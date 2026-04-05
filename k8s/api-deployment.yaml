@@ -1,0 +1,103 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: heretek-swarm-api
+  namespace: heretek-swarm
+  labels:
+    app: heretek-swarm
+    version: "1.0.0"
+    environment: production
+
+spec:
+  replicas: 3
+  selector:
+    matchLabels:
+      app: heretek-swarm-api
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 25%
+      maxUnavailable: 25%
+
+  template:
+    metadata:
+      labels:
+        app: heretek-swarm-api
+        version: "1.0.0"
+    spec:
+      containers:
+      - name: api
+        image: ghcr.io/heretek-ai/heretek-swarm-api:1.0.0
+        imagePullPolicy: IfNotPresent
+        ports:
+          - containerPort: 8000
+            protocol: TCP
+        env:
+          - name: DATABASE_URL
+            valueFrom:
+              secretKeyRef:
+                name: postgres-credentials
+                key: password
+          - name: REDIS_URL
+            valueFrom:
+              configMapKeyRef:
+                name: redis
+                key: host
+          - name: QDRANT_URL
+            valueFrom:
+              configMapKeyRef:
+                name: qdrant
+                key: host
+          - name: LOG_LEVEL
+            value: "INFO"
+          - name: HERETEK_ENV
+            value: "production"
+        resources:
+          requests:
+            cpu: "500m"
+            memory: "512Mi"
+          limits:
+            cpu: "1000m"
+            memory: "2Gi"
+        livenessProbe:
+          httpGet:
+            path: /api/health/live
+            port: 8000
+            initialDelaySeconds: 10
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+        readinessProbe:
+          httpGet:
+            path: /api/health/ready
+            port: 8000
+            initialDelaySeconds: 5
+            periodSeconds: 5
+            timeoutSeconds: 3
+            failureThreshold: 3
+
+  volumeClaimTemplates:
+    - name: api-logs
+      accessModes:
+        - ReadWriteOnce
+      resources:
+        requests:
+          storage: 1Gi
+        limits:
+          storage: 5Gi
+
+  configMaps:
+    - name: redis
+      data:
+        - key: host
+          value: "redis"
+    - name: qdrant
+      data:
+        - key: host
+          value: "http://qdrant:6333"
+
+  secrets:
+    - name: postgres-credentials
+      type: Opaque
+      stringData:
+        password: ${POSTGRES_PASSWORD}
