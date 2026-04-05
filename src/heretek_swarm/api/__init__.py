@@ -27,4 +27,5 @@ __all__ = [
     "websockets",
     "consensus",
     "plugins",
+    "observability",
 ]

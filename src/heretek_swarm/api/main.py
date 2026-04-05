@@ -133,6 +133,7 @@ app.include_router(websockets.router)
 app.include_router(consensus.router)
 app.include_router(plugins.router)
 app.include_router(workflows.router)
+app.include_router(observability.router)
 app.include_router(evaluation.router)
 
 # Setup rate limiting
