@@ -31,6 +31,8 @@ class ConnectionManager:
         self.active_connections: Dict[str, set[WebSocket]] = {}
         self.execution_watchers: Dict[str, set[WebSocket]] = {}
         self.a2a_listeners: set[WebSocket] = set()
+        self.dashboard_listeners: set[WebSocket] = set()
+        self.observability_listeners: set[WebSocket] = set()
     
     async def connect_execution(self, websocket: WebSocket, execution_id: str):
         """Connect to execution updates channel."""
@@ -57,6 +59,26 @@ class ConnectionManager:
         """Disconnect from A2A message stream."""
         self.a2a_listeners.discard(websocket)
     
+    async def connect_dashboard(self, websocket: WebSocket):
+        """Connect to dashboard updates channel."""
+        await websocket.accept()
+        self.dashboard_listeners.add(websocket)
+        logger.info("WebSocket connected to dashboard")
+    
+    def disconnect_dashboard(self, websocket: WebSocket):
+        """Disconnect from dashboard updates."""
+        self.dashboard_listeners.discard(websocket)
+    
+    async def connect_observability(self, websocket: WebSocket):
+        """Connect to observability updates channel."""
+        await websocket.accept()
+        self.observability_listeners.add(websocket)
+        logger.info("WebSocket connected to observability")
+    
+    def disconnect_observability(self, websocket: WebSocket):
+        """Disconnect from observability updates."""
+        self.observability_listeners.discard(websocket)
+    
     async def broadcast_execution(self, execution_id: str, data: Dict[str, Any]):
         """Broadcast execution update to all watchers."""
         if execution_id in self.execution_watchers:
@@ -80,6 +102,28 @@ class ConnectionManager:
                 disconnected.add(websocket)
         for ws in disconnected:
             self.a2a_listeners.discard(ws)
+    
+    async def broadcast_dashboard(self, data: Dict[str, Any]):
+        """Broadcast dashboard update to all listeners."""
+        disconnected = set()
+        for websocket in self.dashboard_listeners:
+            try:
+                await websocket.send_json(data)
+            except Exception:
+                disconnected.add(websocket)
+        for ws in disconnected:
+            self.dashboard_listeners.discard(ws)
+    
+    async def broadcast_observability(self, data: Dict[str, Any]):
+        """Broadcast observability update to all listeners."""
+        disconnected = set()
+        for websocket in self.observability_listeners:
+            try:
+                await websocket.send_json(data)
+            except Exception:
+                disconnected.add(websocket)
+        for ws in disconnected:
+            self.observability_listeners.discard(ws)
 
 
 # Global connection manager
@@ -319,6 +363,121 @@ async def agent_events_websocket(websocket: WebSocket, agent_id: str):
         logger.info("Agent events WebSocket disconnected", agent_id=agent_id)
     except Exception as e:
         logger.error("Agent events WebSocket error", agent_id=agent_id, error=str(e))
+
+
+# =============================================================================
+# Dashboard WebSocket
+# =============================================================================
+
+@router.websocket("/ws/dashboard")
+async def dashboard_websocket(websocket: WebSocket):
+    """
+    WebSocket endpoint for real-time dashboard updates.
+    
+    Broadcasts:
+    - Agent status changes
+    - Memory statistics
+    - A2A messages
+    - Consensus state
+    - System health
+    
+    Message format:
+    {
+        "type": "agent_update|agent_spawned|agent_terminated|a2a_message|memory_update|consensus_update|health_update",
+        "data": {...},
+        "timestamp": "2024-01-01T12:00:00Z"
+    }
+    """
+    await manager.connect_dashboard(websocket)
+    
+    logger.info("Dashboard WebSocket connected")
+    
+    try:
+        # Keep connection alive and stream updates
+        while True:
+            try:
+                # Wait for client messages (heartbeat, subscriptions)
+                data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
+                message = json.loads(data)
+                
+                # Handle client requests
+                if message.get("action") == "ping":
+                    await websocket.send_json({
+                        "type": "pong",
+                        "timestamp": datetime.utcnow().isoformat(),
+                    })
+                    
+            except asyncio.TimeoutError:
+                # Send heartbeat
+                await websocket.send_json({
+                    "type": "heartbeat",
+                    "timestamp": datetime.utcnow().isoformat(),
+                })
+                await asyncio.sleep(30)
+                
+    except WebSocketDisconnect:
+        logger.info("Dashboard WebSocket disconnected")
+    except Exception as e:
+        logger.error("Dashboard WebSocket error", error=str(e))
+    finally:
+        manager.disconnect_dashboard(websocket)
+
+
+# =============================================================================
+# Observability WebSocket
+# =============================================================================
+
+@router.websocket("/ws/observability")
+async def observability_websocket(websocket: WebSocket):
+    """
+    WebSocket endpoint for real-time observability updates.
+    
+    Broadcasts:
+    - LLM traces
+    - Agent executions
+    - Performance metrics
+    - Error logs
+    
+    Message format:
+    {
+        "type": "new_trace|execution_update|new_execution|metric_update|new_error",
+        "data": {...},
+        "timestamp": "2024-01-01T12:00:00Z"
+    }
+    """
+    await manager.connect_observability(websocket)
+    
+    logger.info("Observability WebSocket connected")
+    
+    try:
+        # Keep connection alive and stream updates
+        while True:
+            try:
+                # Wait for client messages (heartbeat, subscriptions)
+                data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
+                message = json.loads(data)
+                
+                # Handle client requests
+                if message.get("action") == "ping":
+                    await websocket.send_json({
+                        "type": "pong",
+                        "timestamp": datetime.utcnow().isoformat(),
+                    })
+                    
+            except asyncio.TimeoutError:
+                # Send heartbeat
+                await websocket.send_json({
+                    "type": "heartbeat",
+                    "timestamp": datetime.utcnow().isoformat(),
+                })
+                await asyncio.sleep(30)
+                
+    except WebSocketDisconnect:
+        logger.info("Observability WebSocket disconnected")
+    except Exception as e:
+        logger.error("Observability WebSocket error", error=str(e))
+    finally:
+        manager.disconnect_observability(websocket)
 
 
 # =============================================================================
