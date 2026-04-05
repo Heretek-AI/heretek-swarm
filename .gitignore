@@ -70,3 +70,7 @@ Thumbs.db
 *.tmp
 *.bak
 *.swp
+
+docs/berk/*
+docs/DEVELOPMENT_PLAN.md
+agent_workspace/error.txt
