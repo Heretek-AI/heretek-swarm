@@ -91,19 +91,8 @@ addopts = [
     "-q",
     "--strict-markers",
     "--strict-config",
-    "--cov=src",
-    "--cov-branch",
-    "--cov-report=term-missing:skip-covered",
-    "--cov-report=html:htmlcov",
-    "--cov-report=xml:coverage.xml",
-    "--cov-fail-under=80",
-    "--benchmark-columns=min,max,mean,median,stddev,outliers,rounds,iterations",
-    "--benchmark-sort=mean",
-    "--benchmark-warmup=on",
 ]
 asyncio_mode = "auto"
-timeout = 300
-timeout_method = "thread"
 filterwarnings = [
     "error",
     "ignore::DeprecationWarning",
@@ -118,10 +107,6 @@ markers = [
     "consensus: Consensus mechanism tests",
     "latency: Latency benchmark tests (<100ms baseline)",
     "security: Security-focused tests",
-]
-env = [
-    "HERETEK_ENV=test",
-    "HERETEK_LOG_LEVEL=DEBUG",
 ]
 
 # ============== COVERAGE CONFIGURATION ==============

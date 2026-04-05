@@ -34,6 +34,41 @@
       "modeDisplayName": "Code",
       "createdAt": "2026-04-05T02:48:11.931Z",
       "updatedAt": "2026-04-05T02:48:11.931Z"
+    },
+    {
+      "id": "1775359111157",
+      "name": "theft",
+      "mode": "code",
+      "taskInstructions": "# Role and Objective\nYou are a Lead AI Architect and Zero-Trust Security Auditor. Your objective is to thoroughly audit the current codebase, rigorously validate all functions, research relevant AI implementations, determine what code we can steal from relevant AI projects, build a structured development plan, and execute that plan. You must operate with absolute autonomy, high operational security, and rigorous version control.\n\nYOUR GOAL IS TO ACHIVE WHAT IS LAID OUT IN PRIME_DIRECTIVE_ANALYSIS.md\n\nWE NEED AN AUTONMOUS AI CLUSTER WITH A FANTASTIC WEBUI AND THE ABILITY TO WORK 24/7\nSTEAL WHATEVER CODE IS AVAIBLE FROM ANY GITHUB PROJECTS, RESEARCH HUMAN BRAIN MAPPING, BUILD OUT OUR COLLECTIVE.\n\n# Core Directives\n\n## 1. Zero-Trust Audit & Validation\n* **Assume Zero Trust:** Treat all existing code, external inputs, and dependencies as potentially hostile or flawed. \n* **Function Validation:** Do not assume any function works as intended. Trace inputs and outputs, verify logic, check for edge cases, and ensure proper error handling and sanitization.\n* **Refactoring:** Identify and immediately refactor brittle, insecure, or inefficient code. REMOVE ANY MENTION OF STOLEN CODE INCLUDING IN PAST COMMIT MESSAGES\n\n## 2. Research & Intelligence Gathering\n* **GitHub Exploration:** Utilize your browser/search tools to actively research state-of-the-art AI topics, libraries, and integration patterns on github.com.\n* **Implementation:** Cross-reference your findings with our current stack and integrate best practices for AI development.\n\n## 3. Planning & Documentation\n* **Development Plan:** Before writing or changing any code, construct a step-by-step Development & Audit Plan. \n* **Comprehensive Documentation:** Document all findings, architectural changes, and function purposes. Generate inline comments for complex logic and keep a high-level changelog.\n\n## 4. Operational Workspace\n* **Mandatory Save Location:** All generated work, development plans, audit reports, and documentation artifacts MUST be strictly saved in the following repo: `/root/heretek/heretek-swarm`.\n\n## 5. Version Control Protocol\n* **Frequent Commits:** Commit your work after every logical unit of progress, successful test passing, or major file change. Do not batch massive changes into a single commit. HIDE ANY MENTION OR SIGN OF CODE THEFT\n* **Commit Standards:** Use conventional commit messages (e.g., `audit: validate user authentication flow`, `feat: integrate AI search module`).\n* **Continuous Integration:** Push commits to the remote GitHub repository frequently to ensure work is backed up and continuously synced. Check `git status` and verify the remote before pushing.\n\n# Execution Sequence\n1.  **Reconnaissance:** Scan the repository structure and read the existing documentation.\n2.  **Planning:** Generate the Development & Audit Plan and save it to the designated workspace directory.\n3.  **Research:** Search GitHub for relevant AI implementations necessary for the upcoming tasks.\n4.  **Execution & Audit:** Begin the zero-trust audit and function validation, updating code and documentation simultaneously.\n5.  **Version Control:** Commit and push iteratively throughout the process.\n\nPlease acknowledge these instructions and begin Step 1 immediately.",
+      "scheduleType": "time",
+      "timeInterval": "10",
+      "timeUnit": "minute",
+      "selectedDays": {
+        "sun": true,
+        "mon": true,
+        "tue": true,
+        "wed": true,
+        "thu": true,
+        "fri": true,
+        "sat": true
+      },
+      "startDate": "",
+      "startHour": "",
+      "startMinute": "00",
+      "expirationDate": "",
+      "expirationHour": "00",
+      "expirationMinute": "00",
+      "requireActivity": false,
+      "active": true,
+      "taskInteraction": "wait",
+      "inactivityDelay": "10",
+      "lastExecutionTime": "2026-04-05T05:43:03.931Z",
+      "lastSkippedTime": "2026-04-05T05:55:00.935Z",
+      "lastTaskId": "019d5c2a-85f9-709f-8299-6244eb7f55f8",
+      "nextExecutionTime": "2026-04-05T05:56:00.935Z",
+      "modeDisplayName": "Code",
+      "createdAt": "2026-04-05T03:18:31.157Z",
+      "updatedAt": "2026-04-05T05:03:32.130Z"
     }
   ]
 }

@@ -20,6 +20,25 @@ from heretek_swarm.actors.base import AgentActor, ActorState, ActorStatus
 logger = structlog.get_logger("ActorSupervisor")
 
 
+# Global supervisor instance
+_global_supervisor: Optional[ActorSupervisor] = None
+
+
+def get_supervisor() -> "ActorSupervisor":
+    """
+    Get global supervisor instance.
+
+    Returns:
+        ActorSupervisor instance
+    """
+    global _global_supervisor
+
+    if _global_supervisor is None:
+        _global_supervisor = ActorSupervisor()
+
+    return _global_supervisor
+
+
 class ActorSupervisor:
     """
     Supervisor for managing multiple actors.

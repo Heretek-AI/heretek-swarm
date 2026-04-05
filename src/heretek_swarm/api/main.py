@@ -16,14 +16,15 @@ import os
 from typing import Any, Dict, List, Optional
 from contextlib import asynccontextmanager
 
-from fastapi import FastAPI, HTTPException
+from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 import structlog
 
 from heretek_swarm.actors.supervisor import ActorSupervisor
 from memory.persistent import PersistentMemoryStore
-from heretek_swarm.api import websockets, consensus, plugins
+from heretek_swarm.api import websockets, consensus, plugins, workflows
 from heretek_swarm.api.rate_limiting import setup_rate_limiting
+from heretek_swarm.gateway.auth import verify_auth
 
 # Import mem0 backend
 try:
@@ -131,6 +132,7 @@ app.add_middleware(
 app.include_router(websockets.router)
 app.include_router(consensus.router)
 app.include_router(plugins.router)
+app.include_router(workflows.router)
 
 # Setup rate limiting
 rate_limit_enabled = os.environ.get("RATE_LIMIT_ENABLED", "true").lower() == "true"
@@ -271,7 +273,7 @@ async def readiness_check():
 # =============================================================================
 
 @app.get("/api/agents")
-async def get_agents():
+async def get_agents(authenticated: str = Depends(verify_auth)):
     """
     Get all agents managed by the supervisor.
     
@@ -296,7 +298,7 @@ async def get_agents():
 
 
 @app.get("/api/agents/{agent_id}")
-async def get_agent(agent_id: str):
+async def get_agent(agent_id: str, authenticated: str = Depends(verify_auth)):
     """
     Get details of a specific agent.
     
@@ -328,7 +330,7 @@ async def get_agent(agent_id: str):
 
 
 @app.get("/api/agents/{agent_id}/metrics")
-async def get_agent_metrics(agent_id: str):
+async def get_agent_metrics(agent_id: str, authenticated: str = Depends(verify_auth)):
     """
     Get metrics for a specific agent.
     
@@ -356,7 +358,7 @@ async def get_agent_metrics(agent_id: str):
 
 
 @app.post("/api/agents/{agent_id}/terminate")
-async def terminate_agent(agent_id: str):
+async def terminate_agent(agent_id: str, authenticated: str = Depends(verify_auth)):
     """
     Terminate a specific agent.
     
@@ -385,7 +387,7 @@ async def terminate_agent(agent_id: str):
 # =============================================================================
 
 @app.get("/api/supervisor/status")
-async def get_supervisor_status():
+async def get_supervisor_status(authenticated: str = Depends(verify_auth)):
     """
     Get supervisor overall status and statistics.
     
@@ -403,7 +405,7 @@ async def get_supervisor_status():
 # =============================================================================
 
 @app.get("/api/memory")
-async def get_memory_stats():
+async def get_memory_stats(authenticated: str = Depends(verify_auth)):
     """
     Get memory statistics across all agents.
     
@@ -469,7 +471,7 @@ async def get_memory_stats():
 # =============================================================================
 
 @app.get("/api/litellm/metrics")
-async def get_litellm_metrics():
+async def get_litellm_metrics(authenticated: str = Depends(verify_auth)):
     """
     Get LiteLLM metrics if available.
     
@@ -513,7 +515,7 @@ async def get_litellm_metrics():
 # =============================================================================
 
 @app.get("/api/memory/mem0")
-async def get_mem0_stats():
+async def get_mem0_stats(authenticated: str = Depends(verify_auth)):
     """
     Get mem0 memory statistics.
     
@@ -534,7 +536,7 @@ async def get_mem0_stats():
 
 
 @app.post("/api/memory/mem0/search")
-async def search_mem0_memory(query: str, agent_id: str, limit: int = 10):
+async def search_mem0_memory(query: str, agent_id: str, limit: int = 10, authenticated: str = Depends(verify_auth)):
     """
     Search mem0 memory for an agent.
     
@@ -577,7 +579,7 @@ async def search_mem0_memory(query: str, agent_id: str, limit: int = 10):
 
 
 @app.get("/api/memory/mem0/agents/{agent_id}")
-async def get_agent_memories(agent_id: str, limit: int = 100):
+async def get_agent_memories(agent_id: str, limit: int = 100, authenticated: str = Depends(verify_auth)):
     """
     Get all memories for an agent from mem0.
     
@@ -614,7 +616,7 @@ async def get_agent_memories(agent_id: str, limit: int = 100):
 # =============================================================================
 
 @app.get("/api/a2a/messages")
-async def get_a2a_messages(limit: int = 100):
+async def get_a2a_messages(limit: int = 100, authenticated: str = Depends(verify_auth)):
     """
     Get recent A2A messages from Redis.
     
@@ -717,4 +719,5 @@ async def root():
         "version": "0.1.0",
         "docs": "/docs",
         "redoc": "/redoc",
+        "workflows": "/api/workflows",
     }
