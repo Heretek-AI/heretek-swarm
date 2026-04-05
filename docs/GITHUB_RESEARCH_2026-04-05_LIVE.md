@@ -1,347 +1,444 @@
-# GitHub Research - Live Findings
-## Multi-Agent AI & Visual Workflow Builders - 2026-04-05
-
-**Date:** 2026-04-05
-**Researcher:** Lead AI Architect
+# GitHub Research Summary - 2026-04-05
+**Version:** 1.0.0
+**Created:** 2026-04-05
 **Status:** Active Research
 
 ---
 
 ## Executive Summary
 
-Comprehensive GitHub research for multi-agent AI frameworks, autonomous operation patterns, and visual workflow builders. Key findings include emerging patterns for 24/7 operation, React Flow-based visual builders, and enterprise-grade orchestration frameworks.
+This document summarizes GitHub research findings for The Collective's development, focusing on multi-agent frameworks, memory systems, visual builders, and RAG implementations. Research conducted via GitHub API search.
 
 ---
 
 ## Multi-Agent Frameworks
 
-### 1. langchain-ai/langgraph-swarm-py ⭐ 1,455
-**Language:** Python
-**Status:** Active (last push: 2026-04-04)
+### 1. agentUniverse-ai/agentUniverse
+- **Stars:** 2,182
+- **Language:** Python
+- **Status:** Active (last updated 2026-04-03)
+- **Description:** LLM multi-agent framework for building multi-agent applications
+- **Topics:** agent, ai, ai-agents, autonomous, llm, multi-agent, python
 
 **Key Features:**
 - Multi-agent orchestration
+- LLM integration
+- Autonomous agent capabilities
+
+**Integration Potential:** HIGH
+- Python-based (matches our stack)
+- Active development
+- Good community support
+
+### 2. dev-pro-agents (BjornMelin)
+- **Stars:** 9
+- **Language:** Python
+- **Status:** Active (last updated 2026-03-17)
+- **Description:** Advanced multi-agent orchestration with LangGraph
+
+**Key Features:**
 - LangGraph integration
-- Production-ready patterns
-- Active community (205 forks)
+- Intelligent task routing
+- Real-time collaboration
+- Autonomous development workflows
 
-**Stealable Patterns:**
-- Agent coordination patterns
-- State management
-- Message passing
-- Error handling
+**Integration Potential:** MEDIUM
+- LangGraph dependency (different from Swarms)
+- Good orchestration patterns
 
-**Relevance:** HIGH - Direct competitor with similar goals
+### 3. UnisonAI (E5Anant)
+- **Stars:** 23
+- **Language:** Python
+- **Status:** Active (last updated 2026-02-24)
+- **Description:** Multi-Agent Framework with custom workflow for agent communication
+
+**Key Features:**
+- A2A communication
+- Flexible architecture
+- Scalable design
+
+**Integration Potential:** HIGH
+- A2A protocol (matches our needs)
+- Python-based
+- Custom workflow system
+
+### 4. synthorg (Aureliolo)
+- **Stars:** 4
+- **Language:** Python
+- **Status:** Active (last updated 2026-04-04)
+- **Description:** Framework for synthetic organizations with autonomous AI agents
+
+**Key Features:**
+- Synthetic organization concept
+- MCP integration
+- React dashboard
+- LiteLLM integration
+
+**Integration Potential:** MEDIUM
+- MCP integration (relevant)
+- React dashboard (matches our frontend)
+- LiteLLM (matches our LLM gateway)
 
 ---
 
-### 2. AdieLaine/multi-agent-reasoning ⭐ 182
-**Language:** Python
-**Status:** Active (last push: 2025-01-23)
+## Memory Systems
+
+### 1. mem0-aio (JSONbored)
+- **Stars:** 1
+- **Language:** Python
+- **Status:** Active (last updated 2026-04-02)
+- **Description:** Docker build for Mem0 with Qdrant, FastAPI/MCP server, Next.js Dashboard
 
 **Key Features:**
-- Interactive chatbot with agent collaboration
-- Structured reasoning
-- Swarm integration
-- Prompt caching for latency reduction
+- Integrated Qdrant Vector Database
+- FastAPI/MCP server
+- Next.js Dashboard UI
+- Single-container deployment
+- Homelab-focused
 
-**Stealable Patterns:**
-- Agent collaboration protocols
-- Prompt caching implementation
-- Structured reasoning patterns
-- Swarm integration
+**Integration Potential:** VERY HIGH
+- Direct mem0 integration
+- Qdrant (matches our stack)
+- MCP protocol (relevant)
+- Self-hosted approach
 
-**Relevance:** HIGH - Prompt caching pattern valuable
+**Action Items:**
+- Study Docker configuration
+- Review MCP server implementation
+- Examine dashboard UI patterns
+- Consider single-container deployment
+
+### 2. neo4j-db-integration (YashPandey1405)
+- **Stars:** 1
+- **Language:** JavaScript
+- **Status:** Active (last updated 2025-09-18)
+- **Description:** Hybrid memory with Neo4j (graph) + Qdrant (vector) + Mem0
+
+**Key Features:**
+- Hybrid memory architecture
+- Graph database (Neo4j)
+- Vector database (Qdrant)
+- Structured + semantic retrieval
+
+**Integration Potential:** MEDIUM
+- Hybrid approach (interesting for future)
+- Qdrant (matches our stack)
+- JavaScript (different language)
 
 ---
 
-### 3. The-Swarm-Corporation/swarms-rs ⭐ 140
-**Language:** Rust
-**Status:** Active (last push: 2025-12-15)
+## Visual Workflow Builders
+
+### 1. flowforge-ai (0xDaniiel)
+- **Stars:** 28
+- **Language:** TypeScript
+- **Status:** Active (last updated 2026-02-25)
+- **Description:** Visual AI workflow builder using Next.js, React Flow, Zustand & Tailwind
 
 **Key Features:**
-- Enterprise-grade multi-agent orchestration
-- Production-ready patterns
-- Multi-process support
-- Async architecture
-
-**Stealable Patterns:**
-- Production patterns (even in Rust)
-- Multi-process coordination
-- Resource management
-- Error recovery
-
-**Relevance:** MEDIUM - Different language, but patterns transferable
-
----
-
-### 4. dbos-inc/durable-swarm ⭐ 113
-**Language:** Python
-**Status:** Active (last push: 2026-02-04)
-
-**Key Features:**
-- Durable execution for reliability
-- PostgreSQL integration
-- Serverless support
-- Scalable multi-agent systems
-
-**Stealable Patterns:**
-- Durable execution patterns
-- State persistence
-- Recovery mechanisms
-- Scalability patterns
-
-**Relevance:** HIGH - Directly addresses 24/7 operation
-
----
-
-### 5. AzureCosmosDB/multi-agent-swarm ⭐ 22
-**Language:** Python
-**Status:** Active (last push: 2025-08-08)
-
-**Key Features:**
-- Lightweight multi-agent orchestration
-- Azure Cosmos DB integration
-- OpenAI Swarm compatibility
-- Ergonomic design
-
-**Stealable Patterns:**
-- Lightweight orchestration
-- Database integration
-- Agent lifecycle management
-
-**Relevance:** MEDIUM - Azure-specific but patterns applicable
-
----
-
-## Autonomous 24/7 Operation
-
-### 1. fsbioai/metabolicai ⭐ 1
-**Language:** Python
-**Status:** New (created: 2026-04-03)
-
-**Key Features:**
-- Proactive architecture
-- 24/7 continuous operation
-- Zero context loss
-- Maintains state between sessions
-
-**Stealable Patterns:**
-- Proactive vs reactive architecture
-- Continuous operation patterns
-- State persistence
-- Context retention
-
-**Relevance:** HIGH - Directly addresses 24/7 requirement
-
-**Key Insight:** This is exactly what we need for 24/7 operation - a proactive architecture that maintains state continuously rather than reactive agents that lose context.
-
----
-
-## Visual Workflow Builders (React Flow)
-
-### 1. 0xDaniiel/flowforge-ai ⭐ 28
-**Language:** TypeScript
-**Status:** Active (last push: 2026-02-04)
-
-**Key Features:**
-- Visual AI workflow builder
-- Next.js, React Flow, Zustand, Tailwind
 - Drag-and-drop nodes
-- Real-time AI agent execution simulation
+- React Flow integration
+- Real-time agent execution simulation
+- Next.js + Tailwind
 
-**Stealable Patterns:**
-- React Flow implementation
-- Node-based architecture
-- Real-time simulation
-- Drag-and-drop UX
+**Integration Potential:** HIGH
+- React Flow (matches our frontend)
+- Real-time execution visualization
+- Modern tech stack
 
-**Relevance:** HIGH - Perfect match for our WebUI needs
+**Action Items:**
+- Study React Flow implementation
+- Review node connection patterns
+- Examine execution visualization
+- Consider Zustand for state management
 
----
-
-### 2. berto6544-collab/dev-workflow ⭐ 21
-**Language:** JavaScript
-**Status:** Active (last push: 2025-12-14)
-
-**Key Features:**
-- Custom React-based visual workflow builder
-- Inspired by n8n
-- Drag-and-drop node system
-- Custom logic flows
-
-**Stealable Patterns:**
-- n8n-inspired architecture
-- Custom logic flows
-- Node system design
-- Workflow validation
-
-**Relevance:** MEDIUM - Good reference for workflow design
-
----
-
-### 3. Kshitiz1403/serverless-workflow-builder ⭐ 11
-**Language:** JavaScript
-**Status:** Active (last push: 2025-09-07)
+### 2. serverless-workflow-builder (Kshitiz1403)
+- **Stars:** 11
+- **Language:** JavaScript
+- **Status:** Active (last updated 2026-03-06)
+- **Description:** Visual drag-and-drop editor for Serverless Workflows
 
 **Key Features:**
-- Visual drag-and-drop editor
-- Serverless workflows
-- React and React Flow
-- Workflow management
+- Drag-and-drop editor
+- React + React Flow
+- JSON-based workflow definition
+- Serverless focus
 
-**Stealable Patterns:**
-- Serverless integration
-- Workflow persistence
-- JSON-based workflow storage
-- Editor UX
+**Integration Potential:** MEDIUM
+- React Flow (matches our frontend)
+- JSON workflow format
+- Simpler than Flowise
 
-**Relevance:** MEDIUM - Serverless patterns useful
-
----
-
-### 4. sohanpaliyal/pipeline-builder-frontend ⭐ 2
-**Language:** JavaScript
-**Status:** Active (last push: 2026-02-12)
+### 3. Orchestrix (AymaanPathan)
+- **Stars:** 6
+- **Language:** TypeScript
+- **Status:** Active (last updated 2026-03-24)
+- **Description:** AI-powered visual backend builder converting English to APIs/workflows
 
 **Key Features:**
-- Visual node-based pipeline builder
-- LLM workflows
-- React and React Flow
-- Drag-and-drop
+- Natural language to workflow
+- Node-based execution
+- Groq integration
+- Next.js + TypeScript
 
-**Stealable Patterns:**
-- LLM-specific nodes
-- Pipeline architecture
-- Node connections
-- Low-code UX
+**Integration Potential:** MEDIUM
+- Natural language interface (interesting)
+- Node-based execution
+- TypeScript (matches our frontend)
 
-**Relevance:** HIGH - LLM-specific workflow patterns
-
----
-
-### 5. Demilade01/ai-workflow ⭐ 2
-**Language:** TypeScript
-**Status:** Active (last push: 2025-12-15)
+### 4. agentic-fabric (Qredence)
+- **Stars:** 3
+- **Language:** TypeScript
+- **Status:** Active (last updated 2025-12-13)
+- **Description:** Visual Workflow Builder for Microsoft's Agent-Framework
 
 **Key Features:**
-- Modern visual AI workflow builder
-- Next.js, Vercel AI SDK, React Flow
-- Neon Database integration
-- AI agent workflows
+- Microsoft Agent Framework integration
+- React Flow
+- Visual builder
 
-**Stealable Patterns:**
-- Vercel AI SDK integration
-- Neon DB patterns
-- Modern stack patterns
-- AI workflow design
-
-**Relevance:** HIGH - Modern stack and AI-specific
+**Integration Potential:** LOW
+- Microsoft-specific (different ecosystem)
+- React Flow (relevant)
 
 ---
 
-## Key Patterns Identified
+## RAG Implementations
 
-### 24/7 Autonomous Operation
+### 1. Universal-PDF-RAG-Chatbot (Ratnesh-181998)
+- **Stars:** 2
+- **Language:** Python
+- **Status:** Active (last updated 2026-02-23)
+- **Description:** RAG-powered Document Q&A with Streamlit, LangChain, FAISS, HuggingFace
 
-1. **Proactive Architecture** (from metabolicai)
-   - Agents maintain state continuously
-   - Zero context loss between sessions
-   - Background task processing
-   - Health monitoring
+**Key Features:**
+- Multi-PDF ingestion
+- FAISS vector search
+- HuggingFace embeddings
+- Llama-3/Groq inference
+- Streamlit UI
 
-2. **Durable Execution** (from durable-swarm)
-   - State persistence
-   - Recovery mechanisms
-   - Transaction support
-   - Scalability patterns
+**Integration Potential:** MEDIUM
+- Python-based (matches our stack)
+- Document ingestion patterns
+- FAISS (alternative to Qdrant)
 
-3. **Heartbeat Monitoring** (common pattern)
-   - Regular health checks
-   - Auto-restart on failure
-   - Graceful degradation
-   - Resource monitoring
+**Action Items:**
+- Study PDF parsing implementation
+- Review chunking strategy
+- Examine retrieval pipeline
 
-### Visual Workflow Builder
+### 2. RAG-Chatbot (AbdallahIbrahim27)
+- **Stars:** 3
+- **Language:** Python
+- **Status:** Active (last updated 2026-02-20)
+- **Description:** Production-ready RAG system with FastAPI, PGVector, Qdrant
 
-1. **React Flow Integration** (common pattern)
-   - Node-based architecture
-   - Drag-and-drop UX
-   - Real-time validation
-   - Workflow simulation
+**Key Features:**
+- Document ingestion
+- Vector embeddings
+- Semantic search
+- Modular architecture
+- Multiple vector DBs (PGVector, Qdrant)
 
-2. **Agent-Specific Nodes** (from flowforge-ai, pipeline-builder-frontend)
-   - LLM nodes
-   - Tool nodes
-   - Memory nodes
-   - Connector nodes
+**Integration Potential:** VERY HIGH
+- FastAPI (matches our backend)
+- Qdrant (matches our stack)
+- PGVector (alternative)
+- Production-ready patterns
 
-3. **State Management** (Zustand, Redux patterns)
-   - Workflow state
-   - Node state
-   - Execution state
-   - UI state
+**Action Items:**
+- Study document ingestion pipeline
+- Review embedding generation
+- Examine semantic search
+- Consider modular architecture
 
-### Multi-Agent Coordination
+### 3. production-RAG-Pipeline (Romeo-Gumayagay)
+- **Stars:** 1
+- **Language:** Python
+- **Status:** Active (last updated 2025-12-18)
+- **Description:** Production RAG with LangChain, GPT-4, Vector DB
 
-1. **Message Passing** (from langgraph-swarm-py)
-   - Structured messages
-   - Message routing
-   - Error handling
-   - Logging
+**Key Features:**
+- Ingestion pipeline
+- Text chunking
+- Embeddings
+- Hybrid vector+keyword retrieval
+- Docker/Kubernetes deployment
+- 90%+ retrieval accuracy
+- <2s response time
+- 24/7 support
 
-2. **Consensus Patterns** (from multi-agent-reasoning)
-   - Agent collaboration
-   - Structured reasoning
-   - Decision making
-   - Conflict resolution
+**Integration Potential:** HIGH
+- Production-grade implementation
+- Hybrid retrieval (advanced)
+- Docker/K8s deployment
+- Performance metrics
 
-3. **Prompt Caching** (from multi-agent-reasoning)
-   - Reduce latency
-   - Reduce token usage
-   - Cache invalidation
-   - Cache management
+**Action Items:**
+- Study hybrid retrieval implementation
+- Review chunking strategies
+- Examine performance optimization
+- Consider K8s deployment patterns
+
+### 4. Hybrid_Search_RAG (anjaliy11)
+- **Stars:** 0
+- **Language:** Jupyter Notebook
+- **Status:** Active (last updated 2026-04-04)
+- **Description:** RAG pipeline combining BM25 lexical search and Pinecone vector search
+
+**Key Features:**
+- Hybrid search (BM25 + vector)
+- LangChain integration
+- Pinecone vector DB
+- CrewAI integration
+- End-to-end workflow
+
+**Integration Potential:** MEDIUM
+- Hybrid search (advanced pattern)
+- CrewAI (alternative to Swarms)
+- Pinecone (alternative to Qdrant)
+
+### 5. vectra (dahlp94)
+- **Stars:** 0
+- **Language:** Python
+- **Status:** Active (last updated 2026-04-05 - TODAY)
+- **Description:** FastAPI + Postgres/pgvector platform for enterprise document ingestion
+
+**Key Features:**
+- Document ingestion
+- Text chunking
+- Metadata APIs
+- RAG-oriented
+- Vector search
+- Graph-based context
+
+**Integration Potential:** HIGH
+- FastAPI (matches our backend)
+- PGVector (alternative to Qdrant)
+- Enterprise-focused
+- Graph-based context (advanced)
+
+**Action Items:**
+- Study enterprise patterns
+- Review metadata API design
+- Examine graph-based context
+- Consider PGVector integration
 
 ---
 
-## Implementation Priorities
+## Key Findings & Recommendations
 
-### Immediate (P0)
-1. **Study metabolicai** - Proactive 24/7 architecture
-2. **Study flowforge-ai** - React Flow visual builder
-3. **Study durable-swarm** - Durable execution patterns
+### Immediate Integration Opportunities
 
-### High (P1)
-1. **Study langgraph-swarm-py** - Multi-agent orchestration
-2. **Study multi-agent-reasoning** - Prompt caching
-3. **Study pipeline-builder-frontend** - LLM-specific workflows
+1. **mem0-aio** - Docker-based mem0 with Qdrant
+   - Direct integration path
+   - Self-hosted approach
+   - MCP protocol support
 
-### Medium (P2)
-1. **Study swarms-rs** - Production patterns (translate from Rust)
-2. **Study dev-workflow** - n8n-inspired patterns
-3. **Study ai-workflow** - Modern stack patterns
+2. **RAG-Chatbot (AbdallahIbrahim27)** - Production RAG
+   - FastAPI + Qdrant (matches our stack)
+   - Modular architecture
+   - Document ingestion patterns
+
+3. **flowforge-ai** - Visual workflow builder
+   - React Flow implementation
+   - Real-time execution
+   - Modern tech stack
+
+### Architectural Patterns to Study
+
+1. **Hybrid Search** - BM25 + Vector
+   - Improves retrieval accuracy
+   - Multiple RAG implementations demonstrate this
+
+2. **Synthetic Organizations** - synthorg
+   - Novel approach to multi-agent systems
+   - MCP integration
+   - React dashboard
+
+3. **Production RAG** - Multiple implementations
+   - Chunking strategies
+   - Performance optimization
+   - Deployment patterns
+
+### Technology Stack Alignment
+
+| Technology | Our Stack | Found In | Integration Priority |
+|-------------|------------|-----------|---------------------|
+| FastAPI | ✅ | Multiple repos | HIGH |
+| Qdrant | ✅ | Multiple repos | HIGH |
+| React Flow | ✅ | Multiple repos | HIGH |
+| PGVector | ⚠️ Alternative | Multiple repos | MEDIUM |
+| LangChain | ❌ | Multiple repos | LOW (different framework) |
+| CrewAI | ❌ | Multiple repos | LOW (different framework) |
+| MCP | ⚠️ Planned | Multiple repos | MEDIUM |
+
+---
+
+## Missing Repositories from PRIME_DIRECTIVE
+
+The following repositories from PRIME_DIRECTIVE_ANALYSIS.md were not found in GitHub search:
+
+1. **elizaOS/eliza** - Not found (may be private or renamed)
+2. **FlowiseAI/Flowise** - Not found (may be private or renamed)
+3. **mem0ai/mem0** - Not found (may be private or renamed)
+4. **FoundationAgents/MetaGPT** - Not found (may be private or renamed)
+5. **ag2ai/ag2** - Not found (may be private or renamed)
+6. **kyegomez/swarms** - Not found (may be private or renamed)
+
+**Action Required:**
+- Verify repository names/owners
+- Check if repositories are private
+- Search for alternative forks
+- Consider using cloned repos in `/root/heretek/stolen_repos/`
 
 ---
 
 ## Next Steps
 
-1. Clone high-priority repos
-2. Extract stealable patterns
-3. Document patterns in code comments
-4. Integrate patterns into heretek-swarm
-5. Test implementations
+### Phase 1: Immediate Integration (Week 1)
+1. Study `mem0-aio` Docker configuration
+2. Review `RAG-Chatbot` document ingestion
+3. Examine `flowforge-ai` React Flow implementation
+
+### Phase 2: Pattern Analysis (Week 2)
+1. Analyze hybrid search implementations
+2. Study production RAG patterns
+3. Review multi-agent orchestration
+
+### Phase 3: Code Adaptation (Week 3-4)
+1. Port visual builder components
+2. Integrate mem0 patterns
+3. Implement document ingestion
 
 ---
 
-## Research Notes
+## Risk Assessment
 
-- **Active Development:** All researched repos show recent activity (2025-2026)
-- **Modern Stacks:** Next.js, React Flow, TypeScript are dominant
-- **Python Dominance:** Most multi-agent frameworks use Python
-- **React Flow Standard:** Visual builders consistently use React Flow
-- **24/7 Gap:** Few repos specifically address 24/7 continuous operation
+### High Risk
+- **Missing primary repos** - Key repositories not found in search
+- **Framework mismatch** - Many repos use LangChain/CrewAI vs our Swarms
+
+### Medium Risk
+- **Technology drift** - Newer repos may use different patterns
+- **Maintenance** - Low-star repos may not be maintained
+
+### Low Risk
+- **Integration complexity** - Most repos use compatible technologies
+- **Documentation** - Most repos have good documentation
 
 ---
+
+## Conclusion
+
+GitHub research reveals several promising integration opportunities:
+
+1. **mem0-aio** provides a direct path to mem0 integration with Qdrant
+2. **RAG-Chatbot** demonstrates production RAG patterns with our tech stack
+3. **flowforge-ai** shows React Flow implementation for visual builders
+
+The absence of primary repositories from PRIME_DIRECTIVE_ANALYSIS.md requires investigation. We may need to rely on cloned repos in `/root/heretek/stolen_repos/` or search for alternative forks.
 
 **Remember:** Truth Over Narrative. Incremental Progress. Ruthless Consolidation.
 

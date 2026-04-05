@@ -109,15 +109,16 @@ ORDER BY importance_score DESC;
 -- GRANT EXECUTE ON FUNCTION decay_memory_importance TO heretek;
 -- GRANT EXECUTE ON FUNCTION cleanup_expired_memories TO heretek;
 
--- Insert a test memory to verify setup
-INSERT INTO swarm_memories (agent_id, content, memory_type, importance_score, metadata)
-VALUES (
-    'system',
-    'Migration 001_create_swarm_memories.sql completed successfully. Heretek Swarm memory system initialized.',
-    'semantic',
-    1.0,
-    '{"migration": "001", "created_by": "system"}'::jsonb
-);
+-- Test data insertion removed for production use
+-- Uncomment below line for testing only:
+-- INSERT INTO swarm_memories (agent_id, content, memory_type, importance_score, metadata)
+-- VALUES (
+--     'system',
+--     'Migration 001_create_swarm_memories.sql completed successfully. Heretek Swarm memory system initialized.',
+--     'semantic',
+--     1.0,
+--     '{"migration": "001", "created_by": "system"}'::jsonb
+-- );
 
 -- Comment on table
 COMMENT ON TABLE swarm_memories IS 'Long-term memory storage for Heretek Swarm agents with vector embeddings';
