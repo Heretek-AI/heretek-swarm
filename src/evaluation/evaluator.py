@@ -28,6 +28,19 @@ class EvaluationStatus(Enum):
     CANCELLED = "cancelled"
 
 
+class EvaluationMetric(Enum):
+    """Evaluation metric types."""
+
+    ACCURACY = "accuracy"
+    PRECISION = "precision"
+    RECALL = "recall"
+    F1_SCORE = "f1_score"
+    RESPONSE_TIME = "response_time"
+    CONSTRAINT_COMPLIANCE = "constraint_compliance"
+    OUTPUT_QUALITY = "output_quality"
+    SUCCESS_RATE = "success_rate"
+
+
 @dataclass
 class TestCase:
     """
@@ -138,12 +151,12 @@ class EvaluationResult:
     agent_id: str
     evaluation_id: str
     status: EvaluationStatus
-    test_results: List[TestResult] = field(default_factory=list)
     started_at: str
     completed_at: Optional[str] = None
     total_time: float = 0.0
     error: Optional[Exception] = None
     metrics: Optional[QualityMetrics] = None
+    test_results: List[TestResult] = field(default_factory=list)
 
 
 class AgentEvaluator:
@@ -473,3 +486,21 @@ class AgentEvaluator:
             if evaluation.metrics:
                 comparison[agent_id] = evaluation.metrics
         return comparison
+
+
+# Singleton evaluator instance
+_evaluator_instance: Optional[AgentEvaluator] = None
+
+
+def get_evaluator() -> AgentEvaluator:
+    """
+    Get singleton evaluator instance.
+    
+    Returns:
+        AgentEvaluator instance
+    """
+    global _evaluator_instance
+    if _evaluator_instance is None:
+        _evaluator_instance = AgentEvaluator()
+        logger.info("evaluator_singleton_created")
+    return _evaluator_instance

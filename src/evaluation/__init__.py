@@ -13,6 +13,8 @@ from .evaluator import (
     QualityMetrics,
     EvaluationResult,
     EvaluationStatus,
+    EvaluationMetric,
+    get_evaluator,
 )
 
 __all__ = [
@@ -23,4 +25,6 @@ __all__ = [
     "QualityMetrics",
     "EvaluationResult",
     "EvaluationStatus",
+    "EvaluationMetric",
+    "get_evaluator",
 ]

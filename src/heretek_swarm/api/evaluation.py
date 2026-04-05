@@ -13,7 +13,7 @@ from fastapi import APIRouter, HTTPException, Depends
 import structlog
 
 from evaluation.evaluator import (
-    Evaluator,
+    AgentEvaluator,
     get_evaluator,
     TestCase,
     EvaluationMetric,
@@ -232,11 +232,11 @@ async def get_all_evaluation_summaries(
     }
 
 
-@router.delete("/test-cases/{test_case_id}", status_code=204)
+@router.delete("/test-cases/{test_case_id}")
 async def delete_test_case(
     test_case_id: str,
     authenticated: str = Depends(verify_auth)
-) -> Dict[str, Any]:
+):
     """
     Delete a test case.
     
@@ -245,7 +245,7 @@ async def delete_test_case(
         authenticated: Authentication token
     
     Returns:
-        Deletion confirmation
+        204 No Content on success
     """
     evaluator = get_evaluator()
     
@@ -256,6 +256,4 @@ async def delete_test_case(
     
     logger.info("test_case_deleted", test_case_id=test_case_id)
     
-    return {
-        "message": f"Test case {test_case_id} deleted"
-    }
+    return None

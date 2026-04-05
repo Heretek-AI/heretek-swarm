@@ -170,7 +170,7 @@ async def execute_workflow(
 async def delete_workflow(
     workflow_id: str,
     authenticated: str = Depends(verify_auth)
-) -> Dict[str, Any]:
+):
     """
     Delete a workflow.
 
@@ -179,7 +179,7 @@ async def delete_workflow(
         authenticated: Authentication token
 
     Returns:
-        Deletion confirmation
+        204 No Content on success
     """
     engine = get_workflow_engine()
 
@@ -191,9 +191,7 @@ async def delete_workflow(
 
     logger.info("workflow_deleted", workflow_id=workflow_id)
 
-    return {
-        "message": f"Workflow {workflow_id} deleted"
-    }
+    return None
 
 
 @router.get("/{workflow_id}/status", status_code=200)

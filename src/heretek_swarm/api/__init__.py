@@ -20,7 +20,7 @@ Example:
 """
 
 from heretek_swarm.api.main import app
-from heretek_swarm.api import websockets, consensus, plugins
+from heretek_swarm.api import websockets, consensus, plugins, observability
 
 __all__ = [
     "app",

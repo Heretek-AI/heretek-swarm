@@ -22,7 +22,7 @@ import structlog
 
 from heretek_swarm.actors.supervisor import ActorSupervisor
 from memory.persistent import PersistentMemoryStore
-from heretek_swarm.api import websockets, consensus, plugins, workflows, evaluation
+from heretek_swarm.api import websockets, consensus, plugins, workflows, evaluation, observability
 from heretek_swarm.api.rate_limiting import setup_rate_limiting
 from heretek_swarm.gateway.auth import verify_auth
 
