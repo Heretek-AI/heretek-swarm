@@ -8,11 +8,43 @@ Reference: MiniMax Audit + OpenClaw tool patterns
 import os
 import asyncio
 import aiohttp
-from typing import Any, Callable, Dict, List, Optional
+import shlex
+from typing import Any, Callable, Dict, List, Optional, Set
 from datetime import datetime
 import structlog
 
 logger = structlog.get_logger(__name__)
+
+# =============================================================================
+# Security: Command Whitelist
+# =============================================================================
+# Only these commands are allowed to be executed by agents
+# This prevents command injection and unauthorized system access
+ALLOWED_COMMANDS: Set[str] = {
+    # File operations (safe)
+    "ls", "pwd", "cd", "cat", "head", "tail", "wc",
+    "grep", "find", "sort", "uniq", "diff",
+    
+    # Text processing
+    "echo", "printf", "sed", "awk", "cut",
+    
+    # System information (read-only)
+    "df", "du", "free", "top", "ps", "uptime",
+    "date", "whoami", "id", "uname",
+    
+    # Development tools
+    "git", "python", "pip", "pytest",
+}
+
+# Commands that are NEVER allowed (security critical)
+BLOCKED_COMMANDS: Set[str] = {
+    "rm", "rmdir", "mv", "cp", "chmod", "chown",
+    "sudo", "su", "passwd", "useradd", "userdel",
+    "systemctl", "service", "iptables", "netstat",
+    "curl", "wget", "ssh", "scp", "rsync",
+    "kill", "killall", "pkill", "reboot", "shutdown",
+    "dd", "mkfs", "fdisk", "mount", "umount",
+}
 
 
 class ToolRegistry:
@@ -217,15 +249,78 @@ async def write_file(path: str, content: str) -> Dict:
 
 async def run_command(command: str, timeout: int = 30) -> Dict:
     """
-    Execute shell command with safety limits.
+    Execute shell command with security validation.
+    
+    SECURITY: Only whitelisted commands are allowed. Command injection
+    is prevented through strict validation and argument sanitization.
     
     Args:
         command: Shell command
         timeout: Timeout in seconds
+        
+    Returns:
+        Dict with success status, output, or error message
+        
+    Raises:
+        ValueError: If command is not allowed
     """
+    # Validate command is not empty
+    if not command or not command.strip():
+        return {
+            "success": False,
+            "error": "Empty command not allowed"
+        }
+    
+    # Parse command to extract base command
+    parts = command.strip().split()
+    if not parts:
+        return {
+            "success": False,
+            "error": "Invalid command format"
+        }
+    
+    base_cmd = parts[0]
+    
+    # Check if command is blocked (security critical)
+    if base_cmd in BLOCKED_COMMANDS:
+        logger.warning(
+            "command_blocked",
+            command=base_cmd,
+            reason="Command in blocked list"
+        )
+        return {
+            "success": False,
+            "error": f"Command '{base_cmd}' is not allowed for security reasons"
+        }
+    
+    # Check if command is allowed
+    if base_cmd not in ALLOWED_COMMANDS:
+        logger.warning(
+            "command_not_allowed",
+            command=base_cmd,
+            reason="Command not in whitelist"
+        )
+        return {
+            "success": False,
+            "error": f"Command '{base_cmd}' is not in the allowed command list"
+        }
+    
+    # Sanitize arguments to prevent injection
     try:
-        proc = await asyncio.create_subprocess_shell(
-            command,
+        sanitized_args = [shlex.quote(arg) for arg in parts[1:]]
+        safe_command = f"{base_cmd} {' '.join(sanitized_args)}"
+    except Exception as e:
+        logger.error("command_sanitization_failed", error=str(e))
+        return {
+            "success": False,
+            "error": f"Failed to sanitize command arguments: {str(e)}"
+        }
+    
+    # Execute command with subprocess (no shell=True for security)
+    try:
+        proc = await asyncio.create_subprocess_exec(
+            base_cmd,
+            *parts[1:],  # Pass arguments as separate parameters
             stdout=asyncio.subprocess.PIPE,
             stderr=asyncio.subprocess.PIPE,
         )
@@ -235,22 +330,44 @@ async def run_command(command: str, timeout: int = 30) -> Dict:
             timeout=timeout,
         )
         
+        # Log command execution
+        logger.info(
+            "command_executed",
+            command=base_cmd,
+            args_count=len(parts) - 1,
+            returncode=proc.returncode,
+        )
+        
         return {
             "success": proc.returncode == 0,
             "returncode": proc.returncode,
             "stdout": stdout.decode()[:10000],  # Limit output
             "stderr": stderr.decode()[:10000],
-            "command": command,
+            "command": safe_command,  # Return sanitized command
         }
     except asyncio.TimeoutError:
+        logger.warning("command_timeout", command=base_cmd, timeout=timeout)
         return {
             "success": False,
-            "error": f"Command timed out after {timeout}s",
+            "error": f"Command timed out after {timeout}s"
+        }
+    except FileNotFoundError:
+        logger.error("command_not_found", command=base_cmd)
+        return {
+            "success": False,
+            "error": f"Command '{base_cmd}' not found"
+        }
+    except PermissionError:
+        logger.error("command_permission_denied", command=base_cmd)
+        return {
+            "success": False,
+            "error": f"Permission denied for command '{base_cmd}'"
         }
     except Exception as e:
+        logger.error("command_execution_failed", command=base_cmd, error=str(e))
         return {
             "success": False,
-            "error": str(e),
+            "error": f"Command execution failed: {str(e)}"
         }
 
 
@@ -360,13 +477,13 @@ def register_builtin_tools(
         },
     )
     
-    # Command execution
+    # Command execution (with security validation)
     registry.register(
         name="run_command",
         handler=run_command,
-        description="Execute shell command (with safety limits)",
+        description="Execute shell command (whitelisted commands only, with argument sanitization)",
         parameters={
-            "command": "string (required): Shell command",
+            "command": "string (required): Shell command from whitelist",
             "timeout": "integer (optional): Timeout in seconds (default: 30)",
         },
     )

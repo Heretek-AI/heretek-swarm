@@ -39,6 +39,26 @@ ENV/
 .env.local
 .env.*.local
 
+# Secrets and credentials
+*.key
+*.pem
+*.p12
+secrets/
+credentials/
+
+# Specific secrets (exact filenames)
+HERETEK_API_KEY
+OPENAI_API_KEY
+DATABASE_URL
+REDIS_URL
+QDRANT_HOST
+QDRANT_PORT
+QDRANT_API_KEY
+
+# Configuration templates (allowed)
+!.env.example
+.env.*.example
+
 # Testing
 .pytest_cache/
 .coverage
@@ -57,7 +77,6 @@ dmypy.json
 *.log
 logs/
 .roo/schedules.json
-.roo/*
 
 # Database
 *.db

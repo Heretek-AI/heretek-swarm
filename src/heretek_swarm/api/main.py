@@ -108,13 +108,23 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Add CORS middleware
+# Add CORS middleware with environment-based configuration
+environment = os.getenv("ENVIRONMENT", "development")
+
+if environment == "production":
+    allowed_origins = os.getenv(
+        "CORS_ORIGINS",
+        "https://your-domain.com"
+    ).split(",")
+else:
+    allowed_origins = ["http://localhost:3000", "http://localhost:5173", "http://localhost:8000"]
+
 app.add_middleware(
     CORSMiddleware,
-    allow_origins=["*"],
+    allow_origins=allowed_origins,
     allow_credentials=True,
-    allow_methods=["*"],
-    allow_headers=["*"],
+    allow_methods=["GET", "POST", "PUT", "DELETE", "PATCH"],
+    allow_headers=["Authorization", "Content-Type", "X-Requested-With"],
 )
 
 # Register routers
