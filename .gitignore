@@ -56,6 +56,8 @@ dmypy.json
 # Logs
 *.log
 logs/
+.roo/schedules.json
+.roo/*
 
 # Database
 *.db
@@ -74,3 +76,4 @@ Thumbs.db
 docs/berk/*
 docs/DEVELOPMENT_PLAN.md
 agent_workspace/error.txt
+.roo/schedules.json

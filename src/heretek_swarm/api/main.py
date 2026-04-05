@@ -122,6 +122,10 @@ app.include_router(websockets.router)
 app.include_router(consensus.router)
 app.include_router(plugins.router)
 
+# Setup rate limiting
+rate_limit_enabled = os.environ.get("RATE_LIMIT_ENABLED", "true").lower() == "true"
+setup_rate_limiting(app, enabled=rate_limit_enabled)
+
 
 # =============================================================================
 # Health Check Functions
