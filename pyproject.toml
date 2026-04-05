@@ -33,6 +33,9 @@ dependencies = [
     "structlog>=24.1.0",
     "tenacity>=8.2.0",
     "circuitbreaker>=2.0.0",
+    "starlette>=0.27.0",
+    "uvicorn>=0.25.0",
+    "websockets>=12.0",
 ]
 
 [project.optional-dependencies]
