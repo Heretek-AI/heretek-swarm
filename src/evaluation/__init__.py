@@ -1,25 +1,26 @@
 """
-Evaluation Framework - Agent Quality Assessment
+Evaluation Module - Agent Quality Assessment
 
-Provides comprehensive agent quality metrics and evaluation.
+Provides comprehensive evaluation framework for agent quality metrics,
+output validation, test case execution, and performance benchmarking.
 """
 
 from .evaluator import (
-    Evaluator,
-    EvaluationMetric,
-    EvaluationStatus,
-    EvaluationResult,
+    AgentEvaluator,
     TestCase,
-    TestExecution,
-    get_evaluator,
+    OutputConstraints,
+    TestResult,
+    QualityMetrics,
+    EvaluationResult,
+    EvaluationStatus,
 )
 
 __all__ = [
-    "Evaluator",
-    "EvaluationMetric",
-    "EvaluationStatus",
-    "EvaluationResult",
+    "AgentEvaluator",
     "TestCase",
-    "TestExecution",
-    "get_evaluator",
+    "OutputConstraints",
+    "TestResult",
+    "QualityMetrics",
+    "EvaluationResult",
+    "EvaluationStatus",
 ]
