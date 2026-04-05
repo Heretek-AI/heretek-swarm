@@ -30,7 +30,10 @@ import 'reactflow/dist/style.css';
 import { AgentNode, AgentData } from './AgentNode';
 import type { AgentNode, TriadNode, HistorianNode, ToolNode, MemoryNode, RAGNode, ConditionNode, LoopNode, HandoffNode, MergeNode, DiscordNode, TelegramNode, WebhookNode } from '../types/reactflow';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+const API_URL = import.meta.env.VITE_API_URL;
+if (!API_URL) {
+  throw new Error('VITE_API_URL environment variable is required');
+}
 
 // =============================================================================
 // Type Definitions
