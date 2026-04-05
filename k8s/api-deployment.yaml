@@ -4,7 +4,7 @@ metadata:
   name: heretek-swarm-api
   namespace: heretek-swarm
   labels:
-    app: heretek-swarm
+    app: heretek-swarm-api
     version: "1.0.0"
     environment: production
 
@@ -37,21 +37,55 @@ spec:
             valueFrom:
               secretKeyRef:
                 name: postgres-credentials
-                key: password
+                key: database-url
           - name: REDIS_URL
             valueFrom:
               configMapKeyRef:
-                name: redis
+                name: redis-config
                 key: host
           - name: QDRANT_URL
             valueFrom:
               configMapKeyRef:
-                name: qdrant
+                name: qdrant-config
                 key: host
           - name: LOG_LEVEL
-            value: "INFO"
+            valueFrom:
+              configMapKeyRef:
+                name: api-config
+                key: log-level
           - name: HERETEK_ENV
-            value: "production"
+            valueFrom:
+              configMapKeyRef:
+                name: api-config
+                key: environment
+          - name: OPENAI_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: api-keys
+                key: openai-api-key
+                optional: true
+          - name: ANTHROPIC_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: api-keys
+                key: anthropic-api-key
+                optional: true
+          - name: QDRANT_API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: api-keys
+                key: qdrant-api-key
+                optional: true
+          - name: JWT_SECRET
+            valueFrom:
+              secretKeyRef:
+                name: auth-secret
+                key: jwt-secret
+          - name: API_KEY
+            valueFrom:
+              secretKeyRef:
+                name: auth-secret
+                key: api-key
         resources:
           requests:
             cpu: "500m"
@@ -63,41 +97,54 @@ spec:
           httpGet:
             path: /api/health/live
             port: 8000
-            initialDelaySeconds: 10
-            periodSeconds: 10
-            timeoutSeconds: 5
-            failureThreshold: 3
+          initialDelaySeconds: 30
+          periodSeconds: 10
+          timeoutSeconds: 5
+          failureThreshold: 3
         readinessProbe:
           httpGet:
             path: /api/health/ready
             port: 8000
-            initialDelaySeconds: 5
-            periodSeconds: 5
-            timeoutSeconds: 3
-            failureThreshold: 3
+          initialDelaySeconds: 10
+          periodSeconds: 5
+          timeoutSeconds: 3
+          failureThreshold: 3
+        volumeMounts:
+          - name: api-logs
+            mountPath: /app/logs
+      volumes:
+        - name: api-logs
+          persistentVolumeClaim:
+            claimName: api-logs-pvc
 
-  volumeClaimTemplates:
-    - name: api-logs
-      accessModes:
-        - ReadWriteOnce
-      resources:
-        requests:
-          storage: 1Gi
-        limits:
-          storage: 5Gi
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: heretek-swarm-api
+  namespace: heretek-swarm
+  labels:
+    app: heretek-swarm-api
+spec:
+  type: ClusterIP
+  ports:
+    - port: 8000
+      targetPort: 8000
+      protocol: TCP
+      name: http
+  selector:
+    app: heretek-swarm-api
 
-  configMaps:
-    - name: redis
-      data:
-        - key: host
-          value: "redis"
-    - name: qdrant
-      data:
-        - key: host
-          value: "http://qdrant:6333"
-
-  secrets:
-    - name: postgres-credentials
-      type: Opaque
-      stringData:
-        password: ${POSTGRES_PASSWORD}
+---
+apiVersion: v1
+kind: PersistentVolumeClaim
+metadata:
+  name: api-logs-pvc
+  namespace: heretek-swarm
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 5Gi
+  storageClassName: standard
