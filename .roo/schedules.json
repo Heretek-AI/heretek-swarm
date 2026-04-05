@@ -24,7 +24,7 @@
       "expirationHour": "00",
       "expirationMinute": "00",
       "requireActivity": false,
-      "active": true,
+      "active": false,
       "taskInteraction": "wait",
       "inactivityDelay": "10",
       "lastExecutionTime": "",

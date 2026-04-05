@@ -1,583 +1,392 @@
 """
-Tool Registry for ElizaOS-style agents.
+Tool Registry - Built-in Agent Tools
 
-This module provides the tool registry with built-in tools for the swarm,
-including memory search, agent communication, and file operations.
+5+ core tools for agent operations.
+Reference: MiniMax Audit + OpenClaw tool patterns
 """
 
-import asyncio
-import logging
 import os
-import subprocess
-import time
-from dataclasses import dataclass, field
-from pathlib import Path
-from typing import Any, Callable, Optional
-
+import asyncio
+import aiohttp
+from typing import Any, Callable, Dict, List, Optional
+from datetime import datetime
 import structlog
 
-logger = structlog.get_logger("ToolRegistry")
-
-# Type alias for tool functions
-ToolFunction = Callable[..., Any]
-
-
-# Rate limiter
-@dataclass
-class RateLimit:
-    """Rate limiting configuration for a tool."""
-
-    max_calls: int = 10
-    window_seconds: int = 60
-    _calls: list[float] = field(default_factory=list)
-
-    def is_allowed(self) -> bool:
-        """Check if a call is allowed under rate limits."""
-        now = time.time()
-        # Remove calls outside the window
-        self._calls = [t for t in self._calls if now - t < self.window_seconds]
-        return len(self._calls) < self.max_calls
-
-    def record_call(self) -> None:
-        """Record a call for rate limiting."""
-        self._calls.append(time.time())
-
-    def reset(self) -> None:
-        """Reset the rate limiter."""
-        self._calls.clear()
-
-
-# Tool definition
-@dataclass
-class ToolDefinition:
-    """Definition of a tool."""
-
-    name: str
-    description: str
-    function: ToolFunction
-    parameters: dict[str, Any] = field(default_factory=dict)
-    rate_limit: Optional[RateLimit] = None
-    requires_approval: bool = False
-    restricted: bool = False
-
-
-# Dangerous commands that require Sentinel approval
-DANGEROUS_COMMANDS = {
-    "rm -rf",
-    "rm -rf /",
-    "chmod 777",
-    "chmod -R 777",
-    "dd if=",
-    ":(){:|:&};:",
-    "mkfs",
-    "dd bs=",
-    "> /dev/sd",
-    "wget | sh",
-    "curl | sh",
-    "chown -R",
-    "shutdown",
-    "reboot",
-    "init 0",
-    "init 6",
-}
-
-# Blocked file paths
-BLOCKED_PATHS = {
-    "/etc/passwd",
-    "/etc/shadow",
-    "/etc/sudoers",
-    "~/.ssh",
-    "~/.bashrc",
-    "/etc",
-    "/sys",
-    "/proc",
-}
+logger = structlog.get_logger(__name__)
 
 
 class ToolRegistry:
     """
-    Registry for managing tools.
-
-    Provides tool registration, validation, and execution with
-    built-in tools for memory, file system, and agent operations.
+    Central registry for agent tools.
+    
+    Manages tool registration, discovery, and execution.
     """
-
-    def __init__(self) -> None:
-        """Initialize the tool registry."""
-        self._tools: dict[str, ToolDefinition] = {}
-        self._execution_history: list[dict[str, Any]] = []
-        self._register_builtin_tools()
-
-    def _register_builtin_tools(self) -> None:
-        """Register all built-in tools."""
-        self.register(
-            "search_memory",
-            "Search memory for relevant context",
-            self._search_memory,
-            parameters={
-                "query": {"type": "string", "required": True},
-                "limit": {"type": "integer", "default": 5},
-            },
-            rate_limit=RateLimit(max_calls=30, window_seconds=60),
-        )
-
-        self.register(
-            "call_agent",
-            "Send a message to another agent via A2A",
-            self._call_agent,
-            parameters={
-                "agent_name": {"type": "string", "required": True},
-                "message": {"type": "string", "required": True},
-            },
-            rate_limit=RateLimit(max_calls=20, window_seconds=60),
-            requires_approval=True,
-        )
-
-        self.register(
-            "read_file",
-            "Read content from a file",
-            self._read_file,
-            parameters={
-                "path": {"type": "string", "required": True},
-                "offset": {"type": "integer", "default": 0},
-                "limit": {"type": "integer", "default": 1000},
-            },
-            rate_limit=RateLimit(max_calls=50, window_seconds=60),
-        )
-
-        self.register(
-            "write_file",
-            "Write content to a file",
-            self._write_file,
-            parameters={
-                "path": {"type": "string", "required": True},
-                "content": {"type": "string", "required": True},
-            },
-            rate_limit=RateLimit(max_calls=20, window_seconds=60),
-            requires_approval=True,
-        )
-
-        self.register(
-            "run_command",
-            "Execute a shell command",
-            self._run_command,
-            parameters={
-                "command": {"type": "string", "required": True},
-                "timeout": {"type": "integer", "default": 30},
-            },
-            rate_limit=RateLimit(max_calls=10, window_seconds=60),
-            requires_approval=True,
-            restricted=True,
-        )
-
-        self.register(
-            "list_directory",
-            "List contents of a directory",
-            self._list_directory,
-            parameters={
-                "path": {"type": "string", "default": "."},
-            },
-            rate_limit=RateLimit(max_calls=30, window_seconds=60),
-        )
-
-        logger.info("Built-in tools registered")
-
+    
+    def __init__(self):
+        self._tools: Dict[str, Dict] = {}
+    
     def register(
         self,
         name: str,
+        handler: Callable,
         description: str,
-        function: ToolFunction,
-        parameters: Optional[dict[str, Any]] = None,
-        rate_limit: Optional[RateLimit] = None,
-        requires_approval: bool = False,
-        restricted: bool = False,
+        parameters: Optional[Dict] = None,
     ) -> None:
         """
         Register a tool.
-
+        
         Args:
             name: Tool name
+            handler: Async function to execute tool
             description: Tool description
-            function: Tool function
             parameters: Parameter schema
-            rate_limit: Rate limiting configuration
-            requires_approval: Whether tool requires approval
-            restricted: Whether tool is restricted
         """
-        self._tools[name] = ToolDefinition(
-            name=name,
-            description=description,
-            function=function,
-            parameters=parameters or {},
-            rate_limit=rate_limit,
-            requires_approval=requires_approval,
-            restricted=restricted,
-        )
-        logger.debug(f"Registered tool: {name}")
-
-    def get_tool(self, name: str) -> Optional[ToolDefinition]:
-        """
-        Get a tool by name.
-
-        Args:
-            name: Tool name
-
-        Returns:
-            ToolDefinition or None
-        """
+        self._tools[name] = {
+            "handler": handler,
+            "description": description,
+            "parameters": parameters or {},
+            "registered_at": datetime.utcnow(),
+        }
+        logger.debug("tool_registered", tool=name)
+    
+    def get(self, name: str) -> Optional[Dict]:
+        """Get tool by name."""
         return self._tools.get(name)
-
-    def list_tools(self) -> list[dict[str, Any]]:
-        """
-        List all available tools.
-
-        Returns:
-            List of tool definitions
-        """
+    
+    def list_tools(self) -> List[Dict]:
+        """List all available tools."""
         return [
             {
-                "name": tool.name,
-                "description": tool.description,
-                "parameters": tool.parameters,
-                "requires_approval": tool.requires_approval,
-                "restricted": tool.restricted,
+                "name": name,
+                "description": tool["description"],
+                "parameters": tool["parameters"],
             }
-            for tool in self._tools.values()
+            for name, tool in self._tools.items()
         ]
-
-    def validate_parameters(
-        self, tool_name: str, params: dict[str, Any]
-    ) -> tuple[bool, Optional[str]]:
+    
+    async def execute(self, name: str, **params) -> Any:
         """
-        Validate parameters for a tool.
-
+        Execute a tool by name.
+        
         Args:
-            tool_name: Tool name
-            params: Parameters to validate
-
+            name: Tool name
+            **params: Tool parameters
+            
         Returns:
-            Tuple of (valid, error_message)
+            Tool execution result
         """
-        tool = self.get_tool(tool_name)
+        tool = self._tools.get(name)
         if not tool:
-            return False, f"Tool not found: {tool_name}"
-
-        # Check required parameters
-        for param_name, schema in tool.parameters.items():
-            if schema.get("required", False) and param_name not in params:
-                return False, f"Missing required parameter: {param_name}"
-
-        return True, None
-
-    def check_rate_limit(self, tool_name: str) -> tuple[bool, Optional[str]]:
-        """
-        Check if a tool call is allowed under rate limits.
-
-        Args:
-            tool_name: Tool name
-
-        Returns:
-            Tuple of (allowed, error_message)
-        """
-        tool = self.get_tool(tool_name)
-        if not tool:
-            return False, f"Tool not found: {tool_name}"
-
-        if tool.rate_limit and not tool.rate_limit.is_allowed():
-            return False, f"Rate limit exceeded for tool: {tool_name}"
-
-        if tool.rate_limit:
-            tool.rate_limit.record_call()
-
-        return True, None
-
-    async def execute(
-        self,
-        tool_name: str,
-        params: dict[str, Any],
-        approved: bool = False,
-    ) -> dict[str, Any]:
-        """
-        Execute a tool.
-
-        Args:
-            tool_name: Tool name
-            params: Tool parameters
-            approved: Whether the tool has been approved (for restricted tools)
-
-        Returns:
-            Execution result
-        """
-        tool = self.get_tool(tool_name)
-        if not tool:
-            return {"success": False, "error": f"Tool not found: {tool_name}"}
-
-        # Check rate limits
-        allowed, error = self.check_rate_limit(tool_name)
-        if not allowed:
-            return {"success": False, "error": error}
-
-        # Check approval for restricted tools
-        if tool.restricted and not approved:
-            return {
-                "success": False,
-                "error": f"Tool {tool_name} requires approval",
-                "requires_approval": True,
-            }
-
-        # Validate parameters
-        valid, error = self.validate_parameters(tool_name, params)
-        if not valid:
-            return {"success": False, "error": error}
-
-        # Execute tool
-        start_time = time.time()
+            raise ValueError(f"Unknown tool: {name}")
+        
+        logger.info("tool_executing", tool=name, params=params)
+        
         try:
-            result = await tool.function(**params)
-            execution_time = time.time() - start_time
-
-            self._execution_history.append(
-                {
-                    "tool": tool_name,
-                    "params": params,
-                    "result": result,
-                    "time": execution_time,
-                }
-            )
-
-            return {"success": True, "result": result}
-
+            result = await tool["handler"](**params)
+            logger.info("tool_executed", tool=name, success=True)
+            return result
         except Exception as e:
-            logger.error(f"Tool execution error: {tool_name} - {e}")
-            return {"success": False, "error": str(e)}
-
-    # Built-in tool implementations
-
-    async def _search_memory(
-        self, query: str, limit: int = 5
-    ) -> dict[str, Any]:
-        """Search memory for relevant context."""
-        # This is a placeholder - in a full implementation, this would
-        # query the actual memory system
-        return {
-            "query": query,
-            "results": [],
-            "count": 0,
-            "message": "Memory search not configured - configure memory system for full functionality",
-        }
-
-    async def _call_agent(
-        self, agent_name: str, message: str
-    ) -> dict[str, Any]:
-        """Send a message to another agent."""
-        # This is a placeholder - in a full implementation, this would
-        # use the A2A protocol to send messages
-        return {
-            "agent": agent_name,
-            "message": message,
-            "status": "not_delivered",
-            "message": "A2A not configured - configure gateway for full functionality",
-        }
-
-    async def _read_file(
-        self, path: str, offset: int = 0, limit: int = 1000
-    ) -> dict[str, Any]:
-        """Read content from a file."""
-        file_path = Path(path).resolve()
-
-        # Security check - prevent access to blocked paths
-        for blocked in BLOCKED_PATHS:
-            if str(file_path).startswith(blocked):
-                return {"success": False, "error": f"Access blocked: {path}"}
-
-        try:
-            if not file_path.exists():
-                return {"success": False, "error": f"File not found: {path}"}
-
-            content = file_path.read_text(encoding="utf-8")
-            lines = content.split("\n")
-
-            # Apply offset and limit
-            selected_lines = lines[offset : offset + limit]
-
-            return {
-                "success": True,
-                "path": str(file_path),
-                "content": "\n".join(selected_lines),
-                "total_lines": len(lines),
-                "returned_lines": len(selected_lines),
-                "offset": offset,
-            }
-
-        except Exception as e:
-            return {"success": False, "error": str(e)}
-
-    async def _write_file(
-        self, path: str, content: str
-    ) -> dict[str, Any]:
-        """Write content to a file."""
-        file_path = Path(path).resolve()
-
-        # Security check - prevent access to blocked paths
-        for blocked in BLOCKED_PATHS:
-            if str(file_path).startswith(blocked):
-                return {"success": False, "error": f"Access blocked: {path}"}
-
-        try:
-            # Create parent directories if needed
-            file_path.parent.mkdir(parents=True, exist_ok=True)
-
-            # Write the file
-            file_path.write_text(content, encoding="utf-8")
-
-            logger.info(f"File written: {file_path}")
-
-            return {
-                "success": True,
-                "path": str(file_path),
-                "bytes_written": len(content),
-            }
-
-        except Exception as e:
-            return {"success": False, "error": str(e)}
-
-    async def _run_command(
-        self, command: str, timeout: int = 30
-    ) -> dict[str, Any]:
-        """Execute a shell command with safety limits."""
-        # Security check - check for dangerous commands
-        for dangerous in DANGEROUS_COMMANDS:
-            if dangerous in command:
-                logger.warning(f"Blocked dangerous command: {command}")
-                return {
-                    "success": False,
-                    "error": "Command blocked for safety",
-                    "requires_approval": True,
-                }
-
-        # Security check - prevent certain path access
-        words = command.split()
-        for word in words:
-            if word.startswith("/"):
-                for blocked in BLOCKED_PATHS:
-                    if word.startswith(blocked):
-                        return {
-                            "success": False,
-                            "error": f"Access to blocked path: {word}",
-                        }
-
-        try:
-            # Execute command with timeout
-            result = await asyncio.wait_for(
-                asyncio.create_subprocess_shell(
-                    command,
-                    stdout=asyncio.subprocess.PIPE,
-                    stderr=asyncio.subprocess.PIPE,
-                ),
-                timeout=timeout,
-            )
-
-            stdout, stderr = await result.communicate()
-
-            return {
-                "success": result.returncode == 0,
-                "returncode": result.returncode,
-                "stdout": stdout.decode("utf-8", errors="replace"),
-                "stderr": stderr.decode("utf-8", errors="replace"),
-            }
-
-        except asyncio.TimeoutError:
-            return {"success": False, "error": f"Command timed out after {timeout}s"}
-        except Exception as e:
-            return {"success": False, "error": str(e)}
-
-    async def _list_directory(
-        self, path: str = "."
-    ) -> dict[str, Any]:
-        """List contents of a directory."""
-        dir_path = Path(path).resolve()
-
-        # Security check
-        for blocked in BLOCKED_PATHS:
-            if str(dir_path).startswith(blocked):
-                return {"success": False, "error": f"Access blocked: {path}"}
-
-        try:
-            if not dir_path.exists():
-                return {"success": False, "error": f"Directory not found: {path}"}
-
-            entries = []
-            for entry in dir_path.iterdir():
-                entries.append(
-                    {
-                        "name": entry.name,
-                        "type": "dir" if entry.is_dir() else "file",
-                        "size": entry.stat().st_size if entry.is_file() else 0,
-                    }
-                )
-
-            return {
-                "success": True,
-                "path": str(dir_path),
-                "entries": entries,
-                "count": len(entries),
-            }
-
-        except Exception as e:
-            return {"success": False, "error": str(e)}
-
-    def get_execution_history(self) -> list[dict[str, Any]]:
-        """Get the execution history."""
-        return self._execution_history
-
-    def reset_rate_limits(self) -> None:
-        """Reset all rate limits."""
-        for tool in self._tools.values():
-            if tool.rate_limit:
-                tool.rate_limit.reset()
+            logger.error("tool_execution_failed", tool=name, error=str(e))
+            raise
 
 
-# Global registry instance
-_default_registry: Optional[ToolRegistry] = None
+# =============================================================================
+# Built-in Tool Implementations
+# =============================================================================
 
-
-def get_tool_registry() -> ToolRegistry:
+async def search_memory(query: str, agent_id: str, limit: int = 5, memory_backend=None):
     """
-    Get the global tool registry.
-
-    Returns:
-        ToolRegistry instance
-    """
-    global _default_registry
-    if _default_registry is None:
-        _default_registry = ToolRegistry()
-    return _default_registry
-
-
-def list_tools() -> list[dict[str, Any]]:
-    """
-    List all available tools.
-
-    Returns:
-        List of tool definitions
-    """
-    return get_tool_registry().list_tools()
-
-
-async def execute_tool(
-    tool_name: str,
-    params: dict[str, Any],
-    approved: bool = False,
-) -> dict[str, Any]:
-    """
-    Execute a tool from the global registry.
-
+    Search agent memory for relevant information.
+    
     Args:
-        tool_name: Tool name
-        params: Tool parameters
-        approved: Whether the tool has been approved
-
-    Returns:
-        Execution result
+        query: Search query
+        agent_id: Agent ID
+        limit: Max results
+        memory_backend: Memory backend instance
     """
-    return await get_tool_registry().execute(tool_name, params, approved)
+    if not memory_backend:
+        return {"error": "Memory backend not available"}
+    
+    from memory.base import MemoryQuery
+    
+    search_query = MemoryQuery(
+        query_text=query,
+        agent_ids=[agent_id],
+        limit=limit,
+    )
+    
+    result = await memory_backend.search(search_query)
+    
+    return {
+        "query": query,
+        "results": [
+            {
+                "content": entry.content,
+                "memory_type": entry.memory_type.value,
+                "importance": entry.importance_score,
+            }
+            for entry in result.entries
+        ],
+        "total": result.total_count,
+    }
+
+
+async def call_agent(
+    agent_id: str,
+    message: str,
+    target_agent: str,
+    a2a_server=None,
+):
+    """
+    Send message to another agent via A2A protocol.
+    
+    Args:
+        agent_id: Sending agent ID
+        message: Message content
+        target_agent: Target agent ID
+        a2a_server: A2A server instance
+    """
+    if not a2a_server:
+        return {"error": "A2A server not available"}
+    
+    # Send via event mesh
+    success = await a2a_server.event_mesh.send_to_json(
+        target_agent,
+        {
+            "type": "message",
+            "from": agent_id,
+            "content": message,
+            "timestamp": datetime.utcnow().isoformat(),
+        }
+    )
+    
+    return {
+        "sent": success,
+        "to": target_agent,
+        "message": message[:100],
+    }
+
+
+async def read_file(path: str) -> Dict:
+    """
+    Read contents of a file.
+    
+    Args:
+        path: File path
+    """
+    try:
+        with open(path, 'r', encoding='utf-8') as f:
+            content = f.read()
+        
+        return {
+            "success": True,
+            "path": path,
+            "content": content,
+            "size": len(content),
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e),
+        }
+
+
+async def write_file(path: str, content: str) -> Dict:
+    """
+    Write content to a file.
+    
+    Args:
+        path: File path
+        content: Content to write
+    """
+    try:
+        with open(path, 'w', encoding='utf-8') as f:
+            f.write(content)
+        
+        return {
+            "success": True,
+            "path": path,
+            "bytes_written": len(content),
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e),
+        }
+
+
+async def run_command(command: str, timeout: int = 30) -> Dict:
+    """
+    Execute shell command with safety limits.
+    
+    Args:
+        command: Shell command
+        timeout: Timeout in seconds
+    """
+    try:
+        proc = await asyncio.create_subprocess_shell(
+            command,
+            stdout=asyncio.subprocess.PIPE,
+            stderr=asyncio.subprocess.PIPE,
+        )
+        
+        stdout, stderr = await asyncio.wait_for(
+            proc.communicate(),
+            timeout=timeout,
+        )
+        
+        return {
+            "success": proc.returncode == 0,
+            "returncode": proc.returncode,
+            "stdout": stdout.decode()[:10000],  # Limit output
+            "stderr": stderr.decode()[:10000],
+            "command": command,
+        }
+    except asyncio.TimeoutError:
+        return {
+            "success": False,
+            "error": f"Command timed out after {timeout}s",
+        }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e),
+        }
+
+
+async def http_request(
+    method: str,
+    url: str,
+    headers: Optional[Dict] = None,
+    body: Optional[Dict] = None,
+    timeout: int = 30,
+) -> Dict:
+    """
+    Make HTTP request.
+    
+    Args:
+        method: HTTP method
+        url: URL
+        headers: Request headers
+        body: Request body
+        timeout: Timeout in seconds
+    """
+    try:
+        async with aiohttp.ClientSession() as session:
+            async with session.request(
+                method,
+                url,
+                headers=headers,
+                json=body,
+                timeout=aiohttp.ClientTimeout(total=timeout),
+            ) as response:
+                content = await response.text()
+                
+                return {
+                    "success": response.status < 400,
+                    "status": response.status,
+                    "headers": dict(response.headers),
+                    "body": content[:10000],  # Limit
+                }
+    except Exception as e:
+        return {
+            "success": False,
+            "error": str(e),
+        }
+
+
+# =============================================================================
+# Tool Registration
+# =============================================================================
+
+def register_builtin_tools(
+    registry: ToolRegistry,
+    memory_backend=None,
+    a2a_server=None,
+) -> None:
+    """
+    Register all built-in tools.
+    
+    Args:
+        registry: Tool registry
+        memory_backend: Optional memory backend
+        a2a_server: Optional A2A server
+    """
+    # Memory search (requires backend)
+    async def memory_search_wrapper(query: str, agent_id: str, limit: int = 5):
+        return await search_memory(query, agent_id, limit, memory_backend)
+    
+    registry.register(
+        name="search_memory",
+        handler=memory_search_wrapper,
+        description="Search agent memory for relevant information",
+        parameters={
+            "query": "string (required): Search query",
+            "agent_id": "string (required): Agent ID",
+            "limit": "integer (optional): Max results (default: 5)",
+        },
+    )
+    
+    # Agent calling (requires A2A server)
+    async def agent_call_wrapper(agent_id: str, message: str, target: str):
+        return await call_agent(agent_id, message, target, a2a_server)
+    
+    registry.register(
+        name="call_agent",
+        handler=agent_call_wrapper,
+        description="Send message to another agent via A2A protocol",
+        parameters={
+            "agent_id": "string (required): Your agent ID",
+            "message": "string (required): Message content",
+            "target": "string (required): Target agent ID",
+        },
+    )
+    
+    # File operations
+    registry.register(
+        name="read_file",
+        handler=read_file,
+        description="Read contents of a file",
+        parameters={"path": "string (required): File path"},
+    )
+    
+    registry.register(
+        name="write_file",
+        handler=write_file,
+        description="Write content to a file",
+        parameters={
+            "path": "string (required): File path",
+            "content": "string (required): Content to write",
+        },
+    )
+    
+    # Command execution
+    registry.register(
+        name="run_command",
+        handler=run_command,
+        description="Execute shell command (with safety limits)",
+        parameters={
+            "command": "string (required): Shell command",
+            "timeout": "integer (optional): Timeout in seconds (default: 30)",
+        },
+    )
+    
+    # HTTP requests
+    registry.register(
+        name="http_request",
+        handler=http_request,
+        description="Make HTTP request",
+        parameters={
+            "method": "string (required): HTTP method (GET, POST, etc)",
+            "url": "string (required): URL",
+            "headers": "object (optional): Request headers",
+            "body": "object (optional): Request body",
+            "timeout": "integer (optional): Timeout in seconds (default: 30)",
+        },
+    )
+    
+    logger.info(
+        "builtin_tools_registered",
+        count=len(registry.list_tools()),
+        tools=[t["name"] for t in registry.list_tools()],
+    )
