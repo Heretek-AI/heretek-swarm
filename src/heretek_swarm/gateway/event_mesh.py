@@ -70,10 +70,21 @@ class EventMesh:
         """
         # Filter to active connections ONLY (null-safe)
         async with self._lock:
+            # Identify null/disconnecting clients for cleanup
+            to_cleanup = [
+                cid for cid, ws in self.clients.items()
+                if ws is None or ws.client_state.disconnecting
+            ]
+            
+            # Create active clients dict
             active_clients = {
                 cid: ws for cid, ws in self.clients.items()
                 if ws is not None and not ws.client_state.disconnecting
             }
+        
+        # Cleanup null/disconnecting clients
+        for client_id in to_cleanup:
+            await self.unregister(client_id)
         
         if not active_clients:
             logger.debug("broadcast_no_clients")
