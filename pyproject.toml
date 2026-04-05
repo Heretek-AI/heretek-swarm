@@ -250,3 +250,7 @@ show_error_context = true
 module = "tests.*"
 disallow_untyped_defs = false
 disallow_incomplete_defs = false
+
+[tool.bandit]
+exclude_dirs = [".roo", "agent_workspace", ".benchmarks", ".dist-rig", "tests"]
+skips = ["B101", "B601"]
