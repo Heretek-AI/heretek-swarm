@@ -166,7 +166,7 @@ async def execute_workflow(
     }
 
 
-@router.delete("/{workflow_id}", status_code=204)
+@router.delete("/{workflow_id}")
 async def delete_workflow(
     workflow_id: str,
     authenticated: str = Depends(verify_auth)

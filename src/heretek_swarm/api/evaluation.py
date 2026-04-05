@@ -12,7 +12,7 @@ from typing import Any, Dict, List, Optional
 from fastapi import APIRouter, HTTPException, Depends
 import structlog
 
-from ..evaluation.evaluator import (
+from evaluation.evaluator import (
     Evaluator,
     get_evaluator,
     TestCase,

@@ -139,11 +139,11 @@ class EvaluationResult:
     evaluation_id: str
     status: EvaluationStatus
     test_results: List[TestResult] = field(default_factory=list)
-    metrics: Optional[QualityMetrics] = None
     started_at: str
     completed_at: Optional[str] = None
     total_time: float = 0.0
     error: Optional[Exception] = None
+    metrics: Optional[QualityMetrics] = None
 
 
 class AgentEvaluator:

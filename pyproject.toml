@@ -76,8 +76,8 @@ dev = [
 heretek-swarm = "src.cli:main"
 
 [tool.setuptools.packages.find]
-where = ["."]
-include = ["src*", "tests*"]
+where = ["src"]
+include = ["heretek_swarm*"]
 
 # ============== PYTEST CONFIGURATION ==============
 [tool.pytest.ini_options]

@@ -394,7 +394,7 @@ class WorkflowEngine:
     def _should_execute_node(
         self,
         workflow: Workflow,
-        node: Node,
+        node: WorkflowNode,
         context: WorkflowContext
     ) -> bool:
         """
@@ -446,7 +446,7 @@ class WorkflowEngine:
     def _get_node_input(
         self,
         workflow: Workflow,
-        node: Node,
+        node: WorkflowNode,
         context: WorkflowContext
     ) -> Dict[str, Any]:
         """

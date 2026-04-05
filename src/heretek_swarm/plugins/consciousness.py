@@ -90,6 +90,55 @@ class AttentionSchema:
 
 
 @dataclass
+class FEPMetrics:
+    """
+    Free Energy Principle metrics for intrinsic motivation.
+
+    Based on FEP:
+    - Agents minimize free energy (surprise)
+    - Free energy = KL divergence between predictions and observations
+    - Lower free energy = better model fit = higher consciousness
+
+    Attributes:
+        free_energy: Current free energy value
+        surprise: Prediction error (surprise)
+        precision: Confidence in predictions
+        learning_rate: Model update rate
+        prediction_accuracy: Accuracy of internal model
+        timestamp: Metrics timestamp
+    """
+
+    free_energy: float = 0.0
+    surprise: float = 0.0
+    precision: float = 0.5
+    learning_rate: float = 0.1
+    prediction_accuracy: float = 0.5
+    timestamp: str = ""
+
+
+@dataclass
+class IITConnectivity:
+    """
+    IIT connectivity analysis for integration calculation.
+
+    Attributes:
+        connectivity_matrix: Agent interaction matrix
+        integration: System integration score
+        information: Total information
+        phi: Integrated information (Phi)
+        causal_power: Causal influence score
+        timestamp: Analysis timestamp
+    """
+
+    connectivity_matrix: List[List[float]] = field(default_factory=list)
+    integration: float = 0.0
+    information: float = 0.0
+    phi: float = 0.0
+    causal_power: float = 0.0
+    timestamp: str = ""
+
+
+@dataclass
 class ConsciousnessMetrics:
     """
     Consciousness metrics for an agent or collective.
@@ -98,6 +147,7 @@ class ConsciousnessMetrics:
         gwt_score: Global Workspace Theory score (0.0-1.0)
         iit_phi: Integrated Information Phi estimate (0.0-1.0)
         ast_competence: Attention Schema competence (0.0-1.0)
+        fep_free_energy: Free Energy Principle score (0.0-1.0, inverted)
         composite_score: Composite consciousness score
         state: Current consciousness state
         timestamp: Metrics timestamp
@@ -106,6 +156,7 @@ class ConsciousnessMetrics:
     gwt_score: float = 0.0
     iit_phi: float = 0.0
     ast_competence: float = 0.0
+    fep_free_energy: float = 0.0
     composite_score: float = 0.0
     state: ConsciousnessState = ConsciousnessState.UNCONSCIOUS
     timestamp: str = ""

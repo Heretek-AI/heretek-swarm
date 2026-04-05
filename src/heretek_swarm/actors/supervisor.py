@@ -21,7 +21,7 @@ logger = structlog.get_logger("ActorSupervisor")
 
 
 # Global supervisor instance
-_global_supervisor: Optional[ActorSupervisor] = None
+_global_supervisor: Optional["ActorSupervisor"] = None
 
 
 def get_supervisor() -> "ActorSupervisor":
