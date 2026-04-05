@@ -7,6 +7,11 @@ including the base AgentActor class, ActorSupervisor, and specialized agents.
 
 from heretek_swarm.actors.base import AgentActor, ActorMessage, ActorState, ActorStatus
 from heretek_swarm.actors.supervisor import ActorSupervisor
+from heretek_swarm.actors.factory import (
+    ActorFactory,
+    ActorConfig,
+    get_factory,
+)
 from heretek_swarm.actors.triad import (
     AlphaAgent,
     BetaAgent,
@@ -21,6 +26,9 @@ __all__ = [
     "ActorState",
     "ActorStatus",
     "ActorSupervisor",
+    "ActorFactory",
+    "ActorConfig",
+    "get_factory",
     "StewardAgent",
     "AlphaAgent",
     "BetaAgent",

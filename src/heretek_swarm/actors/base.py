@@ -138,6 +138,19 @@ class AgentActor:
         ```
     """
 
+    # Class-level actor type identifier
+    actor_type: str = "AgentActor"
+
+    @classmethod
+    def get_actor_type(cls) -> str:
+        """
+        Get the actor type identifier.
+
+        Returns:
+            Actor type string
+        """
+        return cls.actor_type
+
     def __init__(
         self,
         agent_id: Optional[str] = None,
@@ -148,6 +161,7 @@ class AgentActor:
         swarms_agent: Optional[Agent] = None,
         max_mailbox_size: int = 1000,
         heartbeat_interval: float = 10.0,
+        actor_type: Optional[str] = None,
     ) -> None:
         """
         Initialize an actor.
@@ -161,6 +175,7 @@ class AgentActor:
             swarms_agent: Optional Swarms Agent instance for LLM capabilities
             max_mailbox_size: Maximum mailbox queue size
             heartbeat_interval: Interval between heartbeats in seconds
+            actor_type: Optional type identifier for factory registration
         """
         self.agent_id = agent_id or f"actor_{uuid.uuid4().hex[:8]}"
         self.name = name or self.__class__.__name__
@@ -170,6 +185,7 @@ class AgentActor:
         self.swarms_agent = swarms_agent
         self.max_mailbox_size = max_mailbox_size
         self.heartbeat_interval = heartbeat_interval
+        self.actor_type = actor_type or self.__class__.__name__
 
         # Actor state
         self.state: ActorState = ActorState.SPAWNING
@@ -204,6 +220,7 @@ class AgentActor:
         self.register_handler("suspend", self._handle_suspend)
         self.register_handler("resume", self._handle_resume)
         self.register_handler("terminate", self._handle_terminate)
+        self.register_handler("collective_task", self._handle_collective_task)
 
     def register_handler(self, message_type: str, handler: Callable) -> None:
         """
@@ -578,6 +595,113 @@ class AgentActor:
     async def _handle_terminate(self, message: ActorMessage) -> None:
         """Handle terminate requests."""
         await self.terminate()
+
+    async def _handle_collective_task(self, message: ActorMessage) -> None:
+        """
+        Handle collective task contribution requests.
+        
+        This handler processes collective task requests and returns contributions.
+        Subclasses can override this method to provide custom contribution logic.
+        
+        Args:
+            message: ActorMessage with collective task details
+        """
+        task_id = message.content.get("task_id")
+        task_type = message.content.get("task_type")
+        description = message.content.get("description")
+        input_data = message.content.get("input_data", {})
+        protocol = message.content.get("protocol", {})
+        reply_to = message.content.get("reply_to")
+        
+        logger.info(
+            f"[{self.agent_id}] Received collective task",
+            extra={
+                "task_id": task_id,
+                "task_type": task_type,
+                "description": description,
+            }
+        )
+        
+        # Generate contribution (subclasses should override for custom logic)
+        contribution = await self._generate_collective_contribution(
+            task_id=task_id,
+            task_type=task_type,
+            description=description,
+            input_data=input_data,
+            protocol=protocol
+        )
+        
+        # Send response if reply_to is provided
+        if reply_to:
+            await self.send(
+                topic=reply_to,
+                content={
+                    "message_type": "collective_task_response",
+                    "task_id": task_id,
+                    "correlation_id": message.correlation_id,
+                    **contribution
+                },
+                correlation_id=message.correlation_id,
+            )
+    
+    async def _generate_collective_contribution(
+        self,
+        task_id: str,
+        task_type: str,
+        description: str,
+        input_data: Dict[str, Any],
+        protocol: Dict[str, Any]
+    ) -> Dict[str, Any]:
+        """
+        Generate contribution for a collective task.
+        
+        Subclasses should override this method to provide custom contribution logic.
+        Default implementation uses LLM if available, otherwise returns fallback.
+        
+        Args:
+            task_id: Task identifier
+            task_type: Type of task
+            description: Task description
+            input_data: Task input data
+            protocol: Communication protocol
+            
+        Returns:
+            Dict with contribution and confidence
+        """
+        # Try using LLM if available
+        if hasattr(self, 'swarms_agent') and self.swarms_agent is not None:
+            try:
+                prompt = f"""You are participating in a collective task.
+
+Task Details:
+- Task ID: {task_id}
+- Task Type: {task_type}
+- Description: {description}
+- Input Data: {input_data}
+
+Please provide your analysis and recommendation for this collective task."""
+                
+                response = await self.run_with_llm(prompt)
+                return {
+                    "contribution": {
+                        "analysis": response,
+                        "recommendation": "llm_generated",
+                        "method": "run_with_llm"
+                    },
+                    "confidence": 0.75
+                }
+            except Exception as e:
+                logger.error(f"[{self.agent_id}] LLM contribution error: {e}")
+        
+        # Fallback contribution
+        return {
+            "contribution": {
+                "analysis": f"Analysis from {self.name} for task: {description}",
+                "recommendation": f"{self.name}_recommendation",
+                "method": "fallback"
+            },
+            "confidence": 0.6
+        }
 
     def update_state(self, key: str, value: Any) -> None:
         """

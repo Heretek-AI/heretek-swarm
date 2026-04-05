@@ -10,12 +10,14 @@ This module provides:
 
 import asyncio
 import logging
+from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any, Dict, List, Optional, Type
 
 import structlog
 
 from heretek_swarm.actors.base import AgentActor, ActorState, ActorStatus
+from heretek_swarm.actors.factory import ActorConfig, get_factory
 
 logger = structlog.get_logger("ActorSupervisor")
 
@@ -87,9 +89,11 @@ class ActorSupervisor:
         self.max_restarts = max_restarts
 
         self.actors: Dict[str, AgentActor] = {}
+        self.actor_configs: Dict[str, ActorConfig] = {}
         self.restart_counts: Dict[str, int] = {}
         self._running = False
         self._monitor_task: Optional[asyncio.Task] = None
+        self._factory = get_factory()
 
         logger.info(
             f"[{self.name}] Supervisor initialized",
@@ -104,6 +108,7 @@ class ActorSupervisor:
         self,
         actor_class: Type[AgentActor],
         actor_id: str,
+        actor_type: Optional[str] = None,
         **kwargs: Any,
     ) -> AgentActor:
         """
@@ -112,6 +117,7 @@ class ActorSupervisor:
         Args:
             actor_class: Actor class to instantiate
             actor_id: Unique identifier for the actor
+            actor_type: Optional type identifier for factory registration
             **kwargs: Additional arguments for actor initialization
 
         Returns:
@@ -129,13 +135,23 @@ class ActorSupervisor:
         # Spawn the actor
         await actor.spawn()
 
-        # Register
+        # Register actor
         self.actors[actor_id] = actor
         self.restart_counts[actor_id] = 0
 
+        # Store configuration for restart capability
+        config = ActorConfig(
+            actor_type=actor_type or actor_class.__name__,
+            class_ref=actor_class,
+            init_kwargs={"agent_id": actor_id, **kwargs},
+            capabilities=actor.capabilities.copy(),
+            actor_id=actor_id,
+        )
+        self.actor_configs[actor_id] = config
+
         logger.info(
             f"[{self.name}] Actor {actor_id} spawned",
-            extra={"actor_class": actor_class.__name__},
+            extra={"actor_class": actor_class.__name__, "actor_type": actor_type},
         )
 
         return actor
@@ -157,6 +173,8 @@ class ActorSupervisor:
         del self.actors[actor_id]
         if actor_id in self.restart_counts:
             del self.restart_counts[actor_id]
+        if actor_id in self.actor_configs:
+            del self.actor_configs[actor_id]
 
         logger.info(f"[{self.name}] Actor {actor_id} terminated")
 
@@ -262,7 +280,7 @@ class ActorSupervisor:
 
     async def _attempt_restart(self, actor_id: str) -> None:
         """
-        Attempt to restart a failed actor.
+        Attempt to restart a failed actor using stored configuration.
 
         Args:
             actor_id: Actor identifier
@@ -284,19 +302,89 @@ class ActorSupervisor:
         )
 
         try:
+            # Get stored configuration
+            config = self.actor_configs.get(actor_id)
+            if config is None:
+                logger.error(
+                    f"[{self.name}] No configuration found for actor {actor_id}",
+                )
+                return
+
             # Terminate current actor
             await self.actors[actor_id].terminate()
 
-            # Re-spawn (this would require storing actor class and kwargs)
-            # For now, just log the attempt
-            logger.warning(
-                f"[{self.name}] Restart requires actor class info - manual intervention needed",
-            )
+            # Remove from actors dict
+            del self.actors[actor_id]
 
+            # Re-spawn using stored configuration
+            actor_class = config.class_ref
+            init_kwargs = config.init_kwargs
+
+            # Create new instance
+            new_actor = actor_class(**init_kwargs)
+            await new_actor.spawn()
+
+            # Register new actor
+            self.actors[actor_id] = new_actor
             self.restart_counts[actor_id] = restart_count + 1
 
+            logger.info(
+                f"[{self.name}] Actor {actor_id} successfully restarted",
+                extra={"restart_count": self.restart_counts[actor_id]},
+            )
+
         except Exception as e:
-            logger.error(f"[{self.name}] Restart failed for {actor_id}: {e}")
+            logger.error(f"[{self.name}] Restart failed for {actor_id}: {e}", exc_info=True)
+            self.restart_counts[actor_id] = restart_count + 1
+
+    async def respawn_actor(self, actor_id: str) -> bool:
+        """
+        Manually trigger actor respawn using stored configuration.
+
+        This method provides explicit control for respawning actors,
+        separate from the automatic restart mechanism.
+
+        Args:
+            actor_id: Actor identifier to respawn
+
+        Returns:
+            True if respawn successful, False otherwise
+        """
+        if actor_id not in self.actors:
+            logger.warning(f"[{self.name}] Cannot respawn actor {actor_id}: not found")
+            return False
+
+        config = self.actor_configs.get(actor_id)
+        if config is None:
+            logger.error(f"[{self.name}] No configuration found for actor {actor_id}")
+            return False
+
+        logger.info(f"[{self.name}] Manual respawn triggered for {actor_id}")
+
+        try:
+            # Terminate current actor
+            await self.actors[actor_id].terminate()
+
+            # Remove from actors dict
+            del self.actors[actor_id]
+
+            # Re-spawn using stored configuration
+            actor_class = config.class_ref
+            init_kwargs = config.init_kwargs
+
+            # Create new instance
+            new_actor = actor_class(**init_kwargs)
+            await new_actor.spawn()
+
+            # Register new actor
+            self.actors[actor_id] = new_actor
+
+            logger.info(f"[{self.name}] Actor {actor_id} successfully respawned")
+            return True
+
+        except Exception as e:
+            logger.error(f"[{self.name}] Respawn failed for {actor_id}: {e}", exc_info=True)
+            return False
 
     async def save_all_states(self) -> None:
         """Save states of all actors."""
@@ -327,6 +415,7 @@ class ActorSupervisor:
 
         return {
             "total_actors": len(self.actors),
+            "total_configs": len(self.actor_configs),
             "active_actors": sum(
                 1 for s in statuses if s.state == ActorState.ACTIVE
             ),
@@ -341,6 +430,7 @@ class ActorSupervisor:
             ),
             "total_messages": sum(s.message_count for s in statuses),
             "total_errors": sum(s.error_count for s in statuses),
+            "total_restarts": sum(self.restart_counts.values()),
             "monitoring_active": self._running,
         }
 
