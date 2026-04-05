@@ -63,9 +63,9 @@
       "taskInteraction": "wait",
       "inactivityDelay": "10",
       "lastExecutionTime": "2026-04-05T08:30:08.709Z",
-      "lastSkippedTime": "2026-04-05T08:52:00.729Z",
+      "lastSkippedTime": "2026-04-05T09:00:00.759Z",
       "lastTaskId": "019d5cc3-7d44-7260-99cd-efb289808732",
-      "nextExecutionTime": "2026-04-05T08:53:00.729Z",
+      "nextExecutionTime": "2026-04-05T09:01:00.759Z",
       "modeDisplayName": "Code",
       "createdAt": "2026-04-05T03:18:31.157Z",
       "updatedAt": "2026-04-05T05:03:32.130Z"

@@ -15,7 +15,8 @@ from heretek_swarm.api.main import app
 from heretek_swarm.runtime.tools import run_command, ALLOWED_COMMANDS, BLOCKED_COMMANDS
 
 # Test API key for testing
-TEST_API_KEY = "htsk_test_key_for_security_testing_only"
+# Use a key that matches the generated pattern (htsk_ + 32 hex chars)
+TEST_API_KEY = "htsk_" + "0" * 31
 
 
 class TestAuthentication:
@@ -53,8 +54,12 @@ class TestAuthentication:
                 "/api/agents",
                 headers={"Authorization": f"Bearer {TEST_API_KEY}"}
             )
-            # Should not get 401
-            assert response.status_code != 401
+            # Should get 200 OK response for successful auth
+            assert response.status_code == 200
+            # Verify the response contains expected data for successful authentication
+            assert response.status_code == 200
+            # Check that response contains expected authentication success indicator
+            assert "authenticated" in response.text.lower() or "success" in response.text.lower()
 
 
 class TestInputValidation:
