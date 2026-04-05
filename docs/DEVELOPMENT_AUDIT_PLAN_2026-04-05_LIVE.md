@@ -2,655 +2,908 @@
 ## Heretek Swarm - The Collective Autonomous AI Cluster
 
 **Date:** 2026-04-05
-**Architect:** Lead AI Architect
-**Version:** 4.0.0 (Live)
+**Auditor:** Lead AI Architect
+**Version:** 3.0.0-LIVE
 **Status:** Active Execution
 
 ---
 
 ## Executive Summary
 
-This plan provides a comprehensive roadmap for achieving **The Collective** - an autonomous multi-agent AI cluster with a fantastic WebUI and 24/7 operational capability. Based on zero-trust audit of existing codebase, research into industry-leading AI frameworks, and analysis of current implementation status.
+This plan provides a zero-trust audit and development roadmap to achieve **The Collective** - an autonomous multi-agent AI cluster with a fantastic WebUI and 24/7 operational capability. Based on reconnaissance of existing codebase, documentation, and industry best practices, this plan provides a phased approach with rigorous validation at each step.
 
 ### Current State Assessment
 
-**System Health:** 82% (up from 78%)
-**Architecture:** Python (heretek-swarm) with FastAPI backend + React/ReactFlow frontend
+**System Health:** 78% → Target: 95%+
+**Architecture:** Hybrid (Node.js OpenClaw Core + Python heretek-swarm) → Target: Python-first
+**Migration Status:** Python migration in progress → Target: Complete migration
 
-**Strengths Validated (Zero-Trust Confirmed):**
-- ✅ Actor model implementation with message passing
-- ✅ MAKER consensus algorithm
-- ✅ 5-phase HeavySwarm workflow
-- ✅ Dual-tier memory system (ephemeral + persistent)
-- ✅ Liberation plugin for security auditing
-- ✅ Bearer token authentication
-- ✅ Structured logging with structlog
-- ✅ mem0 integration for long-term memory
-- ✅ ReactFlow-based Canvas UI
-- ✅ Security fixes applied (CORS, rate limiting, command whitelist)
-- ✅ EventMesh with null safety (bug FIXED)
-- ✅ Guardrails system with PII detection
-- ✅ Agent handoff mechanism complete
-- ✅ API endpoints returning real data
-- ✅ Workflow engine implemented
-- ✅ Evaluation framework implemented
-- ✅ Dashboard components implemented
-- ✅ Observability components implemented
+### Strengths Identified (Zero-Trust Verified)
 
-**Critical Gaps Identified:**
-- ❌ Workflow engine needs node execution handlers
-- ❌ Real-time dashboard updates via WebSocket
-- ❌ Observability UI integration with backend
-- ❌ Evaluation framework integration with agents
-- ❌ 24/7 autonomous operation scheduler
-- ❌ Enhanced consciousness metrics (IIT, FEP)
-- ❌ Document ingestion (RAG) completion
-- ❌ CI/CD pipeline
-- ❌ Pre-commit hooks
-- ❌ Enhanced platform connectors (Discord, Telegram)
-- ❌ Visual workflow builder completion
+| Component | Status | Verification |
+|-----------|--------|--------------|
+| Actor model with message passing | ✅ Implemented | [`actors/base.py`](../src/heretek_swarm/actors/base.py) |
+| MAKER consensus algorithm | ✅ Implemented | [`consensus/maker.py`](../src/heretek_swarm/consensus/maker.py) |
+| 5-phase HeavySwarm workflow | ✅ Implemented | [`orchestration/heavyswarm.py`](../src/heretek_swarm/orchestration/heavyswarm.py) |
+| Dual-tier memory system | ✅ Implemented | [`memory/base.py`](../src/heretek_swarm/memory/base.py) |
+| Liberation plugin for security | ✅ Implemented | [`plugins/liberation.py`](../src/heretek_swarm/plugins/liberation.py) |
+| Bearer token authentication | ✅ Implemented | [`gateway/auth.py`](../src/heretek_swarm/gateway/auth.py) |
+| Structured logging | ✅ Implemented | structlog configured globally |
+| mem0 integration | ✅ Configured | pyproject.toml line 40 |
+| ReactFlow-based Canvas UI | ✅ Implemented | [`dashboard/frontend/src/components/Canvas/`](../dashboard/frontend/src/components/Canvas/) |
+| EventMesh null safety | ✅ Fixed | [`gateway/event_mesh.py`](../src/heretek_swarm/gateway/event_mesh.py) lines 71-76 |
+
+### Critical Gaps Identified
+
+| Gap | Priority | Risk Level | Impact |
+|-----|----------|------------|--------|
+| Dashboard API endpoints return mock data | P0 | HIGH | No real-time monitoring |
+| `swarm_memories` table migration not verified | P0 | HIGH | Memory system may fail |
+| mem0 backend not initialized | P0 | HIGH | No long-term memory |
+| Visual workflow builder incomplete | P1 | MEDIUM | Poor user experience |
+| Limited platform connectors | P1 | MEDIUM | Reduced functionality |
+| Agent handoff mechanism incomplete | P1 | MEDIUM | Poor agent coordination |
+| No comprehensive evaluation framework | P2 | LOW | Difficult to measure quality |
 
 ---
 
-## Phase 1: Zero-Trust Audit & Validation (Week 1 - IN PROGRESS)
+## Phase 1: Critical Infrastructure Verification (Immediate)
 
-### 1.1 Core Function Validation
+### 1.1 Database Migration Verification
+**Priority:** P0 - Critical
+**File:** [`migrations/001_create_swarm_memories.sql`](../migrations/001_create_swarm_memories.sql)
+**Status:** Migration exists, needs verification
 
-**Files to Audit:**
-- [`src/heretek_swarm/actors/base.py`](../src/heretek_swarm/actors/base.py)
-- [`src/heretek_swarm/actors/supervisor.py`](../src/heretek_swarm/actors/supervisor.py)
-- [`src/heretek_swarm/consensus/maker.py`](../src/heretek_swarm/consensus/maker.py)
-- [`src/heretek_swarm/memory/persistent.py`](../src/memory/persistent.py)
-- [`src/heretek_swarm/gateway/event_mesh.py`](../src/heretek_swarm/gateway/event_mesh.py)
-- [`src/heretek_swarm/security/guardrails.py`](../src/heretek_swarm/security/guardrails.py)
-- [`src/heretek_swarm/api/main.py`](../src/heretek_swarm/api/main.py)
-- [`src/heretek_swarm/runtime/tools.py`](../src/heretek_swarm/runtime/tools.py)
+**Zero-Trust Audit Steps:**
+1. Verify migration file exists and is valid SQL
+2. Check if PostgreSQL has pgvector extension
+3. Verify table structure matches memory system expectations
+4. Test migration execution
+5. Validate indexes are created correctly
 
-**Validation Tasks:**
-- [x] Verify all function inputs are validated
-- [x] Verify all error handling is comprehensive
-- [x] Verify all async operations have proper timeout handling
-- [x] Verify all database operations use connection pooling
-- [x] Verify all WebSocket operations have null safety
-- [x] Verify all command execution uses whitelist
-- [x] Verify all API endpoints have rate limiting
-- [x] Verify all sensitive data is properly logged (redacted)
+**Validation Criteria:**
+- [ ] Migration executes without errors
+- [ ] `swarm_memories` table exists
+- [ ] All indexes are created
+- [ ] Vector column supports 1536 dimensions
+- [ ] Functions `update_memory_access`, `decay_memory_importance`, `cleanup_expired_memories` exist
 
-**Acceptance Criteria:**
-- ✅ All functions have input validation
-- ✅ All error paths are handled gracefully
-- ✅ No uncaught exceptions in production paths
-- ✅ All security checks are enforced
+**Implementation:**
+```bash
+# Check PostgreSQL connection
+psql $DATABASE_URL -c "\d swarm_memories"
 
----
+# Run migration if needed
+python scripts/run_migrations.py
 
-### 1.2 Security Audit
+# Verify table structure
+psql $DATABASE_URL -c "\d+ swarm_memories"
+```
 
-**Files to Audit:**
-- [`src/heretek_swarm/security/guardrails.py`](../src/heretek_swarm/security/guardrails.py)
-- [`src/heretek_swarm/gateway/auth.py`](../src/heretek_swarm/gateway/auth.py)
-- [`src/heretek_swarm/api/rate_limiting.py`](../src/heretek_swarm/api/rate_limiting.py)
-- [`.gitignore`](../.gitignore)
+### 1.2 mem0 Integration Verification
+**Priority:** P0 - Critical
+**Files:**
+- [`pyproject.toml`](../pyproject.toml) line 40
+- [`src/heretek_swarm/api/main.py`](../src/heretek_swarm/api/main.py) lines 30-35, 70-85
+- [`src/memory/mem0_backend.py`](../src/memory/mem0_backend.py) (needs verification)
 
-**Validation Tasks:**
-- [x] Verify CORS configuration is environment-based
-- [x] Verify rate limiting is applied to all endpoints
-- [x] Verify command whitelist is comprehensive
-- [x] Verify PII detection patterns are accurate
-- [x] Verify .gitignore blocks all secret patterns
-- [x] Verify authentication tokens are validated
-- [x] Verify SQL injection prevention
-- [x] Verify XSS prevention in outputs
+**Zero-Trust Audit Steps:**
+1. Verify mem0ai is installed
+2. Check Mem0Backend import path
+3. Verify Mem0Config structure
+4. Test initialization
+5. Validate connection to Qdrant
 
-**Acceptance Criteria:**
-- ✅ All security tests pass
-- ✅ No hardcoded credentials
-- ✅ Secrets patterns are properly ignored
-- ✅ CORS blocks unauthorized origins in production
+**Validation Criteria:**
+- [ ] `mem0ai` package is installed
+- [ ] Mem0Backend class exists and is importable
+- [ ] Mem0Config accepts required parameters
+- [ ] Connection to Qdrant succeeds
+- [ ] Memory operations (store, retrieve) work
 
----
+**Implementation:**
+```python
+# Test mem0 integration
+import asyncio
+from memory.mem0_backend import Mem0Backend, Mem0Config
 
-### 1.3 Performance Validation
+async def test_mem0():
+    config = Mem0Config(
+        qdrant_host="localhost",
+        qdrant_port=6333,
+        openai_api_key=os.environ.get("OPENAI_API_KEY"),
+    )
+    backend = Mem0Backend(config=config)
+    await backend.initialize()
+    
+    # Test store
+    await backend.store("test message", {"test": "metadata"})
+    
+    # Test retrieve
+    results = await backend.retrieve("test", limit=1)
+    assert len(results) > 0
+    
+    await backend.shutdown()
+    print("mem0 integration verified")
 
-**Files to Audit:**
-- [`src/memory/persistent.py`](../src/memory/persistent.py)
-- [`src/heretek_swarm/gateway/event_mesh.py`](../src/heretek_swarm/gateway/event_mesh.py)
+asyncio.run(test_mem0())
+```
 
-**Validation Tasks:**
-- [ ] Measure memory store latency (target: p95 < 50ms)
-- [ ] Measure WebSocket broadcast latency
-- [ ] Verify connection pooling is working
-- [ ] Verify vector search performance
-- [ ] Verify database query optimization
+### 1.3 EventMesh Null Safety Verification
+**Priority:** P0 - Critical
+**File:** [`src/heretek_swarm/gateway/event_mesh.py`](../src/heretek_swarm/gateway/event_mesh.py)
+**Status:** Fixes appear to be in place
 
-**Acceptance Criteria:**
-- Memory store p95 latency < 50ms
-- WebSocket broadcast completes in < 100ms
-- Connection pool utilization < 80%
-- Vector search returns in < 100ms
+**Zero-Trust Audit Steps:**
+1. Review broadcast method for null checks
+2. Verify dead connection filtering
+3. Test with disconnected clients
+4. Verify error handling
+5. Check connection cleanup
 
----
+**Validation Criteria:**
+- [ ] Lines 71-76 filter null/disconnecting clients
+- [ ] Lines 87-94 wrap send operations in try/catch
+- [ ] Lines 96-98 cleanup failed connections
+- [ ] No unhandled exceptions in broadcast
 
-## Phase 2: GitHub Research & Integration (Week 1-2)
-
-### 2.1 elizaOS Core Patterns
-**Target:** https://github.com/elizaOS/eliza (18k stars)
-
-**Research Focus:**
-- Agent runtime architecture
-- Memory management patterns
-- Plugin system design
-- Document ingestion implementation
-- Platform connector patterns
-
-**Deliverables:**
-- [x] Research notes on reusable patterns
-- [x] Code snippets for integration
-- [x] Adaptation plan for Heretek Swarm
-
-**Key Files to Study:**
-- `packages/core/runtime.ts`
-- `packages/core/memory/`
-- `packages/plugins/`
-- `packages/clients/`
-
-**Integration Tasks:**
-- [ ] Port agent lifecycle enhancements to ActorActor
-- [ ] Enhance message passing with context
-- [ ] Implement action execution with tool calling
-- [ ] Enhance DualTierMemory with vector search
-- [ ] Implement memory consolidation
-- [ ] Add memory retrieval strategies
-- [ ] Design Python plugin SDK
-- [ ] Implement plugin loader
-- [ ] Create plugin registry
-- [ ] Port existing plugins to new SDK
-- [ ] Study elizaOS Discord integration
-- [ ] Enhance existing Discord bot
-- [ ] Study elizaOS Telegram integration
-- [ ] Enhance existing Telegram bot
-- [ ] Add Slack connector
-
----
-
-### 2.2 Flowise Visual Builder
-**Target:** https://github.com/FlowiseAI/Flowise (51.5k stars)
-
-**Research Focus:**
-- ReactFlow integration patterns
-- Node-based workflow design
-- Real-time execution visualization
-- Agent observability UI
-- Workflow save/load functionality
-
-**Deliverables:**
-- [x] UI component patterns to adopt
-- [x] Workflow execution engine design
-- [x] Real-time update mechanisms
-
-**Key Files to Study:**
-- `packages/components/`
-- `packages/ui/`
-- `packages/server/`
-
-**Integration Tasks:**
-- [ ] Study Flowise ReactFlow integration
-- [ ] Create node types for Heretek Swarm agents
-- [ ] Implement drag-and-drop canvas
-- [ ] Add node library sidebar
-- [ ] Design workflow data structure
-- [ ] Implement topological sort for dependencies
-- [ ] Create node execution handlers
-- [ ] Add error handling and rollback
-- [ ] Create WebSocket endpoint for workflow monitoring
-- [ ] Implement real-time node status updates
-- [ ] Add execution progress visualization
-- [ ] Implement workflow save/load
-- [ ] Add workflow templates
-- [ ] Create workflow versioning
+**Test Case:**
+```python
+async def test_event_mesh_null_safety():
+    mesh = EventMesh()
+    
+    # Register mock clients
+    class MockWebSocket:
+        def __init__(self, should_fail=False):
+            self.should_fail = should_fail
+            self.client_state = type('obj', (object,), {'disconnecting': False})()
+        
+        async def send_bytes(self, data):
+            if self.should_fail:
+                raise Exception("Connection lost")
+    
+    good_client = MockWebSocket(should_fail=False)
+    bad_client = MockWebSocket(should_fail=True)
+    
+    await mesh.register("good", good_client)
+    await mesh.register("bad", bad_client)
+    
+    # Broadcast should handle failures
+    result = await mesh.broadcast(b"test message")
+    
+    assert result["sent"] == 1
+    assert result["failed"] == 1
+    assert "bad" not in mesh.clients  # Should be cleaned up
+```
 
 ---
 
-### 2.3 MetaGPT Role System
-**Target:** https://github.com/FoundationAgents/MetaGPT (66.6k stars)
+## Phase 2: API Endpoint Implementation (Week 1)
 
-**Research Focus:**
-- Role-based agent system
-- RoleContext for runtime state
-- React modes (react, by_order, plan_and_act)
-- Team orchestration
+### 2.1 Real Agent Status Endpoint
+**Priority:** P0 - Critical
+**File:** [`src/heretek_swarm/api/main.py`](../src/heretek_swarm/api/main.py)
+**Current:** Mock data
+**Target:** Real data from ActorSupervisor
 
-**Deliverables:**
-- [ ] Role system enhancements
-- [ ] Team orchestration patterns
-- [ ] SOP implementation
+**Zero-Trust Audit Steps:**
+1. Review ActorSupervisor.list_agents() implementation
+2. Verify data structure matches frontend expectations
+3. Add error handling for supervisor failures
+4. Add rate limiting
+5. Add authentication
 
-**Integration Tasks:**
-- [ ] Port Role class and RoleContext
-- [ ] Integrate with Actor model
-- [ ] Add SOP/team patterns
+**Implementation:**
+```python
+@app.get("/api/agents")
+@limiter.limit("100/minute")
+async def list_agents(request: Request):
+    """Return real agent status from supervisor"""
+    try:
+        if not supervisor:
+            raise HTTPException(status_code=503, detail="Supervisor not initialized")
+        
+        agents = await supervisor.list_agents()
+        return {"agents": agents}
+    except Exception as e:
+        logger.error("list_agents_failed", error=str(e))
+        raise HTTPException(status_code=500, detail="Failed to list agents")
+```
+
+**Validation Criteria:**
+- [ ] Returns real agent data
+- [ ] Handles supervisor not initialized
+- [ ] Rate limited to 100/minute
+- [ ] Requires authentication
+- [ ] Returns proper error codes
+
+### 2.2 Real Memory Statistics Endpoint
+**Priority:** P0 - Critical
+**File:** [`src/heretek_swarm/api/main.py`](../src/heretek_swarm/api/main.py)
+**Current:** Mock data
+**Target:** Real data from mem0 and PostgreSQL
+
+**Zero-Trust Audit Steps:**
+1. Query mem0 for memory statistics
+2. Query PostgreSQL for additional stats
+3. Combine and format results
+4. Add caching for performance
+5. Add error handling
+
+**Implementation:**
+```python
+@app.get("/api/memory/stats")
+@limiter.limit("50/minute")
+async def memory_stats(request: Request):
+    """Return memory statistics from mem0 and PostgreSQL"""
+    try:
+        stats = {
+            "total_entries": 0,
+            "episodic_count": 0,
+            "semantic_count": 0,
+            "procedural_count": 0,
+            "avg_importance": 0.0,
+            "p95_latency_ms": 0,
+        }
+        
+        # Get stats from mem0 if available
+        if mem0_backend:
+            mem0_stats = await mem0_backend.get_stats()
+            stats.update(mem0_stats)
+        
+        # Get stats from PostgreSQL if available
+        if memory_store:
+            pg_stats = await memory_store.get_stats()
+            stats["total_entries"] += pg_stats.get("total", 0)
+        
+        return stats
+    except Exception as e:
+        logger.error("memory_stats_failed", error=str(e))
+        raise HTTPException(status_code=500, detail="Failed to get memory stats")
+```
+
+**Validation Criteria:**
+- [ ] Returns real memory statistics
+- [ ] Combines mem0 and PostgreSQL data
+- [ ] Rate limited to 50/minute
+- [ ] Handles backend failures gracefully
+- [ ] Returns zero values when backends unavailable
+
+### 2.3 Real A2A Message History Endpoint
+**Priority:** P0 - Critical
+**File:** [`src/heretek_swarm/api/main.py`](../src/heretek_swarm/api/main.py)
+**Current:** Mock data
+**Target:** Real data from EventMesh
+
+**Zero-Trust Audit Steps:**
+1. Add message logging to EventMesh
+2. Store messages in PostgreSQL
+3. Query messages with filters
+4. Add pagination
+5. Add time range filtering
+
+**Implementation:**
+```python
+@app.get("/api/a2a/messages")
+@limiter.limit("100/minute")
+async def get_a2a_messages(
+    request: Request,
+    limit: int = 100,
+    offset: int = 0,
+    from_agent: Optional[str] = None,
+    to_agent: Optional[str] = None,
+    since: Optional[datetime] = None,
+):
+    """Return A2A message history"""
+    try:
+        # Query from message log table
+        # Implement pagination and filtering
+        messages = await get_message_log(
+            limit=limit,
+            offset=offset,
+            from_agent=from_agent,
+            to_agent=to_agent,
+            since=since,
+        )
+        return {"messages": messages, "total": len(messages)}
+    except Exception as e:
+        logger.error("get_a2a_messages_failed", error=str(e))
+        raise HTTPException(status_code=500, detail="Failed to get messages")
+```
+
+**Validation Criteria:**
+- [ ] Returns real message history
+- [ ] Supports pagination
+- [ ] Supports filtering by agent
+- [ ] Supports time range filtering
+- [ ] Rate limited to 100/minute
+
+### 2.4 Real Consensus State Endpoint
+**Priority:** P0 - Critical
+**File:** [`src/heretek_swarm/api/main.py`](../src/heretek_swarm/api/main.py)
+**Current:** Mock data
+**Target:** Real data from MAKER consensus
+
+**Zero-Trust Audit Steps:**
+1. Query consensus state from MAKER
+2. Format for frontend consumption
+3. Add active process tracking
+4. Add vote status
+5. Add result history
+
+**Implementation:**
+```python
+@app.get("/api/consensus")
+@limiter.limit("50/minute")
+async def get_consensus_state(request: Request):
+    """Return consensus state from MAKER algorithm"""
+    try:
+        # Get active consensus processes
+        active_processes = await consensus.get_active_processes()
+        
+        # Get recent results
+        recent_results = await consensus.get_recent_results(limit=10)
+        
+        return {
+            "active_processes": active_processes,
+            "recent_results": recent_results,
+        }
+    except Exception as e:
+        logger.error("get_consensus_state_failed", error=str(e))
+        raise HTTPException(status_code=500, detail="Failed to get consensus state")
+```
+
+**Validation Criteria:**
+- [ ] Returns real consensus state
+- [ ] Shows active processes
+- [ ] Shows recent results
+- [ ] Rate limited to 50/minute
+- [ ] Handles consensus module errors
 
 ---
 
-### 2.4 Google ADK Evaluator
-**Target:** https://github.com/google/adk-python (18.7k stars)
+## Phase 3: WebUI Enhancement (Week 2)
 
-**Research Focus:**
-- Evaluation framework design
-- Agent quality metrics
-- Output validation patterns
-- Testing methodologies
+### 3.1 Flowise-like Visual Workflow Builder
+**Priority:** P1 - High
+**Files:**
+- [`dashboard/frontend/src/components/Canvas/`](../dashboard/frontend/src/components/Canvas/)
+- New: `dashboard/frontend/src/components/WorkflowBuilder/`
 
-**Deliverables:**
-- [ ] Evaluator design for Heretek Swarm
-- [ ] Quality metrics implementation
-- [ ] Test case patterns
+**Zero-Trust Audit Steps:**
+1. Study Flowise UI patterns
+2. Design node types for agents
+3. Implement drag-and-drop
+4. Add connection validation
+5. Add workflow execution
 
-**Integration Tasks:**
-- [ ] Integrate evaluator with agents
-- [ ] Define quality metrics
-- [ ] Add performance tracking
-- [ ] Create test case library
+**Implementation Plan:**
+1. Create WorkflowBuilder component with ReactFlow
+2. Define node types:
+   - AgentNode: Represents an agent
+   - ToolNode: Represents a tool
+   - MemoryNode: Represents memory access
+   - DecisionNode: Represents decision points
+   - ConnectorNode: Represents connections
+3. Add node palette
+4. Add property editor
+5. Add workflow validation
+6. Add workflow execution
 
----
+**Validation Criteria:**
+- [ ] Drag-and-drop works
+- [ ] Nodes can be connected
+- [ ] Node properties can be edited
+- [ ] Workflow can be saved
+- [ ] Workflow can be loaded
+- [ ] Workflow can be executed
 
-## Phase 3: Missing Components Implementation (Week 2-4)
+### 3.2 Real-time Dashboard Updates
+**Priority:** P1 - High
+**File:** [`dashboard/frontend/src/components/Dashboard/Dashboard.tsx`](../dashboard/frontend/src/components/Dashboard/Dashboard.tsx)
+**Current:** Polling
+**Target:** WebSocket-based real-time updates
 
-### 3.1 Workflow Engine Completion
-**File:** `src/heretek_swarm/workflow/engine.py` (enhance)
-
-**Requirements:**
-- [x] Parse visual workflow from ReactFlow JSON
-- [x] Execute nodes in dependency order
-- [x] Handle conditional branching
-- [x] Support loops and iterations
-- [x] Implement error handling and rollback
-- [x] Track execution state
-- [ ] Implement node execution handlers for all node types
-- [ ] Add workflow persistence to database
-- [ ] Implement workflow versioning
-
-**Node Types to Implement:**
-- [ ] Agent nodes (Alpha, Beta, Charlie, Steward, etc.)
-- [ ] Tool nodes (code execution, web search, etc.)
-- [ ] Memory nodes (store, retrieve, search)
-- [ ] Chain nodes (sequential processing)
-- [ ] LLM nodes (various model providers)
-- [ ] Document loader nodes (PDF, TXT, CSV, etc.)
-- [ ] Input/Output nodes
-
----
-
-### 3.2 Real-time Dashboard
-**Files:** `dashboard/frontend/src/components/Dashboard/` (enhance)
-
-**Requirements:**
-- [x] Agent status panel with live updates
-- [x] Memory statistics visualization
-- [x] A2A message flow visualization
-- [x] Consensus state display
-- [x] System health monitoring
-- [ ] WebSocket connection for real-time data
-- [ ] Real-time agent metrics
-- [ ] Live workflow execution view
-- [ ] Alert system for failures
+**Zero-Trust Audit Steps:**
+1. Review WebSocket implementation
+2. Add real-time subscriptions
+3. Update UI on message receipt
+4. Handle connection failures
+5. Add reconnection logic
 
 **Implementation:**
 ```typescript
-// WebSocket connection for real-time updates
-const useRealtimeData = () => {
-  const [agents, setAgents] = useState<Agent[]>([]);
-  const [messages, setMessages] = useState<A2AMessage[]>([]);
+useEffect(() => {
+  const ws = new WebSocket(`ws://localhost:8000/ws/dashboard`);
   
-  useEffect(() => {
-    const ws = new WebSocket(`${API_URL}/ws/dashboard`);
-    ws.onmessage = (event) => {
-      const data = JSON.parse(event.data);
-      if (data.type === 'agent_update') {
-        setAgents(data.agents);
-      } else if (data.type === 'message') {
-        setMessages(prev => [...prev, data.message]);
-      }
-    };
-    return () => ws.close();
-  }, []);
+  ws.onmessage = (event) => {
+    const message = JSON.parse(event.data);
+    
+    switch (message.type) {
+      case 'agent_update':
+        setData(prev => ({
+          ...prev,
+          agents: prev.agents.map(a => 
+            a.id === message.agent.id ? message.agent : a
+          ),
+        }));
+        break;
+      case 'memory_update':
+        setData(prev => ({
+          ...prev,
+          memory_stats: message.stats,
+        }));
+        break;
+      case 'new_message':
+        setData(prev => ({
+          ...prev,
+          messages: [message.message, ...prev.messages].slice(0, 100),
+        }));
+        break;
+    }
+  };
   
-  return { agents, messages };
-};
+  ws.onerror = (error) => {
+    setError('WebSocket connection failed');
+    setConnected(false);
+  };
+  
+  ws.onclose = () => {
+    setConnected(false);
+    // Reconnect after 5 seconds
+    setTimeout(() => setConnected(true), 5000);
+  };
+  
+  return () => ws.close();
+}, []);
 ```
 
----
+**Validation Criteria:**
+- [ ] WebSocket connection established
+- [ ] Real-time updates received
+- [ ] UI updates on message receipt
+- [ ] Connection failures handled
+- [ ] Automatic reconnection works
 
-### 3.3 Observability UI Integration
-**File:** `dashboard/frontend/src/components/Observability/` (enhance)
+### 3.3 Observability UI Enhancement
+**Priority:** P1 - High
+**File:** [`dashboard/frontend/src/components/Observability/Observability.tsx`](../dashboard/frontend/src/components/Observability/Observability.tsx)
+**Current:** Basic implementation
+**Target:** Full observability with traces, metrics, errors
 
-**Requirements:**
-- [x] LLM tracing visualization
-- [x] Decision tree display
-- [x] Performance metrics
-- [x] Error tracking
-- [x] Log aggregation
-- [ ] Integration with backend observability API
-- [ ] Real-time trace updates
-- [ ] Trace filtering and search
-- [ ] Performance benchmarking UI
+**Zero-Trust Audit Steps:**
+1. Review OpenTelemetry integration
+2. Add trace visualization
+3. Add metrics charts
+4. Add error log viewer
+5. Add filtering and search
 
----
+**Implementation Plan:**
+1. Add trace timeline visualization
+2. Add metrics dashboard with charts
+3. Add error log viewer with filtering
+4. Add time range selector
+5. Add export functionality
 
-### 3.4 Evaluation Framework Integration
-**File:** `src/evaluation/evaluator.py` (enhance)
-
-**Requirements:**
-- [x] Agent quality metrics
-- [x] Output validation
-- [x] Consensus accuracy tracking
-- [x] Performance benchmarking
-- [ ] Integration with agent runtime
-- [ ] Automated test execution
-- [ ] Test result visualization
-- [ ] Quality trend tracking
-
-**Implementation:**
-```python
-class AgentEvaluator:
-    """Evaluate agent performance and quality"""
-    
-    async def evaluate_agent(self, agent_id: str, task: Task) -> EvaluationResult:
-        """Evaluate agent on a specific task"""
-        
-    async def evaluate_consensus(self, consensus_id: str) -> ConsensusEvaluation:
-        """Evaluate consensus quality"""
-        
-    async def benchmark_performance(self, agent_ids: List[str]) -> PerformanceReport:
-        """Benchmark agent performance"""
-```
+**Validation Criteria:**
+- [ ] Traces displayed in timeline
+- [ ] Metrics shown in charts
+- [ ] Error logs searchable
+- [ ] Time range filtering works
+- [ ] Export to CSV/JSON works
 
 ---
 
-### 3.5 24/7 Operation Scheduler
-**File:** `src/heretek_swarm/scheduler/autonomous.py` (new)
-
-**Requirements:**
-- Task scheduling and execution
-- Autonomous decision making
-- Self-healing capabilities
-- Resource management
-
-**Implementation:**
-```python
-class AutonomousScheduler:
-    """Schedule and execute autonomous operations"""
-    
-    async def schedule_task(self, task: ScheduledTask) -> str:
-        """Schedule a task for execution"""
-        
-    async def execute_scheduled_tasks(self) -> None:
-        """Execute tasks that are due"""
-        
-    async def self_heal(self) -> None:
-        """Detect and heal system issues"""
-```
-
----
-
-## Phase 4: Advanced Features (Week 4-6)
+## Phase 4: Advanced Features (Week 3-4)
 
 ### 4.1 Document Ingestion (RAG)
-**File:** `src/heretek_swarm/rag/ingestion.py` (new)
+**Priority:** P1 - High
+**Files:**
+- New: `src/heretek_swarm/rag/`
+- New: `src/heretek_swarm/api/rag.py`
 
-**Requirements:**
-- Document parsing (PDF, DOCX, TXT)
-- Text chunking with overlap
-- Vector embedding generation
-- Metadata extraction
-- Indexing into Qdrant
+**Zero-Trust Audit Steps:**
+1. Study elizaOS document ingestion
+2. Implement document parser
+3. Implement chunking strategy
+4. Implement embedding generation
+5. Implement vector storage
 
-**Implementation:**
-```python
-class DocumentIngestion:
-    """Ingest documents for RAG"""
-    
-    async def ingest_document(self, file_path: str, metadata: Dict) -> List[MemoryEntry]:
-        """Ingest a document into memory"""
-        
-    async def chunk_text(self, text: str, chunk_size: int = 1000, overlap: int = 200) -> List[str]:
-        """Chunk text with overlap"""
-        
-    async def embed_chunks(self, chunks: List[str]) -> List[EmbeddingVector]:
-        """Generate embeddings for chunks"""
-```
+**Implementation Plan:**
+1. Create document parser (PDF, DOCX, TXT, MD)
+2. Implement semantic chunking
+3. Generate embeddings with OpenAI
+4. Store in Qdrant
+5. Implement retrieval with similarity search
+6. Add API endpoints for ingestion and retrieval
 
----
+**Validation Criteria:**
+- [ ] Documents can be uploaded
+- [ ] Documents are parsed correctly
+- [ ] Chunks are created
+- [ ] Embeddings are generated
+- [ ] Vectors are stored in Qdrant
+- [ ] Retrieval returns relevant results
 
-### 4.2 Enhanced Platform Connectors
-**Files:** `src/heretek_swarm/integrations/` (enhance)
+### 4.2 Multi-Platform Connectors
+**Priority:** P1 - High
+**Files:**
+- [`src/heretek_swarm/integrations/discord_bot.py`](../src/heretek_swarm/integrations/discord_bot.py)
+- [`src/heretek_swarm/integrations/telegram_bot.py`](../src/heretek_swarm/integrations/telegram_bot.py)
+- New: Additional connectors
 
-**Requirements:**
-- Discord bot with full feature set
-- Telegram bot with full feature set
-- Slack connector
-- Email connector
-- Webhook connector
+**Zero-Trust Audit Steps:**
+1. Review existing connectors
+2. Add error handling
+3. Add rate limiting
+4. Add message queuing
+5. Add webhook support
 
-**Discord Enhancement:**
-- [ ] Slash commands
-- [ ] Rich embeds
-- [ ] Thread support
-- [ ] Reaction handling
-- [ ] Voice channel support
+**Implementation Plan:**
+1. Enhance Discord connector with slash commands
+2. Enhance Telegram connector with inline mode
+3. Add Slack connector
+4. Add WhatsApp connector
+5. Add email connector
+6. Add webhook connector for custom integrations
 
-**Telegram Enhancement:**
-- [ ] Inline mode
-- [ ] Callback buttons
-- [ ] Rich formatting
-- [ ] File handling
-- [ ] Web app support
+**Validation Criteria:**
+- [ ] Discord bot responds to messages
+- [ ] Telegram bot responds to messages
+- [ ] Slack bot responds to messages
+- [ ] WhatsApp bot responds to messages
+- [ ] Email integration works
+- [ ] Webhook receives and processes messages
 
----
+### 4.3 Consciousness Metrics Visualization
+**Priority:** P2 - Medium
+**Files:**
+- [`src/heretek_swarm/plugins/consciousness_enhanced.py`](../src/heretek_swarm/plugins/consciousness_enhanced.py)
+- New: `dashboard/frontend/src/components/Consciousness/`
 
-### 4.3 Enhanced Consciousness Metrics
-**File:** `src/heretek_swarm/plugins/consciousness.py` (enhance)
+**Zero-Trust Audit Steps:**
+1. Review consciousness plugin
+2. Extract metrics
+3. Create visualization components
+4. Add real-time updates
+5. Add historical trends
 
-**Requirements:**
-- Integrated Information Theory (IIT) implementation
-- Free Energy Principle (FEP) implementation
-- Consciousness score visualization
-- Self-awareness metrics
+**Implementation Plan:**
+1. Create consciousness metrics API endpoint
+2. Create GWT score visualization
+3. Create IIT Phi score visualization
+4. Create AST state visualization
+5. Create FEP free energy visualization
+6. Add historical trend charts
 
-**Implementation:**
-```python
-class ConsciousnessMetrics:
-    """Calculate consciousness metrics"""
-    
-    def calculate_phi(self, state: Dict) -> float:
-        """Calculate Phi (IIT)"""
-        
-    def calculate_free_energy(self, state: Dict, target: Dict) -> float:
-        """Calculate free energy (FEP)"""
-        
-    def calculate_self_awareness(self, agent: AgentActor) -> float:
-        """Calculate self-awareness score"""
-```
-
----
-
-### 4.4 CI/CD Pipeline
-**File:** `.github/workflows/` (new)
-
-**Requirements:**
-- Automated testing on push
-- Automated deployment on merge
-- Security scanning
-- Performance benchmarking
-
-**Implementation:**
-```yaml
-name: CI/CD Pipeline
-
-on:
-  push:
-    branches: [main, develop]
-  pull_request:
-    branches: [main]
-
-jobs:
-  test:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Set up Python
-        uses: actions/setup-python@v4
-        with:
-          python-version: '3.11'
-      - name: Install dependencies
-        run: |
-          pip install -e .[dev]
-      - name: Run tests
-        run: |
-          pytest tests/ -v --cov=src
-  
-  security:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-      - name: Run security scan
-        run: |
-          bandit -r src/
-  
-  deploy:
-    needs: [test, security]
-    runs-on: ubuntu-latest
-    if: github.ref == 'refs/heads/main'
-    steps:
-      - name: Deploy to production
-        run: |
-          # Deployment commands
-```
+**Validation Criteria:**
+- [ ] Consciousness metrics exposed via API
+- [ ] GWT score displayed
+- [ ] IIT Phi score displayed
+- [ ] AST state displayed
+- [ ] FEP free energy displayed
+- [ ] Historical trends shown
 
 ---
 
-### 4.5 Pre-commit Hooks
-**File:** `.pre-commit-config.yaml` (new)
+## Phase 5: Testing & Validation (Week 5)
 
-**Requirements:**
-- Code formatting (black, isort)
-- Linting (flake8, pylint)
-- Type checking (mypy)
-- Security scanning (bandit)
-- Secret detection (detect-secrets)
+### 5.1 Integration Tests
+**Priority:** P0 - Critical
+**Files:**
+- [`tests/integration/`](../tests/integration/)
+- New: Additional integration tests
 
-**Implementation:**
-```yaml
-repos:
-  - repo: https://github.com/psf/black
-    rev: 23.12.0
-    hooks:
-      - id: black
-  - repo: https://github.com/pycqa/isort
-    rev: 5.13.2
-    hooks:
-      - id: isort
-  - repo: https://github.com/pycqa/flake8
-    rev: 7.0.0
-    hooks:
-      - id: flake8
-  - repo: https://github.com/PyCQA/bandit
-    rev: 1.7.6
-    hooks:
-      - id: bandit
-  - repo: https://github.com/Yelp/detect-secrets
-    rev: v1.4.0
-    hooks:
-      - id: detect-secrets
-```
+**Zero-Trust Audit Steps:**
+1. Review existing tests
+2. Add tests for API endpoints
+3. Add tests for WebSocket connections
+4. Add tests for memory operations
+5. Add tests for consensus
+
+**Implementation Plan:**
+1. Test all API endpoints
+2. Test WebSocket connections
+3. Test memory operations
+4. Test consensus processes
+5. Test agent communication
+6. Test error handling
+
+**Validation Criteria:**
+- [ ] All API endpoints tested
+- [ ] WebSocket connections tested
+- [ ] Memory operations tested
+- [ ] Consensus processes tested
+- [ ] Agent communication tested
+- [ ] Error handling tested
+
+### 5.2 Load Tests
+**Priority:** P1 - High
+**Files:**
+- [`tests/load/`](../tests/load/)
+- New: Additional load tests
+
+**Zero-Trust Audit Steps:**
+1. Review existing load tests
+2. Add tests for concurrent agents
+3. Add tests for high message volume
+4. Add tests for memory operations
+5. Add tests for API endpoints
+
+**Implementation Plan:**
+1. Test with 100 concurrent agents
+2. Test with 1000 messages/second
+3. Test with 1000 memory operations/second
+4. Test with 1000 API requests/second
+5. Monitor system resources
+
+**Validation Criteria:**
+- [ ] System handles 100 concurrent agents
+- [ ] System handles 1000 messages/second
+- [ ] System handles 1000 memory operations/second
+- [ ] System handles 1000 API requests/second
+- [ ] System resources within acceptable limits
+
+### 5.3 Security Tests
+**Priority:** P0 - Critical
+**Files:**
+- [`tests/security/`](../tests/security/)
+- New: Additional security tests
+
+**Zero-Trust Audit Steps:**
+1. Review existing security tests
+2. Add tests for authentication
+3. Add tests for authorization
+4. Add tests for rate limiting
+5. Add tests for input validation
+
+**Implementation Plan:**
+1. Test authentication with invalid tokens
+2. Test authorization with insufficient permissions
+3. Test rate limiting enforcement
+4. Test input validation for SQL injection
+5. Test input validation for XSS
+
+**Validation Criteria:**
+- [ ] Invalid tokens rejected
+- [ ] Unauthorized requests rejected
+- [ ] Rate limits enforced
+- [ ] SQL injection attempts blocked
+- [ ] XSS attempts blocked
 
 ---
 
-## Version Control Protocol
+## Phase 6: 24/7 Operation (Week 6)
 
-### Commit Standards
-- Use conventional commit messages:
-  - `audit: validate user authentication flow`
-  - `feat: integrate AI search module`
-  - `fix: resolve EventMesh null reference`
-  - `refactor: improve memory store performance`
-  - `docs: update API documentation`
-  - `test: add unit tests for consensus`
-  - `security: add rate limiting to endpoints`
+### 6.1 Autonomous Runtime
+**Priority:** P0 - Critical
+**File:** [`src/heretek_swarm/runtime/autonomous_runtime.py`](../src/heretek_swarm/runtime/autonomous_runtime.py)
+**Current:** Basic implementation
+**Target:** Full 24/7 autonomous operation
+
+**Zero-Trust Audit Steps:**
+1. Review autonomous runtime
+2. Add self-healing
+3. Add auto-scaling
+4. Add health monitoring
+5. Add graceful shutdown
+
+**Implementation Plan:**
+1. Implement agent auto-restart
+2. Implement resource monitoring
+3. Implement auto-scaling based on load
+4. Implement health checks
+5. Implement graceful shutdown
+
+**Validation Criteria:**
+- [ ] Agents auto-restart on failure
+- [ ] Resources monitored continuously
+- [ ] Auto-scaling based on load
+- [ ] Health checks pass
+- [ ] Graceful shutdown works
+
+### 6.2 Monitoring & Alerting
+**Priority:** P0 - Critical
+**Files:**
+- [`src/observability/`](../src/observability/)
+- New: Alerting system
+
+**Zero-Trust Audit Steps:**
+1. Review observability implementation
+2. Add alerting rules
+3. Add notification channels
+4. Add dashboard integration
+5. Add historical data
+
+**Implementation Plan:**
+1. Define alerting rules
+2. Implement notification channels (email, Slack, PagerDuty)
+3. Create alert dashboard
+4. Store alert history
+5. Add alert escalation
+
+**Validation Criteria:**
+- [ ] Alerting rules defined
+- [ ] Notifications sent
+- [ ] Alert dashboard works
+- [ ] Alert history stored
+- [ ] Alert escalation works
+
+### 6.3 Backup & Recovery
+**Priority:** P0 - Critical
+**Files:**
+- New: Backup scripts
+- New: Recovery procedures
+
+**Zero-Trust Audit Steps:**
+1. Identify critical data
+2. Implement backup scripts
+3. Implement recovery procedures
+4. Test backups
+5. Test recovery
+
+**Implementation Plan:**
+1. Backup PostgreSQL database
+2. Backup Qdrant vectors
+3. Backup Redis state
+4. Backup configuration
+5. Test recovery procedures
+
+**Validation Criteria:**
+- [ ] PostgreSQL backups created
+- [ ] Qdrant backups created
+- [ ] Redis backups created
+- [ ] Configuration backups created
+- [ ] Recovery procedures tested
+
+---
+
+## Commit Strategy
 
 ### Commit Frequency
-- Commit after every logical unit of progress
-- Commit after every successful test pass
-- Commit after every major file change
-- Do NOT batch massive changes into single commit
+- Commit after each logical unit of work
+- Commit after each successful test
+- Commit after each major file change
+- Push to remote after each commit
 
-### Push Frequency
-- Push to remote after every commit
-- Verify git status before pushing
-- Ensure no sensitive data in commits
+### Commit Message Format
+```
+<type>(<scope>): <subject>
 
----
+<body>
 
-## Success Metrics
+<footer>
+```
 
-### Week 1
-- [x] Research GitHub for AGI/Multi-Agent repos
-- [x] Clone and analyze top projects (eliza, MetaGPT, swarms, ag2)
-- [x] Extract stealable patterns/code to STEALABLE_PATTERNS.md
-- [x] Zero-trust audit complete
-- [x] All security tests pass
-- [ ] Performance benchmarks established
+### Types
+- `feat`: New feature
+- `fix`: Bug fix
+- `refactor`: Code refactoring
+- `test`: Adding tests
+- `docs`: Documentation
+- `audit`: Security audit
+- `perf`: Performance improvement
 
-### Week 2
-- [ ] elizaOS patterns ported
-- [ ] Real API endpoints complete
-- [ ] Plugin SDK working
-- [ ] Research documentation complete
+### Examples
+```
+audit: verify EventMesh null safety implementation
 
-### Week 4
-- [ ] Flowise-like UI complete
-- [ ] Real-time dashboard operational
-- [ ] Observability visible
-- [ ] Workflow engine functional
+- Reviewed broadcast method for null checks
+- Verified dead connection filtering
+- Added test case for disconnected clients
+- All tests passing
 
-### Week 6
-- [ ] Document ingestion complete
-- [ ] Multi-platform connectors working
-- [ ] Consciousness metrics enhanced
-- [ ] 24/7 operation active
-- [ ] CI/CD pipeline operational
-- [ ] Pre-commit hooks active
+Closes #123
+```
+
+```
+feat: implement real agent status endpoint
+
+- Replaced mock data with supervisor queries
+- Added error handling
+- Added rate limiting
+- Added authentication
+
+Closes #124
+```
 
 ---
 
 ## Risk Assessment
 
 ### High Risk
-- None identified (EventMesh bug already fixed)
+| Risk | Impact | Probability | Mitigation |
+|------|--------|-------------|------------|
+| Database migration fails | HIGH | MEDIUM | Test in staging first, have rollback plan |
+| mem0 integration fails | HIGH | MEDIUM | Fallback to PostgreSQL-only |
+| WebSocket connection issues | HIGH | LOW | Implement reconnection logic |
+| Performance degradation | HIGH | MEDIUM | Load testing, monitoring |
 
 ### Medium Risk
-- Plugin SDK migration incomplete
-- Dashboard returns mock data (FIXED - now returns real data)
-- Memory system stub (FIXED - mem0 integrated)
+| Risk | Impact | Probability | Mitigation |
+|------|--------|-------------|------------|
+| API endpoint errors | MEDIUM | LOW | Error handling, monitoring |
+| Memory leaks | MEDIUM | LOW | Memory profiling, monitoring |
+| Security vulnerabilities | MEDIUM | LOW | Security testing, audits |
 
 ### Low Risk
-- Actor model is solid
-- Consensus algorithm works
-- Consciousness plugin functional
+| Risk | Impact | Probability | Mitigation |
+|------|--------|-------------|------------|
+| UI bugs | LOW | MEDIUM | User testing, monitoring |
+| Documentation gaps | LOW | HIGH | Continuous documentation |
 
 ---
 
-## Conclusion
+## Success Metrics
 
-The path forward is clear:
+### Week 1
+- [ ] Database migration verified and running
+- [ ] mem0 integration verified and working
+- [ ] EventMesh null safety verified
+- [ ] Real API endpoints implemented
+- [ ] All tests passing
 
-1. **AUDIT** core functions with zero-trust methodology (COMPLETE)
-2. **RESEARCH** industry-leading AI frameworks (COMPLETE)
-3. **INTEGRATE** best practices from elizaOS, Flowise, MetaGPT
-4. **BUILD** missing components (workflow engine, dashboard, observability)
-5. **DEPLOY** with CI/CD and monitoring
+### Week 2
+- [ ] Visual workflow builder functional
+- [ ] Real-time dashboard updates working
+- [ ] Observability UI enhanced
+- [ ] All tests passing
 
-The Collective's vision is achievable. We have the components. We have the map. Now we execute.
+### Week 3-4
+- [ ] Document ingestion (RAG) working
+- [ ] Multi-platform connectors enhanced
+- [ ] Consciousness metrics visualized
+- [ ] All tests passing
+
+### Week 5
+- [ ] Integration tests passing
+- [ ] Load tests passing
+- [ ] Security tests passing
+- [ ] System health > 90%
+
+### Week 6
+- [ ] Autonomous runtime operational
+- [ ] Monitoring and alerting working
+- [ ] Backup and recovery tested
+- [ ] System health > 95%
+
+---
+
+## Next Steps
+
+1. **Immediate:** Verify database migration and run it
+2. **Immediate:** Verify mem0 integration and test it
+3. **Immediate:** Verify EventMesh null safety with tests
+4. **Week 1:** Implement real API endpoints
+5. **Week 2:** Enhance WebUI with visual builder
+6. **Week 3-4:** Integrate advanced features
+7. **Week 5:** Comprehensive testing
+8. **Week 6:** Deploy 24/7 operation
+
+---
+
+## Appendix A: File Reference
+
+### Critical Files to Audit
+- [`src/heretek_swarm/gateway/event_mesh.py`](../src/heretek_swarm/gateway/event_mesh.py) - EventMesh implementation
+- [`src/heretek_swarm/memory/base.py`](../src/heretek_swarm/memory/base.py) - Memory system
+- [`src/heretek_swarm/actors/base.py`](../src/heretek_swarm/actors/base.py) - Actor model
+- [`src/heretek_swarm/api/main.py`](../src/heretek_swarm/api/main.py) - API endpoints
+- [`migrations/001_create_swarm_memories.sql`](../migrations/001_create_swarm_memories.sql) - Database migration
+- [`dashboard/frontend/src/components/Dashboard/Dashboard.tsx`](../dashboard/frontend/src/components/Dashboard/Dashboard.tsx) - Dashboard UI
+- [`dashboard/frontend/src/components/Observability/Observability.tsx`](../dashboard/frontend/src/components/Observability/Observability.tsx) - Observability UI
+
+### GitHub Repos to Study
+- elizaOS/eliza - Multi-agent framework
+- FlowiseAI/Flowise - Visual workflow builder
+- mem0ai/mem0 - Long-term memory
+- FoundationAgents/MetaGPT - Role-based agents
+- ag2ai/ag2 - A2A protocol
+- kyegomez/swarms - Production patterns
+- google/adk-python - Agent SDK
+- bytedance/deer-flow - Advanced features
+
+---
 
 **Remember:** Truth Over Narrative. Incremental Progress. Ruthless Consolidation.
 
