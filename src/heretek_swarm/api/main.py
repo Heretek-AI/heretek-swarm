@@ -23,6 +23,7 @@ import structlog
 from heretek_swarm.actors.supervisor import ActorSupervisor
 from memory.persistent import PersistentMemoryStore
 from heretek_swarm.api import websockets, consensus, plugins
+from heretek_swarm.api.rate_limiting import setup_rate_limiting
 
 # Import mem0 backend
 try:
