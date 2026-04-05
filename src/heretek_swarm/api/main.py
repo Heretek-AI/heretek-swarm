@@ -22,7 +22,7 @@ import structlog
 
 from heretek_swarm.actors.supervisor import ActorSupervisor
 from memory.persistent import PersistentMemoryStore
-from heretek_swarm.api import websockets, consensus, plugins, workflows, evaluation, observability
+from heretek_swarm.api import websockets, consensus, plugins, workflows, evaluation, observability, rag, consciousness
 from heretek_swarm.api.rate_limiting import setup_rate_limiting
 from heretek_swarm.gateway.auth import verify_auth
 
@@ -135,6 +135,8 @@ app.include_router(plugins.router)
 app.include_router(workflows.router)
 app.include_router(observability.router)
 app.include_router(evaluation.router)
+app.include_router(rag.router)
+app.include_router(consciousness.router)
 
 # Setup rate limiting
 rate_limit_enabled = os.environ.get("RATE_LIMIT_ENABLED", "true").lower() == "true"

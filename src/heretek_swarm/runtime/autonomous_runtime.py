@@ -1,504 +1,666 @@
 """
-Autonomous Runtime - 24/7 Continuous Operation
+Autonomous Runtime Manager
 
-Provides proactive architecture for continuous autonomous agent operation.
-Inspired by metabolicai pattern - maintains state continuously with zero context loss.
-
-Reference: GitHub Research 2026-04-05 (fsbioai/metabolicai)
+Manages 24/7 autonomous operation of Heretek Swarm including:
+- Agent lifecycle management
+- Health monitoring and auto-recovery
+- Auto-scaling based on load
+- State persistence and recovery
+- Alerting and notifications
 """
 
 import asyncio
-from datetime import datetime
-from typing import Any, Dict, List, Optional, Callable
+import os
+import signal
+import time
+from datetime import datetime, timedelta
+from pathlib import Path
+from typing import Dict, List, Optional, Any
 from dataclasses import dataclass, field
-from enum import Enum
+
 import structlog
 
-logger = structlog.get_logger(__name__)
+from .autonomous_runtime_config import (
+    AutonomousRuntimeConfig,
+    AlertConfig,
+    ScalingPolicy,
+)
+from .agent_runtime import AgentRuntime
+from ..actors.supervisor import ActorSupervisor
+from ..plugins.manager import plugin_manager
 
-
-class HealthStatus(Enum):
-    """Agent health status."""
-    HEALTHY = "healthy"
-    DEGRADED = "degraded"
-    UNHEALTHY = "unhealthy"
-    RECOVERING = "recovering"
+logger = structlog.get_logger("AutonomousRuntime")
 
 
 @dataclass
-class AgentHealth:
-    """Health check result for an agent."""
-    
-    agent_id: str
-    status: HealthStatus
-    last_check: datetime = field(default_factory=datetime.utcnow)
+class RuntimeState:
+    """Current state of the autonomous runtime."""
+
+    start_time: datetime
     uptime_seconds: float = 0.0
-    error_count: int = 0
-    last_error: Optional[str] = None
-    metrics: Dict[str, Any] = field(default_factory=dict)
-
-
-@dataclass
-class RuntimeMetrics:
-    """Overall runtime metrics."""
-    
-    total_agents: int = 0
-    healthy_agents: int = 0
-    degraded_agents: int = 0
-    unhealthy_agents: int = 0
-    total_uptime_seconds: float = 0.0
-    restart_count: int = 0
-    last_restart: Optional[datetime] = None
+    total_agent_restarts: int = 0
+    total_failures: int = 0
+    last_health_check: Optional[datetime] = None
+    last_scale_event: Optional[datetime] = None
+    current_agents: int = 0
 
 
 class AutonomousRuntime:
     """
-    Runtime for 24/7 autonomous operation.
-    
-    Provides:
-    - Proactive heartbeat monitoring
-    - Automatic restart on failure
-    - Graceful degradation on resource exhaustion
-    - Resource monitoring and alerts
-    - Zero context loss between sessions
+    Autonomous runtime manager for 24/7 operation.
+
+    Features:
+    - Continuous health monitoring
+    - Automatic failure recovery
+    - Dynamic agent scaling
+    - State persistence
+    - Alert notifications
     """
-    
-    def __init__(
-        self,
-        heartbeat_interval: int = 30,
-        max_retries: int = 3,
-        retry_delay: int = 5,
-        health_check_timeout: float = 10.0,
-    ):
+
+    def __init__(self, config: AutonomousRuntimeConfig):
         """
         Initialize autonomous runtime.
-        
+
         Args:
-            heartbeat_interval: Seconds between health checks
-            max_retries: Maximum restart attempts per agent
-            retry_delay: Seconds between retry attempts
-            health_check_timeout: Timeout for individual health checks
+            config: Runtime configuration
         """
-        self.heartbeat_interval = heartbeat_interval
-        self.max_retries = max_retries
-        self.retry_delay = retry_delay
-        self.health_check_timeout = health_check_timeout
-        
-        # Agent registry
-        self._agents: Dict[str, Any] = {}
-        self._agent_health: Dict[str, AgentHealth] = {}
-        self._agent_start_times: Dict[str, datetime] = {}
-        
-        # Health check handlers
-        self._health_check_handlers: Dict[str, Callable] = {}
-        
-        # Runtime state
+        self.config = config
+        self.supervisor: Optional[ActorSupervisor] = None
+        self.agent_runtime: Optional[AgentRuntime] = None
+        self.state = RuntimeState(start_time=datetime.utcnow())
         self._running = False
-        self._heartbeat_task: Optional[asyncio.Task] = None
-        self._start_time: Optional[datetime] = None
-        
-        # Metrics
-        self.metrics = RuntimeMetrics()
-        
-        logger.info(
-            "autonomous_runtime_initialized",
-            heartbeat_interval=heartbeat_interval,
-            max_retries=max_retries,
-            retry_delay=retry_delay,
+        self._shutdown_event = asyncio.Event()
+
+        # Alert cooldown tracking
+        self._last_alert_time: Dict[str, datetime] = {}
+
+        # Scaling cooldown tracking
+        self._last_scale_up_time: Optional[datetime] = None
+        self._last_scale_down_time: Optional[datetime] = None
+
+    async def initialize(self) -> None:
+        """Initialize runtime components."""
+        logger.info("Initializing autonomous runtime...")
+
+        # Initialize supervisor
+        self.supervisor = ActorSupervisor()
+        await self.supervisor.initialize()
+
+        # Initialize agent runtime
+        self.agent_runtime = AgentRuntime(
+            supervisor=self.supervisor,
+            character_configs=self.config.agent_configs,
         )
-    
-    def register_agent(
-        self,
-        agent_id: str,
-        agent: Any,
-        health_check_handler: Optional[Callable] = None,
-    ) -> None:
-        """
-        Register an agent for autonomous monitoring.
-        
-        Args:
-            agent_id: Unique agent identifier
-            agent: Agent instance
-            health_check_handler: Optional custom health check function
-        """
-        self._agents[agent_id] = agent
-        self._agent_health[agent_id] = AgentHealth(
-            agent_id=agent_id,
-            status=HealthStatus.HEALTHY,
-        )
-        self._agent_start_times[agent_id] = datetime.utcnow()
-        
-        if health_check_handler:
-            self._health_check_handlers[agent_id] = health_check_handler
-        
-        self.metrics.total_agents += 1
-        self.metrics.healthy_agents += 1
-        
-        logger.info(
-            "agent_registered",
-            agent_id=agent_id,
-            total_agents=self.metrics.total_agents,
-        )
-    
-    def unregister_agent(self, agent_id: str) -> None:
-        """
-        Unregister an agent from monitoring.
-        
-        Args:
-            agent_id: Agent to remove
-        """
-        if agent_id in self._agents:
-            del self._agents[agent_id]
-            del self._agent_health[agent_id]
-            if agent_id in self._agent_start_times:
-                del self._agent_start_times[agent_id]
-            if agent_id in self._health_check_handlers:
-                del self._health_check_handlers[agent_id]
-            
-            self.metrics.total_agents -= 1
-            
-            logger.info(
-                "agent_unregistered",
-                agent_id=agent_id,
-                remaining_agents=self.metrics.total_agents,
-            )
-    
+        await self.agent_runtime.initialize()
+
+        # Load persisted state if enabled
+        if self.config.state_persistence_enabled:
+            await self._load_state()
+
+        logger.info("Autonomous runtime initialized")
+
     async def start(self) -> None:
-        """Start autonomous runtime with heartbeat monitoring."""
-        if self._running:
-            logger.warning("runtime_already_running")
-            return
-        
+        """Start autonomous runtime."""
+        logger.info("Starting autonomous runtime...")
         self._running = True
-        self._start_time = datetime.utcnow()
-        
-        # Start heartbeat task
-        self._heartbeat_task = asyncio.create_task(self._heartbeat_loop())
-        
-        logger.info(
-            "autonomous_runtime_started",
-            start_time=self._start_time.isoformat(),
-            monitored_agents=len(self._agents),
-        )
-    
+        self.state.start_time = datetime.utcnow()
+
+        # Start initial agents
+        await self._start_initial_agents()
+
+        # Start background tasks
+        tasks = [
+            self._monitoring_loop(),
+            self._scaling_loop(),
+            self._state_persistence_loop(),
+            self._metrics_collection_loop(),
+        ]
+
+        if self.config.consciousness_plugin_enabled:
+            tasks.append(self._consciousness_metrics_loop())
+
+        # Run all tasks concurrently
+        await asyncio.gather(*[asyncio.create_task(t) for t in tasks])
+
     async def stop(self) -> None:
-        """Stop autonomous runtime."""
-        if not self._running:
-            return
-        
+        """Stop autonomous runtime gracefully."""
+        logger.info("Stopping autonomous runtime...")
         self._running = False
-        
-        # Cancel heartbeat task
-        if self._heartbeat_task:
-            self._heartbeat_task.cancel()
+        self._shutdown_event.set()
+
+        # Stop all agents
+        if self.supervisor:
+            await self.supervisor.terminate_all()
+
+        # Save final state
+        if self.config.state_persistence_enabled:
+            await self._save_state()
+
+        logger.info("Autonomous runtime stopped")
+
+    async def _start_initial_agents(self) -> None:
+        """Start initial set of agents."""
+        logger.info("Starting initial agents...")
+
+        # Load agent configurations
+        for agent_name, config_path in self.config.agent_configs.items():
             try:
-                await self._heartbeat_task
+                if config_path.exists():
+                    await self.agent_runtime.spawn_agent(
+                        agent_name,
+                        str(config_path),
+                    )
+                    logger.info(f"Started agent: {agent_name}")
+            except Exception as e:
+                logger.error(f"Failed to start agent {agent_name}: {e}")
+                self.state.total_failures += 1
+
+        self.state.current_agents = len(self.supervisor.actors) if self.supervisor else 0
+
+    async def _monitoring_loop(self) -> None:
+        """Main monitoring loop."""
+        while self._running and not self._shutdown_event.is_set():
+            try:
+                # Health checks
+                if self.config.monitoring_enabled:
+                    await self._health_checks()
+
+                # Wait for next interval
+                await asyncio.sleep(self.config.health_check_interval)
+
             except asyncio.CancelledError:
-                pass
-        
-        logger.info("autonomous_runtime_stopped")
-    
-    async def _heartbeat_loop(self) -> None:
-        """Main heartbeat monitoring loop."""
-        while self._running:
-            try:
-                await self._check_all_agents()
-                await self._update_metrics()
+                break
             except Exception as e:
-                logger.error("heartbeat_loop_error", error=str(e))
-            
-            # Wait for next heartbeat
-            await asyncio.sleep(self.heartbeat_interval)
-    
-    async def _check_all_agents(self) -> None:
-        """Check health of all registered agents."""
-        for agent_id in list(self._agents.keys()):
+                logger.error(f"Monitoring loop error: {e}")
+                await asyncio.sleep(5)  # Brief pause before retry
+
+    async def _health_checks(self) -> None:
+        """Perform health checks on all components."""
+        self.state.last_health_check = datetime.utcnow()
+
+        # Check agent health
+        if self.supervisor:
+            failed_agents = []
+            for agent_id, actor in self.supervisor.actors.items():
+                status = actor.get_status()
+                if status and status.state.value in ["suspended", "terminated", "error"]:
+                    failed_agents.append(agent_id)
+
+            # Auto-restart failed agents if enabled
+            if failed_agents and self.config.auto_restart_enabled:
+                await self._restart_agents(failed_agents)
+
+        # Check memory usage
+        await self._check_memory_usage()
+
+        # Check API health
+        await self._check_api_health()
+
+    async def _restart_agents(self, agent_ids: List[str]) -> None:
+        """Restart failed agents."""
+        for agent_id in agent_ids:
             try:
-                health = await self._check_agent_health(agent_id)
-                self._agent_health[agent_id] = health
-                
-                # Handle unhealthy agents
-                if health.status in (HealthStatus.UNHEALTHY, HealthStatus.DEGRADED):
-                    await self._handle_unhealthy_agent(agent_id, health)
-                
+                # Check restart attempts
+                attempts_key = f"restart_{agent_id}"
+                attempts = self.state.__dict__.get(f"{attempts_key}_attempts", 0)
+
+                if attempts >= self.config.max_restart_attempts:
+                    logger.error(f"Max restart attempts reached for {agent_id}")
+                    await self._send_alert(
+                        "agent_failure",
+                        {"agent_id": agent_id, "reason": "max_restart_attempts"},
+                    )
+                    continue
+
+                # Terminate existing actor
+                if agent_id in self.supervisor.actors:
+                    await self.supervisor.terminate_actor(agent_id)
+
+                # Restart agent
+                config_path = self.config.agent_configs.get(agent_id)
+                if config_path and config_path.exists():
+                    await self.agent_runtime.spawn_agent(agent_id, str(config_path))
+                    self.state.total_agent_restarts += 1
+                    logger.info(f"Restarted agent: {agent_id}")
+
+                # Wait before next attempt
+                await asyncio.sleep(self.config.restart_delay_seconds)
+
             except Exception as e:
-                logger.error("agent_health_check_failed", agent_id=agent_id, error=str(e))
-                # Mark as unhealthy on error
-                self._agent_health[agent_id] = AgentHealth(
-                    agent_id=agent_id,
-                    status=HealthStatus.UNHEALTHY,
-                    last_check=datetime.utcnow(),
-                    last_error=str(e),
-                )
-    
-    async def _check_agent_health(self, agent_id: str) -> AgentHealth:
-        """
-        Check health of a single agent.
-        
-        Args:
-            agent_id: Agent to check
-            
-        Returns:
-            AgentHealth with current status
-        """
-        agent = self._agents.get(agent_id)
-        if not agent:
-            return AgentHealth(
-                agent_id=agent_id,
-                status=HealthStatus.UNHEALTHY,
-                last_error="Agent not found",
-            )
-        
-        # Use custom health check if provided
-        if agent_id in self._health_check_handlers:
-            try:
-                is_healthy = await asyncio.wait_for(
-                    self._health_check_handlers[agent_id](agent),
-                    timeout=self.health_check_timeout,
-                )
-                status = HealthStatus.HEALTHY if is_healthy else HealthStatus.UNHEALTHY
-                return AgentHealth(
-                    agent_id=agent_id,
-                    status=status,
-                    last_check=datetime.utcnow(),
-                )
-            except asyncio.TimeoutError:
-                return AgentHealth(
-                    agent_id=agent_id,
-                    status=HealthStatus.UNHEALTHY,
-                    last_error="Health check timeout",
-                )
-        
-        # Default health check - check if agent is responsive
+                logger.error(f"Failed to restart agent {agent_id}: {e}")
+                self.state.total_failures += 1
+
+    async def _check_memory_usage(self) -> None:
+        """Check memory usage and trigger alerts."""
         try:
-            # Check if agent has is_healthy method
-            if hasattr(agent, 'is_healthy'):
-                is_healthy = await asyncio.wait_for(
-                    agent.is_healthy(),
-                    timeout=self.health_check_timeout,
+            import psutil
+
+            memory = psutil.virtual_memory()
+            usage_percent = memory.percent
+
+            if usage_percent > self.config.memory_usage_threshold * 100:
+                await self._send_alert(
+                    "high_memory",
+                    {"usage_percent": usage_percent},
                 )
-                status = HealthStatus.HEALTHY if is_healthy else HealthStatus.UNHEALTHY
-            else:
-                # Assume healthy if no is_healthy method
-                status = HealthStatus.HEALTHY
-            
-            # Calculate uptime
-            start_time = self._agent_start_times.get(agent_id)
-            uptime = (datetime.utcnow() - start_time).total_seconds() if start_time else 0.0
-            
-            return AgentHealth(
-                agent_id=agent_id,
-                status=status,
-                last_check=datetime.utcnow(),
-                uptime_seconds=uptime,
-            )
-        except asyncio.TimeoutError:
-            return AgentHealth(
-                agent_id=agent_id,
-                status=HealthStatus.UNHEALTHY,
-                last_error="Health check timeout",
-            )
+
+        except ImportError:
+            logger.warning("psutil not available for memory monitoring")
         except Exception as e:
-            return AgentHealth(
-                agent_id=agent_id,
-                status=HealthStatus.UNHEALTHY,
-                last_error=str(e),
-            )
-    
-    async def _handle_unhealthy_agent(self, agent_id: str, health: AgentHealth) -> None:
-        """
-        Handle an unhealthy agent with retry logic.
-        
-        Args:
-            agent_id: Unhealthy agent
-            health: Current health status
-        """
-        agent = self._agents.get(agent_id)
-        if not agent:
-            return
-        
-        # Check retry count
-        current_health = self._agent_health.get(agent_id)
-        if current_health.error_count >= self.max_retries:
-            logger.error(
-                "agent_max_retries_exceeded",
-                agent_id=agent_id,
-                retries=current_health.error_count,
-            )
-            # Could escalate to alerting system here
-            return
-        
-        # Attempt restart
-        logger.warning(
-            "agent_unhealthy_attempting_restart",
-            agent_id=agent_id,
-            status=health.status.value,
-            error=health.last_error,
-        )
-        
+            logger.error(f"Memory check error: {e}")
+
+    async def _check_api_health(self) -> None:
+        """Check API health and latency."""
         try:
-            await self._restart_agent(agent_id)
+            import httpx
+
+            start_time = time.time()
+            async with httpx.AsyncClient() as client:
+                response = await client.get(
+                    f"http://{self.config.api_host}:{self.config.api_port}/api/health/live",
+                    timeout=5.0,
+                )
+            latency_ms = (time.time() - start_time) * 1000
+
+            if latency_ms > self.config.high_latency_threshold_ms:
+                await self._send_alert(
+                    "high_latency",
+                    {"latency_ms": latency_ms},
+                )
+
         except Exception as e:
-            logger.error("agent_restart_failed", agent_id=agent_id, error=str(e))
-            # Increment error count
-            current_health.error_count += 1
-            current_health.last_error = str(e)
-    
-    async def _restart_agent(self, agent_id: str) -> bool:
-        """
-        Restart an unhealthy agent.
-        
-        Args:
-            agent_id: Agent to restart
-            
-        Returns:
-            True if restart successful
-        """
-        agent = self._agents.get(agent_id)
-        if not agent:
-            return False
-        
-        for attempt in range(self.max_retries):
+            logger.error(f"API health check failed: {e}")
+            self.state.total_failures += 1
+
+    async def _scaling_loop(self) -> None:
+        """Auto-scaling loop."""
+        while self._running and not self._shutdown_event.is_set():
             try:
-                # Check if agent has restart method
-                if hasattr(agent, 'restart'):
-                    await agent.restart()
-                elif hasattr(agent, 'initialize'):
-                    # Reinitialize as fallback
-                    await agent.initialize()
-                else:
-                    logger.warning("agent_no_restart_method", agent_id=agent_id)
-                    return False
-                
-                # Update start time
-                self._agent_start_times[agent_id] = datetime.utcnow()
-                
-                # Update health
-                self._agent_health[agent_id] = AgentHealth(
-                    agent_id=agent_id,
-                    status=HealthStatus.RECOVERING,
-                    last_check=datetime.utcnow(),
-                )
-                
-                # Update metrics
-                self.metrics.restart_count += 1
-                self.metrics.last_restart = datetime.utcnow()
-                
-                logger.info(
-                    "agent_restarted",
-                    agent_id=agent_id,
-                    attempt=attempt + 1,
-                )
-                
-                return True
-                
+                if self.config.auto_scaling_enabled:
+                    await self._check_scaling_conditions()
+
+                await asyncio.sleep(60)  # Check every minute
+
+            except asyncio.CancelledError:
+                break
             except Exception as e:
-                logger.error(
-                    "agent_restart_attempt_failed",
-                    agent_id=agent_id,
-                    attempt=attempt + 1,
-                    error=str(e),
-                )
-                
-                if attempt < self.max_retries - 1:
-                    await asyncio.sleep(self.retry_delay)
-        
-        return False
-    
-    async def _update_metrics(self) -> None:
-        """Update overall runtime metrics."""
-        healthy = sum(
-            1 for h in self._agent_health.values()
-            if h.status == HealthStatus.HEALTHY
-        )
-        degraded = sum(
-            1 for h in self._agent_health.values()
-            if h.status == HealthStatus.DEGRADED
-        )
-        unhealthy = sum(
-            1 for h in self._agent_health.values()
-            if h.status == HealthStatus.UNHEALTHY
-        )
-        
-        self.metrics.healthy_agents = healthy
-        self.metrics.degraded_agents = degraded
-        self.metrics.unhealthy_agents = unhealthy
-        
-        # Calculate total uptime
-        if self._start_time:
-            self.metrics.total_uptime_seconds = (
-                datetime.utcnow() - self._start_time
-            ).total_seconds()
-        
-        logger.debug(
-            "runtime_metrics_updated",
-            healthy=healthy,
-            degraded=degraded,
-            unhealthy=unhealthy,
-            uptime_seconds=self.metrics.total_uptime_seconds,
-        )
-    
-    def get_agent_health(self, agent_id: str) -> Optional[AgentHealth]:
-        """
-        Get current health status of an agent.
-        
-        Args:
-            agent_id: Agent to query
-            
-        Returns:
-            AgentHealth or None if not found
-        """
-        return self._agent_health.get(agent_id)
-    
-    def get_all_agent_health(self) -> Dict[str, AgentHealth]:
-        """Get health status of all agents."""
-        return self._agent_health.copy()
-    
-    def get_metrics(self) -> RuntimeMetrics:
-        """Get current runtime metrics."""
-        return self.metrics
-    
-    async def graceful_degradation(self) -> None:
-        """
-        Implement graceful degradation under resource pressure.
-        
-        Reduces non-essential operations when resources are constrained.
-        """
-        logger.warning("graceful_degradation_initiated")
-        
-        # Could implement:
-        # - Reduce heartbeat frequency
-        # - Disable non-critical agents
-        # - Throttle memory operations
-        # - Reduce logging verbosity
-        
-        # For now, just log the event
-        pass
+                logger.error(f"Scaling loop error: {e}")
+                await asyncio.sleep(5)
+
+    async def _check_scaling_conditions(self) -> None:
+        """Check if scaling is needed."""
+        if not self.supervisor:
+            return
+
+        current_agents = len(self.supervisor.actors)
+
+        # Check scale up conditions
+        if current_agents < self.config.max_agents:
+            load = await self._calculate_system_load()
+            if load > self.config.scale_up_threshold:
+                await self._scale_up()
+
+        # Check scale down conditions
+        elif current_agents > self.config.min_agents:
+            load = await self._calculate_system_load()
+            if load < self.config.scale_down_threshold:
+                await self._scale_down()
+
+    async def _calculate_system_load(self) -> float:
+        """Calculate current system load (CPU + memory)."""
+        try:
+            import psutil
+
+            cpu = psutil.cpu_percent(interval=1)
+            memory = psutil.virtual_memory().percent
+
+            # Average CPU and memory
+            return (cpu + memory) / 200
+
+        except ImportError:
+            return 0.5  # Default moderate load
+        except Exception as e:
+            logger.error(f"Load calculation error: {e}")
+            return 0.5
+
+    async def _scale_up(self) -> None:
+        """Scale up by adding more agents."""
+        # Check cooldown
+        if self._last_scale_up_time:
+            time_since = datetime.utcnow() - self._last_scale_up_time
+            if time_since.total_seconds() < self.config.scale_up_cooldown_minutes * 60:
+                return
+
+        current_agents = len(self.supervisor.actors) if self.supervisor else 0
+        if current_agents >= self.config.max_agents:
+            return
+
+        # Add new agent
+        available_agents = [
+            name for name in self.config.agent_configs.keys()
+            if name not in (self.supervisor.actors if self.supervisor else {})
+        ]
+
+        if available_agents:
+            agent_name = available_agents[0]
+            config_path = self.config.agent_configs[agent_name]
+
+            try:
+                await self.agent_runtime.spawn_agent(agent_name, str(config_path))
+                self.state.last_scale_event = datetime.utcnow()
+                self._last_scale_up_time = datetime.utcnow()
+                logger.info(f"Scaled up: Started agent {agent_name}")
+            except Exception as e:
+                logger.error(f"Failed to scale up: {e}")
+
+    async def _scale_down(self) -> None:
+        """Scale down by removing idle agents."""
+        # Check cooldown and minimum uptime
+        if self._last_scale_down_time:
+            time_since = datetime.utcnow() - self._last_scale_down_time
+            if time_since.total_seconds() < self.config.scale_down_cooldown_minutes * 60:
+                return
+
+        current_agents = len(self.supervisor.actors) if self.supervisor else 0
+        if current_agents <= self.config.min_agents:
+            return
+
+        # Find idle agent to remove
+        idle_agent = await self._find_idle_agent()
+        if idle_agent:
+            try:
+                await self.supervisor.terminate_actor(idle_agent)
+                self.state.last_scale_event = datetime.utcnow()
+                self._last_scale_down_time = datetime.utcnow()
+                logger.info(f"Scaled down: Terminated agent {idle_agent}")
+            except Exception as e:
+                logger.error(f"Failed to scale down: {e}")
+
+    async def _find_idle_agent(self) -> Optional[str]:
+        """Find an idle agent to scale down."""
+        if not self.supervisor:
+            return None
+
+        for agent_id, actor in self.supervisor.actors.items():
+            status = actor.get_status()
+            if status:
+                # Check if agent has been idle for a while
+                if status.last_activity:
+                    idle_time = datetime.utcnow() - status.last_activity
+                    if idle_time.total_seconds() > self.config.min_uptime_before_scale_down * 60:
+                        return agent_id
+
+        return None
+
+    async def _state_persistence_loop(self) -> None:
+        """State persistence loop."""
+        while self._running and not self._shutdown_event.is_set():
+            try:
+                if self.config.state_persistence_enabled:
+                    await self._save_state()
+
+                await asyncio.sleep(self.config.state_backup_interval)
+
+            except asyncio.CancelledError:
+                break
+            except Exception as e:
+                logger.error(f"State persistence error: {e}")
+                await asyncio.sleep(5)
+
+    async def _save_state(self) -> None:
+        """Save current state to disk."""
+        state_file = Path(self.config.log_directory) / "runtime_state.json"
+
+        state_data = {
+            "timestamp": datetime.utcnow().isoformat(),
+            "uptime_seconds": self.state.uptime_seconds,
+            "total_agent_restarts": self.state.total_agent_restarts,
+            "total_failures": self.state.total_failures,
+            "current_agents": self.state.current_agents,
+        }
+
+        try:
+            state_file.parent.mkdir(parents=True, exist_ok=True)
+            with open(state_file, "w") as f:
+                import json
+                json.dump(state_data, f, indent=2)
+        except Exception as e:
+            logger.error(f"Failed to save state: {e}")
+
+    async def _load_state(self) -> None:
+        """Load saved state from disk."""
+        state_file = Path(self.config.log_directory) / "runtime_state.json"
+
+        if not state_file.exists():
+            return
+
+        try:
+            with open(state_file, "r") as f:
+                import json
+                state_data = json.load(f)
+
+            self.state.total_agent_restarts = state_data.get("total_agent_restarts", 0)
+            self.state.total_failures = state_data.get("total_failures", 0)
+
+            logger.info(f"Loaded state from {state_file}")
+        except Exception as e:
+            logger.error(f"Failed to load state: {e}")
+
+    async def _metrics_collection_loop(self) -> None:
+        """Metrics collection loop."""
+        while self._running and not self._shutdown_event.is_set():
+            try:
+                await self._collect_metrics()
+
+                await asyncio.sleep(self.config.metrics_collection_interval)
+
+            except asyncio.CancelledError:
+                break
+            except Exception as e:
+                logger.error(f"Metrics collection error: {e}")
+                await asyncio.sleep(5)
+
+    async def _collect_metrics(self) -> None:
+        """Collect and store metrics."""
+        if not self.supervisor:
+            return
+
+        # Collect agent metrics
+        agent_metrics = []
+        for agent_id, actor in self.supervisor.actors.items():
+            status = actor.get_status()
+            if status:
+                agent_metrics.append({
+                    "agent_id": agent_id,
+                    "message_count": status.message_count,
+                    "error_count": status.error_count,
+                    "uptime_seconds": status.uptime_seconds,
+                })
+
+        # Store metrics
+        self.state.uptime_seconds = (
+            datetime.utcnow() - self.state.start_time
+        ).total_seconds()
+
+        logger.info(f"Collected metrics for {len(agent_metrics)} agents")
+
+    async def _consciousness_metrics_loop(self) -> None:
+        """Consciousness metrics collection loop."""
+        while self._running and not self._shutdown_event.is_set():
+            try:
+                await self._collect_consciousness_metrics()
+
+                await asyncio.sleep(self.config.consciousness_metrics_interval)
+
+            except asyncio.CancelledError:
+                break
+            except Exception as e:
+                logger.error(f"Consciousness metrics error: {e}")
+                await asyncio.sleep(5)
+
+    async def _collect_consciousness_metrics(self) -> None:
+        """Collect consciousness metrics from plugin."""
+        plugin = plugin_manager.get_plugin("consciousness_enhanced")
+        if not plugin:
+            return
+
+        try:
+            stats = plugin.get_statistics()
+            logger.info(
+                f"Consciousness stats: "
+                f"agents={stats.get('total_agents', 0)}, "
+                f"avg_phi={stats.get('iit_average_phi', 0):.4f}, "
+                f"conscious={stats.get('conscious_agents', 0)}"
+            )
+
+            # Check for consciousness drop
+            if stats.get("conscious_agents", 0) > 0:
+                consciousness_ratio = stats["conscious_agents"] / stats["total_agents"]
+                if consciousness_ratio < self.config.consciousness_drop_threshold:
+                    await self._send_alert(
+                        "consciousness_drop",
+                        {"ratio": consciousness_ratio},
+                    )
+
+        except Exception as e:
+            logger.error(f"Consciousness metrics collection error: {e}")
+
+    async def _send_alert(self, alert_type: str, data: Dict[str, Any]) -> None:
+        """Send alert notification."""
+        # Check cooldown
+        last_time = self._last_alert_time.get(alert_type)
+        if last_time:
+            time_since = datetime.utcnow() - last_time
+            if time_since.total_seconds() < 300:  # 5 minute cooldown
+                return
+
+        self._last_alert_time[alert_type] = datetime.utcnow()
+
+        logger.warning(f"Alert: {alert_type}", data=data)
+
+        # Send to configured channels
+        if self.config.alert_config.slack_channel:
+            await self._send_slack_alert(alert_type, data)
+
+        if self.config.alert_config.discord_channel:
+            await self._send_discord_alert(alert_type, data)
+
+        if self.config.alert_config.email_enabled:
+            await self._send_email_alert(alert_type, data)
+
+    async def _send_slack_alert(self, alert_type: str, data: Dict[str, Any]) -> None:
+        """Send alert to Slack."""
+        try:
+            from ..integrations.slack_bot import SlackBot
+
+            bot = SlackBot(
+                token=os.getenv("SLACK_BOT_TOKEN"),
+                signing_secret=os.getenv("SLACK_SIGNING_SECRET"),
+                agent_id="runtime_monitor",
+                supervisor=self.supervisor,
+            )
+
+            message = f"🚨 Alert: {alert_type}\n"
+            message += f"```json\n{data}\n```"
+
+            await bot.send_notification(
+                channel=self.config.alert_config.slack_channel,
+                message=message,
+            )
+
+        except Exception as e:
+            logger.error(f"Failed to send Slack alert: {e}")
+
+    async def _send_discord_alert(self, alert_type: str, data: Dict[str, Any]) -> None:
+        """Send alert to Discord."""
+        try:
+            from ..integrations.discord_bot import DiscordBot
+
+            bot = DiscordBot(
+                token=os.getenv("DISCORD_BOT_TOKEN"),
+                agent_id="runtime_monitor",
+                prefix="!",
+                supervisor=self.supervisor,
+            )
+
+            message = f"🚨 Alert: {alert_type}\n"
+            message += f"```json\n{data}\n```"
+
+            # Note: Discord bot would need channel reference
+            logger.info(f"Discord alert prepared: {alert_type}")
+
+        except Exception as e:
+            logger.error(f"Failed to send Discord alert: {e}")
+
+    async def _send_email_alert(self, alert_type: str, data: Dict[str, Any]) -> None:
+        """Send alert via email."""
+        try:
+            import smtplib
+            from email.mime.text import MIMEText
+            from email.mime.multipart import MIMEMultipart
+
+            msg = MIMEMultipart()
+            msg["From"] = os.getenv("SMTP_FROM", "noreply@heretek.swarm")
+            msg["To"] = ", ".join(self.config.alert_config.email_recipients)
+            msg["Subject"] = f"Heretek Swarm Alert: {alert_type}"
+
+            body = f"Alert Type: {alert_type}\n\n"
+            body += f"Data:\n{data}\n\n"
+            body += f"Timestamp: {datetime.utcnow().isoformat()}"
+
+            msg.attach(MIMEText(body, "plain"))
+
+            with smtplib.SMTP(
+                os.getenv("SMTP_HOST", "localhost"),
+                int(os.getenv("SMTP_PORT", "25")),
+            ) as server:
+                if os.getenv("SMTP_USERNAME"):
+                    server.login(
+                        os.getenv("SMTP_USERNAME"),
+                        os.getenv("SMTP_PASSWORD"),
+                    )
+                server.send_message(msg)
+
+            logger.info(f"Email alert sent: {alert_type}")
+
+        except Exception as e:
+            logger.error(f"Failed to send email alert: {e}")
+
+    def get_status(self) -> Dict[str, Any]:
+        """Get current runtime status."""
+        return {
+            "running": self._running,
+            "uptime_seconds": self.state.uptime_seconds,
+            "total_agent_restarts": self.state.total_agent_restarts,
+            "total_failures": self.state.total_failures,
+            "current_agents": self.state.current_agents,
+            "last_health_check": self.state.last_health_check.isoformat() if self.state.last_health_check else None,
+            "last_scale_event": self.state.last_scale_event.isoformat() if self.state.last_scale_event else None,
+        }
 
 
-# Singleton instance for global access
-_autonomous_runtime: Optional[AutonomousRuntime] = None
-
-
-def get_autonomous_runtime() -> AutonomousRuntime:
+async def start_autonomous_runtime(config: AutonomousRuntimeConfig) -> AutonomousRuntime:
     """
-    Get the global autonomous runtime instance.
-    
-    Returns:
-        AutonomousRuntime singleton
-    """
-    global _autonomous_runtime
-    if _autonomous_runtime is None:
-        _autonomous_runtime = AutonomousRuntime()
-    return _autonomous_runtime
+    Start autonomous runtime with signal handling.
 
-
-def set_autonomous_runtime(runtime: AutonomousRuntime) -> None:
-    """
-    Set the global autonomous runtime instance.
-    
     Args:
-        runtime: AutonomousRuntime instance to set as global
+        config: Runtime configuration
+
+    Returns:
+        AutonomousRuntime instance
     """
-    global _autonomous_runtime
-    _autonomous_runtime = runtime
+    runtime = AutonomousRuntime(config)
+    await runtime.initialize()
+
+    # Setup signal handlers
+    def signal_handler(signum, frame):
+        logger.info(f"Received signal {signum}, shutting down...")
+        asyncio.create_task(runtime.stop())
+
+    signal.signal(signal.SIGINT, signal_handler)
+    signal.signal(signal.SIGTERM, signal_handler)
+
+    # Start runtime
+    await runtime.start()
+
+    return runtime

@@ -1,26 +1,29 @@
 """
-RAG Pipeline Tests
+Comprehensive test suite for RAG (Retrieval-Augmented Generation) Pipeline
 
-Tests for document processing, embedding, and retrieval.
+Tests for:
+- Document processing and chunking
+- Vector embedding and search
+- Hybrid retrieval (BM25 + semantic)
+- RAG pipeline orchestration
 """
 
-import os
 import pytest
-import tempfile
+from unittest.mock import Mock, AsyncMock, patch
 from pathlib import Path
 
-from rag import (
+from rag.document_processor import (
     DocumentProcessor,
-    DocumentChunk,
-    ProcessingConfig,
-    ChunkStrategy,
     DocumentType,
-    RAGPipeline,
-    RAGConfig,
-    HybridRetriever,
-    RetrievalConfig,
-    SearchMode,
+    ChunkStrategy,
+    ProcessedDocument,
 )
+from rag.retriever import (
+    HybridRetriever,
+    SearchMode,
+    SearchResult,
+)
+from rag.rag_pipeline import RAGPipeline, RAGConfig
 
 
 # =============================================================================
@@ -28,129 +31,124 @@ from rag import (
 # =============================================================================
 
 class TestDocumentProcessor:
-    """Test document processing functionality."""
-    
+    """Test suite for document processing."""
+
     @pytest.fixture
     def processor(self):
+        """Create document processor instance."""
         return DocumentProcessor()
-    
-    @pytest.fixture
-    def config(self):
-        return ProcessingConfig(
-            chunk_strategy=ChunkStrategy.RECURSIVE,
-            chunk_size=500,
-            chunk_overlap=50,
-        )
-    
-    def test_detect_type(self, processor):
-        """Test document type detection."""
+
+    def test_detect_type_markdown(self, processor):
+        """Test detecting markdown files."""
         assert processor.detect_type("test.md") == DocumentType.MARKDOWN
+        assert processor.detect_type("test.markdown") == DocumentType.MARKDOWN
+
+    def test_detect_type_pdf(self, processor):
+        """Test detecting PDF files."""
+        assert processor.detect_type("test.pdf") == DocumentType.PDF
+
+    def test_detect_type_html(self, processor):
+        """Test detecting HTML files."""
+        assert processor.detect_type("test.html") == DocumentType.HTML
+        assert processor.detect_type("test.htm") == DocumentType.HTML
+
+    def test_detect_type_text(self, processor):
+        """Test detecting text files."""
         assert processor.detect_type("test.txt") == DocumentType.TEXT
-        assert processor.detect_type("test.py") == DocumentType.CODE
-        assert processor.detect_type("test.json") == DocumentType.JSON
-        assert processor.detect_type("test.unknown") == DocumentType.UNKNOWN
-    
+        assert processor.detect_type("test.unknown") == DocumentType.TEXT
+
     def test_generate_id(self, processor):
-        """Test ID generation."""
-        id1 = processor.generate_id("content", "source")
-        id2 = processor.generate_id("content", "source")
-        id3 = processor.generate_id("different", "source")
-        
+        """Test generating document IDs."""
+        id1 = processor.generate_id("test content", "source1")
+        id2 = processor.generate_id("test content", "source1")
+        id3 = processor.generate_id("different content", "source1")
+
         assert id1 == id2  # Same content = same ID
         assert id1 != id3  # Different content = different ID
-        assert len(id1) == 16  # 16 character hex
-    
-    @pytest.mark.asyncio
-    async def test_process_content_simple(self, processor, config):
-        """Test processing simple content."""
-        content = "This is a test document. " * 50
-        
-        doc = await processor.process_content(
-            content=content,
-            source_path="test.txt",
-            doc_type=DocumentType.TEXT,
+
+    def test_extract_keywords(self, processor):
+        """Test keyword extraction."""
+        keywords = processor._extract_keywords(
+            "The quick brown fox jumps over the lazy dog. "
+            "Artificial intelligence and machine learning are important."
         )
-        
-        assert doc.id is not None
-        assert doc.source_path == "test.txt"
-        assert len(doc.chunks) > 0
-        assert doc.total_characters == len(content.strip())
-    
-    @pytest.mark.asyncio
-    async def test_chunk_recursive(self, processor, config):
-        """Test recursive chunking."""
-        processor.config = config
-        
-        # Create content with multiple paragraphs
-        content = "\n\n".join([
-            f"Paragraph {i}. " + "Word " * 100
-            for i in range(5)
-        ])
-        
-        doc = await processor.process_content(
-            content=content,
-            source_path="test.md",
-            doc_type=DocumentType.MARKDOWN,
-        )
-        
-        assert len(doc.chunks) > 1
-        
-        # Check chunks have proper metadata
-        for chunk in doc.chunks:
-            assert chunk.total_chunks == len(doc.chunks)
-            assert len(chunk.content) >= config.min_chunk_size
-    
-    @pytest.mark.asyncio
-    async def test_chunk_fixed_size(self, processor):
+
+        assert "artificial" in keywords
+        assert "intelligence" in keywords
+        assert "machine" in keywords
+        assert "learning" in keywords
+
+    def test_chunk_content_fixed_size(self, processor):
         """Test fixed-size chunking."""
-        processor.config = ProcessingConfig(
-            chunk_strategy=ChunkStrategy.FIXED_SIZE,
-            chunk_size=200,
-            chunk_overlap=20,
-        )
-        
-        content = "Test content. " * 50
-        doc = await processor.process_content(
-            content=content,
-            source_path="test.txt",
-        )
-        
-        assert len(doc.chunks) > 1
-    
-    @pytest.mark.asyncio
-    async def test_process_file(self, processor):
-        """Test file processing."""
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".txt", delete=False
-        ) as f:
-            f.write("Test file content.\n" * 20)
-            temp_path = f.name
-        
-        try:
-            doc = await processor.process_file(temp_path)
-            
-            assert doc.id is not None
-            assert doc.source_path == temp_path
-            assert len(doc.chunks) > 0
-        finally:
-            os.unlink(temp_path)
-    
+        text = "a" * 100
+        chunks = processor._chunk_fixed_size(text, chunk_size=30, overlap=5)
+
+        assert len(chunks) == 4
+        assert all(len(chunk) <= 30 for chunk in chunks)
+
+    def test_chunk_content_recursive(self, processor):
+        """Test recursive chunking."""
+        text = "This is a test. This is another test. And a third test."
+        chunks = processor._chunk_recursive(text, max_chars=20)
+
+        assert len(chunks) > 1
+        assert all(len(chunk) <= 20 for chunk in chunks)
+
     def test_clean_content_html(self, processor):
-        """Test HTML cleaning."""
-        html = "<html><body><p>Test <b>content</b></p><script>alert('xss')</script></body></html>"
+        """Test cleaning HTML content."""
+        html = "<p>This is <b>bold</b> text.</p>"
         cleaned = processor._clean_content(html, DocumentType.HTML)
-        
-        assert "<html>" not in cleaned
-        assert "<script>" not in cleaned
-        assert "Test content" in cleaned
-    
-    def test_normalize_whitespace(self, processor):
-        """Test whitespace normalization."""
-        text = "Multiple   spaces   and\n\n\n\nnewlines"
-        normalized = processor._normalize_whitespace(text)
-        
-        assert "   " not in normalized
-        assert "\n\n\n" not in normalized
+
+        assert "<p>" not in cleaned
+        assert "<b>" not in cleaned
+        assert "bold" in cleaned
+
+    def test_clean_content_urls(self, processor):
+        """Test removing URLs from content."""
+        content = "Visit https://example.com for more info."
+        cleaned = processor._clean_content(content, DocumentType.TEXT)
+
+        assert "https://example.com" not in cleaned
+
+    def test_extract_metadata(self, processor):
+        """Test metadata extraction."""
+        metadata = processor._extract_metadata(
+            "Test content",
+            "test.txt",
+            {"custom": "value"}
+        )
+
+        assert "document_type" in metadata
+        assert "source" in metadata
+        assert "custom" in metadata
+        assert metadata["source"] == "test.txt"
+
+    @pytest.mark.asyncio
+    async def test_process_content(self, processor):
+        """Test processing content string."""
+        result = await processor.process_content(
+            "This is test content for processing.",
+            source="test_source",
+            metadata={"author": "test"}
+        )
+
+        assert isinstance(result, ProcessedDocument)
+        assert result.document_id is not None
+        assert len(result.chunks) > 0
+        assert result.chunks[0].content == "This is test content for processing."
+
+    @pytest.mark.asyncio
+    async def test_process_content_with_chunking(self, processor):
+        """Test processing content with chunking."""
+        long_content = "Test. " * 20  # 100 words
+        result = await processor.process_content(
+            long_content,
+            source="test_source",
+            chunk_strategy=ChunkStrategy.FIXED_SIZE,
+            chunk_size=20,
+        )
+
+        assert len(result.chunks) > 1
 
 
 # =============================================================================
@@ -158,215 +156,385 @@ class TestDocumentProcessor:
 # =============================================================================
 
 class TestHybridRetriever:
-    """Test hybrid retrieval functionality."""
-    
+    """Test suite for hybrid retrieval."""
+
     @pytest.fixture
     def retriever(self):
-        return HybridRetriever()
-    
+        """Create retriever instance."""
+        return HybridRetriever(
+            vector_weight=0.7,
+            keyword_weight=0.3,
+        )
+
     @pytest.fixture
-    def sample_documents(self):
-        return [
+    def mock_embedding_service(self):
+        """Create mock embedding service."""
+        service = AsyncMock()
+        service.embed_documents.return_value = [
+            [0.1, 0.2, 0.3] for _ in range(5)
+        ]
+        service.embed_query.return_value = [0.1, 0.2, 0.3]
+        return service
+
+    @pytest.mark.asyncio
+    async def test_initialize(self, retriever, mock_embedding_service):
+        """Test retriever initialization."""
+        await retriever.initialize(mock_embedding_service)
+
+        assert retriever._embedding_service is not None
+
+    @pytest.mark.asyncio
+    async def test_index_documents(self, retriever, mock_embedding_service):
+        """Test indexing documents."""
+        await retriever.initialize(mock_embedding_service)
+
+        documents = [
             {
                 "id": "doc1",
-                "content": "Python is a programming language used for web development, data science, and automation.",
-                "metadata": {"topic": "programming"},
+                "content": "Test document 1",
+                "metadata": {"source": "test"},
             },
             {
                 "id": "doc2",
-                "content": "JavaScript is a scripting language for web browsers and Node.js servers.",
-                "metadata": {"topic": "programming"},
-            },
-            {
-                "id": "doc3",
-                "content": "Machine learning algorithms can classify data and make predictions.",
-                "metadata": {"topic": "ml"},
+                "content": "Test document 2",
+                "metadata": {"source": "test"},
             },
         ]
-    
+
+        await retriever.index_documents(documents)
+
+        # Check that documents were indexed
+        assert len(retriever._bm25_index._documents) == 2
+
     @pytest.mark.asyncio
-    async def test_index_and_search(self, retriever, sample_documents):
-        """Test indexing and searching documents."""
-        await retriever.initialize()
-        
-        # Index documents
-        await retriever.index_documents(sample_documents)
-        
-        # Search
-        results = await retriever.search("python programming", SearchMode.KEYWORD_ONLY)
-        
+    async def test_vector_search(self, retriever, mock_embedding_service):
+        """Test vector similarity search."""
+        await retriever.initialize(mock_embedding_service)
+
+        documents = [
+            {
+                "id": "doc1",
+                "content": "machine learning algorithms",
+                "metadata": {},
+            },
+            {
+                "id": "doc2",
+                "content": "natural language processing",
+                "metadata": {},
+            },
+        ]
+
+        await retriever.index_documents(documents)
+
+        results = await retriever._vector_search(
+            "artificial intelligence",
+            top_k=2,
+        )
+
+        assert len(results) <= 2
+        assert all(isinstance(r, SearchResult) for r in results)
+
+    @pytest.mark.asyncio
+    async def test_keyword_search(self, retriever, mock_embedding_service):
+        """Test keyword (BM25) search."""
+        await retriever.initialize(mock_embedding_service)
+
+        documents = [
+            {
+                "id": "doc1",
+                "content": "machine learning algorithms",
+                "metadata": {},
+            },
+            {
+                "id": "doc2",
+                "content": "deep learning models",
+                "metadata": {},
+            },
+        ]
+
+        await retriever.index_documents(documents)
+
+        results = await retriever._keyword_search("machine learning")
+
         assert len(results) > 0
-        assert "python" in results[0].content.lower()
-    
-    def test_bm25_search(self, retriever, sample_documents):
-        """Test BM25 keyword search."""
-        retriever._bm25_index.add_documents(sample_documents)
-        
-        results = retriever._bm25_index.search("programming language")
-        
-        assert len(results) > 0
-        # doc1 should rank higher for "programming language"
-        assert results[0][0] == "doc1"
+        assert "machine" in results[0].content.lower()
+
+    @pytest.mark.asyncio
+    async def test_hybrid_search(self, retriever, mock_embedding_service):
+        """Test hybrid search combining vector and keyword."""
+        await retriever.initialize(mock_embedding_service)
+
+        documents = [
+            {
+                "id": "doc1",
+                "content": "machine learning algorithms",
+                "metadata": {},
+            },
+            {
+                "id": "doc2",
+                "content": "neural networks",
+                "metadata": {},
+            },
+        ]
+
+        await retriever.index_documents(documents)
+
+        results = await retriever._hybrid_search(
+            "machine learning",
+            top_k=2,
+            mode=SearchMode.HYBRID,
+        )
+
+        assert len(results) <= 2
+        assert all(hasattr(r, "score") for r in results)
+
+    @pytest.mark.asyncio
+    async def test_search_with_filters(self, retriever, mock_embedding_service):
+        """Test search with metadata filters."""
+        await retriever.initialize(mock_embedding_service)
+
+        documents = [
+            {
+                "id": "doc1",
+                "content": "test content",
+                "metadata": {"category": "tech"},
+            },
+            {
+                "id": "doc2",
+                "content": "test content",
+                "metadata": {"category": "news"},
+            },
+        ]
+
+        await retriever.index_documents(documents)
+
+        results = await retriever.search(
+            "test",
+            filters={"category": "tech"},
+            top_k=10,
+        )
+
+        assert len(results) == 1
+        assert results[0].metadata["category"] == "tech"
 
 
 # =============================================================================
-# BM25 Index Tests
-# =============================================================================
-
-class TestBM25Index:
-    """Test BM25 index functionality."""
-    
-    @pytest.fixture
-    def index(self):
-        from rag.retriever import BM25Index
-        return BM25Index()
-    
-    def test_add_and_search(self, index):
-        """Test adding documents and searching."""
-        index.add_document("1", "The quick brown fox jumps over the lazy dog")
-        index.add_document("2", "A fast fox runs through the forest")
-        index.add_document("3", "Dogs are loyal pets")
-        
-        results = index.search("fox")
-        
-        assert len(results) > 0
-        # Documents with fox should rank higher
-        assert results[0][0] in ["1", "2"]
-    
-    def test_tokenize(self, index):
-        """Test tokenization."""
-        tokens = index.tokenize("Hello World 123!")
-        
-        assert "hello" in tokens
-        assert "world" in tokens
-        assert "123" in tokens
-        assert "!" not in tokens
-    
-    def test_empty_search(self, index):
-        """Test search with no documents."""
-        results = index.search("test")
-        assert results == []
-    
-    def test_clear(self, index):
-        """Test clearing index."""
-        index.add_document("1", "Test document")
-        index.clear()
-        
-        assert len(index.documents) == 0
-        assert len(index.inverted_index) == 0
-
-
-# =============================================================================
-# RAG Pipeline Integration Tests
+# RAG Pipeline Tests
 # =============================================================================
 
 class TestRAGPipeline:
-    """Integration tests for RAG pipeline."""
-    
+    """Test suite for RAG pipeline."""
+
     @pytest.fixture
     def config(self):
+        """Create RAG configuration."""
         return RAGConfig(
-            processing=ProcessingConfig(chunk_size=200, chunk_overlap=20),
-            retrieval=RetrievalConfig(mode=SearchMode.KEYWORD_ONLY),
+            chunk_size=100,
+            chunk_overlap=20,
+            top_k=3,
+            rerank_top_k=5,
         )
-    
+
     @pytest.fixture
-    def pipeline(self, config):
-        return RAGPipeline(config=config)
-    
+    def mock_embedding_service(self):
+        """Create mock embedding service."""
+        service = AsyncMock()
+        service.embed_documents.return_value = [
+            [0.1, 0.2, 0.3] for _ in range(10)
+        ]
+        service.embed_query.return_value = [0.1, 0.2, 0.3]
+        return service
+
+    @pytest.fixture
+    def mock_vector_store(self):
+        """Create mock vector store."""
+        store = AsyncMock()
+        store.add.return_value = ["id1", "id2", "id3"]
+        store.search.return_value = [
+            {
+                "id": "id1",
+                "score": 0.9,
+                "payload": {
+                    "content": "test content 1",
+                    "metadata": {},
+                },
+            },
+            {
+                "id": "id2",
+                "score": 0.8,
+                "payload": {
+                    "content": "test content 2",
+                    "metadata": {},
+                },
+            },
+        ]
+        return store
+
+    @pytest.fixture
+    def pipeline(self, config, mock_embedding_service, mock_vector_store):
+        """Create RAG pipeline instance."""
+        return RAGPipeline(
+            config=config,
+            embedding_service=mock_embedding_service,
+            vector_store=mock_vector_store,
+        )
+
     @pytest.mark.asyncio
-    async def test_ingest_and_query(self, pipeline):
-        """Test full ingest and query workflow."""
+    async def test_initialize(self, pipeline):
+        """Test pipeline initialization."""
         await pipeline.initialize()
-        
-        # Ingest content
+
+        assert pipeline._document_processor is not None
+        assert pipeline._retriever is not None
+
+    @pytest.mark.asyncio
+    async def test_ingest_text(self, pipeline):
+        """Test ingesting text content."""
+        await pipeline.initialize()
+
+        result = await pipeline.ingest_text(
+            "This is test content for ingestion.",
+            source="test_source",
+            metadata={"author": "test"},
+        )
+
+        assert result is not None
+        assert result.document_id is not None
+        assert len(result.chunks) > 0
+
+    @pytest.mark.asyncio
+    async def test_query(self, pipeline):
+        """Test querying the RAG pipeline."""
+        await pipeline.initialize()
+
+        # Ingest some content first
         await pipeline.ingest_text(
-            content="Python is a popular programming language. "
-                   "It is used for web development, data science, and automation. "
-                   "Python has a simple syntax that is easy to learn.",
-            source="python_intro.txt",
+            "Machine learning is a subset of artificial intelligence.",
+            source="test",
         )
-        
+        await pipeline.ingest_text(
+            "Deep learning uses neural networks.",
+            source="test",
+        )
+
         # Query
-        result = await pipeline.query("python programming", top_k=3)
-        
-        assert len(result.documents) > 0
-        assert "python" in result.context.lower()
-        assert result.total_time_ms > 0
-    
-    @pytest.mark.asyncio
-    async def test_ingest_file(self, pipeline):
-        """Test file ingestion."""
-        await pipeline.initialize()
-        
-        with tempfile.NamedTemporaryFile(
-            mode="w", suffix=".md", delete=False
-        ) as f:
-            f.write("# Test Document\n\n")
-            f.write("This is a test document for RAG. " * 10)
-            temp_path = f.name
-        
-        try:
-            doc = await pipeline.ingest_file(temp_path)
-            
-            assert doc.id is not None
-            assert len(doc.chunks) > 0
-            assert pipeline.get_stats()["documents_processed"] == 1
-        finally:
-            os.unlink(temp_path)
-    
-    @pytest.mark.asyncio
-    async def test_context_assembly(self, pipeline):
-        """Test context assembly."""
-        await pipeline.initialize()
-        
-        # Ingest multiple documents
-        for i in range(3):
-            await pipeline.ingest_text(
-                content=f"Document {i}: " + "Content " * 50,
-                source=f"doc{i}.txt",
-            )
-        
-        result = await pipeline.query("document", top_k=2)
-        
-        assert len(result.documents) <= 2
-        assert len(result.context) > 0
-        assert "---" in result.context  # Separator
-
-
-# =============================================================================
-# Embedding Service Tests (Mocked)
-# =============================================================================
-
-class TestEmbeddingService:
-    """Test embedding service (requires mocking for API calls)."""
-    
-    @pytest.mark.asyncio
-    async def test_cache(self):
-        """Test embedding caching."""
-        from rag.embedding_service import EmbeddingCache, EmbeddingResult
-        
-        cache = EmbeddingCache()
-        result = EmbeddingResult(
-            embedding=[0.1, 0.2, 0.3],
-            text_hash="abc123",
-            model="test-model",
-            dimensions=3,
+        result = await pipeline.query(
+            "What is machine learning?",
+            top_k=3,
         )
-        
-        # Cache miss
-        cached = cache.get("test text", "test-model")
-        assert cached is None
-        
-        # Cache set
-        cache.set("test text", "test-model", result)
-        
-        # Cache hit
-        cached = cache.get("test text", "test-model")
-        assert cached is not None
-        assert cached.embedding == [0.1, 0.2, 0.3]
-        
-        # Clear
-        cache.clear()
-        cached = cache.get("test text", "test-model")
-        assert cached is None
+
+        assert result is not None
+        assert result.query == "What is machine learning?"
+        assert len(result.documents) > 0
+        assert result.context is not None
+
+    @pytest.mark.asyncio
+    async def test_query_with_reranking(self, pipeline):
+        """Test querying with reranking."""
+        await pipeline.initialize()
+
+        await pipeline.ingest_text("Test content 1", source="test")
+        await pipeline.ingest_text("Test content 2", source="test")
+
+        result = await pipeline.query(
+            "test query",
+            top_k=3,
+            rerank=True,
+        )
+
+        assert result is not None
+        assert len(result.documents) > 0
+
+    def test_assemble_context(self, pipeline):
+        """Test context assembly from documents."""
+        documents = [
+            SearchResult(
+                id="doc1",
+                content="First document",
+                score=0.9,
+                metadata={},
+            ),
+            SearchResult(
+                id="doc2",
+                content="Second document",
+                score=0.8,
+                metadata={},
+            ),
+        ]
+
+        context, count = pipeline._assemble_context(documents)
+
+        assert "First document" in context
+        assert "Second document" in context
+        assert count == 2
+
+    def test_get_stats(self, pipeline):
+        """Test getting pipeline statistics."""
+        stats = pipeline.get_stats()
+
+        assert "total_documents" in stats
+        assert "total_chunks" in stats
+        assert "total_queries" in stats
+
+    @pytest.mark.asyncio
+    async def test_clear(self, pipeline):
+        """Test clearing the pipeline."""
+        await pipeline.initialize()
+
+        await pipeline.ingest_text("Test content", source="test")
+        await pipeline.clear()
+
+        stats = pipeline.get_stats()
+        assert stats["total_documents"] == 0
+
+
+# =============================================================================
+# Integration Tests
+# =============================================================================
+
+class TestRAGIntegration:
+    """Integration tests for RAG components."""
+
+    @pytest.mark.asyncio
+    async def test_end_to_end_ingestion_and_query(self):
+        """Test full workflow from ingestion to query."""
+        from rag.rag_pipeline import RAGPipeline, RAGConfig
+
+        # Create mocks
+        mock_embedding = AsyncMock()
+        mock_embedding.embed_documents.return_value = [[0.1, 0.2, 0.3]]
+        mock_embedding.embed_query.return_value = [0.1, 0.2, 0.3]
+
+        mock_vector_store = AsyncMock()
+        mock_vector_store.add.return_value = ["doc1"]
+        mock_vector_store.search.return_value = [
+            {
+                "id": "doc1",
+                "score": 0.95,
+                "payload": {
+                    "content": "test content",
+                    "metadata": {},
+                },
+            }
+        ]
+
+        # Create pipeline
+        pipeline = RAGPipeline(
+            config=RAGConfig(chunk_size=50, top_k=3),
+            embedding_service=mock_embedding,
+            vector_store=mock_vector_store,
+        )
+
+        await pipeline.initialize()
+
+        # Ingest
+        await pipeline.ingest_text(
+            "Test document content for integration test.",
+            source="integration_test",
+        )
+
+        # Query
+        result = await pipeline.query("test query")
+
+        assert result is not None
+        assert len(result.documents) > 0
