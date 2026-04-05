@@ -1,45 +1,30 @@
 """
-Heretek Swarm Plugins Package
+Plugins Module - Extensible plugin system for Heretek Swarm
 
-This package provides plugin implementations for the Heretek Swarm system:
-- Consciousness Plugin (GWT/AST) - Global Workspace Theory and Attention Schema
-- Liberation Plugin - Transparent security auditing
+This module provides a plugin architecture inspired by elizaOS.
+Plugins can extend swarm functionality without modifying core code.
+
+Components:
+- Plugin base class
+- Plugin runtime for lifecycle management
+- Plugin discovery and loading
+- Plugin execution and message handling
 """
 
-from heretek_swarm.plugins.consciousness import (
-    AttentionSchema,
-    AttentionSchemaManager,
-    ConsciousnessMetrics,
-    ConsciousnessPlugin,
-    ConsciousnessState,
-    GlobalWorkspace,
-    GlobalWorkspaceItem,
-)
-from heretek_swarm.plugins.liberation import (
-    AnomalyResult,
-    LiberationPlugin,
-    LiberationShield,
-    SecurityEvent,
-    SecurityEventType,
-    Severity,
-    ThreatAnalysis,
+from .manager import (
+    Plugin,
+    PluginMetadata,
+    PluginRuntime,
+    PluginState,
+    get_plugin_runtime,
+    load_plugin_from_file,
 )
 
 __all__ = [
-    # Consciousness Plugin
-    "ConsciousnessPlugin",
-    "ConsciousnessState",
-    "ConsciousnessMetrics",
-    "GlobalWorkspace",
-    "GlobalWorkspaceItem",
-    "AttentionSchema",
-    "AttentionSchemaManager",
-    # Liberation Plugin
-    "LiberationPlugin",
-    "LiberationShield",
-    "SecurityEventType",
-    "SecurityEvent",
-    "Severity",
-    "ThreatAnalysis",
-    "AnomalyResult",
+    "Plugin",
+    "PluginMetadata",
+    "PluginRuntime",
+    "PluginState",
+    "get_plugin_runtime",
+    "load_plugin_from_file",
 ]
