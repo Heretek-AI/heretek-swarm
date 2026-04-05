@@ -14,7 +14,7 @@ Features:
 
 import asyncio
 import uuid
-from datetime import datetime
+from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional, Set
 from dataclasses import dataclass, field
 from enum import Enum
@@ -22,6 +22,79 @@ from enum import Enum
 import structlog
 
 logger = structlog.get_logger(__name__)
+
+
+class ContributionCache:
+    """
+    Cache for agent contributions with TTL support.
+    
+    Prevents duplicate requests and improves performance.
+    """
+    
+    def __init__(self, ttl_seconds: int = 300):
+        """
+        Initialize contribution cache.
+        
+        Args:
+            ttl_seconds: Time to live for cached entries (default: 5 minutes)
+        """
+        self._cache: Dict[str, Dict[str, Any]] = {}
+        self._ttl_seconds = ttl_seconds
+    
+    def _generate_key(self, agent_id: str, task_id: str) -> str:
+        """Generate cache key from agent and task IDs."""
+        return f"{agent_id}:{task_id}"
+    
+    def get(self, agent_id: str, task_id: str) -> Optional["AgentContribution"]:
+        """
+        Get cached contribution if not expired.
+        
+        Args:
+            agent_id: Agent identifier
+            task_id: Task identifier
+            
+        Returns:
+            Cached contribution or None if expired/not found
+        """
+        key = self._generate_key(agent_id, task_id)
+        if key in self._cache:
+            entry = self._cache[key]
+            if datetime.fromisoformat(entry["expires_at"]) > datetime.utcnow():
+                return entry["contribution"]
+            else:
+                # Expired, remove from cache
+                del self._cache[key]
+        return None
+    
+    def set(self, agent_id: str, task_id: str, contribution: "AgentContribution") -> None:
+        """
+        Cache a contribution.
+        
+        Args:
+            agent_id: Agent identifier
+            task_id: Task identifier
+            contribution: Contribution to cache
+        """
+        key = self._generate_key(agent_id, task_id)
+        self._cache[key] = {
+            "contribution": contribution,
+            "expires_at": (
+                datetime.utcnow() + timedelta(seconds=self._ttl_seconds)
+            ).isoformat(),
+        }
+        logger.debug("contribution_cacheded", agent_id=agent_id, task_id=task_id)
+    
+    def invalidate(self, agent_id: str, task_id: str) -> None:
+        """Invalidate a cached contribution."""
+        key = self._generate_key(agent_id, task_id)
+        if key in self._cache:
+            del self._cache[key]
+            logger.debug("contribution_invalidated", agent_id=agent_id, task_id=task_id)
+    
+    def clear(self) -> None:
+        """Clear all cached contributions."""
+        self._cache.clear()
+        logger.info("contribution_cache_cleared")
 
 
 class SocietyRole(str, Enum):
@@ -204,12 +277,13 @@ class AgentSociety:
     and emergent behavior detection.
     """
     
-    def __init__(self, supervisor=None):
+    def __init__(self, supervisor=None, contribution_cache_ttl: int = 300):
         """
         Initialize agent society.
         
         Args:
             supervisor: ActorSupervisor for agent management
+            contribution_cache_ttl: TTL for contribution cache in seconds (default: 300)
         """
         self.supervisor = supervisor
         self.hierarchy = self._build_hierarchy()
@@ -217,6 +291,7 @@ class AgentSociety:
         self.collective_memory = CollectiveMemory()
         self._active_tasks: Dict[str, CollectiveTask] = {}
         self._emergent_behaviors: List[EmergentBehavior] = []
+        self._contribution_cache = ContributionCache(ttl_seconds=contribution_cache_ttl)
     
     def _build_hierarchy(self) -> Dict[str, List[str]]:
         """
@@ -481,30 +556,200 @@ class AgentSociety:
         self,
         actor,
         task: CollectiveTask,
-        protocol: Dict[str, Any]
+        protocol: Dict[str, Any],
+        timeout: float = 30.0
     ) -> AgentContribution:
         """
-        Get contribution from an agent.
+        Get contribution from an agent by invoking its process method.
+        
+        This method:
+        1. Checks cache for existing contribution
+        2. Calls actor's process_contribution method if available
+        3. Falls back to run_with_llm if actor has LLM capabilities
+        4. Waits for response with timeout
+        5. Caches the contribution for future requests
+        6. Returns properly formatted AgentContribution
         
         Args:
-            actor: Agent actor
+            actor: Agent actor (must be an AgentActor instance)
+            task: Collective task to process
+            protocol: Communication protocol
+            timeout: Timeout in seconds for contribution request (default: 30s)
+            
+        Returns:
+            AgentContribution with agent's response
+            
+        Raises:
+            asyncio.TimeoutError: If actor doesn't respond within timeout
+        """
+        # Get actor ID
+        agent_id = actor.agent_id if hasattr(actor, 'agent_id') else str(type(actor).__name__)
+        
+        # Check cache first
+        cached = self._contribution_cache.get(agent_id, task.id)
+        if cached is not None:
+            logger.debug("contribution_cache_hit", agent_id=agent_id, task_id=task.id)
+            return cached
+        
+        try:
+            # Try to get contribution via direct method call
+            contribution_data = await self._request_contribution_from_actor(
+                actor, task, protocol, timeout
+            )
+            
+            # Create AgentContribution
+            contribution = AgentContribution(
+                agent_id=agent_id,
+                task_id=task.id,
+                contribution=contribution_data.get("contribution", {}),
+                confidence=contribution_data.get("confidence", 0.8)
+            )
+            
+            # Cache the contribution
+            self._contribution_cache.set(agent_id, task.id, contribution)
+            
+            logger.info(
+                "contribution_received",
+                agent_id=agent_id,
+                task_id=task.id,
+                confidence=contribution.get("confidence", 0.8)
+            )
+            
+            return contribution
+                
+        except asyncio.TimeoutError:
+            logger.error(
+                "contribution_timeout",
+                agent_id=agent_id,
+                task_id=task.id,
+                timeout=timeout
+            )
+            raise
+        except Exception as e:
+            logger.error(
+                "contribution_error",
+                agent_id=agent_id,
+                task_id=task.id,
+                error=str(e)
+            )
+            # Return fallback contribution on error
+            return AgentContribution(
+                agent_id=agent_id,
+                task_id=task.id,
+                contribution={
+                    "analysis": f"Error retrieving contribution from {agent_id}: {str(e)}",
+                    "recommendation": "error_fallback",
+                    "error": str(e)
+                },
+                confidence=0.1  # Low confidence for error fallback
+            )
+    
+    async def _request_contribution_from_actor(
+        self,
+        actor,
+        task: CollectiveTask,
+        protocol: Dict[str, Any],
+        timeout: float = 30.0
+    ) -> Dict[str, Any]:
+        """
+        Request contribution from an actor using available methods.
+        
+        This method tries multiple approaches:
+        1. Direct process_contribution method if available
+        2. run_with_llm if Swarms agent is configured
+        3. Default fallback based on actor type
+        
+        Args:
+            actor: Agent actor instance
+            task: Collective task
+            protocol: Communication protocol
+            timeout: Timeout in seconds
+            
+        Returns:
+            Dict with contribution data and confidence
+        """
+        # Prepare task context for the actor
+        task_context = {
+            "task_id": task.id,
+            "task_type": task.type.value if hasattr(task.type, 'value') else str(task.type),
+            "description": task.description,
+            "input_data": task.input_data,
+            "priority": task.priority,
+            "protocol": protocol,
+        }
+        
+        # Try direct method call if actor has process_contribution
+        if hasattr(actor, 'process_contribution') and callable(actor.process_contribution):
+            result = await asyncio.wait_for(
+                actor.process_contribution(task, protocol),
+                timeout=timeout
+            )
+            return result
+        
+        # Try using LLM if available
+        if hasattr(actor, 'run_with_llm') and actor.swarms_agent is not None:
+            prompt = self._build_contribution_prompt(task, protocol)
+            try:
+                response = await asyncio.wait_for(
+                    actor.run_with_llm(prompt),
+                    timeout=timeout
+                )
+                return {
+                    "contribution": {
+                        "analysis": response,
+                        "recommendation": "llm_generated",
+                        "method": "run_with_llm"
+                    },
+                    "confidence": 0.75
+                }
+            except asyncio.TimeoutError:
+                raise
+        
+        # Fallback: Generate contribution based on actor type
+        actor_type = type(actor).__name__
+        return {
+            "contribution": {
+                "analysis": f"Analysis from {actor_type} for task: {task.description}",
+                "recommendation": f"{actor_type}_recommendation",
+                "method": "fallback"
+            },
+            "confidence": 0.6
+        }
+    
+    def _build_contribution_prompt(
+        self,
+        task: CollectiveTask,
+        protocol: Dict[str, Any]
+    ) -> str:
+        """
+        Build a prompt for LLM-based contribution.
+        
+        Args:
             task: Collective task
             protocol: Communication protocol
             
         Returns:
-            Agent contribution
+            Formatted prompt string
         """
-        # This would typically call the agent's process method
-        # For now, return a placeholder
-        return AgentContribution(
-            agent_id=actor.agent_id if hasattr(actor, 'agent_id') else str(type(actor).__name__),
-            task_id=task.id,
-            contribution={
-                "analysis": f"Analysis from {type(actor).__name__}",
-                "recommendation": "pending",
-            },
-            confidence=0.8
-        )
+        return f"""You are participating in a collective task coordination.
+
+Task Details:
+- Task ID: {task.id}
+- Task Type: {task.type.value if hasattr(task.type, 'value') else str(task.type)}
+- Description: {task.description}
+- Priority: {task.priority}
+- Input Data: {task.input_data}
+
+Protocol:
+- Consensus Threshold: {protocol.get('consensus_threshold', 0.7)}
+- Communication Pattern: {protocol.get('communication_pattern', 'broadcast')}
+- Rounds: {protocol.get('rounds', 3)}
+
+Please provide your analysis and recommendation for this collective task.
+Format your response as:
+1. Analysis: Your understanding of the task and key considerations
+2. Recommendation: Your suggested approach or solution
+"""
     
     async def _aggregate_contributions(
         self,
