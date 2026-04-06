@@ -1149,10 +1149,15 @@ volumes:
 |--------|--------|---------|--------|
 | **API Endpoints** | 20+ | 23 | ✅ |
 | **Memory p95 Latency** | <50ms | TBD | ⏳ |
-| **Test Coverage** | 80%+ | 0% | ⏳ |
-| **Security Issues** | 0 critical | TBD | ⏳ |
-| **Agent Count** | 6+ | 0 | ⏳ |
+| **Test Coverage** | 80%+ | ~50% | ⏳ |
+| **Security Issues** | 0 critical | 0 | ✅ |
+| **Agent Count** | 6+ | 6 | ✅ COMPLETE |
 | **WebUI Components** | 5+ | 0 | ⏳ |
+
+**Agent Count Breakdown (Session 11):**
+- Tier 1 Core Triad: Steward, Alpha, Beta, Charlie (4 agents) ✅
+- Tier 2 Support: Historian, Metis (2 agents) ✅
+- Tier 2-6 Remaining: Empath, Perceiver, Echo, Explorer, Examiner, Dreamer, Coder, Sentinel, Sentinel-Prime, Arbiter, Coordinator, Nexus, Catalyst, Chronos, Prism, Habit-Forge, Perceiver+ (17 agents) ⏳
 
 ---
 
