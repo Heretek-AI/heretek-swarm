@@ -12,9 +12,23 @@ import pytest
 from unittest.mock import Mock, AsyncMock, patch
 from datetime import datetime
 
-from heretek_swarm.integrations.discord_bot import DiscordBot
-from heretek_swarm.integrations.telegram_bot import TelegramBot
-from heretek_swarm.integrations.slack_bot import SlackBot
+try:
+    from heretek_swarm.integrations.discord_bot import DiscordBot, DISCORD_AVAILABLE
+except ImportError:
+    DISCORD_AVAILABLE = False
+    DiscordBot = None
+
+try:
+    from heretek_swarm.integrations.telegram_bot import TelegramBot, TELEGRAM_AVAILABLE
+except ImportError:
+    TELEGRAM_AVAILABLE = False
+    TelegramBot = None
+
+try:
+    from heretek_swarm.integrations.slack_bot import SlackBot, SLACK_AVAILABLE
+except ImportError:
+    SLACK_AVAILABLE = False
+    SlackBot = None
 
 
 # =============================================================================
@@ -23,6 +37,12 @@ from heretek_swarm.integrations.slack_bot import SlackBot
 
 class TestDiscordBot:
     """Test suite for Discord bot integration."""
+
+    @pytest.fixture(autouse=True)
+    def check_discord_available(self):
+        """Skip tests if discord.py is not available."""
+        if not DISCORD_AVAILABLE:
+            pytest.skip("discord.py not installed")
 
     @pytest.fixture
     def discord_config(self):
@@ -117,6 +137,12 @@ class TestDiscordBot:
 class TestTelegramBot:
     """Test suite for Telegram bot integration."""
 
+    @pytest.fixture(autouse=True)
+    def check_telegram_available(self):
+        """Skip tests if python-telegram-bot is not available."""
+        if not TELEGRAM_AVAILABLE:
+            pytest.skip("python-telegram-bot not installed")
+
     @pytest.fixture
     def telegram_config(self):
         """Create Telegram bot configuration."""
@@ -198,6 +224,12 @@ class TestTelegramBot:
 
 class TestSlackBot:
     """Test suite for Slack bot integration."""
+
+    @pytest.fixture(autouse=True)
+    def check_slack_available(self):
+        """Skip tests if slack_sdk is not available."""
+        if not SLACK_AVAILABLE:
+            pytest.skip("slack_sdk not installed")
 
     @pytest.fixture
     def slack_config(self):
