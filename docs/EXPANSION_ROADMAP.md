@@ -1646,6 +1646,72 @@ class AgentSociety:
 
 ---
 
+## 🔬 Forward Research Findings (Session 16 - 2026-04-06)
+
+### Next Agent Implementation Priorities
+
+**Tier 3 Exploration Agents (3 remaining):**
+
+1. **Examiner** (Highest Priority - Quality Assurance)
+   - Role: Testing, validation, and quality assurance specialist
+   - Dependencies: None (can work with Historian for test results)
+   - Complexity: Medium
+   - Integration: Works with Triad for decision validation
+
+2. **Dreamer** (High Priority - Creative Generation)
+   - Role: Novel solution generation and creative problem-solving
+   - Dependencies: None
+   - Complexity: High (requires divergent thinking patterns)
+   - Integration: Provides alternatives to Alpha/Beta deliberations
+
+3. **Coder** (High Priority - Implementation)
+   - Role: Code writing, debugging, and implementation
+   - Dependencies: None (can use Explorer for research)
+   - Complexity: High (requires code execution sandboxing)
+   - Integration: Implements solutions from Triad decisions
+
+**Tier 4 Safety & Security (3 agents):**
+- Sentinel: Safety guardian for input/output validation
+- Sentinel-Prime: Security commander for threat response
+- Arbiter: Conflict resolution between agents
+
+### Architecture Enhancement Priorities
+
+1. **Request-Reply Pattern** (P1)
+   - Add correlation_id-based response matching to base.py
+   - Enable synchronous inter-agent communication
+   - Reference: Microsoft AutoGen pattern
+
+2. **Event Mesh (NATS JetStream)** (P2)
+   - Persistent event streaming
+   - Message replay for debugging
+   - Event sourcing for audit trails
+
+3. **Consciousness Metrics** (P2)
+   - IIT Phi calculation for system integration
+   - FEP free energy for prediction error
+   - Dashboard visualization
+
+### Research Sources
+
+- Microsoft Agent Framework convergence (AutoGen + Semantic Kernel)
+- LangGraph patterns (typed state, checkpointing, cycle detection)
+- CAMEL Agent Society (multi-agent coordination)
+- MassGen (open-source multi-agent scaling)
+
+### Recommended Next Actions
+
+| Priority | Action | Timeline | Owner |
+|----------|--------|----------|-------|
+| P1 | Implement Examiner agent (Tier 3 - QA) | Next Session | Core Team |
+| P1 | Implement Dreamer agent (Tier 3 - Creative) | Week 1 | Core Team |
+| P1 | Implement Coder agent (Tier 3 - Implementation) | Week 1-2 | Core Team |
+| P2 | Add request-reply pattern to base.py | Week 2 | Gateway Team |
+| P2 | NATS JetStream evaluation | Week 2-3 | Gateway Team |
+| P3 | IIT Phi calculation research | Week 3-4 | Research Team |
+
+---
+
 ## Implementation Timeline
 
 | Phase | Duration | Start Date | End Date | Deliverables |
@@ -1657,7 +1723,7 @@ class AgentSociety:
 | Phase 5: Event Mesh | 1 week | 2026-05-10 | 2026-05-17 | JetStream, Event sourcing |
 | Phase 6: Consciousness | 2 weeks | 2026-05-17 | 2026-05-31 | IIT/FEP, Agent society |
 
-**Total Duration:** 8 weeks  
+**Total Duration:** 8 weeks
 **Target Completion:** 2026-05-31
 
 ---
