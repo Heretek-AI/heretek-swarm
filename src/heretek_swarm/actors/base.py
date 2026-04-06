@@ -384,19 +384,22 @@ class AgentActor:
                 )
         
         # Fallback: Direct delivery to actors subscribed to topic
-        # This would use a global actor registry in production
-        actor_registry = self.get_state("_actor_registry")
+        # Use global actor registry from supervisor
+        actor_registry = self._get_actor_registry()
         if actor_registry is not None:
             try:
                 # Find actors subscribed to this topic
-                for actor_id, actor in actor_registry.items():
-                    if topic in getattr(actor, 'topics', []):
-                        await actor.put_message(message)
-                logger.info(
-                    f"[{self.agent_id}] Message {message_id} delivered directly to topic subscribers",
-                    extra={"message_type": message_type},
-                )
-                return message_id
+                delivered = False
+                for reg_actor_id, reg_actor in actor_registry.items():
+                    if topic in getattr(reg_actor, 'topics', []):
+                        await reg_actor.put_message(message)
+                        delivered = True
+                if delivered:
+                    logger.info(
+                        f"[{self.agent_id}] Message {message_id} delivered directly to topic subscribers",
+                        extra={"message_type": message_type},
+                    )
+                    return message_id
             except Exception as e:
                 logger.error(
                     f"[{self.agent_id}] Direct delivery failed: {e}",
@@ -442,8 +445,10 @@ class AgentActor:
         Returns:
             Message ID
         """
-        # Try direct delivery first
-        actor_registry = self.get_state("_actor_registry")
+        message_id = str(uuid.uuid4())
+        
+        # Use global actor registry from supervisor
+        actor_registry = self._get_actor_registry()
         if actor_registry is not None and target_actor_id in actor_registry:
             try:
                 target_actor = actor_registry[target_actor_id]
@@ -463,7 +468,7 @@ class AgentActor:
                     f"[{self.agent_id}] Direct message sent to {target_actor_id}",
                     extra={"message_type": message_type},
                 )
-                return str(uuid.uuid4())
+                return message_id
             except Exception as e:
                 logger.error(
                     f"[{self.agent_id}] Direct actor send failed: {e}",
@@ -810,7 +815,37 @@ class AgentActor:
                     extra={"message_type": message_type},
                 )
         
-        # Fallback to topic-based broadcast
+        # Fallback: Broadcast to all actors via registry
+        actor_registry = self._get_actor_registry()
+        if actor_registry is not None:
+            message = ActorMessage(
+                sender=self.agent_id,
+                message_type=message_type,
+                content={
+                    "message_type": message_type,
+                    "content": content,
+                    "sender": self.agent_id,
+                },
+                timestamp=datetime.now(timezone.utc).isoformat(),
+            )
+            sent_count = 0
+            for reg_actor_id, reg_actor in actor_registry.items():
+                if reg_actor_id != self.agent_id:  # Don't send to self
+                    try:
+                        await reg_actor.put_message(message)
+                        sent_count += 1
+                    except Exception as e:
+                        logger.error(
+                            f"[{self.agent_id}] Broadcast to {reg_actor_id} failed: {e}",
+                            extra={"message_type": message_type},
+                        )
+            logger.info(
+                f"[{self.agent_id}] Broadcast sent to {sent_count} actors via registry",
+                extra={"message_type": message_type},
+            )
+            return
+        
+        # Last resort: topic-based broadcast
         await self.send(
             topic="broadcast",
             content={
@@ -959,6 +994,24 @@ Please provide your analysis and recommendation for this collective task."""
             },
             "confidence": 0.6
         }
+
+    def _get_actor_registry(self) -> Optional[Dict[str, "AgentActor"]]:
+        """
+        Get global actor registry from supervisor.
+        
+        This enables message delivery by accessing the supervisor's actor registry.
+        
+        Returns:
+            Actor registry dict or None if supervisor not available
+        """
+        try:
+            from heretek_swarm.actors.supervisor import get_supervisor
+            supervisor = get_supervisor()
+            if supervisor and hasattr(supervisor, 'actors'):
+                return supervisor.actors
+        except (ImportError, Exception):
+            pass
+        return None
 
     def update_state(self, key: str, value: Any) -> None:
         """

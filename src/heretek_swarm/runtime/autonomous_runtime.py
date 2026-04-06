@@ -78,13 +78,16 @@ class AutonomousRuntime:
         self._last_scale_up_time: Optional[datetime] = None
         self._last_scale_down_time: Optional[datetime] = None
 
+        # P1-8 fix: Track restart attempts separately instead of using __dict__
+        self._restart_attempts: Dict[str, int] = {}
+
     async def initialize(self) -> None:
         """Initialize runtime components."""
         logger.info("Initializing autonomous runtime...")
 
         # Initialize supervisor
         self.supervisor = ActorSupervisor()
-        await self.supervisor.initialize()
+        # Note: ActorSupervisor.initialize() is a no-op, agents are initialized via AgentRuntime
 
         # Initialize agent runtime
         self.agent_runtime = AgentRuntime(
@@ -183,8 +186,9 @@ class AutonomousRuntime:
             failed_agents = []
             for agent_id, actor in self.supervisor.actors.items():
                 status = actor.get_status()
-                # Fix: Use enum values directly (ActorState.SUSPENDED.value = "suspended")
-                if status and status.state.value in ["suspended", "terminated", "error"]:
+                # Fix: Use ActorState enum values for comparison (uppercase)
+                from heretek_swarm.actors.base import ActorState
+                if status and status.state in [ActorState.SUSPENDED, ActorState.TERMINATED, ActorState.ERROR]:
                     failed_agents.append(agent_id)
 
             # Auto-restart failed agents if enabled
@@ -201,9 +205,8 @@ class AutonomousRuntime:
         """Restart failed agents."""
         for agent_id in agent_ids:
             try:
-                # Check restart attempts
-                attempts_key = f"restart_{agent_id}"
-                attempts = self.state.__dict__.get(f"{attempts_key}_attempts", 0)
+                # Check restart attempts (P1-8 fix: use dedicated dict instead of __dict__)
+                attempts = self._restart_attempts.get(agent_id, 0)
 
                 if attempts >= self.config.max_restart_attempts:
                     logger.error(f"Max restart attempts reached for {agent_id}")
@@ -222,7 +225,9 @@ class AutonomousRuntime:
                 if config_path and config_path.exists():
                     await self.agent_runtime.spawn_agent(agent_id, str(config_path))
                     self.state.total_agent_restarts += 1
-                    logger.info(f"Restarted agent: {agent_id}")
+                    # Track restart attempt
+                    self._restart_attempts[agent_id] = attempts + 1
+                    logger.info(f"Restarted agent: {agent_id} (attempt {attempts + 1})")
 
                 # Wait before next attempt
                 await asyncio.sleep(self.config.restart_delay_seconds)
@@ -514,14 +519,20 @@ class AutonomousRuntime:
 
     async def _collect_consciousness_metrics(self) -> None:
         """Collect consciousness metrics from plugin."""
-        # Import here to avoid circular dependency
+        # Import here to avoid circular dependency (P1-9 fix: specific ImportError handling)
         try:
             from ..plugins.consciousness_enhanced import ConsciousnessEnhancedPlugin
-            plugin = ConsciousnessEnhancedPlugin()
-        except Exception:
+        except ImportError as e:
+            logger.warning(f"ConsciousnessEnhancedPlugin not available: {e}")
+            return
+        except Exception as e:
+            logger.error(f"Unexpected error importing consciousness plugin: {e}")
             return
         
-        if not plugin:
+        try:
+            plugin = ConsciousnessEnhancedPlugin()
+        except Exception as e:
+            logger.warning(f"Failed to instantiate ConsciousnessEnhancedPlugin: {e}")
             return
 
         try:
@@ -570,9 +581,14 @@ class AutonomousRuntime:
 
     async def _send_slack_alert(self, alert_type: str, data: Dict[str, Any]) -> None:
         """Send alert to Slack."""
+        # P1-9 fix: Specific ImportError handling
         try:
             from ..integrations.slack_bot import SlackBot
-
+        except ImportError as e:
+            logger.warning(f"SlackBot not available: {e}")
+            return
+        
+        try:
             bot = SlackBot(
                 token=os.getenv("SLACK_BOT_TOKEN"),
                 signing_secret=os.getenv("SLACK_SIGNING_SECRET"),
@@ -593,9 +609,14 @@ class AutonomousRuntime:
 
     async def _send_discord_alert(self, alert_type: str, data: Dict[str, Any]) -> None:
         """Send alert to Discord."""
+        # P1-9 fix: Specific ImportError handling
         try:
             from ..integrations.discord_bot import DiscordBot
-
+        except ImportError as e:
+            logger.warning(f"DiscordBot not available: {e}")
+            return
+        
+        try:
             bot = DiscordBot(
                 token=os.getenv("DISCORD_BOT_TOKEN"),
                 agent_id="runtime_monitor",

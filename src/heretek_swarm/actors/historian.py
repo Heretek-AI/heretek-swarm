@@ -90,6 +90,40 @@ class LRUCache:
         self.hits = 0
         self.misses = 0
     
+    def invalidate(self, key: str) -> bool:
+        """
+        Invalidate a specific cache entry.
+        
+        Args:
+            key: Cache key to invalidate
+            
+        Returns:
+            True if key was found and removed, False otherwise
+        """
+        if key in self._cache:
+            del self._cache[key]
+            return True
+        return False
+    
+    def invalidate_pattern(self, pattern: str) -> int:
+        """
+        Invalidate all cache entries matching a pattern.
+        
+        Args:
+            pattern: Glob-style pattern (* matches any string)
+            
+        Returns:
+            Number of entries invalidated
+        """
+        import fnmatch
+        keys_to_remove = [
+            key for key in self._cache.keys()
+            if fnmatch.fnmatch(key, pattern)
+        ]
+        for key in keys_to_remove:
+            del self._cache[key]
+        return len(keys_to_remove)
+    
     def __contains__(self, key: str) -> bool:
         """Check if key is in cache."""
         return key in self._cache
@@ -108,6 +142,7 @@ class LRUCache:
             "hits": self.hits,
             "misses": self.misses,
             "hit_rate_percent": round(hit_rate, 2),
+            "invalidations": getattr(self, '_invalidation_count', 0),
         }
 
 
@@ -193,7 +228,25 @@ class HistorianAgent(AgentActor):
         """Process incoming messages."""
         handler = self._message_handlers.get(message.message_type)
         if handler:
-            await handler(message)
+            try:
+                await handler(message)
+            except Exception as e:
+                logger.error(
+                    f"[{self.agent_id}] Error processing message {message.message_type}: {e}",
+                    exc_info=True,
+                )
+                self.error_count += 1
+                # Send error response if reply_to is specified
+                if message.content.get("reply_to"):
+                    await self.send(
+                        topic=message.content["reply_to"],
+                        content={
+                            "message_type": "error_response",
+                            "error": str(e),
+                            "original_message_type": message.message_type,
+                        },
+                        correlation_id=message.correlation_id,
+                    )
         else:
             logger.warning(
                 f"[{self.agent_id}] Unhandled message type: {message.message_type}"
@@ -522,11 +575,14 @@ class HistorianAgent(AgentActor):
         )
 
         for entry in results:
-            matched.append({
-                "situation": entry.content,
-                "metadata": entry.metadata,
-                "similarity": 0.8,  # Would use actual similarity in full implementation
-            })
+            # Compute actual similarity using text comparison
+            similarity = self._compute_similarity(situation, str(entry.content))
+            if similarity >= threshold:
+                matched.append({
+                    "situation": entry.content,
+                    "metadata": entry.metadata,
+                    "similarity": similarity,
+                })
 
         # Cache results (with automatic LRU eviction)
         self.pattern_cache.set(situation, matched)
@@ -536,6 +592,55 @@ class HistorianAgent(AgentActor):
         )
 
         return matched
+
+    def _compute_similarity(self, text1: str, text2: str) -> float:
+        """
+        Compute similarity between two texts using cosine similarity on character n-grams.
+        
+        Args:
+            text1: First text
+            text2: Second text
+            
+        Returns:
+            Similarity score between 0.0 and 1.0
+        """
+        # Simple cosine similarity using character 2-grams
+        def get_ngrams(text: str, n: int = 2) -> Dict[str, int]:
+            """Get character n-grams with frequencies."""
+            text = text.lower().strip()
+            ngrams = {}
+            for i in range(len(text) - n + 1):
+                ngram = text[i:i+n]
+                ngrams[ngram] = ngrams.get(ngram, 0) + 1
+            return ngrams
+        
+        def cosine_similarity(vec1: Dict[str, int], vec2: Dict[str, int]) -> float:
+            """Compute cosine similarity between two frequency vectors."""
+            # Get all unique keys
+            all_keys = set(vec1.keys()) | set(vec2.keys())
+            
+            # Compute dot product and magnitudes
+            dot_product = 0.0
+            mag1 = 0.0
+            mag2 = 0.0
+            
+            for key in all_keys:
+                v1 = vec1.get(key, 0)
+                v2 = vec2.get(key, 0)
+                dot_product += v1 * v2
+                mag1 += v1 * v1
+                mag2 += v2 * v2
+            
+            if mag1 == 0 or mag2 == 0:
+                return 0.0
+            
+            return dot_product / (mag1 ** 0.5 * mag2 ** 0.5)
+        
+        # Get n-grams for both texts
+        ngrams1 = get_ngrams(text1)
+        ngrams2 = get_ngrams(text2)
+        
+        return cosine_similarity(ngrams1, ngrams2)
 
     async def provide_deliberation_context(
         self,
@@ -597,6 +702,7 @@ class HistorianAgent(AgentActor):
         self,
         topic: str,
         limit: int = 20,
+        timeout: int = 60,
     ) -> Dict[str, Any]:
         """
         Synthesize knowledge from historical executions.
@@ -604,6 +710,7 @@ class HistorianAgent(AgentActor):
         Args:
             topic: Topic to synthesize
             limit: Maximum memories to consider
+            timeout: LLM call timeout in seconds (default: 60)
 
         Returns:
             Synthesized knowledge summary
@@ -628,13 +735,24 @@ class HistorianAgent(AgentActor):
             try:
                 memory_texts = [str(e.content) for e in results]
                 synthesis_prompt = f"Synthesize knowledge from these memories: {memory_texts}"
-                synthesis = await self.run_with_llm(prompt=synthesis_prompt)
+                # P0-14 fix: Add timeout to LLM call
+                synthesis = await self.run_with_llm(prompt=synthesis_prompt, timeout=timeout)
 
                 return {
                     "topic": topic,
                     "summary": synthesis,
                     "source_count": len(results),
                     "confidence": 0.8,
+                    "synthesized_at": datetime.utcnow().isoformat(),
+                }
+            except asyncio.TimeoutError:
+                logger.error(f"[{self.agent_id}] Synthesis timed out after {timeout}s")
+                return {
+                    "topic": topic,
+                    "summary": f"Synthesis timed out after {timeout}s",
+                    "source_count": len(results),
+                    "confidence": 0.0,
+                    "error": "timeout",
                     "synthesized_at": datetime.utcnow().isoformat(),
                 }
             except Exception as e:

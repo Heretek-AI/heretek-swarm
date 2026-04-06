@@ -8,6 +8,7 @@ Features:
 - Input validation for all handoff parameters
 - Rate limiting to prevent abuse
 - Context size limits
+- Maximum active handoffs limit
 """
 
 import asyncio
@@ -18,6 +19,7 @@ from typing import Any, Dict, List, Optional, Set
 from dataclasses import dataclass, field
 
 import structlog
+from heretek_swarm.actors.base import ActorMessage
 
 logger = structlog.get_logger(__name__)
 
@@ -103,6 +105,8 @@ class AgentHandoff:
     Enables context transfer between agents for specialized task handling.
     """
     
+    MAX_ACTIVE_HANDOFFS = 100  # Maximum concurrent handoffs
+    
     def __init__(self, historian):
         """
         Initialize handoff mechanism.
@@ -162,6 +166,19 @@ class AgentHandoff:
         handoff_id = str(uuid.uuid4())
         timestamp = datetime.utcnow().isoformat()
         
+        # Check active handoffs limit (P0-11 fix)
+        if len(self._active_handoffs) >= self.MAX_ACTIVE_HANDOFFS:
+            logger.error(
+                "handoff_limit_exceeded",
+                active_count=len(self._active_handoffs),
+                max_allowed=self.MAX_ACTIVE_HANDOFFS
+            )
+            return HandoffResult(
+                success=False,
+                handoff_id="",
+                error=f"Maximum active handoffs exceeded ({self.MAX_ACTIVE_HANDOFFS})"
+            )
+        
         # Prepare context package
         context_package = HandoffContext(
             source=from_agent_id,
@@ -182,6 +199,40 @@ class AgentHandoff:
         try:
             # Store active handoff
             self._active_handoffs[handoff_id] = context_package
+            
+            # CRITICAL FIX: Actually transfer context to destination agent
+            # Get actor registry and send context to destination
+            from heretek_swarm.actors.supervisor import get_supervisor
+            supervisor = get_supervisor()
+            if supervisor and to_agent_id in supervisor.actors:
+                destination_actor = supervisor.actors[to_agent_id]
+                # Send handoff message with full context
+                await destination_actor.put_message(
+                    ActorMessage(
+                        sender=from_agent_id,
+                        message_type="handoff_request",
+                        content={
+                            "handoff_id": handoff_id,
+                            "from_agent": from_agent_id,
+                            "context": context,
+                            "reason": reason,
+                            "timestamp": timestamp,
+                        },
+                        timestamp=timestamp,
+                        correlation_id=handoff_id,
+                    )
+                )
+                logger.info(
+                    "handoff_context_transferred",
+                    handoff_id=handoff_id,
+                    to_agent=to_agent_id
+                )
+            else:
+                logger.warning(
+                    "handoff_destination_not_found",
+                    handoff_id=handoff_id,
+                    to_agent=to_agent_id
+                )
             
             # Log handoff to historian
             if self.historian:
@@ -395,6 +446,11 @@ class PerformanceStrategy(HandoffStrategy):
         """Select best performing agent"""
         agent_performance = context.get("agent_performance", {})
         
+        # P1-5 fix: Handle empty dict
+        if not agent_performance:
+            logger.warning("No agent performance data available, defaulting to steward")
+            return "steward"
+        
         # Find agent with highest success rate
         best_agent = max(
             agent_performance.items(),
@@ -417,6 +473,11 @@ class LoadBalancingStrategy(HandoffStrategy):
     async def select_destination(self, context: Dict[str, Any]) -> str:
         """Select least loaded agent"""
         agent_load = context.get("agent_load", {})
+        
+        # P1-5 fix: Handle empty dict
+        if not agent_load:
+            logger.warning("No agent load data available, defaulting to steward")
+            return "steward"
         
         # Find agent with lowest task count
         least_loaded = min(

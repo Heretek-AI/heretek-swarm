@@ -95,7 +95,25 @@ class StewardAgent(AgentActor):
         """
         handler = self._message_handlers.get(message.message_type)
         if handler:
-            await handler(message)
+            try:
+                await handler(message)
+            except Exception as e:
+                logger.error(
+                    f"[{self.agent_id}] Error processing message {message.message_type}: {e}",
+                    exc_info=True,
+                )
+                self.error_count += 1
+                # Send error response if reply_to is specified
+                if message.content.get("reply_to"):
+                    await self.send(
+                        topic=message.content["reply_to"],
+                        content={
+                            "message_type": "error_response",
+                            "error": str(e),
+                            "original_message_type": message.message_type,
+                        },
+                        correlation_id=message.correlation_id,
+                    )
         else:
             logger.warning(
                 f"[{self.agent_id}] Unhandled message type: {message.message_type}"
@@ -301,7 +319,24 @@ class AlphaAgent(AgentActor):
         """Process incoming messages."""
         handler = self._message_handlers.get(message.message_type)
         if handler:
-            await handler(message)
+            try:
+                await handler(message)
+            except Exception as e:
+                logger.error(
+                    f"[{self.agent_id}] Error processing message {message.message_type}: {e}",
+                    exc_info=True,
+                )
+                self.error_count += 1
+                if message.content.get("reply_to"):
+                    await self.send(
+                        topic=message.content["reply_to"],
+                        content={
+                            "message_type": "error_response",
+                            "error": str(e),
+                            "original_message_type": message.message_type,
+                        },
+                        correlation_id=message.correlation_id,
+                    )
         else:
             logger.warning(
                 f"[{self.agent_id}] Unhandled message type: {message.message_type}"
@@ -515,7 +550,24 @@ class BetaAgent(AgentActor):
         """Process incoming messages."""
         handler = self._message_handlers.get(message.message_type)
         if handler:
-            await handler(message)
+            try:
+                await handler(message)
+            except Exception as e:
+                logger.error(
+                    f"[{self.agent_id}] Error processing message {message.message_type}: {e}",
+                    exc_info=True,
+                )
+                self.error_count += 1
+                if message.content.get("reply_to"):
+                    await self.send(
+                        topic=message.content["reply_to"],
+                        content={
+                            "message_type": "error_response",
+                            "error": str(e),
+                            "original_message_type": message.message_type,
+                        },
+                        correlation_id=message.correlation_id,
+                    )
         else:
             logger.warning(
                 f"[{self.agent_id}] Unhandled message type: {message.message_type}"
@@ -744,7 +796,24 @@ class CharlieAgent(AgentActor):
         """Process incoming messages."""
         handler = self._message_handlers.get(message.message_type)
         if handler:
-            await handler(message)
+            try:
+                await handler(message)
+            except Exception as e:
+                logger.error(
+                    f"[{self.agent_id}] Error processing message {message.message_type}: {e}",
+                    exc_info=True,
+                )
+                self.error_count += 1
+                if message.content.get("reply_to"):
+                    await self.send(
+                        topic=message.content["reply_to"],
+                        content={
+                            "message_type": "error_response",
+                            "error": str(e),
+                            "original_message_type": message.message_type,
+                        },
+                        correlation_id=message.correlation_id,
+                    )
         else:
             logger.warning(
                 f"[{self.agent_id}] Unhandled message type: {message.message_type}"

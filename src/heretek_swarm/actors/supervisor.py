@@ -73,6 +73,7 @@ class ActorSupervisor:
         health_check_interval: float = 5.0,
         auto_restart: bool = True,
         max_restarts: int = 3,
+        db_pool: Optional[Any] = None,
     ) -> None:
         """
         Initialize the supervisor.
@@ -82,11 +83,13 @@ class ActorSupervisor:
             health_check_interval: Interval between health checks in seconds
             auto_restart: Automatically restart failed actors
             max_restarts: Maximum restart attempts per actor
+            db_pool: Optional asyncpg database connection pool for state persistence
         """
         self.name = name or "ActorSupervisor"
         self.health_check_interval = health_check_interval
         self.auto_restart = auto_restart
         self.max_restarts = max_restarts
+        self.db_pool = db_pool
 
         self.actors: Dict[str, AgentActor] = {}
         self.actor_configs: Dict[str, ActorConfig] = {}
@@ -140,32 +143,46 @@ class ActorSupervisor:
         if actor_id in self.actors:
             raise ValueError(f"Actor {actor_id} already exists")
 
-        # Create actor instance
-        actor = actor_class(agent_id=actor_id, **kwargs)
+        try:
+            # Create actor instance
+            actor = actor_class(agent_id=actor_id, **kwargs)
 
-        # Spawn the actor
-        await actor.spawn()
+            # Inject actor registry reference for message delivery
+            actor.update_state("_actor_registry", self.actors)
 
-        # Register actor
-        self.actors[actor_id] = actor
-        self.restart_counts[actor_id] = 0
+            # Inject database pool for state persistence
+            if self.db_pool is not None:
+                actor.update_state("_db_pool", self.db_pool)
 
-        # Store configuration for restart capability
-        config = ActorConfig(
-            actor_type=actor_type or actor_class.__name__,
-            class_ref=actor_class,
-            init_kwargs={"agent_id": actor_id, **kwargs},
-            capabilities=actor.capabilities.copy(),
-            actor_id=actor_id,
-        )
-        self.actor_configs[actor_id] = config
+            # Spawn the actor
+            await actor.spawn()
 
-        logger.info(
-            f"[{self.name}] Actor {actor_id} spawned",
-            extra={"actor_class": actor_class.__name__, "actor_type": actor_type},
-        )
+            # Register actor
+            self.actors[actor_id] = actor
+            self.restart_counts[actor_id] = 0
 
-        return actor
+            # Store configuration for restart capability
+            config = ActorConfig(
+                actor_type=actor_type or actor_class.__name__,
+                class_ref=actor_class,
+                init_kwargs={"agent_id": actor_id, **kwargs},
+                capabilities=actor.capabilities.copy(),
+                actor_id=actor_id,
+            )
+            self.actor_configs[actor_id] = config
+
+            logger.info(
+                f"[{self.name}] Actor {actor_id} spawned",
+                extra={"actor_class": actor_class.__name__, "actor_type": actor_type},
+            )
+
+            return actor
+        except Exception as e:
+            logger.error(
+                f"[{self.name}] Failed to spawn actor {actor_id}: {e}",
+                exc_info=True,
+            )
+            raise
 
     async def terminate_actor(self, actor_id: str) -> None:
         """
@@ -260,11 +277,12 @@ class ActorSupervisor:
                 for actor_id, actor in list(self.actors.items()):
                     status = actor.get_status()
 
-                    # Check for terminated actors
+                    # Check for terminated actors - CLEAN UP
                     if status.state == ActorState.TERMINATED:
                         logger.warning(
-                            f"[{self.name}] Actor {actor_id} is terminated",
+                            f"[{self.name}] Actor {actor_id} is terminated - cleaning up",
                         )
+                        await self.terminate_actor(actor_id)
                         continue
 
                     # Check for error state
@@ -275,11 +293,15 @@ class ActorSupervisor:
                         if self.auto_restart:
                             await self._attempt_restart(actor_id)
 
-                    # Check for high error count
+                    # Check for high error count - TAKE ACTION
                     if status.error_count > 10:
                         logger.warning(
                             f"[{self.name}] Actor {actor_id} has high error count: {status.error_count}",
                         )
+                        if self.auto_restart and status.state != ActorState.ERROR:
+                            # Set error state and attempt restart
+                            actor.state = ActorState.ERROR
+                            await self._attempt_restart(actor_id)
 
                 await asyncio.sleep(self.health_check_interval)
 
