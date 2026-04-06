@@ -32,7 +32,7 @@ class EmbeddingVector(BaseModel):
     vector: List[float] = Field(..., min_length=1, description="Embedding vector")
     dimensions: int = Field(..., gt=0, description="Vector dimensions")
     model: str = Field(..., description="Embedding model used")
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     
     @field_validator('vector')
     @classmethod
@@ -67,10 +67,10 @@ class MemoryEntry(BaseModel):
     source_agent: Optional[str] = Field(None, description="Source agent if derived")
     
     # Timestamps
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     expires_at: Optional[datetime] = Field(None, description="TTL for ephemeral memory")
-    accessed_at: datetime = Field(default_factory=datetime.utcnow)
+    accessed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     access_count: int = Field(default=0, ge=0)
     
     # Importance scoring
@@ -185,4 +185,4 @@ class MemoryStats(BaseModel):
     postgres_connected: bool = Field(default=False)
     embedding_service_healthy: bool = Field(default=False)
     
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))

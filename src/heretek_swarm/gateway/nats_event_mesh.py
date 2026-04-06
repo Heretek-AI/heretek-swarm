@@ -1,10 +1,13 @@
 """
 NATSEventMesh - NATS EventMesh Integration for Heretek Swarm
 
-This module provides NATS-based event mesh integration:
+This module provides NATS-based event mesh integration with JetStream support:
 - Asynchronous connection management with connection pooling
 - Publish/subscribe patterns
 - Request-reply pattern with timeout
+- JetStream stream creation and management
+- Durable consumer subscriptions
+- Message replay for event sourcing
 - Integration with existing EventMesh
 - Graceful fallback to in-memory mesh if NATS unavailable
 
@@ -131,10 +134,17 @@ class NATSEventMesh:
         self._state = ConnectionState.DISCONNECTED
         self._nc = None  # NATS connection
         self._js = None  # JetStream context
+        self._js_context: Optional[Any] = None  # JetStream context manager
+        
+        # JetStream streams
+        self._streams: Dict[str, Dict[str, Any]] = {}
         
         # Subscriptions
         self._subscriptions: Dict[str, Subscription] = {}
         self._subscription_ids: Set[str] = set()
+        
+        # Durable consumers
+        self._consumers: Dict[str, Any] = {}
         
         # In-memory fallback
         self._fallback_mesh: Optional["_InMemoryFallback"] = None
@@ -158,9 +168,19 @@ class NATSEventMesh:
         return self._state == ConnectionState.CONNECTED and self._nc is not None
 
     @property
+    def jetstream_enabled(self) -> bool:
+        """Check if JetStream is available."""
+        return self._js is not None and NATS_AVAILABLE
+
+    @property
     def client_count(self) -> int:
         """Get number of active subscriptions."""
         return len([s for s in self._subscriptions.values() if s.active])
+
+    @property
+    def stream_count(self) -> int:
+        """Get number of created streams."""
+        return len(self._streams)
 
     async def connect(self) -> bool:
         """
@@ -183,6 +203,15 @@ class NATSEventMesh:
                 if self._nc is not None:
                     self._state = ConnectionState.CONNECTED
                     logger.info("Connected to NATS")
+                    
+                    # Initialize JetStream context
+                    try:
+                        self._js = self._nc.jetstream()
+                        logger.info("JetStream context initialized")
+                    except Exception as e:
+                        logger.warning(f"JetStream not available: {e}")
+                        self._js = None
+                    
                     return True
                     
             except Exception as e:
@@ -259,6 +288,323 @@ class NATSEventMesh:
             self._subscriptions.clear()
             
             logger.info("Disconnected from NATS")
+
+    async def create_stream(
+        self,
+        name: str,
+        subjects: List[str],
+        storage: str = "file",
+        retention: str = "limits",
+        max_msgs: int = 100000,
+        max_age: int = 86400,  # 24 hours in seconds
+    ) -> bool:
+        """
+        Create a JetStream for message persistence.
+        
+        Args:
+            name: Stream name
+            subjects: List of subjects to capture
+            storage: Storage type ("file" or "memory")
+            retention: Retention policy ("limits", "interest", or "workqueue")
+            max_msgs: Maximum messages to retain
+            max_age: Maximum age of messages in seconds
+            
+        Returns:
+            True if stream created successfully
+        """
+        if not self.jetstream_enabled:
+            logger.warning("JetStream not available")
+            return False
+        
+        try:
+            import nats.js.api as js_api
+            
+            storage_type = js_api.StorageType.FILE if storage == "file" else js_api.StorageType.MEMORY
+            retention_policy = getattr(js_api.RetentionPolicy, retention.upper(), js_api.RetentionPolicy.LIMITS)
+            
+            config = js_api.StreamConfig(
+                name=name,
+                subjects=subjects,
+                storage=storage_type,
+                retention=retention_policy,
+                max_msgs=max_msgs,
+                max_age=max_age * 1_000_000_000,  # Convert to nanoseconds
+            )
+            
+            stream_info = await self._js.add_stream(config=config)
+            
+            self._streams[name] = {
+                "name": name,
+                "subjects": subjects,
+                "storage": storage,
+                "retention": retention,
+                "max_msgs": max_msgs,
+                "max_age": max_age,
+                "created": datetime.now(timezone.utc).isoformat(),
+            }
+            
+            logger.info(f"JetStream '{name}' created", subjects=subjects)
+            return True
+            
+        except Exception as e:
+            logger.error(f"Failed to create stream '{name}': {e}")
+            return False
+
+    async def delete_stream(self, name: str) -> bool:
+        """
+        Delete a JetStream.
+        
+        Args:
+            name: Stream name
+            
+        Returns:
+            True if deleted successfully
+        """
+        if not self.jetstream_enabled:
+            return False
+        
+        try:
+            await self._js.delete_stream(name)
+            self._streams.pop(name, None)
+            logger.info(f"JetStream '{name}' deleted")
+            return True
+        except Exception as e:
+            logger.error(f"Failed to delete stream '{name}': {e}")
+            return False
+
+    async def publish_to_stream(
+        self,
+        stream_name: str,
+        subject: str,
+        data: Dict[str, Any],
+    ) -> bool:
+        """
+        Publish message to a JetStream.
+        
+        Args:
+            stream_name: Name of the stream
+            subject: Message subject
+            data: Message data
+            
+        Returns:
+            True if published successfully
+        """
+        if not self.jetstream_enabled:
+            return False
+        
+        if stream_name not in self._streams:
+            logger.warning(f"Stream '{stream_name}' not found")
+            return False
+        
+        try:
+            ack = await self._js.publish(subject, json.dumps(data).encode('utf-8'))
+            logger.debug(f"Published to stream '{stream_name}'", seq=ack.seq)
+            return True
+        except Exception as e:
+            logger.error(f"Failed to publish to stream: {e}")
+            return False
+
+    async def subscribe_durable(
+        self,
+        stream_name: str,
+        durable_name: str,
+        callback: Callable[[str, Dict[str, Any]], None],
+        deliver_policy: str = "all",
+        ack_policy: bool = True,
+    ) -> Optional[str]:
+        """
+        Subscribe with durable consumer for at-least-once delivery.
+        
+        Args:
+            stream_name: Name of the stream to consume from
+            durable_name: Durable consumer name (persists across reconnects)
+            callback: Async callback function (subject, data)
+            deliver_policy: Delivery policy ("all", "last", "new", or "by_start_sequence")
+            ack_policy: Enable acknowledgment (at-least-once delivery)
+            
+        Returns:
+            Consumer ID or None if failed
+        """
+        if not self.jetstream_enabled:
+            return None
+        
+        if stream_name not in self._streams:
+            logger.warning(f"Stream '{stream_name}' not found")
+            return None
+        
+        try:
+            import nats.js.api as js_api
+            
+            deliver = getattr(js_api.DeliverPolicy, deliver_policy.upper(), js_api.DeliverPolicy.ALL)
+            ack = js_api.AckPolicy.EXPLICIT if ack_policy else js_api.AckPolicy.NONE
+            
+            # Create or bind to durable consumer
+            consumer_info = await self._js.pull_subscribe(
+                stream=stream_name,
+                durable=durable_name,
+                deliver_policy=deliver,
+                ack_policy=ack,
+            )
+            
+            consumer_id = f"consumer_{stream_name}_{durable_name}"
+            self._consumers[consumer_id] = consumer_info
+            
+            # Start message processing loop
+            asyncio.create_task(self._process_durable_messages(
+                consumer_info,
+                stream_name,
+                durable_name,
+                callback
+            ))
+            
+            logger.info(f"Durable consumer '{durable_name}' created on stream '{stream_name}'")
+            return consumer_id
+            
+        except Exception as e:
+            logger.error(f"Failed to create durable consumer: {e}")
+            return None
+
+    async def _process_durable_messages(
+        self,
+        consumer: Any,
+        stream_name: str,
+        durable_name: str,
+        callback: Callable[[str, Dict[str, Any]], None],
+    ) -> None:
+        """
+        Process messages from a durable consumer.
+        
+        Args:
+            consumer: JetStream consumer
+            stream_name: Stream name
+            durable_name: Durable consumer name
+            callback: Message callback
+        """
+        while True:
+            try:
+                msgs = await consumer.fetch(batch=10, timeout=5.0)
+                for msg in msgs:
+                    try:
+                        data = json.loads(msg.data.decode('utf-8'))
+                        await callback(msg.subject, data)
+                        await msg.ack()
+                    except Exception as e:
+                        logger.error(f"Error processing message: {e}")
+                        await msg.nak()
+            except asyncio.TimeoutError:
+                continue
+            except Exception as e:
+                logger.error(f"Durable consumer error: {e}")
+                await asyncio.sleep(1.0)
+
+    async def replay_stream(
+        self,
+        stream_name: str,
+        start_sequence: Optional[int] = None,
+        start_time: Optional[datetime] = None,
+        callback: Optional[Callable[[str, Dict[str, Any]], None]] = None,
+    ) -> List[Dict[str, Any]]:
+        """
+        Replay messages from a JetStream.
+        
+        Args:
+            stream_name: Name of the stream to replay
+            start_sequence: Start from specific sequence number
+            start_time: Start from specific timestamp
+            callback: Optional callback for each message
+            
+        Returns:
+            List of replayed messages
+        """
+        if not self.jetstream_enabled:
+            return []
+        
+        if stream_name not in self._streams:
+            logger.warning(f"Stream '{stream_name}' not found")
+            return []
+        
+        messages = []
+        
+        try:
+            import nats.js.api as js_api
+            
+            # Determine deliver policy
+            if start_sequence is not None:
+                deliver_policy = js_api.DeliverPolicy.BY_START_SEQUENCE
+            elif start_time is not None:
+                deliver_policy = js_api.DeliverPolicy.BY_START_TIME
+            else:
+                deliver_policy = js_api.DeliverPolicy.ALL
+            
+            consumer_info = await self._js.pull_subscribe(
+                stream=stream_name,
+                durable=f"replay_{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}",
+                deliver_policy=deliver_policy,
+                opt_start_seq=start_sequence,
+                opt_start_time=start_time,
+            )
+            
+            # Fetch all messages
+            while True:
+                try:
+                    msgs = await consumer_info.fetch(batch=100, timeout=2.0)
+                    for msg in msgs:
+                        data = json.loads(msg.data.decode('utf-8'))
+                        messages.append({
+                            "subject": msg.subject,
+                            "data": data,
+                            "sequence": msg.metadata.sequence.stream if msg.metadata else None,
+                            "timestamp": msg.metadata.timestamp if msg.metadata else None,
+                        })
+                        if callback:
+                            await callback(msg.subject, data)
+                        await msg.ack()
+                except asyncio.TimeoutError:
+                    break
+            
+            logger.info(f"Replayed {len(messages)} messages from stream '{stream_name}'")
+            return messages
+            
+        except Exception as e:
+            logger.error(f"Failed to replay stream: {e}")
+            return []
+
+    async def reconstruct_state(
+        self,
+        entity_id: str,
+        stream_name: str,
+        event_applier: Callable[[Dict[str, Any], Dict[str, Any]], Dict[str, Any]],
+        initial_state: Optional[Dict[str, Any]] = None,
+    ) -> Dict[str, Any]:
+        """
+        Reconstruct entity state from event stream.
+        
+        Event sourcing pattern: replay all events for an entity and apply
+        them to reconstruct current state.
+        
+        Args:
+            entity_id: Entity identifier to reconstruct
+            stream_name: Name of the event stream
+            event_applier: Function to apply event to state (state, event) -> new_state
+            initial_state: Initial state to start from
+            
+        Returns:
+            Reconstructed state dictionary
+        """
+        state = initial_state or {}
+        
+        def filter_callback(subject: str, data: Dict[str, Any]):
+            nonlocal state
+            if data.get("entity_id") == entity_id:
+                state = event_applier(state, data)
+        
+        await self.replay_stream(
+            stream_name=stream_name,
+            callback=filter_callback,
+        )
+        
+        logger.info(f"Reconstructed state for entity '{entity_id}' from {len(state)} fields")
+        return state
 
     async def publish(self, subject: str, data: Dict[str, Any], reply: Optional[str] = None) -> bool:
         """

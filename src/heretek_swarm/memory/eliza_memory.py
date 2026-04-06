@@ -57,8 +57,8 @@ class ElizaMemoryEntry:
     agent_id: str
     importance: float = 0.5
     decay_rate: float = DEFAULT_DECAY_RATE
-    created_at: datetime = field(default_factory=datetime.utcnow)
-    last_accessed: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    last_accessed: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     access_count: int = 0
     memory_type: str = "short_term"  # working, short_term, long_term
     tags: list[str] = field(default_factory=list)

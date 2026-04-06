@@ -37,7 +37,7 @@ class HandoffContext:
     priority: str = "normal"  # low, normal, high, critical
     deadline: Optional[datetime] = None
     status: HandoffStatus = HandoffStatus.PENDING
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     completed_at: Optional[datetime] = None
     result: Optional[Any] = None
     error: Optional[str] = None

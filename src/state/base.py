@@ -76,7 +76,7 @@ class MessageLineage(BaseModel):
     content_size_bytes: int = Field(..., ge=0)
     
     # Timestamps
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     delivered_at: Optional[datetime] = Field(None)
     processed_at: Optional[datetime] = Field(None)
     
@@ -121,7 +121,7 @@ class StateTransition(BaseModel):
     message_id: Optional[UUID] = Field(None, description="Message that triggered this")
     
     # Timestamps
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     duration_ms: Optional[float] = Field(None, description="Transition duration")
     
     # Rollback info
@@ -175,9 +175,9 @@ class AgentState(BaseModel):
     tasks_failed: int = Field(default=0, ge=0)
     
     # Timestamps
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
-    last_active_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    last_active_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     
     # Versioning
     version: int = Field(default=1, ge=1)
@@ -239,8 +239,8 @@ class ConversationState(BaseModel):
     artifacts: List[Dict[str, Any]] = Field(default_factory=list)
     
     # Timestamps
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     completed_at: Optional[datetime] = Field(None)
     
     # Versioning
@@ -290,8 +290,8 @@ class SystemState(BaseModel):
     last_error_at: Optional[datetime] = Field(None)
     
     # Timestamps
-    started_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    started_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     
     # Versioning
     version: int = Field(default=1, ge=1)
@@ -338,7 +338,7 @@ class StateSnapshot(BaseModel):
     size_bytes: int = Field(default=0, ge=0)
     
     # Timestamps
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     
     # Retention
     expires_at: Optional[datetime] = Field(None)
@@ -385,7 +385,7 @@ class StateDiff(BaseModel):
     added_messages: Dict[str, MessageLineage] = Field(default_factory=dict)
     
     # Metadata
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     size_bytes: int = Field(default=0, ge=0)
     
     class Config:

@@ -100,7 +100,7 @@ class HealthCheckOutput(BaseModel):
     """Output from health check tool"""
     overall_healthy: bool = Field(..., description="Overall system health")
     services: List[ServiceStatus] = Field(default_factory=list)
-    checked_at: datetime = Field(default_factory=datetime.utcnow)
+    checked_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 class HealthCheckTool(BaseTool[HealthCheckInput, HealthCheckOutput]):

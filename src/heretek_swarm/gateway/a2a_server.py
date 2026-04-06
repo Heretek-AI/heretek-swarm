@@ -102,8 +102,8 @@ class AgentInfo:
     """Connected agent information."""
     id: str
     websocket: WebSocket
-    connected_at: datetime = field(default_factory=datetime.utcnow)
-    last_activity: datetime = field(default_factory=datetime.utcnow)
+    connected_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    last_activity: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     status: str = "idle"
     metadata: Dict[str, Any] = field(default_factory=dict)
 

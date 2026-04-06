@@ -69,8 +69,8 @@ class ToolMetadata(BaseModel):
     enabled: bool = Field(default=True)
     
     # Timestamps
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     last_used_at: Optional[datetime] = Field(None)
     
     # Metrics
@@ -99,8 +99,8 @@ class ToolExecutionResult(BaseModel, Generic[TOutput]):
     
     # Performance
     execution_time_ms: float = Field(..., ge=0)
-    started_at: datetime = Field(default_factory=datetime.utcnow)
-    completed_at: datetime = Field(default_factory=datetime.utcnow)
+    started_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    completed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     
     # Context
     input_data: Optional[Dict[str, Any]] = Field(None)
@@ -124,7 +124,7 @@ class ToolContext(BaseModel):
     
     # Execution context
     request_id: UUID = Field(default_factory=uuid4)
-    timestamp: datetime = Field(default_factory=datetime.utcnow)
+    timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     
     # Configuration
     config: Dict[str, Any] = Field(default_factory=dict)
