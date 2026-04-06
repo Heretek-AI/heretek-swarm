@@ -4,6 +4,137 @@
 
 The Consensus Mechanism implements the MAKER (Multi-Agent Knowledge Extraction & Reasoning) algorithm for robust decision aggregation across multiple agents. It provides first-to-ahead-by-k voting, red-flagging for anomalous outputs, reputation-weighted voting, and statistical validation.
 
+**Version:** 1.29.0 (Session 42: Collective Decision-Making Optimization)
+
+## Enhanced Features (Session 42)
+
+The consensus system has been enhanced with the following advanced capabilities:
+
+### 1. Swarm Deliberation Engine
+
+**Location**: [`src/heretek_swarm/consensus/swarm_deliberation.py`](../src/heretek_swarm/consensus/swarm_deliberation.py)
+
+The [`SwarmDeliberationEngine`](../src/heretek_swarm/consensus/swarm_deliberation.py:381) provides multi-round voting with argument exchange:
+
+- **Multi-round Voting**: Iterative position updates through deliberation rounds
+- **Argument Exchange**: Agents can submit arguments supporting their positions
+- **Dissent Tracking**: Minority opinions are preserved in the final report
+- **Consensus Threshold Adaptation**: Dynamic threshold based on participation
+
+```python
+from heretek_swarm.consensus import SwarmDeliberationEngine, Position
+
+engine = SwarmDeliberationEngine(
+    max_rounds=5,
+    consensus_threshold=0.75,
+    min_participants=3
+)
+
+engine.start_deliberation(
+    deliberation_id="deploy-1",
+    proposal="Deploy to production",
+    participants=["agent-1", "agent-2", "agent-3"]
+)
+
+engine.submit_position("deploy-1", "agent-1", Position.AGREE, 0.9, "All tests passed")
+result = engine.finalize_deliberation("deploy-1")
+```
+
+### 2. Enhanced MAKER Protocol
+
+**Location**: [`src/heretek_swarm/consensus/maker_enhanced.py`](../src/heretek_swarm/consensus/maker_enhanced.py)
+
+The [`EnhancedMAKERConsensus`](../src/heretek_swarm/consensus/maker_enhanced.py:266) extends base MAKER with:
+
+- **Reasoning Chains**: Structured reasoning with validation
+- **Cross-validation**: Verification of reasoning consistency
+- **Decision Provenance**: Complete tracking of decision history
+- **Rollback Capability**: Recovery from failed decisions
+
+```python
+from heretek_swarm.consensus import EnhancedMAKERConsensus
+
+consensus = EnhancedMAKERConsensus(
+    ahead_by_k=2,
+    min_votes=3,
+    enable_rollback=True,
+    enable_cross_validation=True
+)
+
+consensus.start_consensus("deploy-1", "Deploy decision")
+
+consensus.add_vote_with_reasoning(
+    consensus_id="deploy-1",
+    agent_id="agent-1",
+    decision="deploy",
+    confidence=0.9,
+    reasoning_chain=[
+        {"type": "observation", "content": "Tests passed", "confidence": 0.95},
+        {"type": "conclusion", "content": "Safe to deploy", "confidence": 0.9}
+    ]
+)
+
+result = consensus.compute_consensus_with_validation("deploy-1", min_validation_score=0.6)
+```
+
+### 3. Agent Expertise Profiling
+
+**Location**: [`src/heretek_swarm/consensus/expertise.py`](../src/heretek_swarm/consensus/expertise.py)
+
+The [`AgentExpertiseProfiler`](../src/heretek_swarm/consensus/expertise.py:234) provides:
+
+- **Dynamic Expertise Scoring**: Per-domain expertise tracking
+- **Historical Accuracy**: Outcome-based score adjustment
+- **Confidence Calibration**: Matching confidence to accuracy
+- **Expertise-based Weighting**: Vote weighting by expertise
+
+```python
+from heretek_swarm.consensus import AgentExpertiseProfiler
+
+profiler = AgentExpertiseProfiler(calibration_window=20)
+profiler.register_agent("agent-1", domains=["code_review", "security"])
+
+# Record outcomes
+profiler.record_outcome("agent-1", "code_review", was_correct=True, confidence=0.9)
+
+# Get weighted confidence
+weighted = profiler.get_weighted_confidence("agent-1", "code_review", base_confidence=0.85)
+```
+
+### 4. Decision Audit Trail
+
+**Location**: [`src/heretek_swarm/consensus/audit.py`](../src/heretek_swarm/consensus/audit.py)
+
+The [`ConsensusAuditTrail`](../src/heretek_swarm/consensus/audit.py:352) provides:
+
+- **Complete Decision History**: Full record of all decisions
+- **Vote Breakdowns**: Detailed vote analysis
+- **Outcome Tracking**: Success/failure tracking for learning
+- **Export Capabilities**: External analysis support
+
+```python
+from heretek_swarm.consensus import ConsensusAuditTrail, DecisionOutcome
+
+audit = ConsensusAuditTrail(storage_backend="memory", retention_days=90)
+
+audit.record_decision(
+    decision_id="deploy-1",
+    consensus_id="consensus-1",
+    proposal="Deploy",
+    decision="deploy",
+    confidence=0.85
+)
+
+audit.record_vote("consensus-1", "agent-1", "deploy", 0.9)
+audit.record_decision_outcome("deploy-1", DecisionOutcome.SUCCESS)
+
+# Query and export
+results = audit.query_decisions(min_confidence=0.8)
+export = audit.export_audit_data(consensus_id="consensus-1")
+```
+
+## Core Architecture (Original)
+
 ## Core Architecture
 
 ### MAKER Consensus Algorithm
