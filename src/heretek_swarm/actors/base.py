@@ -543,6 +543,88 @@ class AgentActor:
             correlation_id=correlation_id,
         )
 
+    async def send_with_reply(
+        self,
+        recipient: str,
+        message_type: str,
+        content: Dict[str, Any],
+        timeout: int = 30,
+    ) -> Optional[Dict[str, Any]]:
+        """
+        Send message and wait for reply with correlation tracking.
+        
+        Implements the request-reply pattern from Microsoft AutoGen for
+        synchronous inter-agent communication.
+        
+        Args:
+            recipient: Target actor ID or topic
+            message_type: Message type identifier
+            content: Message payload
+            timeout: Seconds to wait for reply (default: 30)
+            
+        Returns:
+            Reply content dict, or None if timeout/failure
+            
+        Raises:
+            asyncio.TimeoutError: If no reply received within timeout
+        """
+        import asyncio
+        
+        # Generate unique correlation ID for this request
+        correlation_id = str(uuid.uuid4())
+        reply_channel = f"reply_{self.agent_id}_{correlation_id}"
+        
+        logger.info(
+            f"[{self.agent_id}] Sending request to {recipient} with correlation_id={correlation_id}",
+            extra={"message_type": message_type, "timeout": timeout},
+        )
+        
+        # Create a temporary queue for the reply
+        reply_queue: asyncio.Queue = asyncio.Queue()
+        
+        # Register reply handler
+        async def handle_reply(message: ActorMessage) -> None:
+            """Handle incoming reply message."""
+            await reply_queue.put(message)
+        
+        # Register the reply handler for this specific channel
+        self.register_handler(reply_channel, handle_reply)
+        
+        try:
+            # Send request with reply_to channel
+            await self.send(
+                topic=recipient,
+                content=content,
+                message_type=message_type,
+                correlation_id=correlation_id,
+                reply_to=reply_channel,
+            )
+            
+            # Wait for reply with timeout
+            try:
+                reply_message = await asyncio.wait_for(
+                    reply_queue.get(),
+                    timeout=timeout,
+                )
+                
+                logger.info(
+                    f"[{self.agent_id}] Reply received for correlation_id={correlation_id}",
+                    extra={"message_type": reply_message.message_type},
+                )
+                
+                return reply_message.content
+                
+            except asyncio.TimeoutError:
+                logger.warning(
+                    f"[{self.agent_id}] Request timeout after {timeout}s for correlation_id={correlation_id}",
+                    extra={"recipient": recipient, "message_type": message_type},
+                )
+                raise
+                
+        finally:
+            # Cleanup: unregister reply handler
+            self.unregister_handler(reply_channel)
+    
     async def put_message(self, message: ActorMessage) -> None:
         """
         Put a message in the actor's mailbox.

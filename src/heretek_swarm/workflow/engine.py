@@ -2,20 +2,55 @@
 Workflow Engine - Execute visual workflows from Canvas UI
 
 Provides workflow execution with dependency resolution, error handling,
-and state tracking. Inspired by Flowise workflow engine.
+and state tracking. Inspired by Flowise workflow engine and LangGraph patterns.
+
+Features:
+- TypedDict workflow state with Annotated for state transitions
+- Checkpointing for workflow resumption
+- Cycle detection for infinite loop prevention
+- Conditional edges for dynamic workflow routing
 """
 
 import asyncio
 import json
 import logging
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional, Set, TypeVar, Annotated, Generic
 from dataclasses import dataclass, field
 from enum import Enum
+from typing_extensions import TypedDict
 
 import structlog
 
 logger = structlog.get_logger(__name__)
+
+
+class WorkflowState(TypedDict, total=False):
+    """
+    Typed workflow state with annotations for state transitions.
+    
+    LangGraph pattern: Uses Annotated types to specify how state fields
+    should be updated during workflow execution.
+    
+    Attributes:
+        messages: List of messages (append-only accumulation)
+        results: Dict of node results (merge updates)
+        current_phase: Current workflow phase identifier
+        metadata: Additional metadata dict
+        checkpoint: Optional checkpoint for resumption
+        cycle_count: Counter for cycle detection
+    """
+    
+    messages: Annotated[List[Dict[str, Any]], "append"]
+    results: Annotated[Dict[str, Any], "merge"]
+    current_phase: str
+    metadata: Dict[str, Any]
+    checkpoint: Optional[Dict[str, Any]]
+    cycle_count: int
+
+
+# Type variable for generic workflow state
+T = TypeVar('T', bound=WorkflowState)
 
 
 class WorkflowState(Enum):
@@ -101,10 +136,88 @@ class Workflow:
     created_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
 
+def _merge_state_field(current: Any, update: Any, annotation: str) -> Any:
+    """
+    Merge a state field based on its annotation type.
+    
+    LangGraph pattern: Uses annotations to specify how fields should be updated.
+    
+    Args:
+        current: Current field value
+        update: New value to merge
+        annotation: Annotation type ("append", "merge", "replace")
+        
+    Returns:
+        Merged field value
+    """
+    if annotation == "append":
+        # Append-only accumulation (for messages lists)
+        if isinstance(current, list) and isinstance(update, list):
+            return current + update
+        return update
+    elif annotation == "merge":
+        # Dict merge (for results dicts)
+        if isinstance(current, dict) and isinstance(update, dict):
+            return {**current, **update}
+        return update
+    else:
+        # Default: replace
+        return update
+
+
+def merge_workflow_states(
+    current: WorkflowState,
+    update: WorkflowState,
+) -> WorkflowState:
+    """
+    Merge two workflow states using Annotated type hints.
+    
+    LangGraph pattern: Applies state transition rules based on field annotations.
+    
+    Args:
+        current: Current workflow state
+        update: State updates to apply
+        
+    Returns:
+        New merged workflow state
+    """
+    result: WorkflowState = {}
+    
+    # Get all keys from both states
+    all_keys = set(current.keys()) | set(update.keys())
+    
+    for key in all_keys:
+        if key in update and key in current:
+            # Both have this key - apply merge logic
+            if key == "messages":
+                result["messages"] = _merge_state_field(
+                    current.get("messages", []),
+                    update.get("messages", []),
+                    "append"
+                )
+            elif key == "results":
+                result["results"] = _merge_state_field(
+                    current.get("results", {}),
+                    update.get("results", {}),
+                    "merge"
+                )
+            else:
+                # Default: use update value
+                result[key] = update[key]
+        elif key in update:
+            result[key] = update[key]
+        else:
+            result[key] = current[key]
+    
+    return result
+
+
 @dataclass
 class WorkflowContext:
     """
     Execution context for a workflow.
+    
+    Supports LangGraph-style typed state with checkpointing for resumption.
 
     Attributes:
         workflow_id: Workflow ID
@@ -112,7 +225,8 @@ class WorkflowContext:
         node_results: Results from executed nodes
         variables: Runtime variables
         start_time: Execution start time
-        state: Current workflow state
+        state: Current workflow state (TypedDict)
+        checkpoints: List of checkpoints for resumption
         error: Optional error if failed
     """
 
@@ -120,8 +234,16 @@ class WorkflowContext:
     execution_id: str
     node_results: Dict[str, Any] = field(default_factory=dict)
     variables: Dict[str, Any] = field(default_factory=dict)
-    start_time: datetime = field(default_factory=datetime.utcnow)
-    state: WorkflowState = WorkflowState.PENDING
+    start_time: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    state: WorkflowState = field(default_factory=lambda: WorkflowState(
+        messages=[],
+        results={},
+        current_phase="initialized",
+        metadata={},
+        checkpoint=None,
+        cycle_count=0
+    ))
+    checkpoints: List[Dict[str, Any]] = field(default_factory=list)
     error: Optional[Exception] = None
 
 
