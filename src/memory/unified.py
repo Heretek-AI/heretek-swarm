@@ -8,7 +8,7 @@ Target: p95 latency <50ms for all retrieval operations.
 """
 
 import asyncio
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List, Optional, Tuple
 from uuid import UUID, uuid4
 
@@ -175,7 +175,7 @@ class DualTierMemorySystem:
         Returns:
             The stored memory entry
         """
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         
         # Create entry
         entry = MemoryEntry(
@@ -218,7 +218,7 @@ class DualTierMemorySystem:
             )
             await self.ephemeral.store(cache_entry, ttl_seconds=cache_ttl)
         
-        elapsed_ms = (datetime.utcnow() - start_time).total_seconds() * 1000
+        elapsed_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
         self._track_latency(elapsed_ms)
         
         logger.debug(
@@ -254,7 +254,7 @@ class DualTierMemorySystem:
         
         Searches ephemeral first (faster), then persistent.
         """
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         
         # Try ephemeral first
         if tier is None or tier == MemoryTier.EPHEMERAL:
@@ -262,7 +262,7 @@ class DualTierMemorySystem:
             if entry is not None:
                 self._cache_hits += 1
                 
-                elapsed_ms = (datetime.utcnow() - start_time).total_seconds() * 1000
+                elapsed_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
                 self._track_latency(elapsed_ms)
                 
                 return entry
@@ -271,7 +271,7 @@ class DualTierMemorySystem:
         if tier is None or tier == MemoryTier.PERSISTENT:
             entry = await self.persistent.retrieve(entry_id)
             if entry is not None:
-                elapsed_ms = (datetime.utcnow() - start_time).total_seconds() * 1000
+                elapsed_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
                 self._track_latency(elapsed_ms)
                 
                 return entry
@@ -285,7 +285,7 @@ class DualTierMemorySystem:
         Intelligently combines results from ephemeral and persistent
         storage based on query parameters.
         """
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         
         results_by_tier: Dict[MemoryTier, MemoryResult] = {}
         
@@ -339,7 +339,7 @@ class DualTierMemorySystem:
             query.sort_by
         )
         
-        elapsed_ms = (datetime.utcnow() - start_time).total_seconds() * 1000
+        elapsed_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
         self._track_latency(elapsed_ms)
         
         return merged
@@ -400,13 +400,13 @@ class DualTierMemorySystem:
     
     async def delete(self, entry_id: UUID) -> bool:
         """Delete from both tiers"""
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         
         # Try deleting from both tiers
         ephemeral_deleted = await self.ephemeral.delete(entry_id)
         persistent_deleted = await self.persistent.delete(entry_id)
         
-        elapsed_ms = (datetime.utcnow() - start_time).total_seconds() * 1000
+        elapsed_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
         self._track_latency(elapsed_ms)
         
         return ephemeral_deleted or persistent_deleted

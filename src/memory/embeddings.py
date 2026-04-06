@@ -7,7 +7,7 @@ provides caching to optimize performance.
 
 import asyncio
 import hashlib
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional, Tuple
 
 import aiohttp
@@ -68,7 +68,7 @@ class EmbeddingCache:
         embedding, created_at = self._cache[key]
         
         # Check TTL
-        if datetime.utcnow() - created_at > timedelta(seconds=self.ttl_seconds):
+        if datetime.now(timezone.utc) - created_at > timedelta(seconds=self.ttl_seconds):
             del self._cache[key]
             self._access_order.remove(key)
             return None
@@ -88,7 +88,7 @@ class EmbeddingCache:
             oldest_key = self._access_order.pop(0)
             del self._cache[oldest_key]
         
-        self._cache[key] = (embedding, datetime.utcnow())
+        self._cache[key] = (embedding, datetime.now(timezone.utc))
         self._access_order.append(key)
     
     def clear(self) -> None:
@@ -241,7 +241,7 @@ class EmbeddingService:
     ) -> List[EmbeddingVector]:
         """Fetch embeddings for a batch from LiteLLM"""
         async with self._semaphore:
-            start_time = datetime.utcnow()
+            start_time = datetime.now(timezone.utc)
             
             texts = [text for _, text in batch]
             
@@ -266,12 +266,12 @@ class EmbeddingService:
                             vector=item["embedding"],
                             dimensions=len(item["embedding"]),
                             model=model,
-                            created_at=datetime.utcnow()
+                            created_at=datetime.now(timezone.utc)
                         )
                         embeddings.append(vector)
                     
                     # Track timing
-                    elapsed_ms = (datetime.utcnow() - start_time).total_seconds() * 1000
+                    elapsed_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
                     self._total_time_ms += elapsed_ms
                     
                     logger.debug(

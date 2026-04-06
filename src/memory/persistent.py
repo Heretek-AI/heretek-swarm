@@ -266,7 +266,7 @@ class PersistentMemoryStore:
             entry: Memory entry to store
             generate_embedding: Whether to generate embedding if missing
         """
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         
         if self._session_factory is None:
             await self.connect()
@@ -292,7 +292,7 @@ class PersistentMemoryStore:
                 session.add(model)
                 await session.commit()
             
-            elapsed_ms = (datetime.utcnow() - start_time).total_seconds() * 1000
+            elapsed_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
             self._track_latency(elapsed_ms)
             
             logger.debug(
@@ -319,7 +319,7 @@ class PersistentMemoryStore:
         if not entries:
             return
         
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         
         if self._session_factory is None:
             await self.connect()
@@ -348,7 +348,7 @@ class PersistentMemoryStore:
                 session.add_all(models)
                 await session.commit()
             
-            elapsed_ms = (datetime.utcnow() - start_time).total_seconds() * 1000
+            elapsed_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
             self._track_latency(elapsed_ms)
             
             logger.debug(
@@ -367,7 +367,7 @@ class PersistentMemoryStore:
     
     async def retrieve(self, entry_id: UUID) -> Optional[MemoryEntry]:
         """Retrieve a memory entry by ID"""
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         
         if self._session_factory is None:
             await self.connect()
@@ -384,11 +384,11 @@ class PersistentMemoryStore:
                 entry = self._model_to_entry(model)
                 
                 # Update access time
-                model.accessed_at = datetime.utcnow()
+                model.accessed_at = datetime.now(timezone.utc)
                 model.access_count += 1
                 await session.commit()
             
-            elapsed_ms = (datetime.utcnow() - start_time).total_seconds() * 1000
+            elapsed_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
             self._track_latency(elapsed_ms)
             
             return entry
@@ -403,7 +403,7 @@ class PersistentMemoryStore:
     
     async def delete(self, entry_id: UUID) -> bool:
         """Delete a memory entry"""
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         
         if self._session_factory is None:
             await self.connect()
@@ -416,7 +416,7 @@ class PersistentMemoryStore:
                 
                 deleted = result.rowcount > 0
             
-            elapsed_ms = (datetime.utcnow() - start_time).total_seconds() * 1000
+            elapsed_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
             self._track_latency(elapsed_ms)
             
             return deleted
@@ -433,7 +433,7 @@ class PersistentMemoryStore:
         """
         Search persistent memory with filters and optional vector similarity.
         """
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         
         if self._session_factory is None:
             await self.connect()
@@ -499,7 +499,7 @@ class PersistentMemoryStore:
                 
                 entries = [self._model_to_entry(m) for m in models]
             
-            elapsed_ms = (datetime.utcnow() - start_time).total_seconds() * 1000
+            elapsed_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
             self._track_latency(elapsed_ms)
             
             return MemoryResult(
@@ -532,7 +532,7 @@ class PersistentMemoryStore:
         Note: This is a simplified implementation. Full PGVector
         support requires proper vector index setup.
         """
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         
         if self._session_factory is None:
             await self.connect()
@@ -550,7 +550,7 @@ class PersistentMemoryStore:
             
             result = await self.search(query)
             
-            elapsed_ms = (datetime.utcnow() - start_time).total_seconds() * 1000
+            elapsed_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
             self._track_latency(elapsed_ms)
             
             return result

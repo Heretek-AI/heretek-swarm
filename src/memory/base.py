@@ -5,7 +5,7 @@ Provides Pydantic models for type-safe memory operations with
 complete validation and serialization support.
 """
 
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional
 from uuid import UUID, uuid4
@@ -85,7 +85,7 @@ class MemoryEntry(BaseModel):
     
     def touch(self) -> "MemoryEntry":
         """Update access timestamp and increment counter"""
-        self.accessed_at = datetime.utcnow()
+        self.accessed_at = datetime.now(timezone.utc)
         self.access_count += 1
         return self
     
@@ -93,7 +93,7 @@ class MemoryEntry(BaseModel):
         """Check if memory entry has expired"""
         if self.expires_at is None:
             return False
-        return datetime.utcnow() > self.expires_at
+        return datetime.now(timezone.utc) > self.expires_at
 
 
 class MemoryQuery(BaseModel):

@@ -7,7 +7,7 @@ Target: p95 latency <10ms for all operations.
 
 import asyncio
 import json
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List, Optional, Set
 from uuid import UUID
 
@@ -135,7 +135,7 @@ class EphemeralMemoryStore:
             entry: Memory entry to store
             ttl_seconds: Optional TTL override
         """
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         
         if self._client is None:
             await self.connect()
@@ -145,7 +145,7 @@ class EphemeralMemoryStore:
         
         # Set expiration time
         entry.tier = MemoryTier.EPHEMERAL
-        entry.expires_at = datetime.utcnow() + timedelta(seconds=ttl)
+        entry.expires_at = datetime.now(timezone.utc) + timedelta(seconds=ttl)
         
         key = self._get_key(entry.id)
         value = entry.model_dump_json()
@@ -174,7 +174,7 @@ class EphemeralMemoryStore:
                 
                 await pipe.execute()
             
-            elapsed_ms = (datetime.utcnow() - start_time).total_seconds() * 1000
+            elapsed_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
             self._track_latency(elapsed_ms)
             
             logger.debug(
@@ -195,7 +195,7 @@ class EphemeralMemoryStore:
     
     async def retrieve(self, entry_id: UUID) -> Optional[MemoryEntry]:
         """Retrieve a memory entry by ID"""
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         
         if self._client is None:
             await self.connect()
@@ -205,7 +205,7 @@ class EphemeralMemoryStore:
         try:
             value = await self._client.get(key)
             
-            elapsed_ms = (datetime.utcnow() - start_time).total_seconds() * 1000
+            elapsed_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
             self._track_latency(elapsed_ms)
             
             if value is None:
@@ -240,7 +240,7 @@ class EphemeralMemoryStore:
     
     async def delete(self, entry_id: UUID) -> bool:
         """Delete a memory entry"""
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         
         if self._client is None:
             await self.connect()
@@ -272,7 +272,7 @@ class EphemeralMemoryStore:
                 
                 results = await pipe.execute()
             
-            elapsed_ms = (datetime.utcnow() - start_time).total_seconds() * 1000
+            elapsed_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
             self._track_latency(elapsed_ms)
             
             return results[0] > 0
@@ -292,7 +292,7 @@ class EphemeralMemoryStore:
         Note: Redis doesn't support vector search natively.
         For semantic search, use persistent store.
         """
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         
         if self._client is None:
             await self.connect()
@@ -403,7 +403,7 @@ class EphemeralMemoryStore:
         total_count = len(entries)
         entries = entries[query.offset:query.offset + query.limit]
         
-        elapsed_ms = (datetime.utcnow() - start_time).total_seconds() * 1000
+        elapsed_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
         self._track_latency(elapsed_ms)
         
         return MemoryResult(
