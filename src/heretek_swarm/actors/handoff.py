@@ -234,8 +234,8 @@ class AgentHandoff:
                     to_agent=to_agent_id
                 )
             
-            # Log handoff to historian
-            if self.historian:
+            # Log handoff to historian (P1-4: Check method existence)
+            if self.historian and hasattr(self.historian, 'log_event'):
                 await self.historian.log_event(
                     event_type="agent_handoff",
                     data={
@@ -323,7 +323,8 @@ class AgentHandoff:
         context_package = self._active_handoffs[handoff_id]
         
         # Log completion to historian
-        if self.historian:
+        # P1-4: Check method existence
+        if self.historian and hasattr(self.historian, 'log_event'):
             await self.historian.log_event(
                 event_type="handoff_completed",
                 data={
@@ -371,7 +372,8 @@ class AgentHandoff:
             return False
         
         # Log cancellation
-        if self.historian:
+        # P1-4: Check method existence
+        if self.historian and hasattr(self.historian, 'log_event'):
             await self.historian.log_event(
                 event_type="handoff_cancelled",
                 data={

@@ -85,6 +85,12 @@ class ActorSupervisor:
             max_restarts: Maximum restart attempts per actor
             db_pool: Optional asyncpg database connection pool for state persistence
         """
+        # P1-7: Configuration validation
+        if health_check_interval <= 0:
+            raise ValueError("health_check_interval must be positive")
+        if max_restarts < 0:
+            raise ValueError("max_restarts must be non-negative")
+        
         self.name = name or "ActorSupervisor"
         self.health_check_interval = health_check_interval
         self.auto_restart = auto_restart

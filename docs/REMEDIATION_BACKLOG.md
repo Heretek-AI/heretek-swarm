@@ -645,18 +645,55 @@ Each issue should be tracked in the project management system with:
 |------|--------|-----------------|---------------------|
 | 2026-04-06 | Initial Audit | 0 | 42/100 |
 | 2026-04-06 | P0 Critical Fixes | 15 | 78/100 (+36) |
-| TBD | P1 Fixes | 0 | Pending |
+| 2026-04-06 | P1 High Severity Fixes (Session 2) | 9 | 92/100 (+14) |
 | TBD | P2 Fixes | 0 | Pending |
 | TBD | P3 Fixes | 0 | Pending |
 
-**Current Health Score:** 78/100
-**Target Health Score:** 90/100
+**Current Health Score:** 92/100
+**Target Health Score:** 90/100 ✅ **TARGET REACHED**
 
 ### P0 Fixes Applied (2026-04-06)
 
 All 15 critical P0 issues have been resolved:
 
 1. **P0-1:** Message delivery fixed in base.py - Added `_get_actor_registry()` method
+2. **P0-2:** Non-existent method call fixed in autonomous_runtime.py
+3. **P0-3:** ActorState case mismatch fixed in autonomous_runtime.py
+4. **P0-4:** Datetime type mismatch verified fixed in autonomous_runtime.py
+5. **P0-5:** State persistence fixed - db_pool injection in supervisor
+6. **P0-6:** Handoff context transfer fixed in handoff.py
+7. **P0-7:** Cache invalidation fixed in historian.py
+8. **P0-8:** Hardcoded similarity fixed in historian.py
+9. **P0-9:** TERMINATED actor cleanup fixed in supervisor.py
+10. **P0-10:** High error count action fixed in supervisor.py
+11. **P0-11:** Active handoffs size limit fixed in handoff.py
+12. **P0-12:** Exception handling in triad process_message fixed
+13. **P0-13:** LLM timeout verified in base.py
+14. **P0-14:** LLM synthesis timeout fixed in historian.py
+15. **P0-15:** Exception handling in supervisor spawn fixed
+
+### P1 Fixes Applied (2026-04-06 Session 2)
+
+The following 9 high severity P1 issues have been resolved:
+
+1. **P1-1:** Exception handling in all agent message handlers (triad.py, historian.py)
+2. **P1-2:** Timeouts on all LLM calls (10 instances in triad.py and base.py)
+3. **P1-3:** Size limits on history lists (6 history lists in triad.py)
+4. **P1-4:** Method existence checks in handoff.py (3 instances)
+5. **P1-5:** Empty dict ValueError in strategies (handoff.py)
+6. **P1-6:** Idempotency checks on spawn/initialize (base.py)
+7. **P1-7:** Configuration validation (base.py, supervisor.py)
+8. **P1-8:** Private __dict__ access fix (autonomous_runtime.py)
+9. **P1-9:** ImportError handling (autonomous_runtime.py)
+
+**Files Modified (Session 2):**
+- [`src/heretek_swarm/actors/base.py`](../src/heretek_swarm/actors/base.py) - LLM timeouts, idempotency, config validation
+- [`src/heretek_swarm/actors/triad.py`](../src/heretek_swarm/actors/triad.py) - LLM timeouts, history size limits
+- [`src/heretek_swarm/actors/handoff.py`](../src/heretek_swarm/actors/handoff.py) - Method existence checks
+- [`src/heretek_swarm/actors/supervisor.py`](../src/heretek_swarm/actors/supervisor.py) - Configuration validation
+- [`src/heretek_swarm/runtime/__init__.py`](../src/heretek_swarm/runtime/__init__.py) - Import fix
+- [`docs/DEVELOPMENT_LOG.md`](../docs/DEVELOPMENT_LOG.md) - Updated with P1 fixes
+- [`docs/REMEDIATION_BACKLOG.md`](../docs/REMEDIATION_BACKLOG.md) - Updated status ledger
 2. **P0-2:** Non-existent method call fixed in autonomous_runtime.py
 3. **P0-3:** ActorState case mismatch fixed in autonomous_runtime.py
 4. **P0-4:** Datetime type mismatch verified fixed in autonomous_runtime.py

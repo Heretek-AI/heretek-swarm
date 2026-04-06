@@ -167,7 +167,8 @@ class StewardAgent(AgentActor):
         if self.swarms_agent:
             try:
                 decision = await self.run_with_llm(
-                    prompt=f"Make an executive decision on: {decision_context}"
+                    prompt=f"Make an executive decision on: {decision_context}",
+                    timeout=60
                 )
                 await self.send(
                     topic="decisions",
@@ -302,6 +303,7 @@ class AlphaAgent(AgentActor):
         )
 
         self.analysis_depth = analysis_depth
+        self.max_history_size = 1000  # P1-3: Limit history size to prevent memory leaks
         self.analysis_history: List[Dict[str, Any]] = []
         self.decision_count = 0
 
@@ -394,6 +396,9 @@ class AlphaAgent(AgentActor):
             "analysis": analysis,
             "timestamp": datetime.utcnow().isoformat(),
         })
+        # P1-3: Trim history if it exceeds max size
+        if len(self.analysis_history) > self.max_history_size:
+            self.analysis_history = self.analysis_history[-self.max_history_size:]
 
     async def _handle_validation_request(self, message: ActorMessage) -> None:
         """Handle validation requests."""
@@ -428,7 +433,8 @@ class AlphaAgent(AgentActor):
         if self.swarms_agent:
             try:
                 analysis_result = await self.run_with_llm(
-                    prompt=f"Analyze this problem and provide a decision with confidence: {problem}"
+                    prompt=f"Analyze this problem and provide a decision with confidence: {problem}",
+                    timeout=60
                 )
                 return {
                     "decision": analysis_result,
@@ -460,7 +466,8 @@ class AlphaAgent(AgentActor):
         if self.swarms_agent:
             try:
                 validation_result = await self.run_with_llm(
-                    prompt=f"Validate this decision: {decision}"
+                    prompt=f"Validate this decision: {decision}",
+                    timeout=60
                 )
                 return {
                     "valid": True,
@@ -533,6 +540,7 @@ class BetaAgent(AgentActor):
         )
 
         self.validation_strictness = validation_strictness
+        self.max_history_size = 1000  # P1-3: Limit history size to prevent memory leaks
         self.validation_history: List[Dict[str, Any]] = []
         self.error_detections: List[Dict[str, Any]] = []
 
@@ -615,6 +623,9 @@ class BetaAgent(AgentActor):
             "validation": validation,
             "timestamp": datetime.utcnow().isoformat(),
         })
+        # P1-3: Trim history if it exceeds max size
+        if len(self.validation_history) > self.max_history_size:
+            self.validation_history = self.validation_history[-self.max_history_size:]
 
         reply_topic = message.content.get("reply_to", "validation")
         await self.send(
@@ -639,6 +650,9 @@ class BetaAgent(AgentActor):
                 "errors": errors,
                 "timestamp": datetime.utcnow().isoformat(),
             })
+            # P1-3: Trim history if it exceeds max size
+            if len(self.error_detections) > self.max_history_size:
+                self.error_detections = self.error_detections[-self.max_history_size:]
             logger.warning(f"[{self.agent_id}] Detected {len(errors)} errors")
 
         reply_topic = message.content.get("reply_to", "errors")
@@ -657,7 +671,8 @@ class BetaAgent(AgentActor):
         if self.swarms_agent:
             try:
                 analysis_result = await self.run_with_llm(
-                    prompt=f"Provide independent analysis (Beta perspective): {problem}"
+                    prompt=f"Provide independent analysis (Beta perspective): {problem}",
+                    timeout=60
                 )
                 return {
                     "decision": analysis_result,
@@ -684,7 +699,8 @@ class BetaAgent(AgentActor):
         if self.swarms_agent:
             try:
                 validation_result = await self.run_with_llm(
-                    prompt=f"Beta validation of: {decision}. Original: {original_analysis}"
+                    prompt=f"Beta validation of: {decision}. Original: {original_analysis}",
+                    timeout=60
                 )
                 return {
                     "valid": True,
@@ -709,7 +725,8 @@ class BetaAgent(AgentActor):
         if self.swarms_agent:
             try:
                 error_check = await self.run_with_llm(
-                    prompt=f"Check for errors in: {content}"
+                    prompt=f"Check for errors in: {content}",
+                    timeout=60
                 )
                 if "error" in error_check.lower():
                     errors.append({
@@ -779,6 +796,7 @@ class CharlieAgent(AgentActor):
         )
 
         self.challenge_intensity = challenge_intensity
+        self.max_history_size = 1000  # P1-3: Limit history size to prevent memory leaks
         self.challenges_raised: List[Dict[str, Any]] = []
         self.risk_assessments: List[Dict[str, Any]] = []
 
@@ -858,6 +876,9 @@ class CharlieAgent(AgentActor):
             "challenges": challenges,
             "timestamp": datetime.utcnow().isoformat(),
         })
+        # P1-3: Trim history if it exceeds max size
+        if len(self.challenges_raised) > self.max_history_size:
+            self.challenges_raised = self.challenges_raised[-self.max_history_size:]
 
         reply_topic = message.content.get("reply_to", "challenges")
         await self.send(
@@ -885,6 +906,9 @@ class CharlieAgent(AgentActor):
             "assessment": assessment,
             "timestamp": datetime.utcnow().isoformat(),
         })
+        # P1-3: Trim history if it exceeds max size
+        if len(self.risk_assessments) > self.max_history_size:
+            self.risk_assessments = self.risk_assessments[-self.max_history_size:]
 
         reply_topic = message.content.get("reply_to", "risks")
         await self.send(
@@ -902,7 +926,8 @@ class CharlieAgent(AgentActor):
         if self.swarms_agent:
             try:
                 analysis_result = await self.run_with_llm(
-                    prompt=f"Analyze with critical perspective (Charlie): {problem}. Identify risks and alternatives."
+                    prompt=f"Analyze with critical perspective (Charlie): {problem}. Identify risks and alternatives.",
+                    timeout=60
                 )
                 return {
                     "decision": analysis_result,
@@ -929,7 +954,8 @@ class CharlieAgent(AgentActor):
         if self.swarms_agent:
             try:
                 challenge_result = await self.run_with_llm(
-                    prompt=f"Challenge this proposition: {proposition}"
+                    prompt=f"Challenge this proposition: {proposition}",
+                    timeout=60
                 )
                 challenges.append({
                     "type": "logical_challenge",
@@ -946,7 +972,8 @@ class CharlieAgent(AgentActor):
         if self.swarms_agent:
             try:
                 risk_result = await self.run_with_llm(
-                    prompt=f"Assess risks: {scenario}"
+                    prompt=f"Assess risks: {scenario}",
+                    timeout=60
                 )
                 return {
                     "risks_identified": [risk_result],

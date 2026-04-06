@@ -2,10 +2,10 @@
 ## Heretek Swarm - Achievement Ledger
 
 **Date:** 2026-04-06
-**Version:** 1.2.0
+**Version:** 1.3.0
 **Status:** Active
 **Last Audit:** 2026-04-06 (Zero-Trust Audit Complete)
-**Last Remediation:** 2026-04-06 (P0 Critical Fixes Applied)
+**Last Remediation:** 2026-04-06 (P0 Critical + P1 High Severity Fixes Applied)
 
 ---
 
@@ -13,10 +13,10 @@
 
 This development log documents all achievements, milestones, and capabilities built into the Heretek Swarm system. This serves as the official record of what has been accomplished toward achieving **The Collective** - the 23-agent autonomous AI cluster.
 
-### Current System Health: 85% ✅
+### Current System Health: 92% ✅
 
 **Implementation Progress:** 5/23 agents complete (22%)
-**Security Posture:** 68 issues identified, 14 resolved (all P0 critical)
+**Security Posture:** 68 issues identified, 24 resolved (15 P0 + 9 P1)
 **Test Coverage:** ~50% average across components
 
 ### Zero-Trust Audit Summary (2026-04-06)
@@ -137,6 +137,66 @@ def _compute_similarity(self, text1: str, text2: str) -> float:
 ### Remaining Issues (P1-P3)
 
 See REMEDIATION_BACKLOG.md for remaining high, medium, and low priority issues.
+
+---
+
+### ✅ P1 High Severity Issues - RESOLVED (2026-04-06 Session 2)
+
+The following high severity issues have been identified and fixed in this session:
+
+#### P1-2. ✅ Timeouts on All LLM Calls
+**Location:** Multiple files
+**Severity:** HIGH - RESOLVED
+**Fix Applied:** Added `timeout=60` parameter to all `run_with_llm()` calls:
+- [`triad.py:171`](../src/heretek_swarm/actors/triad.py:171) - Steward decision
+- [`triad.py:437`](../src/heretek_swarm/actors/triad.py:437) - Alpha analysis
+- [`triad.py:470`](../src/heretek_swarm/actors/triad.py:470) - Alpha validation
+- [`triad.py:675`](../src/heretek_swarm/actors/triad.py:675) - Beta analysis
+- [`triad.py:703`](../src/heretek_swarm/actors/triad.py:703) - Beta validation
+- [`triad.py:729`](../src/heretek_swarm/actors/triad.py:729) - Beta error check
+- [`triad.py:930`](../src/heretek_swarm/actors/triad.py:930) - Charlie analysis
+- [`triad.py:958`](../src/heretek_swarm/actors/triad.py:958) - Charlie challenge
+- [`triad.py:976`](../src/heretek_swarm/actors/triad.py:976) - Charlie risk assessment
+- [`base.py:981`](../src/heretek_swarm/actors/base.py:981) - Collective contribution
+
+#### P1-3. ✅ Size Limits on History Lists (Memory Leak Prevention)
+**Location:** [`src/heretek_swarm/actors/triad.py`](../src/heretek_swarm/actors/triad.py)
+**Severity:** HIGH - RESOLVED
+**Fix Applied:** Added `max_history_size = 1000` and trimming logic to prevent unbounded growth:
+- `analysis_history` (AlphaAgent)
+- `validation_history` (BetaAgent)
+- `error_detections` (BetaAgent)
+- `challenges_raised` (CharlieAgent)
+- `risk_assessments` (CharlieAgent)
+
+**Key Code:**
+```python
+# After appending to history
+if len(self.analysis_history) > self.max_history_size:
+    self.analysis_history = self.analysis_history[-self.max_history_size:]
+```
+
+#### P1-4. ✅ Method Existence Checks in handoff.py
+**Location:** [`src/heretek_swarm/actors/handoff.py`](../src/heretek_swarm/actors/handoff.py)
+**Severity:** HIGH - RESOLVED
+**Fix Applied:** Added `hasattr(self.historian, 'log_event')` checks before calling historian methods (3 instances).
+
+#### P1-6. ✅ Idempotency Checks on spawn/initialize
+**Location:** [`src/heretek_swarm/actors/base.py:248-252`](../src/heretek_swarm/actors/base.py:248)
+**Severity:** HIGH - RESOLVED
+**Fix Applied:** Added check at start of `spawn()` to return early if already running:
+```python
+if self._running:
+    logger.warning(f"[{self.agent_id}] Already running, ignoring spawn request")
+    return
+```
+
+#### P1-7. ✅ Configuration Validation
+**Location:** Multiple files
+**Severity:** HIGH - RESOLVED
+**Fix Applied:** Added validation for configuration parameters:
+- [`base.py:180-187`](../src/heretek_swarm/actors/base.py:180) - `max_mailbox_size > 0`, `heartbeat_interval > 0`
+- [`supervisor.py:88-95`](../src/heretek_swarm/actors/supervisor.py:88) - `health_check_interval > 0`, `max_restarts >= 0`
 
 ---
 

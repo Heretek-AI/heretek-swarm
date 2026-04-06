@@ -177,6 +177,12 @@ class AgentActor:
             heartbeat_interval: Interval between heartbeats in seconds
             actor_type: Optional type identifier for factory registration
         """
+        # P1-7: Configuration validation
+        if max_mailbox_size <= 0:
+            raise ValueError("max_mailbox_size must be positive")
+        if heartbeat_interval <= 0:
+            raise ValueError("heartbeat_interval must be positive")
+        
         self.agent_id = agent_id or f"actor_{uuid.uuid4().hex[:8]}"
         self.name = name or self.__class__.__name__
         self.description = description or f"Actor: {self.name}"
@@ -245,6 +251,11 @@ class AgentActor:
         3. Starts heartbeat loop
         4. Calls initialize() hook for subclass setup
         """
+        # P1-6: Idempotency check - prevent multiple spawns
+        if self._running:
+            logger.warning(f"[{self.agent_id}] Already running, ignoring spawn request")
+            return
+        
         try:
             logger.info(
                 f"[{self.agent_id}] Agent spawned: {self.name}",
@@ -973,7 +984,7 @@ Task Details:
 
 Please provide your analysis and recommendation for this collective task."""
                 
-                response = await self.run_with_llm(prompt)
+                response = await self.run_with_llm(prompt, timeout=60)
                 return {
                     "contribution": {
                         "analysis": response,

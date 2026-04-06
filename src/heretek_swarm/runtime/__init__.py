@@ -8,11 +8,7 @@ from .agent_runtime import AgentRuntime, AgentContext, AgentState
 from .tools import ToolRegistry
 from .autonomous_runtime import (
     AutonomousRuntime,
-    AgentHealth,
-    HealthStatus,
-    RuntimeMetrics,
-    get_autonomous_runtime,
-    set_autonomous_runtime,
+    RuntimeState,
 )
 
 # Support both old dictionary-based and new class-based character systems
