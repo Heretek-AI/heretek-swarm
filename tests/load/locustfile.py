@@ -5,14 +5,18 @@ Agent Gamma - QA and Validation Lead
 Uses Locust for scalable load testing of the Heretek Swarm system.
 
 Run with:
-    locust -f tests/load/locustfile.py --headless -u 1000 -r 50 -t 5m
+    locust -f tests/load/locustfile.py --headless -u 1000 -r 50 -t 5m --host http://localhost:8000
+
+Or with UI:
+    locust -f tests/load/locustfile.py --host http://localhost:8000
 """
 
 import json
+import os
 import random
 import time
 from dataclasses import dataclass
-from typing import Any
+from typing import Any, Optional
 
 from locust import HttpUser, between, events, task
 from locust.runners import MasterRunner, WorkerRunner
@@ -22,6 +26,8 @@ from locust.runners import MasterRunner, WorkerRunner
 
 CONCURRENT_AGENT_TARGET = 1000
 MESSAGE_LATENCY_BASELINE_MS = 100
+API_HOST = os.getenv("LOCUST_HOST", "http://localhost:8000")
+API_KEY = os.getenv("HERETEK_API_KEY", "")
 
 
 @dataclass
@@ -33,20 +39,31 @@ class AgentProfile:
     capabilities: list[str]
 
 
-# Agent profiles matching the 22 agent types
+# Agent profiles matching the 23 agent types
 AGENT_PROFILES = [
     AgentProfile("steward", 0.5, "complex", ["orchestration", "authorization"]),
     AgentProfile("alpha", 1.0, "complex", ["deliberation", "consensus"]),
     AgentProfile("beta", 1.0, "complex", ["critique", "analysis"]),
     AgentProfile("charlie", 1.0, "complex", ["validation", "arbitration"]),
     AgentProfile("historian", 2.0, "simple", ["memory", "retrieval"]),
-    AgentProfile("oracle", 0.5, "complex", ["prediction", "analysis"]),
+    AgentProfile("metis", 1.0, "complex", ["planning", "strategy"]),
+    AgentProfile("empath", 1.5, "medium", ["sentiment", "emotional"]),
+    AgentProfile("perceiver", 2.0, "medium", ["sensing", "multimodal"]),
+    AgentProfile("echo", 1.5, "simple", ["communication"]),
     AgentProfile("explorer", 2.0, "medium", ["discovery", "search"]),
+    AgentProfile("examiner", 1.0, "medium", ["review", "audit"]),
+    AgentProfile("dreamer", 0.5, "complex", ["creative", "generation"]),
     AgentProfile("coder", 0.5, "complex", ["code_generation", "refactoring"]),
     AgentProfile("sentinel", 3.0, "simple", ["monitoring", "alerting"]),
-    AgentProfile("examiner", 1.0, "medium", ["review", "audit"]),
+    AgentProfile("sentinel-prime", 2.0, "medium", ["security", "threat"]),
     AgentProfile("arbiter", 0.5, "medium", ["resolution", "judgment"]),
     AgentProfile("coordinator", 2.0, "medium", ["scheduling", "delegation"]),
+    AgentProfile("nexus", 1.5, "medium", ["external", "integration"]),
+    AgentProfile("catalyst", 1.0, "medium", ["change", "transition"]),
+    AgentProfile("chronos", 2.0, "simple", ["temporal", "scheduling"]),
+    AgentProfile("prism", 1.0, "complex", ["perspective", "multi"]),
+    AgentProfile("habit-forge", 1.5, "medium", ["behavior", "pattern"]),
+    AgentProfile("perceiver-plus", 1.0, "complex", ["analytics", "advanced"]),
 ]
 
 
@@ -59,13 +76,21 @@ class HeretekSwarmUser(HttpUser):
     """
     
     abstract = True  # Don't instantiate directly
-    
+    host = API_HOST
+
     def __init__(self, *args, **kwargs):
         super().__init__(*args, **kwargs)
         self.agent_id: str = ""
         self.agent_profile: AgentProfile | None = None
         self.session_state: dict[str, Any] = {}
-    
+
+    def _get_headers(self) -> dict:
+        """Get API headers."""
+        headers = {"Content-Type": "application/json"}
+        if API_KEY:
+            headers["Authorization"] = f"Bearer {API_KEY}"
+        return headers
+
     def on_start(self) -> None:
         """Initialize agent session."""
         # Select random agent profile
@@ -83,23 +108,42 @@ class HeretekSwarmUser(HttpUser):
     
     def register_agent(self) -> None:
         """Register this agent with the system."""
-        # TODO: Implement when API is available
-        # self.client.post("/agents/register", json={
-        #     "agent_id": self.agent_id,
-        #     "agent_type": self.agent_profile.agent_type,
-        #     "capabilities": self.agent_profile.capabilities,
-        # })
-        pass
-    
+        try:
+            with self.client.post(
+                "/api/agents/register",
+                json={
+                    "agent_id": self.agent_id,
+                    "agent_type": self.agent_profile.agent_type if self.agent_profile else "steward",
+                    "capabilities": self.agent_profile.capabilities if self.agent_profile else [],
+                },
+                headers=self._get_headers(),
+                catch_response=True,
+            ) as response:
+                if response.status_code in [200, 201]:
+                    response.success()
+                else:
+                    response.failure(f"Registration failed: {response.status_code}")
+        except Exception as e:
+            # API might not be available, continue anyway
+            pass
+
     def on_stop(self) -> None:
         """Clean up agent session."""
-        # TODO: Deregister agent
-        pass
+        try:
+            self.client.post(
+                f"/api/agents/{self.agent_id}/deregister",
+                headers=self._get_headers(),
+                catch_response=True,
+            )
+        except Exception:
+            pass
 
 
 class MessageSendingUser(HeretekSwarmUser):
     """User that sends A2A messages."""
     
+    abstract = True
+
     @task(10)
     def send_task_message(self) -> None:
         """Send a task-related message."""
@@ -112,13 +156,22 @@ class MessageSendingUser(HeretekSwarmUser):
                 "priority": random.choice(["low", "medium", "high"]),
             },
         }
-        
-        # TODO: Replace with actual API call
-        # with self.client.post("/messages/send", json=payload, catch_response=True) as response:
-        #     if response.elapsed.total_seconds() * 1000 > MESSAGE_LATENCY_BASELINE_MS:
-        #         response.failure(f"Latency {response.elapsed.total_seconds() * 1000:.0f}ms exceeds baseline")
-        pass
-    
+
+        with self.client.post(
+            "/api/messages/send",
+            json=payload,
+            headers=self._get_headers(),
+            catch_response=True,
+        ) as response:
+            elapsed_ms = response.elapsed.total_seconds() * 1000
+            if response.status_code == 200:
+                if elapsed_ms > MESSAGE_LATENCY_BASELINE_MS:
+                    response.failure(f"Latency {elapsed_ms:.0f}ms exceeds baseline")
+                else:
+                    response.success()
+            else:
+                response.failure(f"Status {response.status_code}")
+
     @task(5)
     def send_consensus_message(self) -> None:
         """Send a consensus-related message (for triad agents)."""
@@ -131,42 +184,90 @@ class MessageSendingUser(HeretekSwarmUser):
                     "vote": random.choice(["approve", "reject", "abstain"]),
                 },
             }
-            # TODO: Send consensus message
-            pass
+            self.client.post(
+                "/api/consensus/vote",
+                json=payload,
+                headers=self._get_headers(),
+                catch_response=True,
+            )
 
 
 class TaskExecutionUser(HeretekSwarmUser):
     """User that executes tasks."""
     
+    abstract = True
+
     @task(8)
     def execute_simple_task(self) -> None:
         """Execute a simple task."""
         if self.agent_profile and self.agent_profile.task_complexity in ["simple", "medium"]:
-            # TODO: Execute task via API
-            pass
-    
+            self.client.post(
+                "/api/tasks/execute",
+                json={
+                    "task_type": "simple",
+                    "agent_id": self.agent_id,
+                },
+                headers=self._get_headers(),
+                catch_response=True,
+            )
+
     @task(3)
     def execute_complex_task(self) -> None:
         """Execute a complex task (longer duration)."""
         if self.agent_profile and self.agent_profile.task_complexity == "complex":
-            # TODO: Execute complex task via API
-            pass
+            self.client.post(
+                "/api/tasks/execute",
+                json={
+                    "task_type": "complex",
+                    "agent_id": self.agent_id,
+                },
+                headers=self._get_headers(),
+                catch_response=True,
+            )
 
 
 class MemoryOperationUser(HeretekSwarmUser):
     """User that performs memory operations."""
     
+    abstract = True
+
     @task(5)
     def store_memory(self) -> None:
         """Store data in memory."""
-        # TODO: Store via API
-        pass
-    
+        self.client.post(
+            "/api/memory/store",
+            json={
+                "key": f"mem-{random.randint(1, 10000)}",
+                "value": f"test-data-{time.time()}",
+                "agent_id": self.agent_id,
+            },
+            headers=self._get_headers(),
+            catch_response=True,
+        )
+
     @task(10)
     def query_memory(self) -> None:
         """Query memory for retrieval."""
-        # TODO: Query via API
-        pass
+        self.client.get(
+            f"/api/memory/query?agent_id={self.agent_id}",
+            headers=self._get_headers(),
+            catch_response=True,
+        )
+
+
+class ConsciousnessMetricsUser(HeretekSwarmUser):
+    """User that queries consciousness metrics."""
+    
+    abstract = True
+
+    @task(3)
+    def get_consciousness_metrics(self) -> None:
+        """Get consciousness metrics for agent."""
+        self.client.get(
+            f"/api/consciousness/metrics?agent_id={self.agent_id}",
+            headers=self._get_headers(),
+            catch_response=True,
+        )
 
 
 # ============== EVENT HANDLERS ==============
@@ -178,6 +279,7 @@ def on_test_start(environment, **kwargs):
     print("HERETEK SWARM LOAD TEST")
     print(f"Target: {CONCURRENT_AGENT_TARGET}+ concurrent agents")
     print(f"Latency baseline: <{MESSAGE_LATENCY_BASELINE_MS}ms")
+    print(f"Host: {API_HOST}")
     print(f"{'=' * 60}\n")
 
 
