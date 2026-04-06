@@ -515,6 +515,173 @@ See [`src/memory/persistent.py`](../src/memory/persistent.py) for complete API d
 
 See [`src/memory/unified.py`](../src/memory/unified.py) for complete API documentation.
 
+## Session 43: Memory Optimization
+
+### Overview
+
+Session 43 introduces comprehensive memory optimization features for long-running autonomous sessions. These features enable efficient memory management through access pattern analysis, intelligent pre-fetching, cold data compression, and multi-tier storage.
+
+### Access Pattern Analyzer
+
+**Location**: [`src/heretek_swarm/memory/access_patterns.py`](../src/heretek_swarm/memory/access_patterns.py)
+
+The [`AccessPatternAnalyzer`](../src/heretek_swarm/memory/access_patterns.py:250) provides:
+
+- **Access Frequency Tracking**: Monitor how often memories are accessed
+- **Access Recency Tracking**: Track when memories were last accessed with exponential decay
+- **Tier Classification**: Automatic hot/warm/cold/frozen classification
+- **Pattern Detection**: Identify sequential, cyclical, burst, and decaying patterns
+- **Access Prediction**: Predict future memory accesses based on patterns
+
+```python
+from heretek_swarm.memory import AccessPatternAnalyzer, AccessTier
+
+analyzer = AccessPatternAnalyzer()
+
+# Record accesses
+for i in range(10):
+    analyzer.record_access(
+        memory_id=f"memory_{i}",
+        agent_id="agent_1",
+    )
+
+# Get tier classification
+hot_memories = analyzer.get_hot_memories()
+
+# Generate report
+report = analyzer.generate_report(analysis_window_hours=24)
+```
+
+### Intelligent Pre-fetcher
+
+**Location**: [`src/heretek_swarm/memory/prefetcher.py`](../src/heretek_swarm/memory/prefetcher.py)
+
+The [`IntelligentPrefetcher`](../src/heretek_swarm/memory/prefetcher.py:550) provides:
+
+- **LRU Cache**: O(1) get/put with automatic eviction
+- **LFU Cache**: Frequency-based eviction for hybrid strategies
+- **Pre-fetch Scheduling**: Background scheduling with priority queues
+- **Pattern-based Prediction**: Predict and pre-fetch likely-needed memories
+
+```python
+from heretek_swarm.memory import IntelligentPrefetcher, PreFetchStrategy
+
+prefetcher = IntelligentPrefetcher(
+    cache_size=1000,
+    strategy=PreFetchStrategy.HYBRID,
+)
+
+await prefetcher.initialize()
+
+# Record access (triggers pre-fetching)
+cache_hit, latency = prefetcher.record_access(
+    memory_id="test",
+    agent_id="agent_1",
+)
+
+# Manual pre-fetch
+result = prefetcher.prefetch(
+    memory_id="predicted_memory",
+    data=cached_data,
+)
+
+await prefetcher.shutdown()
+```
+
+### Cold Data Compressor
+
+**Location**: [`src/heretek_swarm/memory/compression.py`](../src/heretek_swarm/memory/compression.py)
+
+The [`ColdDataCompressor`](../src/heretek_swarm/memory/compression.py:350) provides:
+
+- **Multiple Algorithms**: Zlib (fast), Gzip (balanced), and more
+- **Compression Levels**: Fastest, Fast, Balanced, Good, Best
+- **Integrity Verification**: SHA-256 hash verification
+- **Transparent Decompression**: Automatic decompression on access
+
+```python
+from heretek_swarm.memory import ColdDataCompressor, CompressionAlgorithm, CompressionLevel
+
+compressor = ColdDataCompressor()
+
+# Compress memory
+result = compressor.compress(
+    memory_id="cold_memory",
+    data=large_data,
+    algorithm=CompressionAlgorithm.ZLIB,
+    level=CompressionLevel.BALANCED,
+)
+
+# Decompress (transparent)
+decompressed = compressor.decompress("cold_memory")
+```
+
+### Memory Tiering System
+
+**Location**: [`src/heretek_swarm/memory/tiering.py`](../src/heretek_swarm/memory/tiering.py)
+
+The [`MemoryTieringSystem`](../src/heretek_swarm/memory/tiering.py:250) provides:
+
+- **Multi-tier Storage**: L1 (Hot/Redis), L2 (Warm/PostgreSQL), L3 (Cold/Archive)
+- **Automatic Migration**: Policy-based tier migration
+- **Migration Audit**: Complete migration history and logging
+- **Cost Optimization**: Cost-aware tier placement
+
+```python
+from heretek_swarm.memory import MemoryTieringSystem, MemoryTier, MigrationPolicy
+
+tiering = MemoryTieringSystem()
+
+await tiering.start()
+
+# Store memory (auto-tiered)
+memory = tiering.store(
+    memory_id="test",
+    data={"key": "value"},
+    metadata={"importance": 0.9},
+)
+
+# Add migration policy
+tiering.add_policy(MigrationPolicy(
+    name="hot_to_warm",
+    conditions={"recency_score_below": 0.3},
+    actions={"target_tier": MemoryTier.L2_WARM.value},
+))
+
+# Get statistics
+stats = tiering.get_statistics()
+
+await tiering.stop()
+```
+
+### Tier Configuration
+
+| Tier | Storage | Latency | Cost/GB | Use Case |
+|------|---------|---------|---------|----------|
+| L1 Hot | Redis | ~1ms | $0.50/mo | Frequently accessed, real-time |
+| L2 Warm | PostgreSQL | ~10ms | $0.10/mo | Moderately accessed |
+| L3 Cold | Compressed Archive | ~100ms | $0.02/mo | Rarely accessed |
+| Archive | Deep Archive | ~1000ms | $0.004/mo | Compliance, long-term |
+
+### Migration Policies
+
+Default policies include:
+
+| Policy | Trigger | Action | Priority |
+|--------|---------|--------|----------|
+| hot_to_warm_demotion | Recency < 0.3 | L1 → L2 | 100 |
+| warm_to_cold_demotion | Recency < 0.1 | L2 → L3 | 90 |
+| cold_to_warm_promotion | Frequency > 0.6 | L3 → L2 | 80 |
+| warm_to_hot_promotion | Frequency > 0.8 | L2 → L1 | 70 |
+
+### Best Practices
+
+1. **Monitor Access Patterns**: Regularly review access pattern reports
+2. **Tune Thresholds**: Adjust tier thresholds based on workload
+3. **Enable Compression**: Use compression for cold memories to save storage
+4. **Review Migrations**: Monitor migration history for optimization opportunities
+5. **Cost Optimization**: Balance performance needs with storage costs
+
 ## See Also
 
 - [Actors System](./actors-system.md)

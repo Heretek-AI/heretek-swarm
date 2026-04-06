@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-06T23:15:18.641244+00:00",
-  "overall_score": 0.9880074548253788,
+  "timestamp": "2026-04-06T23:43:44.524770+00:00",
+  "overall_score": 0.9856911883589329,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -497,9 +497,9 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 74,
-      "findings_count": 74,
-      "warning_count": 31,
+      "total_entities_checked": 103,
+      "findings_count": 103,
+      "warning_count": 41,
       "score": 0.0,
       "finding_groups": [
         {
@@ -722,6 +722,76 @@
               "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
               "line_start": 27,
               "line_end": 27,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"asyncio\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/arbiter.py",
+              "line_start": 16,
+              "line_end": 16,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"logging\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/arbiter.py",
+              "line_start": 17,
+              "line_end": 17,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"BaseModel\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/arbiter.py",
+              "line_start": 24,
+              "line_end": 24,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"Agent\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/arbiter.py",
+              "line_start": 26,
+              "line_end": 26,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"MessageContent\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/arbiter.py",
+              "line_start": 29,
+              "line_end": 29,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"CollectiveLearning\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/arbiter.py",
+              "line_start": 32,
+              "line_end": 32,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"asyncio\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/catalyst.py",
+              "line_start": 18,
+              "line_end": 18,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"CoordinationRequest\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/catalyst.py",
+              "line_start": 28,
+              "line_end": 28,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"Callable\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/chronos.py",
+              "line_start": 23,
+              "line_end": 23,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"CoordinationRequest\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/chronos.py",
+              "line_start": 28,
+              "line_end": 28,
               "metric_value": 0.0
             }
           ]
@@ -1031,6 +1101,139 @@
               "line_start": 455,
               "line_end": 455,
               "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"asyncio\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/arbiter.py",
+              "line_start": 16,
+              "line_end": 16,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"logging\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/arbiter.py",
+              "line_start": 17,
+              "line_end": 17,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"BaseModel\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/arbiter.py",
+              "line_start": 24,
+              "line_end": 24,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"Agent\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/arbiter.py",
+              "line_start": 26,
+              "line_end": 26,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"MessageContent\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/arbiter.py",
+              "line_start": 29,
+              "line_end": 29,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"CollectiveLearning\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/arbiter.py",
+              "line_start": 32,
+              "line_end": 32,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"validated\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/arbiter.py",
+              "line_start": 319,
+              "line_end": 319,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"validated\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/arbiter.py",
+              "line_start": 421,
+              "line_end": 421,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"conflict_id\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/arbiter.py",
+              "line_start": 485,
+              "line_end": 485,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"validated\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/arbiter.py",
+              "line_start": 491,
+              "line_end": 491,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"validated\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/arbiter.py",
+              "line_start": 541,
+              "line_end": 541,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"outcome\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/arbiter.py",
+              "line_start": 938,
+              "line_end": 938,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"interaction_type\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/arbiter.py",
+              "line_start": 1077,
+              "line_end": 1077,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"resource\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/arbiter.py",
+              "line_start": 1358,
+              "line_end": 1358,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"priority_override\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/arbiter.py",
+              "line_start": 1387,
+              "line_end": 1387,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"asyncio\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/catalyst.py",
+              "line_start": 18,
+              "line_end": 18,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"CoordinationRequest\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/catalyst.py",
+              "line_start": 28,
+              "line_end": 28,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"Callable\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/chronos.py",
+              "line_start": 23,
+              "line_end": 23,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"CoordinationRequest\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/chronos.py",
+              "line_start": 28,
+              "line_end": 28,
+              "metric_value": 0.0
             }
           ]
         }
@@ -1189,6 +1392,12 @@
   ],
   "file_summaries": [
     {
+      "file_path": "src/heretek_swarm/actors/arbiter.py",
+      "total_findings": 24,
+      "warning_findings": 9,
+      "composite_risk_score": 95.0
+    },
+    {
       "file_path": "src/heretek_swarm/actors/historian.py",
       "total_findings": 15,
       "warning_findings": 8,
@@ -1225,6 +1434,18 @@
       "composite_risk_score": 80.0
     },
     {
+      "file_path": "src/heretek_swarm/actors/catalyst.py",
+      "total_findings": 7,
+      "warning_findings": 5,
+      "composite_risk_score": 75.0
+    },
+    {
+      "file_path": "src/heretek_swarm/actors/chronos.py",
+      "total_findings": 7,
+      "warning_findings": 5,
+      "composite_risk_score": 75.0
+    },
+    {
       "file_path": "src/heretek_swarm/actors/empath.py",
       "total_findings": 8,
       "warning_findings": 4,
@@ -1243,25 +1464,7 @@
       "composite_risk_score": 45.0
     },
     {
-      "file_path": "src/heretek_swarm/actors/arbiter.py",
-      "total_findings": 3,
-      "warning_findings": 3,
-      "composite_risk_score": 45.0
-    },
-    {
       "file_path": "src/heretek_swarm/actors/nexus.py",
-      "total_findings": 3,
-      "warning_findings": 3,
-      "composite_risk_score": 45.0
-    },
-    {
-      "file_path": "src/heretek_swarm/actors/catalyst.py",
-      "total_findings": 3,
-      "warning_findings": 3,
-      "composite_risk_score": 45.0
-    },
-    {
-      "file_path": "src/heretek_swarm/actors/chronos.py",
       "total_findings": 3,
       "warning_findings": 3,
       "composite_risk_score": 45.0
