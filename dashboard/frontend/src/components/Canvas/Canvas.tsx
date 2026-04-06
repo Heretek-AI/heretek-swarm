@@ -1,11 +1,11 @@
 /**
  * Collective Canvas - Agent Visualization with ReactFlow
- * 
+ *
  * Displays all agents as nodes with real-time status updates.
  * Reference: MiniMax Audit Lines 418-486 (Flowise Canvas pattern)
  */
 
-import React, { useEffect, useState, useCallback } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import ReactFlow, {
   Node,
   Edge,
@@ -16,10 +16,10 @@ import ReactFlow, {
   useEdgesState,
   Connection,
   addEdge,
-} from 'reactflow';
-import 'reactflow/dist/style.css';
+} from '@xyflow/react';
+import '@xyflow/react/dist/style.css';
 
-import { AgentNode, AgentData } from './AgentNode';
+import AgentNode, { AgentData } from './AgentNode';
 
 const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
 
@@ -90,7 +90,7 @@ export function CollectiveCanvas() {
   // Handle node connections
   const onConnect = useCallback(
     (params: Connection) => {
-      setEdges((eds) => addEdge(params, eds));
+      setEdges((eds: Edge[]) => addEdge(params, eds));
     },
     [setEdges]
   );
@@ -126,8 +126,9 @@ export function CollectiveCanvas() {
         <Background color="#374151" gap={20} />
         <Controls className="bg-gray-800 border-gray-700" />
         <MiniMap
-          nodeColor={(node) => {
-            const status = (node.data as AgentData).status;
+          nodeColor={(node: Node) => {
+            const data = node.data as AgentData;
+            const status = data?.status;
             switch (status) {
               case 'idle': return '#6B7280';
               case 'thinking': return '#3B82F6';
