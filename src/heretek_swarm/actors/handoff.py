@@ -3,12 +3,18 @@ Agent Handoff Mechanism for Heretek Swarm
 
 Provides seamless agent-to-agent handoff with context transfer.
 Reference: PraisonAI agent handoffs pattern, MetaGPT RoleContext
+
+Features:
+- Input validation for all handoff parameters
+- Rate limiting to prevent abuse
+- Context size limits
 """
 
 import asyncio
+import sys
 import uuid
 from datetime import datetime
-from typing import Any, Dict, Optional
+from typing import Any, Dict, List, Optional, Set
 from dataclasses import dataclass, field
 
 import structlog
@@ -34,6 +40,62 @@ class HandoffResult:
     error: Optional[str] = None
 
 
+class HandoffValidator:
+    """
+    Validates handoff parameters before execution.
+    
+    Provides Pydantic-style validation for handoff requests.
+    """
+    
+    MAX_CONTEXT_SIZE = 10000  # Maximum context size in bytes
+    MAX_HANDOFFS_PER_MINUTE = 10  # Rate limiting
+    REQUIRED_FIELDS: Set[str] = frozenset({"from_agent_id", "to_agent_id", "context"})
+    
+    @classmethod
+    def validate(cls, from_agent_id: str, to_agent_id: str, context: Dict[str, Any]) -> None:
+        """
+        Validate handoff parameters.
+        
+        Args:
+            from_agent_id: Source agent ID
+            to_agent_id: Destination agent ID
+            context: Context to transfer
+            
+        Raises:
+            ValueError: If validation fails
+        """
+        cls._validate_fields(from_agent_id, to_agent_id, context)
+        cls._validate_context_size(context)
+        cls._validate_agent_ids(from_agent_id, to_agent_id)
+    
+    @classmethod
+    def _validate_fields(cls, from_agent_id: str, to_agent_id: str, context: Dict[str, Any]) -> None:
+        """Validate required fields are present."""
+        if not from_agent_id or not isinstance(from_agent_id, str):
+            raise ValueError("from_agent_id must be a non-empty string")
+        
+        if not to_agent_id or not isinstance(to_agent_id, str):
+            raise ValueError("to_agent_id must be a non-empty string")
+        
+        if not context or not isinstance(context, dict):
+            raise ValueError("context must be a non-empty dictionary")
+    
+    @classmethod
+    def _validate_context_size(cls, context: Dict[str, Any]) -> None:
+        """Validate context size is within limits."""
+        context_size = sys.getsizeof(str(context))
+        if context_size > cls.MAX_CONTEXT_SIZE:
+            raise ValueError(
+                f"Context size ({context_size} bytes) exceeds maximum allowed ({cls.MAX_CONTEXT_SIZE} bytes)"
+            )
+    
+    @classmethod
+    def _validate_agent_ids(cls, from_agent_id: str, to_agent_id: str) -> None:
+        """Validate agent IDs are different."""
+        if from_agent_id == to_agent_id:
+            raise ValueError("from_agent_id and to_agent_id must be different")
+
+
 class AgentHandoff:
     """
     Seamless agent-to-agent handoff mechanism.
@@ -50,6 +112,8 @@ class AgentHandoff:
         """
         self.historian = historian
         self._active_handoffs: Dict[str, HandoffContext] = {}
+        self._handoff_timestamps: List[datetime] = []  # For rate limiting
+        self._validator = HandoffValidator()
     
     async def execute_handoff(
         self,
@@ -69,7 +133,32 @@ class AgentHandoff:
             
         Returns:
             HandoffResult with success status and handoff ID
+            
+        Raises:
+            ValueError: If validation fails
         """
+        # Validate handoff request
+        try:
+            self._validator.validate(from_agent_id, to_agent_id, context)
+        except ValueError as e:
+            logger.error("handoff_validation_failed", error=str(e))
+            return HandoffResult(
+                success=False,
+                handoff_id="",
+                error=f"Validation failed: {str(e)}"
+            )
+        
+        # Rate limiting check
+        try:
+            self._check_rate_limit()
+        except ValueError as e:
+            logger.error("handoff_rate_limit_exceeded", error=str(e))
+            return HandoffResult(
+                success=False,
+                handoff_id="",
+                error=str(e)
+            )
+        
         handoff_id = str(uuid.uuid4())
         timestamp = datetime.utcnow().isoformat()
         
@@ -132,6 +221,31 @@ class AgentHandoff:
                 handoff_id=handoff_id,
                 error=str(e)
             )
+    
+    def _check_rate_limit(self) -> None:
+        """
+        Check rate limiting for handoffs.
+        
+        Raises:
+            ValueError: If rate limit exceeded
+        """
+        now = datetime.utcnow()
+        one_minute_ago = datetime.utcnow().replace(microsecond=0)
+        
+        # Remove timestamps older than 1 minute
+        self._handoff_timestamps = [
+            ts for ts in self._handoff_timestamps
+            if ts > one_minute_ago
+        ]
+        
+        # Check if limit exceeded
+        if len(self._handoff_timestamps) >= HandoffValidator.MAX_HANDOFFS_PER_MINUTE:
+            raise ValueError(
+                f"Rate limit exceeded: maximum {HandoffValidator.MAX_HANDOFFS_PER_MINUTE} handoffs per minute"
+            )
+        
+        # Record this handoff
+        self._handoff_timestamps.append(now)
     
     async def complete_handoff(
         self,
