@@ -29,8 +29,8 @@ class TestDiscordBot:
         """Create Discord bot configuration."""
         return {
             "token": "test_token",
-            "agent_id": "test-agent",
-            "prefix": "!",
+            "agent_runtime": None,
+            "handoff_manager": None,
         }
 
     @pytest.fixture
@@ -45,19 +45,19 @@ class TestDiscordBot:
         """Create Discord bot instance."""
         return DiscordBot(
             token=discord_config["token"],
-            agent_id=discord_config["agent_id"],
-            prefix=discord_config["prefix"],
-            supervisor=mock_supervisor,
+            agent_runtime=discord_config["agent_runtime"],
+            handoff_manager=discord_config["handoff_manager"],
         )
 
     def test_initialization(self, discord_bot):
         """Test Discord bot initialization."""
-        assert discord_bot._token == "test_token"
-        assert discord_bot._agent_id == "test-agent"
-        assert discord_bot._prefix == "!"
+        assert discord_bot.token == "test_token"
+        assert discord_bot.agent_runtime is None
+        assert discord_bot.handoff_manager is None
 
     def test_register_commands(self, discord_bot):
         """Test command registration."""
+        assert hasattr(discord_bot, '_bot')
         discord_bot._register_commands()
 
         # Check that commands are registered

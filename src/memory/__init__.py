@@ -14,7 +14,7 @@ mem0 provides:
 - 90% lower token usage
 """
 
-from .base import MemoryEntry, MemoryQuery, MemoryResult, EmbeddingVector
+from .base import MemoryEntry, MemoryQuery, MemoryResult, EmbeddingVector, MemoryType, MemoryTier
 from .ephemeral import EphemeralMemoryStore
 from .persistent import PersistentMemoryStore
 from .unified import DualTierMemorySystem

@@ -581,7 +581,6 @@ class SlackBot:
                         }
                     },
                 ]
-            ]
             
             await self._bot.chat_postMessage(
                 channel=event["channel"],

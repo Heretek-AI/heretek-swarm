@@ -7,7 +7,7 @@ Reference: PraisonAI Telegram integration
 
 import os
 import asyncio
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, TYPE_CHECKING
 from datetime import datetime
 import structlog
 
@@ -18,13 +18,16 @@ try:
         CommandHandler,
         MessageHandler,
         filters,
-        ContextTypes,
     )
     TELEGRAM_AVAILABLE = True
 except ImportError:
     TELEGRAM_AVAILABLE = False
     Update = None
     Bot = None
+
+# TYPE_CHECKING ensures type hints are evaluated only during type checking
+if TYPE_CHECKING:
+    from telegram.ext import ContextTypes
 
 logger = structlog.get_logger(__name__)
 
@@ -119,7 +122,7 @@ class TelegramBot:
     async def _handle_start(
         self,
         update: Update,
-        context: ContextTypes.DEFAULT_TYPE,
+        context: "ContextTypes.DEFAULT_TYPE",
     ) -> None:
         """Handle /start command."""
         welcome_message = """
@@ -145,7 +148,7 @@ I'm your Telegram assistant for interacting with the AI agent collective.
     async def _handle_help(
         self,
         update: Update,
-        context: ContextTypes.DEFAULT_TYPE,
+        context: "ContextTypes.DEFAULT_TYPE",
     ) -> None:
         """Handle /help command."""
         help_text = """
@@ -182,7 +185,7 @@ Just type your message and I'll route it to the appropriate agent.
     async def _handle_status(
         self,
         update: Update,
-        context: ContextTypes.DEFAULT_TYPE,
+        context: "ContextTypes.DEFAULT_TYPE",
     ) -> None:
         """Handle /status command."""
         # Get swarm status from API
@@ -206,7 +209,7 @@ Just type your message and I'll route it to the appropriate agent.
     async def _handle_agents(
         self,
         update: Update,
-        context: ContextTypes.DEFAULT_TYPE,
+        context: "ContextTypes.DEFAULT_TYPE",
     ) -> None:
         """Handle /agents command."""
         agents_text = """
@@ -239,7 +242,7 @@ Just type your message and I'll route it to the appropriate agent.
     async def _handle_message(
         self,
         update: Update,
-        context: ContextTypes.DEFAULT_TYPE,
+        context: "ContextTypes.DEFAULT_TYPE",
     ) -> None:
         """Handle regular messages."""
         user_message = update.message.text

@@ -7,7 +7,7 @@ Reference: PraisonAI Discord integration
 
 import os
 import asyncio
-from typing import Optional, Dict, Any
+from typing import Optional, Dict, Any, TYPE_CHECKING
 from datetime import datetime
 import structlog
 
@@ -19,6 +19,10 @@ except ImportError:
     DISCORD_AVAILABLE = False
     discord = None
     commands = None
+
+# TYPE_CHECKING ensures type hints are not evaluated at runtime when discord is None
+if TYPE_CHECKING:
+    from discord import Intents, Message, Embed, Color, DMChannel
 
 logger = structlog.get_logger(__name__)
 
@@ -40,7 +44,7 @@ class DiscordBot:
         token: Optional[str] = None,
         agent_runtime=None,
         handoff_manager=None,
-        intents: Optional[discord.Intents] = None,
+        intents: "Optional[Intents]" = None,
     ):
         self.token = token or os.getenv("DISCORD_BOT_TOKEN")
         self.agent_runtime = agent_runtime
@@ -52,7 +56,7 @@ class DiscordBot:
             logger.warning("discord_bot_unavailable", message="discord.py not installed")
             return
         
-        # Set up intents
+        # Set up intents - lazy import to avoid AttributeError at class definition
         if intents is None:
             intents = discord.Intents.default()
             intents.message_content = True
@@ -210,7 +214,7 @@ class DiscordBot:
         )
         self._running = True
     
-    async def on_message(self, message: discord.Message) -> None:
+    async def on_message(self, message: "Message") -> None:
         """Message received event."""
         # Ignore bot messages
         if message.author.bot:
@@ -313,7 +317,7 @@ class DiscordBot:
         self,
         channel_id: int,
         message: str,
-        embed: Optional[discord.Embed] = None,
+        embed: "Optional[Embed]" = None,
     ) -> bool:
         """
         Send notification to channel.
@@ -378,10 +382,10 @@ class DiscordBot:
 
 
 # Global bot instance
-discord_bot: Optional[DiscordBot] = None
+discord_bot: Optional["DiscordBot"] = None
 
 
-def get_discord_bot() -> Optional[DiscordBot]:
+def get_discord_bot() -> Optional["DiscordBot"]:
     """Get global bot instance."""
     return discord_bot
 
