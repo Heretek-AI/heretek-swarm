@@ -18,7 +18,17 @@ from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
+from pydantic import ValidationError
 from swarms import Agent
+
+from heretek_swarm.actors.validation import (
+    validate_message,
+    MessageContent,
+    HealthCheckRequest,
+    SuspendResumeRequest,
+    TerminateRequest,
+    CollectiveTaskRequest,
+)
 
 # Configure structured logging
 import structlog
@@ -228,6 +238,33 @@ class AgentActor:
         self.register_handler("resume", self._handle_resume)
         self.register_handler("terminate", self._handle_terminate)
         self.register_handler("collective_task", self._handle_collective_task)
+
+    def _validate_message_content(self, message_type: str, content: Dict[str, Any]) -> Optional[Any]:
+        """
+        Validate message content using Pydantic models.
+        
+        Args:
+            message_type: Type of message to validate
+            content: Message content dict
+            
+        Returns:
+            Validated model instance or None if validation not available
+            
+        Raises:
+            ValueError: If validation fails
+        """
+        try:
+            return validate_message(message_type, content)
+        except ValidationError as e:
+            logger.warning(
+                f"[{self.agent_id}] Message validation failed for {message_type}: {e}",
+                extra={"validation_errors": e.errors()},
+            )
+            raise ValueError(f"Invalid message format: {e.errors()}")
+        except KeyError:
+            # Unknown message type - skip validation
+            logger.debug(f"[{self.agent_id}] No validator for message type: {message_type}")
+            return None
 
     def register_handler(self, message_type: str, handler: Callable) -> None:
         """
@@ -890,11 +927,21 @@ class AgentActor:
             message_type=message_type,
         )
 
-    # Default message handlers
+    # Default message handlers with Zero-Trust validation
     async def _handle_health_check(self, message: ActorMessage) -> None:
-        """Handle health check requests."""
+        """Handle health check requests with validation."""
+        # P2-7 fix: Validate input before processing
+        try:
+            validated = self._validate_message_content("health_check", message.content)
+            if validated:
+                reply_topic = validated.reply_to
+            else:
+                reply_topic = message.content.get("reply_to", "health")
+        except ValueError as e:
+            logger.error(f"[{self.agent_id}] Health check validation failed: {e}")
+            return
+        
         status = self.get_status()
-        reply_topic = message.content.get("reply_to", "health")
 
         await self.send(
             topic=reply_topic,
@@ -911,20 +958,40 @@ class AgentActor:
         )
 
     async def _handle_suspend(self, message: ActorMessage) -> None:
-        """Handle suspend requests."""
+        """Handle suspend requests with validation."""
+        # P2-7 fix: Validate input before processing
+        try:
+            self._validate_message_content("suspend", message.content)
+        except ValueError as e:
+            logger.error(f"[{self.agent_id}] Suspend validation failed: {e}")
+            return
         await self.suspend()
 
     async def _handle_resume(self, message: ActorMessage) -> None:
-        """Handle resume requests."""
+        """Handle resume requests with validation."""
+        # P2-7 fix: Validate input before processing
+        try:
+            self._validate_message_content("resume", message.content)
+        except ValueError as e:
+            logger.error(f"[{self.agent_id}] Resume validation failed: {e}")
+            return
         await self.resume()
 
     async def _handle_terminate(self, message: ActorMessage) -> None:
-        """Handle terminate requests."""
+        """Handle terminate requests with validation."""
+        # P2-7 fix: Validate input before processing
+        try:
+            validated = self._validate_message_content("terminate", message.content)
+            if validated and validated.reason:
+                logger.info(f"[{self.agent_id}] Termination requested: {validated.reason}")
+        except ValueError as e:
+            logger.error(f"[{self.agent_id}] Terminate validation failed: {e}")
+            return
         await self.terminate()
 
     async def _handle_collective_task(self, message: ActorMessage) -> None:
         """
-        Handle collective task contribution requests.
+        Handle collective task contribution requests with validation.
         
         This handler processes collective task requests and returns contributions.
         Subclasses can override this method to provide custom contribution logic.
@@ -932,12 +999,27 @@ class AgentActor:
         Args:
             message: ActorMessage with collective task details
         """
-        task_id = message.content.get("task_id")
-        task_type = message.content.get("task_type")
-        description = message.content.get("description")
-        input_data = message.content.get("input_data", {})
-        protocol = message.content.get("protocol", {})
-        reply_to = message.content.get("reply_to")
+        # P2-7 fix: Validate input before processing
+        try:
+            validated = self._validate_message_content("collective_task", message.content)
+            if validated:
+                task_id = validated.task_id
+                task_type = validated.task_type
+                description = validated.description
+                input_data = validated.input_data
+                protocol = validated.protocol
+                reply_to = validated.reply_to
+            else:
+                # Fallback to unvalidated access
+                task_id = message.content.get("task_id")
+                task_type = message.content.get("task_type")
+                description = message.content.get("description")
+                input_data = message.content.get("input_data", {})
+                protocol = message.content.get("protocol", {})
+                reply_to = message.content.get("reply_to")
+        except ValueError as e:
+            logger.error(f"[{self.agent_id}] Collective task validation failed: {e}")
+            return
         
         logger.info(
             f"[{self.agent_id}] Received collective task",

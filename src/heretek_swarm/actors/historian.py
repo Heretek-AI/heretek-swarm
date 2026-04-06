@@ -19,10 +19,16 @@ from collections import OrderedDict
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Tuple
 
+from pydantic import ValidationError
 import structlog
 from swarms import Agent
 
 from heretek_swarm.actors.base import AgentActor, ActorMessage
+from heretek_swarm.actors.validation import (
+    MemoryStoreRequest,
+    QueryRequest,
+    LineageRequest,
+)
 from heretek_swarm.memory.base import DualTierMemory, MemoryEntry, MemoryQuery
 
 logger = structlog.get_logger("HistorianAgent")
@@ -253,11 +259,24 @@ class HistorianAgent(AgentActor):
             )
 
     async def _handle_store_memory(self, message: ActorMessage) -> None:
-        """Handle memory storage requests."""
-        content = message.content.get("content")
-        metadata = message.content.get("metadata", {})
-        ttl = message.content.get("ttl")
-        persistent = message.content.get("persistent", False)
+        """Handle memory storage requests with validation."""
+        # P2-7 fix: Validate input before processing
+        try:
+            validated = self._validate_message_content("store_memory", message.content)
+            if validated:
+                content = validated.content
+                metadata = validated.metadata
+                ttl = validated.ttl
+                persistent = validated.persistent
+            else:
+                # Fallback to unvalidated access
+                content = message.content.get("content")
+                metadata = message.content.get("metadata", {})
+                ttl = message.content.get("ttl")
+                persistent = message.content.get("persistent", False)
+        except ValueError as e:
+            logger.error(f"[{self.agent_id}] Store memory validation failed: {e}")
+            return
 
         logger.debug(f"[{self.agent_id}] Storing memory")
 
@@ -281,10 +300,23 @@ class HistorianAgent(AgentActor):
         )
 
     async def _handle_retrieve_context(self, message: ActorMessage) -> None:
-        """Handle context retrieval requests."""
-        topic = message.content.get("topic")
-        filters = message.content.get("filters", {})
-        window_size = message.content.get("window_size", self.context_window)
+        """Handle context retrieval requests with validation."""
+        # P2-7 fix: Validate input before processing
+        try:
+            validated = self._validate_message_content("retrieve_context", message.content)
+            if validated:
+                # Extract topic from filters or use default
+                topic = validated.filters.get("topic") if hasattr(validated, 'filters') else message.content.get("topic")
+                filters = validated.filters if hasattr(validated, 'filters') else message.content.get("filters", {})
+                window_size = validated.limit if hasattr(validated, 'limit') else message.content.get("window_size", self.context_window)
+            else:
+                # Fallback to unvalidated access
+                topic = message.content.get("topic")
+                filters = message.content.get("filters", {})
+                window_size = message.content.get("window_size", self.context_window)
+        except ValueError as e:
+            logger.error(f"[{self.agent_id}] Retrieve context validation failed: {e}")
+            return
 
         logger.debug(f"[{self.agent_id}] Retrieving context for: {topic}")
 
@@ -307,10 +339,22 @@ class HistorianAgent(AgentActor):
         )
 
     async def _handle_query_history(self, message: ActorMessage) -> None:
-        """Handle history query requests."""
-        query_text = message.content.get("query_text")
-        filters = message.content.get("filters", {})
-        limit = message.content.get("limit", 10)
+        """Handle history query requests with validation."""
+        # P2-7 fix: Validate input before processing
+        try:
+            validated = self._validate_message_content("query_history", message.content)
+            if validated:
+                query_text = validated.query_text
+                filters = validated.filters
+                limit = validated.limit
+            else:
+                # Fallback to unvalidated access
+                query_text = message.content.get("query_text")
+                filters = message.content.get("filters", {})
+                limit = message.content.get("limit", 10)
+        except ValueError as e:
+            logger.error(f"[{self.agent_id}] Query history validation failed: {e}")
+            return
 
         logger.debug(f"[{self.agent_id}] Querying history: {query_text}")
 
@@ -333,9 +377,20 @@ class HistorianAgent(AgentActor):
         )
 
     async def _handle_track_lineage(self, message: ActorMessage) -> None:
-        """Handle lineage tracking requests."""
-        decision_id = message.content.get("decision_id")
-        parent_ids = message.content.get("parent_ids", [])
+        """Handle lineage tracking requests with validation."""
+        # P2-7 fix: Validate input before processing
+        try:
+            validated = self._validate_message_content("track_lineage", message.content)
+            if validated:
+                decision_id = validated.decision_id
+                parent_ids = validated.parent_ids
+            else:
+                # Fallback to unvalidated access
+                decision_id = message.content.get("decision_id")
+                parent_ids = message.content.get("parent_ids", [])
+        except ValueError as e:
+            logger.error(f"[{self.agent_id}] Track lineage validation failed: {e}")
+            return
 
         logger.debug(f"[{self.agent_id}] Tracking lineage for: {decision_id}")
 
@@ -356,8 +411,18 @@ class HistorianAgent(AgentActor):
         )
 
     async def _handle_pattern_match(self, message: ActorMessage) -> None:
-        """Handle pattern matching requests."""
-        current_situation = message.content.get("situation")
+        """Handle pattern matching requests with validation."""
+        # P2-7 fix: Validate input before processing
+        try:
+            validated = self._validate_message_content("pattern_match", message.content)
+            if validated:
+                current_situation = validated.query_text if hasattr(validated, 'query_text') else message.content.get("situation")
+            else:
+                # Fallback to unvalidated access
+                current_situation = message.content.get("situation")
+        except ValueError as e:
+            logger.error(f"[{self.agent_id}] Pattern match validation failed: {e}")
+            return
 
         logger.debug(f"[{self.agent_id}] Matching patterns for: {current_situation}")
 

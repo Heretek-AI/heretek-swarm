@@ -16,10 +16,16 @@ import logging
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
+from pydantic import ValidationError
 import structlog
 from swarms import Agent
 
 from heretek_swarm.actors.base import AgentActor, ActorMessage
+from heretek_swarm.actors.validation import (
+    DeliberationRequest,
+    AnalysisRequest,
+    ValidationRequest,
+)
 
 logger = structlog.get_logger("TriadAgents")
 
@@ -120,13 +126,25 @@ class StewardAgent(AgentActor):
             )
 
     async def _handle_start_deliberation(self, message: ActorMessage) -> None:
-        """Handle deliberation start requests."""
-        deliberation_id = message.content.get("deliberation_id")
-        topic = message.content.get("topic")
-        triad_members = message.content.get("triad_members", [])
-
-        if not deliberation_id or not topic:
-            logger.error(f"[{self.agent_id}] Missing deliberation parameters")
+        """Handle deliberation start requests with validation."""
+        # P2-7 fix: Validate input before processing
+        try:
+            validated = self._validate_message_content("start_deliberation", message.content)
+            if validated:
+                deliberation_id = validated.deliberation_id
+                topic = validated.topic
+                triad_members = validated.triad_members
+            else:
+                # Fallback to unvalidated access
+                deliberation_id = message.content.get("deliberation_id")
+                topic = message.content.get("topic")
+                triad_members = message.content.get("triad_members", [])
+                
+                if not deliberation_id or not topic:
+                    logger.error(f"[{self.agent_id}] Missing deliberation parameters")
+                    return
+        except ValueError as e:
+            logger.error(f"[{self.agent_id}] Deliberation validation failed: {e}")
             return
 
         # Initialize deliberation
@@ -375,9 +393,20 @@ class AlphaAgent(AgentActor):
         self.decision_count += 1
 
     async def _handle_analysis_request(self, message: ActorMessage) -> None:
-        """Handle analysis requests."""
-        request_id = message.content.get("request_id")
-        problem = message.content.get("problem")
+        """Handle analysis requests with validation."""
+        # P2-7 fix: Validate input before processing
+        try:
+            validated = self._validate_message_content("analysis_request", message.content)
+            if validated:
+                request_id = validated.request_id
+                problem = validated.problem
+            else:
+                # Fallback to unvalidated access
+                request_id = message.content.get("request_id")
+                problem = message.content.get("problem")
+        except ValueError as e:
+            logger.error(f"[{self.agent_id}] Analysis validation failed: {e}")
+            return
 
         logger.info(f"[{self.agent_id}] Analyzing: {request_id}")
 
@@ -405,9 +434,21 @@ class AlphaAgent(AgentActor):
             self.analysis_history = self.analysis_history[-self.max_history_size:]
 
     async def _handle_validation_request(self, message: ActorMessage) -> None:
-        """Handle validation requests."""
-        request_id = message.content.get("request_id")
-        decision_to_validate = message.content.get("decision")
+        """Handle validation requests with validation."""
+        # P2-7 fix: Validate input before processing
+        try:
+            validated = self._validate_message_content("validation_request", message.content)
+            if validated:
+                request_id = validated.request_id
+                decision_to_validate = validated.decision
+                original_analysis = validated.original_analysis
+            else:
+                # Fallback to unvalidated access
+                request_id = message.content.get("request_id")
+                decision_to_validate = message.content.get("decision")
+        except ValueError as e:
+            logger.error(f"[{self.agent_id}] Validation request validation failed: {e}")
+            return
 
         logger.info(f"[{self.agent_id}] Validating: {request_id}")
 

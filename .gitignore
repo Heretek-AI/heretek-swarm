@@ -97,3 +97,6 @@ docs/DEVELOPMENT_PLAN.md
 agent_workspace/error.txt
 .roo/schedules.json
 dashboard/frontend/node_modules/*
+
+# Orchestry state
+.orchestry
