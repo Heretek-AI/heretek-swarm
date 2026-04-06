@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-06T23:43:44.392342+00:00",
+    "generated_at": "2026-04-06T23:56:10.845830+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 4,
@@ -36,7 +36,7 @@
       ]
     },
     "migrations/scripts/setup_qdrant_collections.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "migrations.scripts.setup_qdrant_collections.get_qdrant_url",
@@ -62,16 +62,16 @@
         {
           "qualified_name": "migrations.scripts.setup_qdrant_collections.setup_collections",
           "start_line": 94,
-          "end_line": 183,
+          "end_line": 222,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "migrations.scripts.setup_qdrant_collections.main",
-          "start_line": 186,
-          "end_line": 210,
+          "start_line": 225,
+          "end_line": 254,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         }
       ]
     },
@@ -7108,7 +7108,7 @@
       ]
     },
     "src/heretek_swarm/api/main.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.api.main.lifespan",
@@ -20422,17 +20422,17 @@
       "file_path": "migrations/scripts/setup_qdrant_collections.py",
       "qualified_name": "migrations.scripts.setup_qdrant_collections.setup_collections",
       "start_line": 94,
-      "end_line": 183,
+      "end_line": 222,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "migrations/scripts/setup_qdrant_collections.py|migrations.scripts.setup_qdrant_collections.main": {
       "file_path": "migrations/scripts/setup_qdrant_collections.py",
       "qualified_name": "migrations.scripts.setup_qdrant_collections.main",
-      "start_line": 186,
-      "end_line": 210,
+      "start_line": 225,
+      "end_line": 254,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "scripts/check_latency_baseline.py|scripts.check_latency_baseline.check_latency_baseline": {
       "file_path": "scripts/check_latency_baseline.py",
@@ -42917,7 +42917,7 @@
         },
         {
           "file_path": "migrations/scripts/setup_qdrant_collections.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "migrations.scripts.setup_qdrant_collections.get_qdrant_url",
             "migrations.scripts.setup_qdrant_collections.get_api_key",
@@ -44107,7 +44107,7 @@
         },
         {
           "file_path": "src/heretek_swarm/api/main.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.api.main.lifespan",
             "src.heretek_swarm.api.main.check_gateway",
@@ -45531,7 +45531,7 @@
             },
             {
               "file_path": "migrations/scripts/setup_qdrant_collections.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "migrations.scripts.setup_qdrant_collections.get_qdrant_url",
                 "migrations.scripts.setup_qdrant_collections.get_api_key",
@@ -46681,7 +46681,7 @@
             },
             {
               "file_path": "src/heretek_swarm/api/main.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.api.main.lifespan",
                 "src.heretek_swarm.api.main.check_gateway",

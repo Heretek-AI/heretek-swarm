@@ -15,6 +15,12 @@ New in Session 41:
 - Knowledge Transformation Module (knowledge_transform.py)
 - Distributed Learning Engine (distributed_learning.py)
 - Pattern Library (pattern_library.py)
+
+New in Session 46 (Emergent Intelligence Enhancement):
+- Adaptive Learning Rate Controller (adaptive_learning.py)
+- Pattern-Based Agent Adaptor (agent_adaptation.py)
+- Emergent Pattern Detector (emergent_detection.py)
+- Collective Intelligence Metrics (metrics.py)
 """
 
 from .society import (
@@ -70,6 +76,55 @@ from .pattern_library import (
     StorageStats,
 )
 
+# Session 46: Emergent Intelligence Enhancement
+from .adaptive_learning import (
+    AdaptiveLearningRateController,
+    LearningRateOptimizer,
+    LearningRateConfig,
+    LearningRateStrategy,
+    AdaptationReason,
+    AgentLearningState,
+    AdaptationEvent,
+    ConvergenceMetrics,
+)
+
+from .agent_adaptation import (
+    PatternBasedAgentAdaptor,
+    AdaptationTarget,
+    AdaptationStrategy,
+    BehavioralWeight,
+    StrategyProfile,
+    AgentAdaptationState,
+    AdaptationEvent as AgentAdaptationEvent,
+    AdaptationAudit,
+)
+
+from .emergent_detection import (
+    EmergentPatternDetector,
+    EmergenceAnalyzer,
+    EmergentPatternClass,
+    EmergenceLevel,
+    EmergentPattern,
+    CollectiveBehavior,
+    AgentBehaviorSnapshot,
+    DetectionEvent,
+    EmergenceDetectionConfig,
+)
+
+from .metrics import (
+    CollectiveIntelligenceMetrics,
+    MetricsExporter,
+    MetricCategory,
+    MetricAggregation,
+    MetricDefinition,
+    MetricValue,
+    SwarmIntelligenceQuotient,
+    CollectiveEfficiencyMetrics,
+    KnowledgeTransferMetrics,
+    EmergenceCoefficient,
+    MetricsDashboard,
+)
+
 __all__ = [
     # Society classes
     "AgentSociety",
@@ -114,4 +169,41 @@ __all__ = [
     "StorageBackend",
     "QueryResult",
     "StorageStats",
+    # Session 46: Emergent Intelligence Enhancement
+    "AdaptiveLearningRateController",
+    "LearningRateOptimizer",
+    "LearningRateConfig",
+    "LearningRateStrategy",
+    "AdaptationReason",
+    "AgentLearningState",
+    "AdaptationEvent",
+    "ConvergenceMetrics",
+    "PatternBasedAgentAdaptor",
+    "AdaptationTarget",
+    "AdaptationStrategy",
+    "BehavioralWeight",
+    "StrategyProfile",
+    "AgentAdaptationState",
+    "AgentAdaptationEvent",
+    "AdaptationAudit",
+    "EmergentPatternDetector",
+    "EmergenceAnalyzer",
+    "EmergentPatternClass",
+    "EmergenceLevel",
+    "EmergentPattern",
+    "CollectiveBehavior",
+    "AgentBehaviorSnapshot",
+    "DetectionEvent",
+    "EmergenceDetectionConfig",
+    "CollectiveIntelligenceMetrics",
+    "MetricsExporter",
+    "MetricCategory",
+    "MetricAggregation",
+    "MetricDefinition",
+    "MetricValue",
+    "SwarmIntelligenceQuotient",
+    "CollectiveEfficiencyMetrics",
+    "KnowledgeTransferMetrics",
+    "EmergenceCoefficient",
+    "MetricsDashboard",
 ]
