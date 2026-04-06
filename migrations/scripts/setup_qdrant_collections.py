@@ -92,7 +92,13 @@ def create_collection_if_not_exists(
 
 
 def setup_collections() -> dict:
-    """Set up all Qdrant collections for Heretek Swarm."""
+    """Set up all Qdrant collections for Heretek Swarm.
+    
+    Session 45 additions:
+    - heretek_patterns: Collective learning pattern vectors
+    - heretek_consensus: Consensus deliberation embeddings
+    - heretek_memory_access: Memory access pattern vectors
+    """
     # Collection definitions
     collections = {
         "heretek_rag": {
@@ -114,6 +120,22 @@ def setup_collections() -> dict:
             "vector_size": 1536,
             "distance": "Cosine",
             "description": "Context and conversation embeddings",
+        },
+        # Session 45: Collective Learning Collections
+        "heretek_patterns": {
+            "vector_size": 1536,
+            "distance": "Cosine",
+            "description": "Collective learning pattern vectors (Session 45)",
+        },
+        "heretek_consensus": {
+            "vector_size": 1536,
+            "distance": "Cosine",
+            "description": "Consensus deliberation embeddings (Session 45)",
+        },
+        "heretek_memory_access": {
+            "vector_size": 1536,
+            "distance": "Cosine",
+            "description": "Memory access pattern vectors (Session 45)",
         },
     }
 
@@ -152,6 +174,7 @@ def setup_collections() -> dict:
     print("\nCreating payload indexes...")
 
     indexes_to_create = [
+        # Original indexes (Session 1-44)
         ("heretek_rag", "source"),
         ("heretek_rag", "document_type"),
         ("heretek_rag", "created_at"),
@@ -162,6 +185,22 @@ def setup_collections() -> dict:
         ("heretek_semantic", "domain"),
         ("heretek_context", "session_id"),
         ("heretek_context", "agent_id"),
+        # Session 45: Collective Learning indexes
+        ("heretek_patterns", "pattern_type"),
+        ("heretek_patterns", "pattern_category"),
+        ("heretek_patterns", "state"),
+        ("heretek_patterns", "discovered_by"),
+        ("heretek_patterns", "confidence_score"),
+        # Session 45: Consensus indexes
+        ("heretek_consensus", "proposal_type"),
+        ("heretek_consensus", "state"),
+        ("heretek_consensus", "agent_id"),
+        ("heretek_consensus", "round_number"),
+        # Session 45: Memory Access indexes
+        ("heretek_memory_access", "agent_id"),
+        ("heretek_memory_access", "access_type"),
+        ("heretek_memory_access", "tier"),
+        ("heretek_memory_access", "cache_hit"),
     ]
 
     for collection, field in indexes_to_create:
@@ -198,6 +237,11 @@ def main():
     print(f"  Created: {len(results.get('created', []))}")
     print(f"  Existing: {len(results.get('existing', []))}")
     print(f"  Failed: {len(results.get('failed', []))}")
+    print()
+    print("Collections:")
+    for name in collections.keys():
+        status = "✓" if name in results.get("created", []) or name in results.get("existing", []) else "✗"
+        print(f"  {status} {name}")
     print("=" * 60)
 
     if results.get("failed"):
