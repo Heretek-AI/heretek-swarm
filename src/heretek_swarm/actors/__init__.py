@@ -4,10 +4,10 @@ Heretek Swarm Actors Package
 This package provides the actor model implementation for the Heretek Swarm system,
 including the base AgentActor class, ActorSupervisor, and specialized agents.
 
-Implemented Agents (10/23):
+Implemented Agents (13/23):
 - Tier 1 (Core Triad): Steward, Alpha, Beta, Charlie
 - Tier 2 (Support): Historian, Metis, Empath, Perceiver, Echo
-- Tier 3 (Exploration): Explorer
+- Tier 3 (Exploration): Explorer, Examiner, Dreamer, Coder
 """
 
 from heretek_swarm.actors.base import AgentActor, ActorMessage, ActorState, ActorStatus
@@ -29,6 +29,9 @@ from heretek_swarm.actors.empath import EmpathAgent
 from heretek_swarm.actors.perceiver import PerceiverAgent
 from heretek_swarm.actors.echo import EchoActor
 from heretek_swarm.actors.explorer import ExplorerAgent
+from heretek_swarm.actors.examiner import ExaminerAgent
+from heretek_swarm.actors.dreamer import DreamerAgent
+from heretek_swarm.actors.coder import CoderAgent
 
 __all__ = [
     "AgentActor",
@@ -49,4 +52,7 @@ __all__ = [
     "PerceiverAgent",
     "EchoActor",
     "ExplorerAgent",
+    "ExaminerAgent",
+    "DreamerAgent",
+    "CoderAgent",
 ]
