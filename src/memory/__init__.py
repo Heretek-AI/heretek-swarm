@@ -15,10 +15,10 @@ mem0 provides:
 """
 
 from .base import MemoryEntry, MemoryQuery, MemoryResult, EmbeddingVector, MemoryType, MemoryTier
-from .ephemeral import EphemeralMemoryStore
+from .ephemeral import EphemeralMemoryStore, EphemeralConfig
 from .persistent import PersistentMemoryStore
-from .unified import DualTierMemorySystem
-from .embeddings import EmbeddingService
+from .unified import DualTierMemorySystem, DualTierConfig
+from .embeddings import EmbeddingService, EmbeddingConfig
 
 # mem0 backend integration
 try:

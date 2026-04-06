@@ -401,9 +401,9 @@ class PluginRuntime:
 _global_runtime: Optional[PluginRuntime] = None
 
 
-async def get_plugin_runtime() -> PluginRuntime:
+def get_plugin_runtime() -> PluginRuntime:
     """
-    Get the global plugin runtime instance.
+    Get the global plugin runtime instance (synchronous).
 
     Returns:
         PluginRuntime instance
@@ -414,6 +414,12 @@ async def get_plugin_runtime() -> PluginRuntime:
         _global_runtime = PluginRuntime()
 
     return _global_runtime
+
+
+# Sync alias for backwards compatibility
+# NOTE: This is intentionally a new PluginRuntime instance, not the global one
+# The async get_plugin_runtime should be used for the global instance
+plugin_manager = PluginRuntime()
 
 
 async def load_plugin_from_file(plugin_path: Path) -> Optional[Plugin]:

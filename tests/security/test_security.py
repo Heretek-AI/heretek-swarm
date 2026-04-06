@@ -1902,5 +1902,5 @@ class TestSecurityComplianceMonitoring:
         # This test verifies that compliance monitoring is enabled
         # For now, we'll just verify that test passes
         assert True  # Compliance monitoring should be enabled
-    
-    def
+
+# End of test_security.py
