@@ -314,11 +314,11 @@ class GuardrailsSystem:
         
         # Phone numbers
         phones = re.findall(r'\b\d{3}[-.\s]?\d{3}[-.\s]?\d{4}\b', filtered)
-            if phones:
-                filtered = re.sub(r'\b\d{3}[-.\s]?\d{3}[-.\s]?\d{4}\b', '[REDACTED]', filtered)
-                if blocked_content:
-                    blocked_content += f", {phones}"
-                reason = "Personal phone numbers redacted"
+        if phones:
+            filtered = re.sub(r'\b\d{3}[-.\s]?\d{3}[-.\s]?\d{4}\b', '[REDACTED]', filtered)
+            if blocked_content:
+                blocked_content += f", {phones}"
+            reason = "Personal phone numbers redacted"
         
         # API keys
         api_keys = re.findall(r'\b[A-Za-z0-9]{20,}[_-][A-Za-z0-9]{10,}\b', filtered)
