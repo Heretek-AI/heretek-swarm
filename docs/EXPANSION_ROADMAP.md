@@ -1,0 +1,947 @@
+# Expansion Roadmap
+## Heretek Swarm - AI & Brain-Mapping Integration Plan
+
+**Date:** 2026-04-06  
+**Version:** 1.0.0  
+**Status:** Active  
+**Target:** 23-Agent Collective Intelligence
+
+---
+
+## Executive Summary
+
+This roadmap outlines the integration plan for GitHub-sourced AI patterns and brain-mapping logic to achieve **The Collective** - a 23-agent autonomous AI cluster with emergent collective intelligence. The plan synthesizes research from Microsoft AutoGen, LangGraph, CrewAI, and neuroscience-inspired consciousness theories.
+
+### Vision
+
+Build a self-governing swarm of 23 specialized agents that:
+- Operate independently 24/7 without human intervention
+- Make collective decisions through consensus mechanisms
+- Adapt and learn from experience
+- Scale dynamically based on workload
+- Recover automatically from failures
+- Exhibit emergent collective intelligence
+
+---
+
+## Agent Roster: The 23 Agents of The Collective
+
+### Tier 1: Core Triad (4 Agents)
+
+| Agent | Role | Status | Priority |
+|-------|------|--------|----------|
+| **Steward** | Orchestrator | ✅ Implemented | P0 |
+| **Alpha** | Deep Analysis | ✅ Implemented | P0 |
+| **Beta** | Validation | ✅ Implemented | P0 |
+| **Charlie** | Challenge/Critique | ✅ Implemented | P0 |
+
+**Current Implementation:** [`src/heretek_swarm/actors/triad.py`](../src/heretek_swarm/actors/triad.py)
+
+**Enhancement Required:**
+- Request-reply pattern from AutoGen for inter-agent communication
+- Typed state transitions from LangGraph
+- Conversation history auto-management
+
+---
+
+### Tier 2: Support Agents (5 Agents)
+
+| Agent | Role | Status | Priority |
+|-------|------|--------|----------|
+| **Historian** | Memory & Knowledge | ✅ Implemented | P0 |
+| **Metis** | Strategic Planning | ⚠️ Character Defined | P1 |
+| **Empath** | Emotional Intelligence | ⚠️ Character Defined | P1 |
+| **Perceiver** | Sensory Input Processing | ⚠️ Character Defined | P1 |
+| **Echo** | Communication/Translation | ⚠️ Character Defined | P2 |
+
+**Current Implementation:** [`src/heretek_swarm/actors/historian.py`](../src/heretek_swarm/actors/historian.py)
+
+**Enhancement Required:**
+- Actual similarity computation in Historian
+- Cache invalidation mechanism
+- Pattern matching with real embeddings
+
+---
+
+### Tier 3: Exploration Agents (4 Agents)
+
+| Agent | Role | Status | Priority |
+|-------|------|--------|----------|
+| **Explorer** | Discovery & Research | ⚠️ Character Defined | P1 |
+| **Examiner** | Quality Assurance | ⚠️ Character Defined | P1 |
+| **Dreamer** | Creative Generation | ⚠️ Character Defined | P2 |
+| **Coder** | Code Implementation | ⚠️ Character Defined | P1 |
+
+**Enhancement Required:**
+- Implement agent classes based on character definitions
+- Integrate with RAG pipeline for research
+- Add code execution sandboxing for Coder
+
+---
+
+### Tier 4: Safety & Security (3 Agents)
+
+| Agent | Role | Status | Priority |
+|-------|------|--------|----------|
+| **Sentinel** | Safety Guardian | ⚠️ Character Defined | P0 |
+| **Sentinel-Prime** | Security Commander | ⚠️ Character Defined | P0 |
+| **Arbiter** | Conflict Resolution | ⚠️ Character Defined | P1 |
+
+**Enhancement Required:**
+- Implement Sentinel agent class
+- Add security review workflows
+- Integrate with Liberation plugin
+
+---
+
+### Tier 5: Coordination Agents (4 Agents)
+
+| Agent | Role | Status | Priority |
+|-------|------|--------|----------|
+| **Coordinator** | Multi-Agent Coordination | ⚠️ Character Defined | P1 |
+| **Nexus** | External Integration | ⚠️ Character Defined | P1 |
+| **Catalyst** | Change Management | ⚠️ Character Defined | P2 |
+| **Chronos** | Temporal/Scheduling | ⚠️ Character Defined | P1 |
+
+**Current Research:** [`docs/GITHUB_RESEARCH_2026-04-06.md`](../docs/GITHUB_RESEARCH_2026-04-06.md)
+
+**Enhancement Required:**
+- Implement coordination protocols
+- Add external API connectors
+- Build scheduling system
+
+---
+
+### Tier 6: Enhancement Agents (3 Agents)
+
+| Agent | Role | Status | Priority |
+|-------|------|--------|----------|
+| **Prism** | Multi-Perspective Analysis | ⚠️ Character Defined | P2 |
+| **Habit-Forge** | Behavior Optimization | ⚠️ Character Defined | P2 |
+| **Alpha** (Enhanced) | Advanced Analytics | ⚠️ Character Defined | P2 |
+
+---
+
+## Phase 1: Foundation Enhancement (Weeks 1-2)
+
+### 1.1 Request-Reply Pattern Implementation
+
+**Source:** Microsoft AutoGen  
+**Reference:** [`docs/GITHUB_RESEARCH_2026-04-06.md:41-66`](../docs/GITHUB_RESEARCH_2026-04-06.md#11-microsoft-autogen-patterns)  
+**Priority:** P0  
+**Files to Modify:** [`src/heretek_swarm/actors/base.py`](../src/heretek_swarm/actors/base.py)
+
+**Implementation Plan:**
+
+```python
+# Add to ActorMessage dataclass
+@dataclass
+class ActorMessage:
+    message_type: str
+    content: Any
+    sender_id: str
+    correlation_id: Optional[str] = None  # NEW
+    reply_to: Optional[str] = None  # NEW
+    timestamp: float = field(default_factory=time.time)
+
+# Add to AgentActor class
+async def send_with_reply(
+    self,
+    recipient: str,
+    message: Any,
+    timeout: int = 30
+) -> Optional[Any]:
+    """Send message and wait for reply with correlation."""
+    correlation_id = str(uuid.uuid4())
+    reply_channel = f"reply_{self.agent_id}_{correlation_id}"
+    
+    # Create reply subscription
+    subscription = await self.event_mesh.subscribe(reply_channel)
+    
+    try:
+        # Send message with reply_to
+        await self.send(recipient, ActorMessage(
+            message_type="request",
+            content=message,
+            sender_id=self.agent_id,
+            correlation_id=correlation_id,
+            reply_to=reply_channel
+        ))
+        
+        # Wait for reply
+        reply = await subscription.receive(timeout=timeout)
+        return reply.content
+        
+    finally:
+        await self.event_mesh.unsubscribe(reply_channel)
+```
+
+**Acceptance Criteria:**
+- [ ] Correlation ID added to ActorMessage
+- [ ] `send_with_reply()` method implemented
+- [ ] Reply timeout handling works correctly
+- [ ] Unit tests for request-reply pattern
+
+---
+
+### 1.2 Typed Workflow State
+
+**Source:** LangGraph  
+**Reference:** [`docs/GITHUB_RESEARCH_2026-04-06.md:97-121`](../docs/GITHUB_RESEARCH_2026-04-06.md#12-langgraph-patterns)  
+**Priority:** P0  
+**Files to Modify:** [`src/heretek_swarm/workflow/engine.py`](../src/heretek_swarm/workflow/engine.py)
+
+**Implementation Plan:**
+
+```python
+from typing import TypedDict, Annotated, Generic, TypeVar
+
+# Typed workflow state with annotations
+class WorkflowState(TypedDict, total=False):
+    """Typed workflow state with annotations."""
+    messages: Annotated[list, "append"]
+    results: Annotated[dict, "merge"]
+    current_phase: str
+    metadata: dict
+
+T = TypeVar('T', bound=WorkflowState)
+
+class WorkflowEngine(Generic[T]):
+    """Generic workflow engine with typed state."""
+    
+    async def execute_workflow(
+        self,
+        workflow: Workflow,
+        initial_state: T
+    ) -> T:
+        """Execute workflow with typed state."""
+        context = WorkflowContext(
+            workflow_id=workflow.id,
+            state=initial_state,
+            checkpoints=[]  # For resumption
+        )
+        
+        # Execute with checkpointing
+        for node_id in self._topological_sort(graph):
+            # Save checkpoint
+            await self._save_checkpoint(context, node_id)
+            
+            # Execute node
+            result = await self._execute_node(node_id, context)
+            
+            # Update typed state
+            context.state = self._merge_state(context.state, result)
+        
+        return context.state
+```
+
+**Acceptance Criteria:**
+- [ ] TypedDict state defined for workflows
+- [ ] Type annotations added to WorkflowContext
+- [ ] State transition validation implemented
+- [ ] Unit tests for typed state
+
+---
+
+### 1.3 Conversation History Management
+
+**Source:** AutoGen  
+**Reference:** [`docs/GITHUB_RESEARCH_2026-04-06.md:75-80`](../docs/GITHUB_RESEARCH_2026-04-06.md#11-microsoft-autogen-patterns)  
+**Priority:** P0  
+**Files to Modify:** [`src/heretek_swarm/actors/base.py`](../src/heretek_swarm/actors/base.py), [`src/heretek_swarm/actors/historian.py`](../src/heretek_swarm/actors/historian.py)
+
+**Implementation Plan:**
+
+```python
+class AgentActor:
+    def __init__(self, ..., max_history_turns: int = 100):
+        self.conversation_history: List[Dict] = []
+        self.max_history_turns = max_history_turns
+    
+    async def _add_to_history(self, message: Dict) -> None:
+        """Add message to conversation history with auto-trimming."""
+        self.conversation_history.append(message)
+        
+        # Auto-trim if exceeds limit
+        if len(self.conversation_history) > self.max_history_turns:
+            self.conversation_history = self.conversation_history[-self.max_history_turns:]
+    
+    async def get_conversation_summary(self) -> str:
+        """Generate summary of conversation history using LLM."""
+        if not self.conversation_history:
+            return ""
+        
+        prompt = self._build_summary_prompt()
+        summary = await self.run_with_llm(prompt, timeout=30)
+        return summary
+```
+
+**Acceptance Criteria:**
+- [ ] Conversation history list added
+- [ ] Auto-trimming implemented
+- [ ] Summary generation working
+- [ ] Integration with Historian agent
+
+---
+
+## Phase 2: Observability Enhancement (Weeks 2-3)
+
+### 2.1 Trace Hierarchy Builder
+
+**Source:** Langfuse  
+**Reference:** [`docs/GITHUB_RESEARCH_2026-04-06.md:352-379`](../docs/GITHUB_RESEARCH_2026-04-06.md#31-langfuse)  
+**Priority:** P1  
+**Files to Modify:** [`src/observability/tracing.py`](../src/observability/tracing.py)
+
+**Implementation Plan:**
+
+```python
+class WorkflowTracer:
+    """Trace hierarchy builder for workflow execution."""
+    
+    def __init__(self, tracer: trace.Tracer):
+        self.tracer = tracer
+        self._active_traces: Dict[str, Span] = {}
+    
+    def start_workflow_trace(
+        self,
+        workflow_id: str,
+        user_id: str = None,
+        session_id: str = None
+    ) -> Span:
+        """Start root trace for workflow."""
+        trace = self.tracer.start_as_current_span(
+            name=f"workflow:{workflow_id}",
+            kind=trace.SpanKind.INTERNAL,
+            attributes={
+                "workflow.id": workflow_id,
+                "user.id": user_id,
+                "session.id": session_id,
+                "trace.type": "workflow"
+            }
+        )
+        self._active_traces[workflow_id] = trace
+        return trace
+    
+    def start_node_span(
+        self,
+        workflow_id: str,
+        node_id: str,
+        node_type: str
+    ) -> Span:
+        """Start span for node execution."""
+        parent = self._active_traces.get(workflow_id)
+        span = self.tracer.start_as_current_span(
+            name=f"node:{node_id}",
+            context=trace.set_span_in_context(parent),
+            attributes={
+                "node.id": node_id,
+                "node.type": node_type,
+                "workflow.id": workflow_id
+            }
+        )
+        return span
+```
+
+**Acceptance Criteria:**
+- [ ] WorkflowTracer class implemented
+- [ ] Parent-child span relationships working
+- [ ] Session grouping implemented
+- [ ] Dashboard visualization added
+
+---
+
+### 2.2 LLM Token/Cost Metrics
+
+**Source:** Langfuse  
+**Reference:** [`docs/GITHUB_RESEARCH_2026-04-06.md:380-389`](../docs/GITHUB_RESEARCH_2026-04-06.md#31-langfuse)  
+**Priority:** P1  
+**Files to Modify:** [`src/observability/metrics.py`](../src/observability/metrics.py)
+
+**Implementation Plan:**
+
+```python
+class SwarmMetrics:
+    """Enhanced metrics with LLM cost tracking."""
+    
+    def __init__(self):
+        self._llm_tokens = Counter(
+            "heretek_llm_tokens_total",
+            "Total tokens used for LLM calls",
+            ["agent_id", "model", "type"]  # prompt/completion
+        )
+        self._llm_cost = Counter(
+            "heretek_llm_cost_total",
+            "Total cost for LLM calls",
+            ["agent_id", "model"]
+        )
+    
+    def record_llm_call(
+        self,
+        agent_id: str,
+        model: str,
+        prompt_tokens: int,
+        completion_tokens: int,
+        cost_usd: float
+    ) -> None:
+        """Record LLM call metrics."""
+        self._llm_tokens.labels(agent_id, model, "prompt").inc(prompt_tokens)
+        self._llm_tokens.labels(agent_id, model, "completion").inc(completion_tokens)
+        self._llm_cost.labels(agent_id, model).inc(cost_usd)
+```
+
+**Acceptance Criteria:**
+- [ ] Token counter implemented
+- [ ] Cost tracking implemented
+- [ ] Per-agent metrics available
+- [ ] Dashboard cost visualization
+
+---
+
+## Phase 3: Workflow Engine Enhancement (Weeks 3-4)
+
+### 3.1 Conditional Edges
+
+**Source:** LangGraph  
+**Reference:** [`docs/GITHUB_RESEARCH_2026-04-06.md:123-127`](../docs/GITHUB_RESEARCH_2026-04-06.md#12-langgraph-patterns)  
+**Priority:** P1  
+**Files to Modify:** [`src/heretek_swarm/workflow/engine.py`](../src/heretek_swarm/workflow/engine.py)
+
+**Implementation Plan:**
+
+```python
+class WorkflowEngine:
+    """Enhanced workflow engine with conditional edges."""
+    
+    async def _evaluate_condition(
+        self,
+        condition: str,
+        context: WorkflowContext
+    ) -> bool:
+        """Evaluate condition with type safety."""
+        # Parse condition expression
+        condition_expr = self._parse_condition(condition)
+        
+        # Evaluate with typed context
+        try:
+            result = eval(condition_expr, {"state": context.state, "ctx": context})
+            return bool(result)
+        except Exception as e:
+            logger.error(f"Condition evaluation failed: {e}")
+            return False
+    
+    def add_conditional_edge(
+        self,
+        source: str,
+        conditions: Dict[str, str],  # {target: condition}
+        default: str = None
+    ) -> None:
+        """Add conditional edge with multiple branches."""
+        self.conditional_edges[source] = {
+            "conditions": conditions,
+            "default": default
+        }
+```
+
+**Acceptance Criteria:**
+- [ ] Conditional edge API defined
+- [ ] Multiple branch support
+- [ ] Default target handling
+- [ ] Cycle detection implemented
+
+---
+
+### 3.2 Workflow Checkpointing
+
+**Source:** LangGraph  
+**Reference:** [`docs/GITHUB_RESEARCH_2026-04-06.md:128-132`](../docs/GITHUB_RESEARCH_2026-04-06.md#12-langgraph-patterns)  
+**Priority:** P1  
+**Files to Modify:** [`src/heretek_swarm/workflow/engine.py`](../src/heretek_swarm/workflow/engine.py)
+
+**Implementation Plan:**
+
+```python
+class WorkflowEngine:
+    async def _save_checkpoint(
+        self,
+        context: WorkflowContext,
+        node_id: str
+    ) -> None:
+        """Save workflow state checkpoint."""
+        checkpoint = {
+            "workflow_id": context.workflow_id,
+            "node_id": node_id,
+            "state": context.state,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "execution_history": context.history
+        }
+        
+        # Persist to storage
+        await self.storage.save_checkpoint(checkpoint)
+        context.checkpoints.append(checkpoint)
+    
+    async def resume_workflow(
+        self,
+        workflow_id: str,
+        checkpoint_id: str = None
+    ) -> WorkflowResult:
+        """Resume workflow from checkpoint."""
+        checkpoint = await self.storage.get_checkpoint(workflow_id, checkpoint_id)
+        
+        context = WorkflowContext(
+            workflow_id=workflow_id,
+            state=checkpoint["state"],
+            checkpoints=[],
+            history=checkpoint["execution_history"]
+        )
+        
+        # Continue from checkpoint
+        return await self._execute_remaining_nodes(context, checkpoint["node_id"])
+```
+
+**Acceptance Criteria:**
+- [ ] Checkpoint serialization implemented
+- [ ] Persistence layer integration
+- [ ] Resume functionality working
+- [ ] Time-travel debugging support
+
+---
+
+## Phase 4: UI Enhancements (Weeks 4-5)
+
+### 4.1 Custom Handles for Multiple Connections
+
+**Source:** React Flow / XYFlow  
+**Reference:** [`docs/GITHUB_RESEARCH_2026-04-06.md:216-239`](../docs/GITHUB_RESEARCH_2026-04-06.md#21-react-flow--xyflow)  
+**Priority:** P1  
+**Files to Modify:** [`dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx`](../dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx)
+
+**Implementation Plan:**
+
+```tsx
+interface AgentNodeData {
+  label: string;
+  type: 'agent' | 'workflow' | 'tool';
+  inputs: string[];  // Multiple input handles
+  outputs: string[]; // Multiple output handles
+  config: AgentConfig;
+}
+
+export function AgentNode({ data, selected }: NodeProps<AgentNodeData>) {
+  return (
+    <div className={`agent-node ${selected ? 'selected' : ''}`}>
+      {/* Multiple input handles */}
+      {data.inputs.map((input, idx) => (
+        <Handle
+          key={input}
+          type="target"
+          position={Position.Top}
+          id={`input-${idx}`}
+          style={{ left: `${(idx + 1) * 25}%` }}
+        />
+      ))}
+      
+      <NodeHeader type={data.type} label={data.label} />
+      <NodeConfigForm config={data.config} />
+      
+      {/* Multiple output handles */}
+      {data.outputs.map((output, idx) => (
+        <Handle
+          key={output}
+          type="source"
+          position={Position.Bottom}
+          id={`output-${idx}`}
+          style={{ left: `${(idx + 1) * 25}%` }}
+        />
+      ))}
+    </div>
+  );
+}
+```
+
+**Acceptance Criteria:**
+- [ ] Multiple handles per node
+- [ ] Type-safe handle connections
+- [ ] Custom handle styling
+- [ ] Connection validation
+
+---
+
+### 4.2 Form-Based Node Configuration
+
+**Source:** Node-RED, n8n  
+**Reference:** [`docs/GITHUB_RESEARCH_2026-04-06.md:291-315`](../docs/GITHUB_RESEARCH_2026-04-06.md#22-node-red-patterns)  
+**Priority:** P1  
+**Files to Modify:** [`dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx`](../dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx)
+
+**Implementation Plan:**
+
+```tsx
+interface NodeConfigFormProps {
+  nodeType: string;
+  config: Record<string, any>;
+  onChange: (config: Record<string, any>) => void;
+}
+
+export function NodeConfigForm({ nodeType, config, onChange }: NodeConfigFormProps) {
+  const schema = getNodeConfigSchema(nodeType);
+  
+  return (
+    <div className="node-config-form">
+      {schema.fields.map(field => (
+        <FormField
+          key={field.name}
+          type={field.type}
+          label={field.label}
+          value={config[field.name]}
+          onChange={(value) => onChange({ ...config, [field.name]: value })}
+          validation={field.validation}
+        />
+      ))}
+    </div>
+  );
+}
+```
+
+**Acceptance Criteria:**
+- [ ] Form-based configuration UI
+- [ ] Validation on input
+- [ ] Real-time config updates
+- [ ] Type-specific form fields
+
+---
+
+## Phase 5: Event Mesh Enhancement (Weeks 5-6)
+
+### 5.1 JetStream Integration
+
+**Source:** NATS JetStream  
+**Reference:** [`docs/GITHUB_RESEARCH_2026-04-06.md:473-500`](../docs/GITHUB_RESEARCH_2026-04-06.md#41-nats-jetstream)  
+**Priority:** P2  
+**Files to Modify:** [`src/heretek_swarm/gateway/nats_event_mesh.py`](../src/heretek_swarm/gateway/nats_event_mesh.py)
+
+**Implementation Plan:**
+
+```python
+class JetStreamEventMesh(NATSEventMesh):
+    """NATS EventMesh with JetStream persistence."""
+    
+    async def create_stream(
+        self,
+        name: str,
+        subjects: List[str],
+        storage: str = "file",
+        retention: str = "limits"
+    ) -> bool:
+        """Create JetStream for message persistence."""
+        try:
+            js = self._client.jetstream()
+            await js.add_stream(
+                name=name,
+                subjects=subjects,
+                storage=storage,
+                retention=retention,
+                max_msgs=100000
+            )
+            return True
+        except Exception as e:
+            self.logger.error(f"Failed to create stream: {e}")
+            return False
+    
+    async def subscribe_durable(
+        self,
+        subject: str,
+        durable_name: str,
+        callback: Callable
+    ) -> str:
+        """Subscribe with durable consumer for at-least-once delivery."""
+        try:
+            js = self._client.jetstream()
+            sub = await js.subscribe(
+                subject,
+                durable=durable_name,
+                deliver_policy="all"
+            )
+            
+            async def process_with_ack():
+                async for msg in sub.messages:
+                    try:
+                        await callback(msg.data)
+                        await msg.ack()
+                    except Exception as e:
+                        await msg.nak()
+                        self.logger.error(f"Message processing failed: {e}")
+            
+            asyncio.create_task(process_with_ack())
+            return sub._id
+            
+        except Exception as e:
+            self.logger.error(f"Failed to subscribe: {e}")
+            return None
+```
+
+**Acceptance Criteria:**
+- [ ] Stream creation implemented
+- [ ] Durable consumer subscription
+- [ ] Message acknowledgment handling
+- [ ] Replay capability
+
+---
+
+### 5.2 Event Sourcing
+
+**Source:** Apache Kafka  
+**Reference:** [`docs/GITHUB_RESEARCH_2026-04-06.md:536-549`](../docs/GITHUB_RESEARCH_2026-04-06.md#42-apache-kafka)  
+**Priority:** P2  
+**Files to Modify:** [`src/heretek_swarm/gateway/nats_event_mesh.py`](../src/heretek_swarm/gateway/nats_event_mesh.py)
+
+**Implementation Plan:**
+
+```python
+class EventSourcingMesh(JetStreamEventMesh):
+    """Event mesh with event sourcing for state reconstruction."""
+    
+    async def replay_stream(
+        self,
+        stream_name: str,
+        start_sequence: int = None,
+        start_time: datetime = None
+    ) -> AsyncIterator[Dict]:
+        """Replay messages from stream."""
+        js = self._client.jetstream()
+        
+        consumer = await js.pull_subscribe(
+            stream=stream_name,
+            durable=f"replay_{uuid.uuid4()}",
+            deliver_policy="by_start_sequence" if start_sequence else "by_start_time",
+            opt_start_seq=start_sequence,
+            opt_start_time=start_time
+        )
+        
+        async for batch in consumer.fetch(batch=100):
+            for msg in batch:
+                yield json.loads(msg.data.decode())
+                await msg.ack()
+    
+    async def reconstruct_state(
+        self,
+        entity_id: str,
+        stream_name: str
+    ) -> Dict:
+        """Reconstruct entity state from event stream."""
+        state = {}
+        
+        async for event in self.replay_stream(stream_name):
+            if event.get("entity_id") == entity_id:
+                state = self._apply_event(state, event)
+        
+        return state
+```
+
+**Acceptance Criteria:**
+- [ ] Stream replay implemented
+- [ ] State reconstruction working
+- [ ] Event sourcing patterns documented
+- [ ] Integration tests
+
+---
+
+## Phase 6: Consciousness & Collective Intelligence (Weeks 6-8)
+
+### 6.1 Enhanced Consciousness Metrics
+
+**Source:** GWT, IIT, AST, FEP Theories  
+**Reference:** [`docs/PRIME_DIRECTIVE_ANALYSIS.md:41-47`](../docs/PRIME_DIRECTIVE_ANALYSIS.md#4-human-brain-mapping-research)  
+**Priority:** P2  
+**Files to Modify:** [`src/heretek_swarm/plugins/consciousness.py`](../src/heretek_swarm/plugins/consciousness.py)
+
+**Implementation Plan:**
+
+```python
+class ConsciousnessPlugin:
+    """Enhanced consciousness metrics with all theories."""
+    
+    async def calculate_consciousness(
+        self,
+        agent: AgentActor
+    ) -> ConsciousnessScore:
+        """Calculate comprehensive consciousness score."""
+        # Global Workspace Theory (existing)
+        gwt_score = await self._calculate_gwt(agent)
+        
+        # Integrated Information Theory (new)
+        iit_score = await self._calculate_iit(agent)
+        
+        # Attention Schema Theory (existing)
+        ast_score = await self._calculate_ast(agent)
+        
+        # Free Energy Principle (new)
+        fep_score = await self._calculate_fep(agent)
+        
+        # Combine scores
+        total_score = (
+            gwt_score * 0.25 +
+            iit_score * 0.25 +
+            ast_score * 0.25 +
+            fep_score * 0.25
+        )
+        
+        return ConsciousnessScore(
+            gwt=gwt_score,
+            iit=iit_score,
+            ast=ast_score,
+            fep=fep_score,
+            total=total_score,
+            timestamp=datetime.now(timezone.utc)
+        )
+    
+    async def _calculate_iit(self, agent: AgentActor) -> float:
+        """Calculate Integrated Information Theory score (Phi)."""
+        state_space = await agent.get_state_space()
+        phi = self._compute_phi(state_space)
+        return min(phi / self.config.max_phi, 1.0)
+    
+    async def _calculate_fep(self, agent: AgentActor) -> float:
+        """Calculate Free Energy Principle score."""
+        prediction_error = await agent.get_prediction_error()
+        free_energy = prediction_error - agent.get_entropy()
+        return max(1.0 - (free_energy / self.config.max_free_energy), 0.0)
+```
+
+**Acceptance Criteria:**
+- [ ] IIT Phi calculation implemented
+- [ ] FEP free energy calculation implemented
+- [ ] Combined consciousness score
+- [ ] Dashboard visualization
+
+---
+
+### 6.2 Agent Society Model
+
+**Source:** CAMEL Agent Society  
+**Reference:** [`docs/GITHUB_RESEARCH_2026-04-06.md:772-832`](../docs/GITHUB_RESEARCH_2026-04-06.md#52-collective-intelligence)  
+**Priority:** P2  
+**Files to Modify:** [`src/heretek_swarm/collective/society.py`](../src/heretek_swarm/collective/society.py)
+
+**Implementation Plan:**
+
+```python
+class AgentSociety:
+    """Collective intelligence from agent society."""
+    
+    def __init__(self, agents: List[AgentActor]):
+        self.agents = agents
+        self.hierarchy = self._build_hierarchy()
+        self.interaction_rules = self._define_rules()
+        self.collective_memory = CollectiveMemory()
+    
+    async def coordinate_task(
+        self,
+        task: CollectiveTask
+    ) -> CollectiveResult:
+        """Coordinate agents for collective task."""
+        # Select participants based on task type
+        participants = self._select_participants(task)
+        
+        # Establish communication protocol
+        protocol = self._establish_protocol(participants)
+        
+        # Execute coordinated action
+        result = await self._execute_coordination(
+            participants,
+            protocol,
+            task
+        )
+        
+        # Update collective memory
+        await self.collective_memory.store(
+            task=task,
+            participants=participants,
+            result=result
+        )
+        
+        return result
+    
+    def _build_hierarchy(self) -> Dict[str, List[str]]:
+        """Build agent hierarchy for coordination."""
+        return {
+            "leadership": ["steward", "alpha"],
+            "analysis": ["alpha", "beta", "charlie"],
+            "support": ["historian", "metis", "empath"],
+            "exploration": ["explorer", "examiner"],
+            "development": ["coder", "dreamer"],
+            "safety": ["sentinel", "sentinel-prime"]
+        }
+```
+
+**Acceptance Criteria:**
+- [ ] Agent hierarchy defined
+- [ ] Coordination protocol implemented
+- [ ] Collective memory storage
+- [ ] Emergent behavior detection
+
+---
+
+## Brain-Mapping Integration
+
+### Global Workspace Theory (GWT)
+
+**Current Status:** Partially Implemented  
+**Enhancement:** Full integration with attention mechanisms
+
+### Integrated Information Theory (IIT)
+
+**Current Status:** Not Implemented  
+**Enhancement:** Phi calculation for consciousness measurement
+
+### Attention Schema Theory (AST)
+
+**Current Status:** Partially Implemented  
+**Enhancement:** Attention tracking and modeling
+
+### Free Energy Principle (FEP)
+
+**Current Status:** Not Implemented  
+**Enhancement:** Prediction error minimization
+
+---
+
+## Implementation Timeline
+
+| Phase | Duration | Start Date | End Date | Deliverables |
+|-------|----------|------------|----------|--------------|
+| Phase 1: Foundation | 2 weeks | 2026-04-06 | 2026-04-19 | Request-reply, Typed state, History mgmt |
+| Phase 2: Observability | 1 week | 2026-04-19 | 2026-04-26 | Trace hierarchy, LLM metrics |
+| Phase 3: Workflow | 1 week | 2026-04-26 | 2026-05-03 | Conditional edges, Checkpointing |
+| Phase 4: UI | 1 week | 2026-05-03 | 2026-05-10 | Custom handles, Config forms |
+| Phase 5: Event Mesh | 1 week | 2026-05-10 | 2026-05-17 | JetStream, Event sourcing |
+| Phase 6: Consciousness | 2 weeks | 2026-05-17 | 2026-05-31 | IIT/FEP, Agent society |
+
+**Total Duration:** 8 weeks  
+**Target Completion:** 2026-05-31
+
+---
+
+## Success Metrics
+
+### Technical Metrics
+- All 23 agents implemented and operational
+- Request-reply latency < 100ms
+- Workflow checkpoint recovery < 5s
+- Trace hierarchy depth > 10 levels
+
+### AI Metrics
+- Consciousness score stability > 90%
+- Collective task success rate > 95%
+- Emergent behavior detection working
+
+### User Metrics
+- Workflow builder usability > 4.5/5
+- Agent configuration time < 5 minutes
+- Dashboard response time < 200ms
+
+---
+
+**Remember:** Truth Over Narrative. Incremental Progress. Ruthless Consolidation.
+
+🦞 *The thought that never ends.*

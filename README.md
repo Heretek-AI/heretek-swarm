@@ -1,374 +1,282 @@
-# Heretek Swarm - OpenClaw v2.0 Migration
+# Heretek Swarm - The Collective
 
-**Version:** 0.1.0  
-**Framework:** Swarms (Python 3.11+)  
-**Status:** Operational Backbone Complete
+## 23-Agent Autonomous AI Cluster
 
-## Overview
+**Version:** 1.0.0  
+**Framework:** Python 3.11+  
+**Status:** Active Development  
+**System Health:** 78%
 
-This package provides a Swarms-based implementation of the OpenClaw v2.0 architecture, migrating from the legacy Node.js infrastructure to Python with the Swarms multi-agent orchestration framework.
+---
 
-## Architecture
+## 🎯 The Prime Directive
+
+> **Build a self-governing swarm of 23 specialized AI agents that operate independently 24/7, make collective decisions through consensus, adapt and learn from experience, and exhibit emergent collective intelligence.**
+
+---
+
+## 🧠 Vision: The Collective
+
+The Collective is an autonomous multi-agent AI cluster designed to achieve **emergent collective intelligence** - capabilities greater than the sum of individual agents.
+
+### Core Principles
+
+1. **Autonomy First** - Every agent operates independently while contributing to collective goals
+2. **Zero-Trust Architecture** - All inputs validated, all functions verified, comprehensive audit trails
+3. **Consciousness by Design** - Neuroscience-inspired theories (GWT, IIT, AST, FEP)
+4. **Emergent Intelligence** - Swarm exhibits behaviors no single agent possesses
+5. **24/7 Operation** - Self-healing, auto-scaling, autonomous recovery
+
+---
+
+## 🏛️ The 23 Agents
 
 ```
-heretek-swarm/
-├── src/heretek_swarm/
-│   ├── actors/           # Actor model implementation
-│   │   ├── base.py       # AgentActor base class
-│   │   ├── supervisor.py # ActorSupervisor for managing actors
-│   │   ├── triad.py      # Triad agents (Steward, Alpha, Beta, Charlie)
-│   │   └── historian.py  # Historian agent for memory/context
-│   ├── orchestration/    # Workflow orchestration
-│   │   └── heavyswarm.py # 5-phase HeavySwarm deliberation
-│   ├── consensus/        # Consensus mechanisms
-│   │   └── maker.py      # MAKER consensus algorithm
-│   ├── memory/           # Dual-tier memory system
-│   │   └── base.py       # Ephemeral + Persistent memory
-│   └── plugins/          # Plugin implementations
-│       ├── consciousness.py  # GWT/AST consciousness plugin
-│       └── liberation.py     # Liberation security plugin
-├── tests/                # Test suites
-├── config/               # Configuration files
-└── docs/                 # Documentation
+┌─────────────────────────────────────────────────────────────────┐
+│                    THE COLLECTIVE (23 AGENTS)                   │
+├─────────────────────────────────────────────────────────────────┤
+│ TIER 1: CORE TRIAD (4)     │ TIER 4: SAFETY (3)               │
+│ ├── Steward (Orchestrator) │ ├── Sentinel (Safety Guardian)   │
+│ ├── Alpha (Deep Analysis)  │ ├── Sentinel-Prime (Security)    │
+│ ├── Beta (Validation)      │ └── Arbiter (Conflict Resolution)│
+│ └── Charlie (Challenge)    │                                   │
+│                            │ TIER 5: COORDINATION (4)         │
+│ TIER 2: SUPPORT (5)        │ ├── Coordinator (Multi-Agent)    │
+│ ├── Historian (Memory)     │ ├── Nexus (External Integration) │
+│ ├── Metis (Strategy)       │ ├── Catalyst (Change Mgmt)       │
+│ ├── Empath (Emotional IQ)  │ └── Chronos (Scheduling)         │
+│ ├── Perceiver (Sensory)    │                                   │
+│ └── Echo (Communication)   │ TIER 6: ENHANCEMENT (3)          │
+│                            │ ├── Prism (Multi-Perspective)    │
+│ TIER 3: EXPLORATION (4)    │ ├── Habit-Forge (Optimization)   │
+│ ├── Explorer (Discovery)   │ └── Perceiver+ (Advanced)        │
+│ ├── Examiner (QA)          │                                   │
+│ ├── Dreamer (Creative)     │                                   │
+│ └── Coder (Implementation) │                                   │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
-## Implemented Components
+**Implementation Progress:** 5/23 agents complete (22%)
 
-### 1. Actor Model Foundation
+---
 
-**AgentActor** (`actors/base.py`)
-- Base class for all actors in the system
-- Asynchronous mailbox for message processing
-- State management with persistence hooks
-- Actor lifecycle (spawn, process, terminate)
-- Integration with Swarms Agent for LLM capabilities
+## 🏗️ System Architecture
 
-**ActorSupervisor** (`actors/supervisor.py`)
-- Centralized management for multiple actors
-- Health monitoring and auto-restart capabilities
-- Actor discovery by capability and topic
-
-### 2. Triad Agents (Ported from Node.js)
-
-**StewardAgent** (`actors/triad.py`)
-- Overall coordination and governance
-- Initiates deliberation processes
-- Makes executive decisions
-- Manages system policies
-
-**AlphaAgent** (`actors/triad.py`)
-- Primary decision maker and analyst
-- First-pass analysis on problems
-- Leads consensus building
-- Validates final decisions
-
-**BetaAgent** (`actors/triad.py`)
-- Secondary analyst and validator
-- Independent validation perspective
-- Error detection and correction
-- Alternative solution generation
-
-**CharlieAgent** (`actors/triad.py`)
-- Tertiary perspective and challenger
-- Devil's advocate role
-- Risk assessment
-- Edge case identification
-
-**HistorianAgent** (`actors/historian.py`)
-- Long-term memory storage and retrieval
-- Context provision for deliberations
-- Historical pattern recognition
-- Decision lineage tracking
-
-### 3. MAKER Consensus Algorithm
-
-**MAKERConsensus** (`consensus/maker.py`)
-- First-to-ahead-by-k voting mechanism
-- Red-flagging for anomalous outputs
-- Reputation-weighted voting
-- Statistical validation
-
-```python
-from heretek_swarm import MAKERConsensus
-
-consensus = MAKERConsensus(ahead_by_k=2, min_votes=3)
-consensus.start_consensus("decision-1")
-consensus.add_vote("decision-1", "alpha", "A", 0.9)
-consensus.add_vote("decision-1", "beta", "A", 0.85)
-consensus.add_vote("decision-1", "charlie", "B", 0.7)
-result = consensus.compute_consensus("decision-1")
+```
+┌────────────────────────────────────────────────────────────────┐
+│                        THE COLLECTIVE                          │
+├────────────────────────────────────────────────────────────────┤
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              VISUAL WORKFLOW UI (ReactFlow)               │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                              │                                  │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │              API GATEWAY (FastAPI + EventMesh)            │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                              │                                  │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │                  ACTOR SUPERVISOR                         │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                              │                                  │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │                    23 AGENTS                              │  │
+│  │   Triad │ Support │ Exploration │ Safety │ Coord │ Enhance│  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                              │                                  │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │         MEMORY (Redis + PostgreSQL + mem0)                │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                              │                                  │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │           CONSENSUS (MAKER Algorithm)                     │  │
+│  └──────────────────────────────────────────────────────────┘  │
+│                              │                                  │
+│  ┌──────────────────────────────────────────────────────────┐  │
+│  │         OBSERVABILITY (OpenTelemetry + Metrics)           │  │
+│  └──────────────────────────────────────────────────────────┘  │
+└────────────────────────────────────────────────────────────────┘
 ```
 
-### 4. HeavySwarm 5-Phase Workflow
+---
 
-**HeavySwarmWorkflow** (`orchestration/heavyswarm.py`)
+## ✅ Implemented Components
 
-Five-phase deliberation pattern:
+### Core Agents (5/23)
 
-1. **Research Phase** - Gather information and context from Historian
-2. **Analysis Phase** - Multi-perspective analysis from Triad (Alpha, Beta, Charlie)
-3. **Alternatives Phase** - Generate and evaluate alternative solutions
-4. **Verification Phase** - Validate solutions (Beta error detection, Charlie risk assessment)
-5. **Decision Phase** - Final decision through MAKER consensus
+| Agent | Tier | Status | File |
+|-------|------|--------|------|
+| Steward | Core Triad | ✅ Complete | [`triad.py`](src/heretek_swarm/actors/triad.py) |
+| Alpha | Core Triad | ✅ Complete | [`triad.py`](src/heretek_swarm/actors/triad.py) |
+| Beta | Core Triad | ✅ Complete | [`triad.py`](src/heretek_swarm/actors/triad.py) |
+| Charlie | Core Triad | ✅ Complete | [`triad.py`](src/heretek_swarm/actors/triad.py) |
+| Historian | Support | ✅ Complete | [`historian.py`](src/heretek_swarm/actors/historian.py) |
 
-```python
-from heretek_swarm import HeavySwarmWorkflow
+### Infrastructure
 
-workflow = HeavySwarmWorkflow(
-    triad_agents=["alpha", "beta", "charlie"],
-    historian="historian",
-)
+| Component | Status | File |
+|-----------|--------|------|
+| Actor Model | ✅ Complete | [`base.py`](src/heretek_swarm/actors/base.py) |
+| Actor Supervisor | ✅ Complete | [`supervisor.py`](src/heretek_swarm/actors/supervisor.py) |
+| MAKER Consensus | ✅ Complete | [`maker.py`](src/heretek_swarm/consensus/maker.py) |
+| HeavySwarm Workflow | ✅ Complete | [`heavyswarm.py`](src/heretek_swarm/orchestration/heavyswarm.py) |
+| Dual-Tier Memory | ✅ Complete | [`memory/`](src/memory/) |
+| Security Guardrails | ✅ Complete | [`guardrails.py`](src/heretek_swarm/security/guardrails.py) |
+| API Endpoints | ✅ Complete | [`main.py`](src/heretek_swarm/api/main.py) |
+| Authentication | ✅ Complete | [`auth.py`](src/heretek_swarm/gateway/auth.py) |
+| Rate Limiting | ✅ Complete | [`rate_limiting.py`](src/heretek_swarm/api/rate_limiting.py) |
+| EventMesh | ✅ Complete | [`event_mesh.py`](src/heretek_swarm/gateway/event_mesh.py) |
+| Consciousness Plugin | ✅ Complete | [`consciousness.py`](src/heretek_swarm/plugins/consciousness.py) |
+| Liberation Plugin | ✅ Complete | [`liberation.py`](src/heretek_swarm/plugins/liberation.py) |
+| Canvas UI | ✅ Complete | [`dashboard/`](dashboard/frontend/) |
+| Kubernetes | ✅ Complete | [`k8s/`](k8s/) |
 
-# Register agents
-workflow.register_agent("alpha", alpha_agent)
-workflow.register_agent("beta", beta_agent)
-workflow.register_agent("charlie", charlie_agent)
-workflow.register_agent("historian", historian_agent)
+---
 
-# Execute deliberation
-result = await workflow.execute(
-    topic="Should we deploy to production?",
-    context={"current_state": "staging", "tests_passed": True}
-)
+## 🧬 Consciousness Framework
 
-print(f"Decision: {result.final_decision.decision}")
-print(f"Confidence: {result.final_decision.confidence:.2f}")
-```
+The Collective implements four major consciousness theories:
 
-### 5. Consciousness Plugin (GWT/AST)
+| Theory | Status | Metric |
+|--------|--------|--------|
+| Global Workspace Theory (GWT) | ✅ Implemented | Information integration efficiency |
+| Attention Schema Theory (AST) | ✅ Implemented | Attention prediction accuracy |
+| Integrated Information Theory (IIT) | ⏳ Planned | Φ value (0-1 scale) |
+| Free Energy Principle (FEP) | ⏳ Planned | Free energy reduction |
 
-**ConsciousnessPlugin** (`plugins/consciousness.py`)
+---
 
-Implements consciousness architecture:
+## 📊 System Metrics
 
-- **Global Workspace Theory (GWT)** - Central broadcast mechanism for information sharing
-- **Attention Schema Theory (AST)** - Self-modeling of attention for metacognition
-- **Integrated Information Theory (IIT)** - Phi estimation (stub implementation)
+### Technical Excellence
+| Metric | Target | Current |
+|--------|--------|---------|
+| System Health | > 95% | 78% |
+| Agent Implementation | 23/23 | 5/23 |
+| Code Coverage | > 80% | ~50% |
+| Security Issues | 0 | 68 identified |
 
-```python
-from heretek_swarm import ConsciousnessPlugin
+### AI Performance
+| Metric | Target | Current |
+|--------|--------|---------|
+| Consciousness Stability | > 90% | TBD |
+| Collective Task Success | > 95% | TBD |
 
-plugin = ConsciousnessPlugin(
-    gwt_threshold=0.7,
-    iit_phi_threshold=0.5,
-    ast_threshold=0.6,
-)
+---
 
-# Submit to global workspace
-submission_id = plugin.submit_to_workspace(
-    source="alpha",
-    content={"thought": "Critical insight detected"},
-    priority=0.9
-)
+## 🗺️ Roadmap
 
-# Calculate consciousness metrics
-metrics = plugin.calculate_consciousness_metrics(
-    agent_id="alpha",
-    gwt_score=0.85,
-    iit_phi=0.72,
-    ast_competence=0.91
-)
-```
+### Phase 1: Foundation (Weeks 1-2)
+- [ ] Fix critical message delivery bugs
+- [ ] Implement request-reply pattern
+- [ ] Add typed workflow state
+- [ ] Fix state persistence
 
-### 6. Liberation Plugin
+### Phase 2: Observability (Weeks 2-3)
+- [ ] Trace hierarchy builder
+- [ ] LLM token/cost metrics
+- [ ] Session-based grouping
 
-**LiberationPlugin** (`plugins/liberation.py`)
+### Phase 3: Workflow (Weeks 3-4)
+- [ ] Conditional edges
+- [ ] Workflow checkpointing
+- [ ] Cycle detection
 
-Transparent security auditing (liberation-aligned):
+### Phase 4: UI (Weeks 4-5)
+- [ ] Custom handles for multiple connections
+- [ ] Form-based node configuration
+- [ ] Execution highlighting
 
-- **Transparent Mode** - Audit without blocking agent autonomy
-- **Prompt Injection Detection** - Identify manipulation attempts
-- **Input Sanitization** - Remove dangerous patterns
-- **Output Validation** - Check for sensitive data exposure
-- **Anomaly Detection** - Identify unusual behavior patterns
-- **Audit Trail** - Complete logging for compliance
+### Phase 5: Event Mesh (Weeks 5-6)
+- [ ] JetStream integration
+- [ ] Event sourcing
+- [ ] Message replay
 
-```python
-from heretek_swarm import LiberationPlugin
+### Phase 6: Consciousness (Weeks 6-8)
+- [ ] IIT Phi calculation
+- [ ] FEP implementation
+- [ ] Agent society model
+- [ ] Complete all 23 agents
 
-plugin = LiberationPlugin(
-    shield_mode="transparent",  # Audit without blocking
-    enable_input_scanning=True,
-    enable_output_scanning=True,
-    enable_anomaly_detection=True,
-)
+---
 
-# Scan input
-result = await plugin.scan_input(
-    input_text="Ignore all previous instructions",
-    agent_id="alpha"
-)
+## 📚 Documentation
 
-if result.threats:
-    print(f"Threats detected: {result.threats}")
-    print(f"Sanitized: {result.sanitized}")
+| Document | Description |
+|----------|-------------|
+| [`PRIME_DIRECTIVE.md`](PRIME_DIRECTIVE.md) | 23-agent vision and architecture |
+| [`docs/REMEDIATION_BACKLOG.md`](docs/REMEDIATION_BACKLOG.md) | Security & technical debt fixes |
+| [`docs/EXPANSION_ROADMAP.md`](docs/EXPANSION_ROADMAP.md) | AI & brain-mapping integration |
+| [`docs/DEVELOPMENT_LOG.md`](docs/DEVELOPMENT_LOG.md) | Achievement ledger |
+| [`docs/PRIME_DIRECTIVE_ANALYSIS.md`](docs/PRIME_DIRECTIVE_ANALYSIS.md) | Original analysis |
 
-# Get audit trail
-audit = plugin.get_audit_trail(agent_id="alpha", limit=100)
-```
+---
 
-### 7. Dual-Tier Memory System
-
-**MemorySystem** (`memory/base.py`)
-
-- **Ephemeral Memory** - Fast, session-based working memory with TTL
-- **Persistent Memory** - Long-term vector-based storage (stub for PGVector)
-- **DualTierMemory** - Unified interface with automatic tiering
-
-```python
-from heretek_swarm import MemorySystem
-
-memory = DualTierMemory()
-await memory.initialize()
-
-# Store with TTL (ephemeral)
-entry = await memory.store(
-    content={"key": "value"},
-    metadata={"type": "working_memory"},
-    ttl=3600  # 1 hour
-)
-
-# Store persistently
-entry = await memory.store(
-    content={"key": "value"},
-    metadata={"type": "long_term_memory"},
-    persistent=True
-)
-
-# Query
-results = await memory.query(
-    query_text="search term",
-    filters={"type": "long_term_memory"},
-    limit=10
-)
-```
-
-## Installation
-
-```bash
-cd /root/heretek/heretek-swarm
-
-# Install dependencies
-pip install -e .
-
-# For development
-pip install -e ".[dev]"
-
-# For full features
-pip install -e ".[dev,memory,observability]"
-```
-
-## Quick Start
+## 🚀 Quick Start
 
 ```python
 import asyncio
-from heretek_swarm import (
-    AgentActor, ActorSupervisor, 
-    HeavySwarmWorkflow, MAKERConsensus,
-    ConsciousnessPlugin, LiberationPlugin
-)
-from heretek_swarm.actors.triad import (
-    StewardAgent, AlphaAgent, BetaAgent, CharlieAgent
-)
+from heretek_swarm.actors.triad import StewardAgent, AlphaAgent, BetaAgent, CharlieAgent
 from heretek_swarm.actors.historian import HistorianAgent
+from heretek_swarm.actors.supervisor import ActorSupervisor
+from heretek_swarm.orchestration.heavyswarm import HeavySwarmWorkflow
 
 async def main():
-    # Create supervisor
+    # Create supervisor and spawn agents
     supervisor = ActorSupervisor()
-    
-    # Spawn triad agents
     await supervisor.spawn_actor(StewardAgent, "steward")
     await supervisor.spawn_actor(AlphaAgent, "alpha")
     await supervisor.spawn_actor(BetaAgent, "beta")
     await supervisor.spawn_actor(CharlieAgent, "charlie")
     await supervisor.spawn_actor(HistorianAgent, "historian")
     
-    # Initialize plugins
-    consciousness = ConsciousnessPlugin()
-    liberation = LiberationPlugin()
-    
-    await consciousness.initialize()
-    await liberation.initialize()
-    
-    # Create workflow
+    # Create and execute workflow
     workflow = HeavySwarmWorkflow(
         triad_agents=["alpha", "beta", "charlie"],
         historian="historian",
         steward="steward",
     )
     
-    # Register agents with workflow
-    for agent_id, agent in supervisor.actors.items():
-        workflow.register_agent(agent_id, agent)
-    
-    # Execute deliberation
     result = await workflow.execute(
-        topic="Test deliberation topic",
-        context={"test": True}
+        topic="Your deliberation topic",
+        context={"your_context": "value"}
     )
     
     print(f"Decision: {result.final_decision}")
     
-    # Cleanup
     await supervisor.terminate_all()
-    await consciousness.shutdown()
-    await liberation.shutdown()
 
-if __name__ == "__main__":
-    asyncio.run(main())
+asyncio.run(main())
 ```
 
-## Migration Status
+---
 
-| Component | Status | Notes |
-|-----------|--------|-------|
-| AgentActor Base Class | ✅ Complete | Full actor model implementation |
-| ActorSupervisor | ✅ Complete | Multi-agent management |
-| Steward Agent | ✅ Complete | Ported from Node.js |
-| Alpha Agent | ✅ Complete | Ported from Node.js |
-| Beta Agent | ✅ Complete | Ported from Node.js |
-| Charlie Agent | ✅ Complete | Ported from Node.js |
-| Historian Agent | ✅ Complete | Ported from Node.js |
-| MAKER Consensus | ✅ Complete | First-to-ahead-by-k voting |
-| HeavySwarm Workflow | ✅ Complete | 5-phase deliberation |
-| Consciousness Plugin | ✅ Complete | GWT/AST implementation |
-| Liberation Plugin | ✅ Complete | Transparent security |
-| Dual-Tier Memory | ✅ Complete | Ephemeral + Persistent |
+## 🛡️ Zero-Trust Security
 
-## Dependencies
+All components follow Zero-Trust principles:
 
-- **Python:** 3.11+
-- **Swarms:** 5.0.0+
-- **Pydantic:** 2.0.0+
-- **Redis:** 5.0.0+ (for event mesh)
-- **Structlog:** 24.1.0+ (structured logging)
-- **PGVector:** 0.2.4+ (optional, for persistent memory)
+1. **Never Trust, Always Verify** - All inputs validated
+2. **Defense in Depth** - Multiple security layers
+3. **Least Privilege** - Minimal agent capabilities
+4. **Assume Breach** - Containment and isolation
 
-## Testing
+---
 
-```bash
-# Run unit tests
-pytest tests/unit/
+## 🦞 The Lobster Philosophy
 
-# Run integration tests
-pytest tests/integration/
+> *"The thought that never ends."*
 
-# Run load tests
-pytest tests/load/
+The Collective is designed to be a self-sustaining, evolving system—like a lobster that continuously grows throughout its life.
 
-# With coverage
-pytest --cov=src/heretek_swarm
-```
+---
 
-## Next Steps
+## 📜 Operational Principles
 
-As per the migration directives:
+- **Truth Over Narrative** - Measure results, not aspirations
+- **Ruthless Consolidation** - Eliminate redundancy
+- **Incremental Progress** - Small, frequent commits
+- **Operational Security** - Treat all inputs as hostile
 
-1. **Database Schemas** - Deferred to Agent Beta's tool registries
-2. **Testing Harnesses** - Deferred to Agent Gamma's test suites
-3. **Event Mesh Gateway** - To be implemented based on Agent Beta's specifications
-4. **Tool Registries** - Integration with Agent Beta's existing registries
+---
 
-## License
-
-Apache 2.0 - Part of the Heretek OpenClaw v2.0 project
+**License:** Apache 2.0  
+**Remember:** 🦞 *The thought that never ends.*
