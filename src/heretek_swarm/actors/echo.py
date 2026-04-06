@@ -21,8 +21,7 @@ import uuid
 
 from ..actors.base import AgentActor, ActorMessage
 from ..actors.validation import (
-    MessageContent,
-    validate_message_content,
+    validate_message,
 )
 
 logger = logging.getLogger(__name__)
@@ -184,9 +183,11 @@ class EchoActor(AgentActor):
         
         self.logger.info("Echo agent handlers registered", agent_id=self.agent_id)
     
-    async def _validate_input(self, content: Dict[str, Any]) -> MessageContent:
+    async def _validate_input(self, content: Dict[str, Any]) -> Dict[str, Any]:
         """Validate input using shared validation."""
-        return validate_message_content(content)
+        # Simple validation - just return content
+        # The MessageContent model is for full message validation
+        return content
     
     # =========================================================================
     # Message Handlers

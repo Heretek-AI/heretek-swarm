@@ -348,6 +348,91 @@ class CollectiveTaskRequest(BaseModel):
     
     model_config = ConfigDict(extra='forbid')
     
+    task: str = Field(
+        ...,
+        min_length=1,
+        max_length=10000,
+        description="Task description"
+    )
+    participants: List[str] = Field(
+        default_factory=list,
+        description="Participant actor IDs"
+    )
+
+
+class TaskRequest(BaseModel):
+    """Validated task coordination request model."""
+    
+    model_config = ConfigDict(extra='forbid')
+    
+    task_id: Optional[str] = Field(
+        None,
+        max_length=64,
+        description="Optional task identifier"
+    )
+    name: str = Field(
+        ...,
+        min_length=1,
+        max_length=256,
+        description="Task name"
+    )
+    description: str = Field(
+        ...,
+        min_length=1,
+        max_length=10000,
+        description="Task description"
+    )
+    assigned_agents: Optional[List[str]] = Field(
+        default_factory=list,
+        description="Agents assigned to this task"
+    )
+    dependencies: Optional[List[str]] = Field(
+        default_factory=list,
+        description="Task IDs this depends on"
+    )
+    dependency_type: Optional[str] = Field(
+        "sequential",
+        description="sequential|parallel|conditional|resource"
+    )
+    priority: Optional[int] = Field(
+        5,
+        ge=1,
+        le=10,
+        description="Priority 1-10"
+    )
+    metadata: Optional[Dict[str, Any]] = Field(
+        default_factory=dict,
+        description="Additional metadata"
+    )
+
+
+class DependencyRequest(BaseModel):
+    """Validated dependency resolution request model."""
+    
+    model_config = ConfigDict(extra='forbid')
+    
+    task_ids: Optional[List[str]] = Field(
+        default_factory=list,
+        description="Tasks to analyze"
+    )
+
+
+class CoordinationRequest(BaseModel):
+    """Validated coordination request model."""
+    
+    model_config = ConfigDict(extra='forbid')
+    
+    workflow_id: Optional[str] = Field(
+        None,
+        max_length=64,
+        description="Workflow identifier"
+    )
+    agent_id: Optional[str] = Field(
+        None,
+        max_length=128,
+        description="Agent identifier"
+    )
+    
     task_id: str = Field(
         ...,
         min_length=1,
@@ -412,6 +497,29 @@ MESSAGE_TYPE_VALIDATORS = {
     "pattern_match": QueryRequest,
     "analysis_request": AnalysisRequest,
     "validation_request": ValidationRequest,
+    # Coordinator agent types
+    "create_task": TaskRequest,
+    "update_task": TaskRequest,
+    "get_task_status": DependencyRequest,
+    "get_workflow_status": DependencyRequest,
+    "assign_agent": CoordinationRequest,
+    "update_agent_state": CoordinationRequest,
+    "resolve_dependencies": DependencyRequest,
+    "start_workflow": CoordinationRequest,
+    "cancel_workflow": CoordinationRequest,
+    "get_coordination_report": CoordinationRequest,
+    # Nexus agent types
+    "create_connection": CoordinationRequest,
+    "update_connection": CoordinationRequest,
+    "delete_connection": CoordinationRequest,
+    "get_connection_status": CoordinationRequest,
+    "execute_request": CoordinationRequest,
+    "register_webhook": CoordinationRequest,
+    "unregister_webhook": CoordinationRequest,
+    "validate_webhook": CoordinationRequest,
+    "get_webhook_status": CoordinationRequest,
+    "translate_protocol": CoordinationRequest,
+    "get_integration_report": CoordinationRequest,
 }
 
 
