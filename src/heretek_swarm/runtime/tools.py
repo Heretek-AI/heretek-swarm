@@ -10,7 +10,7 @@ import asyncio
 import aiohttp
 import shlex
 from typing import Any, Callable, Dict, List, Optional, Set
-from datetime import datetime
+from datetime import datetime, timezone
 import structlog
 
 logger = structlog.get_logger(__name__)
@@ -20,6 +20,7 @@ logger = structlog.get_logger(__name__)
 # =============================================================================
 # Only these commands are allowed to be executed by agents
 # This prevents command injection and unauthorized system access
+# SECURITY NOTE: 'python' and 'git' removed due to arbitrary code execution risk
 ALLOWED_COMMANDS: Set[str] = {
     # File operations (safe)
     "ls", "pwd", "cd", "cat", "head", "tail", "wc",
@@ -32,8 +33,8 @@ ALLOWED_COMMANDS: Set[str] = {
     "df", "du", "free", "top", "ps", "uptime",
     "date", "whoami", "id", "uname",
     
-    # Development tools
-    "git", "python", "pip", "pytest",
+    # Package management (controlled)
+    "pip",
 }
 
 # Commands that are NEVER allowed (security critical)
@@ -54,8 +55,15 @@ class ToolRegistry:
     Manages tool registration, discovery, and execution.
     """
     
-    def __init__(self):
+    def __init__(self, default_timeout: int = 30):
+        """
+        Initialize tool registry.
+        
+        Args:
+            default_timeout: Default timeout for tool execution in seconds (default: 30)
+        """
         self._tools: Dict[str, Dict] = {}
+        self.default_timeout = default_timeout
     
     def register(
         self,
@@ -77,7 +85,7 @@ class ToolRegistry:
             "handler": handler,
             "description": description,
             "parameters": parameters or {},
-            "registered_at": datetime.utcnow(),
+            "registered_at": datetime.now(timezone.utc),
         }
         logger.debug("tool_registered", tool=name)
     
@@ -96,27 +104,41 @@ class ToolRegistry:
             for name, tool in self._tools.items()
         ]
     
-    async def execute(self, name: str, **params) -> Any:
+    async def execute(self, name: str, timeout: Optional[int] = None, **params) -> Any:
         """
         Execute a tool by name.
         
         Args:
             name: Tool name
+            timeout: Optional timeout override in seconds
             **params: Tool parameters
             
         Returns:
             Tool execution result
+            
+        Raises:
+            ValueError: If tool not found
+            asyncio.TimeoutError: If tool execution times out
         """
         tool = self._tools.get(name)
         if not tool:
             raise ValueError(f"Unknown tool: {name}")
         
-        logger.info("tool_executing", tool=name, params=params)
+        # Use provided timeout, tool-specific timeout, or default
+        execution_timeout = timeout or tool["parameters"].get("timeout", self.default_timeout)
+        
+        logger.info("tool_executing", tool=name, params=params, timeout=execution_timeout)
         
         try:
-            result = await tool["handler"](**params)
+            result = await asyncio.wait_for(
+                tool["handler"](**params),
+                timeout=execution_timeout,
+            )
             logger.info("tool_executed", tool=name, success=True)
             return result
+        except asyncio.TimeoutError:
+            logger.error("tool_execution_timeout", tool=name, timeout=execution_timeout)
+            raise
         except Exception as e:
             logger.error("tool_execution_failed", tool=name, error=str(e))
             raise
@@ -188,7 +210,7 @@ async def call_agent(
             "type": "message",
             "from": agent_id,
             "content": message,
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
         }
     )
     
@@ -199,13 +221,44 @@ async def call_agent(
     }
 
 
-async def read_file(path: str) -> Dict:
+async def read_file(path: str, allowed_base_paths: Optional[List[str]] = None) -> Dict:
     """
-    Read contents of a file.
+    Read contents of a file with path traversal protection.
+    
+    SECURITY: Validates that the resolved path is within allowed base paths
+    to prevent reading sensitive files like /etc/passwd.
     
     Args:
         path: File path
+        allowed_base_paths: List of allowed base directories (default: current working directory)
     """
+    # Default to current working directory if not specified
+    if allowed_base_paths is None:
+        allowed_base_paths = [os.getcwd()]
+    
+    # Resolve to absolute path
+    resolved_path = os.path.realpath(os.path.abspath(path))
+    
+    # Validate path is within allowed directories
+    path_allowed = False
+    for base_path in allowed_base_paths:
+        resolved_base = os.path.realpath(os.path.abspath(base_path))
+        if resolved_path.startswith(resolved_base + os.sep) or resolved_path == resolved_base:
+            path_allowed = True
+            break
+    
+    if not path_allowed:
+        logger.warning(
+            "path_traversal_blocked",
+            requested_path=path,
+            resolved_path=resolved_path,
+            allowed_bases=allowed_base_paths
+        )
+        return {
+            "success": False,
+            "error": "Access denied: Path traversal detected. Access is restricted to allowed directories."
+        }
+    
     try:
         with open(path, 'r', encoding='utf-8') as f:
             content = f.read()
@@ -223,14 +276,45 @@ async def read_file(path: str) -> Dict:
         }
 
 
-async def write_file(path: str, content: str) -> Dict:
+async def write_file(path: str, content: str, allowed_base_paths: Optional[List[str]] = None) -> Dict:
     """
-    Write content to a file.
+    Write content to a file with path traversal protection.
+    
+    SECURITY: Validates that the resolved path is within allowed base paths
+    to prevent writing to sensitive locations like /etc/.
     
     Args:
         path: File path
         content: Content to write
+        allowed_base_paths: List of allowed base directories (default: current working directory)
     """
+    # Default to current working directory if not specified
+    if allowed_base_paths is None:
+        allowed_base_paths = [os.getcwd()]
+    
+    # Resolve to absolute path
+    resolved_path = os.path.realpath(os.path.abspath(path))
+    
+    # Validate path is within allowed directories
+    path_allowed = False
+    for base_path in allowed_base_paths:
+        resolved_base = os.path.realpath(os.path.abspath(base_path))
+        if resolved_path.startswith(resolved_base + os.sep) or resolved_path == resolved_base:
+            path_allowed = True
+            break
+    
+    if not path_allowed:
+        logger.warning(
+            "path_traversal_blocked",
+            requested_path=path,
+            resolved_path=resolved_path,
+            allowed_bases=allowed_base_paths
+        )
+        return {
+            "success": False,
+            "error": "Access denied: Path traversal detected. Access is restricted to allowed directories."
+        }
+    
     try:
         with open(path, 'w', encoding='utf-8') as f:
             f.write(content)
@@ -377,39 +461,83 @@ async def http_request(
     headers: Optional[Dict] = None,
     body: Optional[Dict] = None,
     timeout: int = 30,
+    max_retries: int = 1,
 ) -> Dict:
     """
-    Make HTTP request.
+    Make HTTP request with timeout and retry support.
     
     Args:
         method: HTTP method
         url: URL
         headers: Request headers
         body: Request body
-        timeout: Timeout in seconds
+        timeout: Timeout in seconds (default: 30)
+        max_retries: Maximum retry attempts (default: 1)
+        
+    Returns:
+        Dict with success status, response data, or error message
     """
-    try:
-        async with aiohttp.ClientSession() as session:
-            async with session.request(
-                method,
-                url,
-                headers=headers,
-                json=body,
-                timeout=aiohttp.ClientTimeout(total=timeout),
-            ) as response:
-                content = await response.text()
-                
-                return {
-                    "success": response.status < 400,
-                    "status": response.status,
-                    "headers": dict(response.headers),
-                    "body": content[:10000],  # Limit
-                }
-    except Exception as e:
+    # Validate URL to prevent SSRF attacks
+    if not url or not isinstance(url, str):
         return {
             "success": False,
-            "error": str(e),
+            "error": "Invalid URL provided",
         }
+    
+    # Block private/internal IP ranges to prevent SSRF
+    import re
+    private_ip_pattern = re.compile(
+        r'^(127\.|10\.|172\.(1[6-9]|2[0-9]|3[0-1])\.|192\.168\.|0\.0\.0\.0|localhost)',
+        re.IGNORECASE
+    )
+    if private_ip_pattern.match(url):
+        logger.warning("ssrf_attempt_blocked", url=url)
+        return {
+            "success": False,
+            "error": "Access to internal addresses is not allowed",
+        }
+    
+    attempt = 0
+    last_error = None
+    
+    while attempt <= max_retries:
+        try:
+            async with aiohttp.ClientSession() as session:
+                async with session.request(
+                    method,
+                    url,
+                    headers=headers,
+                    json=body,
+                    timeout=aiohttp.ClientTimeout(total=timeout),
+                ) as response:
+                    content = await response.text()
+                    
+                    return {
+                        "success": response.status < 400,
+                        "status": response.status,
+                        "headers": dict(response.headers),
+                        "body": content[:10000],  # Limit output size
+                    }
+        except asyncio.TimeoutError as e:
+            last_error = f"Request timed out after {timeout}s"
+            logger.warning("http_request_timeout", url=url, attempt=attempt + 1)
+        except aiohttp.ClientError as e:
+            last_error = f"HTTP client error: {str(e)}"
+            logger.error("http_request_client_error", url=url, error=str(e))
+            break  # Don't retry client errors
+        except Exception as e:
+            last_error = str(e)
+            logger.error("http_request_error", url=url, error=str(e))
+        
+        attempt += 1
+        if attempt <= max_retries:
+            await asyncio.sleep(1.0 * attempt)  # Exponential backoff
+    
+    return {
+        "success": False,
+        "error": last_error or "Unknown error",
+        "attempts": attempt,
+    }
 
 
 # =============================================================================
