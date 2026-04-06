@@ -11,7 +11,7 @@ from uuid import UUID
 
 from pydantic import BaseModel, Field
 
-from .base import BaseTool, ToolContext
+from .base import BaseTool, SimpleTool, ToolContext
 
 
 # ============================================================================
