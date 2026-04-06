@@ -5,21 +5,84 @@ WebSocket RPC server on port 18789 for inter-agent communication.
 Implements handshake, discovery, messaging, and consensus protocols.
 
 Reference: OpenClaw A2A Protocol + MiniMax Audit
+
+SECURITY: Token-based authentication required for all connections.
 """
 
 import os
 import json
 import asyncio
-from datetime import datetime
-from typing import Dict, List, Optional, Any
+import secrets
+import hashlib
+from datetime import datetime, timedelta
+from typing import Dict, List, Optional, Any, Tuple
 from dataclasses import dataclass, field
 from enum import Enum
-from fastapi import WebSocket, WebSocketDisconnect
+from fastapi import WebSocket, WebSocketDisconnect, HTTPException
 import structlog
 
 from .event_mesh import EventMesh
 
 logger = structlog.get_logger(__name__)
+
+# =============================================================================
+# Authentication Configuration
+# =============================================================================
+
+class AuthTokenManager:
+    """Manages authentication tokens for A2A connections."""
+    
+    def __init__(self, secret_key: Optional[str] = None):
+        self.secret_key = secret_key or os.environ.get("A2A_SECRET_KEY", secrets.token_hex(32))
+        self._valid_tokens: Dict[str, Dict[str, Any]] = {}
+        self._token_expiry = timedelta(hours=24)
+    
+    def generate_token(self, agent_id: str, metadata: Optional[Dict] = None) -> str:
+        """Generate an authentication token for an agent."""
+        token = secrets.token_urlsafe(32)
+        self._valid_tokens[token] = {
+            "agent_id": agent_id,
+            "created_at": datetime.now(timezone.utc),
+            "expires_at": datetime.now(timezone.utc) + self._token_expiry,
+            "metadata": metadata or {},
+        }
+        return token
+    
+    def validate_token(self, token: str) -> Tuple[bool, Optional[str], Optional[str]]:
+        """
+        Validate an authentication token.
+        
+        Returns:
+            Tuple of (is_valid, agent_id, error_message)
+        """
+        if token not in self._valid_tokens:
+            return False, None, "Invalid token"
+        
+        token_data = self._valid_tokens[token]
+        if datetime.now(timezone.utc) > token_data["expires_at"]:
+            del self._valid_tokens[token]
+            return False, None, "Token expired"
+        
+        return True, token_data["agent_id"], None
+    
+    def revoke_token(self, token: str) -> bool:
+        """Revoke a token."""
+        if token in self._valid_tokens:
+            del self._valid_tokens[token]
+            return True
+        return False
+    
+    def cleanup_expired(self) -> int:
+        """Remove expired tokens. Returns count of removed tokens."""
+        now = datetime.now(timezone.utc)
+        expired = [t for t, data in self._valid_tokens.items() if now > data["expires_at"]]
+        for token in expired:
+            del self._valid_tokens[token]
+        return len(expired)
+
+
+# Global token manager instance
+token_manager = AuthTokenManager()
 
 
 class MessageType(str, Enum):
@@ -59,17 +122,67 @@ class A2AServer:
         self._message_log: List[Dict] = []
         self._max_log_size = 1000
     
-    async def handle_connection(self, websocket: WebSocket, agent_id: str) -> None:
+    async def handle_connection(self, websocket: WebSocket, agent_id: str, auth_token: Optional[str] = None) -> None:
         """
-        Handle new agent connection.
+        Handle new agent connection with authentication.
+        
+        SECURITY: Requires valid authentication token before allowing connection.
         
         Args:
             websocket: WebSocket connection
             agent_id: Agent identifier
+            auth_token: Authentication token (required)
         """
+        # SECURITY: Validate authentication token
+        if not auth_token:
+            try:
+                await websocket.accept()
+                await websocket.send_json({
+                    "type": MessageType.ERROR.value,
+                    "error": "Authentication required. Provide valid auth_token."
+                })
+                await websocket.close()
+            except Exception:
+                pass
+            logger.warning("a2a_connection_rejected_no_auth", agent_id=agent_id)
+            return
+        
+        # Validate token
+        is_valid, valid_agent_id, error = token_manager.validate_token(auth_token)
+        if not is_valid:
+            try:
+                await websocket.accept()
+                await websocket.send_json({
+                    "type": MessageType.ERROR.value,
+                    "error": f"Authentication failed: {error}"
+                })
+                await websocket.close()
+            except Exception:
+                pass
+            logger.warning("a2a_connection_rejected_invalid_token", agent_id=agent_id, error=error)
+            return
+        
+        # SECURITY: Verify agent_id matches token
+        if valid_agent_id != agent_id:
+            try:
+                await websocket.accept()
+                await websocket.send_json({
+                    "type": MessageType.ERROR.value,
+                    "error": f"Agent ID mismatch. Token belongs to {valid_agent_id}"
+                })
+                await websocket.close()
+            except Exception:
+                pass
+            logger.warning(
+                "a2a_connection_rejected_agent_mismatch",
+                requested_agent=agent_id,
+                token_agent=valid_agent_id
+            )
+            return
+        
         # Accept connection
         await websocket.accept()
-        logger.info("a2a_connection_accepted", agent_id=agent_id)
+        logger.info("a2a_connection_accepted", agent_id=agent_id, authenticated=True)
         
         # Register agent
         agent_info = AgentInfo(id=agent_id, websocket=websocket)
@@ -83,8 +196,9 @@ class A2AServer:
             "type": MessageType.HANDSHAKE.value,
             "status": "ok",
             "agent_id": agent_id,
-            "timestamp": datetime.utcnow().isoformat(),
-            "server": "heretek-swarm-a2a"
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "server": "heretek-swarm-a2a",
+            "authenticated": True
         })
         
         # Log connection
@@ -92,7 +206,8 @@ class A2AServer:
             "type": "connection",
             "agent_id": agent_id,
             "action": "connected",
-            "timestamp": datetime.utcnow().isoformat()
+            "authenticated": True,
+            "timestamp": datetime.now(timezone.utc).isoformat()
         })
         
         try:
@@ -126,7 +241,7 @@ class A2AServer:
         # Update last activity
         async with self._lock:
             if agent_id in self.agents:
-                self.agents[agent_id].last_activity = datetime.utcnow()
+                self.agents[agent_id].last_activity = datetime.now(timezone.utc)
         
         # Route by message type
         if msg_type == MessageType.HANDSHAKE.value:
@@ -170,7 +285,7 @@ class A2AServer:
             "type": MessageType.DISCOVERY.value,
             "agents": agents_list,
             "count": len(agents_list),
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.now(timezone.utc).isoformat()
         }
         
         await self.event_mesh.send_to_json(agent_id, response)
@@ -188,7 +303,7 @@ class A2AServer:
             "from": sender_id,
             "content": data.get("content"),
             "metadata": data.get("metadata", {}),
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.now(timezone.utc).isoformat()
         }
         
         # Broadcast to all except sender
@@ -207,11 +322,11 @@ class A2AServer:
         """
         proposal = {
             "type": MessageType.PROPOSAL.value,
-            "id": data.get("id", f"proposal_{datetime.utcnow().timestamp()}"),
+            "id": data.get("id", f"proposal_{datetime.now(timezone.utc).timestamp()}"),
             "from": agent_id,
             "action": data.get("action"),
             "details": data.get("details", {}),
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.now(timezone.utc).isoformat()
         }
         
         logger.info("a2a_proposal_created", proposal_id=proposal["id"], agent_id=agent_id)
@@ -236,7 +351,7 @@ class A2AServer:
             "from": agent_id,
             "vote": data.get("vote"),  # "yes", "no", "abstain"
             "reason": data.get("reason", ""),
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.now(timezone.utc).isoformat()
         }
         
         logger.info("a2a_vote_cast", proposal_id=vote["proposal_id"], vote=vote["vote"])
@@ -265,7 +380,7 @@ class A2AServer:
             "type": "connection",
             "agent_id": agent_id,
             "action": "disconnected",
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.now(timezone.utc).isoformat()
         })
     
     def _log_message(self, message: dict) -> None:
@@ -291,5 +406,16 @@ class A2AServer:
             "connected_agents": len(self.agents),
             "agent_ids": list(self.agents.keys()),
             "message_log_size": len(self._message_log),
-            "uptime": "active"
+            "uptime": "active",
+            "active_tokens": len(token_manager._valid_tokens),
         }
+    
+    @staticmethod
+    def generate_auth_token(agent_id: str, metadata: Optional[Dict] = None) -> str:
+        """Generate an authentication token for an agent."""
+        return token_manager.generate_token(agent_id, metadata)
+    
+    @staticmethod
+    def revoke_auth_token(token: str) -> bool:
+        """Revoke an authentication token."""
+        return token_manager.revoke_token(token)
