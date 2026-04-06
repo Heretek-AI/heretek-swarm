@@ -7,12 +7,17 @@ The Historian provides:
 - Historical pattern recognition
 - Knowledge synthesis from past executions
 - Lineage tracking for decisions
+
+Features:
+- LRU cache with configurable max size for context and patterns
+- Cache eviction when limits are reached
 """
 
 import asyncio
 import logging
+from collections import OrderedDict
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Tuple
 
 import structlog
 from swarms import Agent
@@ -21,6 +26,89 @@ from heretek_swarm.actors.base import AgentActor, ActorMessage
 from heretek_swarm.memory.base import DualTierMemory, MemoryEntry, MemoryQuery
 
 logger = structlog.get_logger("HistorianAgent")
+
+
+class LRUCache:
+    """
+    LRU Cache implementation with configurable max size.
+    
+    Provides automatic eviction of least-recently-used items when capacity is exceeded.
+    """
+    
+    def __init__(self, max_size: int = 100):
+        """
+        Initialize LRU cache.
+        
+        Args:
+            max_size: Maximum number of items to cache (default: 100)
+        """
+        self._cache: OrderedDict[str, Any] = OrderedDict()
+        self.max_size = max_size
+        self.hits = 0
+        self.misses = 0
+    
+    def get(self, key: str, default: Any = None) -> Any:
+        """
+        Get item from cache.
+        
+        Args:
+            key: Cache key
+            default: Default value if not found
+            
+        Returns:
+            Cached value or default
+        """
+        if key not in self._cache:
+            self.misses += 1
+            return default
+        
+        # Move to end (most recently used)
+        self._cache.move_to_end(key)
+        self.hits += 1
+        return self._cache[key]
+    
+    def set(self, key: str, value: Any) -> None:
+        """
+        Set item in cache.
+        
+        Args:
+            key: Cache key
+            value: Value to cache
+        """
+        if key in self._cache:
+            self._cache.move_to_end(key)
+            self._cache[key] = value
+        else:
+            if len(self._cache) >= self.max_size:
+                # Evict least recently used
+                self._cache.popitem(last=False)
+            self._cache[key] = value
+    
+    def clear(self) -> None:
+        """Clear all cached items."""
+        self._cache.clear()
+        self.hits = 0
+        self.misses = 0
+    
+    def __contains__(self, key: str) -> bool:
+        """Check if key is in cache."""
+        return key in self._cache
+    
+    def __len__(self) -> int:
+        """Return number of cached items."""
+        return len(self._cache)
+    
+    def get_statistics(self) -> Dict[str, Any]:
+        """Get cache statistics."""
+        total = self.hits + self.misses
+        hit_rate = (self.hits / total * 100) if total > 0 else 0.0
+        return {
+            "size": len(self._cache),
+            "max_size": self.max_size,
+            "hits": self.hits,
+            "misses": self.misses,
+            "hit_rate_percent": round(hit_rate, 2),
+        }
 
 
 class HistorianAgent(AgentActor):
@@ -43,6 +131,8 @@ class HistorianAgent(AgentActor):
         swarms_agent: Optional[Agent] = None,
         memory_system: Optional[DualTierMemory] = None,
         context_window: int = 10,
+        context_cache_max_size: int = 100,
+        pattern_cache_max_size: int = 50,
         **kwargs,
     ) -> None:
         """
@@ -55,6 +145,8 @@ class HistorianAgent(AgentActor):
             swarms_agent: Optional Swarms Agent for LLM capabilities
             memory_system: Optional dual-tier memory system
             context_window: Number of recent memories to include as context
+            context_cache_max_size: Maximum context cache entries (default: 100)
+            pattern_cache_max_size: Maximum pattern cache entries (default: 50)
             **kwargs: Additional arguments
         """
         super().__init__(
@@ -76,10 +168,10 @@ class HistorianAgent(AgentActor):
         self.memory_system = memory_system or DualTierMemory()
         self.context_window = context_window
 
-        # Historian-specific state
+        # Historian-specific state with LRU caches
         self.decision_lineage: Dict[str, List[str]] = {}
-        self.pattern_cache: Dict[str, Any] = {}
-        self.context_cache: Dict[str, List[MemoryEntry]] = {}
+        self.pattern_cache = LRUCache(max_size=pattern_cache_max_size)
+        self.context_cache = LRUCache(max_size=context_cache_max_size)
 
         logger.info(f"[{self.agent_id}] Historian agent initialized")
 
@@ -289,12 +381,10 @@ class HistorianAgent(AgentActor):
         """
         # Check cache first
         cache_key = f"{topic}:{window_size}"
-        if cache_key in self.context_cache:
+        cached = self.context_cache.get(cache_key)
+        if cached is not None:
             logger.debug(f"[{self.agent_id}] Context cache hit for: {topic}")
-            return [
-                {"content": e.content, "metadata": e.metadata}
-                for e in self.context_cache[cache_key]
-            ]
+            return cached
 
         # Build query filters
         query_filters = filters or {}
@@ -307,9 +397,7 @@ class HistorianAgent(AgentActor):
             limit=window_size,
         )
 
-        # Update cache
-        self.context_cache[cache_key] = results
-
+        # Update cache (with automatic LRU eviction)
         context = [
             {
                 "content": e.content,
@@ -318,9 +406,10 @@ class HistorianAgent(AgentActor):
             }
             for e in results
         ]
+        self.context_cache.set(cache_key, context)
 
         logger.debug(
-            f"[{self.agent_id}] Retrieved {len(context)} context entries for: {topic}"
+            f"[{self.agent_id}] Retrieved {len(context)} context entries for: {topic} (cache size: {len(self.context_cache)})"
         )
 
         return context
@@ -418,11 +507,12 @@ class HistorianAgent(AgentActor):
         Returns:
             List of matched patterns
         """
+        # Check cache first
+        cached = self.pattern_cache.get(situation)
+        if cached is not None:
+            return cached
+        
         matched = []
-
-        # Check cache
-        if situation in self.pattern_cache:
-            return self.pattern_cache[situation]
 
         # Query for similar situations
         results = await self.memory_system.query(
@@ -438,11 +528,11 @@ class HistorianAgent(AgentActor):
                 "similarity": 0.8,  # Would use actual similarity in full implementation
             })
 
-        # Cache results
-        self.pattern_cache[situation] = matched
+        # Cache results (with automatic LRU eviction)
+        self.pattern_cache.set(situation, matched)
 
         logger.debug(
-            f"[{self.agent_id}] Matched {len(matched)} patterns for: {situation}"
+            f"[{self.agent_id}] Matched {len(matched)} patterns for: {situation} (cache size: {len(self.pattern_cache)})"
         )
 
         return matched
@@ -566,8 +656,8 @@ class HistorianAgent(AgentActor):
         return {
             "total_memories": memory_stats.get("combined_total", 0),
             "decision_lineages": len(self.decision_lineage),
-            "pattern_cache_size": len(self.pattern_cache),
-            "context_cache_size": len(self.context_cache),
+            "pattern_cache": self.pattern_cache.get_statistics(),
+            "context_cache": self.context_cache.get_statistics(),
             "memory_details": memory_stats,
         }
 
