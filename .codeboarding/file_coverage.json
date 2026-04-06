@@ -1,6 +1,6 @@
 {
   "version": 1,
-  "generated_at": "2026-04-06T17:44:29.688173+00:00",
+  "generated_at": "2026-04-06T22:16:22.299877+00:00",
   "analyzed_files": [
     "dashboard/frontend/src/App.tsx",
     "dashboard/frontend/src/api/agents.ts",
@@ -24,6 +24,7 @@
     "dashboard/frontend/src/components/Consciousness/index.ts",
     "dashboard/frontend/src/components/Consciousness/types.ts",
     "dashboard/frontend/src/components/Dashboard/Dashboard.tsx",
+    "dashboard/frontend/src/components/Dashboard/UnifiedDashboard.tsx",
     "dashboard/frontend/src/components/Observability/A2AMessageFlow.tsx",
     "dashboard/frontend/src/components/Observability/LLMTrace.tsx",
     "dashboard/frontend/src/components/Observability/Observability.tsx",
@@ -43,6 +44,7 @@
     "dashboard/frontend/src/stores/metricsStore.ts",
     "dashboard/frontend/src/types/reactflow.d.ts",
     "dashboard/frontend/src/vite-env.d.ts",
+    "migrations/scripts/setup_qdrant_collections.py",
     "scripts/check_latency_baseline.py",
     "scripts/run_migration.py",
     "scripts/run_migrations.py",
@@ -88,6 +90,8 @@
     "src/heretek_swarm/api/rate_limiting.py",
     "src/heretek_swarm/api/websockets.py",
     "src/heretek_swarm/api/workflows.py",
+    "src/heretek_swarm/channels/__init__.py",
+    "src/heretek_swarm/channels/registry.py",
     "src/heretek_swarm/collective/__init__.py",
     "src/heretek_swarm/collective/society.py",
     "src/heretek_swarm/consensus/__init__.py",
@@ -103,6 +107,8 @@
     "src/heretek_swarm/integrations/praison_handoffs.py",
     "src/heretek_swarm/integrations/slack_bot.py",
     "src/heretek_swarm/integrations/telegram_bot.py",
+    "src/heretek_swarm/knowledge/__init__.py",
+    "src/heretek_swarm/knowledge/unified_access.py",
     "src/heretek_swarm/memory/__init__.py",
     "src/heretek_swarm/memory/base.py",
     "src/heretek_swarm/memory/eliza_memory.py",
@@ -112,6 +118,7 @@
     "src/heretek_swarm/plugins/__init__.py",
     "src/heretek_swarm/plugins/consciousness.py",
     "src/heretek_swarm/plugins/consciousness_enhanced.py",
+    "src/heretek_swarm/plugins/consciousness_metrics.py",
     "src/heretek_swarm/plugins/examples.py",
     "src/heretek_swarm/plugins/liberation.py",
     "src/heretek_swarm/plugins/manager.py",
@@ -120,13 +127,17 @@
     "src/heretek_swarm/runtime/autonomous_runtime.py",
     "src/heretek_swarm/runtime/autonomous_runtime_config.py",
     "src/heretek_swarm/runtime/characters.py",
+    "src/heretek_swarm/runtime/main_loop.py",
     "src/heretek_swarm/runtime/registry.py",
     "src/heretek_swarm/runtime/tools.py",
+    "src/heretek_swarm/security/__init__.py",
     "src/heretek_swarm/security/guardrails.py",
+    "src/heretek_swarm/security/zero_trust.py",
     "src/heretek_swarm/state/__init__.py",
     "src/heretek_swarm/tools/__init__.py",
     "src/heretek_swarm/tools/base.py",
     "src/heretek_swarm/tools/examples.py",
+    "src/heretek_swarm/tools/mcp_tools.py",
     "src/heretek_swarm/tools/registry.py",
     "src/heretek_swarm/workflow/__init__.py",
     "src/heretek_swarm/workflow/engine.py",
@@ -156,6 +167,10 @@
     "src/tools/registry.py"
   ],
   "not_analyzed_files": [
+    {
+      "path": "AUTO_PROMPT.md",
+      "reason": "other"
+    },
     {
       "path": "Dockerfile",
       "reason": "other"
@@ -205,6 +220,14 @@
       "reason": "other"
     },
     {
+      "path": "docker/docker-entrypoint.sh",
+      "reason": "other"
+    },
+    {
+      "path": "docker-compose.autonomous.yml",
+      "reason": "other"
+    },
+    {
       "path": "docker-compose.yml",
       "reason": "other"
     },
@@ -225,6 +248,10 @@
       "reason": "other"
     },
     {
+      "path": "docs/AUTONOMOUS_WORKFLOW.md",
+      "reason": "other"
+    },
+    {
       "path": "docs/CONSCIOUSNESS_PLUGINS.md",
       "reason": "other"
     },
@@ -234,6 +261,10 @@
     },
     {
       "path": "docs/DEPLOYMENT.md",
+      "reason": "other"
+    },
+    {
+      "path": "docs/DEPLOYMENT_AUTONOMOUS.md",
       "reason": "other"
     },
     {
@@ -370,6 +401,22 @@
     },
     {
       "path": "migrations/001_create_swarm_memories.sql",
+      "reason": "other"
+    },
+    {
+      "path": "migrations/002_create_agent_states.sql",
+      "reason": "other"
+    },
+    {
+      "path": "migrations/003_create_workflow_states.sql",
+      "reason": "other"
+    },
+    {
+      "path": "migrations/004_create_consensus_votes.sql",
+      "reason": "other"
+    },
+    {
+      "path": "migrations/README.md",
       "reason": "other"
     },
     {
@@ -585,11 +632,35 @@
       "reason": "codeboardingignore"
     },
     {
+      "path": "tests/knowledge/test_unified_access.py",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/load/README.md",
+      "reason": "codeboardingignore"
+    },
+    {
       "path": "tests/load/__init__.py",
       "reason": "codeboardingignore"
     },
     {
+      "path": "tests/load/grafana/dashboard.json",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/load/k6/load_test.js",
+      "reason": "codeboardingignore"
+    },
+    {
       "path": "tests/load/locustfile.py",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/load/prometheus/prometheus.yml",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/load/prometheus/rules.yml",
       "reason": "codeboardingignore"
     },
     {
@@ -606,6 +677,10 @@
     },
     {
       "path": "tests/plugins/test_consciousness_enhanced.py",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/plugins/test_consciousness_metrics.py",
       "reason": "codeboardingignore"
     },
     {
@@ -670,12 +745,12 @@
     }
   ],
   "summary": {
-    "total_files": 280,
-    "analyzed": 152,
-    "not_analyzed": 128,
+    "total_files": 307,
+    "analyzed": 163,
+    "not_analyzed": 144,
     "not_analyzed_by_reason": {
-      "other": 82,
-      "codeboardingignore": 46
+      "other": 91,
+      "codeboardingignore": 53
     }
   }
 }
