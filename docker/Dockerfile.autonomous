@@ -1,52 +1,60 @@
-# Heretek Swarm - Autonomous Runtime Dockerfile
-# Production deployment for 24/7 autonomous operation
+# Heretek Swarm - Autonomous Runtime Container
+# 24/7 continuous operation entry point
+#
+# Usage:
+#   docker build -f docker/Dockerfile.autonomous -t heretek-swarm:autonomous .
+#   docker run -d --name heretek-swarm heretek-swarm:autonomous
 
-FROM python:3.13-slim as base
+FROM python:3.11-slim
 
-# Install system dependencies
-RUN apt-get update && apt-get install -y --no-install-recommends \
-    gcc \
-    g++ \
-    curl \
-    git \
-    && rm -rf /var/lib/apt/lists/*
+LABEL maintainer="Heretek Swarm"
+LABEL description="Autonomous AI Swarm - 24/7 Continuous Operation"
+LABEL version="1.0.0"
+
+# Set environment variables
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_NO_CACHE_DIR=1 \
+    PIP_DISABLE_PIP_VERSION_CHECK=1
 
 # Set working directory
 WORKDIR /app
 
-# Copy requirements first for better caching
-COPY requirements.txt .
-RUN pip install --no-cache-dir -r requirements.txt
+# Install system dependencies
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    curl \
+    && rm -rf /var/lib/apt/lists/*
 
-# Copy application code
-COPY src/ ./src
+# Copy project files
+COPY pyproject.toml README.md ./
 
-# Create non-root user
-RUN useradd -m -s /bin/bash -u heretek heretek
+# Copy source code
+COPY src/ ./src/
+COPY config/ ./config/
+COPY migrations/ ./migrations/
+
+# Copy docker entrypoint
+COPY docker/docker-entrypoint.sh /usr/local/bin/docker-entrypoint.sh
+RUN chmod +x /usr/local/bin/docker-entrypoint.sh
+
+# Install the package
+RUN pip install -e .[all]
+
+# Create non-root user for security
+RUN useradd --create-home --shell /bin/bash heretek
+RUN chown -R heretek:heretek /app
 USER heretek
-WORKDIR /app
 
-# Create necessary directories
-RUN mkdir -p /app/logs /app/data /app/workflows /app/state
-
-# Install psutil for monitoring
-RUN pip install psutil
-
-# Set environment variables
-ENV PYTHONUNBUFFERED=1 \
-    PYTHONDONTWRITEBYTECODE=1 \
-    PIP_NO_CACHE_DIR=1 \
-    PIP_DISABLE_PIP_VERSION_CHECK=1 \
-    HERETEK_ENV=production \
-    LOG_LEVEL=INFO \
-    LOG_FORMAT=json
+# Expose ports
+# 8000 - API Gateway
+# 18789 - A2A Protocol Server
+# 18790 - MCP Server
+EXPOSE 8000 18789 18790
 
 # Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=5s --retries=3 \
-    CMD curl -f http://localhost:8000/api/health/live || exit 1
+HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
+    CMD curl -f http://localhost:8000/api/health || exit 1
 
-# Expose port
-EXPOSE 8000
-
-# Run autonomous runtime
-CMD ["python", "-m", "heretek_swarm.runtime.autonomous_runtime", "start"]
+# Run autonomous entry point
+ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
+CMD ["python", "-m", "heretek_swarm.runtime.main_loop"]

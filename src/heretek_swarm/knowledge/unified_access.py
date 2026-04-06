@@ -1,0 +1,515 @@
+"""
+Unified Knowledge Access Layer for Heretek Swarm
+
+Provides a unified interface for querying both memory and RAG systems,
+with intelligent result merging and reranking using MMR (Maximal Marginal Relevance).
+
+This layer is designed for use by:
+- Historian agent - Long-term memory and context retrieval
+- Perceiver+ agent - Advanced analytics with combined knowledge sources
+- All other agents - Standardized knowledge access pattern
+"""
+
+from typing import Dict, Any, List, Optional, Literal
+from dataclasses import dataclass, field
+from datetime import datetime, timezone
+import math
+import structlog
+
+logger = structlog.get_logger(__name__)
+
+
+@dataclass
+class KnowledgeEntry:
+    """
+    Unified knowledge entry from any source.
+    
+    Attributes:
+        content: The actual content (text, dict, etc.)
+        source: Source type (memory, rag, merged)
+        source_id: Original ID from the source system
+        metadata: Additional metadata
+        score: Relevance score (0-1)
+        diversity_score: Diversity score for MMR (0-1)
+        combined_score: Final combined score after reranking
+    """
+    content: Any
+    source: str
+    source_id: str
+    metadata: Dict[str, Any] = field(default_factory=dict)
+    score: float = 0.0
+    diversity_score: float = 0.0
+    combined_score: float = 0.0
+    created_at: Optional[str] = None
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary representation."""
+        return {
+            "content": self.content,
+            "source": self.source,
+            "source_id": self.source_id,
+            "metadata": self.metadata,
+            "score": self.score,
+            "diversity_score": self.diversity_score,
+            "combined_score": self.combined_score,
+            "created_at": self.created_at,
+        }
+
+
+@dataclass
+class KnowledgeQueryResult:
+    """
+    Result of a unified knowledge query.
+    
+    Attributes:
+        entries: List of knowledge entries
+        total_results: Total number of results before limiting
+        query_time_ms: Time taken for the query
+        sources_queried: List of sources that were queried
+        reranking_applied: Whether reranking was applied
+        parameters: Query parameters used
+    """
+    entries: List[KnowledgeEntry]
+    total_results: int = 0
+    query_time_ms: float = 0.0
+    sources_queried: List[str] = field(default_factory=list)
+    reranking_applied: bool = False
+    parameters: Dict[str, Any] = field(default_factory=dict)
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary representation."""
+        return {
+            "entries": [e.to_dict() for e in self.entries],
+            "total_results": self.total_results,
+            "query_time_ms": self.query_time_ms,
+            "sources_queried": self.sources_queried,
+            "reranking_applied": self.reranking_applied,
+            "parameters": self.parameters,
+        }
+
+
+class UnifiedKnowledgeAccess:
+    """
+    Unified interface for memory and RAG queries.
+    
+    Features:
+    - Combined querying of memory and RAG systems
+    - Intelligent result merging with MMR reranking
+    - Configurable source weighting
+    - Diversity-aware result selection
+    - Performance metrics tracking
+    
+    Usage:
+        knowledge = UnifiedKnowledgeAccess(memory_system, rag_pipeline)
+        result = await knowledge.query(
+            query="What was the decision about X?",
+            sources=["memory", "rag"],
+            limit=10,
+            rerank=True,
+            diversity_lambda=0.5,
+        )
+    """
+    
+    def __init__(
+        self,
+        memory_system=None,
+        rag_pipeline=None,
+    ):
+        self.memory = memory_system
+        self.rag = rag_pipeline
+        self._query_stats: Dict[str, Dict] = {}
+    
+    async def query(
+        self,
+        query: str,
+        sources: Optional[List[Literal["memory", "rag", "all"]]] = None,
+        limit: int = 10,
+        rerank: bool = True,
+        diversity_lambda: float = 0.5,
+        source_weights: Optional[Dict[str, float]] = None,
+        filters: Optional[Dict[str, Any]] = None,
+    ) -> KnowledgeQueryResult:
+        """
+        Query knowledge from multiple sources with optional reranking.
+        
+        Args:
+            query: Search query string
+            sources: List of sources to query (memory, rag, all)
+            limit: Maximum number of results to return
+            rerank: Whether to apply MMR reranking
+            diversity_lambda: MMR diversity parameter (0=similarity, 1=diversity)
+            source_weights: Weight multipliers for each source
+            filters: Additional filters (agent_id, workflow_id, date range, etc.)
+            
+        Returns:
+            KnowledgeQueryResult with merged and optionally reranked entries
+        """
+        import time
+        start_time = time.time()
+        
+        sources = sources or ["all"]
+        if "all" in sources:
+            sources = ["memory", "rag"]
+        
+        source_weights = source_weights or {"memory": 1.0, "rag": 1.0}
+        filters = filters or {}
+        
+        # Query each source
+        all_entries: List[KnowledgeEntry] = []
+        sources_queried = []
+        
+        if "memory" in sources and self.memory:
+            try:
+                memory_entries = await self._query_memory(query, filters)
+                for entry in memory_entries:
+                    entry.score *= source_weights.get("memory", 1.0)
+                all_entries.extend(memory_entries)
+                sources_queried.append("memory")
+            except Exception as e:
+                logger.error("memory_query_error", error=str(e))
+        
+        if "rag" in sources and self.rag:
+            try:
+                rag_entries = await self._query_rag(query, filters)
+                for entry in rag_entries:
+                    entry.score *= source_weights.get("rag", 1.0)
+                all_entries.extend(rag_entries)
+                sources_queried.append("rag")
+            except Exception as e:
+                logger.error("rag_query_error", error=str(e))
+        
+        total_results = len(all_entries)
+        
+        # Apply reranking if requested
+        if rerank and len(all_entries) > 1:
+            all_entries = self._mmr_rerank(all_entries, diversity_lambda, limit)
+        else:
+            # Sort by score if no reranking
+            all_entries.sort(key=lambda x: x.combined_score or x.score, reverse=True)
+            all_entries = all_entries[:limit]
+        
+        query_time_ms = (time.time() - start_time) * 1000
+        
+        result = KnowledgeQueryResult(
+            entries=all_entries,
+            total_results=total_results,
+            query_time_ms=query_time_ms,
+            sources_queried=sources_queried,
+            reranking_applied=rerank,
+            parameters={
+                "query": query,
+                "sources": sources,
+                "limit": limit,
+                "diversity_lambda": diversity_lambda,
+                "filters": filters,
+            },
+        )
+        
+        # Track stats
+        self._track_query_stats(query, result)
+        
+        logger.debug(
+            "knowledge_query_completed",
+            query=query[:50] if len(query) > 50 else query,
+            total_results=total_results,
+            returned_results=len(all_entries),
+            query_time_ms=query_time_ms,
+        )
+        
+        return result
+    
+    async def _query_memory(
+        self, 
+        query: str, 
+        filters: Dict[str, Any]
+    ) -> List[KnowledgeEntry]:
+        """Query the memory system."""
+        if not self.memory:
+            return []
+        
+        # Build query parameters
+        limit = filters.get("memory_limit", 50)
+        
+        # Query memory
+        results = await self.memory.query(
+            query_text=query,
+            limit=limit,
+        )
+        
+        entries = []
+        memory_entries = results.entries if hasattr(results, 'entries') else results
+        
+        for entry in memory_entries:
+            entries.append(KnowledgeEntry(
+                content=entry.content if hasattr(entry, 'content') else entry,
+                source="memory",
+                source_id=getattr(entry, 'id', getattr(entry, 'memory_id', 'unknown')),
+                metadata=getattr(entry, 'metadata', {}),
+                score=getattr(entry, 'similarity', getattr(entry, 'score', 0.5)),
+                created_at=getattr(entry, 'created_at', None),
+            ))
+        
+        return entries
+    
+    async def _query_rag(
+        self, 
+        query: str, 
+        filters: Dict[str, Any]
+    ) -> List[KnowledgeEntry]:
+        """Query the RAG pipeline."""
+        if not self.rag:
+            return []
+        
+        # Build query parameters
+        top_k = filters.get("rag_top_k", 50)
+        mode = filters.get("rag_mode", "hybrid")
+        
+        # Query RAG
+        result = await self.rag.query(
+            query=query,
+            top_k=top_k,
+        )
+        
+        entries = []
+        documents = result.documents if hasattr(result, 'documents') else result
+        
+        for doc in documents:
+            entries.append(KnowledgeEntry(
+                content=doc.content if hasattr(doc, 'content') else doc,
+                source="rag",
+                source_id=getattr(doc, 'id', getattr(doc, 'doc_id', 'unknown')),
+                metadata=getattr(doc, 'metadata', {}),
+                score=getattr(doc, 'score', getattr(doc, 'similarity', 0.5)),
+                created_at=None,
+            ))
+        
+        return entries
+    
+    def _mmr_rerank(
+        self,
+        entries: List[KnowledgeEntry],
+        diversity_lambda: float,
+        limit: int,
+    ) -> List[KnowledgeEntry]:
+        """
+        Apply MMR (Maximal Marginal Relevance) reranking.
+        
+        MMR balances relevance and diversity by selecting items that:
+        1. Are highly relevant to the query (high score)
+        2. Are diverse from already-selected items (low similarity to selected)
+        
+        Formula:
+            MMR = argmax [ λ * relevance(item) - (1-λ) * max_similarity(item, selected) ]
+        
+        Args:
+            entries: List of knowledge entries to rerank
+            diversity_lambda: Balance parameter (0=relevance, 1=diversity)
+            limit: Number of results to return
+            
+        Returns:
+            Reranked list of entries
+        """
+        if not entries or diversity_lambda < 0 or diversity_lambda > 1:
+            return entries
+        
+        # Compute embeddings for similarity calculation if available
+        # For now, use content-based similarity approximation
+        
+        selected: List[KnowledgeEntry] = []
+        remaining = entries.copy()
+        
+        # Sort by initial score
+        remaining.sort(key=lambda x: x.score, reverse=True)
+        
+        # Select first item (highest relevance)
+        if remaining:
+            first = remaining.pop(0)
+            first.combined_score = first.score
+            first.diversity_score = 1.0
+            selected.append(first)
+        
+        # Iteratively select remaining items
+        while len(selected) < limit and remaining:
+            best_score = float('-inf')
+            best_idx = 0
+            
+            for i, entry in enumerate(remaining):
+                # Calculate max similarity to already selected items
+                max_similarity = 0.0
+                for sel in selected:
+                    sim = self._compute_similarity(entry, sel)
+                    max_similarity = max(max_similarity, sim)
+                
+                # MMR score
+                mmr_score = (
+                    diversity_lambda * entry.score - 
+                    (1 - diversity_lambda) * max_similarity
+                )
+                
+                if mmr_score > best_score:
+                    best_score = mmr_score
+                    best_idx = i
+            
+            # Select best item
+            best_entry = remaining.pop(best_idx)
+            best_entry.combined_score = best_score
+            best_entry.diversity_score = 1.0 - max(
+                self._compute_similarity(best_entry, s) for s in selected
+            ) if selected else 1.0
+            selected.append(best_entry)
+        
+        return selected
+    
+    def _compute_similarity(
+        self, 
+        entry1: KnowledgeEntry, 
+        entry2: KnowledgeEntry
+    ) -> float:
+        """
+        Compute similarity between two knowledge entries.
+        
+        Uses content-based similarity approximation.
+        For production, use embedding-based cosine similarity.
+        """
+        # Get content as strings
+        content1 = self._get_content_string(entry1.content)
+        content2 = self._get_content_string(entry2.content)
+        
+        if not content1 or not content2:
+            return 0.0
+        
+        # Simple Jaccard similarity on words
+        words1 = set(content1.lower().split())
+        words2 = set(content2.lower().split())
+        
+        if not words1 or not words2:
+            return 0.0
+        
+        intersection = len(words1 & words2)
+        union = len(words1 | words2)
+        
+        return intersection / union if union > 0 else 0.0
+    
+    def _get_content_string(self, content: Any) -> str:
+        """Extract string content from various content types."""
+        if isinstance(content, str):
+            return content
+        elif isinstance(content, dict):
+            # Try common text fields
+            for key in ['text', 'content', 'body', 'message']:
+                if key in content and isinstance(content[key], str):
+                    return content[key]
+            return str(content)
+        else:
+            return str(content)
+    
+    def _track_query_stats(self, query: str, result: KnowledgeQueryResult) -> None:
+        """Track query statistics for monitoring."""
+        # Simple stats tracking
+        key = f"{result.sources_queried}"
+        
+        if key not in self._query_stats:
+            self._query_stats[key] = {
+                "count": 0,
+                "total_time_ms": 0.0,
+                "total_results": 0,
+            }
+        
+        stats = self._query_stats[key]
+        stats["count"] += 1
+        stats["total_time_ms"] += result.query_time_ms
+        stats["total_results"] += result.total_results
+    
+    def get_stats(self) -> Dict[str, Dict[str, Any]]:
+        """Get query statistics."""
+        stats = {}
+        for key, data in self._query_stats.items():
+            count = data["count"]
+            stats[key] = {
+                "count": count,
+                "avg_time_ms": data["total_time_ms"] / count if count > 0 else 0,
+                "avg_results": data["total_results"] / count if count > 0 else 0,
+            }
+        return stats
+
+
+class KnowledgeQueryBuilder:
+    """
+    Fluent builder for constructing knowledge queries.
+    
+    Usage:
+        result = (KnowledgeQueryBuilder(knowledge_access)
+            .query("What was decided about X?")
+            .from_sources("memory", "rag")
+            .with_limit(10)
+            .with_diversity(0.5)
+            .filtered_by(agent_id="alpha")
+            .execute())
+    """
+    
+    def __init__(self, knowledge_access: UnifiedKnowledgeAccess):
+        self._knowledge = knowledge_access
+        self._query: Optional[str] = None
+        self._sources: List[str] = ["all"]
+        self._limit: int = 10
+        self._rerank: bool = True
+        self._diversity_lambda: float = 0.5
+        self._source_weights: Dict[str, float] = {}
+        self._filters: Dict[str, Any] = {}
+    
+    def query(self, query_text: str) -> "KnowledgeQueryBuilder":
+        """Set the query text."""
+        self._query = query_text
+        return self
+    
+    def from_sources(self, *sources: str) -> "KnowledgeQueryBuilder":
+        """Set sources to query (memory, rag)."""
+        self._sources = list(sources)
+        return self
+    
+    def with_limit(self, limit: int) -> "KnowledgeQueryBuilder":
+        """Set result limit."""
+        self._limit = limit
+        return self
+    
+    def with_diversity(self, diversity_lambda: float) -> "KnowledgeQueryBuilder":
+        """Set MMR diversity parameter (0-1)."""
+        self._diversity_lambda = max(0, min(1, diversity_lambda))
+        return self
+    
+    def with_reranking(self, enabled: bool = True) -> "KnowledgeQueryBuilder":
+        """Enable or disable reranking."""
+        self._rerank = enabled
+        return self
+    
+    def with_source_weights(
+        self, 
+        memory: Optional[float] = None,
+        rag: Optional[float] = None,
+    ) -> "KnowledgeQueryBuilder":
+        """Set source weight multipliers."""
+        if memory is not None:
+            self._source_weights["memory"] = memory
+        if rag is not None:
+            self._source_weights["rag"] = rag
+        return self
+    
+    def filtered_by(self, **filters) -> "KnowledgeQueryBuilder":
+        """Add query filters."""
+        self._filters.update(filters)
+        return self
+    
+    async def execute(self) -> KnowledgeQueryResult:
+        """Execute the query."""
+        if not self._query:
+            raise ValueError("Query text is required")
+        
+        return await self._knowledge.query(
+            query=self._query,
+            sources=self._sources,
+            limit=self._limit,
+            rerank=self._rerank,
+            diversity_lambda=self._diversity_lambda,
+            source_weights=self._source_weights,
+            filters=self._filters,
+        )

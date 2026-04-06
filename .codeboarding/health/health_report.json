@@ -1,0 +1,1298 @@
+{
+  "repository_name": "heretek-swarm",
+  "timestamp": "2026-04-06T17:52:16.918439+00:00",
+  "overall_score": 0.988167598670881,
+  "check_summaries": [
+    {
+      "check_name": "function_size",
+      "description": "Checks that functions/methods do not exceed line count thresholds",
+      "language": "Python",
+      "check_type": "standard",
+      "total_entities_checked": 2897,
+      "findings_count": 6,
+      "warning_count": 6,
+      "score": 0.9979288919571971,
+      "finding_groups": [
+        {
+          "severity": "warning",
+          "threshold": 150,
+          "description": "Functions exceeding 150.0 lines",
+          "entities": [
+            {
+              "entity_name": "src.heretek_swarm.security.guardrails.GuardrailsSystem.validate_input",
+              "file_path": "src/heretek_swarm/security/guardrails.py",
+              "line_start": 115,
+              "line_end": 277,
+              "metric_value": 162
+            },
+            {
+              "entity_name": "src.heretek_swarm.security.guardrails.validate_input",
+              "file_path": "src/heretek_swarm/security/guardrails.py",
+              "line_start": 115,
+              "line_end": 277,
+              "metric_value": 162
+            },
+            {
+              "entity_name": "src.heretek_swarm.orchestration.heavyswarm.HeavySwarmWorkflow.execute",
+              "file_path": "src/heretek_swarm/orchestration/heavyswarm.py",
+              "line_start": 178,
+              "line_end": 333,
+              "metric_value": 155
+            },
+            {
+              "entity_name": "src.heretek_swarm.orchestration.heavyswarm.execute",
+              "file_path": "src/heretek_swarm/orchestration/heavyswarm.py",
+              "line_start": 178,
+              "line_end": 333,
+              "metric_value": 155
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.handoff.AgentHandoff.execute_handoff",
+              "file_path": "src/heretek_swarm/actors/handoff.py",
+              "line_start": 122,
+              "line_end": 275,
+              "metric_value": 153
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.handoff.execute_handoff",
+              "file_path": "src/heretek_swarm/actors/handoff.py",
+              "line_start": 122,
+              "line_end": 275,
+              "metric_value": 153
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "check_name": "fan_out",
+      "description": "Checks efferent coupling: how many other functions each function calls",
+      "language": "Python",
+      "check_type": "standard",
+      "total_entities_checked": 2897,
+      "findings_count": 3,
+      "warning_count": 3,
+      "score": 0.9989644459785986,
+      "finding_groups": [
+        {
+          "severity": "warning",
+          "threshold": 10,
+          "description": "Functions calling more than 10.0 other functions",
+          "entities": [
+            {
+              "entity_name": "src.heretek_swarm.actors.arbiter.ArbiterAgent._register_handlers",
+              "file_path": "src/heretek_swarm/actors/arbiter.py",
+              "line_start": 216,
+              "line_end": 232,
+              "metric_value": 13
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._register_handlers",
+              "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
+              "line_start": 234,
+              "line_end": 249,
+              "metric_value": 12
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.arbiter.ArbiterAgent.__init__",
+              "file_path": "src/heretek_swarm/actors/arbiter.py",
+              "line_start": 134,
+              "line_end": 194,
+              "metric_value": 11
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "check_name": "fan_in",
+      "description": "Checks afferent coupling: how many other functions call each function",
+      "language": "Python",
+      "check_type": "standard",
+      "total_entities_checked": 2897,
+      "findings_count": 17,
+      "warning_count": 17,
+      "score": 0.9941318605453918,
+      "finding_groups": [
+        {
+          "severity": "warning",
+          "threshold": 10,
+          "description": "Functions called by more than 10.0 other functions",
+          "entities": [
+            {
+              "entity_name": "src.heretek_swarm.actors.base.AgentActor.send",
+              "file_path": "src/heretek_swarm/actors/base.py",
+              "line_start": 379,
+              "line_end": 473,
+              "metric_value": 120
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.validation.validate_message",
+              "file_path": "src/heretek_swarm/actors/validation.py",
+              "line_start": 526,
+              "line_end": 546,
+              "metric_value": 49
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.base.AgentActor.run_with_llm",
+              "file_path": "src/heretek_swarm/actors/base.py",
+              "line_start": 1237,
+              "line_end": 1270,
+              "metric_value": 43
+            },
+            {
+              "entity_name": "src.heretek_swarm.gateway.auth.verify_auth",
+              "file_path": "src/heretek_swarm/gateway/auth.py",
+              "line_start": 67,
+              "line_end": 107,
+              "metric_value": 35
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.base.AgentActor.__init__",
+              "file_path": "src/heretek_swarm/actors/base.py",
+              "line_start": 164,
+              "line_end": 232,
+              "metric_value": 23
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.base.AgentActor._validate_message_content",
+              "file_path": "src/heretek_swarm/actors/base.py",
+              "line_start": 242,
+              "line_end": 267,
+              "metric_value": 19
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.base.AgentActor.register_handler",
+              "file_path": "src/heretek_swarm/actors/base.py",
+              "line_start": 269,
+              "line_end": 280,
+              "metric_value": 14
+            },
+            {
+              "entity_name": "src.heretek_swarm.api.consciousness.get_consciousness_plugin",
+              "file_path": "src/heretek_swarm/api/consciousness.py",
+              "line_start": 26,
+              "line_end": 31,
+              "metric_value": 13
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.base.AgentActor.get_status",
+              "file_path": "src/heretek_swarm/actors/base.py",
+              "line_start": 907,
+              "line_end": 924,
+              "metric_value": 11
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.nexus.NexusAgent._send_error",
+              "file_path": "src/heretek_swarm/actors/nexus.py",
+              "line_start": 910,
+              "line_end": 924,
+              "metric_value": 11
+            },
+            {
+              "entity_name": "src.memory.persistent.PersistentMemoryStore.connect",
+              "file_path": "src/memory/persistent.py",
+              "line_start": 132,
+              "line_end": 170,
+              "metric_value": 11
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.catalyst.CatalystAgent._validate_message",
+              "file_path": "src/heretek_swarm/actors/catalyst.py",
+              "line_start": 186,
+              "line_end": 194,
+              "metric_value": 10
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.catalyst.CatalystAgent._send_error",
+              "file_path": "src/heretek_swarm/actors/catalyst.py",
+              "line_start": 871,
+              "line_end": 885,
+              "metric_value": 10
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.chronos.ChronosAgent._validate_message",
+              "file_path": "src/heretek_swarm/actors/chronos.py",
+              "line_start": 216,
+              "line_end": 224,
+              "metric_value": 10
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.chronos.ChronosAgent._send_error",
+              "file_path": "src/heretek_swarm/actors/chronos.py",
+              "line_start": 960,
+              "line_end": 974,
+              "metric_value": 10
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.coordinator.CoordinatorAgent._send_error",
+              "file_path": "src/heretek_swarm/actors/coordinator.py",
+              "line_start": 888,
+              "line_end": 902,
+              "metric_value": 10
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.nexus.NexusAgent._validate_message",
+              "file_path": "src/heretek_swarm/actors/nexus.py",
+              "line_start": 221,
+              "line_end": 230,
+              "metric_value": 10
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "check_name": "god_class",
+      "description": "Detects classes with too many methods, too much code, or too many outgoing dependencies",
+      "language": "Python",
+      "check_type": "standard",
+      "total_entities_checked": 128,
+      "findings_count": 40,
+      "warning_count": 40,
+      "score": 0.6875,
+      "finding_groups": [
+        {
+          "severity": "warning",
+          "threshold": 25,
+          "description": "Classes exceeding god class criteria (methods, LOC, or fan-out)",
+          "entities": [
+            {
+              "entity_name": "src.heretek_swarm.actors.arbiter.ArbiterAgent",
+              "file_path": "src/heretek_swarm/actors/arbiter.py",
+              "metric_value": 1256.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent",
+              "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
+              "metric_value": 1123.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.base.AgentActor",
+              "file_path": "src/heretek_swarm/actors/base.py",
+              "metric_value": 1115.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent",
+              "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
+              "metric_value": 1025.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.prism.PrismAgent",
+              "file_path": "src/heretek_swarm/actors/prism.py",
+              "metric_value": 944.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.orchestration.heavyswarm.HeavySwarmWorkflow",
+              "file_path": "src/heretek_swarm/orchestration/heavyswarm.py",
+              "metric_value": 928.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.habit_forge.HabitForgeAgent",
+              "file_path": "src/heretek_swarm/actors/habit_forge.py",
+              "metric_value": 841.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.chronos.ChronosAgent",
+              "file_path": "src/heretek_swarm/actors/chronos.py",
+              "metric_value": 823.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.examiner.ExaminerAgent",
+              "file_path": "src/heretek_swarm/actors/examiner.py",
+              "metric_value": 803.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.perceiver.PerceiverAgent",
+              "file_path": "src/heretek_swarm/actors/perceiver.py",
+              "metric_value": 802.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.coordinator.CoordinatorAgent",
+              "file_path": "src/heretek_swarm/actors/coordinator.py",
+              "metric_value": 771.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.plugins.consciousness.ConsciousnessPlugin",
+              "file_path": "src/heretek_swarm/plugins/consciousness.py",
+              "metric_value": 770.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.nexus.NexusAgent",
+              "file_path": "src/heretek_swarm/actors/nexus.py",
+              "metric_value": 763.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.dreamer.DreamerAgent",
+              "file_path": "src/heretek_swarm/actors/dreamer.py",
+              "metric_value": 758.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.sentinel.SentinelAgent",
+              "file_path": "src/heretek_swarm/actors/sentinel.py",
+              "metric_value": 745.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.catalyst.CatalystAgent",
+              "file_path": "src/heretek_swarm/actors/catalyst.py",
+              "metric_value": 741.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.empath.EmpathAgent",
+              "file_path": "src/heretek_swarm/actors/empath.py",
+              "metric_value": 733.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.coder.CoderAgent",
+              "file_path": "src/heretek_swarm/actors/coder.py",
+              "metric_value": 731.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.explorer.ExplorerAgent",
+              "file_path": "src/heretek_swarm/actors/explorer.py",
+              "metric_value": 730.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.collective.society.AgentSociety",
+              "file_path": "src/heretek_swarm/collective/society.py",
+              "metric_value": 695.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.historian.HistorianAgent",
+              "file_path": "src/heretek_swarm/actors/historian.py",
+              "metric_value": 688.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.metis.MetisAgent",
+              "file_path": "src/heretek_swarm/actors/metis.py",
+              "metric_value": 681.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh",
+              "file_path": "src/heretek_swarm/gateway/nats_event_mesh.py",
+              "metric_value": 659.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime",
+              "file_path": "src/heretek_swarm/runtime/autonomous_runtime.py",
+              "metric_value": 632.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.echo.EchoActor",
+              "file_path": "src/heretek_swarm/actors/echo.py",
+              "metric_value": 605.0
+            },
+            {
+              "entity_name": "src.state.manager.StateManager",
+              "file_path": "src/state/manager.py",
+              "metric_value": 602.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.integrations.slack_bot.SlackBot",
+              "file_path": "src/heretek_swarm/integrations/slack_bot.py",
+              "metric_value": 597.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.workflow.engine.WorkflowEngine",
+              "file_path": "src/heretek_swarm/workflow/engine.py",
+              "metric_value": 576.0
+            },
+            {
+              "entity_name": "src.memory.persistent.PersistentMemoryStore",
+              "file_path": "src/memory/persistent.py",
+              "metric_value": 532.0
+            },
+            {
+              "entity_name": "src.memory.unified.DualTierMemorySystem",
+              "file_path": "src/memory/unified.py",
+              "metric_value": 524.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.consensus.raft_election.RaftElection",
+              "file_path": "src/heretek_swarm/consensus/raft_election.py",
+              "metric_value": 506.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol",
+              "file_path": "src/heretek_swarm/gateway/a2a_protocol.py",
+              "metric_value": 499.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.supervisor.ActorSupervisor",
+              "file_path": "src/heretek_swarm/actors/supervisor.py",
+              "metric_value": 479.0
+            },
+            {
+              "entity_name": "src.rag.document_processor.DocumentProcessor",
+              "file_path": "src/rag/document_processor.py",
+              "metric_value": 476.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.plugins.liberation.LiberationShield",
+              "file_path": "src/heretek_swarm/plugins/liberation.py",
+              "metric_value": 468.0
+            },
+            {
+              "entity_name": "src.tools.registry.ToolRegistry",
+              "file_path": "src/tools/registry.py",
+              "metric_value": 466.0
+            },
+            {
+              "entity_name": "src.state.snapshots.SnapshotManager",
+              "file_path": "src/state/snapshots.py",
+              "metric_value": 444.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.consensus.maker.MAKERConsensus",
+              "file_path": "src/heretek_swarm/consensus/maker.py",
+              "metric_value": 443.0
+            },
+            {
+              "entity_name": "src.state.lineage.LineageTracker",
+              "file_path": "src/state/lineage.py",
+              "metric_value": 436.0
+            },
+            {
+              "entity_name": "src.memory.ephemeral.EphemeralMemoryStore",
+              "file_path": "src/memory/ephemeral.py",
+              "metric_value": 435.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "check_name": "circular_dependencies",
+      "description": "Detects circular dependencies between packages",
+      "language": "Python",
+      "check_type": "circular_dependencies",
+      "cycles": [],
+      "packages_checked": 23,
+      "packages_in_cycles": 0
+    },
+    {
+      "check_name": "package_instability",
+      "description": "Computes Martin's instability metric (I = Ce / (Ca + Ce)) per package",
+      "language": "Python",
+      "check_type": "standard",
+      "total_entities_checked": 13,
+      "findings_count": 0,
+      "warning_count": 0,
+      "score": 1.0,
+      "finding_groups": []
+    },
+    {
+      "check_name": "component_cohesion",
+      "description": "Measures internal vs external edge ratio per component/cluster",
+      "language": "Python",
+      "check_type": "standard",
+      "total_entities_checked": 128,
+      "findings_count": 0,
+      "warning_count": 0,
+      "score": 1.0,
+      "finding_groups": []
+    },
+    {
+      "check_name": "unused_code_diagnostics",
+      "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
+      "language": "Python",
+      "check_type": "standard",
+      "total_entities_checked": 72,
+      "findings_count": 72,
+      "warning_count": 31,
+      "score": 0.0,
+      "finding_groups": [
+        {
+          "severity": "warning",
+          "threshold": 0,
+          "description": "Unused import statements that should be removed",
+          "entities": [
+            {
+              "entity_name": "[unused_import] Import \"asyncio\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/metis.py",
+              "line_start": 14,
+              "line_end": 14,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"logging\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/metis.py",
+              "line_start": 15,
+              "line_end": 15,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"Tuple\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/metis.py",
+              "line_start": 17,
+              "line_end": 17,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"ValidationError\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/metis.py",
+              "line_start": 19,
+              "line_end": 19,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"validate_message\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/metis.py",
+              "line_start": 24,
+              "line_end": 24,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"logging\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/empath.py",
+              "line_start": 15,
+              "line_end": 15,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"Tuple\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/empath.py",
+              "line_start": 17,
+              "line_end": 17,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"MessageContent\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/empath.py",
+              "line_start": 24,
+              "line_end": 24,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"asyncio\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/coder.py",
+              "line_start": 16,
+              "line_end": 16,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"logging\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/coder.py",
+              "line_start": 17,
+              "line_end": 17,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"Tuple\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/coder.py",
+              "line_start": 19,
+              "line_end": 19,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"BaseModel\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/coder.py",
+              "line_start": 24,
+              "line_end": 24,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"Agent\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/coder.py",
+              "line_start": 26,
+              "line_end": 26,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"MessageContent\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/coder.py",
+              "line_start": 29,
+              "line_end": 29,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"logging\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/examiner.py",
+              "line_start": 17,
+              "line_end": 17,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"Set\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/examiner.py",
+              "line_start": 19,
+              "line_end": 19,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"BaseModel\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/examiner.py",
+              "line_start": 23,
+              "line_end": 23,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"Agent\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/examiner.py",
+              "line_start": 25,
+              "line_end": 25,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"MessageContent\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/examiner.py",
+              "line_start": 28,
+              "line_end": 28,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"logging\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/historian.py",
+              "line_start": 17,
+              "line_end": 17,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"Tuple\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/historian.py",
+              "line_start": 20,
+              "line_end": 20,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"ValidationError\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/historian.py",
+              "line_start": 22,
+              "line_end": 22,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"MemoryStoreRequest\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/historian.py",
+              "line_start": 28,
+              "line_end": 28,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"QueryRequest\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/historian.py",
+              "line_start": 29,
+              "line_end": 29,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"LineageRequest\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/historian.py",
+              "line_start": 30,
+              "line_end": 30,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"MemoryQuery\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/historian.py",
+              "line_start": 32,
+              "line_end": 32,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"asyncio\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
+              "line_start": 15,
+              "line_end": 15,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"logging\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
+              "line_start": 16,
+              "line_end": 16,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"timedelta\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
+              "line_start": 18,
+              "line_end": 18,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"ValidationError\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
+              "line_start": 22,
+              "line_end": 22,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"validate_message\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
+              "line_start": 27,
+              "line_end": 27,
+              "metric_value": 0.0
+            }
+          ]
+        },
+        {
+          "severity": "info",
+          "threshold": 0,
+          "description": "Variables declared but never used",
+          "entities": [
+            {
+              "entity_name": "[unused_variable] \"asyncio\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/metis.py",
+              "line_start": 14,
+              "line_end": 14,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"logging\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/metis.py",
+              "line_start": 15,
+              "line_end": 15,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"Tuple\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/metis.py",
+              "line_start": 17,
+              "line_end": 17,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"ValidationError\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/metis.py",
+              "line_start": 19,
+              "line_end": 19,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"validate_message\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/metis.py",
+              "line_start": 24,
+              "line_end": 24,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"plan_id\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/metis.py",
+              "line_start": 481,
+              "line_end": 481,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"response\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/metis.py",
+              "line_start": 554,
+              "line_end": 554,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"response\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/metis.py",
+              "line_start": 635,
+              "line_end": 635,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"logging\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/empath.py",
+              "line_start": 15,
+              "line_end": 15,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"Tuple\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/empath.py",
+              "line_start": 17,
+              "line_end": 17,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"MessageContent\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/empath.py",
+              "line_start": 24,
+              "line_end": 24,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"source_agent\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/empath.py",
+              "line_start": 248,
+              "line_end": 248,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"asyncio\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/coder.py",
+              "line_start": 16,
+              "line_end": 16,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"logging\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/coder.py",
+              "line_start": 17,
+              "line_end": 17,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"Tuple\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/coder.py",
+              "line_start": 19,
+              "line_end": 19,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"BaseModel\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/coder.py",
+              "line_start": 24,
+              "line_end": 24,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"Agent\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/coder.py",
+              "line_start": 26,
+              "line_end": 26,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"MessageContent\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/coder.py",
+              "line_start": 29,
+              "line_end": 29,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"logging\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/examiner.py",
+              "line_start": 17,
+              "line_end": 17,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"Set\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/examiner.py",
+              "line_start": 19,
+              "line_end": 19,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"BaseModel\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/examiner.py",
+              "line_start": 23,
+              "line_end": 23,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"Agent\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/examiner.py",
+              "line_start": 25,
+              "line_end": 25,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"MessageContent\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/examiner.py",
+              "line_start": 28,
+              "line_end": 28,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"target_type\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/examiner.py",
+              "line_start": 773,
+              "line_end": 773,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"target\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/examiner.py",
+              "line_start": 798,
+              "line_end": 798,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"target\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/examiner.py",
+              "line_start": 803,
+              "line_end": 803,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"target\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/examiner.py",
+              "line_start": 808,
+              "line_end": 808,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"target\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/examiner.py",
+              "line_start": 813,
+              "line_end": 813,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"logging\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/historian.py",
+              "line_start": 17,
+              "line_end": 17,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"Tuple\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/historian.py",
+              "line_start": 20,
+              "line_end": 20,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"ValidationError\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/historian.py",
+              "line_start": 22,
+              "line_end": 22,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"MemoryStoreRequest\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/historian.py",
+              "line_start": 28,
+              "line_end": 28,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"QueryRequest\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/historian.py",
+              "line_start": 29,
+              "line_end": 29,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"LineageRequest\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/historian.py",
+              "line_start": 30,
+              "line_end": 30,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"MemoryQuery\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/historian.py",
+              "line_start": 32,
+              "line_end": 32,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"asyncio\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
+              "line_start": 15,
+              "line_end": 15,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"logging\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
+              "line_start": 16,
+              "line_end": 16,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"timedelta\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
+              "line_start": 18,
+              "line_end": 18,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"ValidationError\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
+              "line_start": 22,
+              "line_end": 22,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"validate_message\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
+              "line_start": 27,
+              "line_end": 27,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"analysis_type\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
+              "line_start": 1189,
+              "line_end": 1189,
+              "metric_value": 0.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "check_name": "function_size",
+      "description": "Checks that functions/methods do not exceed line count thresholds",
+      "language": "TypeScript",
+      "check_type": "standard",
+      "total_entities_checked": 800,
+      "findings_count": 8,
+      "warning_count": 8,
+      "score": 0.99,
+      "finding_groups": [
+        {
+          "severity": "warning",
+          "threshold": 150,
+          "description": "Functions exceeding 150.0 lines",
+          "entities": [
+            {
+              "entity_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder",
+              "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
+              "line_start": 53,
+              "line_end": 490,
+              "metric_value": 437
+            },
+            {
+              "entity_name": "src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder",
+              "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
+              "line_start": 53,
+              "line_end": 490,
+              "metric_value": 437
+            },
+            {
+              "entity_name": "dashboard.frontend.src.components.Consciousness.ConsciousnessDashboard.ConsciousnessDashboard",
+              "file_path": "dashboard/frontend/src/components/Consciousness/ConsciousnessDashboard.tsx",
+              "line_start": 21,
+              "line_end": 252,
+              "metric_value": 231
+            },
+            {
+              "entity_name": "src.components.Consciousness.ConsciousnessDashboard.ConsciousnessDashboard",
+              "file_path": "dashboard/frontend/src/components/Consciousness/ConsciousnessDashboard.tsx",
+              "line_start": 21,
+              "line_end": 252,
+              "metric_value": 231
+            },
+            {
+              "entity_name": "dashboard.frontend.src.components.Canvas.EnhancedCanvas.EnhancedCanvas",
+              "file_path": "dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx",
+              "line_start": 154,
+              "line_end": 370,
+              "metric_value": 216
+            },
+            {
+              "entity_name": "src.components.Canvas.EnhancedCanvas.EnhancedCanvas",
+              "file_path": "dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx",
+              "line_start": 154,
+              "line_end": 370,
+              "metric_value": 216
+            },
+            {
+              "entity_name": "dashboard.frontend.src.components.Dashboard.Dashboard.Dashboard",
+              "file_path": "dashboard/frontend/src/components/Dashboard/Dashboard.tsx",
+              "line_start": 71,
+              "line_end": 262,
+              "metric_value": 191
+            },
+            {
+              "entity_name": "src.components.Dashboard.Dashboard.Dashboard",
+              "file_path": "dashboard/frontend/src/components/Dashboard/Dashboard.tsx",
+              "line_start": 71,
+              "line_end": 262,
+              "metric_value": 191
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "check_name": "fan_out",
+      "description": "Checks efferent coupling: how many other functions each function calls",
+      "language": "TypeScript",
+      "check_type": "standard",
+      "total_entities_checked": 1238,
+      "findings_count": 0,
+      "warning_count": 0,
+      "score": 1.0,
+      "finding_groups": []
+    },
+    {
+      "check_name": "fan_in",
+      "description": "Checks afferent coupling: how many other functions call each function",
+      "language": "TypeScript",
+      "check_type": "standard",
+      "total_entities_checked": 1238,
+      "findings_count": 0,
+      "warning_count": 0,
+      "score": 1.0,
+      "finding_groups": []
+    },
+    {
+      "check_name": "god_class",
+      "description": "Detects classes with too many methods, too much code, or too many outgoing dependencies",
+      "language": "TypeScript",
+      "check_type": "standard",
+      "total_entities_checked": 6,
+      "findings_count": 0,
+      "warning_count": 0,
+      "score": 1.0,
+      "finding_groups": []
+    },
+    {
+      "check_name": "circular_dependencies",
+      "description": "Detects circular dependencies between packages",
+      "language": "TypeScript",
+      "check_type": "circular_dependencies",
+      "cycles": [],
+      "packages_checked": 26,
+      "packages_in_cycles": 0
+    },
+    {
+      "check_name": "package_instability",
+      "description": "Computes Martin's instability metric (I = Ce / (Ca + Ce)) per package",
+      "language": "TypeScript",
+      "check_type": "standard",
+      "total_entities_checked": 0,
+      "findings_count": 0,
+      "warning_count": 0,
+      "score": 1.0,
+      "finding_groups": []
+    },
+    {
+      "check_name": "component_cohesion",
+      "description": "Measures internal vs external edge ratio per component/cluster",
+      "language": "TypeScript",
+      "check_type": "standard",
+      "total_entities_checked": 25,
+      "findings_count": 0,
+      "warning_count": 0,
+      "score": 1.0,
+      "finding_groups": []
+    },
+    {
+      "check_name": "unused_code_diagnostics",
+      "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
+      "language": "TypeScript",
+      "check_type": "standard",
+      "total_entities_checked": 0,
+      "findings_count": 0,
+      "warning_count": 0,
+      "score": 1.0,
+      "finding_groups": []
+    }
+  ],
+  "file_summaries": [
+    {
+      "file_path": "src/heretek_swarm/actors/historian.py",
+      "total_findings": 15,
+      "warning_findings": 8,
+      "composite_risk_score": 90.0
+    },
+    {
+      "file_path": "src/heretek_swarm/actors/base.py",
+      "total_findings": 7,
+      "warning_findings": 7,
+      "composite_risk_score": 85.0
+    },
+    {
+      "file_path": "src/heretek_swarm/actors/coder.py",
+      "total_findings": 13,
+      "warning_findings": 7,
+      "composite_risk_score": 85.0
+    },
+    {
+      "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
+      "total_findings": 12,
+      "warning_findings": 6,
+      "composite_risk_score": 80.0
+    },
+    {
+      "file_path": "src/heretek_swarm/actors/examiner.py",
+      "total_findings": 16,
+      "warning_findings": 6,
+      "composite_risk_score": 80.0
+    },
+    {
+      "file_path": "src/heretek_swarm/actors/metis.py",
+      "total_findings": 14,
+      "warning_findings": 6,
+      "composite_risk_score": 80.0
+    },
+    {
+      "file_path": "src/heretek_swarm/actors/empath.py",
+      "total_findings": 8,
+      "warning_findings": 4,
+      "composite_risk_score": 70.0
+    },
+    {
+      "file_path": "src/heretek_swarm/orchestration/heavyswarm.py",
+      "total_findings": 3,
+      "warning_findings": 3,
+      "composite_risk_score": 45.0
+    },
+    {
+      "file_path": "src/heretek_swarm/actors/arbiter.py",
+      "total_findings": 3,
+      "warning_findings": 3,
+      "composite_risk_score": 45.0
+    },
+    {
+      "file_path": "src/heretek_swarm/actors/nexus.py",
+      "total_findings": 3,
+      "warning_findings": 3,
+      "composite_risk_score": 45.0
+    },
+    {
+      "file_path": "src/heretek_swarm/actors/catalyst.py",
+      "total_findings": 3,
+      "warning_findings": 3,
+      "composite_risk_score": 45.0
+    },
+    {
+      "file_path": "src/heretek_swarm/actors/chronos.py",
+      "total_findings": 3,
+      "warning_findings": 3,
+      "composite_risk_score": 45.0
+    },
+    {
+      "file_path": "src/heretek_swarm/security/guardrails.py",
+      "total_findings": 2,
+      "warning_findings": 2,
+      "composite_risk_score": 30.0
+    },
+    {
+      "file_path": "src/heretek_swarm/actors/handoff.py",
+      "total_findings": 2,
+      "warning_findings": 2,
+      "composite_risk_score": 30.0
+    },
+    {
+      "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
+      "total_findings": 2,
+      "warning_findings": 2,
+      "composite_risk_score": 30.0
+    },
+    {
+      "file_path": "src/memory/persistent.py",
+      "total_findings": 2,
+      "warning_findings": 2,
+      "composite_risk_score": 30.0
+    },
+    {
+      "file_path": "src/heretek_swarm/actors/coordinator.py",
+      "total_findings": 2,
+      "warning_findings": 2,
+      "composite_risk_score": 30.0
+    },
+    {
+      "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
+      "total_findings": 2,
+      "warning_findings": 2,
+      "composite_risk_score": 30.0
+    },
+    {
+      "file_path": "dashboard/frontend/src/components/Consciousness/ConsciousnessDashboard.tsx",
+      "total_findings": 2,
+      "warning_findings": 2,
+      "composite_risk_score": 30.0
+    },
+    {
+      "file_path": "dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx",
+      "total_findings": 2,
+      "warning_findings": 2,
+      "composite_risk_score": 30.0
+    }
+  ]
+}

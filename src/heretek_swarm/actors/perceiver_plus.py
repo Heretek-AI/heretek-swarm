@@ -25,6 +25,7 @@ from swarms import Agent
 
 from heretek_swarm.actors.base import AgentActor, ActorMessage
 from heretek_swarm.actors.validation import validate_message, MessageContent
+from heretek_swarm.knowledge.unified_access import UnifiedKnowledgeAccess, KnowledgeQueryResult
 
 logger = structlog.get_logger("PerceiverPlusAgent")
 
@@ -253,6 +254,14 @@ class PerceiverPlusAgent(AgentActor):
     
     async def initialize(self) -> None:
         """Initialize the Perceiver+ agent."""
+        # Initialize unified knowledge access layer
+        if self.memory_system or self.rag_pipeline:
+            self.knowledge_access = UnifiedKnowledgeAccess(
+                memory_system=self.memory_system,
+                rag_pipeline=self.rag_pipeline,
+            )
+            logger.info(f"[{self.agent_id}] Unified knowledge access initialized")
+        
         # Register message handlers with Zero-Trust validation
         self.register_handler("analyze_data", self._handle_analyze_data)
         self.register_handler("detect_trends", self._handle_detect_trends)
@@ -262,6 +271,7 @@ class PerceiverPlusAgent(AgentActor):
         self.register_handler("forecast_values", self._handle_forecast_values)
         self.register_handler("get_analytics_summary", self._handle_get_analytics_summary)
         self.register_handler("signal_processing", self._handle_signal_processing)
+        self.register_handler("knowledge_enhanced_analysis", self._handle_knowledge_enhanced_analysis)
         
         logger.info(f"[{self.agent_id}] Perceiver+ initialization complete")
     
@@ -1161,6 +1171,105 @@ Respond in JSON:
             
         except Exception as e:
             logger.error(f"[{self.agent_id}] Error getting analytics summary: {e}", exc_info=True)
+    
+    async def _handle_knowledge_enhanced_analysis(self, message: ActorMessage) -> None:
+        """
+        Perform knowledge-enhanced analytics using the unified knowledge access layer.
+        
+        This handler combines data analysis with contextual knowledge from memory and RAG.
+        
+        Args:
+            message: Actor message with data and query for context
+        """
+        try:
+            data = message.content.get("data", [])
+            query = message.content.get("query")
+            sources = message.content.get("sources", ["memory", "rag"])
+            limit = message.content.get("limit", 10)
+            analysis_type = message.content.get("analysis_type", "descriptive")
+            
+            if not query:
+                logger.error(f"[{self.agent_id}] Knowledge enhanced analysis requires query")
+                return
+            
+            logger.info(f"[{self.agent_id}] Performing knowledge-enhanced analysis: {query[:50]}")
+            
+            # First, query knowledge base for context
+            if self.knowledge_access:
+                knowledge_result = await self.knowledge_access.query(
+                    query=query,
+                    sources=sources,
+                    limit=limit,
+                    rerank=True,
+                    diversity_lambda=0.5,
+                )
+                
+                # Perform analysis on data
+                analysis_id = f"knowledge_analysis_{datetime.now(timezone.utc).timestamp()}"
+                
+                # Combine data analysis with knowledge context
+                result = {
+                    "analysis_id": analysis_id,
+                    "query": query,
+                    "knowledge_context": {
+                        "entries": [e.to_dict() for e in knowledge_result.entries],
+                        "total_results": knowledge_result.total_results,
+                        "query_time_ms": knowledge_result.query_time_ms,
+                    },
+                    "data_analysis": {
+                        "data_points": len(data),
+                        "mean": sum(data) / len(data) if data else 0,
+                        "min": min(data) if data else 0,
+                        "max": max(data) if data else 0,
+                    },
+                }
+                
+                response = {
+                    "message_type": "knowledge_enhanced_analysis_response",
+                    "result": result,
+                }
+                
+                if message.content.get("reply_to"):
+                    await self.send(
+                        topic=message.content["reply_to"],
+                        content=response,
+                        sender_id=self.agent_id,
+                    )
+            else:
+                logger.warning(f"[{self.agent_id}] Knowledge access not initialized")
+                
+        except Exception as e:
+            logger.error(f"[{self.agent_id}] Error in knowledge enhanced analysis: {e}", exc_info=True)
+    
+    async def knowledge_enhanced_query(
+        self,
+        query: str,
+        sources: Optional[List[str]] = None,
+        limit: int = 10,
+        rerank: bool = True,
+    ) -> KnowledgeQueryResult:
+        """
+        Execute a knowledge-enhanced query for analytics context.
+        
+        Args:
+            query: Search query string
+            sources: List of sources (memory, rag)
+            limit: Maximum results
+            rerank: Apply MMR reranking
+            
+        Returns:
+            KnowledgeQueryResult with merged and reranked entries
+        """
+        if not self.knowledge_access:
+            logger.warning(f"[{self.agent_id}] Knowledge access not initialized")
+            return KnowledgeQueryResult(entries=[], total_results=0)
+        
+        return await self.knowledge_access.query(
+            query=query,
+            sources=sources or ["memory", "rag"],
+            limit=limit,
+            rerank=rerank,
+        )
     
     async def _handle_signal_processing(self, message: ActorMessage) -> None:
         """

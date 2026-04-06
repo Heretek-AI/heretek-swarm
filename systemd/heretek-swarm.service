@@ -1,0 +1,66 @@
+[Unit]
+Description=Heretek Swarm Autonomous Runtime
+Documentation=https://github.com/heretek/heretek-swarm/docs/DEPLOYMENT_AUTONOMOUS.md
+After=network.target postgresql.service redis.service docker.service
+Wants=postgresql.service redis.service docker.service
+
+[Service]
+Type=exec
+User=heretek
+Group=heretek
+WorkingDirectory=/opt/heretek-swarm
+
+# Environment Configuration
+EnvironmentFile=-/etc/heretek-swarm/.env
+
+# Security Hardening - Zero Trust Principles
+NoNewPrivileges=yes
+ProtectSystem=strict
+ProtectHome=yes
+PrivateTmp=yes
+PrivateDevices=yes
+ProtectKernelTunables=yes
+ProtectKernelModules=yes
+ProtectControlGroups=yes
+RestrictAddressFamilies=AF_INET AF_INET6 AF_UNIX
+RestrictNamespaces=yes
+RestrictRealtime=yes
+RestrictSUIDSGID=yes
+MemoryDenyWriteExecute=yes
+LockPersonality=yes
+
+# Capability Restrictions
+CapabilityBoundingSet=CAP_NET_BIND_SERVICE CAP_NET_RAW
+AmbientCapabilities=
+
+# Filesystem Access
+ReadWritePaths=/opt/heretek-swarm/logs
+ReadWritePaths=/opt/heretek-swarm/data
+ReadOnlyPaths=/opt/heretek-swarm/src
+
+# Resource Limits
+LimitNOFILE=65536
+LimitNPROC=4096
+LimitCORE=infinity
+
+# Restart Policy
+Restart=always
+RestartSec=10
+TimeoutStartSec=120
+TimeoutStopSec=30
+
+# Logging
+StandardOutput=journal
+StandardError=journal
+SyslogIdentifier=heretek-swarm
+
+# Health Check
+ExecStartPre=/usr/bin/test -f /opt/heretek-swarm/.env
+ExecStart=/opt/heretek-swarm/venv/bin/python -m heretek_swarm.runtime.main_loop
+ExecReload=/bin/kill -HUP $MAINPID
+
+# Watchdog
+WatchdogSec=300
+
+[Install]
+WantedBy=multi-user.target

@@ -1,336 +1,362 @@
 """
-Load testing framework for 1,000+ concurrent agents.
+Heretek Swarm Load Testing Framework - Locust
 
-Agent Gamma - QA and Validation Lead
-Uses Locust for scalable load testing of the Heretek Swarm system.
+Performance benchmarking for the Heretek Swarm multi-agent system.
+Target: p95 latency < 100ms for API endpoints
 
-Run with:
-    locust -f tests/load/locustfile.py --headless -u 1000 -r 50 -t 5m --host http://localhost:8000
-
-Or with UI:
-    locust -f tests/load/locustfile.py --host http://localhost:8000
+Usage:
+    locust -f tests/load/locustfile.py --host=http://localhost:8000
+    locust -f tests/load/locustfile.py --host=http://localhost:8000 --headless -u 100 -r 10 -t 60s
 """
 
 import json
-import os
-import random
 import time
-from dataclasses import dataclass
-from typing import Any, Optional
-
-from locust import HttpUser, between, events, task
+import random
+from uuid import uuid4
+from locust import HttpUser, task, between, events
 from locust.runners import MasterRunner, WorkerRunner
 
 
-# ============== CONFIGURATION ==============
+# =============================================================================
+# Custom Load Shapes
+# =============================================================================
 
-CONCURRENT_AGENT_TARGET = 1000
-MESSAGE_LATENCY_BASELINE_MS = 100
-API_HOST = os.getenv("LOCUST_HOST", "http://localhost:8000")
-API_KEY = os.getenv("HERETEK_API_KEY", "")
-
-
-@dataclass
-class AgentProfile:
-    """Profile for load testing agent behavior."""
-    agent_type: str
-    message_rate: float  # messages per second
-    task_complexity: str  # simple, medium, complex
-    capabilities: list[str]
-
-
-# Agent profiles matching the 23 agent types
-AGENT_PROFILES = [
-    AgentProfile("steward", 0.5, "complex", ["orchestration", "authorization"]),
-    AgentProfile("alpha", 1.0, "complex", ["deliberation", "consensus"]),
-    AgentProfile("beta", 1.0, "complex", ["critique", "analysis"]),
-    AgentProfile("charlie", 1.0, "complex", ["validation", "arbitration"]),
-    AgentProfile("historian", 2.0, "simple", ["memory", "retrieval"]),
-    AgentProfile("metis", 1.0, "complex", ["planning", "strategy"]),
-    AgentProfile("empath", 1.5, "medium", ["sentiment", "emotional"]),
-    AgentProfile("perceiver", 2.0, "medium", ["sensing", "multimodal"]),
-    AgentProfile("echo", 1.5, "simple", ["communication"]),
-    AgentProfile("explorer", 2.0, "medium", ["discovery", "search"]),
-    AgentProfile("examiner", 1.0, "medium", ["review", "audit"]),
-    AgentProfile("dreamer", 0.5, "complex", ["creative", "generation"]),
-    AgentProfile("coder", 0.5, "complex", ["code_generation", "refactoring"]),
-    AgentProfile("sentinel", 3.0, "simple", ["monitoring", "alerting"]),
-    AgentProfile("sentinel-prime", 2.0, "medium", ["security", "threat"]),
-    AgentProfile("arbiter", 0.5, "medium", ["resolution", "judgment"]),
-    AgentProfile("coordinator", 2.0, "medium", ["scheduling", "delegation"]),
-    AgentProfile("nexus", 1.5, "medium", ["external", "integration"]),
-    AgentProfile("catalyst", 1.0, "medium", ["change", "transition"]),
-    AgentProfile("chronos", 2.0, "simple", ["temporal", "scheduling"]),
-    AgentProfile("prism", 1.0, "complex", ["perspective", "multi"]),
-    AgentProfile("habit-forge", 1.5, "medium", ["behavior", "pattern"]),
-    AgentProfile("perceiver-plus", 1.0, "complex", ["analytics", "advanced"]),
-]
-
-
-class HeretekSwarmUser(HttpUser):
+class SpikeLoadShape:
     """
-    Simulated agent user for load testing.
+    Spike Load Test - Sudden increase in load
     
-    Each user represents one agent in the swarm, making requests
-    at rates consistent with their agent profile.
+    Tests system behavior under sudden traffic surge.
+    Expected: System should handle spike gracefully, recover after spike ends.
     """
+    stages = [
+        {"duration": 60, "users": 10, "spawn_rate": 2},    # Baseline
+        {"duration": 120, "users": 100, "spawn_rate": 20},  # Spike
+        {"duration": 180, "users": 100, "spawn_rate": 0},   # Hold
+        {"duration": 240, "users": 10, "spawn_rate": -20},  # Recovery
+        {"duration": 300, "users": 10, "spawn_rate": 0},    # Post-spike baseline
+    ]
+
+
+class EnduranceLoadShape:
+    """
+    Endurance Load Test - Sustained load over extended period
     
-    abstract = True  # Don't instantiate directly
-    host = API_HOST
+    Tests for memory leaks, resource exhaustion, degradation over time.
+    Expected: Stable performance throughout test duration.
+    """
+    stages = [
+        {"duration": 300, "users": 50, "spawn_rate": 5},    # Ramp up
+        {"duration": 3600, "users": 50, "spawn_rate": 0},    # Hold for 1 hour
+        {"duration": 3900, "users": 0, "spawn_rate": -10},   # Ramp down
+    ]
 
-    def __init__(self, *args, **kwargs):
-        super().__init__(*args, **kwargs)
-        self.agent_id: str = ""
-        self.agent_profile: AgentProfile | None = None
-        self.session_state: dict[str, Any] = {}
 
-    def _get_headers(self) -> dict:
-        """Get API headers."""
-        headers = {"Content-Type": "application/json"}
-        if API_KEY:
-            headers["Authorization"] = f"Bearer {API_KEY}"
-        return headers
+class BreakingPointLoadShape:
+    """
+    Breaking Point Test - Find system limits
+    
+    Gradually increases load until system fails.
+    Expected: Identify maximum sustainable load and failure mode.
+    """
+    stages = [
+        {"duration": 120, "users": 10, "spawn_rate": 2},
+        {"duration": 240, "users": 50, "spawn_rate": 5},
+        {"duration": 360, "users": 100, "spawn_rate": 10},
+        {"duration": 480, "users": 200, "spawn_rate": 20},
+        {"duration": 600, "users": 500, "spawn_rate": 50},
+        {"duration": 720, "users": 1000, "spawn_rate": 100},
+    ]
 
-    def on_start(self) -> None:
-        """Initialize agent session."""
-        # Select random agent profile
-        self.agent_profile = random.choice(AGENT_PROFILES)
-        self.agent_id = f"load-agent-{random.randint(1, 10000)}"
+
+class RecoveryLoadShape:
+    """
+    Recovery Test - System recovery after failure
+    
+    Tests system ability to recover after overload.
+    Expected: System should recover and return to normal operation.
+    """
+    stages = [
+        {"duration": 60, "users": 20, "spawn_rate": 5},     # Normal load
+        {"duration": 180, "users": 500, "spawn_rate": 50},  # Overload
+        {"duration": 240, "users": 20, "spawn_rate": -50},  # Recovery
+        {"duration": 360, "users": 20, "spawn_rate": 0},    # Verify recovery
+    ]
+
+
+# =============================================================================
+# Locust User Classes
+# =============================================================================
+
+class APIUser(HttpUser):
+    """
+    Simulates API client behavior
+    
+    Tests: Authentication, agent operations, memory operations, consensus
+    """
+    wait_time = between(0.5, 2)  # Realistic user think time
+    host = "http://localhost:8000"
+    
+    # Test data
+    test_agent_id = None
+    test_memory_id = None
+    auth_token = None
+    
+    def on_start(self):
+        """Called when simulated user starts"""
+        # Try to get auth token if available
+        self.auth_token = self.client.get("/api/auth/token").json().get("token", None)
         
-        # Set wait time based on profile message rate
-        self.wait_time = between(
-            0.5 / self.agent_profile.message_rate,
-            2.0 / self.agent_profile.message_rate,
-        )
-        
-        # Register agent
-        self.register_agent()
-    
-    def register_agent(self) -> None:
-        """Register this agent with the system."""
-        try:
-            with self.client.post(
-                "/api/agents/register",
-                json={
-                    "agent_id": self.agent_id,
-                    "agent_type": self.agent_profile.agent_type if self.agent_profile else "steward",
-                    "capabilities": self.agent_profile.capabilities if self.agent_profile else [],
-                },
-                headers=self._get_headers(),
-                catch_response=True,
-            ) as response:
-                if response.status_code in [200, 201]:
-                    response.success()
-                else:
-                    response.failure(f"Registration failed: {response.status_code}")
-        except Exception as e:
-            # API might not be available, continue anyway
-            pass
-
-    def on_stop(self) -> None:
-        """Clean up agent session."""
-        try:
-            self.client.post(
-                f"/api/agents/{self.agent_id}/deregister",
-                headers=self._get_headers(),
-                catch_response=True,
-            )
-        except Exception:
-            pass
-
-
-class MessageSendingUser(HeretekSwarmUser):
-    """User that sends A2A messages."""
-    
-    abstract = True
-
-    @task(10)
-    def send_task_message(self) -> None:
-        """Send a task-related message."""
-        payload = {
-            "sender_id": self.agent_id,
-            "receiver_id": f"agent-{random.randint(1, 100)}",
-            "message_type": "task_request",
-            "payload": {
-                "task": random.choice(["analyze", "execute", "query", "report"]),
-                "priority": random.choice(["low", "medium", "high"]),
-            },
-        }
-
-        with self.client.post(
-            "/api/messages/send",
-            json=payload,
-            headers=self._get_headers(),
-            catch_response=True,
-        ) as response:
-            elapsed_ms = response.elapsed.total_seconds() * 1000
-            if response.status_code == 200:
-                if elapsed_ms > MESSAGE_LATENCY_BASELINE_MS:
-                    response.failure(f"Latency {elapsed_ms:.0f}ms exceeds baseline")
-                else:
-                    response.success()
-            else:
-                response.failure(f"Status {response.status_code}")
-
-    @task(5)
-    def send_consensus_message(self) -> None:
-        """Send a consensus-related message (for triad agents)."""
-        if self.agent_profile and self.agent_profile.agent_type in ["alpha", "beta", "charlie", "steward"]:
-            payload = {
-                "sender_id": self.agent_id,
-                "message_type": "deliberation_vote",
-                "payload": {
-                    "proposal_id": f"prop-{random.randint(1, 1000)}",
-                    "vote": random.choice(["approve", "reject", "abstain"]),
-                },
-            }
-            self.client.post(
-                "/api/consensus/vote",
-                json=payload,
-                headers=self._get_headers(),
-                catch_response=True,
-            )
-
-
-class TaskExecutionUser(HeretekSwarmUser):
-    """User that executes tasks."""
-    
-    abstract = True
-
-    @task(8)
-    def execute_simple_task(self) -> None:
-        """Execute a simple task."""
-        if self.agent_profile and self.agent_profile.task_complexity in ["simple", "medium"]:
-            self.client.post(
-                "/api/tasks/execute",
-                json={
-                    "task_type": "simple",
-                    "agent_id": self.agent_id,
-                },
-                headers=self._get_headers(),
-                catch_response=True,
-            )
-
     @task(3)
-    def execute_complex_task(self) -> None:
-        """Execute a complex task (longer duration)."""
-        if self.agent_profile and self.agent_profile.task_complexity == "complex":
-            self.client.post(
-                "/api/tasks/execute",
-                json={
-                    "task_type": "complex",
-                    "agent_id": self.agent_id,
-                },
-                headers=self._get_headers(),
-                catch_response=True,
-            )
-
-
-class MemoryOperationUser(HeretekSwarmUser):
-    """User that performs memory operations."""
+    def health_check(self):
+        """Test health endpoint - most common operation"""
+        self.client.get("/api/health", name="Health Check")
     
-    abstract = True
+    @task(2)
+    def get_agents(self):
+        """Test agents listing endpoint"""
+        headers = {}
+        if self.auth_token:
+            headers["Authorization"] = f"Bearer {self.auth_token}"
+        
+        self.client.get("/api/agents", headers=headers, name="List Agents")
+    
+    @task(2)
+    def get_agent_status(self):
+        """Test individual agent status"""
+        agent_id = f"agent-{random.randint(1, 23)}"
+        headers = {}
+        if self.auth_token:
+            headers["Authorization"] = f"Bearer {self.auth_token}"
+        
+        self.client.get(f"/api/agents/{agent_id}/status", headers=headers, name="Agent Status")
+    
+    @task(1)
+    def search_memory(self):
+        """Test memory search endpoint"""
+        headers = {}
+        if self.auth_token:
+            headers["Authorization"] = f"Bearer {self.auth_token}"
+        
+        queries = [
+            "test query",
+            "agent memory",
+            "conversation history",
+            "task context",
+            "knowledge base"
+        ]
+        
+        self.client.post(
+            "/api/memory/search",
+            json={"query": random.choice(queries), "limit": 10},
+            headers=headers,
+            name="Search Memory"
+        )
+    
+    @task(1)
+    def get_consciousness_metrics(self):
+        """Test consciousness metrics endpoint"""
+        agent_id = f"agent-{random.randint(1, 23)}"
+        headers = {}
+        if self.auth_token:
+            headers["Authorization"] = f"Bearer {self.auth_token}"
+        
+        self.client.get(f"/api/agents/{agent_id}/consciousness", headers=headers, name="Consciousness Metrics")
+    
+    @task(1)
+    def get_event_mesh_stats(self):
+        """Test event mesh statistics"""
+        headers = {}
+        if self.auth_token:
+            headers["Authorization"] = f"Bearer {self.auth_token}"
+        
+        self.client.get("/api/eventmesh/stats", headers=headers, name="Event Mesh Stats")
 
-    @task(5)
-    def store_memory(self) -> None:
-        """Store data in memory."""
+
+class HeavyUser(HttpUser):
+    """
+    Simulates heavy API client behavior
+    
+    Tests: Complex operations, large payloads, multi-step workflows
+    """
+    wait_time = between(1, 5)  # Longer think time for complex operations
+    host = "http://localhost:8000"
+    
+    auth_token = None
+    
+    def on_start(self):
+        """Called when simulated user starts"""
+        self.auth_token = self.client.get("/api/auth/token").json().get("token", None)
+    
+    @task(2)
+    def create_agent(self):
+        """Test agent creation - write operation"""
+        headers = {}
+        if self.auth_token:
+            headers["Authorization"] = f"Bearer {self.auth_token}"
+        
+        agent_data = {
+            "agent_id": f"test-agent-{uuid4()}",
+            "agent_type": "worker",
+            "character": {
+                "name": f"Test Agent {random.randint(1, 100)}",
+                "description": "Load test agent"
+            }
+        }
+        
+        self.client.post(
+            "/api/agents",
+            json=agent_data,
+            headers=headers,
+            name="Create Agent"
+        )
+    
+    @task(2)
+    def store_memory(self):
+        """Test memory storage - write operation"""
+        headers = {}
+        if self.auth_token:
+            headers["Authorization"] = f"Bearer {self.auth_token}"
+        
+        memory_data = {
+            "agent_id": f"agent-{random.randint(1, 23)}",
+            "content": f"Load test memory content {uuid4()}",
+            "memory_type": "episodic",
+            "tags": ["load-test", "automated"],
+            "importance_score": random.uniform(0.1, 0.9)
+        }
+        
         self.client.post(
             "/api/memory/store",
-            json={
-                "key": f"mem-{random.randint(1, 10000)}",
-                "value": f"test-data-{time.time()}",
-                "agent_id": self.agent_id,
-            },
-            headers=self._get_headers(),
-            catch_response=True,
+            json=memory_data,
+            headers=headers,
+            name="Store Memory"
         )
-
-    @task(10)
-    def query_memory(self) -> None:
-        """Query memory for retrieval."""
-        self.client.get(
-            f"/api/memory/query?agent_id={self.agent_id}",
-            headers=self._get_headers(),
-            catch_response=True,
-        )
-
-
-class ConsciousnessMetricsUser(HeretekSwarmUser):
-    """User that queries consciousness metrics."""
     
-    abstract = True
-
-    @task(3)
-    def get_consciousness_metrics(self) -> None:
-        """Get consciousness metrics for agent."""
-        self.client.get(
-            f"/api/consciousness/metrics?agent_id={self.agent_id}",
-            headers=self._get_headers(),
-            catch_response=True,
+    @task(1)
+    def send_agent_message(self):
+        """Test agent message sending - complex operation"""
+        headers = {}
+        if self.auth_token:
+            headers["Authorization"] = f"Bearer {self.auth_token}"
+        
+        message_data = {
+            "target_agent": f"agent-{random.randint(1, 23)}",
+            "message_type": "request",
+            "content": {
+                "task": f"Process data batch {random.randint(1, 100)}",
+                "priority": random.choice(["low", "medium", "high"]),
+                "payload": {"data": list(range(random.randint(10, 100)))}
+            }
+        }
+        
+        self.client.post(
+            "/api/agents/message",
+            json=message_data,
+            headers=headers,
+            name="Send Agent Message"
+        )
+    
+    @task(1)
+    def initiate_consensus(self):
+        """Test consensus initiation - multi-agent operation"""
+        headers = {}
+        if self.auth_token:
+            headers["Authorization"] = f"Bearer {self.auth_token}"
+        
+        consensus_data = {
+            "proposal_id": f"prop-{uuid4()}",
+            "description": f"Load test consensus {random.randint(1, 100)}",
+            "participants": [f"agent-{i}" for i in range(1, random.randint(4, 10))],
+            "threshold": 0.7
+        }
+        
+        self.client.post(
+            "/api/consensus/initiate",
+            json=consensus_data,
+            headers=headers,
+            name="Initiate Consensus"
         )
 
 
-# ============== EVENT HANDLERS ==============
+class WebSocketUser(HttpUser):
+    """
+    Simulates WebSocket client behavior
+    
+    Tests: Real-time communication, message streaming
+    """
+    wait_time = between(0.1, 1)  # Short wait time for real-time ops
+    host = "ws://localhost:8000"
+    
+    @task
+    def connect_and_listen(self):
+        """Test WebSocket connection and message reception"""
+        # Note: Locust WebSocket support requires locust-websocket package
+        # This is a placeholder for WebSocket testing
+        pass
+
+
+# =============================================================================
+# Event Handlers
+# =============================================================================
+
+@events.request.add_listener
+def on_request(request_type, name, response_time, response_length, exception, **kwargs):
+    """Log slow requests"""
+    if response_time > 1000:  # > 1 second
+        print(f"SLOW REQUEST: {name} took {response_time}ms")
+
 
 @events.test_start.add_listener
 def on_test_start(environment, **kwargs):
-    """Called when load test starts."""
-    print(f"\n{'=' * 60}")
-    print("HERETEK SWARM LOAD TEST")
-    print(f"Target: {CONCURRENT_AGENT_TARGET}+ concurrent agents")
-    print(f"Latency baseline: <{MESSAGE_LATENCY_BASELINE_MS}ms")
-    print(f"Host: {API_HOST}")
-    print(f"{'=' * 60}\n")
+    """Called when load test starts"""
+    print(f"Load test starting - Target host: {environment.host}")
+    print(f"Performance targets: p95 < 100ms, p99 < 500ms")
 
 
 @events.test_stop.add_listener
 def on_test_stop(environment, **kwargs):
-    """Called when load test stops."""
-    print(f"\n{'=' * 60}")
-    print("LOAD TEST COMPLETE")
-    print(f"{'=' * 60}\n")
+    """Called when load test stops"""
+    stats = environment.stats
     
-    # Check if we met the target
-    if isinstance(environment.runner, MasterRunner):
-        stats = environment.runner.stats
-        print(f"Total requests: {stats.total.num_requests}")
-        print(f"Total failures: {stats.total.num_failures}")
-        print(f"Average response time: {stats.total.avg_response_time:.2f}ms")
-        
-        if stats.total.avg_response_time > MESSAGE_LATENCY_BASELINE_MS:
-            print(f"\n⚠️  WARNING: Average response time exceeds {MESSAGE_LATENCY_BASELINE_MS}ms baseline")
-            print("   FLAG FOR REFACTORING per Phase Directives")
+    print("\n" + "=" * 60)
+    print("LOAD TEST RESULTS")
+    print("=" * 60)
+    
+    # Overall statistics
+    total_requests = stats.total.num_requests
+    total_failures = stats.total.num_failures
+    failure_rate = (total_failures / total_requests * 100) if total_requests > 0 else 0
+    
+    print(f"Total Requests: {total_requests}")
+    print(f"Total Failures: {total_failures}")
+    print(f"Failure Rate: {failure_rate:.2f}%")
+    
+    # Latency percentiles
+    print(f"\nLatency Percentiles:")
+    print(f"  p50:  {stats.total.get_response_time_percentile(0.5):.2f}ms")
+    print(f"  p95:  {stats.total.get_response_time_percentile(0.95):.2f}ms")
+    print(f"  p99:  {stats.total.get_response_time_percentile(0.99):.2f}ms")
+    print(f"  Avg:  {stats.total.avg_response_time:.2f}ms")
+    
+    # Performance assessment
+    p95 = stats.total.get_response_time_percentile(0.95)
+    p99 = stats.total.get_response_time_percentile(0.99)
+    
+    print(f"\nPerformance Assessment:")
+    if p95 < 100 and p99 < 500:
+        print("  ✅ PASS - All latency targets met")
+    elif p95 < 200 and p99 < 1000:
+        print("  ⚠️  WARNING - Latency targets exceeded but acceptable")
+    else:
+        print("  ❌ FAIL - Latency targets significantly exceeded")
+    
+    print("=" * 60 + "\n")
 
 
-# ============== CUSTOM SHAPE ==============
+# =============================================================================
+# Run Configuration
+# =============================================================================
 
-class SwarmLoadTestShape:
-    """
-    Custom load test shape for realistic agent scaling.
-    
-    Phases:
-    1. Ramp-up: Gradually increase to 1000 users
-    2. Sustained: Maintain 1000 users
-    3. Spike: Brief spike to 1500 users
-    4. Ramp-down: Gradually decrease
-    """
-    
-    def tick(self):
-        run_time = self.get_run_time()
-        
-        if run_time < 60:
-            # Ramp up to 1000 users over 1 minute
-            return (int(run_time / 60 * 1000), 50)
-        elif run_time < 300:
-            # Sustained load at 1000 users for 4 minutes
-            return (1000, 10)
-        elif run_time < 330:
-            # Spike to 1500 users for 30 seconds
-            return (1500, 100)
-        elif run_time < 390:
-            # Return to 1000 users
-            return (1000, 50)
-        else:
-            # Ramp down
-            remaining = max(0, 1000 - int((run_time - 390) / 30 * 200))
-            return (remaining, 50) if remaining > 0 else None
+if __name__ == "__main__":
+    import os
+    os.system("locust -f tests/load/locustfile.py --host=http://localhost:8000")

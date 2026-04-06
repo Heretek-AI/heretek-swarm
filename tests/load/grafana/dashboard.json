@@ -1,0 +1,296 @@
+{
+  "dashboard": {
+    "id": null,
+    "uid": "heretek-swarm-load-test",
+    "title": "Heretek Swarm Load Testing Dashboard",
+    "description": "Real-time monitoring for Heretek Swarm load testing with Locust and k6",
+    "tags": ["heretek", "load-testing", "k6", "locust"],
+    "timezone": "browser",
+    "schemaVersion": 38,
+    "version": 1,
+    "refresh": "5s",
+    "panels": [
+      {
+        "id": 1,
+        "gridPos": { "h": 4, "w": 24, "x": 0, "y": 0 },
+        "type": "stat",
+        "title": "Performance Status",
+        "targets": [
+          {
+            "expr": "http_req_duration{quantile=\"0.95\"}",
+            "legendFormat": "p95 Latency"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "thresholds": {
+              "steps": [
+                { "color": "green", "value": null },
+                { "color": "yellow", "value": 100 },
+                { "color": "red", "value": 200 }
+              ]
+            },
+            "unit": "ms"
+          }
+        }
+      },
+      {
+        "id": 2,
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 4 },
+        "type": "timeseries",
+        "title": "Request Rate",
+        "targets": [
+          {
+            "expr": "rate(http_reqs[1m])",
+            "legendFormat": "Requests/sec"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "reqps"
+          }
+        }
+      },
+      {
+        "id": 3,
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 4 },
+        "type": "timeseries",
+        "title": "Failure Rate",
+        "targets": [
+          {
+            "expr": "rate(http_req_failed[1m]) * 100",
+            "legendFormat": "Failure Rate %"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "thresholds": {
+              "steps": [
+                { "color": "green", "value": null },
+                { "color": "yellow", "value": 1 },
+                { "color": "red", "value": 5 }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 4,
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 12 },
+        "type": "timeseries",
+        "title": "Latency Percentiles",
+        "targets": [
+          {
+            "expr": "http_req_duration{quantile=\"0.50\"}",
+            "legendFormat": "p50"
+          },
+          {
+            "expr": "http_req_duration{quantile=\"0.95\"}",
+            "legendFormat": "p95"
+          },
+          {
+            "expr": "http_req_duration{quantile=\"0.99\"}",
+            "legendFormat": "p99"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "ms",
+            "thresholds": {
+              "steps": [
+                { "color": "green", "value": null },
+                { "color": "yellow", "value": 100 },
+                { "color": "red", "value": 500 }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 5,
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 12 },
+        "type": "timeseries",
+        "title": "Active Users (VUs)",
+        "targets": [
+          {
+            "expr": "vus",
+            "legendFormat": "Virtual Users"
+          },
+          {
+            "expr": "vus_max",
+            "legendFormat": "Max VUs"
+          }
+        ]
+      },
+      {
+        "id": 6,
+        "gridPos": { "h": 8, "w": 8, "x": 0, "y": 20 },
+        "type": "stat",
+        "title": "Total Requests",
+        "targets": [
+          {
+            "expr": "sum(http_reqs)",
+            "legendFormat": "Requests"
+          }
+        ]
+      },
+      {
+        "id": 7,
+        "gridPos": { "h": 8, "w": 8, "x": 8, "y": 20 },
+        "type": "stat",
+        "title": "Total Failures",
+        "targets": [
+          {
+            "expr": "sum(http_req_failed)",
+            "legendFormat": "Failures"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "thresholds": {
+              "steps": [
+                { "color": "green", "value": null },
+                { "color": "yellow", "value": 10 },
+                { "color": "red", "value": 100 }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 8,
+        "gridPos": { "h": 8, "w": 8, "x": 16, "y": 20 },
+        "type": "stat",
+        "title": "Success Rate",
+        "targets": [
+          {
+            "expr": "(1 - sum(http_req_failed) / sum(http_reqs)) * 100",
+            "legendFormat": "Success %"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "percent",
+            "thresholds": {
+              "steps": [
+                { "color": "red", "value": null },
+                { "color": "yellow", "value": 95 },
+                { "color": "green", "value": 99 }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 9,
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 28 },
+        "type": "timeseries",
+        "title": "Health Check Latency",
+        "targets": [
+          {
+            "expr": "health_check_latency_ms{quantile=\"0.95\"}",
+            "legendFormat": "Health Check p95"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "ms",
+            "thresholds": {
+              "steps": [
+                { "color": "green", "value": null },
+                { "color": "yellow", "value": 50 },
+                { "color": "red", "value": 100 }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 10,
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 28 },
+        "type": "timeseries",
+        "title": "Agent Operations Latency",
+        "targets": [
+          {
+            "expr": "agent_ops_latency_ms{quantile=\"0.95\"}",
+            "legendFormat": "Agent Ops p95"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "ms",
+            "thresholds": {
+              "steps": [
+                { "color": "green", "value": null },
+                { "color": "yellow", "value": 100 },
+                { "color": "red", "value": 200 }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 11,
+        "gridPos": { "h": 8, "w": 12, "x": 0, "y": 36 },
+        "type": "timeseries",
+        "title": "Memory Operations Latency",
+        "targets": [
+          {
+            "expr": "memory_ops_latency_ms{quantile=\"0.95\"}",
+            "legendFormat": "Memory Ops p95"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "ms",
+            "thresholds": {
+              "steps": [
+                { "color": "green", "value": null },
+                { "color": "yellow", "value": 150 },
+                { "color": "red", "value": 300 }
+              ]
+            }
+          }
+        }
+      },
+      {
+        "id": 12,
+        "gridPos": { "h": 8, "w": 12, "x": 12, "y": 36 },
+        "type": "timeseries",
+        "title": "Consensus Operations Latency",
+        "targets": [
+          {
+            "expr": "consensus_ops_latency_ms{quantile=\"0.95\"}",
+            "legendFormat": "Consensus Ops p95"
+          }
+        ],
+        "fieldConfig": {
+          "defaults": {
+            "unit": "ms",
+            "thresholds": {
+              "steps": [
+                { "color": "green", "value": null },
+                { "color": "yellow", "value": 300 },
+                { "color": "red", "value": 500 }
+              ]
+            }
+          }
+        }
+      }
+    ],
+    "templating": {
+      "list": [
+        {
+          "name": "datasource",
+          "type": "datasource",
+          "query": "prometheus",
+          "current": {
+            "text": "Prometheus",
+            "value": "Prometheus"
+          }
+        }
+      ]
+    }
+  }
+}

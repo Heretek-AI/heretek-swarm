@@ -30,6 +30,7 @@ from heretek_swarm.actors.validation import (
     LineageRequest,
 )
 from heretek_swarm.memory.base import DualTierMemory, MemoryEntry, MemoryQuery
+from heretek_swarm.knowledge.unified_access import UnifiedKnowledgeAccess, KnowledgeQueryResult
 
 logger = structlog.get_logger("HistorianAgent")
 
@@ -207,12 +208,16 @@ class HistorianAgent(AgentActor):
         )
 
         self.memory_system = memory_system or DualTierMemory()
+        self.rag_pipeline = kwargs.get('rag_pipeline')
         self.context_window = context_window
 
         # Historian-specific state with LRU caches
         self.decision_lineage: Dict[str, List[str]] = {}
         self.pattern_cache = LRUCache(max_size=pattern_cache_max_size)
         self.context_cache = LRUCache(max_size=context_cache_max_size)
+        
+        # Unified knowledge access layer
+        self.knowledge_access: Optional[UnifiedKnowledgeAccess] = None
 
         logger.info(f"[{self.agent_id}] Historian agent initialized")
 
@@ -221,12 +226,27 @@ class HistorianAgent(AgentActor):
         # Initialize memory system
         await self.memory_system.initialize()
 
+        # Initialize unified knowledge access layer
+        if self.rag_pipeline:
+            self.knowledge_access = UnifiedKnowledgeAccess(
+                memory_system=self.memory_system,
+                rag_pipeline=self.rag_pipeline,
+            )
+            logger.info(f"[{self.agent_id}] Unified knowledge access initialized")
+        else:
+            self.knowledge_access = UnifiedKnowledgeAccess(
+                memory_system=self.memory_system,
+                rag_pipeline=None,
+            )
+            logger.info(f"[{self.agent_id}] Knowledge access initialized (memory only)")
+
         # Register message handlers
         self.register_handler("store_memory", self._handle_store_memory)
         self.register_handler("retrieve_context", self._handle_retrieve_context)
         self.register_handler("query_history", self._handle_query_history)
         self.register_handler("track_lineage", self._handle_track_lineage)
         self.register_handler("pattern_match", self._handle_pattern_match)
+        self.register_handler("unified_query", self._handle_unified_query)
 
         logger.info(f"[{self.agent_id}] Historian initialization complete")
 
@@ -438,6 +458,96 @@ class HistorianAgent(AgentActor):
                 "pattern_count": len(patterns),
             },
             correlation_id=message.correlation_id,
+        )
+
+    async def _handle_unified_query(self, message: ActorMessage) -> None:
+        """Handle unified knowledge query requests using the knowledge access layer."""
+        try:
+            query_text = message.content.get("query")
+            sources = message.content.get("sources", ["memory", "rag"])
+            limit = message.content.get("limit", 10)
+            rerank = message.content.get("rerank", True)
+            diversity_lambda = message.content.get("diversity_lambda", 0.5)
+            filters = message.content.get("filters", {})
+            
+            if not query_text:
+                logger.error(f"[{self.agent_id}] Unified query requires query text")
+                return
+            
+            logger.debug(f"[{self.agent_id}] Executing unified query: {query_text[:50]}")
+            
+            # Execute unified query
+            result = await self.knowledge_access.query(
+                query=query_text,
+                sources=sources,
+                limit=limit,
+                rerank=rerank,
+                diversity_lambda=diversity_lambda,
+                filters=filters,
+            )
+            
+            # Send response
+            reply_topic = message.content.get("reply_to", "knowledge")
+            await self.send(
+                topic=reply_topic,
+                content={
+                    "message_type": "unified_query_response",
+                    "query": query_text,
+                    "results": result.to_dict(),
+                    "entry_count": len(result.entries),
+                    "total_results": result.total_results,
+                    "query_time_ms": result.query_time_ms,
+                    "reranking_applied": result.reranking_applied,
+                },
+                correlation_id=message.correlation_id,
+            )
+            
+        except Exception as e:
+            logger.error(f"[{self.agent_id}] Unified query error: {e}", exc_info=True)
+            if message.content.get("reply_to"):
+                await self.send(
+                    topic=message.content["reply_to"],
+                    content={
+                        "message_type": "error_response",
+                        "error": str(e),
+                    },
+                    correlation_id=message.correlation_id,
+                )
+
+    async def unified_query(
+        self,
+        query: str,
+        sources: Optional[List[str]] = None,
+        limit: int = 10,
+        rerank: bool = True,
+        diversity_lambda: float = 0.5,
+        filters: Optional[Dict[str, Any]] = None,
+    ) -> KnowledgeQueryResult:
+        """
+        Execute a unified knowledge query.
+        
+        Args:
+            query: Search query string
+            sources: List of sources (memory, rag)
+            limit: Maximum results
+            rerank: Apply MMR reranking
+            diversity_lambda: MMR diversity parameter
+            filters: Additional filters
+            
+        Returns:
+            KnowledgeQueryResult with merged and reranked entries
+        """
+        if not self.knowledge_access:
+            logger.warning(f"[{self.agent_id}] Knowledge access not initialized")
+            return KnowledgeQueryResult(entries=[], total_results=0)
+        
+        return await self.knowledge_access.query(
+            query=query,
+            sources=sources or ["memory", "rag"],
+            limit=limit,
+            rerank=rerank,
+            diversity_lambda=diversity_lambda,
+            filters=filters or {},
         )
 
     async def store_memory(
