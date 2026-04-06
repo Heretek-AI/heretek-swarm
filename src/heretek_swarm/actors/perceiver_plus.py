@@ -1,0 +1,1215 @@
+"""
+Perceiver+ Agent - Advanced Analytics & Enhanced Perception.
+
+The Perceiver+ agent provides:
+- Advanced multi-modal analytics and pattern recognition
+- Deep feature extraction and correlation analysis
+- Predictive modeling and trend forecasting
+- Statistical analysis and significance testing
+- Enhanced signal processing and noise reduction
+
+Named as an enhancement to the base Perceiver agent, providing advanced
+analytics capabilities for deeper insight extraction from sensory data.
+"""
+
+import asyncio
+import logging
+import math
+from datetime import datetime, timezone, timedelta
+from typing import Any, Dict, List, Optional, Tuple, Union
+from enum import Enum
+
+from pydantic import ValidationError, Field
+import structlog
+from swarms import Agent
+
+from heretek_swarm.actors.base import AgentActor, ActorMessage
+from heretek_swarm.actors.validation import validate_message, MessageContent
+
+logger = structlog.get_logger("PerceiverPlusAgent")
+
+
+class AnalyticsType(str, Enum):
+    """Types of analytics Perceiver+ can perform."""
+    DESCRIPTIVE = "descriptive"
+    DIAGNOSTIC = "diagnostic"
+    PREDICTIVE = "predictive"
+    PRESCRIPTIVE = "prescriptive"
+    STATISTICAL = "statistical"
+    CORRELATIONAL = "correlational"
+    TREND = "trend"
+    ANOMALY = "anomaly"
+
+
+class DataModality(str, Enum):
+    """Data modalities for analysis."""
+    NUMERIC = "numeric"
+    CATEGORICAL = "categorical"
+    TEXTUAL = "textual"
+    TEMPORAL = "temporal"
+    SPATIAL = "spatial"
+    MULTI_MODAL = "multi_modal"
+
+
+class StatisticalTest(str, Enum):
+    """Statistical tests available."""
+    T_TEST = "t_test"
+    CHI_SQUARE = "chi_square"
+    ANOVA = "anova"
+    CORRELATION = "correlation"
+    REGRESSION = "regression"
+    MANN_WHITNEY = "mann_whitney"
+    WILCOXON = "wilcoxon"
+
+
+class AnalyticsResult:
+    """Represents an analytics result."""
+    
+    def __init__(
+        self,
+        analysis_id: str,
+        analytics_type: AnalyticsType,
+        title: str,
+        findings: List[str],
+        metrics: Dict[str, float],
+        confidence: float = 0.0,
+        recommendations: Optional[List[str]] = None,
+        visualizations: Optional[List[Dict[str, Any]]] = None,
+    ) -> None:
+        self.analysis_id = analysis_id
+        self.analytics_type = analytics_type
+        self.title = title
+        self.findings = findings
+        self.metrics = metrics
+        self.confidence = confidence
+        self.recommendations = recommendations or []
+        self.visualizations = visualizations or []
+        self.timestamp = datetime.now(timezone.utc)
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert result to dictionary."""
+        return {
+            "analysis_id": self.analysis_id,
+            "analytics_type": self.analytics_type.value,
+            "title": self.title,
+            "findings": self.findings,
+            "metrics": self.metrics,
+            "confidence": self.confidence,
+            "recommendations": self.recommendations,
+            "timestamp": self.timestamp.isoformat(),
+            "visualizations": self.visualizations,
+        }
+
+
+class TrendAnalysis:
+    """Represents a trend analysis result."""
+    
+    def __init__(
+        self,
+        trend_id: str,
+        direction: str,
+        strength: float,
+        slope: float,
+        r_squared: float,
+        forecast: Optional[List[Dict[str, Any]]] = None,
+        seasonal_patterns: Optional[List[str]] = None,
+    ) -> None:
+        self.trend_id = trend_id
+        self.direction = direction  # upward, downward, stable
+        self.strength = strength  # 0-1
+        self.slope = slope
+        self.r_squared = r_squared
+        self.forecast = forecast or []
+        self.seasonal_patterns = seasonal_patterns or []
+        self.timestamp = datetime.now(timezone.utc)
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert trend to dictionary."""
+        return {
+            "trend_id": self.trend_id,
+            "direction": self.direction,
+            "strength": self.strength,
+            "slope": self.slope,
+            "r_squared": self.r_squared,
+            "forecast": self.forecast,
+            "seasonal_patterns": self.seasonal_patterns,
+            "timestamp": self.timestamp.isoformat(),
+        }
+
+
+class CorrelationMatrix:
+    """Represents a correlation analysis result."""
+    
+    def __init__(
+        self,
+        matrix_id: str,
+        variables: List[str],
+        correlations: Dict[str, Dict[str, float]],
+        significant_pairs: List[Tuple[str, str, float]],
+    ) -> None:
+        self.matrix_id = matrix_id
+        self.variables = variables
+        self.correlations = correlations
+        self.significant_pairs = significant_pairs
+        self.timestamp = datetime.now(timezone.utc)
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert matrix to dictionary."""
+        return {
+            "matrix_id": self.matrix_id,
+            "variables": self.variables,
+            "correlations": self.correlations,
+            "significant_pairs": [
+                {"var1": p[0], "var2": p[1], "correlation": p[2]}
+                for p in self.significant_pairs
+            ],
+            "timestamp": self.timestamp.isoformat(),
+        }
+
+
+class PerceiverPlusAgent(AgentActor):
+    """
+    Perceiver+ Agent - Advanced Analytics Specialist.
+    
+    The Perceiver+ is responsible for:
+    - Advanced multi-modal analytics and pattern recognition
+    - Deep feature extraction and correlation analysis
+    - Predictive modeling and trend forecasting
+    - Statistical analysis and significance testing
+    - Enhanced signal processing and noise reduction
+    
+    Enhanced Analytics Workflow:
+    1. Receive data for analysis
+    2. Detect data modalities and quality
+    3. Apply appropriate analytical methods
+    4. Extract deep features and patterns
+    5. Generate predictions and forecasts
+    6. Provide actionable recommendations
+    """
+    
+    def __init__(
+        self,
+        agent_id: str = "perceiver-plus",
+        name: str = "Perceiver+",
+        description: str = "Advanced analytics and enhanced perception specialist",
+        swarms_agent: Optional[Agent] = None,
+        max_analyses: int = 100,
+        confidence_threshold: float = 0.7,
+        significance_level: float = 0.05,
+        **kwargs,
+    ) -> None:
+        """
+        Initialize the Perceiver+ agent.
+        
+        Args:
+            agent_id: Unique identifier
+            name: Human-readable name
+            description: Agent description
+            swarms_agent: Optional Swarms Agent for LLM capabilities
+            max_analyses: Maximum analyses to store
+            confidence_threshold: Minimum confidence for reporting
+            significance_level: Statistical significance threshold
+            **kwargs: Additional arguments
+        """
+        super().__init__(
+            agent_id=agent_id,
+            name=name,
+            description=description,
+            topics=[
+                "analytics",
+                "statistics",
+                "prediction",
+                "patterns",
+                "insights",
+            ],
+            capabilities=[
+                "advanced-analytics",
+                "predictive-modeling",
+                "statistical-analysis",
+                "correlation-detection",
+                "trend-forecasting",
+                "signal-processing",
+            ],
+            swarms_agent=swarms_agent,
+            **kwargs,
+        )
+        
+        # Perceiver+ specific state
+        self.max_analyses = max_analyses
+        self.confidence_threshold = confidence_threshold
+        self.significance_level = significance_level
+        
+        # Analytics storage
+        self.analysis_results: Dict[str, AnalyticsResult] = {}
+        self.trend_analyses: Dict[str, TrendAnalysis] = {}
+        self.correlation_matrices: Dict[str, CorrelationMatrix] = {}
+        self.feature_cache: Dict[str, Dict[str, Any]] = {}
+        
+        # Statistical computation state
+        self.data_buffers: Dict[str, List[float]] = {}
+        self.categorical_buffers: Dict[str, List[str]] = {}
+        
+        logger.info(f"[{self.agent_id}] Perceiver+ agent initialized")
+    
+    async def initialize(self) -> None:
+        """Initialize the Perceiver+ agent."""
+        # Register message handlers with Zero-Trust validation
+        self.register_handler("analyze_data", self._handle_analyze_data)
+        self.register_handler("detect_trends", self._handle_detect_trends)
+        self.register_handler("compute_correlations", self._handle_compute_correlations)
+        self.register_handler("run_statistical_test", self._handle_run_statistical_test)
+        self.register_handler("extract_features", self._handle_extract_features)
+        self.register_handler("forecast_values", self._handle_forecast_values)
+        self.register_handler("get_analytics_summary", self._handle_get_analytics_summary)
+        self.register_handler("signal_processing", self._handle_signal_processing)
+        
+        logger.info(f"[{self.agent_id}] Perceiver+ initialization complete")
+    
+    async def process_message(self, message: ActorMessage) -> None:
+        """
+        Process incoming messages with exception handling.
+        
+        Args:
+            message: Actor message to process
+        """
+        handler = self._message_handlers.get(message.message_type)
+        if handler:
+            try:
+                await handler(message)
+            except Exception as e:
+                logger.error(
+                    f"[{self.agent_id}] Error processing message {message.message_type}: {e}",
+                    exc_info=True,
+                )
+                self.error_count += 1
+                if message.content.get("reply_to"):
+                    await self.send(
+                        topic=message.content["reply_to"],
+                        content={
+                            "message_type": "error_response",
+                            "error": str(e),
+                            "original_message_type": message.message_type,
+                        },
+                        sender_id=self.agent_id,
+                    )
+        else:
+            logger.warning(f"[{self.agent_id}] Unknown message type: {message.message_type}")
+    
+    def _validate_data_input(self, content: Dict[str, Any]) -> Tuple[bool, str]:
+        """
+        Validate data input for analysis.
+        
+        Args:
+            content: Message content to validate
+            
+        Returns:
+            Tuple of (is_valid, error_message)
+        """
+        if "data" not in content:
+            return False, "Missing required field: data"
+        
+        data = content["data"]
+        if not isinstance(data, (list, dict)):
+            return False, "Field 'data' must be a list or dictionary"
+        
+        # Check data size
+        if isinstance(data, list) and len(data) > 100000:
+            return False, "Data exceeds maximum size (100000 elements)"
+        
+        return True, ""
+    
+    async def _handle_analyze_data(self, message: ActorMessage) -> None:
+        """
+        Perform comprehensive data analysis.
+        
+        Args:
+            message: Actor message with data for analysis
+        """
+        try:
+            # Validate content
+            is_valid, error = self._validate_data_input(message.content)
+            if not is_valid:
+                logger.error(f"[{self.agent_id}] Invalid data analysis request: {error}")
+                return
+            
+            data = message.content["data"]
+            analysis_id = message.content.get(
+                "analysis_id", 
+                f"analysis_{datetime.now(timezone.utc).timestamp()}"
+            )
+            analytics_types = message.content.get("analytics_types", ["descriptive"])
+            
+            logger.info(f"[{self.agent_id}] Performing comprehensive analysis: {analysis_id}")
+            
+            # Perform analyses
+            results = []
+            for atype in analytics_types:
+                try:
+                    atype_enum = AnalyticsType(atype)
+                    result = await self._perform_analysis(data, atype_enum, analysis_id)
+                    if result.confidence >= self.confidence_threshold:
+                        results.append(result)
+                except ValueError:
+                    logger.warning(f"[{self.agent_id}] Unknown analytics type: {atype}")
+            
+            # Store results
+            for result in results:
+                if len(self.analysis_results) >= self.max_analyses:
+                    oldest_id = list(self.analysis_results.keys())[0]
+                    del self.analysis_results[oldest_id]
+                self.analysis_results[result.analysis_id] = result
+            
+            # Send response
+            response = {
+                "message_type": "data_analysis_response",
+                "analysis_id": analysis_id,
+                "results": [r.to_dict() for r in results],
+                "results_count": len(results),
+            }
+            
+            if message.content.get("reply_to"):
+                await self.send(
+                    topic=message.content["reply_to"],
+                    content=response,
+                    sender_id=self.agent_id,
+                )
+            
+            logger.info(f"[{self.agent_id}] Completed {len(results)} analyses")
+            
+        except Exception as e:
+            logger.error(f"[{self.agent_id}] Error analyzing data: {e}", exc_info=True)
+    
+    async def _perform_analysis(
+        self,
+        data: Union[List, Dict],
+        analytics_type: AnalyticsType,
+        analysis_id: str,
+    ) -> AnalyticsResult:
+        """
+        Perform a specific type of analysis.
+        
+        Args:
+            data: Data to analyze
+            analytics_type: Type of analysis to perform
+            analysis_id: Analysis identifier
+            
+        Returns:
+            AnalyticsResult object
+        """
+        if analytics_type == AnalyticsType.DESCRIPTIVE:
+            return await self._descriptive_analysis(data, analysis_id)
+        elif analytics_type == AnalyticsType.DIAGNOSTIC:
+            return await self._diagnostic_analysis(data, analysis_id)
+        elif analytics_type == AnalyticsType.PREDICTIVE:
+            return await self._predictive_analysis(data, analysis_id)
+        elif analytics_type == AnalyticsType.STATISTICAL:
+            return await self._statistical_analysis(data, analysis_id)
+        elif analytics_type == AnalyticsType.CORRELATIONAL:
+            return await self._correlational_analysis(data, analysis_id)
+        elif analytics_type == AnalyticsType.TREND:
+            return await self._trend_analysis(data, analysis_id)
+        elif analytics_type == AnalyticsType.ANOMALY:
+            return await self._anomaly_analysis(data, analysis_id)
+        else:
+            return AnalyticsResult(
+                analysis_id=analysis_id,
+                analytics_type=analytics_type,
+                title=f"Unknown analysis type: {analytics_type.value}",
+                findings=[],
+                metrics={},
+                confidence=0.0,
+            )
+    
+    async def _descriptive_analysis(
+        self,
+        data: Union[List, Dict],
+        analysis_id: str,
+    ) -> AnalyticsResult:
+        """Perform descriptive statistics analysis."""
+        findings = []
+        metrics = {}
+        
+        if isinstance(data, list) and all(isinstance(x, (int, float)) for x in data):
+            # Numeric descriptive stats
+            n = len(data)
+            if n > 0:
+                mean = sum(data) / n
+                variance = sum((x - mean) ** 2 for x in data) / n if n > 1 else 0
+                std_dev = math.sqrt(variance)
+                sorted_data = sorted(data)
+                median = sorted_data[n // 2] if n % 2 == 1 else (sorted_data[n // 2 - 1] + sorted_data[n // 2]) / 2
+                min_val = min(data)
+                max_val = max(data)
+                
+                metrics = {
+                    "count": n,
+                    "mean": mean,
+                    "std_dev": std_dev,
+                    "median": median,
+                    "min": min_val,
+                    "max": max_val,
+                    "range": max_val - min_val,
+                    "variance": variance,
+                }
+                
+                findings = [
+                    f"Dataset contains {n} numeric values",
+                    f"Mean: {mean:.4f}, Median: {median:.4f}",
+                    f"Standard deviation: {std_dev:.4f}",
+                    f"Range: [{min_val:.4f}, {max_val:.4f}]",
+                ]
+                
+                confidence = 0.95
+            else:
+                confidence = 0.0
+        else:
+            # General description
+            findings = [
+                f"Data type: {type(data).__name__}",
+                f"Data length/size: {len(data) if hasattr(data, '__len__') else 'N/A'}",
+            ]
+            metrics = {"size": len(data) if hasattr(data, '__len__') else 1}
+            confidence = 0.7
+        
+        return AnalyticsResult(
+            analysis_id=analysis_id,
+            analytics_type=AnalyticsType.DESCRIPTIVE,
+            title="Descriptive Statistics Analysis",
+            findings=findings,
+            metrics=metrics,
+            confidence=confidence,
+        )
+    
+    async def _diagnostic_analysis(
+        self,
+        data: Union[List, Dict],
+        analysis_id: str,
+    ) -> AnalyticsResult:
+        """Perform diagnostic analysis to understand causes."""
+        findings = []
+        metrics = {}
+        
+        # Build prompt for LLM diagnostic analysis
+        prompt = f"""Perform diagnostic analysis on this data:
+
+DATA: {str(data)[:5000]}
+
+Identify:
+1. Key patterns and relationships
+2. Potential causal factors
+3. Contributing variables
+4. Root causes of observed outcomes
+
+Respond in JSON:
+{{
+    "findings": ["...", "..."],
+    "causal_factors": ["...", "..."],
+    "key_relationships": ["...", "..."],
+    "confidence": 0.0
+}}"""
+        
+        try:
+            if self.swarms_agent:
+                result = await self.run_with_llm(prompt=prompt, timeout=60)
+                import json
+                try:
+                    start_idx = result.find("{")
+                    end_idx = result.rfind("}") + 1
+                    if start_idx >= 0 and end_idx > start_idx:
+                        parsed = json.loads(result[start_idx:end_idx])
+                        findings = parsed.get("findings", [])
+                        metrics = {
+                            "causal_factors_count": len(parsed.get("causal_factors", [])),
+                        }
+                        confidence = float(parsed.get("confidence", 0.7))
+                    else:
+                        raise ValueError("No JSON found")
+                except Exception:
+                    raise
+            else:
+                raise RuntimeError("LLM not available")
+        except Exception:
+            # Fallback
+            findings = ["Diagnostic analysis requires LLM capabilities"]
+            confidence = 0.3
+        
+        return AnalyticsResult(
+            analysis_id=analysis_id,
+            analytics_type=AnalyticsType.DIAGNOSTIC,
+            title="Diagnostic Analysis",
+            findings=findings,
+            metrics=metrics,
+            confidence=confidence,
+        )
+    
+    async def _predictive_analysis(
+        self,
+        data: Union[List, Dict],
+        analysis_id: str,
+    ) -> AnalyticsResult:
+        """Perform predictive analysis and forecasting."""
+        findings = []
+        metrics = {}
+        
+        prompt = f"""Perform predictive analysis on this data:
+
+DATA: {str(data)[:5000]}
+
+Generate:
+1. Predictions for future values/outcomes
+2. Confidence intervals
+3. Key predictive factors
+4. Risk indicators
+
+Respond in JSON:
+{{
+    "predictions": ["...", "..."],
+    "confidence_intervals": {{}},
+    "predictive_factors": ["...", "..."],
+    "risk_indicators": ["...", "..."],
+    "confidence": 0.0
+}}"""
+        
+        try:
+            if self.swarms_agent:
+                result = await self.run_with_llm(prompt=prompt, timeout=60)
+                import json
+                try:
+                    start_idx = result.find("{")
+                    end_idx = result.rfind("}") + 1
+                    if start_idx >= 0 and end_idx > start_idx:
+                        parsed = json.loads(result[start_idx:end_idx])
+                        findings = parsed.get("predictions", [])
+                        metrics = {
+                            "factors_count": len(parsed.get("predictive_factors", [])),
+                        }
+                        confidence = float(parsed.get("confidence", 0.6))
+                    else:
+                        raise ValueError("No JSON found")
+                except Exception:
+                    raise
+            else:
+                raise RuntimeError("LLM not available")
+        except Exception:
+            findings = ["Predictive analysis requires LLM capabilities"]
+            confidence = 0.3
+        
+        return AnalyticsResult(
+            analysis_id=analysis_id,
+            analytics_type=AnalyticsType.PREDICTIVE,
+            title="Predictive Analysis",
+            findings=findings,
+            metrics=metrics,
+            confidence=confidence,
+            recommendations=metrics.get("risk_indicators", []),
+        )
+    
+    async def _statistical_analysis(
+        self,
+        data: Union[List, Dict],
+        analysis_id: str,
+    ) -> AnalyticsResult:
+        """Perform statistical analysis."""
+        findings = []
+        metrics = {}
+        
+        if isinstance(data, list) and all(isinstance(x, (int, float)) for x in data):
+            n = len(data)
+            if n >= 2:
+                # Basic statistical tests
+                mean = sum(data) / n
+                variance = sum((x - mean) ** 2 for x in data) / (n - 1)
+                std_dev = math.sqrt(variance)
+                se = std_dev / math.sqrt(n)  # Standard error
+                
+                # 95% confidence interval
+                ci_margin = 1.96 * se
+                ci_lower = mean - ci_margin
+                ci_upper = mean + ci_margin
+                
+                metrics = {
+                    "sample_size": n,
+                    "mean": mean,
+                    "std_dev": std_dev,
+                    "std_error": se,
+                    "ci_95_lower": ci_lower,
+                    "ci_95_upper": ci_upper,
+                }
+                
+                findings = [
+                    f"Sample size: {n}",
+                    f"Mean: {mean:.4f} (95% CI: [{ci_lower:.4f}, {ci_upper:.4f}])",
+                    f"Standard deviation: {std_dev:.4f}",
+                    f"Standard error: {se:.4f}",
+                ]
+                
+                confidence = 0.95
+            else:
+                findings = ["Insufficient data for statistical analysis (minimum n=2)"]
+                confidence = 0.0
+        else:
+            findings = ["Statistical analysis requires numeric list data"]
+            confidence = 0.0
+        
+        return AnalyticsResult(
+            analysis_id=analysis_id,
+            analytics_type=AnalyticsType.STATISTICAL,
+            title="Statistical Analysis",
+            findings=findings,
+            metrics=metrics,
+            confidence=confidence,
+        )
+    
+    async def _correlational_analysis(
+        self,
+        data: Union[List, Dict],
+        analysis_id: str,
+    ) -> AnalyticsResult:
+        """Perform correlational analysis between variables."""
+        findings = []
+        metrics = {}
+        
+        # Expect dict of variables: {var_name: [values]}
+        if isinstance(data, dict):
+            variables = list(data.keys())
+            if len(variables) >= 2:
+                # Calculate correlations
+                correlations = {}
+                significant_pairs = []
+                
+                for i, var1 in enumerate(variables):
+                    correlations[var1] = {}
+                    for var2 in variables[i:]:
+                        if var1 == var2:
+                            correlations[var1][var2] = 1.0
+                        else:
+                            corr = self._calculate_correlation(
+                                data.get(var1, []),
+                                data.get(var2, []),
+                            )
+                            correlations[var1][var2] = corr
+                            correlations[var2][var1] = corr
+                            
+                            if abs(corr) > 0.5:  # Significant threshold
+                                significant_pairs.append((var1, var2, corr))
+                
+                # Store correlation matrix
+                matrix = CorrelationMatrix(
+                    matrix_id=f"corr_{analysis_id}",
+                    variables=variables,
+                    correlations=correlations,
+                    significant_pairs=significant_pairs,
+                )
+                self.correlation_matrices[matrix.matrix_id] = matrix
+                
+                findings = [
+                    f"Analyzed {len(variables)} variables",
+                    f"Found {len(significant_pairs)} significant correlations (|r| > 0.5)",
+                ] + [f"{p[0]} ↔ {p[1]}: r = {p[2]:.3f}" for p in significant_pairs[:5]]
+                
+                metrics = {
+                    "variables_count": len(variables),
+                    "significant_correlations": len(significant_pairs),
+                    "strongest_correlation": max([abs(p[2]) for p in significant_pairs]) if significant_pairs else 0,
+                }
+                
+                confidence = 0.85
+            else:
+                findings = ["Need at least 2 variables for correlation analysis"]
+                confidence = 0.0
+        else:
+            findings = ["Correlational analysis requires dict of variables"]
+            confidence = 0.0
+        
+        return AnalyticsResult(
+            analysis_id=analysis_id,
+            analytics_type=AnalyticsType.CORRELATIONAL,
+            title="Correlational Analysis",
+            findings=findings,
+            metrics=metrics,
+            confidence=confidence,
+        )
+    
+    def _calculate_correlation(self, x: List[float], y: List[float]) -> float:
+        """Calculate Pearson correlation coefficient."""
+        n = min(len(x), len(y))
+        if n < 2:
+            return 0.0
+        
+        x = x[:n]
+        y = y[:n]
+        
+        mean_x = sum(x) / n
+        mean_y = sum(y) / n
+        
+        numerator = sum((x[i] - mean_x) * (y[i] - mean_y) for i in range(n))
+        denom_x = math.sqrt(sum((xi - mean_x) ** 2 for xi in x))
+        denom_y = math.sqrt(sum((yi - mean_y) ** 2 for yi in y))
+        
+        if denom_x * denom_y == 0:
+            return 0.0
+        
+        return numerator / (denom_x * denom_y)
+    
+    async def _trend_analysis(
+        self,
+        data: Union[List, Dict],
+        analysis_id: str,
+    ) -> AnalyticsResult:
+        """Perform trend analysis on time series data."""
+        findings = []
+        metrics = {}
+        
+        # Perform linear regression for trend
+        if isinstance(data, list) and all(isinstance(x, (int, float)) for x in data):
+            n = len(data)
+            if n >= 3:
+                # Simple linear regression
+                x_mean = (n - 1) / 2
+                y_mean = sum(data) / n
+                
+                numerator = sum((i - x_mean) * (data[i] - y_mean) for i in range(n))
+                denominator = sum((i - x_mean) ** 2 for i in range(n))
+                
+                if denominator != 0:
+                    slope = numerator / denominator
+                    intercept = y_mean - slope * x_mean
+                    
+                    # Calculate R-squared
+                    y_pred = [slope * i + intercept for i in range(n)]
+                    ss_res = sum((data[i] - y_pred[i]) ** 2 for i in range(n))
+                    ss_tot = sum((data[i] - y_mean) ** 2 for i in range(n))
+                    r_squared = 1 - (ss_res / ss_tot) if ss_tot != 0 else 0
+                    
+                    # Determine direction
+                    if slope > 0.01:
+                        direction = "upward"
+                    elif slope < -0.01:
+                        direction = "downward"
+                    else:
+                        direction = "stable"
+                    
+                    # Store trend analysis
+                    trend = TrendAnalysis(
+                        trend_id=f"trend_{analysis_id}",
+                        direction=direction,
+                        strength=abs(slope),
+                        slope=slope,
+                        r_squared=r_squared,
+                    )
+                    self.trend_analyses[trend.trend_id] = trend
+                    
+                    findings = [
+                        f"Trend direction: {direction}",
+                        f"Slope: {slope:.4f} units per time period",
+                        f"R-squared: {r_squared:.4f} ({r_squared*100:.1f}% variance explained)",
+                    ]
+                    
+                    metrics = {
+                        "slope": slope,
+                        "intercept": intercept,
+                        "r_squared": r_squared,
+                        "trend_strength": abs(slope),
+                    }
+                    
+                    confidence = min(r_squared + 0.3, 1.0)
+                else:
+                    findings = ["Cannot compute trend (zero variance in time)"]
+                    confidence = 0.0
+            else:
+                findings = ["Need at least 3 data points for trend analysis"]
+                confidence = 0.0
+        else:
+            findings = ["Trend analysis requires numeric time series data"]
+            confidence = 0.0
+        
+        return AnalyticsResult(
+            analysis_id=analysis_id,
+            analytics_type=AnalyticsType.TREND,
+            title="Trend Analysis",
+            findings=findings,
+            metrics=metrics,
+            confidence=confidence,
+        )
+    
+    async def _anomaly_analysis(
+        self,
+        data: Union[List, Dict],
+        analysis_id: str,
+    ) -> AnalyticsResult:
+        """Detect anomalies in data."""
+        findings = []
+        metrics = {}
+        
+        if isinstance(data, list) and all(isinstance(x, (int, float)) for x in data):
+            n = len(data)
+            if n >= 3:
+                mean = sum(data) / n
+                std_dev = math.sqrt(sum((x - mean) ** 2 for x in data) / (n - 1)) if n > 1 else 0
+                
+                # Find anomalies (values beyond 2 standard deviations)
+                threshold = 2.0 * std_dev
+                anomalies = []
+                for i, value in enumerate(data):
+                    if abs(value - mean) > threshold:
+                        anomalies.append({
+                            "index": i,
+                            "value": value,
+                            "deviation": abs(value - mean) / std_dev if std_dev > 0 else 0,
+                        })
+                
+                findings = [
+                    f"Analyzed {n} data points",
+                    f"Detection threshold: ±{threshold:.4f} from mean ({mean:.4f})",
+                    f"Found {len(anomalies)} anomalies",
+                ] + [f"Index {a['index']}: value={a['value']:.4f} ({a['deviation']:.1f}σ)" for a in anomalies[:5]]
+                
+                metrics = {
+                    "anomalies_count": len(anomalies),
+                    "anomaly_rate": len(anomalies) / n,
+                    "threshold_sigma": 2.0,
+                }
+                
+                confidence = 0.8
+            else:
+                findings = ["Need at least 3 data points for anomaly detection"]
+                confidence = 0.0
+        else:
+            findings = ["Anomaly detection requires numeric list data"]
+            confidence = 0.0
+        
+        return AnalyticsResult(
+            analysis_id=analysis_id,
+            analytics_type=AnalyticsType.ANOMALY,
+            title="Anomaly Detection",
+            findings=findings,
+            metrics=metrics,
+            confidence=confidence,
+            recommendations=["Review detected anomalies for data quality issues"] if metrics.get("anomalies_count", 0) > 0 else [],
+        )
+    
+    async def _handle_detect_trends(self, message: ActorMessage) -> None:
+        """
+        Detect trends in time series data.
+        
+        Args:
+            message: Actor message with time series data
+        """
+        try:
+            is_valid, error = self._validate_data_input(message.content)
+            if not is_valid:
+                logger.error(f"[{self.agent_id}] Invalid trend detection request: {error}")
+                return
+            
+            data = message.content["data"]
+            
+            logger.info(f"[{self.agent_id}] Detecting trends")
+            
+            result = await self._trend_analysis(data, f"trend_{datetime.now(timezone.utc).timestamp()}")
+            
+            # Get trend details
+            trend_id = f"trend_{result.analysis_id}"
+            trend = self.trend_analyses.get(trend_id)
+            
+            response = {
+                "message_type": "trend_detection_response",
+                "result": result.to_dict(),
+                "trend_details": trend.to_dict() if trend else None,
+            }
+            
+            if message.content.get("reply_to"):
+                await self.send(
+                    topic=message.content["reply_to"],
+                    content=response,
+                    sender_id=self.agent_id,
+                )
+            
+        except Exception as e:
+            logger.error(f"[{self.agent_id}] Error detecting trends: {e}", exc_info=True)
+    
+    async def _handle_compute_correlations(self, message: ActorMessage) -> None:
+        """
+        Compute correlations between variables.
+        
+        Args:
+            message: Actor message with variable data
+        """
+        try:
+            is_valid, error = self._validate_data_input(message.content)
+            if not is_valid:
+                logger.error(f"[{self.agent_id}] Invalid correlation request: {error}")
+                return
+            
+            data = message.content["data"]
+            
+            logger.info(f"[{self.agent_id}] Computing correlations")
+            
+            result = await self._correlational_analysis(data, f"corr_{datetime.now(timezone.utc).timestamp()}")
+            
+            response = {
+                "message_type": "correlation_response",
+                "result": result.to_dict(),
+            }
+            
+            if message.content.get("reply_to"):
+                await self.send(
+                    topic=message.content["reply_to"],
+                    content=response,
+                    sender_id=self.agent_id,
+                )
+            
+        except Exception as e:
+            logger.error(f"[{self.agent_id}] Error computing correlations: {e}", exc_info=True)
+    
+    async def _handle_run_statistical_test(self, message: ActorMessage) -> None:
+        """
+        Run a statistical test.
+        
+        Args:
+            message: Actor message with test parameters
+        """
+        try:
+            test_type = message.content.get("test_type", "t_test")
+            data = message.content.get("data", [])
+            
+            logger.info(f"[{self.agent_id}] Running statistical test: {test_type}")
+            
+            # For now, run basic statistical analysis
+            result = await self._statistical_analysis(data, f"stat_{datetime.now(timezone.utc).timestamp()}")
+            
+            response = {
+                "message_type": "statistical_test_response",
+                "test_type": test_type,
+                "result": result.to_dict(),
+            }
+            
+            if message.content.get("reply_to"):
+                await self.send(
+                    topic=message.content["reply_to"],
+                    content=response,
+                    sender_id=self.agent_id,
+                )
+            
+        except Exception as e:
+            logger.error(f"[{self.agent_id}] Error running statistical test: {e}", exc_info=True)
+    
+    async def _handle_extract_features(self, message: ActorMessage) -> None:
+        """
+        Extract features from data.
+        
+        Args:
+            message: Actor message with data
+        """
+        try:
+            is_valid, error = self._validate_data_input(message.content)
+            if not is_valid:
+                logger.error(f"[{self.agent_id}] Invalid feature extraction request: {error}")
+                return
+            
+            data = message.content["data"]
+            feature_id = message.content.get("feature_id", f"features_{datetime.now(timezone.utc).timestamp()}")
+            
+            logger.info(f"[{self.agent_id}] Extracting features")
+            
+            # Extract features
+            features = await self._extract_features_from_data(data)
+            
+            # Cache features
+            self.feature_cache[feature_id] = features
+            
+            response = {
+                "message_type": "feature_extraction_response",
+                "feature_id": feature_id,
+                "features": features,
+            }
+            
+            if message.content.get("reply_to"):
+                await self.send(
+                    topic=message.content["reply_to"],
+                    content=response,
+                    sender_id=self.agent_id,
+                )
+            
+        except Exception as e:
+            logger.error(f"[{self.agent_id}] Error extracting features: {e}", exc_info=True)
+    
+    async def _extract_features_from_data(self, data: Union[List, Dict]) -> Dict[str, Any]:
+        """Extract features from data."""
+        features = {
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "data_type": type(data).__name__,
+        }
+        
+        if isinstance(data, list) and all(isinstance(x, (int, float)) for x in data):
+            n = len(data)
+            if n > 0:
+                mean = sum(data) / n
+                features.update({
+                    "count": n,
+                    "mean": mean,
+                    "min": min(data),
+                    "max": max(data),
+                    "sum": sum(data),
+                })
+                if n > 1:
+                    variance = sum((x - mean) ** 2 for x in data) / (n - 1)
+                    features["variance"] = variance
+                    features["std_dev"] = math.sqrt(variance)
+        
+        return features
+    
+    async def _handle_forecast_values(self, message: ActorMessage) -> None:
+        """
+        Forecast future values.
+        
+        Args:
+            message: Actor message with historical data
+        """
+        try:
+            data = message.content.get("data", [])
+            periods = message.content.get("periods", 5)
+            
+            logger.info(f"[{self.agent_id}] Forecasting {periods} periods")
+            
+            # Simple forecasting
+            forecast = await self._forecast_values(data, periods)
+            
+            response = {
+                "message_type": "forecast_response",
+                "historical_count": len(data),
+                "forecast_periods": periods,
+                "forecast": forecast,
+            }
+            
+            if message.content.get("reply_to"):
+                await self.send(
+                    topic=message.content["reply_to"],
+                    content=response,
+                    sender_id=self.agent_id,
+                )
+            
+        except Exception as e:
+            logger.error(f"[{self.agent_id}] Error forecasting: {e}", exc_info=True)
+    
+    async def _forecast_values(self, data: List[float], periods: int) -> List[Dict[str, Any]]:
+        """Generate forecast values."""
+        forecast = []
+        
+        if len(data) >= 2:
+            # Simple linear extrapolation
+            n = len(data)
+            x_mean = (n - 1) / 2
+            y_mean = sum(data) / n
+            
+            numerator = sum((i - x_mean) * (data[i] - y_mean) for i in range(n))
+            denominator = sum((i - x_mean) ** 2 for i in range(n))
+            
+            if denominator != 0:
+                slope = numerator / denominator
+                intercept = y_mean - slope * x_mean
+                
+                for i in range(periods):
+                    future_x = n + i
+                    predicted = slope * future_x + intercept
+                    forecast.append({
+                        "period": i + 1,
+                        "predicted_value": predicted,
+                        "confidence": max(0.5 - (i * 0.05), 0.1),  # Decreasing confidence
+                    })
+            else:
+                # Flat forecast
+                for i in range(periods):
+                    forecast.append({
+                        "period": i + 1,
+                        "predicted_value": y_mean,
+                        "confidence": 0.3,
+                    })
+        else:
+            forecast = [{"error": "Insufficient data for forecasting"}]
+        
+        return forecast
+    
+    async def _handle_get_analytics_summary(self, message: ActorMessage) -> None:
+        """
+        Get summary of all analytics.
+        
+        Args:
+            message: Actor message
+        """
+        try:
+            summary = {
+                "analyses_count": len(self.analysis_results),
+                "trend_analyses_count": len(self.trend_analyses),
+                "correlation_matrices_count": len(self.correlation_matrices),
+                "feature_cache_count": len(self.feature_cache),
+                "recent_analyses": [
+                    r.to_dict() for r in list(self.analysis_results.values())[-5:]
+                ],
+            }
+            
+            response = {
+                "message_type": "analytics_summary_response",
+                "summary": summary,
+            }
+            
+            if message.content.get("reply_to"):
+                await self.send(
+                    topic=message.content["reply_to"],
+                    content=response,
+                    sender_id=self.agent_id,
+                )
+            
+        except Exception as e:
+            logger.error(f"[{self.agent_id}] Error getting analytics summary: {e}", exc_info=True)
+    
+    async def _handle_signal_processing(self, message: ActorMessage) -> None:
+        """
+        Process signals with noise reduction.
+        
+        Args:
+            message: Actor message with signal data
+        """
+        try:
+            data = message.content.get("data", [])
+            method = message.content.get("method", "moving_average")
+            window = message.content.get("window", 3)
+            
+            logger.info(f"[{self.agent_id}] Processing signal with {method}")
+            
+            # Process signal
+            processed = self._process_signal(data, method, window)
+            
+            response = {
+                "message_type": "signal_processing_response",
+                "method": method,
+                "window": window,
+                "original_length": len(data),
+                "processed_length": len(processed),
+                "processed_signal": processed,
+            }
+            
+            if message.content.get("reply_to"):
+                await self.send(
+                    topic=message.content["reply_to"],
+                    content=response,
+                    sender_id=self.agent_id,
+                )
+            
+        except Exception as e:
+            logger.error(f"[{self.agent_id}] Error processing signal: {e}", exc_info=True)
+    
+    def _process_signal(self, data: List[float], method: str, window: int) -> List[float]:
+        """Process signal with specified method."""
+        if method == "moving_average":
+            result = []
+            for i in range(len(data) - window + 1):
+                result.append(sum(data[i:i+window]) / window)
+            return result
+        elif method == "median_filter":
+            result = []
+            for i in range(len(data) - window + 1):
+                sorted_window = sorted(data[i:i+window])
+                result.append(sorted_window[window // 2])
+            return result
+        else:
+            return data  # No processing
