@@ -15,7 +15,7 @@ import logging
 import random
 import uuid
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional, Set
 
@@ -118,7 +118,7 @@ class LogEntry:
     index: int
     term: int
     data: Dict[str, Any]
-    timestamp: str = field(default_factory=datetime.utcnow().isoformat)
+    timestamp: str = field(default_factory=datetime.now(timezone.utc).isoformat)
 
 
 @dataclass

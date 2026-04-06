@@ -7,7 +7,7 @@ enabling replay, debugging, and audit capabilities.
 
 import asyncio
 import hashlib
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List, Optional, Set, Tuple
 from uuid import UUID, uuid4
 
@@ -429,7 +429,7 @@ class LineageTracker:
         """Mark a message as delivered"""
         node = self._nodes.get(message_id)
         if node:
-            node.lineage.delivered_at = datetime.utcnow()
+            node.lineage.delivered_at = datetime.now(timezone.utc)
             return True
         return False
     
@@ -437,7 +437,7 @@ class LineageTracker:
         """Mark a message as processed"""
         node = self._nodes.get(message_id)
         if node:
-            node.lineage.processed_at = datetime.utcnow()
+            node.lineage.processed_at = datetime.now(timezone.utc)
             return True
         return False
     
@@ -497,7 +497,7 @@ class LineageTracker:
     
     async def cleanup_expired(self, days: int = 30) -> int:
         """Remove expired lineage entries"""
-        cutoff = datetime.utcnow() - timedelta(days=days)
+        cutoff = datetime.now(timezone.utc) - timedelta(days=days)
         
         to_remove = []
         for message_id, node in self._nodes.items():

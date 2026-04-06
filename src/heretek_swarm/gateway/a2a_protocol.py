@@ -22,7 +22,7 @@ import uuid
 from typing import Dict, Any, Optional, List, Set
 from enum import Enum
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 
 import structlog
 from starlette.websockets import WebSocket, WebSocketState
@@ -60,7 +60,7 @@ class A2AMessage:
     sender_id: str
     sender_type: str
     payload: Dict[str, Any]
-    timestamp: str = field(default_factory=lambda: datetime.utcnow().isoformat())
+    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     message_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     correlation_id: Optional[str] = None
 
@@ -246,7 +246,7 @@ class A2AProtocol:
             "agent_type": agent_type,
             "capabilities": capabilities,
             "metadata": metadata,
-            "connected_at": datetime.utcnow().isoformat()
+            "connected_at": datetime.now(timezone.utc).isoformat()
         }
         
         # Send handshake response
@@ -287,7 +287,7 @@ class A2AProtocol:
             "action": "agent_joined",
             "agent_id": client_id,
             "agent_type": agent_type,
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.now(timezone.utc).isoformat()
         }
         
         await self.event_mesh.broadcast(
@@ -487,7 +487,7 @@ class A2AProtocol:
         await websocket.send_json({
             "type": "error",
             "message": error_msg,
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.now(timezone.utc).isoformat()
         })
     
     async def _cleanup_connection(self, client_id: str) -> None:
@@ -516,7 +516,7 @@ class A2AProtocol:
             "action": "agent_left",
             "agent_id": client_id,
             "agent_type": agent_info.get("agent_type", "unknown"),
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.now(timezone.utc).isoformat()
         }
         await self.event_mesh.broadcast(discovery_msg)
     
@@ -540,7 +540,7 @@ class A2AProtocol:
                 "sender_id": sender_id,
                 "sender_type": sender_type,
                 "payload": payload,
-                "timestamp": datetime.utcnow().isoformat()
+                "timestamp": datetime.now(timezone.utc).isoformat()
             }
             
             await self.redis_client.publish(channel, json.dumps(message_data))

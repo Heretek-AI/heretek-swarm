@@ -19,7 +19,7 @@ import logging
 import time
 import uuid
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional, Set
 
@@ -231,7 +231,7 @@ class GlobalWorkspace:
             content=content,
             priority=priority,
             source=source,
-            timestamp=datetime.utcnow().isoformat(),
+            timestamp=datetime.now(timezone.utc).isoformat(),
             ttl=ttl,
         )
 
@@ -304,7 +304,7 @@ class GlobalWorkspace:
         Returns:
             Number of items removed
         """
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         original_count = len(self.workspace)
 
         active = []
@@ -385,7 +385,7 @@ class AttentionSchemaManager:
             agent_id=agent_id,
             focus_target=focus_target,
             attention_intensity=0.5,
-            last_update=datetime.utcnow().isoformat(),
+            last_update=datetime.now(timezone.utc).isoformat(),
         )
 
         self.schemas[agent_id] = schema
@@ -423,7 +423,7 @@ class AttentionSchemaManager:
                 "previous_focus": schema.focus_target,
                 "new_focus": focus_target,
                 "intensity": intensity,
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
             })
 
             # Keep last 100 entries
@@ -433,7 +433,7 @@ class AttentionSchemaManager:
         # Update schema
         schema.focus_target = focus_target
         schema.attention_intensity = intensity
-        schema.last_update = datetime.utcnow().isoformat()
+        schema.last_update = datetime.now(timezone.utc).isoformat()
 
         # Update metacognitive awareness
         schema.metacognitive_awareness = self._calculate_metacognitive_awareness(
@@ -748,7 +748,7 @@ class ConsciousnessPlugin:
             ast_competence=ast_competence,
             composite_score=composite_score,
             state=state,
-            timestamp=datetime.utcnow().isoformat(),
+            timestamp=datetime.now(timezone.utc).isoformat(),
         )
 
         # Store metrics
@@ -934,7 +934,7 @@ class ConsciousnessPlugin:
             "unconscious_agents": total_agents - conscious_agents,
             "average_composite": average_composite,
             "collective_state": collective_state,
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
         }
 
     def get_status(self) -> Dict[str, Any]:

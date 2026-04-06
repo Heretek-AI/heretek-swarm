@@ -8,7 +8,7 @@ Reference: MiniMax Audit Lines 153-242 (elizaOS runtime patterns)
 from enum import Enum
 from dataclasses import dataclass, field
 from typing import Any, Callable, Dict, List, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 import asyncio
 import structlog
 
@@ -87,7 +87,7 @@ class AgentRuntime:
             Generated response
         """
         self.context.state = AgentState.THINKING
-        self.context.last_activity = datetime.utcnow()
+        self.context.last_activity = datetime.now(timezone.utc)
         
         try:
             # Get relevant memories
@@ -115,12 +115,12 @@ class AgentRuntime:
             self.context.conversation_history.append({
                 "role": "user",
                 "content": prompt,
-                "timestamp": datetime.utcnow().isoformat()
+                "timestamp": datetime.now(timezone.utc).isoformat()
             })
             self.context.conversation_history.append({
                 "role": "assistant",
                 "content": response,
-                "timestamp": datetime.utcnow().isoformat()
+                "timestamp": datetime.now(timezone.utc).isoformat()
             })
             
             return response
@@ -144,7 +144,7 @@ class AgentRuntime:
             Tool execution result
         """
         self.context.state = AgentState.ACTING
-        self.context.last_activity = datetime.utcnow()
+        self.context.last_activity = datetime.now(timezone.utc)
         
         try:
             if action not in self._tools:
@@ -253,5 +253,5 @@ class AgentRuntime:
             "tools": list(self._tools.keys()),
             "conversation_length": len(self.context.conversation_history),
             "last_activity": self.context.last_activity.isoformat(),
-            "uptime": (datetime.utcnow() - self.context.created_at).total_seconds(),
+            "uptime": (datetime.now(timezone.utc) - self.context.created_at).total_seconds(),
         }

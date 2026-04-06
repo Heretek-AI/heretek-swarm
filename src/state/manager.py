@@ -6,7 +6,7 @@ and state transitions for the multi-agent system.
 """
 
 import asyncio
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List, Optional, Set
 from uuid import UUID, uuid4
 
@@ -379,7 +379,7 @@ class StateManager:
         if artifact:
             conv.artifacts.append(artifact)
         
-        conv.updated_at = datetime.utcnow()
+        conv.updated_at = datetime.now(timezone.utc)
         conv.version += 1
         
         return conv
@@ -394,7 +394,7 @@ class StateManager:
             return None
         
         conv.status = StateStatus.COMPLETED
-        conv.completed_at = datetime.utcnow()
+        conv.completed_at = datetime.now(timezone.utc)
         
         # Update participants
         for agent_id in conv.participant_ids:
@@ -430,7 +430,7 @@ class StateManager:
         conv = self._conversations.get(str(conversation_id))
         if conv:
             conv.message_count += 1
-            conv.updated_at = datetime.utcnow()
+            conv.updated_at = datetime.now(timezone.utc)
         
         # Update agent metrics
         if sender_agent_id in self._agents:
@@ -568,7 +568,7 @@ class StateManager:
             to_state=changes or {},
             agent_id=agent_id,
             conversation_id=conversation_id,
-            timestamp=datetime.utcnow()
+            timestamp=datetime.now(timezone.utc)
         )
         
         self._transitions.append(transition)

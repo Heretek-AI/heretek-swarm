@@ -5,7 +5,7 @@ Provides type-safe data structures for agent state, message lineage,
 and state transitions with complete validation.
 """
 
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional, Set
 from uuid import UUID, uuid4
@@ -196,8 +196,8 @@ class AgentState(BaseModel):
     
     def touch(self) -> "AgentState":
         """Update timestamps"""
-        self.updated_at = datetime.utcnow()
-        self.last_active_at = datetime.utcnow()
+        self.updated_at = datetime.now(timezone.utc)
+        self.last_active_at = datetime.now(timezone.utc)
         self.state_hash = self.compute_hash()
         return self
     

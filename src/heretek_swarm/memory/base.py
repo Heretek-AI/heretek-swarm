@@ -14,7 +14,7 @@ import logging
 import uuid
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List, Optional, Tuple
 
 import structlog
@@ -212,7 +212,7 @@ class EphemeralMemory(MemorySystem):
             await self.initialize()
 
         memory_id = str(uuid.uuid4())
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
 
         # Calculate expiration
         ttl = ttl or self.default_ttl
@@ -327,7 +327,7 @@ class EphemeralMemory(MemorySystem):
             return False
 
         expires_at = datetime.fromisoformat(entry.expires_at)
-        return datetime.utcnow() > expires_at
+        return datetime.now(timezone.utc) > expires_at
 
     def _matches_filters(
         self,
@@ -382,7 +382,7 @@ class EphemeralMemory(MemorySystem):
 
     def get_statistics(self) -> Dict[str, Any]:
         """Get memory statistics."""
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         expired_count = sum(
             1
             for entry in self._storage.values()
@@ -442,7 +442,7 @@ class PersistentMemory(MemorySystem):
             await self.initialize()
 
         memory_id = str(uuid.uuid4())
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
 
         entry = MemoryEntry(
             id=memory_id,

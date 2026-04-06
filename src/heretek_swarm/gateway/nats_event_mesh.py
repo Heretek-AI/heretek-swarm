@@ -14,7 +14,7 @@ Reference: MiniMax Audit Lines 11-30 (EventMesh bug fix)
 import asyncio
 import json
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Callable, Dict, List, Optional, Set
 from enum import Enum
 
@@ -57,7 +57,7 @@ class NATSMessage:
     data: Dict[str, Any]
     reply: Optional[str] = None
     sid: Optional[str] = None
-    timestamp: str = field(default_factory=datetime.utcnow().isoformat)
+    timestamp: str = field(default_factory=datetime.now(timezone.utc).isoformat)
 
 
 class NATSEventMesh:

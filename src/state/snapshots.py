@@ -9,7 +9,7 @@ import asyncio
 import gzip
 import hashlib
 import json
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Set
 from uuid import UUID, uuid4
@@ -359,7 +359,7 @@ class SnapshotManager:
         snapshot.state_hash = snapshot.compute_hash()
         
         # Set expiration
-        snapshot.expires_at = datetime.utcnow() + timedelta(
+        snapshot.expires_at = datetime.now(timezone.utc) + timedelta(
             days=self.config.default_retention_days
         )
         
@@ -607,7 +607,7 @@ class SnapshotManager:
                 # Run cleanup daily
                 await asyncio.sleep(86400)
                 
-                cutoff = datetime.utcnow() - timedelta(
+                cutoff = datetime.now(timezone.utc) - timedelta(
                     days=self.config.default_retention_days
                 )
                 

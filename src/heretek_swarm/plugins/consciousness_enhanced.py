@@ -20,7 +20,7 @@ import time
 import uuid
 from collections import defaultdict
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional, Set, Tuple
 
@@ -171,7 +171,7 @@ class IITCalculator:
                 phi=0.0,
                 integration=0.0,
                 information=0.0,
-                timestamp=datetime.utcnow().isoformat(),
+                timestamp=datetime.now(timezone.utc).isoformat(),
             )
 
         # Build connectivity matrix
@@ -195,7 +195,7 @@ class IITCalculator:
             information=information,
             phi=phi,
             causal_power=causal_power,
-            timestamp=datetime.utcnow().isoformat(),
+            timestamp=datetime.now(timezone.utc).isoformat(),
         )
 
         self.connectivity_history.append(connectivity)
@@ -431,7 +431,7 @@ class FEPTracker:
         metrics = self.agent_metrics.get(agent_id, FEPMetrics())
         metrics.surprise = surprise
         metrics.precision = confidence
-        metrics.timestamp = datetime.utcnow().isoformat()
+        metrics.timestamp = datetime.now(timezone.utc).isoformat()
 
         # Calculate free energy
         free_energy = self._calculate_free_energy(agent_id, surprise, confidence)
@@ -762,7 +762,7 @@ class EnhancedConsciousnessPlugin:
             fep_free_energy=fep_score,
             composite_score=composite,
             state=state,
-            timestamp=datetime.utcnow().isoformat(),
+            timestamp=datetime.now(timezone.utc).isoformat(),
         )
 
         self.agent_metrics[agent_id] = metrics

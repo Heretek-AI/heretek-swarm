@@ -7,7 +7,7 @@ Reference: PraisonAI agent handoff patterns
 
 from typing import Dict, List, Optional, Any, Callable
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 import asyncio
 import structlog
@@ -106,7 +106,7 @@ class AgentHandoff:
         Returns:
             Handoff ID
         """
-        handoff_id = f"handoff_{task_id}_{datetime.utcnow().timestamp()}"
+        handoff_id = f"handoff_{task_id}_{datetime.now(timezone.utc).timestamp()}"
         
         context = HandoffContext(
             task_id=task_id,
@@ -204,7 +204,7 @@ class AgentHandoff:
             return False
         
         context.status = HandoffStatus.COMPLETED
-        context.completed_at = datetime.utcnow()
+        context.completed_at = datetime.now(timezone.utc)
         context.result = result
         
         logger.info(
@@ -245,7 +245,7 @@ class AgentHandoff:
         context = self._handoffs[handoff_id]
         context.status = HandoffStatus.FAILED
         context.error = error
-        context.completed_at = datetime.utcnow()
+        context.completed_at = datetime.now(timezone.utc)
         
         logger.error(
             "handoff_failed",

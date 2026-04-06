@@ -5,7 +5,7 @@ Demonstrates migration patterns from legacy shell scripts to
 type-safe, Python-native Swarms tools.
 """
 
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Dict, List, Optional
 from uuid import UUID
 
@@ -60,7 +60,7 @@ class MemorySearchTool(BaseTool[MemorySearchInput, MemorySearchOutput]):
         context: ToolContext
     ) -> MemorySearchOutput:
         """Execute memory search"""
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         
         # Placeholder implementation
         # In production, this would integrate with the DualTierMemorySystem
@@ -69,7 +69,7 @@ class MemorySearchTool(BaseTool[MemorySearchInput, MemorySearchOutput]):
         # Simulate search
         await asyncio.sleep(0.01)  # Simulate query time
         
-        query_time_ms = (datetime.utcnow() - start_time).total_seconds() * 1000
+        query_time_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
         
         return MemorySearchOutput(
             results=results,
@@ -149,13 +149,13 @@ class HealthCheckTool(BaseTool[HealthCheckInput, HealthCheckOutput]):
         """Check individual service health"""
         import asyncio
         
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         
         try:
             # Simulate health check
             await asyncio.sleep(0.01)
             
-            latency_ms = (datetime.utcnow() - start_time).total_seconds() * 1000
+            latency_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
             
             return ServiceStatus(
                 name=service,

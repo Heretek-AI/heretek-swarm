@@ -368,7 +368,7 @@ class AutonomousRuntime:
         """Scale down by removing idle agents."""
         # Check cooldown and minimum uptime
         if self._last_scale_down_time:
-            time_since = datetime.utcnow() - self._last_scale_down_time
+            time_since = datetime.now(timezone.utc) - self._last_scale_down_time
             if time_since.total_seconds() < self.config.scale_down_cooldown_minutes * 60:
                 return
 

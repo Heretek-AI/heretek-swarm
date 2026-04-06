@@ -18,7 +18,7 @@ Based on: MiniMax Audit lines 244-337
 import math
 import time
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any, Optional
 
 import structlog
@@ -72,14 +72,14 @@ class ElizaMemoryEntry:
             Importance adjusted for time elapsed since creation
         """
         # Hours since creation
-        hours_elapsed = (datetime.utcnow() - self.created_at).total_seconds() / 3600
+        hours_elapsed = (datetime.now(timezone.utc) - self.created_at).total_seconds() / 3600
 
         # Decay formula: importance * e^(-decay_rate * hours)
         decayed = self.importance * math.exp(-self.decay_rate * hours_elapsed)
 
         # Boost for recent access
         if self.access_count > 0:
-            hours_since_access = (datetime.utcnow() - self.last_accessed).total_seconds() / 3600
+            hours_since_access = (datetime.now(timezone.utc) - self.last_accessed).total_seconds() / 3600
             access_boost = min(0.1, self.access_count * 0.02 * math.exp(-hours_since_access))
             decayed += access_boost
 
@@ -87,7 +87,7 @@ class ElizaMemoryEntry:
 
     def touch(self) -> None:
         """Update access time and increment count."""
-        self.last_accessed = datetime.utcnow()
+        self.last_accessed = datetime.now(timezone.utc)
         self.access_count += 1
 
 
@@ -311,7 +311,7 @@ class MemoryManager:
 
         agent_id = agent_id or self.agent_id
         limit = limit or self.config.recall_limit
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
 
         results: list[tuple[float, ElizaMemoryEntry]] = []
 
@@ -439,7 +439,7 @@ class MemoryManager:
         Returns:
             Number of memories cleaned up
         """
-        now = datetime.utcnow()
+        now = datetime.now(timezone.utc)
         cleaned = 0
         expired_ids = []
 

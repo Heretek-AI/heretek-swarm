@@ -14,7 +14,7 @@ Features:
 import hashlib
 import re
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
@@ -93,7 +93,7 @@ class DocumentChunk:
     keywords: List[str] = field(default_factory=list)
     
     # Timestamps
-    created_at: str = field(default_factory=lambda: datetime.utcnow().isoformat())
+    created_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for serialization."""
@@ -127,7 +127,7 @@ class ProcessedDocument:
     # Document metadata
     title: Optional[str] = None
     author: Optional[str] = None
-    created_at: str = field(default_factory=lambda: datetime.utcnow().isoformat())
+    created_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     
     # Statistics
     total_characters: int = 0

@@ -22,7 +22,7 @@ import re
 import time
 import uuid
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional, Set
 
@@ -542,7 +542,7 @@ class LiberationShield:
 
         event = SecurityEvent(
             id=str(uuid.uuid4()),
-            timestamp=datetime.utcnow().isoformat(),
+            timestamp=datetime.now(timezone.utc).isoformat(),
             event_type=event_type,
             severity=Severity(data.get("severity", Severity.LOW.value)),
             agent=context.get("agent_name", "unknown"),

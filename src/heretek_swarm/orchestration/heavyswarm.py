@@ -14,7 +14,7 @@ Based on the Swarms framework HeavySwarm pattern.
 import asyncio
 import logging
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
@@ -193,7 +193,7 @@ class HeavySwarmWorkflow:
             Complete workflow result
         """
         workflow_id = workflow_id or self._generate_workflow_id()
-        started_at = datetime.utcnow()
+        started_at = datetime.now(timezone.utc)
 
         logger.info(
             f"[{self.name}] Starting workflow {workflow_id}",
@@ -311,7 +311,7 @@ class HeavySwarmWorkflow:
 
         finally:
             # Finalize
-            completed_at = datetime.utcnow()
+            completed_at = datetime.now(timezone.utc)
             result.completed_at = completed_at.isoformat()
             result.total_duration_ms = (
                 completed_at - started_at
@@ -353,7 +353,7 @@ class HeavySwarmWorkflow:
         Returns:
             Phase result
         """
-        started_at = datetime.utcnow()
+        started_at = datetime.now(timezone.utc)
         logger.info(f"[{self.name}] Executing phase: {phase.value}")
 
         try:
@@ -363,7 +363,7 @@ class HeavySwarmWorkflow:
                 timeout=self.phase_timeout,
             )
 
-            duration_ms = (datetime.utcnow() - started_at).total_seconds() * 1000
+            duration_ms = (datetime.now(timezone.utc) - started_at).total_seconds() * 1000
 
             return PhaseResult(
                 phase=phase,
@@ -373,7 +373,7 @@ class HeavySwarmWorkflow:
             )
 
         except asyncio.TimeoutError:
-            duration_ms = (datetime.utcnow() - started_at).total_seconds() * 1000
+            duration_ms = (datetime.now(timezone.utc) - started_at).total_seconds() * 1000
             error_msg = f"Phase {phase.value} timed out after {self.phase_timeout}s"
 
             return PhaseResult(
@@ -385,7 +385,7 @@ class HeavySwarmWorkflow:
             )
 
         except Exception as e:
-            duration_ms = (datetime.utcnow() - started_at).total_seconds() * 1000
+            duration_ms = (datetime.now(timezone.utc) - started_at).total_seconds() * 1000
 
             return PhaseResult(
                 phase=phase,

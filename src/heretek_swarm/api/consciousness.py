@@ -8,7 +8,7 @@ and agent connectivity analysis.
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 from typing import Dict, Any, List, Optional
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from ..gateway.auth import verify_auth
 from ..plugins.consciousness_enhanced import (
@@ -47,7 +47,7 @@ async def get_consciousness_statistics(
     plugin = get_consciousness_plugin()
     stats = plugin.get_statistics()
     return {
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         **stats,
     }
 
@@ -74,7 +74,7 @@ async def get_agent_consciousness(
 
     return {
         "agent_id": agent_id,
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         **metrics,
     }
 
@@ -102,7 +102,7 @@ async def get_agent_iit_metrics(
 
     return {
         "agent_id": agent_id,
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "phi_score": phi,
         "connectivity": connectivity,
         "average_phi": iit_calculator.get_average_phi(),
@@ -136,7 +136,7 @@ async def get_agent_fep_metrics(
 
     return {
         "agent_id": agent_id,
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "metrics": metrics,
         "average_free_energy": avg_free_energy,
         "window_size": window,
@@ -158,7 +158,7 @@ async def get_connectivity_matrix(
     connectivity = iit_calculator._build_connectivity_matrix()
 
     return {
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "connectivity": connectivity,
         "agent_count": len(connectivity),
     }
@@ -186,7 +186,7 @@ async def get_consciousness_states(
         state_counts[state.value] += 1
 
     return {
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "states": {agent_id: state.value for agent_id, state in states.items()},
         "counts": state_counts,
         "total_agents": len(states),
@@ -208,7 +208,7 @@ async def get_consciousness_history(
     iit_calculator = plugin._iit_calculator
 
     # Get interaction history
-    cutoff_time = datetime.utcnow() - timedelta(hours=hours)
+    cutoff_time = datetime.now(timezone.utc) - timedelta(hours=hours)
     history = []
 
     for interaction in iit_calculator._interactions:
@@ -218,7 +218,7 @@ async def get_consciousness_history(
                 history.append(interaction)
 
     return {
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "agent_id": agent_id,
         "hours": hours,
         "history": history,
@@ -249,7 +249,7 @@ async def record_interaction(
 
     return {
         "status": "recorded",
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
     }
 
 
@@ -276,7 +276,7 @@ async def record_prediction(
 
     return {
         "status": "recorded",
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
     }
 
 
@@ -302,7 +302,7 @@ async def record_outcome(
 
     return {
         "status": "recorded",
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
     }
 
 
@@ -324,7 +324,7 @@ async def calculate_consciousness_metrics(
 
     return {
         "agent_id": agent_id,
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         **metrics,
     }
 
@@ -365,7 +365,7 @@ async def get_network_visualization(
                 })
 
     return {
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
         "nodes": nodes,
         "links": links,
     }
@@ -386,7 +386,7 @@ async def get_timeseries_data(
     plugin = get_consciousness_plugin()
     iit_calculator = plugin._iit_calculator
 
-    cutoff_time = datetime.utcnow() - timedelta(hours=hours)
+    cutoff_time = datetime.now(timezone.utc) - timedelta(hours=hours)
     data_points = []
 
     if metric == "phi":

@@ -8,7 +8,7 @@ Provides endpoints for:
 - Real-time streaming via WebSocket
 """
 
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List, Optional
 from fastapi import APIRouter, Query, WebSocket, WebSocketDisconnect
 import structlog
@@ -33,11 +33,11 @@ class TraceEvent:
         timestamp: Optional[datetime] = None,
         duration: Optional[float] = None,
     ):
-        self.id = f"{event_type}-{agent_id}-{datetime.utcnow().timestamp()}"
+        self.id = f"{event_type}-{agent_id}-{datetime.now(timezone.utc).timestamp()}"
         self.event_type = event_type  # 'llm_call', 'tool_call', 'agent_message'
         self.agent_id = agent_id
         self.data = data
-        self.timestamp = timestamp or datetime.utcnow()
+        self.timestamp = timestamp or datetime.now(timezone.utc)
         self.duration = duration
 
     def to_dict(self) -> Dict[str, Any]:
@@ -270,7 +270,7 @@ async def get_metrics() -> Dict[str, Any]:
         "events_by_agent": events_by_agent,
         "average_duration_ms": round(avg_duration, 2),
         "active_connections": len(connection_manager.active_connections),
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
     }
 
 

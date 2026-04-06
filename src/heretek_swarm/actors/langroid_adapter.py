@@ -15,7 +15,7 @@ import asyncio
 import json
 import uuid
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional, Set
 
@@ -62,8 +62,8 @@ class AgentConversation:
     agent_id: str
     messages: List[Dict[str, str]] = field(default_factory=list)
     state: ConversationState = ConversationState.IDLE
-    created_at: str = field(default_factory=datetime.utcnow().isoformat)
-    updated_at: str = field(default_factory=lambda: datetime.utcnow().isoformat())
+    created_at: str = field(default_factory=datetime.now(timezone.utc).isoformat)
+    updated_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     metadata: Dict[str, Any] = field(default_factory=dict)
 
     def add_message(self, role: str, content: str) -> None:
@@ -71,9 +71,9 @@ class AgentConversation:
         self.messages.append({
             "role": role,
             "content": content,
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
         })
-        self.updated_at = datetime.utcnow().isoformat()
+        self.updated_at = datetime.now(timezone.utc).isoformat()
 
     def get_messages(self) -> List[Dict[str, str]]:
         """Get all messages."""

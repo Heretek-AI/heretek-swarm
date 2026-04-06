@@ -14,7 +14,7 @@ Plugins available:
 
 import os
 from typing import Any, Dict, List, Optional
-from datetime import datetime
+from datetime import datetime, timezone
 
 from fastapi import APIRouter, HTTPException
 import structlog
@@ -269,7 +269,7 @@ async def get_plugin_metrics(plugin_id: str):
                 "attention_switches": 0,
                 "broadcasts_sent": 0,
             },
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
         }
     
     elif plugin_id == "liberation":
@@ -281,14 +281,14 @@ async def get_plugin_metrics(plugin_id: str):
                 "threats_detected": 0,
                 "red_flags_raised": 0,
             },
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
         }
     
     return {
         "plugin_id": plugin_id,
         "enabled": state["enabled"],
         "metrics": {},
-        "timestamp": datetime.utcnow().isoformat(),
+        "timestamp": datetime.now(timezone.utc).isoformat(),
     }
 
 

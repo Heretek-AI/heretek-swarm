@@ -12,7 +12,7 @@ import asyncio
 import logging
 import statistics
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple
 
@@ -175,7 +175,7 @@ class MAKERConsensus:
             agent_id=agent_id,
             decision=decision,
             confidence=confidence,
-            timestamp=datetime.utcnow().isoformat(),
+            timestamp=datetime.now(timezone.utc).isoformat(),
             metadata=metadata or {},
         )
 
@@ -301,7 +301,7 @@ class MAKERConsensus:
                 confidence=confidence,
                 votes=original_votes,
                 state=ConsensusState.COMPLETED,
-                timestamp=datetime.utcnow().isoformat(),
+                timestamp=datetime.now(timezone.utc).isoformat(),
                 red_flags=red_flags,
             )
 

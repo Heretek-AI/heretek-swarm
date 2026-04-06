@@ -14,7 +14,7 @@ Features:
 
 import asyncio
 import uuid
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List, Optional, Set
 from dataclasses import dataclass, field
 from enum import Enum
@@ -59,7 +59,7 @@ class ContributionCache:
         key = self._generate_key(agent_id, task_id)
         if key in self._cache:
             entry = self._cache[key]
-            if datetime.fromisoformat(entry["expires_at"]) > datetime.utcnow():
+            if datetime.fromisoformat(entry["expires_at"]) > datetime.now(timezone.utc):
                 return entry["contribution"]
             else:
                 # Expired, remove from cache
@@ -79,7 +79,7 @@ class ContributionCache:
         self._cache[key] = {
             "contribution": contribution,
             "expires_at": (
-                datetime.utcnow() + timedelta(seconds=self._ttl_seconds)
+                datetime.now(timezone.utc) + timedelta(seconds=self._ttl_seconds)
             ).isoformat(),
         }
         logger.debug("contribution_cacheded", agent_id=agent_id, task_id=task_id)
@@ -129,7 +129,7 @@ class CollectiveTask:
     description: str
     input_data: Dict[str, Any]
     priority: float = 0.5
-    created_at: str = field(default_factory=lambda: datetime.utcnow().isoformat())
+    created_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     deadline: Optional[str] = None
     participants: List[str] = field(default_factory=list)
     status: str = "pending"
@@ -158,7 +158,7 @@ class AgentContribution:
     task_id: str
     contribution: Dict[str, Any]
     confidence: float
-    timestamp: str = field(default_factory=lambda: datetime.utcnow().isoformat())
+    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
 
 @dataclass
@@ -169,7 +169,7 @@ class EmergentBehavior:
     behavior_type: str
     description: str
     participants: List[str]
-    timestamp: str = field(default_factory=lambda: datetime.utcnow().isoformat())
+    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     confidence: float = 0.0
     impact: str = "unknown"
 
@@ -198,7 +198,7 @@ class CollectiveMemory:
             "value": value,
             "source": source,
             "importance": importance,
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "access_count": 0
         }
         logger.debug("collective_memory_stored", key=key, source=source)
@@ -207,7 +207,7 @@ class CollectiveMemory:
         """Retrieve knowledge from collective memory."""
         if key in self._memory:
             self._memory[key]["access_count"] += 1
-            self._memory[key]["last_accessed"] = datetime.utcnow().isoformat()
+            self._memory[key]["last_accessed"] = datetime.now(timezone.utc).isoformat()
             return self._memory[key]
         return None
     
@@ -223,7 +223,7 @@ class CollectiveMemory:
             "type": pattern_type,
             "data": pattern_data,
             "confidence": confidence,
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.now(timezone.utc).isoformat()
         }
         self._patterns.append(pattern)
         logger.info("pattern_discovered", type=pattern_type, confidence=confidence)
@@ -240,7 +240,7 @@ class CollectiveMemory:
             "type": learning_type,
             "data": learning_data,
             "participants": participants,
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.now(timezone.utc).isoformat()
         }
         self._learnings.append(learning)
         logger.info("collective_learning", type=learning_type, participants=len(participants))
@@ -351,7 +351,7 @@ class AgentSociety:
             description=task.description
         )
         
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         
         try:
             # Select participants based on task type
@@ -382,7 +382,7 @@ class AgentSociety:
                 result
             )
             
-            execution_time = (datetime.utcnow() - start_time).total_seconds()
+            execution_time = (datetime.now(timezone.utc) - start_time).total_seconds()
             
             collective_result = CollectiveResult(
                 task_id=task_id,
@@ -917,7 +917,7 @@ Format your response as:
         return {
             "recommendations": recommendations,
             "optimization_score": self._calculate_optimization_score(metrics),
-            "timestamp": datetime.utcnow().isoformat()
+            "timestamp": datetime.now(timezone.utc).isoformat()
         }
     
     def _calculate_optimization_score(

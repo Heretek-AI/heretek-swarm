@@ -10,7 +10,7 @@ Provides the foundation for Python-native Swarms tools with:
 """
 
 from abc import ABC, abstractmethod
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, Generic, List, Optional, TypeVar
 from uuid import UUID, uuid4
@@ -227,7 +227,7 @@ class BaseTool(ABC, Generic[TInput, TOutput]):
         Returns:
             Execution result with status and output
         """
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         execution_id = uuid4()
         
         # Create default context if not provided
@@ -246,7 +246,7 @@ class BaseTool(ABC, Generic[TInput, TOutput]):
                 error=f"Input validation failed: {str(e)}",
                 execution_time_ms=0,
                 started_at=start_time,
-                completed_at=datetime.utcnow(),
+                completed_at=datetime.now(timezone.utc),
                 input_data=input_data
             )
         
@@ -260,7 +260,7 @@ class BaseTool(ABC, Generic[TInput, TOutput]):
                 error="Tool is disabled",
                 execution_time_ms=0,
                 started_at=start_time,
-                completed_at=datetime.utcnow(),
+                completed_at=datetime.now(timezone.utc),
                 input_data=input_data
             )
         
@@ -279,7 +279,7 @@ class BaseTool(ABC, Generic[TInput, TOutput]):
             )
             
             # Calculate execution time
-            execution_time_ms = (datetime.utcnow() - start_time).total_seconds() * 1000
+            execution_time_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
             
             # Update metrics
             self._execution_count += 1
@@ -289,7 +289,7 @@ class BaseTool(ABC, Generic[TInput, TOutput]):
             self.metadata.avg_execution_time_ms = (
                 self._total_time_ms / self._execution_count
             )
-            self.metadata.last_used_at = datetime.utcnow()
+            self.metadata.last_used_at = datetime.now(timezone.utc)
             
             # Log success
             logger.info(
@@ -307,7 +307,7 @@ class BaseTool(ABC, Generic[TInput, TOutput]):
                 output=output,
                 execution_time_ms=execution_time_ms,
                 started_at=start_time,
-                completed_at=datetime.utcnow(),
+                completed_at=datetime.now(timezone.utc),
                 input_data=input_data
             )
         
@@ -329,7 +329,7 @@ class BaseTool(ABC, Generic[TInput, TOutput]):
                 error=f"Execution timeout after {self.metadata.timeout_seconds}s",
                 execution_time_ms=self.metadata.timeout_seconds * 1000,
                 started_at=start_time,
-                completed_at=datetime.utcnow(),
+                completed_at=datetime.now(timezone.utc),
                 input_data=input_data
             )
         
@@ -351,9 +351,9 @@ class BaseTool(ABC, Generic[TInput, TOutput]):
                 status=ToolStatus.FAILED,
                 error=str(e),
                 error_details={"type": type(e).__name__},
-                execution_time_ms=(datetime.utcnow() - start_time).total_seconds() * 1000,
+                execution_time_ms=(datetime.now(timezone.utc) - start_time).total_seconds() * 1000,
                 started_at=start_time,
-                completed_at=datetime.utcnow(),
+                completed_at=datetime.now(timezone.utc),
                 input_data=input_data
             )
     

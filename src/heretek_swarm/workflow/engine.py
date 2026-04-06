@@ -8,7 +8,7 @@ and state tracking. Inspired by Flowise workflow engine.
 import asyncio
 import json
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Set
 from dataclasses import dataclass, field
 from enum import Enum
@@ -98,7 +98,7 @@ class Workflow:
     nodes: List[WorkflowNode]
     edges: List[WorkflowEdge]
     metadata: Dict[str, Any] = field(default_factory=dict)
-    created_at: str = field(default_factory=lambda: datetime.utcnow().isoformat())
+    created_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
 
 @dataclass
@@ -253,12 +253,12 @@ class WorkflowEngine:
             raise ValueError(f"Workflow not found: {workflow_id}")
 
         workflow = self.workflows[workflow_id]
-        execution_id = f"exec_{workflow_id}_{datetime.utcnow().timestamp()}"
+        execution_id = f"exec_{workflow_id}_{datetime.now(timezone.utc).timestamp()}"
 
         context = WorkflowContext(
             workflow_id=workflow_id,
             execution_id=execution_id,
-            start_time=datetime.utcnow(),
+            start_time=datetime.now(timezone.utc),
             state=WorkflowState.RUNNING
         )
 
@@ -279,7 +279,7 @@ class WorkflowEngine:
 
             # Mark workflow as completed
             context.state = WorkflowState.COMPLETED
-            context.end_time = datetime.utcnow()
+            context.end_time = datetime.now(timezone.utc)
 
             logger.info("workflow_completed", workflow_id=workflow_id, execution_id=execution_id)
 
@@ -298,7 +298,7 @@ class WorkflowEngine:
             # Handle workflow failure
             context.state = WorkflowState.FAILED
             context.error = e
-            context.end_time = datetime.utcnow()
+            context.end_time = datetime.now(timezone.utc)
 
             logger.error("workflow_failed", workflow_id=workflow_id, error=str(e))
 
@@ -355,7 +355,7 @@ class WorkflowEngine:
         input_data = self._get_node_input(workflow, node, context)
 
         # Execute node based on type
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
 
         try:
             if node.type == "agent":
@@ -369,7 +369,7 @@ class WorkflowEngine:
             else:
                 raise ValueError(f"Unknown node type: {node.type}")
 
-            execution_time = (datetime.utcnow() - start_time).total_seconds()
+            execution_time = (datetime.now(timezone.utc) - start_time).total_seconds()
 
             context.node_results[node_id] = NodeResult(
                 node_id=node_id,
@@ -388,7 +388,7 @@ class WorkflowEngine:
                 node_id=node_id,
                 status=NodeStatus.FAILED,
                 error=e,
-                execution_time=(datetime.utcnow() - start_time).total_seconds()
+                execution_time=(datetime.now(timezone.utc) - start_time).total_seconds()
             )
 
     def _should_execute_node(
@@ -735,7 +735,7 @@ class WorkflowEngine:
 
         context = self.active_executions[execution_id]
         context.state = WorkflowState.CANCELLED
-        context.end_time = datetime.utcnow()
+        context.end_time = datetime.now(timezone.utc)
 
         logger.info("workflow_cancelled", execution_id=execution_id)
         return True

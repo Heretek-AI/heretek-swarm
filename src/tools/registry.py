@@ -12,7 +12,7 @@ Provides runtime tool discovery, registration, and management with:
 import importlib
 import inspect
 import pkgutil
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Set, Type
 from uuid import UUID
@@ -338,12 +338,12 @@ class ToolRegistry:
             # Update entry
             entry.instance = instance
             entry.loaded = True
-            entry.load_time = datetime.utcnow()
+            entry.load_time = datetime.now(timezone.utc)
             
             # Cache
             if self.config.cache_enabled:
                 self._cache[entry.tool_id] = instance
-                self._cache_timestamps[entry.tool_id] = datetime.utcnow()
+                self._cache_timestamps[entry.tool_id] = datetime.now(timezone.utc)
             
             logger.info(
                 "tool_loaded",
@@ -385,7 +385,7 @@ class ToolRegistry:
         # Check TTL
         timestamp = self._cache_timestamps.get(tool_id)
         if timestamp:
-            age = (datetime.utcnow() - timestamp).total_seconds()
+            age = (datetime.now(timezone.utc) - timestamp).total_seconds()
             if age > self.config.cache_ttl_seconds:
                 # Expired
                 del self._cache[tool_id]
@@ -421,7 +421,7 @@ class ToolRegistry:
         context: Optional[ToolContext] = None
     ) -> ToolExecutionResult:
         """Execute a tool by name"""
-        start_time = datetime.utcnow()
+        start_time = datetime.now(timezone.utc)
         
         # Get tool
         tool = await self.get_tool(tool_name)
@@ -435,7 +435,7 @@ class ToolRegistry:
                 error=f"Tool not found: {tool_name}",
                 execution_time_ms=0,
                 started_at=start_time,
-                completed_at=datetime.utcnow()
+                completed_at=datetime.now(timezone.utc)
             )
         
         # Execute
@@ -448,7 +448,7 @@ class ToolRegistry:
         entry = self._tools.get(tool_name)
         if entry:
             entry.usage_count += 1
-            entry.last_used_at = datetime.utcnow()
+            entry.last_used_at = datetime.now(timezone.utc)
             entry.consecutive_failures = 0 if result.status == ToolStatus.COMPLETED else entry.consecutive_failures + 1
         
         return result

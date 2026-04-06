@@ -8,7 +8,7 @@ and performance benchmarking. Inspired by Harbor and RagaAI-Catalyst patterns.
 import asyncio
 import logging
 import time
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Callable, Type
 from dataclasses import dataclass, field
 from enum import Enum
@@ -237,9 +237,9 @@ class AgentEvaluator:
             EvaluationResult with test results and metrics
         """
         if evaluation_id is None:
-            evaluation_id = f"eval-{datetime.utcnow().strftime('%Y%m%d%H%M%S%f')}"
+            evaluation_id = f"eval-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S%f')}"
 
-        started_at = datetime.utcnow().isoformat()
+        started_at = datetime.now(timezone.utc).isoformat()
         start_time = time.time()
 
         logger.info(
@@ -258,7 +258,7 @@ class AgentEvaluator:
         # Calculate metrics
         metrics = self._calculate_metrics(test_results)
 
-        completed_at = datetime.utcnow().isoformat()
+        completed_at = datetime.now(timezone.utc).isoformat()
         total_time = time.time() - start_time
 
         result = EvaluationResult(
