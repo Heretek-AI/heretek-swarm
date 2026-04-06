@@ -16,7 +16,7 @@ Features:
 import asyncio
 import logging
 from collections import OrderedDict
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Tuple
 
 import structlog
@@ -397,10 +397,11 @@ class HistorianAgent(AgentActor):
             Stored memory entry
         """
         # Add agent metadata
+        # P2-1 fix: Use timezone-aware datetime
         full_metadata = {
             **(metadata or {}),
             "agent_id": self.agent_id,
-            "stored_at": datetime.utcnow().isoformat(),
+            "stored_at": datetime.now(timezone.utc).isoformat(),
         }
 
         entry = await self.memory_system.store(
@@ -673,13 +674,14 @@ class HistorianAgent(AgentActor):
         # Get lineage if exists
         lineage = await self.get_lineage(deliberation_id)
 
+        # P2-1 fix: Use timezone-aware datetime
         context = {
             "deliberation_id": deliberation_id,
             "topic": topic,
             "relevant_memories": context_entries,
             "matched_patterns": patterns,
             "lineage": lineage,
-            "provided_at": datetime.utcnow().isoformat(),
+            "provided_at": datetime.now(timezone.utc).isoformat(),
         }
 
         # Store context provision in memory
@@ -738,14 +740,16 @@ class HistorianAgent(AgentActor):
                 # P0-14 fix: Add timeout to LLM call
                 synthesis = await self.run_with_llm(prompt=synthesis_prompt, timeout=timeout)
 
+                # P2-1 fix: Use timezone-aware datetime
                 return {
                     "topic": topic,
                     "summary": synthesis,
                     "source_count": len(results),
                     "confidence": 0.8,
-                    "synthesized_at": datetime.utcnow().isoformat(),
+                    "synthesized_at": datetime.now(timezone.utc).isoformat(),
                 }
             except asyncio.TimeoutError:
+                # P2-1 fix: Use timezone-aware datetime
                 logger.error(f"[{self.agent_id}] Synthesis timed out after {timeout}s")
                 return {
                     "topic": topic,
@@ -753,18 +757,19 @@ class HistorianAgent(AgentActor):
                     "source_count": len(results),
                     "confidence": 0.0,
                     "error": "timeout",
-                    "synthesized_at": datetime.utcnow().isoformat(),
+                    "synthesized_at": datetime.now(timezone.utc).isoformat(),
                 }
             except Exception as e:
                 logger.error(f"[{self.agent_id}] Synthesis error: {e}")
 
         # Fallback synthesis
+        # P2-1 fix: Use timezone-aware datetime
         return {
             "topic": topic,
             "summary": f"Found {len(results)} relevant memories",
             "source_count": len(results),
             "confidence": 0.5,
-            "synthesized_at": datetime.utcnow().isoformat(),
+            "synthesized_at": datetime.now(timezone.utc).isoformat(),
         }
 
     def get_memory_statistics(self) -> Dict[str, Any]:

@@ -102,7 +102,7 @@ class ActorSupervisor:
         self.restart_counts: Dict[str, int] = {}
         self._running = False
         self._monitor_task: Optional[asyncio.Task] = None
-        self._factory = get_factory()
+        # P2-5 fix: Removed unused _factory - dead code removal
 
         logger.info(
             f"[{self.name}] Supervisor initialized",
@@ -183,11 +183,19 @@ class ActorSupervisor:
             )
 
             return actor
+        except ValueError:
+            # Re-raise ValueError (e.g., duplicate actor_id)
+            raise
         except Exception as e:
+            # P1-10f fix: Comprehensive exception handling for spawn failures
             logger.error(
                 f"[{self.name}] Failed to spawn actor {actor_id}: {e}",
                 exc_info=True,
             )
+            # Clean up partial state if actor was partially registered
+            self.actors.pop(actor_id, None)
+            self.restart_counts.pop(actor_id, None)
+            self.actor_configs.pop(actor_id, None)
             raise
 
     async def terminate_actor(self, actor_id: str) -> None:
@@ -271,6 +279,9 @@ class ActorSupervisor:
                 await self._monitor_task
             except asyncio.CancelledError:
                 pass
+            finally:
+                # P1-10h fix: Reset _monitor_task to None after cancellation
+                self._monitor_task = None
 
         logger.info(f"[{self.name}] Actor monitoring stopped")
 

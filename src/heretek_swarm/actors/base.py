@@ -183,7 +183,8 @@ class AgentActor:
         if heartbeat_interval <= 0:
             raise ValueError("heartbeat_interval must be positive")
         
-        self.agent_id = agent_id or f"actor_{uuid.uuid4().hex[:8]}"
+        # P1-10a fix: Use full 128-bit uuid for agent_id instead of truncated 32-bit
+        self.agent_id = agent_id or f"actor_{uuid.uuid4().hex}"
         self.name = name or self.__class__.__name__
         self.description = description or f"Actor: {self.name}"
         self.topics = topics or []
@@ -296,9 +297,8 @@ class AgentActor:
             logger.info(f"[{self.agent_id}] Agent terminating...")
 
             self._running = False
-            self.state = ActorState.TERMINATED
-
-            # Cancel tasks
+            # P1-10c fix: Set state to TERMINATED AFTER cleanup completes, not before
+            # First cancel all tasks
             await self._cancel_tasks()
 
             # Save final state
@@ -307,6 +307,9 @@ class AgentActor:
             # Call cleanup hook
             await self.cleanup()
 
+            # Now set state to TERMINATED after all cleanup is complete
+            self.state = ActorState.TERMINATED
+
             logger.info(f"[{self.agent_id}] Agent terminated")
         except Exception as e:
             logger.error(f"[{self.agent_id}] Terminate failed: {e}", exc_info=True)
@@ -314,7 +317,7 @@ class AgentActor:
             raise
 
     async def _cancel_tasks(self) -> None:
-        """Cancel all running tasks."""
+        """Cancel all running tasks with comprehensive exception handling."""
         tasks_to_cancel = []
 
         if self._processing_task and not self._processing_task.done():
@@ -327,9 +330,14 @@ class AgentActor:
 
         if tasks_to_cancel:
             try:
+                # P1-10d fix: Catch all exceptions, not just CancelledError
                 await asyncio.gather(*tasks_to_cancel, return_exceptions=True)
             except asyncio.CancelledError:
+                # Expected during task cancellation
                 pass
+            except Exception as e:
+                # P1-10d fix: Log any other exceptions during task cancellation
+                logger.error(f"[{self.agent_id}] Error during task cancellation: {e}", exc_info=True)
 
     async def send(
         self,
@@ -505,21 +513,36 @@ class AgentActor:
         Args:
             message: Actor message to process
         """
-        try:
-            await asyncio.wait_for(
-                self.mailbox.put(message),
-                timeout=5.0,
-            )
-            logger.debug(
-                f"[{self.agent_id}] Message queued",
-                extra={"message_type": message.message_type},
-            )
-        except asyncio.TimeoutError:
-            logger.warning(
-                f"[{self.agent_id}] Mailbox full, message dropped",
-                extra={"message_type": message.message_type},
-            )
-            self.error_count += 1
+        # P1-10e fix: Add retry logic for message queuing instead of dropping
+        max_retries = 3
+        retry_delay = 0.1  # 100ms initial delay
+        
+        for attempt in range(max_retries):
+            try:
+                await asyncio.wait_for(
+                    self.mailbox.put(message),
+                    timeout=5.0,
+                )
+                logger.debug(
+                    f"[{self.agent_id}] Message queued",
+                    extra={"message_type": message.message_type},
+                )
+                return  # Success, exit retry loop
+            except asyncio.TimeoutError:
+                if attempt < max_retries - 1:
+                    # P1-10e fix: Retry with exponential backoff
+                    logger.warning(
+                        f"[{self.agent_id}] Mailbox full, retrying ({attempt + 1}/{max_retries})",
+                        extra={"message_type": message.message_type},
+                    )
+                    await asyncio.sleep(retry_delay * (2 ** attempt))
+                else:
+                    # P1-10e fix: Only drop after all retries exhausted
+                    logger.error(
+                        f"[{self.agent_id}] Mailbox full after {max_retries} retries, message dropped",
+                        extra={"message_type": message.message_type},
+                    )
+                    self.error_count += 1
 
     async def _process_mailbox(self) -> None:
         """Process messages from mailbox in a loop."""

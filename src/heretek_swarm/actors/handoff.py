@@ -14,7 +14,7 @@ Features:
 import asyncio
 import sys
 import uuid
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Set
 from dataclasses import dataclass, field
 
@@ -163,8 +163,9 @@ class AgentHandoff:
                 error=str(e)
             )
         
+        # P2-1 fix: Use timezone-aware datetime
         handoff_id = str(uuid.uuid4())
-        timestamp = datetime.utcnow().isoformat()
+        timestamp = datetime.now(timezone.utc).isoformat()
         
         # Check active handoffs limit (P0-11 fix)
         if len(self._active_handoffs) >= self.MAX_ACTIVE_HANDOFFS:
@@ -280,8 +281,9 @@ class AgentHandoff:
         Raises:
             ValueError: If rate limit exceeded
         """
-        now = datetime.utcnow()
-        one_minute_ago = datetime.utcnow().replace(microsecond=0)
+        # P2-1 fix: Use timezone-aware datetime
+        now = datetime.now(timezone.utc)
+        one_minute_ago = now.replace(microsecond=0)
         
         # Remove timestamps older than 1 minute
         self._handoff_timestamps = [
@@ -326,11 +328,12 @@ class AgentHandoff:
         # P1-4: Check method existence
         if self.historian and hasattr(self.historian, 'log_event'):
             await self.historian.log_event(
+                # P2-1 fix: Use timezone-aware datetime
                 event_type="handoff_completed",
                 data={
                     "handoff_id": handoff_id,
                     "result": result,
-                    "timestamp": datetime.utcnow().isoformat()
+                    "timestamp": datetime.now(timezone.utc).isoformat()
                 }
             )
         
@@ -374,11 +377,12 @@ class AgentHandoff:
         # Log cancellation
         # P1-4: Check method existence
         if self.historian and hasattr(self.historian, 'log_event'):
+            # P2-1 fix: Use timezone-aware datetime
             await self.historian.log_event(
                 event_type="handoff_cancelled",
                 data={
                     "handoff_id": handoff_id,
-                    "timestamp": datetime.utcnow().isoformat()
+                    "timestamp": datetime.now(timezone.utc).isoformat()
                 }
             )
         

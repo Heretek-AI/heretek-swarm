@@ -13,7 +13,7 @@ import asyncio
 import os
 import signal
 import time
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Dict, List, Optional, Any
 from dataclasses import dataclass, field
@@ -64,10 +64,11 @@ class AutonomousRuntime:
         Args:
             config: Runtime configuration
         """
+        # P2-1 fix: Use timezone-aware datetime
         self.config = config
         self.supervisor: Optional[ActorSupervisor] = None
         self.agent_runtime: Optional[AgentRuntime] = None
-        self.state = RuntimeState(start_time=datetime.utcnow())
+        self.state = RuntimeState(start_time=datetime.now(timezone.utc))
         self._running = False
         self._shutdown_event = asyncio.Event()
 
@@ -104,9 +105,10 @@ class AutonomousRuntime:
 
     async def start(self) -> None:
         """Start autonomous runtime."""
+        # P2-1 fix: Use timezone-aware datetime
         logger.info("Starting autonomous runtime...")
         self._running = True
-        self.state.start_time = datetime.utcnow()
+        self.state.start_time = datetime.now(timezone.utc)
 
         # Start initial agents
         await self._start_initial_agents()
@@ -179,7 +181,8 @@ class AutonomousRuntime:
 
     async def _health_checks(self) -> None:
         """Perform health checks on all components."""
-        self.state.last_health_check = datetime.utcnow()
+        # P2-1 fix: Use timezone-aware datetime
+        self.state.last_health_check = datetime.now(timezone.utc)
 
         # Check agent health
         if self.supervisor:
@@ -331,9 +334,10 @@ class AutonomousRuntime:
 
     async def _scale_up(self) -> None:
         """Scale up by adding more agents."""
+        # P2-1 fix: Use timezone-aware datetime
         # Check cooldown
         if self._last_scale_up_time:
-            time_since = datetime.utcnow() - self._last_scale_up_time
+            time_since = datetime.now(timezone.utc) - self._last_scale_up_time
             if time_since.total_seconds() < self.config.scale_up_cooldown_minutes * 60:
                 return
 
@@ -352,9 +356,10 @@ class AutonomousRuntime:
             config_path = self.config.agent_configs[agent_name]
 
             try:
+                # P2-1 fix: Use timezone-aware datetime
                 await self.agent_runtime.spawn_agent(agent_name, str(config_path))
-                self.state.last_scale_event = datetime.utcnow()
-                self._last_scale_up_time = datetime.utcnow()
+                self.state.last_scale_event = datetime.now(timezone.utc)
+                self._last_scale_up_time = datetime.now(timezone.utc)
                 logger.info(f"Scaled up: Started agent {agent_name}")
             except Exception as e:
                 logger.error(f"Failed to scale up: {e}")
@@ -375,9 +380,10 @@ class AutonomousRuntime:
         idle_agent = await self._find_idle_agent()
         if idle_agent:
             try:
+                # P2-1 fix: Use timezone-aware datetime
                 await self.supervisor.terminate_actor(idle_agent)
-                self.state.last_scale_event = datetime.utcnow()
-                self._last_scale_down_time = datetime.utcnow()
+                self.state.last_scale_event = datetime.now(timezone.utc)
+                self._last_scale_down_time = datetime.now(timezone.utc)
                 logger.info(f"Scaled down: Terminated agent {idle_agent}")
             except Exception as e:
                 logger.error(f"Failed to scale down: {e}")
@@ -402,7 +408,8 @@ class AutonomousRuntime:
                         else:
                             last_activity_dt = last_activity_str
                         
-                        idle_time = datetime.utcnow() - last_activity_dt
+                        # P2-1 fix: Use timezone-aware datetime
+                        idle_time = datetime.now(timezone.utc) - last_activity_dt
                         if idle_time.total_seconds() > self.config.min_uptime_before_scale_down * 60:
                             return agent_id
                     except (ValueError, TypeError) as e:
@@ -428,10 +435,11 @@ class AutonomousRuntime:
 
     async def _save_state(self) -> None:
         """Save current state to disk."""
+        # P2-1 fix: Use timezone-aware datetime
         state_file = Path(self.config.log_directory) / "runtime_state.json"
 
         state_data = {
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
             "uptime_seconds": self.state.uptime_seconds,
             "total_agent_restarts": self.state.total_agent_restarts,
             "total_failures": self.state.total_failures,
@@ -497,8 +505,9 @@ class AutonomousRuntime:
                 })
 
         # Store metrics
+        # P2-1 fix: Use timezone-aware datetime
         self.state.uptime_seconds = (
-            datetime.utcnow() - self.state.start_time
+            datetime.now(timezone.utc) - self.state.start_time
         ).total_seconds()
 
         logger.info(f"Collected metrics for {len(agent_metrics)} agents")
@@ -558,14 +567,16 @@ class AutonomousRuntime:
 
     async def _send_alert(self, alert_type: str, data: Dict[str, Any]) -> None:
         """Send alert notification."""
+        # P2-1 fix: Use timezone-aware datetime
         # Check cooldown
         last_time = self._last_alert_time.get(alert_type)
         if last_time:
-            time_since = datetime.utcnow() - last_time
+            time_since = datetime.now(timezone.utc) - last_time
             if time_since.total_seconds() < 300:  # 5 minute cooldown
                 return
 
-        self._last_alert_time[alert_type] = datetime.utcnow()
+        # P2-1 fix: Use timezone-aware datetime
+        self._last_alert_time[alert_type] = datetime.now(timezone.utc)
 
         logger.warning(f"Alert: {alert_type}", data=data)
 
@@ -645,9 +656,10 @@ class AutonomousRuntime:
             msg["To"] = ", ".join(self.config.alert_config.email_recipients)
             msg["Subject"] = f"Heretek Swarm Alert: {alert_type}"
 
+            # P2-1 fix: Use timezone-aware datetime
             body = f"Alert Type: {alert_type}\n\n"
             body += f"Data:\n{data}\n\n"
-            body += f"Timestamp: {datetime.utcnow().isoformat()}"
+            body += f"Timestamp: {datetime.now(timezone.utc).isoformat()}"
 
             msg.attach(MIMEText(body, "plain"))
 

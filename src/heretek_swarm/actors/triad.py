@@ -13,7 +13,7 @@ These agents work together using MAKER consensus for deliberation.
 
 import asyncio
 import logging
-from datetime import datetime
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
 import structlog
@@ -130,11 +130,12 @@ class StewardAgent(AgentActor):
             return
 
         # Initialize deliberation
+        # P2-1 fix: Use timezone-aware datetime
         self.active_deliberations[deliberation_id] = {
             "topic": topic,
             "triad_members": triad_members,
             "status": "initiated",
-            "started_at": datetime.utcnow().isoformat(),
+            "started_at": datetime.now(timezone.utc).isoformat(),
             "votes": {},
         }
 
@@ -211,9 +212,10 @@ class StewardAgent(AgentActor):
         policy_data = message.content.get("policy_data")
 
         if policy_id and policy_data:
+            # P2-1 fix: Use timezone-aware datetime
             self.governance_policies[policy_id] = {
                 **policy_data,
-                "updated_at": datetime.utcnow().isoformat(),
+                "updated_at": datetime.now(timezone.utc).isoformat(),
                 "updated_by": message.sender,
             }
             logger.info(f"[{self.agent_id}] Updated policy: {policy_id}")
@@ -233,7 +235,8 @@ class StewardAgent(AgentActor):
         Returns:
             Deliberation ID
         """
-        deliberation_id = f"del_{datetime.utcnow().strftime('%Y%m%d_%H%M%S')}"
+        # P2-1 fix: Use timezone-aware datetime
+        deliberation_id = f"del_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}"
 
         await self.send(
             topic="triad",
@@ -391,10 +394,11 @@ class AlphaAgent(AgentActor):
             correlation_id=message.correlation_id,
         )
 
+        # P2-1 fix: Use timezone-aware datetime
         self.analysis_history.append({
             "request_id": request_id,
             "analysis": analysis,
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
         })
         # P1-3: Trim history if it exceeds max size
         if len(self.analysis_history) > self.max_history_size:
@@ -618,10 +622,11 @@ class BetaAgent(AgentActor):
             original_analysis,
         )
 
+        # P2-1 fix: Use timezone-aware datetime
         self.validation_history.append({
             "request_id": request_id,
             "validation": validation,
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
         })
         # P1-3: Trim history if it exceeds max size
         if len(self.validation_history) > self.max_history_size:
@@ -645,10 +650,11 @@ class BetaAgent(AgentActor):
         errors = await self._detect_errors(content)
 
         if errors:
+            # P2-1 fix: Use timezone-aware datetime
             self.error_detections.append({
                 "content": content,
                 "errors": errors,
-                "timestamp": datetime.utcnow().isoformat(),
+                "timestamp": datetime.now(timezone.utc).isoformat(),
             })
             # P1-3: Trim history if it exceeds max size
             if len(self.error_detections) > self.max_history_size:
@@ -871,10 +877,11 @@ class CharlieAgent(AgentActor):
 
         challenges = await self._generate_challenges(proposition)
 
+        # P2-1 fix: Use timezone-aware datetime
         self.challenges_raised.append({
             "proposition": proposition,
             "challenges": challenges,
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
         })
         # P1-3: Trim history if it exceeds max size
         if len(self.challenges_raised) > self.max_history_size:
@@ -901,10 +908,11 @@ class CharlieAgent(AgentActor):
 
         assessment = await self._assess_risks(scenario)
 
+        # P2-1 fix: Use timezone-aware datetime
         self.risk_assessments.append({
             "scenario": scenario,
             "assessment": assessment,
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
         })
         # P1-3: Trim history if it exceeds max size
         if len(self.risk_assessments) > self.max_history_size:
