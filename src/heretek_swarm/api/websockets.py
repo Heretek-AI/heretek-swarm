@@ -5,20 +5,132 @@ Provides WebSocket connections for:
 - Execution updates: Real-time status of agent executions
 - A2A messages: Agent-to-agent message stream monitoring
 - Agent events: Live agent state change notifications
+
+SECURITY: All WebSocket connections require authentication via token.
 """
 
 import asyncio
 import json
 import os
-from typing import Any, Dict, Optional
-from datetime import datetime
+import secrets
+from typing import Any, Dict, Optional, Tuple
+from datetime import datetime, timedelta
 
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect, HTTPException
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect, HTTPException, Query
 import structlog
 
 from heretek_swarm.gateway import EventMesh
 
 logger = structlog.get_logger("api.websockets")
+
+# =============================================================================
+# Authentication Configuration
+# =============================================================================
+
+class WebSocketAuthManager:
+    """Manages authentication for WebSocket connections."""
+    
+    def __init__(self, secret_key: Optional[str] = None):
+        self.secret_key = secret_key or os.environ.get("WEBSOCKET_SECRET_KEY", secrets.token_hex(32))
+        self._valid_tokens: Dict[str, Dict[str, Any]] = {}
+        self._token_expiry = timedelta(hours=24)
+        self._rate_limits: Dict[str, list] = {}  # Track requests per user
+        self._rate_limit_window = 60  # seconds
+        self._rate_limit_max = 100  # max requests per window
+    
+    def generate_token(self, user_id: str, metadata: Optional[Dict] = None) -> str:
+        """Generate an authentication token for a user."""
+        token = secrets.token_urlsafe(32)
+        self._valid_tokens[token] = {
+            "user_id": user_id,
+            "created_at": datetime.now(timezone.utc),
+            "expires_at": datetime.now(timezone.utc) + self._token_expiry,
+            "metadata": metadata or {},
+        }
+        return token
+    
+    def validate_token(self, token: str) -> Tuple[bool, Optional[str], Optional[str]]:
+        """
+        Validate an authentication token.
+        
+        Returns:
+            Tuple of (is_valid, user_id, error_message)
+        """
+        if not token:
+            return False, None, "Token required"
+        
+        if token not in self._valid_tokens:
+            return False, None, "Invalid token"
+        
+        token_data = self._valid_tokens[token]
+        if datetime.now(timezone.utc) > token_data["expires_at"]:
+            del self._valid_tokens[token]
+            return False, None, "Token expired"
+        
+        return True, token_data["user_id"], None
+    
+    def revoke_token(self, token: str) -> bool:
+        """Revoke a token."""
+        if token in self._valid_tokens:
+            del self._valid_tokens[token]
+            return True
+        return False
+    
+    def check_rate_limit(self, user_id: str) -> bool:
+        """
+        Check if user has exceeded rate limit.
+        
+        Returns:
+            True if request is allowed, False if rate limited
+        """
+        now = datetime.now(timezone.utc).timestamp()
+        
+        if user_id not in self._rate_limits:
+            self._rate_limits[user_id] = []
+        
+        # Remove old entries outside window
+        self._rate_limits[user_id] = [
+            ts for ts in self._rate_limits[user_id]
+            if now - ts < self._rate_limit_window
+        ]
+        
+        # Check limit
+        if len(self._rate_limits[user_id]) >= self._rate_limit_max:
+            return False
+        
+        # Record this request
+        self._rate_limits[user_id].append(now)
+        return True
+    
+    def cleanup_expired(self) -> int:
+        """Remove expired tokens. Returns count of removed tokens."""
+        now = datetime.now(timezone.utc)
+        expired = [t for t, data in self._valid_tokens.items() if now > data["expires_at"]]
+        for token in expired:
+            del self._valid_tokens[token]
+        return len(expired)
+
+
+# Global auth manager instance
+ws_auth_manager = WebSocketAuthManager()
+
+
+async def authenticate_websocket(websocket: WebSocket, token: Optional[str]) -> Tuple[bool, Optional[str], Optional[str]]:
+    """
+    Authenticate a WebSocket connection.
+    
+    Returns:
+        Tuple of (is_authenticated, user_id, error_message)
+    """
+    is_valid, user_id, error = ws_auth_manager.validate_token(token or "")
+    if not is_valid:
+        return False, None, error
+    
+    # Check rate limit
+    if not ws_auth_manager.check_rate_limit(user_id):
+        return False, None, "Rate limit exceeded"
+    
+    return True, user_id, None
 
 # Create WebSocket router
 router = APIRouter()
@@ -135,9 +247,15 @@ manager = ConnectionManager()
 # =============================================================================
 
 @router.websocket("/ws/executions/{execution_id}")
-async def execution_websocket(websocket: WebSocket, execution_id: str):
+async def execution_websocket(
+    websocket: WebSocket,
+    execution_id: str,
+    token: Optional[str] = Query(None, description="Authentication token")
+):
     """
     WebSocket endpoint for real-time execution updates.
+    
+    SECURITY: Requires valid authentication token.
     
     Clients connect to receive live updates about agent execution progress.
     Messages are sent as JSON with the following structure:
@@ -151,16 +269,32 @@ async def execution_websocket(websocket: WebSocket, execution_id: str):
     
     Args:
         execution_id: Unique execution identifier
+        token: Authentication token (required)
         
     Example:
         ```javascript
-        const ws = new WebSocket("ws://localhost:8000/ws/executions/exec-123");
+        const ws = new WebSocket("ws://localhost:8000/ws/executions/exec-123?token=YOUR_TOKEN");
         ws.onmessage = (event) => {
             const update = JSON.parse(event.data);
             console.log(`Progress: ${update.progress * 100}%`);
         };
         ```
     """
+    # SECURITY: Authenticate connection
+    is_authenticated, user_id, error = await authenticate_websocket(websocket, token)
+    if not is_authenticated:
+        try:
+            await websocket.accept()
+            await websocket.send_json({
+                "type": "error",
+                "error": f"Authentication failed: {error}"
+            })
+            await websocket.close()
+        except Exception:
+            pass
+        logger.warning("websocket_execution_auth_failed", execution_id=execution_id, error=error)
+        return
+    
     await manager.connect_execution(websocket, execution_id)
     
     try:
@@ -168,7 +302,7 @@ async def execution_websocket(websocket: WebSocket, execution_id: str):
         await websocket.send_json({
             "type": "connected",
             "execution_id": execution_id,
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(timezone.utc).isoformat(),
         })
         
         # Track execution state in memory (simplified - in production use Redis)
@@ -177,7 +311,7 @@ async def execution_websocket(websocket: WebSocket, execution_id: str):
             "status": "running",
             "progress": 0.0,
             "message": "Initializing",
-            "started_at": datetime.utcnow().isoformat(),
+            "started_at": datetime.now(timezone.utc).isoformat(),
         }
         
         # Store in memory for retrieval
@@ -202,7 +336,7 @@ async def execution_websocket(websocket: WebSocket, execution_id: str):
                 # Send heartbeat/update
                 await websocket.send_json({
                     "type": "heartbeat",
-                    "timestamp": datetime.utcnow().isoformat(),
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
                 })
                 
     except WebSocketDisconnect:
@@ -239,9 +373,14 @@ async def get_execution_update(execution_id: str) -> Dict[str, Any]:
 # =============================================================================
 
 @router.websocket("/ws/a2a")
-async def a2a_websocket(websocket: WebSocket):
+async def a2a_websocket(
+    websocket: WebSocket,
+    token: Optional[str] = Query(None, description="Authentication token")
+):
     """
     WebSocket endpoint for A2A protocol message stream.
+    
+    SECURITY: Requires valid authentication token.
     
     This endpoint provides real-time monitoring of agent-to-agent messages.
     All A2A messages are broadcast to connected clients.
@@ -257,13 +396,28 @@ async def a2a_websocket(websocket: WebSocket):
     
     Example:
         ```javascript
-        const ws = new WebSocket("ws://localhost:8000/ws/a2a");
+        const ws = new WebSocket("ws://localhost:8000/ws/a2a?token=YOUR_TOKEN");
         ws.onmessage = (event) => {
             const msg = JSON.parse(event.data);
             console.log(`A2A: ${msg.from} -> ${msg.to}`);
         };
         ```
     """
+    # SECURITY: Authenticate connection
+    is_authenticated, user_id, error = await authenticate_websocket(websocket, token)
+    if not is_authenticated:
+        try:
+            await websocket.accept()
+            await websocket.send_json({
+                "type": "error",
+                "error": f"Authentication failed: {error}"
+            })
+            await websocket.close()
+        except Exception:
+            pass
+        logger.warning("websocket_a2a_auth_failed", error=error)
+        return
+    
     await manager.connect_a2a(websocket)
     
     # Try to use Redis pub/sub if available, fallback to simulation
@@ -299,7 +453,7 @@ async def a2a_websocket(websocket: WebSocket):
                 # Send periodic heartbeat to keep connection alive
                 await websocket.send_json({
                     "type": "heartbeat",
-                    "timestamp": datetime.utcnow().isoformat(),
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
                 })
                 await asyncio.sleep(30)
                 
@@ -314,9 +468,15 @@ async def a2a_websocket(websocket: WebSocket):
 # =============================================================================
 
 @router.websocket("/ws/agents/{agent_id}/events")
-async def agent_events_websocket(websocket: WebSocket, agent_id: str):
+async def agent_events_websocket(
+    websocket: WebSocket,
+    agent_id: str,
+    token: Optional[str] = Query(None, description="Authentication token")
+):
     """
     WebSocket endpoint for agent-specific event stream.
+    
+    SECURITY: Requires valid authentication token.
     
     Provides real-time events for a specific agent including:
     - State changes
@@ -326,6 +486,7 @@ async def agent_events_websocket(websocket: WebSocket, agent_id: str):
     
     Args:
         agent_id: Unique agent identifier
+        token: Authentication token (required)
         
     Message format:
     {
@@ -335,6 +496,21 @@ async def agent_events_websocket(websocket: WebSocket, agent_id: str):
         "timestamp": "2024-01-01T12:00:00Z"
     }
     """
+    # SECURITY: Authenticate connection
+    is_authenticated, user_id, error = await authenticate_websocket(websocket, token)
+    if not is_authenticated:
+        try:
+            await websocket.accept()
+            await websocket.send_json({
+                "type": "error",
+                "error": f"Authentication failed: {error}"
+            })
+            await websocket.close()
+        except Exception:
+            pass
+        logger.warning("websocket_agent_events_auth_failed", agent_id=agent_id, error=error)
+        return
+    
     await websocket.accept()
     
     logger.info("Agent events WebSocket connected", agent_id=agent_id)
@@ -356,7 +532,7 @@ async def agent_events_websocket(websocket: WebSocket, agent_id: str):
                 # Send heartbeat
                 await websocket.send_json({
                     "type": "heartbeat",
-                    "timestamp": datetime.utcnow().isoformat(),
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
                 })
                 
     except WebSocketDisconnect:
@@ -370,9 +546,14 @@ async def agent_events_websocket(websocket: WebSocket, agent_id: str):
 # =============================================================================
 
 @router.websocket("/ws/dashboard")
-async def dashboard_websocket(websocket: WebSocket):
+async def dashboard_websocket(
+    websocket: WebSocket,
+    token: Optional[str] = Query(None, description="Authentication token")
+):
     """
     WebSocket endpoint for real-time dashboard updates.
+    
+    SECURITY: Requires valid authentication token.
     
     Broadcasts:
     - Agent status changes
@@ -388,6 +569,21 @@ async def dashboard_websocket(websocket: WebSocket):
         "timestamp": "2024-01-01T12:00:00Z"
     }
     """
+    # SECURITY: Authenticate connection
+    is_authenticated, user_id, error = await authenticate_websocket(websocket, token)
+    if not is_authenticated:
+        try:
+            await websocket.accept()
+            await websocket.send_json({
+                "type": "error",
+                "error": f"Authentication failed: {error}"
+            })
+            await websocket.close()
+        except Exception:
+            pass
+        logger.warning("websocket_dashboard_auth_failed", error=error)
+        return
+    
     await manager.connect_dashboard(websocket)
     
     logger.info("Dashboard WebSocket connected")
@@ -404,14 +600,14 @@ async def dashboard_websocket(websocket: WebSocket):
                 if message.get("action") == "ping":
                     await websocket.send_json({
                         "type": "pong",
-                        "timestamp": datetime.utcnow().isoformat(),
+                        "timestamp": datetime.now(timezone.utc).isoformat(),
                     })
                     
             except asyncio.TimeoutError:
                 # Send heartbeat
                 await websocket.send_json({
                     "type": "heartbeat",
-                    "timestamp": datetime.utcnow().isoformat(),
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
                 })
                 await asyncio.sleep(30)
                 
@@ -428,9 +624,14 @@ async def dashboard_websocket(websocket: WebSocket):
 # =============================================================================
 
 @router.websocket("/ws/observability")
-async def observability_websocket(websocket: WebSocket):
+async def observability_websocket(
+    websocket: WebSocket,
+    token: Optional[str] = Query(None, description="Authentication token")
+):
     """
     WebSocket endpoint for real-time observability updates.
+    
+    SECURITY: Requires valid authentication token.
     
     Broadcasts:
     - LLM traces
@@ -445,6 +646,21 @@ async def observability_websocket(websocket: WebSocket):
         "timestamp": "2024-01-01T12:00:00Z"
     }
     """
+    # SECURITY: Authenticate connection
+    is_authenticated, user_id, error = await authenticate_websocket(websocket, token)
+    if not is_authenticated:
+        try:
+            await websocket.accept()
+            await websocket.send_json({
+                "type": "error",
+                "error": f"Authentication failed: {error}"
+            })
+            await websocket.close()
+        except Exception:
+            pass
+        logger.warning("websocket_observability_auth_failed", error=error)
+        return
+    
     await manager.connect_observability(websocket)
     
     logger.info("Observability WebSocket connected")
@@ -461,14 +677,14 @@ async def observability_websocket(websocket: WebSocket):
                 if message.get("action") == "ping":
                     await websocket.send_json({
                         "type": "pong",
-                        "timestamp": datetime.utcnow().isoformat(),
+                        "timestamp": datetime.now(timezone.utc).isoformat(),
                     })
                     
             except asyncio.TimeoutError:
                 # Send heartbeat
                 await websocket.send_json({
                     "type": "heartbeat",
-                    "timestamp": datetime.utcnow().isoformat(),
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
                 })
                 await asyncio.sleep(30)
                 
@@ -485,9 +701,14 @@ async def observability_websocket(websocket: WebSocket):
 # =============================================================================
 
 @router.websocket("/ws/agents")
-async def all_agents_websocket(websocket: WebSocket):
+async def all_agents_websocket(
+    websocket: WebSocket,
+    token: Optional[str] = Query(None, description="Authentication token")
+):
     """
     WebSocket endpoint for all agent state updates.
+    
+    SECURITY: Requires valid authentication token.
     
     Broadcasts state changes for all agents to connected clients.
     Useful for dashboards and monitoring.
@@ -500,6 +721,21 @@ async def all_agents_websocket(websocket: WebSocket):
         "timestamp": "2024-01-01T12:00:00Z"
     }
     """
+    # SECURITY: Authenticate connection
+    is_authenticated, user_id, error = await authenticate_websocket(websocket, token)
+    if not is_authenticated:
+        try:
+            await websocket.accept()
+            await websocket.send_json({
+                "type": "error",
+                "error": f"Authentication failed: {error}"
+            })
+            await websocket.close()
+        except Exception:
+            pass
+        logger.warning("websocket_all_agents_auth_failed", error=error)
+        return
+    
     await websocket.accept()
     
     logger.info("All agents WebSocket connected")
@@ -516,7 +752,7 @@ async def all_agents_websocket(websocket: WebSocket):
             except asyncio.TimeoutError:
                 await websocket.send_json({
                     "type": "heartbeat",
-                    "timestamp": datetime.utcnow().isoformat(),
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
                 })
                 
     except WebSocketDisconnect:
