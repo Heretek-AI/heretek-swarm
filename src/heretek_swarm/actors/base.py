@@ -14,7 +14,7 @@ import logging
 import uuid
 from abc import abstractmethod
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
@@ -193,7 +193,7 @@ class AgentActor:
         self.internal_state: Dict[str, Any] = {}
         self.message_count = 0
         self.error_count = 0
-        self.created_at = datetime.utcnow().isoformat()
+        self.created_at = datetime.now(timezone.utc).isoformat()
         self.last_activity: Optional[str] = None
 
         # Processing tasks
@@ -245,25 +245,31 @@ class AgentActor:
         3. Starts heartbeat loop
         4. Calls initialize() hook for subclass setup
         """
-        logger.info(
-            f"[{self.agent_id}] Agent spawned: {self.name}",
-            extra={"state": self.state.value},
-        )
+        try:
+            logger.info(
+                f"[{self.agent_id}] Agent spawned: {self.name}",
+                extra={"state": self.state.value},
+            )
 
-        self._running = True
-        self.state = ActorState.ACTIVE
+            self._running = True
+            self.state = ActorState.ACTIVE
 
-        # Start processing tasks
-        self._processing_task = asyncio.create_task(self._process_mailbox())
-        self._heartbeat_task = asyncio.create_task(self._heartbeat_loop())
+            # Start processing tasks
+            self._processing_task = asyncio.create_task(self._process_mailbox())
+            self._heartbeat_task = asyncio.create_task(self._heartbeat_loop())
 
-        # Call initialization hook
-        await self.initialize()
+            # Call initialization hook
+            await self.initialize()
 
-        logger.info(
-            f"[{self.agent_id}] Actor spawn complete",
-            extra={"mailbox_size": self.mailbox.qsize()},
-        )
+            logger.info(
+                f"[{self.agent_id}] Actor spawn complete",
+                extra={"mailbox_size": self.mailbox.qsize()},
+            )
+        except Exception as e:
+            logger.error(f"[{self.agent_id}] Spawn failed: {e}", exc_info=True)
+            self.state = ActorState.ERROR
+            self.error_count += 1
+            raise
 
     async def terminate(self) -> None:
         """
@@ -275,21 +281,26 @@ class AgentActor:
         3. Calls cleanup() hook for subclass teardown
         4. Saves final state
         """
-        logger.info(f"[{self.agent_id}] Agent terminating...")
+        try:
+            logger.info(f"[{self.agent_id}] Agent terminating...")
 
-        self._running = False
-        self.state = ActorState.TERMINATED
+            self._running = False
+            self.state = ActorState.TERMINATED
 
-        # Cancel tasks
-        await self._cancel_tasks()
+            # Cancel tasks
+            await self._cancel_tasks()
 
-        # Save final state
-        await self.save_state()
+            # Save final state
+            await self.save_state()
 
-        # Call cleanup hook
-        await self.cleanup()
+            # Call cleanup hook
+            await self.cleanup()
 
-        logger.info(f"[{self.agent_id}] Agent terminated")
+            logger.info(f"[{self.agent_id}] Agent terminated")
+        except Exception as e:
+            logger.error(f"[{self.agent_id}] Terminate failed: {e}", exc_info=True)
+            self.state = ActorState.ERROR
+            raise
 
     async def _cancel_tasks(self) -> None:
         """Cancel all running tasks."""
@@ -338,20 +349,79 @@ class AgentActor:
             sender=self.agent_id,
             message_type=message_type,
             content=content,
-            timestamp=datetime.utcnow().isoformat(),
+            timestamp=datetime.now(timezone.utc).isoformat(),
             correlation_id=correlation_id,
             reply_to=reply_to,
             metadata=metadata or {},
         )
 
-        # In a full implementation, this would route through event mesh
-        # For now, log the message send
-        logger.debug(
-            f"[{self.agent_id}] Sent message {message_id} to {topic}",
-            extra={"message_type": message_type},
+        # Route through event mesh if available
+        event_mesh = self.get_state("_event_mesh")
+        if event_mesh is not None:
+            try:
+                # Send via event mesh
+                await event_mesh.send_to_json(
+                    topic,
+                    {
+                        "type": message_type,
+                        "from": self.agent_id,
+                        "content": content,
+                        "correlation_id": correlation_id,
+                        "reply_to": reply_to,
+                        "metadata": metadata or {},
+                        "timestamp": datetime.now(timezone.utc).isoformat(),
+                    }
+                )
+                logger.info(
+                    f"[{self.agent_id}] Message {message_id} sent via event mesh to {topic}",
+                    extra={"message_type": message_type},
+                )
+                return message_id
+            except Exception as e:
+                logger.error(
+                    f"[{self.agent_id}] Event mesh send failed: {e}",
+                    extra={"message_id": message_id, "topic": topic},
+                )
+        
+        # Fallback: Direct delivery to actors subscribed to topic
+        # This would use a global actor registry in production
+        actor_registry = self.get_state("_actor_registry")
+        if actor_registry is not None:
+            try:
+                # Find actors subscribed to this topic
+                for actor_id, actor in actor_registry.items():
+                    if topic in getattr(actor, 'topics', []):
+                        await actor.put_message(message)
+                logger.info(
+                    f"[{self.agent_id}] Message {message_id} delivered directly to topic subscribers",
+                    extra={"message_type": message_type},
+                )
+                return message_id
+            except Exception as e:
+                logger.error(
+                    f"[{self.agent_id}] Direct delivery failed: {e}",
+                    extra={"message_id": message_id, "topic": topic},
+                )
+        
+        # Last resort: log the message (should not happen in production)
+        logger.warning(
+            f"[{self.agent_id}] Message {message_id} queued (no delivery mechanism available)",
+            extra={"message_type": message_type, "topic": topic},
         )
-
+        
+        # Store in internal queue for later delivery
+        self._queue_message(message)
         return message_id
+    
+    def _queue_message(self, message: ActorMessage) -> None:
+        """Queue a message for later delivery when event mesh becomes available."""
+        pending_messages = self.get_state("_pending_messages", [])
+        pending_messages.append(message)
+        self.update_state("_pending_messages", pending_messages)
+        logger.debug(
+            f"[{self.agent_id}] Message queued for later delivery",
+            extra={"message_type": message.message_type},
+        )
 
     async def send_to_actor(
         self,
@@ -372,6 +442,35 @@ class AgentActor:
         Returns:
             Message ID
         """
+        # Try direct delivery first
+        actor_registry = self.get_state("_actor_registry")
+        if actor_registry is not None and target_actor_id in actor_registry:
+            try:
+                target_actor = actor_registry[target_actor_id]
+                message = ActorMessage(
+                    sender=self.agent_id,
+                    message_type=message_type,
+                    content={
+                        "message_type": message_type,
+                        "content": content,
+                        "sender": self.agent_id,
+                    },
+                    timestamp=datetime.now(timezone.utc).isoformat(),
+                    correlation_id=correlation_id,
+                )
+                await target_actor.put_message(message)
+                logger.info(
+                    f"[{self.agent_id}] Direct message sent to {target_actor_id}",
+                    extra={"message_type": message_type},
+                )
+                return str(uuid.uuid4())
+            except Exception as e:
+                logger.error(
+                    f"[{self.agent_id}] Direct actor send failed: {e}",
+                    extra={"target": target_actor_id},
+                )
+        
+        # Fallback to topic-based routing
         return await self.send(
             topic=f"actor:{target_actor_id}",
             content={
@@ -419,7 +518,7 @@ class AgentActor:
                 )
 
                 self.message_count += 1
-                self.last_activity = datetime.utcnow().isoformat()
+                self.last_activity = datetime.now(timezone.utc).isoformat()
 
                 # Process message
                 await self.process_message(message)
@@ -465,8 +564,25 @@ class AgentActor:
         Cleanup resources when actor terminates.
 
         Override this method in subclasses for custom cleanup logic.
+        This method is called during actor shutdown to ensure proper resource cleanup.
         """
-        pass
+        try:
+            # Clear mailbox to prevent memory leaks
+            while not self.mailbox.empty():
+                try:
+                    self.mailbox.get_nowait()
+                except asyncio.QueueEmpty:
+                    break
+            
+            # Clear internal state
+            self.internal_state.clear()
+            
+            # Clear message handlers
+            self._message_handlers.clear()
+            
+            logger.debug(f"[{self.agent_id}] Cleanup complete")
+        except Exception as e:
+            logger.error(f"[{self.agent_id}] Cleanup error: {e}", exc_info=True)
 
     async def _heartbeat_loop(self) -> None:
         """Send periodic heartbeats."""
@@ -477,7 +593,7 @@ class AgentActor:
             except asyncio.CancelledError:
                 break
             except Exception as e:
-                logger.error(f"[{self.agent_id}] Heartbeat error: {e}")
+                logger.error(f"[{self.agent_id}] Heartbeat error: {e}", exc_info=True)
                 await asyncio.sleep(5.0)
 
     async def heartbeat(self) -> None:
@@ -490,26 +606,145 @@ class AgentActor:
 
     async def save_state(self) -> None:
         """
-        Persist actor state.
+        Persist actor state to PostgreSQL or file system.
 
-        Override this method in subclasses to implement custom state persistence.
+        Saves actor state to the 'actor_states' table with proper serialization.
+        Table schema expected:
+            CREATE TABLE actor_states (
+                actor_id TEXT PRIMARY KEY,
+                actor_type TEXT,
+                state JSONB,
+                updated_at TIMESTAMPTZ DEFAULT NOW()
+            );
         """
+        import json
+        
         state = {
             "internal_state": self.internal_state,
             "message_count": self.message_count,
             "error_count": self.error_count,
             "state": self.state.value,
-            "saved_at": datetime.utcnow().isoformat(),
+            "created_at": self.created_at,
+            "last_activity": self.last_activity,
+            "topics": self.topics,
+            "capabilities": self.capabilities,
+            "saved_at": datetime.now(timezone.utc).isoformat(),
         }
-        logger.debug(f"[{self.agent_id}] State persisted")
+        
+        # Try to persist to PostgreSQL if database is available
+        db_pool = self.get_state("_db_pool")
+        if db_pool is not None:
+            try:
+                async with db_pool.acquire() as conn:
+                    await conn.execute(
+                        """
+                        INSERT INTO actor_states (actor_id, actor_type, state, updated_at)
+                        VALUES ($1, $2, $3, NOW())
+                        ON CONFLICT (actor_id) DO UPDATE
+                        SET state = $3, updated_at = NOW()
+                        """,
+                        self.agent_id,
+                        self.actor_type,
+                        json.dumps(state),
+                    )
+                logger.info(
+                    f"[{self.agent_id}] State persisted to PostgreSQL",
+                    extra={"state": self.state.value},
+                )
+                return
+            except Exception as e:
+                logger.error(
+                    f"[{self.agent_id}] PostgreSQL persistence failed: {e}",
+                    exc_info=True,
+                )
+        
+        # Fallback: persist to file system
+        try:
+            import os
+            state_dir = os.path.join(os.getcwd(), ".actor_states")
+            os.makedirs(state_dir, exist_ok=True)
+            state_file = os.path.join(state_dir, f"{self.agent_id}.json")
+            
+            with open(state_file, 'w') as f:
+                json.dump(state, f, indent=2)
+            
+            logger.info(
+                f"[{self.agent_id}] State persisted to file system",
+                extra={"path": state_file},
+            )
+        except Exception as e:
+            logger.error(
+                f"[{self.agent_id}] File system persistence failed: {e}",
+                exc_info=True,
+            )
 
     async def load_state(self) -> None:
         """
-        Load actor state from persistence.
+        Load actor state from PostgreSQL or file system.
 
-        Override this method in subclasses to implement custom state loading.
+        Attempts to load from PostgreSQL first, then falls back to file system.
         """
-        logger.info(f"[{self.agent_id}] State loaded")
+        import json
+        
+        # Try to load from PostgreSQL first
+        db_pool = self.get_state("_db_pool")
+        if db_pool is not None:
+            try:
+                async with db_pool.acquire() as conn:
+                    row = await conn.fetchrow(
+                        "SELECT state FROM actor_states WHERE actor_id = $1",
+                        self.agent_id,
+                    )
+                    if row:
+                        loaded_state = json.loads(row["state"])
+                        self.internal_state = loaded_state.get("internal_state", {})
+                        self.message_count = loaded_state.get("message_count", 0)
+                        self.error_count = loaded_state.get("error_count", 0)
+                        self.state = ActorState(loaded_state.get("state", "active"))
+                        self.created_at = loaded_state.get("created_at", self.created_at)
+                        self.last_activity = loaded_state.get("last_activity")
+                        self.topics = loaded_state.get("topics", self.topics)
+                        self.capabilities = loaded_state.get("capabilities", self.capabilities)
+                        
+                        logger.info(
+                            f"[{self.agent_id}] State loaded from PostgreSQL",
+                            extra={"state": self.state.value},
+                        )
+                        return
+            except Exception as e:
+                logger.error(
+                    f"[{self.agent_id}] PostgreSQL load failed: {e}",
+                    exc_info=True,
+                )
+        
+        # Fallback: load from file system
+        try:
+            import os
+            state_file = os.path.join(os.getcwd(), ".actor_states", f"{self.agent_id}.json")
+            
+            if os.path.exists(state_file):
+                with open(state_file, 'r') as f:
+                    loaded_state = json.load(f)
+                
+                self.internal_state = loaded_state.get("internal_state", {})
+                self.message_count = loaded_state.get("message_count", 0)
+                self.error_count = loaded_state.get("error_count", 0)
+                self.state = ActorState(loaded_state.get("state", "active"))
+                self.created_at = loaded_state.get("created_at", self.created_at)
+                self.last_activity = loaded_state.get("last_activity")
+                self.topics = loaded_state.get("topics", self.topics)
+                self.capabilities = loaded_state.get("capabilities", self.capabilities)
+                
+                logger.info(
+                    f"[{self.agent_id}] State loaded from file system",
+                    extra={"path": state_file},
+                )
+                return
+        except Exception as e:
+            logger.error(f"[{self.agent_id}] File system load failed: {e}", exc_info=True)
+        
+        # No state found - actor is starting fresh
+        logger.info(f"[{self.agent_id}] No previous state found, starting fresh")
 
     def get_status(self) -> ActorStatus:
         """
@@ -554,6 +789,28 @@ class AgentActor:
             content: Message content
             message_type: Message type identifier
         """
+        # Use event mesh broadcast if available
+        event_mesh = self.get_state("_event_mesh")
+        if event_mesh is not None:
+            try:
+                await event_mesh.broadcast_json({
+                    "type": message_type,
+                    "from": self.agent_id,
+                    "content": content,
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                })
+                logger.info(
+                    f"[{self.agent_id}] Broadcast sent via event mesh",
+                    extra={"message_type": message_type},
+                )
+                return
+            except Exception as e:
+                logger.error(
+                    f"[{self.agent_id}] Event mesh broadcast failed: {e}",
+                    extra={"message_type": message_type},
+                )
+        
+        # Fallback to topic-based broadcast
         await self.send(
             topic="broadcast",
             content={
@@ -726,22 +983,37 @@ Please provide your analysis and recommendation for this collective task."""
         """
         return self.internal_state.get(key, default)
 
-    async def run_with_llm(self, prompt: str, **kwargs) -> str:
+    async def run_with_llm(self, prompt: str, timeout: int = 60, **kwargs) -> str:
         """
         Run a prompt through the Swarms agent (if available).
 
         Args:
             prompt: Input prompt
+            timeout: Timeout in seconds (default: 60)
             **kwargs: Additional arguments for agent run
 
         Returns:
             Agent response
+
+        Raises:
+            RuntimeError: If no Swarms agent configured
+            asyncio.TimeoutError: If LLM call times out
         """
         if self.swarms_agent is None:
             raise RuntimeError("No Swarms agent configured")
 
-        return await asyncio.to_thread(
-            self.swarms_agent.run,
-            prompt,
-            **kwargs,
-        )
+        try:
+            return await asyncio.wait_for(
+                asyncio.to_thread(
+                    self.swarms_agent.run,
+                    prompt,
+                    **kwargs,
+                ),
+                timeout=timeout,
+            )
+        except asyncio.TimeoutError:
+            logger.error(f"[{self.agent_id}] LLM call timed out after {timeout}s")
+            raise
+        except Exception as e:
+            logger.error(f"[{self.agent_id}] LLM call failed: {e}", exc_info=True)
+            raise
