@@ -104,6 +104,17 @@ class ActorSupervisor:
             },
         )
 
+    async def initialize(self) -> None:
+        """
+        Initialize the supervisor.
+        
+        This method is called to initialize the supervisor after construction.
+        It can be overridden by subclasses for custom initialization logic.
+        """
+        logger.info(f"[{self.name}] Supervisor initialize called")
+        # Initialization is handled in __init__, this method is for API compatibility
+        pass
+
     async def spawn_actor(
         self,
         actor_class: Type[AgentActor],
