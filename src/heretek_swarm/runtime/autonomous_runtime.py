@@ -27,7 +27,7 @@ from .autonomous_runtime_config import (
 )
 from .agent_runtime import AgentRuntime
 from ..actors.supervisor import ActorSupervisor
-from ..plugins.manager import plugin_manager
+from ..plugins.manager import get_plugin_runtime
 
 logger = structlog.get_logger("AutonomousRuntime")
 
@@ -183,6 +183,7 @@ class AutonomousRuntime:
             failed_agents = []
             for agent_id, actor in self.supervisor.actors.items():
                 status = actor.get_status()
+                # Fix: Use enum values directly (ActorState.SUSPENDED.value = "suspended")
                 if status and status.state.value in ["suspended", "terminated", "error"]:
                     failed_agents.append(agent_id)
 
@@ -386,9 +387,22 @@ class AutonomousRuntime:
             if status:
                 # Check if agent has been idle for a while
                 if status.last_activity:
-                    idle_time = datetime.utcnow() - status.last_activity
-                    if idle_time.total_seconds() > self.config.min_uptime_before_scale_down * 60:
-                        return agent_id
+                    # Fix: Parse ISO format timestamp string to datetime
+                    try:
+                        last_activity_str = status.last_activity
+                        # Handle both string and datetime types
+                        if isinstance(last_activity_str, str):
+                            # Parse ISO format timestamp
+                            last_activity_dt = datetime.fromisoformat(last_activity_str.replace('Z', '+00:00'))
+                        else:
+                            last_activity_dt = last_activity_str
+                        
+                        idle_time = datetime.utcnow() - last_activity_dt
+                        if idle_time.total_seconds() > self.config.min_uptime_before_scale_down * 60:
+                            return agent_id
+                    except (ValueError, TypeError) as e:
+                        logger.warning(f"Failed to parse last_activity timestamp: {e}")
+                        continue
 
         return None
 
@@ -500,7 +514,13 @@ class AutonomousRuntime:
 
     async def _collect_consciousness_metrics(self) -> None:
         """Collect consciousness metrics from plugin."""
-        plugin = plugin_manager.get_plugin("consciousness_enhanced")
+        # Import here to avoid circular dependency
+        try:
+            from ..plugins.consciousness_enhanced import ConsciousnessEnhancedPlugin
+            plugin = ConsciousnessEnhancedPlugin()
+        except Exception:
+            return
+        
         if not plugin:
             return
 
