@@ -210,8 +210,18 @@ class ActorSupervisor:
             return
 
         actor = self.actors[actor_id]
-        await actor.terminate()
+        try:
+            # P1-10g fix: Add exception handling around terminate()
+            await actor.terminate()
+        except Exception as e:
+            logger.error(
+                f"[{self.name}] Error terminating actor {actor_id}: {e}",
+                exc_info=True,
+            )
+            # Still attempt cleanup even if terminate failed
+            actor.state = ActorState.ERROR
 
+        # Cleanup registry entries
         del self.actors[actor_id]
         if actor_id in self.restart_counts:
             del self.restart_counts[actor_id]
