@@ -218,8 +218,8 @@ class MAKERConsensus:
         # Check for red flags
         red_flags = self._check_red_flags(votes)
 
-        # Compute weighted votes
-        weighted_votes = self._apply_reputation_weights(votes)
+        # Compute weighted votes - use enhanced weighting if available
+        weighted_votes = self._apply_enhanced_vote_weights(votes, consensus_id)
 
         # First-to-ahead-by-k voting
         result = self._first_to_ahead_by_k(
@@ -386,6 +386,28 @@ class MAKERConsensus:
             weighted.append((vote.decision, weight))
 
         return weighted
+
+    def _apply_enhanced_vote_weights(
+        self,
+        votes: List[Vote],
+        consensus_id: str,
+    ) -> List[Tuple[str, float]]:
+        """
+        Apply enhanced vote weights using evidence quality, expertise, confidence, and historical accuracy.
+
+        This method is designed to be called by EnhancedMAKERConsensus which overrides
+        the vote weighting logic. The base implementation falls back to reputation weighting.
+
+        Args:
+            votes: List of votes
+            consensus_id: Consensus process identifier
+
+        Returns:
+            List of (decision, weight) tuples
+        """
+        # Base implementation falls back to reputation weighting
+        # EnhancedMAKERConsensus overrides this method
+        return self._apply_reputation_weights(votes)
 
     def update_reputation(
         self,

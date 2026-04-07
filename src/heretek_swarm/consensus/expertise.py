@@ -472,6 +472,27 @@ class AgentExpertiseProfiler:
         # Ensure valid range
         return max(0.0, min(1.0, weighted_confidence))
 
+    def get_expertise_for_domain(
+        self,
+        agent_id: str,
+        domain: str,
+    ) -> Optional[DomainExpertise]:
+        """
+        Get complete domain expertise for an agent.
+
+        Args:
+            agent_id: Agent identifier
+            domain: Domain name
+
+        Returns:
+            Domain expertise or None if agent not found
+        """
+        if agent_id not in self.profiles:
+            return None
+
+        profile = self.profiles[agent_id]
+        return profile.get_expertise_for_domain(domain)
+
     def get_expertise_score(
         self,
         agent_id: str,
@@ -719,3 +740,97 @@ class AgentExpertiseProfiler:
                 domain_expertise.recent_outcomes = []
             profile.overall_reputation = reset_value
             logger.info(f"Reset all expertise for {agent_id}")
+
+    def export_profiles(self) -> Dict[str, Any]:
+        """
+        Export all agent profiles for persistence.
+
+        Returns:
+            Serializable dictionary of all profiles
+        """
+        return {
+            "profiles": {
+                agent_id: self.export_profile(agent_id)
+                for agent_id in self.profiles
+            },
+            "domain_statistics": {
+                domain: {
+                    "total_decisions": stats["total_decisions"],
+                    "correct_decisions": stats["correct_decisions"],
+                    "avg_confidence": stats["avg_confidence"],
+                    "participating_agents": list(stats["participating_agents"]),
+                }
+                for domain, stats in self.domain_statistics.items()
+            },
+            "calibration_window": self.calibration_window,
+        }
+
+    def import_profiles(self, data: Dict[str, Any]) -> None:
+        """
+        Import agent profiles from persisted data.
+
+        Args:
+            data: Dictionary containing exported profile data
+        """
+        if "profiles" in data:
+            for agent_id, profile_data in data["profiles"].items():
+                # Recreate profile
+                profile = AgentExpertiseProfile(
+                    agent_id=agent_id,
+                    overall_reputation=profile_data.get("overall_reputation", 0.5),
+                    total_decisions=profile_data.get("total_decisions", 0),
+                    created_at=profile_data.get("created_at", datetime.now(timezone.utc).isoformat()),
+                    last_active=profile_data.get("last_active", datetime.now(timezone.utc).isoformat()),
+                )
+
+                # Recreate domain expertise
+                for domain, domain_data in profile_data.get("domains", {}).items():
+                    profile.domains[domain] = DomainExpertise(
+                        domain=domain,
+                        expertise_score=domain_data.get("expertise_score", 0.5),
+                        total_decisions=domain_data.get("total_decisions", 0),
+                        correct_decisions=domain_data.get("correct_decisions", 0),
+                        avg_confidence=domain_data.get("avg_confidence", 0.5),
+                        confidence_calibration=domain_data.get("confidence_calibration", 0.0),
+                    )
+
+                self.profiles[agent_id] = profile
+
+        if "domain_statistics" in data:
+            for domain, stats_data in data["domain_statistics"].items():
+                self.domain_statistics[domain] = {
+                    "total_decisions": stats_data.get("total_decisions", 0),
+                    "correct_decisions": stats_data.get("correct_decisions", 0),
+                    "avg_confidence": stats_data.get("avg_confidence", 0.0),
+                    "participating_agents": set(stats_data.get("participating_agents", [])),
+                }
+
+        if "calibration_window" in data:
+            self.calibration_window = data["calibration_window"]
+
+        logger.info(f"Imported {len(self.profiles)} agent profiles")
+
+    def save_to_file(self, filepath: str) -> None:
+        """
+        Save profiles to a JSON file.
+
+        Args:
+            filepath: Path to save file
+        """
+        import json
+        with open(filepath, 'w') as f:
+            json.dump(self.export_profiles(), f, indent=2)
+        logger.info(f"Saved expertise profiles to {filepath}")
+
+    def load_from_file(self, filepath: str) -> None:
+        """
+        Load profiles from a JSON file.
+
+        Args:
+            filepath: Path to load file
+        """
+        import json
+        with open(filepath, 'r') as f:
+            data = json.load(f)
+        self.import_profiles(data)
+        logger.info(f"Loaded expertise profiles from {filepath}")
