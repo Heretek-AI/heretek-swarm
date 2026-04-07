@@ -6,6 +6,8 @@ and state transitions for the multi-agent system.
 """
 
 import asyncio
+import hashlib
+import json
 from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List, Optional, Set
 from uuid import UUID, uuid4
@@ -561,14 +563,22 @@ class StateManager:
         changes: Optional[Dict[str, Any]] = None
     ) -> None:
         """Record a state transition"""
+        # Generate a state_id from agent_id or conversation_id for tracking
+        state_id_str = agent_id or conversation_id or "system"
+        state_id = uuid4()  # Generate a unique state ID for this transition
+        
         transition = StateTransition(
             transition_id=uuid4(),
+            state_id=state_id,
             transition_type=transition_type,
-            from_state={},  # Could track previous state here
-            to_state=changes or {},
-            agent_id=agent_id,
-            conversation_id=conversation_id,
-            timestamp=datetime.now(timezone.utc)
+            triggered_by=agent_id or "system",
+            trigger_reason=changes.get("reason") if changes else None,
+            previous_state_hash=None,  # Could compute hash of previous state if needed
+            new_state_hash=hashlib.sha256(json.dumps(changes or {}, sort_keys=True).encode()).hexdigest(),
+            delta=changes or {},
+            message_id=None,  # Could link to message if available
+            can_rollback=True,
+            rollback_data=changes if changes else None,
         )
         
         self._transitions.append(transition)

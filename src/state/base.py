@@ -334,7 +334,7 @@ class StateSnapshot(BaseModel):
     description: Optional[str] = Field(None)
     
     # Integrity
-    state_hash: str = Field(..., description="Hash of snapshot data")
+    state_hash: str = Field(default="", description="Hash of snapshot data")
     size_bytes: int = Field(default=0, ge=0)
     
     # Timestamps
