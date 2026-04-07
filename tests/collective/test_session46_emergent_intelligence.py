@@ -558,9 +558,9 @@ class TestCollectiveIntelligenceMetrics:
         """Test SIQ calculation."""
         # Create some agent states
         controller = collective_metrics.learning_controller
-        asyncio.run(controller.record_update("agent-1", success=True))
-        asyncio.run(controller.record_update("agent-2", success=True))
-        asyncio.run(controller.record_update("agent-3", success=False))
+        await controller.record_update("agent-1", success=True)
+        await controller.record_update("agent-2", success=True)
+        await controller.record_update("agent-3", success=False)
         
         siq = await collective_metrics.calculate_siq()
         
@@ -573,7 +573,7 @@ class TestCollectiveIntelligenceMetrics:
         """Test collective efficiency calculation."""
         controller = collective_metrics.learning_controller
         for i in range(5):
-            asyncio.run(controller.record_update(f"agent-{i}", success=i % 2 == 0))
+            await controller.record_update(f"agent-{i}", success=i % 2 == 0)
         
         efficiency = await collective_metrics.calculate_collective_efficiency()
         
@@ -735,7 +735,7 @@ class TestSession46Integration:
         for i in range(5):
             agent_id = f"agent-{i}"
             # Record learning updates
-            asyncio.run(controller.record_update(agent_id, success=i % 2 == 0))
+            await controller.record_update(agent_id, success=i % 2 == 0)
             
             # Record behavior snapshots
             snapshot = AgentBehaviorSnapshot(

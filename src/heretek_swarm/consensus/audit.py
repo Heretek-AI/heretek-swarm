@@ -879,8 +879,12 @@ class ConsensusAuditTrail:
         }
 
         if consensus_id:
-            # Export specific consensus
-            decision = self.get_decision(consensus_id)
+            # Export specific consensus - search by consensus_id not decision_id
+            decision = None
+            for dec_id, dec_record in self.decisions.items():
+                if dec_record.consensus_id == consensus_id:
+                    decision = dec_record
+                    break
             if decision:
                 export_data["decisions"] = [
                     {

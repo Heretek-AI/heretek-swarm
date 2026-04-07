@@ -618,7 +618,7 @@ class SwarmDeliberationEngine:
             position_counts[pos.position] = position_counts.get(pos.position, 0) + 1
 
         counts_str = ", ".join(
-            f"{p.value}: {c}" for p, c in sorted(position_counts.items())
+            f"{p.value}: {c}" for p, c in sorted(position_counts.items(), key=lambda x: x[0].value)
         )
 
         return (

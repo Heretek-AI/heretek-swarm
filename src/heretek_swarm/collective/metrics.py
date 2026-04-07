@@ -860,7 +860,7 @@ class CollectiveIntelligenceMetrics:
         # Convergence rate
         converged = swarm_stats.get("converged_agents", 0)
         total = swarm_stats.get("total_agents", 1)
-        convergence_rate = converged / total
+        convergence_rate = converged / total if total > 0 else 0.0
         
         # Generate alerts
         alerts = self._generate_alerts()

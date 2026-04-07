@@ -63,9 +63,15 @@ class TestEventMesh:
         """Test broadcast handles failed sends."""
         # Add one working and one failing client
         mock_ws1 = AsyncMock()
-        mock_ws2 = AsyncMock(side_effect=Exception("Connection lost"))
+        mock_ws1.client_state = MagicMock()
+        mock_ws1.client_state.disconnecting = False
+        
+        # For failing client, we need to set up client_state BEFORE the side_effect
+        # because broadcast checks _is_disconnecting() before calling send_bytes
+        mock_ws2 = AsyncMock()
         mock_ws2.client_state = MagicMock()
         mock_ws2.client_state.disconnecting = False
+        mock_ws2.send_bytes = AsyncMock(side_effect=Exception("Connection lost"))
         
         await event_mesh.register("client-1", mock_ws1)
         await event_mesh.register("client-2", mock_ws2)

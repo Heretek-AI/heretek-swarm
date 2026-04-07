@@ -112,6 +112,7 @@ class ReasoningChain:
         status: Validation status
         validation_errors: List of validation errors
         created_at: Creation timestamp
+        pattern_references: List of pattern IDs referenced in this chain
     """
 
     chain_id: str
@@ -120,6 +121,7 @@ class ReasoningChain:
     status: ReasoningChainStatus = ReasoningChainStatus.UNVERIFIED
     validation_errors: List[str] = field(default_factory=list)
     created_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    pattern_references: List[str] = field(default_factory=list)
 
     def add_step(
         self,
