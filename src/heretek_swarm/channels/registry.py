@@ -89,9 +89,9 @@ class ChannelMessage:
     requires_ack: bool = False      # Require acknowledgment
     
     # Context
-    workflow_id: Optional[str]      # Associated workflow
-    task_id: Optional[str]          # Associated task
-    session_id: Optional[str]       # User/session context
+    workflow_id: Optional[str] = None      # Associated workflow
+    task_id: Optional[str] = None          # Associated task
+    session_id: Optional[str] = None       # User/session context
     
     @classmethod
     def create(
@@ -691,3 +691,15 @@ class GroupRegistry:
         """Get members of a group."""
         group = self._groups.get(name)
         return group.members if group else []
+
+
+# Global instance
+_channel_registry_instance: Optional[ChannelRegistry] = None
+
+
+def get_channel_registry() -> ChannelRegistry:
+    """Get or create the channel registry singleton."""
+    global _channel_registry_instance
+    if _channel_registry_instance is None:
+        _channel_registry_instance = ChannelRegistry()
+    return _channel_registry_instance

@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-07T20:46:35.980119+00:00",
+    "generated_at": "2026-04-07T23:17:54.133740+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 4,
@@ -8487,7 +8487,7 @@
       ]
     },
     "src/heretek_swarm/channels/registry.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.channels.registry.ChannelType",
@@ -8515,7 +8515,7 @@
           "start_line": 63,
           "end_line": 132,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.channels.registry.ChannelMessage.create",
@@ -8712,6 +8712,13 @@
           "end_line": 693,
           "node_type": "METHOD",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.channels.registry.get_channel_registry",
+          "start_line": 700,
+          "end_line": 705,
+          "node_type": "FUNCTION",
+          "status": "added"
         }
       ]
     },
@@ -35883,7 +35890,7 @@
       "start_line": 63,
       "end_line": 132,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/channels/registry.py|src.heretek_swarm.channels.registry.ChannelMessage.create": {
       "file_path": "src/heretek_swarm/channels/registry.py",
@@ -36108,6 +36115,14 @@
       "end_line": 693,
       "type": "METHOD",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/channels/registry.py|src.heretek_swarm.channels.registry.get_channel_registry": {
+      "file_path": "src/heretek_swarm/channels/registry.py",
+      "qualified_name": "src.heretek_swarm.channels.registry.get_channel_registry",
+      "start_line": 700,
+      "end_line": 705,
+      "type": "FUNCTION",
+      "status": "added"
     },
     "src/heretek_swarm/collective/society.py|src.heretek_swarm.collective.society.ContributionCache": {
       "file_path": "src/heretek_swarm/collective/society.py",
@@ -57152,7 +57167,7 @@
         },
         {
           "file_path": "src/heretek_swarm/channels/registry.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.channels.registry.ChannelType",
             "src.heretek_swarm.channels.registry.QoSLevel",
@@ -57185,7 +57200,8 @@
             "src.heretek_swarm.channels.registry.GroupRegistry.register",
             "src.heretek_swarm.channels.registry.GroupRegistry.get_group",
             "src.heretek_swarm.channels.registry.GroupRegistry.list_groups",
-            "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members"
+            "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members",
+            "src.heretek_swarm.channels.registry.get_channel_registry"
           ]
         },
         {
@@ -59753,7 +59769,7 @@
             },
             {
               "file_path": "src/heretek_swarm/channels/registry.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.channels.registry.ChannelType",
                 "src.heretek_swarm.channels.registry.QoSLevel",
@@ -59786,7 +59802,8 @@
                 "src.heretek_swarm.channels.registry.GroupRegistry.register",
                 "src.heretek_swarm.channels.registry.GroupRegistry.get_group",
                 "src.heretek_swarm.channels.registry.GroupRegistry.list_groups",
-                "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members"
+                "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members",
+                "src.heretek_swarm.channels.registry.get_channel_registry"
               ]
             },
             {
@@ -61290,7 +61307,7 @@
           "file_methods": [
             {
               "file_path": "src/heretek_swarm/channels/registry.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.channels.registry.ChannelType",
                 "src.heretek_swarm.channels.registry.QoSLevel",
@@ -61323,7 +61340,8 @@
                 "src.heretek_swarm.channels.registry.GroupRegistry.register",
                 "src.heretek_swarm.channels.registry.GroupRegistry.get_group",
                 "src.heretek_swarm.channels.registry.GroupRegistry.list_groups",
-                "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members"
+                "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members",
+                "src.heretek_swarm.channels.registry.get_channel_registry"
               ]
             },
             {
@@ -61477,7 +61495,7 @@
               "file_methods": [
                 {
                   "file_path": "src/heretek_swarm/channels/registry.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.channels.registry.ChannelType",
                     "src.heretek_swarm.channels.registry.QoSLevel",
@@ -61510,7 +61528,8 @@
                     "src.heretek_swarm.channels.registry.GroupRegistry.register",
                     "src.heretek_swarm.channels.registry.GroupRegistry.get_group",
                     "src.heretek_swarm.channels.registry.GroupRegistry.list_groups",
-                    "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members"
+                    "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members",
+                    "src.heretek_swarm.channels.registry.get_channel_registry"
                   ]
                 },
                 {
@@ -61644,7 +61663,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/channels/registry.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.channels.registry.ChannelType",
                         "src.heretek_swarm.channels.registry.QoSLevel",
@@ -61677,7 +61696,8 @@
                         "src.heretek_swarm.channels.registry.GroupRegistry.register",
                         "src.heretek_swarm.channels.registry.GroupRegistry.get_group",
                         "src.heretek_swarm.channels.registry.GroupRegistry.list_groups",
-                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members"
+                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members",
+                        "src.heretek_swarm.channels.registry.get_channel_registry"
                       ]
                     },
                     {
@@ -61820,7 +61840,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/channels/registry.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.channels.registry.ChannelType",
                         "src.heretek_swarm.channels.registry.QoSLevel",
@@ -61853,7 +61873,8 @@
                         "src.heretek_swarm.channels.registry.GroupRegistry.register",
                         "src.heretek_swarm.channels.registry.GroupRegistry.get_group",
                         "src.heretek_swarm.channels.registry.GroupRegistry.list_groups",
-                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members"
+                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members",
+                        "src.heretek_swarm.channels.registry.get_channel_registry"
                       ]
                     },
                     {
@@ -61986,7 +62007,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/channels/registry.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.channels.registry.ChannelType",
                         "src.heretek_swarm.channels.registry.QoSLevel",
@@ -62019,7 +62040,8 @@
                         "src.heretek_swarm.channels.registry.GroupRegistry.register",
                         "src.heretek_swarm.channels.registry.GroupRegistry.get_group",
                         "src.heretek_swarm.channels.registry.GroupRegistry.list_groups",
-                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members"
+                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members",
+                        "src.heretek_swarm.channels.registry.get_channel_registry"
                       ]
                     },
                     {
@@ -62158,7 +62180,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/channels/registry.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.channels.registry.ChannelType",
                         "src.heretek_swarm.channels.registry.QoSLevel",
@@ -62191,7 +62213,8 @@
                         "src.heretek_swarm.channels.registry.GroupRegistry.register",
                         "src.heretek_swarm.channels.registry.GroupRegistry.get_group",
                         "src.heretek_swarm.channels.registry.GroupRegistry.list_groups",
-                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members"
+                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members",
+                        "src.heretek_swarm.channels.registry.get_channel_registry"
                       ]
                     },
                     {
@@ -62312,7 +62335,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/channels/registry.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.channels.registry.ChannelType",
                         "src.heretek_swarm.channels.registry.QoSLevel",
@@ -62345,7 +62368,8 @@
                         "src.heretek_swarm.channels.registry.GroupRegistry.register",
                         "src.heretek_swarm.channels.registry.GroupRegistry.get_group",
                         "src.heretek_swarm.channels.registry.GroupRegistry.list_groups",
-                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members"
+                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members",
+                        "src.heretek_swarm.channels.registry.get_channel_registry"
                       ]
                     },
                     {
@@ -62647,7 +62671,7 @@
               "file_methods": [
                 {
                   "file_path": "src/heretek_swarm/channels/registry.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.channels.registry.ChannelType",
                     "src.heretek_swarm.channels.registry.QoSLevel",
@@ -62680,7 +62704,8 @@
                     "src.heretek_swarm.channels.registry.GroupRegistry.register",
                     "src.heretek_swarm.channels.registry.GroupRegistry.get_group",
                     "src.heretek_swarm.channels.registry.GroupRegistry.list_groups",
-                    "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members"
+                    "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members",
+                    "src.heretek_swarm.channels.registry.get_channel_registry"
                   ]
                 },
                 {
@@ -62810,7 +62835,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/channels/registry.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.channels.registry.ChannelType",
                         "src.heretek_swarm.channels.registry.QoSLevel",
@@ -62843,7 +62868,8 @@
                         "src.heretek_swarm.channels.registry.GroupRegistry.register",
                         "src.heretek_swarm.channels.registry.GroupRegistry.get_group",
                         "src.heretek_swarm.channels.registry.GroupRegistry.list_groups",
-                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members"
+                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members",
+                        "src.heretek_swarm.channels.registry.get_channel_registry"
                       ]
                     },
                     {
@@ -62984,7 +63010,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/channels/registry.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.channels.registry.ChannelType",
                         "src.heretek_swarm.channels.registry.QoSLevel",
@@ -63017,7 +63043,8 @@
                         "src.heretek_swarm.channels.registry.GroupRegistry.register",
                         "src.heretek_swarm.channels.registry.GroupRegistry.get_group",
                         "src.heretek_swarm.channels.registry.GroupRegistry.list_groups",
-                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members"
+                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members",
+                        "src.heretek_swarm.channels.registry.get_channel_registry"
                       ]
                     },
                     {
@@ -63142,7 +63169,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/channels/registry.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.channels.registry.ChannelType",
                         "src.heretek_swarm.channels.registry.QoSLevel",
@@ -63175,7 +63202,8 @@
                         "src.heretek_swarm.channels.registry.GroupRegistry.register",
                         "src.heretek_swarm.channels.registry.GroupRegistry.get_group",
                         "src.heretek_swarm.channels.registry.GroupRegistry.list_groups",
-                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members"
+                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members",
+                        "src.heretek_swarm.channels.registry.get_channel_registry"
                       ]
                     },
                     {
@@ -63306,7 +63334,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/channels/registry.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.channels.registry.ChannelType",
                         "src.heretek_swarm.channels.registry.QoSLevel",
@@ -63339,7 +63367,8 @@
                         "src.heretek_swarm.channels.registry.GroupRegistry.register",
                         "src.heretek_swarm.channels.registry.GroupRegistry.get_group",
                         "src.heretek_swarm.channels.registry.GroupRegistry.list_groups",
-                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members"
+                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members",
+                        "src.heretek_swarm.channels.registry.get_channel_registry"
                       ]
                     },
                     {
@@ -63476,7 +63505,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/channels/registry.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.channels.registry.ChannelType",
                         "src.heretek_swarm.channels.registry.QoSLevel",
@@ -63509,7 +63538,8 @@
                         "src.heretek_swarm.channels.registry.GroupRegistry.register",
                         "src.heretek_swarm.channels.registry.GroupRegistry.get_group",
                         "src.heretek_swarm.channels.registry.GroupRegistry.list_groups",
-                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members"
+                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members",
+                        "src.heretek_swarm.channels.registry.get_channel_registry"
                       ]
                     },
                     {
@@ -63787,7 +63817,7 @@
               "file_methods": [
                 {
                   "file_path": "src/heretek_swarm/channels/registry.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.channels.registry.ChannelType",
                     "src.heretek_swarm.channels.registry.QoSLevel",
@@ -63820,7 +63850,8 @@
                     "src.heretek_swarm.channels.registry.GroupRegistry.register",
                     "src.heretek_swarm.channels.registry.GroupRegistry.get_group",
                     "src.heretek_swarm.channels.registry.GroupRegistry.list_groups",
-                    "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members"
+                    "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members",
+                    "src.heretek_swarm.channels.registry.get_channel_registry"
                   ]
                 },
                 {
@@ -63971,7 +64002,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/channels/registry.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.channels.registry.ChannelType",
                         "src.heretek_swarm.channels.registry.QoSLevel",
@@ -64004,7 +64035,8 @@
                         "src.heretek_swarm.channels.registry.GroupRegistry.register",
                         "src.heretek_swarm.channels.registry.GroupRegistry.get_group",
                         "src.heretek_swarm.channels.registry.GroupRegistry.list_groups",
-                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members"
+                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members",
+                        "src.heretek_swarm.channels.registry.get_channel_registry"
                       ]
                     },
                     {
@@ -64117,7 +64149,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/channels/registry.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.channels.registry.ChannelType",
                         "src.heretek_swarm.channels.registry.QoSLevel",
@@ -64150,7 +64182,8 @@
                         "src.heretek_swarm.channels.registry.GroupRegistry.register",
                         "src.heretek_swarm.channels.registry.GroupRegistry.get_group",
                         "src.heretek_swarm.channels.registry.GroupRegistry.list_groups",
-                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members"
+                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members",
+                        "src.heretek_swarm.channels.registry.get_channel_registry"
                       ]
                     },
                     {
@@ -64291,7 +64324,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/channels/registry.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.channels.registry.ChannelType",
                         "src.heretek_swarm.channels.registry.QoSLevel",
@@ -64324,7 +64357,8 @@
                         "src.heretek_swarm.channels.registry.GroupRegistry.register",
                         "src.heretek_swarm.channels.registry.GroupRegistry.get_group",
                         "src.heretek_swarm.channels.registry.GroupRegistry.list_groups",
-                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members"
+                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members",
+                        "src.heretek_swarm.channels.registry.get_channel_registry"
                       ]
                     },
                     {
@@ -64475,7 +64509,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/channels/registry.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.channels.registry.ChannelType",
                         "src.heretek_swarm.channels.registry.QoSLevel",
@@ -64508,7 +64542,8 @@
                         "src.heretek_swarm.channels.registry.GroupRegistry.register",
                         "src.heretek_swarm.channels.registry.GroupRegistry.get_group",
                         "src.heretek_swarm.channels.registry.GroupRegistry.list_groups",
-                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members"
+                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members",
+                        "src.heretek_swarm.channels.registry.get_channel_registry"
                       ]
                     },
                     {
@@ -64749,7 +64784,7 @@
               "file_methods": [
                 {
                   "file_path": "src/heretek_swarm/channels/registry.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.channels.registry.ChannelType",
                     "src.heretek_swarm.channels.registry.QoSLevel",
@@ -64782,7 +64817,8 @@
                     "src.heretek_swarm.channels.registry.GroupRegistry.register",
                     "src.heretek_swarm.channels.registry.GroupRegistry.get_group",
                     "src.heretek_swarm.channels.registry.GroupRegistry.list_groups",
-                    "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members"
+                    "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members",
+                    "src.heretek_swarm.channels.registry.get_channel_registry"
                   ]
                 },
                 {
@@ -64925,7 +64961,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/channels/registry.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.channels.registry.ChannelType",
                         "src.heretek_swarm.channels.registry.QoSLevel",
@@ -64958,7 +64994,8 @@
                         "src.heretek_swarm.channels.registry.GroupRegistry.register",
                         "src.heretek_swarm.channels.registry.GroupRegistry.get_group",
                         "src.heretek_swarm.channels.registry.GroupRegistry.list_groups",
-                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members"
+                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members",
+                        "src.heretek_swarm.channels.registry.get_channel_registry"
                       ]
                     },
                     {
@@ -65071,7 +65108,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/channels/registry.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.channels.registry.ChannelType",
                         "src.heretek_swarm.channels.registry.QoSLevel",
@@ -65104,7 +65141,8 @@
                         "src.heretek_swarm.channels.registry.GroupRegistry.register",
                         "src.heretek_swarm.channels.registry.GroupRegistry.get_group",
                         "src.heretek_swarm.channels.registry.GroupRegistry.list_groups",
-                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members"
+                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members",
+                        "src.heretek_swarm.channels.registry.get_channel_registry"
                       ]
                     },
                     {
@@ -65223,7 +65261,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/channels/registry.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.channels.registry.ChannelType",
                         "src.heretek_swarm.channels.registry.QoSLevel",
@@ -65256,7 +65294,8 @@
                         "src.heretek_swarm.channels.registry.GroupRegistry.register",
                         "src.heretek_swarm.channels.registry.GroupRegistry.get_group",
                         "src.heretek_swarm.channels.registry.GroupRegistry.list_groups",
-                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members"
+                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members",
+                        "src.heretek_swarm.channels.registry.get_channel_registry"
                       ]
                     },
                     {
@@ -65383,7 +65422,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/channels/registry.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.channels.registry.ChannelType",
                         "src.heretek_swarm.channels.registry.QoSLevel",
@@ -65416,7 +65455,8 @@
                         "src.heretek_swarm.channels.registry.GroupRegistry.register",
                         "src.heretek_swarm.channels.registry.GroupRegistry.get_group",
                         "src.heretek_swarm.channels.registry.GroupRegistry.list_groups",
-                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members"
+                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members",
+                        "src.heretek_swarm.channels.registry.get_channel_registry"
                       ]
                     },
                     {
@@ -65553,7 +65593,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/channels/registry.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.channels.registry.ChannelType",
                         "src.heretek_swarm.channels.registry.QoSLevel",
@@ -65586,7 +65626,8 @@
                         "src.heretek_swarm.channels.registry.GroupRegistry.register",
                         "src.heretek_swarm.channels.registry.GroupRegistry.get_group",
                         "src.heretek_swarm.channels.registry.GroupRegistry.list_groups",
-                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members"
+                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members",
+                        "src.heretek_swarm.channels.registry.get_channel_registry"
                       ]
                     },
                     {
@@ -65705,7 +65746,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/channels/registry.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.channels.registry.ChannelType",
                         "src.heretek_swarm.channels.registry.QoSLevel",
@@ -65738,7 +65779,8 @@
                         "src.heretek_swarm.channels.registry.GroupRegistry.register",
                         "src.heretek_swarm.channels.registry.GroupRegistry.get_group",
                         "src.heretek_swarm.channels.registry.GroupRegistry.list_groups",
-                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members"
+                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members",
+                        "src.heretek_swarm.channels.registry.get_channel_registry"
                       ]
                     },
                     {
@@ -66011,7 +66053,7 @@
               "file_methods": [
                 {
                   "file_path": "src/heretek_swarm/channels/registry.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.channels.registry.ChannelType",
                     "src.heretek_swarm.channels.registry.QoSLevel",
@@ -66044,7 +66086,8 @@
                     "src.heretek_swarm.channels.registry.GroupRegistry.register",
                     "src.heretek_swarm.channels.registry.GroupRegistry.get_group",
                     "src.heretek_swarm.channels.registry.GroupRegistry.list_groups",
-                    "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members"
+                    "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members",
+                    "src.heretek_swarm.channels.registry.get_channel_registry"
                   ]
                 },
                 {
@@ -66187,7 +66230,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/channels/registry.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.channels.registry.ChannelType",
                         "src.heretek_swarm.channels.registry.QoSLevel",
@@ -66220,7 +66263,8 @@
                         "src.heretek_swarm.channels.registry.GroupRegistry.register",
                         "src.heretek_swarm.channels.registry.GroupRegistry.get_group",
                         "src.heretek_swarm.channels.registry.GroupRegistry.list_groups",
-                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members"
+                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members",
+                        "src.heretek_swarm.channels.registry.get_channel_registry"
                       ]
                     },
                     {
@@ -66363,7 +66407,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/channels/registry.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.channels.registry.ChannelType",
                         "src.heretek_swarm.channels.registry.QoSLevel",
@@ -66396,7 +66440,8 @@
                         "src.heretek_swarm.channels.registry.GroupRegistry.register",
                         "src.heretek_swarm.channels.registry.GroupRegistry.get_group",
                         "src.heretek_swarm.channels.registry.GroupRegistry.list_groups",
-                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members"
+                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members",
+                        "src.heretek_swarm.channels.registry.get_channel_registry"
                       ]
                     },
                     {
@@ -66521,7 +66566,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/channels/registry.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.channels.registry.ChannelType",
                         "src.heretek_swarm.channels.registry.QoSLevel",
@@ -66554,7 +66599,8 @@
                         "src.heretek_swarm.channels.registry.GroupRegistry.register",
                         "src.heretek_swarm.channels.registry.GroupRegistry.get_group",
                         "src.heretek_swarm.channels.registry.GroupRegistry.list_groups",
-                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members"
+                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members",
+                        "src.heretek_swarm.channels.registry.get_channel_registry"
                       ]
                     },
                     {
@@ -66699,7 +66745,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/channels/registry.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.channels.registry.ChannelType",
                         "src.heretek_swarm.channels.registry.QoSLevel",
@@ -66732,7 +66778,8 @@
                         "src.heretek_swarm.channels.registry.GroupRegistry.register",
                         "src.heretek_swarm.channels.registry.GroupRegistry.get_group",
                         "src.heretek_swarm.channels.registry.GroupRegistry.list_groups",
-                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members"
+                        "src.heretek_swarm.channels.registry.GroupRegistry.get_group_members",
+                        "src.heretek_swarm.channels.registry.get_channel_registry"
                       ]
                     },
                     {

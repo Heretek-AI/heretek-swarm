@@ -12,11 +12,13 @@ Provides endpoints for:
 
 from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List, Optional
-from fastapi import APIRouter, Query, WebSocket, WebSocketDisconnect, HTTPException, Request
+from fastapi import APIRouter, Query, WebSocket, WebSocketDisconnect, HTTPException, Request, Depends
 from fastapi.responses import PlainTextResponse
+from pydantic import BaseModel, Field
 import structlog
 import uuid
 
+from heretek_swarm.gateway.auth import verify_auth
 from heretek_swarm.security.zero_trust import ZeroTrustValidator, ZeroTrustResult, LayerResult, Severity
 from heretek_swarm.consciousness.iit_phi import PhiCalculator
 from heretek_swarm.consciousness.fep_active_inference import FreeEnergyCalculator
