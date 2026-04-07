@@ -20,7 +20,7 @@ from typing import Any, Dict, List, Optional, Set
 import uuid
 
 from ..actors.base import AgentActor, ActorMessage
-from ..actors.validation import (
+from ..actors.validation import validate_message
 
 # Session 44: Collective Learning Integration
 from heretek_swarm.collective.learning import PatternExtractor, PatternType
@@ -33,9 +33,6 @@ from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer, AccessTi
 
 # Session 44: Zero-Trust Validation
 from heretek_swarm.security.zero_trust import ZeroTrustValidator
-
-    validate_message,
-)
 
 logger = logging.getLogger(__name__)
 
@@ -164,7 +161,6 @@ class EchoActor(AgentActor):
             "errors": 0
         }
         
-        self.
         # Session 44: Collective Learning Integration
         self.pattern_extractor = pattern_extractor or PatternExtractor(min_support=3, min_confidence=0.6)
         

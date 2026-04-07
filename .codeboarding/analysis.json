@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-06T23:56:10.845830+00:00",
+    "generated_at": "2026-04-07T00:04:55.800674+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 4,
@@ -2249,15 +2249,15 @@
         },
         {
           "qualified_name": "src.heretek_swarm.actors.echo.EchoActor",
-          "start_line": 82,
-          "end_line": 911,
+          "start_line": 79,
+          "end_line": 907,
           "node_type": "CLASS",
           "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.echo.EchoActor.__init__",
-          "start_line": 94,
-          "end_line": 189,
+          "start_line": 91,
+          "end_line": 185,
           "node_type": "METHOD",
           "status": "modified"
         },
@@ -22853,16 +22853,16 @@
     "src/heretek_swarm/actors/echo.py|src.heretek_swarm.actors.echo.EchoActor": {
       "file_path": "src/heretek_swarm/actors/echo.py",
       "qualified_name": "src.heretek_swarm.actors.echo.EchoActor",
-      "start_line": 82,
-      "end_line": 911,
+      "start_line": 79,
+      "end_line": 907,
       "type": "CLASS",
       "status": "modified"
     },
     "src/heretek_swarm/actors/echo.py|src.heretek_swarm.actors.echo.EchoActor.__init__": {
       "file_path": "src/heretek_swarm/actors/echo.py",
       "qualified_name": "src.heretek_swarm.actors.echo.EchoActor.__init__",
-      "start_line": 94,
-      "end_line": 189,
+      "start_line": 91,
+      "end_line": 185,
       "type": "METHOD",
       "status": "modified"
     },

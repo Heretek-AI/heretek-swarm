@@ -25,7 +25,7 @@ from typing import Any, Dict, List, Optional, Set
 import structlog
 
 from heretek_swarm.actors.base import AgentActor, ActorMessage
-from heretek_swarm.actors.validation import (
+from heretek_swarm.actors.validation import validate_message
 
 # Session 44: Collective Learning Integration
 from heretek_swarm.collective.learning import PatternExtractor, PatternType
@@ -38,12 +38,6 @@ from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer, AccessTi
 
 # Session 44: Zero-Trust Validation
 from heretek_swarm.security.zero_trust import ZeroTrustValidator
-
-    validate_message,
-    TaskRequest,
-    DependencyRequest,
-    CoordinationRequest,
-)
 
 logger = structlog.get_logger(__name__)
 

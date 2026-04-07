@@ -1,5 +1,153 @@
 # API Endpoints
 
+**Version:** 1.34.0  
+**Session:** 47 (2026-04-07)
+
+FastAPI REST API reference for the Heretek Swarm system.
+
+---
+
+## Table of Contents
+
+1. [Main API](#main-api)
+2. [Workflow Endpoints](#workflow-endpoints)
+3. [Consciousness Endpoints](#consciousness-endpoints)
+4. [Observability Endpoints](#observability-endpoints)
+5. [Plugin Endpoints](#plugin-endpoints)
+6. [Evaluation Endpoints](#evaluation-endpoints)
+7. [RAG Endpoints](#rag-endpoints)
+8. [Rate Limiting](#rate-limiting)
+9. [Integration Endpoints](#integration-endpoints)
+
+---
+
+## Integration Endpoints
+
+**File:** [`src/heretek_swarm/integrations/manager.py`](../src/heretek_swarm/integrations/manager.py)
+
+Integration management and lifecycle control for external framework adapters.
+
+### List Integrations
+
+```python
+@router.get("/integrations")
+async def list_integrations() -> Dict[str, Any]:
+    """List all registered integrations."""
+```
+
+**Response:**
+```json
+{
+  "integrations": [
+    {
+      "integration_id": "langgraph-001",
+      "type": "langgraph",
+      "status": "running",
+      "health": "healthy"
+    }
+  ],
+  "total": 1
+}
+```
+
+### Get Integration Details
+
+```python
+@router.get("/integrations/{integration_id}")
+async def get_integration(integration_id: str) -> Dict[str, Any]:
+    """Get integration details and configuration."""
+```
+
+### Start Integration
+
+```python
+@router.post("/integrations/{integration_id}/start")
+async def start_integration(integration_id: str) -> Dict[str, Any]:
+    """Start an integration."""
+```
+
+### Stop Integration
+
+```python
+@router.post("/integrations/{integration_id}/stop")
+async def stop_integration(integration_id: str) -> Dict[str, Any]:
+    """Stop an integration."""
+```
+
+### Health Check
+
+```python
+@router.get("/integrations/{integration_id}/health")
+async def check_health(integration_id: str) -> Dict[str, Any]:
+    """Check integration health status."""
+```
+
+**Response:**
+```json
+{
+  "integration_id": "langgraph-001",
+  "status": "healthy",
+  "last_check": "2026-04-07T00:00:00Z",
+  "uptime_seconds": 3600,
+  "details": {
+    "graphs_active": 3,
+    "checkpoints_stored": 150
+  }
+}
+```
+
+### Get Statistics
+
+```python
+@router.get("/integrations/{integration_id}/statistics")
+async def get_statistics(integration_id: str) -> Dict[str, Any]:
+    """Get integration statistics."""
+```
+
+### LangGraph Endpoints
+
+```python
+@router.get("/integrations/langgraph/graphs")
+async def list_langgraph_graphs() -> Dict[str, Any]:
+    """List all LangGraph graphs."""
+```
+
+### AutoGen Endpoints
+
+```python
+@router.get("/integrations/autogen/agents")
+async def list_autogen_agents() -> Dict[str, Any]:
+    """List all AutoGen agents."""
+```
+
+### CrewAI Endpoints
+
+```python
+@router.get("/integrations/crewai/crews")
+async def list_crewai_crews() -> Dict[str, Any]:
+    """List all CrewAI crews."""
+```
+
+### OpenAI Assistants Endpoints
+
+```python
+@router.get("/integrations/openai/assistants")
+async def list_openai_assistants() -> Dict[str, Any]:
+    """List all OpenAI assistants."""
+```
+
+### Anthropic Endpoints
+
+```python
+@router.get("/integrations/anthropic/conversations")
+async def list_anthropic_conversations() -> Dict[str, Any]:
+    """List all Anthropic conversations."""
+```
+
+---
+
+# API Endpoints
+
 **Version:** 1.11.0  
 **Session:** 21 (2026-04-06)
 

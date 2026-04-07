@@ -1,6 +1,6 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-06T23:56:10.978857+00:00",
+  "timestamp": "2026-04-07T00:21:27.744664+00:00",
   "overall_score": 0.9772381181373727,
   "check_summaries": [
     {
@@ -499,7 +499,7 @@
       "check_type": "standard",
       "total_entities_checked": 210,
       "findings_count": 210,
-      "warning_count": 208,
+      "warning_count": 79,
       "score": 0.0,
       "finding_groups": [
         {
@@ -858,6 +858,13 @@
               "metric_value": 0.0
             },
             {
+              "entity_name": "[unused_import] Import \"validate_message\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/echo.py",
+              "line_start": 23,
+              "line_end": 23,
+              "metric_value": 0.0
+            },
+            {
               "entity_name": "[unused_import] Import \"logging\" is not accessed",
               "file_path": "src/heretek_swarm/actors/explorer.py",
               "line_start": 16,
@@ -1056,7 +1063,7 @@
           ]
         },
         {
-          "severity": "warning",
+          "severity": "info",
           "threshold": 0,
           "description": "Variables declared but never used",
           "entities": [
@@ -1495,13 +1502,6 @@
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] Expression value is unused",
-              "file_path": "src/heretek_swarm/actors/coordinator.py",
-              "line_start": 42,
-              "line_end": 45,
-              "metric_value": 0.0
-            },
-            {
               "entity_name": "[unused_variable] \"asyncio\" is not accessed",
               "file_path": "src/heretek_swarm/actors/coordinator.py",
               "line_start": 18,
@@ -1586,13 +1586,6 @@
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] Expression value is unused",
-              "file_path": "src/heretek_swarm/actors/echo.py",
-              "line_start": 37,
-              "line_end": 37,
-              "metric_value": 0.0
-            },
-            {
               "entity_name": "[unused_variable] \"asyncio\" is not accessed",
               "file_path": "src/heretek_swarm/actors/echo.py",
               "line_start": 14,
@@ -1604,6 +1597,13 @@
               "file_path": "src/heretek_swarm/actors/echo.py",
               "line_start": 16,
               "line_end": 16,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"validate_message\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/echo.py",
+              "line_start": 23,
+              "line_end": 23,
               "metric_value": 0.0
             },
             {
@@ -2148,92 +2148,20 @@
   ],
   "file_summaries": [
     {
-      "file_path": "src/heretek_swarm/actors/handoff.py",
-      "total_findings": 17,
-      "warning_findings": 17,
-      "composite_risk_score": 100.0
-    },
-    {
       "file_path": "src/heretek_swarm/actors/arbiter.py",
       "total_findings": 24,
-      "warning_findings": 24,
-      "composite_risk_score": 100.0
-    },
-    {
-      "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
-      "total_findings": 12,
-      "warning_findings": 12,
-      "composite_risk_score": 100.0
-    },
-    {
-      "file_path": "src/heretek_swarm/actors/prism.py",
-      "total_findings": 10,
-      "warning_findings": 10,
-      "composite_risk_score": 100.0
-    },
-    {
-      "file_path": "src/heretek_swarm/actors/habit_forge.py",
-      "total_findings": 10,
-      "warning_findings": 10,
-      "composite_risk_score": 100.0
-    },
-    {
-      "file_path": "src/heretek_swarm/actors/examiner.py",
-      "total_findings": 16,
-      "warning_findings": 16,
-      "composite_risk_score": 100.0
-    },
-    {
-      "file_path": "src/heretek_swarm/actors/perceiver.py",
-      "total_findings": 15,
-      "warning_findings": 13,
-      "composite_risk_score": 100.0
-    },
-    {
-      "file_path": "src/heretek_swarm/actors/dreamer.py",
-      "total_findings": 18,
-      "warning_findings": 18,
-      "composite_risk_score": 100.0
-    },
-    {
-      "file_path": "src/heretek_swarm/actors/coder.py",
-      "total_findings": 13,
-      "warning_findings": 13,
-      "composite_risk_score": 100.0
-    },
-    {
-      "file_path": "src/heretek_swarm/actors/explorer.py",
-      "total_findings": 10,
-      "warning_findings": 10,
-      "composite_risk_score": 100.0
-    },
-    {
-      "file_path": "src/heretek_swarm/actors/historian.py",
-      "total_findings": 15,
-      "warning_findings": 15,
-      "composite_risk_score": 100.0
-    },
-    {
-      "file_path": "src/heretek_swarm/actors/metis.py",
-      "total_findings": 14,
-      "warning_findings": 14,
-      "composite_risk_score": 100.0
-    },
-    {
-      "file_path": "src/heretek_swarm/api/main.py",
-      "total_findings": 17,
-      "warning_findings": 17,
-      "composite_risk_score": 100.0
-    },
-    {
-      "file_path": "src/heretek_swarm/actors/nexus.py",
-      "total_findings": 9,
       "warning_findings": 9,
       "composite_risk_score": 95.0
     },
     {
-      "file_path": "src/heretek_swarm/actors/empath.py",
-      "total_findings": 8,
+      "file_path": "src/heretek_swarm/actors/handoff.py",
+      "total_findings": 17,
+      "warning_findings": 8,
+      "composite_risk_score": 90.0
+    },
+    {
+      "file_path": "src/heretek_swarm/actors/historian.py",
+      "total_findings": 15,
       "warning_findings": 8,
       "composite_risk_score": 90.0
     },
@@ -2244,28 +2172,100 @@
       "composite_risk_score": 85.0
     },
     {
-      "file_path": "src/heretek_swarm/actors/catalyst.py",
-      "total_findings": 7,
+      "file_path": "src/heretek_swarm/actors/dreamer.py",
+      "total_findings": 18,
       "warning_findings": 7,
       "composite_risk_score": 85.0
     },
     {
-      "file_path": "src/heretek_swarm/actors/chronos.py",
-      "total_findings": 7,
+      "file_path": "src/heretek_swarm/actors/coder.py",
+      "total_findings": 13,
       "warning_findings": 7,
       "composite_risk_score": 85.0
     },
     {
-      "file_path": "src/heretek_swarm/actors/echo.py",
-      "total_findings": 6,
+      "file_path": "src/heretek_swarm/actors/nexus.py",
+      "total_findings": 9,
       "warning_findings": 6,
       "composite_risk_score": 80.0
     },
     {
-      "file_path": "src/heretek_swarm/actors/coordinator.py",
-      "total_findings": 5,
+      "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
+      "total_findings": 12,
+      "warning_findings": 6,
+      "composite_risk_score": 80.0
+    },
+    {
+      "file_path": "src/heretek_swarm/actors/examiner.py",
+      "total_findings": 16,
+      "warning_findings": 6,
+      "composite_risk_score": 80.0
+    },
+    {
+      "file_path": "src/heretek_swarm/actors/metis.py",
+      "total_findings": 14,
+      "warning_findings": 6,
+      "composite_risk_score": 80.0
+    },
+    {
+      "file_path": "src/heretek_swarm/actors/catalyst.py",
+      "total_findings": 7,
       "warning_findings": 5,
       "composite_risk_score": 75.0
+    },
+    {
+      "file_path": "src/heretek_swarm/actors/chronos.py",
+      "total_findings": 7,
+      "warning_findings": 5,
+      "composite_risk_score": 75.0
+    },
+    {
+      "file_path": "src/heretek_swarm/actors/prism.py",
+      "total_findings": 10,
+      "warning_findings": 5,
+      "composite_risk_score": 75.0
+    },
+    {
+      "file_path": "src/heretek_swarm/actors/habit_forge.py",
+      "total_findings": 10,
+      "warning_findings": 5,
+      "composite_risk_score": 75.0
+    },
+    {
+      "file_path": "src/heretek_swarm/actors/perceiver.py",
+      "total_findings": 15,
+      "warning_findings": 5,
+      "composite_risk_score": 75.0
+    },
+    {
+      "file_path": "src/heretek_swarm/actors/explorer.py",
+      "total_findings": 10,
+      "warning_findings": 5,
+      "composite_risk_score": 75.0
+    },
+    {
+      "file_path": "src/heretek_swarm/actors/empath.py",
+      "total_findings": 8,
+      "warning_findings": 4,
+      "composite_risk_score": 70.0
+    },
+    {
+      "file_path": "src/heretek_swarm/actors/echo.py",
+      "total_findings": 7,
+      "warning_findings": 4,
+      "composite_risk_score": 70.0
+    },
+    {
+      "file_path": "src/heretek_swarm/api/main.py",
+      "total_findings": 17,
+      "warning_findings": 2,
+      "composite_risk_score": 60.0
+    },
+    {
+      "file_path": "src/heretek_swarm/actors/coordinator.py",
+      "total_findings": 4,
+      "warning_findings": 3,
+      "composite_risk_score": 55.0
     }
   ]
 }
