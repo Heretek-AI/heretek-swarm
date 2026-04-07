@@ -40,10 +40,13 @@ export function useWebSocket(
   const reconnectAttempts = useRef(0);
   const reconnectTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
-  const API_URL = import.meta.env.VITE_API_URL || 'localhost:8000';
+  // Use environment variable or current hostname (nginx proxies /ws to api:8000)
+  const API_URL = import.meta.env.VITE_API_URL || window.location.hostname;
 
   const connect = useCallback(() => {
-    const wsUrl = `ws://${API_URL.replace('http://', '').replace('https://', '')}/ws/${channel}`;
+    // Use relative WebSocket path - works with nginx proxy
+    const protocol = window.location.protocol === 'https:' ? 'wss:' : 'ws:';
+    const wsUrl = `${protocol}//${window.location.host}/ws/${channel}`;
     
     try {
       wsRef.current = new WebSocket(wsUrl);

@@ -36,7 +36,8 @@ type SortField = "health_score" | "success_rate" | "tasks_completed" | "error_co
 type SortOrder = "asc" | "desc";
 type FilterStatus = "all" | "healthy" | "degraded" | "critical";
 
-const API_URL = import.meta.env.VITE_API_URL || "http://localhost:8000";
+// Use environment variable or relative path (nginx proxies /api to api:8000)
+const API_URL = import.meta.env.VITE_API_URL || "";
 
 export function AgentMetricsGrid({
   apiBaseUrl = API_URL,

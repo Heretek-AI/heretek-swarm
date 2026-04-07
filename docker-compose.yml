@@ -34,8 +34,12 @@ services:
     build:
       context: ./dashboard/frontend
       dockerfile: Dockerfile
+      args:
+        - VITE_API_HOST=${VITE_API_HOST:-}
     ports:
       - "3000:80"
+    environment:
+      - VITE_API_HOST=${VITE_API_HOST:-}
     depends_on:
       - api
     restart: unless-stopped

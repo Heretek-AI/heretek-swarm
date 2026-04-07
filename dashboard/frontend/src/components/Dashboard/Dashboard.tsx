@@ -66,7 +66,8 @@ interface DashboardData {
   health: SystemHealth;
 }
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+// Use environment variable or relative path (nginx proxies /api to api:8000)
+const API_URL = import.meta.env.VITE_API_URL || '';
 
 export function Dashboard() {
   const [data, setData] = useState<DashboardData>({

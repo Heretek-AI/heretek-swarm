@@ -6,7 +6,8 @@
  */
 
 import { useEffect, useState, useCallback } from 'react';
-import ReactFlow, {
+import {
+  ReactFlow,
   Node,
   Edge,
   Controls,
@@ -21,7 +22,8 @@ import '@xyflow/react/dist/style.css';
 
 import AgentNode, { AgentData } from './AgentNode';
 
-const API_URL = import.meta.env.VITE_API_URL || 'http://localhost:8000';
+// Use environment variable or relative path (nginx proxies /api to api:8000)
+const API_URL = import.meta.env.VITE_API_URL || '';
 
 interface AgentApiResponse {
   id: string;
