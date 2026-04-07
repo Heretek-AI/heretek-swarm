@@ -6,6 +6,7 @@ This module provides advanced consciousness metric calculations:
 2. Multi-agent integration metrics
 3. Temporal consciousness tracking
 4. Collective consciousness scoring
+5. Free Energy Principle (FEP) integration
 
 Usage:
     from heretek_swarm.plugins.consciousness_metrics import ConsciousnessMetricsCalculator
@@ -22,6 +23,9 @@ from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple
 
 import structlog
+
+from ..consciousness.iit_phi import PhiCalculator, PhiResult, CauseEffectStructure
+from ..consciousness.fep_active_inference import FreeEnergyCalculator, FEPResult
 
 logger = structlog.get_logger("ConsciousnessMetrics")
 
@@ -92,6 +96,8 @@ class CollectiveMetrics:
         collective_state: Collective consciousness state
         agent_count: Number of agents
         active_connections: Number of active connections
+        fep_free_energy: Average FEP free energy across agents
+        fep_surprise: Average Bayesian surprise across agents
     """
     collective_phi: float = 0.0
     integration_level: IntegrationLevel = IntegrationLevel.DISCONNECTED
@@ -100,6 +106,8 @@ class CollectiveMetrics:
     collective_state: str = "disconnected"
     agent_count: int = 0
     active_connections: int = 0
+    fep_free_energy: float = 0.0
+    fep_surprise: float = 0.0
 
 
 @dataclass
@@ -134,12 +142,14 @@ class ConsciousnessMetricsCalculator:
     - Causal analysis
     - Temporal tracking
     - Collective metrics
+    - Free Energy Principle (FEP) calculations
     """
     
     def __init__(
         self,
         integration_threshold: float = 0.3,
         differentiation_threshold: float = 0.3,
+        strict_validation: bool = True,
     ):
         """
         Initialize the calculator.
@@ -147,11 +157,20 @@ class ConsciousnessMetricsCalculator:
         Args:
             integration_threshold: Threshold for integration
             differentiation_threshold: Threshold for differentiation
+            strict_validation: If True, strictly validate all inputs
         """
         self.integration_threshold = integration_threshold
         self.differentiation_threshold = differentiation_threshold
         self._temporal_data: Dict[str, List[Tuple[float, str]]] = {}
         self._max_history = 1000
+        
+        # Initialize IIT Phi calculator
+        self._phi_calculator = PhiCalculator(strict_validation=strict_validation)
+        
+        # Initialize FEP calculator
+        self._fep_calculator = FreeEnergyCalculator(strict_validation=strict_validation)
+        
+        logger.info("ConsciousnessMetricsCalculator initialized with IIT Phi and FEP calculators")
     
     def calculate_phi(
         self,
@@ -161,11 +180,10 @@ class ConsciousnessMetricsCalculator:
         """
         Calculate IIT Phi for a connectivity matrix.
         
-        Uses IIT 3.0 methodology:
-        1. Compute cause information
-        2. Compute effect information
-        3. Calculate integrated information (Phi)
-        4. Determine causal density
+        Uses IIT 3.0 methodology with the PhiCalculator:
+        1. Build cause-effect structure from connectivity
+        2. Calculate integrated information (Phi) using PhiCalculator
+        3. Determine causal density and differentiation
         
         Args:
             connectivity_matrix: NxN matrix of connection strengths
@@ -178,36 +196,81 @@ class ConsciousnessMetricsCalculator:
         if n == 0:
             return CausalAnalysis()
         
-        # Normalize connectivity matrix
-        normalized = self._normalize_matrix(connectivity_matrix)
+        # Build elements list from matrix
+        elements = [f"node_{i}" for i in range(n)]
         
-        # Compute cause information
-        cause_info = self._compute_cause_information(normalized)
+        # Build connectivity dict for PhiCalculator
+        connectivity = {}
+        for i, row in enumerate(connectivity_matrix):
+            connectivity[elements[i]] = {}
+            for j, weight in enumerate(row):
+                if i != j:
+                    connectivity[elements[i]][elements[j]] = weight
         
-        # Compute effect information
-        effect_info = self._compute_effect_information(normalized)
+        # Build current state from state_vector
+        current_state = {}
+        if state_vector:
+            for i, val in enumerate(state_vector):
+                current_state[elements[i]] = val
+        else:
+            # Default state: all elements active
+            current_state = {e: 1.0 for e in elements}
         
-        # Compute integrated information (Phi)
-        phi = self._compute_integrated_information(normalized, cause_info, effect_info)
+        # Build cause-effect structure
+        cause_effect_structure = {
+            "system_id": f"system_{id(connectivity_matrix)}",
+            "elements": elements,
+            "connectivity": connectivity,
+            "current_state": current_state,
+        }
         
-        # Compute causal density
-        causal_density = self._compute_causal_density(normalized)
+        # Use PhiCalculator for IIT calculation
+        phi_result = self._phi_calculator.calculate_phi(cause_effect_structure)
         
-        # Compute differentiation
-        differentiation = self._compute_differentiation(normalized)
-        
+        # Map PhiResult to CausalAnalysis
         return CausalAnalysis(
-            cause_info=cause_info,
-            effect_info=effect_info,
-            integrated_info=phi,
-            causal_density=causal_density,
-            differentiation=differentiation,
+            cause_info=phi_result.phi_max,
+            effect_info=phi_result.phi,
+            integrated_info=phi_result.phi,
+            causal_density=self._compute_causal_density(self._normalize_matrix(connectivity_matrix)),
+            differentiation=phi_result.phi_max,
         )
+    
+    def calculate_fep_metrics(
+        self,
+        observations: Dict[str, Any],
+        generative_model: Dict[str, Any],
+    ) -> FEPResult:
+        """
+        Calculate Free Energy Principle metrics.
+        
+        Args:
+            observations: Current observations
+            generative_model: Agent's generative model
+            
+        Returns:
+            FEPResult with free energy, surprise, and KL divergence
+        """
+        free_energy = self._fep_calculator.calculate_free_energy(observations, generative_model)
+        surprise = self._fep_calculator.calculate_surprise(observations, generative_model.get("predictions", {}))
+        
+        result = FEPResult(
+            free_energy=free_energy,
+            surprise=surprise,
+            kl_divergence=self._fep_calculator.calculate_kl_divergence(
+                generative_model.get("posterior", {}),
+                generative_model.get("prior", {}),
+            ),
+        )
+        
+        return result
     
     def calculate_collective_metrics(
         self,
         agent_data: List[AgentConsciousnessData],
         connection_matrix: Optional[List[List[float]]] = None,
+        agent_observations: Optional[Dict[str, Dict[str, Any]]] = None,
+        agent_models: Optional[Dict[str, Dict[str, Any]]] = None,
     ) -> CollectiveMetrics:
         """
         Calculate collective consciousness metrics for multi-agent system.
@@ -215,6 +278,8 @@ class ConsciousnessMetricsCalculator:
         Args:
             agent_data: List of agent consciousness data
             connection_matrix: Inter-agent connection strengths
+            agent_observations: Optional observations per agent for FEP
+            agent_models: Optional generative models per agent for FEP
             
         Returns:
             CollectiveMetrics for the system
@@ -243,6 +308,33 @@ class ConsciousnessMetricsCalculator:
             collective_phi, integration_level, emergence_score
         )
         
+        # Calculate FEP metrics if observations and models provided
+        fep_free_energy = 0.0
+        fep_surprise = 0.0
+        
+        if agent_observations and agent_models:
+            fep_values = []
+            surprise_values = []
+            
+            for agent in agent_data:
+                agent_id = agent.agent_id
+                if agent_id in agent_observations and agent_id in agent_models:
+                    obs = agent_observations[agent_id]
+                    model = agent_models[agent_id]
+                    
+                    free_energy = self._fep_calculator.calculate_free_energy(obs, model)
+                    surprise = self._fep_calculator.calculate_surprise(
+                        obs, model.get("predictions", {})
+                    )
+                    
+                    fep_values.append(free_energy)
+                    surprise_values.append(surprise)
+            
+            if fep_values:
+                fep_free_energy = sum(fep_values) / len(fep_values)
+            if surprise_values:
+                fep_surprise = sum(surprise_values) / len(surprise_values)
+        
         return CollectiveMetrics(
             collective_phi=collective_phi,
             integration_level=integration_level,
@@ -251,6 +343,8 @@ class ConsciousnessMetricsCalculator:
             collective_state=collective_state,
             agent_count=len(agent_data),
             active_connections=self._count_connections(connection_matrix) if connection_matrix else 0,
+            fep_free_energy=fep_free_energy,
+            fep_surprise=fep_surprise,
         )
     
     def update_temporal_metrics(

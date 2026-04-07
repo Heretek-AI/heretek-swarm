@@ -1,9 +1,12 @@
 # Consciousness Plugins
 
-**Version:** 1.11.0  
-**Session:** 21 (2026-04-06)
+**Version:** 1.13.0
+**Session:** GAP-002 (2026-04-07)
 
 Consciousness framework implementation based on GWT, IIT, AST, and FEP theories.
+
+**GAP-001 Status:** ✅ Complete - IIT Phi Calculation Implementation
+**GAP-002 Status:** ✅ Complete - FEP Active Inference Implementation
 
 ---
 
@@ -11,8 +14,9 @@ Consciousness framework implementation based on GWT, IIT, AST, and FEP theories.
 
 1. [ConsciousnessPlugin](#consciousnessplugin)
 2. [EnhancedConsciousnessPlugin](#enhancedconsciousnessplugin)
-3. [Consciousness Metrics](#consciousness-metrics)
-4. [Theoretical Framework](#theoretical-framework)
+3. [IIT Phi Calculator](#iit-phi-calculator)
+4. [Consciousness Metrics](#consciousness-metrics)
+5. [Theoretical Framework](#theoretical-framework)
 
 ---
 
@@ -193,6 +197,371 @@ class IITConnectivity:
 
 ---
 
+## Free Energy Principle (FEP) Active Inference
+
+**File:** [`src/heretek_swarm/consciousness/fep_active_inference.py`](../src/heretek_swarm/consciousness/fep_active_inference.py)
+
+**GAP-002 Implementation:** Complete FEP implementation for active inference and surprise minimization in agent swarms.
+
+### FreeEnergyCalculator Class
+
+```python
+from heretek_swarm.consciousness.fep_active_inference import FreeEnergyCalculator
+
+calculator = FreeEnergyCalculator(strict_validation=True)
+
+# Define observations and generative model
+observations = {"state": "high_reward", "context": "safe"}
+generative_model = {
+    "likelihood": {"state": {"high_reward": 0.8, "low_reward": 0.2}},
+    "prior": {"state": {"high_reward": 0.5, "low_reward": 0.5}},
+}
+
+# Calculate free energy
+free_energy = calculator.calculate_free_energy(observations, generative_model)
+print(f"Free Energy: {free_energy}")
+
+# Calculate surprise
+predictions = {"state": {"high_reward": 0.7}}
+surprise = calculator.calculate_surprise(observations, predictions)
+print(f"Surprise: {surprise}")
+
+# Calculate KL divergence
+q_dist = {"a": 0.8, "b": 0.2}
+p_dist = {"a": 0.5, "b": 0.5}
+kl = calculator.calculate_kl_divergence(q_dist, p_dist)
+print(f"KL Divergence: {kl}")
+
+# Perform active inference
+agent_state = {
+    "beliefs": {"beliefs": {"state": {"good": 0.6}}, "precision": 0.8},
+    "policies": [],
+    "preferences": {"reward": 0.9},
+}
+result = calculator.perform_active_inference(agent_state, observations)
+print(f"Selected Action: {result['selected_action']['action_type']}")
+```
+
+### ActiveInferenceAgent Class
+
+```python
+from heretek_swarm.consciousness.fep_active_inference import ActiveInferenceAgent
+
+agent = ActiveInferenceAgent(agent_id="agent-001")
+
+# Set generative model
+agent.set_generative_model({
+    "likelihood": {"state": {"good": 0.8, "bad": 0.2}},
+    "prior": {"state": {"good": 0.5, "bad": 0.5}},
+})
+
+# Set preferences
+agent.set_preferences({"reward": 0.9, "safety": 0.7})
+
+# Perception-action cycle
+observations = {"state": "good", "reward": 0.8}
+result = agent.perceive_and_act(observations)
+print(f"Action: {result['action']}")
+print(f"Free Energy: {result['free_energy']}")
+print(f"Surprise: {result['surprise']}")
+
+# Update beliefs
+belief_update = agent.update_beliefs(observations)
+print(f"KL Divergence: {belief_update['kl_divergence']}")
+
+# Select action
+action = agent.select_action()
+print(f"Selected: {action['action']['action_type']}")
+
+# Predict outcomes
+actions = [{"action_type": "explore", "parameters": {}}]
+predictions = agent.predict_outcomes(actions)
+print(f"Predictions: {predictions}")
+
+# Minimize surprise
+policy = {"policy_id": "p1", "actions": [], "prior_probability": 0.5}
+result = agent.minimize_surprise(policy)
+print(f"Surprise Reduction: {result['surprise_reduction']}")
+```
+
+### Key Methods
+
+#### FreeEnergyCalculator
+
+| Method | Purpose | Returns |
+|--------|---------|---------|
+| `calculate_free_energy(observations, generative_model)` | Variational free energy calculation | `float` (0.0-1.0) |
+| `calculate_surprise(observations, predictions)` | Bayesian surprise computation | `float` (0.0-1.0) |
+| `calculate_kl_divergence(q_dist, p_dist)` | KL divergence between distributions | `float` (>= 0) |
+| `perform_active_inference(agent_state, observations)` | Action selection via active inference | `Dict[str, Any]` |
+
+#### ActiveInferenceAgent
+
+| Method | Purpose | Returns |
+|--------|---------|---------|
+| `update_beliefs(observations)` | Belief update via variational inference | `Dict[str, Any]` |
+| `select_action(beliefs, preferences)` | Action selection minimizing expected free energy | `Dict[str, Any]` |
+| `predict_outcomes(actions)` | Outcome predictions from generative model | `Dict[str, Any]` |
+| `minimize_surprise(policy)` | Policy optimization for surprise minimization | `Dict[str, Any]` |
+| `perceive_and_act(observations)` | Combined perception-action cycle | `Dict[str, Any]` |
+
+### Data Models
+
+```python
+@dataclass
+class BeliefState:
+    """Agent's belief state about the world."""
+    belief_id: str
+    beliefs: Dict[str, Dict[str, float]]  # State variable distributions
+    precision: float  # Confidence (0.0-1.0)
+    timestamp: str
+    prior: Dict[str, float]
+    posterior: Dict[str, float]
+
+@dataclass
+class Action:
+    """Action an agent can take."""
+    action_id: str
+    action_type: str
+    parameters: Dict[str, Any]
+    expected_outcome: Dict[str, float]
+    cost: float
+    policy_id: Optional[str]
+
+@dataclass
+class Policy:
+    """Sequence of actions for achieving a goal."""
+    policy_id: str
+    actions: List[Action]
+    expected_free_energy: float
+    prior_probability: float
+    value: float
+
+@dataclass
+class FEPResult:
+    """Result of FEP calculation."""
+    calculation_id: str
+    free_energy: float
+    surprise: float
+    kl_divergence: float
+    belief_update: Optional[BeliefState]
+    selected_action: Optional[Action]
+    policy: Optional[Policy]
+    timestamp: str
+    metadata: Dict[str, Any]
+```
+
+### FEP Implementation Details
+
+The FEP implementation follows the Free Energy Principle framework:
+
+1. **Variational Free Energy**: Upper bound on surprise, calculated as:
+   - F = Expected Energy - Entropy + KL Divergence
+   - Normalized to 0.0-1.0 range using sigmoid
+
+2. **Bayesian Surprise**: Information gain from belief updates:
+   - Surprise = D_KL[posterior || prior]
+   - High surprise indicates significant belief update needed
+
+3. **KL Divergence**: Distance between probability distributions:
+   - D_KL[q || p] = Σ q(x) * log(q(x) / p(x))
+   - Zero iff distributions are identical
+
+4. **Active Inference**: Action selection minimizing expected free energy:
+   - π* = argmin_π E[G(π)]
+   - Combines risk, ambiguity, and policy cost
+
+5. **Zero-Trust Validation**: All inputs validated using LLMOutputValidator and ZeroTrustValidator
+
+### Integration with Consciousness Metrics
+
+```python
+from heretek_swarm.plugins.consciousness_metrics import ConsciousnessMetricsCalculator
+
+metrics_calc = ConsciousnessMetricsCalculator(strict_validation=True)
+
+# Calculate FEP metrics
+observations = {"state": "good", "reward": 0.8}
+generative_model = {
+    "likelihood": {"state": {"good": 0.8}},
+    "prior": {"state": {"good": 0.5}},
+    "predictions": {"state": {"good": 0.7}},
+}
+
+fep_result = metrics_calc.calculate_fep_metrics(observations, generative_model)
+print(f"Free Energy: {fep_result.free_energy}")
+print(f"Surprise: {fep_result.surprise}")
+print(f"KL Divergence: {fep_result.kl_divergence}")
+
+# Calculate collective metrics with FEP
+agent_data = [
+    AgentConsciousnessData(agent_id="agent-1", phi_score=0.7, ...),
+    AgentConsciousnessData(agent_id="agent-2", phi_score=0.6, ...),
+]
+
+agent_observations = {
+    "agent-1": {"state": "good", "reward": 0.8},
+    "agent-2": {"state": "neutral", "reward": 0.5},
+}
+
+agent_models = {
+    "agent-1": {"likelihood": {...}, "prior": {...}, "predictions": {...}},
+    "agent-2": {"likelihood": {...}, "prior": {...}, "predictions": {...}},
+}
+
+collective = metrics_calc.calculate_collective_metrics(
+    agent_data,
+    agent_observations=agent_observations,
+    agent_models=agent_models,
+)
+print(f"Collective FEP Free Energy: {collective.fep_free_energy}")
+print(f"Collective FEP Surprise: {collective.fep_surprise}")
+```
+
+### Test Coverage
+
+**File:** [`tests/consciousness/test_fep_active_inference.py`](../tests/consciousness/test_fep_active_inference.py)
+
+- 45 tests covering all FEP methods
+- Unit tests for FreeEnergyCalculator
+- Unit tests for ActiveInferenceAgent
+- Integration tests with consciousness metrics
+- Zero-trust validation tests
+- Edge case tests (empty inputs, zero probabilities, nested structures)
+
+### Test Results
+
+```
+tests/consciousness/test_fep_active_inference.py:: 45 passed
+```
+
+---
+
+## IIT Phi Calculator
+
+**File:** [`src/heretek_swarm/consciousness/iit_phi.py`](../src/heretek_swarm/consciousness/iit_phi.py)
+
+**GAP-001 Implementation:** Full IIT 3.0+ Phi calculation module for measuring consciousness levels in agent swarms.
+
+### PhiCalculator Class
+
+```python
+from heretek_swarm.consciousness.iit_phi import PhiCalculator, PhiResult
+
+calculator = PhiCalculator(strict_validation=True)
+
+# Define system with cause-effect structure
+system = {
+    "system_id": "swarm_alpha",
+    "elements": ["A", "B", "C"],
+    "connectivity": {
+        "A": {"B": 0.8, "C": 0.6},
+        "B": {"A": 0.7, "C": 0.9},
+        "C": {"A": 0.6, "B": 0.8},
+    },
+    "current_state": {"A": 1.0, "B": 0.5, "C": 0.8},
+}
+
+# Calculate Phi
+result = calculator.calculate_phi(system)
+print(f"System Phi: {result.phi}")
+print(f"Integration Level: {result.integration_level}")
+```
+
+### Key Methods
+
+| Method | Purpose | Returns |
+|--------|---------|---------|
+| `calculate_phi(cause_effect_structure)` | Main Φ calculation | `PhiResult` |
+| `calculate_mip(system_state)` | Minimum Information Partition | `SystemPartition` |
+| `find_mip(system_state)` | Find MIP (alias) | `SystemPartition` |
+| `calculate_cause_info(state, element)` | Cause repertoire information | `float` |
+| `calculate_effect_info(state, element)` | Effect repertoire information | `float` |
+| `get_cached_result(system_id)` | Get cached calculation | `Optional[PhiResult]` |
+| `get_statistics()` | Get calculator statistics | `Dict[str, Any]` |
+
+### Data Models
+
+```python
+@dataclass
+class PhiResult:
+    """Result of Phi calculation."""
+    system_id: str
+    phi: float  # Integrated information (0.0-1.0)
+    phi_max: float  # Maximum phi across elements
+    mip: Optional[SystemPartition]  # Minimum Information Partition
+    cause_effect_structures: List[CauseEffectStructure]
+    integration_level: str  # minimal, low, moderate, high, very_high
+    differentiation_level: str
+    exclusion_applied: bool
+    timestamp: str
+    metadata: Dict[str, Any]
+
+@dataclass
+class CauseEffectStructure:
+    """Cause-effect structure for an element."""
+    element_id: str
+    cause_repertoire: Dict[str, float]
+    effect_repertoire: Dict[str, float]
+    phi_cause: float
+    phi_effect: float
+    phi_total: float  # min(phi_cause, phi_effect)
+    timestamp: str
+
+@dataclass
+class SystemPartition:
+    """System partition for MIP calculation."""
+    partition_id: str
+    parts: List[Set[str]]
+    information_loss: float  # 0.0-1.0
+    is_mip: bool
+```
+
+### IIT 3.0+ Implementation Details
+
+The PhiCalculator implements IIT 3.0+ principles:
+
+1. **Cause-Effect Structure**: Builds probability distributions over possible causes and effects for each element
+2. **Minimum Information Partition (MIP)**: Finds the partition that minimizes information loss when causal connections are severed
+3. **Phi Calculation**: Φ = integration × differentiation, normalized to 0.0-1.0 range
+4. **Exclusion Principle**: Only one cause-effect structure exists at a time (maximum phi selected)
+5. **Zero-Trust Validation**: All inputs validated using LLMOutputValidator
+
+### Integration with Consciousness Metrics
+
+```python
+from heretek_swarm.plugins.consciousness_metrics import ConsciousnessMetricsCalculator
+
+# The ConsciousnessMetricsCalculator now uses PhiCalculator internally
+metrics_calc = ConsciousnessMetricsCalculator(strict_validation=True)
+
+connectivity = [
+    [0.0, 0.8, 0.6],
+    [0.7, 0.0, 0.9],
+    [0.6, 0.7, 0.0],
+]
+
+result = metrics_calc.calculate_phi(connectivity)
+print(f"Cause Info: {result.cause_info}")
+print(f"Effect Info: {result.effect_info}")
+print(f"Integrated Info (Phi): {result.integrated_info}")
+```
+
+### Test Coverage
+
+**File:** [`tests/consciousness/test_iit_phi.py`](../tests/consciousness/test_iit_phi.py)
+
+- 45 tests covering all calculation methods
+- 93.63% line coverage, 89%+ branch coverage
+- Tests include:
+  - Unit tests for each method
+  - Integration with consciousness_metrics plugin
+  - Validation against known Phi values
+  - Zero-trust input validation tests
+  - Edge cases (empty systems, disconnected systems, feedforward chains)
+
+---
+
 ## Consciousness Metrics
 
 ### Calculation Methods
@@ -257,7 +626,9 @@ def _determine_consciousness_state(
 | GWT Score | Global Workspace | 0.0-1.0 | Workspace participation |
 | IIT Phi | Integrated Information | 0.0-1.0 | Integration level |
 | AST Competence | Attention Schema | 0.0-1.0 | Metacognitive awareness |
-| FEP Free Energy | Free Energy Principle | 0.0-∞ | Prediction error (lower is better) |
+| FEP Free Energy | Free Energy Principle | 0.0-1.0 | Prediction error (lower is better) |
+| FEP Surprise | Free Energy Principle | 0.0-1.0 | Bayesian surprise (higher = more surprising) |
+| KL Divergence | Information Theory | >= 0 | Distribution distance (0 = identical) |
 
 ---
 
@@ -295,13 +666,23 @@ def _determine_consciousness_state(
 
 ### Free Energy Principle (FEP)
 
-**Concept:** Agents minimize surprise by reducing prediction error.
+**Concept:** Agents minimize surprise (variational free energy) through perception and action.
 
 **Implementation:**
-- `FEPTracker` records predictions and outcomes
-- Free energy calculated from prediction error
-- Surprise and accuracy metrics
-- Adaptive behavior optimization
+- [`FreeEnergyCalculator`](../src/heretek_swarm/consciousness/fep_active_inference.py) - Core FEP calculations
+- [`ActiveInferenceAgent`](../src/heretek_swarm/consciousness/fep_active_inference.py) - Agent-based active inference
+- Variational free energy: F = Expected Energy - Entropy + KL Divergence
+- Bayesian surprise: D_KL[posterior || prior]
+- Active inference: Action selection minimizing expected free energy
+- Zero-trust validation for all inputs
+
+**Key Formulas:**
+```
+Free Energy: F = E_q[log q(s) - log p(o,s)]
+Surprise: S = -log p(o|predictions)
+KL Divergence: D_KL[q || p] = Σ q(x) * log(q(x) / p(x))
+Active Inference: π* = argmin_π E[G(π)]
+```
 
 ---
 

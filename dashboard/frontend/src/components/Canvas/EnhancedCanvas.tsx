@@ -28,7 +28,27 @@ import ReactFlow, {
 import 'reactflow/dist/style.css';
 
 import { AgentNode, AgentData } from './AgentNode';
-import type { AgentNode, TriadNode, HistorianNode, ToolNode, MemoryNode, RAGNode, ConditionNode, LoopNode, HandoffNode, MergeNode, DiscordNode, TelegramNode, WebhookNode } from '../types/reactflow';
+import type { AgentNode as AgentNodeType, TriadNode, HistorianNode, ToolNode, MemoryNode, RAGNode, ConditionNode, LoopNode, HandoffNode, MergeNode, DiscordNode, TelegramNode, WebhookNode } from '../types/reactflow';
+
+// Metrics overlay types
+interface SwarmHealthMetrics {
+  overall_health_score: number;
+  total_agents: number;
+  active_agents: number;
+  idle_agents: number;
+  total_tasks_completed: number;
+  total_tasks_failed: number;
+  timestamp: string;
+}
+
+interface ConsciousnessMetrics {
+  phi_score: number;
+  phi_avg: number;
+  phi_max: number;
+  free_energy_avg: number;
+  integration_level: string;
+  agent_phi_scores: Record<string, number>;
+}
 
 const API_URL = import.meta.env.VITE_API_URL;
 if (!API_URL) {
@@ -165,6 +185,12 @@ export function EnhancedCanvas() {
   const [showPalette, setShowPalette] = useState(true);
   const [savedWorkflows, setSavedWorkflows] = useState<Workflow[]>([]);
   const [showExecution, setShowExecution] = useState(false);
+  
+  // Metrics overlay state
+  const [showMetrics, setShowMetrics] = useState(false);
+  const [swarmHealth, setSwarmHealth] = useState<SwarmHealthMetrics | null>(null);
+  const [consciousnessMetrics, setConsciousnessMetrics] = useState<ConsciousnessMetrics | null>(null);
+  const [metricsLoading, setMetricsLoading] = useState(false);
 
   // Fetch agents
   const fetchAgents = useCallback(async () => {
@@ -305,16 +331,56 @@ export function EnhancedCanvas() {
     setSelectedNode(node);
   }, []);
 
+  // Fetch metrics
+  const fetchMetrics = useCallback(async () => {
+    if (!showMetrics) return;
+    
+    setMetricsLoading(true);
+    try {
+      const [healthResponse, consciousnessResponse] = await Promise.all([
+        fetch(`${API_URL}/api/v1/observability/swarm`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        }),
+        fetch(`${API_URL}/api/v1/observability/consciousness`, {
+          headers: { Authorization: `Bearer ${localStorage.getItem('token')}` },
+        }),
+      ]);
+      
+      if (healthResponse.ok) {
+        const healthData = await healthResponse.json();
+        setSwarmHealth(healthData);
+      }
+      
+      if (consciousnessResponse.ok) {
+        const consciousnessData = await consciousnessResponse.json();
+        setConsciousnessMetrics(consciousnessData);
+      }
+    } catch (err) {
+      console.error('Failed to fetch metrics:', err);
+    } finally {
+      setMetricsLoading(false);
+    }
+  }, [showMetrics]);
+
   // Initial fetch
   useEffect(() => {
     fetchAgents();
   }, []);
 
-  // Poll for updates
+  // Poll for agent updates
   useEffect(() => {
     const interval = setInterval(fetchAgents, 5000);
     return () => clearInterval(interval);
   }, [fetchAgents]);
+
+  // Poll for metrics updates when metrics panel is open
+  useEffect(() => {
+    if (showMetrics) {
+      fetchMetrics();
+      const interval = setInterval(fetchMetrics, 5000);
+      return () => clearInterval(interval);
+    }
+  }, [showMetrics, fetchMetrics]);
 
   if (loading) {
     return (
@@ -332,8 +398,120 @@ export function EnhancedCanvas() {
     );
   }
 
+  // Get health color
+  const getHealthColor = (score: number): string => {
+    if (score >= 80) return 'text-green-400';
+    if (score >= 60) return 'text-blue-400';
+    if (score >= 40) return 'text-yellow-400';
+    if (score >= 20) return 'text-orange-400';
+    return 'text-red-400';
+  };
+
+  // Get phi color
+  const getPhiColor = (score: number): string => {
+    if (score >= 0.7) return 'text-green-400';
+    if (score >= 0.5) return 'text-blue-400';
+    if (score >= 0.3) return 'text-yellow-400';
+    return 'text-red-400';
+  };
+
   return (
     <div className="w-full h-screen flex">
+      {/* Metrics Overlay Panel */}
+      {showMetrics && (
+        <div className="absolute top-4 left-4 z-50 w-80 bg-gray-800 border border-gray-700 rounded-lg shadow-xl p-4 max-h-[80vh] overflow-y-auto">
+          <div className="flex items-center justify-between mb-4">
+            <h3 className="text-white font-bold">Swarm Metrics</h3>
+            <button
+              onClick={() => setShowMetrics(false)}
+              className="text-gray-400 hover:text-white"
+            >
+              ✕
+            </button>
+          </div>
+          
+          {metricsLoading && !swarmHealth && (
+            <div className="text-center text-gray-400 py-4">Loading metrics...</div>
+          )}
+          
+          {swarmHealth && (
+            <div className="space-y-4">
+              {/* Overall Health */}
+              <div className="bg-gray-900 rounded-lg p-3">
+                <div className="text-gray-400 text-xs uppercase mb-1">Overall Health</div>
+                <div className={`text-3xl font-bold ${getHealthColor(swarmHealth.overall_health_score)}`}>
+                  {swarmHealth.overall_health_score.toFixed(1)}
+                </div>
+                <div className="w-full bg-gray-700 rounded-full h-2 mt-2">
+                  <div
+                    className={`h-2 rounded-full ${
+                      swarmHealth.overall_health_score >= 80 ? 'bg-green-500' :
+                      swarmHealth.overall_health_score >= 60 ? 'bg-blue-500' :
+                      swarmHealth.overall_health_score >= 40 ? 'bg-yellow-500' :
+                      'bg-red-500'
+                    }`}
+                    style={{ width: `${swarmHealth.overall_health_score}%` }}
+                  />
+                </div>
+              </div>
+              
+              {/* Agent Stats */}
+              <div className="grid grid-cols-2 gap-2">
+                <div className="bg-gray-900 rounded-lg p-2">
+                  <div className="text-gray-400 text-xs">Total Agents</div>
+                  <div className="text-white font-bold">{swarmHealth.total_agents}</div>
+                </div>
+                <div className="bg-gray-900 rounded-lg p-2">
+                  <div className="text-gray-400 text-xs">Active</div>
+                  <div className="text-green-400 font-bold">{swarmHealth.active_agents}</div>
+                </div>
+              </div>
+              
+              {/* Task Stats */}
+              <div className="bg-gray-900 rounded-lg p-3">
+                <div className="flex justify-between items-center">
+                  <div>
+                    <div className="text-gray-400 text-xs">Tasks</div>
+                    <div className="text-white">
+                      <span className="text-green-400">{swarmHealth.total_tasks_completed}</span>
+                      <span className="text-gray-500 mx-1">/</span>
+                      <span className="text-red-400">{swarmHealth.total_tasks_failed}</span>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              
+              {/* Consciousness Metrics */}
+              {consciousnessMetrics && (
+                <>
+                  <div className="border-t border-gray-700 pt-3">
+                    <div className="text-gray-400 text-xs uppercase mb-2">Consciousness</div>
+                    <div className="bg-gray-900 rounded-lg p-3">
+                      <div className="text-gray-400 text-xs mb-1">Avg Phi (IIT)</div>
+                      <div className={`text-2xl font-bold ${getPhiColor(consciousnessMetrics.phi_avg)}`}>
+                        {consciousnessMetrics.phi_avg.toFixed(4)}
+                      </div>
+                    </div>
+                    <div className="bg-gray-900 rounded-lg p-3 mt-2">
+                      <div className="text-gray-400 text-xs mb-1">Free Energy (FEP)</div>
+                      <div className="text-green-400 text-xl font-bold">
+                        {consciousnessMetrics.free_energy_avg.toFixed(4)}
+                      </div>
+                    </div>
+                    <div className="bg-gray-900 rounded-lg p-3 mt-2">
+                      <div className="text-gray-400 text-xs mb-1">Integration</div>
+                      <div className="text-blue-400 font-bold capitalize">
+                        {consciousnessMetrics.integration_level.replace('_', ' ')}
+                      </div>
+                    </div>
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+        </div>
+      )}
+
       {/* Node Palette */}
       {showPalette && (
         <div className="w-64 bg-gray-800 border-r border-gray-700 p-4 overflow-y-auto">
@@ -371,6 +549,15 @@ export function EnhancedCanvas() {
 
       {/* Toolbar */}
       <div className="flex-1 bg-gray-800 border-r border-gray-700 p-4">
+        <button
+          onClick={() => setShowMetrics(!showMetrics)}
+          className={`p-2 rounded-lg transition-colors ${
+            showMetrics ? 'bg-blue-600 hover:bg-blue-700' : 'bg-gray-700 hover:bg-gray-600'
+          }`}
+          title="Toggle Metrics Overlay"
+        >
+          📊
+        </button>
         <button
           onClick={() => setShowPalette(!showPalette)}
           className="p-2 bg-gray-700 hover:bg-gray-600 rounded-lg transition-colors"
