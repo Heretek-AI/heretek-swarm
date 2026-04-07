@@ -44,6 +44,8 @@ import {
   ConnectorNode,
   LLMNode,
 } from './index';
+import { NodeConfigPanel } from '../Workflow/NodeConfigPanel';
+import type { AgentConfig } from '../Workflow/NodeConfigPanel';
 
 // Use environment variable or relative path (nginx proxies /api to api:8000)
 const API_URL = import.meta.env.VITE_API_URL || '';
@@ -60,6 +62,18 @@ export function WorkflowBuilder() {
   const [isExecuting, setIsExecuting] = useState(false);
   const [savedWorkflows, setSavedWorkflows] = useState<Workflow[]>([]);
   const [currentWorkflowId, setCurrentWorkflowId] = useState<string | null>(null);
+  
+  // NodeConfigPanel state
+  const [configPanelOpen, setConfigPanelOpen] = useState(false);
+  const [configPanelNode, setConfigPanelNode] = useState<{
+    id: string;
+    type: string;
+    data: {
+      agentId?: string;
+      agentType?: string;
+      config?: Record<string, any>;
+    };
+  } | null>(null);
 
   const reactFlowWrapperRef = useRef<HTMLDivElement>(null);
 
@@ -201,15 +215,18 @@ export function WorkflowBuilder() {
     const paletteItem = nodePalette.find((item) => item.type === type);
     if (!paletteItem) return;
 
+    const nodeId = `node-${Date.now()}`;
     const newNode: Node<BaseNodeData> = {
-      id: `node-${Date.now()}`,
+      id: nodeId,
       type: type,
       position: { x: 100 + Math.random() * 200, y: 100 + Math.random() * 200 },
       data: {
-        id: `node-${Date.now()}`,
+        id: nodeId,
         type: type,
         ...paletteItem.defaultConfig,
         config: paletteItem.defaultConfig || {},
+        // Add callback for opening config panel
+        onOpenConfig: handleOpenConfig,
       } as any,
     };
 
@@ -219,6 +236,109 @@ export function WorkflowBuilder() {
       [newNode.id]: paletteItem.defaultConfig || {},
     }));
   }, [nodePalette]);
+
+  /**
+   * Handle opening configuration panel
+   */
+  const handleOpenConfig = useCallback((nodeId: string) => {
+    const node = nodes.find((n) => n.id === nodeId);
+    if (node) {
+      setConfigPanelNode({
+        id: node.id,
+        type: node.type || 'agent',
+        data: {
+          agentId: (node.data as any).agentId || node.id,
+          agentType: (node.data as any).agentType || 'steward',
+          config: (node.data as any).config || {},
+        },
+      });
+      setConfigPanelOpen(true);
+    }
+  }, [nodes]);
+
+  /**
+   * Handle closing configuration panel
+   */
+  const handleCloseConfig = useCallback(() => {
+    setConfigPanelOpen(false);
+    setConfigPanelNode(null);
+  }, []);
+
+  /**
+   * Handle saving configuration via API
+   */
+  const handleSaveConfig = useCallback(async (config: AgentConfig) => {
+    try {
+      const response = await fetch(`${API_URL}/api/agent-config`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          agent_id: config.agentId,
+          agent_type: config.agentType,
+          config: {
+            llmProvider: config.llmProvider,
+            model: config.model,
+            temperature: config.temperature,
+            maxTokens: config.maxTokens,
+            // Arbiter-specific
+            decisionThreshold: config.decisionThreshold,
+            quorumSize: config.quorumSize,
+            timeout: config.timeout,
+            // Prism-specific
+            analysisDepth: config.analysisDepth,
+            perspectiveCount: config.perspectiveCount,
+            confidenceThreshold: config.confidenceThreshold,
+            // Habit-Forge-specific
+            repetitionThreshold: config.repetitionThreshold,
+            rewardSchedule: config.rewardSchedule,
+            extinctionCriteria: config.extinctionCriteria,
+          },
+        }),
+      });
+      
+      if (!response.ok) throw new Error('Failed to save configuration');
+      
+      // Update local node config
+      if (configPanelNode) {
+        setNodeConfig((prev) => ({
+          ...prev,
+          [configPanelNode.id]: {
+            ...prev[configPanelNode.id],
+            agentType: config.agentType,
+            llmProvider: config.llmProvider,
+            model: config.model,
+            temperature: config.temperature,
+            maxTokens: config.maxTokens,
+          },
+        }));
+        
+        // Update node data in ReactFlow
+        setNodes((nds) =>
+          nds.map((node) =>
+            node.id === configPanelNode.id
+              ? {
+                  ...node,
+                  data: {
+                    ...(node.data as any),
+                    agentType: config.agentType,
+                    config: {
+                      ...((node.data as any).config || {}),
+                      llmProvider: config.llmProvider,
+                      model: config.model,
+                      temperature: config.temperature,
+                      maxTokens: config.maxTokens,
+                    },
+                  },
+                }
+              : node
+          )
+        );
+      }
+    } catch (error) {
+      console.error('Failed to save agent configuration:', error);
+      throw error;
+    }
+  }, [configPanelNode, setNodes]);
 
   /**
    * Delete node
@@ -246,7 +366,11 @@ export function WorkflowBuilder() {
   /**
    * Handle node selection
    */
-  const onNodeClick = useCallback((_: React.MouseEvent, node: Node) => {
+  const onNodeClick = useCallback((event: React.MouseEvent, node: Node) => {
+    // Don't select node if config panel was opened
+    if ((node.data as any).onOpenConfig) {
+      // Let the node handle the click for config
+    }
     setSelectedNode(node.data as BaseNodeData);
   }, []);
 
@@ -606,6 +730,14 @@ export function WorkflowBuilder() {
                 pannable
               />
             </ReactFlow>
+            
+            {/* Node Configuration Panel */}
+            <NodeConfigPanel
+              node={configPanelNode}
+              isOpen={configPanelOpen}
+              onClose={handleCloseConfig}
+              onSave={handleSaveConfig}
+            />
           </ReactFlowProvider>
         </div>
       </div>

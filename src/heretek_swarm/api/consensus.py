@@ -28,6 +28,20 @@ from heretek_swarm.consensus import (
     ConsensusResult,
     Vote,
 )
+from heretek_swarm.consensus.deliberation import (
+    DeliberationEngine,
+    Argument,
+    CounterArgument,
+    Evidence,
+    Position,
+    ConsensusConfidence,
+    DissentRecord,
+)
+from heretek_swarm.consensus.audit import (
+    ConsensusAuditTrail,
+    DecisionAudit,
+    DecisionOutcome,
+)
 
 logger = structlog.get_logger("api.consensus")
 
@@ -577,6 +591,495 @@ async def revoke_auth_token(token: str):
     success = consensus_auth_manager.revoke_token(token)
     return {
         "revoked": success,
+    }
+
+
+# =============================================================================
+# Deliberation Endpoints
+# =============================================================================
+
+# Global deliberation engine instance
+deliberation_engine = DeliberationEngine()
+
+
+@router.post("/deliberation/start")
+async def start_deliberation(
+    proposal: str,
+    participants: List[str],
+    topic: Optional[str] = None,
+    max_rounds: int = 5,
+    timeout_minutes: int = 30,
+    auth: dict = Depends(get_authenticated_agent),
+):
+    """
+    Start a new deliberation process.
+    
+    Args:
+        proposal: Proposal to deliberate on
+        participants: List of participant agent IDs
+        topic: Optional topic/category for the deliberation
+        max_rounds: Maximum number of deliberation rounds
+        timeout_minutes: Timeout in minutes
+        
+    Returns:
+        Deliberation ID and initial state
+    """
+    agent_id = auth["agent_id"]
+    logger.info("starting_deliberation", agent_id=agent_id, participants=len(participants))
+    
+    deliberation_id = deliberation_engine.start_deliberation(
+        proposal=proposal,
+        participants=participants,
+        topic=topic,
+        max_rounds=max_rounds,
+    )
+    
+    return {
+        "deliberation_id": deliberation_id,
+        "proposal": proposal,
+        "topic": topic,
+        "participants": participants,
+        "max_rounds": max_rounds,
+        "timeout_minutes": timeout_minutes,
+        "state": "initiated",
+    }
+
+
+@router.post("/deliberation/{deliberation_id}/submit_position")
+async def submit_deliberation_position(
+    deliberation_id: str,
+    position: str,
+    confidence: float = 0.5,
+    reasoning: Optional[str] = None,
+    auth: dict = Depends(get_authenticated_agent),
+):
+    """
+    Submit a position in a deliberation.
+    
+    Args:
+        deliberation_id: Deliberation identifier
+        position: Position ("support", "oppose", "neutral", "modify")
+        confidence: Confidence level (0.0-1.0)
+        reasoning: Optional reasoning text
+        
+    Returns:
+        Submission confirmation
+    """
+    agent_id = auth["agent_id"]
+    logger.info("submitting_position", deliberation_id=deliberation_id, agent_id=agent_id)
+    
+    try:
+        position_enum = Position(position.lower())
+    except ValueError:
+        raise HTTPException(status_code=400, detail=f"Invalid position. Must be one of: {[p.value for p in Position]}")
+    
+    success = deliberation_engine.submit_position(
+        deliberation_id=deliberation_id,
+        agent_id=agent_id,
+        position=position_enum,
+        confidence=confidence,
+        reasoning=reasoning,
+    )
+    
+    if not success:
+        raise HTTPException(status_code=400, detail="Failed to submit position")
+    
+    return {
+        "deliberation_id": deliberation_id,
+        "agent_id": agent_id,
+        "position": position,
+        "confidence": confidence,
+        "submitted": True,
+    }
+
+
+@router.post("/deliberation/{deliberation_id}/submit_argument")
+async def submit_deliberation_argument(
+    deliberation_id: str,
+    position: str,
+    reasoning: str,
+    evidence_refs: Optional[List[str]] = None,
+    confidence: float = 0.5,
+    auth: dict = Depends(get_authenticated_agent),
+):
+    """
+    Submit an argument in a deliberation.
+    
+    Args:
+        deliberation_id: Deliberation identifier
+        position: Position being argued ("support", "oppose", "neutral", "modify")
+        reasoning: Argument reasoning text
+        evidence_refs: Optional list of evidence references
+        confidence: Confidence level (0.0-1.0)
+        
+    Returns:
+        Argument ID and confirmation
+    """
+    agent_id = auth["agent_id"]
+    logger.info("submitting_argument", deliberation_id=deliberation_id, agent_id=agent_id)
+    
+    try:
+        position_enum = Position(position.lower())
+    except ValueError:
+        raise HTTPException(status_code=400, detail=f"Invalid position. Must be one of: {[p.value for p in Position]}")
+    
+    argument = Argument(
+        agent_id=agent_id,
+        position=position_enum,
+        reasoning=reasoning,
+        evidence_refs=evidence_refs or [],
+        confidence=confidence,
+    )
+    
+    argument_id = deliberation_engine.submit_argument(
+        deliberation_id=deliberation_id,
+        argument=argument,
+    )
+    
+    if not argument_id:
+        raise HTTPException(status_code=400, detail="Failed to submit argument")
+    
+    return {
+        "argument_id": argument_id,
+        "deliberation_id": deliberation_id,
+        "agent_id": agent_id,
+        "position": position,
+        "reasoning": reasoning,
+        "evidence_refs": evidence_refs,
+    }
+
+
+@router.post("/deliberation/{deliberation_id}/submit_evidence")
+async def submit_deliberation_evidence(
+    deliberation_id: str,
+    argument_id: str,
+    content: str,
+    source: Optional[str] = None,
+    quality_score: float = 0.5,
+    auth: dict = Depends(get_authenticated_agent),
+):
+    """
+    Submit evidence for an argument.
+    
+    Args:
+        deliberation_id: Deliberation identifier
+        argument_id: Argument to support with evidence
+        content: Evidence content
+        source: Optional source reference
+        quality_score: Quality score (0.0-1.0)
+        
+    Returns:
+        Evidence ID and confirmation
+    """
+    agent_id = auth["agent_id"]
+    logger.info("submitting_evidence", deliberation_id=deliberation_id, agent_id=agent_id)
+    
+    evidence = Evidence(
+        argument_id=argument_id,
+        content=content,
+        source=source,
+        quality_score=quality_score,
+    )
+    
+    evidence_id = deliberation_engine.submit_evidence(
+        deliberation_id=deliberation_id,
+        evidence=evidence,
+    )
+    
+    if not evidence_id:
+        raise HTTPException(status_code=400, detail="Failed to submit evidence")
+    
+    return {
+        "evidence_id": evidence_id,
+        "argument_id": argument_id,
+        "deliberation_id": deliberation_id,
+        "content_length": len(content),
+        "quality_score": quality_score,
+    }
+
+
+@router.post("/deliberation/{deliberation_id}/run_round")
+async def run_deliberation_round(deliberation_id: str, auth: dict = Depends(get_authenticated_agent)):
+    """
+    Run a single deliberation round.
+    
+    Args:
+        deliberation_id: Deliberation identifier
+        
+    Returns:
+        Round results including consensus score and summary
+    """
+    agent_id = auth["agent_id"]
+    logger.info("running_deliberation_round", deliberation_id=deliberation_id, agent_id=agent_id)
+    
+    round_result = deliberation_engine.run_deliberation_round(deliberation_id=deliberation_id)
+    
+    if not round_result:
+        raise HTTPException(status_code=400, detail="Failed to run deliberation round")
+    
+    return {
+        "deliberation_id": deliberation_id,
+        "round_number": round_result.round_number,
+        "arguments_submitted": len(round_result.arguments_submitted),
+        "positions": {k.value: v for k, v in round_result.positions.items()},
+        "consensus_score": round_result.consensus_score,
+        "summary": round_result.summary,
+        "timestamp": round_result.timestamp,
+    }
+
+
+@router.get("/deliberation/{deliberation_id}/state")
+async def get_deliberation_state(deliberation_id: str, auth: dict = Depends(get_authenticated_agent)):
+    """
+    Get current deliberation state.
+    
+    Args:
+        deliberation_id: Deliberation identifier
+        
+    Returns:
+        Current deliberation state including positions and consensus score
+    """
+    state = deliberation_engine.get_deliberation_state(deliberation_id=deliberation_id)
+    
+    if not state:
+        raise HTTPException(status_code=404, detail="Deliberation not found")
+    
+    return {
+        "deliberation_id": deliberation_id,
+        "state": state.state.value,
+        "proposal": state.proposal,
+        "topic": state.topic,
+        "participants": state.participants,
+        "current_round": state.current_round,
+        "max_rounds": state.max_rounds,
+        "consensus_score": state.consensus_score,
+        "position_distribution": state.position_distribution,
+    }
+
+
+@router.get("/deliberation/{deliberation_id}/history")
+async def get_deliberation_history(
+    deliberation_id: str,
+    limit: int = 10,
+    auth: dict = Depends(get_authenticated_agent),
+):
+    """
+    Get deliberation round history.
+    
+    Args:
+        deliberation_id: Deliberation identifier
+        limit: Maximum number of rounds to return
+        
+    Returns:
+        List of deliberation rounds
+    """
+    history = deliberation_engine.get_round_history(deliberation_id=deliberation_id, limit=limit)
+    
+    return {
+        "deliberation_id": deliberation_id,
+        "rounds": [
+            {
+                "round_number": r.round_number,
+                "arguments_submitted": len(r.arguments_submitted),
+                "positions": {k.value: v for k, v in r.positions.items()},
+                "consensus_score": r.consensus_score,
+                "summary": r.summary,
+                "timestamp": r.timestamp,
+            }
+            for r in history
+        ],
+    }
+
+
+@router.post("/deliberation/{deliberation_id}/finalize")
+async def finalize_deliberation(deliberation_id: str, auth: dict = Depends(get_authenticated_agent)):
+    """
+    Finalize a deliberation and return results.
+    
+    Args:
+        deliberation_id: Deliberation identifier
+        
+    Returns:
+        Final deliberation results including decision and minority reports
+    """
+    agent_id = auth["agent_id"]
+    logger.info("finalizing_deliberation", deliberation_id=deliberation_id, agent_id=agent_id)
+    
+    result = deliberation_engine.finalize_deliberation(deliberation_id=deliberation_id)
+    
+    if not result:
+        raise HTTPException(status_code=400, detail="Failed to finalize deliberation")
+    
+    return {
+        "deliberation_id": deliberation_id,
+        "final_position": result.final_position.value,
+        "consensus_score": result.consensus_score,
+        "total_rounds": result.total_rounds,
+        "total_arguments": result.total_arguments,
+        "total_participants": result.total_participants,
+        "minority_report": result.minority_report,
+        "summary": result.summary,
+        "timestamp": result.timestamp,
+    }
+
+
+@router.delete("/deliberation/{deliberation_id}")
+async def cleanup_deliberation(deliberation_id: str, auth: dict = Depends(get_authenticated_agent)):
+    """
+    Cleanup and remove a deliberation.
+    
+    Args:
+        deliberation_id: Deliberation identifier
+        
+    Returns:
+        Cleanup confirmation
+    """
+    deliberation_engine.cleanup_deliberation(deliberation_id=deliberation_id)
+    
+    return {
+        "deliberation_id": deliberation_id,
+        "cleaned_up": True,
+    }
+
+
+# =============================================================================
+# Audit Trail Endpoints
+# =============================================================================
+
+# Global audit trail instance
+audit_trail = ConsensusAuditTrail()
+
+
+@router.get("/audit/decision/{decision_id}")
+async def get_decision_audit(decision_id: str, auth: dict = Depends(get_authenticated_agent)):
+    """
+    Get comprehensive decision audit record.
+    
+    Args:
+        decision_id: Decision identifier
+        
+    Returns:
+        Complete audit record with deliberation history and votes
+    """
+    audit_record = audit_trail.get_decision_audit(decision_id=decision_id)
+    
+    if not audit_record:
+        raise HTTPException(status_code=404, detail="Decision audit not found")
+    
+    return audit_record.to_dict()
+
+
+@router.get("/audit/decision/{decision_id}/export")
+async def export_decision_audit(decision_id: str, auth: dict = Depends(get_authenticated_agent)):
+    """
+    Export decision audit record as JSON.
+    
+    Args:
+        decision_id: Decision identifier
+        
+    Returns:
+        JSON export of audit record
+    """
+    try:
+        export_data = audit_trail.export_decision_audit(decision_id=decision_id, format="json")
+        return {
+            "decision_id": decision_id,
+            "export_format": "json",
+            "data": export_data,
+        }
+    except ValueError as e:
+        raise HTTPException(status_code=404, detail=str(e))
+
+
+@router.get("/audit/decision/{decision_id}/verify")
+async def verify_decision_audit(decision_id: str, auth: dict = Depends(get_authenticated_agent)):
+    """
+    Verify integrity of decision audit record.
+    
+    Args:
+        decision_id: Decision identifier
+        
+    Returns:
+        Verification result with hash validation
+    """
+    verification = audit_trail.verify_audit_integrity(decision_id=decision_id)
+    
+    if not verification.get("valid"):
+        return {
+            "decision_id": decision_id,
+            "valid": False,
+            "error": verification.get("error", "Unknown verification failure"),
+        }
+    
+    return verification
+
+
+@router.get("/audit/statistics")
+async def get_audit_statistics(auth: dict = Depends(get_authenticated_agent)):
+    """
+    Get audit trail statistics.
+    
+    Returns:
+        Statistics about decision audits
+    """
+    return audit_trail.get_audit_statistics()
+
+
+@router.get("/audit/failed")
+async def get_failed_audits(auth: dict = Depends(get_authenticated_agent)):
+    """
+    Get all failed decision audits.
+    
+    Returns:
+        List of failed audit records
+    """
+    failed = audit_trail.get_failed_audits()
+    return {
+        "total_failed": len(failed),
+        "audits": [a.to_dict() for a in failed],
+    }
+
+
+@router.get("/audit/successful")
+async def get_successful_audits(auth: dict = Depends(get_authenticated_agent)):
+    """
+    Get all successful decision audits.
+    
+    Returns:
+        List of successful audit records
+    """
+    successful = audit_trail.get_successful_audits()
+    return {
+        "total_successful": len(successful),
+        "audits": [a.to_dict() for a in successful],
+    }
+
+
+@router.get("/audit/deliberation/{consensus_id}/history")
+async def get_deliberation_audit_history(consensus_id: str, auth: dict = Depends(get_authenticated_agent)):
+    """
+    Get deliberation history for audit.
+    
+    Args:
+        consensus_id: Consensus identifier
+        
+    Returns:
+        List of deliberation round records
+    """
+    history = audit_trail.get_deliberation_history(consensus_id=consensus_id)
+    return {
+        "consensus_id": consensus_id,
+        "deliberation_rounds": [
+            {
+                "round_id": r.round_id,
+                "round_number": r.round_number,
+                "arguments_submitted": r.arguments_submitted,
+                "positions": r.positions,
+                "consensus_score": r.consensus_score,
+                "timestamp": r.timestamp,
+            }
+            for r in history
+        ],
     }
 
 

@@ -135,7 +135,10 @@ async def authenticate_websocket(websocket: WebSocket, token: Optional[str]) -> 
 # Create WebSocket router
 router = APIRouter()
 
-# Connection manager for tracking active WebSocket connections
+# =============================================================================
+# Connection Manager
+# =============================================================================
+
 class ConnectionManager:
     """Manages WebSocket connections for broadcasting."""
     
@@ -145,6 +148,9 @@ class ConnectionManager:
         self.a2a_listeners: set[WebSocket] = set()
         self.dashboard_listeners: set[WebSocket] = set()
         self.observability_listeners: set[WebSocket] = set()
+        self.agent_status_listeners: Dict[str, WebSocket] = {}  # agent_id -> websocket
+        self.workflow_progress_listeners: Dict[str, set[WebSocket]] = {}  # workflow_id -> websockets
+        self.metrics_listeners: Dict[str, set[WebSocket]] = {}  # agent_id -> websockets
     
     async def connect_execution(self, websocket: WebSocket, execution_id: str):
         """Connect to execution updates channel."""
@@ -236,10 +242,93 @@ class ConnectionManager:
                 disconnected.add(websocket)
         for ws in disconnected:
             self.observability_listeners.discard(ws)
+    
+    async def broadcast_agent_status(self, agent_id: str, data: Dict[str, Any]):
+        """Broadcast agent status update to specific listener."""
+        if agent_id in self.agent_status_listeners:
+            websocket = self.agent_status_listeners[agent_id]
+            try:
+                await websocket.send_json({
+                    "type": "agent_status",
+                    "agentId": agent_id,
+                    **data,
+                })
+            except Exception:
+                del self.agent_status_listeners[agent_id]
+    
+    async def broadcast_workflow_progress(self, workflow_id: str, data: Dict[str, Any]):
+        """Broadcast workflow progress update to all listeners."""
+        if workflow_id in self.workflow_progress_listeners:
+            disconnected = set()
+            for websocket in self.workflow_progress_listeners[workflow_id]:
+                try:
+                    await websocket.send_json({
+                        "type": "workflow_progress",
+                        "workflowId": workflow_id,
+                        **data,
+                    })
+                except Exception:
+                    disconnected.add(websocket)
+            for ws in disconnected:
+                self.workflow_progress_listeners[workflow_id].discard(ws)
+    
+    async def broadcast_metrics(self, agent_id: str, data: Dict[str, Any]):
+        """Broadcast metrics update to all listeners for an agent."""
+        if agent_id in self.metrics_listeners:
+            disconnected = set()
+            for websocket in self.metrics_listeners[agent_id]:
+                try:
+                    await websocket.send_json({
+                        "type": "metrics",
+                        "agentId": agent_id,
+                        "metrics": data,
+                    })
+                except Exception:
+                    disconnected.add(websocket)
+            for ws in disconnected:
+                self.metrics_listeners[agent_id].discard(ws)
+    
+    def subscribe_agent_status(self, agent_id: str, websocket: WebSocket):
+        """Subscribe to agent status updates."""
+        self.agent_status_listeners[agent_id] = websocket
+    
+    def unsubscribe_agent_status(self, agent_id: str):
+        """Unsubscribe from agent status updates."""
+        if agent_id in self.agent_status_listeners:
+            del self.agent_status_listeners[agent_id]
+    
+    def subscribe_workflow_progress(self, workflow_id: str, websocket: WebSocket):
+        """Subscribe to workflow progress updates."""
+        if workflow_id not in self.workflow_progress_listeners:
+            self.workflow_progress_listeners[workflow_id] = set()
+        self.workflow_progress_listeners[workflow_id].add(websocket)
+    
+    def unsubscribe_workflow_progress(self, workflow_id: str, websocket: WebSocket):
+        """Unsubscribe from workflow progress updates."""
+        if workflow_id in self.workflow_progress_listeners:
+            self.workflow_progress_listeners[workflow_id].discard(websocket)
+            if not self.workflow_progress_listeners[workflow_id]:
+                del self.workflow_progress_listeners[workflow_id]
+    
+    def subscribe_metrics(self, agent_id: str, websocket: WebSocket):
+        """Subscribe to agent metrics updates."""
+        if agent_id not in self.metrics_listeners:
+            self.metrics_listeners[agent_id] = set()
+        self.metrics_listeners[agent_id].add(websocket)
+    
+    def unsubscribe_metrics(self, agent_id: str, websocket: WebSocket):
+        """Unsubscribe from agent metrics updates."""
+        if agent_id in self.metrics_listeners:
+            self.metrics_listeners[agent_id].discard(websocket)
+            if not self.metrics_listeners[agent_id]:
+                del self.metrics_listeners[agent_id]
 
 
 # Global connection manager
 manager = ConnectionManager()
+
+# In-memory store for agent states
+_agent_states: Dict[str, Dict[str, Any]] = {}
 
 
 # =============================================================================
@@ -542,6 +631,294 @@ async def agent_events_websocket(
 
 
 # =============================================================================
+# Agent Status Stream WebSocket
+# =============================================================================
+
+@router.websocket("/ws/agents/status")
+async def agent_status_websocket(
+    websocket: WebSocket,
+    agent_id: Optional[str] = Query(None, description="Specific agent ID to monitor"),
+    token: Optional[str] = Query(None, description="Authentication token")
+):
+    """
+    WebSocket endpoint for real-time agent status updates.
+    
+    SECURITY: Requires valid authentication token.
+    
+    Provides real-time status updates for agents including:
+    - Status changes (active, idle, processing, error)
+    - Current task
+    - Last heartbeat
+    
+    Message format:
+    {
+        "type": "agent_status",
+        "agentId": "agent-id",
+        "status": "active|idle|processing|error",
+        "currentTask": "task description",
+        "lastHeartbeat": "2024-01-01T12:00:00Z"
+    }
+    
+    Args:
+        agent_id: Optional specific agent ID to monitor (if not provided, subscribes to all)
+        token: Authentication token (required)
+    """
+    # SECURITY: Authenticate connection
+    is_authenticated, user_id, error = await authenticate_websocket(websocket, token)
+    if not is_authenticated:
+        try:
+            await websocket.accept()
+            await websocket.send_json({
+                "type": "error",
+                "error": f"Authentication failed: {error}"
+            })
+            await websocket.close()
+        except Exception:
+            pass
+        logger.warning("websocket_agent_status_auth_failed", error=error)
+        return
+    
+    await websocket.accept()
+    logger.info("Agent status WebSocket connected", agent_id=agent_id)
+    
+    subscribed_agents = set()
+    
+    try:
+        while True:
+            try:
+                data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
+                message = json.loads(data)
+                
+                # Handle subscription/unsubscription
+                action = message.get("action")
+                if action == "subscribe":
+                    sub_agent_id = message.get("agentId") or agent_id
+                    if sub_agent_id:
+                        manager.subscribe_agent_status(sub_agent_id, websocket)
+                        subscribed_agents.add(sub_agent_id)
+                        logger.info("Subscribed to agent status", agent_id=sub_agent_id)
+                        
+                        # Send current state if available
+                        if sub_agent_id in _agent_states:
+                            await websocket.send_json({
+                                "type": "agent_status",
+                                "agentId": sub_agent_id,
+                                **_agent_states[sub_agent_id],
+                            })
+                
+                elif action == "unsubscribe":
+                    sub_agent_id = message.get("agentId") or agent_id
+                    if sub_agent_id in subscribed_agents:
+                        manager.unsubscribe_agent_status(sub_agent_id)
+                        subscribed_agents.discard(sub_agent_id)
+                        logger.info("Unsubscribed from agent status", agent_id=sub_agent_id)
+                
+            except asyncio.TimeoutError:
+                # Send heartbeat
+                await websocket.send_json({
+                    "type": "heartbeat",
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                })
+                
+    except WebSocketDisconnect:
+        logger.info("Agent status WebSocket disconnected")
+    except Exception as e:
+        logger.error("Agent status WebSocket error", error=str(e))
+    finally:
+        # Cleanup subscriptions
+        for sub_agent_id in subscribed_agents:
+            manager.unsubscribe_agent_status(sub_agent_id)
+
+
+# =============================================================================
+# Workflow Progress WebSocket
+# =============================================================================
+
+@router.websocket("/ws/workflows/progress")
+async def workflow_progress_websocket(
+    websocket: WebSocket,
+    workflow_id: Optional[str] = Query(None, description="Specific workflow ID to monitor"),
+    token: Optional[str] = Query(None, description="Authentication token")
+):
+    """
+    WebSocket endpoint for real-time workflow progress updates.
+    
+    SECURITY: Requires valid authentication token.
+    
+    Provides real-time progress updates for workflows including:
+    - Current node being executed
+    - Phase (plan, analyze, execute, validate, report)
+    - Progress percentage (0-100)
+    
+    Message format:
+    {
+        "type": "workflow_progress",
+        "workflowId": "workflow-id",
+        "currentNode": "node-id",
+        "phase": "plan|analyze|execute|validate|report",
+        "progress": 75
+    }
+    
+    Args:
+        workflow_id: Optional specific workflow ID to monitor
+        token: Authentication token (required)
+    """
+    # SECURITY: Authenticate connection
+    is_authenticated, user_id, error = await authenticate_websocket(websocket, token)
+    if not is_authenticated:
+        try:
+            await websocket.accept()
+            await websocket.send_json({
+                "type": "error",
+                "error": f"Authentication failed: {error}"
+            })
+            await websocket.close()
+        except Exception:
+            pass
+        logger.warning("websocket_workflow_progress_auth_failed", error=error)
+        return
+    
+    await websocket.accept()
+    logger.info("Workflow progress WebSocket connected", workflow_id=workflow_id)
+    
+    subscribed_workflows = set()
+    
+    try:
+        while True:
+            try:
+                data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
+                message = json.loads(data)
+                
+                # Handle subscription/unsubscription
+                action = message.get("action")
+                if action == "subscribe":
+                    sub_workflow_id = message.get("workflowId") or workflow_id
+                    if sub_workflow_id:
+                        manager.subscribe_workflow_progress(sub_workflow_id, websocket)
+                        subscribed_workflows.add(sub_workflow_id)
+                        logger.info("Subscribed to workflow progress", workflow_id=sub_workflow_id)
+                
+                elif action == "unsubscribe":
+                    sub_workflow_id = message.get("workflowId") or workflow_id
+                    if sub_workflow_id in subscribed_workflows:
+                        manager.unsubscribe_workflow_progress(sub_workflow_id, websocket)
+                        subscribed_workflows.discard(sub_workflow_id)
+                        logger.info("Unsubscribed from workflow progress", workflow_id=sub_workflow_id)
+                
+            except asyncio.TimeoutError:
+                # Send heartbeat
+                await websocket.send_json({
+                    "type": "heartbeat",
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                })
+                
+    except WebSocketDisconnect:
+        logger.info("Workflow progress WebSocket disconnected")
+    except Exception as e:
+        logger.error("Workflow progress WebSocket error", error=str(e))
+    finally:
+        # Cleanup subscriptions
+        for sub_workflow_id in subscribed_workflows:
+            manager.unsubscribe_workflow_progress(sub_workflow_id, websocket)
+
+
+# =============================================================================
+# Agent Metrics WebSocket
+# =============================================================================
+
+@router.websocket("/ws/agents/metrics")
+async def agent_metrics_websocket(
+    websocket: WebSocket,
+    agent_id: Optional[str] = Query(None, description="Specific agent ID to monitor"),
+    token: Optional[str] = Query(None, description="Authentication token")
+):
+    """
+    WebSocket endpoint for real-time agent metrics updates.
+    
+    SECURITY: Requires valid authentication token.
+    
+    Provides real-time metrics for agents including:
+    - Phi (consciousness metric)
+    - Coherence
+    - Load
+    - Queue size
+    
+    Message format:
+    {
+        "type": "metrics",
+        "agentId": "agent-id",
+        "metrics": {
+            "phi": 0.85,
+            "coherence": 0.92,
+            "load": 0.45,
+            "queueSize": 3
+        }
+    }
+    
+    Args:
+        agent_id: Optional specific agent ID to monitor
+        token: Authentication token (required)
+    """
+    # SECURITY: Authenticate connection
+    is_authenticated, user_id, error = await authenticate_websocket(websocket, token)
+    if not is_authenticated:
+        try:
+            await websocket.accept()
+            await websocket.send_json({
+                "type": "error",
+                "error": f"Authentication failed: {error}"
+            })
+            await websocket.close()
+        except Exception:
+            pass
+        logger.warning("websocket_agent_metrics_auth_failed", error=error)
+        return
+    
+    await websocket.accept()
+    logger.info("Agent metrics WebSocket connected", agent_id=agent_id)
+    
+    subscribed_agents = set()
+    
+    try:
+        while True:
+            try:
+                data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
+                message = json.loads(data)
+                
+                # Handle subscription/unsubscription
+                action = message.get("action")
+                if action == "subscribe":
+                    sub_agent_id = message.get("agentId") or agent_id
+                    if sub_agent_id:
+                        manager.subscribe_metrics(sub_agent_id, websocket)
+                        subscribed_agents.add(sub_agent_id)
+                        logger.info("Subscribed to agent metrics", agent_id=sub_agent_id)
+                
+                elif action == "unsubscribe":
+                    sub_agent_id = message.get("agentId") or agent_id
+                    if sub_agent_id in subscribed_agents:
+                        manager.unsubscribe_metrics(sub_agent_id, websocket)
+                        subscribed_agents.discard(sub_agent_id)
+                        logger.info("Unsubscribed from agent metrics", agent_id=sub_agent_id)
+                
+            except asyncio.TimeoutError:
+                # Send heartbeat
+                await websocket.send_json({
+                    "type": "heartbeat",
+                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                })
+                
+    except WebSocketDisconnect:
+        logger.info("Agent metrics WebSocket disconnected")
+    except Exception as e:
+        logger.error("Agent metrics WebSocket error", error=str(e))
+    finally:
+        # Cleanup subscriptions
+        for sub_agent_id in subscribed_agents:
+            manager.unsubscribe_metrics(sub_agent_id, websocket)
+
+
+# =============================================================================
 # Dashboard WebSocket
 # =============================================================================
 
@@ -588,6 +965,13 @@ async def dashboard_websocket(
     
     logger.info("Dashboard WebSocket connected")
     
+    # Track subscriptions
+    subscriptions = {
+        "agent_status": False,
+        "workflow_progress": False,
+        "metrics": False,
+    }
+    
     try:
         # Keep connection alive and stream updates
         while True:
@@ -602,6 +986,19 @@ async def dashboard_websocket(
                         "type": "pong",
                         "timestamp": datetime.now(timezone.utc).isoformat(),
                     })
+                
+                # Handle channel subscriptions
+                elif message.get("action") == "subscribe":
+                    channel = message.get("channel")
+                    if channel in subscriptions:
+                        subscriptions[channel] = True
+                        logger.info("Dashboard subscribed to channel", channel=channel)
+                
+                elif message.get("action") == "unsubscribe":
+                    channel = message.get("channel")
+                    if channel in subscriptions:
+                        subscriptions[channel] = False
+                        logger.info("Dashboard unsubscribed from channel", channel=channel)
                     
             except asyncio.TimeoutError:
                 # Send heartbeat
@@ -761,5 +1158,80 @@ async def all_agents_websocket(
         logger.error("All agents WebSocket error", error=str(e))
 
 
+# =============================================================================
+# Helper Functions for Broadcasting Updates
+# =============================================================================
+
+async def send_agent_status_update(agent_id: str, status: str, current_task: Optional[str] = None):
+    """
+    Send an agent status update to all subscribers.
+    
+    Args:
+        agent_id: Agent identifier
+        status: Agent status (active, idle, processing, error)
+        current_task: Optional current task description
+    """
+    update = {
+        "status": status,
+        "currentTask": current_task,
+        "lastHeartbeat": datetime.now(timezone.utc).isoformat(),
+    }
+    _agent_states[agent_id] = update
+    await manager.broadcast_agent_status(agent_id, update)
+
+
+async def send_workflow_progress_update(
+    workflow_id: str,
+    current_node: str,
+    phase: str,
+    progress: int
+):
+    """
+    Send a workflow progress update to all subscribers.
+    
+    Args:
+        workflow_id: Workflow identifier
+        current_node: Current node being executed
+        phase: Workflow phase (plan, analyze, execute, validate, report)
+        progress: Progress percentage (0-100)
+    """
+    update = {
+        "currentNode": current_node,
+        "phase": phase,
+        "progress": progress,
+    }
+    await manager.broadcast_workflow_progress(workflow_id, update)
+
+
+async def send_agent_metrics_update(
+    agent_id: str,
+    phi: Optional[float] = None,
+    coherence: Optional[float] = None,
+    load: Optional[float] = None,
+    queue_size: Optional[int] = None
+):
+    """
+    Send agent metrics update to all subscribers.
+    
+    Args:
+        agent_id: Agent identifier
+        phi: Consciousness metric (optional)
+        coherence: Coherence metric (optional)
+        load: Load percentage (optional)
+        queue_size: Queue size (optional)
+    """
+    metrics = {}
+    if phi is not None:
+        metrics["phi"] = phi
+    if coherence is not None:
+        metrics["coherence"] = coherence
+    if load is not None:
+        metrics["load"] = load
+    if queue_size is not None:
+        metrics["queueSize"] = queue_size
+    
+    await manager.broadcast_metrics(agent_id, metrics)
+
+
 # Export router
-__all__ = ["router", "manager"]
+__all__ = ["router", "manager", "send_agent_status_update", "send_workflow_progress_update", "send_agent_metrics_update"]

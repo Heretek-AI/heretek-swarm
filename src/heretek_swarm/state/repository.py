@@ -6,6 +6,7 @@ Provides PostgreSQL-backed persistence for agent states with:
 - Versioned checkpoints for schema compatibility
 - State restoration after restart
 - Concurrent update handling with optimistic locking
+- Event sourcing integration for audit trail and state reconstruction
 """
 
 import asyncio
@@ -13,12 +14,20 @@ import json
 import logging
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional, Set, Callable
 from uuid import UUID, uuid4
 
 import structlog
 
 logger = structlog.get_logger("state.repository")
+
+# Import event sourcing types
+try:
+    from heretek_swarm.state.event_store import DomainEvent
+    EVENT_SOURCING_AVAILABLE = True
+except ImportError:
+    EVENT_SOURCING_AVAILABLE = False
+    DomainEvent = None
 
 
 @dataclass
@@ -698,3 +707,291 @@ class StateRepository:
 class ConcurrencyError(Exception):
     """Raised when concurrent update conflicts exceed max retries."""
     pass
+
+
+# =============================================================================
+# Event Sourcing Integration
+# =============================================================================
+
+class EventSourcedRepository(StateRepository):
+    """
+    Event-sourced state repository extending StateRepository.
+    
+    Combines traditional state persistence with event sourcing:
+    - All state changes are stored as immutable events
+    - Current state is stored for performance (CQRS pattern)
+    - State can be reconstructed from events at any time
+    - Supports snapshotting for large event streams
+    
+    Example:
+        ```python
+        repo = EventSourcedRepository(db_pool)
+        await repo.initialize()
+        
+        # Save state with event
+        await repo.save_state_with_event(
+            agent_id="agent-1",
+            state={"status": "running"},
+            event_type="agent.state.changed",
+            event_payload={"old_state": "stopped", "new_state": "running"},
+        )
+        
+        # Reconstruct state from events
+        state = await repo.reconstruct_state("agent-1")
+        ```
+    """
+    
+    def __init__(
+        self,
+        db_pool: Optional[Any] = None,
+        max_retries: int = 3,
+        retry_delay: float = 0.1,
+        snapshot_interval: int = 100,
+    ):
+        """
+        Initialize event-sourced repository.
+        
+        Args:
+            db_pool: asyncpg connection pool
+            max_retries: Maximum retries for concurrent updates
+            retry_delay: Base delay between retries
+            snapshot_interval: Create snapshot every N events
+        """
+        super().__init__(db_pool, max_retries, retry_delay)
+        
+        # Event store reference
+        self._event_store = None
+        self._snapshot_interval = snapshot_interval
+        
+        # Event appliers
+        self._event_appliers: Dict[str, Callable[[Dict[str, Any], DomainEvent], Dict[str, Any]]] = {
+            "agent.state.changed": self._apply_agent_state_changed,
+            "agent.config.updated": self._apply_agent_config_updated,
+            "agent.created": self._apply_agent_created,
+        }
+        
+        logger.info(
+            "EventSourcedRepository initialized",
+            snapshot_interval=snapshot_interval,
+        )
+    
+    async def initialize(self, db_pool: Optional[Any] = None) -> None:
+        """Initialize repository and event store."""
+        await super().initialize(db_pool)
+        
+        # Initialize event store
+        from heretek_swarm.state.event_store import get_event_store
+        
+        self._event_store = get_event_store()
+        await self._event_store.initialize(db_pool)
+        
+        logger.info("EventSourcedRepository fully initialized")
+    
+    async def save_state_with_event(
+        self,
+        agent_id: str,
+        state: Dict[str, Any],
+        event_type: str,
+        event_payload: Dict[str, Any],
+        agent_type: str = "AgentActor",
+        version: Optional[int] = None,
+        event_metadata: Optional[Dict[str, Any]] = None,
+    ) -> AgentStateRecord:
+        """
+        Save state and append corresponding event.
+        
+        Args:
+            agent_id: Agent identifier
+            state: State data to persist
+            event_type: Type of event
+            event_payload: Event payload
+            agent_type: Type of agent
+            version: Expected current version
+            event_metadata: Event metadata (correlation_id, causation_id, user_id)
+            
+        Returns:
+            Saved state record
+        """
+        # Get current version
+        current_version = await self._event_store.get_last_version(agent_id) if self._event_store else 0
+        new_version = current_version + 1
+        
+        # Create event
+        event = DomainEvent.create(
+            event_type=event_type,
+            aggregate_id=agent_id,
+            aggregate_type=agent_type,
+            payload=event_payload,
+            version=new_version,
+            metadata=event_metadata,
+        )
+        
+        # Append event first (event sourcing)
+        if self._event_store:
+            await self._event_store.append(event)
+        
+        # Save current state (for performance)
+        record = await self.save_state(
+            agent_id=agent_id,
+            state=state,
+            agent_type=agent_type,
+            version=new_version,
+        )
+        
+        logger.info(
+            "State saved with event",
+            agent_id=agent_id,
+            event_type=event_type,
+            version=new_version,
+        )
+        
+        return record
+    
+    async def reconstruct_state(self, agent_id: str) -> Optional[Dict[str, Any]]:
+        """
+        Reconstruct state from events.
+        
+        Args:
+            agent_id: Agent identifier
+            
+        Returns:
+            Reconstructed state or None if no events found
+        """
+        if not self._event_store:
+            logger.warning("Event store not available")
+            return None
+        
+        # Get current state as base
+        current_record = await self.load_state(agent_id)
+        initial_state = current_record.state if current_record else {}
+        
+        # Reconstruct from events
+        state = await self._event_store.reconstruct_state(
+            aggregate_id=agent_id,
+            applier=self._apply_event,
+            initial_state=initial_state,
+        )
+        
+        logger.info(f"State reconstructed for {agent_id}")
+        return state
+    
+    def _apply_event(
+        self,
+        state: Dict[str, Any],
+        event: DomainEvent,
+    ) -> Dict[str, Any]:
+        """Apply event to state."""
+        applier = self._event_appliers.get(event.event_type)
+        
+        if applier:
+            return applier(state, event)
+        else:
+            # Default: merge payload into state
+            state.update(event.payload)
+            return state
+    
+    def _apply_agent_state_changed(
+        self,
+        state: Dict[str, Any],
+        event: DomainEvent,
+    ) -> Dict[str, Any]:
+        """Apply agent.state.changed event."""
+        if "new_state" in event.payload:
+            state["state"] = event.payload["new_state"]
+        if "status" in event.payload:
+            state["status"] = event.payload["status"]
+        state["last_state_change"] = event.timestamp.isoformat()
+        return state
+    
+    def _apply_agent_config_updated(
+        self,
+        state: Dict[str, Any],
+        event: DomainEvent,
+    ) -> Dict[str, Any]:
+        """Apply agent.config.updated event."""
+        if "config" in event.payload:
+            state["config"] = event.payload["config"]
+        state["last_config_update"] = event.timestamp.isoformat()
+        return state
+    
+    def _apply_agent_created(
+        self,
+        state: Dict[str, Any],
+        event: DomainEvent,
+    ) -> Dict[str, Any]:
+        """Apply agent.created event."""
+        state.update(event.payload)
+        state["created_at"] = event.timestamp.isoformat()
+        return state
+    
+    async def get_event_history(
+        self,
+        agent_id: str,
+        from_version: int = 0,
+    ) -> List[DomainEvent]:
+        """
+        Get event history for an agent.
+        
+        Args:
+            agent_id: Agent identifier
+            from_version: Start version (exclusive)
+            
+        Returns:
+            List of events
+        """
+        if not self._event_store:
+            return []
+        
+        return await self._event_store.get_events(agent_id, from_version=from_version)
+    
+    async def create_state_snapshot(self, agent_id: str, agent_type: str) -> bool:
+        """
+        Create a state snapshot.
+        
+        Args:
+            agent_id: Agent identifier
+            agent_type: Agent type
+            
+        Returns:
+            True if snapshot created
+        """
+        if not self._event_store:
+            return False
+        
+        # Get current state
+        record = await self.load_state(agent_id)
+        if not record:
+            return False
+        
+        # Get current version
+        version = await self._event_store.get_last_version(agent_id)
+        
+        # Create snapshot
+        return await self._event_store.create_snapshot(
+            aggregate_id=agent_id,
+            aggregate_type=agent_type,
+            state=record.state,
+            version=version,
+        )
+    
+    def register_event_applier(
+        self,
+        event_type: str,
+        applier: Callable[[Dict[str, Any], DomainEvent], Dict[str, Any]],
+    ) -> None:
+        """
+        Register a custom event applier.
+        
+        Args:
+            event_type: Type of event
+            applier: Function to apply event to state
+        """
+        self._event_appliers[event_type] = applier
+        logger.debug(f"Event applier registered for {event_type}")
+
+
+# Override get_event_store for event_sourced compatibility
+def get_event_sourced_repository() -> EventSourcedRepository:
+    """Get or create the event-sourced repository singleton."""
+    # This would typically be a singleton, but for now create new instance
+    return EventSourcedRepository()

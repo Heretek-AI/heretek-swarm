@@ -73,6 +73,9 @@ class DomainExpertise:
         confidence_calibration: How well confidence matches accuracy
         last_updated: Last update timestamp
         recent_outcomes: Recent outcome history for trend analysis
+        peer_trust_scores: Trust scores from other agents (agent_id -> trust score)
+        evidence_quality_avg: Average quality of evidence provided
+        collaboration_count: Number of successful collaborations
     """
 
     domain: str
@@ -83,6 +86,11 @@ class DomainExpertise:
     confidence_calibration: float = 0.0
     last_updated: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     recent_outcomes: List[Dict[str, Any]] = field(default_factory=list)
+    
+    # Peer trust tracking (NEW)
+    peer_trust_scores: Dict[str, float] = field(default_factory=dict)
+    evidence_quality_avg: float = 0.5
+    collaboration_count: int = 0
 
     def __post_init__(self) -> None:
         """Validate expertise score range."""
@@ -118,6 +126,47 @@ class DomainExpertise:
         """
         # Map expertise score to multiplier range [0.5, 1.5]
         return 0.5 + (self.expertise_score * 1.0)
+    
+    def get_peer_trust_score(self) -> float:
+        """
+        Calculate average peer trust score.
+        
+        Returns:
+            Average trust score from peers (0.0 to 1.0)
+        """
+        if not self.peer_trust_scores:
+            return 0.5  # Default trust for new agents
+        
+        return sum(self.peer_trust_scores.values()) / len(self.peer_trust_scores)
+    
+    def update_peer_trust(self, peer_id: str, trust_delta: float) -> None:
+        """
+        Update trust score from a specific peer.
+        
+        Args:
+            peer_id: ID of the peer agent
+            trust_delta: Change in trust score (-0.1 to +0.1 recommended)
+        """
+        current_trust = self.peer_trust_scores.get(peer_id, 0.5)
+        new_trust = max(0.0, min(1.0, current_trust + trust_delta))
+        self.peer_trust_scores[peer_id] = new_trust
+        self.last_updated = datetime.now(timezone.utc).isoformat()
+    
+    def record_evidence_quality(self, quality_score: float) -> None:
+        """
+        Record evidence quality score for running average.
+        
+        Args:
+            quality_score: Quality score of evidence (0.0 to 1.0)
+        """
+        # Update running average
+        total = self.total_decisions
+        if total == 0:
+            self.evidence_quality_avg = quality_score
+        else:
+            self.evidence_quality_avg = (
+                (self.evidence_quality_avg * total + quality_score) / (total + 1)
+            )
 
 
 @dataclass
@@ -132,6 +181,7 @@ class AgentExpertiseProfile:
         total_decisions: Total decisions across all domains
         created_at: Profile creation timestamp
         last_active: Last activity timestamp
+        peer_trust_score: Overall peer trust score across all domains
     """
 
     agent_id: str
@@ -140,6 +190,7 @@ class AgentExpertiseProfile:
     total_decisions: int = 0
     created_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     last_active: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    peer_trust_score: float = 0.5
 
     def get_expertise_for_domain(self, domain: str) -> DomainExpertise:
         """Get expertise for a specific domain, creating if needed."""
@@ -307,6 +358,108 @@ class AgentExpertiseProfiler:
             f"correct={was_correct}, confidence={confidence:.2f}, "
             f"new_expertise={domain_expertise.expertise_score:.2f}"
         )
+
+    def record_peer_trust(
+        self,
+        agent_id: str,
+        domain: str,
+        peer_id: str,
+        trust_delta: float,
+    ) -> None:
+        """
+        Record peer trust update for an agent.
+
+        Args:
+            agent_id: Agent receiving trust update
+            domain: Domain of the interaction
+            peer_id: Agent giving the trust update
+            trust_delta: Change in trust (-0.1 to +0.1 recommended)
+        """
+        if agent_id not in self.profiles:
+            return
+
+        profile = self.profiles[agent_id]
+        domain_expertise = profile.get_expertise_for_domain(domain)
+
+        # Update peer trust in domain expertise
+        domain_expertise.update_peer_trust(peer_id, trust_delta)
+
+        logger.info(
+            f"Recorded peer trust for {agent_id} in {domain} from {peer_id}: {trust_delta:+.2f}"
+        )
+
+        # Update overall peer trust score
+        self._update_peer_trust_score(profile)
+
+        logger.debug(
+            f"Peer trust updated for {agent_id} from {peer_id} "
+            f"in {domain}: delta={trust_delta:+.3f}"
+        )
+
+    def _update_peer_trust_score(self, profile: AgentExpertiseProfile) -> None:
+        """
+        Update overall peer trust score for a profile.
+
+        Args:
+            profile: Agent expertise profile
+        """
+        all_trust_scores = []
+        for domain_expertise in profile.domains.values():
+            all_trust_scores.extend(domain_expertise.peer_trust_scores.values())
+
+        if all_trust_scores:
+            profile.peer_trust_score = sum(all_trust_scores) / len(all_trust_scores)
+        else:
+            profile.peer_trust_score = 0.5
+
+    def record_collaboration(
+        self,
+        agent_id: str,
+        domain: str,
+        success: bool,
+    ) -> None:
+        """
+        Record a collaboration event for an agent.
+
+        Args:
+            agent_id: Agent identifier
+            domain: Domain of collaboration
+            success: Whether collaboration was successful
+        """
+        if agent_id not in self.profiles:
+            return
+
+        profile = self.profiles[agent_id]
+        domain_expertise = profile.get_expertise_for_domain(domain)
+
+        if success:
+            domain_expertise.collaboration_count += 1
+
+            # Bonus trust update for successful collaboration
+            domain_expertise.expertise_score = min(1.0, domain_expertise.expertise_score + 0.02)
+
+        self._update_peer_trust_score(profile)
+
+    def get_peer_trust_weight(self, agent_id: str, domain: Optional[str] = None) -> float:
+        """
+        Get peer trust weight for vote weighting.
+
+        Args:
+            agent_id: Agent identifier
+            domain: Optional specific domain
+
+        Returns:
+            Peer trust weight (0.0 to 1.0)
+        """
+        if agent_id not in self.profiles:
+            return 0.5
+
+        profile = self.profiles[agent_id]
+
+        if domain and domain in profile.domains:
+            return profile.domains[domain].get_peer_trust_score()
+
+        return profile.peer_trust_score
 
     def _calculate_expertise_score(
         self, domain_expertise: DomainExpertise

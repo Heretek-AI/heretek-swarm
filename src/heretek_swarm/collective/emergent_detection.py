@@ -115,7 +115,33 @@ class CollectiveBehavior:
 
 @dataclass
 class EmergentPattern:
-    """Represents a detected emergent pattern."""
+    """
+    Represents a detected emergent pattern.
+    
+    Attributes:
+        pattern_id: Unique identifier
+        pattern_class: Classification of pattern type
+        emergence_level: Level of emergence strength
+        timestamp: Detection timestamp
+        description: Human-readable description
+        participating_agents: Agents involved in pattern
+        collective_behaviors: Associated collective behaviors
+        emergence_score: Overall emergence strength (0.0-1.0)
+        individual_baseline: Average individual capability
+        collective_capability: Observed collective capability
+        emergence_ratio: Ratio of collective/individual capability
+        statistical_significance: P-value equivalent
+        confidence: Detection confidence (0.0-1.0)
+        is_validated: Whether pattern has been validated
+        impact_score: Impact rating (-1.0 harmful to +1.0 beneficial)
+        first_detected: When pattern was first detected
+        last_observed: When pattern was last observed
+        frequency: How often pattern has been observed
+        recommended_action: Suggested response action
+        pattern_data: Raw pattern data
+        context: Pattern context
+        metadata: Additional metadata
+    """
     
     pattern_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     pattern_class: EmergentPatternClass = EmergentPatternClass.COORDINATION
@@ -137,6 +163,13 @@ class EmergentPattern:
     statistical_significance: float = 0.0  # p-value equivalent
     confidence: float = 0.0
     is_validated: bool = False
+    
+    # Impact tracking (NEW)
+    impact_score: float = 0.0  # -1.0 (harmful) to +1.0 (beneficial)
+    first_detected: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    last_observed: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    frequency: int = 1
+    recommended_action: Optional[str] = None
     
     # Pattern data
     pattern_data: Dict[str, Any] = field(default_factory=dict)
@@ -465,6 +498,62 @@ class EmergentPatternDetector:
             ]
         
         return patterns[-limit:]
+    
+    def get_patterns_by_impact(
+        self,
+        min_impact: float = 0.0,
+        max_impact: float = 1.0,
+        limit: int = 100,
+    ) -> List[EmergentPattern]:
+        """
+        Get patterns filtered by impact score.
+        
+        Args:
+            min_impact: Minimum impact score (-1.0 to 1.0)
+            max_impact: Maximum impact score (-1.0 to 1.0)
+            limit: Maximum patterns to return
+            
+        Returns:
+            List of patterns sorted by impact score (descending)
+        """
+        patterns = [
+            p for p in self._emergent_patterns
+            if min_impact <= p.impact_score <= max_impact
+        ]
+        
+        # Sort by impact score descending
+        patterns.sort(key=lambda p: p.impact_score, reverse=True)
+        
+        return patterns[:limit]
+    
+    def get_harmful_patterns(self, limit: int = 50) -> List[EmergentPattern]:
+        """
+        Get patterns with negative impact scores (potentially harmful).
+        
+        Args:
+            limit: Maximum patterns to return
+            
+        Returns:
+            List of harmful patterns sorted by severity
+        """
+        patterns = [p for p in self._emergent_patterns if p.impact_score < 0]
+        patterns.sort(key=lambda p: p.impact_score)  # Most negative first
+        return patterns[:limit]
+    
+    def get_beneficial_patterns(self, min_impact: float = 0.3, limit: int = 50) -> List[EmergentPattern]:
+        """
+        Get patterns with positive impact scores (beneficial).
+        
+        Args:
+            min_impact: Minimum positive impact threshold
+            limit: Maximum patterns to return
+            
+        Returns:
+            List of beneficial patterns sorted by impact
+        """
+        patterns = [p for p in self._emergent_patterns if p.impact_score >= min_impact]
+        patterns.sort(key=lambda p: p.impact_score, reverse=True)
+        return patterns[:limit]
     
     def get_collective_behaviors(
         self,
@@ -1010,6 +1099,16 @@ class EmergentPatternDetector:
         event.passed_validation = True
         pattern.is_validated = True
         
+        # Calculate impact score and recommended action
+        pattern.impact_score = self._calculate_impact_score(pattern)
+        pattern.recommended_action = self._generate_recommended_action(pattern)
+        
+        # Update frequency if pattern already exists
+        existing_pattern = self._find_similar_pattern(pattern)
+        if existing_pattern:
+            pattern.frequency = existing_pattern.frequency + 1
+            pattern.first_detected = existing_pattern.first_detected
+        
         # Store pattern
         self._emergent_patterns.append(pattern)
         
@@ -1018,9 +1117,27 @@ class EmergentPatternDetector:
             pattern_id=pattern.pattern_id,
             pattern_class=pattern.pattern_class.value,
             emergence_level=pattern.emergence_level.value,
+            impact_score=pattern.impact_score,
         )
         
         return event
+    
+    def _find_similar_pattern(self, pattern: EmergentPattern) -> Optional[EmergentPattern]:
+        """
+        Find a similar existing pattern for frequency tracking.
+        
+        Args:
+            pattern: Pattern to find similar match for
+            
+        Returns:
+            Similar pattern or None
+        """
+        for existing in self._emergent_patterns:
+            # Match by pattern class and participating agents
+            if (existing.pattern_class == pattern.pattern_class and
+                set(existing.participating_agents) == set(pattern.participating_agents)):
+                return existing
+        return None
     
     def _calculate_statistical_significance(self, pattern: EmergentPattern) -> float:
         """Calculate statistical significance of a pattern."""
@@ -1054,6 +1171,103 @@ class EmergentPatternDetector:
         factors.append(ratio_factor)
         
         return sum(factors) / len(factors)
+    
+    def _calculate_impact_score(self, pattern: EmergentPattern) -> float:
+        """
+        Calculate impact score for an emergent pattern.
+        
+        Impact score ranges from -1.0 (harmful) to +1.0 (beneficial).
+        
+        Args:
+            pattern: Emergent pattern to evaluate
+            
+        Returns:
+            Impact score (-1.0 to +1.0)
+        """
+        # Base impact from emergence level
+        level_impact = {
+            EmergenceLevel.WEAK: 0.2,
+            EmergenceLevel.MODERATE: 0.4,
+            EmergenceLevel.STRONG: 0.6,
+            EmergenceLevel.CRITICAL: 0.8,
+        }
+        base_impact = level_impact.get(pattern.emergence_level, 0.2)
+        
+        # Pattern class impact modifiers
+        # Positive emergence (beneficial patterns)
+        positive_patterns = [
+            EmergentPatternClass.COORDINATION,
+            EmergentPatternClass.OPTIMIZATION,
+            EmergentPatternClass.INNOVATION,
+            EmergentPatternClass.SELF_ORGANIZATION,
+            EmergentPatternClass.ADAPTATION,
+        ]
+        
+        # Negative emergence (potentially harmful patterns)
+        negative_patterns = [
+            EmergentPatternClass.CASCADE,  # Can be runaway chain reactions
+            EmergentPatternClass.PHASE_TRANSITION,  # Can be disruptive
+        ]
+        
+        # Resonance can be either positive or negative depending on context
+        if pattern.pattern_class in positive_patterns:
+            class_modifier = 1.0  # Positive impact
+        elif pattern.pattern_class in negative_patterns:
+            class_modifier = -0.5  # Potentially negative impact
+        elif pattern.pattern_class == EmergentPatternClass.RESONANCE:
+            # Resonance impact depends on emergence ratio
+            if pattern.emergence_ratio > 1.5:
+                class_modifier = 0.8  # Amplified positive
+            elif pattern.emergence_ratio < 0.5:
+                class_modifier = -0.3  # Damped/negative
+            else:
+                class_modifier = 0.3  # Neutral-positive
+        else:
+            class_modifier = 0.0  # Neutral
+        
+        # Confidence modifier - higher confidence = stronger impact
+        confidence_modifier = pattern.confidence * 0.2
+        
+        # Frequency modifier - repeated patterns have stronger impact
+        frequency_modifier = min(0.2, pattern.frequency * 0.02)
+        
+        # Calculate final impact
+        impact = (base_impact * class_modifier) + confidence_modifier + frequency_modifier
+        
+        # Clamp to valid range
+        return max(-1.0, min(1.0, impact))
+    
+    def _generate_recommended_action(self, pattern: EmergentPattern) -> Optional[str]:
+        """
+        Generate recommended action based on pattern characteristics.
+        
+        Args:
+            pattern: Emergent pattern to analyze
+            
+        Returns:
+            Recommended action string or None
+        """
+        impact_score = self._calculate_impact_score(pattern)
+        
+        # High positive impact - encourage/reinforce
+        if impact_score >= 0.7:
+            return "REINFORCE: High-value emergent pattern detected. Consider reinforcing conditions that enabled this behavior."
+        
+        # Moderate positive impact - monitor and document
+        elif impact_score >= 0.3:
+            return "MONITOR: Beneficial pattern detected. Document conditions for future replication."
+        
+        # Neutral impact - observe
+        elif impact_score >= -0.3:
+            return "OBSERVE: Neutral emergence. Continue monitoring for changes."
+        
+        # Moderate negative impact - investigate
+        elif impact_score >= -0.7:
+            return "INVESTIGATE: Potentially harmful pattern. Analyze root causes and consider intervention."
+        
+        # High negative impact - immediate action
+        else:
+            return "ALERT: Harmful emergent pattern detected. Immediate intervention recommended."
     
     async def _call_detection_callbacks(self, event: DetectionEvent) -> None:
         """Call registered detection callbacks."""

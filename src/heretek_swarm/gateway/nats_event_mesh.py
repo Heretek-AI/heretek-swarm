@@ -863,3 +863,312 @@ class NATSEventMeshMixin:
     def nats_enabled(self) -> bool:
         """Check if NATS is enabled."""
         return self._nats_enabled
+
+
+# =============================================================================
+# JetStreamManager Integration
+# =============================================================================
+
+class NATSEventMeshWithJetStream(NATSEventMesh):
+    """
+    Enhanced NATSEventMesh with JetStreamManager integration.
+    
+    Combines the messaging capabilities of NATSEventMesh with the
+    stream management features of JetStreamManager for comprehensive
+    event mesh functionality.
+    
+    Example:
+        ```python
+        mesh = NATSEventMeshWithJetStream(
+            servers=["nats://localhost:4222"],
+            fallback=True
+        )
+        await mesh.connect()
+        
+        # Initialize default streams
+        await mesh.initialize_jetstream()
+        
+        # Publish to stream
+        await mesh.publish_to_stream(
+            stream_name="AGENT_EVENTS",
+            subject="agent.test.state",
+            data={"state": "running"}
+        )
+        ```
+    """
+    
+    def __init__(
+        self,
+        servers: Optional[List[str]] = None,
+        name: Optional[str] = None,
+        fallback: bool = True,
+        max_reconnect_attempts: int = 5,
+        reconnect_timewait: float = 1.0,
+        ping_interval: int = 30,
+        max_outstanding: int = 1000,
+        zero_trust_enabled: bool = True,
+    ) -> None:
+        """
+        Initialize enhanced NATSEventMesh with JetStream.
+        
+        Args:
+            servers: List of NATS server URLs
+            name: Client name
+            fallback: Enable fallback to in-memory mesh
+            max_reconnect_attempts: Max reconnection attempts
+            reconnect_timewait: Time to wait between reconnect attempts
+            ping_interval: Ping interval in seconds
+            max_outstanding: Max pending messages
+            zero_trust_enabled: Enable zero-trust security
+        """
+        super().__init__(
+            servers=servers,
+            name=name,
+            fallback=fallback,
+            max_reconnect_attempts=max_reconnect_attempts,
+            reconnect_timewait=reconnect_timewait,
+            ping_interval=ping_interval,
+            max_outstanding=max_outstanding,
+        )
+        
+        # JetStream manager reference
+        self._js_manager = None
+        self._zero_trust_enabled = zero_trust_enabled
+        
+        logger.info("NATSEventMeshWithJetStream initialized")
+    
+    @property
+    def jetstream_manager(self) -> Optional[Any]:
+        """Get JetStream manager instance."""
+        return self._js_manager
+    
+    @property
+    def jetstream_ready(self) -> bool:
+        """Check if JetStream is ready."""
+        return self._js_manager is not None and self._js_manager.is_connected
+    
+    async def initialize_jetstream(
+        self,
+        create_default_streams: bool = True,
+    ) -> bool:
+        """
+        Initialize JetStream manager and create streams.
+        
+        Args:
+            create_default_streams: Create default stream configurations
+            
+        Returns:
+            True if initialized successfully
+        """
+        if not self.is_connected:
+            logger.warning("Not connected, cannot initialize JetStream")
+            return False
+        
+        try:
+            # Import JetStreamManager
+            from heretek_swarm.gateway.jetstream_manager import (
+                JetStreamManager,
+                JetStreamConfig,
+            )
+            
+            # Create manager
+            self._js_manager = JetStreamManager(
+                servers=self.servers,
+                name=self.client_name,
+                zero_trust_enabled=self._zero_trust_enabled,
+                fallback_enabled=self.fallback,
+            )
+            
+            # Connect
+            connected = await self._js_manager.connect()
+            if not connected:
+                logger.warning("JetStreamManager connection failed")
+                return False
+            
+            # Create default streams if requested
+            if create_default_streams:
+                results = await self._js_manager.initialize_default_streams()
+                logger.info("Default streams initialized", results=results)
+            
+            logger.info("JetStream initialized")
+            return True
+            
+        except Exception as e:
+            logger.error(f"Failed to initialize JetStream: {e}")
+            return False
+    
+    async def publish_event(
+        self,
+        stream_name: str,
+        event_type: str,
+        entity_id: str,
+        payload: Dict[str, Any],
+        correlation_id: Optional[str] = None,
+    ) -> bool:
+        """
+        Publish a domain event to a stream.
+        
+        Args:
+            stream_name: Target stream name
+            event_type: Type of event (e.g., "agent.state.changed")
+            entity_id: Entity identifier
+            payload: Event payload
+            correlation_id: Optional correlation ID for tracing
+            
+        Returns:
+            True if published successfully
+        """
+        if not self.jetstream_ready:
+            # Fallback to regular publish
+            subject = f"{stream_name}.{event_type}.{entity_id}"
+            return await self.publish(subject, payload)
+        
+        # Build event envelope
+        event = {
+            "event_id": f"{event_type}-{entity_id}-{datetime.now(timezone.utc).timestamp()}",
+            "event_type": event_type,
+            "entity_id": entity_id,
+            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "payload": payload,
+        }
+        
+        # Determine subject based on stream type
+        if stream_name == "AGENT_EVENTS":
+            subject = f"agent.{entity_id}.events"
+        elif stream_name == "WORKFLOW_EVENTS":
+            subject = f"workflow.{entity_id}.events"
+        elif stream_name == "CONSCIOUSNESS_METRICS":
+            subject = f"consciousness.{entity_id}.metrics"
+        elif stream_name == "SYSTEM_HEALTH":
+            subject = f"health.{entity_id}.metrics"
+        else:
+            subject = f"{stream_name}.{event_type}"
+        
+        return await self._js_manager.publish(
+            stream_name=stream_name,
+            subject=subject,
+            data=event,
+            correlation_id=correlation_id,
+        )
+    
+    async def subscribe_to_events(
+        self,
+        stream_name: str,
+        event_type: Optional[str] = None,
+        entity_id: Optional[str] = None,
+        callback: Optional[Callable[[str, Dict[str, Any]], None]] = None,
+        durable_name: Optional[str] = None,
+    ) -> Optional[str]:
+        """
+        Subscribe to events from a stream.
+        
+        Args:
+            stream_name: Source stream name
+            event_type: Optional event type filter
+            entity_id: Optional entity ID filter
+            callback: Message callback function
+            durable_name: Optional durable consumer name
+            
+        Returns:
+            Consumer/subscription ID or None if failed
+        """
+        if not self.jetstream_ready:
+            # Fallback to regular subscribe
+            if event_type and entity_id:
+                subject = f"{stream_name}.{event_type}.{entity_id}"
+            elif event_type:
+                subject = f"{stream_name}.{event_type}.>"
+            else:
+                subject = f"{stream_name}.>"
+            return await self.subscribe(subject, callback)
+        
+        # Build subject filter
+        if event_type and entity_id:
+            subject_filter = f"agent.{entity_id}.events"
+        elif event_type:
+            subject_filter = f"agent.*.events"
+        else:
+            subject_filter = ">"
+        
+        # Create consumer config
+        from heretek_swarm.gateway.jetstream_manager import (
+            ConsumerConfig,
+            DeliverPolicy,
+            AckPolicy,
+        )
+        
+        consumer_config = ConsumerConfig(
+            durable_name=durable_name or f"consumer_{stream_name}_{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}",
+            stream_name=stream_name,
+            deliver_policy=DeliverPolicy.NEW,
+            ack_policy=AckPolicy.EXPLICIT,
+            filter_subject=subject_filter,
+        )
+        
+        return await self._js_manager.create_consumer(consumer_config, callback)
+    
+    async def replay_events(
+        self,
+        stream_name: str,
+        start_sequence: Optional[int] = None,
+        end_sequence: Optional[int] = None,
+        event_type: Optional[str] = None,
+        callback: Optional[Callable[[str, Dict[str, Any]], None]] = None,
+    ) -> List[Dict[str, Any]]:
+        """
+        Replay events from a stream.
+        
+        Args:
+            stream_name: Source stream name
+            start_sequence: Start sequence number
+            end_sequence: End sequence number
+            event_type: Optional event type filter
+            callback: Optional callback for each message
+            
+        Returns:
+            List of replayed events
+        """
+        if not self.jetstream_ready:
+            logger.warning("JetStream not ready, cannot replay events")
+            return []
+        
+        # Build subject filter
+        subject_filter = None
+        if event_type:
+            subject_filter = f"*.{event_type}.*"
+        
+        return await self._js_manager.replay_messages(
+            stream_name=stream_name,
+            start_sequence=start_sequence,
+            end_sequence=end_sequence,
+            subject_filter=subject_filter,
+            callback=callback,
+        )
+    
+    async def get_stream_stats(self, stream_name: str) -> Optional[Dict[str, Any]]:
+        """
+        Get statistics for a stream.
+        
+        Args:
+            stream_name: Stream name
+            
+        Returns:
+            Stream statistics or None if not found
+        """
+        if not self.jetstream_ready:
+            return None
+        
+        info = await self._js_manager.get_stream_info(stream_name)
+        if not info:
+            return None
+        
+        return info.to_dict()
+    
+    async def shutdown(self) -> None:
+        """Shutdown JetStream and NATS connections."""
+        if self._js_manager:
+            await self._js_manager.disconnect()
+            self._js_manager = None
+        
+        await self.disconnect()
+        logger.info("NATSEventMeshWithJetStream shutdown complete")

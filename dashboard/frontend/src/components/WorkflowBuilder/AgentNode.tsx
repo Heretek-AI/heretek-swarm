@@ -1,19 +1,28 @@
 /**
  * Agent Node Component for Workflow Builder
- * 
+ *
  * Displays an agent node in the visual workflow builder.
  * Handles agent selection and configuration.
+ *
+ * Features:
+ * - Click on agent node → opens configuration panel
+ * - Double-click for detailed configuration
+ * - Visual status indicators
+ * - Dynamic handles based on channel subscriptions
  */
 
-import React, { memo } from 'react';
+import React, { memo, useCallback } from 'react';
 import { Handle, Position, NodeProps } from 'reactflow';
-import type { AgentType } from './types';
+import { useAgentHandles, getHandleColor, type AgentHandle } from '../../hooks/useAgentHandles';
+import DynamicHandles from './DynamicHandles';
 
 interface AgentData {
   agentId: string;
-  agentType: 'steward' | 'alpha' | 'beta' | 'charlie' | 'explorer' | 'examiner' | 'coder' | 'dreamer' | 'empath' | 'historian' | 'sentinel' | 'sentinel-prime' | 'metis' | 'nexus' | 'perceiver' | 'chronos' | 'catalyst' | 'coordinator';
+  agentType: 'steward' | 'alpha' | 'beta' | 'charlie' | 'explorer' | 'examiner' | 'coder' | 'dreamer' | 'empath' | 'historian' | 'sentinel' | 'sentinel-prime' | 'metis' | 'nexus' | 'perceiver' | 'chronos' | 'catalyst' | 'coordinator' | 'arbiter' | 'prism' | 'habit-forge';
   status: 'idle' | 'thinking' | 'acting' | 'error';
   lastActivity?: string;
+  onOpenConfig?: (nodeId: string) => void;
+  enableDynamicHandles?: boolean;
 }
 
 const statusColors = {
@@ -40,13 +49,22 @@ const agentIcons: Record<AgentData['agentType'], string> = {
   nexus: '🌐',
   perceiver: '👁️',
   chronos: '⏰',
-  catalyst: '⚗',
+  catalyst: '⚗️',
   coordinator: '📊',
+  arbiter: '⚖️',
+  prism: '🔮',
+  'habit-forge': '🔨',
 };
 
 function AgentNode({ data, selected }: NodeProps<AgentData>) {
   const colors = statusColors[data.status] || statusColors.idle;
   const icon = agentIcons[data.agentType] || '🤖';
+  
+  // Use dynamic handles hook
+  const { handles, subscriptions, isLoading, error } = useAgentHandles({
+    agentId: data.agentId,
+    enabled: data.enableDynamicHandles ?? true,
+  });
   
   const timeAgo = (timestamp: string) => {
     const now = new Date();
@@ -59,11 +77,35 @@ function AgentNode({ data, selected }: NodeProps<AgentData>) {
     return `${Math.floor(diff / 86400)}d ago`;
   };
   
+  // Handle click to open configuration panel
+  const handleClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (data.onOpenConfig) {
+      data.onOpenConfig(data.agentId);
+    }
+  }, [data]);
+  
+  // Handle double-click for quick edit
+  const handleDoubleClick = useCallback((e: React.MouseEvent) => {
+    e.stopPropagation();
+    if (data.onOpenConfig) {
+      data.onOpenConfig(data.agentId);
+    }
+  }, [data]);
+  
+  // Handle click on a specific handle
+  const handleHandleClick = useCallback((handleId: string) => {
+    console.log('Handle clicked:', handleId);
+    // Could open channel configuration or show channel details
+  }, []);
+  
   return (
     <div
       className={`
         px-4 py-3 rounded-lg shadow-lg border-2 transition-all duration-200
         ${selected ? 'ring-2 ring-white ring-offset-2 ring-offset-gray-900' : ''}
+        hover:shadow-xl hover:scale-105
+        cursor-pointer
       `}
       style={{
         backgroundColor: colors.bg,
@@ -71,26 +113,53 @@ function AgentNode({ data, selected }: NodeProps<AgentData>) {
         minWidth: '220px',
         maxWidth: '280px',
       }}
+      onClick={handleClick}
+      onDoubleClick={handleDoubleClick}
+      title="Click to configure agent"
     >
-      {/* Target Handle (input) */}
-      <Handle
-        type="target"
-        position={Position.Top}
-        className="!bg-gray-600 !border-2 !border-gray-500"
-      />
+      {/* Dynamic Handles or Static Fallback */}
+      {handles.length > 0 ? (
+        <DynamicHandles
+          handles={handles}
+          onHandleClick={handleHandleClick}
+        />
+      ) : (
+        <>
+          {/* Target Handle (input) - Static fallback */}
+          <Handle
+            type="target"
+            position={Position.Top}
+            className="!bg-gray-600 !border-2 !border-gray-500"
+            onClick={(e) => e.stopPropagation()}
+          />
+          
+          {/* Source Handle (output) - Static fallback */}
+          <Handle
+            type="source"
+            position={Position.Bottom}
+            className="!bg-gray-600 !border-2 !border-gray-500"
+            onClick={(e) => e.stopPropagation()}
+          />
+        </>
+      )}
       
-      {/* Header */}
+      {/* Header with config indicator */}
       <div className="flex items-center justify-between mb-2">
         <span className="text-2xl">{icon}</span>
-        <span
-          className="text-xs font-semibold px-2 py-1 rounded uppercase"
-          style={{
-            backgroundColor: colors.border,
-            color: '#FFFFFF',
-          }}
-        >
-          {data.status}
-        </span>
+        <div className="flex items-center gap-2">
+          <span
+            className="text-xs font-semibold px-2 py-1 rounded uppercase"
+            style={{
+              backgroundColor: colors.border,
+              color: '#FFFFFF',
+            }}
+          >
+            {data.status}
+          </span>
+          <span className="text-xs" title="Click to configure">
+            ⚙️
+          </span>
+        </div>
       </div>
       
       {/* Agent Info */}
@@ -106,14 +175,24 @@ function AgentNode({ data, selected }: NodeProps<AgentData>) {
             {timeAgo(data.lastActivity)}
           </div>
         )}
+        {/* Channel subscription count */}
+        {subscriptions.length > 0 && (
+          <div className="text-xs text-gray-400 flex items-center gap-1">
+            <span>📡</span>
+            <span>{subscriptions.length} channels</span>
+          </div>
+        )}
+        {isLoading && (
+          <div className="text-xs text-blue-400">
+            Loading channels...
+          </div>
+        )}
+        {error && (
+          <div className="text-xs text-red-400" title={error.message}>
+            ⚠️ Channel error
+          </div>
+        )}
       </div>
-      
-      {/* Source Handle (output) */}
-      <Handle
-        type="source"
-        position={Position.Bottom}
-        className="!bg-gray-600 !border-2 !border-gray-500"
-      />
     </div>
   );
 }

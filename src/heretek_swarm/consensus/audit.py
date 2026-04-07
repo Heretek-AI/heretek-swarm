@@ -239,6 +239,206 @@ class QueryResult:
     timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
 
+@dataclass
+class DeliberationRoundRecord:
+    """
+    Record of a single deliberation round.
+
+    Attributes:
+        round_id: Unique round identifier
+        round_number: Round number in sequence
+        consensus_id: Related consensus process
+        arguments_submitted: Arguments submitted in this round
+        positions: Agent positions at end of round
+        consensus_score: Consensus score at end of round
+        timestamp: Round completion timestamp
+    """
+
+    round_id: str
+    round_number: int
+    consensus_id: str
+    arguments_submitted: List[str] = field(default_factory=list)
+    positions: Dict[str, str] = field(default_factory=dict)  # agent_id -> position
+    consensus_score: float = 0.0
+    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+
+
+@dataclass
+class DecisionAudit:
+    """
+    Comprehensive decision audit record with full deliberation history.
+
+    This extends DecisionRecord with additional audit-specific fields:
+    - Complete deliberation round history
+    - Vote records with reasoning
+    - Final decision with provenance
+    - Consensus method used
+    - Confidence score breakdown
+    - Dissenting agent tracking
+    - Outcome verification
+    - Immutable provenance hash
+
+    Attributes:
+        audit_id: Unique audit record identifier
+        decision_id: Related decision identifier
+        consensus_id: Related consensus process
+        deliberation_rounds: All deliberation rounds
+        votes_with_reasoning: All votes with detailed reasoning
+        final_decision: Final decision string
+        consensus_method: Method used (e.g., "MAKER", "Deliberation")
+        confidence_score: Overall confidence score
+        confidence_breakdown: Breakdown of confidence components
+        dissenting_agents: Agents who dissented
+        minority_report: Summary of minority position
+        outcome: Decision outcome
+        outcome_recorded_at: When outcome was recorded
+        outcome_verified_at: When outcome was verified
+        provenance_hash: Cryptographic hash of complete audit record
+        created_at: Record creation timestamp
+        updated_at: Record last update timestamp
+        metadata: Additional metadata
+    """
+
+    audit_id: str = field(default_factory=lambda: f"audit-{datetime.now(timezone.utc).isoformat()}")
+    decision_id: str = ""
+    consensus_id: str = ""
+    deliberation_rounds: List[DeliberationRoundRecord] = field(default_factory=list)
+    votes_with_reasoning: List[VoteRecord] = field(default_factory=list)
+    final_decision: str = ""
+    consensus_method: str = "unknown"
+    confidence_score: float = 0.5
+    confidence_breakdown: Dict[str, float] = field(default_factory=dict)
+    dissenting_agents: List[str] = field(default_factory=list)
+    minority_report: Optional[str] = None
+    outcome: DecisionOutcome = DecisionOutcome.PENDING
+    outcome_recorded_at: Optional[str] = None
+    outcome_verified_at: Optional[str] = None
+    provenance_hash: Optional[str] = None
+    created_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    updated_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    metadata: Dict[str, Any] = field(default_factory=dict)
+
+    def __post_init__(self) -> None:
+        """Generate provenance hash after initialization."""
+        if not self.provenance_hash:
+            self.provenance_hash = self._generate_provenance_hash()
+
+    def _generate_provenance_hash(self) -> str:
+        """Generate cryptographic hash of complete audit record for immutability."""
+        data = {
+            "audit_id": self.audit_id,
+            "decision_id": self.decision_id,
+            "consensus_id": self.consensus_id,
+            "deliberation_rounds": [
+                {
+                    "round_id": r.round_id,
+                    "round_number": r.round_number,
+                    "arguments": r.arguments_submitted,
+                    "positions": r.positions,
+                    "consensus_score": r.consensus_score,
+                }
+                for r in self.deliberation_rounds
+            ],
+            "votes": [
+                {
+                    "vote_id": v.vote_id,
+                    "agent_id": v.agent_id,
+                    "decision": v.decision,
+                    "confidence": v.confidence,
+                    "reasoning": v.reasoning,
+                }
+                for v in self.votes_with_reasoning
+            ],
+            "final_decision": self.final_decision,
+            "consensus_method": self.consensus_method,
+            "confidence_score": self.confidence_score,
+            "dissenting_agents": self.dissenting_agents,
+            "outcome": self.outcome.value,
+            "created_at": self.created_at,
+        }
+        data_json = json.dumps(data, sort_keys=True)
+        return hashlib.sha256(data_json.encode()).hexdigest()
+
+    def update_outcome(self, outcome: DecisionOutcome, verified: bool = False) -> None:
+        """
+        Update decision outcome and recalculate provenance hash.
+
+        Args:
+            outcome: New outcome value
+            verified: Whether outcome has been verified
+        """
+        self.outcome = outcome
+        self.outcome_recorded_at = datetime.now(timezone.utc).isoformat()
+        if verified:
+            self.outcome_verified_at = self.outcome_recorded_at
+        self.updated_at = self.outcome_recorded_at
+        self.provenance_hash = self._generate_provenance_hash()
+
+    def add_deliberation_round(self, round_record: DeliberationRoundRecord) -> None:
+        """
+        Add a deliberation round record and update hash.
+
+        Args:
+            round_record: Deliberation round to add
+        """
+        self.deliberation_rounds.append(round_record)
+        self.updated_at = datetime.now(timezone.utc).isoformat()
+        self.provenance_hash = self._generate_provenance_hash()
+
+    def verify_integrity(self) -> bool:
+        """
+        Verify the integrity of the audit record by comparing hashes.
+
+        Returns:
+            True if current hash matches computed hash, False otherwise
+        """
+        current_hash = self._generate_provenance_hash()
+        return current_hash == self.provenance_hash
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert audit record to dictionary for export."""
+        return {
+            "audit_id": self.audit_id,
+            "decision_id": self.decision_id,
+            "consensus_id": self.consensus_id,
+            "deliberation_rounds": [
+                {
+                    "round_id": r.round_id,
+                    "round_number": r.round_number,
+                    "arguments_submitted": r.arguments_submitted,
+                    "positions": r.positions,
+                    "consensus_score": r.consensus_score,
+                    "timestamp": r.timestamp,
+                }
+                for r in self.deliberation_rounds
+            ],
+            "votes_with_reasoning": [
+                {
+                    "vote_id": v.vote_id,
+                    "agent_id": v.agent_id,
+                    "decision": v.decision,
+                    "confidence": v.confidence,
+                    "reasoning": v.reasoning,
+                    "timestamp": v.timestamp,
+                }
+                for v in self.votes_with_reasoning
+            ],
+            "final_decision": self.final_decision,
+            "consensus_method": self.consensus_method,
+            "confidence_score": self.confidence_score,
+            "confidence_breakdown": self.confidence_breakdown,
+            "dissenting_agents": self.dissenting_agents,
+            "minority_report": self.minority_report,
+            "outcome": self.outcome.value,
+            "outcome_recorded_at": self.outcome_recorded_at,
+            "outcome_verified_at": self.outcome_verified_at,
+            "provenance_hash": self.provenance_hash,
+            "created_at": self.created_at,
+            "updated_at": self.updated_at,
+            "metadata": self.metadata,
+        }
+
+
 class ConsensusAuditTrail:
     """
     Comprehensive audit trail for consensus decisions.
@@ -282,6 +482,8 @@ class ConsensusAuditTrail:
         self.votes: Dict[str, List[VoteRecord]] = {}
         self.arguments: Dict[str, List[ArgumentRecord]] = {}
         self.outcomes: Dict[str, DecisionOutcome] = {}
+        self.deliberation_rounds: Dict[str, List[DeliberationRoundRecord]] = {}
+        self.decision_audits: Dict[str, DecisionAudit] = {}
 
         # Event chain tracking
         self.last_event_hash: Optional[str] = None
@@ -615,6 +817,263 @@ class ConsensusAuditTrail:
         )
 
         logger.info(f"Rollback recorded for {decision_id}: {reason}")
+
+    def create_decision_audit(
+        self,
+        decision_id: str,
+        consensus_id: str,
+        final_decision: str,
+        consensus_method: str = "MAKER",
+        confidence_score: float = 0.5,
+        confidence_breakdown: Optional[Dict[str, float]] = None,
+        dissenting_agents: Optional[List[str]] = None,
+        minority_report: Optional[str] = None,
+        metadata: Optional[Dict[str, Any]] = None,
+    ) -> DecisionAudit:
+        """
+        Create a comprehensive decision audit record.
+
+        This method creates a DecisionAudit record that includes:
+        - All deliberation rounds
+        - All votes with reasoning
+        - Consensus method and confidence breakdown
+        - Dissenting agents and minority report
+        - Immutable provenance hash
+
+        Args:
+            decision_id: Decision identifier
+            consensus_id: Related consensus process
+            final_decision: Final decision string
+            consensus_method: Method used (e.g., "MAKER", "Deliberation")
+            confidence_score: Overall confidence score
+            confidence_breakdown: Breakdown of confidence components
+            dissenting_agents: Agents who dissented
+            minority_report: Summary of minority position
+            metadata: Additional metadata
+
+        Returns:
+            Created DecisionAudit record
+        """
+        # Get existing decision record if present
+        existing_decision = self.decisions.get(decision_id)
+
+        # Get all votes for this consensus
+        votes = self.votes.get(consensus_id, [])
+
+        # Get all deliberation rounds if present
+        rounds = self.deliberation_rounds.get(consensus_id, [])
+
+        audit = DecisionAudit(
+            decision_id=decision_id,
+            consensus_id=consensus_id,
+            deliberation_rounds=rounds,
+            votes_with_reasoning=votes,
+            final_decision=final_decision,
+            consensus_method=consensus_method,
+            confidence_score=confidence_score,
+            confidence_breakdown=confidence_breakdown or {},
+            dissenting_agents=dissenting_agents or [],
+            minority_report=minority_report,
+            outcome=existing_decision.outcome if existing_decision else DecisionOutcome.PENDING,
+            metadata=metadata or {},
+        )
+
+        # Store audit record
+        self.decision_audits[decision_id] = audit
+
+        logger.info(f"Decision audit created: {decision_id} with {len(rounds)} rounds, {len(votes)} votes")
+
+        return audit
+
+    def record_deliberation_round(
+        self,
+        consensus_id: str,
+        round_number: int,
+        arguments_submitted: Optional[List[str]] = None,
+        positions: Optional[Dict[str, str]] = None,
+        consensus_score: float = 0.0,
+    ) -> DeliberationRoundRecord:
+        """
+        Record a deliberation round for later audit.
+
+        Args:
+            consensus_id: Consensus process identifier
+            round_number: Round number in sequence
+            arguments_submitted: Arguments submitted in this round
+            positions: Agent positions at end of round
+            consensus_score: Consensus score at end of round
+
+        Returns:
+            Created DeliberationRoundRecord
+        """
+        round_id = f"round-{consensus_id}-{round_number}"
+
+        round_record = DeliberationRoundRecord(
+            round_id=round_id,
+            round_number=round_number,
+            consensus_id=consensus_id,
+            arguments_submitted=arguments_submitted or [],
+            positions=positions or {},
+            consensus_score=consensus_score,
+        )
+
+        # Store round record
+        if consensus_id not in self.deliberation_rounds:
+            self.deliberation_rounds[consensus_id] = []
+        self.deliberation_rounds[consensus_id].append(round_record)
+
+        # Update any existing audit record for this consensus
+        for audit in self.decision_audits.values():
+            if audit.consensus_id == consensus_id:
+                audit.add_deliberation_round(round_record)
+
+        logger.debug(f"Deliberation round recorded: {round_id} (score: {consensus_score:.2f})")
+
+        return round_record
+
+    def get_decision_audit(self, decision_id: str) -> Optional[DecisionAudit]:
+        """
+        Get comprehensive decision audit record.
+
+        Args:
+            decision_id: Decision identifier
+
+        Returns:
+            DecisionAudit record or None
+        """
+        return self.decision_audits.get(decision_id)
+
+    def get_deliberation_history(self, consensus_id: str) -> List[DeliberationRoundRecord]:
+        """
+        Get complete deliberation history for a consensus process.
+
+        Args:
+            consensus_id: Consensus identifier
+
+        Returns:
+            List of deliberation round records
+        """
+        return self.deliberation_rounds.get(consensus_id, [])
+
+    def export_decision_audit(self, decision_id: str, format: str = "json") -> str:
+        """
+        Export a complete decision audit record.
+
+        Args:
+            decision_id: Decision identifier
+            format: Export format ("json" supported)
+
+        Returns:
+            Exported audit data as string
+
+        Raises:
+            ValueError: If decision not found or invalid format
+        """
+        audit = self.decision_audits.get(decision_id)
+        if not audit:
+            logger.warning(f"Decision audit not found: {decision_id}")
+            raise ValueError(f"Decision audit not found: {decision_id}")
+
+        if format == "json":
+            return json.dumps(audit.to_dict(), indent=2, sort_keys=True)
+        else:
+            raise ValueError(f"Unsupported export format: {format}")
+
+    def export_all_audits(self, format: str = "json") -> str:
+        """
+        Export all decision audit records.
+
+        Args:
+            format: Export format ("json" supported)
+
+        Returns:
+            Exported audit data as string
+        """
+        if format == "json":
+            data = {
+                "export_timestamp": datetime.now(timezone.utc).isoformat(),
+                "total_audits": len(self.decision_audits),
+                "audits": [audit.to_dict() for audit in self.decision_audits.values()],
+            }
+            return json.dumps(data, indent=2, sort_keys=True)
+        else:
+            raise ValueError(f"Unsupported export format: {format}")
+
+    def verify_audit_integrity(self, decision_id: str) -> Dict[str, Any]:
+        """
+        Verify the integrity of a decision audit record.
+
+        Args:
+            decision_id: Decision identifier
+
+        Returns:
+            Verification result with integrity status
+        """
+        audit = self.decision_audits.get(decision_id)
+        if not audit:
+            return {"valid": False, "error": "Audit record not found"}
+
+        is_valid = audit.verify_integrity()
+        return {
+            "valid": is_valid,
+            "decision_id": decision_id,
+            "provenance_hash": audit.provenance_hash,
+            "verified_at": datetime.now(timezone.utc).isoformat(),
+        }
+
+    def get_audits_by_outcome(self, outcome: DecisionOutcome) -> List[DecisionAudit]:
+        """
+        Get all decision audits with a specific outcome.
+
+        Args:
+            outcome: Outcome to filter by
+
+        Returns:
+            List of matching DecisionAudit records
+        """
+        return [
+            audit for audit in self.decision_audits.values()
+            if audit.outcome == outcome
+        ]
+
+    def get_failed_audits(self) -> List[DecisionAudit]:
+        """Get all audits with failure outcomes."""
+        return self.get_audits_by_outcome(DecisionOutcome.FAILURE)
+
+    def get_successful_audits(self) -> List[DecisionAudit]:
+        """Get all audits with success outcomes."""
+        return self.get_audits_by_outcome(DecisionOutcome.SUCCESS)
+
+    def get_audit_statistics(self) -> Dict[str, Any]:
+        """
+        Get statistics about decision audits.
+
+        Returns:
+            Dictionary with audit statistics
+        """
+        total = len(self.decision_audits)
+        by_outcome = {
+            outcome.value: len([a for a in self.decision_audits.values() if a.outcome == outcome])
+            for outcome in DecisionOutcome
+        }
+
+        avg_confidence = (
+            sum(a.confidence_score for a in self.decision_audits.values()) / total
+            if total > 0 else 0.0
+        )
+
+        avg_rounds = (
+            sum(len(a.deliberation_rounds) for a in self.decision_audits.values()) / total
+            if total > 0 else 0.0
+        )
+
+        return {
+            "total_audits": total,
+            "by_outcome": by_outcome,
+            "average_confidence": avg_confidence,
+            "average_deliberation_rounds": avg_rounds,
+            "total_deliberation_rounds": sum(len(a.deliberation_rounds) for a in self.decision_audits.values()),
+        }
 
     def get_decision(
         self,

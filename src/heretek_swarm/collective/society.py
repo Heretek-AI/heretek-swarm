@@ -15,13 +15,30 @@ Features:
 import asyncio
 import uuid
 from datetime import datetime, timedelta, timezone
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional, Set, Tuple
 from dataclasses import dataclass, field
 from enum import Enum
 
 import structlog
 
 logger = structlog.get_logger(__name__)
+
+# Import swarm intelligence patterns for integration
+try:
+    from .swarm_intelligence import (
+        SwarmIntelligenceEngine,
+        SwarmPattern,
+        SwarmDecision,
+        Particle,
+        PheromoneTrail,
+        BeeAgent,
+        FlockingAgent,
+        StigmergicTrace,
+    )
+    SWARM_INTELLIGENCE_AVAILABLE = True
+except ImportError:
+    SWARM_INTELLIGENCE_AVAILABLE = False
+    logger.warning("Swarm intelligence module not available")
 
 
 class ContributionCache:
@@ -277,13 +294,19 @@ class AgentSociety:
     and emergent behavior detection.
     """
     
-    def __init__(self, supervisor=None, contribution_cache_ttl: int = 300):
+    def __init__(
+        self,
+        supervisor=None,
+        contribution_cache_ttl: int = 300,
+        enable_swarm_intelligence: bool = True,
+    ):
         """
         Initialize agent society.
         
         Args:
             supervisor: ActorSupervisor for agent management
             contribution_cache_ttl: TTL for contribution cache in seconds (default: 300)
+            enable_swarm_intelligence: Enable swarm intelligence patterns (default: True)
         """
         self.supervisor = supervisor
         self.hierarchy = self._build_hierarchy()
@@ -292,6 +315,14 @@ class AgentSociety:
         self._active_tasks: Dict[str, CollectiveTask] = {}
         self._emergent_behaviors: List[EmergentBehavior] = []
         self._contribution_cache = ContributionCache(ttl_seconds=contribution_cache_ttl)
+        
+        # Initialize swarm intelligence engine if available
+        self.swarm_engine: Optional[SwarmIntelligenceEngine] = None
+        if enable_swarm_intelligence and SWARM_INTELLIGENCE_AVAILABLE:
+            self.swarm_engine = SwarmIntelligenceEngine()
+            logger.info("swarm_intelligence_enabled")
+        elif enable_swarm_intelligence and not SWARM_INTELLIGENCE_AVAILABLE:
+            logger.warning("swarm_intelligence_requested_but_not_available")
     
     def _build_hierarchy(self) -> Dict[str, List[str]]:
         """
@@ -865,7 +896,201 @@ Format your response as:
             return behavior.description
         
         return None
-    
+
+    async def apply_swarm_pattern(
+        self,
+        pattern: str,
+        participants: List[str],
+        decision_space: Dict[str, float],
+        **kwargs: Any,
+    ) -> Optional[Dict[str, Any]]:
+        """
+        Apply a swarm intelligence pattern to a decision problem.
+
+        This method delegates to the swarm intelligence engine to apply
+        bio-inspired patterns for collective decision-making.
+
+        Args:
+            pattern: Swarm pattern to apply ("pso", "ant_colony", "bee_algorithm",
+                     "flocking", "stigmergy")
+            participants: List of participant agent IDs
+            decision_space: Decision space as a dictionary of options and values
+            **kwargs: Additional parameters for the specific pattern
+
+        Returns:
+            Dictionary with swarm decision results or None if swarm engine unavailable
+
+        Raises:
+            ValueError: If invalid pattern specified
+        """
+        if not self.swarm_engine:
+            logger.warning("swarm_pattern_requested_but_engine_unavailable")
+            return None
+
+        pattern_map = {
+            "pso": self.swarm_engine.run_pso,
+            "ant_colony": self.swarm_engine.run_ant_colony,
+            "bee_algorithm": self.swarm_engine.run_bee_algorithm,
+            "flocking": self.swarm_engine.run_flocking,
+            "stigmergy": self.swarm_engine.run_stigmergy,
+        }
+
+        if pattern.lower() not in pattern_map:
+            raise ValueError(
+                f"Invalid swarm pattern: {pattern}. "
+                f"Valid options: {list(pattern_map.keys())}"
+            )
+
+        logger.info(
+            "applying_swarm_pattern",
+            pattern=pattern,
+            participants=len(participants),
+        )
+
+        # Execute the swarm pattern
+        swarm_decision: SwarmDecision = await pattern_map[pattern.lower()](
+            participants=participants,
+            decision_space=decision_space,
+            **kwargs,
+        )
+
+        # Store result in collective memory
+        await self.collective_memory.add_pattern(
+            pattern_type=f"swarm_{pattern}",
+            pattern_data={
+                "decision": swarm_decision.decision,
+                "confidence": swarm_decision.confidence,
+                "participants": participants,
+                "iterations": swarm_decision.iterations,
+                "emergence_detected": swarm_decision.emergence_detected,
+                "quality_metrics": swarm_decision.quality_metrics,
+            },
+            confidence=swarm_decision.confidence,
+        )
+
+        # Check for emergent behavior
+        if swarm_decision.emergence_detected:
+            emergent = EmergentBehavior(
+                id=str(uuid.uuid4()),
+                behavior_type=f"swarm_{pattern}_emergence",
+                description=f"Emergent behavior detected in {pattern} pattern",
+                participants=participants,
+                confidence=swarm_decision.confidence,
+                impact="positive" if swarm_decision.quality_metrics.get("convergence_rate", 0) > 0.7 else "neutral",
+            )
+            self._emergent_behaviors.append(emergent)
+
+        return {
+            "decision": swarm_decision.decision,
+            "confidence": swarm_decision.confidence,
+            "iterations": swarm_decision.iterations,
+            "emergence_detected": swarm_decision.emergence_detected,
+            "quality_metrics": swarm_decision.quality_metrics,
+            "pattern_type": pattern,
+        }
+
+    async def run_collective_optimization(
+        self,
+        task: CollectiveTask,
+        optimization_type: str = "pso",
+        max_iterations: int = 50,
+    ) -> CollectiveResult:
+        """
+        Run collective optimization using swarm intelligence.
+
+        This method integrates swarm patterns into the collective task execution
+        flow, enabling bio-inspired optimization for complex decision problems.
+
+        Args:
+            task: Collective task to optimize
+            optimization_type: Type of optimization ("pso", "ant_colony", "bee_algorithm")
+            max_iterations: Maximum optimization iterations
+
+        Returns:
+            CollectiveResult with optimization outcome
+        """
+        start_time = datetime.now(timezone.utc)
+
+        if not self.swarm_engine:
+            return CollectiveResult(
+                task_id=task.id,
+                success=False,
+                error="Swarm intelligence engine not available",
+            )
+
+        logger.info(
+            "running_collective_optimization",
+            task_id=task.id,
+            type=optimization_type,
+        )
+
+        # Convert task to decision space
+        decision_space = {
+            str(k): v if isinstance(v, float) else float(v)
+            for k, v in task.input_data.items()
+        }
+
+        # Select participants based on task requirements
+        participants = task.participants or self._select_participants(task)
+
+        try:
+            # Apply swarm pattern
+            result = await self.apply_swarm_pattern(
+                pattern=optimization_type,
+                participants=participants,
+                decision_space=decision_space,
+                max_iterations=max_iterations,
+            )
+
+            if result is None:
+                return CollectiveResult(
+                    task_id=task.id,
+                    success=False,
+                    error="Swarm pattern execution failed",
+                )
+
+            execution_time = (datetime.now(timezone.utc) - start_time).total_seconds()
+
+            return CollectiveResult(
+                task_id=task.id,
+                success=True,
+                result=result,
+                participants=participants,
+                execution_time=execution_time,
+                consensus_score=result.get("confidence", 0.0),
+                emergent_behavior=result.get("emergence_detected", False),
+            )
+
+        except Exception as e:
+            logger.exception("collective_optimization_failed", task_id=task.id, error=str(e))
+            return CollectiveResult(
+                task_id=task.id,
+                success=False,
+                error=str(e),
+                participants=participants,
+            )
+
+    def get_swarm_status(self) -> Dict[str, Any]:
+        """
+        Get status of swarm intelligence engine.
+
+        Returns:
+            Dictionary with swarm engine status
+        """
+        if not self.swarm_engine:
+            return {"available": False, "enabled": False}
+
+        return {
+            "available": True,
+            "enabled": True,
+            "patterns_available": [p.value for p in SwarmPattern],
+            "active_particles": len(self.swarm_engine.particles),
+            "active_pheromones": len(self.swarm_engine.pheromone_trails),
+            "active_bees": len(self.swarm_engine.bee_agents),
+            "active_flocking_agents": len(self.swarm_engine.flocking_agents),
+            "stigmergic_traces": len(self.swarm_engine.stigmergic_traces),
+        }
+
     async def optimize_swarm(
         self,
         metrics: Dict[str, Any]
@@ -962,14 +1187,20 @@ Format your response as:
         Get current status of agent society.
         
         Returns:
-            Society status information
+            Society status information including swarm intelligence status
         """
-        return {
+        status = {
             "hierarchy": self.hierarchy,
             "active_tasks": len(self._active_tasks),
             "emergent_behaviors": len(self._emergent_behaviors),
             "collective_memory_size": len(self.collective_memory._memory),
             "patterns_discovered": len(self.collective_memory._patterns),
             "collective_learnings": len(self.collective_memory._learnings),
-            "interaction_rules": self.interaction_rules
+            "interaction_rules": self.interaction_rules,
         }
+
+        # Add swarm intelligence status if available
+        if self.swarm_engine:
+            status["swarm_intelligence"] = self.get_swarm_status()
+
+        return status

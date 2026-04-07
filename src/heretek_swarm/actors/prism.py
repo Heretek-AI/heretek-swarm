@@ -37,6 +37,15 @@ from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer, AccessTi
 # Session 44: Zero-Trust Validation
 from heretek_swarm.security.zero_trust import ZeroTrustValidator
 
+# Phi Training Integration
+from heretek_swarm.consciousness.phi_training import (
+    PhiTrainingEnvironment,
+    TrainingScenario,
+    DecisionCoherenceTrainingScenario,
+    AgentActor,
+)
+from heretek_swarm.consciousness.iit_phi import PhiCalculator
+
 
 logger = structlog.get_logger("PrismAgent")
 
@@ -1255,6 +1264,93 @@ Respond in JSON:
             "memory_optimization": {
                 "access_statistics": self.access_analyzer.get_statistics().to_dict() if self.access_analyzer else {},
             },
+            "phi_training": self.get_phi_training_status(),
+        }
+    
+    # =========================================================================
+    # Phi Training Integration Methods
+    # =========================================================================
+    
+    def _prism_agent_actor(self) -> AgentActor:
+        """Create an AgentActor wrapper for Prism for Phi training."""
+        class PrismAgentActor(AgentActor):
+            def __init__(self, prism: "PrismAgent"):
+                super().__init__(
+                    agent_id=prism.agent_id,
+                    agent_type="prism",
+                )
+                self.prism = prism
+            
+            async def act(self, observation: Dict[str, Any]) -> Dict[str, Any]:
+                """Take action based on observation for Phi training."""
+                # Use perspective analysis to determine action
+                issue = observation.get("issue", "")
+                if issue:
+                    perspectives = self.prism.perspective_cache.get(issue, [])
+                    if perspectives:
+                        return {
+                            "action": "analyze_perspectives",
+                            "perspective_count": len(perspectives),
+                            "avg_confidence": sum(p.confidence for p in perspectives) / len(perspectives),
+                        }
+                return {"action": "monitor"}
+            
+            def get_state(self) -> Dict[str, Any]:
+                """Get current state for Phi calculation."""
+                return {
+                    "active_analyses": len(self.prism.active_analyses),
+                    "perspective_cache_size": len(self.prism.perspective_cache),
+                    "bias_history_size": len(self.prism.bias_history),
+                    "framework_results_size": len(self.prism.framework_results),
+                    "activation": len(self.prism.active_analyses) / max(len(self.prism.available_perspectives), 1),
+                }
+        
+        return PrismAgentActor(self)
+    
+    async def run_phi_training_episode(
+        self,
+        scenario: Optional[TrainingScenario] = None,
+        participating_agents: Optional[List[AgentActor]] = None,
+    ) -> Dict[str, Any]:
+        """
+        Run a Phi training episode for Prism.
+        
+        Args:
+            scenario: Optional training scenario (defaults to decision coherence)
+            participating_agents: Optional list of agents to train with
+            
+        Returns:
+            Training result dictionary
+        """
+        # Create training environment
+        env = PhiTrainingEnvironment()
+        
+        # Get agent actors
+        agent_actors = participating_agents or [self._prism_agent_actor()]
+        
+        # Use default scenario if not provided
+        if scenario is None:
+            scenario = DecisionCoherenceTrainingScenario(agent_count=len(agent_actors))
+        
+        # Run episode
+        result = await env.run_episode(agent_actors, scenario)
+        
+        logger.info(
+            "phi_training_episode_completed",
+            agent_id=self.agent_id,
+            phi_delta=result.episode.phi_delta,
+            success=result.success,
+        )
+        
+        return result.to_dict()
+    
+    def get_phi_training_status(self) -> Dict[str, Any]:
+        """Get Phi training status and metrics."""
+        return {
+            "phi_training_enabled": True,
+            "agent_type": "prism",
+            "training_capability": "decision_coherence",
+            "phi_optimization_target": "perspective_integration",
         }
 
 

@@ -26,6 +26,13 @@ import structlog
 
 logger = structlog.get_logger(__name__)
 
+# Import cycle detection
+try:
+    from .cycle_detector import WorkflowCycleDetector, FivePhaseWorkflowTracker
+except ImportError:
+    WorkflowCycleDetector = None  # type: ignore
+    FivePhaseWorkflowTracker = None  # type: ignore
+
 # Safe operators for comparison and boolean logic
 SAFE_OPERATORS = {
     ast.Eq: operator.eq,
@@ -574,11 +581,30 @@ class WorkflowEngine:
     - Real-time progress updates
     """
 
-    def __init__(self):
-        """Initialize workflow engine."""
+    def __init__(
+        self,
+        cycle_detector: Optional[WorkflowCycleDetector] = None,
+        max_iterations: int = 100,
+        timeout_seconds: float = 300.0,
+    ):
+        """
+        Initialize workflow engine.
+        
+        Args:
+            cycle_detector: Optional pre-configured cycle detector
+            max_iterations: Maximum iterations before cycle break (if no detector provided)
+            timeout_seconds: Timeout in seconds before cycle break (if no detector provided)
+        """
         self.workflows: Dict[str, Workflow] = {}
         self.active_executions: Dict[str, WorkflowContext] = {}
         self._execution_lock = asyncio.Lock()
+        
+        # Cycle detection integration
+        self.cycle_detector = cycle_detector or WorkflowCycleDetector(
+            max_iterations=max_iterations,
+            timeout_seconds=timeout_seconds,
+        )
+        self.phase_tracker = FivePhaseWorkflowTracker()
 
     async def load_workflow(self, workflow_definition: Dict[str, Any]) -> Workflow:
         """
@@ -631,7 +657,7 @@ class WorkflowEngine:
         input_data: Optional[Dict[str, Any]] = None
     ) -> WorkflowResult:
         """
-        Execute a workflow.
+        Execute a workflow with cycle detection.
 
         Args:
             workflow_id: Workflow ID
@@ -639,6 +665,12 @@ class WorkflowEngine:
 
         Returns:
             WorkflowResult
+            
+        Cycle Detection:
+            - Tracks execution path through workflow nodes
+            - Detects cycles using path-based and node-visit analysis
+            - Breaks cycles using configured strategies (max iterations, timeout, convergence)
+            - Logs all cycle events with correlation IDs for audit trails
         """
         if workflow_id not in self.workflows:
             raise ValueError(f"Workflow not found: {workflow_id}")
@@ -655,6 +687,9 @@ class WorkflowEngine:
 
         self.active_executions[execution_id] = context
 
+        # Initialize cycle detection for this workflow
+        self.cycle_detector.start_workflow_tracking(execution_id)
+
         logger.info("workflow_started", workflow_id=workflow_id, execution_id=execution_id)
 
         try:
@@ -664,8 +699,40 @@ class WorkflowEngine:
             # Get execution order (topological sort)
             execution_order = self._topological_sort(graph)
 
-            # Execute nodes in order
+            # Execute nodes in order with cycle detection
             for node_id in execution_order:
+                # Check for cycles before executing node
+                if self.cycle_detector.detect_cycle(execution_id, node_id):
+                    if self.cycle_detector.should_break_cycle(execution_id):
+                        # Break cycle and log event
+                        event = self.cycle_detector.break_cycle(
+                            execution_id,
+                            CycleBreakingStrategy.MAX_ITERATIONS,
+                            reason=f"Cycle detected at node {node_id}"
+                        )
+                        logger.warning(
+                            "cycle_broken_during_execution",
+                            workflow_id=workflow_id,
+                            execution_id=execution_id,
+                            node_id=node_id,
+                            event_id=event.event_id,
+                        )
+                        # Skip this node to break the cycle
+                        context.node_results[node_id] = NodeResult(
+                            node_id=node_id,
+                            status=NodeStatus.SKIPPED,
+                            output=None,
+                            error=Exception(f"Node skipped due to cycle detection: {node_id}")
+                        )
+                        continue
+                
+                # Record node execution for tracking
+                self.cycle_detector.record_node_execution(
+                    execution_id,
+                    node_id,
+                    state={"node": node_id, "phase": "execution"}
+                )
+
                 await self._execute_node(workflow, node_id, context)
 
             # Mark workflow as completed
@@ -705,7 +772,8 @@ class WorkflowEngine:
             )
 
         finally:
-            # Clean up execution context
+            # Clean up execution context and cycle tracking
+            self.cycle_detector.stop_workflow_tracking(execution_id)
             if execution_id in self.active_executions:
                 del self.active_executions[execution_id]
 
@@ -1157,9 +1225,18 @@ class WorkflowEngine:
 _global_engine: Optional[WorkflowEngine] = None
 
 
-async def get_workflow_engine() -> WorkflowEngine:
+async def get_workflow_engine(
+    cycle_detector: Optional[WorkflowCycleDetector] = None,
+    max_iterations: int = 100,
+    timeout_seconds: float = 300.0,
+) -> WorkflowEngine:
     """
-    Get global workflow engine instance.
+    Get global workflow engine instance with cycle detection.
+
+    Args:
+        cycle_detector: Optional pre-configured cycle detector
+        max_iterations: Maximum iterations before cycle break
+        timeout_seconds: Timeout in seconds before cycle break
 
     Returns:
         WorkflowEngine instance
@@ -1167,6 +1244,34 @@ async def get_workflow_engine() -> WorkflowEngine:
     global _global_engine
 
     if _global_engine is None:
-        _global_engine = WorkflowEngine()
+        _global_engine = WorkflowEngine(
+            cycle_detector=cycle_detector,
+            max_iterations=max_iterations,
+            timeout_seconds=timeout_seconds,
+        )
 
     return _global_engine
+
+
+def get_cycle_detector_metrics() -> Dict[str, Any]:
+    """
+    Get cycle detection metrics from global engine.
+
+    Returns:
+        Dictionary of cycle detection metrics
+    """
+    if _global_engine and hasattr(_global_engine, 'cycle_detector'):
+        return _global_engine.cycle_detector.get_metrics()
+    return {}
+
+
+def export_cycle_detector_prometheus() -> str:
+    """
+    Export cycle detection metrics in Prometheus format.
+
+    Returns:
+        Prometheus-formatted metrics string
+    """
+    if _global_engine and hasattr(_global_engine, 'cycle_detector'):
+        return _global_engine.cycle_detector.export_prometheus_metrics()
+    return "# No cycle detector available\n"

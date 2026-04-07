@@ -658,6 +658,234 @@ kubectl get events -n heretek-swarm --sort-by='.lastTimestamp'
 
 ---
 
+## Serverless Deployment (AWS Lambda)
+
+For serverless deployment to AWS Lambda, the Heretek Swarm provides a Serverless Framework configuration.
+
+### Architecture
+
+```
+┌─────────────────────────────────────────────────────────┐
+│                    AWS Cloud                             │
+├─────────────────────────────────────────────────────────┤
+│  Service           │ Purpose                             │
+├─────────────────────────────────────────────────────────┤
+│  Lambda            │ API handlers, async processing      │
+│  API Gateway       │ REST API endpoint                   │
+│  DynamoDB          │ Agent states, workflows, knowledge  │
+│  S3                │ Document storage                    │
+│  SQS               │ Async task queue                    │
+│  EventBridge       │ Scheduled tasks                     │
+│  ElastiCache       │ Redis caching (VPC)                 │
+│  RDS               │ PostgreSQL (VPC)                    │
+└─────────────────────────────────────────────────────────┘
+```
+
+### Prerequisites
+
+| Software | Minimum Version | Purpose |
+|----------|-----------------|---------|
+| Node.js | 18+ | Serverless Framework runtime |
+| Serverless Framework | 3.x | Deployment orchestration |
+| AWS CLI | 2.x | AWS authentication |
+| Python | 3.11+ | Lambda runtime |
+
+### Installation
+
+```bash
+# Install Serverless Framework
+npm install -g serverless
+
+# Install AWS CLI (if not already installed)
+# macOS
+brew install awscli
+
+# Linux
+curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+unzip awscliv2.zip
+sudo ./aws/install
+
+# Configure AWS credentials
+aws configure
+
+# Install serverless plugins
+cd serverless
+npm install
+```
+
+### Configuration
+
+**serverless/serverless.yml:**
+
+The main configuration file defines:
+- Lambda functions and their settings
+- API Gateway routes
+- DynamoDB tables
+- S3 buckets
+- SQS queues
+- EventBridge schedules
+- IAM permissions
+- CloudWatch alarms
+
+**Environment Variables:**
+
+Store secrets in AWS Systems Manager Parameter Store:
+
+```bash
+# Database configuration
+aws ssm put-parameter --name /heretek-swarm/dev/database-url --value "postgresql://..." --type SecureString
+aws ssm put-parameter --name /heretek-swarm/dev/redis-url --value "redis://..." --type SecureString
+
+# Vector database
+aws ssm put-parameter --name /heretek-swarm/dev/qdrant-host --value "qdrant.example.com" --type SecureString
+aws ssm put-parameter --name /heretek-swarm/dev/qdrant-port --value "6333" --type SecureString
+
+# API configuration
+aws ssm put-parameter --name /heretek-swarm/dev/api-key --value "your-api-key" --type SecureString
+aws ssm put-parameter --name /heretek-swarm/dev/secret-key --value "your-secret-key" --type SecureString
+
+# LLM configuration
+aws ssm put-parameter --name /heretek-swarm/dev/openai-api-key --value "sk-..." --type SecureString
+```
+
+### Deployment
+
+```bash
+# Deploy to dev stage
+cd serverless
+serverless deploy --stage dev
+
+# Deploy to production
+serverless deploy --stage prod
+
+# Deploy specific function
+serverless deploy --function api
+
+# View deployment logs
+serverless logs -f api --tail
+
+# Invoke function locally (for testing)
+serverless invoke local -f api -d '{"httpMethod": "GET", "path": "/health"}'
+
+# Invoke deployed function
+serverless invoke -f api -d '{"httpMethod": "GET", "path": "/health"}'
+```
+
+### Cold Start Optimization
+
+The serverless deployment includes several cold start optimizations:
+
+1. **Connection Reuse**: Database and Redis connections are reused across invocations
+2. **Lazy Initialization**: Heavy dependencies (RAG pipeline, profiler) are initialized on first use
+3. **Provisioned Concurrency**: Can be enabled for critical functions
+4. **Lambda Layers**: Common dependencies packaged as layers
+
+```yaml
+# In serverless.yml, enable provisioned concurrency:
+functions:
+  api:
+    handler: handler.api_handler
+    provisionedConcurrency: 5  # Keep 5 instances warm
+```
+
+### Monitoring
+
+```bash
+# View function logs
+serverless logs -f api --tail
+serverless logs -f async_processor --tail
+
+# View metrics
+serverless metrics
+
+# CloudWatch Alarms
+# - Error rate alarm (triggers at >10 errors in 5 minutes)
+# - Duration alarm (triggers at >25 seconds average)
+
+# X-Ray Tracing
+# Enable in serverless.yml:
+provider:
+  tracing:
+    lambda: true
+    apiGateway: true
+```
+
+### Scaling
+
+| Component | Scaling Method | Limits |
+|-----------|---------------|--------|
+| Lambda | Automatic | 1000 concurrent executions (default) |
+| API Gateway | Automatic | 10,000 requests/second |
+| DynamoDB | On-demand | Automatic scaling |
+| SQS | Automatic | Unlimited |
+
+### Cost Optimization
+
+- **Pay-per-request**: Only pay for actual invocations
+- **DynamoDB on-demand**: Pay per read/write
+- **S3 lifecycle**: Transition to IA after 30 days
+- **Log retention**: 30-day retention policy
+
+### Zero-Trust Security
+
+All serverless endpoints implement:
+- API key authentication via `X-Heretek-Api-Key` header
+- IAM role-based access control
+- VPC isolation for sensitive resources
+- Encrypted data at rest (S3, DynamoDB)
+- Encrypted data in transit (TLS)
+- Audit logging via CloudWatch
+
+### Serverless Endpoints
+
+| Endpoint | Method | Description |
+|----------|--------|-------------|
+| `/health` | GET | Health check |
+| `/ready` | GET | Readiness check |
+| `/api/agents/*` | ANY | Agent management |
+| `/api/agents/{id}/profiling/metrics` | GET | Behavior metrics |
+| `/api/agents/{id}/profiling/profile` | GET | Behavior profile |
+| `/api/agents/{id}/profiling/anomalies` | GET | Anomaly detection |
+| `/api/agents/profiling/alerts` | GET | All alerts |
+| `/api/agents/profiling/stats` | GET | Profiler statistics |
+| `/api/agents/profiling/prometheus` | GET | Prometheus metrics |
+| `/api/rag/*` | ANY | RAG operations |
+| `/api/workflows/*` | ANY | Workflow operations |
+
+### Troubleshooting
+
+```bash
+# Check function configuration
+serverless info
+
+# View CloudFormation stack
+serverless resources
+
+# Test locally
+serverless offline
+
+# Remove deployment
+serverless remove --stage dev
+
+# Debug cold starts
+# Check initialization duration in logs
+serverless logs -f api --startTime 1h | grep "initializing_dependencies"
+```
+
+### Comparison: Serverless vs Kubernetes
+
+| Aspect | Serverless (Lambda) | Kubernetes |
+|--------|--------------------|------------|
+| Cost | Pay per invocation | Pay for running nodes |
+| Scaling | Automatic, instant | Requires HPA configuration |
+| Cold starts | 100-500ms | N/A (always running) |
+| Max duration | 15 minutes | Unlimited |
+| Memory | Up to 10GB | Configurable |
+| Operations | Managed by AWS | Self-managed |
+| Best for | Bursty, intermittent workloads | Steady, continuous workloads |
+
+---
+
 ## Support
 
 - GitHub Issues: https://github.com/Heretek-AI/heretek-swarm/issues
@@ -665,6 +893,7 @@ kubectl get events -n heretek-swarm --sort-by='.lastTimestamp'
 
 ---
 
-**License:** Apache 2.0  
-**Version:** 2.0.0  
+**License:** Apache 2.0
+**Version:** 2.1.0
 **Last Updated:** 2026-04-07
+**New in 2.1.0:** Serverless deployment, Advanced RAG strategies, Behavior profiling

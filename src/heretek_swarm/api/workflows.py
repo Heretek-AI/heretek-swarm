@@ -7,6 +7,7 @@ Provides REST API for:
 - Executing workflows
 - Getting workflow status
 - Deleting workflows
+- Validating workflows
 """
 
 from typing import Dict, List, Optional, Any
@@ -20,6 +21,11 @@ from ..workflow.engine import (
     WorkflowResult,
     WorkflowState,
     NodeStatus,
+)
+from ..workflow.validator import (
+    WorkflowValidator,
+    validate_workflow,
+    ValidationResult,
 )
 from ..gateway.auth import verify_auth
 
@@ -263,3 +269,101 @@ async def cancel_workflow(
         return {
             "message": f"Failed to cancel workflow execution {execution_id}"
         }
+
+
+@router.post("/{workflow_id}/validate", status_code=200)
+async def validate_workflow_endpoint(
+    workflow_id: str,
+    authenticated: str = Depends(verify_auth)
+) -> Dict[str, Any]:
+    """
+    Validate a workflow graph before execution.
+    
+    Checks for:
+    - Disconnected nodes (no input/output connections)
+    - Circular dependencies (beyond allowed loops)
+    - Missing required connections
+    - Invalid agent types
+    - Resource conflicts
+    
+    Args:
+        workflow_id: Workflow ID to validate
+        authenticated: Authentication token
+    
+    Returns:
+        Validation result with errors, warnings, and info messages
+    """
+    engine = get_workflow_engine()
+    
+    if workflow_id not in engine.workflows:
+        raise HTTPException(status_code=404, detail="Workflow not found")
+    
+    workflow = engine.workflows[workflow_id]
+    
+    # Convert workflow to validation format
+    workflow_definition = {
+        "id": workflow.id,
+        "name": workflow.name,
+        "nodes": [
+            {
+                "id": node.id,
+                "type": node.type,
+                "data": node.data,
+                "position": node.position,
+            }
+            for node in workflow.nodes
+        ],
+        "edges": [
+            {
+                "id": edge.id,
+                "source": edge.source,
+                "target": edge.target,
+                "condition": edge.condition,
+            }
+            for edge in workflow.edges
+        ],
+    }
+    
+    # Validate
+    validator = WorkflowValidator()
+    result = validator.validate(workflow_definition)
+    
+    logger.info(
+        "workflow_validated",
+        workflow_id=workflow_id,
+        valid=result.valid,
+        error_count=len(result.errors),
+        warning_count=len(result.warnings),
+    )
+    
+    return result.to_dict()
+
+
+@router.post("/validate", status_code=200)
+async def validate_workflow_draft(
+    workflow_definition: Dict[str, Any],
+    authenticated: str = Depends(verify_auth)
+) -> Dict[str, Any]:
+    """
+    Validate a workflow definition (draft mode).
+    
+    Useful for validating workflows before saving them.
+    
+    Args:
+        workflow_definition: Workflow definition to validate
+        authenticated: Authentication token
+    
+    Returns:
+        Validation result with errors, warnings, and info messages
+    """
+    validator = WorkflowValidator()
+    result = validator.validate(workflow_definition)
+    
+    logger.info(
+        "workflow_draft_validated",
+        valid=result.valid,
+        error_count=len(result.errors),
+        warning_count=len(result.warnings),
+    )
+    
+    return result.to_dict()

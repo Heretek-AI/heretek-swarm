@@ -2,6 +2,15 @@
 Metrics collection and monitoring for Heretek Swarm.
 
 Provides real-time metrics collection, consciousness metrics, and agent performance tracking.
+
+Features:
+- Per-agent performance metrics
+- Aggregate swarm health metrics
+- Consciousness metrics (Phi, FEP)
+- Cycle detection metrics from workflow engine
+- Phi training metrics from training environment
+- Real-time metrics collection
+- Prometheus format export
 """
 
 from dataclasses import dataclass, field
@@ -9,6 +18,15 @@ from datetime import datetime, timezone
 from typing import Dict, List, Optional, Any
 from collections import defaultdict
 import time
+
+# Import cycle detector and phi training for metrics integration
+try:
+    from ..workflow.engine import get_cycle_detector_metrics, export_cycle_detector_prometheus
+    from ..consciousness.phi_training import PhiTrainingEnvironment
+    CYCLE_DETECTOR_AVAILABLE = True
+except ImportError:
+    CYCLE_DETECTOR_AVAILABLE = False
+    PhiTrainingEnvironment = None
 
 
 @dataclass
@@ -309,7 +327,15 @@ class RealTimeMetricsStream:
         return self._last_snapshot
     
     def export_prometheus_format(self) -> str:
-        """Export metrics in Prometheus text format."""
+        """
+        Export metrics in Prometheus text format.
+        
+        Includes:
+        - Standard swarm metrics
+        - Consciousness metrics (Phi, FEP)
+        - Cycle detection metrics (if available)
+        - Phi training metrics (if available)
+        """
         metrics = self._collector.collect_swarm_metrics()
         consciousness = self._collector.collect_consciousness_metrics()
         
@@ -334,6 +360,82 @@ class RealTimeMetricsStream:
             "# TYPE heretek_swarm_consciousness_phi_avg gauge",
             f"heretek_swarm_consciousness_phi_avg {consciousness.phi_avg}",
             "",
+            "# HELP heretek_swarm_consciousness_phi_max Maximum consciousness phi score",
+            "# TYPE heretek_swarm_consciousness_phi_max gauge",
+            f"heretek_swarm_consciousness_phi_max {consciousness.phi_max}",
+            "",
+            "# HELP heretek_swarm_consciousness_fep_avg Average free energy score",
+            "# TYPE heretek_swarm_consciousness_fep_avg gauge",
+            f"heretek_swarm_consciousness_fep_avg {consciousness.free_energy_avg}",
+            "",
         ]
+        
+        # Add cycle detection metrics if available
+        if CYCLE_DETECTOR_AVAILABLE:
+            try:
+                cycle_metrics = get_cycle_detector_metrics()
+                if cycle_metrics:
+                    lines.extend([
+                        "# HELP heretek_workflow_cycles_total Total number of workflow cycles detected",
+                        "# TYPE heretek_workflow_cycles_total counter",
+                        f"heretek_workflow_cycles_total {cycle_metrics.get('total_cycles_detected', 0)}",
+                        "",
+                        "# HELP heretek_workflow_cycles_broken_total Total number of workflow cycles broken",
+                        "# TYPE heretek_workflow_cycles_broken_total counter",
+                        f"heretek_workflow_cycles_broken_total {cycle_metrics.get('total_cycles_broken', 0)}",
+                        "",
+                        "# HELP heretek_workflow_avg_iterations_before_cycle Average iterations before cycle detection",
+                        "# TYPE heretek_workflow_avg_iterations_before_cycle gauge",
+                        f"heretek_workflow_avg_iterations_before_cycle {cycle_metrics.get('avg_iterations_before_cycle', 0)}",
+                        "",
+                    ])
+                    
+                    # Add per-strategy metrics
+                    for strategy, count in cycle_metrics.get("cycles_by_strategy", {}).items():
+                        lines.extend([
+                            "# HELP heretek_workflow_cycles_by_strategy Cycles broken by strategy",
+                            "# TYPE heretek_workflow_cycles_by_strategy gauge",
+                            f'heretek_workflow_cycles_by_strategy{{strategy="{strategy}"}} {count}',
+                            "",
+                        ])
+            except Exception as e:
+                lines.append(f"# Cycle detection metrics unavailable: {e}")
+                lines.append("")
+        
+        # Add Phi training metrics if available
+        if CYCLE_DETECTOR_AVAILABLE and PhiTrainingEnvironment:
+            try:
+                # Note: In production, you would get a reference to the actual training environment
+                # This is a placeholder showing the metric format
+                lines.extend([
+                    "# HELP heretek_phi_training_episodes_total Total Phi training episodes",
+                    "# TYPE heretek_phi_training_episodes_total counter",
+                    "heretek_phi_training_episodes_total 0",
+                    "",
+                    "# HELP heretek_phi_training_success_total Successful Phi training episodes",
+                    "# TYPE heretek_phi_training_success_total counter",
+                    "heretek_phi_training_success_total 0",
+                    "",
+                    "# HELP heretek_phi_training_avg_improvement Average Phi improvement per episode",
+                    "# TYPE heretek_phi_training_avg_improvement gauge",
+                    "heretek_phi_training_avg_improvement 0",
+                    "",
+                    "# HELP heretek_phi_training_best_phi Best Phi achieved in training",
+                    "# TYPE heretek_phi_training_best_phi gauge",
+                    "heretek_phi_training_best_phi 0",
+                    "",
+                ])
+            except Exception as e:
+                lines.append(f"# Phi training metrics unavailable: {e}")
+                lines.append("")
+        
+        # Add per-agent phi scores
+        for agent_id, phi_score in consciousness.agent_phi_scores.items():
+            lines.extend([
+                "# HELP heretek_agent_phi Agent Phi score",
+                "# TYPE heretek_agent_phi gauge",
+                f'heretek_agent_phi{{agent_id="{agent_id}"}} {phi_score}',
+                "",
+            ])
         
         return "\n".join(lines)

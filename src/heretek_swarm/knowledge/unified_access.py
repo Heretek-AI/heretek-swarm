@@ -8,15 +8,50 @@ This layer is designed for use by:
 - Historian agent - Long-term memory and context retrieval
 - Perceiver+ agent - Advanced analytics with combined knowledge sources
 - All other agents - Standardized knowledge access pattern
+
+Enhanced with Advanced RAG Strategies:
+- Dense retrieval (vector similarity)
+- Sparse retrieval (BM25)
+- Hybrid retrieval (combined scoring)
+- Multi-hop retrieval (chained queries)
+- Re-ranking (cross-encoder scoring)
 """
 
-from typing import Dict, Any, List, Optional, Literal
+from typing import Dict, Any, List, Optional, Literal, Union
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 import math
 import structlog
 
 logger = structlog.get_logger(__name__)
+
+# Import advanced RAG strategies
+try:
+    from ..rag.strategies import (
+        RetrievalStrategyType,
+        RetrievalResult,
+        StrategySelector,
+        QueryType,
+        RAGStrategyConfig,
+        create_strategy_selector,
+    )
+    from ..rag.hybrid_retriever import (
+        HybridRetriever,
+        HybridRetrieverConfig,
+        FusionMethod,
+    )
+    RAG_STRATEGIES_AVAILABLE = True
+except ImportError:
+    RAG_STRATEGIES_AVAILABLE = False
+    RetrievalStrategyType = None
+    RetrievalResult = None
+    StrategySelector = None
+    QueryType = None
+    RAGStrategyConfig = None
+    create_strategy_selector = None
+    HybridRetriever = None
+    HybridRetrieverConfig = None
+    FusionMethod = None
 
 
 @dataclass
@@ -114,10 +149,23 @@ class UnifiedKnowledgeAccess:
         self,
         memory_system=None,
         rag_pipeline=None,
+        hybrid_retriever: Optional["HybridRetriever"] = None,
+        strategy_selector: Optional["StrategySelector"] = None,
     ):
         self.memory = memory_system
         self.rag = rag_pipeline
+        self.hybrid_retriever = hybrid_retriever
+        self.strategy_selector = strategy_selector
         self._query_stats: Dict[str, Dict] = {}
+        
+        # Initialize strategy selector if not provided but RAG strategies available
+        if RAG_STRATEGIES_AVAILABLE and strategy_selector is None and hybrid_retriever is None:
+            # Create default strategy selector
+            try:
+                config = RAGStrategyConfig()
+                self.strategy_selector = create_strategy_selector(config=config)
+            except Exception as e:
+                logger.warning("strategy_selector_init_failed", error=str(e))
     
     async def query(
         self,
@@ -217,6 +265,99 @@ class UnifiedKnowledgeAccess:
         )
         
         return result
+    
+    async def query_with_strategy(
+        self,
+        query: str,
+        strategy: Optional[str] = None,
+        top_k: int = 10,
+        filters: Optional[Dict[str, Any]] = None,
+        use_multihop: bool = True,
+        apply_reranking: bool = True,
+    ) -> KnowledgeQueryResult:
+        """
+        Query using advanced RAG strategies.
+        
+        Args:
+            query: Search query string
+            strategy: Optional strategy override (dense, sparse, hybrid, multi_hop, re_ranking)
+            top_k: Maximum number of results to return
+            filters: Additional filters
+            use_multihop: Enable multi-hop retrieval for complex queries
+            apply_reranking: Apply cross-encoder re-ranking
+            
+        Returns:
+            KnowledgeQueryResult with retrieved entries
+        """
+        import time
+        start_time = time.time()
+        
+        if not RAG_STRATEGIES_AVAILABLE:
+            logger.warning("rag_strategies_not_available")
+            return await self.query(query, sources=["rag"], limit=top_k)
+        
+        try:
+            # Use hybrid retriever if available
+            if self.hybrid_retriever:
+                results = await self.hybrid_retriever.retrieve(
+                    query=query,
+                    top_k=top_k,
+                    filters=filters,
+                    use_multihop=use_multihop,
+                    apply_reranking=apply_reranking,
+                )
+            elif self.strategy_selector:
+                # Use strategy selector
+                results = await self.strategy_selector.retrieve(
+                    query=query,
+                    top_k=top_k,
+                    filters=filters,
+                )
+            else:
+                logger.warning("no_strategy_available")
+                return await self.query(query, sources=["rag"], limit=top_k)
+            
+            # Convert RetrievalResult to KnowledgeEntry
+            entries = []
+            for result in results:
+                entries.append(KnowledgeEntry(
+                    content=result.content,
+                    source=f"rag_{result.strategy.value}",
+                    source_id=result.source,
+                    metadata={**result.metadata, "strategy": result.strategy.value},
+                    score=result.score,
+                    created_at=None,
+                ))
+            
+            query_time_ms = (time.time() - start_time) * 1000
+            
+            result = KnowledgeQueryResult(
+                entries=entries,
+                total_results=len(entries),
+                query_time_ms=query_time_ms,
+                sources_queried=["rag"],
+                reranking_applied=apply_reranking,
+                parameters={
+                    "query": query,
+                    "strategy": strategy,
+                    "top_k": top_k,
+                    "filters": filters,
+                },
+            )
+            
+            logger.debug(
+                "knowledge_query_with_strategy_completed",
+                query=query[:50] if len(query) > 50 else query,
+                strategy=strategy or "auto",
+                results_count=len(entries),
+                query_time_ms=query_time_ms,
+            )
+            
+            return result
+            
+        except Exception as e:
+            logger.error("query_with_strategy_error", error=str(e))
+            return await self.query(query, sources=["rag"], limit=top_k)
     
     async def _query_memory(
         self, 
@@ -431,6 +572,50 @@ class UnifiedKnowledgeAccess:
                 "avg_results": data["total_results"] / count if count > 0 else 0,
             }
         return stats
+    
+    def get_rag_strategy_stats(self) -> Dict[str, Any]:
+        """Get RAG strategy statistics."""
+        if not RAG_STRATEGIES_AVAILABLE:
+            return {"available": False}
+        
+        stats = {
+            "available": True,
+            "hybrid_retriever": None,
+            "strategy_selector": None,
+        }
+        
+        if self.hybrid_retriever:
+            stats["hybrid_retriever"] = self.hybrid_retriever.get_stats()
+        
+        if self.strategy_selector:
+            stats["strategy_selector"] = self.strategy_selector.get_stats()
+        
+        return stats
+    
+    def export_prometheus_metrics(self) -> str:
+        """Export RAG metrics in Prometheus format."""
+        if not RAG_STRATEGIES_AVAILABLE:
+            return "# RAG strategies not available\n"
+        
+        lines = ["# Heretek Swarm RAG Metrics", ""]
+        
+        if self.hybrid_retriever:
+            lines.append(self.hybrid_retriever.export_prometheus_metrics())
+        
+        # Add unified knowledge access metrics
+        for source_key, source_stats in self._query_stats.items():
+            lines.extend([
+                f"# HELP heretek_knowledge_queries_total Total knowledge queries for {source_key}",
+                "# TYPE heretek_knowledge_queries_total counter",
+                f'heretek_knowledge_queries_total{{sources="{source_key}"}} {source_stats["count"]}',
+                "",
+                f"# HELP heretek_knowledge_query_time_ms_total Total query time for {source_key}",
+                "# TYPE heretek_knowledge_query_time_ms_total counter",
+                f'heretek_knowledge_query_time_ms_total{{sources="{source_key}"}} {source_stats["total_time_ms"]}',
+                "",
+            ])
+        
+        return "\n".join(lines)
 
 
 class KnowledgeQueryBuilder:
@@ -499,11 +684,49 @@ class KnowledgeQueryBuilder:
         self._filters.update(filters)
         return self
     
+    def with_strategy(self, strategy: str) -> "KnowledgeQueryBuilder":
+        """Set RAG strategy (requires advanced strategies enabled)."""
+        self._filters["rag_strategy"] = strategy
+        return self
+    
+    def with_multihop(self, enabled: bool = True) -> "KnowledgeQueryBuilder":
+        """Enable multi-hop retrieval."""
+        self._filters["rag_multihop"] = enabled
+        return self
+    
+    def with_reranking_options(
+        self,
+        enabled: bool = True,
+        top_k: int = 50,
+    ) -> "KnowledgeQueryBuilder":
+        """Configure re-ranking options."""
+        self._filters["rag_rerank"] = enabled
+        self._filters["rag_rerank_top_k"] = top_k
+        return self
+    
     async def execute(self) -> KnowledgeQueryResult:
         """Execute the query."""
         if not self._query:
             raise ValueError("Query text is required")
         
+        # Check if using advanced strategy
+        if RAG_STRATEGIES_AVAILABLE and self._knowledge.strategy_selector:
+            # Use advanced strategy query
+            strategy = self._filters.get("rag_strategy")
+            multihop = self._filters.get("rag_multihop", True)
+            rerank = self._filters.get("rag_rerank", self._rerank)
+            rerank_top_k = self._filters.get("rag_rerank_top_k", 50)
+            
+            return await self._knowledge.query_with_strategy(
+                query=self._query,
+                strategy=strategy,
+                top_k=self._limit,
+                filters=self._filters,
+                use_multihop=multihop,
+                apply_reranking=rerank,
+            )
+        
+        # Fall back to standard query
         return await self._knowledge.query(
             query=self._query,
             sources=self._sources,
@@ -513,3 +736,60 @@ class KnowledgeQueryBuilder:
             source_weights=self._source_weights,
             filters=self._filters,
         )
+
+
+def create_unified_knowledge_access(
+    memory_system=None,
+    rag_pipeline=None,
+    embedding_provider=None,
+    vector_store=None,
+    sparse_index=None,
+    cross_encoder=None,
+    config: Optional[Any] = None,
+) -> UnifiedKnowledgeAccess:
+    """
+    Create UnifiedKnowledgeAccess with advanced RAG strategies.
+    
+    Args:
+        memory_system: Memory system instance
+        rag_pipeline: Legacy RAG pipeline instance
+        embedding_provider: Embedding provider for dense retrieval
+        vector_store: Vector store for dense retrieval
+        sparse_index: Sparse index for BM25 retrieval
+        cross_encoder: Cross-encoder for re-ranking
+        config: Optional HybridRetrieverConfig
+        
+    Returns:
+        Configured UnifiedKnowledgeAccess instance
+    """
+    if not RAG_STRATEGIES_AVAILABLE:
+        logger.warning("rag_strategies_not_available_using_legacy")
+        return UnifiedKnowledgeAccess(memory_system=memory_system, rag_pipeline=rag_pipeline)
+    
+    try:
+        # Create hybrid retriever config
+        retriever_config = config or HybridRetrieverConfig()
+        
+        # Create hybrid retriever
+        hybrid_retriever = HybridRetriever(
+            config=retriever_config,
+            embedding_provider=embedding_provider,
+            vector_store=vector_store,
+            sparse_index=sparse_index,
+            cross_encoder=cross_encoder,
+        )
+        
+        # Create unified access with hybrid retriever
+        knowledge_access = UnifiedKnowledgeAccess(
+            memory_system=memory_system,
+            rag_pipeline=rag_pipeline,
+            hybrid_retriever=hybrid_retriever,
+        )
+        
+        logger.info("unified_knowledge_access_created_with_strategies")
+        return knowledge_access
+        
+    except Exception as e:
+        logger.error("unified_knowledge_access_creation_failed", error=str(e))
+        # Fall back to legacy
+        return UnifiedKnowledgeAccess(memory_system=memory_system, rag_pipeline=rag_pipeline)
