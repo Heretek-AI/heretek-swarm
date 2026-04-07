@@ -21,6 +21,10 @@ COPY requirements.txt .
 # Install Python dependencies
 RUN pip install --no-cache-dir -r requirements.txt
 
+# Install the package in development mode
+COPY src/ ./src/
+RUN pip install -e .
+
 # =============================================================================
 # Stage 2: Runtime
 # =============================================================================
@@ -36,9 +40,9 @@ COPY --from=dependencies /usr/local/lib/python3.11/site-packages /usr/local/lib/
 COPY --from=dependencies /usr/local/bin /usr/local/bin
 
 # Copy application code
-COPY src/ ./src/
 COPY migrations/ ./migrations/
-COPY data/ ./data/ 2>/dev/null || true
+# Copy data directory if it exists (optional)
+COPY data/ ./data/
 
 # Set ownership
 RUN chown -R appuser:appuser /app
@@ -49,6 +53,7 @@ USER appuser
 # Environment variables
 ENV PYTHONUNBUFFERED=1
 ENV PYTHONDONTWRITEBYTECODE=1
+ENV PYTHONPATH=/app:$PYTHONPATH
 ENV PATH="/home/appuser/.local/bin:$PATH"
 
 # Health check
