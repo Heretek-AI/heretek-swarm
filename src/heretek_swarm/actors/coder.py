@@ -26,7 +26,13 @@ import structlog
 from swarms import Agent
 
 from heretek_swarm.actors.base import AgentActor, ActorMessage
-from heretek_swarm.actors.validation import validate_message, MessageContent
+from heretek_swarm.actors.validation import validate_message as validate_message_schema, MessageContent
+from heretek_swarm.validation import (
+    LLMOutputValidator,
+    validate_llm_code,
+    is_code_safe,
+    is_text_safe,
+)
 
 # Session 44: Collective Learning Integration
 from heretek_swarm.collective.learning import PatternExtractor, PatternType
@@ -208,6 +214,9 @@ class CoderAgent(AgentActor):
         # Session 44: Zero-Trust Validation
         self.zero_trust_validator = zero_trust_validator or ZeroTrustValidator()
         
+        # Session 44: LLM Output Validation
+        self.llm_output_validator = LLMOutputValidator(strict_mode=True)
+        
         # Session 44: Integration state
         self._active_deliberations: Dict[str, str] = {}
         self._pattern_emitted: Set[str] = set()
@@ -245,8 +254,14 @@ class CoderAgent(AgentActor):
         }
         """
         try:
-            content = validate_message(message.content, "CoderGenerateCode")
+            # Schema validation
+            content = validate_message_schema(message.content, "CoderGenerateCode")
+            
+            # Security validation for code-related content
             description = content.get("description", "")
+            if not is_text_safe(description):
+                logger.warning("Unsafe description detected", description=description[:100])
+                return {"status": "error", "error": "Unsafe content detected in description"}
             language = CodeLanguage(content.get("language", self._default_language.value))
             requirements = content.get("requirements", [])
             include_tests = content.get("include_tests", self._enable_tests)
@@ -322,8 +337,14 @@ class CoderAgent(AgentActor):
         }
         """
         try:
-            content = validate_message(message.content, "CoderReviewCode")
+            # Schema validation
+            content = validate_message_schema(message.content, "CoderReviewCode")
+            
+            # Security validation for code
             code = content.get("code", "")
+            if not is_code_safe(code):
+                logger.warning("Unsafe code detected in review request")
+                return {"status": "error", "error": "Unsafe code detected - contains dangerous patterns"}
             language = CodeLanguage(content.get("language", self._default_language.value))
             focus_areas = content.get("focus_areas", ["security", "bugs", "style"])
             
@@ -413,8 +434,15 @@ class CoderAgent(AgentActor):
         }
         """
         try:
-            content = validate_message(message.content, "CoderDebugCode")
+            # Schema validation
+            content = validate_message_schema(message.content, "CoderDebugCode")
+            
+            # Security validation for code
             code = content.get("code", "")
+            if not is_code_safe(code):
+                logger.warning("Unsafe code detected in debug request")
+                # Still allow debugging but log the security concern
+                logger.info("Proceeding with debug but code contains dangerous patterns")
             error_message = content.get("error_message", "")
             symptoms = content.get("symptoms", [])
             
@@ -727,13 +755,20 @@ Return as JSON with keys: code, dependencies, purpose, complexity"""
             
             import json
             try:
-                return json.loads(response)
+                result = json.loads(response)
+                # Validate generated code for safety
+                code = result.get("code", "")
+                if code and not self.llm_output_validator.is_safe_code(code):
+                    logger.warning("Generated code contains dangerous patterns", code_preview=code[:100])
+                    result["security_warning"] = "Generated code contains potentially dangerous patterns"
+                return result
             except:
                 return {
                     "code": response,
                     "dependencies": [],
                     "purpose": description[:100],
-                    "complexity": 0.5
+                    "complexity": 0.5,
+                    "security_warning": "Could not validate generated code"
                 }
         except Exception as e:
             logger.error("Code generation failed", error=str(e))

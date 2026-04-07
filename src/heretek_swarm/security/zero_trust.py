@@ -66,6 +66,7 @@ class ZeroTrustResult:
     request_id: str
     agent_id: Optional[str] = None
     total_latency_ms: float = 0.0
+    sanitized_output: Optional[str] = None
     
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for logging/serialization."""
@@ -683,6 +684,7 @@ class OutputValidator:
                     "pii_detected": detected_pii,
                     "sensitive_detected": detected_sensitive,
                     "sanitized": self.config.redact_pii and (bool(detected_pii) or bool(detected_sensitive)),
+                    "sanitized_output": sanitized_output,
                 },
             )
             
@@ -1004,6 +1006,9 @@ class ZeroTrustValidator:
         
         latency_ms = (time.time() - start_time) * 1000
         
+        # Extract sanitized output from layer3 details if available
+        sanitized = layer3.details.get("sanitized_output")
+        
         result = ZeroTrustResult(
             passed=layer3.passed,
             layer1=layer1,
@@ -1013,6 +1018,7 @@ class ZeroTrustValidator:
             request_id=request_id,
             agent_id=agent_id,
             total_latency_ms=latency_ms,
+            sanitized_output=sanitized,
         )
         
         # Layer 4: Audit Logging
