@@ -12,8 +12,10 @@ Features:
 """
 
 import asyncio
+import ast
 import json
 import logging
+import operator
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Set, TypeVar, Annotated, Generic
 from dataclasses import dataclass, field
@@ -23,6 +25,273 @@ from typing_extensions import TypedDict
 import structlog
 
 logger = structlog.get_logger(__name__)
+
+# Safe operators for comparison and boolean logic
+SAFE_OPERATORS = {
+    ast.Eq: operator.eq,
+    ast.NotEq: operator.ne,
+    ast.Lt: operator.lt,
+    ast.LtE: operator.le,
+    ast.Gt: operator.gt,
+    ast.GtE: operator.ge,
+    ast.Is: operator.is_,
+    ast.IsNot: operator.is_not,
+    ast.In: lambda x, y: x in y,
+    ast.NotIn: lambda x, y: x not in y,
+}
+
+SAFE_BOOL_OPS = {
+    ast.And: lambda x, y: x and y,
+    ast.Or: lambda x, y: x or y,
+}
+
+SAFE_UNARY_OPS = {
+    ast.Not: operator.not_,
+    ast.USub: operator.neg,
+    ast.UAdd: operator.pos,
+}
+
+
+class SafeExpressionEvaluator:
+    """
+    Safe expression evaluator using AST validation.
+    
+    This class provides a secure alternative to eval() by:
+    1. Parsing expressions into an AST
+    2. Validating that only safe node types are present
+    3. Rejecting dangerous operations (function calls, attribute access, imports)
+    4. Safely evaluating the validated AST
+    
+    Supported operations:
+    - Literal values (numbers, strings, booleans, None, lists, dicts, tuples)
+    - Comparison operators (==, !=, <, <=, >, >=, is, in)
+    - Boolean operators (and, or, not)
+    - Unary operators (+, -, not)
+    - Variable substitution (via context)
+    
+    Security: Prevents code injection through object introspection attacks
+    by never allowing execution of arbitrary Python code.
+    """
+    
+    # AST node types that are safe to evaluate
+    SAFE_NODE_TYPES = (
+        ast.Expression,
+        ast.Constant,  # Literal values (Python 3.8+)
+        ast.Num,       # Numbers (deprecated but for compatibility)
+        ast.Str,       # Strings (deprecated but for compatibility)
+        ast.NameConstant,  # True, False, None (deprecated but for compatibility)
+        ast.List,
+        ast.Tuple,
+        ast.Dict,
+        ast.Compare,
+        ast.BoolOp,
+        ast.UnaryOp,
+        ast.BinOp,
+        ast.Name,  # Variable names (validated against allowed context)
+        ast.Subscript,  # Indexing (e.g., list[0], dict['key'])
+        # Context nodes (required for variable access)
+        ast.Load,
+        ast.Store,
+        ast.Del,
+        # Boolean operator nodes
+        ast.And,
+        ast.Or,
+        # Comparison operator nodes
+        ast.Eq,
+        ast.NotEq,
+        ast.Lt,
+        ast.LtE,
+        ast.Gt,
+        ast.GtE,
+        ast.Is,
+        ast.IsNot,
+        ast.In,
+        ast.NotIn,
+        # Binary operator nodes
+        ast.Add,
+        ast.Sub,
+        ast.Mult,
+        ast.Div,
+        ast.FloorDiv,
+        ast.Mod,
+        ast.Pow,
+        # Unary operator nodes
+        ast.Not,
+        ast.USub,
+        ast.UAdd,
+    )
+    
+    # Safe binary operators
+    SAFE_BIN_OPS = {
+        ast.Add: operator.add,
+        ast.Sub: operator.sub,
+        ast.Mult: operator.mul,
+        ast.Div: operator.truediv,
+        ast.FloorDiv: operator.floordiv,
+        ast.Mod: operator.mod,
+        ast.Pow: operator.pow,
+    }
+    
+    def __init__(self, allowed_variables: Optional[Dict[str, Any]] = None):
+        """
+        Initialize the evaluator with allowed variables.
+        
+        Args:
+            allowed_variables: Dict of variable names to values that can be
+                               referenced in expressions
+        """
+        self.allowed_variables = allowed_variables or {}
+    
+    def validate_and_eval(self, expr: str) -> Any:
+        """
+        Safely validate and evaluate an expression.
+        
+        Args:
+            expr: Expression string to evaluate
+            
+        Returns:
+            Result of the evaluation
+            
+        Raises:
+            ValueError: If expression contains unsafe operations
+            SyntaxError: If expression is not valid Python syntax
+        """
+        # Parse the expression into an AST
+        try:
+            tree = ast.parse(expr, mode='eval')
+        except SyntaxError as e:
+            raise ValueError(f"Invalid expression syntax: {e}")
+        
+        # Validate the AST contains only safe nodes
+        self._validate_ast(tree)
+        
+        # Safely evaluate the validated AST
+        return self._eval_node(tree.body)
+    
+    def _validate_ast(self, node: ast.AST) -> None:
+        """
+        Recursively validate that an AST contains only safe node types.
+        
+        Args:
+            node: AST node to validate
+            
+        Raises:
+            ValueError: If node contains unsafe operations
+        """
+        # Check if this node type is safe
+        if not isinstance(node, self.SAFE_NODE_TYPES):
+            raise ValueError(
+                f"Unsafe node type '{type(node).__name__}' in expression. "
+                f"Only literals, comparisons, and boolean logic are allowed."
+            )
+        
+        # Special validation for Name nodes (variable access)
+        if isinstance(node, ast.Name):
+            if node.id not in self.allowed_variables:
+                raise ValueError(
+                    f"Variable '{node.id}' is not in the allowed variables list. "
+                    f"Allowed: {list(self.allowed_variables.keys())}"
+                )
+        
+        # Recursively validate all child nodes
+        for field, value in ast.iter_fields(node):
+            if isinstance(value, list):
+                for item in value:
+                    if isinstance(item, ast.AST):
+                        self._validate_ast(item)
+            elif isinstance(value, ast.AST):
+                self._validate_ast(value)
+    
+    def _eval_node(self, node: ast.AST) -> Any:
+        """
+        Recursively evaluate a validated AST node.
+        
+        Args:
+            node: AST node to evaluate
+            
+        Returns:
+            Result of evaluating the node
+            
+        Raises:
+            ValueError: If node type is not supported
+        """
+        # Handle literal values
+        if isinstance(node, ast.Constant):  # Python 3.8+
+            return node.value
+        elif isinstance(node, ast.Num):  # Deprecated, for compatibility
+            return node.n
+        elif isinstance(node, ast.Str):  # Deprecated, for compatibility
+            return node.s
+        elif isinstance(node, ast.NameConstant):  # Deprecated, for compatibility
+            return node.value
+        
+        # Handle variable references
+        elif isinstance(node, ast.Name):
+            return self.allowed_variables[node.id]
+        
+        # Handle lists
+        elif isinstance(node, ast.List):
+            return [self._eval_node(elt) for elt in node.elts]
+        
+        # Handle tuples
+        elif isinstance(node, ast.Tuple):
+            return tuple(self._eval_node(elt) for elt in node.elts)
+        
+        # Handle dicts
+        elif isinstance(node, ast.Dict):
+            return {
+                self._eval_node(k): self._eval_node(v)
+                for k, v in zip(node.keys, node.values)
+                if k is not None
+            }
+        
+        # Handle comparison operations
+        elif isinstance(node, ast.Compare):
+            left = self._eval_node(node.left)
+            result = True
+            for op, comparator in zip(node.ops, node.comparators):
+                op_func = SAFE_OPERATORS.get(type(op))
+                if op_func is None:
+                    raise ValueError(f"Unsupported comparison operator: {type(op).__name__}")
+                right = self._eval_node(comparator)
+                result = result and op_func(left, right)
+                left = right
+            return result
+        
+        # Handle boolean operations (and, or)
+        elif isinstance(node, ast.BoolOp):
+            op_func = SAFE_BOOL_OPS.get(type(node.op))
+            if op_func is None:
+                raise ValueError(f"Unsupported boolean operator: {type(node.op).__name__}")
+            result = self._eval_node(node.values[0])
+            for value in node.values[1:]:
+                result = op_func(result, self._eval_node(value))
+            return result
+        
+        # Handle unary operations (not, -, +)
+        elif isinstance(node, ast.UnaryOp):
+            op_func = SAFE_UNARY_OPS.get(type(node.op))
+            if op_func is None:
+                raise ValueError(f"Unsupported unary operator: {type(node.op).__name__}")
+            return op_func(self._eval_node(node.operand))
+        
+        # Handle binary operations (+, -, *, /, etc.)
+        elif isinstance(node, ast.BinOp):
+            op_func = self.SAFE_BIN_OPS.get(type(node.op))
+            if op_func is None:
+                raise ValueError(f"Unsupported binary operator: {type(node.op).__name__}")
+            left = self._eval_node(node.left)
+            right = self._eval_node(node.right)
+            return op_func(left, right)
+        
+        # Handle subscript (indexing)
+        elif isinstance(node, ast.Subscript):
+            value = self._eval_node(node.value)
+            slice_val = self._eval_node(node.slice)
+            return value[slice_val]
+        
+        else:
+            raise ValueError(f"Unsupported node type: {type(node).__name__}")
 
 
 class WorkflowState(TypedDict, total=False):
@@ -540,7 +809,7 @@ class WorkflowEngine:
 
     def _evaluate_condition(self, condition: str, context: WorkflowContext) -> bool:
         """
-        Evaluate a condition expression.
+        Evaluate a condition expression using safe AST-based evaluator.
 
         Args:
             condition: Condition expression
@@ -548,17 +817,17 @@ class WorkflowEngine:
 
         Returns:
             True if condition evaluates to true
+            
+        Security: Uses SafeExpressionEvaluator to prevent code injection attacks
+        through object introspection. The old eval() implementation was vulnerable
+        to attacks via __class__, __mro__, __subclasses__(), etc.
         """
-        # Simple condition evaluation
-        # Supports: variable comparison, boolean logic
+        # Create safe evaluator with context variables
+        evaluator = SafeExpressionEvaluator(allowed_variables=context.variables)
+        
         try:
-            # Replace variable references with values
-            expr = condition
-            for var_name, var_value in context.variables.items():
-                expr = expr.replace(f"{{{var_name}}}", str(var_value))
-
-            # Evaluate expression
-            result = eval(expr, {"__builtins__": {}})
+            # Safely evaluate the condition expression
+            result = evaluator.validate_and_eval(condition)
             return bool(result)
 
         except Exception as e:
