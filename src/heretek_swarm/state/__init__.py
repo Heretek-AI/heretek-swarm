@@ -1,9 +1,15 @@
 """
 Heretek Swarm State Package
 
-Compatibility shim for test imports.
-Re-exports from src/state/ package.
+Provides state persistence, management, and lineage tracking.
 """
+
+from heretek_swarm.state.repository import (
+    StateRepository,
+    AgentStateRecord,
+    StateCheckpoint,
+    ConcurrencyError,
+)
 
 from state.base import (
     StateSnapshot,
@@ -36,6 +42,12 @@ from state.lineage import (
 )
 
 __all__ = [
+    # Repository
+    "StateRepository",
+    "AgentStateRecord",
+    "StateCheckpoint",
+    "ConcurrencyError",
+    # Base models
     "StateSnapshot",
     "MessageLineage",
     "StateTransition",
@@ -45,11 +57,12 @@ __all__ = [
     "StateStatus",
     "TransitionType",
     "MessageType",
+    # Managers
     "LineageTracker",
     "LineageConfig",
     "SnapshotManager",
-    "SnapshotConfig",
     "StateManager",
     "StateConfig",
+    "SnapshotConfig",
     "LineageNode",
 ]
