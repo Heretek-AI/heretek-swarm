@@ -61,7 +61,7 @@ class ProcessingConfig:
     # Metadata extraction
     extract_metadata: bool = True
     extract_keywords: bool = False
-    keyword_count: int = 5
+    keyword_count: int = 10  # Increased to capture more relevant keywords
     
     # Processing limits
     max_file_size_mb: int = 50
@@ -193,6 +193,7 @@ class DocumentProcessor:
             ".yaml": DocumentType.TEXT,
             ".yml": DocumentType.TEXT,
             ".xml": DocumentType.TEXT,
+            ".pdf": DocumentType.PDF,
         }
     
     def detect_type(self, file_path: Union[str, Path]) -> DocumentType:

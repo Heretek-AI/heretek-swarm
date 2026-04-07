@@ -66,6 +66,10 @@ class MetisAgent(AgentActor):
         swarms_agent: Optional[Agent] = None,
         planning_horizon_days: int = 90,
         max_scenarios: int = 5,
+        pattern_extractor: Optional[PatternExtractor] = None,
+        deliberation_engine: Optional[SwarmDeliberationEngine] = None,
+        access_analyzer: Optional[AccessPatternAnalyzer] = None,
+        zero_trust_validator: Optional[ZeroTrustValidator] = None,
         **kwargs,
     ) -> None:
         """

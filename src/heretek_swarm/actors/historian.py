@@ -188,6 +188,10 @@ class HistorianAgent(AgentActor):
         context_window: int = 10,
         context_cache_max_size: int = 100,
         pattern_cache_max_size: int = 50,
+        pattern_extractor: Optional[PatternExtractor] = None,
+        deliberation_engine: Optional[SwarmDeliberationEngine] = None,
+        access_analyzer: Optional[AccessPatternAnalyzer] = None,
+        zero_trust_validator: Optional[ZeroTrustValidator] = None,
         **kwargs,
     ) -> None:
         """

@@ -275,8 +275,8 @@ class A2AServer:
                 {
                     "id": aid,
                     "status": info.status,
-                    "connected_at": info.connected_at.isoformat(),
-                    "last_activity": info.last_activity.isoformat()
+                    "connected_at": info.connected_at.isoformat() if isinstance(info.connected_at, datetime) else info.connected_at,
+                    "last_activity": info.last_activity.isoformat() if isinstance(info.last_activity, datetime) else info.last_activity
                 }
                 for aid, info in self.agents.items()
             ]

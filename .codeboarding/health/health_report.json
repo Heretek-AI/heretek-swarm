@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-07T03:52:49.406979+00:00",
-  "overall_score": 0.9932292836290141,
+  "timestamp": "2026-04-07T10:10:38.088234+00:00",
+  "overall_score": 0.981137658110807,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -578,10 +578,10 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 7,
-      "findings_count": 7,
-      "warning_count": 3,
-      "score": 0.6499999999999999,
+      "total_entities_checked": 129,
+      "findings_count": 129,
+      "warning_count": 42,
+      "score": 0.0,
       "finding_groups": [
         {
           "severity": "warning",
@@ -589,24 +589,297 @@
           "description": "Unused import statements that should be removed",
           "entities": [
             {
-              "entity_name": "[unused_import] Import \"hashlib\" is not accessed",
-              "file_path": "src/heretek_swarm/security/zero_trust.py",
-              "line_start": 15,
-              "line_end": 15,
+              "entity_name": "[unused_import] Import \"time\" is not accessed",
+              "file_path": "src/heretek_swarm/plugins/consciousness_metrics.py",
+              "line_start": 19,
+              "line_end": 19,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_import] Import \"ABC\" is not accessed",
-              "file_path": "src/heretek_swarm/security/zero_trust.py",
+              "entity_name": "[unused_import] Import \"PhiResult\" is not accessed",
+              "file_path": "src/heretek_swarm/plugins/consciousness_metrics.py",
+              "line_start": 27,
+              "line_end": 27,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"Severity\" is not accessed",
+              "file_path": "src/heretek_swarm/api/observability.py",
+              "line_start": 20,
+              "line_end": 20,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"PhiCalculator\" is not accessed",
+              "file_path": "src/heretek_swarm/api/observability.py",
+              "line_start": 21,
+              "line_end": 21,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"FreeEnergyCalculator\" is not accessed",
+              "file_path": "src/heretek_swarm/api/observability.py",
+              "line_start": 22,
+              "line_end": 22,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"SwarmMetricsData\" is not accessed",
+              "file_path": "src/heretek_swarm/api/observability.py",
+              "line_start": 26,
+              "line_end": 26,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"ConsciousnessMetricsData\" is not accessed",
+              "file_path": "src/heretek_swarm/api/observability.py",
+              "line_start": 27,
+              "line_end": 27,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"AgentMetrics\" is not accessed",
+              "file_path": "src/heretek_swarm/api/observability.py",
+              "line_start": 28,
+              "line_end": 28,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"logging\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/historian.py",
               "line_start": 17,
               "line_end": 17,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_import] Import \"Callable\" is not accessed",
-              "file_path": "src/heretek_swarm/security/zero_trust.py",
+              "entity_name": "[unused_import] Import \"Tuple\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/historian.py",
+              "line_start": 20,
+              "line_end": 20,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"ValidationError\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/historian.py",
+              "line_start": 22,
+              "line_end": 22,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"MemoryStoreRequest\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/historian.py",
+              "line_start": 28,
+              "line_end": 28,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"QueryRequest\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/historian.py",
+              "line_start": 29,
+              "line_end": 29,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"LineageRequest\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/historian.py",
+              "line_start": 30,
+              "line_end": 30,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"MemoryQuery\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/historian.py",
+              "line_start": 32,
+              "line_end": 32,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"logging\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/perceiver.py",
+              "line_start": 15,
+              "line_end": 15,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"base64\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/perceiver.py",
+              "line_start": 16,
+              "line_end": 16,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"Tuple\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/perceiver.py",
+              "line_start": 19,
+              "line_end": 19,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"MessageContent\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/perceiver.py",
+              "line_start": 27,
+              "line_end": 27,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"logging\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/empath.py",
+              "line_start": 15,
+              "line_end": 15,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"Tuple\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/empath.py",
+              "line_start": 17,
+              "line_end": 17,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"MessageContent\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/empath.py",
+              "line_start": 24,
+              "line_end": 24,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"asyncio\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/metis.py",
+              "line_start": 14,
+              "line_end": 14,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"logging\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/metis.py",
+              "line_start": 15,
+              "line_end": 15,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"Tuple\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/metis.py",
+              "line_start": 17,
+              "line_end": 17,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"ValidationError\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/metis.py",
+              "line_start": 19,
+              "line_end": 19,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"validate_message\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/metis.py",
+              "line_start": 24,
+              "line_end": 24,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"Set\" is not accessed",
+              "file_path": "src/heretek_swarm/collective/learning.py",
+              "line_start": 29,
+              "line_end": 29,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"Set\" is not accessed",
+              "file_path": "src/heretek_swarm/collective/knowledge_transform.py",
+              "line_start": 28,
+              "line_end": 28,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"PatternMetadata\" is not accessed",
+              "file_path": "src/heretek_swarm/collective/knowledge_transform.py",
+              "line_start": 32,
+              "line_end": 32,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"hashlib\" is not accessed",
+              "file_path": "src/heretek_swarm/gateway/a2a_server.py",
+              "line_start": 16,
+              "line_end": 16,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"HTTPException\" is not accessed",
+              "file_path": "src/heretek_swarm/gateway/a2a_server.py",
               "line_start": 21,
               "line_end": 21,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"HTTPException\" is not accessed",
+              "file_path": "src/heretek_swarm/api/websockets.py",
+              "line_start": 19,
+              "line_end": 19,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"EventMesh\" is not accessed",
+              "file_path": "src/heretek_swarm/api/websockets.py",
+              "line_start": 22,
+              "line_end": 22,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"Optional\" is not accessed",
+              "file_path": "src/heretek_swarm/gateway/event_mesh.py",
+              "line_start": 9,
+              "line_end": 9,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"logging\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/base.py",
+              "line_start": 13,
+              "line_end": 13,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"Tuple\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/base.py",
+              "line_start": 19,
+              "line_end": 19,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"MessageContent\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/base.py",
+              "line_start": 26,
+              "line_end": 26,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"HealthCheckRequest\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/base.py",
+              "line_start": 27,
+              "line_end": 27,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"SuspendResumeRequest\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/base.py",
+              "line_start": 28,
+              "line_end": 28,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"TerminateRequest\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/base.py",
+              "line_start": 29,
+              "line_end": 29,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"CollectiveTaskRequest\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/base.py",
+              "line_start": 30,
+              "line_end": 30,
               "metric_value": 0.0
             }
           ]
@@ -617,31 +890,619 @@
           "description": "Variables declared but never used",
           "entities": [
             {
-              "entity_name": "[unused_variable] \"hashlib\" is not accessed",
-              "file_path": "src/heretek_swarm/security/zero_trust.py",
-              "line_start": 15,
-              "line_end": 15,
+              "entity_name": "[unused_variable] \"time\" is not accessed",
+              "file_path": "src/heretek_swarm/plugins/consciousness_metrics.py",
+              "line_start": 19,
+              "line_end": 19,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] \"ABC\" is not accessed",
-              "file_path": "src/heretek_swarm/security/zero_trust.py",
-              "line_start": 17,
-              "line_end": 17,
+              "entity_name": "[unused_variable] \"PhiResult\" is not accessed",
+              "file_path": "src/heretek_swarm/plugins/consciousness_metrics.py",
+              "line_start": 27,
+              "line_end": 27,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] \"Callable\" is not accessed",
-              "file_path": "src/heretek_swarm/security/zero_trust.py",
+              "entity_name": "[unused_variable] \"individual_sum\" is not accessed",
+              "file_path": "src/heretek_swarm/plugins/consciousness_metrics.py",
+              "line_start": 561,
+              "line_end": 561,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"description\" is not accessed",
+              "file_path": "src/observability/metrics.py",
+              "line_start": 101,
+              "line_end": 101,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"description\" is not accessed",
+              "file_path": "src/observability/metrics.py",
+              "line_start": 104,
+              "line_end": 104,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"description\" is not accessed",
+              "file_path": "src/observability/metrics.py",
+              "line_start": 107,
+              "line_end": 107,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"attributes\" is not accessed",
+              "file_path": "src/observability/metrics.py",
+              "line_start": 119,
+              "line_end": 119,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"attributes\" is not accessed",
+              "file_path": "src/observability/metrics.py",
+              "line_start": 122,
+              "line_end": 122,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"attributes\" is not accessed",
+              "file_path": "src/observability/metrics.py",
+              "line_start": 125,
+              "line_end": 125,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"timestamp_ms\" is not accessed",
+              "file_path": "src/observability/metrics.py",
+              "line_start": 908,
+              "line_end": 908,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"Severity\" is not accessed",
+              "file_path": "src/heretek_swarm/api/observability.py",
+              "line_start": 20,
+              "line_end": 20,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"PhiCalculator\" is not accessed",
+              "file_path": "src/heretek_swarm/api/observability.py",
               "line_start": 21,
               "line_end": 21,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] \"validated\" is not accessed",
-              "file_path": "src/heretek_swarm/security/zero_trust.py",
+              "entity_name": "[unused_variable] \"FreeEnergyCalculator\" is not accessed",
+              "file_path": "src/heretek_swarm/api/observability.py",
+              "line_start": 22,
+              "line_end": 22,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"SwarmMetricsData\" is not accessed",
+              "file_path": "src/heretek_swarm/api/observability.py",
+              "line_start": 26,
+              "line_end": 26,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"ConsciousnessMetricsData\" is not accessed",
+              "file_path": "src/heretek_swarm/api/observability.py",
+              "line_start": 27,
+              "line_end": 27,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"AgentMetrics\" is not accessed",
+              "file_path": "src/heretek_swarm/api/observability.py",
+              "line_start": 28,
+              "line_end": 28,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"validator\" is not accessed",
+              "file_path": "src/heretek_swarm/api/observability.py",
+              "line_start": 95,
+              "line_end": 95,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"trace_id\" is not accessed",
+              "file_path": "src/heretek_swarm/api/observability.py",
+              "line_start": 619,
+              "line_end": 619,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"message\" is not accessed",
+              "file_path": "src/heretek_swarm/api/observability.py",
+              "line_start": 743,
+              "line_end": 743,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"websocket\" is not accessed",
+              "file_path": "src/heretek_swarm/api/observability.py",
+              "line_start": 860,
+              "line_end": 860,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"logging\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/historian.py",
+              "line_start": 17,
+              "line_end": 17,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"Tuple\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/historian.py",
+              "line_start": 20,
+              "line_end": 20,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"ValidationError\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/historian.py",
+              "line_start": 22,
+              "line_end": 22,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"MemoryStoreRequest\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/historian.py",
+              "line_start": 28,
+              "line_end": 28,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"QueryRequest\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/historian.py",
+              "line_start": 29,
+              "line_end": 29,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"LineageRequest\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/historian.py",
+              "line_start": 30,
+              "line_end": 30,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"MemoryQuery\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/historian.py",
+              "line_start": 32,
+              "line_end": 32,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"logging\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/perceiver.py",
+              "line_start": 15,
+              "line_end": 15,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"base64\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/perceiver.py",
+              "line_start": 16,
+              "line_end": 16,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"Tuple\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/perceiver.py",
+              "line_start": 19,
+              "line_end": 19,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"MessageContent\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/perceiver.py",
+              "line_start": 27,
+              "line_end": 27,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"priority\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/perceiver.py",
+              "line_start": 258,
+              "line_end": 258,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"image_data\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/perceiver.py",
+              "line_start": 510,
+              "line_end": 510,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"key\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/perceiver.py",
+              "line_start": 603,
+              "line_end": 603,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"input_data\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/perceiver.py",
+              "line_start": 623,
+              "line_end": 623,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"logging\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/empath.py",
+              "line_start": 15,
+              "line_end": 15,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"Tuple\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/empath.py",
+              "line_start": 17,
+              "line_end": 17,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"MessageContent\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/empath.py",
+              "line_start": 24,
+              "line_end": 24,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"source_agent\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/empath.py",
+              "line_start": 285,
+              "line_end": 285,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"asyncio\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/metis.py",
+              "line_start": 14,
+              "line_end": 14,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"logging\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/metis.py",
+              "line_start": 15,
+              "line_end": 15,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"Tuple\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/metis.py",
+              "line_start": 17,
+              "line_end": 17,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"ValidationError\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/metis.py",
+              "line_start": 19,
+              "line_end": 19,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"validate_message\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/metis.py",
+              "line_start": 24,
+              "line_end": 24,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"plan_id\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/metis.py",
+              "line_start": 518,
+              "line_end": 518,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"response\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/metis.py",
+              "line_start": 591,
+              "line_end": 591,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"response\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/metis.py",
+              "line_start": 672,
+              "line_end": 672,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"context\" is not accessed",
+              "file_path": "src/tools/base.py",
+              "line_start": 476,
+              "line_end": 476,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"doc_type\" is not accessed",
+              "file_path": "src/rag/document_processor.py",
+              "line_start": 386,
+              "line_end": 386,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"Set\" is not accessed",
+              "file_path": "src/heretek_swarm/collective/learning.py",
+              "line_start": 29,
+              "line_end": 29,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"content\" is not accessed",
+              "file_path": "src/heretek_swarm/collective/learning.py",
+              "line_start": 397,
+              "line_end": 397,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"content\" is not accessed",
+              "file_path": "src/heretek_swarm/collective/learning.py",
+              "line_start": 436,
+              "line_end": 436,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"decisions\" is not accessed",
+              "file_path": "src/heretek_swarm/collective/learning.py",
+              "line_start": 923,
+              "line_end": 923,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"Set\" is not accessed",
+              "file_path": "src/heretek_swarm/collective/knowledge_transform.py",
+              "line_start": 28,
+              "line_end": 28,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"PatternMetadata\" is not accessed",
+              "file_path": "src/heretek_swarm/collective/knowledge_transform.py",
+              "line_start": 32,
+              "line_end": 32,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"i\" is not accessed",
+              "file_path": "src/heretek_swarm/collective/knowledge_transform.py",
+              "line_start": 349,
+              "line_end": 349,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"target_agent_type\" is not accessed",
+              "file_path": "src/heretek_swarm/collective/knowledge_transform.py",
+              "line_start": 447,
+              "line_end": 447,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"agent_id\" is not accessed",
+              "file_path": "src/heretek_swarm/collective/knowledge_transform.py",
+              "line_start": 543,
+              "line_end": 543,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"agent_type\" is not accessed",
+              "file_path": "src/heretek_swarm/collective/knowledge_transform.py",
+              "line_start": 722,
+              "line_end": 722,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"hashlib\" is not accessed",
+              "file_path": "src/heretek_swarm/gateway/a2a_server.py",
+              "line_start": 16,
+              "line_end": 16,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"HTTPException\" is not accessed",
+              "file_path": "src/heretek_swarm/gateway/a2a_server.py",
+              "line_start": 21,
+              "line_end": 21,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"data\" is not accessed",
+              "file_path": "src/heretek_swarm/gateway/a2a_server.py",
+              "line_start": 260,
+              "line_end": 260,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"data\" is not accessed",
+              "file_path": "src/heretek_swarm/gateway/a2a_server.py",
+              "line_start": 265,
+              "line_end": 265,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"HTTPException\" is not accessed",
+              "file_path": "src/heretek_swarm/api/websockets.py",
+              "line_start": 19,
+              "line_end": 19,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"EventMesh\" is not accessed",
+              "file_path": "src/heretek_swarm/api/websockets.py",
+              "line_start": 22,
+              "line_end": 22,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"websocket\" is not accessed",
+              "file_path": "src/heretek_swarm/api/websockets.py",
+              "line_start": 118,
+              "line_end": 118,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"user_id\" is not accessed",
+              "file_path": "src/heretek_swarm/api/websockets.py",
               "line_start": 284,
               "line_end": 284,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"user_id\" is not accessed",
+              "file_path": "src/heretek_swarm/api/websockets.py",
+              "line_start": 407,
+              "line_end": 407,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"user_id\" is not accessed",
+              "file_path": "src/heretek_swarm/api/websockets.py",
+              "line_start": 500,
+              "line_end": 500,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"user_id\" is not accessed",
+              "file_path": "src/heretek_swarm/api/websockets.py",
+              "line_start": 573,
+              "line_end": 573,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"user_id\" is not accessed",
+              "file_path": "src/heretek_swarm/api/websockets.py",
+              "line_start": 650,
+              "line_end": 650,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"user_id\" is not accessed",
+              "file_path": "src/heretek_swarm/api/websockets.py",
+              "line_start": 725,
+              "line_end": 725,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"all_agent_listeners\" is not accessed",
+              "file_path": "src/heretek_swarm/api/websockets.py",
+              "line_start": 744,
+              "line_end": 744,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"message\" is not accessed",
+              "file_path": "src/heretek_swarm/api/websockets.py",
+              "line_start": 750,
+              "line_end": 750,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"Optional\" is not accessed",
+              "file_path": "src/heretek_swarm/gateway/event_mesh.py",
+              "line_start": 9,
+              "line_end": 9,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"client_id\" is not accessed",
+              "file_path": "src/heretek_swarm/gateway/event_mesh.py",
+              "line_start": 190,
+              "line_end": 190,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"logging\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/base.py",
+              "line_start": 13,
+              "line_end": 13,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"Tuple\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/base.py",
+              "line_start": 19,
+              "line_end": 19,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"MessageContent\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/base.py",
+              "line_start": 26,
+              "line_end": 26,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"HealthCheckRequest\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/base.py",
+              "line_start": 27,
+              "line_end": 27,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"SuspendResumeRequest\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/base.py",
+              "line_start": 28,
+              "line_end": 28,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"TerminateRequest\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/base.py",
+              "line_start": 29,
+              "line_end": 29,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"CollectiveTaskRequest\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/base.py",
+              "line_start": 30,
+              "line_end": 30,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"reg_actor_id\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/base.py",
+              "line_start": 474,
+              "line_end": 474,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"protocol\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/base.py",
+              "line_start": 1352,
+              "line_end": 1352,
+              "metric_value": 0.0
+            }
+          ]
+        },
+        {
+          "severity": "info",
+          "threshold": 0,
+          "description": "Code that cannot be reached during execution",
+          "entities": [
+            {
+              "entity_name": "[unreachable_code] Type analysis indicates code is unreachable",
+              "file_path": "src/heretek_swarm/actors/perceiver.py",
+              "line_start": 421,
+              "line_end": 421,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unreachable_code] Type analysis indicates code is unreachable",
+              "file_path": "src/heretek_swarm/actors/perceiver.py",
+              "line_start": 599,
+              "line_end": 599,
               "metric_value": 0.0
             }
           ]
@@ -806,23 +1667,334 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "TypeScript",
       "check_type": "standard",
-      "total_entities_checked": 0,
-      "findings_count": 0,
+      "total_entities_checked": 38,
+      "findings_count": 38,
       "warning_count": 0,
-      "score": 1.0,
-      "finding_groups": []
+      "score": 0.0,
+      "finding_groups": [
+        {
+          "severity": "info",
+          "threshold": 0,
+          "description": "Variables declared but never used",
+          "entities": [
+            {
+              "entity_name": "[unused_variable] 'Panel' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx",
+              "line_start": 25,
+              "line_end": 25,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] All imports in import declaration are unused.",
+              "file_path": "dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx",
+              "line_start": 31,
+              "line_end": 31,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'NODE_TYPES' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx",
+              "line_start": 97,
+              "line_end": 97,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'nodes' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx",
+              "line_start": 175,
+              "line_end": 175,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'edges' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx",
+              "line_start": 176,
+              "line_end": 176,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'selectedNode' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx",
+              "line_start": 177,
+              "line_end": 177,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'workflows' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx",
+              "line_start": 178,
+              "line_end": 178,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'executionState' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx",
+              "line_start": 180,
+              "line_end": 180,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'isExecuting' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx",
+              "line_start": 184,
+              "line_end": 184,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'showPalette' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx",
+              "line_start": 185,
+              "line_end": 185,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'showExecution' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx",
+              "line_start": 187,
+              "line_end": 187,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'consciousnessMetrics' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx",
+              "line_start": 192,
+              "line_end": 192,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'saveWorkflow' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx",
+              "line_start": 227,
+              "line_end": 227,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'loadWorkflow' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx",
+              "line_start": 246,
+              "line_end": 246,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'executeWorkflow' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx",
+              "line_start": 261,
+              "line_end": 261,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'result' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx",
+              "line_start": 279,
+              "line_end": 279,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'addNode' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx",
+              "line_start": 309,
+              "line_end": 309,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'onConnect' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx",
+              "line_start": 322,
+              "line_end": 322,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'onNodeClick' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx",
+              "line_start": 330,
+              "line_end": 330,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'getPhiColor' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx",
+              "line_start": 411,
+              "line_end": 411,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Left side of comma operator is unused and has no side effects.",
+              "file_path": "dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx",
+              "line_start": 623,
+              "line_end": 623,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Left side of comma operator is unused and has no side effects.",
+              "file_path": "dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx",
+              "line_start": 624,
+              "line_end": 624,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Left side of comma operator is unused and has no side effects.",
+              "file_path": "dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx",
+              "line_start": 625,
+              "line_end": 625,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Left side of comma operator is unused and has no side effects.",
+              "file_path": "dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx",
+              "line_start": 626,
+              "line_end": 626,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Left side of comma operator is unused and has no side effects.",
+              "file_path": "dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx",
+              "line_start": 627,
+              "line_end": 627,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Left side of comma operator is unused and has no side effects.",
+              "file_path": "dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx",
+              "line_start": 628,
+              "line_end": 628,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Left side of comma operator is unused and has no side effects.",
+              "file_path": "dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx",
+              "line_start": 629,
+              "line_end": 629,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Left side of comma operator is unused and has no side effects.",
+              "file_path": "dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx",
+              "line_start": 630,
+              "line_end": 630,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Left side of comma operator is unused and has no side effects.",
+              "file_path": "dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx",
+              "line_start": 631,
+              "line_end": 631,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Left side of comma operator is unused and has no side effects.",
+              "file_path": "dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx",
+              "line_start": 632,
+              "line_end": 632,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Left side of comma operator is unused and has no side effects.",
+              "file_path": "dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx",
+              "line_start": 633,
+              "line_end": 633,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Left side of comma operator is unused and has no side effects.",
+              "file_path": "dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx",
+              "line_start": 634,
+              "line_end": 634,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Left side of comma operator is unused and has no side effects.",
+              "file_path": "dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx",
+              "line_start": 635,
+              "line_end": 635,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Unused label.",
+              "file_path": "dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx",
+              "line_start": 689,
+              "line_end": 689,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Unused label.",
+              "file_path": "dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx",
+              "line_start": 695,
+              "line_end": 695,
+              "metric_value": 0.0
+            }
+          ]
+        },
+        {
+          "severity": "info",
+          "threshold": 0,
+          "description": "Code that cannot be reached during execution",
+          "entities": [
+            {
+              "entity_name": "[unreachable_code] Unreachable code detected.",
+              "file_path": "dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx",
+              "line_start": 388,
+              "line_end": 390,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unreachable_code] Unreachable code detected.",
+              "file_path": "dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx",
+              "line_start": 396,
+              "line_end": 398,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unreachable_code] Unreachable code detected.",
+              "file_path": "dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx",
+              "line_start": 421,
+              "line_end": 426,
+              "metric_value": 0.0
+            }
+          ]
+        }
+      ]
     }
   ],
   "file_summaries": [
     {
       "file_path": "src/heretek_swarm/actors/base.py",
-      "total_findings": 7,
-      "warning_findings": 7,
-      "composite_risk_score": 85.0
+      "total_findings": 23,
+      "warning_findings": 14,
+      "composite_risk_score": 100.0
     },
     {
-      "file_path": "src/heretek_swarm/security/zero_trust.py",
-      "total_findings": 7,
+      "file_path": "src/heretek_swarm/actors/historian.py",
+      "total_findings": 15,
+      "warning_findings": 8,
+      "composite_risk_score": 90.0
+    },
+    {
+      "file_path": "src/heretek_swarm/actors/metis.py",
+      "total_findings": 14,
+      "warning_findings": 6,
+      "composite_risk_score": 80.0
+    },
+    {
+      "file_path": "src/heretek_swarm/api/observability.py",
+      "total_findings": 16,
+      "warning_findings": 6,
+      "composite_risk_score": 80.0
+    },
+    {
+      "file_path": "src/heretek_swarm/actors/perceiver.py",
+      "total_findings": 15,
+      "warning_findings": 5,
+      "composite_risk_score": 75.0
+    },
+    {
+      "file_path": "src/heretek_swarm/actors/empath.py",
+      "total_findings": 8,
+      "warning_findings": 4,
+      "composite_risk_score": 70.0
+    },
+    {
+      "file_path": "src/heretek_swarm/plugins/consciousness_metrics.py",
+      "total_findings": 6,
       "warning_findings": 3,
       "composite_risk_score": 65.0
     },
@@ -831,6 +2003,42 @@
       "total_findings": 4,
       "warning_findings": 4,
       "composite_risk_score": 60.0
+    },
+    {
+      "file_path": "src/heretek_swarm/collective/knowledge_transform.py",
+      "total_findings": 8,
+      "warning_findings": 2,
+      "composite_risk_score": 60.0
+    },
+    {
+      "file_path": "src/heretek_swarm/gateway/a2a_server.py",
+      "total_findings": 6,
+      "warning_findings": 2,
+      "composite_risk_score": 60.0
+    },
+    {
+      "file_path": "src/heretek_swarm/api/websockets.py",
+      "total_findings": 13,
+      "warning_findings": 2,
+      "composite_risk_score": 60.0
+    },
+    {
+      "file_path": "dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx",
+      "total_findings": 40,
+      "warning_findings": 2,
+      "composite_risk_score": 60.0
+    },
+    {
+      "file_path": "src/heretek_swarm/collective/learning.py",
+      "total_findings": 5,
+      "warning_findings": 1,
+      "composite_risk_score": 55.0
+    },
+    {
+      "file_path": "src/observability/metrics.py",
+      "total_findings": 7,
+      "warning_findings": 0,
+      "composite_risk_score": 50.0
     },
     {
       "file_path": "src/heretek_swarm/channels/registry.py",
@@ -867,72 +2075,6 @@
       "total_findings": 3,
       "warning_findings": 3,
       "composite_risk_score": 45.0
-    },
-    {
-      "file_path": "src/heretek_swarm/security/guardrails.py",
-      "total_findings": 2,
-      "warning_findings": 2,
-      "composite_risk_score": 30.0
-    },
-    {
-      "file_path": "src/heretek_swarm/actors/handoff.py",
-      "total_findings": 2,
-      "warning_findings": 2,
-      "composite_risk_score": 30.0
-    },
-    {
-      "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
-      "total_findings": 2,
-      "warning_findings": 2,
-      "composite_risk_score": 30.0
-    },
-    {
-      "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
-      "total_findings": 2,
-      "warning_findings": 2,
-      "composite_risk_score": 30.0
-    },
-    {
-      "file_path": "src/heretek_swarm/runtime/main_loop.py",
-      "total_findings": 2,
-      "warning_findings": 2,
-      "composite_risk_score": 30.0
-    },
-    {
-      "file_path": "src/memory/persistent.py",
-      "total_findings": 2,
-      "warning_findings": 2,
-      "composite_risk_score": 30.0
-    },
-    {
-      "file_path": "src/heretek_swarm/actors/coordinator.py",
-      "total_findings": 2,
-      "warning_findings": 2,
-      "composite_risk_score": 30.0
-    },
-    {
-      "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
-      "total_findings": 2,
-      "warning_findings": 2,
-      "composite_risk_score": 30.0
-    },
-    {
-      "file_path": "dashboard/frontend/src/components/Consciousness/ConsciousnessDashboard.tsx",
-      "total_findings": 2,
-      "warning_findings": 2,
-      "composite_risk_score": 30.0
-    },
-    {
-      "file_path": "dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx",
-      "total_findings": 2,
-      "warning_findings": 2,
-      "composite_risk_score": 30.0
-    },
-    {
-      "file_path": "dashboard/frontend/src/components/Dashboard/Dashboard.tsx",
-      "total_findings": 2,
-      "warning_findings": 2,
-      "composite_risk_score": 30.0
     }
   ]
 }

@@ -81,6 +81,10 @@ class PerceiverAgent(AgentActor):
         max_input_size_mb: int = 50,
         feature_cache_size: int = 1000,
         enable_cross_modal: bool = True,
+        pattern_extractor: Optional[PatternExtractor] = None,
+        deliberation_engine: Optional[SwarmDeliberationEngine] = None,
+        access_analyzer: Optional[AccessPatternAnalyzer] = None,
+        zero_trust_validator: Optional[ZeroTrustValidator] = None,
         **kwargs,
     ) -> None:
         """

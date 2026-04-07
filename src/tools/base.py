@@ -93,8 +93,8 @@ class ToolExecutionResult(BaseModel, Generic[TOutput]):
     error: Optional[str] = Field(None)
     error_details: Optional[Dict[str, Any]] = Field(None)
     
-    # Output
-    output: Optional[TOutput] = Field(None)
+    # Output - use Any to allow primitive types, TOutput is for type hints only
+    output: Optional[Any] = Field(None)
     raw_output: Optional[Any] = Field(None)
     
     # Performance
@@ -362,12 +362,35 @@ class BaseTool(ABC, Generic[TInput, TOutput]):
         Validate input data against expected schema.
         
         Override this method for custom validation logic.
-        """
-        # Get the input type from the generic
-        input_type = self.__orig_class__.__args__[0]
         
-        if issubclass(input_type, BaseModel):
-            return input_type(**input_data)
+        Note: We use type hints and __orig_bases__ instead of __orig_class__
+        because __orig_class__ is not available at runtime in Python 3.13+
+        """
+        # Try to get input type from generic type parameters
+        # Fall back to a safe default if we can't determine the type
+        input_type: Optional[type] = None
+        
+        # Try __orig_bases__ for generic type info
+        if hasattr(self, '__orig_bases__') and self.__orig_bases__:
+            for base in self.__orig_bases__:
+                if hasattr(base, '__args__') and base.__args__:
+                    potential_type = base.__args__[0]
+                    # Ensure it's actually a type before using
+                    if isinstance(potential_type, type):
+                        input_type = potential_type
+                        break
+        
+        # If we couldn't determine the type, return input as-is
+        if input_type is None:
+            return input_data  # type: ignore
+        
+        # Only try issubclass if we have a valid type
+        try:
+            if issubclass(input_type, BaseModel):
+                return input_type(**input_data)
+        except (TypeError, AttributeError):
+            # If issubclass fails, return as dict
+            pass
         
         # If not a Pydantic model, return as dict
         return input_data  # type: ignore

@@ -179,6 +179,7 @@ class AgentActor:
         actor_type: Optional[str] = None,
         state_repository: Optional[StateRepository] = None,
         load_state_on_init: bool = True,
+        persistence_interval: Optional[int] = None,  # P0-1: Continuous persistence
     ) -> None:
         """
         Initialize an actor.
@@ -195,6 +196,9 @@ class AgentActor:
             actor_type: Optional type identifier for factory registration
             state_repository: Optional state persistence repository
             load_state_on_init: Whether to load state from DB on initialization
+            persistence_interval: Optional interval (in messages) for auto-persistence.
+                                  If None, only persists on terminate (legacy behavior).
+                                  Recommended: 10-100 for production use.
         """
         # P1-7: Configuration validation
         if max_mailbox_size <= 0:
@@ -217,6 +221,8 @@ class AgentActor:
         self._state_repository: Optional[StateRepository] = state_repository
         self._state_record: Optional[AgentStateRecord] = None
         self._load_state_on_init = load_state_on_init
+        self._persistence_interval = persistence_interval  # P0-1: Continuous persistence
+        self._messages_since_persist = 0  # P0-1: Track messages for auto-persist
 
         # Actor state
         self.state: ActorState = ActorState.SPAWNING
@@ -683,7 +689,7 @@ class AgentActor:
                     self.error_count += 1
 
     async def _process_mailbox(self) -> None:
-        """Process messages from mailbox in a loop."""
+        """Process messages from mailbox in a loop with continuous persistence."""
         logger.info(f"[{self.agent_id}] Starting mailbox processing")
 
         while self._running:
@@ -695,10 +701,20 @@ class AgentActor:
                 )
 
                 self.message_count += 1
+                self._messages_since_persist += 1  # P0-1: Track for auto-persist
                 self.last_activity = datetime.now(timezone.utc).isoformat()
 
                 # Process message
                 await self.process_message(message)
+
+                # P0-1: Auto-persist if interval configured and threshold reached
+                if self._persistence_interval and self._messages_since_persist >= self._persistence_interval:
+                    await self.save_state()
+                    self._messages_since_persist = 0
+                    logger.debug(
+                        f"[{self.agent_id}] State persisted after {self._persistence_interval} messages",
+                        extra={"total_messages": self.message_count}
+                    )
 
                 # Mark as done
                 self.mailbox.task_done()
@@ -762,10 +778,17 @@ class AgentActor:
             logger.error(f"[{self.agent_id}] Cleanup error: {e}", exc_info=True)
 
     async def _heartbeat_loop(self) -> None:
-        """Send periodic heartbeats."""
+        """Send periodic heartbeats with state persistence."""
         while self._running:
             try:
                 await self.heartbeat()
+                # P0-1: Persist state on heartbeat if configured
+                if self._persistence_interval is not None:
+                    await self.save_state()
+                    logger.debug(
+                        f"[{self.agent_id}] State persisted on heartbeat",
+                        extra={"messages_since_persist": self._messages_since_persist}
+                    )
                 await asyncio.sleep(self.heartbeat_interval)
             except asyncio.CancelledError:
                 break

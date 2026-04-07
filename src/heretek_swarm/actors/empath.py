@@ -68,6 +68,10 @@ class EmpathAgent(AgentActor):
         sentiment_threshold: float = 0.7,
         stress_threshold: float = 0.8,
         max_mood_history: int = 100,
+        pattern_extractor: Optional[PatternExtractor] = None,
+        deliberation_engine: Optional[SwarmDeliberationEngine] = None,
+        access_analyzer: Optional[AccessPatternAnalyzer] = None,
+        zero_trust_validator: Optional[ZeroTrustValidator] = None,
         **kwargs,
     ) -> None:
         """

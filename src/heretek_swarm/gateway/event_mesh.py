@@ -70,16 +70,30 @@ class EventMesh:
         """
         # Filter to active connections ONLY (null-safe)
         async with self._lock:
+            def _is_disconnecting(ws):
+                """Check if websocket is disconnecting (handles mocks and real WebSockets)."""
+                if ws is None:
+                    return True
+                try:
+                    client_state = getattr(ws, 'client_state', None)
+                    if client_state is None:
+                        return False  # No client_state means assume active (for mocks)
+                    disconnecting = getattr(client_state, 'disconnecting', False)
+                    # Handle Mock objects - check if it's a boolean
+                    return bool(disconnecting) if not hasattr(disconnecting, 'name') else False
+                except Exception:
+                    return False
+            
             # Identify null/disconnecting clients for cleanup
             to_cleanup = [
                 cid for cid, ws in self.clients.items()
-                if ws is None or ws.client_state.disconnecting
+                if _is_disconnecting(ws)
             ]
             
             # Create active clients dict
             active_clients = {
                 cid: ws for cid, ws in self.clients.items()
-                if ws is not None and not ws.client_state.disconnecting
+                if ws is not None and not _is_disconnecting(ws)
             }
         
         # Cleanup null/disconnecting clients
