@@ -25,6 +25,16 @@ from memory.persistent import PersistentMemoryStore
 from heretek_swarm.api import websockets, consensus, plugins, workflows, evaluation, observability, rag, consciousness, emergent_intelligence, agents_management, configuration
 from heretek_swarm.api.rate_limiting import setup_rate_limiting
 from heretek_swarm.gateway.auth import verify_auth
+from heretek_swarm.config.service import (
+    initialize_config_service,
+    shutdown_config_service,
+    get_config_service,
+)
+from heretek_swarm.config.loader import (
+    initialize_config_loader,
+    get_config,
+    get_config_loader,
+)
 
 # Import mem0 backend
 try:
@@ -50,16 +60,34 @@ async def lifespan(app: FastAPI):
     # Startup
     logger.info("Starting Heretek Swarm API...")
     
+    # Initialize ConfigurationService FIRST before other services
+    config_source = "environment"
+    try:
+        await initialize_config_service()
+        await initialize_config_loader()
+        
+        # Check if configurations are loaded from database
+        config_service = get_config_service()
+        rate_limit_config = await config_service.get_config("rate_limit.enabled")
+        if rate_limit_config is not None:
+            config_source = "database"
+            logger.info("Configuration loaded from database")
+        else:
+            logger.info("Configuration falling back to environment variables")
+    except Exception as e:
+        logger.warning("ConfigurationService not available", error=str(e))
+        logger.info("Using environment variables for configuration")
+    
     # Initialize supervisor
     supervisor = ActorSupervisor()
     logger.info("ActorSupervisor initialized")
     
     # Initialize memory store
     try:
-        database_url = os.environ.get(
-            "DATABASE_URL",
-            "postgresql+asyncpg://postgres:langfuse@localhost:5432/heretek_swarm"
-        )
+        # Use ConfigurationService to get DATABASE_URL
+        database_url = await get_config("database.url", default=os.environ.get("DATABASE_URL"))
+        if not database_url:
+            raise ValueError("DATABASE_URL is required")
         memory_store = PersistentMemoryStore()
         await memory_store.connect()
         logger.info("PersistentMemoryStore connected")
@@ -70,10 +98,14 @@ async def lifespan(app: FastAPI):
     # Initialize mem0 backend if available
     if MEM0_AVAILABLE:
         try:
+            qdrant_host = await get_config("qdrant.url", default=os.environ.get("QDRANT_HOST", "localhost"))
+            qdrant_port = await get_config("qdrant.port", default=int(os.environ.get("QDRANT_PORT", "6333")))
+            openai_api_key = await get_config("llm.api_key", default=os.environ.get("OPENAI_API_KEY"))
+            
             mem0_config = Mem0Config(
-                qdrant_host=os.environ.get("QDRANT_HOST", "localhost"),
-                qdrant_port=int(os.environ.get("QDRANT_PORT", "6333")),
-                openai_api_key=os.environ.get("OPENAI_API_KEY"),
+                qdrant_host=qdrant_host,
+                qdrant_port=int(qdrant_port),
+                openai_api_key=openai_api_key,
             )
             mem0_backend = Mem0Backend(config=mem0_config)
             await mem0_backend.initialize()
@@ -83,6 +115,13 @@ async def lifespan(app: FastAPI):
             mem0_backend = None
     else:
         logger.info("mem0 not installed - using PostgreSQL memory only")
+    
+    # Log configuration source
+    logger.info(
+        "Application startup complete",
+        config_source=config_source,
+        rate_limit_enabled=await get_config("rate_limit.enabled", default=True),
+    )
     
     yield
     
@@ -97,6 +136,10 @@ async def lifespan(app: FastAPI):
     
     if memory_store:
         await memory_store.disconnect()
+    
+    # Shutdown ConfigurationService
+    await shutdown_config_service()
+    logger.info("ConfigurationService shutdown complete")
 
 
 # Create FastAPI application
@@ -109,14 +152,13 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
-# Add CORS middleware with environment-based configuration
-environment = os.getenv("ENVIRONMENT", "development")
-
-if environment == "production":
-    allowed_origins = os.getenv(
-        "CORS_ORIGINS",
-        "https://your-domain.com"
-    ).split(",")
+# Add CORS middleware with configuration-based configuration
+# Configuration will be loaded from database with environment fallback
+allowed_origins_env = os.getenv("CORS_ORIGINS", "")
+if allowed_origins_env:
+    allowed_origins = allowed_origins_env.split(",")
+elif os.getenv("ENVIRONMENT", "development") == "production":
+    allowed_origins = ["https://your-domain.com"]
 else:
     allowed_origins = ["http://localhost:3000", "http://localhost:5173", "http://localhost:8000"]
 
@@ -141,9 +183,12 @@ app.include_router(emergent_intelligence.router)
 app.include_router(agents_management.router)
 app.include_router(configuration.router)
 
-# Setup rate limiting
+# Setup rate limiting with configuration from database
+# Note: Rate limiting is set up after lifespan starts, so we use environment variable here
+# For runtime config changes, use the /api/config/reload endpoint
 rate_limit_enabled = os.environ.get("RATE_LIMIT_ENABLED", "true").lower() == "true"
 setup_rate_limiting(app, enabled=rate_limit_enabled)
+logger.info("Rate limiting configured", enabled=rate_limit_enabled)
 
 
 # =============================================================================

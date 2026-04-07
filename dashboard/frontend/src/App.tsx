@@ -14,6 +14,8 @@ import { SettingsPage } from './components/Settings/SettingsPage';
 import { LogsPage } from './components/Logs/LogsPage';
 import { ToastProvider, useToast } from './components/UI/Toast';
 import { ErrorBoundary } from './components/UI/ErrorBoundary';
+import { DebugPanel } from './components/UI/DebugPanel';
+import { PerformanceOverlay } from './components/UI/PerformanceOverlay';
 import { setToastInstance } from './api/client';
 
 // Legacy components (keep for compatibility)
@@ -141,6 +143,9 @@ function App() {
   return (
     <ToastProvider>
       <DashboardContent />
+      {/* Debug features - only visible when Developer Mode is enabled */}
+      <DebugPanel />
+      <PerformanceOverlay position="top-right" />
     </ToastProvider>
   );
 }

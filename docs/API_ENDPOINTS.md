@@ -1,216 +1,202 @@
-# API Endpoints
+# Heretek Swarm API Endpoints
 
-**Version:** 1.34.0  
-**Session:** 47 (2026-04-07)
-
-FastAPI REST API reference for the Heretek Swarm system.
-
----
-
-## Table of Contents
-
-1. [Main API](#main-api)
-2. [Workflow Endpoints](#workflow-endpoints)
-3. [Consciousness Endpoints](#consciousness-endpoints)
-4. [Observability Endpoints](#observability-endpoints)
-5. [Plugin Endpoints](#plugin-endpoints)
-6. [Evaluation Endpoints](#evaluation-endpoints)
-7. [RAG Endpoints](#rag-endpoints)
-8. [Rate Limiting](#rate-limiting)
-9. [Integration Endpoints](#integration-endpoints)
-
----
-
-## Integration Endpoints
-
-**File:** [`src/heretek_swarm/integrations/manager.py`](../src/heretek_swarm/integrations/manager.py)
-
-Integration management and lifecycle control for external framework adapters.
-
-### List Integrations
-
-```python
-@router.get("/integrations")
-async def list_integrations() -> Dict[str, Any]:
-    """List all registered integrations."""
-```
-
-**Response:**
-```json
-{
-  "integrations": [
-    {
-      "integration_id": "langgraph-001",
-      "type": "langgraph",
-      "status": "running",
-      "health": "healthy"
-    }
-  ],
-  "total": 1
-}
-```
-
-### Get Integration Details
-
-```python
-@router.get("/integrations/{integration_id}")
-async def get_integration(integration_id: str) -> Dict[str, Any]:
-    """Get integration details and configuration."""
-```
-
-### Start Integration
-
-```python
-@router.post("/integrations/{integration_id}/start")
-async def start_integration(integration_id: str) -> Dict[str, Any]:
-    """Start an integration."""
-```
-
-### Stop Integration
-
-```python
-@router.post("/integrations/{integration_id}/stop")
-async def stop_integration(integration_id: str) -> Dict[str, Any]:
-    """Stop an integration."""
-```
-
-### Health Check
-
-```python
-@router.get("/integrations/{integration_id}/health")
-async def check_health(integration_id: str) -> Dict[str, Any]:
-    """Check integration health status."""
-```
-
-**Response:**
-```json
-{
-  "integration_id": "langgraph-001",
-  "status": "healthy",
-  "last_check": "2026-04-07T00:00:00Z",
-  "uptime_seconds": 3600,
-  "details": {
-    "graphs_active": 3,
-    "checkpoints_stored": 150
-  }
-}
-```
-
-### Get Statistics
-
-```python
-@router.get("/integrations/{integration_id}/statistics")
-async def get_statistics(integration_id: str) -> Dict[str, Any]:
-    """Get integration statistics."""
-```
-
-### LangGraph Endpoints
-
-```python
-@router.get("/integrations/langgraph/graphs")
-async def list_langgraph_graphs() -> Dict[str, Any]:
-    """List all LangGraph graphs."""
-```
-
-### AutoGen Endpoints
-
-```python
-@router.get("/integrations/autogen/agents")
-async def list_autogen_agents() -> Dict[str, Any]:
-    """List all AutoGen agents."""
-```
-
-### CrewAI Endpoints
-
-```python
-@router.get("/integrations/crewai/crews")
-async def list_crewai_crews() -> Dict[str, Any]:
-    """List all CrewAI crews."""
-```
-
-### OpenAI Assistants Endpoints
-
-```python
-@router.get("/integrations/openai/assistants")
-async def list_openai_assistants() -> Dict[str, Any]:
-    """List all OpenAI assistants."""
-```
-
-### Anthropic Endpoints
-
-```python
-@router.get("/integrations/anthropic/conversations")
-async def list_anthropic_conversations() -> Dict[str, Any]:
-    """List all Anthropic conversations."""
-```
-
----
-
-# API Endpoints
-
-**Version:** 1.11.0  
-**Session:** 21 (2026-04-06)
-
-FastAPI REST API reference for the Heretek Swarm system.
+**Version:** 2.0.0  
+**Date:** 2026-04-07  
+**Status:** Production-Ready
 
 ---
 
 ## Table of Contents
 
 1. [Main API](#main-api)
-2. [Workflow Endpoints](#workflow-endpoints)
-3. [Consciousness Endpoints](#consciousness-endpoints)
-4. [Observability Endpoints](#observability-endpoints)
-5. [Plugin Endpoints](#plugin-endpoints)
-6. [Evaluation Endpoints](#evaluation-endpoints)
-7. [RAG Endpoints](#rag-endpoints)
-8. [Rate Limiting](#rate-limiting)
+2. [Health Endpoints](#health-endpoints)
+3. [Agent Management Endpoints](#agent-management-endpoints)
+4. [Workflow Endpoints](#workflow-endpoints)
+5. [Consciousness Endpoints](#consciousness-endpoints)
+6. [Observability Endpoints](#observability-endpoints)
+7. [Plugin Endpoints](#plugin-endpoints)
+8. [Evaluation Endpoints](#evaluation-endpoints)
+9. [RAG Endpoints](#rag-endpoints)
+10. [Configuration Endpoints](#configuration-endpoints)
+11. [Integration Endpoints](#integration-endpoints)
+12. [Rate Limiting](#rate-limiting)
 
 ---
 
 ## Main API
 
-**File:** [`src/heretek_swarm/api/main.py`](../src/heretek_swarm/api/main.py)
+**File:** [`src/heretek_swarm/api/main.py`](src/heretek_swarm/api/main.py)
 
 FastAPI application with all endpoint routers.
 
 ```python
-app = FastAPI(title="Heretek Swarm API", version="1.11.0")
-
-# Include routers
-app.include_router(workflows.router, prefix="/api/workflows")
-app.include_router(consciousness.router, prefix="/api/consciousness")
-app.include_router(observability.router, prefix="/api/observability")
-app.include_router(plugins.router, prefix="/api/plugins")
-app.include_router(evaluation.router, prefix="/api/evaluation")
-app.include_router(rag.router, prefix="/api/rag")
+app = FastAPI(
+    title="Heretek Swarm API",
+    description="Multi-agent swarm orchestration with A2A protocol communication",
+    version="0.1.0",
+    docs_url="/docs",
+    redoc_url="/redoc",
+)
 ```
 
-### Health Endpoints
+### Registered Routers
 
-```python
-@app.get("/health")
-async def health_check() -> Dict[str, Any]:
-    """API health check."""
-    
-@app.get("/ready")
-async def readiness_check() -> Dict[str, Any]:
-    """Readiness probe for Kubernetes."""
-    
-@app.get("/live")
-async def liveness_check() -> Dict[str, Any]:
-    """Liveness probe for Kubernetes."""
+| Router | Prefix | File |
+|--------|--------|------|
+| websockets | - | [`websockets.py`](src/heretek_swarm/api/websockets.py) |
+| consensus | /api/consensus | [`consensus.py`](src/heretek_swarm/api/consensus.py) |
+| plugins | /api/plugins | [`plugins.py`](src/heretek_swarm/api/plugins.py) |
+| workflows | /api/workflows | [`workflows.py`](src/heretek_swarm/api/workflows.py) |
+| observability | /api/observability | [`observability.py`](src/heretek_swarm/api/observability.py) |
+| evaluation | /api/evaluation | [`evaluation.py`](src/heretek_swarm/api/evaluation.py) |
+| rag | /api/rag | [`rag.py`](src/heretek_swarm/api/rag.py) |
+| consciousness | /api/consciousness | [`consciousness.py`](src/heretek_swarm/api/consciousness.py) |
+| emergent_intelligence | /api/v1/emergent-intelligence | [`emergent_intelligence.py`](src/heretek_swarm/api/emergent_intelligence.py) |
+| agents_management | /api/agents | [`agents_management.py`](src/heretek_swarm/api/agents_management.py) |
+| configuration | /api/config | [`configuration.py`](src/heretek_swarm/api/configuration.py) |
+
+---
+
+## Health Endpoints
+
+### API Health Check
+
+```http
+GET /api/health
 ```
 
-### Response Format
-
+**Response:**
 ```json
 {
   "status": "healthy",
-  "version": "1.11.0",
-  "agents": 23,
-  "health_score": 100,
-  "timestamp": "2026-04-06T10:00:00Z"
+  "services": {
+    "gateway": {"status": "healthy", "active_connections": 0},
+    "redis": {"status": "healthy", "version": "7.0.0"},
+    "postgres": {"status": "healthy", "database": "heretek_swarm"},
+    "qdrant": {"status": "healthy", "collections": []}
+  }
+}
+```
+
+### Kubernetes Liveness Probe
+
+```http
+GET /api/health/live
+```
+
+**Response:**
+```json
+{"status": "alive"}
+```
+
+### Kubernetes Readiness Probe
+
+```http
+GET /api/health/ready
+```
+
+**Response:**
+```json
+{"status": "ready"}
+```
+
+---
+
+## Agent Management Endpoints
+
+**File:** [`src/heretek_swarm/api/main.py`](src/heretek_swarm/api/main.py:327)
+
+### List All Agents
+
+```http
+GET /api/agents
+Authorization: Bearer {api_key}
+```
+
+**Response:**
+```json
+{
+  "agents": [
+    {
+      "id": "steward-001",
+      "type": "StewardAgent",
+      "status": "running",
+      "message_count": 1523,
+      "error_count": 0,
+      "last_activity": "2026-04-07T15:00:00Z"
+    }
+  ],
+  "total": 23
+}
+```
+
+### Get Agent Details
+
+```http
+GET /api/agents/{agent_id}
+Authorization: Bearer {api_key}
+```
+
+**Response:**
+```json
+{
+  "id": "steward-001",
+  "type": "StewardAgent",
+  "status": "running",
+  "message_count": 1523,
+  "error_count": 0,
+  "last_activity": "2026-04-07T15:00:00Z",
+  "topics": ["deliberation", "orchestration"],
+  "capabilities": ["process_message", "send_message", "broadcast"]
+}
+```
+
+### Get Agent Metrics
+
+```http
+GET /api/agents/{agent_id}/metrics
+Authorization: Bearer {api_key}
+```
+
+**Response:**
+```json
+{
+  "agent_id": "steward-001",
+  "messages_processed": 1523,
+  "errors": 0,
+  "uptime_seconds": 3600
+}
+```
+
+### Terminate Agent
+
+```http
+POST /api/agents/{agent_id}/terminate
+Authorization: Bearer {api_key}
+```
+
+**Response:**
+```json
+{
+  "status": "terminated",
+  "agent_id": "steward-001"
+}
+```
+
+### Supervisor Status
+
+```http
+GET /api/supervisor/status
+Authorization: Bearer {api_key}
+```
+
+**Response:**
+```json
+{
+  "total_actors": 23,
+  "active_actors": 23,
+  "suspended_actors": 0,
+  "terminating_actors": 0
 }
 ```
 
@@ -218,16 +204,14 @@ async def liveness_check() -> Dict[str, Any]:
 
 ## Workflow Endpoints
 
-**File:** [`src/heretek_swarm/api/workflows.py`](../src/heretek_swarm/api/workflows.py)
-
-Workflow execution and management.
+**File:** [`src/heretek_swarm/api/workflows.py`](src/heretek_swarm/api/workflows.py)
 
 ### Execute Workflow
 
-```python
-@router.post("/execute")
-async def execute_workflow(request: WorkflowRequest) -> WorkflowResponse:
-    """Execute workflow with specified agents."""
+```http
+POST /api/workflows/execute
+Authorization: Bearer {api_key}
+Content-Type: application/json
 ```
 
 **Request:**
@@ -237,7 +221,7 @@ async def execute_workflow(request: WorkflowRequest) -> WorkflowResponse:
   "agents": ["steward-001", "alpha-001", "beta-001", "charlie-001"],
   "input": {
     "topic": "System architecture decision",
-    "context": {...}
+    "context": {}
   },
   "timeout": 300
 }
@@ -248,17 +232,16 @@ async def execute_workflow(request: WorkflowRequest) -> WorkflowResponse:
 {
   "workflow_id": "deliberation-001",
   "status": "running",
-  "started_at": "2026-04-06T10:00:00Z",
-  "estimated_completion": "2026-04-06T10:05:00Z"
+  "started_at": "2026-04-07T15:00:00Z",
+  "estimated_completion": "2026-04-07T15:05:00Z"
 }
 ```
 
 ### Get Workflow Status
 
-```python
-@router.get("/status/{workflow_id}")
-async def get_workflow_status(workflow_id: str) -> WorkflowStatus:
-    """Get workflow execution status."""
+```http
+GET /api/workflows/status/{workflow_id}
+Authorization: Bearer {api_key}
 ```
 
 **Response:**
@@ -271,35 +254,28 @@ async def get_workflow_status(workflow_id: str) -> WorkflowStatus:
     "confidence": 0.95,
     "reasoning": "..."
   },
-  "completed_at": "2026-04-06T10:04:32Z"
+  "completed_at": "2026-04-07T15:04:32Z"
 }
 ```
 
 ### List Workflows
 
-```python
-@router.get("/list")
-async def list_workflows(
-    state: Optional[str] = None,
-    limit: int = 100
-) -> List[WorkflowInfo]:
-    """List workflows with optional state filter."""
+```http
+GET /api/workflows/list?state=running&limit=100
+Authorization: Bearer {api_key}
 ```
 
 ---
 
 ## Consciousness Endpoints
 
-**File:** [`src/heretek_swarm/api/consciousness.py`](../src/heretek_swarm/api/consciousness.py)
-
-Consciousness metrics and global workspace operations.
+**File:** [`src/heretek_swarm/api/consciousness.py`](src/heretek_swarm/api/consciousness.py)
 
 ### Get Global Metrics
 
-```python
-@router.get("/metrics")
-async def get_consciousness_metrics() -> ConsciousnessMetricsResponse:
-    """Get global consciousness metrics."""
+```http
+GET /api/consciousness/metrics
+Authorization: Bearer {api_key}
 ```
 
 **Response:**
@@ -311,16 +287,15 @@ async def get_consciousness_metrics() -> ConsciousnessMetricsResponse:
   "average_free_energy": 0.15,
   "consciousness_state": "conscious",
   "agent_count": 23,
-  "timestamp": "2026-04-06T10:00:00Z"
+  "timestamp": "2026-04-07T15:00:00Z"
 }
 ```
 
 ### Get Agent Metrics
 
-```python
-@router.get("/agent/{agent_id}/metrics")
-async def get_agent_metrics(agent_id: str) -> AgentMetricsResponse:
-    """Get metrics for specific agent."""
+```http
+GET /api/consciousness/agent/{agent_id}/metrics
+Authorization: Bearer {api_key}
 ```
 
 **Response:**
@@ -333,16 +308,16 @@ async def get_agent_metrics(agent_id: str) -> AgentMetricsResponse:
   "free_energy": 0.12,
   "consciousness_state": "highly_conscious",
   "attention_focus": "deliberation_orchestration",
-  "timestamp": "2026-04-06T10:00:00Z"
+  "timestamp": "2026-04-07T15:00:00Z"
 }
 ```
 
 ### Submit to Workspace
 
-```python
-@router.post("/workspace/submit")
-async def submit_to_workspace(request: WorkspaceSubmitRequest) -> str:
-    """Submit content to global workspace."""
+```http
+POST /api/consciousness/workspace/submit
+Authorization: Bearer {api_key}
+Content-Type: application/json
 ```
 
 **Request:**
@@ -358,38 +333,28 @@ async def submit_to_workspace(request: WorkspaceSubmitRequest) -> str:
 ```json
 {
   "workspace_id": "ws-123456",
-  "submitted_at": "2026-04-06T10:00:00Z"
+  "submitted_at": "2026-04-07T15:00:00Z"
 }
 ```
 
 ### Get Workspace Contents
 
-```python
-@router.get("/workspace")
-async def get_workspace_contents(
-    limit: int = 10,
-    attended_only: bool = False
-) -> List[GlobalWorkspaceItem]:
-    """Get current workspace contents."""
+```http
+GET /api/consciousness/workspace?limit=10&attended_only=false
+Authorization: Bearer {api_key}
 ```
 
 ---
 
 ## Observability Endpoints
 
-**File:** [`src/heretek_swarm/api/observability.py`](../src/heretek_swarm/api/observability.py)
-
-Tracing, metrics, and monitoring.
+**File:** [`src/heretek_swarm/api/observability.py`](src/heretek_swarm/api/observability.py)
 
 ### Get Traces
 
-```python
-@router.get("/traces")
-async def get_traces(
-    agent_id: Optional[str] = None,
-    limit: int = 100
-) -> List[Trace]:
-    """Get execution traces."""
+```http
+GET /api/observability/traces?agent_id=steward-001&limit=100
+Authorization: Bearer {api_key}
 ```
 
 **Response:**
@@ -401,17 +366,16 @@ async def get_traces(
     "operation": "deliberation",
     "duration_ms": 1523,
     "status": "success",
-    "timestamp": "2026-04-06T10:00:00Z"
+    "timestamp": "2026-04-07T15:00:00Z"
   }
 ]
 ```
 
 ### Get Latency Metrics
 
-```python
-@router.get("/metrics/latency")
-async def get_latency_metrics() -> LatencyMetrics:
-    """Get latency statistics."""
+```http
+GET /api/observability/metrics/latency
+Authorization: Bearer {api_key}
 ```
 
 **Response:**
@@ -427,47 +391,22 @@ async def get_latency_metrics() -> LatencyMetrics:
 
 ### Get Agent Status
 
-```python
-@router.get("/agents/status")
-async def get_all_agents_status() -> Dict[str, AgentStatus]:
-    """Get status of all agents."""
-```
-
-**Response:**
-```json
-{
-  "steward-001": {
-    "state": "running",
-    "health_score": 100,
-    "message_count": 1523,
-    "last_activity": "2026-04-06T10:00:00Z"
-  },
-  "alpha-001": {...}
-}
-```
-
-### Get Single Agent Status
-
-```python
-@router.get("/agents/{agent_id}/status")
-async def get_agent_status(agent_id: str) -> AgentStatus:
-    """Get status of specific agent."""
+```http
+GET /api/observability/agents/status
+Authorization: Bearer {api_key}
 ```
 
 ---
 
 ## Plugin Endpoints
 
-**File:** [`src/heretek_swarm/api/plugins.py`](../src/heretek_swarm/api/plugins.py)
-
-Plugin management and operations.
+**File:** [`src/heretek_swarm/api/plugins.py`](src/heretek_swarm/api/plugins.py)
 
 ### List Plugins
 
-```python
-@router.get("/list")
-async def list_plugins() -> List[PluginInfo]:
-    """List all loaded plugins."""
+```http
+GET /api/plugins/list
+Authorization: Bearer {api_key}
 ```
 
 **Response:**
@@ -490,42 +429,37 @@ async def list_plugins() -> List[PluginInfo]:
 
 ### Enable Plugin
 
-```python
-@router.post("/{plugin_name}/enable")
-async def enable_plugin(plugin_name: str) -> Dict[str, Any]:
-    """Enable a plugin."""
+```http
+POST /api/plugins/{plugin_name}/enable
+Authorization: Bearer {api_key}
 ```
 
 ### Disable Plugin
 
-```python
-@router.post("/{plugin_name}/disable")
-async def disable_plugin(plugin_name: str) -> Dict[str, Any]:
-    """Disable a plugin."""
+```http
+POST /api/plugins/{plugin_name}/disable
+Authorization: Bearer {api_key}
 ```
 
 ### Get Plugin Status
 
-```python
-@router.get("/{plugin_name}/status")
-async def get_plugin_status(plugin_name: str) -> PluginStatus:
-    """Get plugin status and metrics."""
+```http
+GET /api/plugins/{plugin_name}/status
+Authorization: Bearer {api_key}
 ```
 
 ---
 
 ## Evaluation Endpoints
 
-**File:** [`src/heretek_swarm/api/evaluation.py`](../src/heretek_swarm/api/evaluation.py)
-
-Agent and workflow evaluation.
+**File:** [`src/heretek_swarm/api/evaluation.py`](src/heretek_swarm/api/evaluation.py)
 
 ### Run Evaluation
 
-```python
-@router.post("/run")
-async def run_evaluation(request: EvalRequest) -> EvalResponse:
-    """Run evaluation on agent or workflow."""
+```http
+POST /api/evaluation/run
+Authorization: Bearer {api_key}
+Content-Type: application/json
 ```
 
 **Request:**
@@ -553,47 +487,37 @@ async def run_evaluation(request: EvalRequest) -> EvalResponse:
 
 ### Get Evaluation Results
 
-```python
-@router.get("/results/{eval_id}")
-async def get_eval_results(eval_id: str) -> EvalResults:
-    """Get evaluation results."""
+```http
+GET /api/evaluation/results/{eval_id}
+Authorization: Bearer {api_key}
 ```
 
 ### List Evaluations
 
-```python
-@router.get("/list")
-async def list_evaluations(
-    target_type: Optional[str] = None,
-    limit: int = 100
-) -> List[EvalSummary]:
-    """List past evaluations."""
+```http
+GET /api/evaluation/list?target_type=agent&limit=100
+Authorization: Bearer {api_key}
 ```
 
 ---
 
 ## RAG Endpoints
 
-**File:** [`src/heretek_swarm/api/rag.py`](../src/heretek_swarm/api/rag.py)
-
-Retrieval-Augmented Generation operations.
+**File:** [`src/heretek_swarm/api/rag.py`](src/heretek_swarm/api/rag.py)
 
 ### Ingest Document
 
-```python
-@router.post("/ingest")
-async def ingest_document(request: IngestRequest) -> IngestResponse:
-    """Ingest document into RAG system."""
+```http
+POST /api/rag/ingest
+Authorization: Bearer {api_key}
+Content-Type: application/json
 ```
 
 **Request:**
 ```json
 {
   "document": "Document content...",
-  "metadata": {
-    "source": "manual",
-    "category": "knowledge"
-  },
+  "metadata": {"source": "manual", "category": "knowledge"},
   "chunk_size": 500,
   "chunk_overlap": 50
 }
@@ -604,16 +528,16 @@ async def ingest_document(request: IngestRequest) -> IngestResponse:
 {
   "document_id": "doc-123",
   "chunks_created": 15,
-  "ingested_at": "2026-04-06T10:00:00Z"
+  "ingested_at": "2026-04-07T15:00:00Z"
 }
 ```
 
 ### Query Documents
 
-```python
-@router.post("/query")
-async def query_documents(request: QueryRequest) -> QueryResponse:
-    """Query documents with RAG."""
+```http
+POST /api/rag/query
+Authorization: Bearer {api_key}
+Content-Type: application/json
 ```
 
 **Request:**
@@ -634,7 +558,7 @@ async def query_documents(request: QueryRequest) -> QueryResponse:
       "chunk_id": "chunk-123",
       "content": "The deliberation process involves...",
       "score": 0.92,
-      "metadata": {...}
+      "metadata": {}
     }
   ]
 }
@@ -642,19 +566,245 @@ async def query_documents(request: QueryRequest) -> QueryResponse:
 
 ### Delete Document
 
-```python
-@router.delete("/documents/{document_id}")
-async def delete_document(document_id: str) -> Dict[str, Any]:
-    """Delete document from RAG system."""
+```http
+DELETE /api/rag/documents/{document_id}
+Authorization: Bearer {api_key}
+```
+
+---
+
+## Configuration Endpoints
+
+**File:** [`src/heretek_swarm/api/configuration.py`](src/heretek_swarm/api/configuration.py)
+
+### List Configurations
+
+```http
+GET /api/config
+Authorization: Bearer {api_key}
+```
+
+### Get Configuration
+
+```http
+GET /api/config/{key}
+Authorization: Bearer {api_key}
+```
+
+### Update Configuration
+
+```http
+PUT /api/config/{key}
+Authorization: Bearer {api_key}
+Content-Type: application/json
+```
+
+### Create Configuration
+
+```http
+POST /api/config
+Authorization: Bearer {api_key}
+Content-Type: application/json
+```
+
+### Delete Configuration
+
+```http
+DELETE /api/config/{key}
+Authorization: Bearer {api_key}
+```
+
+### LLM Providers
+
+```http
+GET /api/config/llm/providers
+POST /api/config/llm/providers
+PUT /api/config/llm/providers/{id}
+DELETE /api/config/llm/providers/{id}
+POST /api/config/llm/providers/{id}/test
+GET /api/config/llm/types
+```
+
+### Embedding Providers
+
+```http
+GET /api/config/embedding/providers
+POST /api/config/embedding/providers
+PUT /api/config/embedding/providers/{id}
+DELETE /api/config/embedding/providers/{id}
+POST /api/config/embedding/providers/{id}/test
+GET /api/config/embedding/types
+```
+
+### Import/Export
+
+```http
+GET /api/config/export
+POST /api/config/import
+POST /api/config/migrate-from-env
+```
+
+---
+
+## Integration Endpoints
+
+**File:** [`src/heretek_swarm/integrations/manager.py`](src/heretek_swarm/integrations/manager.py)
+
+### List Integrations
+
+```http
+GET /api/v1/integrations
+Authorization: Bearer {api_key}
+```
+
+**Response:**
+```json
+{
+  "integrations": [
+    {
+      "integration_id": "langgraph-001",
+      "type": "langgraph",
+      "status": "running",
+      "health": "healthy"
+    }
+  ],
+  "total": 1
+}
+```
+
+### Get Integration Details
+
+```http
+GET /api/v1/integrations/{integration_id}
+Authorization: Bearer {api_key}
+```
+
+### Start Integration
+
+```http
+POST /api/v1/integrations/{integration_id}/start
+Authorization: Bearer {api_key}
+```
+
+### Stop Integration
+
+```http
+POST /api/v1/integrations/{integration_id}/stop
+Authorization: Bearer {api_key}
+```
+
+### Health Check
+
+```http
+GET /api/v1/integrations/{integration_id}/health
+Authorization: Bearer {api_key}
+```
+
+### Get Statistics
+
+```http
+GET /api/v1/integrations/{integration_id}/statistics
+Authorization: Bearer {api_key}
+```
+
+### LangGraph Endpoints
+
+```http
+GET /api/v1/integrations/langgraph/graphs
+```
+
+### AutoGen Endpoints
+
+```http
+GET /api/v1/integrations/autogen/agents
+```
+
+### CrewAI Endpoints
+
+```http
+GET /api/v1/integrations/crewai/crews
+```
+
+### OpenAI Assistants Endpoints
+
+```http
+GET /api/v1/integrations/openai/assistants
+```
+
+### Anthropic Endpoints
+
+```http
+GET /api/v1/integrations/anthropic/conversations
+```
+
+---
+
+## Memory Endpoints
+
+**File:** [`src/heretek_swarm/api/main.py`](src/heretek_swarm/api/main.py:459)
+
+### Get Memory Stats
+
+```http
+GET /api/memory
+Authorization: Bearer {api_key}
+```
+
+**Response:**
+```json
+{
+  "total_memories": 1523,
+  "by_agent": {"steward-001": 500, "alpha-001": 300},
+  "by_type": {"episodic": 1000, "semantic": 523},
+  "status": "available"
+}
+```
+
+### Get mem0 Stats
+
+```http
+GET /api/memory/mem0
+Authorization: Bearer {api_key}
+```
+
+### Search mem0
+
+```http
+POST /api/memory/mem0/search?query={query}&agent_id={agent_id}&limit=10
+Authorization: Bearer {api_key}
+```
+
+### Get Agent Memories
+
+```http
+GET /api/memory/mem0/agents/{agent_id}?limit=100
+Authorization: Bearer {api_key}
+```
+
+---
+
+## A2A Message Endpoints
+
+**File:** [`src/heretek_swarm/api/main.py`](src/heretek_swarm/api/main.py:670)
+
+### Get Recent Messages
+
+```http
+GET /api/a2a/messages?limit=100
+Authorization: Bearer {api_key}
+```
+
+### Get Conversation
+
+```http
+GET /api/a2a/messages/{from_agent}/{to_agent}?limit=50
 ```
 
 ---
 
 ## Rate Limiting
 
-**File:** [`src/heretek_swarm/api/rate_limiting.py`](../src/heretek_swarm/api/rate_limiting.py)
-
-API rate limiting configuration.
+**File:** [`src/heretek_swarm/api/rate_limiting.py`](src/heretek_swarm/api/rate_limiting.py)
 
 ### Rate Limit Tiers
 
@@ -694,7 +844,7 @@ X-RateLimit-Reset: 1649260800
   "error": {
     "code": "AGENT_NOT_FOUND",
     "message": "Agent 'steward-001' not found",
-    "details": {...}
+    "details": {}
   }
 }
 ```
@@ -716,45 +866,17 @@ X-RateLimit-Reset: 1649260800
 
 ---
 
-## WebSocket Endpoints
+## Authentication
 
-**File:** [`src/heretek_swarm/api/websockets.py`](../src/heretek_swarm/api/websockets.py)
+All endpoints except health checks require Bearer token authentication:
 
-Real-time WebSocket communication.
-
-### Connect
-
-```
-ws://localhost:8000/ws?client_id=client-001
+```http
+Authorization: Bearer {api_key}
 ```
 
-### Messages
-
-**Client to Server:**
-```json
-{
-  "type": "subscribe",
-  "channel": "agent_events"
-}
-```
-
-**Server to Client:**
-```json
-{
-  "type": "agent_event",
-  "data": {
-    "agent_id": "steward-001",
-    "event": "message_processed",
-    "timestamp": "2026-04-06T10:00:00Z"
-  }
-}
-```
+API keys are managed through the ConfigurationService and can be created via the UI or API.
 
 ---
 
-## See Also
-
-- [Core Actors System](./CORE_ACTORS.md) - Agent base classes
-- [Agent Reference](./AGENT_REFERENCE.md) - All 23 agents
-- [Gateway & Communication](./GATEWAY_COMMUNICATION.md) - A2A protocol
-- [Deployment Guide](./DEPLOYMENT.md) - Setup instructions
+**License:** Apache 2.0  
+**GitHub:** [Heretek-AI/heretek-swarm](https://github.com/Heretek-AI/heretek-swarm)

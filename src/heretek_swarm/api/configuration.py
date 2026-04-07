@@ -8,6 +8,7 @@ Provides CRUD operations through a RESTful API.
 from __future__ import annotations
 
 import json
+from datetime import datetime
 from typing import Any, Dict, List, Optional
 from uuid import UUID
 
@@ -542,3 +543,153 @@ async def migrate_from_env(
     """Migrate configurations from environment variables to database."""
     result = await service.migrate_from_env(changed_by=authenticated)
     return result
+
+
+# =============================================================================
+# Configuration Reload Endpoint
+# =============================================================================
+
+@router.post("/reload")
+async def reload_configurations(
+    authenticated: str = Depends(verify_auth),
+    service: ConfigurationService = Depends(get_service),
+) -> Dict[str, Any]:
+    """
+    Reload configuration cache from database.
+    
+    This endpoint invalidates the cached configurations and reloads them
+    from the database. Useful for applying configuration changes at runtime
+    without restarting the application.
+    
+    Returns:
+        Reload status and cache statistics
+    """
+    from heretek_swarm.config.loader import get_config_loader, reload_config
+    
+    try:
+        # Reload the configuration cache
+        reload_result = await reload_config()
+        
+        # Get cache stats
+        loader = get_config_loader()
+        cache_stats = loader.get_cache_stats()
+        
+        logger.info("Configuration reloaded", cached_keys=reload_result.get("cached_keys", []))
+        
+        return {
+            "status": "reloaded",
+            "cached_keys": reload_result.get("cached_keys", []),
+            "cache_count": reload_result.get("cache_count", 0),
+            "cache_stats": cache_stats,
+            "reloaded_by": authenticated,
+            "reloaded_at": datetime.utcnow().isoformat() if hasattr(datetime, 'utcnow') else datetime.now().isoformat(),
+        }
+    except Exception as e:
+        logger.error("Configuration reload failed", error=str(e))
+        raise HTTPException(500, f"Configuration reload failed: {e}")
+
+
+# =============================================================================
+# Configuration Health Check Endpoint
+# =============================================================================
+
+@router.get("/health")
+async def configuration_health(
+    service: ConfigurationService = Depends(get_service),
+) -> Dict[str, Any]:
+    """
+    Check configuration service health status.
+    
+    Returns:
+        Health status including database connectivity and cache status
+    """
+    from heretek_swarm.config.loader import get_config_loader
+    
+    try:
+        # Test database connectivity
+        test_config = await service.get_config("system.health_check")
+        database_healthy = test_config is not None or True  # Config may not exist but connection works
+        
+        # Get cache stats
+        loader = get_config_loader()
+        cache_stats = loader.get_cache_stats()
+        
+        return {
+            "status": "healthy",
+            "database_connected": database_healthy,
+            "cache_entries": cache_stats.get("total_entries", 0),
+            "cache_hit_rate": cache_stats.get("hit_rate", 0),
+        }
+    except Exception as e:
+        return {
+            "status": "unhealthy",
+            "database_connected": False,
+            "error": str(e),
+        }
+
+
+# =============================================================================
+# Configuration Import/Export Enhanced Endpoints
+# =============================================================================
+
+@router.get("/export/bundle")
+async def export_configuration_bundle(
+    authenticated: str = Depends(verify_auth),
+    service: ConfigurationService = Depends(get_service),
+) -> Dict[str, Any]:
+    """
+    Export all configurations as a downloadable bundle.
+    
+    Returns:
+        Complete configuration export with metadata
+    """
+    from datetime import datetime
+    
+    export_data = await service.export_configurations(exported_by=authenticated)
+    
+    return {
+        "version": export_data.version,
+        "exported_at": export_data.exported_at.isoformat(),
+        "exported_by": export_data.exported_by,
+        "user_configurations": [uc.model_dump() for uc in export_data.user_configurations],
+        "llm_providers": [p.model_dump() for p in export_data.llm_providers],
+        "embedding_providers": [p.model_dump() for p in export_data.embedding_providers],
+        "agent_configs": [c.model_dump() for c in export_data.agent_configs],
+        "summary": {
+            "user_config_count": len(export_data.user_configurations),
+            "llm_provider_count": len(export_data.llm_providers),
+            "embedding_provider_count": len(export_data.embedding_providers),
+            "agent_config_count": len(export_data.agent_configs),
+        },
+    }
+
+
+@router.post("/import/bundle")
+async def import_configuration_bundle(
+    import_data: ConfigurationImport,
+    options: ImportOptions = ImportOptions(),
+    authenticated: str = Depends(verify_auth),
+    service: ConfigurationService = Depends(get_service),
+) -> Dict[str, Any]:
+    """
+    Import configurations from a bundle.
+    
+    Args:
+        import_data: Configuration bundle to import
+        options: Import options (skip_conflicts, etc.)
+        authenticated: Authenticated user
+        
+    Returns:
+        Import result summary
+    """
+    result = await service.import_configurations(import_data, options, changed_by=authenticated)
+    
+    return {
+        "success": result.success,
+        "imported_count": result.imported_count,
+        "skipped_count": result.skipped_count,
+        "error_count": result.error_count,
+        "errors": result.errors,
+        "imported_by": authenticated,
+        "imported_at": datetime.utcnow().isoformat(),
+    }

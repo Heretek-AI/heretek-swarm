@@ -119,7 +119,7 @@ For production Kubernetes deployment, see [`k8s/README.md`](k8s/README.md).
 - System health score: 100/100
 - Production deployment ready
 
-**Documentation:** See [`docs/ARCHITECTURE_2026.md`](docs/ARCHITECTURE_2026.md) for complete architectural transition details.
+**Documentation:** See [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) for complete architectural details.
 
 ---
 
@@ -445,11 +445,17 @@ asyncio.run(main())
 
 | Document | Description | Status |
 |----------|-------------|--------|
-| [`PRIME_DIRECTIVE.md`](PRIME_DIRECTIVE.md) | 23-agent vision and architecture | ✅ Accurate |
-| [`docs/REMEDIATION_BACKLOG.md`](docs/REMEDIATION_BACKLOG.md) | Zero-Trust Audit Phase 5 Master Report | ✅ Critical reading |
-| [`docs/EXPANSION_ROADMAP.md`](docs/EXPANSION_ROADMAP.md) | AI & brain-mapping integration | ✅ Accurate |
-| [`docs/API_ENDPOINTS.md`](docs/API_ENDPOINTS.md) | API reference | Partially accurate |
-| [`docs/ARCHITECTURE/`](docs/architecture/) | Architecture documentation | Aspirational |
+| [`README.md`](README.md) | **This file** - Quick start and project overview | ✅ Current |
+| [`docs/ARCHITECTURE.md`](docs/ARCHITECTURE.md) | System architecture, 23 agents, memory, event mesh | ✅ Current |
+| [`docs/API_ENDPOINTS.md`](docs/API_ENDPOINTS.md) | Complete API reference | ✅ Current |
+| [`docs/DEPLOYMENT.md`](docs/DEPLOYMENT.md) | Deployment guide (Docker Compose & Kubernetes) | ✅ Current |
+| [`docs/AUTONOMOUS_WORKFLOW.md`](docs/AUTONOMOUS_WORKFLOW.md) | Autonomous 24/7 operation guide | ✅ Current |
+| [`docs/CONSCIOUSNESS_PLUGINS.md`](docs/CONSCIOUSNESS_PLUGINS.md) | Consciousness framework (GWT, IIT, AST, FEP) | ✅ Current |
+| [`docs/EXPANSION_ROADMAP.md`](docs/EXPANSION_ROADMAP.md) | Development roadmap and gap analysis | ✅ Current |
+| [`docs/REMEDIATION_BACKLOG.md`](docs/REMEDIATION_BACKLOG.md) | Zero-Trust Audit findings and remediation | ✅ Current |
+| [`PRIME_DIRECTIVE.md`](PRIME_DIRECTIVE.md) | 23-agent vision and guiding philosophy | ✅ Current |
+| [`k8s/README.md`](k8s/README.md) | Kubernetes deployment guide | ✅ Current |
+| [`dashboard/frontend/README.md`](dashboard/frontend/README.md) | Frontend dashboard documentation | ✅ Current |
 
 ---
 

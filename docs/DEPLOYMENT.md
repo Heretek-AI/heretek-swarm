@@ -1,23 +1,35 @@
 # Heretek Swarm Deployment Guide
 
-## Complete Setup and Deployment Instructions
-
-**Version:** 1.11.0  
-**Session:** 21 (2026-04-06)  
-**Health Score:** 100/100
+**Version:** 2.0.0  
+**Date:** 2026-04-07  
+**Status:** Production-Ready
 
 ---
 
 ## Table of Contents
 
-1. [Prerequisites](#prerequisites)
-2. [Quick Start](#quick-start)
-3. [Local Development Setup](#local-development-setup)
-4. [Docker Deployment](#docker-deployment)
-5. [Kubernetes Deployment](#kubernetes-deployment)
-6. [Production Deployment](#production-deployment)
-7. [Configuration Reference](#configuration-reference)
-8. [Troubleshooting](#troubleshooting)
+1. [Overview](#overview)
+2. [Prerequisites](#prerequisites)
+3. [Quick Start](#quick-start)
+4. [Docker Compose Deployment](#docker-compose-deployment)
+5. [Autonomous Mode Deployment](#autonomous-mode-deployment)
+6. [Kubernetes Deployment](#kubernetes-deployment)
+7. [Environment Variables Reference](#environment-variables-reference)
+8. [Configuration Migration](#configuration-migration)
+9. [Troubleshooting](#troubleshooting)
+
+---
+
+## Overview
+
+The Heretek Swarm can be deployed in several configurations:
+
+| Deployment | Use Case | Complexity |
+|------------|----------|------------|
+| Docker Compose | Development, testing, small production | Low |
+| Docker Compose (Autonomous) | 24/7 autonomous operation | Low |
+| Kubernetes | Production, scaling, high availability | Medium |
+| Systemd | Bare-metal Linux deployment | Medium |
 
 ---
 
@@ -25,13 +37,13 @@
 
 ### Required Software
 
-| Software | Version | Purpose |
-|----------|---------|---------|
+| Software | Minimum Version | Purpose |
+|----------|-----------------|---------|
 | Python | 3.11+ | Runtime |
 | Node.js | 18+ | Dashboard frontend |
 | Docker | 24+ | Containerization |
 | Docker Compose | 2.20+ | Multi-container orchestration |
-| kubectl | 1.28+ | Kubernetes CLI (for K8s deployment) |
+| kubectl | 1.28+ | Kubernetes CLI (for K8s) |
 | Helm | 3.13+ | Kubernetes package manager (optional) |
 
 ### Infrastructure Requirements
@@ -48,9 +60,10 @@
 | Service | Purpose | Required |
 |---------|---------|----------|
 | OpenAI API | LLM integration | Yes (for AI features) |
-| PostgreSQL 15+ | Persistent storage | Yes |
+| PostgreSQL 15+ | State persistence | Yes |
 | Redis 7+ | Caching & pub/sub | Yes |
-| Qdrant 1.7+ | Vector memory | Yes (for mem0) |
+| Qdrant 1.8+ | Vector memory | Yes |
+| NATS 2.10+ | Event mesh | Yes |
 
 ---
 
@@ -70,10 +83,10 @@ cd heretek-swarm
 cp .env.example .env
 
 # Edit with your credentials
-nano .env  # or use your preferred editor
+nano .env
 ```
 
-### 3. Start with Docker
+### 3. Start with Docker Compose
 
 ```bash
 # Build and start all services
@@ -97,115 +110,7 @@ curl http://localhost:8000/health
 
 ---
 
-## Local Development Setup
-
-### Step 1: Install Python Dependencies
-
-```bash
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # Linux/Mac
-# or: venv\Scripts\activate  # Windows
-
-# Install with dev dependencies
-pip install -e ".[dev]"
-
-# Verify installation
-python -c "from heretek_swarm.actors import StewardAgent; print('OK')"
-```
-
-### Step 2: Setup Database
-
-```bash
-# Start PostgreSQL (Docker)
-docker run -d --name postgres \
-  -e POSTGRES_USER=postgres \
-  -e POSTGRES_PASSWORD=postgres \
-  -e POSTGRES_DB=heretek_swarm \
-  -p 5432:5432 \
-  postgres:15
-
-# Run migrations
-python scripts/run_migrations.py
-
-# Verify tables
-psql postgresql://postgres:postgres@localhost:5432/heretek_swarm -c "\dt"
-```
-
-### Step 3: Setup Redis
-
-```bash
-# Start Redis (Docker)
-docker run -d --name redis \
-  -p 6379:6379 \
-  redis:7-alpine
-
-# Test connection
-redis-cli ping  # Should return: PONG
-```
-
-### Step 4: Setup Qdrant
-
-```bash
-# Start Qdrant (Docker)
-docker run -d --name qdrant \
-  -p 6333:6333 \
-  -p 6334:6334 \
-  qdrant/qdrant:latest
-
-# Test connection
-curl http://localhost:6333/
-```
-
-### Step 5: Start API Server
-
-```bash
-# Development mode with auto-reload
-uvicorn heretek_swarm.api.main:app \
-  --reload \
-  --host 0.0.0.0 \
-  --port 8000
-
-# Production mode
-uvicorn heretek_swarm.api.main:app \
-  --host 0.0.0.0 \
-  --port 8000 \
-  --workers 4
-```
-
-### Step 6: Run Tests
-
-```bash
-# Run all tests
-pytest tests/ -v
-
-# Run with coverage
-pytest tests/ -v --cov=src/heretek_swarm --cov-report=html
-
-# Run specific test category
-pytest tests/actors/ -v
-pytest tests/memory/ -v
-pytest tests/plugins/ -v
-```
-
-### Step 7: Setup Dashboard (Optional)
-
-```bash
-cd dashboard
-
-# Install dependencies
-npm install
-
-# Start development server
-npm run dev
-
-# Build for production
-npm run build
-```
-
----
-
-## Docker Deployment
+## Docker Compose Deployment
 
 ### Architecture
 
@@ -346,6 +251,77 @@ curl http://localhost:6333/
 
 ---
 
+## Autonomous Mode Deployment
+
+For 24/7 autonomous operation, use the autonomous Docker Compose configuration.
+
+### docker-compose.autonomous.yml
+
+```yaml
+version: '3.8'
+
+services:
+  heretek-swarm-autonomous:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.autonomous
+    ports:
+      - "8000:8000"   # API Gateway
+      - "18789:18789" # A2A Protocol
+      - "18790:18790" # MCP Server
+    environment:
+      - DATABASE_URL=postgresql://postgres:postgres@postgres:5432/heretek_swarm
+      - REDIS_URL=redis://redis:6379
+      - QDRANT_HOST=qdrant
+      - NATS_SERVERS=nats://nats:4222
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+    depends_on:
+      - postgres
+      - redis
+      - qdrant
+      - nats
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  nats:
+    image: nats:latest
+    ports:
+      - "4222:4222"
+      - "8222:8222"
+    command: ["-js"]  # Enable JetStream
+    restart: unless-stopped
+
+  # ... (postgres, redis, qdrant same as above)
+```
+
+### Commands
+
+```bash
+# Start autonomous mode
+docker-compose -f docker-compose.autonomous.yml up -d
+
+# View autonomous swarm logs
+docker-compose -f docker-compose.autonomous.yml logs -f heretek-swarm-autonomous
+
+# Check service health
+curl http://localhost:8000/health
+curl http://localhost:18789/health  # A2A Protocol
+curl http://localhost:18790/health  # MCP Server
+
+# Access services
+# API Gateway:    http://localhost:8000
+# A2A Protocol:   http://localhost:18789
+# MCP Server:     http://localhost:18790
+# Qdrant UI:      http://localhost:6333/dashboard
+# NATS Monitor:   http://localhost:8222
+```
+
+---
+
 ## Kubernetes Deployment
 
 ### Prerequisites
@@ -458,95 +434,9 @@ kubectl delete namespace heretek-swarm
 
 ---
 
-## Production Deployment
+## Environment Variables Reference
 
-### Security Checklist
-
-- [ ] API keys rotated and secured
-- [ ] Database credentials changed from defaults
-- [ ] TLS/SSL configured for all endpoints
-- [ ] Firewall rules configured
-- [ ] Rate limiting enabled
-- [ ] Authentication required on all endpoints
-- [ ] Secrets stored in secure vault
-- [ ] Audit logging enabled
-
-### Environment Variables (Production)
-
-```bash
-# Required
-OPENAI_API_KEY=sk-...
-DATABASE_URL=postgresql://user:pass@host:5432/db
-REDIS_URL=redis://host:6379
-QDRANT_HOST=host
-
-# Security
-HERETEK_API_KEY=htsk_...
-SECRET_KEY=your-secret-key-here
-
-# Optional
-LOG_LEVEL=INFO
-ENABLE_TRACING=true
-ENABLE_METRICS=true
-```
-
-### High Availability
-
-```yaml
-# Example: Multi-replica API deployment
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: api
-spec:
-  replicas: 3
-  strategy:
-    type: RollingUpdate
-    rollingUpdate:
-      maxSurge: 1
-      maxUnavailable: 0
-  template:
-    spec:
-      affinity:
-        podAntiAffinity:
-          requiredDuringSchedulingIgnoredDuringExecution:
-          - labelSelector:
-              matchExpressions:
-              - key: app
-                operator: In
-                values:
-                - api
-            topologyKey: "kubernetes.io/hostname"
-```
-
-### Backup Strategy
-
-```bash
-# PostgreSQL backup
-pg_dump postgresql://user:pass@host:5432/db > backup.sql
-
-# Redis backup
-redis-cli BGSAVE
-
-# Qdrant snapshot
-curl -X POST http://host:6333/collections/_local/snapshots
-```
-
-### Monitoring
-
-| Metric | Alert Threshold | Action |
-|--------|-----------------|--------|
-| API Latency (p95) | > 500ms | Scale up |
-| Error Rate | > 1% | Investigate |
-| Memory Usage | > 80% | Scale up |
-| CPU Usage | > 70% | Scale up |
-| Queue Depth | > 1000 | Scale workers |
-
----
-
-## Configuration Reference
-
-### Environment Variables
+### Required Variables
 
 | Variable | Default | Description |
 |----------|---------|-------------|
@@ -555,23 +445,98 @@ curl -X POST http://host:6333/collections/_local/snapshots
 | `REDIS_URL` | `redis://localhost:6379` | Redis connection string |
 | `QDRANT_HOST` | `localhost` | Qdrant vector database host |
 | `QDRANT_PORT` | `6333` | Qdrant port |
+| `NATS_SERVERS` | `nats://localhost:4222` | NATS server URLs |
+
+### Security Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
 | `HERETEK_API_KEY` | - | API authentication key |
+| `SECRET_KEY` | - | Secret key for JWT tokens |
+
+### Optional Variables
+
+| Variable | Default | Description |
+|----------|---------|-------------|
 | `LOG_LEVEL` | `INFO` | Logging level |
-| `ENABLE_TRACING` | `false` | Enable OpenTelemetry tracing |
+| `ENABLE_TRACING` | `true` | Enable OpenTelemetry tracing |
 | `ENABLE_METRICS` | `true` | Enable Prometheus metrics |
+| `CONSCIOUSNESS_ENABLED` | `true` | Enable consciousness metrics |
+| `RAG_ENABLED` | `true` | Enable RAG pipeline |
+| `DEBUG_MODE` | `false` | Enable debug logging |
 
-### File Locations
+---
 
-| Path | Description |
-|------|-------------|
-| `config/` | Configuration files |
-| `migrations/` | Database migrations |
-| `scripts/` | Utility scripts |
-| `k8s/` | Kubernetes manifests |
-| `docker/` | Docker configurations |
-| `dashboard/` | Frontend application |
-| `src/heretek_swarm/` | Main source code |
-| `tests/` | Test suite |
+## Configuration Migration
+
+### From Environment to Database
+
+The Heretek Swarm supports database-backed configuration for all user-facing settings.
+
+#### Step 1: Run Database Migration
+
+```bash
+psql -U postgres -d heretek_swarm -f migrations/009_create_configuration_tables.sql
+```
+
+#### Step 2: Migrate from Environment
+
+```bash
+curl -X POST http://localhost:8000/api/config/migrate-from-env \
+  -H "Authorization: Bearer YOUR_API_KEY"
+```
+
+#### Step 3: Update .env File
+
+After migration, your `.env` file should only contain deployment secrets:
+
+```bash
+# Keep these in .env (deployment secrets)
+DATABASE_URL=postgresql+asyncpg://postgres:password@localhost:5432/heretek_swarm
+REDIS_URL=redis://localhost:6379
+QDRANT_HOST=localhost
+QDRANT_PORT=6333
+
+# Remove these (now in database)
+# OPENAI_API_KEY - moved to database
+# RATE_LIMIT_ENABLED - moved to database
+# MEMORY_MAX_SIZE - moved to database
+```
+
+### LLM Provider Configuration
+
+Configure LLM providers through the API or UI:
+
+```bash
+# Add OpenAI provider
+curl -X POST http://localhost:8000/api/config/llm/providers \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "provider_name": "my-openai",
+    "provider_type": "openai",
+    "base_url": "https://api.openai.com/v1",
+    "api_key": "sk-...",
+    "default_model": "gpt-4o",
+    "is_enabled": true,
+    "is_default": true
+  }'
+```
+
+### Import/Export Configuration
+
+```bash
+# Export all configurations
+curl -X GET http://localhost:8000/api/config/export \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -o config-backup.json
+
+# Import configurations
+curl -X POST http://localhost:8000/api/config/import \
+  -H "Authorization: Bearer YOUR_API_KEY" \
+  -H "Content-Type: application/json" \
+  -d @config-backup.json
+```
 
 ---
 
@@ -634,20 +599,66 @@ docker-compose exec postgres psql -U postgres -c "SELECT * FROM pg_stat_statemen
 docker-compose up -d --scale api=3
 ```
 
+#### NATS Connection Failed
+
+```bash
+# Check NATS is running
+docker-compose ps nats
+
+# Test connection
+docker-compose exec nats nats sub '>' --server nats://localhost:4222
+
+# Check NATS logs
+docker-compose logs nats
+```
+
+#### Qdrant Connection Failed
+
+```bash
+# Check Qdrant container
+docker ps | grep qdrant
+docker logs qdrant
+
+# Test connection
+curl http://localhost:6333/
+
+# Check collections
+curl http://localhost:6333/collections
+```
+
 ### Debug Mode
 
 ```bash
 # Enable debug logging
 export LOG_LEVEL=DEBUG
+export DEBUG_MODE=true
 
-# Start with verbose output
-docker-compose up -d
+# Restart service
+docker-compose restart api
 
 # View debug logs
 docker-compose logs -f api | grep DEBUG
 ```
 
-### Support
+### Kubernetes Troubleshooting
+
+```bash
+# Check pod status
+kubectl get pods -n heretek-swarm
+
+# Describe problematic pod
+kubectl describe pod <pod-name> -n heretek-swarm
+
+# View pod logs
+kubectl logs <pod-name> -n heretek-swarm
+
+# Check events
+kubectl get events -n heretek-swarm --sort-by='.lastTimestamp'
+```
+
+---
+
+## Support
 
 - GitHub Issues: https://github.com/Heretek-AI/heretek-swarm/issues
 - Documentation: https://github.com/Heretek-AI/heretek-swarm/docs
@@ -655,5 +666,5 @@ docker-compose logs -f api | grep DEBUG
 ---
 
 **License:** Apache 2.0  
-**Version:** 1.11.0  
-**Last Updated:** 2026-04-06 (Session 21)
+**Version:** 2.0.0  
+**Last Updated:** 2026-04-07

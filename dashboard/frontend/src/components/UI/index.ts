@@ -23,5 +23,14 @@ export type { LoadingSpinnerProps } from './LoadingSpinner';
 export { ErrorBoundary } from './ErrorBoundary';
 export type { ErrorBoundaryProps } from './ErrorBoundary';
 
+export { ComponentErrorBoundary, ErrorFallback, withErrorBoundary } from './ComponentErrorBoundary';
+export type { ComponentErrorBoundaryProps, ErrorFallbackProps } from './ComponentErrorBoundary';
+
+export { DebugPanel } from './DebugPanel';
+export type { DebugPanelProps, ApiRequestLog, StateTransition } from './DebugPanel';
+
+export { PerformanceOverlay, usePerformanceMonitor } from './PerformanceOverlay';
+export type { PerformanceOverlayProps } from './PerformanceOverlay';
+
 export { EmptyState } from './EmptyState';
 export type { EmptyStateProps } from './EmptyState';

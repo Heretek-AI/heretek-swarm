@@ -7,6 +7,7 @@
 
 import React, { useState, useCallback } from 'react';
 import { useToast } from '../UI/Toast';
+import { DeveloperModeToggle } from './DeveloperModeToggle';
 import {
   LLMProvidersSection,
   EmbeddingProvidersSection,
@@ -76,6 +77,14 @@ export function SettingsPage() {
         <p className="text-gray-400 text-sm mt-1">
           System configuration and provider management
         </p>
+      </div>
+
+      {/* Developer Mode Toggle */}
+      <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
+        <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+          <span>🔧</span> Developer Tools
+        </h2>
+        <DeveloperModeToggle />
       </div>
 
       {/* Connection Settings */}

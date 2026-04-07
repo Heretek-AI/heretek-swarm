@@ -20,7 +20,7 @@ import uuid
 from heretek_swarm.security.zero_trust import ZeroTrustValidator, ZeroTrustResult, LayerResult, Severity
 from heretek_swarm.consciousness.iit_phi import PhiCalculator
 from heretek_swarm.consciousness.fep_active_inference import FreeEnergyCalculator
-from observability.metrics import (
+from src.heretek_swarm.observability.metrics import (
     SwarmMetricsCollector,
     RealTimeMetricsStream,
     SwarmMetricsData,

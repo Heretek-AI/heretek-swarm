@@ -2,11 +2,13 @@
 Autonomous Runtime Configuration
 
 Configuration for 24/7 autonomous operation of Heretek Swarm.
+Supports loading from database via ConfigurationService with environment fallback.
 """
 
 from dataclasses import dataclass, field
 from typing import Dict, List, Optional, Any
 from pathlib import Path
+import os
 
 
 @dataclass
@@ -146,15 +148,119 @@ class ScalingPolicy:
     min_uptime_before_scale_down: int = 60  # minutes
 
 
-def load_config_from_env() -> AutonomousRuntimeConfig:
+async def load_config_from_env() -> AutonomousRuntimeConfig:
     """
-    Load runtime configuration from environment variables.
+    Load runtime configuration from environment variables or database.
+    
+    Uses environment variables as the primary source for runtime configuration.
+    For database-backed configuration, use the ConfigLoader class instead.
 
     Returns:
         AutonomousRuntimeConfig instance
     """
-    import os
+    # Try to load from ConfigLoader if available (database-backed)
+    try:
+        from heretek_swarm.config.loader import get_config_loader
+        loader = get_config_loader()
+        
+        if loader._initialized:
+            # Load from database with environment fallback
+            monitoring_enabled = await loader.get_async("runtime.monitoring_enabled", default=os.getenv("MONITORING_ENABLED", "true"))
+            auto_restart_enabled = await loader.get_async("runtime.auto_restart_enabled", default=os.getenv("AUTO_RESTART_ENABLED", "true"))
+            consciousness_enabled = await loader.get_async("consciousness.enabled", default=os.getenv("CONSCIOUSNESS_ENABLED", "true"))
+            rag_enabled = await loader.get_async("rag.enabled", default=os.getenv("RAG_ENABLED", "true"))
+            discord_enabled = await loader.get_async("integrations.discord_enabled", default=os.getenv("DISCORD_BOT_ENABLED", "false"))
+            telegram_enabled = await loader.get_async("integrations.telegram_enabled", default=os.getenv("TELEGRAM_BOT_ENABLED", "false"))
+            slack_enabled = await loader.get_async("integrations.slack_enabled", default=os.getenv("SLACK_BOT_ENABLED", "false"))
+            api_host = await loader.get_async("api.host", default=os.getenv("API_HOST", "0.0.0.0"))
+            api_port = await loader.get_async("api.port", default=int(os.getenv("API_PORT", "8000")))
+            database_url = await loader.get_async("database.url", default=os.getenv("DATABASE_URL"))
+            redis_url = await loader.get_async("redis.url", default=os.getenv("REDIS_URL", "redis://localhost:6379"))
+            qdrant_url = await loader.get_async("qdrant.url", default=os.getenv("QDRANT_URL", "http://localhost:6333"))
+            log_level = await loader.get_async("logging.level", default=os.getenv("LOG_LEVEL", "INFO"))
+            
+            # Convert string values to bool if needed
+            if isinstance(monitoring_enabled, str):
+                monitoring_enabled = monitoring_enabled.lower() == "true"
+            if isinstance(auto_restart_enabled, str):
+                auto_restart_enabled = auto_restart_enabled.lower() == "true"
+            if isinstance(consciousness_enabled, str):
+                consciousness_enabled = consciousness_enabled.lower() == "true"
+            if isinstance(rag_enabled, str):
+                rag_enabled = rag_enabled.lower() == "true"
+            if isinstance(discord_enabled, str):
+                discord_enabled = discord_enabled.lower() == "true"
+            if isinstance(telegram_enabled, str):
+                telegram_enabled = telegram_enabled.lower() == "true"
+            if isinstance(slack_enabled, str):
+                slack_enabled = slack_enabled.lower() == "true"
+            
+            return AutonomousRuntimeConfig(
+                monitoring_enabled=monitoring_enabled,
+                auto_restart_enabled=auto_restart_enabled,
+                consciousness_plugin_enabled=consciousness_enabled,
+                rag_enabled=rag_enabled,
+                discord_bot_enabled=discord_enabled,
+                telegram_bot_enabled=telegram_enabled,
+                slack_bot_enabled=slack_enabled,
+                api_host=str(api_host),
+                api_port=int(api_port),
+                database_url=database_url,
+                redis_url=str(redis_url),
+                qdrant_url=str(qdrant_url),
+                log_level=str(log_level),
+            )
+    except Exception as e:
+        import structlog
+        logger = structlog.get_logger("config.runtime")
+        logger.warning("Failed to load config from database, using environment fallback", error=str(e))
+    
+    # Fallback to direct environment variable loading
+    return AutonomousRuntimeConfig(
+        monitoring_enabled=os.getenv("MONITORING_ENABLED", "true").lower() == "true",
+        auto_restart_enabled=os.getenv("AUTO_RESTART_ENABLED", "true").lower() == "true",
+        consciousness_plugin_enabled=os.getenv("CONSCIOUSNESS_ENABLED", "true").lower() == "true",
+        rag_enabled=os.getenv("RAG_ENABLED", "true").lower() == "true",
+        discord_bot_enabled=os.getenv("DISCORD_BOT_ENABLED", "false").lower() == "true",
+        telegram_bot_enabled=os.getenv("TELEGRAM_BOT_ENABLED", "false").lower() == "true",
+        slack_bot_enabled=os.getenv("SLACK_BOT_ENABLED", "false").lower() == "true",
+        api_host=os.getenv("API_HOST", "0.0.0.0"),
+        api_port=int(os.getenv("API_PORT", "8000")),
+        database_url=os.getenv("DATABASE_URL"),
+        redis_url=os.getenv("REDIS_URL", "redis://localhost:6379"),
+        qdrant_url=os.getenv("QDRANT_URL", "http://localhost:6333"),
+        log_level=os.getenv("LOG_LEVEL", "INFO"),
+    )
 
+
+def load_config_from_env_sync() -> AutonomousRuntimeConfig:
+    """
+    Synchronous version of load_config_from_env for non-async contexts.
+    
+    Returns:
+        AutonomousRuntimeConfig instance
+    """
+    import asyncio
+    
+    try:
+        loop = asyncio.get_event_loop()
+        if loop.is_running():
+            # If loop is running, we can't use run_until_complete
+            # Return environment-only config
+            return _load_config_from_env_sync_fallback()
+        return loop.run_until_complete(load_config_from_env())
+    except RuntimeError:
+        # No event loop exists
+        return _load_config_from_env_sync_fallback()
+
+
+def _load_config_from_env_sync_fallback() -> AutonomousRuntimeConfig:
+    """
+    Synchronous fallback that only reads from environment variables.
+    
+    Returns:
+        AutonomousRuntimeConfig instance
+    """
     return AutonomousRuntimeConfig(
         monitoring_enabled=os.getenv("MONITORING_ENABLED", "true").lower() == "true",
         auto_restart_enabled=os.getenv("AUTO_RESTART_ENABLED", "true").lower() == "true",

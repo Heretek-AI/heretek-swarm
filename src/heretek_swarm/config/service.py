@@ -3,10 +3,12 @@ Configuration Service
 
 Provides CRUD operations for configurations with caching and validation.
 Supports migration from .env to database-backed configuration.
+Features API key encryption using Fernet symmetric encryption.
 """
 
 from __future__ import annotations
 
+import base64
 import json
 import os
 from datetime import datetime, timedelta
@@ -41,6 +43,14 @@ from .models import (
     HealthStatus,
 )
 
+# Fernet encryption for API keys
+try:
+    from cryptography.fernet import Fernet
+    CRYPTOGRAPHY_AVAILABLE = True
+except ImportError:
+    CRYPTOGRAPHY_AVAILABLE = False
+    Fernet = None
+
 logger = structlog.get_logger("config.service")
 
 T = TypeVar("T")
@@ -65,11 +75,13 @@ class ConfigurationService:
         
         Args:
             database_url: PostgreSQL database URL. Defaults to DATABASE_URL env var.
+            
+        Raises:
+            ValueError: If DATABASE_URL environment variable is not set
         """
-        self.database_url = database_url or os.environ.get(
-            "DATABASE_URL",
-            "postgresql+asyncpg://postgres:langfuse@localhost:5432/heretek_swarm"
-        )
+        self.database_url = database_url or os.environ.get("DATABASE_URL")
+        if not self.database_url:
+            raise ValueError("DATABASE_URL environment variable is required")
         
         self._engine = create_async_engine(
             self.database_url,
@@ -87,7 +99,89 @@ class ConfigurationService:
         self._cache: Dict[str, ConfigCacheEntry] = {}
         self._cache_ttl = timedelta(minutes=5)
         
+        # Initialize Fernet encryption for API keys
+        self._fernet: Optional[Fernet] = None
+        self._encryption_key = os.environ.get("CONFIG_ENCRYPTION_KEY")
+        if self._encryption_key:
+            self._initialize_encryption()
+        else:
+            logger.warning("CONFIG_ENCRYPTION_KEY not set - API keys will not be encrypted")
+        
         logger.info("ConfigurationService initialized", database_url=self.database_url)
+
+    def _initialize_encryption(self) -> None:
+        """
+        Initialize Fernet encryption for API keys.
+        
+        The encryption key should be a 32-byte URL-safe base64-encoded key.
+        Generate with: Fernet.generate_key().decode()
+        """
+        if not CRYPTOGRAPHY_AVAILABLE:
+            logger.error("cryptography package not installed - encryption disabled")
+            return
+        
+        try:
+            # Handle both raw keys and URL-safe base64 encoded keys
+            if len(self._encryption_key) == 44 and self._encryption_key.endswith('='):
+                # Already base64 encoded
+                key = self._encryption_key.encode()
+            else:
+                # Raw key - encode it
+                key = base64.urlsafe_b64encode(self._encryption_key.encode().ljust(32))
+            
+            self._fernet = Fernet(key)
+            logger.info("API key encryption initialized")
+        except Exception as e:
+            logger.error("Failed to initialize encryption", error=str(e))
+            self._fernet = None
+
+    def encrypt_api_key(self, api_key: str) -> str:
+        """
+        Encrypt an API key using Fernet symmetric encryption.
+        
+        Args:
+            api_key: The plain text API key to encrypt
+            
+        Returns:
+            Encrypted API key (base64 encoded)
+            
+        Raises:
+            ValueError: If encryption is not configured
+        """
+        if not self._fernet:
+            # Return as-is if encryption not configured (backward compatibility)
+            return api_key
+        
+        try:
+            encrypted = self._fernet.encrypt(api_key.encode())
+            return encrypted.decode()
+        except Exception as e:
+            logger.error("Failed to encrypt API key", error=str(e))
+            raise ValueError(f"Encryption failed: {e}")
+
+    def decrypt_api_key(self, encrypted_key: str) -> str:
+        """
+        Decrypt an API key using Fernet symmetric encryption.
+        
+        Args:
+            encrypted_key: The encrypted API key to decrypt
+            
+        Returns:
+            Decrypted plain text API key
+            
+        Raises:
+            ValueError: If decryption fails or encryption not configured
+        """
+        if not self._fernet:
+            # Return as-is if encryption not configured (backward compatibility)
+            return encrypted_key
+        
+        try:
+            decrypted = self._fernet.decrypt(encrypted_key.encode())
+            return decrypted.decode()
+        except Exception as e:
+            logger.error("Failed to decrypt API key", error=str(e))
+            raise ValueError(f"Decryption failed: {e}")
 
     async def initialize(self) -> None:
         """Initialize the service and warm up the cache."""
@@ -489,6 +583,48 @@ class ConfigurationService:
             )
             return result.scalar_one_or_none()
 
+    def _encrypt_extra_config(self, extra_config: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Encrypt sensitive fields in extra_config.
+        
+        Encrypts fields like 'api_key', 'auth_token', 'secret' etc.
+        """
+        if not extra_config:
+            return {}
+        
+        sensitive_keys = {'api_key', 'auth_token', 'secret', 'password', 'credential'}
+        encrypted_config = {}
+        
+        for key, value in extra_config.items():
+            if any(sensitive in key.lower() for sensitive in sensitive_keys) and isinstance(value, str):
+                encrypted_config[key] = self.encrypt_api_key(value)
+            else:
+                encrypted_config[key] = value
+        
+        return encrypted_config
+
+    def _decrypt_extra_config(self, extra_config: Dict[str, Any]) -> Dict[str, Any]:
+        """
+        Decrypt sensitive fields in extra_config.
+        """
+        if not extra_config:
+            return {}
+        
+        sensitive_keys = {'api_key', 'auth_token', 'secret', 'password', 'credential'}
+        decrypted_config = {}
+        
+        for key, value in extra_config.items():
+            if any(sensitive in key.lower() for sensitive in sensitive_keys) and isinstance(value, str):
+                try:
+                    decrypted_config[key] = self.decrypt_api_key(value)
+                except ValueError:
+                    # If decryption fails, return as-is (might not be encrypted)
+                    decrypted_config[key] = value
+            else:
+                decrypted_config[key] = value
+        
+        return decrypted_config
+
     async def create_llm_provider(
         self,
         provider: LLMProviderCreate,
@@ -506,6 +642,13 @@ class ConfigurationService:
                     )
                     .values(is_default=False)
                 )
+            
+            # Encrypt API key in extra_config if present
+            extra_config = self._encrypt_extra_config(provider.extra_config or {})
+            
+            # Also encrypt api_key if passed in extra_config
+            if hasattr(provider, 'api_key') and provider.api_key:
+                extra_config['api_key'] = self.encrypt_api_key(provider.api_key)
             
             new_provider = LLMProvider(
                 provider_name=provider.provider_name,
@@ -525,7 +668,7 @@ class ConfigurationService:
                 is_enabled=provider.is_enabled,
                 is_default=provider.is_default,
                 priority=provider.priority,
-                extra_config=provider.extra_config or {},
+                extra_config=extra_config,
             )
             
             session.add(new_provider)
@@ -636,6 +779,20 @@ class ConfigurationService:
             logger.info("LLM provider deleted", name=provider.provider_name)
             return True
 
+    def get_llm_provider_api_key(self, provider: LLMProvider) -> Optional[str]:
+        """
+        Get the decrypted API key for an LLM provider.
+        
+        Args:
+            provider: The LLM provider object
+            
+        Returns:
+            Decrypted API key or None if not found
+        """
+        if not provider.extra_config:
+            return None
+        return self.decrypt_api_key(provider.extra_config.get('api_key', ''))
+
     # =========================================================================
     # Embedding Provider CRUD
     # =========================================================================
@@ -718,6 +875,13 @@ class ConfigurationService:
                     .values(is_default=False)
                 )
             
+            # Encrypt API key in extra_config if present
+            extra_config = self._encrypt_extra_config(provider.extra_config or {})
+            
+            # Also encrypt api_key if passed in extra_config
+            if hasattr(provider, 'api_key') and provider.api_key:
+                extra_config['api_key'] = self.encrypt_api_key(provider.api_key)
+            
             new_provider = EmbeddingProvider(
                 provider_name=provider.provider_name,
                 provider_type=provider.provider_type,
@@ -732,7 +896,7 @@ class ConfigurationService:
                 is_enabled=provider.is_enabled,
                 is_default=provider.is_default,
                 priority=provider.priority,
-                extra_config=provider.extra_config or {},
+                extra_config=extra_config,
             )
             
             session.add(new_provider)
@@ -848,6 +1012,20 @@ class ConfigurationService:
             
             logger.info("Embedding provider deleted", name=provider.provider_name)
             return True
+
+    def get_embedding_provider_api_key(self, provider: EmbeddingProvider) -> Optional[str]:
+        """
+        Get the decrypted API key for an embedding provider.
+        
+        Args:
+            provider: The embedding provider object
+            
+        Returns:
+            Decrypted API key or None if not found
+        """
+        if not provider.extra_config:
+            return None
+        return self.decrypt_api_key(provider.extra_config.get('api_key', ''))
 
     # =========================================================================
     # Agent Configuration CRUD

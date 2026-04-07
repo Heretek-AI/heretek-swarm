@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-07T14:00:33.506561+00:00",
+    "generated_at": "2026-04-07T15:36:57.155080+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 4,
@@ -70,8 +70,8 @@
         },
         {
           "qualified_name": "dashboard.frontend.src.App.App",
-          "start_line": 140,
-          "end_line": 146,
+          "start_line": 142,
+          "end_line": 151,
           "node_type": "FUNCTION",
           "status": "modified"
         }
@@ -7175,10 +7175,10 @@
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.api.main.lifespan",
-          "start_line": 46,
-          "end_line": 99,
+          "start_line": 56,
+          "end_line": 142,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main.check_gateway",
@@ -12607,7 +12607,7 @@
       ]
     },
     "src/heretek_swarm/runtime/autonomous_runtime_config.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.runtime.autonomous_runtime_config.AutonomousRuntimeConfig",
@@ -12632,10 +12632,24 @@
         },
         {
           "qualified_name": "src.heretek_swarm.runtime.autonomous_runtime_config.load_config_from_env",
-          "start_line": 149,
-          "end_line": 172,
+          "start_line": 151,
+          "end_line": 233,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.runtime.autonomous_runtime_config.load_config_from_env_sync",
+          "start_line": 236,
+          "end_line": 254,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.runtime.autonomous_runtime_config._load_config_from_env_sync_fallback",
+          "start_line": 257,
+          "end_line": 278,
+          "node_type": "FUNCTION",
+          "status": "added"
         }
       ]
     },
@@ -19214,7 +19228,7 @@
       ]
     },
     "dashboard/frontend/src/stores/metricsStore.ts": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "dashboard.frontend.src.stores.metricsStore.ConsciousnessMetrics",
@@ -19249,63 +19263,126 @@
           "start_line": 48,
           "end_line": 71,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback",
           "start_line": 48,
           "end_line": 71,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "deleted"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback",
+          "start_line": 52,
+          "end_line": 126,
+          "node_type": "FUNCTION",
+          "status": "modified"
         },
         {
           "qualified_name": "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setCollectiveMetrics",
           "start_line": 57,
           "end_line": 57,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setAgentMetrics",
           "start_line": 58,
           "end_line": 60,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setAgentMetrics.set() callback",
           "start_line": 58,
           "end_line": 60,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setAgentStates",
           "start_line": 61,
           "end_line": 61,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setLoading",
           "start_line": 62,
           "end_line": 62,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setAgentMetrics.set('setAgentMetrics') callback",
+          "start_line": 62,
+          "end_line": 64,
+          "node_type": "FUNCTION",
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setError",
           "start_line": 63,
           "end_line": 63,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.reset",
           "start_line": 64,
           "end_line": 70,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setCollectiveMetrics",
+          "start_line": 99,
+          "end_line": 101,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setAgentMetrics",
+          "start_line": 102,
+          "end_line": 106,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setAgentMetrics.setWithAction('setAgentMetrics') callback",
+          "start_line": 103,
+          "end_line": 105,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setAgentStates",
+          "start_line": 107,
+          "end_line": 109,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setLoading",
+          "start_line": 110,
+          "end_line": 112,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setError",
+          "start_line": 113,
+          "end_line": 115,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.reset",
+          "start_line": 116,
+          "end_line": 124,
+          "node_type": "METHOD",
+          "status": "modified"
         }
       ]
     },
@@ -23525,6 +23602,666 @@
     "dashboard/frontend/src/components/Consciousness/index.ts": {
       "file_status": "modified",
       "methods": []
+    },
+    "src/heretek_swarm/config/service.py": {
+      "file_status": "modified",
+      "methods": [
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService",
+          "start_line": 59,
+          "end_line": 1560,
+          "node_type": "CLASS",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.__init__",
+          "start_line": 72,
+          "end_line": 110,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.initialize",
+          "start_line": 94,
+          "end_line": 97,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.shutdown",
+          "start_line": 99,
+          "end_line": 102,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService._warm_cache",
+          "start_line": 108,
+          "end_line": 125,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService._initialize_encryption",
+          "start_line": 112,
+          "end_line": 136,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService._get_cache_key",
+          "start_line": 127,
+          "end_line": 129,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService._invalidate_cache",
+          "start_line": 131,
+          "end_line": 135,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService._set_cache",
+          "start_line": 137,
+          "end_line": 150,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.encrypt_api_key",
+          "start_line": 138,
+          "end_line": 160,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService._get_cache",
+          "start_line": 152,
+          "end_line": 166,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.decrypt_api_key",
+          "start_line": 162,
+          "end_line": 184,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.get_config",
+          "start_line": 172,
+          "end_line": 199,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.get_config_value",
+          "start_line": 201,
+          "end_line": 217,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.list_configs",
+          "start_line": 219,
+          "end_line": 245,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.create_config",
+          "start_line": 247,
+          "end_line": 301,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.update_config",
+          "start_line": 303,
+          "end_line": 369,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.delete_config",
+          "start_line": 371,
+          "end_line": 424,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.get_llm_provider",
+          "start_line": 430,
+          "end_line": 436,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.get_llm_provider_by_name",
+          "start_line": 438,
+          "end_line": 449,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.list_llm_providers",
+          "start_line": 451,
+          "end_line": 481,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.get_default_llm_provider",
+          "start_line": 483,
+          "end_line": 492,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.update_llm_provider",
+          "start_line": 551,
+          "end_line": 603,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService._encrypt_extra_config",
+          "start_line": 586,
+          "end_line": 604,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.delete_llm_provider",
+          "start_line": 605,
+          "end_line": 639,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService._decrypt_extra_config",
+          "start_line": 606,
+          "end_line": 626,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.create_llm_provider",
+          "start_line": 628,
+          "end_line": 690,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.get_embedding_provider",
+          "start_line": 645,
+          "end_line": 656,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.get_embedding_provider_by_name",
+          "start_line": 658,
+          "end_line": 669,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.list_embedding_providers",
+          "start_line": 671,
+          "end_line": 690,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.get_default_embedding_provider",
+          "start_line": 692,
+          "end_line": 703,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.update_embedding_provider",
+          "start_line": 758,
+          "end_line": 812,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.get_llm_provider_api_key",
+          "start_line": 782,
+          "end_line": 794,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.delete_embedding_provider",
+          "start_line": 814,
+          "end_line": 852,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.get_agent_config",
+          "start_line": 858,
+          "end_line": 864,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.create_embedding_provider",
+          "start_line": 860,
+          "end_line": 918,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.get_agent_config_by_type",
+          "start_line": 866,
+          "end_line": 884,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.list_agent_configs",
+          "start_line": 886,
+          "end_line": 905,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.create_agent_config",
+          "start_line": 907,
+          "end_line": 955,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.update_agent_config",
+          "start_line": 957,
+          "end_line": 1010,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.delete_agent_config",
+          "start_line": 1012,
+          "end_line": 1046,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.get_embedding_provider_api_key",
+          "start_line": 1016,
+          "end_line": 1028,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService._log_change",
+          "start_line": 1052,
+          "end_line": 1083,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.get_audit_log",
+          "start_line": 1085,
+          "end_line": 1104,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.export_configurations",
+          "start_line": 1110,
+          "end_line": 1145,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.import_configurations",
+          "start_line": 1147,
+          "end_line": 1241,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService._validate_config_value",
+          "start_line": 1247,
+          "end_line": 1296,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.migrate_from_env",
+          "start_line": 1302,
+          "end_line": 1384,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.get_config_service",
+          "start_line": 1391,
+          "end_line": 1396,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.initialize_config_service",
+          "start_line": 1399,
+          "end_line": 1402,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.shutdown_config_service",
+          "start_line": 1405,
+          "end_line": 1410,
+          "node_type": "FUNCTION",
+          "status": "added"
+        }
+      ]
+    },
+    "src/heretek_swarm/api/configuration.py": {
+      "file_status": "modified",
+      "methods": [
+        {
+          "qualified_name": "src.heretek_swarm.api.configuration.get_service",
+          "start_line": 68,
+          "end_line": 70,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.configuration.get_all_configs",
+          "start_line": 78,
+          "end_line": 92,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.configuration.get_config",
+          "start_line": 96,
+          "end_line": 105,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.configuration.update_config",
+          "start_line": 109,
+          "end_line": 119,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.configuration.create_config",
+          "start_line": 123,
+          "end_line": 133,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.configuration.delete_config",
+          "start_line": 137,
+          "end_line": 146,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.configuration.list_llm_provider_types",
+          "start_line": 154,
+          "end_line": 158,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.configuration.list_llm_providers",
+          "start_line": 162,
+          "end_line": 176,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.configuration.get_llm_provider",
+          "start_line": 180,
+          "end_line": 189,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.configuration.create_llm_provider",
+          "start_line": 193,
+          "end_line": 204,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.configuration.update_llm_provider",
+          "start_line": 208,
+          "end_line": 218,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.configuration.delete_llm_provider",
+          "start_line": 222,
+          "end_line": 231,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.configuration.test_llm_provider",
+          "start_line": 235,
+          "end_line": 277,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.configuration.list_embedding_provider_types",
+          "start_line": 285,
+          "end_line": 289,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.configuration.list_embedding_providers",
+          "start_line": 293,
+          "end_line": 307,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.configuration.get_embedding_provider",
+          "start_line": 311,
+          "end_line": 320,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.configuration.create_embedding_provider",
+          "start_line": 324,
+          "end_line": 334,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.configuration.update_embedding_provider",
+          "start_line": 338,
+          "end_line": 348,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.configuration.delete_embedding_provider",
+          "start_line": 352,
+          "end_line": 361,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.configuration.test_embedding_provider",
+          "start_line": 365,
+          "end_line": 412,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.configuration.list_agent_configs",
+          "start_line": 420,
+          "end_line": 431,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.configuration.get_agent_config",
+          "start_line": 435,
+          "end_line": 444,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.configuration.create_agent_config",
+          "start_line": 448,
+          "end_line": 458,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.configuration.update_agent_config",
+          "start_line": 462,
+          "end_line": 472,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.configuration.delete_agent_config",
+          "start_line": 476,
+          "end_line": 485,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.configuration.get_audit_log",
+          "start_line": 493,
+          "end_line": 504,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.configuration.export_configurations",
+          "start_line": 512,
+          "end_line": 518,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.configuration.import_configurations",
+          "start_line": 522,
+          "end_line": 530,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.configuration.migrate_from_env",
+          "start_line": 538,
+          "end_line": 544,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.configuration.reload_configurations",
+          "start_line": 552,
+          "end_line": 588,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.configuration.configuration_health",
+          "start_line": 596,
+          "end_line": 627,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.configuration.export_configuration_bundle",
+          "start_line": 635,
+          "end_line": 663,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.configuration.import_configuration_bundle",
+          "start_line": 667,
+          "end_line": 694,
+          "node_type": "FUNCTION",
+          "status": "added"
+        }
+      ]
+    },
+    "dashboard/frontend/src/components/UI/index.ts": {
+      "file_status": "modified",
+      "methods": []
+    },
+    "dashboard/frontend/src/components/Settings/index.ts": {
+      "file_status": "modified",
+      "methods": []
+    },
+    "dashboard/frontend/src/components/Settings/SettingsPage.tsx": {
+      "file_status": "modified",
+      "methods": [
+        {
+          "qualified_name": "dashboard.frontend.src.components.Settings.SettingsPage.TabConfig",
+          "start_line": 19,
+          "end_line": 23,
+          "node_type": "INTERFACE",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage",
+          "start_line": 33,
+          "end_line": 105,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiKey.useCallback() callback",
+          "start_line": 39,
+          "end_line": 42,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiUrl.useCallback() callback",
+          "start_line": 44,
+          "end_line": 47,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleClearApiKey.useCallback() callback",
+          "start_line": 49,
+          "end_line": 53,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Settings.SettingsPage.<unknown>..map() callback",
+          "start_line": 160,
+          "end_line": 162,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Settings.SettingsPage.renderTabContent",
+          "start_line": 179,
+          "end_line": 179,
+          "node_type": "METHOD",
+          "status": "added"
+        }
+      ]
     }
   },
   "methods_index": {
@@ -23587,8 +24324,8 @@
     "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.App": {
       "file_path": "dashboard/frontend/src/App.tsx",
       "qualified_name": "dashboard.frontend.src.App.App",
-      "start_line": 140,
-      "end_line": 146,
+      "start_line": 142,
+      "end_line": 151,
       "type": "FUNCTION",
       "status": "modified"
     },
@@ -31507,10 +32244,10 @@
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.lifespan": {
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.lifespan",
-      "start_line": 46,
-      "end_line": 99,
+      "start_line": 56,
+      "end_line": 142,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.check_gateway": {
       "file_path": "src/heretek_swarm/api/main.py",
@@ -37555,10 +38292,26 @@
     "src/heretek_swarm/runtime/autonomous_runtime_config.py|src.heretek_swarm.runtime.autonomous_runtime_config.load_config_from_env": {
       "file_path": "src/heretek_swarm/runtime/autonomous_runtime_config.py",
       "qualified_name": "src.heretek_swarm.runtime.autonomous_runtime_config.load_config_from_env",
-      "start_line": 149,
-      "end_line": 172,
+      "start_line": 151,
+      "end_line": 233,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
+    },
+    "src/heretek_swarm/runtime/autonomous_runtime_config.py|src.heretek_swarm.runtime.autonomous_runtime_config.load_config_from_env_sync": {
+      "file_path": "src/heretek_swarm/runtime/autonomous_runtime_config.py",
+      "qualified_name": "src.heretek_swarm.runtime.autonomous_runtime_config.load_config_from_env_sync",
+      "start_line": 236,
+      "end_line": 254,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/runtime/autonomous_runtime_config.py|src.heretek_swarm.runtime.autonomous_runtime_config._load_config_from_env_sync_fallback": {
+      "file_path": "src/heretek_swarm/runtime/autonomous_runtime_config.py",
+      "qualified_name": "src.heretek_swarm.runtime.autonomous_runtime_config._load_config_from_env_sync_fallback",
+      "start_line": 257,
+      "end_line": 278,
+      "type": "FUNCTION",
+      "status": "added"
     },
     "src/heretek_swarm/runtime/characters.py|src.heretek_swarm.runtime.characters.get_character": {
       "file_path": "src/heretek_swarm/runtime/characters.py",
@@ -44854,7 +45607,7 @@
       "start_line": 48,
       "end_line": 71,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/stores/metricsStore.ts|dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback": {
       "file_path": "dashboard/frontend/src/stores/metricsStore.ts",
@@ -44862,7 +45615,15 @@
       "start_line": 48,
       "end_line": 71,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "deleted"
+    },
+    "dashboard/frontend/src/stores/metricsStore.ts|dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback": {
+      "file_path": "dashboard/frontend/src/stores/metricsStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback",
+      "start_line": 52,
+      "end_line": 126,
+      "type": "FUNCTION",
+      "status": "modified"
     },
     "dashboard/frontend/src/stores/metricsStore.ts|dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setCollectiveMetrics": {
       "file_path": "dashboard/frontend/src/stores/metricsStore.ts",
@@ -44870,7 +45631,7 @@
       "start_line": 57,
       "end_line": 57,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/stores/metricsStore.ts|dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setAgentMetrics": {
       "file_path": "dashboard/frontend/src/stores/metricsStore.ts",
@@ -44878,7 +45639,7 @@
       "start_line": 58,
       "end_line": 60,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/stores/metricsStore.ts|dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setAgentMetrics.set() callback": {
       "file_path": "dashboard/frontend/src/stores/metricsStore.ts",
@@ -44886,7 +45647,7 @@
       "start_line": 58,
       "end_line": 60,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/stores/metricsStore.ts|dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setAgentStates": {
       "file_path": "dashboard/frontend/src/stores/metricsStore.ts",
@@ -44894,7 +45655,7 @@
       "start_line": 61,
       "end_line": 61,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/stores/metricsStore.ts|dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setLoading": {
       "file_path": "dashboard/frontend/src/stores/metricsStore.ts",
@@ -44902,7 +45663,15 @@
       "start_line": 62,
       "end_line": 62,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
+    },
+    "dashboard/frontend/src/stores/metricsStore.ts|dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setAgentMetrics.set('setAgentMetrics') callback": {
+      "file_path": "dashboard/frontend/src/stores/metricsStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setAgentMetrics.set('setAgentMetrics') callback",
+      "start_line": 62,
+      "end_line": 64,
+      "type": "FUNCTION",
+      "status": "deleted"
     },
     "dashboard/frontend/src/stores/metricsStore.ts|dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setError": {
       "file_path": "dashboard/frontend/src/stores/metricsStore.ts",
@@ -44910,7 +45679,7 @@
       "start_line": 63,
       "end_line": 63,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/stores/metricsStore.ts|dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.reset": {
       "file_path": "dashboard/frontend/src/stores/metricsStore.ts",
@@ -44918,7 +45687,63 @@
       "start_line": 64,
       "end_line": 70,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
+    },
+    "dashboard/frontend/src/stores/metricsStore.ts|dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setCollectiveMetrics": {
+      "file_path": "dashboard/frontend/src/stores/metricsStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setCollectiveMetrics",
+      "start_line": 99,
+      "end_line": 101,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "dashboard/frontend/src/stores/metricsStore.ts|dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setAgentMetrics": {
+      "file_path": "dashboard/frontend/src/stores/metricsStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setAgentMetrics",
+      "start_line": 102,
+      "end_line": 106,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "dashboard/frontend/src/stores/metricsStore.ts|dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setAgentMetrics.setWithAction('setAgentMetrics') callback": {
+      "file_path": "dashboard/frontend/src/stores/metricsStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setAgentMetrics.setWithAction('setAgentMetrics') callback",
+      "start_line": 103,
+      "end_line": 105,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/stores/metricsStore.ts|dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setAgentStates": {
+      "file_path": "dashboard/frontend/src/stores/metricsStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setAgentStates",
+      "start_line": 107,
+      "end_line": 109,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "dashboard/frontend/src/stores/metricsStore.ts|dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setLoading": {
+      "file_path": "dashboard/frontend/src/stores/metricsStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setLoading",
+      "start_line": 110,
+      "end_line": 112,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "dashboard/frontend/src/stores/metricsStore.ts|dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setError": {
+      "file_path": "dashboard/frontend/src/stores/metricsStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setError",
+      "start_line": 113,
+      "end_line": 115,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "dashboard/frontend/src/stores/metricsStore.ts|dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.reset": {
+      "file_path": "dashboard/frontend/src/stores/metricsStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.reset",
+      "start_line": 116,
+      "end_line": 124,
+      "type": "METHOD",
+      "status": "modified"
     },
     "dashboard/frontend/src/types/reactflow.d.ts|dashboard.frontend.src.types.reactflow.d.AgentNode": {
       "file_path": "dashboard/frontend/src/types/reactflow.d.ts",
@@ -49551,6 +50376,734 @@
       "end_line": 309,
       "type": "METHOD",
       "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService",
+      "start_line": 59,
+      "end_line": 1560,
+      "type": "CLASS",
+      "status": "modified"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.__init__": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.__init__",
+      "start_line": 72,
+      "end_line": 110,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.initialize": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.initialize",
+      "start_line": 94,
+      "end_line": 97,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.shutdown": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.shutdown",
+      "start_line": 99,
+      "end_line": 102,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService._warm_cache": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService._warm_cache",
+      "start_line": 108,
+      "end_line": 125,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService._initialize_encryption": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService._initialize_encryption",
+      "start_line": 112,
+      "end_line": 136,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService._get_cache_key": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService._get_cache_key",
+      "start_line": 127,
+      "end_line": 129,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService._invalidate_cache": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService._invalidate_cache",
+      "start_line": 131,
+      "end_line": 135,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService._set_cache": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService._set_cache",
+      "start_line": 137,
+      "end_line": 150,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.encrypt_api_key": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.encrypt_api_key",
+      "start_line": 138,
+      "end_line": 160,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService._get_cache": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService._get_cache",
+      "start_line": 152,
+      "end_line": 166,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.decrypt_api_key": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.decrypt_api_key",
+      "start_line": 162,
+      "end_line": 184,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.get_config": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.get_config",
+      "start_line": 172,
+      "end_line": 199,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.get_config_value": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.get_config_value",
+      "start_line": 201,
+      "end_line": 217,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.list_configs": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.list_configs",
+      "start_line": 219,
+      "end_line": 245,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.create_config": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.create_config",
+      "start_line": 247,
+      "end_line": 301,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.update_config": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.update_config",
+      "start_line": 303,
+      "end_line": 369,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.delete_config": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.delete_config",
+      "start_line": 371,
+      "end_line": 424,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.get_llm_provider": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.get_llm_provider",
+      "start_line": 430,
+      "end_line": 436,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.get_llm_provider_by_name": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.get_llm_provider_by_name",
+      "start_line": 438,
+      "end_line": 449,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.list_llm_providers": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.list_llm_providers",
+      "start_line": 451,
+      "end_line": 481,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.get_default_llm_provider": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.get_default_llm_provider",
+      "start_line": 483,
+      "end_line": 492,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.update_llm_provider": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.update_llm_provider",
+      "start_line": 551,
+      "end_line": 603,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService._encrypt_extra_config": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService._encrypt_extra_config",
+      "start_line": 586,
+      "end_line": 604,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.delete_llm_provider": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.delete_llm_provider",
+      "start_line": 605,
+      "end_line": 639,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService._decrypt_extra_config": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService._decrypt_extra_config",
+      "start_line": 606,
+      "end_line": 626,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.create_llm_provider": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.create_llm_provider",
+      "start_line": 628,
+      "end_line": 690,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.get_embedding_provider": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.get_embedding_provider",
+      "start_line": 645,
+      "end_line": 656,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.get_embedding_provider_by_name": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.get_embedding_provider_by_name",
+      "start_line": 658,
+      "end_line": 669,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.list_embedding_providers": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.list_embedding_providers",
+      "start_line": 671,
+      "end_line": 690,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.get_default_embedding_provider": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.get_default_embedding_provider",
+      "start_line": 692,
+      "end_line": 703,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.update_embedding_provider": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.update_embedding_provider",
+      "start_line": 758,
+      "end_line": 812,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.get_llm_provider_api_key": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.get_llm_provider_api_key",
+      "start_line": 782,
+      "end_line": 794,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.delete_embedding_provider": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.delete_embedding_provider",
+      "start_line": 814,
+      "end_line": 852,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.get_agent_config": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.get_agent_config",
+      "start_line": 858,
+      "end_line": 864,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.create_embedding_provider": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.create_embedding_provider",
+      "start_line": 860,
+      "end_line": 918,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.get_agent_config_by_type": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.get_agent_config_by_type",
+      "start_line": 866,
+      "end_line": 884,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.list_agent_configs": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.list_agent_configs",
+      "start_line": 886,
+      "end_line": 905,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.create_agent_config": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.create_agent_config",
+      "start_line": 907,
+      "end_line": 955,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.update_agent_config": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.update_agent_config",
+      "start_line": 957,
+      "end_line": 1010,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.delete_agent_config": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.delete_agent_config",
+      "start_line": 1012,
+      "end_line": 1046,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.get_embedding_provider_api_key": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.get_embedding_provider_api_key",
+      "start_line": 1016,
+      "end_line": 1028,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService._log_change": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService._log_change",
+      "start_line": 1052,
+      "end_line": 1083,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.get_audit_log": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.get_audit_log",
+      "start_line": 1085,
+      "end_line": 1104,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.export_configurations": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.export_configurations",
+      "start_line": 1110,
+      "end_line": 1145,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.import_configurations": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.import_configurations",
+      "start_line": 1147,
+      "end_line": 1241,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService._validate_config_value": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService._validate_config_value",
+      "start_line": 1247,
+      "end_line": 1296,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.migrate_from_env": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.migrate_from_env",
+      "start_line": 1302,
+      "end_line": 1384,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.get_config_service": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.get_config_service",
+      "start_line": 1391,
+      "end_line": 1396,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.initialize_config_service": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.initialize_config_service",
+      "start_line": 1399,
+      "end_line": 1402,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.shutdown_config_service": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.shutdown_config_service",
+      "start_line": 1405,
+      "end_line": 1410,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.get_service": {
+      "file_path": "src/heretek_swarm/api/configuration.py",
+      "qualified_name": "src.heretek_swarm.api.configuration.get_service",
+      "start_line": 68,
+      "end_line": 70,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.get_all_configs": {
+      "file_path": "src/heretek_swarm/api/configuration.py",
+      "qualified_name": "src.heretek_swarm.api.configuration.get_all_configs",
+      "start_line": 78,
+      "end_line": 92,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.get_config": {
+      "file_path": "src/heretek_swarm/api/configuration.py",
+      "qualified_name": "src.heretek_swarm.api.configuration.get_config",
+      "start_line": 96,
+      "end_line": 105,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.update_config": {
+      "file_path": "src/heretek_swarm/api/configuration.py",
+      "qualified_name": "src.heretek_swarm.api.configuration.update_config",
+      "start_line": 109,
+      "end_line": 119,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.create_config": {
+      "file_path": "src/heretek_swarm/api/configuration.py",
+      "qualified_name": "src.heretek_swarm.api.configuration.create_config",
+      "start_line": 123,
+      "end_line": 133,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.delete_config": {
+      "file_path": "src/heretek_swarm/api/configuration.py",
+      "qualified_name": "src.heretek_swarm.api.configuration.delete_config",
+      "start_line": 137,
+      "end_line": 146,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.list_llm_provider_types": {
+      "file_path": "src/heretek_swarm/api/configuration.py",
+      "qualified_name": "src.heretek_swarm.api.configuration.list_llm_provider_types",
+      "start_line": 154,
+      "end_line": 158,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.list_llm_providers": {
+      "file_path": "src/heretek_swarm/api/configuration.py",
+      "qualified_name": "src.heretek_swarm.api.configuration.list_llm_providers",
+      "start_line": 162,
+      "end_line": 176,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.get_llm_provider": {
+      "file_path": "src/heretek_swarm/api/configuration.py",
+      "qualified_name": "src.heretek_swarm.api.configuration.get_llm_provider",
+      "start_line": 180,
+      "end_line": 189,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.create_llm_provider": {
+      "file_path": "src/heretek_swarm/api/configuration.py",
+      "qualified_name": "src.heretek_swarm.api.configuration.create_llm_provider",
+      "start_line": 193,
+      "end_line": 204,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.update_llm_provider": {
+      "file_path": "src/heretek_swarm/api/configuration.py",
+      "qualified_name": "src.heretek_swarm.api.configuration.update_llm_provider",
+      "start_line": 208,
+      "end_line": 218,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.delete_llm_provider": {
+      "file_path": "src/heretek_swarm/api/configuration.py",
+      "qualified_name": "src.heretek_swarm.api.configuration.delete_llm_provider",
+      "start_line": 222,
+      "end_line": 231,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.test_llm_provider": {
+      "file_path": "src/heretek_swarm/api/configuration.py",
+      "qualified_name": "src.heretek_swarm.api.configuration.test_llm_provider",
+      "start_line": 235,
+      "end_line": 277,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.list_embedding_provider_types": {
+      "file_path": "src/heretek_swarm/api/configuration.py",
+      "qualified_name": "src.heretek_swarm.api.configuration.list_embedding_provider_types",
+      "start_line": 285,
+      "end_line": 289,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.list_embedding_providers": {
+      "file_path": "src/heretek_swarm/api/configuration.py",
+      "qualified_name": "src.heretek_swarm.api.configuration.list_embedding_providers",
+      "start_line": 293,
+      "end_line": 307,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.get_embedding_provider": {
+      "file_path": "src/heretek_swarm/api/configuration.py",
+      "qualified_name": "src.heretek_swarm.api.configuration.get_embedding_provider",
+      "start_line": 311,
+      "end_line": 320,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.create_embedding_provider": {
+      "file_path": "src/heretek_swarm/api/configuration.py",
+      "qualified_name": "src.heretek_swarm.api.configuration.create_embedding_provider",
+      "start_line": 324,
+      "end_line": 334,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.update_embedding_provider": {
+      "file_path": "src/heretek_swarm/api/configuration.py",
+      "qualified_name": "src.heretek_swarm.api.configuration.update_embedding_provider",
+      "start_line": 338,
+      "end_line": 348,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.delete_embedding_provider": {
+      "file_path": "src/heretek_swarm/api/configuration.py",
+      "qualified_name": "src.heretek_swarm.api.configuration.delete_embedding_provider",
+      "start_line": 352,
+      "end_line": 361,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.test_embedding_provider": {
+      "file_path": "src/heretek_swarm/api/configuration.py",
+      "qualified_name": "src.heretek_swarm.api.configuration.test_embedding_provider",
+      "start_line": 365,
+      "end_line": 412,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.list_agent_configs": {
+      "file_path": "src/heretek_swarm/api/configuration.py",
+      "qualified_name": "src.heretek_swarm.api.configuration.list_agent_configs",
+      "start_line": 420,
+      "end_line": 431,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.get_agent_config": {
+      "file_path": "src/heretek_swarm/api/configuration.py",
+      "qualified_name": "src.heretek_swarm.api.configuration.get_agent_config",
+      "start_line": 435,
+      "end_line": 444,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.create_agent_config": {
+      "file_path": "src/heretek_swarm/api/configuration.py",
+      "qualified_name": "src.heretek_swarm.api.configuration.create_agent_config",
+      "start_line": 448,
+      "end_line": 458,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.update_agent_config": {
+      "file_path": "src/heretek_swarm/api/configuration.py",
+      "qualified_name": "src.heretek_swarm.api.configuration.update_agent_config",
+      "start_line": 462,
+      "end_line": 472,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.delete_agent_config": {
+      "file_path": "src/heretek_swarm/api/configuration.py",
+      "qualified_name": "src.heretek_swarm.api.configuration.delete_agent_config",
+      "start_line": 476,
+      "end_line": 485,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.get_audit_log": {
+      "file_path": "src/heretek_swarm/api/configuration.py",
+      "qualified_name": "src.heretek_swarm.api.configuration.get_audit_log",
+      "start_line": 493,
+      "end_line": 504,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.export_configurations": {
+      "file_path": "src/heretek_swarm/api/configuration.py",
+      "qualified_name": "src.heretek_swarm.api.configuration.export_configurations",
+      "start_line": 512,
+      "end_line": 518,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.import_configurations": {
+      "file_path": "src/heretek_swarm/api/configuration.py",
+      "qualified_name": "src.heretek_swarm.api.configuration.import_configurations",
+      "start_line": 522,
+      "end_line": 530,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.migrate_from_env": {
+      "file_path": "src/heretek_swarm/api/configuration.py",
+      "qualified_name": "src.heretek_swarm.api.configuration.migrate_from_env",
+      "start_line": 538,
+      "end_line": 544,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.reload_configurations": {
+      "file_path": "src/heretek_swarm/api/configuration.py",
+      "qualified_name": "src.heretek_swarm.api.configuration.reload_configurations",
+      "start_line": 552,
+      "end_line": 588,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.configuration_health": {
+      "file_path": "src/heretek_swarm/api/configuration.py",
+      "qualified_name": "src.heretek_swarm.api.configuration.configuration_health",
+      "start_line": 596,
+      "end_line": 627,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.export_configuration_bundle": {
+      "file_path": "src/heretek_swarm/api/configuration.py",
+      "qualified_name": "src.heretek_swarm.api.configuration.export_configuration_bundle",
+      "start_line": 635,
+      "end_line": 663,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration.import_configuration_bundle": {
+      "file_path": "src/heretek_swarm/api/configuration.py",
+      "qualified_name": "src.heretek_swarm.api.configuration.import_configuration_bundle",
+      "start_line": 667,
+      "end_line": 694,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Settings/SettingsPage.tsx|dashboard.frontend.src.components.Settings.SettingsPage.TabConfig": {
+      "file_path": "dashboard/frontend/src/components/Settings/SettingsPage.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Settings.SettingsPage.TabConfig",
+      "start_line": 19,
+      "end_line": 23,
+      "type": "INTERFACE",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Settings/SettingsPage.tsx|dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage": {
+      "file_path": "dashboard/frontend/src/components/Settings/SettingsPage.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage",
+      "start_line": 33,
+      "end_line": 105,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Settings/SettingsPage.tsx|dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiKey.useCallback() callback": {
+      "file_path": "dashboard/frontend/src/components/Settings/SettingsPage.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiKey.useCallback() callback",
+      "start_line": 39,
+      "end_line": 42,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Settings/SettingsPage.tsx|dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiUrl.useCallback() callback": {
+      "file_path": "dashboard/frontend/src/components/Settings/SettingsPage.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiUrl.useCallback() callback",
+      "start_line": 44,
+      "end_line": 47,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Settings/SettingsPage.tsx|dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleClearApiKey.useCallback() callback": {
+      "file_path": "dashboard/frontend/src/components/Settings/SettingsPage.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleClearApiKey.useCallback() callback",
+      "start_line": 49,
+      "end_line": 53,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Settings/SettingsPage.tsx|dashboard.frontend.src.components.Settings.SettingsPage.<unknown>..map() callback": {
+      "file_path": "dashboard/frontend/src/components/Settings/SettingsPage.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Settings.SettingsPage.<unknown>..map() callback",
+      "start_line": 160,
+      "end_line": 162,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Settings/SettingsPage.tsx|dashboard.frontend.src.components.Settings.SettingsPage.renderTabContent": {
+      "file_path": "dashboard/frontend/src/components/Settings/SettingsPage.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Settings.SettingsPage.renderTabContent",
+      "start_line": 179,
+      "end_line": 179,
+      "type": "METHOD",
+      "status": "added"
     }
   },
   "components": [
@@ -51745,12 +53298,14 @@
         },
         {
           "file_path": "src/heretek_swarm/runtime/autonomous_runtime_config.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.runtime.autonomous_runtime_config.AutonomousRuntimeConfig",
             "src.heretek_swarm.runtime.autonomous_runtime_config.AlertConfig",
             "src.heretek_swarm.runtime.autonomous_runtime_config.ScalingPolicy",
-            "src.heretek_swarm.runtime.autonomous_runtime_config.load_config_from_env"
+            "src.heretek_swarm.runtime.autonomous_runtime_config.load_config_from_env",
+            "src.heretek_swarm.runtime.autonomous_runtime_config.load_config_from_env_sync",
+            "src.heretek_swarm.runtime.autonomous_runtime_config._load_config_from_env_sync_fallback"
           ]
         },
         {
@@ -54119,12 +55674,14 @@
             },
             {
               "file_path": "src/heretek_swarm/runtime/autonomous_runtime_config.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.runtime.autonomous_runtime_config.AutonomousRuntimeConfig",
                 "src.heretek_swarm.runtime.autonomous_runtime_config.AlertConfig",
                 "src.heretek_swarm.runtime.autonomous_runtime_config.ScalingPolicy",
-                "src.heretek_swarm.runtime.autonomous_runtime_config.load_config_from_env"
+                "src.heretek_swarm.runtime.autonomous_runtime_config.load_config_from_env",
+                "src.heretek_swarm.runtime.autonomous_runtime_config.load_config_from_env_sync",
+                "src.heretek_swarm.runtime.autonomous_runtime_config._load_config_from_env_sync_fallback"
               ]
             },
             {
@@ -72363,7 +73920,7 @@
         },
         {
           "file_path": "dashboard/frontend/src/stores/metricsStore.ts",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "dashboard.frontend.src.stores.metricsStore.ConsciousnessMetrics",
             "dashboard.frontend.src.stores.metricsStore.AgentMetrics",
@@ -72371,13 +73928,22 @@
             "dashboard.frontend.src.stores.metricsStore.MetricsState",
             "dashboard.frontend.src.stores.metricsStore.useMetricsStore",
             "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback",
+            "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback",
             "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setCollectiveMetrics",
             "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setAgentMetrics",
             "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setAgentMetrics.set() callback",
             "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setAgentStates",
             "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setLoading",
+            "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setAgentMetrics.set('setAgentMetrics') callback",
             "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setError",
-            "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.reset"
+            "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.reset",
+            "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setCollectiveMetrics",
+            "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setAgentMetrics",
+            "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setAgentMetrics.setWithAction('setAgentMetrics') callback",
+            "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setAgentStates",
+            "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setLoading",
+            "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setError",
+            "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.reset"
           ]
         },
         {
@@ -73610,7 +75176,7 @@
             },
             {
               "file_path": "dashboard/frontend/src/stores/metricsStore.ts",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "dashboard.frontend.src.stores.metricsStore.ConsciousnessMetrics",
                 "dashboard.frontend.src.stores.metricsStore.AgentMetrics",
@@ -73618,13 +75184,22 @@
                 "dashboard.frontend.src.stores.metricsStore.MetricsState",
                 "dashboard.frontend.src.stores.metricsStore.useMetricsStore",
                 "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback",
+                "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback",
                 "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setCollectiveMetrics",
                 "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setAgentMetrics",
                 "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setAgentMetrics.set() callback",
                 "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setAgentStates",
                 "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setLoading",
+                "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setAgentMetrics.set('setAgentMetrics') callback",
                 "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setError",
-                "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.reset"
+                "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.reset",
+                "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setCollectiveMetrics",
+                "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setAgentMetrics",
+                "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setAgentMetrics.setWithAction('setAgentMetrics') callback",
+                "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setAgentStates",
+                "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setLoading",
+                "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setError",
+                "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.reset"
               ]
             }
           ],
@@ -73701,7 +75276,7 @@
                 },
                 {
                   "file_path": "dashboard/frontend/src/stores/metricsStore.ts",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "dashboard.frontend.src.stores.metricsStore.ConsciousnessMetrics",
                     "dashboard.frontend.src.stores.metricsStore.AgentMetrics",
@@ -73709,13 +75284,22 @@
                     "dashboard.frontend.src.stores.metricsStore.MetricsState",
                     "dashboard.frontend.src.stores.metricsStore.useMetricsStore",
                     "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback",
+                    "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback",
                     "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setCollectiveMetrics",
                     "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setAgentMetrics",
                     "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setAgentMetrics.set() callback",
                     "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setAgentStates",
                     "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setLoading",
+                    "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setAgentMetrics.set('setAgentMetrics') callback",
                     "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setError",
-                    "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.reset"
+                    "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.reset",
+                    "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setCollectiveMetrics",
+                    "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setAgentMetrics",
+                    "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setAgentMetrics.setWithAction('setAgentMetrics') callback",
+                    "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setAgentStates",
+                    "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setLoading",
+                    "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setError",
+                    "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.reset"
                   ]
                 }
               ],
@@ -73778,7 +75362,7 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/stores/metricsStore.ts",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "dashboard.frontend.src.stores.metricsStore.ConsciousnessMetrics",
                         "dashboard.frontend.src.stores.metricsStore.AgentMetrics",
@@ -73786,13 +75370,22 @@
                         "dashboard.frontend.src.stores.metricsStore.MetricsState",
                         "dashboard.frontend.src.stores.metricsStore.useMetricsStore",
                         "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback",
+                        "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback",
                         "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setCollectiveMetrics",
                         "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setAgentMetrics",
                         "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setAgentMetrics.set() callback",
                         "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setAgentStates",
                         "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setLoading",
+                        "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setAgentMetrics.set('setAgentMetrics') callback",
                         "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setError",
-                        "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.reset"
+                        "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.reset",
+                        "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setCollectiveMetrics",
+                        "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setAgentMetrics",
+                        "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setAgentMetrics.setWithAction('setAgentMetrics') callback",
+                        "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setAgentStates",
+                        "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setLoading",
+                        "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setError",
+                        "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.reset"
                       ]
                     }
                   ],
@@ -73899,7 +75492,7 @@
                   "file_methods": [
                     {
                       "file_path": "dashboard/frontend/src/stores/metricsStore.ts",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "dashboard.frontend.src.stores.metricsStore.ConsciousnessMetrics",
                         "dashboard.frontend.src.stores.metricsStore.AgentMetrics",
@@ -73907,13 +75500,22 @@
                         "dashboard.frontend.src.stores.metricsStore.MetricsState",
                         "dashboard.frontend.src.stores.metricsStore.useMetricsStore",
                         "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback",
+                        "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback",
                         "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setCollectiveMetrics",
                         "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setAgentMetrics",
                         "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setAgentMetrics.set() callback",
                         "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setAgentStates",
                         "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setLoading",
+                        "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setAgentMetrics.set('setAgentMetrics') callback",
                         "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setError",
-                        "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.reset"
+                        "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.reset",
+                        "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setCollectiveMetrics",
+                        "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setAgentMetrics",
+                        "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setAgentMetrics.setWithAction('setAgentMetrics') callback",
+                        "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setAgentStates",
+                        "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setLoading",
+                        "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setError",
+                        "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.reset"
                       ]
                     }
                   ],
@@ -74004,7 +75606,7 @@
                 },
                 {
                   "file_path": "dashboard/frontend/src/stores/metricsStore.ts",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "dashboard.frontend.src.stores.metricsStore.ConsciousnessMetrics",
                     "dashboard.frontend.src.stores.metricsStore.AgentMetrics",
@@ -74012,13 +75614,22 @@
                     "dashboard.frontend.src.stores.metricsStore.MetricsState",
                     "dashboard.frontend.src.stores.metricsStore.useMetricsStore",
                     "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback",
+                    "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback",
                     "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setCollectiveMetrics",
                     "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setAgentMetrics",
                     "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setAgentMetrics.set() callback",
                     "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setAgentStates",
                     "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setLoading",
+                    "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setAgentMetrics.set('setAgentMetrics') callback",
                     "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setError",
-                    "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.reset"
+                    "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.reset",
+                    "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setCollectiveMetrics",
+                    "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setAgentMetrics",
+                    "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setAgentMetrics.setWithAction('setAgentMetrics') callback",
+                    "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setAgentStates",
+                    "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setLoading",
+                    "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setError",
+                    "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.reset"
                   ]
                 }
               ],
@@ -74087,7 +75698,7 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/stores/metricsStore.ts",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "dashboard.frontend.src.stores.metricsStore.ConsciousnessMetrics",
                         "dashboard.frontend.src.stores.metricsStore.AgentMetrics",
@@ -74095,13 +75706,22 @@
                         "dashboard.frontend.src.stores.metricsStore.MetricsState",
                         "dashboard.frontend.src.stores.metricsStore.useMetricsStore",
                         "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback",
+                        "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback",
                         "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setCollectiveMetrics",
                         "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setAgentMetrics",
                         "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setAgentMetrics.set() callback",
                         "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setAgentStates",
                         "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setLoading",
+                        "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setAgentMetrics.set('setAgentMetrics') callback",
                         "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.setError",
-                        "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.reset"
+                        "dashboard.frontend.src.stores.metricsStore.useMetricsStore.create() callback.reset",
+                        "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setCollectiveMetrics",
+                        "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setAgentMetrics",
+                        "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setAgentMetrics.setWithAction('setAgentMetrics') callback",
+                        "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setAgentStates",
+                        "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setLoading",
+                        "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.setError",
+                        "dashboard.frontend.src.stores.metricsStore.useMetricsStore.withDebugMiddleware() callback.reset"
                       ]
                     }
                   ],
