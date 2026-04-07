@@ -669,7 +669,7 @@ class MemoryTieringSystem:
         reason: str = "",
     ) -> MigrationRecord:
         """
-        Migrate a memory to a different tier.
+        Migrate a memory to a different tier with transactional integrity.
         
         Args:
             memory: Memory to migrate
@@ -681,10 +681,12 @@ class MemoryTieringSystem:
             Migration record
         """
         start_time = time.time()
+        source_tier = memory.current_tier
         
+        # Create migration record
         record = MigrationRecord(
             memory_id=memory.memory_id,
-            from_tier=memory.current_tier,
+            from_tier=source_tier,
             to_tier=target_tier,
             status=TierMigrationStatus.IN_PROGRESS,
             trigger=trigger,
@@ -692,31 +694,70 @@ class MemoryTieringSystem:
             started_at=datetime.now(timezone.utc).isoformat(),
         )
         
+        # Snapshot for rollback - preserve original state
+        original_tier = source_tier
+        original_tier_history = memory.tier_history.copy()
+        original_metadata = memory.metadata.copy()
+        original_data = memory.data
+        original_compressed = memory.compressed
+        original_compression_ratio = memory.compression_ratio
+        original_size_bytes = memory.size_bytes
+        
+        migration_completed = False
+        
         try:
-            # Remove from source tier
-            source_tier = memory.current_tier
+            # PHASE 1: Validate migration is possible
+            if target_tier == source_tier:
+                raise ValueError(f"Cannot migrate to same tier: {source_tier.value}")
+            
+            if source_tier not in self._memories_by_tier:
+                raise ValueError(f"Source tier {source_tier.value} not found")
+            
+            if target_tier not in self._memories_by_tier:
+                raise ValueError(f"Target tier {target_tier.value} not found")
+            
+            if memory.memory_id not in self._memories_by_tier[source_tier]:
+                raise ValueError(f"Memory {memory.memory_id} not found in source tier")
+            
+            # PHASE 2: Remove from source tier (begin transaction)
             if memory.memory_id in self._memories_by_tier[source_tier]:
                 del self._memories_by_tier[source_tier][memory.memory_id]
             
-            # Update memory tier
+            # PHASE 3: Update memory tier and metadata
             memory.current_tier = target_tier
-            memory.tier_history.append({
+            migration_entry = {
                 "action": "migrated",
                 "from_tier": source_tier.value,
                 "to_tier": target_tier.value,
                 "timestamp": datetime.now(timezone.utc).isoformat(),
                 "trigger": trigger.value,
                 "reason": reason,
-            })
+            }
+            memory.tier_history.append(migration_entry)
             
-            # Add to target tier
+            # PHASE 4: Add to target tier
             self._memories_by_tier[target_tier][memory.memory_id] = memory
             
-            # Complete migration
+            # PHASE 5: Verify migration succeeded
+            verification_result = self._verify_migration(
+                memory_id=memory.memory_id,
+                expected_tier=target_tier,
+                original_metadata=original_metadata,
+            )
+            
+            if not verification_result["success"]:
+                raise ValueError(f"Migration verification failed: {verification_result['error']}")
+            
+            # PHASE 6: Complete migration (commit transaction)
             latency_ms = (time.time() - start_time) * 1000
             record.status = TierMigrationStatus.COMPLETED
             record.completed_at = datetime.now(timezone.utc).isoformat()
             record.latency_ms = latency_ms
+            record.audit_metadata = {
+                "verification": verification_result,
+                "metadata_preserved": memory.metadata == original_metadata,
+                "data_preserved": memory.data == original_data,
+            }
             
             # Update statistics
             self._total_migrations += 1
@@ -726,18 +767,38 @@ class MemoryTieringSystem:
             # Add to history
             self._add_to_history(record)
             
+            migration_completed = True
+            
             logger.info(
                 "memory_migrated",
                 memory_id=memory.memory_id,
                 from_tier=source_tier.value,
                 to_tier=target_tier.value,
                 latency_ms=latency_ms,
+                verified=True,
             )
             
         except Exception as e:
+            # PHASE 7: Rollback on failure
+            rollback_result = self._rollback_migration(
+                memory=memory,
+                original_tier=original_tier,
+                original_tier_history=original_tier_history,
+                original_metadata=original_metadata,
+                original_data=original_data,
+                original_compressed=original_compressed,
+                original_compression_ratio=original_compression_ratio,
+                original_size_bytes=original_size_bytes,
+            )
+            
             record.status = TierMigrationStatus.FAILED
             record.completed_at = datetime.now(timezone.utc).isoformat()
             record.error = str(e)
+            record.rolled_back = rollback_result["success"]
+            record.audit_metadata = {
+                "rollback_result": rollback_result,
+                "original_error": str(e),
+            }
             
             self._total_migrations += 1
             self._failed_migrations += 1
@@ -748,9 +809,165 @@ class MemoryTieringSystem:
                 "memory_migration_failed",
                 memory_id=memory.memory_id,
                 error=str(e),
+                rolled_back=rollback_result["success"],
             )
         
         return record
+    
+    def _verify_migration(
+        self,
+        memory_id: str,
+        expected_tier: MemoryTier,
+        original_metadata: Dict[str, Any],
+    ) -> Dict[str, Any]:
+        """
+        Verify that a migration completed successfully.
+        
+        Args:
+            memory_id: Memory identifier
+            expected_tier: Expected destination tier
+            original_metadata: Original metadata to verify preservation
+            
+        Returns:
+            Verification result with success status and any errors
+        """
+        result: Dict[str, Any] = {
+            "success": False,
+            "errors": [],
+            "checks_performed": [],
+        }
+        
+        try:
+            # Check 1: Memory exists in target tier
+            if memory_id not in self._memories_by_tier[expected_tier]:
+                result["errors"].append(f"Memory not found in target tier {expected_tier.value}")
+                result["checks_performed"].append("target_tier_exists")
+                return result
+            result["checks_performed"].append("target_tier_exists")
+            
+            memory = self._memories_by_tier[expected_tier][memory_id]
+            
+            # Check 2: Memory tier is correctly set
+            if memory.current_tier != expected_tier:
+                result["errors"].append(
+                    f"Memory tier mismatch: expected {expected_tier.value}, got {memory.current_tier.value}"
+                )
+                result["checks_performed"].append("tier_field_correct")
+                return result
+            result["checks_performed"].append("tier_field_correct")
+            
+            # Check 3: Tier history was updated
+            if not memory.tier_history or memory.tier_history[-1]["action"] != "migrated":
+                result["errors"].append("Tier history not updated correctly")
+                result["checks_performed"].append("tier_history_updated")
+                return result
+            result["checks_performed"].append("tier_history_updated")
+            
+            # Check 4: Metadata preserved
+            if memory.metadata != original_metadata:
+                result["errors"].append("Metadata not preserved during migration")
+                result["checks_performed"].append("metadata_preserved")
+                return result
+            result["checks_performed"].append("metadata_preserved")
+            
+            # Check 5: Memory not in source tier (should be removed)
+            found_in_wrong_tier = False
+            for tier, memories in self._memories_by_tier.items():
+                if tier != expected_tier and memory_id in memories:
+                    found_in_wrong_tier = True
+                    result["errors"].append(f"Memory still exists in source tier {tier.value}")
+                    break
+            
+            if found_in_wrong_tier:
+                result["checks_performed"].append("removed_from_source")
+                return result
+            result["checks_performed"].append("removed_from_source")
+            
+            result["success"] = True
+            
+        except Exception as e:
+            result["errors"].append(f"Verification error: {str(e)}")
+        
+        return result
+    
+    def _rollback_migration(
+        self,
+        memory: TieredMemory,
+        original_tier: MemoryTier,
+        original_tier_history: List[Dict[str, Any]],
+        original_metadata: Dict[str, Any],
+        original_data: Any,
+        original_compressed: bool,
+        original_compression_ratio: float,
+        original_size_bytes: int,
+    ) -> Dict[str, Any]:
+        """
+        Rollback a failed migration to restore original state.
+        
+        Args:
+            memory: Memory to rollback
+            original_tier: Original tier before migration
+            original_tier_history: Original tier history
+            original_metadata: Original metadata
+            original_data: Original data
+            original_compressed: Original compression state
+            original_compression_ratio: Original compression ratio
+            original_size_bytes: Original size in bytes
+            
+        Returns:
+            Rollback result with success status
+        """
+        result: Dict[str, Any] = {
+            "success": False,
+            "errors": [],
+            "actions_taken": [],
+        }
+        
+        try:
+            # Remove from target tier if present
+            target_tier = memory.current_tier
+            if memory.memory_id in self._memories_by_tier.get(target_tier, {}):
+                del self._memories_by_tier[target_tier][memory.memory_id]
+                result["actions_taken"].append(f"removed_from_target_{target_tier.value}")
+            
+            # Restore to original tier
+            memory.current_tier = original_tier
+            memory.tier_history = original_tier_history
+            memory.metadata = original_metadata
+            memory.data = original_data
+            memory.compressed = original_compressed
+            memory.compression_ratio = original_compression_ratio
+            memory.size_bytes = original_size_bytes
+            
+            # Add back to original tier
+            self._memories_by_tier[original_tier][memory.memory_id] = memory
+            result["actions_taken"].append(f"restored_to_original_{original_tier.value}")
+            
+            # Verify rollback succeeded
+            if memory.memory_id in self._memories_by_tier[original_tier]:
+                restored_memory = self._memories_by_tier[original_tier][memory.memory_id]
+                if restored_memory.current_tier == original_tier:
+                    result["success"] = True
+                    result["actions_taken"].append("rollback_verified")
+                    logger.info(
+                        "migration_rolled_back",
+                        memory_id=memory.memory_id,
+                        original_tier=original_tier.value,
+                    )
+                else:
+                    result["errors"].append("Rollback verification failed: tier mismatch")
+            else:
+                result["errors"].append("Rollback failed: memory not restored")
+                
+        except Exception as e:
+            result["errors"].append(f"Rollback error: {str(e)}")
+            logger.error(
+                "rollback_failed",
+                memory_id=memory.memory_id,
+                error=str(e),
+            )
+        
+        return result
     
     def _add_to_history(self, record: MigrationRecord) -> None:
         """Add migration record to history."""
