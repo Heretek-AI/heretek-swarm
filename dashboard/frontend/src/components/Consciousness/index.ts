@@ -1,10 +1,12 @@
 /**
  * Consciousness Components
- *
- * Exports all consciousness metrics visualization components
  */
 
-export { ConsciousnessDashboard } from "./ConsciousnessDashboard";
-export { ConsciousnessGauge, type ConsciousnessGaugeProps } from "./ConsciousnessGauge";
-export { AgentStatusGrid, type AgentStatusGridProps, type Agent, type AgentStatus } from "./AgentStatusGrid";
-export * from "./types";
+export { ConsciousnessPage } from './ConsciousnessPage';
+
+// Re-export existing components
+export { ConsciousnessDashboard } from './ConsciousnessDashboard';
+export { ConsciousnessGauge } from './ConsciousnessGauge';
+export { AgentStatusGrid } from './AgentStatusGrid';
+export { RealTimeAgentPanel } from './RealTimeAgentPanel';
+export type * from './types';
