@@ -14,6 +14,15 @@ const api = axios.create({
   },
 });
 
+// Add API key interceptor
+api.interceptors.request.use((config) => {
+  const apiKey = import.meta.env.VITE_API_KEY;
+  if (apiKey) {
+    config.headers.Authorization = `Bearer ${apiKey}`;
+  }
+  return config;
+});
+
 export interface ConsciousnessStatistics {
   total_agents: number;
   average_phi: number;

@@ -40,6 +40,7 @@ services:
       - "3000:80"
     environment:
       - VITE_API_HOST=${VITE_API_HOST:-}
+      - VITE_API_KEY=${HERETEK_API_KEY:-}
     depends_on:
       - api
     restart: unless-stopped
