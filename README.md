@@ -9,6 +9,102 @@
 
 ---
 
+## 🚀 Quick Start - One-Shot Deployment
+
+Get Heretek Swarm running in under 5 minutes with a single command!
+
+### Prerequisites
+
+Requirement | Minimum | Recommended |
+|-------------|---------|-------------|
+**Docker** | 20.10+ | Latest |
+**Docker Compose** | 2.0+ | Latest plugin |
+**Disk Space** | 10GB | 20GB+ |
+**Memory** | 4GB | 8GB+ |
+**CPU** | 2 cores | 4+ cores |
+
+### Installation
+
+```bash
+# 1. Clone the repository (if you haven't already)
+git clone https://github.com/heretek-ai/heretek-swarm.git
+cd heretek-swarm
+
+# 2. Run the one-shot deployment script
+./deploy.sh
+```
+
+That's it! The [`deploy.sh`](deploy.sh) script will:
+- ✅ Check prerequisites (Docker, Docker Compose, disk space, memory)
+- ✅ Create `.env` file from template
+- ✅ Pull all required container images
+- ✅ Start PostgreSQL, Redis, Qdrant, API server, and Frontend
+- ✅ Run database migrations
+- ✅ Verify all services are healthy
+
+### Post-Deployment
+
+```bash
+# 1. Edit your environment file with API keys
+nano .env
+
+# 2. Restart the API to pick up your configuration
+docker-compose restart api
+
+# 3. Access the services
+# API:    http://localhost:8000
+# Frontend: http://localhost:3000
+```
+
+### Script Commands
+
+Command | Description |
+|---------|-------------|
+`./deploy.sh` | Deploy all services |
+`./deploy.sh stop` | Stop all services |
+`./deploy.sh restart` | Restart all services |
+`./deploy.sh status` | Show service status |
+`./deploy.sh logs` | View live logs |
+`./deploy.sh clean` | Remove all containers and volumes |
+
+### Manual Docker Compose Commands
+
+```bash
+# Start all services
+docker-compose up -d
+
+# View logs
+docker-compose logs -f
+
+# Stop all services
+docker-compose down
+
+# Stop and remove volumes (clean slate)
+docker-compose down -v
+```
+
+### Troubleshooting
+
+```bash
+# Check if Docker is running
+docker info
+
+# Check service status
+docker-compose ps
+
+# View error logs
+docker-compose logs api
+
+# Restart a specific service
+docker-compose restart api
+```
+
+### Kubernetes Deployment
+
+For production Kubernetes deployment, see [`k8s/README.md`](k8s/README.md).
+
+---
+
 ## ✅ P0/P1 Remediation Complete (2026-04-07)
 
 **All critical vulnerabilities have been addressed.** The system is now **PRODUCTION-READY** with P0 and P1 remediation items complete.
