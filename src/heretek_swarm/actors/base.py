@@ -29,6 +29,11 @@ from heretek_swarm.actors.validation import (
     TerminateRequest,
     CollectiveTaskRequest,
 )
+from heretek_swarm.state.repository import (
+    StateRepository,
+    AgentStateRecord,
+    StateCheckpoint,
+)
 
 # Configure structured logging
 import structlog
@@ -172,6 +177,8 @@ class AgentActor:
         max_mailbox_size: int = 1000,
         heartbeat_interval: float = 10.0,
         actor_type: Optional[str] = None,
+        state_repository: Optional[StateRepository] = None,
+        load_state_on_init: bool = True,
     ) -> None:
         """
         Initialize an actor.
@@ -186,6 +193,8 @@ class AgentActor:
             max_mailbox_size: Maximum mailbox queue size
             heartbeat_interval: Interval between heartbeats in seconds
             actor_type: Optional type identifier for factory registration
+            state_repository: Optional state persistence repository
+            load_state_on_init: Whether to load state from DB on initialization
         """
         # P1-7: Configuration validation
         if max_mailbox_size <= 0:
@@ -203,6 +212,11 @@ class AgentActor:
         self.max_mailbox_size = max_mailbox_size
         self.heartbeat_interval = heartbeat_interval
         self.actor_type = actor_type or self.__class__.__name__
+
+        # State persistence
+        self._state_repository: Optional[StateRepository] = state_repository
+        self._state_record: Optional[AgentStateRecord] = None
+        self._load_state_on_init = load_state_on_init
 
         # Actor state
         self.state: ActorState = ActorState.SPAWNING
@@ -288,6 +302,7 @@ class AgentActor:
         2. Starts mailbox processing loop
         3. Starts heartbeat loop
         4. Calls initialize() hook for subclass setup
+        5. Loads state from database if configured
         """
         # P1-6: Idempotency check - prevent multiple spawns
         if self._running:
@@ -302,6 +317,10 @@ class AgentActor:
 
             self._running = True
             self.state = ActorState.ACTIVE
+
+            # Load state from database if configured
+            if self._load_state_on_init:
+                await self.load_state()
 
             # Start processing tasks
             self._processing_task = asyncio.create_task(self._process_mailbox())
@@ -764,20 +783,14 @@ class AgentActor:
 
     async def save_state(self) -> None:
         """
-        Persist actor state to PostgreSQL or file system.
+        Persist actor state to PostgreSQL via StateRepository.
 
-        Saves actor state to the 'actor_states' table with proper serialization.
-        Table schema expected:
-            CREATE TABLE actor_states (
-                actor_id TEXT PRIMARY KEY,
-                actor_type TEXT,
-                state JSONB,
-                updated_at TIMESTAMPTZ DEFAULT NOW()
-            );
+        Saves actor state with version tracking for optimistic locking.
+        Falls back to legacy file system persistence if repository not available.
         """
         import json
         
-        state = {
+        state_data = {
             "internal_state": self.internal_state,
             "message_count": self.message_count,
             "error_count": self.error_count,
@@ -789,24 +802,49 @@ class AgentActor:
             "saved_at": datetime.now(timezone.utc).isoformat(),
         }
         
-        # Try to persist to PostgreSQL if database is available
+        # Use state repository if available
+        if self._state_repository is not None:
+            try:
+                # Get current version from stored record
+                version = None
+                if self._state_record:
+                    version = self._state_record.version + 1
+                
+                self._state_record = await self._state_repository.save_state(
+                    agent_id=self.agent_id,
+                    state=state_data,
+                    agent_type=self.actor_type,
+                    version=version,
+                )
+                logger.info(
+                    f"[{self.agent_id}] State persisted via StateRepository",
+                    extra={"state": self.state.value, "version": self._state_record.version},
+                )
+                return
+            except Exception as e:
+                logger.error(
+                    f"[{self.agent_id}] StateRepository persistence failed: {e}",
+                    exc_info=True,
+                )
+        
+        # Legacy fallback: try direct db_pool access
         db_pool = self.get_state("_db_pool")
         if db_pool is not None:
             try:
                 async with db_pool.acquire() as conn:
                     await conn.execute(
                         """
-                        INSERT INTO actor_states (actor_id, actor_type, state, updated_at)
-                        VALUES ($1, $2, $3, NOW())
-                        ON CONFLICT (actor_id) DO UPDATE
-                        SET state = $3, updated_at = NOW()
+                        INSERT INTO agent_states (id, agent_id, agent_type, state, version, updated_at, is_active)
+                        VALUES (gen_random_uuid(), $1, $2, $3, 1, NOW(), true)
+                        ON CONFLICT (agent_id) DO UPDATE
+                        SET state = $3, version = agent_states.version + 1, updated_at = NOW()
                         """,
                         self.agent_id,
                         self.actor_type,
-                        json.dumps(state),
+                        json.dumps(state_data),
                     )
                 logger.info(
-                    f"[{self.agent_id}] State persisted to PostgreSQL",
+                    f"[{self.agent_id}] State persisted to PostgreSQL (legacy)",
                     extra={"state": self.state.value},
                 )
                 return
@@ -816,7 +854,7 @@ class AgentActor:
                     exc_info=True,
                 )
         
-        # Fallback: persist to file system
+        # Final fallback: persist to file system
         try:
             import os
             state_dir = os.path.join(os.getcwd(), ".actor_states")
@@ -824,7 +862,7 @@ class AgentActor:
             state_file = os.path.join(state_dir, f"{self.agent_id}.json")
             
             with open(state_file, 'w') as f:
-                json.dump(state, f, indent=2)
+                json.dump(state_data, f, indent=2)
             
             logger.info(
                 f"[{self.agent_id}] State persisted to file system",
@@ -838,19 +876,47 @@ class AgentActor:
 
     async def load_state(self) -> None:
         """
-        Load actor state from PostgreSQL or file system.
+        Load actor state from StateRepository.
 
-        Attempts to load from PostgreSQL first, then falls back to file system.
+        Attempts to load from repository first, then falls back to legacy methods.
         """
         import json
         
-        # Try to load from PostgreSQL first
+        # Try StateRepository first
+        if self._state_repository is not None:
+            try:
+                record = await self._state_repository.load_state(self.agent_id)
+                if record:
+                    self._state_record = record
+                    loaded_state = record.state
+                    
+                    self.internal_state = loaded_state.get("internal_state", {})
+                    self.message_count = loaded_state.get("message_count", 0)
+                    self.error_count = loaded_state.get("error_count", 0)
+                    self.state = ActorState(loaded_state.get("state", "spawning"))
+                    self.created_at = loaded_state.get("created_at", self.created_at)
+                    self.last_activity = loaded_state.get("last_activity")
+                    self.topics = loaded_state.get("topics", self.topics)
+                    self.capabilities = loaded_state.get("capabilities", self.capabilities)
+                    
+                    logger.info(
+                        f"[{self.agent_id}] State loaded from StateRepository",
+                        extra={"state": self.state.value, "version": record.version},
+                    )
+                    return
+            except Exception as e:
+                logger.error(
+                    f"[{self.agent_id}] StateRepository load failed: {e}",
+                    exc_info=True,
+                )
+        
+        # Legacy fallback: try direct db_pool access
         db_pool = self.get_state("_db_pool")
         if db_pool is not None:
             try:
                 async with db_pool.acquire() as conn:
                     row = await conn.fetchrow(
-                        "SELECT state FROM actor_states WHERE actor_id = $1",
+                        "SELECT state, version FROM agent_states WHERE agent_id = $1 AND is_active = true",
                         self.agent_id,
                     )
                     if row:
@@ -858,14 +924,14 @@ class AgentActor:
                         self.internal_state = loaded_state.get("internal_state", {})
                         self.message_count = loaded_state.get("message_count", 0)
                         self.error_count = loaded_state.get("error_count", 0)
-                        self.state = ActorState(loaded_state.get("state", "active"))
+                        self.state = ActorState(loaded_state.get("state", "spawning"))
                         self.created_at = loaded_state.get("created_at", self.created_at)
                         self.last_activity = loaded_state.get("last_activity")
                         self.topics = loaded_state.get("topics", self.topics)
                         self.capabilities = loaded_state.get("capabilities", self.capabilities)
                         
                         logger.info(
-                            f"[{self.agent_id}] State loaded from PostgreSQL",
+                            f"[{self.agent_id}] State loaded from PostgreSQL (legacy)",
                             extra={"state": self.state.value},
                         )
                         return
@@ -875,7 +941,7 @@ class AgentActor:
                     exc_info=True,
                 )
         
-        # Fallback: load from file system
+        # Final fallback: load from file system
         try:
             import os
             state_file = os.path.join(os.getcwd(), ".actor_states", f"{self.agent_id}.json")
@@ -887,7 +953,7 @@ class AgentActor:
                 self.internal_state = loaded_state.get("internal_state", {})
                 self.message_count = loaded_state.get("message_count", 0)
                 self.error_count = loaded_state.get("error_count", 0)
-                self.state = ActorState(loaded_state.get("state", "active"))
+                self.state = ActorState(loaded_state.get("state", "spawning"))
                 self.created_at = loaded_state.get("created_at", self.created_at)
                 self.last_activity = loaded_state.get("last_activity")
                 self.topics = loaded_state.get("topics", self.topics)
@@ -903,6 +969,126 @@ class AgentActor:
         
         # No state found - actor is starting fresh
         logger.info(f"[{self.agent_id}] No previous state found, starting fresh")
+
+    async def save_checkpoint(
+        self,
+        metadata: Optional[Dict[str, Any]] = None,
+    ) -> Optional[StateCheckpoint]:
+        """
+        Save a versioned state checkpoint.
+
+        Checkpoints are immutable snapshots that can be used for:
+        - Rollback after errors
+        - State restoration after restart
+        - Audit trail
+
+        Args:
+            metadata: Optional metadata (reason, trigger, etc.)
+
+        Returns:
+            Created checkpoint, or None if repository not available
+        """
+        if self._state_repository is None:
+            logger.warning(f"[{self.agent_id}] Cannot save checkpoint: no state repository")
+            return None
+        
+        state_data = {
+            "internal_state": self.internal_state,
+            "message_count": self.message_count,
+            "error_count": self.error_count,
+            "state": self.state.value,
+            "created_at": self.created_at,
+            "last_activity": self.last_activity,
+            "topics": self.topics,
+            "capabilities": self.capabilities,
+        }
+        
+        try:
+            version = self._state_record.version + 1 if self._state_record else 1
+            checkpoint = await self._state_repository.checkpoint(
+                agent_id=self.agent_id,
+                state=state_data,
+                version=version,
+                metadata=metadata,
+            )
+            logger.info(
+                f"[{self.agent_id}] Checkpoint saved",
+                extra={"version": version, "checkpoint_id": str(checkpoint.checkpoint_id)},
+            )
+            return checkpoint
+        except Exception as e:
+            logger.error(
+                f"[{self.agent_id}] Checkpoint save failed: {e}",
+                exc_info=True,
+            )
+            return None
+
+    async def restore_from_checkpoint(
+        self,
+        checkpoint_id: uuid.UUID,
+    ) -> bool:
+        """
+        Restore agent state from a checkpoint.
+
+        Args:
+            checkpoint_id: UUID of checkpoint to restore from
+
+        Returns:
+            True if restored successfully, False otherwise
+        """
+        if self._state_repository is None:
+            logger.warning(f"[{self.agent_id}] Cannot restore checkpoint: no state repository")
+            return False
+        
+        try:
+            success = await self._state_repository.restore_from_checkpoint(
+                agent_id=self.agent_id,
+                checkpoint_id=checkpoint_id,
+            )
+            
+            if success:
+                # Reload the state
+                await self.load_state()
+                logger.info(
+                    f"[{self.agent_id}] State restored from checkpoint",
+                    extra={"checkpoint_id": str(checkpoint_id)},
+                )
+            
+            return success
+        except Exception as e:
+            logger.error(
+                f"[{self.agent_id}] Checkpoint restore failed: {e}",
+                exc_info=True,
+            )
+            return False
+
+    async def get_checkpoints(
+        self,
+        limit: int = 10,
+    ) -> List[StateCheckpoint]:
+        """
+        Get recent checkpoints for this agent.
+
+        Args:
+            limit: Maximum number of checkpoints to return
+
+        Returns:
+            List of checkpoints (newest first)
+        """
+        if self._state_repository is None:
+            return []
+        
+        try:
+            return await self._state_repository.get_checkpoints(
+                agent_id=self.agent_id,
+                limit=limit,
+            )
+        except Exception as e:
+            logger.error(
+                f"[{self.agent_id}] Failed to get checkpoints: {e}",
+                exc_info=True,
+            )
+            return []
 
     def get_status(self) -> ActorStatus:
         """

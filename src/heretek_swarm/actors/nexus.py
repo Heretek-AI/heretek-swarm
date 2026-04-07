@@ -30,6 +30,13 @@ import structlog
 
 from heretek_swarm.actors.base import AgentActor, ActorMessage
 from heretek_swarm.actors.validation import validate_message, CoordinationRequest
+from heretek_swarm.validation import (
+    LLMOutputValidator,
+    validate_llm_structured,
+    is_text_safe,
+    StateUpdate,
+    create_state_update,
+)
 
 # Session 44: Collective Learning Integration
 from heretek_swarm.collective.learning import PatternExtractor, PatternType
@@ -228,6 +235,9 @@ class NexusAgent(AgentActor):
         
         # Session 44: Zero-Trust Validation
         self.zero_trust_validator = zero_trust_validator or ZeroTrustValidator()
+        
+        # Session 44: LLM Output Validation
+        self.llm_output_validator = LLMOutputValidator(strict_mode=True)
         
         # Session 44: Integration state
         self._active_deliberations: Dict[str, str] = {}
