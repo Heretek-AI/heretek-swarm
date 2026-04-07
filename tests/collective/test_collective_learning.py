@@ -335,7 +335,8 @@ class TestCollectiveLearning:
     
     def test_get_patterns(self, collective_learning, sample_pattern):
         """Test getting patterns."""
-        collective_learning._patterns[sample_pattern.metadata.pattern_id] = sample_pattern
+        # Add pattern to extractor's validated_patterns (where get_validated_patterns looks)
+        collective_learning.extractor._validated_patterns[sample_pattern.metadata.pattern_id] = sample_pattern
         
         patterns = collective_learning.get_patterns(
             pattern_type=PatternType.SUCCESS,
@@ -344,11 +345,11 @@ class TestCollectiveLearning:
         
         assert len(patterns) == 1
     
-    def test_record_outcome(self, collective_learning, sample_pattern):
+    async def test_record_outcome(self, collective_learning, sample_pattern):
         """Test recording outcome."""
         collective_learning._patterns[sample_pattern.metadata.pattern_id] = sample_pattern
         
-        signal = collective_learning.record_outcome(
+        signal = await collective_learning.record_outcome(
             pattern_id=sample_pattern.metadata.pattern_id,
             outcome="success",
             outcome_data={"result": "completed"},

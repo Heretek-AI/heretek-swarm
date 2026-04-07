@@ -399,15 +399,15 @@ class KnowledgeTransformer:
         actions = []
         
         # Extract actionable items from pattern
-        if pattern.pattern_type == PatternType.SUCCESS:
+        if pattern.metadata.pattern_type == PatternType.SUCCESS:
             actions.append("Replicate this successful interaction pattern")
             actions.extend(pattern.applicability_conditions)
-        elif pattern.pattern_type == PatternType.FAILURE:
+        elif pattern.metadata.pattern_type == PatternType.FAILURE:
             actions.append("Avoid conditions that led to this failure")
             actions.extend([f"Check: {pre}" for pre in pattern.preconditions])
-        elif pattern.pattern_type == PatternType.HANDOFF:
+        elif pattern.metadata.pattern_type == PatternType.HANDOFF:
             actions.append("Consider this handoff path for similar tasks")
-        elif pattern.pattern_type == PatternType.OPTIMIZATION:
+        elif pattern.metadata.pattern_type == PatternType.OPTIMIZATION:
             actions.append("Apply this optimization when conditions match")
         
         return {

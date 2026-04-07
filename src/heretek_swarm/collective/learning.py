@@ -153,6 +153,7 @@ class MessageAnalysis:
     topic: Optional[str] = None
     intent: Optional[str] = None
     outcome: Optional[str] = None
+    latency_ms: Optional[float] = None
     metadata: Dict[str, Any] = field(default_factory=dict)
 
 
@@ -515,6 +516,45 @@ class PatternExtractor:
                         ],
                     )
                     patterns.append(pattern)
+        
+        return patterns
+    
+    async def _extract_optimization_patterns(
+        self,
+        messages: List[MessageAnalysis],
+    ) -> List[ExtractedPattern]:
+        """Extract patterns for optimization opportunities."""
+        patterns = []
+        
+        # Group by interaction type
+        interaction_groups: Dict[str, List[MessageAnalysis]] = {}
+        for msg in messages:
+            key = f"{msg.sender}->{msg.recipient}"
+            if key not in interaction_groups:
+                interaction_groups[key] = []
+            interaction_groups[key].append(msg)
+        
+        # Find interactions with high latency or resource usage
+        for interaction_type, group in interaction_groups.items():
+            if len(group) >= self.min_support:
+                # Calculate average latency
+                latencies = [m.latency_ms for m in group if m.latency_ms is not None]
+                if latencies:
+                    avg_latency = sum(latencies) / len(latencies)
+                    # Flag high-latency interactions
+                    if avg_latency > 1000:  # 1 second threshold
+                        pattern = ExtractedPattern(
+                            metadata=PatternMetadata(
+                                pattern_type=PatternType.OPTIMIZATION,
+                                source=PatternSource.MESSAGE_HISTORY,
+                                confidence=0.8,
+                                description=f"High latency detected in {interaction_type} interactions",
+                            ),
+                            content=f"Average latency: {avg_latency:.2f}ms across {len(group)} interactions",
+                            agents_involved=list(set([m.sender for m in group] + [m.recipient for m in group])),
+                            context={"avg_latency_ms": avg_latency, "interaction_count": len(group)},
+                        )
+                        patterns.append(pattern)
         
         return patterns
     
@@ -1144,7 +1184,7 @@ class CollectiveLearning:
             min_confidence=min_confidence,
         )
     
-    def record_outcome(
+    async def record_outcome(
         self,
         pattern_id: str,
         outcome: str,
@@ -1163,7 +1203,7 @@ class CollectiveLearning:
         """
         if pattern_id in self._patterns:
             pattern = self._patterns[pattern_id]
-            self.extractor.track_outcome(pattern_id, outcome, outcome_data)
+            await self.extractor.track_outcome(pattern_id, outcome, outcome_data)
             signal = self.extractor.generate_learning_signal(pattern, outcome)
             self._learning_signals.append(signal)
             return signal
