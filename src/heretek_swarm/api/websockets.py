@@ -14,7 +14,7 @@ import json
 import os
 import secrets
 from typing import Any, Dict, Optional, Tuple
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 
 from fastapi import APIRouter, WebSocket, WebSocketDisconnect, HTTPException, Query
 import structlog
