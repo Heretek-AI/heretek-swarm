@@ -16,6 +16,7 @@ import { ToastProvider, useToast } from './components/UI/Toast';
 import { ErrorBoundary } from './components/UI/ErrorBoundary';
 import { DebugPanel } from './components/UI/DebugPanel';
 import { PerformanceOverlay } from './components/UI/PerformanceOverlay';
+import { SetupWizard } from './components/Setup';
 import { setToastInstance } from './api/client';
 
 // Legacy components (keep for compatibility)
@@ -49,7 +50,16 @@ const navItems: NavItem[] = [
 function DashboardContent() {
   const [currentView, setCurrentView] = useState<View>('home');
   const [systemStatus, setSystemStatus] = useState<'healthy' | 'degraded' | 'offline'>('healthy');
+  const [showSetup, setShowSetup] = useState(false);
   const toast = useToast();
+
+  // Check if setup is needed
+  useEffect(() => {
+    const isConfigured = localStorage.getItem('swarm_configured') === 'true';
+    if (!isConfigured) {
+      setShowSetup(true);
+    }
+  }, []);
 
   // Set toast instance for API client
   useEffect(() => {
@@ -126,16 +136,22 @@ function DashboardContent() {
   };
 
   return (
-    <DashboardLayout
-      activeNav={currentView}
-      onNavClick={handleNavClick}
-      navItems={navItems}
-      systemStatus={systemStatus}
-    >
-      <ErrorBoundary>
-        {renderView()}
-      </ErrorBoundary>
-    </DashboardLayout>
+    <>
+      {showSetup ? (
+        <SetupWizard onComplete={() => setShowSetup(false)} />
+      ) : (
+        <DashboardLayout
+          activeNav={currentView}
+          onNavClick={handleNavClick}
+          navItems={navItems}
+          systemStatus={systemStatus}
+        >
+          <ErrorBoundary>
+            {renderView()}
+          </ErrorBoundary>
+        </DashboardLayout>
+      )}
+    </>
   );
 }
 
