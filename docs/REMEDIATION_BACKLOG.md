@@ -453,4 +453,119 @@ The updated health score reflects zero-trust verification findings:
 
 **Next Steps:** Execute P0 remediation items to address state persistence.
 
+---
+
+## 🔍 Codeboarding Audit Findings (2026-04-08)
+
+### Audit Summary
+
+**Source:** `codeboarding_results.md` - Automated static analysis from codeboarding process
+**Scope:** Full codebase analysis including Python backend and TypeScript frontend
+
+### Validated Findings
+
+The following findings from the codeboarding audit are **VALID** and should be addressed:
+
+### 1. Long Functions (>150 lines) - VALID (Code Quality)
+
+| Module | Function | Lines | Severity |
+|--------|----------|-------|----------|
+| `mcp_tools.py` | `_register_default_tools` | 290-503 (213 lines) | Medium |
+| `channels/registry.py` | `_setup_default_channels` | 150-352 (202 lines) | Medium |
+| `security/guardrails.py` | `validate_input` | 115-277 (162 lines) | Medium |
+| `orchestration/heavyswarm.py` | `execute` | 178-333 (155 lines) | Medium |
+| `actors/handoff.py` | `execute_handoff` | 135-288 (153 lines) | Medium |
+| `memory/tiering.py` | `_migrate_memory` | 664-815 (151 lines) | Medium |
+| `WorkflowBuilder.tsx` | `WorkflowBuilder` | 56-615 (559 lines) | High |
+| `ConsciousnessDashboard.tsx` | `ConsciousnessDashboard` | 22-253 (231 lines) | Medium |
+
+**Remediation:** Refactor into smaller, focused functions using the Single Responsibility Principle.
+
+### 2. Unused Imports - VALID (Code Quality)
+
+**Issue:** Multiple unused imports in actor modules are being imported but not used in the current code paths.
+
+| File | Unused Imports |
+|------|----------------|
+| `triad.py` | `asyncio`, `logging`, `ValidationError`, `get_nats_event_mesh`, `DeliberationRequest`, `AnalysisRequest`, `ValidationRequest` |
+| `historian.py` | `logging`, `Tuple`, `ValidationError`, `get_nats_event_mesh`, `MemoryStoreRequest`, `QueryRequest`, `LineageRequest`, `MemoryQuery` |
+| `perceiver.py` | `logging`, `base64`, `Tuple`, `get_nats_event_mesh`, `MessageContent` |
+| `metis.py` | `asyncio`, `logging`, `Tuple`, `ValidationError`, `validate_message`, `get_nats_event_mesh` |
+| `echo.py` | `asyncio`, `field`, `validate_message`, `get_nats_event_mesh` |
+| `empath.py` | `logging`, `Tuple`, `MessageContent`, `get_nats_event_mesh` |
+| `base.py` | `logging`, `Tuple`, `MessageContent`, `HealthCheckRequest`, `SuspendResumeRequest`, `TerminateRequest`, `CollectiveTaskRequest`, `get_nats_event_mesh` |
+
+**Note:** Many of these imports are for type hints or are used in inheritance patterns. The `get_nats_event_mesh` import appears to be a pattern for potential NATS integration that isn't currently used.
+
+**Remediation:** Remove unused imports using automated linting (ruff/flake8).
+
+### 3. Unused Variables - VALID (Code Quality)
+
+| File | Variable | Line |
+|------|----------|------|
+| `triad.py` | `original_analysis` | 445 |
+| `perceiver.py` | `priority`, `image_data`, `key`, `input_data` | 259, 511, 604, 624 |
+| `metis.py` | `plan_id`, `response` | 519, 592, 673 |
+| `empath.py` | `source_agent` | 286 |
+| `base.py` | `reg_actor_id`, `protocol` | 475, 1353 |
+| `lineage.py` | `include_content` | 272 |
+
+**Remediation:** Remove unused variables or prefix with `_` to indicate intentional non-use.
+
+### 4. Unreachable Code - VALID (Code Quality)
+
+| File | Lines | Issue |
+|------|-------|-------|
+| `perceiver.py` | 422, 600 | Type analysis indicates unreachable code |
+| `App.tsx` | 163-166 | Unreachable code in switch case |
+
+**Remediation:** Review and remove or fix dead code paths.
+
+### 5. Circular Dependencies - VALID (Architecture)
+
+**Issue:** 27 circular dependency cycles detected across the codebase.
+
+**Major Cycles:**
+- `api -> embeddings.providers -> api`
+- `api -> llm.providers -> api`
+- `collective -> actors -> collective`
+- Frontend: `UI -> Agents -> Settings -> UI` (multiple variants)
+
+**Root Cause:** Tight coupling between configuration API and provider modules.
+
+**Remediation:** 
+1. Introduce dependency inversion (abstract interfaces)
+2. Move configuration loading to separate initialization phase
+3. Use lazy imports to break cycles
+
+### 6. Frontend Long Components - VALID (Code Quality)
+
+| Component | Lines | Issue |
+|-----------|-------|-------|
+| `WorkflowBuilder.tsx` | 559 | Single massive component |
+| `ConsciousnessDashboard.tsx` | 231 | Needs decomposition |
+| `SwarmHealthDashboard.tsx` | 211 | Needs decomposition |
+| `AgentsPage.tsx` | 207 | Needs decomposition |
+
+**Remediation:** Extract logical sub-components, use custom hooks for state management.
+
+### Findings Marked as INVALID/NON-ISSUES
+
+The following findings from the audit are **NOT ACTUAL ISSUES**:
+
+1. **Dashboard.tsx line 163-166 unreachable**: This is likely conditional rendering logic for legacy views that is intentionally conditional.
+
+2. **Actor imports being flagged**: Many actor modules import base classes and validation utilities that are used for type hints and inheritance, even if not directly referenced in every method.
+
+### Recommended Priority Actions
+
+| Priority | Action | Impact |
+|----------|--------|--------|
+| P1 | Remove unused imports from actor modules | Low effort, high visibility |
+| P2 | Break circular dependencies in API module | Medium effort, architectural improvement |
+| P3 | Refactor WorkflowBuilder.tsx | High effort, component improvement |
+| P4 | Remove unused variables | Low effort, code cleanliness |
+
+---
+
 🦞 *The thought that never ends.*
