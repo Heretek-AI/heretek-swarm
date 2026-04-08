@@ -214,7 +214,7 @@ class TestHybridRetriever:
         await retriever.index_documents(documents)
 
         # Check that documents were indexed
-        assert len(retriever._bm25_index._documents) == 2
+        assert len(retriever._bm25_index.documents) == 2
 
     @pytest.mark.asyncio
     async def test_vector_search(self, retriever, mock_embedding_service):
@@ -238,7 +238,6 @@ class TestHybridRetriever:
 
         results = await retriever._vector_search(
             "artificial intelligence",
-            top_k=2,
         )
 
         assert len(results) <= 2
@@ -291,8 +290,6 @@ class TestHybridRetriever:
 
         results = await retriever._hybrid_search(
             "machine learning",
-            top_k=2,
-            mode=SearchMode.HYBRID,
         )
 
         assert len(results) <= 2
@@ -321,7 +318,6 @@ class TestHybridRetriever:
         results = await retriever.search(
             "test",
             filters={"category": "tech"},
-            top_k=10,
         )
 
         assert len(results) == 1
@@ -533,9 +529,10 @@ class TestRAGIntegration:
 
         # Create pipeline
         pipeline = RAGPipeline(
-            config=RAGConfig(chunk_size=50, top_k=3),
-            embedding_service=mock_embedding,
-            vector_store=mock_vector_store,
+            config=RAGConfig(
+                processing=ProcessingConfig(chunk_size=50),
+                retrieval=RetrievalConfig(top_k=3)
+            ),
         )
 
         await pipeline.initialize()
