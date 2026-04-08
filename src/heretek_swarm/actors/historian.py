@@ -14,22 +14,15 @@ Features:
 """
 
 import asyncio
-import logging
 from collections import OrderedDict
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Tuple
 
-from pydantic import ValidationError
+from typing import Any, Dict, List, Optional
+
 import structlog
 from swarms import Agent
 
 from heretek_swarm.actors.base import AgentActor, ActorMessage
-from heretek_swarm.actors.stubs import get_nats_event_mesh, get_llm_provider, get_db_pool
-from heretek_swarm.actors.validation import (
-    MemoryStoreRequest,
-    QueryRequest,
-    LineageRequest,
-)
 from heretek_swarm.memory.base import DualTierMemory, MemoryEntry, MemoryQuery
 from heretek_swarm.knowledge.unified_access import UnifiedKnowledgeAccess, KnowledgeQueryResult
 

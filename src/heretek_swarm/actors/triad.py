@@ -11,22 +11,14 @@ This module implements the core Triad agents:
 These agents work together using MAKER consensus for deliberation.
 """
 
-import asyncio
 import logging
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
-from pydantic import ValidationError
 import structlog
 from swarms import Agent
 
 from heretek_swarm.actors.base import AgentActor, ActorMessage
-from heretek_swarm.actors.stubs import get_nats_event_mesh, get_llm_provider
-from heretek_swarm.actors.validation import (
-    DeliberationRequest,
-    AnalysisRequest,
-    ValidationRequest,
-)
 
 logger = structlog.get_logger("TriadAgents")
 
@@ -447,6 +439,7 @@ class AlphaAgent(AgentActor):
                 # Fallback to unvalidated access
                 request_id = message.content.get("request_id")
                 decision_to_validate = message.content.get("decision")
+                _original_analysis = message.content.get("original_analysis")  # Reserved for future use
         except ValueError as e:
             logger.error(f"[{self.agent_id}] Validation request validation failed: {e}")
             return

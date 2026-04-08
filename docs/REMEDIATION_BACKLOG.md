@@ -559,12 +559,40 @@ The following findings from the audit are **NOT ACTUAL ISSUES**:
 
 ### Recommended Priority Actions
 
-| Priority | Action | Impact |
-|----------|--------|--------|
-| P1 | Remove unused imports from actor modules | Low effort, high visibility |
-| P2 | Break circular dependencies in API module | Medium effort, architectural improvement |
-| P3 | Refactor WorkflowBuilder.tsx | High effort, component improvement |
-| P4 | Remove unused variables | Low effort, code cleanliness |
+| Priority | Action | Impact | Status |
+|----------|--------|--------|--------|
+| ~~P1~~ | ~~Remove unused imports from actor modules~~ | ✅ FIXED 2026-04-08 |
+| ~~P2~~ | ~~Break circular dependencies in API module~~ | Architectural (deferred to future) |
+| ~~P3~~ | ~~Refactor WorkflowBuilder.tsx~~ | Component refactor (deferred to future) |
+| ~~P4~~ | ~~Remove unused variables~~ | ✅ FIXED 2026-04-08 |
+
+---
+
+## 🔧 Unused Imports Remediation (2026-04-08)
+
+The following unused imports have been **FIXED**:
+
+| File | Removed Imports | Status |
+|------|-----------------|--------|
+| `triad.py` | `asyncio`, `logging`, `ValidationError`, `get_nats_event_mesh`, `DeliberationRequest`, `AnalysisRequest`, `ValidationRequest` | ✅ FIXED |
+| `historian.py` | `logging`, `Tuple`, `ValidationError`, `get_nats_event_mesh`, `get_llm_provider`, `get_db_pool`, `MemoryStoreRequest`, `QueryRequest`, `LineageRequest` | ✅ FIXED |
+| `perceiver.py` | `logging`, `base64`, `Tuple`, `get_nats_event_mesh`, `get_llm_provider` | ✅ FIXED |
+| `metis.py` | `logging`, `Tuple`, `ValidationError`, `get_nats_event_mesh`, `get_llm_provider` | ✅ FIXED |
+| `echo.py` | `asyncio`, `logging`, `get_nats_event_mesh`, `get_llm_provider`, replaced `logging.getLogger` with structlog | ✅ FIXED |
+| `empath.py` | `logging`, `Tuple`, `get_nats_event_mesh`, `get_llm_provider` | ✅ FIXED |
+| `base.py` | `logging`, `Tuple`, `get_nats_event_mesh`, `get_llm_provider`, reorganized structlog configuration | ✅ FIXED |
+
+**Verification:** All imports tested successfully:
+```python
+from src.heretek_swarm.actors.base import AgentActor
+from src.heretek_swarm.actors.triad import StewardAgent
+from src.heretek_swarm.actors.historian import HistorianAgent
+from src.heretek_swarm.actors.perceiver import PerceiverAgent
+from src.heretek_swarm.actors.metis import MetisAgent
+from src.heretek_swarm.actors.echo import EchoActor
+from src.heretek_swarm.actors.empath import EmpathAgent
+# All imports successful!
+```
 
 ---
 

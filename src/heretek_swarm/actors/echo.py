@@ -11,8 +11,6 @@ The Echo agent is responsible for:
 This agent ensures clear, contextual communication across all swarm interfaces.
 """
 
-import asyncio
-import logging
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
@@ -21,7 +19,6 @@ import uuid
 
 from ..actors.base import AgentActor, ActorMessage
 from ..actors.validation import validate_message
-from ..actors.stubs import get_nats_event_mesh, get_llm_provider
 
 # Session 44: Collective Learning Integration
 from heretek_swarm.collective.learning import PatternExtractor, PatternType
@@ -35,7 +32,9 @@ from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer, AccessTi
 # Session 44: Zero-Trust Validation
 from heretek_swarm.security.zero_trust import ZeroTrustValidator
 
-logger = logging.getLogger(__name__)
+import structlog
+
+logger = structlog.get_logger("EchoAgent")
 
 
 class CommunicationChannel(Enum):

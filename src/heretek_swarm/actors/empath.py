@@ -12,17 +12,14 @@ Named for the ability to understand and share the feelings of others.
 """
 
 import asyncio
-import logging
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, List, Optional
 
-from pydantic import ValidationError
 import structlog
 from swarms import Agent
 
 from heretek_swarm.actors.base import AgentActor, ActorMessage
 from heretek_swarm.actors.validation import validate_message, MessageContent
-from heretek_swarm.actors.stubs import get_nats_event_mesh, get_llm_provider
 
 # Session 44: Collective Learning Integration
 from heretek_swarm.collective.learning import PatternExtractor, PatternType

@@ -10,14 +10,14 @@ This module provides the foundational actor implementation with:
 """
 
 import asyncio
-import logging
 import uuid
 from abc import abstractmethod
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional
 
+import structlog
 from pydantic import ValidationError
 from swarms import Agent
 
@@ -35,9 +35,6 @@ from heretek_swarm.state.repository import (
     StateCheckpoint,
 )
 
-# Configure structured logging
-import structlog
-from heretek_swarm.actors.stubs import get_nats_event_mesh, get_llm_provider
 
 structlog.configure(
     processors=[
