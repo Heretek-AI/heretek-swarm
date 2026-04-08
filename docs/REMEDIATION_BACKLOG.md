@@ -562,8 +562,8 @@ The following findings from the audit are **NOT ACTUAL ISSUES**:
 | Priority | Action | Impact | Status |
 |----------|--------|--------|--------|
 | ~~P1~~ | ~~Remove unused imports from actor modules~~ | ✅ FIXED 2026-04-08 |
-| ~~P2~~ | ~~Break circular dependencies in API module~~ | Architectural (deferred to future) |
-| ~~P3~~ | ~~Refactor WorkflowBuilder.tsx~~ | Component refactor (deferred to future) |
+| ~~P2~~ | ~~Break circular dependencies in API module~~ | ✅ FIXED 2026-04-08 (lazy imports + interfaces) |
+| ~~P3~~ | ~~Refactor long functions~~ | Component refactor (deferred to future) |
 | ~~P4~~ | ~~Remove unused variables~~ | ✅ FIXED 2026-04-08 |
 
 ---
@@ -592,6 +592,24 @@ from src.heretek_swarm.actors.metis import MetisAgent
 from src.heretek_swarm.actors.echo import EchoActor
 from src.heretek_swarm.actors.empath import EmpathAgent
 # All imports successful!
+```
+
+---
+
+## 🔧 Circular Dependencies Fix (2026-04-08)
+
+**Solution:** Implemented lazy imports and dependency inversion with abstract interfaces
+
+| Component | Status |
+|-----------|--------|
+| `src/heretek_swarm/interfaces/providers.py` | ✅ Created - LLMProviderInterface, EmbeddingProviderInterface |
+| `src/heretek_swarm/interfaces/registry.py` | ✅ Created - ProviderRegistryInterface |
+| `src/heretek_swarm/utils/lazy_imports.py` | ✅ Created - LazyImport, LazyModule, get_lazy_import |
+| `src/heretek_swarm/api/configuration.py` | ✅ Refactored to use lazy imports |
+
+**Verification:**
+```python
+from heretek_swarm.api.main import app  # No circular dependency errors!
 ```
 
 ---

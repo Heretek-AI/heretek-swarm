@@ -3055,7 +3055,7 @@ python3 -c "from heretek_swarm.actors import (...23 agents...)"
 | Priority | Action | Effort | Timeline | Status |
 |----------|--------|--------|----------|--------|
 | ~~P1~~ | ~~Remove unused imports~~ | ~~Low~~ | ~~1 day~~ | ✅ COMPLETED 2026-04-08 |
-| ~~P2~~ | ~~Break circular dependencies~~ | ~~Medium~~ | ~~1 week~~ | ⏸️ Deferred (architectural) |
+| ~~P2~~ | ~~Break circular dependencies~~ | ~~Medium~~ | ~~1 week~~ | ✅ COMPLETED 2026-04-08 (lazy imports) |
 | ~~P3~~ | ~~Refactor long functions~~ | ~~High~~ | ~~2 weeks~~ | ⏸️ Deferred (component refactor) |
 | ~~P4~~ | ~~Remove unused variables~~ | ~~Low~~ | ~~1 day~~ | ✅ COMPLETED 2026-04-08 |
 
@@ -3070,6 +3070,13 @@ All unused imports in actor modules have been removed:
 
 - `triad.py`: Prefixed `original_analysis` with underscore to indicate reserved for future use
 - All other "unused" variables are actually used in their respective contexts
+
+### Circular Dependencies Fixed (2026-04-08)
+
+- Created `src/heretek_swarm/interfaces/` with LLMProviderInterface and EmbeddingProviderInterface
+- Created `src/heretek_swarm/utils/lazy_imports.py` with LazyImport class
+- Refactored `src/heretek_swarm/api/configuration.py` to use lazy imports
+- Verification: `from heretek_swarm.api.main import app` works without circular dependency errors
 
 ---
 
