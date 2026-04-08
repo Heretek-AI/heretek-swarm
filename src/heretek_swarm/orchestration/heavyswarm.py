@@ -18,10 +18,29 @@ from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
+from .phase_handlers import (
+    PhaseHandler,
+    PhaseHandlerRegistry,
+    ResearchPhaseHandler,
+    AnalysisPhaseHandler,
+    AlternativesPhaseHandler,
+    VerificationPhaseHandler,
+    DecisionPhaseHandler,
+)
+
 import structlog
 
 from heretek_swarm.actors.base import AgentActor
 from heretek_swarm.consensus.maker import MAKERConsensus, ConsensusResult
+
+from .phase_handlers import (
+    PhaseHandlerRegistry,
+    ResearchPhaseHandler,
+    AnalysisPhaseHandler,
+    AlternativesPhaseHandler,
+    VerificationPhaseHandler,
+    DecisionPhaseHandler,
+)
 
 logger = structlog.get_logger("HeavySwarmWorkflow")
 
@@ -155,6 +174,9 @@ class HeavySwarmWorkflow:
         self.active_workflows: Dict[str, WorkflowResult] = {}
         self.workflow_history: List[WorkflowResult] = []
 
+        # Phase handler registry
+        self._phase_handlers = self._create_phase_handlers()
+
         logger.info(
             f"[{self.name}] HeavySwarm workflow initialized",
             extra={
@@ -163,6 +185,29 @@ class HeavySwarmWorkflow:
                 "steward": self.steward,
             },
         )
+
+    def _create_phase_handlers(self) -> PhaseHandlerRegistry:
+        """Create and register phase handlers"""
+        registry = PhaseHandlerRegistry()
+        # Note: Handlers are created lazily with agent references
+        return registry
+
+    def _get_phase_handler(self, phase: WorkflowPhase) -> Optional[PhaseHandler]:
+        """Get or create a phase handler for the given phase"""
+        if not self.agents:
+            return None
+        
+        if phase == WorkflowPhase.RESEARCH:
+            return ResearchPhaseHandler(self.historian, self.agents)
+        elif phase == WorkflowPhase.ANALYSIS:
+            return AnalysisPhaseHandler(self.triad_agents, self.agents)
+        elif phase == WorkflowPhase.ALTERNATIVES:
+            return AlternativesPhaseHandler(self.agents)
+        elif phase == WorkflowPhase.VERIFICATION:
+            return VerificationPhaseHandler(self.agents)
+        elif phase == WorkflowPhase.DECISION:
+            return DecisionPhaseHandler(self.triad_agents, self.agents, self.consensus_engine)
+        return None
 
     def register_agent(self, agent_id: str, agent: AgentActor) -> None:
         """

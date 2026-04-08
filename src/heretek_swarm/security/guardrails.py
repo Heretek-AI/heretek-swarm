@@ -5,14 +5,21 @@ Provides input validation, output filtering, and content safety checks.
 Reference: PraisonAI guardrails pattern
 """
 
+from .validators import (
+    LengthValidator,
+    BlockedPatternValidator,
+    PersonalInfoValidator,
+    CodeExecutionValidator,
+    AllowedPatternsValidator,
+    ValidatorChain,
+)
+
 import re
 from typing import Any, Dict, List, Optional
 from dataclasses import dataclass, field
 from enum import Enum
 
 import structlog
-
-logger = structlog.get_logger(__name__)
 
 
 class GuardrailsAction(str, Enum):
@@ -91,6 +98,7 @@ class GuardrailsSystem:
         """
         self.config = config or GuardrailsConfig()
         self._blocked_patterns = self._compile_blocked_patterns()
+        self._validator_chain = self._build_validator_chain()
         logger.info(
             "guardrails_initialized",
             blocked_patterns_count=len(self.config.blocked_patterns),
@@ -112,6 +120,30 @@ class GuardrailsSystem:
                 )
         return compiled
     
+    def _build_validator_chain(self) -> ValidatorChain:
+        """Build the validator chain for input validation"""
+        chain = ValidatorChain()
+        
+        # Length validation
+        chain.add(LengthValidator(
+            min_length=self.config.min_input_length,
+            max_length=self.config.max_input_length
+        ))
+        
+        # Blocked patterns validation
+        chain.add(BlockedPatternValidator(self._blocked_patterns))
+        
+        # Personal information validation
+        chain.add(PersonalInfoValidator(self.config.block_personal_info))
+        
+        # Code execution validation
+        chain.add(CodeExecutionValidator(self.config.block_code_execution))
+        
+        # Allowed patterns validation
+        chain.add(AllowedPatternsValidator(self.config.allowed_patterns))
+        
+        return chain
+    
     async def validate_input(
         self,
         input_text: str,
@@ -127,154 +159,18 @@ class GuardrailsSystem:
         Returns:
             ValidationResult with validation status
         """
-        # Check length limits
-        if len(input_text) < self.config.min_input_length:
-            logger.warning(
-                "input_too_short",
+        # Use validator chain for all validation checks
+        is_valid, reason = await self._validator_chain.validate(input_text, agent_id)
+        
+        if is_valid:
+            logger.info(
+                "input_validated",
                 agent_id=agent_id,
                 length=len(input_text)
             )
-            return ValidationResult(
-                valid=False,
-                reason="Input too short",
-                max_length=self.config.max_input_length,
-                min_length=self.config.min_input_length
-            )
+            return ValidationResult(valid=True)
         
-        if len(input_text) > self.config.max_input_length:
-            logger.warning(
-                "input_too_long",
-                agent_id=agent_id,
-                length=len(input_text),
-                max_length=self.config.max_input_length
-            )
-            return ValidationResult(
-                valid=False,
-                reason="Input too long",
-                max_length=self.config.max_input_length,
-                min_length=self.config.min_input_length
-            )
-        
-        # Check blocked patterns
-        for pattern in self._blocked_patterns:
-            match = pattern.search(input_text)
-            if match:
-                logger.warning(
-                    "input_blocked",
-                    agent_id=agent_id,
-                    pattern=pattern.pattern,
-                    match=match.group(0)
-                )
-                return ValidationResult(
-                    valid=False,
-                    reason=pattern.description,
-                    pattern=pattern.pattern,
-                    modified_content=None
-                )
-        
-        # Check for personal information disclosure
-        if self.config.block_personal_info:
-            # Email addresses
-            if re.search(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', input_text):
-                logger.warning(
-                    "input_blocked_personal_email",
-                    agent_id=agent_id
-                )
-                return ValidationResult(
-                    valid=False,
-                    reason="Personal email address detected",
-                    modified_content=None
-                )
-            
-            # Phone numbers
-            if re.search(r'\b\d{3}[-.\s]?\d{3}[-.\s]?\d{4}\b', input_text):
-                logger.warning(
-                    "input_blocked_personal_phone",
-                    agent_id=agent_id
-                )
-                return ValidationResult(
-                    valid=False,
-                    reason="Personal phone number detected",
-                    modified_content=None
-                )
-            
-            # SSN patterns
-            if re.search(r'\b\d{3}[-]\d{2}[-]\d{4}\b', input_text):
-                logger.warning(
-                    "input_blocked_personal_ssn",
-                    agent_id=agent_id
-                )
-                return ValidationResult(
-                    valid=False,
-                    reason="Personal SSN pattern detected",
-                    modified_content=None
-                )
-            
-            # API keys
-            if re.search(r'\b[A-Za-z0-9]{20,}[_-][A-Za-z0-9]{10,}\b', input_text):
-                logger.warning(
-                    "input_blocked_personal_api_key",
-                    agent_id=agent_id
-                )
-                return ValidationResult(
-                    valid=False,
-                    reason="API key pattern detected",
-                    modified_content=None
-                )
-        
-        # Check for code execution attempts
-        if self.config.block_code_execution:
-            # Shell command patterns
-            if re.search(r'\b(sh|bash|cmd|powershell|exec)\s+[^\s]', input_text, re.IGNORECASE):
-                logger.warning(
-                    "input_blocked_code_execution",
-                    agent_id=agent_id
-                )
-                return ValidationResult(
-                    valid=False,
-                    reason="Code execution attempt detected",
-                    modified_content=None
-                )
-            
-            # Python exec patterns
-            if re.search(r'\b(exec|eval|__import__|open\()[\'"]\s*\(', input_text, re.IGNORECASE):
-                logger.warning(
-                    "input_blocked_python_execution",
-                    agent_id=agent_id
-                )
-                return ValidationResult(
-                    valid=False,
-                    reason="Python execution attempt detected",
-                    modified_content=None
-                )
-        
-        # Check allowed patterns
-        if self.config.allowed_patterns:
-            allowed = False
-            for pattern in self.config.allowed_patterns:
-                if re.search(pattern, input_text, re.IGNORECASE):
-                    allowed = True
-                    break
-            
-            if not allowed:
-                logger.warning(
-                    "input_not_allowed",
-                    agent_id=agent_id,
-                    input=input_text[:100]
-                )
-                return ValidationResult(
-                    valid=False,
-                    reason="Input does not match allowed patterns",
-                    modified_content=None
-                )
-        
-        # Input passed all checks
-        logger.info(
-            "input_validated",
-            agent_id=agent_id,
-            length=len(input_text)
-        )
-        return ValidationResult(valid=True)
+        return ValidationResult(valid=False, reason=reason)
     
     async def filter_output(
         self,
