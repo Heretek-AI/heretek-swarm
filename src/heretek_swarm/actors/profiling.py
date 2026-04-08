@@ -399,18 +399,22 @@ class AnomalyDetector:
             self._agent_stds[agent_id] = {}
         
         for key, value in metrics.items():
+            # Skip non-numeric values (e.g., metadata dict, agent_id string)
+            if not isinstance(value, (int, float)):
+                continue
+            
             if key not in self._agent_baselines[agent_id]:
-                self._agent_baselines[agent_id][key] = value
+                self._agent_baselines[agent_id][key] = float(value)
                 self._agent_stds[agent_id][key] = 0.0
             else:
                 # Exponential moving average for baseline
                 alpha = 0.1
                 old_baseline = self._agent_baselines[agent_id][key]
-                self._agent_baselines[agent_id][key] = alpha * value + (1 - alpha) * old_baseline
+                self._agent_baselines[agent_id][key] = alpha * float(value) + (1 - alpha) * old_baseline
                 
                 # Update standard deviation estimate
                 old_std = self._agent_stds[agent_id][key]
-                deviation = abs(value - old_baseline)
+                deviation = abs(float(value) - old_baseline)
                 self._agent_stds[agent_id][key] = 0.9 * old_std + 0.1 * deviation
     
     def detect_anomalies(
@@ -747,7 +751,9 @@ class BehaviorProfiler:
         """
         metrics = self.compute_metrics(agent_id)
         
-        if not metrics or metrics.total_actions < 10:
+        # Use configurable minimum threshold instead of hardcoded 10
+        min_samples = getattr(self.config, 'profile_sample_min', 10)
+        if not metrics or metrics.total_actions < min_samples:
             return None
         
         if agent_type not in self._profiles:
@@ -861,20 +867,24 @@ class BehaviorProfiler:
             unacknowledged_only: Only return unacknowledged alerts
             
         Returns:
-            List of matching alerts
+            List of matching alerts (filtering applied but modifications will persist)
         """
-        alerts = self._alerts
+        # Create filtered copy but ensure modifications persist
+        # by returning the original list if no filtering is applied
+        if agent_id or severity or unacknowledged_only:
+            alerts = []
+            for a in self._alerts:
+                if agent_id and a.agent_id != agent_id:
+                    continue
+                if severity and a.anomaly.severity != severity:
+                    continue
+                if unacknowledged_only and a.acknowledged:
+                    continue
+                alerts.append(a)
+            return sorted(alerts, key=lambda a: a.timestamp, reverse=True)
         
-        if agent_id:
-            alerts = [a for a in alerts if a.agent_id == agent_id]
-        
-        if severity:
-            alerts = [a for a in alerts if a.anomaly.severity == severity]
-        
-        if unacknowledged_only:
-            alerts = [a for a in alerts if not a.acknowledged]
-        
-        return sorted(alerts, key=lambda a: a.timestamp, reverse=True)
+        # No filtering - return original list to allow modifications to persist
+        return self._alerts
     
     def acknowledge_alert(self, alert_index: int, acknowledged_by: str) -> bool:
         """
