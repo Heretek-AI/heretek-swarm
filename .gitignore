@@ -100,3 +100,15 @@ dashboard/frontend/node_modules/*
 
 # Orchestry state
 .orchestry
+
+# Coverage files (added by CoverLens)
+coverage/
+lcov.info
+coverage.out
+coverage.out.partial
+*.coverprofile
+coverage.xml
+coverage.cobertura.xml
+jacoco.xml
+coverage.json
+coverage-final.json
