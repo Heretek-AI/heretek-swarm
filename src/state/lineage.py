@@ -159,6 +159,7 @@ class LineageTracker:
         root_message_id: UUID
         ancestor_ids: List[UUID] = []
         depth: int = 0
+        is_root = parent_message_id is None
         
         if parent_message_id:
             parent_node = self._nodes.get(parent_message_id)
@@ -176,14 +177,18 @@ class LineageTracker:
                     )
             else:
                 # Parent not found, this becomes root
-                root_message_id = uuid4()
-        else:
-            # This is a root message
-            root_message_id = uuid4()
+                is_root = True
+        
+        # Generate message_id first so we can use it for root
+        message_id = uuid4()
+        
+        # For root messages, root_message_id = message_id
+        if is_root:
+            root_message_id = message_id
         
         # Create lineage entry
         lineage = MessageLineage(
-            message_id=uuid4(),
+            message_id=message_id,
             conversation_id=conversation_id,
             parent_message_id=parent_message_id,
             root_message_id=root_message_id,
