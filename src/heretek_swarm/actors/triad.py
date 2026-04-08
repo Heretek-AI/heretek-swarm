@@ -21,6 +21,7 @@ import structlog
 from swarms import Agent
 
 from heretek_swarm.actors.base import AgentActor, ActorMessage
+from heretek_swarm.actors.stubs import get_nats_event_mesh, get_llm_provider
 from heretek_swarm.actors.validation import (
     DeliberationRequest,
     AnalysisRequest,

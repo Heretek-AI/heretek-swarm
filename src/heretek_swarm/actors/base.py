@@ -37,6 +37,7 @@ from heretek_swarm.state.repository import (
 
 # Configure structured logging
 import structlog
+from heretek_swarm.actors.stubs import get_nats_event_mesh, get_llm_provider
 
 structlog.configure(
     processors=[

@@ -21,6 +21,7 @@ import uuid
 
 from ..actors.base import AgentActor, ActorMessage
 from ..actors.validation import validate_message
+from ..actors.stubs import get_nats_event_mesh, get_llm_provider
 
 # Session 44: Collective Learning Integration
 from heretek_swarm.collective.learning import PatternExtractor, PatternType

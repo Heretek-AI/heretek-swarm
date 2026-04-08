@@ -624,6 +624,11 @@ def message_timeout() -> int:
 def reset_async_state() -> None:
     """Reset async state between tests."""
     yield
-    pending = asyncio.all_tasks()
-    for task in pending:
-        task.cancel()
+    try:
+        loop = asyncio.get_running_loop()
+        pending = asyncio.all_tasks(loop)
+        for task in pending:
+            task.cancel()
+    except RuntimeError:
+        # No running event loop - nothing to cancel
+        pass
