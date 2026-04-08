@@ -199,22 +199,25 @@ class ConfigurationService:
 
     async def _warm_cache(self) -> None:
         """Warm up the cache with frequently accessed configurations."""
-        async with self._session_factory() as session:
-            # Cache system configurations
-            result = await session.execute(
-                select(UserConfiguration).where(
-                    UserConfiguration.category.in_(["system", "rate_limiting"])
+        try:
+            async with self._session_factory() as session:
+                # Cache system configurations
+                result = await session.execute(
+                    select(UserConfiguration).where(
+                        UserConfiguration.category.in_(["system", "rate_limiting"])
+                    )
                 )
-            )
-            configs = result.scalars().all()
-            
-            for config in configs:
-                cache_key = f"config:{config.config_key}"
-                self._cache[cache_key] = ConfigCacheEntry(
-                    cache_key=cache_key,
-                    cache_value={"value": config.config_value, "type": config.config_type.value},
-                    expires_at=datetime.utcnow() + self._cache_ttl,
-                )
+                configs = result.scalars().all()
+                
+                for config in configs:
+                    cache_key = f"config:{config.config_key}"
+                    self._cache[cache_key] = ConfigCacheEntry(
+                        cache_key=cache_key,
+                        cache_value={"value": config.config_value, "type": config.config_type.value},
+                        expires_at=datetime.utcnow() + self._cache_ttl,
+                    )
+        except Exception as e:
+            logger.warning("cache_warmup_skipped", reason=str(e))
 
     def _get_cache_key(self, entity_type: str, key: str) -> str:
         """Generate a cache key for an entity."""

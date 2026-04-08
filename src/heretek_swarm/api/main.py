@@ -237,9 +237,23 @@ async def check_redis() -> Dict[str, Any]:
 async def check_postgres() -> Dict[str, Any]:
     """Check PostgreSQL connection status."""
     try:
-        if memory_store and memory_store._engine:
+        if not memory_store:
+            # Try to get database URL and connect directly
+            db_url = os.environ.get("DATABASE_URL", "postgresql+asyncpg://heretek:langfuse@postgres:5432/heretek_swarm")
+            from sqlalchemy.ext.asyncio import create_async_engine
+            from sqlalchemy import text
+            engine = create_async_engine(db_url)
+            async with engine.connect() as conn:
+                await conn.execute(text("SELECT 1"))
+            await engine.dispose()
+            return {
+                "status": "healthy",
+                "database": "heretek_swarm",
+            }
+        elif memory_store and memory_store._engine:
+            from sqlalchemy import text
             async with memory_store._engine.connect() as conn:
-                await conn.execute("SELECT 1")
+                await conn.execute(text("SELECT 1"))
             return {
                 "status": "healthy",
                 "database": "heretek_swarm",
@@ -259,7 +273,12 @@ async def check_qdrant() -> Dict[str, Any]:
     """Check Qdrant vector database status."""
     try:
         import httpx
-        qdrant_url = os.environ.get("QDRANT_URL", "http://localhost:6333")
+        # Check multiple environment variables for compatibility
+        qdrant_url = os.environ.get("QDRANT_URL")
+        if not qdrant_url:
+            qdrant_host = os.environ.get("QDRANT_HOST", "localhost")
+            qdrant_port = os.environ.get("QDRANT_PORT", "6333")
+            qdrant_url = f"http://{qdrant_host}:{qdrant_port}"
         async with httpx.AsyncClient() as client:
             response = await client.get(f"{qdrant_url}/collections")
             if response.status_code == 200:
