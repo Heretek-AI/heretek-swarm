@@ -32,13 +32,16 @@ const LLM_PROVIDERS = [
   { value: 'openai', label: 'OpenAI', defaultModel: 'gpt-4o', defaultUrl: 'https://api.openai.com/v1' },
   { value: 'ollama', label: 'Ollama (Local)', defaultModel: 'llama2', defaultUrl: 'http://localhost:11434' },
   { value: 'openai_compatible', label: 'OpenAI Compatible', defaultModel: '', defaultUrl: '' },
+  { value: 'lite_llm', label: 'LiteLLM', defaultModel: '', defaultUrl: 'http://localhost:4000' },
   { value: 'zai', label: 'Z.AI (Zhipu)', defaultModel: 'glm-4', defaultUrl: 'https://open.bigmodel.cn/api/paas/v4' },
+  { value: 'anthropic', label: 'Anthropic (Claude)', defaultModel: 'claude-3-opus-20240229', defaultUrl: 'https://api.anthropic.com' },
 ];
 
 const EMBEDDING_PROVIDERS = [
   { value: 'openai', label: 'OpenAI', defaultModel: 'text-embedding-3-small', defaultUrl: 'https://api.openai.com/v1' },
   { value: 'ollama', label: 'Ollama (Local)', defaultModel: 'nomic-embed-text', defaultUrl: 'http://localhost:11434' },
   { value: 'azure', label: 'Azure OpenAI', defaultModel: 'text-embedding-3-small', defaultUrl: '' },
+  { value: 'lite_llm', label: 'LiteLLM', defaultModel: 'text-embedding-3-small', defaultUrl: 'http://localhost:4000' },
 ];
 
 export function SetupWizard({ onComplete }: SetupWizardProps) {
