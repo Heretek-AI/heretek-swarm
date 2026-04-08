@@ -46,16 +46,24 @@ from heretek_swarm.config.models import (
     HealthStatus,
 )
 from heretek_swarm.gateway.auth import verify_auth
-from heretek_swarm.llm.providers.factory import (
-    create_llm_provider,
-    list_available_providers as list_llm_provider_types,
-    get_provider_info as get_llm_provider_info,
-)
-from heretek_swarm.embeddings.providers.factory import (
-    create_embedding_provider,
-    list_available_providers as list_embedding_provider_types,
-    get_provider_info as get_embedding_provider_info,
-)
+
+# Use lazy imports to break circular dependency at module load time
+# These imports are resolved only when the functions are called
+from heretek_swarm.utils import get_lazy_import
+
+# Lazy-loaded provider factory functions
+_llm_factory = get_lazy_import('heretek_swarm.llm.providers.factory')
+_embedding_factory = get_lazy_import('heretek_swarm.embeddings.providers.factory')
+
+
+def _get_llm_provider_factory():
+    """Get LLM provider factory functions with lazy resolution."""
+    return _llm_factory
+
+
+def _get_embedding_provider_factory():
+    """Get embedding provider factory functions with lazy resolution."""
+    return _embedding_factory
 
 logger = structlog.get_logger("api.configuration")
 
@@ -246,7 +254,7 @@ async def test_llm_provider(
     
     try:
         # Create provider instance
-        llm_provider = create_llm_provider(
+        llm_provider = _get_llm_provider_factory().create_llm_provider(
             provider.provider_type,
             {
                 "base_url": provider.base_url,
@@ -376,7 +384,7 @@ async def test_embedding_provider(
     
     try:
         # Create provider instance
-        embedding_provider = create_embedding_provider(
+        embedding_provider = _get_embedding_provider_factory().create_embedding_provider(
             provider.provider_type,
             {
                 "base_url": provider.base_url,

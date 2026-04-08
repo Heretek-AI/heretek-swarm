@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-08T14:32:17.823475+00:00",
+    "generated_at": "2026-04-08T20:37:14.826828+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 5,
@@ -7024,17 +7024,17 @@
           "status": "unchanged"
         },
         {
+          "qualified_name": "src.heretek_swarm.actors.triad.AlphaAgent",
+          "start_line": 273,
+          "end_line": 532,
+          "node_type": "CLASS",
+          "status": "modified"
+        },
+        {
           "qualified_name": "src.heretek_swarm.actors.triad.StewardAgent.get_governance_policy",
           "start_line": 275,
           "end_line": 277,
           "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.actors.triad.AlphaAgent",
-          "start_line": 280,
-          "end_line": 538,
-          "node_type": "CLASS",
           "status": "unchanged"
         },
         {
@@ -7074,10 +7074,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.actors.triad.AlphaAgent._handle_validation_request",
-          "start_line": 436,
-          "end_line": 466,
+          "start_line": 429,
+          "end_line": 460,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.triad.AlphaAgent._perform_analysis",
@@ -32627,71 +32627,57 @@
       "methods": [
         {
           "qualified_name": "dashboard.frontend.src.App.DashboardContent",
-          "start_line": 49,
-          "end_line": 140,
-          "node_type": "FUNCTION",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "dashboard.frontend.src.App.useEffect() callback",
-          "start_line": 55,
-          "end_line": 59,
+          "start_line": 50,
+          "end_line": 141,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.App.DashboardContent.useEffect() callback.error",
-          "start_line": 57,
-          "end_line": 57,
+          "start_line": 67,
+          "end_line": 67,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
-          "qualified_name": "dashboard.frontend.src.App.DashboardContent.checkSystemHealth",
-          "start_line": 62,
-          "end_line": 88,
-          "node_type": "CLASS",
-          "status": "unchanged"
-        },
-        {
           "qualified_name": "dashboard.frontend.src.App.DashboardContent.checkSystemHealth.useCallback() callback",
-          "start_line": 62,
-          "end_line": 88,
+          "start_line": 72,
+          "end_line": 98,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.App.DashboardContent.useEffect() callback",
-          "start_line": 90,
-          "end_line": 94,
+          "start_line": 100,
+          "end_line": 104,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.App.DashboardContent.handleNavClick.useCallback() callback",
-          "start_line": 96,
-          "end_line": 98,
+          "start_line": 106,
+          "end_line": 108,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
-          "qualified_name": "dashboard.frontend.src.App.handleNavClick",
-          "start_line": 96,
-          "end_line": 98,
-          "node_type": "CLASS",
+          "qualified_name": "dashboard.frontend.src.App.DashboardContent.showSetup",
+          "start_line": 140,
+          "end_line": 141,
+          "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.App.renderView",
-          "start_line": 136,
-          "end_line": 136,
+          "start_line": 150,
+          "end_line": 150,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "dashboard.frontend.src.App.App",
-          "start_line": 142,
-          "end_line": 151,
+          "start_line": 158,
+          "end_line": 167,
           "node_type": "FUNCTION",
           "status": "unchanged"
         }
@@ -42072,6 +42058,150 @@
     "lcov.info": {
       "file_status": "modified",
       "methods": []
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx": {
+      "file_status": "unchanged",
+      "methods": [
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizardProps",
+          "start_line": 11,
+          "end_line": 13,
+          "node_type": "INTERFACE",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.LLMConfig",
+          "start_line": 17,
+          "end_line": 22,
+          "node_type": "INTERFACE",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.EmbeddingConfig",
+          "start_line": 24,
+          "end_line": 29,
+          "node_type": "INTERFACE",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard",
+          "start_line": 47,
+          "end_line": 162,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.useEffect() callback",
+          "start_line": 67,
+          "end_line": 71,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange.useCallback() callback",
+          "start_line": 73,
+          "end_line": 83,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange.useCallback() callback.provider.LLM_PROVIDERS.find() callback",
+          "start_line": 74,
+          "end_line": 74,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange.useCallback() callback.setLlmConfig() callback",
+          "start_line": 76,
+          "end_line": 81,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange.useCallback() callback",
+          "start_line": 85,
+          "end_line": 95,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange.useCallback() callback.provider.EMBEDDING_PROVIDERS.find() callback",
+          "start_line": 86,
+          "end_line": 86,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange.useCallback() callback.setEmbeddingConfig() callback",
+          "start_line": 88,
+          "end_line": 93,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleTestConnection.useCallback() callback",
+          "start_line": 97,
+          "end_line": 139,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleComplete.useCallback() callback",
+          "start_line": 141,
+          "end_line": 148,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.setLlmConfig() callback",
+          "start_line": 220,
+          "end_line": 220,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.<unknown>..map() callback",
+          "start_line": 261,
+          "end_line": 262,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.setEmbeddingConfig() callback",
+          "start_line": 294,
+          "end_line": 294,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.renderStep",
+          "start_line": 404,
+          "end_line": 404,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        }
+      ]
+    },
+    ".actor_states/alpha-test-001.json": {
+      "file_status": "modified",
+      "methods": []
+    },
+    ".actor_states/beta-test-001.json": {
+      "file_status": "modified",
+      "methods": []
+    },
+    ".actor_states/charlie-test-001.json": {
+      "file_status": "modified",
+      "methods": []
+    },
+    ".actor_states/historian-test-001.json": {
+      "file_status": "modified",
+      "methods": []
+    },
+    ".actor_states/steward-test-001.json": {
+      "file_status": "modified",
+      "methods": []
     }
   },
   "methods_index": {
@@ -49891,20 +50021,20 @@
       "type": "METHOD",
       "status": "unchanged"
     },
+    "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.AlphaAgent": {
+      "file_path": "src/heretek_swarm/actors/triad.py",
+      "qualified_name": "src.heretek_swarm.actors.triad.AlphaAgent",
+      "start_line": 273,
+      "end_line": 532,
+      "type": "CLASS",
+      "status": "modified"
+    },
     "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.StewardAgent.get_governance_policy": {
       "file_path": "src/heretek_swarm/actors/triad.py",
       "qualified_name": "src.heretek_swarm.actors.triad.StewardAgent.get_governance_policy",
       "start_line": 275,
       "end_line": 277,
       "type": "METHOD",
-      "status": "unchanged"
-    },
-    "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.AlphaAgent": {
-      "file_path": "src/heretek_swarm/actors/triad.py",
-      "qualified_name": "src.heretek_swarm.actors.triad.AlphaAgent",
-      "start_line": 280,
-      "end_line": 538,
-      "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.AlphaAgent.__init__": {
@@ -49950,10 +50080,10 @@
     "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.AlphaAgent._handle_validation_request": {
       "file_path": "src/heretek_swarm/actors/triad.py",
       "qualified_name": "src.heretek_swarm.actors.triad.AlphaAgent._handle_validation_request",
-      "start_line": 436,
-      "end_line": 466,
+      "start_line": 429,
+      "end_line": 460,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.AlphaAgent._perform_analysis": {
       "file_path": "src/heretek_swarm/actors/triad.py",
@@ -78422,80 +78552,64 @@
     "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.DashboardContent": {
       "file_path": "dashboard/frontend/src/App.tsx",
       "qualified_name": "dashboard.frontend.src.App.DashboardContent",
-      "start_line": 49,
-      "end_line": 140,
-      "type": "FUNCTION",
-      "status": "unchanged"
-    },
-    "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.useEffect() callback": {
-      "file_path": "dashboard/frontend/src/App.tsx",
-      "qualified_name": "dashboard.frontend.src.App.useEffect() callback",
-      "start_line": 55,
-      "end_line": 59,
+      "start_line": 50,
+      "end_line": 141,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.DashboardContent.useEffect() callback.error": {
       "file_path": "dashboard/frontend/src/App.tsx",
       "qualified_name": "dashboard.frontend.src.App.DashboardContent.useEffect() callback.error",
-      "start_line": 57,
-      "end_line": 57,
+      "start_line": 67,
+      "end_line": 67,
       "type": "METHOD",
-      "status": "unchanged"
-    },
-    "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.DashboardContent.checkSystemHealth": {
-      "file_path": "dashboard/frontend/src/App.tsx",
-      "qualified_name": "dashboard.frontend.src.App.DashboardContent.checkSystemHealth",
-      "start_line": 62,
-      "end_line": 88,
-      "type": "CLASS",
       "status": "unchanged"
     },
     "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.DashboardContent.checkSystemHealth.useCallback() callback": {
       "file_path": "dashboard/frontend/src/App.tsx",
       "qualified_name": "dashboard.frontend.src.App.DashboardContent.checkSystemHealth.useCallback() callback",
-      "start_line": 62,
-      "end_line": 88,
+      "start_line": 72,
+      "end_line": 98,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.DashboardContent.useEffect() callback": {
       "file_path": "dashboard/frontend/src/App.tsx",
       "qualified_name": "dashboard.frontend.src.App.DashboardContent.useEffect() callback",
-      "start_line": 90,
-      "end_line": 94,
+      "start_line": 100,
+      "end_line": 104,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.DashboardContent.handleNavClick.useCallback() callback": {
       "file_path": "dashboard/frontend/src/App.tsx",
       "qualified_name": "dashboard.frontend.src.App.DashboardContent.handleNavClick.useCallback() callback",
-      "start_line": 96,
-      "end_line": 98,
+      "start_line": 106,
+      "end_line": 108,
       "type": "FUNCTION",
       "status": "unchanged"
     },
-    "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.handleNavClick": {
+    "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.DashboardContent.showSetup": {
       "file_path": "dashboard/frontend/src/App.tsx",
-      "qualified_name": "dashboard.frontend.src.App.handleNavClick",
-      "start_line": 96,
-      "end_line": 98,
-      "type": "CLASS",
+      "qualified_name": "dashboard.frontend.src.App.DashboardContent.showSetup",
+      "start_line": 140,
+      "end_line": 141,
+      "type": "METHOD",
       "status": "unchanged"
     },
     "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.renderView": {
       "file_path": "dashboard/frontend/src/App.tsx",
       "qualified_name": "dashboard.frontend.src.App.renderView",
-      "start_line": 136,
-      "end_line": 136,
+      "start_line": 150,
+      "end_line": 150,
       "type": "METHOD",
       "status": "unchanged"
     },
     "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.App": {
       "file_path": "dashboard/frontend/src/App.tsx",
       "qualified_name": "dashboard.frontend.src.App.App",
-      "start_line": 142,
-      "end_line": 151,
+      "start_line": 158,
+      "end_line": 167,
       "type": "FUNCTION",
       "status": "unchanged"
     },
@@ -88770,6 +88884,142 @@
       "end_line": 427,
       "type": "FUNCTION",
       "status": "unchanged"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.SetupWizardProps": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizardProps",
+      "start_line": 11,
+      "end_line": 13,
+      "type": "INTERFACE",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.LLMConfig": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.LLMConfig",
+      "start_line": 17,
+      "end_line": 22,
+      "type": "INTERFACE",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.EmbeddingConfig": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.EmbeddingConfig",
+      "start_line": 24,
+      "end_line": 29,
+      "type": "INTERFACE",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard",
+      "start_line": 47,
+      "end_line": 162,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.useEffect() callback": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.useEffect() callback",
+      "start_line": 67,
+      "end_line": 71,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange.useCallback() callback": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange.useCallback() callback",
+      "start_line": 73,
+      "end_line": 83,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange.useCallback() callback.provider.LLM_PROVIDERS.find() callback": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange.useCallback() callback.provider.LLM_PROVIDERS.find() callback",
+      "start_line": 74,
+      "end_line": 74,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange.useCallback() callback.setLlmConfig() callback": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange.useCallback() callback.setLlmConfig() callback",
+      "start_line": 76,
+      "end_line": 81,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange.useCallback() callback": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange.useCallback() callback",
+      "start_line": 85,
+      "end_line": 95,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange.useCallback() callback.provider.EMBEDDING_PROVIDERS.find() callback": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange.useCallback() callback.provider.EMBEDDING_PROVIDERS.find() callback",
+      "start_line": 86,
+      "end_line": 86,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange.useCallback() callback.setEmbeddingConfig() callback": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange.useCallback() callback.setEmbeddingConfig() callback",
+      "start_line": 88,
+      "end_line": 93,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleTestConnection.useCallback() callback": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleTestConnection.useCallback() callback",
+      "start_line": 97,
+      "end_line": 139,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleComplete.useCallback() callback": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleComplete.useCallback() callback",
+      "start_line": 141,
+      "end_line": 148,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.setLlmConfig() callback": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.setLlmConfig() callback",
+      "start_line": 220,
+      "end_line": 220,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.<unknown>..map() callback": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.<unknown>..map() callback",
+      "start_line": 261,
+      "end_line": 262,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.setEmbeddingConfig() callback": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.setEmbeddingConfig() callback",
+      "start_line": 294,
+      "end_line": 294,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.renderStep": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.renderStep",
+      "start_line": 404,
+      "end_line": 404,
+      "type": "METHOD",
+      "status": "unchanged"
     }
   },
   "components": [
@@ -88807,6 +89057,20 @@
         6
       ],
       "file_methods": [
+        {
+          "file_path": "dashboard/frontend/src/App.tsx",
+          "file_status": "unchanged",
+          "methods": [
+            "dashboard.frontend.src.App.DashboardContent",
+            "dashboard.frontend.src.App.DashboardContent.useEffect() callback.error",
+            "dashboard.frontend.src.App.DashboardContent.checkSystemHealth.useCallback() callback",
+            "dashboard.frontend.src.App.DashboardContent.useEffect() callback",
+            "dashboard.frontend.src.App.DashboardContent.handleNavClick.useCallback() callback",
+            "dashboard.frontend.src.App.DashboardContent.showSetup",
+            "dashboard.frontend.src.App.renderView",
+            "dashboard.frontend.src.App.App"
+          ]
+        },
         {
           "file_path": "migrations/scripts/setup_qdrant_collections.py",
           "file_status": "unchanged",
@@ -89986,8 +90250,8 @@
             "src.heretek_swarm.actors.triad.StewardAgent._handle_policy_update",
             "src.heretek_swarm.actors.triad.StewardAgent.coordinate_triad",
             "src.heretek_swarm.actors.triad.StewardAgent.get_deliberation_status",
-            "src.heretek_swarm.actors.triad.StewardAgent.get_governance_policy",
             "src.heretek_swarm.actors.triad.AlphaAgent",
+            "src.heretek_swarm.actors.triad.StewardAgent.get_governance_policy",
             "src.heretek_swarm.actors.triad.AlphaAgent.__init__",
             "src.heretek_swarm.actors.triad.AlphaAgent.initialize",
             "src.heretek_swarm.actors.triad.AlphaAgent.process_message",
@@ -108799,8 +109063,8 @@
                 "src.heretek_swarm.actors.triad.StewardAgent._handle_policy_update",
                 "src.heretek_swarm.actors.triad.StewardAgent.coordinate_triad",
                 "src.heretek_swarm.actors.triad.StewardAgent.get_deliberation_status",
-                "src.heretek_swarm.actors.triad.StewardAgent.get_governance_policy",
                 "src.heretek_swarm.actors.triad.AlphaAgent",
+                "src.heretek_swarm.actors.triad.StewardAgent.get_governance_policy",
                 "src.heretek_swarm.actors.triad.AlphaAgent.__init__",
                 "src.heretek_swarm.actors.triad.AlphaAgent.initialize",
                 "src.heretek_swarm.actors.triad.AlphaAgent.process_message",
@@ -111829,8 +112093,8 @@
                     "src.heretek_swarm.actors.triad.StewardAgent._handle_policy_update",
                     "src.heretek_swarm.actors.triad.StewardAgent.coordinate_triad",
                     "src.heretek_swarm.actors.triad.StewardAgent.get_deliberation_status",
-                    "src.heretek_swarm.actors.triad.StewardAgent.get_governance_policy",
                     "src.heretek_swarm.actors.triad.AlphaAgent",
+                    "src.heretek_swarm.actors.triad.StewardAgent.get_governance_policy",
                     "src.heretek_swarm.actors.triad.AlphaAgent.__init__",
                     "src.heretek_swarm.actors.triad.AlphaAgent.initialize",
                     "src.heretek_swarm.actors.triad.AlphaAgent.process_message",
@@ -113058,8 +113322,8 @@
                         "src.heretek_swarm.actors.triad.StewardAgent._handle_policy_update",
                         "src.heretek_swarm.actors.triad.StewardAgent.coordinate_triad",
                         "src.heretek_swarm.actors.triad.StewardAgent.get_deliberation_status",
-                        "src.heretek_swarm.actors.triad.StewardAgent.get_governance_policy",
                         "src.heretek_swarm.actors.triad.AlphaAgent",
+                        "src.heretek_swarm.actors.triad.StewardAgent.get_governance_policy",
                         "src.heretek_swarm.actors.triad.AlphaAgent.__init__",
                         "src.heretek_swarm.actors.triad.AlphaAgent.initialize",
                         "src.heretek_swarm.actors.triad.AlphaAgent.process_message",
@@ -194526,13 +194790,11 @@
           "file_status": "unchanged",
           "methods": [
             "dashboard.frontend.src.App.DashboardContent",
-            "dashboard.frontend.src.App.useEffect() callback",
             "dashboard.frontend.src.App.DashboardContent.useEffect() callback.error",
-            "dashboard.frontend.src.App.DashboardContent.checkSystemHealth",
             "dashboard.frontend.src.App.DashboardContent.checkSystemHealth.useCallback() callback",
             "dashboard.frontend.src.App.DashboardContent.useEffect() callback",
             "dashboard.frontend.src.App.DashboardContent.handleNavClick.useCallback() callback",
-            "dashboard.frontend.src.App.handleNavClick",
+            "dashboard.frontend.src.App.DashboardContent.showSetup",
             "dashboard.frontend.src.App.renderView",
             "dashboard.frontend.src.App.App"
           ]
@@ -196128,13 +196390,11 @@
               "file_status": "unchanged",
               "methods": [
                 "dashboard.frontend.src.App.DashboardContent",
-                "dashboard.frontend.src.App.useEffect() callback",
                 "dashboard.frontend.src.App.DashboardContent.useEffect() callback.error",
-                "dashboard.frontend.src.App.DashboardContent.checkSystemHealth",
                 "dashboard.frontend.src.App.DashboardContent.checkSystemHealth.useCallback() callback",
                 "dashboard.frontend.src.App.DashboardContent.useEffect() callback",
                 "dashboard.frontend.src.App.DashboardContent.handleNavClick.useCallback() callback",
-                "dashboard.frontend.src.App.handleNavClick",
+                "dashboard.frontend.src.App.DashboardContent.showSetup",
                 "dashboard.frontend.src.App.renderView",
                 "dashboard.frontend.src.App.App"
               ]
@@ -197607,13 +197867,11 @@
                   "file_status": "unchanged",
                   "methods": [
                     "dashboard.frontend.src.App.DashboardContent",
-                    "dashboard.frontend.src.App.useEffect() callback",
                     "dashboard.frontend.src.App.DashboardContent.useEffect() callback.error",
-                    "dashboard.frontend.src.App.DashboardContent.checkSystemHealth",
                     "dashboard.frontend.src.App.DashboardContent.checkSystemHealth.useCallback() callback",
                     "dashboard.frontend.src.App.DashboardContent.useEffect() callback",
                     "dashboard.frontend.src.App.DashboardContent.handleNavClick.useCallback() callback",
-                    "dashboard.frontend.src.App.handleNavClick",
+                    "dashboard.frontend.src.App.DashboardContent.showSetup",
                     "dashboard.frontend.src.App.renderView",
                     "dashboard.frontend.src.App.App"
                   ]
@@ -199085,13 +199343,11 @@
                       "file_status": "unchanged",
                       "methods": [
                         "dashboard.frontend.src.App.DashboardContent",
-                        "dashboard.frontend.src.App.useEffect() callback",
                         "dashboard.frontend.src.App.DashboardContent.useEffect() callback.error",
-                        "dashboard.frontend.src.App.DashboardContent.checkSystemHealth",
                         "dashboard.frontend.src.App.DashboardContent.checkSystemHealth.useCallback() callback",
                         "dashboard.frontend.src.App.DashboardContent.useEffect() callback",
                         "dashboard.frontend.src.App.DashboardContent.handleNavClick.useCallback() callback",
-                        "dashboard.frontend.src.App.handleNavClick",
+                        "dashboard.frontend.src.App.DashboardContent.showSetup",
                         "dashboard.frontend.src.App.renderView",
                         "dashboard.frontend.src.App.App"
                       ]
@@ -200486,13 +200742,11 @@
                           "file_status": "unchanged",
                           "methods": [
                             "dashboard.frontend.src.App.DashboardContent",
-                            "dashboard.frontend.src.App.useEffect() callback",
                             "dashboard.frontend.src.App.DashboardContent.useEffect() callback.error",
-                            "dashboard.frontend.src.App.DashboardContent.checkSystemHealth",
                             "dashboard.frontend.src.App.DashboardContent.checkSystemHealth.useCallback() callback",
                             "dashboard.frontend.src.App.DashboardContent.useEffect() callback",
                             "dashboard.frontend.src.App.DashboardContent.handleNavClick.useCallback() callback",
-                            "dashboard.frontend.src.App.handleNavClick",
+                            "dashboard.frontend.src.App.DashboardContent.showSetup",
                             "dashboard.frontend.src.App.renderView",
                             "dashboard.frontend.src.App.App"
                           ]
