@@ -1,0 +1,21 @@
+{
+  "internal_state": {},
+  "message_count": 0,
+  "error_count": 0,
+  "state": "active",
+  "created_at": "2026-04-08T13:40:44.906807+00:00",
+  "last_activity": null,
+  "topics": [
+    "triad",
+    "challenge",
+    "risk",
+    "charlie"
+  ],
+  "capabilities": [
+    "devil-advocate",
+    "risk-assessment",
+    "edge-case-analysis",
+    "creative-solutions"
+  ],
+  "saved_at": "2026-04-08T15:51:33.330409+00:00"
+}

@@ -1,0 +1,23 @@
+{
+  "internal_state": {},
+  "message_count": 0,
+  "error_count": 0,
+  "state": "active",
+  "created_at": "2026-04-08T14:14:08.807913+00:00",
+  "last_activity": null,
+  "topics": [
+    "triad",
+    "memory",
+    "context",
+    "history",
+    "lineage"
+  ],
+  "capabilities": [
+    "memory-storage",
+    "memory-retrieval",
+    "context-provision",
+    "pattern-recognition",
+    "lineage-tracking"
+  ],
+  "saved_at": "2026-04-08T15:51:35.762286+00:00"
+}
