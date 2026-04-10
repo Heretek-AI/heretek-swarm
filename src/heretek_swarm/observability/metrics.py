@@ -24,7 +24,7 @@ try:
     CYCLE_DETECTOR_AVAILABLE = True
 except ImportError:
     CYCLE_DETECTOR_AVAILABLE = False
-    PhiTrainingEnvironment = None
+    _PhiTrainingEnvironment = None
 
 
 @dataclass
@@ -129,21 +129,12 @@ class SwarmMetricsCollector:
         self._task_durations: List[float] = []
         self._start_time = datetime.now(timezone.utc)
     
-    def record_agent_activity(
-        self,
-        agent_id: str,
-        task_completed: bool = False,
-        task_failed: bool = False,
-        task_duration_ms: float = 0.0,
-        message_sent: bool = False,
-        message_received: bool = False,
-        error: bool = False,
-    ) -> None:
+    def record_agent_activity(self, _agent_id: str, _task_completed: bool, _task_failed: bool, _task_duration_ms: float, _message_sent: bool, _message_received: bool, _error: bool) -> None:
         """Record activity for an agent."""
         if agent_id not in self._agent_metrics:
             self._agent_metrics[agent_id] = AgentMetrics(agent_id=agent_id)
         
-        metrics = self._agent_metrics[agent_id]
+        _metrics = self._agent_metrics[agent_id]
         metrics.last_activity = datetime.now(timezone.utc)
         
         if task_completed:
@@ -167,10 +158,10 @@ class SwarmMetricsCollector:
         # Update health score
         self._update_health_score(metrics)
     
-    def _update_health_score(self, metrics: AgentMetrics) -> None:
+    def _update_health_score(self, _metrics: AgentMetrics) -> None:
         """Calculate agent health score based on various factors."""
         # Base score
-        score = 100.0
+        _score = 100.0
         
         # Penalize errors
         score -= min(metrics.error_count * 5, 30)
@@ -178,18 +169,18 @@ class SwarmMetricsCollector:
         # Penalize failures
         total_tasks = metrics.tasks_completed + metrics.tasks_failed
         if total_tasks > 0:
-            failure_rate = metrics.tasks_failed / total_tasks
+            _failure_rate = metrics.tasks_failed / total_tasks
             score -= failure_rate * 20
         
         # Penalize inactivity (if no activity in last 5 minutes)
         if metrics.last_activity:
-            inactive_seconds = (datetime.now(timezone.utc) - metrics.last_activity).total_seconds()
+            _inactive_seconds = (datetime.now(timezone.utc) - metrics.last_activity).total_seconds()
             if inactive_seconds > 300:
                 score -= min((inactive_seconds - 300) / 60, 20)
         
         metrics.health_score = max(0, min(100, score))
     
-    def record_message_latency(self, latency_ms: float) -> None:
+    def record_message_latency(self, _latency_ms: float) -> None:
         """Record message latency."""
         self._message_latencies.append(latency_ms)
         # Keep only last 1000 measurements
@@ -203,14 +194,14 @@ class SwarmMetricsCollector:
             1 for m in self._agent_metrics.values()
             if m.last_activity and (datetime.now(timezone.utc) - m.last_activity).total_seconds() < 60
         )
-        idle_agents = total_agents - active_agents
+        _idle_agents = total_agents - active_agents
         
         total_tasks = sum(m.tasks_completed + m.tasks_failed for m in self._agent_metrics.values())
-        completed_tasks = sum(m.tasks_completed for m in self._agent_metrics.values())
-        failed_tasks = sum(m.tasks_failed for m in self._agent_metrics.values())
-        total_messages = sum(m.messages_sent + m.messages_received for m in self._agent_metrics.values())
+        _completed_tasks = sum(m.tasks_completed for m in self._agent_metrics.values())
+        _failed_tasks = sum(m.tasks_failed for m in self._agent_metrics.values())
+        _total_messages = sum(m.messages_sent + m.messages_received for m in self._agent_metrics.values())
         
-        avg_latency = sum(self._message_latencies) / len(self._message_latencies) if self._message_latencies else 0
+        _avg_latency = sum(self._message_latencies) / len(self._message_latencies) if self._message_latencies else 0
         
         # Calculate overall health score
         if self._agent_metrics:
@@ -221,16 +212,16 @@ class SwarmMetricsCollector:
         return SwarmMetricsData(
             total_agents=total_agents,
             active_agents=active_agents,
-            idle_agents=idle_agents,
+            _idle_agents = idle_agents,
             total_tasks=total_tasks,
-            completed_tasks=completed_tasks,
-            failed_tasks=failed_tasks,
-            total_messages=total_messages,
-            avg_message_latency_ms=avg_latency,
+            _completed_tasks = completed_tasks,
+            _failed_tasks = failed_tasks,
+            _total_messages = total_messages,
+            _avg_message_latency_ms = avg_latency,
             health_score=health_score,
         )
     
-    def collect_agent_metrics(self, agent_id: str) -> AgentMetrics:
+    def collect_agent_metrics(self, _agent_id: str) -> AgentMetrics:
         """Get metrics for a specific agent."""
         return self._agent_metrics.get(agent_id, AgentMetrics(agent_id=agent_id))
     
@@ -240,11 +231,11 @@ class SwarmMetricsCollector:
     
     def get_agent_states(self) -> Dict[str, str]:
         """Get current states of all agents."""
-        states = {}
-        now = datetime.now(timezone.utc)
+        _states = {}
+        _now = datetime.now(timezone.utc)
         for agent_id, metrics in self._agent_metrics.items():
             if metrics.last_activity:
-                inactive_seconds = (now - metrics.last_activity).total_seconds()
+                _inactive_seconds = (now - metrics.last_activity).total_seconds()
                 if inactive_seconds < 60:
                     states[agent_id] = "active"
                 elif inactive_seconds < 300:
@@ -260,12 +251,12 @@ class SwarmMetricsCollector:
         if not self._agent_metrics:
             return 100.0
         
-        avg_health = sum(m.health_score for m in self._agent_metrics.values()) / len(self._agent_metrics)
+        _avg_health = sum(m.health_score for m in self._agent_metrics.values()) / len(self._agent_metrics)
         
         # Factor in error rates
         total_tasks = sum(m.tasks_completed + m.tasks_failed for m in self._agent_metrics.values())
-        total_failures = sum(m.tasks_failed for m in self._agent_metrics.values())
-        failure_penalty = (total_failures / total_tasks * 10) if total_tasks > 0 else 0
+        _total_failures = sum(m.tasks_failed for m in self._agent_metrics.values())
+        _failure_penalty = (total_failures / total_tasks * 10) if total_tasks > 0 else 0
         
         return max(0, min(100, avg_health - failure_penalty))
     
@@ -277,30 +268,30 @@ class SwarmMetricsCollector:
         this would integrate with the IIT Phi and FEP calculators.
         """
         agent_phi_scores = {}
-        agent_fep_scores = {}
+        _agent_fep_scores = {}
         
         for agent_id, metrics in self._agent_metrics.items():
             # Simplified phi calculation based on activity
-            activity_score = min(1.0, (metrics.messages_sent + metrics.messages_received) / 100)
-            health_factor = metrics.health_score / 100
+            _activity_score = min(1.0, (metrics.messages_sent + metrics.messages_received) / 100)
+            _health_factor = metrics.health_score / 100
             agent_phi_scores[agent_id] = activity_score * health_factor
             
             # Simplified FEP calculation
-            error_factor = 1 / (1 + metrics.error_count)
+            _error_factor = 1 / (1 + metrics.error_count)
             agent_fep_scores[agent_id] = error_factor * health_factor
         
-        phi_values = list(agent_phi_scores.values()) if agent_phi_scores else [0]
+        _phi_values = list(agent_phi_scores.values()) if agent_phi_scores else [0]
         
         return ConsciousnessMetricsData(
             phi_avg=sum(phi_values) / len(phi_values) if phi_values else 0,
             phi_max=max(phi_values) if phi_values else 0,
-            phi_min=min(phi_values) if phi_values else 0,
-            integration_level=0.5,  # Placeholder
-            differentiation_level=0.5,  # Placeholder
+            _phi_min = min(phi_values) if phi_values else 0,
+            _integration_level = 0.5,  # Placeholder
+            _differentiation_level = 0.5,  # Placeholder
             free_energy_avg=sum(agent_fep_scores.values()) / len(agent_fep_scores) if agent_fep_scores else 0,
-            free_energy_variance=0.1,  # Placeholder
+            _free_energy_variance = 0.1,  # Placeholder
             agent_phi_scores=agent_phi_scores,
-            agent_fep_scores=agent_fep_scores,
+            _agent_fep_scores = agent_fep_scores,
         )
 
 
@@ -314,7 +305,7 @@ class RealTimeMetricsStream:
     - Prometheus format export
     """
     
-    def __init__(self, collector: SwarmMetricsCollector):
+    def __init__(self, _collector: SwarmMetricsCollector):
         self._collector = collector
         self._snapshot_interval = 5  # seconds
         self._last_snapshot: Optional[SwarmMetricsData] = None
@@ -334,10 +325,10 @@ class RealTimeMetricsStream:
         - Cycle detection metrics (if available)
         - Phi training metrics (if available)
         """
-        metrics = self._collector.collect_swarm_metrics()
-        consciousness = self._collector.collect_consciousness_metrics()
+        _metrics = self._collector.collect_swarm_metrics()
+        _consciousness = self._collector.collect_consciousness_metrics()
         
-        lines = [
+        _lines = [
             "# HELP heretek_swarm_total_agents Total number of agents",
             "# TYPE heretek_swarm_total_agents gauge",
             f"heretek_swarm_total_agents {metrics.total_agents}",
@@ -371,7 +362,7 @@ class RealTimeMetricsStream:
         # Add cycle detection metrics if available
         if CYCLE_DETECTOR_AVAILABLE:
             try:
-                cycle_metrics = get_cycle_detector_metrics()
+                _cycle_metrics = get_cycle_detector_metrics()
                 if cycle_metrics:
                     lines.extend([
                         "# HELP heretek_workflow_cycles_total Total number of workflow cycles detected",

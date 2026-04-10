@@ -24,7 +24,7 @@ from typing import Any, Callable, Dict, List, Optional
 
 import structlog
 
-logger = structlog.get_logger(__name__)
+_logger = structlog.get_logger(__name__)
 
 
 class IntegrationType(str, Enum):
@@ -208,12 +208,7 @@ class IntegrationManager:
         configs: Integration configurations
     """
     
-    def __init__(
-        self,
-        health_check_interval: float = 30.0,
-        max_restart_attempts: int = 3,
-        enable_auto_restart: bool = True,
-    ) -> None:
+    def __init__(self, _health_check_interval: float, _max_restart_attempts: int, _enable_auto_restart: bool) -> None:
         """
         Initialize the Integration Manager.
         
@@ -248,26 +243,21 @@ class IntegrationManager:
             "integration_manager_initialized",
             health_check_interval=health_check_interval,
             max_restart_attempts=max_restart_attempts,
-            auto_restart=enable_auto_restart,
+            _auto_restart = enable_auto_restart,
         )
     
-    def register_event_callback(self, callback: Callable) -> None:
+    def register_event_callback(self, _callback: Callable) -> None:
         """Register a callback for integration events."""
         self._event_callbacks.append(callback)
         logger.debug("event_callback_registered", callback=callback.__name__)
     
-    async def _emit_event(
-        self,
-        event_type: str,
-        integration_id: str,
-        data: Optional[Dict[str, Any]] = None,
-    ) -> None:
+    async def _emit_event(self, _event_type: str, _integration_id: str, _data: Optional[Dict[str, _Any]]) -> None:
         """Emit an integration event."""
         event = IntegrationEvent(
             event_id=f"evt_{uuid.uuid4().hex[:12]}",
-            event_type=event_type,
+            _event_type = event_type,
             integration_id=integration_id,
-            data=data or {},
+            _data = data or {},
         )
         
         for callback in self._event_callbacks:
@@ -281,20 +271,12 @@ class IntegrationManager:
         
         logger.debug(
             "event_emitted",
-            event_id=event.event_id,
-            event_type=event_type,
+            _event_id = event.event_id,
+            _event_type = event_type,
             integration_id=integration_id,
         )
     
-    async def register_integration(
-        self,
-        integration_id: str,
-        integration_type: IntegrationType,
-        name: str,
-        config: Optional[Dict[str, Any]] = None,
-        metadata: Optional[Dict[str, Any]] = None,
-        instance: Optional[Any] = None,
-    ) -> IntegrationConfig:
+    async def register_integration(self, _integration_id: str, _integration_type: IntegrationType, _name: str, _config: Optional[Dict[str, _Any]], _metadata: Optional[Dict[str, _Any]], _instance: Optional[Any]) -> IntegrationConfig:
         """
         Register a new integration.
         
@@ -309,12 +291,12 @@ class IntegrationManager:
         Returns:
             IntegrationConfig
         """
-        integration_config = IntegrationConfig(
+        _integration_config = IntegrationConfig(
             integration_id=integration_id,
             integration_type=integration_type,
-            name=name,
+            _name = name,
             config=config or {},
-            metadata=metadata or {},
+            _metadata = metadata or {},
         )
         
         state = IntegrationState(
@@ -331,7 +313,7 @@ class IntegrationManager:
         logger.info(
             "integration_registered",
             integration_id=integration_id,
-            type=integration_type.value,
+            _type = integration_type.value,
         )
         
         await self._emit_event(
@@ -342,7 +324,7 @@ class IntegrationManager:
         
         return integration_config
     
-    async def unregister_integration(self, integration_id: str) -> bool:
+    async def unregister_integration(self, _integration_id: str) -> bool:
         """
         Unregister an integration.
         
@@ -375,7 +357,7 @@ class IntegrationManager:
         
         return True
     
-    async def start_integration(self, integration_id: str) -> bool:
+    async def start_integration(self, _integration_id: str) -> bool:
         """
         Start an integration.
         
@@ -439,7 +421,7 @@ class IntegrationManager:
             
             return False
     
-    async def stop_integration(self, integration_id: str) -> bool:
+    async def stop_integration(self, _integration_id: str) -> bool:
         """
         Stop an integration.
         
@@ -498,7 +480,7 @@ class IntegrationManager:
             
             return False
     
-    async def restart_integration(self, integration_id: str) -> bool:
+    async def restart_integration(self, _integration_id: str) -> bool:
         """
         Restart an integration.
         
@@ -529,16 +511,13 @@ class IntegrationManager:
         # Start
         return await self.start_integration(integration_id)
     
-    async def _create_adapter_instance(
-        self,
-        config: IntegrationConfig,
-    ) -> Any:
+    async def _create_adapter_instance(self, _config: IntegrationConfig) -> Any:
         """Create an adapter instance based on integration type."""
         integration_type = config.integration_type
         
         if integration_type == IntegrationType.LANGGRAPH:
             from .langgraph import get_langgraph_adapter
-            adapter = get_langgraph_adapter()
+            _adapter = get_langgraph_adapter()
             if config.config:
                 if hasattr(adapter, 'create_graph') and 'graph_id' in config.config:
                     adapter.create_graph(
@@ -549,33 +528,33 @@ class IntegrationManager:
             
         elif integration_type == IntegrationType.AUTOGEN:
             from .autogen import get_autogen_adapter
-            adapter = get_autogen_adapter()
+            _adapter = get_autogen_adapter()
             if config.config.get('llm_config'):
                 adapter.llm_config = config.config['llm_config']
             return adapter
             
         elif integration_type == IntegrationType.CREWAI:
             from .crewai import get_crewai_adapter
-            adapter = get_crewai_adapter(
-                verbose=config.config.get('verbose', True),
-                memory_enabled=config.config.get('memory_enabled', False),
-                cache_enabled=config.config.get('cache_enabled', True),
+            _adapter = get_crewai_adapter(
+                _verbose = config.config.get('verbose', True),
+                _memory_enabled = config.config.get('memory_enabled', False),
+                _cache_enabled = config.config.get('cache_enabled', True),
             )
             return adapter
             
         elif integration_type == IntegrationType.OPENAI_ASSISTANTS:
             from .openai_assistants import get_openai_assistants_adapter
-            adapter = get_openai_assistants_adapter(
-                api_key=config.config.get('api_key'),
-                base_url=config.config.get('base_url'),
+            _adapter = get_openai_assistants_adapter(
+                _api_key = config.config.get('api_key'),
+                _base_url = config.config.get('base_url'),
             )
             return adapter
             
         elif integration_type == IntegrationType.ANTHROPIC:
             from .anthropic import get_anthropic_adapter
-            adapter = get_anthropic_adapter(
-                api_key=config.config.get('api_key'),
-                base_url=config.config.get('base_url'),
+            _adapter = get_anthropic_adapter(
+                _api_key = config.config.get('api_key'),
+                _base_url = config.config.get('base_url'),
             )
             return adapter
         
@@ -583,7 +562,7 @@ class IntegrationManager:
             logger.warning("unknown_integration_type", type=integration_type.value)
             return None
     
-    async def check_health(self, integration_id: str) -> HealthCheckResult:
+    async def check_health(self, _integration_id: str) -> HealthCheckResult:
         """
         Check health of an integration.
         
@@ -593,14 +572,14 @@ class IntegrationManager:
         Returns:
             HealthCheckResult
         """
-        start_time = datetime.now(timezone.utc)
+        _start_time = datetime.now(timezone.utc)
         
         if integration_id not in self.states:
             return HealthCheckResult(
                 integration_id=integration_id,
                 status=HealthStatus.UNKNOWN,
-                latency_ms=0,
-                details={"error": "Integration not found"},
+                _latency_ms = 0,
+                _details = {"error": "Integration not found"},
             )
         
         state = self.states[integration_id]
@@ -609,35 +588,35 @@ class IntegrationManager:
             return HealthCheckResult(
                 integration_id=integration_id,
                 status=HealthStatus.UNHEALTHY,
-                latency_ms=0,
-                details={"status": state.status.value},
+                _latency_ms = 0,
+                _details = {"status": state.status.value},
             )
         
         try:
             # Check adapter statistics method
             instance = state.instance
-            health_details = {}
+            _health_details = {}
             
             if instance and hasattr(instance, 'get_statistics'):
-                stats = instance.get_statistics()
+                _stats = instance.get_statistics()
                 health_details["statistics"] = stats
                 
                 # Determine health based on statistics
                 if stats:
-                    health_status = HealthStatus.HEALTHY
+                    _health_status = HealthStatus.HEALTHY
                 else:
-                    health_status = HealthStatus.DEGRADED
+                    _health_status = HealthStatus.DEGRADED
             else:
-                health_status = HealthStatus.HEALTHY
+                _health_status = HealthStatus.HEALTHY
                 health_details["note"] = "No statistics available"
             
-            latency_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
+            _latency_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
             
-            result = HealthCheckResult(
+            _result = HealthCheckResult(
                 integration_id=integration_id,
                 status=health_status,
-                latency_ms=latency_ms,
-                details=health_details,
+                _latency_ms = latency_ms,
+                _details = health_details,
             )
             
             state.last_health_check = result
@@ -645,13 +624,13 @@ class IntegrationManager:
             return result
             
         except Exception as e:
-            latency_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
+            _latency_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
             
             return HealthCheckResult(
                 integration_id=integration_id,
                 status=HealthStatus.UNHEALTHY,
-                latency_ms=latency_ms,
-                details={"error": str(e)},
+                _latency_ms = latency_ms,
+                _details = {"error": str(e)},
             )
     
     async def _run_health_check_loop(self) -> None:
@@ -659,7 +638,7 @@ class IntegrationManager:
         while self._running:
             try:
                 for integration_id in list(self.configs.keys()):
-                    result = await self.check_health(integration_id)
+                    _result = await self.check_health(integration_id)
                     
                     # Auto-restart on failure
                     if (
@@ -716,26 +695,22 @@ class IntegrationManager:
         
         await self._emit_event("manager_stopped", "manager")
     
-    def get_integration(self, integration_id: str) -> Optional[Any]:
+    def get_integration(self, _integration_id: str) -> Optional[Any]:
         """Get integration instance by ID."""
         state = self.states.get(integration_id)
         return state.instance if state else None
     
-    def get_integration_state(self, integration_id: str) -> Optional[IntegrationState]:
+    def get_integration_state(self, _integration_id: str) -> Optional[IntegrationState]:
         """Get integration state by ID."""
         return self.states.get(integration_id)
     
-    def get_integration_config(self, integration_id: str) -> Optional[IntegrationConfig]:
+    def get_integration_config(self, _integration_id: str) -> Optional[IntegrationConfig]:
         """Get integration configuration by ID."""
         return self.configs.get(integration_id)
     
-    def list_integrations(
-        self,
-        status: Optional[IntegrationStatus] = None,
-        integration_type: Optional[IntegrationType] = None,
-    ) -> List[Dict[str, Any]]:
+    def list_integrations(self, _status: Optional[IntegrationStatus], _integration_type: Optional[IntegrationType]) -> List[Dict[str, Any]]:
         """List integrations with optional filtering."""
-        result = []
+        _result = []
         
         for integration_id, config in self.configs.items():
             if integration_type and config.integration_type != integration_type:
@@ -754,10 +729,10 @@ class IntegrationManager:
     
     def get_statistics(self) -> Dict[str, Any]:
         """Get manager statistics."""
-        status_counts = {}
-        type_counts = {}
-        healthy_count = 0
-        unhealthy_count = 0
+        _status_counts = {}
+        _type_counts = {}
+        _healthy_count = 0
+        _unhealthy_count = 0
         
         for state in self.states.values():
             status = state.status.value
@@ -765,7 +740,7 @@ class IntegrationManager:
             
             config = self.configs.get(state.integration_id)
             if config:
-                type_name = config.integration_type.value
+                _type_name = config.integration_type.value
                 type_counts[type_name] = type_counts.get(type_name, 0) + 1
             
             if state.last_health_check:
@@ -790,22 +765,22 @@ class IntegrationManager:
     
     async def get_health_summary(self) -> Dict[str, Any]:
         """Get health summary for all integrations."""
-        health_results = {}
+        _health_results = {}
         
         for integration_id in self.configs:
-            result = await self.check_health(integration_id)
+            _result = await self.check_health(integration_id)
             health_results[integration_id] = result.to_dict()
         
-        total = len(health_results)
-        healthy = sum(
+        _total = len(health_results)
+        _healthy = sum(
             1 for r in health_results.values()
             if r["status"] == HealthStatus.HEALTHY.value
         )
-        degraded = sum(
+        _degraded = sum(
             1 for r in health_results.values()
             if r["status"] == HealthStatus.DEGRADED.value
         )
-        unhealthy = sum(
+        _unhealthy = sum(
             1 for r in health_results.values()
             if r["status"] == HealthStatus.UNHEALTHY.value
         )
@@ -832,14 +807,11 @@ def get_integration_manager() -> IntegrationManager:
     """Get the global Integration Manager instance."""
     global integration_manager
     if integration_manager is None:
-        integration_manager = IntegrationManager()
+        _integration_manager = IntegrationManager()
     return integration_manager
 
 
-async def initialize_integrations(
-    configs: List[Dict[str, Any]],
-    agent_runtime: Optional[Any] = None,
-) -> IntegrationManager:
+async def initialize_integrations(_configs: List[Dict[str, _Any]], _agent_runtime: Optional[Any]) -> IntegrationManager:
     """
     Initialize multiple integrations from configuration.
     
@@ -850,21 +822,21 @@ async def initialize_integrations(
     Returns:
         IntegrationManager instance
     """
-    manager = get_integration_manager()
+    _manager = get_integration_manager()
     
     for config in configs:
         await manager.register_integration(
-            integration_id=config["integration_id"],
-            integration_type=IntegrationType(config["integration_type"]),
-            name=config.get("name", config["integration_id"]),
+            _integration_id = config["integration_id"],
+            _integration_type = IntegrationType(config["integration_type"]),
+            _name = config.get("name", config["integration_id"]),
             config=config.get("config", {}),
-            metadata=config.get("metadata", {}),
+            _metadata = config.get("metadata", {}),
         )
     
     # Set agent runtime for all adapters
     if agent_runtime:
         for integration_id in list(manager.configs.keys()):
-            instance = manager.get_integration(integration_id)
+            _instance = manager.get_integration(integration_id)
             if instance and hasattr(instance, 'set_agent_runtime'):
                 instance.set_agent_runtime(agent_runtime)
     

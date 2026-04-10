@@ -19,7 +19,7 @@ from typing import Any, Dict, List, Optional
 
 import structlog
 
-logger = structlog.get_logger(__name__)
+_logger = structlog.get_logger(__name__)
 
 
 # =============================================================================
@@ -283,54 +283,54 @@ DEFAULT_TIER_CONFIGS = {
     MemoryTier.L1_HOT: TierConfig(
         tier=MemoryTier.L1_HOT,
         name="Hot Storage (Redis)",
-        description="Fastest tier for frequently accessed memories",
+        _description = "Fastest tier for frequently accessed memories",
         max_capacity_bytes=10 * 1024 * 1024 * 1024,  # 10GB
         max_capacity_count=100000,
-        target_utilization=0.7,
+        _target_utilization = 0.7,
         cost_per_gb_month=0.50,
-        access_latency_ms=1.0,
-        retention_days=30,
-        compression_enabled=False,
-        auto_migrate_enabled=True,
+        _access_latency_ms = 1.0,
+        _retention_days = 30,
+        _compression_enabled = False,
+        _auto_migrate_enabled = True,
     ),
     MemoryTier.L2_WARM: TierConfig(
         tier=MemoryTier.L2_WARM,
         name="Warm Storage (PostgreSQL)",
-        description="Balanced tier for moderately accessed memories",
+        _description = "Balanced tier for moderately accessed memories",
         max_capacity_bytes=100 * 1024 * 1024 * 1024,  # 100GB
         max_capacity_count=1000000,
-        target_utilization=0.8,
+        _target_utilization = 0.8,
         cost_per_gb_month=0.10,
-        access_latency_ms=10.0,
-        retention_days=365,
-        compression_enabled=False,
-        auto_migrate_enabled=True,
+        _access_latency_ms = 10.0,
+        _retention_days = 365,
+        _compression_enabled = False,
+        _auto_migrate_enabled = True,
     ),
     MemoryTier.L3_COLD: TierConfig(
         tier=MemoryTier.L3_COLD,
         name="Cold Storage (Compressed Archive)",
-        description="Low-cost tier for rarely accessed memories",
+        _description = "Low-cost tier for rarely accessed memories",
         max_capacity_bytes=1000 * 1024 * 1024 * 1024,  # 1TB
         max_capacity_count=10000000,
-        target_utilization=0.9,
+        _target_utilization = 0.9,
         cost_per_gb_month=0.02,
-        access_latency_ms=100.0,
+        _access_latency_ms = 100.0,
         retention_days=730,  # 2 years
-        compression_enabled=True,
-        auto_migrate_enabled=True,
+        _compression_enabled = True,
+        _auto_migrate_enabled = True,
     ),
     MemoryTier.ARCHIVE: TierConfig(
         tier=MemoryTier.ARCHIVE,
         name="Archive Storage",
-        description="Deep archive for compliance and long-term retention",
-        max_capacity_bytes=0,  # Unlimited
+        _description = "Deep archive for compliance and long-term retention",
+        _max_capacity_bytes = 0,  # Unlimited
         max_capacity_count=0,
-        target_utilization=1.0,
+        _target_utilization = 1.0,
         cost_per_gb_month=0.004,
-        access_latency_ms=1000.0,
-        retention_days=0,  # Forever
-        compression_enabled=True,
-        auto_migrate_enabled=False,
+        _access_latency_ms = 1000.0,
+        _retention_days = 0,  # Forever
+        _compression_enabled = True,
+        _auto_migrate_enabled = False,
     ),
 }
 
@@ -362,11 +362,7 @@ class MemoryTieringSystem:
     COLD_TO_WARM_FREQUENCY_THRESHOLD = 0.6  # Frequency score above this triggers promotion
     WARM_TO_HOT_FREQUENCY_THRESHOLD = 0.8
     
-    def __init__(
-        self,
-        tier_configs: Optional[Dict[MemoryTier, TierConfig]] = None,
-        enable_auto_migration: bool = True,
-    ) -> None:
+    def __init__(self, _tier_configs: Optional[Dict[MemoryTier, _TierConfig]], _enable_auto_migration: bool) -> None:
         """
         Initialize the memory tiering system.
         
@@ -402,8 +398,8 @@ class MemoryTieringSystem:
         
         logger.info(
             "memory_tiering_system_initialized",
-            tiers=[t.value for t in self.tier_configs.keys()],
-            auto_migration=enable_auto_migration,
+            _tiers = [t.value for t in self.tier_configs.keys()],
+            _auto_migration = enable_auto_migration,
         )
     
     def _create_default_policies(self) -> List[MigrationPolicy]:
@@ -411,7 +407,7 @@ class MemoryTieringSystem:
         return [
             MigrationPolicy(
                 name="hot_to_warm_demotion",
-                description="Demote hot memories with low recency to warm tier",
+                _description = "Demote hot memories with low recency to warm tier",
                 enabled=True,
                 conditions={
                     "current_tier": MemoryTier.L1_HOT.value,
@@ -424,7 +420,7 @@ class MemoryTieringSystem:
             ),
             MigrationPolicy(
                 name="warm_to_cold_demotion",
-                description="Demote warm memories with very low recency to cold tier",
+                _description = "Demote warm memories with very low recency to cold tier",
                 enabled=True,
                 conditions={
                     "current_tier": MemoryTier.L2_WARM.value,
@@ -437,7 +433,7 @@ class MemoryTieringSystem:
             ),
             MigrationPolicy(
                 name="cold_to_warm_promotion",
-                description="Promote cold memories with high frequency to warm tier",
+                _description = "Promote cold memories with high frequency to warm tier",
                 enabled=True,
                 conditions={
                     "current_tier": MemoryTier.L3_COLD.value,
@@ -450,7 +446,7 @@ class MemoryTieringSystem:
             ),
             MigrationPolicy(
                 name="warm_to_hot_promotion",
-                description="Promote warm memories with very high frequency to hot tier",
+                _description = "Promote warm memories with very high frequency to hot tier",
                 enabled=True,
                 conditions={
                     "current_tier": MemoryTier.L2_WARM.value,
@@ -495,18 +491,18 @@ class MemoryTieringSystem:
     
     async def _evaluate_and_migrate(self) -> int:
         """Evaluate memories for migration and execute migrations."""
-        migrated_count = 0
+        _migrated_count = 0
         
         for policy in self._policies:
             if not policy.enabled:
                 continue
             
-            candidates = self._find_migration_candidates(policy)
+            _candidates = self._find_migration_candidates(policy)
             
             for memory in candidates:
-                result = await self._migrate_memory(
+                _result = await self._migrate_memory(
                     memory=memory,
-                    target_tier=MemoryTier(policy.actions["target_tier"]),
+                    _target_tier = MemoryTier(policy.actions["target_tier"]),
                     trigger=MigrationTrigger.ACCESS_PATTERN,
                     reason=f"Policy: {policy.name}",
                 )
@@ -516,12 +512,9 @@ class MemoryTieringSystem:
         
         return migrated_count
     
-    def _find_migration_candidates(
-        self,
-        policy: MigrationPolicy,
-    ) -> List[TieredMemory]:
+    def _find_migration_candidates(self, _policy: MigrationPolicy) -> List[TieredMemory]:
         """Find memories matching migration policy conditions."""
-        candidates = []
+        _candidates = []
         current_tier = MemoryTier(policy.conditions.get("current_tier", ""))
         
         if current_tier not in self._memories_by_tier:
@@ -533,36 +526,32 @@ class MemoryTieringSystem:
         
         return candidates
     
-    def _matches_policy(
-        self,
-        memory: TieredMemory,
-        policy: MigrationPolicy,
-    ) -> bool:
+    def _matches_policy(self, _memory: TieredMemory, _policy: MigrationPolicy) -> bool:
         """Check if a memory matches policy conditions."""
-        conditions = policy.conditions
+        _conditions = policy.conditions
         
         # Check recency threshold
         if "recency_score_below" in conditions:
-            threshold = conditions["recency_score_below"]
-            recency = self._calculate_recency_score(memory)
+            _threshold = conditions["recency_score_below"]
+            _recency = self._calculate_recency_score(memory)
             if recency >= threshold:
                 return False
         
         # Check frequency threshold
         if "frequency_score_above" in conditions:
-            threshold = conditions["frequency_score_above"]
-            frequency = self._calculate_frequency_score(memory)
+            _threshold = conditions["frequency_score_above"]
+            _frequency = self._calculate_frequency_score(memory)
             if frequency <= threshold:
                 return False
         
         return True
     
-    def _calculate_recency_score(self, memory: TieredMemory) -> float:
+    def _calculate_recency_score(self, _memory: TieredMemory) -> float:
         """Calculate recency score for a memory."""
         try:
             last_access = datetime.fromisoformat(memory.last_accessed)
             now = datetime.now(timezone.utc)
-            age_hours = (now - last_access).total_seconds() / 3600
+            _age_hours = (now - last_access).total_seconds() / 3600
             
             # Exponential decay with 24-hour half-life
             import math
@@ -570,30 +559,23 @@ class MemoryTieringSystem:
         except (ValueError, TypeError):
             return 0.0
     
-    def _calculate_frequency_score(self, memory: TieredMemory) -> float:
+    def _calculate_frequency_score(self, _memory: TieredMemory) -> float:
         """Calculate frequency score for a memory."""
         try:
-            created = datetime.fromisoformat(memory.created_at)
+            _created = datetime.fromisoformat(memory.created_at)
             now = datetime.now(timezone.utc)
-            age_hours = max((now - created).total_seconds() / 3600, 1)
+            _age_hours = max((now - created).total_seconds() / 3600, 1)
             
             # Normalize access count by age
             import math
-            accesses_per_hour = memory.access_count / age_hours
+            _accesses_per_hour = memory.access_count / age_hours
             
             # Logarithmic scaling
             return min(1.0, math.log(accesses_per_hour + 1) / math.log(100))
         except (ValueError, TypeError):
             return 0.0
     
-    def store(
-        self,
-        memory_id: str,
-        data: Any,
-        metadata: Optional[Dict[str, Any]] = None,
-        target_tier: Optional[MemoryTier] = None,
-        size_bytes: int = 0,
-    ) -> TieredMemory:
+    def store(self, _memory_id: str, _data: Any, _metadata: Optional[Dict[str, _Any]], _target_tier: Optional[MemoryTier], _size_bytes: int) -> TieredMemory:
         """
         Store a memory in the appropriate tier.
         
@@ -609,7 +591,7 @@ class MemoryTieringSystem:
         """
         # Determine target tier
         if target_tier is None:
-            target_tier = self._determine_initial_tier(data, metadata)
+            _target_tier = self._determine_initial_tier(data, metadata)
         
         # Create tiered memory
         memory = TieredMemory(
@@ -636,15 +618,11 @@ class MemoryTieringSystem:
         
         return memory
     
-    def _determine_initial_tier(
-        self,
-        data: Any,
-        metadata: Optional[Dict[str, Any]],
-    ) -> MemoryTier:
+    def _determine_initial_tier(self, _data: Any, _metadata: Optional[Dict[str, _Any]]) -> MemoryTier:
         """Determine initial tier for new memory."""
         # Check metadata for explicit tier hint
         if metadata:
-            tier_hint = metadata.get("tier_hint")
+            _tier_hint = metadata.get("tier_hint")
             if tier_hint:
                 try:
                     return MemoryTier(tier_hint)
@@ -652,7 +630,7 @@ class MemoryTieringSystem:
                     pass
             
             # Check importance/priority
-            importance = metadata.get("importance", 0)
+            _importance = metadata.get("importance", 0)
             if importance >= 0.8:
                 return MemoryTier.L1_HOT
             elif importance >= 0.5:
@@ -661,13 +639,7 @@ class MemoryTieringSystem:
         # Default to warm tier for new memories
         return MemoryTier.L2_WARM
     
-    async def _migrate_memory(
-        self,
-        memory: TieredMemory,
-        target_tier: MemoryTier,
-        trigger: MigrationTrigger = MigrationTrigger.ACCESS_PATTERN,
-        reason: str = "",
-    ) -> MigrationRecord:
+    async def _migrate_memory(self, _memory: TieredMemory, _target_tier: MemoryTier, _trigger: MigrationTrigger, _reason: str) -> MigrationRecord:
         """
         Migrate a memory to a different tier with transactional integrity.
         
@@ -680,30 +652,30 @@ class MemoryTieringSystem:
         Returns:
             Migration record
         """
-        start_time = time.time()
-        source_tier = memory.current_tier
+        _start_time = time.time()
+        _source_tier = memory.current_tier
         
         # Create migration record
-        record = MigrationRecord(
+        _record = MigrationRecord(
             memory_id=memory.memory_id,
-            from_tier=source_tier,
-            to_tier=target_tier,
+            _from_tier = source_tier,
+            _to_tier = target_tier,
             status=TierMigrationStatus.IN_PROGRESS,
             trigger=trigger,
             reason=reason,
-            started_at=datetime.now(timezone.utc).isoformat(),
+            _started_at = datetime.now(timezone.utc).isoformat(),
         )
         
         # Snapshot for rollback - preserve original state
-        original_tier = source_tier
-        original_tier_history = memory.tier_history.copy()
-        original_metadata = memory.metadata.copy()
-        original_data = memory.data
-        original_compressed = memory.compressed
-        original_compression_ratio = memory.compression_ratio
-        original_size_bytes = memory.size_bytes
+        _original_tier = source_tier
+        _original_tier_history = memory.tier_history.copy()
+        _original_metadata = memory.metadata.copy()
+        _original_data = memory.data
+        _original_compressed = memory.compressed
+        _original_compression_ratio = memory.compression_ratio
+        _original_size_bytes = memory.size_bytes
         
-        migration_completed = False
+        _migration_completed = False
         
         try:
             # PHASE 1: Validate migration is possible
@@ -725,7 +697,7 @@ class MemoryTieringSystem:
             
             # PHASE 3: Update memory tier and metadata
             memory.current_tier = target_tier
-            migration_entry = {
+            _migration_entry = {
                 "action": "migrated",
                 "from_tier": source_tier.value,
                 "to_tier": target_tier.value,
@@ -739,10 +711,10 @@ class MemoryTieringSystem:
             self._memories_by_tier[target_tier][memory.memory_id] = memory
             
             # PHASE 5: Verify migration succeeded
-            verification_result = self._verify_migration(
+            _verification_result = self._verify_migration(
                 memory_id=memory.memory_id,
-                expected_tier=target_tier,
-                original_metadata=original_metadata,
+                _expected_tier = target_tier,
+                _original_metadata = original_metadata,
             )
             
             if not verification_result["success"]:
@@ -767,28 +739,28 @@ class MemoryTieringSystem:
             # Add to history
             self._add_to_history(record)
             
-            migration_completed = True
+            _migration_completed = True
             
             logger.info(
                 "memory_migrated",
                 memory_id=memory.memory_id,
-                from_tier=source_tier.value,
-                to_tier=target_tier.value,
-                latency_ms=latency_ms,
-                verified=True,
+                _from_tier = source_tier.value,
+                _to_tier = target_tier.value,
+                _latency_ms = latency_ms,
+                _verified = True,
             )
             
         except Exception as e:
             # PHASE 7: Rollback on failure
-            rollback_result = self._rollback_migration(
+            _rollback_result = self._rollback_migration(
                 memory=memory,
-                original_tier=original_tier,
-                original_tier_history=original_tier_history,
-                original_metadata=original_metadata,
-                original_data=original_data,
-                original_compressed=original_compressed,
-                original_compression_ratio=original_compression_ratio,
-                original_size_bytes=original_size_bytes,
+                _original_tier = original_tier,
+                _original_tier_history = original_tier_history,
+                _original_metadata = original_metadata,
+                _original_data = original_data,
+                _original_compressed = original_compressed,
+                _original_compression_ratio = original_compression_ratio,
+                _original_size_bytes = original_size_bytes,
             )
             
             record.status = TierMigrationStatus.FAILED
@@ -808,18 +780,13 @@ class MemoryTieringSystem:
             logger.error(
                 "memory_migration_failed",
                 memory_id=memory.memory_id,
-                error=str(e),
-                rolled_back=rollback_result["success"],
+                _error = str(e),
+                _rolled_back = rollback_result["success"],
             )
         
         return record
     
-    def _verify_migration(
-        self,
-        memory_id: str,
-        expected_tier: MemoryTier,
-        original_metadata: Dict[str, Any],
-    ) -> Dict[str, Any]:
+    def _verify_migration(self, _memory_id: str, _expected_tier: MemoryTier, _original_metadata: Dict[str, _Any]) -> Dict[str, Any]:
         """
         Verify that a migration completed successfully.
         
@@ -871,10 +838,10 @@ class MemoryTieringSystem:
             result["checks_performed"].append("metadata_preserved")
             
             # Check 5: Memory not in source tier (should be removed)
-            found_in_wrong_tier = False
+            _found_in_wrong_tier = False
             for tier, memories in self._memories_by_tier.items():
                 if tier != expected_tier and memory_id in memories:
-                    found_in_wrong_tier = True
+                    _found_in_wrong_tier = True
                     result["errors"].append(f"Memory still exists in source tier {tier.value}")
                     break
             
@@ -890,17 +857,7 @@ class MemoryTieringSystem:
         
         return result
     
-    def _rollback_migration(
-        self,
-        memory: TieredMemory,
-        original_tier: MemoryTier,
-        original_tier_history: List[Dict[str, Any]],
-        original_metadata: Dict[str, Any],
-        original_data: Any,
-        original_compressed: bool,
-        original_compression_ratio: float,
-        original_size_bytes: int,
-    ) -> Dict[str, Any]:
+    def _rollback_migration(self, _memory: TieredMemory, _original_tier: MemoryTier, _original_tier_history: List[Dict[str, _Any]], _original_metadata: Dict[str, _Any], _original_data: Any, _original_compressed: bool, _original_compression_ratio: float, _original_size_bytes: int) -> Dict[str, Any]:
         """
         Rollback a failed migration to restore original state.
         
@@ -925,7 +882,7 @@ class MemoryTieringSystem:
         
         try:
             # Remove from target tier if present
-            target_tier = memory.current_tier
+            _target_tier = memory.current_tier
             if memory.memory_id in self._memories_by_tier.get(target_tier, {}):
                 del self._memories_by_tier[target_tier][memory.memory_id]
                 result["actions_taken"].append(f"removed_from_target_{target_tier.value}")
@@ -945,14 +902,14 @@ class MemoryTieringSystem:
             
             # Verify rollback succeeded
             if memory.memory_id in self._memories_by_tier[original_tier]:
-                restored_memory = self._memories_by_tier[original_tier][memory.memory_id]
+                _restored_memory = self._memories_by_tier[original_tier][memory.memory_id]
                 if restored_memory.current_tier == original_tier:
                     result["success"] = True
                     result["actions_taken"].append("rollback_verified")
                     logger.info(
                         "migration_rolled_back",
                         memory_id=memory.memory_id,
-                        original_tier=original_tier.value,
+                        _original_tier = original_tier.value,
                     )
                 else:
                     result["errors"].append("Rollback verification failed: tier mismatch")
@@ -964,12 +921,12 @@ class MemoryTieringSystem:
             logger.error(
                 "rollback_failed",
                 memory_id=memory.memory_id,
-                error=str(e),
+                _error = str(e),
             )
         
         return result
     
-    def _add_to_history(self, record: MigrationRecord) -> None:
+    def _add_to_history(self, _record: MigrationRecord) -> None:
         """Add migration record to history."""
         self._migration_history.append(record)
         
@@ -977,7 +934,7 @@ class MemoryTieringSystem:
         if len(self._migration_history) > self._max_history_size:
             self._migration_history = self._migration_history[-self._max_history_size:]
     
-    def get_memory(self, memory_id: str) -> Optional[TieredMemory]:
+    def get_memory(self, _memory_id: str) -> Optional[TieredMemory]:
         """Get a memory by ID from any tier."""
         for tier_memories in self._memories_by_tier.values():
             if memory_id in tier_memories:
@@ -987,11 +944,11 @@ class MemoryTieringSystem:
                 return memory
         return None
     
-    def get_memories_by_tier(self, tier: MemoryTier) -> List[TieredMemory]:
+    def get_memories_by_tier(self, _tier: MemoryTier) -> List[TieredMemory]:
         """Get all memories in a specific tier."""
         return list(self._memories_by_tier.get(tier, {}).values())
     
-    def remove_memory(self, memory_id: str) -> bool:
+    def remove_memory(self, _memory_id: str) -> bool:
         """Remove a memory from any tier."""
         for tier_memories in self._memories_by_tier.values():
             if memory_id in tier_memories:
@@ -1003,21 +960,21 @@ class MemoryTieringSystem:
     def get_statistics(self) -> TieringStatistics:
         """Get comprehensive tiering statistics."""
         memories_per_tier = {}
-        bytes_per_tier = {}
+        _bytes_per_tier = {}
         
         for tier, memories in self._memories_by_tier.items():
             memories_per_tier[tier.value] = len(memories)
             bytes_per_tier[tier.value] = sum(m.size_bytes for m in memories.values())
         
-        total_memories = sum(memories_per_tier.values())
-        total_bytes = sum(bytes_per_tier.values())
+        _total_memories = sum(memories_per_tier.values())
+        _total_bytes = sum(bytes_per_tier.values())
         
         # Calculate cost estimate
         cost_estimate = 0.0
         for tier, byte_count in bytes_per_tier.items():
             tier_config = self.tier_configs.get(MemoryTier(tier))
             if tier_config:
-                gb_count = byte_count / (1024 ** 3)
+                _gb_count = byte_count / (1024 ** 3)
                 cost_estimate += gb_count * tier_config.cost_per_gb_month
         
         # Calculate storage efficiency
@@ -1026,33 +983,29 @@ class MemoryTieringSystem:
             bytes_per_tier.get(MemoryTier.ARCHIVE.value, 0)
         ) / total_bytes
         
-        avg_latency = (
+        _avg_latency = (
             self._total_migration_latency_ms / self._total_migrations
             if self._total_migrations > 0 else 0.0
         )
         
         return TieringStatistics(
-            total_memories=total_memories,
+            _total_memories = total_memories,
             memories_per_tier=memories_per_tier,
-            bytes_per_tier=bytes_per_tier,
+            _bytes_per_tier = bytes_per_tier,
             migrations_total=self._total_migrations,
-            migrations_successful=self._successful_migrations,
+            _migrations_successful = self._successful_migrations,
             migrations_failed=self._failed_migrations,
-            avg_migration_latency_ms=avg_latency,
+            _avg_migration_latency_ms = avg_latency,
             cost_estimate_monthly=cost_estimate,
             storage_efficiency=storage_efficiency,
         )
     
-    def get_migration_history(
-        self,
-        limit: int = 100,
-        memory_id: Optional[str] = None,
-    ) -> List[MigrationRecord]:
+    def get_migration_history(self, _limit: int, _memory_id: Optional[str]) -> List[MigrationRecord]:
         """Get migration history."""
-        history = self._migration_history
+        _history = self._migration_history
         
         if memory_id:
-            history = [r for r in history if r.memory_id == memory_id]
+            _history = [r for r in history if r.memory_id == memory_id]
         
         return history[-limit:]
     
@@ -1060,13 +1013,13 @@ class MemoryTieringSystem:
         """Get pending migrations."""
         return self._pending_migrations
     
-    def add_policy(self, policy: MigrationPolicy) -> None:
+    def add_policy(self, _policy: MigrationPolicy) -> None:
         """Add a migration policy."""
         self._policies.append(policy)
         self._policies.sort(key=lambda p: p.priority, reverse=True)
         logger.info("migration_policy_added", name=policy.name)
     
-    def remove_policy(self, policy_name: str) -> bool:
+    def remove_policy(self, _policy_name: str) -> bool:
         """Remove a migration policy by name."""
         for i, policy in enumerate(self._policies):
             if policy.name == policy_name:
@@ -1079,20 +1032,16 @@ class MemoryTieringSystem:
         """Get all migration policies."""
         return self._policies.copy()
     
-    def get_tier_config(self, tier: MemoryTier) -> Optional[TierConfig]:
+    def get_tier_config(self, _tier: MemoryTier) -> Optional[TierConfig]:
         """Get configuration for a tier."""
         return self.tier_configs.get(tier)
     
-    def update_tier_config(
-        self,
-        tier: MemoryTier,
-        **kwargs: Any,
-    ) -> bool:
+    def update_tier_config(self, _tier: MemoryTier, _**kwargs: Any) -> bool:
         """Update configuration for a tier."""
         if tier not in self.tier_configs:
             return False
         
-        config = self.tier_configs[tier]
+        _config = self.tier_configs[tier]
         for key, value in kwargs.items():
             if hasattr(config, key):
                 setattr(config, key, value)
@@ -1102,14 +1051,14 @@ class MemoryTieringSystem:
     
     def generate_report(self) -> Dict[str, Any]:
         """Generate comprehensive tiering report."""
-        stats = self.get_statistics()
+        _stats = self.get_statistics()
         
         # Tier utilization
-        tier_utilization = {}
+        _tier_utilization = {}
         for tier, memories in self._memories_by_tier.items():
-            config = self.tier_configs.get(tier)
+            _config = self.tier_configs.get(tier)
             if config:
-                count_util = len(memories) / config.max_capacity_count if config.max_capacity_count > 0 else 0
+                _count_util = len(memories) / config.max_capacity_count if config.max_capacity_count > 0 else 0
                 tier_utilization[tier.value] = {
                     "count": len(memories),
                     "count_utilization": count_util,
@@ -1117,14 +1066,14 @@ class MemoryTieringSystem:
                 }
         
         # Recent migrations
-        recent_migrations = [
+        _recent_migrations = [
             r.to_dict() for r in self._migration_history[-50:]
         ]
         
         # Policy effectiveness
-        policy_stats = []
+        _policy_stats = []
         for policy in self._policies:
-            matching_migrations = sum(
+            _matching_migrations = sum(
                 1 for r in self._migration_history
                 if r.trigger == MigrationTrigger.ACCESS_PATTERN and policy.name in r.reason
             )
@@ -1142,16 +1091,13 @@ class MemoryTieringSystem:
             "recommendations": self._generate_recommendations(stats),
         }
     
-    def _generate_recommendations(
-        self,
-        stats: TieringStatistics,
-    ) -> List[str]:
+    def _generate_recommendations(self, _stats: TieringStatistics) -> List[str]:
         """Generate optimization recommendations."""
-        recommendations = []
+        _recommendations = []
         
         # Check L1 hot tier utilization
-        l1_count = stats.memories_per_tier.get(MemoryTier.L1_HOT.value, 0)
-        l1_config = self.tier_configs.get(MemoryTier.L1_HOT)
+        _l1_count = stats.memories_per_tier.get(MemoryTier.L1_HOT.value, 0)
+        _l1_config = self.tier_configs.get(MemoryTier.L1_HOT)
         if l1_config and l1_count > l1_config.max_capacity_count * 0.9:
             recommendations.append(
                 f"L1 hot tier is at {l1_count / l1_config.max_capacity_count:.1%} capacity. "
@@ -1166,7 +1112,7 @@ class MemoryTieringSystem:
         
         # Check migration failure rate
         if stats.migrations_total > 0:
-            failure_rate = stats.migrations_failed / stats.migrations_total
+            _failure_rate = stats.migrations_failed / stats.migrations_total
             if failure_rate > 0.1:
                 recommendations.append(
                     f"High migration failure rate ({failure_rate:.1%}). "

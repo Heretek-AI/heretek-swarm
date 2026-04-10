@@ -35,19 +35,14 @@ from starlette.requests import Request
 from starlette.responses import Response
 import structlog
 
-logger = structlog.get_logger("observability.tracing")
+_logger = structlog.get_logger("observability.tracing")
 
 # Global tracer instance
 _tracer: Optional[trace.Tracer] = None
 _propagator = TraceContextTextMapPropagator()
 
 
-def initialize_tracing(
-    service_name: str = "heretek-swarm",
-    service_version: str = "0.1.0",
-    otlp_endpoint: Optional[str] = None,
-    enable_console_export: bool = False,
-) -> trace.Tracer:
+def initialize_tracing(_service_name: str, _service_version: str, _otlp_endpoint: Optional[str], _enable_console_export: bool) -> trace.Tracer:
     """
     Initialize OpenTelemetry tracing with OTLP exporter.
     
@@ -63,7 +58,7 @@ def initialize_tracing(
     global _tracer
     
     # Create resource with service information
-    resource = Resource.create({
+    _resource = Resource.create({
         SERVICE_NAME: service_name,
         SERVICE_VERSION: service_version,
         "deployment.environment": os.getenv("ENVIRONMENT", "development"),
@@ -71,18 +66,18 @@ def initialize_tracing(
     })
     
     # Create tracer provider
-    provider = TracerProvider(resource=resource)
+    _provider = TracerProvider(resource=resource)
     
     # Configure OTLP exporter if endpoint provided
     if otlp_endpoint is None:
-        otlp_endpoint = os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT", "http://otel-collector:4317")
+        _otlp_endpoint = os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT", "http://otel-collector:4317")
     
     # Add OTLP exporter for production
     if otlp_endpoint and not enable_console_export:
         try:
-            otlp_exporter = OTLPSpanExporter(
-                endpoint=otlp_endpoint,
-                insecure=os.getenv("OTEL_EXPORTER_OTLP_INSECURE", "true").lower() == "true",
+            _otlp_exporter = OTLPSpanExporter(
+                _endpoint = otlp_endpoint,
+                _insecure = os.getenv("OTEL_EXPORTER_OTLP_INSECURE", "true").lower() == "true",
             )
             provider.add_span_processor(BatchSpanProcessor(otlp_exporter))
             logger.info("OTLP tracing configured", endpoint=otlp_endpoint)
@@ -91,7 +86,7 @@ def initialize_tracing(
     
     # Add console exporter for debugging
     if enable_console_export or os.getenv("OTEL_DEBUG", "false").lower() == "true":
-        console_exporter = ConsoleSpanExporter()
+        _console_exporter = ConsoleSpanExporter()
         provider.add_span_processor(BatchSpanProcessor(console_exporter))
         logger.info("Console tracing export enabled")
     
@@ -106,9 +101,9 @@ def initialize_tracing(
     
     logger.info(
         "OpenTelemetry tracing initialized",
-        service=service_name,
-        version=service_version,
-        otlp_endpoint=otlp_endpoint,
+        _service = service_name,
+        _version = service_version,
+        _otlp_endpoint = otlp_endpoint,
     )
     
     return _tracer
@@ -122,11 +117,7 @@ def get_tracer() -> trace.Tracer:
     return _tracer
 
 
-def create_span(
-    name: str,
-    attributes: Optional[Dict[str, Any]] = None,
-    kind: trace.SpanKind = trace.SpanKind.INTERNAL,
-) -> Callable:
+def create_span(_name: str, _attributes: Optional[Dict[str, _Any]], _kind: trace.SpanKind) -> Callable:
     """
     Decorator to create a span around a function.
     
@@ -137,20 +128,20 @@ def create_span(
         
     Example:
         @create_span("agent.execute_task", {"agent_id": "agent-1"})
-        async def execute_task(task: Task):
+        async def execute_task(_task: Task):
             ...
     """
-    def decorator(func: Callable) -> Callable:
+    def decorator(_func: Callable) -> Callable:
         @wraps(func)
-        async def async_wrapper(*args, **kwargs):
-            tracer = get_tracer()
+        async def async_wrapper(_*args, _**kwargs):
+            _tracer = get_tracer()
             with tracer.start_as_current_span(
                 name,
-                kind=kind,
-                attributes=attributes or {},
+                _kind = kind,
+                _attributes = attributes or {},
             ) as span:
                 try:
-                    result = await func(*args, **kwargs)
+                    _result = await func(*args, **kwargs)
                     span.set_status(Status(StatusCode.OK))
                     return result
                 except Exception as e:
@@ -159,15 +150,15 @@ def create_span(
                     raise
         
         @wraps(func)
-        def sync_wrapper(*args, **kwargs):
-            tracer = get_tracer()
+        def sync_wrapper(_*args, _**kwargs):
+            _tracer = get_tracer()
             with tracer.start_as_current_span(
                 name,
-                kind=kind,
-                attributes=attributes or {},
+                _kind = kind,
+                _attributes = attributes or {},
             ) as span:
                 try:
-                    result = func(*args, **kwargs)
+                    _result = func(*args, **kwargs)
                     span.set_status(Status(StatusCode.OK))
                     return result
                 except Exception as e:
@@ -184,11 +175,7 @@ def create_span(
 
 
 @contextmanager
-def span_context(
-    name: str,
-    attributes: Optional[Dict[str, Any]] = None,
-    kind: trace.SpanKind = trace.SpanKind.INTERNAL,
-):
+def span_context(_name: str, _attributes: Optional[Dict[str, _Any]], _kind: trace.SpanKind):
     """
     Context manager for creating spans.
     
@@ -201,11 +188,11 @@ def span_context(
         with span_context("consensus.vote", {"consensus_id": round_id}):
             await vote_on_proposal(proposal)
     """
-    tracer = get_tracer()
+    _tracer = get_tracer()
     with tracer.start_as_current_span(
         name,
-        kind=kind,
-        attributes=attributes or {},
+        _kind = kind,
+        _attributes = attributes or {},
     ) as span:
         try:
             yield span
@@ -228,16 +215,16 @@ def get_trace_context() -> Dict[str, str]:
     return carrier
 
 
-def set_span_attribute(key: str, value: Any) -> None:
+def set_span_attribute(_key: str, _value: Any) -> None:
     """Set an attribute on the current span."""
-    span = get_current_span()
+    _span = get_current_span()
     if span and span.is_recording():
         span.set_attribute(key, value)
 
 
-def set_span_attributes(attributes: Dict[str, Any]) -> None:
+def set_span_attributes(_attributes: Dict[str, _Any]) -> None:
     """Set multiple attributes on the current span."""
-    span = get_current_span()
+    _span = get_current_span()
     if span and span.is_recording():
         for key, value in attributes.items():
             span.set_attribute(key, value)
@@ -342,24 +329,24 @@ class TelemetryMiddleware(BaseHTTPMiddleware):
     - Trace context propagation
     """
     
-    async def dispatch(self, request: Request, call_next: Callable) -> Response:
+    async def dispatch(self, _request: Request, _call_next: Callable) -> Response:
         """Process request with tracing."""
-        tracer = get_tracer()
+        _tracer = get_tracer()
         
         # Extract trace context from incoming headers
-        ctx = _propagator.extract(carrier=dict(request.headers))
+        _ctx = _propagator.extract(carrier=dict(request.headers))
         
         # Get client IP for attribute
         client_ip = request.client.host if request.client else "unknown"
         
         # Create span for this request
-        span_name = f"{request.method} {request.url.path}"
+        _span_name = f"{request.method} {request.url.path}"
         
         with tracer.start_as_current_span(
             span_name,
-            context=ctx,
-            kind=trace.SpanKind.SERVER,
-            attributes={
+            _context = ctx,
+            _kind = trace.SpanKind.SERVER,
+            _attributes = {
                 SpanAttributes.HTTP_METHOD: request.method,
                 SpanAttributes.HTTP_URL: str(request.url),
                 "http.client_ip": client_ip,
@@ -373,13 +360,13 @@ class TelemetryMiddleware(BaseHTTPMiddleware):
             if span.is_recording():
                 request.state.trace_id = format(span.get_span_context().trace_id, '032x')
             
-            start_time = time.perf_counter()
+            _start_time = time.perf_counter()
             
             try:
-                response = await call_next(request)
+                _response = await call_next(request)
                 
                 # Add response attributes
-                duration_ms = (time.perf_counter() - start_time) * 1000
+                _duration_ms = (time.perf_counter() - start_time) * 1000
                 
                 span.set_attribute(SpanAttributes.HTTP_STATUS_CODE, response.status_code)
                 span.set_attribute(SpanAttributes.DURATION_MS, duration_ms)
@@ -395,14 +382,14 @@ class TelemetryMiddleware(BaseHTTPMiddleware):
                 return response
                 
             except Exception as e:
-                duration_ms = (time.perf_counter() - start_time) * 1000
+                _duration_ms = (time.perf_counter() - start_time) * 1000
                 span.set_attribute(SpanAttributes.DURATION_MS, duration_ms)
                 span.set_status(Status(StatusCode.ERROR, str(e)))
                 span.record_exception(e)
                 raise
 
 
-def setup_telemetry_middleware(app):
+def setup_telemetry_middleware(_app):
     """
     Add telemetry middleware to FastAPI/Starlette application.
     
@@ -422,19 +409,19 @@ def setup_telemetry_middleware(app):
 # Context Propagation Helpers
 # =============================================================================
 
-async def propagate_trace_context(coro):
+async def propagate_trace_context(_coro):
     """
     Execute coroutine with trace context propagation.
     
     Ensures child spans are linked to the current trace.
     """
-    tracer = get_tracer()
-    ctx = trace.get_current_context()
+    _tracer = get_tracer()
+    _ctx = trace.get_current_context()
     
     with tracer.start_as_current_span(
         "propagated.task",
-        context=ctx,
-        kind=trace.SpanKind.INTERNAL,
+        _context = ctx,
+        _kind = trace.SpanKind.INTERNAL,
     ):
         return await coro
 
@@ -445,7 +432,7 @@ async def propagate_trace_context(coro):
 
 async def shutdown_tracing():
     """Shutdown tracing provider and flush spans."""
-    provider = trace.get_tracer_provider()
+    _provider = trace.get_tracer_provider()
     if hasattr(provider, 'shutdown'):
         await provider.shutdown()
     logger.info("Tracing shutdown complete")

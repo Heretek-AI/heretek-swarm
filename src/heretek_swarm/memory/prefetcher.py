@@ -20,7 +20,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import structlog
 
-logger = structlog.get_logger(__name__)
+_logger = structlog.get_logger(__name__)
 
 
 # =============================================================================
@@ -193,7 +193,7 @@ class LRUCache:
     - Size-based eviction
     """
     
-    def __init__(self, max_size: int = 1000) -> None:
+    def __init__(self, _max_size: int) -> None:
         """
         Initialize LRU cache.
         
@@ -209,7 +209,7 @@ class LRUCache:
         
         logger.info(f"lru_cache_initialized", max_size=max_size)
     
-    def get(self, memory_id: str) -> Optional[Any]:
+    def get(self, _memory_id: str) -> Optional[Any]:
         """
         Get item from cache.
         
@@ -219,7 +219,7 @@ class LRUCache:
         Returns:
             Cached data or None
         """
-        start_time = time.time()
+        _start_time = time.time()
         
         if memory_id not in self._cache:
             self._miss_count += 1
@@ -227,22 +227,17 @@ class LRUCache:
         
         # Move to end (most recently used)
         self._cache.move_to_end(memory_id)
-        entry = self._cache[memory_id]
+        _entry = self._cache[memory_id]
         entry.access_count += 1
         entry.last_access = datetime.now(timezone.utc).isoformat()
         
         self._hit_count += 1
-        latency_ms = (time.time() - start_time) * 1000
+        _latency_ms = (time.time() - start_time) * 1000
         self._total_latency_ms += latency_ms
         
         return entry.data
     
-    def put(
-        self,
-        memory_id: str,
-        data: Any,
-        size_bytes: int = 0,
-    ) -> Optional[str]:
+    def put(self, _memory_id: str, _data: Any, _size_bytes: int) -> Optional[str]:
         """
         Put item in cache.
         
@@ -254,12 +249,12 @@ class LRUCache:
         Returns:
             Evicted memory_id if eviction occurred
         """
-        evicted = None
+        _evicted = None
         
         if memory_id in self._cache:
             # Update existing
             self._cache.move_to_end(memory_id)
-            entry = self._cache[memory_id]
+            _entry = self._cache[memory_id]
             entry.data = data
             entry.access_count += 1
             entry.last_access = datetime.now(timezone.utc).isoformat()
@@ -269,26 +264,26 @@ class LRUCache:
             if len(self._cache) >= self.max_size:
                 # Evict least recently used
                 evicted_id, _ = self._cache.popitem(last=False)
-                evicted = evicted_id
+                _evicted = evicted_id
                 self._eviction_count += 1
             
-            entry = LRUCacheEntry(
-                memory_id=memory_id,
-                data=data,
-                size_bytes=size_bytes,
+            _entry = LRUCacheEntry(
+                _memory_id = memory_id,
+                _data = data,
+                _size_bytes = size_bytes,
             )
             self._cache[memory_id] = entry
         
         return evicted
     
-    def remove(self, memory_id: str) -> bool:
+    def remove(self, _memory_id: str) -> bool:
         """Remove item from cache."""
         if memory_id in self._cache:
             del self._cache[memory_id]
             return True
         return False
     
-    def contains(self, memory_id: str) -> bool:
+    def contains(self, _memory_id: str) -> bool:
         """Check if memory_id is in cache."""
         return memory_id in self._cache
     
@@ -298,19 +293,19 @@ class LRUCache:
     
     def get_statistics(self) -> CacheStatistics:
         """Get cache statistics."""
-        total_ops = self._hit_count + self._miss_count
-        hit_rate = self._hit_count / total_ops if total_ops > 0 else 0.0
-        avg_latency = self._total_latency_ms / total_ops if total_ops > 0 else 0.0
+        _total_ops = self._hit_count + self._miss_count
+        _hit_rate = self._hit_count / total_ops if total_ops > 0 else 0.0
+        _avg_latency = self._total_latency_ms / total_ops if total_ops > 0 else 0.0
         
         return CacheStatistics(
-            total_size=len(self._cache),
+            _total_size = len(self._cache),
             max_size=self.max_size,
-            utilization=len(self._cache) / self.max_size if self.max_size > 0 else 0.0,
-            hit_count=self._hit_count,
-            miss_count=self._miss_count,
-            hit_rate=hit_rate,
-            eviction_count=self._eviction_count,
-            avg_latency_ms=avg_latency,
+            _utilization = len(self._cache) / self.max_size if self.max_size > 0 else 0.0,
+            _hit_count = self._hit_count,
+            _miss_count = self._miss_count,
+            _hit_rate = hit_rate,
+            _eviction_count = self._eviction_count,
+            _avg_latency_ms = avg_latency,
         )
     
     def get_entries_by_frequency(self) -> List[LRUCacheEntry]:
@@ -318,10 +313,10 @@ class LRUCache:
         return sorted(
             self._cache.values(),
             key=lambda e: e.access_count,
-            reverse=True,
+            _reverse = True,
         )
     
-    def get_least_recently_used(self, count: int = 10) -> List[str]:
+    def get_least_recently_used(self, _count: int) -> List[str]:
         """Get least recently used memory IDs."""
         return list(self._cache.keys())[:count]
 
@@ -340,7 +335,7 @@ class LFUCache:
     - Handles frequency ties with LRU
     """
     
-    def __init__(self, max_size: int = 1000) -> None:
+    def __init__(self, _max_size: int) -> None:
         """
         Initialize LFU cache.
         
@@ -357,14 +352,14 @@ class LFUCache:
         
         logger.info(f"lfu_cache_initialized", max_size=max_size)
     
-    def get(self, memory_id: str) -> Optional[Any]:
+    def get(self, _memory_id: str) -> Optional[Any]:
         """Get item from cache with frequency update."""
         if memory_id not in self._cache:
             self._miss_count += 1
             return None
         
-        entry = self._cache[memory_id]
-        old_freq = entry.access_count
+        _entry = self._cache[memory_id]
+        _old_freq = entry.access_count
         
         # Remove from old frequency bucket
         self._frequency_map[old_freq].pop(memory_id)
@@ -381,19 +376,14 @@ class LFUCache:
         
         return entry.data
     
-    def put(
-        self,
-        memory_id: str,
-        data: Any,
-        size_bytes: int = 0,
-    ) -> Optional[str]:
+    def put(self, _memory_id: str, _data: Any, _size_bytes: int) -> Optional[str]:
         """Put item in cache with frequency tracking."""
-        evicted = None
+        _evicted = None
         
         if memory_id in self._cache:
             # Update existing
-            entry = self._cache[memory_id]
-            old_freq = entry.access_count
+            _entry = self._cache[memory_id]
+            _old_freq = entry.access_count
             self._frequency_map[old_freq].pop(memory_id)
             if not self._frequency_map[old_freq]:
                 del self._frequency_map[old_freq]
@@ -408,19 +398,19 @@ class LFUCache:
             # Add new
             if len(self._cache) >= self.max_size:
                 # Evict least frequently used
-                lfu_bucket = self._frequency_map[self._min_frequency]
+                _lfu_bucket = self._frequency_map[self._min_frequency]
                 evicted_id, _ = lfu_bucket.popitem(last=False)
                 if not lfu_bucket:
                     del self._frequency_map[self._min_frequency]
                 
                 del self._cache[evicted_id]
-                evicted = evicted_id
+                _evicted = evicted_id
                 self._eviction_count += 1
             
-            entry = LRUCacheEntry(
-                memory_id=memory_id,
-                data=data,
-                size_bytes=size_bytes,
+            _entry = LRUCacheEntry(
+                _memory_id = memory_id,
+                _data = data,
+                _size_bytes = size_bytes,
             )
             self._cache[memory_id] = entry
             self._frequency_map[1][memory_id] = None
@@ -430,17 +420,17 @@ class LFUCache:
     
     def get_statistics(self) -> CacheStatistics:
         """Get cache statistics."""
-        total_ops = self._hit_count + self._miss_count
-        hit_rate = self._hit_count / total_ops if total_ops > 0 else 0.0
+        _total_ops = self._hit_count + self._miss_count
+        _hit_rate = self._hit_count / total_ops if total_ops > 0 else 0.0
         
         return CacheStatistics(
-            total_size=len(self._cache),
+            _total_size = len(self._cache),
             max_size=self.max_size,
-            utilization=len(self._cache) / self.max_size if self.max_size > 0 else 0.0,
-            hit_count=self._hit_count,
-            miss_count=self._miss_count,
-            hit_rate=hit_rate,
-            eviction_count=self._eviction_count,
+            _utilization = len(self._cache) / self.max_size if self.max_size > 0 else 0.0,
+            _hit_count = self._hit_count,
+            _miss_count = self._miss_count,
+            _hit_rate = hit_rate,
+            _eviction_count = self._eviction_count,
         )
 
 
@@ -472,12 +462,7 @@ class PreFetchScheduler:
     - Rate limiting
     """
     
-    def __init__(
-        self,
-        max_pending: int = 100,
-        max_concurrent: int = 5,
-        rate_limit_per_second: float = 10.0,
-    ) -> None:
+    def __init__(self, _max_pending: int, _max_concurrent: int, _rate_limit_per_second: float) -> None:
         """
         Initialize pre-fetch scheduler.
         
@@ -505,15 +490,7 @@ class PreFetchScheduler:
             max_concurrent=max_concurrent,
         )
     
-    def schedule(
-        self,
-        memory_id: str,
-        delay_seconds: float = 0.0,
-        priority: PreFetchPriority = PreFetchPriority.NORMAL,
-        strategy: PreFetchStrategy = PreFetchStrategy.PATTERN,
-        agent_id: Optional[str] = None,
-        confidence: float = 0.0,
-    ) -> bool:
+    def schedule(self, _memory_id: str, _delay_seconds: float, _priority: PreFetchPriority, _strategy: PreFetchStrategy, _agent_id: Optional[str], _confidence: float) -> bool:
         """
         Schedule a pre-fetch.
         
@@ -538,12 +515,12 @@ class PreFetchScheduler:
         ).isoformat()
         
         schedule = PreFetchSchedule(
-            memory_id=memory_id,
+            _memory_id = memory_id,
             scheduled_time=scheduled_time,
-            priority=priority,
-            strategy=strategy,
-            agent_id=agent_id,
-            confidence=confidence,
+            _priority = priority,
+            _strategy = strategy,
+            _agent_id = agent_id,
+            _confidence = confidence,
         )
         
         self._pending_queue.append(schedule)
@@ -557,7 +534,7 @@ class PreFetchScheduler:
         
         return True
     
-    def _priority_value(self, priority: PreFetchPriority) -> int:
+    def _priority_value(self, _priority: PreFetchPriority) -> int:
         """Convert priority to numeric value for sorting."""
         return {
             PreFetchPriority.CRITICAL: 0,
@@ -602,18 +579,18 @@ class PreFetchScheduler:
         
         # Check rate limit
         if self._last_execution_time:
-            elapsed = (now - self._last_execution_time).total_seconds()
-            min_interval = 1.0 / self.rate_limit_per_second
+            _elapsed = (now - self._last_execution_time).total_seconds()
+            _min_interval = 1.0 / self.rate_limit_per_second
             if elapsed < min_interval:
                 return
         
         # Find ready pre-fetches
-        ready = []
+        _ready = []
         for schedule in self._pending_queue:
             if schedule.executed:
                 continue
             
-            scheduled_time = datetime.fromisoformat(schedule.scheduled_time)
+            _scheduled_time = datetime.fromisoformat(schedule.scheduled_time)
             if scheduled_time <= now:
                 ready.append(schedule)
         
@@ -631,7 +608,7 @@ class PreFetchScheduler:
         # Clean up executed from queue
         self._pending_queue = [s for s in self._pending_queue if not s.executed]
     
-    async def _execute_prefetch(self, schedule: PreFetchSchedule) -> None:
+    async def _execute_prefetch(self, _schedule: PreFetchSchedule) -> None:
         """Execute a single pre-fetch."""
         try:
             # This would be called by the main Prefetcher
@@ -642,8 +619,8 @@ class PreFetchScheduler:
             
             logger.debug(
                 "prefetch_executed",
-                memory_id=schedule.memory_id,
-                priority=schedule.priority.value,
+                _memory_id = schedule.memory_id,
+                _priority = schedule.priority.value,
             )
         except Exception as e:
             logger.error("prefetch_execution_error", error=str(e))
@@ -681,13 +658,7 @@ class IntelligentPrefetcher:
     - Adaptive pre-fetching
     """
     
-    def __init__(
-        self,
-        cache_size: int = 1000,
-        prefetch_threshold: float = 0.6,
-        strategy: PreFetchStrategy = PreFetchStrategy.HYBRID,
-        enable_background: bool = True,
-    ) -> None:
+    def __init__(self, _cache_size: int, _prefetch_threshold: float, _strategy: PreFetchStrategy, _enable_background: bool) -> None:
         """
         Initialize the intelligent pre-fetcher.
         
@@ -725,8 +696,8 @@ class IntelligentPrefetcher:
         
         logger.info(
             "intelligent_prefetcher_initialized",
-            cache_size=cache_size,
-            strategy=strategy.value,
+            _cache_size = cache_size,
+            _strategy = strategy.value,
         )
     
     async def initialize(self) -> None:
@@ -743,11 +714,7 @@ class IntelligentPrefetcher:
             self._scheduler_running = False
         logger.info("intelligent_prefetcher_shutdown")
     
-    def record_access(
-        self,
-        memory_id: str,
-        agent_id: Optional[str] = None,
-    ) -> Tuple[bool, float]:
+    def record_access(self, _memory_id: str, _agent_id: Optional[str]) -> Tuple[bool, float]:
         """
         Record a memory access and trigger pre-fetching.
         
@@ -758,19 +725,19 @@ class IntelligentPrefetcher:
         Returns:
             Tuple of (cache_hit, latency_ms)
         """
-        start_time = time.time()
+        _start_time = time.time()
         
         # Check cache
-        cache_hit = self._lru_cache.contains(memory_id)
+        _cache_hit = self._lru_cache.contains(memory_id)
         
         if cache_hit:
-            data = self._lru_cache.get(memory_id)
+            _data = self._lru_cache.get(memory_id)
             self._lru_cache.put(memory_id, data)  # Update LRU
         else:
             self._lru_cache.put(memory_id, None)  # Placeholder
         
         self._total_accesses += 1
-        latency_ms = (time.time() - start_time) * 1000
+        _latency_ms = (time.time() - start_time) * 1000
         self._total_latency_ms += latency_ms
         
         # Update access patterns
@@ -782,66 +749,58 @@ class IntelligentPrefetcher:
         
         return cache_hit, latency_ms
     
-    def _update_access_pattern(
-        self,
-        memory_id: str,
-        agent_id: Optional[str],
-    ) -> None:
+    def _update_access_pattern(self, _memory_id: str, _agent_id: Optional[str]) -> None:
         """Update access pattern tracking."""
         # Track sequential access patterns
         for key in list(self._access_patterns.keys()):
-            pattern = self._access_patterns[key]
+            _pattern = self._access_patterns[key]
             if len(pattern) >= self._sequential_access_window:
                 pattern.pop(0)
         
         if agent_id:
             self._access_patterns[agent_id].append(memory_id)
     
-    def _trigger_prefetch(
-        self,
-        accessed_memory_id: str,
-        agent_id: Optional[str],
-    ) -> None:
+    def _trigger_prefetch(self, _accessed_memory_id: str, _agent_id: Optional[str]) -> None:
         """Trigger pre-fetching based on access patterns."""
         # Pattern-based pre-fetch
         if agent_id and len(self._access_patterns[agent_id]) >= 2:
-            pattern = self._access_patterns[agent_id]
+            _pattern = self._access_patterns[agent_id]
             
             # Predict next memory based on sequential pattern
-            predicted = self._predict_next_memory(pattern)
+            _predicted = self._predict_next_memory(pattern)
             
             if predicted and not self._lru_cache.contains(predicted):
                 self._request_prefetch(
-                    memory_id=predicted,
-                    priority=PreFetchPriority.NORMAL,
-                    strategy=PreFetchStrategy.PATTERN,
-                    agent_id=agent_id,
-                    confidence=0.7,
-                    reason=f"Sequential pattern prediction after {accessed_memory_id}",
+                    _memory_id = predicted,
+                    _priority = PreFetchPriority.NORMAL,
+                    _strategy = PreFetchStrategy.PATTERN,
+                    _agent_id = agent_id,
+                    _confidence = 0.7,
+                    _reason = f"Sequential pattern prediction after {accessed_memory_id}",
                 )
         
         # Agent-based pre-fetch
         if agent_id:
             # Pre-fetch other memories commonly accessed by this agent
-            agent_memories = set(self._access_patterns[agent_id])
+            _agent_memories = set(self._access_patterns[agent_id])
             for related_memory in agent_memories:
                 if not self._lru_cache.contains(related_memory):
                     self._request_prefetch(
-                        memory_id=related_memory,
-                        priority=PreFetchPriority.LOW,
-                        strategy=PreFetchStrategy.AGENT,
-                        agent_id=agent_id,
-                        confidence=0.5,
-                        reason=f"Agent {agent_id} frequently accesses",
+                        _memory_id = related_memory,
+                        _priority = PreFetchPriority.LOW,
+                        _strategy = PreFetchStrategy.AGENT,
+                        _agent_id = agent_id,
+                        _confidence = 0.5,
+                        _reason = f"Agent {agent_id} frequently accesses",
                     )
     
-    def _predict_next_memory(self, pattern: List[str]) -> Optional[str]:
+    def _predict_next_memory(self, _pattern: List[str]) -> Optional[str]:
         """Predict next memory based on access pattern."""
         if len(pattern) < 2:
             return None
         
         # Simple prediction: most common next memory
-        next_memories = []
+        _next_memories = []
         for i in range(len(pattern) - 1):
             if pattern[i] == pattern[-1]:
                 next_memories.append(pattern[i + 1])
@@ -851,26 +810,18 @@ class IntelligentPrefetcher:
         
         # Return most common next memory
         from collections import Counter
-        counter = Counter(next_memories)
+        _counter = Counter(next_memories)
         return counter.most_common(1)[0][0]
     
-    def _request_prefetch(
-        self,
-        memory_id: str,
-        priority: PreFetchPriority,
-        strategy: PreFetchStrategy,
-        agent_id: Optional[str],
-        confidence: float,
-        reason: str,
-    ) -> None:
+    def _request_prefetch(self, _memory_id: str, _priority: PreFetchPriority, _strategy: PreFetchStrategy, _agent_id: Optional[str], _confidence: float, _reason: str) -> None:
         """Request a pre-fetch."""
-        request = PreFetchRequest(
-            memory_id=memory_id,
-            priority=priority,
-            reason=reason,
-            confidence=confidence,
-            strategy=strategy,
-            agent_id=agent_id,
+        _request = PreFetchRequest(
+            _memory_id = memory_id,
+            _priority = priority,
+            _reason = reason,
+            _confidence = confidence,
+            _strategy = strategy,
+            _agent_id = agent_id,
         )
         
         self._prefetch_requests.append(request)
@@ -881,7 +832,7 @@ class IntelligentPrefetcher:
         
         # Schedule if background enabled
         if self._scheduler and confidence >= self.prefetch_threshold:
-            delay = {
+            _delay = {
                 PreFetchPriority.CRITICAL: 0.0,
                 PreFetchPriority.HIGH: 0.5,
                 PreFetchPriority.NORMAL: 1.0,
@@ -890,20 +841,15 @@ class IntelligentPrefetcher:
             }.get(priority, 1.0)
             
             self._scheduler.schedule(
-                memory_id=memory_id,
-                delay_seconds=delay,
-                priority=priority,
-                strategy=strategy,
-                agent_id=agent_id,
-                confidence=confidence,
+                _memory_id = memory_id,
+                _delay_seconds = delay,
+                _priority = priority,
+                _strategy = strategy,
+                _agent_id = agent_id,
+                _confidence = confidence,
             )
     
-    def prefetch(
-        self,
-        memory_id: str,
-        data: Any,
-        size_bytes: int = 0,
-    ) -> PreFetchResult:
+    def prefetch(self, _memory_id: str, _data: Any, _size_bytes: int) -> PreFetchResult:
         """
         Pre-fetch memory data into cache.
         
@@ -915,21 +861,21 @@ class IntelligentPrefetcher:
         Returns:
             Pre-fetch result
         """
-        start_time = time.time()
+        _start_time = time.time()
         
-        cache_hit = self._lru_cache.contains(memory_id)
-        evicted = self._lru_cache.put(memory_id, data, size_bytes)
+        _cache_hit = self._lru_cache.contains(memory_id)
+        _evicted = self._lru_cache.put(memory_id, data, size_bytes)
         
         # Also add to LFU for hybrid strategy
         self._lfu_cache.put(memory_id, data, size_bytes)
         
-        latency_ms = (time.time() - start_time) * 1000
+        _latency_ms = (time.time() - start_time) * 1000
         
-        result = PreFetchResult(
-            memory_id=memory_id,
-            success=True,
-            latency_ms=latency_ms,
-            cache_hit=cache_hit,
+        _result = PreFetchResult(
+            _memory_id = memory_id,
+            _success = True,
+            _latency_ms = latency_ms,
+            _cache_hit = cache_hit,
         )
         
         self._prefetch_results.append(result)
@@ -943,36 +889,36 @@ class IntelligentPrefetcher:
         
         return result
     
-    def get(self, memory_id: str) -> Optional[Any]:
+    def get(self, _memory_id: str) -> Optional[Any]:
         """Get memory from cache."""
         return self._lru_cache.get(memory_id)
     
-    def contains(self, memory_id: str) -> bool:
+    def contains(self, _memory_id: str) -> bool:
         """Check if memory is in cache."""
         return self._lru_cache.contains(memory_id)
     
-    def evict(self, memory_id: str) -> bool:
+    def evict(self, _memory_id: str) -> bool:
         """Evict memory from cache."""
-        removed_lru = self._lru_cache.remove(memory_id)
+        _removed_lru = self._lru_cache.remove(memory_id)
         self._lfu_cache.get(memory_id)  # This won't remove but access tracking
         return removed_lru
     
     def get_statistics(self) -> Dict[str, Any]:
         """Get comprehensive statistics."""
-        lru_stats = self._lru_cache.get_statistics()
-        lfu_stats = self._lfu_cache.get_statistics()
+        _lru_stats = self._lru_cache.get_statistics()
+        _lfu_stats = self._lfu_cache.get_statistics()
         
-        total_prefetch = self._prefetch_hits + self._prefetch_misses
-        prefetch_hit_rate = (
+        _total_prefetch = self._prefetch_hits + self._prefetch_misses
+        _prefetch_hit_rate = (
             self._prefetch_hits / total_prefetch if total_prefetch > 0 else 0.0
         )
         
-        avg_latency = (
+        _avg_latency = (
             self._total_latency_ms / self._total_accesses
             if self._total_accesses > 0 else 0.0
         )
         
-        scheduler_stats = self._scheduler.get_stats() if self._scheduler else {}
+        _scheduler_stats = self._scheduler.get_stats() if self._scheduler else {}
         
         return {
             "lru_cache": lru_stats.to_dict(),
@@ -993,21 +939,21 @@ class IntelligentPrefetcher:
     
     def get_prefetch_recommendations(self) -> List[PreFetchRequest]:
         """Get pre-fetch recommendations based on current patterns."""
-        recommendations = []
+        _recommendations = []
         
         # Find memories that should be pre-fetched
         for agent_id, pattern in self._access_patterns.items():
             if len(pattern) >= 2:
-                predicted = self._predict_next_memory(pattern)
+                _predicted = self._predict_next_memory(pattern)
                 if predicted and not self._lru_cache.contains(predicted):
                     recommendations.append(
                         PreFetchRequest(
-                            memory_id=predicted,
-                            priority=PreFetchPriority.NORMAL,
-                            reason=f"Predicted next access for agent {agent_id}",
-                            confidence=0.7,
-                            strategy=PreFetchStrategy.PATTERN,
-                            agent_id=agent_id,
+                            _memory_id = predicted,
+                            _priority = PreFetchPriority.NORMAL,
+                            _reason = f"Predicted next access for agent {agent_id}",
+                            _confidence = 0.7,
+                            _strategy = PreFetchStrategy.PATTERN,
+                            _agent_id = agent_id,
                         )
                     )
         

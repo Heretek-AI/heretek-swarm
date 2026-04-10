@@ -5,7 +5,6 @@ Abstract base class for all embedding providers in Heretek Swarm.
 Defines the interface that all embedding providers must implement.
 """
 
-from __future__ import annotations
 
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
@@ -13,7 +12,7 @@ from typing import Any, Dict, List, Optional, Union
 
 import structlog
 
-logger = structlog.get_logger("embeddings.providers.base")
+_logger = structlog.get_logger("embeddings.providers.base")
 
 
 @dataclass
@@ -28,7 +27,7 @@ class EmbeddingRequest:
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert request to dictionary for API calls."""
-        result = {
+        _result = {
             "input": self.inputs,
             "encoding_format": self.encoding_format,
         }
@@ -91,17 +90,10 @@ class EmbeddingProviderBase(ABC):
     
     Example usage:
         provider = OpenAIEmbeddingProvider(api_key="sk-...")
-        response = await provider.embed(texts=["Hello, world!"])
+        _response = await provider.embed(texts=["Hello, world!"])
     """
 
-    def __init__(
-        self,
-        provider_name: str,
-        base_url: str,
-        api_key: Optional[str] = None,
-        default_model: Optional[str] = None,
-        extra_config: Optional[Dict[str, Any]] = None,
-    ):
+    def __init__(self, _provider_name: str, _base_url: str, _api_key: Optional[str], _default_model: Optional[str], _extra_config: Optional[Dict[str, _Any]]):
         """
         Initialize the embedding provider.
         
@@ -123,7 +115,7 @@ class EmbeddingProviderBase(ABC):
         logger.debug(
             "Embedding provider initialized",
             provider_name=provider_name,
-            base_url=base_url,
+            _base_url = base_url,
         )
 
     @abstractmethod
@@ -137,12 +129,7 @@ class EmbeddingProviderBase(ABC):
         return self._capabilities
 
     @abstractmethod
-    async def embed(
-        self,
-        texts: Union[str, List[str]],
-        model: Optional[str] = None,
-        dimensions: Optional[int] = None,
-    ) -> EmbeddingResponse:
+    async def embed(self, _texts: Union[str, _List[str]], _model: Optional[str], _dimensions: Optional[int]) -> EmbeddingResponse:
         """
         Generate embeddings for texts.
         
@@ -159,14 +146,7 @@ class EmbeddingProviderBase(ABC):
         """
         pass
 
-    async def embed_with_retry(
-        self,
-        texts: Union[str, List[str]],
-        model: Optional[str] = None,
-        dimensions: Optional[int] = None,
-        max_retries: int = 3,
-        retry_delay: float = 1.0,
-    ) -> EmbeddingResponse:
+    async def embed_with_retry(self, _texts: Union[str, _List[str]], _model: Optional[str], _dimensions: Optional[int], _max_retries: int, _retry_delay: float) -> EmbeddingResponse:
         """
         Generate embeddings with automatic retries.
         
@@ -185,20 +165,20 @@ class EmbeddingProviderBase(ABC):
         """
         import asyncio
         
-        last_error = None
+        _last_error = None
         
         for attempt in range(max_retries):
             try:
                 return await self.embed(texts, model, dimensions)
             except Exception as e:
-                last_error = e
+                _last_error = e
                 if attempt < max_retries - 1:
                     logger.warning(
                         "Embedding request failed, retrying",
                         provider=self.provider_name,
-                        attempt=attempt + 1,
-                        max_retries=max_retries,
-                        error=str(e),
+                        _attempt = attempt + 1,
+                        _max_retries = max_retries,
+                        _error = str(e),
                     )
                     await asyncio.sleep(retry_delay * (attempt + 1))
         
@@ -208,7 +188,7 @@ class EmbeddingProviderBase(ABC):
             cause=last_error,
         )
 
-    def _get_model(self, model: Optional[str]) -> str:
+    def _get_model(self, _model: Optional[str]) -> str:
         """Get the model to use, falling back to default if needed."""
         if model:
             return model
@@ -216,7 +196,7 @@ class EmbeddingProviderBase(ABC):
             return self.default_model
         raise ValueError("No model specified and no default model configured")
 
-    def _ensure_list(self, texts: Union[str, List[str]]) -> List[str]:
+    def _ensure_list(self, _texts: Union[str, _List[str]]) -> List[str]:
         """Ensure texts is a list."""
         if isinstance(texts, str):
             return [texts]
@@ -226,7 +206,7 @@ class EmbeddingProviderBase(ABC):
         """Async context manager entry."""
         return self
 
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
+    async def __aexit__(self, _exc_type, _exc_val, _exc_tb):
         """Async context manager exit."""
         pass
 
@@ -234,12 +214,7 @@ class EmbeddingProviderBase(ABC):
 class EmbeddingProviderError(Exception):
     """Exception raised for embedding provider-related errors."""
     
-    def __init__(
-        self,
-        message: str,
-        provider: Optional[str] = None,
-        cause: Optional[Exception] = None,
-    ):
+    def __init__(self, _message: str, _provider: Optional[str], _cause: Optional[Exception]):
         self.message = message
         self.provider = provider
         self.cause = cause
@@ -247,11 +222,11 @@ class EmbeddingProviderError(Exception):
     
     def format_message(self) -> str:
         """Format the error message."""
-        msg = self.message
+        _msg = self.message
         if self.provider:
-            msg = f"[{self.provider}] {msg}"
+            _msg = f"[{self.provider}] {msg}"
         if self.cause:
-            msg = f"{msg} (caused by: {self.cause})"
+            _msg = f"{msg} (caused by: {self.cause})"
         return msg
 
 
@@ -267,12 +242,7 @@ class EmbeddingAuthenticationError(EmbeddingProviderError):
 
 class EmbeddingRateLimitError(EmbeddingProviderError):
     """Exception raised when rate limited."""
-    def __init__(
-        self,
-        message: str,
-        provider: Optional[str] = None,
-        retry_after: Optional[float] = None,
-    ):
+    def __init__(self, _message: str, _provider: Optional[str], _retry_after: Optional[float]):
         self.retry_after = retry_after
         super().__init__(message, provider)
 

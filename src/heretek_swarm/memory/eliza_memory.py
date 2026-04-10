@@ -22,7 +22,7 @@ from typing import Any, Optional
 
 import structlog
 
-logger = structlog.get_logger("MemoryManager")
+_logger = structlog.get_logger("MemoryManager")
 
 
 # Decay constants
@@ -71,15 +71,15 @@ class ElizaMemoryEntry:
             Importance adjusted for time elapsed since creation
         """
         # Hours since creation
-        hours_elapsed = (datetime.now(timezone.utc) - self.created_at).total_seconds() / 3600
+        _hours_elapsed = (datetime.now(timezone.utc) - self.created_at).total_seconds() / 3600
 
         # Decay formula: importance * e^(-decay_rate * hours)
-        decayed = self.importance * math.exp(-self.decay_rate * hours_elapsed)
+        _decayed = self.importance * math.exp(-self.decay_rate * hours_elapsed)
 
         # Boost for recent access
         if self.access_count > 0:
-            hours_since_access = (datetime.now(timezone.utc) - self.last_accessed).total_seconds() / 3600
-            access_boost = min(0.1, self.access_count * 0.02 * math.exp(-hours_since_access))
+            _hours_since_access = (datetime.now(timezone.utc) - self.last_accessed).total_seconds() / 3600
+            _access_boost = min(0.1, self.access_count * 0.02 * math.exp(-hours_since_access))
             decayed += access_boost
 
         return max(MIN_IMPORTANCE, min(1.0, decayed))
@@ -128,11 +128,7 @@ class MemoryManager:
     - Merged recall across all tiers
     """
 
-    def __init__(
-        self,
-        config: Optional[MemoryManagerConfig] = None,
-        agent_id: str = "default",
-    ) -> None:
+    def __init__(self, _config: Optional[MemoryManagerConfig], _agent_id: str) -> None:
         """
         Initialize Memory Manager.
 
@@ -170,7 +166,7 @@ class MemoryManager:
                 # Note: mem0 requires OpenAI API key, so we make it optional
                 # If no key, we'll fall back to in-memory storage
                 self._mem0 = PersistentMemory(
-                    user_id=self.agent_id
+                    _user_id = self.agent_id
                 )
                 logger.info(
                     "memory_manager_initialized",
@@ -180,7 +176,7 @@ class MemoryManager:
             except Exception as e:
                 logger.warning(
                     "mem0_init_failed_falling_back",
-                    error=str(e)
+                    _error = str(e)
                 )
                 self._mem0 = None
         else:
@@ -189,20 +185,11 @@ class MemoryManager:
         self._initialized = True
         logger.info(
             "memory_manager_initialized",
-            use_mem0=self.config.use_mem0 and self._mem0 is not None,
+            _use_mem0 = self.config.use_mem0 and self._mem0 is not None,
             agent_id=self.agent_id
         )
 
-    async def remember(
-        self,
-        content: str,
-        agent_id: Optional[str] = None,
-        importance: float = 0.5,
-        decay_rate: Optional[float] = None,
-        memory_type: Optional[str] = None,
-        tags: Optional[list[str]] = None,
-        metadata: Optional[dict[str, Any]] = None,
-    ) -> ElizaMemoryEntry:
+    async def remember(self, _content: str, _agent_id: Optional[str], _importance: float, _decay_rate: Optional[float], _memory_type: Optional[str], _tags: Optional[list[str]], _metadata: Optional[dict[str, _Any]]) -> ElizaMemoryEntry:
         """
         Store a memory with automatic tier selection.
 
@@ -230,16 +217,16 @@ class MemoryManager:
 
         agent_id = agent_id or self.agent_id
         decay_rate = decay_rate or self.config.default_decay_rate
-        entry_id = str(uuid.uuid4())
+        _entry_id = str(uuid.uuid4())
 
-        entry = ElizaMemoryEntry(
+        _entry = ElizaMemoryEntry(
             id=entry_id,
             content=content,
             agent_id=agent_id,
             importance=importance,
             decay_rate=decay_rate,
             memory_type=memory_type or "short_term",
-            tags=tags or [],
+            _tags = tags or [],
             metadata=metadata or {},
         )
 
@@ -259,7 +246,7 @@ class MemoryManager:
             if self._mem0 and self._mem0.is_initialized():
                 await self._mem0.store(
                     content=content,
-                    user_id=agent_id,
+                    _user_id = agent_id,
                     agent_id=agent_id,
                     metadata={
                         "entry_id": entry_id,
@@ -275,7 +262,7 @@ class MemoryManager:
 
         logger.debug(
             "memory_remembered",
-            entry_id=entry_id,
+            _entry_id = entry_id,
             memory_type=entry.memory_type,
             importance=importance,
             agent_id=agent_id,
@@ -286,13 +273,7 @@ class MemoryManager:
 
         return entry
 
-    async def recall(
-        self,
-        query: Optional[str] = None,
-        agent_id: Optional[str] = None,
-        limit: Optional[int] = None,
-        min_importance: float = MIN_IMPORTANCE,
-    ) -> list[ElizaMemoryEntry]:
+    async def recall(self, _query: Optional[str], _agent_id: Optional[str], _limit: Optional[int], _min_importance: float) -> list[ElizaMemoryEntry]:
         """
         Recall memories with merged ranking.
 
@@ -309,8 +290,8 @@ class MemoryManager:
             await self.initialize()
 
         agent_id = agent_id or self.agent_id
-        limit = limit or self.config.recall_limit
-        now = datetime.now(timezone.utc)
+        _limit = limit or self.config.recall_limit
+        _now = datetime.now(timezone.utc)
 
         results: list[tuple[float, ElizaMemoryEntry]] = []
 
@@ -332,17 +313,17 @@ class MemoryManager:
 
         # Search long-term (mem0) if query provided
         if query and self._mem0 and self._mem0.is_initialized():
-            long_term_results = await self._mem0.search(
-                query=query,
-                user_id=agent_id,
-                limit=limit,
+            _long_term_results = await self._mem0.search(
+                _query = query,
+                _user_id = agent_id,
+                _limit = limit,
             )
             for mem in long_term_results:
                 # Check metadata for entry info
                 meta = mem.get("metadata", {})
-                entry_id = meta.get("entry_id")
+                _entry_id = meta.get("entry_id")
                 if entry_id and entry_id in self._short_term:
-                    entry = self._short_term[entry_id]
+                    _entry = self._short_term[entry_id]
                     effective = entry.effective_importance()
                     results.append((effective, entry))
 
@@ -352,11 +333,7 @@ class MemoryManager:
         # Return top results
         return [entry for _, entry in results[:limit]]
 
-    async def get_working_context(
-        self,
-        agent_id: Optional[str] = None,
-        limit: int = 5,
-    ) -> list[ElizaMemoryEntry]:
+    async def get_working_context(self, _agent_id: Optional[str], _limit: int) -> list[ElizaMemoryEntry]:
         """
         Get working memory context for current task.
 
@@ -369,7 +346,7 @@ class MemoryManager:
         """
         agent_id = agent_id or self.agent_id
 
-        working = [
+        _working = [
             e for e in self._working.values()
             if e.agent_id == agent_id
         ]
@@ -379,7 +356,7 @@ class MemoryManager:
 
         return working[:limit]
 
-    async def touch(self, entry_id: str) -> bool:
+    async def touch(self, _entry_id: str) -> bool:
         """
         Touch a memory to update access time and boost importance.
 
@@ -401,7 +378,7 @@ class MemoryManager:
 
         return False
 
-    async def forget(self, entry_id: str) -> bool:
+    async def forget(self, _entry_id: str) -> bool:
         """
         Delete a memory.
 
@@ -419,7 +396,7 @@ class MemoryManager:
 
         # Check short-term
         if entry_id in self._short_term:
-            entry = self._short_term[entry_id]
+            _entry = self._short_term[entry_id]
 
             # Delete from long-term if it was stored there
             if entry.memory_type == "long_term" and self._mem0:
@@ -438,9 +415,9 @@ class MemoryManager:
         Returns:
             Number of memories cleaned up
         """
-        now = datetime.now(timezone.utc)
-        cleaned = 0
-        expired_ids = []
+        _now = datetime.now(timezone.utc)
+        _cleaned = 0
+        _expired_ids = []
 
         for entry_id, entry in self._short_term.items():
             # Check if past TTL
@@ -459,11 +436,11 @@ class MemoryManager:
 
     def get_statistics(self) -> dict[str, Any]:
         """Get memory statistics."""
-        total_short_term = sum(
+        _total_short_term = sum(
             e.effective_importance()
             for e in self._short_term.values()
         )
-        total_working = sum(
+        _total_working = sum(
             e.effective_importance()
             for e in self._working.values()
         )
@@ -485,7 +462,7 @@ class MemoryManager:
         self._initialized = False
         logger.info("memory_manager_closed")
 
-    async def _check_promotion(self, entry: ElizaMemoryEntry) -> None:
+    async def _check_promotion(self, _entry: ElizaMemoryEntry) -> None:
         """
         Check if memory should be promoted to long-term.
 
@@ -502,9 +479,9 @@ class MemoryManager:
             # Store in mem0 if available
             if self._mem0 and self._mem0.is_initialized():
                 await self._mem0.store(
-                    content=entry.content,
-                    user_id=entry.agent_id,
-                    agent_id=entry.agent_id,
+                    _content = entry.content,
+                    _user_id = entry.agent_id,
+                    _agent_id = entry.agent_id,
                     metadata={
                         "entry_id": entry.id,
                         "importance": entry.importance,
@@ -515,16 +492,13 @@ class MemoryManager:
 
             logger.debug(
                 "memory_promoted",
-                entry_id=entry.id,
-                new_type="long_term",
-                agent_id=entry.agent_id,
+                _entry_id = entry.id,
+                _new_type = "long_term",
+                _agent_id = entry.agent_id,
             )
 
 
-async def create_memory_manager(
-    agent_id: str = "default",
-    use_mem0: bool = True,
-) -> MemoryManager:
+async def create_memory_manager(_agent_id: str, _use_mem0: bool) -> MemoryManager:
     """
     Factory function to create a Memory Manager.
 
@@ -535,9 +509,9 @@ async def create_memory_manager(
     Returns:
         Configured MemoryManager instance
     """
-    config = MemoryManagerConfig(
-        use_mem0=use_mem0,
+    _config = MemoryManagerConfig(
+        _use_mem0 = use_mem0,
     )
-    manager = MemoryManager(config=config, agent_id=agent_id)
+    _manager = MemoryManager(config=config, agent_id=agent_id)
     await manager.initialize()
     return manager

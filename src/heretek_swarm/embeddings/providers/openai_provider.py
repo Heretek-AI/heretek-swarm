@@ -5,10 +5,9 @@ Implementation of the embedding provider interface for OpenAI's API.
 Supports text-embedding-3-small, text-embedding-3-large, and text-embedding-ada-002.
 """
 
-from __future__ import annotations
 
 import time
-from typing import Any, Dict, List, Optional, Union
+from typing import Dict, Optional, Union
 
 import httpx
 import structlog
@@ -23,7 +22,7 @@ from .base import (
     EmbeddingProviderError,
 )
 
-logger = structlog.get_logger("embeddings.providers.openai")
+_logger = structlog.get_logger("embeddings.providers.openai")
 
 
 class OpenAIEmbeddingProvider(EmbeddingProviderBase):
@@ -36,21 +35,14 @@ class OpenAIEmbeddingProvider(EmbeddingProviderBase):
     - text-embedding-ada-002 (1536 dimensions)
     
     Example:
-        provider = OpenAIEmbeddingProvider(
+        _provider = OpenAIEmbeddingProvider(
             api_key="sk-...",
-            default_model="text-embedding-3-small"
+            _default_model = "text-embedding-3-small"
         )
-        response = await provider.embed(["Hello, world!"])
+        _response = await provider.embed(["Hello, world!"])
     """
 
-    def __init__(
-        self,
-        api_key: str,
-        base_url: str = "https://api.openai.com/v1",
-        default_model: Optional[str] = None,
-        organization: Optional[str] = None,
-        extra_config: Optional[Dict[str, Any]] = None,
-    ):
+    def __init__(self, _api_key: str, _base_url: str, _default_model: Optional[str], _organization: Optional[str], _extra_config: Optional[Dict[str, _Any]]):
         """
         Initialize the OpenAI embedding provider.
         
@@ -65,11 +57,11 @@ class OpenAIEmbeddingProvider(EmbeddingProviderBase):
             raise EmbeddingAuthenticationError("OpenAI API key is required")
         
         super().__init__(
-            provider_name="openai",
+            _provider_name = "openai",
             base_url=base_url,
             api_key=api_key,
-            default_model=default_model or "text-embedding-3-small",
-            extra_config=extra_config,
+            _default_model = default_model or "text-embedding-3-small",
+            _extra_config = extra_config,
         )
         
         self.organization = organization
@@ -78,11 +70,11 @@ class OpenAIEmbeddingProvider(EmbeddingProviderBase):
     def _init_capabilities(self) -> EmbeddingProviderCapabilities:
         """Initialize provider capabilities."""
         return EmbeddingProviderCapabilities(
-            max_batch_size=2048,
-            max_tokens_per_batch=8192,
-            supported_formats=["float", "base64"],
+            _max_batch_size = 2048,
+            _max_tokens_per_batch = 8192,
+            _supported_formats = ["float", "base64"],
             supports_dimensions_override=True,
-            default_dimensions=1536,
+            _default_dimensions = 1536,
         )
 
     async def _get_client(self) -> httpx.AsyncClient:
@@ -96,18 +88,13 @@ class OpenAIEmbeddingProvider(EmbeddingProviderBase):
                 headers["OpenAI-Organization"] = self.organization
             
             self._client = httpx.AsyncClient(
-                base_url=self.base_url,
+                _base_url = self.base_url,
                 headers=headers,
-                timeout=httpx.Timeout(60.0, connect=10.0),
+                _timeout = httpx.Timeout(60.0, connect=10.0),
             )
         return self._client
 
-    async def embed(
-        self,
-        texts: Union[str, List[str]],
-        model: Optional[str] = None,
-        dimensions: Optional[int] = None,
-    ) -> EmbeddingResponse:
+    async def embed(self, _texts: Union[str, _List[str]], _model: Optional[str], _dimensions: Optional[int]) -> EmbeddingResponse:
         """
         Generate embeddings for texts.
         
@@ -119,13 +106,13 @@ class OpenAIEmbeddingProvider(EmbeddingProviderBase):
         Returns:
             Embedding response with vectors
         """
-        client = await self._get_client()
-        start_time = time.time()
+        _client = await self._get_client()
+        _start_time = time.time()
         
-        model = self._get_model(model)
-        inputs = self._ensure_list(texts)
+        _model = self._get_model(model)
+        _inputs = self._ensure_list(texts)
         
-        payload = {
+        _payload = {
             "model": model,
             "input": inputs,
             "encoding_format": "float",
@@ -137,12 +124,12 @@ class OpenAIEmbeddingProvider(EmbeddingProviderBase):
         
         logger.debug(
             "Sending OpenAI embedding request",
-            model=model,
-            text_count=len(inputs),
+            _model = model,
+            _text_count = len(inputs),
         )
         
         try:
-            response = await client.post(
+            _response = await client.post(
                 "/embeddings",
                 json=payload,
             )
@@ -150,48 +137,48 @@ class OpenAIEmbeddingProvider(EmbeddingProviderBase):
             if response.status_code == 401:
                 raise EmbeddingAuthenticationError(
                     "Invalid OpenAI API key",
-                    provider="openai",
+                    _provider = "openai",
                 )
             elif response.status_code == 429:
-                retry_after = response.headers.get("Retry-After")
+                _retry_after = response.headers.get("Retry-After")
                 raise EmbeddingRateLimitError(
                     "Rate limited by OpenAI",
-                    provider="openai",
-                    retry_after=float(retry_after) if retry_after else None,
+                    _provider = "openai",
+                    _retry_after = float(retry_after) if retry_after else None,
                 )
             elif response.status_code >= 500:
                 raise EmbeddingUnavailableError(
                     "OpenAI service unavailable",
-                    provider="openai",
+                    _provider = "openai",
                 )
             elif response.status_code != 200:
                 raise EmbeddingProviderError(
                     f"OpenAI API error: {response.status_code}",
-                    provider="openai",
+                    _provider = "openai",
                 )
             
-            data = response.json()
-            latency_ms = (time.time() - start_time) * 1000
+            _data = response.json()
+            _latency_ms = (time.time() - start_time) * 1000
             
             # Extract embeddings from response
-            embeddings = [item["embedding"] for item in data.get("data", [])]
+            _embeddings = [item["embedding"] for item in data.get("data", [])]
             
             return EmbeddingResponse(
-                embeddings=embeddings,
-                model=data.get("model", model),
-                usage=data.get("usage", {}),
-                raw_response=data,
-                latency_ms=latency_ms,
+                _embeddings = embeddings,
+                _model = data.get("model", model),
+                _usage = data.get("usage", {}),
+                _raw_response = data,
+                _latency_ms = latency_ms,
             )
             
         except httpx.RequestError as e:
             raise EmbeddingUnavailableError(
                 f"Request failed: {e}",
-                provider="openai",
-                cause=e,
+                _provider = "openai",
+                _cause = e,
             )
 
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
+    async def __aexit__(self, _exc_type, _exc_val, _exc_tb):
         """Cleanup HTTP client."""
         if self._client and not self._client.is_closed:
             await self._client.aclose()

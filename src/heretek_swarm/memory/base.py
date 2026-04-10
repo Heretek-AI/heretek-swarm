@@ -16,7 +16,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import structlog
 
-logger = structlog.get_logger("MemorySystem")
+_logger = structlog.get_logger("MemorySystem")
 
 
 @dataclass
@@ -72,7 +72,7 @@ class MemorySystem(ABC):
     - Persistent layer: Long-term vector-based storage with semantic search
     """
 
-    def __init__(self, name: Optional[str] = None) -> None:
+    def __init__(self, _name: Optional[str]) -> None:
         """
         Initialize the memory system.
 
@@ -88,13 +88,7 @@ class MemorySystem(ABC):
         pass
 
     @abstractmethod
-    async def store(
-        self,
-        content: Dict[str, Any],
-        metadata: Optional[Dict[str, Any]] = None,
-        ttl: Optional[int] = None,
-        lineage: Optional[List[str]] = None,
-    ) -> MemoryEntry:
+    async def store(self, _content: Dict[str, _Any], _metadata: Optional[Dict[str, _Any]], _ttl: Optional[int], _lineage: Optional[List[str]]) -> MemoryEntry:
         """
         Store a memory entry.
 
@@ -110,7 +104,7 @@ class MemorySystem(ABC):
         pass
 
     @abstractmethod
-    async def retrieve(self, memory_id: str) -> Optional[MemoryEntry]:
+    async def retrieve(self, _memory_id: str) -> Optional[MemoryEntry]:
         """
         Retrieve a memory entry by ID.
 
@@ -123,7 +117,7 @@ class MemorySystem(ABC):
         pass
 
     @abstractmethod
-    async def query(self, query: MemoryQuery) -> List[MemoryEntry]:
+    async def query(self, _query: MemoryQuery) -> List[MemoryEntry]:
         """
         Query memory entries.
 
@@ -136,7 +130,7 @@ class MemorySystem(ABC):
         pass
 
     @abstractmethod
-    async def delete(self, memory_id: str) -> bool:
+    async def delete(self, _memory_id: str) -> bool:
         """
         Delete a memory entry.
 
@@ -161,12 +155,7 @@ class EphemeralMemory(MemorySystem):
     Provides fast, in-memory storage for session-based working memory.
     """
 
-    def __init__(
-        self,
-        name: str = "EphemeralMemory",
-        max_size: int = 10000,
-        default_ttl: int = 3600,
-    ) -> None:
+    def __init__(self, _name: str, _max_size: int, _default_ttl: int) -> None:
         """
         Initialize ephemeral memory.
 
@@ -186,13 +175,7 @@ class EphemeralMemory(MemorySystem):
         self._initialized = True
         logger.info(f"[{self.name}] Ephemeral memory initialized")
 
-    async def store(
-        self,
-        content: Dict[str, Any],
-        metadata: Optional[Dict[str, Any]] = None,
-        ttl: Optional[int] = None,
-        lineage: Optional[List[str]] = None,
-    ) -> MemoryEntry:
+    async def store(self, _content: Dict[str, _Any], _metadata: Optional[Dict[str, _Any]], _ttl: Optional[int], _lineage: Optional[List[str]]) -> MemoryEntry:
         """
         Store a memory entry with TTL.
 
@@ -208,20 +191,20 @@ class EphemeralMemory(MemorySystem):
         if not self._initialized:
             await self.initialize()
 
-        memory_id = str(uuid.uuid4())
-        now = datetime.now(timezone.utc)
+        _memory_id = str(uuid.uuid4())
+        _now = datetime.now(timezone.utc)
 
         # Calculate expiration
-        ttl = ttl or self.default_ttl
+        _ttl = ttl or self.default_ttl
         expires_at = (now + timedelta(seconds=ttl)).isoformat()
 
-        entry = MemoryEntry(
-            id=memory_id,
-            content=content,
+        _entry = MemoryEntry(
+            _id = memory_id,
+            _content = content,
             metadata=metadata or {},
-            created_at=now.isoformat(),
+            _created_at = now.isoformat(),
             expires_at=expires_at,
-            lineage=lineage or [],
+            _lineage = lineage or [],
         )
 
         # Check size limit
@@ -238,9 +221,9 @@ class EphemeralMemory(MemorySystem):
 
         return entry
 
-    async def retrieve(self, memory_id: str) -> Optional[MemoryEntry]:
+    async def retrieve(self, _memory_id: str) -> Optional[MemoryEntry]:
         """Retrieve a memory entry by ID."""
-        entry = self._storage.get(memory_id)
+        _entry = self._storage.get(memory_id)
 
         if entry:
             # Check expiration
@@ -250,7 +233,7 @@ class EphemeralMemory(MemorySystem):
 
         return entry
 
-    async def query(self, query: MemoryQuery) -> List[MemoryEntry]:
+    async def query(self, _query: MemoryQuery) -> List[MemoryEntry]:
         """
         Query memory entries with filters.
 
@@ -260,7 +243,7 @@ class EphemeralMemory(MemorySystem):
         Returns:
             List of matching memory entries
         """
-        results = []
+        _results = []
 
         for entry in self._storage.values():
             # Skip expired entries
@@ -285,12 +268,12 @@ class EphemeralMemory(MemorySystem):
 
         return results
 
-    async def delete(self, memory_id: str) -> bool:
+    async def delete(self, _memory_id: str) -> bool:
         """Delete a memory entry."""
         if memory_id not in self._storage:
             return False
 
-        entry = self._storage[memory_id]
+        _entry = self._storage[memory_id]
         del self._storage[memory_id]
 
         # Remove from indexes
@@ -312,65 +295,61 @@ class EphemeralMemory(MemorySystem):
         if not self._storage:
             return
 
-        oldest_id = min(
+        _oldest_id = min(
             self._storage.keys(),
-            key=lambda k: self._storage[k].created_at,
+            _key = lambda k: self._storage[k].created_at,
         )
         await self.delete(oldest_id)
 
-    def _is_expired(self, entry: MemoryEntry) -> bool:
+    def _is_expired(self, _entry: MemoryEntry) -> bool:
         """Check if an entry is expired."""
         if not entry.expires_at:
             return False
 
-        expires_at = datetime.fromisoformat(entry.expires_at)
+        _expires_at = datetime.fromisoformat(entry.expires_at)
         return datetime.now(timezone.utc) > expires_at
 
-    def _matches_filters(
-        self,
-        entry: MemoryEntry,
-        filters: Dict[str, Any],
-    ) -> bool:
+    def _matches_filters(self, _entry: MemoryEntry, _filters: Dict[str, _Any]) -> bool:
         """Check if entry matches filters."""
         for key, value in filters.items():
-            entry_value = entry.metadata.get(key)
+            _entry_value = entry.metadata.get(key)
             if entry_value != value:
                 return False
         return True
 
-    def _matches_text(self, entry: MemoryEntry, text: str) -> bool:
+    def _matches_text(self, _entry: MemoryEntry, _text: str) -> bool:
         """Check if entry contains text."""
         # Simple text search in content
-        content_str = str(entry.content).lower()
+        _content_str = str(entry.content).lower()
         return text.lower() in content_str
 
-    async def _update_indexes(self, entry: MemoryEntry) -> None:
+    async def _update_indexes(self, _entry: MemoryEntry) -> None:
         """Update indexes for an entry."""
         # Index by memory type
-        memory_type = entry.metadata.get("type", "default")
+        _memory_type = entry.metadata.get("type", "default")
         if memory_type not in self._index:
             self._index[memory_type] = []
         self._index[memory_type].append(entry.id)
 
         # Index by agent ID
-        agent_id = entry.metadata.get("agent_id")
+        _agent_id = entry.metadata.get("agent_id")
         if agent_id:
             if "agent:" + agent_id not in self._index:
                 self._index["agent:" + agent_id] = []
             self._index["agent:" + agent_id].append(entry.id)
 
-    async def _remove_from_indexes(self, entry: MemoryEntry) -> None:
+    async def _remove_from_indexes(self, _entry: MemoryEntry) -> None:
         """Remove entry from indexes."""
-        memory_type = entry.metadata.get("type", "default")
+        _memory_type = entry.metadata.get("type", "default")
         if memory_type in self._index:
             try:
                 self._index[memory_type].remove(entry.id)
             except ValueError:
                 pass
 
-        agent_id = entry.metadata.get("agent_id")
+        _agent_id = entry.metadata.get("agent_id")
         if agent_id:
-            key = "agent:" + agent_id
+            _key = "agent:" + agent_id
             if key in self._index:
                 try:
                     self._index[key].remove(entry.id)
@@ -379,8 +358,8 @@ class EphemeralMemory(MemorySystem):
 
     def get_statistics(self) -> Dict[str, Any]:
         """Get memory statistics."""
-        now = datetime.now(timezone.utc)
-        expired_count = sum(
+        _now = datetime.now(timezone.utc)
+        _expired_count = sum(
             1
             for entry in self._storage.values()
             if self._is_expired(entry)
@@ -405,11 +384,7 @@ class PersistentMemory(MemorySystem):
     PGVector or similar vector database.
     """
 
-    def __init__(
-        self,
-        name: str = "PersistentMemory",
-        connection_string: Optional[str] = None,
-    ) -> None:
+    def __init__(self, _name: str, _connection_string: Optional[str]) -> None:
         """
         Initialize persistent memory.
 
@@ -427,27 +402,21 @@ class PersistentMemory(MemorySystem):
         self._initialized = True
         logger.info(f"[{self.name}] Persistent memory initialized")
 
-    async def store(
-        self,
-        content: Dict[str, Any],
-        metadata: Optional[Dict[str, Any]] = None,
-        ttl: Optional[int] = None,
-        lineage: Optional[List[str]] = None,
-    ) -> MemoryEntry:
+    async def store(self, _content: Dict[str, _Any], _metadata: Optional[Dict[str, _Any]], _ttl: Optional[int], _lineage: Optional[List[str]]) -> MemoryEntry:
         """Store a memory entry (no TTL for persistent memory)."""
         if not self._initialized:
             await self.initialize()
 
-        memory_id = str(uuid.uuid4())
-        now = datetime.now(timezone.utc)
+        _memory_id = str(uuid.uuid4())
+        _now = datetime.now(timezone.utc)
 
-        entry = MemoryEntry(
-            id=memory_id,
-            content=content,
+        _entry = MemoryEntry(
+            _id = memory_id,
+            _content = content,
             metadata=metadata or {},
-            created_at=now.isoformat(),
-            expires_at=None,  # No expiration for persistent memory
-            lineage=lineage or [],
+            _created_at = now.isoformat(),
+            _expires_at = None,  # No expiration for persistent memory
+            _lineage = lineage or [],
         )
 
         # In a full implementation, this would store to database
@@ -457,18 +426,18 @@ class PersistentMemory(MemorySystem):
 
         return entry
 
-    async def retrieve(self, memory_id: str) -> Optional[MemoryEntry]:
+    async def retrieve(self, _memory_id: str) -> Optional[MemoryEntry]:
         """Retrieve a memory entry by ID."""
         return self._storage.get(memory_id)
 
-    async def query(self, query: MemoryQuery) -> List[MemoryEntry]:
+    async def query(self, _query: MemoryQuery) -> List[MemoryEntry]:
         """
         Query memory entries with optional vector similarity.
 
         In a full implementation, this would use PGVector for
         semantic search.
         """
-        results = []
+        _results = []
 
         for entry in self._storage.values():
             # Apply filters
@@ -483,7 +452,7 @@ class PersistentMemory(MemorySystem):
 
         return results
 
-    async def delete(self, memory_id: str) -> bool:
+    async def delete(self, _memory_id: str) -> bool:
         """Delete a memory entry."""
         if memory_id not in self._storage:
             return False
@@ -500,23 +469,15 @@ class PersistentMemory(MemorySystem):
         self._initialized = False
         logger.info(f"[{self.name}] Persistent memory closed")
 
-    def _matches_filters(
-        self,
-        entry: MemoryEntry,
-        filters: Dict[str, Any],
-    ) -> bool:
+    def _matches_filters(self, _entry: MemoryEntry, _filters: Dict[str, _Any]) -> bool:
         """Check if entry matches filters."""
         for key, value in filters.items():
-            entry_value = entry.metadata.get(key)
+            _entry_value = entry.metadata.get(key)
             if entry_value != value:
                 return False
         return True
 
-    async def store_embedding(
-        self,
-        memory_id: str,
-        embedding: List[float],
-    ) -> bool:
+    async def store_embedding(self, _memory_id: str, _embedding: List[float]) -> bool:
         """
         Store/update embedding for a memory entry.
 
@@ -533,12 +494,7 @@ class PersistentMemory(MemorySystem):
         self._storage[memory_id].embedding = embedding
         return True
 
-    async def semantic_search(
-        self,
-        query_embedding: List[float],
-        limit: int = 10,
-        threshold: float = 0.7,
-    ) -> List[Tuple[MemoryEntry, float]]:
+    async def semantic_search(self, _query_embedding: List[float], _limit: int, _threshold: float) -> List[Tuple[MemoryEntry, float]]:
         """
         Perform semantic search using vector similarity.
 
@@ -551,12 +507,12 @@ class PersistentMemory(MemorySystem):
             List of (entry, similarity_score) tuples
         """
         # Stub implementation - would use PGVector in production
-        results = []
+        _results = []
 
         for entry in self._storage.values():
             if entry.embedding:
                 # Cosine similarity
-                similarity = self._cosine_similarity(
+                _similarity = self._cosine_similarity(
                     query_embedding,
                     entry.embedding,
                 )
@@ -568,20 +524,16 @@ class PersistentMemory(MemorySystem):
 
         return results[:limit]
 
-    def _cosine_similarity(
-        self,
-        vec1: List[float],
-        vec2: List[float],
-    ) -> float:
+    def _cosine_similarity(self, _vec1: List[float], _vec2: List[float]) -> float:
         """Calculate cosine similarity between two vectors."""
         if len(vec1) != len(vec2):
             return 0.0
 
-        dot_product = sum(a * b for a, b in zip(vec1, vec2))
-        norm1 = sum(a * a for a in vec1) ** 0.5
-        norm2 = sum(b * b for b in vec2) ** 0.5
+        _dot_product = sum(a * b for a, b in zip(vec1, vec2))
+        _norm1 = sum(a * a for a in vec1) ** 0.5
+        _norm2 = sum(b * b for b in vec2) ** 0.5
 
-        if norm1 == 0 or norm2 == 0:
+        if norm1 in (0, 0):
             return 0.0
 
         return dot_product / (norm1 * norm2)
@@ -595,11 +547,7 @@ class DualTierMemory:
     tiering based on TTL and access patterns.
     """
 
-    def __init__(
-        self,
-        ephemeral: Optional[EphemeralMemory] = None,
-        persistent: Optional[PersistentMemory] = None,
-    ) -> None:
+    def __init__(self, _ephemeral: Optional[EphemeralMemory], _persistent: Optional[PersistentMemory]) -> None:
         """
         Initialize dual-tier memory.
 
@@ -618,14 +566,7 @@ class DualTierMemory:
         self._initialized = True
         logger.info("Dual-tier memory initialized")
 
-    async def store(
-        self,
-        content: Dict[str, Any],
-        metadata: Optional[Dict[str, Any]] = None,
-        ttl: Optional[int] = None,
-        lineage: Optional[List[str]] = None,
-        persistent: bool = False,
-    ) -> MemoryEntry:
+    async def store(self, _content: Dict[str, _Any], _metadata: Optional[Dict[str, _Any]], _ttl: Optional[int], _lineage: Optional[List[str]], _persistent: bool) -> MemoryEntry:
         """
         Store a memory entry in appropriate tier.
 
@@ -651,7 +592,7 @@ class DualTierMemory:
                 content, metadata, ttl, lineage
             )
 
-    async def retrieve(self, memory_id: str) -> Optional[MemoryEntry]:
+    async def retrieve(self, _memory_id: str) -> Optional[MemoryEntry]:
         """
         Retrieve a memory entry from either tier.
 
@@ -662,20 +603,14 @@ class DualTierMemory:
             Memory entry or None
         """
         # Try ephemeral first
-        entry = await self.ephemeral.retrieve(memory_id)
+        _entry = await self.ephemeral.retrieve(memory_id)
         if entry:
             return entry
 
         # Try persistent
         return await self.persistent.retrieve(memory_id)
 
-    async def query(
-        self,
-        query_text: Optional[str] = None,
-        filters: Optional[Dict[str, Any]] = None,
-        limit: int = 10,
-        include_persistent: bool = True,
-    ) -> List[MemoryEntry]:
+    async def query(self, _query_text: Optional[str], _filters: Optional[Dict[str, _Any]], _limit: int, _include_persistent: bool) -> List[MemoryEntry]:
         """
         Query both memory tiers.
 
@@ -690,16 +625,16 @@ class DualTierMemory:
         """
         from heretek_swarm.memory.base import MemoryQuery
 
-        mq = MemoryQuery(
-            query_text=query_text,
-            filters=filters,
-            limit=limit,
+        _mq = MemoryQuery(
+            _query_text = query_text,
+            _filters = filters,
+            _limit = limit,
         )
 
-        results = await self.ephemeral.query(mq)
+        _results = await self.ephemeral.query(mq)
 
         if include_persistent:
-            persistent_results = await self.persistent.query(mq)
+            _persistent_results = await self.persistent.query(mq)
             results.extend(persistent_results)
 
         return results[:limit]
@@ -713,8 +648,8 @@ class DualTierMemory:
 
     def get_statistics(self) -> Dict[str, Any]:
         """Get combined statistics for both tiers."""
-        ephemeral_stats = self.ephemeral.get_statistics()
-        persistent_stats = {
+        _ephemeral_stats = self.ephemeral.get_statistics()
+        _persistent_stats = {
             "persistent_total": len(self.persistent._storage),
         }
 

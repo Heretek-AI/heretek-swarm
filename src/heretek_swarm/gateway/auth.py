@@ -14,10 +14,10 @@ from fastapi import Security, HTTPException, status
 from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 import structlog
 
-logger = structlog.get_logger(__name__)
+_logger = structlog.get_logger(__name__)
 
 # Security configuration
-security = HTTPBearer(auto_error=False)
+_security = HTTPBearer(auto_error=False)
 
 
 def generate_api_key() -> str:
@@ -40,11 +40,11 @@ def get_api_key_from_env() -> str:
     Raises:
         RuntimeError: If in production without API key
     """
-    key = os.getenv("HERETEK_API_KEY")
+    _key = os.getenv("HERETEK_API_KEY")
     
     if not key:
         # Check if production
-        environment = os.getenv("ENVIRONMENT", "development")
+        _environment = os.getenv("ENVIRONMENT", "development")
         
         if environment == "production":
             logger.error("api_key_missing_production")
@@ -54,11 +54,11 @@ def get_api_key_from_env() -> str:
             )
         
         # Development: generate and warn
-        key = generate_api_key()
+        _key = generate_api_key()
         logger.warning(
             "api_key_generated_development",
-            message="Set HERETEK_API_KEY environment variable",
-            key_prefix=key[:10] + "..."
+            _message = "Set HERETEK_API_KEY environment variable",
+            _key_prefix = key[:10] + "..."
         )
     
     return key
@@ -80,27 +80,27 @@ async def verify_auth(
         HTTPException: If auth fails
     """
     # Get expected key
-    expected_key = get_api_key_from_env()
+    _expected_key = get_api_key_from_env()
     
     # Check credentials
     if credentials is None:
         logger.warning("auth_missing_credentials")
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Missing authentication credentials",
-            headers={"WWW-Authenticate": "Bearer"},
+            _status_code = status.HTTP_401_UNAUTHORIZED,
+            _detail = "Missing authentication credentials",
+            _headers = {"WWW-Authenticate": "Bearer"},
         )
     
     # Validate token
     if credentials.credentials != expected_key:
         logger.warning(
             "auth_invalid_token",
-            provided_prefix=credentials.credentials[:10] + "..."
+            _provided_prefix = credentials.credentials[:10] + "..."
         )
         raise HTTPException(
-            status_code=status.HTTP_401_UNAUTHORIZED,
-            detail="Invalid API key",
-            headers={"WWW-Authenticate": "Bearer"},
+            _status_code = status.HTTP_401_UNAUTHORIZED,
+            _detail = "Invalid API key",
+            _headers = {"WWW-Authenticate": "Bearer"},
         )
     
     logger.debug("auth_success")
@@ -124,7 +124,7 @@ async def optional_auth(
     if credentials is None:
         return None
     
-    expected_key = get_api_key_from_env()
+    _expected_key = get_api_key_from_env()
     
     if credentials.credentials == expected_key:
         return "authenticated"
@@ -134,5 +134,5 @@ async def optional_auth(
 
 def get_api_key_header() -> dict:
     """Get API key for outbound requests."""
-    key = get_api_key_from_env()
+    _key = get_api_key_from_env()
     return {"Authorization": f"Bearer {key}"}

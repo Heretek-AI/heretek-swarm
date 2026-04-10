@@ -13,7 +13,7 @@ from typing import Any, Optional
 
 import structlog
 
-logger = structlog.get_logger("PersistentMemory")
+_logger = structlog.get_logger("PersistentMemory")
 
 
 @dataclass
@@ -84,11 +84,7 @@ class PersistentMemory:
     Note: Requires Qdrant or other vector store to be running.
     """
 
-    def __init__(
-        self,
-        config: Optional[Mem0Config] = None,
-        user_id: str = "default",
-    ) -> None:
+    def __init__(self, _config: Optional[Mem0Config], _user_id: str) -> None:
         """
         Initialize persistent memory store.
 
@@ -114,8 +110,8 @@ class PersistentMemory:
 
             logger.info(
                 "persistent_memory_initialized",
-                provider=self.config.vector_store_provider,
-                collection=self.config.qdrant_collection,
+                _provider = self.config.vector_store_provider,
+                _collection = self.config.qdrant_collection,
             )
 
         except ImportError:
@@ -125,13 +121,7 @@ class PersistentMemory:
             logger.error("failed_to_initialize_memory", error=str(e))
             raise
 
-    async def store(
-        self,
-        content: str,
-        user_id: Optional[str] = None,
-        agent_id: Optional[str] = None,
-        metadata: Optional[dict[str, Any]] = None,
-    ) -> str:
+    async def store(self, _content: str, _user_id: Optional[str], _agent_id: Optional[str], _metadata: Optional[dict[str, _Any]]) -> str:
         """
         Store a memory entry with semantic embedding.
 
@@ -148,22 +138,22 @@ class PersistentMemory:
             await self.initialize()
 
         user_id = user_id or self.user_id
-        meta = {"agent_id": agent_id} if agent_id else {}
+        _meta = {"agent_id": agent_id} if agent_id else {}
         if metadata:
             meta.update(metadata)
 
         try:
-            result = self._memory.add(
+            _result = self._memory.add(
                 content,
                 user_id=user_id,
-                metadata=meta,
+                _metadata = meta,
             )
-            memory_id = result.get("id", "")
+            _memory_id = result.get("id", "")
             logger.debug(
                 "memory_stored",
-                memory_id=memory_id,
+                _memory_id = memory_id,
                 user_id=user_id,
-                agent_id=agent_id,
+                _agent_id = agent_id,
             )
             return memory_id
 
@@ -171,11 +161,7 @@ class PersistentMemory:
             logger.error("memory_store_failed", error=str(e))
             return ""
 
-    async def store_batch(
-        self,
-        memories: list[dict[str, Any]],
-        user_id: Optional[str] = None,
-    ) -> list[str]:
+    async def store_batch(self, _memories: list[dict[str, _Any]], _user_id: Optional[str]) -> list[str]:
         """
         Store multiple memories efficiently.
 
@@ -190,21 +176,21 @@ class PersistentMemory:
             await self.initialize()
 
         user_id = user_id or self.user_id
-        memory_ids = []
+        _memory_ids = []
 
         for mem in memories:
-            content = mem.get("content", "")
-            agent_id = mem.get("agent_id")
-            metadata = mem.get("metadata", {})
+            _content = mem.get("content", "")
+            _agent_id = mem.get("agent_id")
+            _metadata = mem.get("metadata", {})
 
             if agent_id:
-                metadata = {"agent_id": agent_id, **metadata}
+                _metadata = {"agent_id": agent_id, **metadata}
 
             try:
-                result = self._memory.add(
+                _result = self._memory.add(
                     content,
                     user_id=user_id,
-                    metadata=metadata,
+                    _metadata = metadata,
                 )
                 memory_ids.append(result.get("id", ""))
             except Exception as e:
@@ -214,13 +200,7 @@ class PersistentMemory:
         logger.debug("batch_memory_stored", count=len(memory_ids))
         return memory_ids
 
-    async def search(
-        self,
-        query: str,
-        user_id: Optional[str] = None,
-        agent_id: Optional[str] = None,
-        limit: int = 10,
-    ) -> list[dict[str, Any]]:
+    async def search(self, _query: str, _user_id: Optional[str], _agent_id: Optional[str], _limit: int) -> list[dict[str, Any]]:
         """
         Search memories using semantic similarity.
 
@@ -239,24 +219,24 @@ class PersistentMemory:
         user_id = user_id or self.user_id
 
         try:
-            filters = {}
+            _filters = {}
             if agent_id:
                 filters["agent_id"] = agent_id
 
-            results = self._memory.search(
-                query=query,
+            _results = self._memory.search(
+                _query = query,
                 user_id=user_id,
-                limit=limit,
+                _limit = limit,
             )
 
             # Filter by agent_id if specified (mem0 doesn't support this directly)
             if agent_id:
-                results = [r for r in results if r.get("metadata", {}).get("agent_id") == agent_id]
+                _results = [r for r in results if r.get("metadata", {}).get("agent_id") == agent_id]
 
             logger.debug(
                 "memory_searched",
-                query=query[:50],
-                results=len(results),
+                _query = query[:50],
+                _results = len(results),
                 user_id=user_id,
             )
             return results
@@ -265,11 +245,7 @@ class PersistentMemory:
             logger.error("memory_search_failed", error=str(e))
             return []
 
-    async def get_all(
-        self,
-        user_id: Optional[str] = None,
-        limit: int = 100,
-    ) -> list[dict[str, Any]]:
+    async def get_all(self, _user_id: Optional[str], _limit: int) -> list[dict[str, Any]]:
         """
         Get all memories for a user.
 
@@ -286,7 +262,7 @@ class PersistentMemory:
         user_id = user_id or self.user_id
 
         try:
-            results = self._memory.get_all(user_id=user_id)
+            _results = self._memory.get_all(user_id=user_id)
             logger.debug("memory_get_all", count=len(results), user_id=user_id)
             return results[:limit]
 
@@ -294,7 +270,7 @@ class PersistentMemory:
             logger.error("memory_get_all_failed", error=str(e))
             return []
 
-    async def get(self, memory_id: str) -> Optional[dict[str, Any]]:
+    async def get(self, _memory_id: str) -> Optional[dict[str, Any]]:
         """
         Get a specific memory by ID.
 
@@ -308,14 +284,14 @@ class PersistentMemory:
             await self.initialize()
 
         try:
-            result = self._memory.get(memory_id)
+            _result = self._memory.get(memory_id)
             return result if result else None
 
         except Exception as e:
             logger.error("memory_get_failed", memory_id=memory_id, error=str(e))
             return None
 
-    async def delete(self, memory_id: str) -> bool:
+    async def delete(self, _memory_id: str) -> bool:
         """
         Delete a memory entry.
 
@@ -337,12 +313,7 @@ class PersistentMemory:
             logger.error("memory_delete_failed", memory_id=memory_id, error=str(e))
             return False
 
-    async def update(
-        self,
-        memory_id: str,
-        content: Optional[str] = None,
-        metadata: Optional[dict[str, Any]] = None,
-    ) -> bool:
+    async def update(self, _memory_id: str, _content: Optional[str], _metadata: Optional[dict[str, _Any]]) -> bool:
         """
         Update a memory entry.
 
@@ -359,7 +330,7 @@ class PersistentMemory:
 
         try:
             # Get existing memory
-            existing = await self.get(memory_id)
+            _existing = await self.get(memory_id)
             if not existing:
                 return False
 
@@ -371,10 +342,10 @@ class PersistentMemory:
 
             # Re-add to update (mem0 doesn't have direct update)
             self._memory.delete(memory_id)
-            result = self._memory.add(
+            _result = self._memory.add(
                 existing["content"],
-                user_id=existing.get("user_id", self.user_id),
-                metadata=existing.get("metadata", {}),
+                _user_id = existing.get("user_id", self.user_id),
+                _metadata = existing.get("metadata", {}),
             )
 
             logger.debug("memory_updated", memory_id=memory_id)
@@ -395,10 +366,7 @@ class PersistentMemory:
         return self._initialized
 
 
-async def create_memory_store(
-    provider: str = "qdrant",
-    user_id: str = "default",
-) -> PersistentMemory:
+async def create_memory_store(_provider: str, _user_id: str) -> PersistentMemory:
     """
     Factory function to create a persistent memory store.
 
@@ -409,7 +377,7 @@ async def create_memory_store(
     Returns:
         Configured PersistentMemory instance
     """
-    config = Mem0Config(vector_store_provider=provider)
-    memory = PersistentMemory(config=config, user_id=user_id)
+    _config = Mem0Config(vector_store_provider=provider)
+    _memory = PersistentMemory(config=config, user_id=user_id)
     await memory.initialize()
     return memory

@@ -12,7 +12,7 @@ from enum import Enum
 import asyncio
 import structlog
 
-logger = structlog.get_logger(__name__)
+_logger = structlog.get_logger(__name__)
 
 
 class HandoffStatus(Enum):
@@ -60,15 +60,11 @@ class AgentHandoff:
         self._callbacks: Dict[str, Callable] = {}
         self._a2a_server = None
     
-    def set_a2a_server(self, server) -> None:
+    def set_a2a_server(self, _server) -> None:
         """Set A2A server for inter-agent communication."""
         self._a2a_server = server
     
-    def register_callback(
-        self,
-        event: str,
-        callback: Callable[[HandoffContext], Any]
-    ) -> None:
+    def register_callback(self, _event: str, _callback: Callable[[HandoffContext], _Any]) -> None:
         """
         Register callback for handoff events.
         
@@ -79,17 +75,7 @@ class AgentHandoff:
         self._callbacks[event] = callback
         logger.debug("handoff_callback_registered", event=event)
     
-    async def create_handoff(
-        self,
-        task_id: str,
-        source_agent: str,
-        target_agent: str,
-        task_description: str,
-        context_data: Optional[Dict] = None,
-        conversation_history: Optional[List[Dict]] = None,
-        priority: str = "normal",
-        deadline: Optional[datetime] = None,
-    ) -> str:
+    async def create_handoff(self, _task_id: str, _source_agent: str, _target_agent: str, _task_description: str, _context_data: Optional[Dict], _conversation_history: Optional[List[Dict]], _priority: str, _deadline: Optional[datetime]) -> str:
         """
         Create a new agent handoff.
         
@@ -106,15 +92,15 @@ class AgentHandoff:
         Returns:
             Handoff ID
         """
-        handoff_id = f"handoff_{task_id}_{datetime.now(timezone.utc).timestamp()}"
+        _handoff_id = f"handoff_{task_id}_{datetime.now(timezone.utc).timestamp()}"
         
-        context = HandoffContext(
-            task_id=task_id,
-            source_agent=source_agent,
-            target_agent=target_agent,
-            task_description=task_description,
-            context_data=context_data or {},
-            conversation_history=conversation_history or [],
+        _context = HandoffContext(
+            _task_id = task_id,
+            _source_agent = source_agent,
+            _target_agent = target_agent,
+            _task_description = task_description,
+            _context_data = context_data or {},
+            _conversation_history = conversation_history or [],
             priority=priority,
             deadline=deadline,
         )
@@ -124,7 +110,7 @@ class AgentHandoff:
         
         logger.info(
             "handoff_created",
-            handoff_id=handoff_id,
+            _handoff_id = handoff_id,
             source=source_agent,
             target=target_agent,
             priority=priority,
@@ -140,7 +126,7 @@ class AgentHandoff:
         
         return handoff_id
     
-    async def accept_handoff(self, handoff_id: str, agent_id: str) -> bool:
+    async def accept_handoff(self, _handoff_id: str, _agent_id: str) -> bool:
         """
         Accept a handoff (called by target agent).
         
@@ -155,14 +141,14 @@ class AgentHandoff:
             logger.warning("handoff_not_found", handoff_id=handoff_id)
             return False
         
-        context = self._handoffs[handoff_id]
+        _context = self._handoffs[handoff_id]
         
         if context.target_agent != agent_id:
             logger.warning(
                 "handoff_wrong_agent",
-                handoff_id=handoff_id,
-                expected=context.target_agent,
-                actual=agent_id,
+                _handoff_id = handoff_id,
+                _expected = context.target_agent,
+                _actual = agent_id,
             )
             return False
         
@@ -178,12 +164,7 @@ class AgentHandoff:
         
         return True
     
-    async def complete_handoff(
-        self,
-        handoff_id: str,
-        result: Any,
-        agent_id: str,
-    ) -> bool:
+    async def complete_handoff(self, _handoff_id: str, _result: Any, _agent_id: str) -> bool:
         """
         Complete a handoff with result.
         
@@ -198,7 +179,7 @@ class AgentHandoff:
         if handoff_id not in self._handoffs:
             return False
         
-        context = self._handoffs[handoff_id]
+        _context = self._handoffs[handoff_id]
         
         if context.target_agent != agent_id:
             return False
@@ -209,8 +190,8 @@ class AgentHandoff:
         
         logger.info(
             "handoff_completed",
-            handoff_id=handoff_id,
-            agent=agent_id,
+            _handoff_id = handoff_id,
+            _agent = agent_id,
         )
         
         if "completed" in self._callbacks:
@@ -222,12 +203,7 @@ class AgentHandoff:
         
         return True
     
-    async def fail_handoff(
-        self,
-        handoff_id: str,
-        error: str,
-        agent_id: str,
-    ) -> bool:
+    async def fail_handoff(self, _handoff_id: str, _error: str, _agent_id: str) -> bool:
         """
         Mark handoff as failed.
         
@@ -242,15 +218,15 @@ class AgentHandoff:
         if handoff_id not in self._handoffs:
             return False
         
-        context = self._handoffs[handoff_id]
+        _context = self._handoffs[handoff_id]
         context.status = HandoffStatus.FAILED
         context.error = error
         context.completed_at = datetime.now(timezone.utc)
         
         logger.error(
             "handoff_failed",
-            handoff_id=handoff_id,
-            agent=agent_id,
+            _handoff_id = handoff_id,
+            _agent = agent_id,
             error=error,
         )
         
@@ -259,25 +235,25 @@ class AgentHandoff:
         
         return True
     
-    def get_handoff(self, handoff_id: str) -> Optional[HandoffContext]:
+    def get_handoff(self, _handoff_id: str) -> Optional[HandoffContext]:
         """Get handoff by ID."""
         return self._handoffs.get(handoff_id)
     
-    def get_pending_handoffs(self, agent_id: str) -> List[HandoffContext]:
+    def get_pending_handoffs(self, _agent_id: str) -> List[HandoffContext]:
         """Get pending handoffs for an agent."""
         return [
             h for h in self._handoffs.values()
             if h.target_agent == agent_id and h.status == HandoffStatus.PENDING
         ]
     
-    def get_active_handoffs(self, agent_id: str) -> List[HandoffContext]:
+    def get_active_handoffs(self, _agent_id: str) -> List[HandoffContext]:
         """Get active handoffs for an agent."""
         return [
             h for h in self._handoffs.values()
             if h.target_agent == agent_id and h.status == HandoffStatus.IN_PROGRESS
         ]
     
-    def get_handoff_history(self, agent_id: str) -> List[HandoffContext]:
+    def get_handoff_history(self, _agent_id: str) -> List[HandoffContext]:
         """Get completed/failed handoff history."""
         return [
             h for h in self._handoffs.values()
@@ -285,16 +261,12 @@ class AgentHandoff:
             and h.status in [HandoffStatus.COMPLETED, HandoffStatus.FAILED]
         ]
     
-    async def _notify_target_agent(
-        self,
-        handoff_id: str,
-        context: HandoffContext,
-    ) -> None:
+    async def _notify_target_agent(self, _handoff_id: str, _context: HandoffContext) -> None:
         """Notify target agent of new handoff via A2A."""
         if not self._a2a_server:
             return
         
-        message = {
+        _message = {
             "type": "handoff_request",
             "handoff_id": handoff_id,
             "source_agent": context.source_agent,
@@ -308,17 +280,12 @@ class AgentHandoff:
             message,
         )
     
-    async def _notify_source_agent(
-        self,
-        handoff_id: str,
-        context: HandoffContext,
-        result: Any,
-    ) -> None:
+    async def _notify_source_agent(self, _handoff_id: str, _context: HandoffContext, _result: Any) -> None:
         """Notify source agent of handoff completion."""
         if not self._a2a_server:
             return
         
-        message = {
+        _message = {
             "type": "handoff_complete",
             "handoff_id": handoff_id,
             "target_agent": context.target_agent,
@@ -331,14 +298,10 @@ class AgentHandoff:
             message,
         )
     
-    async def _execute_callback(
-        self,
-        event: str,
-        context: HandoffContext,
-    ) -> None:
+    async def _execute_callback(self, _event: str, _context: HandoffContext) -> None:
         """Execute callback with error handling."""
         try:
-            callback = self._callbacks.get(event)
+            _callback = self._callbacks.get(event)
             if callback:
                 if asyncio.iscoroutinefunction(callback):
                     await callback(context)
@@ -347,8 +310,8 @@ class AgentHandoff:
         except Exception as e:
             logger.error(
                 "handoff_callback_error",
-                event=event,
-                error=str(e),
+                _event = event,
+                _error = str(e),
             )
     
     def get_statistics(self) -> Dict:
@@ -372,25 +335,19 @@ class AgentHandoff:
 
 
 # Global handoff manager
-handoff_manager = AgentHandoff()
+_handoff_manager = AgentHandoff()
 
 
-def create_handoff_sync(
-    task_id: str,
-    source_agent: str,
-    target_agent: str,
-    task_description: str,
-    **kwargs,
-) -> str:
+def create_handoff_sync(_task_id: str, _source_agent: str, _target_agent: str, _task_description: str, _**kwargs) -> str:
     """Synchronous wrapper for create_handoff."""
     import asyncio
-    loop = asyncio.get_event_loop()
+    _loop = asyncio.get_event_loop()
     return loop.run_until_complete(
         handoff_manager.create_handoff(
-            task_id=task_id,
-            source_agent=source_agent,
-            target_agent=target_agent,
-            task_description=task_description,
+            _task_id = task_id,
+            _source_agent = source_agent,
+            _target_agent = target_agent,
+            _task_description = task_description,
             **kwargs,
         )
     )

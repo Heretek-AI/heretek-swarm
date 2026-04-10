@@ -23,7 +23,7 @@ from typing import Any, Callable, Dict, List, Optional, Tuple
 
 import structlog
 
-logger = structlog.get_logger(__name__)
+_logger = structlog.get_logger(__name__)
 
 # Try to import autogen components
 try:
@@ -33,13 +33,13 @@ try:
     AUTOGEN_AVAILABLE = True
 except ImportError:
     AUTOGEN_AVAILABLE = False
-    ConversableAgent = None
-    AssistantAgent = None
-    UserProxyAgent = None
-    GroupChat = None
-    GroupChatManager = None
-    register_function = None
-    ChatResult = None
+    _ConversableAgent = None
+    _AssistantAgent = None
+    _UserProxyAgent = None
+    _GroupChat = None
+    _GroupChatManager = None
+    _register_function = None
+    _ChatResult = None
 
 
 class AgentRole(str, Enum):
@@ -97,7 +97,7 @@ class AutoGenMessage:
     
     def to_autogen_format(self) -> Dict[str, Any]:
         """Convert to AutoGen message format."""
-        msg = {
+        _msg = {
             "role": self.role,
             "content": self.content,
         }
@@ -230,12 +230,7 @@ class AutoGenAdapter:
         tools: Registered tools
     """
     
-    def __init__(
-        self,
-        llm_config: Optional[Dict[str, Any]] = None,
-        enable_message_translation: bool = True,
-        max_messages: int = 100,
-    ) -> None:
+    def __init__(self, _llm_config: Optional[Dict[str, _Any]], _enable_message_translation: bool, _max_messages: int) -> None:
         """
         Initialize the AutoGen adapter.
         
@@ -269,34 +264,29 @@ class AutoGenAdapter:
         logger.info(
             "autogen_adapter_initialized",
             llm_config=bool(llm_config),
-            message_translation=enable_message_translation,
+            _message_translation = enable_message_translation,
         )
     
-    def set_agent_runtime(self, runtime: Any) -> None:
+    def set_agent_runtime(self, _runtime: Any) -> None:
         """Set the Heretek agent runtime for integration."""
         self._agent_runtime = runtime
         logger.debug("agent_runtime_set", runtime_type=type(runtime).__name__)
     
-    def register_heretek_agent(self, heretek_agent_id: str, autogen_agent_id: str) -> None:
+    def register_heretek_agent(self, _heretek_agent_id: str, _autogen_agent_id: str) -> None:
         """Register a mapping between Heretek and AutoGen agents."""
         self._heretek_agents[heretek_agent_id] = autogen_agent_id
         logger.info(
             "heretek_agent_registered",
-            heretek_agent_id=heretek_agent_id,
-            autogen_agent_id=autogen_agent_id,
+            _heretek_agent_id = heretek_agent_id,
+            _autogen_agent_id = autogen_agent_id,
         )
     
-    def register_conversation_callback(self, callback: Callable) -> None:
+    def register_conversation_callback(self, _callback: Callable) -> None:
         """Register a callback for conversation events."""
         self._conversation_callbacks.append(callback)
         logger.debug("conversation_callback_registered", callback=callback.__name__)
     
-    async def _notify_conversation_event(
-        self,
-        event_type: str,
-        agent_id: str,
-        message: Dict[str, Any],
-    ) -> None:
+    async def _notify_conversation_event(self, _event_type: str, _agent_id: str, _message: Dict[str, _Any]) -> None:
         """Notify callbacks of conversation events."""
         for callback in self._conversation_callbacks:
             try:
@@ -307,18 +297,7 @@ class AutoGenAdapter:
             except Exception as e:
                 logger.error("conversation_callback_error", error=str(e))
     
-    def create_agent(
-        self,
-        agent_id: str,
-        name: str,
-        role: AgentRole = AgentRole.ASSISTANT,
-        system_message: Optional[str] = None,
-        description: Optional[str] = None,
-        human_input_mode: str = "NEVER",
-        max_consecutive_auto_reply: int = 10,
-        llm_config: Optional[Dict[str, Any]] = None,
-        metadata: Optional[Dict[str, Any]] = None,
-    ) -> Any:
+    def create_agent(self, _agent_id: str, _name: str, _role: AgentRole, _system_message: Optional[str], _description: Optional[str], _human_input_mode: str, _max_consecutive_auto_reply: int, _llm_config: Optional[Dict[str, _Any]], _metadata: Optional[Dict[str, _Any]]) -> Any:
         """
         Create an AutoGen agent.
         
@@ -342,16 +321,16 @@ class AutoGenAdapter:
                 "AutoGen is not available. Install with: pip install pyautogen"
             )
         
-        config = AutoGenAgentConfig(
-            agent_id=agent_id,
-            name=name,
-            role=role,
-            system_message=system_message,
-            description=description,
-            human_input_mode=human_input_mode,
-            max_consecutive_auto_reply=max_consecutive_auto_reply,
+        _config = AutoGenAgentConfig(
+            _agent_id = agent_id,
+            _name = name,
+            _role = role,
+            _system_message = system_message,
+            _description = description,
+            _human_input_mode = human_input_mode,
+            _max_consecutive_auto_reply = max_consecutive_auto_reply,
             llm_config=llm_config or self.llm_config,
-            metadata=metadata or {},
+            _metadata = metadata or {},
         )
         self.agent_configs[agent_id] = config
         
@@ -360,34 +339,34 @@ class AutoGenAdapter:
         
         if role == AgentRole.ASSISTANT:
             agent = AssistantAgent(
-                name=name,
-                system_message=system_message or "You are a helpful AI assistant.",
+                _name = name,
+                _system_message = system_message or "You are a helpful AI assistant.",
                 llm_config=llm_config or self.llm_config,
-                human_input_mode=human_input_mode,
-                max_consecutive_auto_reply=max_consecutive_auto_reply,
-                description=description,
+                _human_input_mode = human_input_mode,
+                _max_consecutive_auto_reply = max_consecutive_auto_reply,
+                _description = description,
             )
         elif role == AgentRole.USER_PROXY:
             agent = UserProxyAgent(
-                name=name,
-                system_message=system_message or "A human user.",
-                human_input_mode=human_input_mode,
-                max_consecutive_auto_reply=max_consecutive_auto_reply,
-                code_execution_config=False,
+                _name = name,
+                _system_message = system_message or "A human user.",
+                _human_input_mode = human_input_mode,
+                _max_consecutive_auto_reply = max_consecutive_auto_reply,
+                _code_execution_config = False,
             )
         elif role == AgentRole.HERETEK_BRIDGE:
             # Special bridge agent for Heretek integration
             agent = ConversableAgent(
-                name=name,
-                system_message=system_message,
+                _name = name,
+                _system_message = system_message,
                 llm_config=llm_config or self.llm_config,
-                human_input_mode=human_input_mode,
+                _human_input_mode = human_input_mode,
             )
             # Register reply function for Heretek integration
             agent.register_reply(
                 [ConversableAgent, None],
                 self._heretek_reply_callback,
-                position=0,
+                _position = 0,
             )
         
         if agent:
@@ -395,20 +374,14 @@ class AutoGenAdapter:
             self.message_history[agent_id] = []
             logger.info(
                 "agent_created",
-                agent_id=agent_id,
-                role=role.value,
-                name=name,
+                _agent_id = agent_id,
+                _role = role.value,
+                _name = name,
             )
         
         return agent
     
-    def _heretek_reply_callback(
-        self,
-        recipient: ConversableAgent,
-        messages: Optional[List[Dict]] = None,
-        sender: Optional[ConversableAgent] = None,
-        config: Optional[Any] = None,
-    ) -> Tuple[bool, Optional[Dict]]:
+    def _heretek_reply_callback(self, _recipient: ConversableAgent, _messages: Optional[List[Dict]], _sender: Optional[ConversableAgent], _config: Optional[Any]) -> Tuple[bool, Optional[Dict]]:
         """
         Reply callback for Heretek bridge agents.
         
@@ -417,41 +390,33 @@ class AutoGenAdapter:
         if messages is None or not messages:
             return False, None
         
-        last_message = messages[-1]
-        content = last_message.get("content", "")
+        _last_message = messages[-1]
+        _content = last_message.get("content", "")
         
         # Find corresponding Heretek agent
-        heretek_agent_id = None
+        _heretek_agent_id = None
         for h_id, a_id in self._heretek_agents.items():
             if a_id == recipient.name:
-                heretek_agent_id = h_id
+                _heretek_agent_id = h_id
                 break
         
         if heretek_agent_id and self._agent_runtime:
             try:
                 # Route to Heretek agent
                 if heretek_agent_id in self._agent_runtime:
-                    runtime = self._agent_runtime[heretek_agent_id]
+                    _runtime = self._agent_runtime[heretek_agent_id]
                     if hasattr(runtime, 'think'):
                         # Synchronous call for callback compatibility
                         import asyncio
-                        loop = asyncio.get_event_loop()
-                        response = loop.run_until_complete(runtime.think(content))
+                        _loop = asyncio.get_event_loop()
+                        _response = loop.run_until_complete(runtime.think(content))
                         return True, {"role": "assistant", "content": response}
             except Exception as e:
                 logger.error("heretek_reply_error", error=str(e))
         
         return False, None
     
-    def create_group_chat(
-        self,
-        group_id: str,
-        name: str,
-        agent_ids: List[str],
-        max_round: int = 10,
-        speaker_selection_method: str = "auto",
-        metadata: Optional[Dict[str, Any]] = None,
-    ) -> Any:
+    def create_group_chat(self, _group_id: str, _name: str, _agent_ids: List[str], _max_round: int, _speaker_selection_method: str, _metadata: Optional[Dict[str, _Any]]) -> Any:
         """
         Create an AutoGen group chat.
         
@@ -475,13 +440,13 @@ class AutoGenAdapter:
         if not agents:
             raise ValueError(f"No valid agents found for IDs: {agent_ids}")
         
-        config = GroupChatConfig(
-            group_id=group_id,
-            name=name,
+        _config = GroupChatConfig(
+            _group_id = group_id,
+            _name = name,
             agents=agent_ids,
             max_round=max_round,
-            speaker_selection_method=speaker_selection_method,
-            metadata=metadata or {},
+            _speaker_selection_method = speaker_selection_method,
+            _metadata = metadata or {},
         )
         self.group_chat_configs[group_id] = config
         
@@ -490,35 +455,26 @@ class AutoGenAdapter:
             agents=agents,
             messages=[],
             max_round=max_round,
-            speaker_selection_method=speaker_selection_method,
+            _speaker_selection_method = speaker_selection_method,
         )
         self.group_chats[group_id] = group_chat
         
         # Create group chat manager
-        manager = GroupChatManager(
-            groupchat=group_chat,
-            llm_config=self.llm_config,
+        _manager = GroupChatManager(
+            _groupchat = group_chat,
+            _llm_config = self.llm_config,
         )
         self.group_chat_managers[group_id] = manager
         
         logger.info(
             "group_chat_created",
-            group_id=group_id,
-            agent_count=len(agents),
+            _group_id = group_id,
+            _agent_count = len(agents),
         )
         
         return group_chat
     
-    def register_tool(
-        self,
-        tool_id: str,
-        name: str,
-        description: str,
-        function: Callable,
-        agent_ids: Optional[List[str]] = None,
-        heretek_tool: bool = False,
-        metadata: Optional[Dict[str, Any]] = None,
-    ) -> str:
+    def register_tool(self, _tool_id: str, _name: str, _description: str, _function: Callable, _agent_ids: Optional[List[str]], _heretek_tool: bool, _metadata: Optional[Dict[str, _Any]]) -> str:
         """
         Register a tool with AutoGen agents.
         
@@ -537,18 +493,18 @@ class AutoGenAdapter:
         if not AUTOGEN_AVAILABLE:
             raise RuntimeError("AutoGen is not available")
         
-        registration = ToolRegistration(
-            tool_id=tool_id,
-            name=name,
-            description=description,
-            function=function,
-            heretek_tool=heretek_tool,
-            metadata=metadata or {},
+        _registration = ToolRegistration(
+            _tool_id = tool_id,
+            _name = name,
+            _description = description,
+            _function = function,
+            _heretek_tool = heretek_tool,
+            _metadata = metadata or {},
         )
         self.tools[tool_id] = registration
         
         # Register with specified agents
-        target_agents = agent_ids or list(self.agents.keys())
+        _target_agents = agent_ids or list(self.agents.keys())
         
         for agent_id in target_agents:
             if agent_id in self.agents:
@@ -556,32 +512,27 @@ class AutoGenAdapter:
                 try:
                     register_function(
                         function,
-                        name=name,
-                        description=description,
+                        _name = name,
+                        _description = description,
                         agent=agent,
                     )
                     logger.debug(
                         "tool_registered_for_agent",
-                        tool_id=tool_id,
-                        agent_id=agent_id,
+                        _tool_id = tool_id,
+                        _agent_id = agent_id,
                     )
                 except Exception as e:
                     logger.error(
                         "tool_registration_error",
-                        tool_id=tool_id,
-                        agent_id=agent_id,
+                        _tool_id = tool_id,
+                        _agent_id = agent_id,
                         error=str(e),
                     )
         
         logger.info("tool_registered", tool_id=tool_id, name=name)
         return tool_id
     
-    def translate_message(
-        self,
-        message: Dict[str, Any],
-        from_format: str = "heretek",
-        to_format: str = "autogen",
-    ) -> AutoGenMessage:
+    def translate_message(self, _message: Dict[str, _Any], _from_format: str, _to_format: str) -> AutoGenMessage:
         """
         Translate a message between formats.
         
@@ -593,52 +544,46 @@ class AutoGenAdapter:
         Returns:
             Translated AutoGenMessage
         """
-        message_id = str(uuid.uuid4())
+        _message_id = str(uuid.uuid4())
         
         # Parse source message
-        role = message.get("role", MessageRole.USER.value)
-        content = message.get("content")
+        _role = message.get("role", MessageRole.USER.value)
+        _content = message.get("content")
         name = message.get("name")
-        function_call = message.get("function_call")
-        tool_calls = message.get("tool_calls")
+        _function_call = message.get("function_call")
+        _tool_calls = message.get("tool_calls")
         
         # Translate role if needed
         if from_format == "heretek":
-            role_map = {
+            _role_map = {
                 "user": MessageRole.USER.value,
                 "assistant": MessageRole.ASSISTANT.value,
                 "system": MessageRole.SYSTEM.value,
                 "function": MessageRole.FUNCTION.value,
                 "tool": MessageRole.TOOL.value,
             }
-            role = role_map.get(role, role)
+            _role = role_map.get(role, role)
         
-        autogen_message = AutoGenMessage(
-            message_id=message_id,
-            role=role,
-            content=content,
-            name=name,
-            function_call=function_call,
-            tool_calls=tool_calls,
-            metadata={"from_format": from_format, "to_format": to_format},
+        _autogen_message = AutoGenMessage(
+            _message_id = message_id,
+            _role = role,
+            _content = content,
+            _name = name,
+            _function_call = function_call,
+            _tool_calls = tool_calls,
+            _metadata = {"from_format": from_format, "to_format": to_format},
         )
         
         logger.debug(
             "message_translated",
-            message_id=message_id,
-            from_format=from_format,
-            to_format=to_format,
+            _message_id = message_id,
+            _from_format = from_format,
+            _to_format = to_format,
         )
         
         return autogen_message
     
-    async def send_message(
-        self,
-        sender_id: str,
-        recipient_id: str,
-        content: str,
-        metadata: Optional[Dict[str, Any]] = None,
-    ) -> Optional[Dict[str, Any]]:
+    async def send_message(self, _sender_id: str, _recipient_id: str, _content: str, _metadata: Optional[Dict[str, _Any]]) -> Optional[Dict[str, Any]]:
         """
         Send a message between agents.
         
@@ -656,8 +601,8 @@ class AutoGenAdapter:
         if recipient_id not in self.agents:
             raise ValueError(f"Recipient agent {recipient_id} not found")
         
-        sender = self.agents[sender_id]
-        recipient = self.agents[recipient_id]
+        _sender = self.agents[sender_id]
+        _recipient = self.agents[recipient_id]
         
         # Create message
         message = {
@@ -667,7 +612,7 @@ class AutoGenAdapter:
         }
         
         # Track message
-        autogen_msg = self.translate_message(message, from_format="autogen")
+        _autogen_msg = self.translate_message(message, from_format="autogen")
         if recipient_id in self.message_history:
             self.message_history[recipient_id].append(autogen_msg)
             # Trim history
@@ -679,17 +624,17 @@ class AutoGenAdapter:
         
         # Send message and get response
         try:
-            response = await recipient.a_send(
+            _response = await recipient.a_send(
                 message=content,
-                sender=sender,
-                max_turns=1,
+                _sender = sender,
+                _max_turns = 1,
             )
             
             if response and len(response) > 0:
-                last_response = response[-1]
+                _last_response = response[-1]
                 
                 # Track response
-                response_msg = self.translate_message(last_response, from_format="autogen")
+                _response_msg = self.translate_message(last_response, from_format="autogen")
                 if sender_id in self.message_history:
                     self.message_history[sender_id].append(response_msg)
                 
@@ -705,13 +650,7 @@ class AutoGenAdapter:
         
         return None
     
-    async def initiate_chat(
-        self,
-        initiator_id: str,
-        recipient_id: str,
-        message: str,
-        max_turns: int = 1,
-    ) -> Optional[ChatResult]:
+    async def initiate_chat(self, _initiator_id: str, _recipient_id: str, _message: str, _max_turns: int) -> Optional[ChatResult]:
         """
         Initiate a chat between two agents.
         
@@ -732,21 +671,21 @@ class AutoGenAdapter:
         if recipient_id not in self.agents:
             raise ValueError(f"Recipient agent {recipient_id} not found")
         
-        initiator = self.agents[initiator_id]
-        recipient = self.agents[recipient_id]
+        _initiator = self.agents[initiator_id]
+        _recipient = self.agents[recipient_id]
         
         try:
-            result = await initiator.a_initiate_chat(
-                recipient=recipient,
+            _result = await initiator.a_initiate_chat(
+                _recipient = recipient,
                 message=message,
-                max_turns=max_turns,
+                _max_turns = max_turns,
             )
             
             logger.info(
                 "chat_initiated",
-                initiator=initiator_id,
-                recipient=recipient_id,
-                turns=max_turns,
+                _initiator = initiator_id,
+                _recipient = recipient_id,
+                _turns = max_turns,
             )
             
             return result
@@ -755,12 +694,7 @@ class AutoGenAdapter:
             logger.error("chat_initiation_error", error=str(e))
             return None
     
-    async def run_group_chat(
-        self,
-        group_id: str,
-        message: str,
-        initiator_id: Optional[str] = None,
-    ) -> Optional[ChatResult]:
+    async def run_group_chat(self, _group_id: str, _message: str, _initiator_id: Optional[str]) -> Optional[ChatResult]:
         """
         Run a group chat conversation.
         
@@ -775,25 +709,25 @@ class AutoGenAdapter:
         if group_id not in self.group_chat_managers:
             raise ValueError(f"Group chat {group_id} not found")
         
-        manager = self.group_chat_managers[group_id]
-        config = self.group_chat_configs[group_id]
+        _manager = self.group_chat_managers[group_id]
+        _config = self.group_chat_configs[group_id]
         
         # Determine initiator
-        initiator = None
+        _initiator = None
         if initiator_id and initiator_id in self.agents:
-            initiator = self.agents[initiator_id]
+            _initiator = self.agents[initiator_id]
         elif self.agents:
             # Use first agent as initiator
-            initiator = list(self.agents.values())[0]
+            _initiator = list(self.agents.values())[0]
         
         if not initiator:
             raise ValueError("No initiator agent available")
         
         try:
-            result = await initiator.a_initiate_chat(
-                recipient=manager,
+            _result = await initiator.a_initiate_chat(
+                _recipient = manager,
                 message=message,
-                max_turns=config.max_round,
+                _max_turns = config.max_round,
             )
             
             # Update group chat messages
@@ -802,8 +736,8 @@ class AutoGenAdapter:
             
             logger.info(
                 "group_chat_completed",
-                group_id=group_id,
-                message_count=len(result.chat_history) if result else 0,
+                _group_id = group_id,
+                _message_count = len(result.chat_history) if result else 0,
             )
             
             return result
@@ -812,25 +746,21 @@ class AutoGenAdapter:
             logger.error("group_chat_error", group_id=group_id, error=str(e))
             return None
     
-    def get_agent(self, agent_id: str) -> Optional[Any]:
+    def get_agent(self, _agent_id: str) -> Optional[Any]:
         """Get an agent by ID."""
         return self.agents.get(agent_id)
     
-    def get_agent_config(self, agent_id: str) -> Optional[AutoGenAgentConfig]:
+    def get_agent_config(self, _agent_id: str) -> Optional[AutoGenAgentConfig]:
         """Get agent configuration."""
         return self.agent_configs.get(agent_id)
     
-    def get_group_chat(self, group_id: str) -> Optional[Any]:
+    def get_group_chat(self, _group_id: str) -> Optional[Any]:
         """Get a group chat by ID."""
         return self.group_chats.get(group_id)
     
-    def get_message_history(
-        self,
-        agent_id: str,
-        limit: int = 50,
-    ) -> List[Dict[str, Any]]:
+    def get_message_history(self, _agent_id: str, _limit: int) -> List[Dict[str, Any]]:
         """Get message history for an agent."""
-        history = self.message_history.get(agent_id, [])
+        _history = self.message_history.get(agent_id, [])
         return [msg.to_dict() for msg in history[-limit:]]
     
     def get_statistics(self) -> Dict[str, Any]:
@@ -844,7 +774,7 @@ class AutoGenAdapter:
             "message_translation_enabled": self.enable_message_translation,
         }
     
-    def clear_agent(self, agent_id: str) -> bool:
+    def clear_agent(self, _agent_id: str) -> bool:
         """Clear an agent and its history."""
         if agent_id not in self.agents:
             return False
@@ -859,7 +789,7 @@ class AutoGenAdapter:
         logger.info("agent_cleared", agent_id=agent_id)
         return True
     
-    def clear_group_chat(self, group_id: str) -> bool:
+    def clear_group_chat(self, _group_id: str) -> bool:
         """Clear a group chat."""
         if group_id not in self.group_chats:
             return False
@@ -895,17 +825,11 @@ def get_autogen_adapter() -> AutoGenAdapter:
     """Get the global AutoGen adapter instance."""
     global autogen_adapter
     if autogen_adapter is None:
-        autogen_adapter = AutoGenAdapter()
+        _autogen_adapter = AutoGenAdapter()
     return autogen_adapter
 
 
-def create_assistant_agent(
-    agent_id: str,
-    name: str,
-    system_message: str,
-    llm_config: Optional[Dict[str, Any]] = None,
-    tools: Optional[List[Callable]] = None,
-) -> Any:
+def create_assistant_agent(_agent_id: str, _name: str, _system_message: str, _llm_config: Optional[Dict[str, _Any]], _tools: Optional[List[Callable]]) -> Any:
     """
     Create an assistant agent with optional tools.
     
@@ -919,26 +843,26 @@ def create_assistant_agent(
     Returns:
         Created AssistantAgent
     """
-    adapter = get_autogen_adapter()
+    _adapter = get_autogen_adapter()
     
-    agent = adapter.create_agent(
-        agent_id=agent_id,
-        name=name,
-        role=AgentRole.ASSISTANT,
-        system_message=system_message,
-        llm_config=llm_config,
+    _agent = adapter.create_agent(
+        _agent_id = agent_id,
+        _name = name,
+        _role = AgentRole.ASSISTANT,
+        _system_message = system_message,
+        _llm_config = llm_config,
     )
     
     # Register tools if provided
     if tools and AUTOGEN_AVAILABLE:
         for tool in tools:
-            tool_name = getattr(tool, '__name__', str(tool))
+            _tool_name = getattr(tool, '__name__', str(tool))
             adapter.register_tool(
-                tool_id=f"{agent_id}_{tool_name}",
-                name=tool_name,
-                description=tool.__doc__ or f"Tool: {tool_name}",
-                function=tool,
-                agent_ids=[agent_id],
+                _tool_id = f"{agent_id}_{tool_name}",
+                _name = tool_name,
+                _description = tool.__doc__ or f"Tool: {tool_name}",
+                _function = tool,
+                _agent_ids = [agent_id],
             )
     
     return agent

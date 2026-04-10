@@ -37,9 +37,9 @@ Example Usage:
     # Use integration manager
     manager = get_integration_manager()
     await manager.register_integration(
-        integration_id="my_langgraph",
-        integration_type=IntegrationType.LANGGRAPH,
-        name="My LangGraph Workflow",
+        _integration_id = "my_langgraph",
+        _integration_type = IntegrationType.LANGGRAPH,
+        _name = "My LangGraph Workflow",
     )
     await manager.start()
     ```

@@ -22,7 +22,7 @@ from typing import Any, Callable, Dict, List, Optional
 
 import structlog
 
-logger = structlog.get_logger(__name__)
+_logger = structlog.get_logger(__name__)
 
 # Try to import crewai components
 try:
@@ -32,12 +32,12 @@ try:
     CREWAI_AVAILABLE = True
 except ImportError:
     CREWAI_AVAILABLE = False
-    Agent = None
-    Task = None
-    Crew = None
-    Process = None
-    TaskOutput = None
-    BaseTool = None
+    _Agent = None
+    _Task = None
+    _Crew = None
+    _Process = None
+    _TaskOutput = None
+    _BaseTool = None
 
 
 class CrewProcess(str, Enum):
@@ -246,13 +246,7 @@ class CrewAIAdapter:
         crews: Registered crews
     """
     
-    def __init__(
-        self,
-        verbose: bool = True,
-        memory_enabled: bool = False,
-        cache_enabled: bool = True,
-        max_rpm: Optional[int] = None,
-    ) -> None:
+    def __init__(self, _verbose: bool, _memory_enabled: bool, _cache_enabled: bool, _max_rpm: Optional[int]) -> None:
         """
         Initialize the CrewAI adapter.
         
@@ -287,40 +281,31 @@ class CrewAIAdapter:
         
         logger.info(
             "crewai_adapter_initialized",
-            verbose=verbose,
+            _verbose = verbose,
             memory_enabled=memory_enabled,
             cache_enabled=cache_enabled,
         )
     
-    def set_agent_runtime(self, runtime: Any) -> None:
+    def set_agent_runtime(self, _runtime: Any) -> None:
         """Set the Heretek agent runtime for integration."""
         self._agent_runtime = runtime
         logger.debug("agent_runtime_set", runtime_type=type(runtime).__name__)
     
-    def register_heretek_agent_mapping(
-        self,
-        heretek_agent_id: str,
-        crewai_agent_id: str,
-    ) -> None:
+    def register_heretek_agent_mapping(self, _heretek_agent_id: str, _crewai_agent_id: str) -> None:
         """Register a mapping between Heretek and CrewAI agents."""
         self._heretek_agent_mappings[heretek_agent_id] = crewai_agent_id
         logger.info(
             "heretek_agent_mapping_registered",
-            heretek_agent_id=heretek_agent_id,
-            crewai_agent_id=crewai_agent_id,
+            _heretek_agent_id = heretek_agent_id,
+            _crewai_agent_id = crewai_agent_id,
         )
     
-    def register_task_callback(self, callback: Callable) -> None:
+    def register_task_callback(self, _callback: Callable) -> None:
         """Register a callback for task events."""
         self._task_callbacks.append(callback)
         logger.debug("task_callback_registered", callback=callback.__name__)
     
-    async def _notify_task_event(
-        self,
-        event_type: str,
-        task_id: str,
-        result: Optional[TaskExecutionResult] = None,
-    ) -> None:
+    async def _notify_task_event(self, _event_type: str, _task_id: str, _result: Optional[TaskExecutionResult]) -> None:
         """Notify callbacks of task events."""
         for callback in self._task_callbacks:
             try:
@@ -331,18 +316,7 @@ class CrewAIAdapter:
             except Exception as e:
                 logger.error("task_callback_error", error=str(e))
     
-    def create_agent(
-        self,
-        agent_id: str,
-        role: str,
-        goal: str,
-        backstory: str = "",
-        verbose: bool = True,
-        allow_delegation: bool = False,
-        max_iter: int = 15,
-        tools: Optional[List[Any]] = None,
-        metadata: Optional[Dict[str, Any]] = None,
-    ) -> Any:
+    def create_agent(self, _agent_id: str, _role: str, _goal: str, _backstory: str, _verbose: bool, _allow_delegation: bool, _max_iter: int, _tools: Optional[List[Any]], _metadata: Optional[Dict[str, _Any]]) -> Any:
         """
         Create a CrewAI agent.
         
@@ -366,51 +340,44 @@ class CrewAIAdapter:
                 "CrewAI is not available. Install with: pip install crewai"
             )
         
-        config = CrewAgentConfig(
-            agent_id=agent_id,
-            role=role,
-            goal=goal,
-            backstory=backstory,
-            verbose=verbose,
-            allow_delegation=allow_delegation,
-            max_iter=max_iter,
+        _config = CrewAgentConfig(
+            _agent_id = agent_id,
+            _role = role,
+            _goal = goal,
+            _backstory = backstory,
+            _verbose = verbose,
+            _allow_delegation = allow_delegation,
+            _max_iter = max_iter,
             max_rpm=self.max_rpm,
             cache=self.cache_enabled,
-            tools=tools or [],
-            metadata=metadata or {},
+            _tools = tools or [],
+            _metadata = metadata or {},
         )
         self.agent_configs[agent_id] = config
         
         # Create CrewAI agent
         agent = Agent(
-            role=role,
-            goal=goal,
-            backstory=backstory,
-            verbose=verbose,
-            allow_delegation=allow_delegation,
-            max_iter=max_iter,
+            _role = role,
+            _goal = goal,
+            _backstory = backstory,
+            _verbose = verbose,
+            _allow_delegation = allow_delegation,
+            _max_iter = max_iter,
             max_rpm=self.max_rpm,
             cache=self.cache_enabled,
-            tools=tools or [],
+            _tools = tools or [],
         )
         
         self.agents[agent_id] = agent
         logger.info(
             "agent_created",
-            agent_id=agent_id,
-            role=role,
+            _agent_id = agent_id,
+            _role = role,
         )
         
         return agent
     
-    def create_heretek_bridge_agent(
-        self,
-        agent_id: str,
-        heretek_agent_id: str,
-        role: str = "Heretek Bridge Agent",
-        goal: str = "Coordinate with Heretek swarm agents",
-        backstory: str = "You are a bridge between CrewAI and Heretek Swarm systems.",
-    ) -> Any:
+    def create_heretek_bridge_agent(self, _agent_id: str, _heretek_agent_id: str, _role: str, _goal: str, _backstory: str) -> Any:
         """
         Create a bridge agent that connects to a Heretek agent.
         
@@ -429,33 +396,22 @@ class CrewAIAdapter:
         
         # Create agent with custom handler for Heretek integration
         agent = self.create_agent(
-            agent_id=agent_id,
-            role=role,
-            goal=goal,
-            backstory=backstory,
-            allow_delegation=True,
+            _agent_id = agent_id,
+            _role = role,
+            _goal = goal,
+            _backstory = backstory,
+            _allow_delegation = True,
         )
         
         logger.info(
             "heretek_bridge_agent_created",
-            agent_id=agent_id,
-            heretek_agent_id=heretek_agent_id,
+            _agent_id = agent_id,
+            _heretek_agent_id = heretek_agent_id,
         )
         
         return agent
     
-    def create_task(
-        self,
-        task_id: str,
-        description: str,
-        expected_output: str,
-        agent_id: Optional[str] = None,
-        async_execution: bool = False,
-        context: Optional[List[str]] = None,
-        tools: Optional[List[Any]] = None,
-        callback: Optional[Callable[[TaskOutput], None]] = None,
-        metadata: Optional[Dict[str, Any]] = None,
-    ) -> Any:
+    def create_task(self, _task_id: str, _description: str, _expected_output: str, _agent_id: Optional[str], _async_execution: bool, _context: Optional[List[str]], _tools: Optional[List[Any]], _callback: Optional[Callable[[TaskOutput], _None]], _metadata: Optional[Dict[str, _Any]]) -> Any:
         """
         Create a CrewAI task.
         
@@ -477,7 +433,7 @@ class CrewAIAdapter:
             raise RuntimeError("CrewAI is not available")
         
         # Get context tasks if provided
-        context_tasks = []
+        _context_tasks = []
         if context:
             for ctx_task_id in context:
                 if ctx_task_id in self.tasks:
@@ -488,52 +444,40 @@ class CrewAIAdapter:
         if agent_id and agent_id in self.agents:
             agent = self.agents[agent_id]
         
-        config = CrewTaskConfig(
-            task_id=task_id,
-            description=description,
-            expected_output=expected_output,
-            agent_id=agent_id,
-            async_execution=async_execution,
-            context=context_tasks,
-            tools=tools or [],
-            callback=callback,
-            metadata=metadata or {},
+        _config = CrewTaskConfig(
+            _task_id = task_id,
+            _description = description,
+            _expected_output = expected_output,
+            _agent_id = agent_id,
+            _async_execution = async_execution,
+            _context = context_tasks,
+            _tools = tools or [],
+            _callback = callback,
+            _metadata = metadata or {},
         )
         self.task_configs[task_id] = config
         
         # Create CrewAI task
         task = Task(
-            description=description,
-            expected_output=expected_output,
+            _description = description,
+            _expected_output = expected_output,
             agent=agent,
-            async_execution=async_execution,
-            context=context_tasks if context_tasks else None,
-            tools=tools or [],
-            output_file=config.output_file,
+            _async_execution = async_execution,
+            _context = context_tasks if context_tasks else None,
+            _tools = tools or [],
+            _output_file = config.output_file,
         )
         
         self.tasks[task_id] = task
         logger.info(
             "task_created",
-            task_id=task_id,
-            agent_id=agent_id,
+            _task_id = task_id,
+            _agent_id = agent_id,
         )
         
         return task
     
-    def create_crew(
-        self,
-        crew_id: str,
-        name: str,
-        agent_ids: List[str],
-        task_ids: List[str],
-        process: CrewProcess = CrewProcess.SEQUENTIAL,
-        verbose: bool = True,
-        memory: Optional[Any] = None,
-        cache: bool = True,
-        max_rpm: Optional[int] = None,
-        metadata: Optional[Dict[str, Any]] = None,
-    ) -> Any:
+    def create_crew(self, _crew_id: str, _name: str, _agent_ids: List[str], _task_ids: List[str], _process: CrewProcess, _verbose: bool, _memory: Optional[Any], _cache: bool, _max_rpm: Optional[int], _metadata: Optional[Dict[str, _Any]]) -> Any:
         """
         Create a CrewAI crew.
         
@@ -565,9 +509,9 @@ class CrewAIAdapter:
             raise ValueError(f"No valid tasks found for IDs: {task_ids}")
         
         # Convert process type
-        crew_process = Process.SEQUENTIAL if process == CrewProcess.SEQUENTIAL else Process.HIERARCHICAL
+        _crew_process = Process.SEQUENTIAL if process == CrewProcess.SEQUENTIAL else Process.HIERARCHICAL
         
-        config = {
+        _config = {
             "crew_id": crew_id,
             "name": name,
             "agent_ids": agent_ids,
@@ -585,29 +529,25 @@ class CrewAIAdapter:
         crew = Crew(
             agents=agents,
             tasks=tasks,
-            process=crew_process,
-            verbose=verbose,
+            _process = crew_process,
+            _verbose = verbose,
             memory=memory if memory else self.memory_enabled,
-            cache=cache,
-            max_rpm=max_rpm or self.max_rpm,
+            _cache = cache,
+            _max_rpm = max_rpm or self.max_rpm,
         )
         
         self.crews[crew_id] = crew
         logger.info(
             "crew_created",
-            crew_id=crew_id,
-            agent_count=len(agents),
-            task_count=len(tasks),
-            process=process.value,
+            _crew_id = crew_id,
+            _agent_count = len(agents),
+            _task_count = len(tasks),
+            _process = process.value,
         )
         
         return crew
     
-    async def execute_task(
-        self,
-        task_id: str,
-        context: Optional[Dict[str, Any]] = None,
-    ) -> TaskExecutionResult:
+    async def execute_task(self, _task_id: str, _context: Optional[Dict[str, _Any]]) -> TaskExecutionResult:
         """
         Execute a single task.
         
@@ -621,18 +561,18 @@ class CrewAIAdapter:
         if task_id not in self.tasks:
             raise ValueError(f"Task {task_id} not found")
         
-        start_time = datetime.now(timezone.utc)
-        config = self.task_configs.get(task_id, CrewTaskConfig(
-            task_id=task_id,
-            description="",
-            expected_output="",
+        _start_time = datetime.now(timezone.utc)
+        _config = self.task_configs.get(task_id, CrewTaskConfig(
+            _task_id = task_id,
+            _description = "",
+            _expected_output = "",
         ))
         
-        result = TaskExecutionResult(
-            task_id=task_id,
+        _result = TaskExecutionResult(
+            _task_id = task_id,
             status=TaskStatus.IN_PROGRESS,
             output=None,
-            agent_id=config.agent_id,
+            _agent_id = config.agent_id,
             execution_time_ms=0,
         )
         
@@ -643,11 +583,11 @@ class CrewAIAdapter:
             await self._notify_task_event("task_started", task_id, result)
             
             # Execute task (synchronously for now, as CrewAI doesn't have native async)
-            loop = asyncio.get_event_loop()
+            _loop = asyncio.get_event_loop()
             output = await loop.run_in_executor(None, task.execute, context)
             
-            end_time = datetime.now(timezone.utc)
-            execution_time_ms = (end_time - start_time).total_seconds() * 1000
+            _end_time = datetime.now(timezone.utc)
+            _execution_time_ms = (end_time - start_time).total_seconds() * 1000
             
             result.status = TaskStatus.COMPLETED
             result.output = str(output) if output else ""
@@ -665,14 +605,14 @@ class CrewAIAdapter:
             
             logger.info(
                 "task_executed",
-                task_id=task_id,
+                _task_id = task_id,
                 status=TaskStatus.COMPLETED.value,
-                execution_time_ms=execution_time_ms,
+                _execution_time_ms = execution_time_ms,
             )
             
         except Exception as e:
-            end_time = datetime.now(timezone.utc)
-            execution_time_ms = (end_time - start_time).total_seconds() * 1000
+            _end_time = datetime.now(timezone.utc)
+            _execution_time_ms = (end_time - start_time).total_seconds() * 1000
             
             result.status = TaskStatus.FAILED
             result.error = str(e)
@@ -686,11 +626,7 @@ class CrewAIAdapter:
         
         return result
     
-    async def execute_crew(
-        self,
-        crew_id: str,
-        inputs: Optional[Dict[str, Any]] = None,
-    ) -> CrewExecutionResult:
+    async def execute_crew(self, _crew_id: str, _inputs: Optional[Dict[str, _Any]]) -> CrewExecutionResult:
         """
         Execute a crew.
         
@@ -704,13 +640,13 @@ class CrewAIAdapter:
         if crew_id not in self.crews:
             raise ValueError(f"Crew {crew_id} not found")
         
-        start_time = datetime.now(timezone.utc)
-        config = self.crew_configs.get(crew_id, {})
-        process_type = config.get("process", CrewProcess.SEQUENTIAL)
+        _start_time = datetime.now(timezone.utc)
+        _config = self.crew_configs.get(crew_id, {})
+        _process_type = config.get("process", CrewProcess.SEQUENTIAL)
         
         task_results: List[TaskExecutionResult] = []
         error: Optional[str] = None
-        status = "running"
+        _status = "running"
         token_usage: Dict[str, Any] = {}
         
         try:
@@ -719,58 +655,58 @@ class CrewAIAdapter:
             logger.info("crew_execution_started", crew_id=crew_id)
             
             # Execute crew (synchronously for now)
-            loop = asyncio.get_event_loop()
-            result = await loop.run_in_executor(None, crew.kickoff, inputs)
+            _loop = asyncio.get_event_loop()
+            _result = await loop.run_in_executor(None, crew.kickoff, inputs)
             
-            end_time = datetime.now(timezone.utc)
-            execution_time_ms = (end_time - start_time).total_seconds() * 1000
+            _end_time = datetime.now(timezone.utc)
+            _execution_time_ms = (end_time - start_time).total_seconds() * 1000
             
             # Collect task results
             for task_id in config.get("task_ids", []):
                 if task_id in self.task_results:
                     task_results.append(self.task_results[task_id])
             
-            status = "completed"
+            _status = "completed"
             
             # Extract token usage if available
             if hasattr(result, 'token_usage'):
-                token_usage = result.token_usage
+                _token_usage = result.token_usage
             
             logger.info(
                 "crew_execution_completed",
-                crew_id=crew_id,
-                execution_time_ms=execution_time_ms,
+                _crew_id = crew_id,
+                _execution_time_ms = execution_time_ms,
             )
             
             return CrewExecutionResult(
-                crew_id=crew_id,
-                status=status,
+                _crew_id = crew_id,
+                _status = status,
                 task_results=task_results,
-                execution_time_ms=execution_time_ms,
-                token_usage=token_usage,
-                process_type=process_type,
+                _execution_time_ms = execution_time_ms,
+                _token_usage = token_usage,
+                _process_type = process_type,
             )
             
         except Exception as e:
-            end_time = datetime.now(timezone.utc)
-            execution_time_ms = (end_time - start_time).total_seconds() * 1000
+            _end_time = datetime.now(timezone.utc)
+            _execution_time_ms = (end_time - start_time).total_seconds() * 1000
             
-            status = "failed"
+            _status = "failed"
             error = str(e)
             
             logger.error("crew_execution_failed", crew_id=crew_id, error=str(e))
             
             return CrewExecutionResult(
-                crew_id=crew_id,
-                status=status,
+                _crew_id = crew_id,
+                _status = status,
                 task_results=task_results,
-                execution_time_ms=execution_time_ms,
-                token_usage=token_usage,
-                process_type=process_type,
-                error=error,
+                _execution_time_ms = execution_time_ms,
+                _token_usage = token_usage,
+                _process_type = process_type,
+                _error = error,
             )
     
-    def share_memory(self, key: str, value: Any, heretek_agents: Optional[List[str]] = None) -> None:
+    def share_memory(self, _key: str, _value: Any, _heretek_agents: Optional[List[str]]) -> None:
         """
         Share memory between CrewAI and Heretek agents.
         
@@ -785,13 +721,13 @@ class CrewAIAdapter:
         if heretek_agents and self._agent_runtime:
             for agent_id in heretek_agents:
                 if agent_id in self._agent_runtime:
-                    runtime = self._agent_runtime[agent_id]
+                    _runtime = self._agent_runtime[agent_id]
                     if hasattr(runtime, 'update_context'):
                         asyncio.create_task(runtime.update_context({f"crewai_{key}": value}))
         
         logger.info("memory_shared", key=key, heretek_agents=heretek_agents)
     
-    def get_memory(self, key: str) -> Optional[Any]:
+    def get_memory(self, _key: str) -> Optional[Any]:
         """Get a shared memory value."""
         return self._shared_memory.get(key)
     
@@ -803,27 +739,27 @@ class CrewAIAdapter:
             "heretek_mappings": len(self._heretek_agent_mappings),
         }
     
-    def get_agent(self, agent_id: str) -> Optional[Any]:
+    def get_agent(self, _agent_id: str) -> Optional[Any]:
         """Get an agent by ID."""
         return self.agents.get(agent_id)
     
-    def get_agent_config(self, agent_id: str) -> Optional[CrewAgentConfig]:
+    def get_agent_config(self, _agent_id: str) -> Optional[CrewAgentConfig]:
         """Get agent configuration."""
         return self.agent_configs.get(agent_id)
     
-    def get_task(self, task_id: str) -> Optional[Any]:
+    def get_task(self, _task_id: str) -> Optional[Any]:
         """Get a task by ID."""
         return self.tasks.get(task_id)
     
-    def get_task_config(self, task_id: str) -> Optional[CrewTaskConfig]:
+    def get_task_config(self, _task_id: str) -> Optional[CrewTaskConfig]:
         """Get task configuration."""
         return self.task_configs.get(task_id)
     
-    def get_task_result(self, task_id: str) -> Optional[TaskExecutionResult]:
+    def get_task_result(self, _task_id: str) -> Optional[TaskExecutionResult]:
         """Get task execution result."""
         return self.task_results.get(task_id)
     
-    def get_crew(self, crew_id: str) -> Optional[Any]:
+    def get_crew(self, _crew_id: str) -> Optional[Any]:
         """Get a crew by ID."""
         return self.crews.get(crew_id)
     
@@ -840,7 +776,7 @@ class CrewAIAdapter:
             "cache_enabled": self.cache_enabled,
         }
     
-    def clear_agent(self, agent_id: str) -> bool:
+    def clear_agent(self, _agent_id: str) -> bool:
         """Clear an agent."""
         if agent_id not in self.agents:
             return False
@@ -851,10 +787,10 @@ class CrewAIAdapter:
             del self.agent_configs[agent_id]
         
         # Remove from mappings
-        heretek_id = None
+        _heretek_id = None
         for h_id, c_id in self._heretek_agent_mappings.items():
             if c_id == agent_id:
-                heretek_id = h_id
+                _heretek_id = h_id
                 break
         if heretek_id:
             del self._heretek_agent_mappings[heretek_id]
@@ -862,7 +798,7 @@ class CrewAIAdapter:
         logger.info("agent_cleared", agent_id=agent_id)
         return True
     
-    def clear_task(self, task_id: str) -> bool:
+    def clear_task(self, _task_id: str) -> bool:
         """Clear a task."""
         if task_id not in self.tasks:
             return False
@@ -877,7 +813,7 @@ class CrewAIAdapter:
         logger.info("task_cleared", task_id=task_id)
         return True
     
-    def clear_crew(self, crew_id: str) -> bool:
+    def clear_crew(self, _crew_id: str) -> bool:
         """Clear a crew."""
         if crew_id not in self.crews:
             return False
@@ -912,16 +848,11 @@ def get_crewai_adapter() -> CrewAIAdapter:
     """Get the global CrewAI adapter instance."""
     global crewai_adapter
     if crewai_adapter is None:
-        crewai_adapter = CrewAIAdapter()
+        _crewai_adapter = CrewAIAdapter()
     return crewai_adapter
 
 
-def create_sequential_crew(
-    crew_id: str,
-    name: str,
-    agents: List[Dict[str, str]],
-    tasks: List[Dict[str, str]],
-) -> CrewAIAdapter:
+def create_sequential_crew(_crew_id: str, _name: str, _agents: List[Dict[str, _str]], _tasks: List[Dict[str, _str]]) -> CrewAIAdapter:
     """
     Create a sequential crew from configuration.
     
@@ -934,43 +865,43 @@ def create_sequential_crew(
     Returns:
         Configured CrewAIAdapter
     """
-    adapter = get_crewai_adapter()
+    _adapter = get_crewai_adapter()
     
     # Create agents
-    agent_ids = []
+    _agent_ids = []
     for i, agent_config in enumerate(agents):
-        agent_id = f"{crew_id}_agent_{i}"
+        _agent_id = f"{crew_id}_agent_{i}"
         adapter.create_agent(
-            agent_id=agent_id,
-            role=agent_config.get("role", "Assistant"),
-            goal=agent_config.get("goal", "Help the user"),
-            backstory=agent_config.get("backstory", ""),
+            _agent_id = agent_id,
+            _role = agent_config.get("role", "Assistant"),
+            _goal = agent_config.get("goal", "Help the user"),
+            _backstory = agent_config.get("backstory", ""),
         )
         agent_ids.append(agent_id)
     
     # Create tasks
-    task_ids = []
-    prev_task_id = None
+    _task_ids = []
+    _prev_task_id = None
     for i, task_config in enumerate(tasks):
-        task_id = f"{crew_id}_task_{i}"
-        context = [prev_task_id] if prev_task_id else None
+        _task_id = f"{crew_id}_task_{i}"
+        _context = [prev_task_id] if prev_task_id else None
         adapter.create_task(
-            task_id=task_id,
-            description=task_config.get("description", ""),
-            expected_output=task_config.get("expected_output", ""),
-            agent_id=agent_ids[i % len(agent_ids)],
-            context=context,
+            _task_id = task_id,
+            _description = task_config.get("description", ""),
+            _expected_output = task_config.get("expected_output", ""),
+            _agent_id = agent_ids[i % len(agent_ids)],
+            _context = context,
         )
         task_ids.append(task_id)
-        prev_task_id = task_id
+        _prev_task_id = task_id
     
     # Create crew
     adapter.create_crew(
-        crew_id=crew_id,
-        name=name,
-        agent_ids=agent_ids,
-        task_ids=task_ids,
-        process=CrewProcess.SEQUENTIAL,
+        _crew_id = crew_id,
+        _name = name,
+        _agent_ids = agent_ids,
+        _task_ids = task_ids,
+        _process = CrewProcess.SEQUENTIAL,
     )
     
     logger.info("sequential_crew_created", crew_id=crew_id)

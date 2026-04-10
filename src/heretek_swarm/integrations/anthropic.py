@@ -24,7 +24,7 @@ from typing import Any, Callable, Dict, List, Optional, Union
 
 import structlog
 
-logger = structlog.get_logger(__name__)
+_logger = structlog.get_logger(__name__)
 
 # Try to import Anthropic components
 try:
@@ -35,14 +35,14 @@ try:
     ANTHROPIC_AVAILABLE = True
 except ImportError:
     ANTHROPIC_AVAILABLE = False
-    Anthropic = None
-    AsyncAnthropic = None
-    Message = None
-    ContentBlock = None
-    TextBlock = None
-    ToolUseBlock = None
-    ToolsBetaMessage = None
-    BetaToolUseBlock = None
+    _Anthropic = None
+    _AsyncAnthropic = None
+    _Message = None
+    _ContentBlock = None
+    _TextBlock = None
+    _ToolUseBlock = None
+    _ToolsBetaMessage = None
+    _BetaToolUseBlock = None
 
 class AnthropicMessageRole(str, Enum):
     """Message roles for Anthropic API."""
@@ -196,15 +196,10 @@ class ConversationContext:
             "heretek_context": self.heretek_context,
         }
     
-    def add_message(
-            self,
-            role: AnthropicMessageRole,
-        content: Union[str, List[Dict[str, Any]]],
-        **kwargs,
-    ) -> ConversationMessage:
+    def add_message(self, _role: AnthropicMessageRole, _content: Union[str, _List[Dict[str, _Any]]], _**kwargs) -> ConversationMessage:
         """Add a message to the conversation."""
         message = ConversationMessage(
-            message_id=f"msg_{uuid.uuid4().hex[:12]}",
+            _message_id = f"msg_{uuid.uuid4().hex[:12]}",
             role=role,
             content=content,
             **kwargs,
@@ -216,7 +211,7 @@ class ConversationContext:
     def _update_token_count(self) -> None:
         """Estimate token count."""
         # Rough estimation: 1 token ~ 4 characters
-        total_chars = 0
+        _total_chars = 0
         for msg in self.messages:
             if isinstance(msg.content, str):
                 total_chars += len(msg.content)
@@ -274,14 +269,7 @@ class AnthropicAdapter:
         tools: Registered tools
     """
     
-    def __init__(
-        self,
-        api_key: Optional[str] = None,
-        base_url: Optional[str] = None,
-        enable_heretek_bridge: bool = True,
-        default_max_tokens: int = 1024,
-        default_temperature: float = 0.7,
-    ) -> None:
+    def __init__(self, _api_key: Optional[str], _base_url: Optional[str], _enable_heretek_bridge: bool, _default_max_tokens: int, _default_temperature: float) -> None:
         """
         Initialize the Anthropic adapter.
         
@@ -300,12 +288,12 @@ class AnthropicAdapter:
         
         if ANTHROPIC_AVAILABLE and api_key:
             self.client = AsyncAnthropic(
-                api_key=api_key,
-                base_url=base_url,
+                _api_key = api_key,
+                _base_url = base_url,
             )
             self.sync_client = Anthropic(
-                api_key=api_key,
-                base_url=base_url,
+                _api_key = api_key,
+                _base_url = base_url,
             )
         
         self.conversations: Dict[str, ConversationContext] = {}
@@ -323,20 +311,16 @@ class AnthropicAdapter:
         
         logger.info(
             "anthropic_adapter_initialized",
-            api_key_set=bool(api_key),
-            heretek_bridge_enabled=enable_heretek_bridge,
+            _api_key_set = bool(api_key),
+            _heretek_bridge_enabled = enable_heretek_bridge,
         )
     
-    def set_agent_runtime(self, runtime: Any) -> None:
+    def set_agent_runtime(self, _runtime: Any) -> None:
         """Set the Heretek agent runtime for integration."""
         self._agent_runtime = runtime
         logger.debug("agent_runtime_set", runtime_type=type(runtime).__name__)
     
-    def register_heretek_agent_mapping(
-        self,
-        heretek_agent_id: str,
-        tool_name: str,
-    ) -> None:
+    def register_heretek_agent_mapping(self, _heretek_agent_id: str, _tool_name: str) -> None:
         """Register a mapping between Heretek agent and tool."""
         self._heretek_agent_mappings[heretek_agent_id] = tool_name
         if tool_name in self.tools:
@@ -347,17 +331,12 @@ class AnthropicAdapter:
             tool_name=tool_name,
         )
     
-    def register_conversation_callback(self, callback: Callable) -> None:
+    def register_conversation_callback(self, _callback: Callable) -> None:
         """Register a callback for conversation events."""
         self._conversation_callbacks.append(callback)
         logger.debug("conversation_callback_registered", callback=callback.__name__)
     
-    async def _notify_conversation_event(
-        self,
-        event_type: str,
-        conversation_id: str,
-        message: Optional[ConversationMessage] = None,
-    ) -> None:
+    async def _notify_conversation_event(self, _event_type: str, _conversation_id: str, _message: Optional[ConversationMessage]) -> None:
         """Notify callbacks of conversation events."""
         for callback in self._conversation_callbacks:
             try:
@@ -368,15 +347,7 @@ class AnthropicAdapter:
             except Exception as e:
                 logger.error("conversation_callback_error", error=str(e))
     
-    def register_tool(
-        self,
-        name: str,
-        description: str,
-        input_schema: Dict[str, Any],
-        handler: Optional[Callable] = None,
-        heretek_agent_id: Optional[str] = None,
-        metadata: Optional[Dict[str, Any]] = None,
-    ) -> ToolDefinition:
+    def register_tool(self, _name: str, _description: str, _input_schema: Dict[str, _Any], _handler: Optional[Callable], _heretek_agent_id: Optional[str], _metadata: Optional[Dict[str, _Any]]) -> ToolDefinition:
         """
         Register a tool for use with Claude.
         
@@ -393,11 +364,11 @@ class AnthropicAdapter:
         """
         tool = ToolDefinition(
             name=name,
-            description=description,
-            input_schema=input_schema,
+            _description = description,
+            _input_schema = input_schema,
             handler=handler,
             heretek_agent_id=heretek_agent_id,
-            metadata=metadata or {},
+            _metadata = metadata or {},
         )
         
         self.tools[name] = tool
@@ -405,16 +376,7 @@ class AnthropicAdapter:
         
         return tool
     
-    def create_conversation(
-        self,
-        conversation_id: Optional[str] = None,
-        system_prompt: Optional[str] = None,
-        max_tokens: Optional[int] = None,
-        temperature: Optional[float] = None,
-        tools: Optional[List[str]] = None,
-        metadata: Optional[Dict[str, Any]] = None,
-        heretek_context: Optional[Dict[str, Any]] = None,
-    ) -> ConversationContext:
+    def create_conversation(self, _conversation_id: Optional[str], _system_prompt: Optional[str], _max_tokens: Optional[int], _temperature: Optional[float], _tools: Optional[List[str]], _metadata: Optional[Dict[str, _Any]], _heretek_context: Optional[Dict[str, _Any]]) -> ConversationContext:
         """
         Create a new conversation context.
         
@@ -434,40 +396,32 @@ class AnthropicAdapter:
             conversation_id = f"conv_{uuid.uuid4().hex[:12]}"
         
         # Get selected tools
-        selected_tools = []
+        _selected_tools = []
         if tools:
             for tool_name in tools:
                 if tool_name in self.tools:
                     selected_tools.append(self.tools[tool_name])
         
-        context = ConversationContext(
-            conversation_id=conversation_id,
-            system_prompt=system_prompt,
+        _context = ConversationContext(
+            _conversation_id = conversation_id,
+            _system_prompt = system_prompt,
             max_tokens=max_tokens or self.default_max_tokens,
             temperature=temperature or self.default_temperature,
             tools=selected_tools,
-            metadata=metadata or {},
-            heretek_context=heretek_context or {},
+            _metadata = metadata or {},
+            _heretek_context = heretek_context or {},
         )
         
         self.conversations[conversation_id] = context
         logger.info(
             "conversation_created",
-            conversation_id=conversation_id,
-            tool_count=len(selected_tools),
+            _conversation_id = conversation_id,
+            _tool_count = len(selected_tools),
         )
         
         return context
     
-    async def send_message(
-        self,
-        conversation_id: str,
-        content: str,
-                role: AnthropicMessageRole = AnthropicMessageRole.USER,
-        max_tokens: Optional[int] = None,
-        temperature: Optional[float] = None,
-        system_prompt: Optional[str] = None,
-    ) -> ConversationMessage:
+    async def send_message(self, _conversation_id: str, _content: str, _role: AnthropicMessageRole, _max_tokens: Optional[int], _temperature: Optional[float], _system_prompt: Optional[str]) -> ConversationMessage:
         """
         Send a message and get a response.
         
@@ -488,34 +442,34 @@ class AnthropicAdapter:
         if conversation_id not in self.conversations:
             raise ValueError(f"Conversation {conversation_id} not found")
         
-        context = self.conversations[conversation_id]
+        _context = self.conversations[conversation_id]
         
         # Add user message
-        user_message = context.add_message(role, content)
+        _user_message = context.add_message(role, content)
         await self._notify_conversation_event("message_sent", conversation_id, user_message)
         
         # Prepare API request
         messages = [m.to_anthropic_format() for m in context.messages if m.role in [MessageRole.USER, MessageRole.ASSISTANT]]
         
         # Get tools
-        tool_defs = [t.to_anthropic_format() for t in context.tools] if context.tools else None
+        _tool_defs = [t.to_anthropic_format() for t in context.tools] if context.tools else None
         
         # Get system prompt
         system = system_prompt or context.system_prompt
         
         try:
             # Send message
-            response = await self.client.messages.create(
-                model="claude-sonnet-4-20250514",
+            _response = await self.client.messages.create(
+                _model = "claude-sonnet-4-20250514",
                 max_tokens=max_tokens or context.max_tokens,
                 messages=messages,
-                system=system,
+                _system = system,
                 temperature=temperature or context.temperature,
                 tools=tool_defs if tool_defs else None,
             )
             
             # Process response
-            assistant_message = await self._process_response(response, context)
+            _assistant_message = await self._process_response(response, context)
             
             # Handle tool uses recursively
             if assistant_message.tool_calls:
@@ -529,8 +483,8 @@ class AnthropicAdapter:
             
             logger.info(
                 "message_sent",
-                conversation_id=conversation_id,
-                stop_reason=response.stop_reason,
+                _conversation_id = conversation_id,
+                _stop_reason = response.stop_reason,
             )
             
             return assistant_message
@@ -539,13 +493,9 @@ class AnthropicAdapter:
             logger.error("message_send_error", conversation_id=conversation_id, error=str(e))
             raise
     
-    async def _process_response(
-        self,
-        response: Message,
-        context: ConversationContext,
-    ) -> ConversationMessage:
+    async def _process_response(self, _response: Message, _context: ConversationContext) -> ConversationMessage:
         """Process API response into a ConversationMessage."""
-        content_parts = []
+        _content_parts = []
         tool_calls = []
         
         for block in response.content:
@@ -558,9 +508,9 @@ class AnthropicAdapter:
                     "input": block.input if hasattr(block, 'input') else {},
                 })
         
-        content = "\n".join(content_parts) if content_parts else ""
+        _content = "\n".join(content_parts) if content_parts else ""
         
-        assistant_message = context.add_message(
+        _assistant_message = context.add_message(
             MessageRole.ASSISTANT,
             content if content else "[Tool use]",
             tool_calls=tool_calls,
@@ -568,25 +518,21 @@ class AnthropicAdapter:
         
         return assistant_message
     
-    async def _handle_tool_uses(
-        self,
-        assistant_message: ConversationMessage,
-        context: ConversationContext,
-    ) -> None:
+    async def _handle_tool_uses(self, _assistant_message: ConversationMessage, _context: ConversationContext) -> None:
         """Handle tool uses from assistant message."""
         for tool_call in assistant_message.tool_calls:
             request = ToolUseRequest(
                 request_id=tool_call.get("id", str(uuid.uuid4())),
                 tool_name=tool_call.get("name", "unknown"),
                 tool_input=tool_call.get("input", {}),
-                conversation_id=context.conversation_id,
+                _conversation_id = context.conversation_id,
             )
             
             # Execute tool
-            result = await self._execute_tool(request, context)
+            _result = await self._execute_tool(request, context)
             
             # Add tool result message
-            tool_result_message = {
+            _tool_result_message = {
                 "type": "tool_result",
                 "tool_use_id": request.request_id,
                 "content": result if isinstance(result, str) else json.dumps(result),
@@ -595,7 +541,7 @@ class AnthropicAdapter:
             context.add_message(
                 MessageRole.USER,
                 [tool_result_message],
-                tool_results=[{
+                _tool_results = [{
                     "tool_use_id": request.request_id,
                     "result": result,
                 }],
@@ -605,17 +551,17 @@ class AnthropicAdapter:
             messages = [m.to_anthropic_format() for m in context.messages]
             
             try:
-                response = await self.client.messages.create(
-                    model="claude-sonnet-4-20250514",
-                    max_tokens=context.max_tokens,
+                _response = await self.client.messages.create(
+                    _model = "claude-sonnet-4-20250514",
+                    _max_tokens = context.max_tokens,
                     messages=messages,
-                    system=context.system_prompt,
-                    temperature=context.temperature,
+                    _system = context.system_prompt,
+                    _temperature = context.temperature,
                     tools=[t.to_anthropic_format() for t in context.tools] if context.tools else None,
                 )
                 
                 # Process follow-up
-                follow_up = await self._process_response(response, context)
+                _follow_up = await self._process_response(response, context)
                 
                 # Handle nested tool uses
                 if follow_up.tool_calls:
@@ -624,11 +570,7 @@ class AnthropicAdapter:
             except Exception as e:
                 logger.error("tool_follow_up_error", error=str(e))
     
-    async def _execute_tool(
-        self,
-        request: ToolUseRequest,
-        context: ConversationContext,
-    ) -> Any:
+    async def _execute_tool(self, _request: ToolUseRequest, _context: ConversationContext) -> Any:
         """Execute a tool request."""
         tool = self.tools.get(request.tool_name)
         
@@ -648,29 +590,24 @@ class AnthropicAdapter:
         
         # Try Heretek bridge
         if self.enable_heretek_bridge and self._agent_runtime:
-            heretek_agent_id = tool.heretek_agent_id if tool else request.tool_name
+            _heretek_agent_id = tool.heretek_agent_id if tool else request.tool_name
             
             if heretek_agent_id in self._agent_runtime:
                 try:
-                    runtime = self._agent_runtime[heretek_agent_id]
+                    _runtime = self._agent_runtime[heretek_agent_id]
                     if hasattr(runtime, 'think'):
-                        prompt = f"Execute tool: {request.tool_name}({json.dumps(request.tool_input)})"
+                        _prompt = f"Execute tool: {request.tool_name}({json.dumps(request.tool_input)})"
                         return await runtime.think(prompt)
                 except Exception as e:
                     logger.error(
                         "heretek_tool_routing_error",
-                        agent_id=heretek_agent_id,
-                        error=str(e),
+                        _agent_id = heretek_agent_id,
+                        _error = str(e),
                     )
         
         return {"error": f"Tool {request.tool_name} not found or no handler"}
     
-    async def chat(
-        self,
-        conversation_id: str,
-        user_message: str,
-        max_turns: int = 5,
-    ) -> List[ConversationMessage]:
+    async def chat(self, _conversation_id: str, _user_message: str, _max_turns: int) -> List[ConversationMessage]:
         """
         Multi-turn chat conversation.
         
@@ -683,43 +620,39 @@ class AnthropicAdapter:
             List of conversation messages
         """
         messages = []
-        current_message = user_message
+        _current_message = user_message
         
         for _ in range(max_turns):
-            response = await self.send_message(conversation_id, current_message)
+            _response = await self.send_message(conversation_id, current_message)
             messages.append(response)
             
             # Check if response has tool calls (needs more turns)
             if not response.tool_calls:
                 break
             
-            current_message = ""  # Empty for tool result follow-up
+            _current_message = ""  # Empty for tool result follow-up
         
         return messages
     
-    def get_conversation(self, conversation_id: str) -> Optional[ConversationContext]:
+    def get_conversation(self, _conversation_id: str) -> Optional[ConversationContext]:
         """Get conversation context by ID."""
         return self.conversations.get(conversation_id)
     
-    def get_conversation_history(
-        self,
-        conversation_id: str,
-        limit: int = 50,
-    ) -> List[Dict[str, Any]]:
+    def get_conversation_history(self, _conversation_id: str, _limit: int) -> List[Dict[str, Any]]:
         """Get conversation message history."""
-        context = self.conversations.get(conversation_id)
+        _context = self.conversations.get(conversation_id)
         if not context:
             return []
         
         return [m.to_dict() for m in context.messages[-limit:]]
     
-    def get_tool(self, name: str) -> Optional[ToolDefinition]:
+    def get_tool(self, _name: str) -> Optional[ToolDefinition]:
         """Get tool by name."""
         return self.tools.get(name)
     
     def get_statistics(self) -> Dict[str, Any]:
         """Get adapter statistics."""
-        total_tokens = sum(c.token_count for c in self.conversations.values())
+        _total_tokens = sum(c.token_count for c in self.conversations.values())
         
         return {
             "conversation_count": len(self.conversations),
@@ -730,7 +663,7 @@ class AnthropicAdapter:
             "client_initialized": self.client is not None,
         }
     
-    def clear_conversation(self, conversation_id: str) -> bool:
+    def clear_conversation(self, _conversation_id: str) -> bool:
         """Clear a conversation."""
         if conversation_id not in self.conversations:
             return False
@@ -739,7 +672,7 @@ class AnthropicAdapter:
         logger.info("conversation_cleared", conversation_id=conversation_id)
         return True
     
-    def clear_tool(self, name: str) -> bool:
+    def clear_tool(self, _name: str) -> bool:
         """Clear a tool."""
         if name not in self.tools:
             return False
@@ -760,25 +693,18 @@ class AnthropicAdapter:
 anthropic_adapter: Optional[AnthropicAdapter] = None
 
 
-def get_anthropic_adapter(
-    api_key: Optional[str] = None,
-    base_url: Optional[str] = None,
-) -> AnthropicAdapter:
+def get_anthropic_adapter(_api_key: Optional[str], _base_url: Optional[str]) -> AnthropicAdapter:
     """Get the global Anthropic adapter instance."""
     global anthropic_adapter
     if anthropic_adapter is None:
-        anthropic_adapter = AnthropicAdapter(
-            api_key=api_key,
-            base_url=base_url,
+        _anthropic_adapter = AnthropicAdapter(
+            _api_key = api_key,
+            _base_url = base_url,
         )
     return anthropic_adapter
 
 
-def create_conversation(
-    conversation_id: Optional[str] = None,
-    system_prompt: Optional[str] = None,
-    tools: Optional[List[Dict[str, Any]]] = None,
-) -> ConversationContext:
+def create_conversation(_conversation_id: Optional[str], _system_prompt: Optional[str], _tools: Optional[List[Dict[str, _Any]]]) -> ConversationContext:
     """
     Create a conversation with default settings.
     
@@ -790,21 +716,21 @@ def create_conversation(
     Returns:
         ConversationContext
     """
-    adapter = get_anthropic_adapter()
+    _adapter = get_anthropic_adapter()
     
-    tool_names = None
+    _tool_names = None
     if tools:
         for tool in tools:
             adapter.register_tool(
-                name=tool.get("name", "unknown"),
-                description=tool.get("description", ""),
-                input_schema=tool.get("input_schema", {}),
-                handler=tool.get("handler"),
+                _name = tool.get("name", "unknown"),
+                _description = tool.get("description", ""),
+                _input_schema = tool.get("input_schema", {}),
+                _handler = tool.get("handler"),
             )
-        tool_names = [t.get("name") for t in tools]
+        _tool_names = [t.get("name") for t in tools]
     
     return adapter.create_conversation(
-        conversation_id=conversation_id,
-        system_prompt=system_prompt,
-        tools=tool_names,
+        _conversation_id = conversation_id,
+        _system_prompt = system_prompt,
+        _tools = tool_names,
     )

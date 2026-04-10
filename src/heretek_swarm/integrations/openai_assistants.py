@@ -24,7 +24,7 @@ from typing import Any, Callable, Dict, List, Optional
 
 import structlog
 
-logger = structlog.get_logger(__name__)
+_logger = structlog.get_logger(__name__)
 
 # Try to import OpenAI components
 try:
@@ -36,15 +36,15 @@ try:
     OPENAI_AVAILABLE = True
 except ImportError:
     OPENAI_AVAILABLE = False
-    OpenAI = None
-    AsyncOpenAI = None
-    Assistant = None
-    Thread = None
-    Run = None
-    Message = None
-    TextContentBlock = None
-    ToolCall = None
-    FunctionToolCall = None
+    _OpenAI = None
+    _AsyncOpenAI = None
+    _Assistant = None
+    _Thread = None
+    _Run = None
+    _Message = None
+    _TextContentBlock = None
+    _ToolCall = None
+    _FunctionToolCall = None
 
 
 class RunStatus(str, Enum):
@@ -226,13 +226,7 @@ class OpenAIAssistantsAdapter:
         runs: Active runs
     """
     
-    def __init__(
-        self,
-        api_key: Optional[str] = None,
-        base_url: Optional[str] = None,
-        organization: Optional[str] = None,
-        enable_heretek_bridge: bool = True,
-    ) -> None:
+    def __init__(self, _api_key: Optional[str], _base_url: Optional[str], _organization: Optional[str], _enable_heretek_bridge: bool) -> None:
         """
         Initialize the OpenAI Assistants adapter.
         
@@ -251,14 +245,14 @@ class OpenAIAssistantsAdapter:
         
         if OPENAI_AVAILABLE and api_key:
             self.client = AsyncOpenAI(
-                api_key=api_key,
-                base_url=base_url,
-                organization=organization,
+                _api_key = api_key,
+                _base_url = base_url,
+                _organization = organization,
             )
             self.sync_client = OpenAI(
-                api_key=api_key,
-                base_url=base_url,
-                organization=organization,
+                _api_key = api_key,
+                _base_url = base_url,
+                _organization = organization,
             )
         
         self.assistants: Dict[str, AssistantConfig] = {}
@@ -277,41 +271,32 @@ class OpenAIAssistantsAdapter:
         
         logger.info(
             "openai_assistants_adapter_initialized",
-            api_key_set=bool(api_key),
-            heretek_bridge_enabled=enable_heretek_bridge,
+            _api_key_set = bool(api_key),
+            _heretek_bridge_enabled = enable_heretek_bridge,
         )
     
-    def set_agent_runtime(self, runtime: Any) -> None:
+    def set_agent_runtime(self, _runtime: Any) -> None:
         """Set the Heretek agent runtime for integration."""
         self._agent_runtime = runtime
         logger.debug("agent_runtime_set", runtime_type=type(runtime).__name__)
     
-    def register_heretek_agent_mapping(
-        self,
-        heretek_agent_id: str,
-        assistant_id: str,
-    ) -> None:
+    def register_heretek_agent_mapping(self, _heretek_agent_id: str, _assistant_id: str) -> None:
         """Register a mapping between Heretek and OpenAI assistants."""
         self._heretek_agent_mappings[heretek_agent_id] = assistant_id
         if assistant_id in self.assistants:
             self.assistants[assistant_id].heretek_agent_id = heretek_agent_id
         logger.info(
             "heretek_agent_mapping_registered",
-            heretek_agent_id=heretek_agent_id,
-            assistant_id=assistant_id,
+            _heretek_agent_id = heretek_agent_id,
+            _assistant_id = assistant_id,
         )
     
-    def register_run_callback(self, callback: Callable) -> None:
+    def register_run_callback(self, _callback: Callable) -> None:
         """Register a callback for run events."""
         self._run_callbacks.append(callback)
         logger.debug("run_callback_registered", callback=callback.__name__)
     
-    async def _notify_run_event(
-        self,
-        event_type: str,
-        run_id: str,
-        context: Optional[RunContext] = None,
-    ) -> None:
+    async def _notify_run_event(self, _event_type: str, _run_id: str, _context: Optional[RunContext]) -> None:
         """Notify callbacks of run events."""
         for callback in self._run_callbacks:
             try:
@@ -322,7 +307,7 @@ class OpenAIAssistantsAdapter:
             except Exception as e:
                 logger.error("run_callback_error", error=str(e))
     
-    def register_function(self, name: str, func: Callable) -> None:
+    def register_function(self, _name: str, _func: Callable) -> None:
         """
         Register a function for tool calling.
         
@@ -333,18 +318,7 @@ class OpenAIAssistantsAdapter:
         self._registered_functions[name] = func
         logger.info("function_registered", name=name)
     
-    async def create_assistant(
-        self,
-        assistant_id: str,
-        name: str,
-        model: str = "gpt-4o",
-        instructions: str = "You are a helpful assistant.",
-        description: Optional[str] = None,
-        tools: Optional[List[Dict[str, Any]]] = None,
-        file_ids: Optional[List[str]] = None,
-        metadata: Optional[Dict[str, Any]] = None,
-        heretek_agent_id: Optional[str] = None,
-    ) -> AssistantConfig:
+    async def create_assistant(self, _assistant_id: str, _name: str, _model: str, _instructions: str, _description: Optional[str], _tools: Optional[List[Dict[str, _Any]]], _file_ids: Optional[List[str]], _metadata: Optional[Dict[str, _Any]], _heretek_agent_id: Optional[str]) -> AssistantConfig:
         """
         Create an OpenAI Assistant.
         
@@ -371,28 +345,28 @@ class OpenAIAssistantsAdapter:
         if not self.client:
             raise RuntimeError("OpenAI client not initialized. Provide API key.")
         
-        config = AssistantConfig(
-            assistant_id=assistant_id,
-            name=name,
-            model=model,
-            instructions=instructions,
-            description=description,
+        _config = AssistantConfig(
+            _assistant_id = assistant_id,
+            _name = name,
+            _model = model,
+            _instructions = instructions,
+            _description = description,
             tools=tools or [],
-            file_ids=file_ids or [],
-            metadata=metadata or {},
-            heretek_agent_id=heretek_agent_id,
+            _file_ids = file_ids or [],
+            _metadata = metadata or {},
+            _heretek_agent_id = heretek_agent_id,
         )
         
         # Create assistant via API
         try:
             assistant = await self.client.beta.assistants.create(
-                name=name,
-                model=model,
-                instructions=instructions,
-                description=description,
+                _name = name,
+                _model = model,
+                _instructions = instructions,
+                _description = description,
                 tools=tools or [],
-                file_ids=file_ids or [],
-                metadata=metadata or {},
+                _file_ids = file_ids or [],
+                _metadata = metadata or {},
             )
             
             # Store the OpenAI assistant ID
@@ -401,7 +375,7 @@ class OpenAIAssistantsAdapter:
             
             logger.info(
                 "assistant_created",
-                assistant_id=assistant_id,
+                _assistant_id = assistant_id,
                 openai_id=assistant.id,
             )
             
@@ -410,19 +384,13 @@ class OpenAIAssistantsAdapter:
             self.assistants[assistant_id] = config
             logger.warning(
                 "assistant_creation_warning",
-                assistant_id=assistant_id,
+                _assistant_id = assistant_id,
                 error=str(e),
             )
         
         return config
     
-    async def create_thread(
-        self,
-        thread_id: Optional[str] = None,
-        assistant_id: Optional[str] = None,
-        initial_messages: Optional[List[Dict[str, Any]]] = None,
-        metadata: Optional[Dict[str, Any]] = None,
-    ) -> ThreadContext:
+    async def create_thread(self, _thread_id: Optional[str], _assistant_id: Optional[str], _initial_messages: Optional[List[Dict[str, _Any]]], _metadata: Optional[Dict[str, _Any]]) -> ThreadContext:
         """
         Create a new thread.
         
@@ -441,10 +409,10 @@ class OpenAIAssistantsAdapter:
         if thread_id is None:
             thread_id = f"thread_{uuid.uuid4().hex[:12]}"
         
-        context = ThreadContext(
-            thread_id=thread_id,
-            assistant_id=assistant_id,
-            metadata=metadata or {},
+        _context = ThreadContext(
+            _thread_id = thread_id,
+            _assistant_id = assistant_id,
+            _metadata = metadata or {},
         )
         
         # Create thread via API
@@ -452,11 +420,11 @@ class OpenAIAssistantsAdapter:
             if initial_messages:
                 thread = await self.client.beta.threads.create(
                     messages=initial_messages,
-                    metadata=metadata or {},
+                    _metadata = metadata or {},
                 )
             else:
                 thread = await self.client.beta.threads.create(
-                    metadata=metadata or {},
+                    _metadata = metadata or {},
                 )
             context.thread_id = thread.id
         except Exception as e:
@@ -467,14 +435,7 @@ class OpenAIAssistantsAdapter:
         
         return context
     
-    async def add_message(
-        self,
-        thread_id: str,
-        content: str,
-        role: MessageRole = MessageRole.USER,
-        file_ids: Optional[List[str]] = None,
-        metadata: Optional[Dict[str, Any]] = None,
-    ) -> bool:
+    async def add_message(self, _thread_id: str, _content: str, _role: MessageRole, _file_ids: Optional[List[str]], _metadata: Optional[Dict[str, _Any]]) -> bool:
         """
         Add a message to a thread.
         
@@ -496,11 +457,11 @@ class OpenAIAssistantsAdapter:
         
         try:
             message = await self.client.beta.threads.messages.create(
-                thread_id=thread_id,
+                _thread_id = thread_id,
                 role=role.value,
                 content=content,
-                file_ids=file_ids or [],
-                metadata=metadata or {},
+                _file_ids = file_ids or [],
+                _metadata = metadata or {},
             )
             
             # Track message locally
@@ -518,14 +479,7 @@ class OpenAIAssistantsAdapter:
             logger.error("message_add_error", thread_id=thread_id, error=str(e))
             return False
     
-    async def create_run(
-        self,
-        thread_id: str,
-        assistant_id: str,
-        instructions: Optional[str] = None,
-        tools: Optional[List[Dict[str, Any]]] = None,
-        metadata: Optional[Dict[str, Any]] = None,
-    ) -> RunContext:
+    async def create_run(self, _thread_id: str, _assistant_id: str, _instructions: Optional[str], _tools: Optional[List[Dict[str, _Any]]], _metadata: Optional[Dict[str, _Any]]) -> RunContext:
         """
         Create a new run.
         
@@ -547,26 +501,26 @@ class OpenAIAssistantsAdapter:
         
         run_id = f"run_{uuid.uuid4().hex[:12]}"
         
-        context = RunContext(
+        _context = RunContext(
             run_id=run_id,
-            thread_id=thread_id,
-            assistant_id=assistant_id,
+            _thread_id = thread_id,
+            _assistant_id = assistant_id,
             status=RunStatus.QUEUED,
-            instructions=instructions,
-            tools=tools,
-            metadata=metadata or {},
+            _instructions = instructions,
+            _tools = tools,
+            _metadata = metadata or {},
         )
         
         # Get assistant config
-        assistant_config = self.assistants.get(assistant_id)
+        _assistant_config = self.assistants.get(assistant_id)
         
         try:
             run = await self.client.beta.threads.runs.create(
-                thread_id=thread_id,
-                assistant_id=assistant_config.openai_id if assistant_config else assistant_id,
-                instructions=instructions,
-                tools=tools or (assistant_config.tools if assistant_config else []),
-                metadata=metadata or {},
+                _thread_id = thread_id,
+                _assistant_id = assistant_config.openai_id if assistant_config else assistant_id,
+                _instructions = instructions,
+                _tools = tools or (assistant_config.tools if assistant_config else []),
+                _metadata = metadata or {},
             )
             
             context.run_id = run.id
@@ -582,12 +536,7 @@ class OpenAIAssistantsAdapter:
         
         return context
     
-    async def poll_run(
-        self,
-        run_id: str,
-        poll_interval: float = 1.0,
-        timeout: float = 60.0,
-    ) -> RunContext:
+    async def poll_run(self, _run_id: str, _poll_interval: float, _timeout: float) -> RunContext:
         """
         Poll a run until completion.
         
@@ -605,15 +554,15 @@ class OpenAIAssistantsAdapter:
         if run_id not in self.runs:
             raise ValueError(f"Run {run_id} not found")
         
-        context = self.runs[run_id]
-        start_time = datetime.now(timezone.utc)
+        _context = self.runs[run_id]
+        _start_time = datetime.now(timezone.utc)
         
         if not context.started_at:
             context.started_at = datetime.now(timezone.utc).isoformat()
         
         while True:
             # Check timeout
-            elapsed = (datetime.now(timezone.utc) - start_time).total_seconds()
+            _elapsed = (datetime.now(timezone.utc) - start_time).total_seconds()
             if elapsed >= timeout:
                 context.status = RunStatus.EXPIRED
                 context.error = f"Run timed out after {timeout}s"
@@ -657,11 +606,7 @@ class OpenAIAssistantsAdapter:
         
         return context
     
-    async def _handle_tool_calls(
-        self,
-        run: Run,
-        context: RunContext,
-    ) -> None:
+    async def _handle_tool_calls(self, _run: Run, _context: RunContext) -> None:
         """Handle tool calls from a run."""
         if not run.required_action:
             return
@@ -670,8 +615,8 @@ class OpenAIAssistantsAdapter:
         
         for tool_call in tool_calls:
             if isinstance(tool_call, FunctionToolCall):
-                call_request = FunctionCallRequest(
-                    call_id=tool_call.id,
+                _call_request = FunctionCallRequest(
+                    _call_id = tool_call.id,
                     name=tool_call.function.name,
                     arguments=json.loads(tool_call.function.arguments),
                     thread_id=context.thread_id,
@@ -681,38 +626,35 @@ class OpenAIAssistantsAdapter:
                 context.tool_calls.append(call_request.to_dict())
                 
                 # Try to execute function
-                result = await self._execute_function(call_request)
+                _result = await self._execute_function(call_request)
                 
                 # Submit tool output
                 try:
                     await self.client.beta.threads.runs.submit_tool_outputs(
-                        thread_id=context.thread_id,
+                        _thread_id = context.thread_id,
                         run_id=context.run_id,
-                        tool_outputs=[{
+                        _tool_outputs = [{
                             "tool_call_id": tool_call.id,
                             "output": json.dumps(result) if not isinstance(result, str) else result,
                         }],
                     )
                     logger.debug(
                         "tool_output_submitted",
-                        call_id=tool_call.id,
-                        function=call_request.name,
+                        _call_id = tool_call.id,
+                        _function = call_request.name,
                     )
                 except Exception as e:
                     logger.error(
                         "tool_output_error",
-                        call_id=tool_call.id,
+                        _call_id = tool_call.id,
                         error=str(e),
                     )
     
-    async def _execute_function(
-        self,
-        call_request: FunctionCallRequest,
-    ) -> Any:
+    async def _execute_function(self, _call_request: FunctionCallRequest) -> Any:
         """Execute a function call."""
         # Check registered functions
         if call_request.name in self._registered_functions:
-            func = self._registered_functions[call_request.name]
+            _func = self._registered_functions[call_request.name]
             try:
                 if asyncio.iscoroutinefunction(func):
                     return await func(**call_request.arguments)
@@ -721,39 +663,33 @@ class OpenAIAssistantsAdapter:
             except Exception as e:
                 logger.error(
                     "function_execution_error",
-                    function=call_request.name,
+                    _function = call_request.name,
                     error=str(e),
                 )
                 return {"error": str(e)}
         
         # Try to route to Heretek agent
         if self.enable_heretek_bridge and self._agent_runtime:
-            heretek_agent_id = call_request.heretek_agent_id or call_request.name
+            _heretek_agent_id = call_request.heretek_agent_id or call_request.name
             
             if heretek_agent_id in self._agent_runtime:
                 try:
-                    runtime = self._agent_runtime[heretek_agent_id]
+                    _runtime = self._agent_runtime[heretek_agent_id]
                     if hasattr(runtime, 'think'):
-                        response = await runtime.think(
+                        _response = await runtime.think(
                             f"Execute: {call_request.name}({json.dumps(call_request.arguments)})"
                         )
                         return {"response": response}
                 except Exception as e:
                     logger.error(
                         "heretek_routing_error",
-                        agent_id=heretek_agent_id,
+                        _agent_id = heretek_agent_id,
                         error=str(e),
                     )
         
         return {"error": f"Function {call_request.name} not found"}
     
-    async def execute_chat(
-        self,
-        thread_id: str,
-        assistant_id: str,
-        message: str,
-        instructions: Optional[str] = None,
-    ) -> Dict[str, Any]:
+    async def execute_chat(self, _thread_id: str, _assistant_id: str, _message: str, _instructions: Optional[str]) -> Dict[str, Any]:
         """
         Execute a chat message and get response.
         
@@ -770,17 +706,17 @@ class OpenAIAssistantsAdapter:
         await self.add_message(thread_id, message, MessageRole.USER)
         
         # Create and run
-        run_context = await self.create_run(
-            thread_id=thread_id,
-            assistant_id=assistant_id,
-            instructions=instructions,
+        _run_context = await self.create_run(
+            _thread_id = thread_id,
+            _assistant_id = assistant_id,
+            _instructions = instructions,
         )
         
         # Poll for completion
-        result = await self.poll_run(run_context.run_id)
+        _result = await self.poll_run(run_context.run_id)
         
         # Get assistant messages
-        response_messages = await self.get_thread_messages(thread_id)
+        _response_messages = await self.get_thread_messages(thread_id)
         
         return {
             "run_id": result.run_id,
@@ -790,22 +726,18 @@ class OpenAIAssistantsAdapter:
             "error": result.error,
         }
     
-    async def get_thread_messages(
-        self,
-        thread_id: str,
-        limit: int = 20,
-    ) -> List[Dict[str, Any]]:
+    async def get_thread_messages(self, _thread_id: str, _limit: int) -> List[Dict[str, Any]]:
         """Get messages from a thread."""
         if not OPENAI_AVAILABLE or not self.client:
             return self.threads.get(thread_id, {}).messages
         
         try:
-            messages = await self.client.beta.threads.messages.list(
-                thread_id=thread_id,
-                limit=limit,
+            _messages = await self.client.beta.threads.messages.list(
+                _thread_id = thread_id,
+                _limit = limit,
             )
             
-            result = []
+            _result = []
             for msg in messages.data:
                 content = ""
                 for c in msg.content:
@@ -824,15 +756,15 @@ class OpenAIAssistantsAdapter:
             logger.error("get_messages_error", thread_id=thread_id, error=str(e))
             return []
     
-    def get_assistant(self, assistant_id: str) -> Optional[AssistantConfig]:
+    def get_assistant(self, _assistant_id: str) -> Optional[AssistantConfig]:
         """Get assistant config by ID."""
         return self.assistants.get(assistant_id)
     
-    def get_thread(self, thread_id: str) -> Optional[ThreadContext]:
+    def get_thread(self, _thread_id: str) -> Optional[ThreadContext]:
         """Get thread context by ID."""
         return self.threads.get(thread_id)
     
-    def get_run(self, run_id: str) -> Optional[RunContext]:
+    def get_run(self, _run_id: str) -> Optional[RunContext]:
         """Get run context by ID."""
         return self.runs.get(run_id)
     
@@ -848,7 +780,7 @@ class OpenAIAssistantsAdapter:
             "client_initialized": self.client is not None,
         }
     
-    def clear_assistant(self, assistant_id: str) -> bool:
+    def clear_assistant(self, _assistant_id: str) -> bool:
         """Clear an assistant."""
         if assistant_id not in self.assistants:
             return False
@@ -857,7 +789,7 @@ class OpenAIAssistantsAdapter:
         logger.info("assistant_cleared", assistant_id=assistant_id)
         return True
     
-    def clear_thread(self, thread_id: str) -> bool:
+    def clear_thread(self, _thread_id: str) -> bool:
         """Clear a thread."""
         if thread_id not in self.threads:
             return False
@@ -880,28 +812,18 @@ class OpenAIAssistantsAdapter:
 openai_assistants_adapter: Optional[OpenAIAssistantsAdapter] = None
 
 
-def get_openai_assistants_adapter(
-    api_key: Optional[str] = None,
-    base_url: Optional[str] = None,
-) -> OpenAIAssistantsAdapter:
+def get_openai_assistants_adapter(_api_key: Optional[str], _base_url: Optional[str]) -> OpenAIAssistantsAdapter:
     """Get the global OpenAI Assistants adapter instance."""
     global openai_assistants_adapter
     if openai_assistants_adapter is None:
-        openai_assistants_adapter = OpenAIAssistantsAdapter(
-            api_key=api_key,
-            base_url=base_url,
+        _openai_assistants_adapter = OpenAIAssistantsAdapter(
+            _api_key = api_key,
+            _base_url = base_url,
         )
     return openai_assistants_adapter
 
 
-def create_assistant(
-    assistant_id: str,
-    name: str,
-    model: str = "gpt-4o",
-    instructions: str = "You are a helpful assistant.",
-    tools: Optional[List[Dict[str, Any]]] = None,
-    heretek_agent_id: Optional[str] = None,
-) -> AssistantConfig:
+def create_assistant(_assistant_id: str, _name: str, _model: str, _instructions: str, _tools: Optional[List[Dict[str, _Any]]], _heretek_agent_id: Optional[str]) -> AssistantConfig:
     """
     Create an assistant with default configuration.
     
@@ -916,13 +838,13 @@ def create_assistant(
     Returns:
         AssistantConfig
     """
-    adapter = get_openai_assistants_adapter()
+    _adapter = get_openai_assistants_adapter()
     
     return asyncio.create_task(adapter.create_assistant(
-        assistant_id=assistant_id,
-        name=name,
-        model=model,
-        instructions=instructions,
-        tools=tools,
-        heretek_agent_id=heretek_agent_id,
+        _assistant_id = assistant_id,
+        _name = name,
+        _model = model,
+        _instructions = instructions,
+        _tools = tools,
+        _heretek_agent_id = heretek_agent_id,
     ))

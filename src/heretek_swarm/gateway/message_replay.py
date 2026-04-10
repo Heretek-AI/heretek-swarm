@@ -30,7 +30,7 @@ from uuid import uuid4
 
 import structlog
 
-logger = structlog.get_logger(__name__)
+_logger = structlog.get_logger(__name__)
 
 
 class ReplayStatus(str, Enum):
@@ -99,16 +99,7 @@ class ReplayJob:
         }
     
     @classmethod
-    def create(
-        cls,
-        stream_name: str,
-        start_sequence: Optional[int] = None,
-        end_sequence: Optional[int] = None,
-        subject_filter: Optional[str] = None,
-        destination_stream: Optional[str] = None,
-        replay_speed: float = 1.0,
-        metadata: Optional[Dict[str, Any]] = None,
-    ) -> "ReplayJob":
+    def create(cls, _stream_name: str, _start_sequence: Optional[int], _end_sequence: Optional[int], _subject_filter: Optional[str], _destination_stream: Optional[str], _replay_speed: float, _metadata: Optional[Dict[str, _Any]]) -> "ReplayJob":
         """Create a new replay job."""
         return cls(
             job_id=str(uuid4()),
@@ -166,25 +157,16 @@ class TimeTravelRequest:
         }
     
     @classmethod
-    def create(
-        cls,
-        entity_id: str,
-        entity_type: str,
-        target_time: datetime,
-        source_stream: str,
-        include_snapshots: bool = True,
-        destination: Optional[str] = None,
-        metadata: Optional[Dict[str, Any]] = None,
-    ) -> "TimeTravelRequest":
+    def create(cls, _entity_id: str, _entity_type: str, _target_time: datetime, _source_stream: str, _include_snapshots: bool, _destination: Optional[str], _metadata: Optional[Dict[str, _Any]]) -> "TimeTravelRequest":
         """Create a new time travel request."""
         return cls(
             request_id=str(uuid4()),
             entity_id=entity_id,
-            entity_type=entity_type,
+            _entity_type = entity_type,
             target_time=target_time,
-            source_stream=source_stream,
+            _source_stream = source_stream,
             include_snapshots=include_snapshots,
-            destination=destination,
+            _destination = destination,
             metadata=metadata or {},
         )
 
@@ -204,7 +186,7 @@ class MessageReplayManager:
     
     Example:
         ```python
-        manager = MessageReplayManager(jetstream_manager)
+        _manager = MessageReplayManager(jetstream_manager)
         
         # Create replay job
         job = ReplayJob.create(
@@ -221,20 +203,15 @@ class MessageReplayManager:
         # Time travel debugging
         request = TimeTravelRequest.create(
             entity_id="agent-1",
-            entity_type="Agent",
+            _entity_type = "Agent",
             target_time=datetime(2024, 1, 1, 12, 0),
-            source_stream="AGENT_EVENTS",
+            _source_stream = "AGENT_EVENTS",
         )
         state = await manager.time_travel(request, applier)
         ```
     """
     
-    def __init__(
-        self,
-        jetstream_manager: Optional[Any] = None,
-        event_store: Optional[Any] = None,
-        zero_trust_enabled: bool = True,
-    ):
+    def __init__(self, _jetstream_manager: Optional[Any], _event_store: Optional[Any], _zero_trust_enabled: bool):
         """
         Initialize message replay manager.
         
@@ -278,18 +255,7 @@ class MessageReplayManager:
         """Get total job count."""
         return len(self._jobs)
     
-    async def create_replay_job(
-        self,
-        stream_name: str,
-        start_sequence: Optional[int] = None,
-        end_sequence: Optional[int] = None,
-        start_time: Optional[datetime] = None,
-        end_time: Optional[datetime] = None,
-        subject_filter: Optional[str] = None,
-        destination_stream: Optional[str] = None,
-        replay_speed: float = 1.0,
-        metadata: Optional[Dict[str, Any]] = None,
-    ) -> ReplayJob:
+    async def create_replay_job(self, _stream_name: str, _start_sequence: Optional[int], _end_sequence: Optional[int], _start_time: Optional[datetime], _end_time: Optional[datetime], _subject_filter: Optional[str], _destination_stream: Optional[str], _replay_speed: float, _metadata: Optional[Dict[str, _Any]]) -> ReplayJob:
         """
         Create a new replay job.
         
@@ -334,11 +300,7 @@ class MessageReplayManager:
         
         return job
     
-    async def execute_replay(
-        self,
-        job: ReplayJob,
-        message_callback: Optional[Callable[[str, Dict[str, Any]], None]] = None,
-    ) -> bool:
+    async def execute_replay(self, _job: ReplayJob, _message_callback: Optional[Callable[[str, _Dict[str, _Any]], _None]]) -> bool:
         """
         Execute a replay job.
         
@@ -359,18 +321,18 @@ class MessageReplayManager:
         
         try:
             # Get messages to replay
-            messages = await self._fetch_messages(job)
+            _messages = await self._fetch_messages(job)
             job.total = len(messages)
             
             logger.info(
                 "Replay started",
                 job_id=job.job_id,
-                total_messages=len(messages),
+                _total_messages = len(messages),
             )
             
             # Calculate delay based on replay speed
             base_delay = 0.1  # 100ms between messages at 1.0x speed
-            delay = base_delay / job.replay_speed
+            _delay = base_delay / job.replay_speed
             
             # Process messages
             for i, msg in enumerate(messages):
@@ -402,7 +364,7 @@ class MessageReplayManager:
             logger.info(
                 "Replay completed",
                 job_id=job.job_id,
-                messages_replayed=len(messages),
+                _messages_replayed = len(messages),
             )
             
             return True
@@ -415,40 +377,40 @@ class MessageReplayManager:
             
             logger.error(
                 f"Replay failed: {job.job_id}",
-                error=str(e),
+                _error = str(e),
             )
             return False
     
-    async def _fetch_messages(self, job: ReplayJob) -> List[Dict[str, Any]]:
+    async def _fetch_messages(self, _job: ReplayJob) -> List[Dict[str, Any]]:
         """Fetch messages for replay job."""
         if not self._js_manager:
             logger.warning("JetStream manager not available")
             return []
         
         # Use time-based filtering if specified
-        start_time = None
-        end_time = None
+        _start_time = None
+        _end_time = None
         
         if "start_time" in job.metadata:
-            start_time = datetime.fromisoformat(job.metadata["start_time"])
+            _start_time = datetime.fromisoformat(job.metadata["start_time"])
         if "end_time" in job.metadata:
-            end_time = datetime.fromisoformat(job.metadata["end_time"])
+            _end_time = datetime.fromisoformat(job.metadata["end_time"])
         
         # Fetch from JetStream
-        messages = await self._js_manager.replay_messages(
-            stream_name=job.stream_name,
-            start_sequence=job.start_sequence,
-            end_sequence=job.end_sequence,
-            subject_filter=job.subject_filter,
+        _messages = await self._js_manager.replay_messages(
+            _stream_name = job.stream_name,
+            _start_sequence = job.start_sequence,
+            _end_sequence = job.end_sequence,
+            _subject_filter = job.subject_filter,
         )
         
         # Apply time filtering if needed
         if start_time or end_time:
-            filtered = []
+            _filtered = []
             for msg in messages:
-                msg_time = None
+                _msg_time = None
                 if "timestamp" in msg:
-                    msg_time = datetime.fromisoformat(msg["timestamp"])
+                    _msg_time = datetime.fromisoformat(msg["timestamp"])
                 
                 if start_time and msg_time and msg_time < start_time:
                     continue
@@ -457,27 +419,22 @@ class MessageReplayManager:
                 
                 filtered.append(msg)
             
-            messages = filtered
+            _messages = filtered
         
         return messages
     
-    async def _process_message(
-        self,
-        job: ReplayJob,
-        message: Dict[str, Any],
-        callback: Optional[Callable[[str, Dict[str, Any]], None]],
-    ) -> None:
+    async def _process_message(self, _job: ReplayJob, _message: Dict[str, _Any], _callback: Optional[Callable[[str, _Dict[str, _Any]], _None]]) -> None:
         """Process a single replay message."""
-        subject = message.get("subject", "")
-        data = message.get("data", {})
+        _subject = message.get("subject", "")
+        _data = message.get("data", {})
         
         # Publish to destination if specified
         if job.destination_stream and self._js_manager:
-            dest_subject = f"replay.{subject}"
+            _dest_subject = f"replay.{subject}"
             await self._js_manager.publish(
-                stream_name=job.destination_stream,
-                subject=dest_subject,
-                data={
+                _stream_name = job.destination_stream,
+                _subject = dest_subject,
+                _data = {
                     "original_subject": subject,
                     "original_data": data,
                     "replay_job_id": job.job_id,
@@ -492,7 +449,7 @@ class MessageReplayManager:
             else:
                 callback(subject, data)
     
-    async def pause_replay(self, job_id: str) -> bool:
+    async def pause_replay(self, _job_id: str) -> bool:
         """Pause a running replay job."""
         if job_id not in self._jobs:
             return False
@@ -505,7 +462,7 @@ class MessageReplayManager:
         
         return False
     
-    async def resume_replay(self, job_id: str) -> bool:
+    async def resume_replay(self, _job_id: str) -> bool:
         """Resume a paused replay job."""
         if job_id not in self._jobs:
             return False
@@ -518,7 +475,7 @@ class MessageReplayManager:
         
         return False
     
-    async def cancel_replay(self, job_id: str) -> bool:
+    async def cancel_replay(self, _job_id: str) -> bool:
         """Cancel a replay job."""
         if job_id not in self._jobs:
             return False
@@ -532,7 +489,7 @@ class MessageReplayManager:
         
         return False
     
-    def get_job(self, job_id: str) -> Optional[ReplayJob]:
+    def get_job(self, _job_id: str) -> Optional[ReplayJob]:
         """Get replay job by ID."""
         return self._jobs.get(job_id)
     
@@ -540,15 +497,7 @@ class MessageReplayManager:
         """Get all replay jobs."""
         return list(self._jobs.values())
     
-    async def create_time_travel_request(
-        self,
-        entity_id: str,
-        entity_type: str,
-        target_time: datetime,
-        source_stream: str,
-        include_snapshots: bool = True,
-        destination: Optional[str] = None,
-    ) -> TimeTravelRequest:
+    async def create_time_travel_request(self, _entity_id: str, _entity_type: str, _target_time: datetime, _source_stream: str, _include_snapshots: bool, _destination: Optional[str]) -> TimeTravelRequest:
         """
         Create a time travel debugging request.
         
@@ -565,11 +514,11 @@ class MessageReplayManager:
         """
         request = TimeTravelRequest.create(
             entity_id=entity_id,
-            entity_type=entity_type,
+            _entity_type = entity_type,
             target_time=target_time,
-            source_stream=source_stream,
+            _source_stream = source_stream,
             include_snapshots=include_snapshots,
-            destination=destination,
+            _destination = destination,
         )
         
         self._time_travel_requests[request.request_id] = request
@@ -577,18 +526,14 @@ class MessageReplayManager:
         
         logger.info(
             "Time travel request created",
-            request_id=request.request_id,
+            _request_id = request.request_id,
             entity_id=entity_id,
             target_time=target_time,
         )
         
         return request
     
-    async def execute_time_travel(
-        self,
-        request: TimeTravelRequest,
-        state_applier: Callable[[Dict[str, Any], Any], Dict[str, Any]],
-    ) -> Dict[str, Any]:
+    async def execute_time_travel(self, _request: TimeTravelRequest, _state_applier: Callable[[Dict[str, _Any], _Any], _Dict[str, _Any]]) -> Dict[str, Any]:
         """
         Execute time travel state reconstruction.
         
@@ -605,47 +550,47 @@ class MessageReplayManager:
         
         logger.info(
             "Time travel started",
-            request_id=request.request_id,
+            _request_id = request.request_id,
             entity_id=request.entity_id,
             target_time=request.target_time,
         )
         
         # Get snapshot if available and requested
-        initial_state = {}
-        from_version = 0
+        _initial_state = {}
+        _from_version = 0
         
         if request.include_snapshots:
-            snapshot = await self._event_store.get_snapshot(request.entity_id)
+            _snapshot = await self._event_store.get_snapshot(request.entity_id)
             if snapshot and snapshot.created_at <= request.target_time:
-                initial_state = snapshot.state.copy()
-                from_version = snapshot.version
+                _initial_state = snapshot.state.copy()
+                _from_version = snapshot.version
                 logger.debug(
                     "Using snapshot",
-                    version=from_version,
+                    _version = from_version,
                     time=snapshot.created_at,
                 )
         
         # Get events up to target time
-        events = await self._event_store.get_events(
+        _events = await self._event_store.get_events(
             request.entity_id,
-            from_version=from_version,
+            _from_version = from_version,
         )
         
         # Filter events by target time
-        filtered_events = [
+        _filtered_events = [
             e for e in events
             if e.timestamp <= request.target_time
         ]
         
         # Apply events
-        state = initial_state
+        _state = initial_state
         for event in filtered_events:
-            state = state_applier(state, event)
+            _state = state_applier(state, event)
         
         logger.info(
             "Time travel completed",
-            request_id=request.request_id,
-            events_applied=len(filtered_events),
+            _request_id = request.request_id,
+            _events_applied = len(filtered_events),
         )
         
         return state
@@ -672,10 +617,7 @@ def get_replay_manager() -> MessageReplayManager:
     return _replay_manager
 
 
-async def setup_replay_manager(
-    jetstream_manager: Optional[Any] = None,
-    event_store: Optional[Any] = None,
-) -> MessageReplayManager:
+async def setup_replay_manager(_jetstream_manager: Optional[Any], _event_store: Optional[Any]) -> MessageReplayManager:
     """
     Setup and initialize replay manager.
     
@@ -688,7 +630,7 @@ async def setup_replay_manager(
     """
     global _replay_manager
     _replay_manager = MessageReplayManager(
-        jetstream_manager=jetstream_manager,
-        event_store=event_store,
+        _jetstream_manager = jetstream_manager,
+        _event_store = event_store,
     )
     return _replay_manager

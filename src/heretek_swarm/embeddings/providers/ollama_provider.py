@@ -7,10 +7,9 @@ Supports local embedding generation with models like nomic-embed-text, mxbai-emb
 Reference: https://github.com/ollama/ollama/blob/main/docs/api.md#generate-embeddings
 """
 
-from __future__ import annotations
 
 import time
-from typing import Any, Dict, List, Optional, Union
+from typing import Dict, List, Optional, Union
 
 import httpx
 import structlog
@@ -23,7 +22,7 @@ from .base import (
     EmbeddingProviderError,
 )
 
-logger = structlog.get_logger("embeddings.providers.ollama")
+_logger = structlog.get_logger("embeddings.providers.ollama")
 
 
 class OllamaEmbeddingProvider(EmbeddingProviderBase):
@@ -37,19 +36,14 @@ class OllamaEmbeddingProvider(EmbeddingProviderBase):
     - Other Ollama embedding models
     
     Example:
-        provider = OllamaEmbeddingProvider(
+        _provider = OllamaEmbeddingProvider(
             base_url="http://localhost:11434",
-            default_model="nomic-embed-text"
+            _default_model = "nomic-embed-text"
         )
-        response = await provider.embed(["Hello, world!"])
+        _response = await provider.embed(["Hello, world!"])
     """
 
-    def __init__(
-        self,
-        base_url: str = "http://localhost:11434",
-        default_model: Optional[str] = None,
-        extra_config: Optional[Dict[str, Any]] = None,
-    ):
+    def __init__(self, _base_url: str, _default_model: Optional[str], _extra_config: Optional[Dict[str, _Any]]):
         """
         Initialize the Ollama embedding provider.
         
@@ -59,11 +53,11 @@ class OllamaEmbeddingProvider(EmbeddingProviderBase):
             extra_config: Additional configuration
         """
         super().__init__(
-            provider_name="ollama",
+            _provider_name = "ollama",
             base_url=base_url,
             api_key=None,  # Ollama doesn't require authentication
-            default_model=default_model or "nomic-embed-text",
-            extra_config=extra_config,
+            _default_model = default_model or "nomic-embed-text",
+            _extra_config = extra_config,
         )
         
         self._client: Optional[httpx.AsyncClient] = None
@@ -71,10 +65,10 @@ class OllamaEmbeddingProvider(EmbeddingProviderBase):
     def _init_capabilities(self) -> EmbeddingProviderCapabilities:
         """Initialize provider capabilities."""
         return EmbeddingProviderCapabilities(
-            max_batch_size=32,
-            max_tokens_per_batch=8192,
-            supported_formats=["float"],
-            supports_dimensions_override=False,
+            _max_batch_size = 32,
+            _max_tokens_per_batch = 8192,
+            _supported_formats = ["float"],
+            _supports_dimensions_override = False,
             default_dimensions=None,  # Varies by model
         )
 
@@ -82,18 +76,13 @@ class OllamaEmbeddingProvider(EmbeddingProviderBase):
         """Get or create the HTTP client."""
         if self._client is None or self._client.is_closed:
             self._client = httpx.AsyncClient(
-                base_url=self.base_url,
-                headers={"Content-Type": "application/json"},
-                timeout=httpx.Timeout(120.0, connect=10.0),
+                _base_url = self.base_url,
+                _headers = {"Content-Type": "application/json"},
+                _timeout = httpx.Timeout(120.0, connect=10.0),
             )
         return self._client
 
-    async def embed(
-        self,
-        texts: Union[str, List[str]],
-        model: Optional[str] = None,
-        dimensions: Optional[int] = None,
-    ) -> EmbeddingResponse:
+    async def embed(self, _texts: Union[str, _List[str]], _model: Optional[str], _dimensions: Optional[int]) -> EmbeddingResponse:
         """
         Generate embeddings for texts.
         
@@ -105,30 +94,30 @@ class OllamaEmbeddingProvider(EmbeddingProviderBase):
         Returns:
             Embedding response with vectors
         """
-        client = await self._get_client()
-        start_time = time.time()
+        _client = await self._get_client()
+        _start_time = time.time()
         
-        model = self._get_model(model)
-        inputs = self._ensure_list(texts)
+        _model = self._get_model(model)
+        _inputs = self._ensure_list(texts)
         
-        embeddings = []
-        total_prompt_tokens = 0
+        _embeddings = []
+        _total_prompt_tokens = 0
         
         # Ollama processes one text at a time for embeddings
         for text in inputs:
-            payload = {
+            _payload = {
                 "model": model,
                 "prompt": text,
             }
             
             logger.debug(
                 "Sending Ollama embedding request",
-                model=model,
-                text_length=len(text),
+                _model = model,
+                _text_length = len(text),
             )
             
             try:
-                response = await client.post(
+                _response = await client.post(
                     "/api/embeddings",
                     json=payload,
                 )
@@ -136,21 +125,21 @@ class OllamaEmbeddingProvider(EmbeddingProviderBase):
                 if response.status_code == 404:
                     raise EmbeddingProviderError(
                         f"Model '{model}' not found. Try: ollama pull {model}",
-                        provider="ollama",
+                        _provider = "ollama",
                     )
                 elif response.status_code >= 500:
                     raise EmbeddingUnavailableError(
                         "Ollama service unavailable",
-                        provider="ollama",
+                        _provider = "ollama",
                     )
                 elif response.status_code != 200:
                     raise EmbeddingProviderError(
                         f"Ollama API error: {response.status_code} - {response.text[:200]}",
-                        provider="ollama",
+                        _provider = "ollama",
                     )
                 
-                data = response.json()
-                embedding = data.get("embedding", [])
+                _data = response.json()
+                _embedding = data.get("embedding", [])
                 embeddings.append(embedding)
                 
                 # Estimate tokens (Ollama doesn't return token count for embeddings)
@@ -159,33 +148,33 @@ class OllamaEmbeddingProvider(EmbeddingProviderBase):
             except httpx.RequestError as e:
                 raise EmbeddingUnavailableError(
                     f"Request failed: {e}. Is Ollama running? (ollama serve)",
-                    provider="ollama",
-                    cause=e,
+                    _provider = "ollama",
+                    _cause = e,
                 )
         
-        latency_ms = (time.time() - start_time) * 1000
+        _latency_ms = (time.time() - start_time) * 1000
         
         return EmbeddingResponse(
-            embeddings=embeddings,
-            model=model,
-            usage={
+            _embeddings = embeddings,
+            _model = model,
+            _usage = {
                 "prompt_tokens": total_prompt_tokens,
                 "total_tokens": total_prompt_tokens,
             },
-            latency_ms=latency_ms,
+            _latency_ms = latency_ms,
         )
 
     async def list_models(self) -> List[str]:
         """List available Ollama embedding models."""
-        client = await self._get_client()
+        _client = await self._get_client()
         
         try:
-            response = await client.get("/api/tags")
+            _response = await client.get("/api/tags")
             if response.status_code == 200:
-                data = response.json()
+                _data = response.json()
                 # Filter for embedding models (typically have "embed" in name)
-                all_models = [m.get("name", "") for m in data.get("models", [])]
-                embedding_models = [
+                _all_models = [m.get("name", "") for m in data.get("models", [])]
+                _embedding_models = [
                     m for m in all_models 
                     if "embed" in m.lower() or m in ["nomic-embed-text", "mxbai-embed-large"]
                 ]
@@ -200,7 +189,7 @@ class OllamaEmbeddingProvider(EmbeddingProviderBase):
             "all-minilm",
         ]
 
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
+    async def __aexit__(self, _exc_type, _exc_val, _exc_tb):
         """Cleanup HTTP client."""
         if self._client and not self._client.is_closed:
             await self._client.aclose()

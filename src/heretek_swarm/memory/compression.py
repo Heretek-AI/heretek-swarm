@@ -21,7 +21,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import structlog
 
-logger = structlog.get_logger(__name__)
+_logger = structlog.get_logger(__name__)
 
 
 # =============================================================================
@@ -288,7 +288,7 @@ class CompressionEngine:
         CompressionLevel.BEST: 9,
     }
     
-    def __init__(self, config: Optional[CompressionConfig] = None) -> None:
+    def __init__(self, _config: Optional[CompressionConfig]) -> None:
         """
         Initialize the compression engine.
         
@@ -314,12 +314,7 @@ class CompressionEngine:
             level=self.config.default_level.value,
         )
     
-    def compress(
-        self,
-        data: Any,
-        algorithm: Optional[CompressionAlgorithm] = None,
-        level: Optional[CompressionLevel] = None,
-    ) -> Tuple[bytes, CompressionResult]:
+    def compress(self, _data: Any, _algorithm: Optional[CompressionAlgorithm], _level: Optional[CompressionLevel]) -> Tuple[bytes, CompressionResult]:
         """
         Compress data.
         
@@ -331,7 +326,7 @@ class CompressionEngine:
         Returns:
             Tuple of (compressed_bytes, result)
         """
-        start_time = time.time()
+        _start_time = time.time()
         
         algorithm = algorithm or self.config.default_algorithm
         level = level or self.config.default_level
@@ -339,17 +334,17 @@ class CompressionEngine:
         try:
             # Serialize data if needed
             if not isinstance(data, bytes):
-                data_bytes = json.dumps(data).encode('utf-8')
+                _data_bytes = json.dumps(data).encode('utf-8')
             else:
-                data_bytes = data
+                _data_bytes = data
             
             original_size = len(data_bytes)
             
             # Check minimum size
             if original_size < self.config.min_size_for_compression:
-                result = CompressionResult(
+                _result = CompressionResult(
                     memory_id="",
-                    success=False,
+                    _success = False,
                     original_size=original_size,
                     compressed_size=original_size,
                     compression_ratio=0.0,
@@ -369,9 +364,9 @@ class CompressionEngine:
             
             # Check if compression is worthwhile
             if compression_ratio < self.config.compression_threshold:
-                result = CompressionResult(
+                _result = CompressionResult(
                     memory_id="",
-                    success=False,
+                    _success = False,
                     original_size=original_size,
                     compressed_size=compressed_size,
                     compression_ratio=compression_ratio,
@@ -390,7 +385,7 @@ class CompressionEngine:
                 logger.warning(
                     "compression_latency_exceeded",
                     latency_ms=latency_ms,
-                    threshold_ms=self.config.max_compression_latency_ms,
+                    _threshold_ms = self.config.max_compression_latency_ms,
                 )
             
             # Update statistics
@@ -398,9 +393,9 @@ class CompressionEngine:
             self._total_compression_time_ms += latency_ms
             self._algorithm_counts[algorithm.value] += 1
             
-            result = CompressionResult(
+            _result = CompressionResult(
                 memory_id="",
-                success=True,
+                _success = True,
                 original_size=original_size,
                 compressed_size=compressed_size,
                 compression_ratio=compression_ratio,
@@ -413,21 +408,17 @@ class CompressionEngine:
             
         except Exception as e:
             self._failed_compressions += 1
-            result = CompressionResult(
+            _result = CompressionResult(
                 memory_id="",
-                success=False,
-                error=str(e),
+                _success = False,
+                _error = str(e),
                 algorithm=algorithm,
                 level=level,
                 latency_ms=(time.time() - start_time) * 1000,
             )
             raise
     
-    def decompress(
-        self,
-        compressed_data: bytes,
-        algorithm: CompressionAlgorithm,
-    ) -> Tuple[bytes, DecompressionResult]:
+    def decompress(self, _compressed_data: bytes, _algorithm: CompressionAlgorithm) -> Tuple[bytes, DecompressionResult]:
         """
         Decompress data.
         
@@ -438,11 +429,11 @@ class CompressionEngine:
         Returns:
             Tuple of (decompressed_bytes, result)
         """
-        start_time = time.time()
+        _start_time = time.time()
         
         try:
             # Decompress based on algorithm
-            decompressed = self._decompress_algorithm(compressed_data, algorithm)
+            _decompressed = self._decompress_algorithm(compressed_data, algorithm)
             
             latency_ms = (time.time() - start_time) * 1000
             
@@ -450,33 +441,28 @@ class CompressionEngine:
             self._decompression_count += 1
             self._total_decompression_time_ms += latency_ms
             
-            result = DecompressionResult(
+            _result = DecompressionResult(
                 memory_id="",
-                success=True,
-                data=decompressed,
+                _success = True,
+                _data = decompressed,
                 original_size=len(decompressed),
                 latency_ms=latency_ms,
-                integrity_verified=True,
+                _integrity_verified = True,
             )
             
             return decompressed, result
             
         except Exception as e:
             self._failed_decompressions += 1
-            result = DecompressionResult(
+            _result = DecompressionResult(
                 memory_id="",
-                success=False,
-                error=str(e),
+                _success = False,
+                _error = str(e),
                 latency_ms=(time.time() - start_time) * 1000,
             )
             raise
     
-    def _compress_algorithm(
-        self,
-        data: bytes,
-        algorithm: CompressionAlgorithm,
-        level: CompressionLevel,
-    ) -> bytes:
+    def _compress_algorithm(self, _data: bytes, _algorithm: CompressionAlgorithm, _level: CompressionLevel) -> bytes:
         """Compress using specific algorithm."""
         if algorithm == CompressionAlgorithm.ZLIB:
             return self._compress_zlib(data, level)
@@ -486,11 +472,7 @@ class CompressionEngine:
             # Default to zlib for unsupported algorithms
             return self._compress_zlib(data, level)
     
-    def _decompress_algorithm(
-        self,
-        data: bytes,
-        algorithm: CompressionAlgorithm,
-    ) -> bytes:
+    def _decompress_algorithm(self, _data: bytes, _algorithm: CompressionAlgorithm) -> bytes:
         """Decompress using specific algorithm."""
         if algorithm == CompressionAlgorithm.ZLIB:
             return zlib.decompress(data)
@@ -501,23 +483,23 @@ class CompressionEngine:
             # Default to zlib
             return zlib.decompress(data)
     
-    def _compress_zlib(self, data: bytes, level: CompressionLevel) -> bytes:
+    def _compress_zlib(self, _data: bytes, _level: CompressionLevel) -> bytes:
         """Compress using zlib."""
-        level_value = self.LEVEL_MAP.get(level, 6)
+        _level_value = self.LEVEL_MAP.get(level, 6)
         return zlib.compress(data, level_value)
     
-    def _compress_gzip(self, data: bytes, level: CompressionLevel) -> bytes:
+    def _compress_gzip(self, _data: bytes, _level: CompressionLevel) -> bytes:
         """Compress using gzip."""
         import gzip
-        level_value = self.LEVEL_MAP.get(level, 6)
+        _level_value = self.LEVEL_MAP.get(level, 6)
         return gzip.compress(data, compresslevel=level_value)
     
-    def calculate_hash(self, data: bytes) -> str:
+    def calculate_hash(self, _data: bytes) -> str:
         """Calculate hash for integrity verification."""
         import hashlib
         return hashlib.sha256(data).hexdigest()
     
-    def verify_integrity(self, data: bytes, expected_hash: str) -> bool:
+    def verify_integrity(self, _data: bytes, _expected_hash: str) -> bool:
         """Verify data integrity against hash."""
         if not self.config.enable_integrity_check:
             return True
@@ -525,36 +507,36 @@ class CompressionEngine:
     
     def get_statistics(self) -> CompressionStatistics:
         """Get compression statistics."""
-        total_original = 0
-        total_compressed = 0
+        _total_original = 0
+        _total_compressed = 0
         
         # Calculate totals from results (would need to track these)
         # For now, return basic stats
         
-        overall_ratio = 0.0
+        _overall_ratio = 0.0
         if total_original > 0:
-            overall_ratio = 1.0 - (total_compressed / total_original)
+            _overall_ratio = 1.0 - (total_compressed / total_original)
         
-        avg_compression_latency = (
+        _avg_compression_latency = (
             self._total_compression_time_ms / self._compression_count
             if self._compression_count > 0 else 0.0
         )
-        avg_decompression_latency = (
+        _avg_decompression_latency = (
             self._total_decompression_time_ms / self._decompression_count
             if self._decompression_count > 0 else 0.0
         )
         
         return CompressionStatistics(
-            total_compressed=self._compression_count,
-            total_original_size=total_original,
-            total_compressed_size=total_compressed,
-            overall_ratio=overall_ratio,
-            total_space_saved=total_original - total_compressed,
-            algorithm_distribution=dict(self._algorithm_counts),
-            avg_compression_latency=avg_compression_latency,
-            avg_decompression_latency=avg_decompression_latency,
-            failed_compressions=self._failed_compressions,
-            failed_decompressions=self._failed_decompressions,
+            _total_compressed = self._compression_count,
+            _total_original_size = total_original,
+            _total_compressed_size = total_compressed,
+            _overall_ratio = overall_ratio,
+            _total_space_saved = total_original - total_compressed,
+            _algorithm_distribution = dict(self._algorithm_counts),
+            _avg_compression_latency = avg_compression_latency,
+            _avg_decompression_latency = avg_decompression_latency,
+            _failed_compressions = self._failed_compressions,
+            _failed_decompressions = self._failed_decompressions,
         )
 
 
@@ -579,11 +561,7 @@ class ColdDataCompressor:
     - Storage savings reporting
     """
     
-    def __init__(
-        self,
-        config: Optional[CompressionConfig] = None,
-        enable_auto_compress: bool = True,
-    ) -> None:
+    def __init__(self, _config: Optional[CompressionConfig], _enable_auto_compress: bool) -> None:
         """
         Initialize the cold data compressor.
         
@@ -607,17 +585,10 @@ class ColdDataCompressor:
         
         logger.info(
             "cold_data_compressor_initialized",
-            auto_compress=enable_auto_compress,
+            _auto_compress = enable_auto_compress,
         )
     
-    def compress(
-        self,
-        memory_id: str,
-        data: Any,
-        metadata: Optional[Dict[str, Any]] = None,
-        algorithm: Optional[CompressionAlgorithm] = None,
-        level: Optional[CompressionLevel] = None,
-    ) -> CompressionResult:
+    def compress(self, _memory_id: str, _data: Any, _metadata: Optional[Dict[str, _Any]], _algorithm: Optional[CompressionAlgorithm], _level: Optional[CompressionLevel]) -> CompressionResult:
         """
         Compress a memory entry.
         
@@ -639,29 +610,29 @@ class ColdDataCompressor:
         if not result.success:
             return CompressionResult(
                 memory_id=memory_id,
-                success=False,
+                _success = False,
                 error=result.error,
                 algorithm=result.algorithm,
-                level=result.level,
-                latency_ms=result.latency_ms,
+                _level = result.level,
+                _latency_ms = result.latency_ms,
             )
         
         # Calculate hash for integrity
-        data_hash = self._engine.calculate_hash(compressed_bytes)
+        _data_hash = self._engine.calculate_hash(compressed_bytes)
         
         # Encode compressed data
-        encoded_data = base64.b64encode(compressed_bytes).decode('utf-8')
+        _encoded_data = base64.b64encode(compressed_bytes).decode('utf-8')
         
         # Create compressed memory entry
-        compressed_entry = CompressedMemory(
+        _compressed_entry = CompressedMemory(
             memory_id=memory_id,
             compressed_data=encoded_data,
             original_size=result.original_size,
             compressed_size=result.compressed_size,
             algorithm=result.algorithm,
-            compression_level=result.level,
+            _compression_level = result.level,
             original_hash=data_hash,
-            metadata=metadata or {},
+            _metadata = metadata or {},
         )
         
         # Store in compressed memories
@@ -673,8 +644,8 @@ class ColdDataCompressor:
         logger.debug(
             "memory_compressed",
             memory_id=memory_id,
-            ratio=f"{result.compression_ratio:.2%}",
-            space_saved=result.original_size - result.compressed_size,
+            _ratio = f"{result.compression_ratio:.2%}",
+            _space_saved = result.original_size - result.compressed_size,
         )
         
         return CompressionResult(
@@ -684,11 +655,11 @@ class ColdDataCompressor:
             compressed_size=result.compressed_size,
             compression_ratio=result.compression_ratio,
             algorithm=result.algorithm,
-            level=result.level,
+            _level = result.level,
             latency_ms=result.latency_ms,
         )
     
-    def decompress(self, memory_id: str) -> DecompressionResult:
+    def decompress(self, _memory_id: str) -> DecompressionResult:
         """
         Decompress a memory entry.
         
@@ -703,15 +674,15 @@ class ColdDataCompressor:
         if memory_id not in self._compressed_memories:
             return DecompressionResult(
                 memory_id=memory_id,
-                success=False,
+                _success = False,
                 error=f"Memory {memory_id} not found in compressed storage",
             )
         
-        compressed_entry = self._compressed_memories[memory_id]
+        _compressed_entry = self._compressed_memories[memory_id]
         
         try:
             # Decode compressed data
-            compressed_bytes = base64.b64decode(compressed_entry.compressed_data)
+            _compressed_bytes = base64.b64decode(compressed_entry.compressed_data)
             
             # Decompress
             decompressed_bytes, result = self._engine.decompress(
@@ -722,13 +693,13 @@ class ColdDataCompressor:
             if not result.success:
                 return DecompressionResult(
                     memory_id=memory_id,
-                    success=False,
-                    error=result.error,
-                    latency_ms=result.latency_ms,
+                    _success = False,
+                    _error = result.error,
+                    _latency_ms = result.latency_ms,
                 )
             
             # Verify integrity
-            integrity_ok = self._engine.verify_integrity(
+            _integrity_ok = self._engine.verify_integrity(
                 compressed_bytes,
                 compressed_entry.original_hash,
             )
@@ -740,36 +711,36 @@ class ColdDataCompressor:
             
             # Parse JSON data
             try:
-                decompressed_data = json.loads(decompressed_bytes.decode('utf-8'))
+                _decompressed_data = json.loads(decompressed_bytes.decode('utf-8'))
             except (json.JSONDecodeError, UnicodeDecodeError):
-                decompressed_data = decompressed_bytes
+                _decompressed_data = decompressed_bytes
             
             return DecompressionResult(
                 memory_id=memory_id,
-                success=True,
-                data=decompressed_data,
+                _success = True,
+                _data = decompressed_data,
                 original_size=compressed_entry.original_size,
-                latency_ms=result.latency_ms,
-                integrity_verified=integrity_ok,
+                _latency_ms = result.latency_ms,
+                _integrity_verified = integrity_ok,
             )
             
         except Exception as e:
             compressed_entry.status = CompressionStatus.FAILED
             return DecompressionResult(
                 memory_id=memory_id,
-                success=False,
-                error=str(e),
+                _success = False,
+                _error = str(e),
             )
     
-    def is_compressed(self, memory_id: str) -> bool:
+    def is_compressed(self, _memory_id: str) -> bool:
         """Check if a memory is compressed."""
         return memory_id in self._compressed_memories
     
-    def get_compressed_entry(self, memory_id: str) -> Optional[CompressedMemory]:
+    def get_compressed_entry(self, _memory_id: str) -> Optional[CompressedMemory]:
         """Get compressed memory entry."""
         return self._compressed_memories.get(memory_id)
     
-    def remove(self, memory_id: str) -> bool:
+    def remove(self, _memory_id: str) -> bool:
         """Remove a compressed memory."""
         if memory_id in self._compressed_memories:
             del self._compressed_memories[memory_id]
@@ -778,12 +749,12 @@ class ColdDataCompressor:
     
     def get_statistics(self) -> Dict[str, Any]:
         """Get comprehensive compression statistics."""
-        engine_stats = self._engine.get_statistics()
+        _engine_stats = self._engine.get_statistics()
         
         # Calculate totals from compressed memories
-        total_original = sum(m.original_size for m in self._compressed_memories.values())
-        total_compressed = sum(m.compressed_size for m in self._compressed_memories.values())
-        overall_ratio = 1.0 - (total_compressed / total_original) if total_original > 0 else 0.0
+        _total_original = sum(m.original_size for m in self._compressed_memories.values())
+        _total_compressed = sum(m.compressed_size for m in self._compressed_memories.values())
+        _overall_ratio = 1.0 - (total_compressed / total_original) if total_original > 0 else 0.0
         
         return {
             "engine": engine_stats.to_dict(),
@@ -803,17 +774,17 @@ class ColdDataCompressor:
     
     def get_compression_report(self) -> Dict[str, Any]:
         """Generate a detailed compression report."""
-        stats = self.get_statistics()
+        _stats = self.get_statistics()
         
         # Analyze compression by algorithm
-        algorithm_stats = defaultdict(lambda: {"count": 0, "total_saved": 0})
+        _algorithm_stats = defaultdict(lambda: {"count": 0, "total_saved": 0})
         for entry in self._compressed_memories.values():
             algo = entry.algorithm.value
             algorithm_stats[algo]["count"] += 1
             algorithm_stats[algo]["total_saved"] += entry.space_saved_bytes
         
         # Find best candidates for compression
-        uncompressed_candidates = []
+        _uncompressed_candidates = []
         for entry in self._compressed_memories.values():
             if entry.compression_ratio < 0.3:  # Less than 30% savings
                 uncompressed_candidates.append({
@@ -831,10 +802,10 @@ class ColdDataCompressor:
     
     def _generate_recommendations(self) -> List[str]:
         """Generate compression optimization recommendations."""
-        recommendations = []
+        _recommendations = []
         
-        stats = self.get_statistics()
-        storage = stats.get("storage", {})
+        _stats = self.get_statistics()
+        _storage = stats.get("storage", {})
         
         # Check overall ratio
         if storage.get("overall_ratio", 0) < 0.3:
@@ -844,7 +815,7 @@ class ColdDataCompressor:
         
         # Check for many small compressions
         if storage.get("compressed_count", 0) > 100:
-            avg_size = storage.get("total_original_size", 0) / max(storage.get("compressed_count", 1), 1)
+            _avg_size = storage.get("total_original_size", 0) / max(storage.get("compressed_count", 1), 1)
             if avg_size < 2048:  # Less than 2KB average
                 recommendations.append(
                     "Many small compressions detected. Consider increasing min_size_for_compression."

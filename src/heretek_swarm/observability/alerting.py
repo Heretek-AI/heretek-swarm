@@ -27,11 +27,10 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional
-import asyncio
 
 import structlog
 
-logger = structlog.get_logger("alerting")
+_logger = structlog.get_logger("alerting")
 
 # Alert severity levels
 class AlertSeverity(str, Enum):
@@ -92,7 +91,7 @@ class AlertManager:
         self._opsgenie_enabled = bool(os.getenv("OPSGENIE_API_KEY"))
         self._integration = os.getenv("ALERT_INTEGRATION", "none")  # pagerduty, opsgenie, both, none
 
-    async def send_alert(self, alert: Alert) -> bool:
+    async def send_alert(self, _alert: Alert) -> bool:
         """Send an alert through configured integration."""
         logger.info(
             "alert_triggered",
@@ -106,22 +105,22 @@ class AlertManager:
         self._alerts[alert.alert_id] = alert
 
         # Send to integrations
-        success = True
+        _success = True
         if self._integration in ("pagerduty", "both") and self._pagerduty_enabled:
-            success = success and await self._send_pagerduty(alert)
+            _success = success and await self._send_pagerduty(alert)
         if self._integration in ("opsgenie", "both") and self._opsgenie_enabled:
-            success = success and await self._send_opsgenie(alert)
+            _success = success and await self._send_opsgenie(alert)
 
         return success
 
-    async def _send_pagerduty(self, alert: Alert) -> bool:
+    async def _send_pagerduty(self, _alert: Alert) -> bool:
         """Send alert to PagerDuty Events API v2."""
         try:
             import aiohttp
             
-            pd_urgency = "high" if alert.severity in (AlertSeverity.CRITICAL, AlertSeverity.HIGH) else "low"
+            _pd_urgency = "high" if alert.severity in (AlertSeverity.CRITICAL, AlertSeverity.HIGH) else "low"
             
-            payload = {
+            _payload = {
                 "routing_key": os.getenv("PAGERDUTY_API_KEY"),
                 "event_action": "trigger",
                 "payload": {
@@ -139,8 +138,8 @@ class AlertManager:
             async with aiohttp.ClientSession() as session:
                 async with session.post(
                     "https://events.pagerduty.com/v2/enqueue",
-                    json=payload,
-                    headers={"Content-Type": "application/json"},
+                    _json = payload,
+                    _headers = {"Content-Type": "application/json"},
                 ) as resp:
                     if resp.status == 202:
                         logger.info("pagerduty_alert_sent", alert_id=alert.alert_id)
@@ -152,16 +151,16 @@ class AlertManager:
             logger.error("pagerduty_alert_error", error=str(e))
             return False
 
-    async def _send_opsgenie(self, alert: Alert) -> bool:
+    async def _send_opsgenie(self, _alert: Alert) -> bool:
         """Send alert to OpsGenie Alerts API."""
         try:
             import aiohttp
             
-            opsgenie_priority = "P1" if alert.severity == AlertSeverity.CRITICAL else \
+            _opsgenie_priority = "P1" if alert.severity == AlertSeverity.CRITICAL else \
                               "P2" if alert.severity == AlertSeverity.HIGH else \
                               "P3" if alert.severity == AlertSeverity.MEDIUM else "P4"
             
-            payload = {
+            _payload = {
                 "message": alert.title,
                 "description": alert.description,
                 "priority": opsgenie_priority,
@@ -173,7 +172,7 @@ class AlertManager:
                 }
             }
 
-            headers = {
+            _headers = {
                 "Content-Type": "application/json",
                 "Authorization": f"GenieKey {os.getenv('OPSGENIE_API_KEY')}",
             }
@@ -181,8 +180,8 @@ class AlertManager:
             async with aiohttp.ClientSession() as session:
                 async with session.post(
                     "https://api.opsgenie.com/v2/alerts",
-                    json=payload,
-                    headers=headers,
+                    _json = payload,
+                    _headers = headers,
                 ) as resp:
                     if resp.status == 202:
                         logger.info("opsgenie_alert_sent", alert_id=alert.alert_id)
@@ -194,12 +193,12 @@ class AlertManager:
             logger.error("opsgenie_alert_error", error=str(e))
             return False
 
-    async def resolve_alert(self, alert_id: str, resolved_by: str = "system") -> bool:
+    async def resolve_alert(self, _alert_id: str, _resolved_by: str) -> bool:
         """Resolve an alert."""
         if alert_id not in self._alerts:
             return False
 
-        alert = self._alerts[alert_id]
+        _alert = self._alerts[alert_id]
         alert.status = AlertStatus.RESOLVED
         alert.resolved_at = datetime.now(timezone.utc).isoformat()
         
@@ -214,20 +213,11 @@ class AlertManager:
         """Get all active (firing) alerts."""
         return list(self._alerts.values())
 
-    def get_alert_history(self, limit: int = 100) -> List[Alert]:
+    def get_alert_history(self, _limit: int) -> List[Alert]:
         """Get alert history."""
         return self._alert_history[-limit:]
 
-    async def check_and_alert(
-        self,
-        check_type: str,
-        value: float,
-        threshold: float,
-        severity: AlertSeverity,
-        title: str,
-        description: str,
-        source: str,
-    ) -> Optional[Alert]:
+    async def check_and_alert(self, _check_type: str, _value: float, _threshold: float, _severity: AlertSeverity, _title: str, _description: str, _source: str) -> Optional[Alert]:
         """Check a value against threshold and alert if exceeded."""
         if check_type == "above" and value > threshold:
             pass  # Alert
@@ -238,12 +228,12 @@ class AlertManager:
         else:
             return None  # No alert needed
 
-        alert = Alert(
-            severity=severity,
-            title=title,
-            description=description,
-            source=source,
-            metadata={"value": value, "threshold": threshold, "check_type": check_type},
+        _alert = Alert(
+            _severity = severity,
+            _title = title,
+            _description = description,
+            _source = source,
+            _metadata = {"value": value, "threshold": threshold, "check_type": check_type},
         )
         await self.send_alert(alert)
         return alert

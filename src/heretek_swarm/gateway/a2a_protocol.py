@@ -29,7 +29,7 @@ from starlette.applications import Starlette
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 
-logger = structlog.get_logger(__name__)
+_logger = structlog.get_logger(__name__)
 
 
 # Message type constants
@@ -71,13 +71,7 @@ class A2AProtocol:
     Implements handshake flow, discovery endpoints, and Redis pub/sub logging.
     """
     
-    def __init__(
-        self,
-        event_mesh,
-        port: int = DEFAULT_PORT,
-        redis_client=None,
-        auth_required: bool = True
-    ):
+    def __init__(self, _event_mesh, _port: int, _redis_client, _auth_required: bool):
         """
         Initialize A2A Protocol.
         
@@ -104,7 +98,7 @@ class A2AProtocol:
         logger.info(
             "a2a_protocol_initialized",
             port=port,
-            redis_enabled=redis_client is not None,
+            _redis_enabled = redis_client is not None,
             auth_required=auth_required
         )
     
@@ -114,22 +108,22 @@ class A2AProtocol:
         """Start the WebSocket server."""
         from starlette.routing import Route
         
-        async def websocket_endpoint(ws: WebSocket):
+        async def websocket_endpoint(_ws: WebSocket):
             await self._handle_connection(ws)
         
-        routes = [
+        _routes = [
             Route("/ws", websocket_endpoint),
             Route("/health", self._health_check),
         ]
         
-        app = Starlette(routes=routes)
+        _app = Starlette(routes=routes)
         
         import uvicorn
-        config = uvicorn.Config(
+        _config = uvicorn.Config(
             app,
             host="0.0.0.0",
             port=self.port,
-            log_level="info"
+            _log_level = "info"
         )
         self._server = uvicorn.Server(config)
         
@@ -150,7 +144,7 @@ class A2AProtocol:
             self._server.should_exit = True
         logger.info("a2a_server_stopped")
     
-    async def _health_check(self, request: Request) -> JSONResponse:
+    async def _health_check(self, _request: Request) -> JSONResponse:
         """Health check endpoint."""
         return JSONResponse({
             "status": "healthy",
@@ -162,7 +156,7 @@ class A2AProtocol:
     
     # ============== Connection Handling ==============
     
-    async def _handle_connection(self, websocket: WebSocket) -> None:
+    async def _handle_connection(self, _websocket: WebSocket) -> None:
         """
         Handle incoming WebSocket connection.
         
@@ -172,7 +166,7 @@ class A2AProtocol:
         - Message loop
         - Cleanup on disconnect
         """
-        client_id = None
+        _client_id = None
         
         try:
             await websocket.accept()
@@ -183,11 +177,11 @@ class A2AProtocol:
                 if raw_message is None:
                     continue
                 
-                msg_type = raw_message.get("type")
+                _msg_type = raw_message.get("type")
                 
                 # Handle handshake first
                 if msg_type == MessageType.HANDSHAKE:
-                    client_id = await self._handle_handshake(websocket, raw_message)
+                    _client_id = await self._handle_handshake(websocket, raw_message)
                     continue
                 
                 # Check authentication for other messages
@@ -209,11 +203,7 @@ class A2AProtocol:
             if client_id:
                 await self._cleanup_connection(client_id)
     
-    async def _handle_handshake(
-        self,
-        websocket: WebSocket,
-        message: Dict[str, Any]
-    ) -> str:
+    async def _handle_handshake(self, _websocket: WebSocket, _message: Dict[str, _Any]) -> str:
         """
         Handle handshake message.
         
@@ -222,16 +212,16 @@ class A2AProtocol:
         2. Server validates and responds:
            {"type": "handshake", "status": "ok", "agent_id": "..."}
         """
-        agent_type = message.get("agent", "unknown")
-        capabilities = message.get("capabilities", [])
-        metadata = message.get("metadata", {})
+        _agent_type = message.get("agent", "unknown")
+        _capabilities = message.get("capabilities", [])
+        _metadata = message.get("metadata", {})
         
         # Register with EventMesh
-        client_id = await self.event_mesh.register(
-            websocket=websocket,
-            agent_type=agent_type,
-            capabilities=capabilities,
-            metadata=metadata
+        _client_id = await self.event_mesh.register(
+            _websocket = websocket,
+            _agent_type = agent_type,
+            _capabilities = capabilities,
+            _metadata = metadata
         )
         
         # Track connection
@@ -248,7 +238,7 @@ class A2AProtocol:
         }
         
         # Send handshake response
-        response = {
+        _response = {
             "type": "handshake",
             "status": "ok",
             "agent_id": client_id,
@@ -269,8 +259,8 @@ class A2AProtocol:
         
         logger.info(
             "a2a_handshake_completed",
-            client_id=client_id,
-            agent_type=agent_type
+            _client_id = client_id,
+            _agent_type = agent_type
         )
         
         # Broadcast discovery to other agents
@@ -278,9 +268,9 @@ class A2AProtocol:
         
         return client_id
     
-    async def _broadcast_discovery(self, client_id: str, agent_type: str) -> None:
+    async def _broadcast_discovery(self, _client_id: str, _agent_type: str) -> None:
         """Broadcast new agent discovery to all connected agents."""
-        discovery_msg = {
+        _discovery_msg = {
             "type": "discovery",
             "action": "agent_joined",
             "agent_id": client_id,
@@ -290,19 +280,14 @@ class A2AProtocol:
         
         await self.event_mesh.broadcast(
             discovery_msg,
-            exclude=[client_id]
+            _exclude = [client_id]
         )
     
-    async def _route_message(
-        self,
-        websocket: WebSocket,
-        client_id: str,
-        message: Dict[str, Any]
-    ) -> None:
+    async def _route_message(self, _websocket: WebSocket, _client_id: str, _message: Dict[str, _Any]) -> None:
         """Route message to appropriate handler."""
-        msg_type = message.get("type", "unknown")
+        _msg_type = message.get("type", "unknown")
         
-        handler_map = {
+        _handler_map = {
             MessageType.DISCOVERY: self._handle_discovery,
             MessageType.MESSAGE: self._handle_agent_message,
             MessageType.STATUS: self._handle_status,
@@ -311,7 +296,7 @@ class A2AProtocol:
             MessageType.DECISION: self._handle_decision,
         }
         
-        handler = handler_map.get(msg_type)
+        _handler = handler_map.get(msg_type)
         if handler:
             await handler(client_id, message)
         else:
@@ -319,17 +304,13 @@ class A2AProtocol:
     
     # ============== Message Handlers ==============
     
-    async def _handle_discovery(
-        self,
-        client_id: str,
-        message: Dict[str, Any]
-    ) -> None:
+    async def _handle_discovery(self, _client_id: str, _message: Dict[str, _Any]) -> None:
         """Handle discovery request - return list of all agents."""
-        action = message.get("action", "list_agents")
+        _action = message.get("action", "list_agents")
         
         if action == "list_agents":
             # Return all registered agents
-            response = {
+            _response = {
                 "type": "discovery",
                 "action": "agent_list",
                 "agents": list(self._agent_registry.values()),
@@ -339,12 +320,12 @@ class A2AProtocol:
             
         elif action == "by_type":
             # Filter by agent type
-            agent_type = message.get("agent_type")
-            filtered = [
+            _agent_type = message.get("agent_type")
+            _filtered = [
                 a for a in self._agent_registry.values()
                 if a["agent_type"] == agent_type
             ]
-            response = {
+            _response = {
                 "type": "discovery",
                 "action": "agent_list",
                 "agents": filtered,
@@ -360,14 +341,10 @@ class A2AProtocol:
             message
         )
     
-    async def _handle_agent_message(
-        self,
-        client_id: str,
-        message: Dict[str, Any]
-    ) -> None:
+    async def _handle_agent_message(self, _client_id: str, _message: Dict[str, _Any]) -> None:
         """Handle standard agent-to-agent message."""
-        target_id = message.get("target")
-        content = message.get("content", {})
+        _target_id = message.get("target")
+        _content = message.get("content", {})
         
         if target_id:
             # Direct message
@@ -384,13 +361,9 @@ class A2AProtocol:
             content
         )
     
-    async def _handle_status(
-        self,
-        client_id: str,
-        message: Dict[str, Any]
-    ) -> None:
+    async def _handle_status(self, _client_id: str, _message: Dict[str, _Any]) -> None:
         """Handle status update message."""
-        status = message.get("status", {})
+        _status = message.get("status", {})
         
         # Update agent registry with status
         if client_id in self._agent_registry:
@@ -406,21 +379,17 @@ class A2AProtocol:
             status
         )
     
-    async def _handle_proposal(
-        self,
-        client_id: str,
-        message: Dict[str, Any]
-    ) -> None:
+    async def _handle_proposal(self, _client_id: str, _message: Dict[str, _Any]) -> None:
         """Handle triad proposal message."""
-        proposal_id = message.get("proposal_id")
+        _proposal_id = message.get("proposal_id")
         
         # Broadcast proposal to all agents
         await self.event_mesh.broadcast(message, exclude=[client_id])
         
         logger.info(
             "a2a_proposal_received",
-            client_id=client_id,
-            proposal_id=proposal_id
+            _client_id = client_id,
+            _proposal_id = proposal_id
         )
         
         await self._log_message(
@@ -430,22 +399,18 @@ class A2AProtocol:
             message
         )
     
-    async def _handle_vote(
-        self,
-        client_id: str,
-        message: Dict[str, Any]
-    ) -> None:
+    async def _handle_vote(self, _client_id: str, _message: Dict[str, _Any]) -> None:
         """Handle triad vote message."""
-        vote = message.get("vote")
-        proposal_id = message.get("proposal_id")
+        _vote = message.get("vote")
+        _proposal_id = message.get("proposal_id")
         
         await self.event_mesh.broadcast(message, exclude=[client_id])
         
         logger.info(
             "a2a_vote_received",
-            client_id=client_id,
-            proposal_id=proposal_id,
-            vote=vote
+            _client_id = client_id,
+            _proposal_id = proposal_id,
+            _vote = vote
         )
         
         await self._log_message(
@@ -455,22 +420,18 @@ class A2AProtocol:
             message
         )
     
-    async def _handle_decision(
-        self,
-        client_id: str,
-        message: Dict[str, Any]
-    ) -> None:
+    async def _handle_decision(self, _client_id: str, _message: Dict[str, _Any]) -> None:
         """Handle final decision message."""
-        decision = message.get("decision")
-        proposal_id = message.get("proposal_id")
+        _decision = message.get("decision")
+        _proposal_id = message.get("proposal_id")
         
         await self.event_mesh.broadcast(message)
         
         logger.info(
             "a2a_decision_made",
-            client_id=client_id,
-            proposal_id=proposal_id,
-            decision=decision
+            _client_id = client_id,
+            _proposal_id = proposal_id,
+            _decision = decision
         )
         
         await self._log_message(
@@ -480,7 +441,7 @@ class A2AProtocol:
             message
         )
     
-    async def _send_error(self, websocket: WebSocket, error_msg: str) -> None:
+    async def _send_error(self, _websocket: WebSocket, _error_msg: str) -> None:
         """Send error message to client."""
         await websocket.send_json({
             "type": "error",
@@ -488,7 +449,7 @@ class A2AProtocol:
             "timestamp": datetime.now(timezone.utc).isoformat()
         })
     
-    async def _cleanup_connection(self, client_id: str) -> None:
+    async def _cleanup_connection(self, _client_id: str) -> None:
         """Clean up connection state on disconnect."""
         # Remove from connections
         self._connections.pop(client_id, None)
@@ -497,19 +458,19 @@ class A2AProtocol:
         self._authenticated.discard(client_id)
         
         # Remove from registry
-        agent_info = self._agent_registry.pop(client_id, {})
+        _agent_info = self._agent_registry.pop(client_id, {})
         
         # Unregister from EventMesh
         await self.event_mesh.unregister(client_id)
         
         logger.info(
             "a2a_connection_cleaned",
-            client_id=client_id,
-            agent_type=agent_info.get("agent_type", "unknown")
+            _client_id = client_id,
+            _agent_type = agent_info.get("agent_type", "unknown")
         )
         
         # Broadcast disconnect
-        discovery_msg = {
+        _discovery_msg = {
             "type": "discovery",
             "action": "agent_left",
             "agent_id": client_id,
@@ -520,20 +481,14 @@ class A2AProtocol:
     
     # ============== Redis Logging ==============
     
-    async def _log_message(
-        self,
-        msg_type: str,
-        sender_id: str,
-        sender_type: str,
-        payload: Dict[str, Any]
-    ) -> None:
+    async def _log_message(self, _msg_type: str, _sender_id: str, _sender_type: str, _payload: Dict[str, _Any]) -> None:
         """Log message to Redis pub/sub if available."""
         if not self.redis_client:
             return
         
         try:
-            channel = f"{REDIS_CHANNEL_PREFIX}:{msg_type}"
-            message_data = {
+            _channel = f"{REDIS_CHANNEL_PREFIX}:{msg_type}"
+            _message_data = {
                 "type": msg_type,
                 "sender_id": sender_id,
                 "sender_type": sender_type,
@@ -548,9 +503,9 @@ class A2AProtocol:
     
     # ============== Helpers ==============
     
-    def _get_agent_type(self, client_id: str) -> str:
+    def _get_agent_type(self, _client_id: str) -> str:
         """Get agent type for client ID."""
-        agent = self._agent_registry.get(client_id, {})
+        _agent = self._agent_registry.get(client_id, {})
         return agent.get("agent_type", "unknown")
     
     def get_stats(self) -> Dict[str, Any]:
@@ -568,7 +523,7 @@ class A2AProtocol:
         """Count agents by type."""
         counts: Dict[str, int] = {}
         for agent in self._agent_registry.values():
-            atype = agent.get("agent_type", "unknown")
+            _atype = agent.get("agent_type", "unknown")
             counts[atype] = counts.get(atype, 0) + 1
         return counts
 

@@ -15,25 +15,23 @@ Reference: Prometheus metrics at prometheus_metrics.py
 Reference: Tracing at observability/tracing.py
 """
 
-from __future__ import annotations
 
 import asyncio
 import json
 import logging
 import os
 import time
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass
 from datetime import datetime, timezone
 from enum import Enum
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional
-import uuid
 
 import structlog
-from prometheus_client import CollectorRegistry, generate_latest, CONTENT_TYPE_LATEST
+from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
 
 from .prometheus_metrics import PrometheusMetrics
-from .tracing import initialize_tracing, get_tracer, span_context
+from .tracing import initialize_tracing, span_context
 
 # ============================================================================
 # Configuration
@@ -96,14 +94,7 @@ class LokiHandler(logging.Handler):
     Also writes to local JSON files for ELK filebeat pickup.
     """
 
-    def __init__(
-        self,
-        loki_url: str = "http://localhost:3100/loki/api/v1/push",
-        log_dir: Path = HERETEK_LOGS_DIR,
-        service_name: str = "heretek-swarm",
-        batch_size: int = 100,
-        flush_interval: float = 5.0,
-    ):
+    def __init__(self, _loki_url: str, _log_dir: Path, _service_name: str, _batch_size: int, _flush_interval: float):
         """
         Initialize Loki handler.
 
@@ -146,7 +137,7 @@ class LokiHandler(logging.Handler):
             if not self._buffer:
                 return
 
-            logs_to_send = self._buffer.copy()
+            _logs_to_send = self._buffer.copy()
             self._buffer.clear()
             self._last_flush = time.time()
 
@@ -161,12 +152,12 @@ class LokiHandler(logging.Handler):
         # Send to Loki
         if self.loki_url:
             try:
-                client = await self._get_client()
+                _client = await self._get_client()
 
                 # Format for Loki (Promtail compatible)
-                streams = {}
+                _streams = {}
                 for log_entry in logs_to_send:
-                    labels = f'{{service="{self.service_name}",level="{log_entry["level"]}"}}'
+                    _labels = f'{{service="{self.service_name}",level="{log_entry["level"]}"}}'
                     if labels not in streams:
                         streams[labels] = []
                     streams[labels].append({
@@ -176,7 +167,7 @@ class LokiHandler(logging.Handler):
                         **log_entry
                     })
 
-                payload = {
+                _payload = {
                     "streams": [
                         {"labels": labels, "entries": entries}
                         for labels, entries in streams.items()
@@ -193,11 +184,11 @@ class LokiHandler(logging.Handler):
             await asyncio.sleep(self.flush_interval)
             await self._flush_buffer()
 
-    def emit(self, record: logging.LogRecord) -> None:
+    def emit(self, _record: logging.LogRecord) -> None:
         """Emit a log record."""
         try:
             # Parse log record
-            log_entry = self._format_record(record)
+            _log_entry = self._format_record(record)
 
             # Add to buffer
             asyncio.create_task(self._add_to_buffer(log_entry))
@@ -205,7 +196,7 @@ class LokiHandler(logging.Handler):
         except Exception:
             self.handleError(record)
 
-    async def _add_to_buffer(self, log_entry: Dict[str, Any]) -> None:
+    async def _add_to_buffer(self, _log_entry: Dict[str, _Any]) -> None:
         """Add log entry to buffer."""
         async with self._buffer_lock:
             self._buffer.append(log_entry)
@@ -214,9 +205,9 @@ class LokiHandler(logging.Handler):
             if len(self._buffer) >= self.batch_size:
                 await self._flush_buffer()
 
-    def _format_record(self, record: logging.LogRecord) -> Dict[str, Any]:
+    def _format_record(self, _record: logging.LogRecord) -> Dict[str, Any]:
         """Format a log record."""
-        log_entry = {
+        _log_entry = {
             "timestamp": datetime.fromtimestamp(record.created, tz=timezone.utc).isoformat(),
             "level": record.levelname,
             "logger": record.name,
@@ -276,7 +267,7 @@ class ObservabilityManager:
     - Alert management
 
     Example:
-        obs = ObservabilityManager()
+        _obs = ObservabilityManager()
         await obs.initialize()
 
         # Record metrics
@@ -287,17 +278,10 @@ class ObservabilityManager:
             await process_agent_task()
 
         # Check health
-        health = await obs.check_health()
+        _health = await obs.check_health()
     """
 
-    def __init__(
-        self,
-        service_name: str = "heretek-swarm",
-        service_version: str = "1.0.0",
-        loki_url: Optional[str] = None,
-        otlp_endpoint: Optional[str] = None,
-        prometheus_port: int = 9090,
-    ):
+    def __init__(self, _service_name: str, _service_version: str, _loki_url: Optional[str], _otlp_endpoint: Optional[str], _prometheus_port: int):
         """
         Initialize the observability manager.
 
@@ -335,7 +319,7 @@ class ObservabilityManager:
             initialize_tracing(
                 service_name=self.service_name,
                 service_version=self.service_version,
-                otlp_endpoint=self.otlp_endpoint,
+                _otlp_endpoint = self.otlp_endpoint,
             )
             self.logger.info("OpenTelemetry tracing initialized")
         except Exception as e:
@@ -344,7 +328,7 @@ class ObservabilityManager:
         # Initialize Loki handler
         try:
             self._loki_handler = LokiHandler(
-                loki_url=self.loki_url,
+                _loki_url = self.loki_url,
                 service_name=self.service_name,
             )
             await self._loki_handler.start()
@@ -360,7 +344,7 @@ class ObservabilityManager:
         self.logger.info(
             "Observability manager initialized",
             service=self.service_name,
-            version=self.service_version,
+            _version = self.service_version,
         )
 
     async def shutdown(self) -> None:
@@ -389,49 +373,43 @@ class ObservabilityManager:
         """Get Prometheus metrics content type."""
         return CONTENT_TYPE_LATEST
 
-    def record_agent_registration(self, agent_id: str, agent_type: str) -> None:
+    def record_agent_registration(self, _agent_id: str, _agent_type: str) -> None:
         """Record agent registration."""
         self.metrics.record_agent_registration(agent_id, agent_type)
 
-    def record_agent_active(self, agent_id: str, agent_type: str) -> None:
+    def record_agent_active(self, _agent_id: str, _agent_type: str) -> None:
         """Record agent activity."""
         self.metrics.record_agent_active(agent_id, agent_type)
 
-    def record_task_completed(self, agent_id: str, agent_type: str, task_type: str) -> None:
+    def record_task_completed(self, _agent_id: str, _agent_type: str, _task_type: str) -> None:
         """Record task completion."""
         self.metrics.record_task_completed(agent_id, agent_type, task_type)
 
-    def record_task_failed(self, agent_id: str, agent_type: str, task_type: str) -> None:
+    def record_task_failed(self, _agent_id: str, _agent_type: str, _task_type: str) -> None:
         """Record task failure."""
         self.metrics.record_task_failed(agent_id, agent_type, task_type)
 
-    def record_message(self, direction: str, message_type: str) -> None:
+    def record_message(self, _direction: str, _message_type: str) -> None:
         """Record message processing."""
         self.metrics.record_message(direction, message_type)
 
-    def record_consensus_round(self, consensus_type: str, outcome: str) -> None:
+    def record_consensus_round(self, _consensus_type: str, _outcome: str) -> None:
         """Record consensus round."""
         self.metrics.record_consensus_round(consensus_type, outcome)
 
-    def record_phi_score(self, agent_id: str, phi_score: float) -> None:
+    def record_phi_score(self, _agent_id: str, _phi_score: float) -> None:
         """Record consciousness phi score."""
         self.metrics.record_phi_score(agent_id, phi_score)
 
-    def record_free_energy(self, agent_id: str, free_energy: float) -> None:
+    def record_free_energy(self, _agent_id: str, _free_energy: float) -> None:
         """Record free energy level."""
         self.metrics.record_free_energy(agent_id, free_energy)
 
-    def record_api_request(
-        self,
-        method: str,
-        endpoint: str,
-        status: int,
-        duration: float,
-    ) -> None:
+    def record_api_request(self, _method: str, _endpoint: str, _status: int, _duration: float) -> None:
         """Record API request."""
         self.metrics.record_api_request(method, endpoint, status, duration)
 
-    def record_uptime(self, uptime_seconds: float) -> None:
+    def record_uptime(self, _uptime_seconds: float) -> None:
         """Record service uptime."""
         self.metrics.record_uptime(uptime_seconds)
 
@@ -439,15 +417,9 @@ class ObservabilityManager:
     # Tracing
     # =========================================================================
 
-    def trace_span(
-        self,
-        name: str,
-        agent_id: Optional[str] = None,
-        task_id: Optional[str] = None,
-        **attributes,
-    ):
+    def trace_span(self, _name: str, _agent_id: Optional[str], _task_id: Optional[str], _**attributes):
         """Create a trace span context manager."""
-        span_attributes = {**attributes}
+        _span_attributes = {**attributes}
         if agent_id:
             span_attributes["agent_id"] = agent_id
         if task_id:
@@ -455,16 +427,10 @@ class ObservabilityManager:
 
         return span_context(name, attributes=span_attributes)
 
-    async def traced(
-        self,
-        name: str,
-        agent_id: Optional[str] = None,
-        task_id: Optional[str] = None,
-        **attributes,
-    ):
+    async def traced(self, _name: str, _agent_id: Optional[str], _task_id: Optional[str], _**attributes):
         """Async context manager for tracing."""
         from .tracing import span_context
-        span_attributes = {**attributes}
+        _span_attributes = {**attributes}
         if agent_id:
             span_attributes["agent_id"] = agent_id
         if task_id:
@@ -477,7 +443,7 @@ class ObservabilityManager:
     # Health Checks
     # =========================================================================
 
-    def register_health_check(self, name: str, check_fn: Callable[[], Any]) -> None:
+    def register_health_check(self, _name: str, _check_fn: Callable[[], _Any]) -> None:
         """
         Register a health check.
 
@@ -494,16 +460,16 @@ class ObservabilityManager:
         Returns:
             Dictionary with health status and individual check results
         """
-        check_results = {}
-        overall_healthy = True
-        any_degraded = False
+        _check_results = {}
+        _overall_healthy = True
+        _any_degraded = False
 
         for name, check_fn in self._health_checks.items():
             try:
                 if asyncio.iscoroutinefunction(check_fn):
-                    result = await check_fn()
+                    _result = await check_fn()
                 else:
-                    result = check_fn()
+                    _result = check_fn()
 
                 check_results[name] = {
                     "status": ServiceStatus.HEALTHY.value if result else ServiceStatus.UNHEALTHY.value,
@@ -511,22 +477,22 @@ class ObservabilityManager:
                 }
 
                 if not result:
-                    overall_healthy = False
+                    _overall_healthy = False
             except Exception as e:
                 check_results[name] = {
                     "status": ServiceStatus.UNHEALTHY.value,
                     "healthy": False,
                     "error": str(e),
                 }
-                overall_healthy = False
+                _overall_healthy = False
 
         # Determine overall status
         if overall_healthy:
-            status = ServiceStatus.HEALTHY
+            _status = ServiceStatus.HEALTHY
         elif any_degraded:
-            status = ServiceStatus.DEGRADED
+            _status = ServiceStatus.DEGRADED
         else:
-            status = ServiceStatus.UNHEALTHY
+            _status = ServiceStatus.UNHEALTHY
 
         return {
             "status": status.value,
@@ -541,26 +507,18 @@ class ObservabilityManager:
     # Structured Logging
     # =========================================================================
 
-    def log(
-        self,
-        level: LogLevel,
-        message: str,
-        agent_id: Optional[str] = None,
-        task_id: Optional[str] = None,
-        session_id: Optional[str] = None,
-        **metadata,
-    ) -> None:
+    def log(self, _level: LogLevel, _message: str, _agent_id: Optional[str], _task_id: Optional[str], _session_id: Optional[str], _**metadata) -> None:
         """
         Log with structured metadata.
         """
-        log_dict = {
+        _log_dict = {
             "message": message,
             "agent_id": agent_id,
             "task_id": task_id,
             "session_id": session_id,
             **metadata,
         }
-        log_func = getattr(structlog.get_logger(), level.value.lower())
+        _log_func = getattr(structlog.get_logger(), level.value.lower())
         log_func(**log_dict)
 
 
@@ -594,7 +552,7 @@ async def initialize_observability() -> ObservabilityManager:
 async def main():
     """Example usage of observability."""
     # Initialize
-    obs = await initialize_observability()
+    _obs = await initialize_observability()
 
     # Register health check
     async def check_api():
@@ -612,11 +570,11 @@ async def main():
         await asyncio.sleep(0.1)  # Simulate work
 
     # Check health
-    health = await obs.check_health()
+    _health = await obs.check_health()
     print(f"Health: {health}")
 
     # Get metrics
-    metrics = obs.get_metrics()
+    _metrics = obs.get_metrics()
     print(f"Metrics: {metrics[:200]}...")
 
     # Shutdown

@@ -20,14 +20,14 @@ try:
     TELEGRAM_AVAILABLE = True
 except ImportError:
     TELEGRAM_AVAILABLE = False
-    Update = None
-    Bot = None
+    _Update = None
+    _Bot = None
 
 # TYPE_CHECKING ensures type hints are evaluated only during type checking
 if TYPE_CHECKING:
     from telegram.ext import ContextTypes
 
-logger = structlog.get_logger(__name__)
+_logger = structlog.get_logger(__name__)
 
 
 class TelegramBot:
@@ -41,12 +41,7 @@ class TelegramBot:
     - Handoff updates
     """
     
-    def __init__(
-        self,
-        token: Optional[str] = None,
-        agent_runtime=None,
-        handoff_manager=None,
-    ):
+    def __init__(self, _token: Optional[str], _agent_runtime = None, _handoff_manager = None):
         self.token = token or os.getenv("TELEGRAM_BOT_TOKEN")
         self.agent_runtime = agent_runtime
         self.handoff_manager = handoff_manager
@@ -117,13 +112,9 @@ class TelegramBot:
         
         logger.info("telegram_bot_stopped")
     
-    async def _handle_start(
-        self,
-        update: Update,
-        context: "ContextTypes.DEFAULT_TYPE",
-    ) -> None:
+    async def _handle_start(self, _update: Update, _context: "ContextTypes.DEFAULT_TYPE") -> None:
         """Handle /start command."""
-        welcome_message = """
+        _welcome_message = """
 🤖 *Welcome to Heretek Swarm!*
 
 I'm your Telegram assistant for interacting with the AI agent collective.
@@ -140,16 +131,12 @@ I'm your Telegram assistant for interacting with the AI agent collective.
         
         await update.message.reply_text(
             welcome_message,
-            parse_mode="Markdown",
+            _parse_mode = "Markdown",
         )
     
-    async def _handle_help(
-        self,
-        update: Update,
-        context: "ContextTypes.DEFAULT_TYPE",
-    ) -> None:
+    async def _handle_help(self, _update: Update, _context: "ContextTypes.DEFAULT_TYPE") -> None:
         """Handle /help command."""
-        help_text = """
+        _help_text = """
 📖 *Heretek Swarm Help*
 
 *Chat with Agents:*
@@ -177,40 +164,32 @@ Just type your message and I'll route it to the appropriate agent.
         
         await update.message.reply_text(
             help_text,
-            parse_mode="Markdown",
+            _parse_mode = "Markdown",
         )
     
-    async def _handle_status(
-        self,
-        update: Update,
-        context: "ContextTypes.DEFAULT_TYPE",
-    ) -> None:
+    async def _handle_status(self, _update: Update, _context: "ContextTypes.DEFAULT_TYPE") -> None:
         """Handle /status command."""
         # Get swarm status from API
-        status_text = "📊 *Swarm Status*\n\n"
+        _status_text = "📊 *Swarm Status*\n\n"
         
         if self.agent_runtime:
             # Get agent statuses
             status_text += "*Active Agents:*\n"
             for agent_id, runtime in self.agent_runtime.items():
-                status = runtime.get_status()
-                emoji = "🟢" if status["state"] == "idle" else "🟡"
+                _status = runtime.get_status()
+                _emoji = "🟢" if status["state"] == "idle" else "🟡"
                 status_text += f"{emoji} {agent_id}: {status['state']}\n"
         else:
             status_text += "Swarm status unavailable\n"
         
         await update.message.reply_text(
             status_text,
-            parse_mode="Markdown",
+            _parse_mode = "Markdown",
         )
     
-    async def _handle_agents(
-        self,
-        update: Update,
-        context: "ContextTypes.DEFAULT_TYPE",
-    ) -> None:
+    async def _handle_agents(self, _update: Update, _context: "ContextTypes.DEFAULT_TYPE") -> None:
         """Handle /agents command."""
-        agents_text = """
+        _agents_text = """
 🤖 *Available Agents*
 
 🎯 *Steward* - Orchestrator
@@ -234,35 +213,27 @@ Just type your message and I'll route it to the appropriate agent.
         
         await update.message.reply_text(
             agents_text,
-            parse_mode="Markdown",
+            _parse_mode = "Markdown",
         )
     
-    async def _handle_message(
-        self,
-        update: Update,
-        context: "ContextTypes.DEFAULT_TYPE",
-    ) -> None:
+    async def _handle_message(self, _update: Update, _context: "ContextTypes.DEFAULT_TYPE") -> None:
         """Handle regular messages."""
-        user_message = update.message.text
-        user_id = str(update.message.from_user.id)
+        _user_message = update.message.text
+        _user_id = str(update.message.from_user.id)
         
         # Send typing indicator
         await update.chat_bot.action("typing")
         
         # Route to appropriate agent
-        response = await self._route_message(user_message, user_id)
+        _response = await self._route_message(user_message, user_id)
         
         # Send response
         await update.message.reply_text(
             response,
-            parse_mode="Markdown",
+            _parse_mode = "Markdown",
         )
     
-    async def _route_message(
-        self,
-        message: str,
-        user_id: str,
-    ) -> str:
+    async def _route_message(self, _message: str, _user_id: str) -> str:
         """
         Route message to appropriate agent.
         
@@ -274,32 +245,32 @@ Just type your message and I'll route it to the appropriate agent.
             Agent response
         """
         # Simple routing based on keywords
-        message_lower = message.lower()
+        _message_lower = message.lower()
         
         if any(word in message_lower for word in ["code", "program", "script", "debug"]):
-            agent_id = "coder"
+            _agent_id = "coder"
         elif any(word in message_lower for word in ["analyze", "research", "investigate"]):
-            agent_id = "alpha"
+            _agent_id = "alpha"
         elif any(word in message_lower for word in ["validate", "test", "check", "verify"]):
-            agent_id = "beta"
+            _agent_id = "beta"
         elif any(word in message_lower for word in ["memory", "remember", "history", "context"]):
-            agent_id = "historian"
+            _agent_id = "historian"
         elif any(word in message_lower for word in ["safe", "ethic", "constraint"]):
-            agent_id = "sentinel"
+            _agent_id = "sentinel"
         else:
             agent_id = "steward"  # Default orchestrator
         
         logger.info(
             "telegram_message_routed",
             agent=agent_id,
-            user=user_id,
+            _user = user_id,
         )
         
         # Get agent response
         if self.agent_runtime and agent_id in self.agent_runtime:
             try:
-                runtime = self.agent_runtime[agent_id]
-                response = await runtime.think(message)
+                _runtime = self.agent_runtime[agent_id]
+                _response = await runtime.think(message)
                 return f"🤖 *{agent_id.title()}*:\n\n{response}"
             except Exception as e:
                 logger.error("agent_response_error", error=str(e))
@@ -307,12 +278,7 @@ Just type your message and I'll route it to the appropriate agent.
         
         return f"🤖 Agent {agent_id} is currently unavailable."
     
-    async def send_notification(
-        self,
-        chat_id: str,
-        message: str,
-        parse_mode: str = "Markdown",
-    ) -> bool:
+    async def send_notification(self, _chat_id: str, _message: str, _parse_mode: str) -> bool:
         """
         Send notification to specific chat.
         
@@ -328,26 +294,22 @@ Just type your message and I'll route it to the appropriate agent.
             return False
         
         try:
-            bot = self._application.bot
+            _bot = self._application.bot
             await bot.send_message(
-                chat_id=chat_id,
-                text=message,
-                parse_mode=parse_mode,
+                _chat_id = chat_id,
+                _text = message,
+                _parse_mode = parse_mode,
             )
             return True
         except Exception as e:
             logger.error(
                 "telegram_notification_failed",
-                chat_id=chat_id,
-                error=str(e),
+                _chat_id = chat_id,
+                _error = str(e),
             )
             return False
     
-    async def notify_handoff(
-        self,
-        chat_id: str,
-        handoff_context: Dict,
-    ) -> None:
+    async def notify_handoff(self, _chat_id: str, _handoff_context: Dict) -> None:
         """
         Send handoff notification.
         
@@ -355,7 +317,7 @@ Just type your message and I'll route it to the appropriate agent.
             chat_id: Chat to notify
             handoff_context: Handoff details
         """
-        message = f"""
+        _message = f"""
 🔄 *Task Handoff*
 
 *From:* {handoff_context.get('source_agent')}
@@ -376,16 +338,13 @@ def get_telegram_bot() -> Optional[TelegramBot]:
     return telegram_bot
 
 
-async def start_telegram_bot(
-    agent_runtime=None,
-    handoff_manager=None,
-) -> None:
+async def start_telegram_bot(_agent_runtime = None, _handoff_manager = None) -> None:
     """Start Telegram bot."""
     global telegram_bot
     
-    telegram_bot = TelegramBot(
-        agent_runtime=agent_runtime,
-        handoff_manager=handoff_manager,
+    _telegram_bot = TelegramBot(
+        _agent_runtime = agent_runtime,
+        _handoff_manager = handoff_manager,
     )
     
     await telegram_bot.initialize()
@@ -398,4 +357,4 @@ async def stop_telegram_bot() -> None:
     
     if telegram_bot:
         await telegram_bot.stop()
-        telegram_bot = None
+        _telegram_bot = None

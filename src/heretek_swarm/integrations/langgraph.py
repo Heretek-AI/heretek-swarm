@@ -23,7 +23,7 @@ from typing import Any, Callable, Dict, List, Optional
 
 import structlog
 
-logger = structlog.get_logger(__name__)
+_logger = structlog.get_logger(__name__)
 
 # Try to import langgraph components
 try:
@@ -37,17 +37,17 @@ try:
     LANGGRAPH_AVAILABLE = True
 except ImportError:
     LANGGRAPH_AVAILABLE = False
-    StateGraph = None
+    _StateGraph = None
     END = None
-    BaseCheckpointSaver = None
-    MemorySaver = None
-    ToolNode = None
-    RunnableConfig = None
-    BaseMessage = None
-    HumanMessage = None
-    AIMessage = None
-    SystemMessage = None
-    BaseTool = None
+    _BaseCheckpointSaver = None
+    _MemorySaver = None
+    _ToolNode = None
+    _RunnableConfig = None
+    _BaseMessage = None
+    _HumanMessage = None
+    _AIMessage = None
+    _SystemMessage = None
+    _BaseTool = None
 
 
 class GraphState(str, Enum):
@@ -224,12 +224,7 @@ class LangGraphAdapter:
         tools: Registered LangChain tools
     """
     
-    def __init__(
-        self,
-        checkpoint_saver: Optional[Any] = None,
-        enable_state_sync: bool = True,
-        max_checkpoints: int = 100,
-    ) -> None:
+    def __init__(self, _checkpoint_saver: Optional[Any], _enable_state_sync: bool, _max_checkpoints: int) -> None:
         """
         Initialize the LangGraph adapter.
         
@@ -264,20 +259,20 @@ class LangGraphAdapter:
         logger.info(
             "langgraph_adapter_initialized",
             checkpoint_saver=type(self.checkpoint_saver).__name__ if self.checkpoint_saver else None,
-            state_sync_enabled=enable_state_sync,
+            _state_sync_enabled = enable_state_sync,
         )
     
-    def set_agent_runtime(self, runtime: Any) -> None:
+    def set_agent_runtime(self, _runtime: Any) -> None:
         """Set the Heretek agent runtime for state synchronization."""
         self._agent_runtime = runtime
         logger.debug("agent_runtime_set", runtime_type=type(runtime).__name__)
     
-    def register_state_sync_callback(self, callback: Callable) -> None:
+    def register_state_sync_callback(self, _callback: Callable) -> None:
         """Register a callback for state synchronization events."""
         self._state_sync_callbacks.append(callback)
         logger.debug("state_sync_callback_registered", callback=callback.__name__)
     
-    async def _notify_state_sync(self, graph_id: str, state: Dict[str, Any]) -> None:
+    async def _notify_state_sync(self, _graph_id: str, _state: Dict[str, _Any]) -> None:
         """Notify callbacks of state changes."""
         for callback in self._state_sync_callbacks:
             try:
@@ -288,11 +283,7 @@ class LangGraphAdapter:
             except Exception as e:
                 logger.error("state_sync_callback_error", error=str(e))
     
-    def create_graph(
-        self,
-        graph_id: str,
-        state_schema: Optional[Dict[str, Any]] = None,
-    ) -> "StateGraph":
+    def create_graph(self, _graph_id: str, _state_schema: Optional[Dict[str, _Any]]) -> "StateGraph":
         """
         Create a new workflow graph.
         
@@ -308,7 +299,7 @@ class LangGraphAdapter:
             raise RuntimeError("LangGraph is not available. Install with: pip install langgraph")
         
         if state_schema is None:
-            state_schema = {
+            _state_schema = {
                 "messages": list,
                 "agent_states": dict,
                 "context": dict,
@@ -341,15 +332,7 @@ class LangGraphAdapter:
         logger.info("graph_created", graph_id=graph_id)
         return graph
     
-    def add_node(
-        self,
-        graph_id: str,
-        node_id: str,
-        name: str,
-        agent_id: Optional[str] = None,
-        action: Optional[Callable[[Dict[str, Any]], Dict[str, Any]]] = None,
-        metadata: Optional[Dict[str, Any]] = None,
-    ) -> GraphNode:
+    def add_node(self, _graph_id: str, _node_id: str, _name: str, _agent_id: Optional[str], _action: Optional[Callable[[Dict[str, _Any]], _Dict[str, _Any]]], _metadata: Optional[Dict[str, _Any]]) -> GraphNode:
         """
         Add a node to a workflow graph.
         
@@ -367,12 +350,12 @@ class LangGraphAdapter:
         if graph_id not in self.graphs:
             raise ValueError(f"Graph {graph_id} not found")
         
-        node = GraphNode(
-            node_id=node_id,
+        _node = GraphNode(
+            _node_id = node_id,
             name=name,
             agent_id=agent_id,
-            function=action,
-            metadata=metadata or {},
+            _function = action,
+            _metadata = metadata or {},
         )
         
         self.graph_nodes[graph_id][node_id] = node
@@ -387,22 +370,14 @@ class LangGraphAdapter:
         
         logger.info(
             "node_added",
-            graph_id=graph_id,
-            node_id=node_id,
+            _graph_id = graph_id,
+            _node_id = node_id,
             agent_id=agent_id,
         )
         
         return node
     
-    def add_edge(
-        self,
-        graph_id: str,
-        source: str,
-        target: str,
-        condition: Optional[Callable[[Dict[str, Any]], bool]] = None,
-        weight: float = 1.0,
-        metadata: Optional[Dict[str, Any]] = None,
-    ) -> GraphEdge:
+    def add_edge(self, _graph_id: str, _source: str, _target: str, _condition: Optional[Callable[[Dict[str, _Any]], _bool]], _weight: float, _metadata: Optional[Dict[str, _Any]]) -> GraphEdge:
         """
         Add an edge between nodes.
         
@@ -420,14 +395,14 @@ class LangGraphAdapter:
         if graph_id not in self.graphs:
             raise ValueError(f"Graph {graph_id} not found")
         
-        edge_id = f"edge_{source}_{target}_{uuid.uuid4().hex[:8]}"
-        edge = GraphEdge(
-            edge_id=edge_id,
-            source=source,
-            target=target,
-            condition=condition,
-            weight=weight,
-            metadata=metadata or {},
+        _edge_id = f"edge_{source}_{target}_{uuid.uuid4().hex[:8]}"
+        _edge = GraphEdge(
+            _edge_id = edge_id,
+            _source = source,
+            _target = target,
+            _condition = condition,
+            _weight = weight,
+            _metadata = metadata or {},
         )
         
         if edge_id not in self.graph_edges[graph_id]:
@@ -443,21 +418,15 @@ class LangGraphAdapter:
         
         logger.info(
             "edge_added",
-            graph_id=graph_id,
-            edge_id=edge_id,
-            source=source,
-            target=target,
+            _graph_id = graph_id,
+            _edge_id = edge_id,
+            _source = source,
+            _target = target,
         )
         
         return edge
     
-    def add_conditional_edges(
-        self,
-        graph_id: str,
-        source: str,
-        condition: Callable[[Dict[str, Any]], str],
-        targets: Dict[str, str],
-    ) -> None:
+    def add_conditional_edges(self, _graph_id: str, _source: str, _condition: Callable[[Dict[str, _Any]], _str], _targets: Dict[str, _str]) -> None:
         """
         Add conditional edges from a node.
         
@@ -475,22 +444,22 @@ class LangGraphAdapter:
         
         # Create edges for tracking
         for condition_result, target in targets.items():
-            edge_id = f"cond_edge_{source}_{target}_{condition_result}"
+            _edge_id = f"cond_edge_{source}_{target}_{condition_result}"
             self.graph_edges[graph_id][edge_id] = GraphEdge(
-                edge_id=edge_id,
-                source=source,
-                target=target,
-                condition=lambda state, cr=condition_result: condition(state) == cr,
+                _edge_id = edge_id,
+                _source = source,
+                _target = target,
+                _condition = lambda state, cr=condition_result: condition(state) == cr,
             )
         
         logger.info(
             "conditional_edges_added",
-            graph_id=graph_id,
-            source=source,
-            targets=list(targets.values()),
+            _graph_id = graph_id,
+            _source = source,
+            _targets = list(targets.values()),
         )
     
-    def set_entry_point(self, graph_id: str, node_id: str) -> None:
+    def set_entry_point(self, _graph_id: str, _node_id: str) -> None:
         """Set the entry point for a graph."""
         if graph_id not in self.graphs:
             raise ValueError(f"Graph {graph_id} not found")
@@ -500,7 +469,7 @@ class LangGraphAdapter:
         
         logger.info("entry_point_set", graph_id=graph_id, node_id=node_id)
     
-    def set_finish_point(self, graph_id: str, node_id: str) -> None:
+    def set_finish_point(self, _graph_id: str, _node_id: str) -> None:
         """Set the finish point for a graph."""
         if graph_id not in self.graphs:
             raise ValueError(f"Graph {graph_id} not found")
@@ -511,7 +480,7 @@ class LangGraphAdapter:
         
         logger.info("finish_point_set", graph_id=graph_id, node_id=node_id)
     
-    def compile_graph(self, graph_id: str) -> Any:
+    def compile_graph(self, _graph_id: str) -> Any:
         """
         Compile a graph for execution.
         
@@ -527,17 +496,11 @@ class LangGraphAdapter:
         if not LANGGRAPH_AVAILABLE:
             raise RuntimeError("LangGraph is not available")
         
-        compiled = self.graphs[graph_id].compile(checkpointer=self.checkpoint_saver)
+        _compiled = self.graphs[graph_id].compile(checkpointer=self.checkpoint_saver)
         logger.info("graph_compiled", graph_id=graph_id)
         return compiled
     
-    async def execute_graph(
-        self,
-        graph_id: str,
-        input_state: Optional[Dict[str, Any]] = None,
-        thread_id: Optional[str] = None,
-        checkpoint_id: Optional[str] = None,
-    ) -> GraphExecutionResult:
+    async def execute_graph(self, _graph_id: str, _input_state: Optional[Dict[str, _Any]], _thread_id: Optional[str], _checkpoint_id: Optional[str]) -> GraphExecutionResult:
         """
         Execute a workflow graph.
         
@@ -553,12 +516,12 @@ class LangGraphAdapter:
         if graph_id not in self.graphs:
             raise ValueError(f"Graph {graph_id} not found")
         
-        start_time = datetime.now(timezone.utc)
+        _start_time = datetime.now(timezone.utc)
         self.graph_status[graph_id] = GraphState.RUNNING
         
         # Initialize state
         if input_state is None:
-            input_state = self.graph_states.get(graph_id, {}).copy()
+            _input_state = self.graph_states.get(graph_id, {}).copy()
         
         # Prepare config for checkpointing
         config: RunnableConfig = {
@@ -582,14 +545,14 @@ class LangGraphAdapter:
             if not LANGGRAPH_AVAILABLE:
                 raise RuntimeError("LangGraph is not available")
             
-            compiled = self.compile_graph(graph_id)
+            _compiled = self.compile_graph(graph_id)
             
             # Execute graph
             async for event in compiled.astream(input_state, config=config):
                 # Process event and update node states
                 for node_id, node_output in event.items():
                     if node_id in self.graph_nodes.get(graph_id, {}):
-                        node = self.graph_nodes[graph_id][node_id]
+                        _node = self.graph_nodes[graph_id][node_id]
                         node.status = NodeStatus.COMPLETED
                         node.execution_count += 1
                         node.last_execution_time = datetime.now(timezone.utc).isoformat()
@@ -597,9 +560,9 @@ class LangGraphAdapter:
                         
                         # Create checkpoint after node completion
                         checkpoint = await self._create_checkpoint(
-                            graph_id=graph_id,
-                            state={**input_state, **node_output},
-                            thread_id=config["configurable"]["thread_id"],
+                            _graph_id = graph_id,
+                            _state = {**input_state, **node_output},
+                            _thread_id = config["configurable"]["thread_id"],
                         )
                         if checkpoint:
                             checkpoints.append(checkpoint)
@@ -619,36 +582,36 @@ class LangGraphAdapter:
             error = str(e)
             logger.error("graph_execution_failed", graph_id=graph_id, error=str(e))
         
-        end_time = datetime.now(timezone.utc)
-        execution_time_ms = (end_time - start_time).total_seconds() * 1000
+        _end_time = datetime.now(timezone.utc)
+        _execution_time_ms = (end_time - start_time).total_seconds() * 1000
         
-        result = GraphExecutionResult(
-            graph_id=graph_id,
+        _result = GraphExecutionResult(
+            _graph_id = graph_id,
             status=self.graph_status[graph_id],
-            output=input_state,
-            node_results=node_results,
-            execution_time_ms=execution_time_ms,
+            _output = input_state,
+            _node_results = node_results,
+            _execution_time_ms = execution_time_ms,
             checkpoints=checkpoints,
             error=error,
         )
         
         logger.info(
             "graph_execution_completed",
-            graph_id=graph_id,
+            _graph_id = graph_id,
             status=self.graph_status[graph_id].value,
-            execution_time_ms=execution_time_ms,
+            _execution_time_ms = execution_time_ms,
         )
         
         return result
     
-    async def _sync_agent_state(self, agent_id: str, state: Dict[str, Any]) -> None:
+    async def _sync_agent_state(self, _agent_id: str, _state: Dict[str, _Any]) -> None:
         """Synchronize state with a Heretek agent."""
         if not self._agent_runtime:
             return
         
         try:
             if agent_id in self._agent_runtime:
-                runtime = self._agent_runtime[agent_id]
+                _runtime = self._agent_runtime[agent_id]
                 # Update agent context with graph state
                 if hasattr(runtime, 'update_context'):
                     await runtime.update_context({"graph_state": state})
@@ -656,29 +619,24 @@ class LangGraphAdapter:
         except Exception as e:
             logger.error("agent_state_sync_error", agent_id=agent_id, error=str(e))
     
-    async def _create_checkpoint(
-        self,
-        graph_id: str,
-        state: Dict[str, Any],
-        thread_id: str,
-    ) -> Optional[GraphCheckpoint]:
+    async def _create_checkpoint(self, _graph_id: str, _state: Dict[str, _Any], _thread_id: str) -> Optional[GraphCheckpoint]:
         """Create a checkpoint for the current graph state."""
         if not self.checkpoint_saver:
             return None
         
         checkpoint_id = f"checkpoint_{graph_id}_{uuid.uuid4().hex[:8]}"
         
-        node_states = {
+        _node_states = {
             node_id: node.status
             for node_id, node in self.graph_nodes.get(graph_id, {}).items()
         }
         
         checkpoint = GraphCheckpoint(
             checkpoint_id=checkpoint_id,
-            graph_id=graph_id,
-            state=state,
-            node_states=node_states,
-            thread_id=thread_id,
+            _graph_id = graph_id,
+            _state = state,
+            _node_states = node_states,
+            _thread_id = thread_id,
         )
         
         # Store checkpoint
@@ -694,18 +652,14 @@ class LangGraphAdapter:
         logger.debug("checkpoint_created", checkpoint_id=checkpoint_id)
         return checkpoint
     
-    async def _load_checkpoint(
-        self,
-        graph_id: str,
-        checkpoint_id: str,
-    ) -> Optional[GraphCheckpoint]:
+    async def _load_checkpoint(self, _graph_id: str, _checkpoint_id: str) -> Optional[GraphCheckpoint]:
         """Load a checkpoint by ID."""
         for checkpoint in self.checkpoints.get(graph_id, []):
             if checkpoint.checkpoint_id == checkpoint_id:
                 return checkpoint
         return None
     
-    def register_tool(self, tool: Any, tool_id: Optional[str] = None) -> str:
+    def register_tool(self, _tool: Any, _tool_id: Optional[str]) -> str:
         """
         Register a LangChain tool for use in workflows.
         
@@ -723,13 +677,13 @@ class LangGraphAdapter:
             raise TypeError("Tool must be a LangChain BaseTool instance")
         
         if tool_id is None:
-            tool_id = tool.name
+            _tool_id = tool.name
         
         self.tools[tool_id] = tool
         logger.info("tool_registered", tool_id=tool_id)
         return tool_id
     
-    def create_tool_node(self, graph_id: str, tool_ids: List[str]) -> None:
+    def create_tool_node(self, _graph_id: str, _tool_ids: List[str]) -> None:
         """
         Create a ToolNode for executing tools in a workflow.
         
@@ -744,21 +698,21 @@ class LangGraphAdapter:
         
         if tools:
             tool_node = ToolNode(tools)
-            node_id = f"tool_node_{uuid.uuid4().hex[:8]}"
+            _node_id = f"tool_node_{uuid.uuid4().hex[:8]}"
             self.graph_nodes[graph_id][node_id] = GraphNode(
-                node_id=node_id,
-                name=f"ToolNode ({len(tools)} tools)",
-                function=tool_node.invoke,
+                _node_id = node_id,
+                _name = f"ToolNode ({len(tools)} tools)",
+                _function = tool_node.invoke,
             )
             self.tool_nodes[node_id] = tool_node
             logger.info("tool_node_created", node_id=node_id, tool_count=len(tools))
     
-    def get_graph_status(self, graph_id: str) -> Dict[str, Any]:
+    def get_graph_status(self, _graph_id: str) -> Dict[str, Any]:
         """Get current status of a graph."""
         if graph_id not in self.graphs:
             return {"error": f"Graph {graph_id} not found"}
         
-        nodes = self.graph_nodes.get(graph_id, {})
+        _nodes = self.graph_nodes.get(graph_id, {})
         
         return {
             "graph_id": graph_id,
@@ -770,16 +724,16 @@ class LangGraphAdapter:
             "checkpoint_count": len(self.checkpoints.get(graph_id, [])),
         }
     
-    def get_checkpoints(self, graph_id: str, limit: int = 10) -> List[Dict[str, Any]]:
+    def get_checkpoints(self, _graph_id: str, _limit: int) -> List[Dict[str, Any]]:
         """Get recent checkpoints for a graph."""
         checkpoints = self.checkpoints.get(graph_id, [])
         return [c.to_dict() for c in checkpoints[-limit:]]
     
     def get_statistics(self) -> Dict[str, Any]:
         """Get adapter statistics."""
-        total_nodes = sum(len(nodes) for nodes in self.graph_nodes.values())
-        total_edges = sum(len(edges) for edges in self.graph_edges.values())
-        total_checkpoints = sum(len(checkpoints) for checkpoints in self.checkpoints.values())
+        _total_nodes = sum(len(nodes) for nodes in self.graph_nodes.values())
+        _total_edges = sum(len(edges) for edges in self.graph_edges.values())
+        _total_checkpoints = sum(len(checkpoints) for checkpoints in self.checkpoints.values())
         
         return {
             "graph_count": len(self.graphs),
@@ -791,7 +745,7 @@ class LangGraphAdapter:
             "state_sync_enabled": self.enable_state_sync,
         }
     
-    def clear_graph(self, graph_id: str) -> bool:
+    def clear_graph(self, _graph_id: str) -> bool:
         """Clear a graph and its state."""
         if graph_id not in self.graphs:
             return False
@@ -833,17 +787,11 @@ def get_langgraph_adapter() -> LangGraphAdapter:
     """Get the global LangGraph adapter instance."""
     global langgraph_adapter
     if langgraph_adapter is None:
-        langgraph_adapter = LangGraphAdapter()
+        _langgraph_adapter = LangGraphAdapter()
     return langgraph_adapter
 
 
-def create_workflow_graph(
-    graph_id: str,
-    nodes: List[Dict[str, Any]],
-    edges: List[Dict[str, Any]],
-    entry_point: str,
-    state_schema: Optional[Dict[str, Any]] = None,
-) -> LangGraphAdapter:
+def create_workflow_graph(_graph_id: str, _nodes: List[Dict[str, _Any]], _edges: List[Dict[str, _Any]], _entry_point: str, _state_schema: Optional[Dict[str, _Any]]) -> LangGraphAdapter:
     """
     Create a workflow graph from configuration.
     
@@ -857,7 +805,7 @@ def create_workflow_graph(
     Returns:
         Configured LangGraphAdapter
     """
-    adapter = get_langgraph_adapter()
+    _adapter = get_langgraph_adapter()
     
     # Create graph
     adapter.create_graph(graph_id, state_schema)
@@ -865,23 +813,23 @@ def create_workflow_graph(
     # Add nodes
     for node_config in nodes:
         adapter.add_node(
-            graph_id=graph_id,
-            node_id=node_config.get("node_id", node_config.get("name")),
-            name=node_config.get("name", "unnamed"),
-            agent_id=node_config.get("agent_id"),
-            action=node_config.get("action"),
-            metadata=node_config.get("metadata"),
+            _graph_id = graph_id,
+            _node_id = node_config.get("node_id", node_config.get("name")),
+            _name = node_config.get("name", "unnamed"),
+            _agent_id = node_config.get("agent_id"),
+            _action = node_config.get("action"),
+            _metadata = node_config.get("metadata"),
         )
     
     # Add edges
     for edge_config in edges:
         adapter.add_edge(
-            graph_id=graph_id,
-            source=edge_config["source"],
-            target=edge_config["target"],
-            condition=edge_config.get("condition"),
-            weight=edge_config.get("weight", 1.0),
-            metadata=edge_config.get("metadata"),
+            _graph_id = graph_id,
+            _source = edge_config["source"],
+            _target = edge_config["target"],
+            _condition = edge_config.get("condition"),
+            _weight = edge_config.get("weight", 1.0),
+            _metadata = edge_config.get("metadata"),
         )
     
     # Set entry point
