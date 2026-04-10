@@ -109,8 +109,9 @@ async def get_siq(
         result = siq.to_dict()
         
         if include_history:
+            limit = int(history_limit)
             result["history"] = [
-                s.to_dict() for s in metrics._siq_history[-history_limit:]
+                s.to_dict() for s in metrics._siq_history[-limit:]
             ]
         
         return {
@@ -148,8 +149,9 @@ async def get_collective_efficiency(
         result = efficiency.to_dict()
         
         if include_history:
+            limit = int(history_limit)
             result["history"] = [
-                e.to_dict() for e in metrics._efficiency_history[-history_limit:]
+                e.to_dict() for e in metrics._efficiency_history[-limit:]
             ]
         
         return {
@@ -187,8 +189,9 @@ async def get_knowledge_transfer_metrics(
         result = transfer.to_dict()
         
         if include_history:
+            limit = int(history_limit)
             result["history"] = [
-                t.to_dict() for t in metrics._transfer_history[-history_limit:]
+                t.to_dict() for t in metrics._transfer_history[-limit:]
             ]
         
         return {
@@ -224,8 +227,9 @@ async def get_emergence_coefficient(
         result = coefficient.to_dict()
         
         if include_history:
+            limit = int(history_limit)
             result["history"] = [
-                e.to_dict() for e in metrics._emergence_history[-history_limit:]
+                e.to_dict() for e in metrics._emergence_history[-limit:]
             ]
         
         return {
