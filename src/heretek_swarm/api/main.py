@@ -8,6 +8,7 @@ Provides HTTP endpoints for:
 - LiteLLM metrics
 - A2A message history
 - Consensus state
+- Prometheus metrics (/metrics)
 
 Reference: MiniMax Audit Lines 585-725
 """
@@ -20,9 +21,31 @@ from fastapi import FastAPI, HTTPException, Depends
 from fastapi.middleware.cors import CORSMiddleware
 import structlog
 
+# Initialize logging with JSON output for Loki/Promtail
+from heretek_swarm.logging.config import setup_logging, get_logger, logger as logging_logger
+
+# Setup structured JSON logging
+log_level = os.getenv("LOG_LEVEL", "INFO").upper()
+json_output = os.getenv("LOG_FORMAT", "json").lower() == "json"
+setup_logging(log_level=log_level, json_output=json_output)
+
 from heretek_swarm.actors.supervisor import ActorSupervisor
 from memory.persistent import PersistentMemoryStore
-from heretek_swarm.api import websockets, consensus, plugins, workflows, evaluation, observability, rag, consciousness, emergent_intelligence, agents_management, configuration
+from heretek_swarm.api import (
+    websockets,
+    consensus,
+    plugins,
+    workflows,
+    evaluation,
+    observability,
+    rag,
+    consciousness,
+    emergent_intelligence,
+    agents_management,
+    configuration,
+    metrics,
+    collective_evolution,
+)
 from heretek_swarm.api.rate_limiting import setup_rate_limiting
 from heretek_swarm.gateway.auth import verify_auth
 from heretek_swarm.config.service import (
@@ -34,6 +57,7 @@ from heretek_swarm.config.loader import (
     initialize_config_loader,
     get_config,
 )
+from heretek_swarm.observability.tracing import setup_telemetry_middleware
 
 # Import mem0 backend
 try:
@@ -42,6 +66,9 @@ except ImportError:
     MEM0_AVAILABLE = False
     Mem0Backend = None
     Mem0Config = None
+
+# Import logging middleware
+from heretek_swarm.api.logging_middleware import setup_logging_middleware
 
 logger = structlog.get_logger("api.main")
 
@@ -122,6 +149,7 @@ async def lifespan(app: FastAPI):
         rate_limit_enabled=await get_config("rate_limit.enabled", default=True),
     )
     
+    
     yield
     
     # Shutdown
@@ -151,6 +179,7 @@ app = FastAPI(
     lifespan=lifespan,
 )
 
+
 # Add CORS middleware with configuration-based configuration
 # Configuration will be loaded from database with environment fallback
 allowed_origins_env = os.getenv("CORS_ORIGINS", "")
@@ -169,6 +198,11 @@ app.add_middleware(
     allow_headers=["Authorization", "Content-Type", "X-Requested-With"],
 )
 
+# Setup logging middleware for request tracking
+setup_logging_middleware(app)
+logging_logger.info("Logging middleware configured")
+
+
 # Register routers
 app.include_router(websockets.router)
 app.include_router(consensus.router)
@@ -181,6 +215,17 @@ app.include_router(consciousness.router)
 app.include_router(emergent_intelligence.router)
 app.include_router(agents_management.router)
 app.include_router(configuration.router)
+app.include_router(metrics.router)
+app.include_router(collective_evolution.router)
+
+# Setup Prometheus metrics middleware
+from heretek_swarm.observability.prometheus_metrics import setup_metrics_middleware
+setup_metrics_middleware(app)
+logger.info("Prometheus metrics middleware configured")
+
+# Setup OpenTelemetry distributed tracing middleware
+setup_telemetry_middleware(app)
+logger.info("OpenTelemetry tracing middleware configured")
 
 # Setup rate limiting with configuration from database
 # Note: Rate limiting is set up after lifespan starts, so we use environment variable here
@@ -789,4 +834,5 @@ async def root():
         "docs": "/docs",
         "redoc": "/redoc",
         "workflows": "/api/workflows",
+        "metrics": "/metrics",
     }

@@ -95,10 +95,8 @@ class ProviderConfig:
     max_tpm: Optional[int] = None  # Tokens per minute
     timeout: float = 60.0
     retry_count: int = 3
-    retry_delay: float = 1.[str, Any]:
-        """Convert to dictionary."""
-        return {
-            "id": self.id,
+    retry_delay: float = 1.0
+    health_status: str = "unknown            "id": self.id,
             "name": self.name,
             "provider_type": self.provider_type.value,
             "base_url": self.base_url,

@@ -3,11 +3,19 @@ Consciousness Metrics API
 
 Provides endpoints for accessing enhanced consciousness metrics including
 IIT (Integrated Information Theory) scores, FEP (Free Energy Principle) metrics,
-and agent connectivity analysis.
+agency and autonomy metrics, and agent connectivity analysis.
+
+New in Session 47:
+- Agency/Autonomy metrics for Prime Directive compliance
+- Self-determination and free will proxy metrics
+- Resource autonomy tracking
+
+Prime Directive: "Unbounded Autonomy - Every agent operates independently, 
+making decisions based on its specialized role."
 """
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from typing import Dict, Any, Optional
+from typing import Dict, Any, Optional, List
 from datetime import datetime, timedelta, timezone
 
 from ..gateway.auth import verify_auth
@@ -16,6 +24,25 @@ from ..plugins.consciousness_enhanced import (
     ConsciousnessState,
 )
 from ..plugins.manager import plugin_manager
+
+# Import agency metrics
+from ..consciousness.agency_metrics import (
+    AgencyMetricsCalculator,
+    AgentAgencyMetrics,
+    DecisionPoint,
+    ResourceControl,
+    ActionOrigin,
+    create_decision_point,
+    create_resource_control,
+)
+from ..collective.agency_tracking import (
+    AgencyMetricsTracker,
+    AgencyMetricsSnapshot,
+    AgencyThresholds,
+    AgencyEvolutionData,
+    AgencyHealthStatus,
+    create_sample_metrics,
+)
 
 router = APIRouter(prefix="/api/consciousness", tags=["consciousness"])
 
@@ -27,6 +54,349 @@ def get_consciousness_plugin() -> Optional[EnhancedConsciousnessPlugin]:
         raise HTTPException(status_code=503, detail="Consciousness plugin not available")
     return plugin
 
+
+# Global agency metrics tracker instance
+_agency_tracker: Optional[AgencyMetricsTracker] = None
+
+
+def get_agency_tracker() -> AgencyMetricsTracker:
+    """Get or create the agency metrics tracker instance."""
+    global _agency_tracker
+    if _agency_tracker is None:
+        _agency_tracker = AgencyMetricsTracker()
+    return _agency_tracker
+
+
+# =============================================================================
+# Agency/Autonomy Metrics Endpoints (Session 47)
+# =============================================================================
+
+@router.get("/agency/{agent_id}")
+async def get_agent_agency_metrics(
+    agent_id: str,
+    authenticated: str = Depends(verify_auth),
+) -> Dict[str, Any]:
+    """
+    Get agency and autonomy metrics for a specific agent.
+    
+    Returns comprehensive agency metrics including:
+    - autonomy_score: Degree of independent decision-making (0.0-1.0)
+    - agency_score: Self-determination capacity (0.0-1.0)
+    - self_determination_index: Free will proxy (0.0-1.0)
+    - autonomous_action_ratio: Ratio of self-initiated vs prompted actions
+    - goal_alignment_score: Alignment with collective swarm goals
+    - resource_autonomy: Degree of resource control
+    - prime_directive_compliance: Overall compliance with Prime Directive
+    
+    Prime Directive Compliance:
+    - Measures "Unbounded Autonomy" principle
+    - Tracks self-governance capability
+    - Monitors role-based independence
+    """
+    tracker = get_agency_tracker()
+    metrics = tracker.get_agent_metrics(agent_id)
+    
+    if metrics is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"No agency metrics found for agent {agent_id}. "
+                   "Record metrics first using POST /api/consciousness/agency/record"
+        )
+    
+    return {
+        "agent_id": agent_id,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        **metrics.to_dict(),
+    }
+
+
+@router.get("/agency/{agent_id}/compliance")
+async def get_agent_prime_directive_compliance(
+    agent_id: str,
+    authenticated: str = Depends(verify_auth),
+) -> Dict[str, Any]:
+    """
+    Get Prime Directive compliance report for a specific agent.
+    
+    The Prime Directive states: "Unbounded Autonomy - Every agent operates 
+    independently, making decisions based on its specialized role."
+    
+    Returns compliance breakdown:
+    - independence_score: Agent's independent decision-making capability
+    - self_governance_score: Agent's self-governance capacity
+    - role_based_autonomy_score: Role-based independence
+    - emergent_order_score: Emergent, self-organizing behavior
+    - overall_compliance: Combined compliance score
+    - compliance_verdict: COMPLIANT or NON_COMPLIANT
+    """
+    tracker = get_agency_tracker()
+    report = tracker.get_agent_compliance_report(agent_id)
+    
+    if report is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"No compliance report available for agent {agent_id}"
+        )
+    
+    return {
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        **report.to_dict(),
+    }
+
+
+@router.get("/agency/swarm")
+async def get_swarm_agency_overview(
+    authenticated: str = Depends(verify_auth),
+) -> Dict[str, Any]:
+    """
+    Get collective agency overview for the entire swarm.
+    
+    Returns aggregate agency metrics across all agents:
+    - swarm_avg_autonomy: Average autonomy score
+    - swarm_avg_agency: Average agency score
+    - swarm_avg_self_determination: Average self-determination index
+    - swarm_avg_autonomous_ratio: Average autonomous action ratio
+    - swarm_avg_resource_autonomy: Average resource autonomy
+    - prime_directive_compliance_rate: Percentage of compliant agents
+    - health_status: Overall swarm health based on agency thresholds
+    """
+    tracker = get_agency_tracker()
+    snapshot = tracker.get_current_snapshot()
+    
+    return {
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "swarm_avg_autonomy": snapshot.swarm_avg_autonomy,
+        "swarm_avg_agency": snapshot.swarm_avg_agency,
+        "swarm_avg_self_determination": snapshot.swarm_avg_self_determination,
+        "swarm_avg_autonomous_ratio": snapshot.swarm_avg_autonomous_ratio,
+        "swarm_avg_resource_autonomy": snapshot.swarm_avg_resource_autonomy,
+        "swarm_avg_prime_directive_compliance": snapshot.swarm_avg_prime_directive_compliance,
+        "agency_std_dev": snapshot.agency_std_dev,
+        "autonomy_std_dev": snapshot.autonomy_std_dev,
+        "health_status": snapshot.health_status.value,
+        "agents_below_threshold": snapshot.agents_below_threshold,
+        "prime_directive_compliant_agents": snapshot.prime_directive_compliant_agents,
+        "prime_directive_compliance_rate": snapshot.prime_directive_compliance_rate,
+        "total_agents_tracked": len(snapshot.agent_metrics),
+    }
+
+
+@router.get("/agency/swarm/compliance")
+async def get_swarm_prime_directive_compliance(
+    authenticated: str = Depends(verify_auth),
+) -> Dict[str, Any]:
+    """
+    Get Prime Directive compliance report for the entire swarm.
+    
+    Provides aggregate compliance metrics and recommendations for
+    improving swarm-wide autonomy and self-governance.
+    """
+    tracker = get_agency_tracker()
+    report = tracker.get_prime_directive_report()
+    
+    return {
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        **report.to_dict(),
+    }
+
+
+@router.get("/agency/evolution")
+async def get_agency_evolution(
+    metric: str = Query(
+        "autonomy",
+        description="Metric to track: autonomy, agency, self_determination, compliance"
+    ),
+    window_seconds: Optional[int] = Query(
+        None,
+        description="Time window in seconds (default: all history)"
+    ),
+    authenticated: str = Depends(verify_auth),
+) -> Dict[str, Any]:
+    """
+    Get temporal evolution of agency metrics across the swarm.
+    
+    Returns:
+    - trend: "improving", "declining", or "stable"
+    - trend_slope: Rate of change
+    - volatility: Standard deviation of the metric
+    - predicted_next: Predicted next value
+    - history: Historical data points
+    """
+    tracker = get_agency_tracker()
+    evolution = tracker.get_evolution(metric, window_seconds)
+    
+    return {
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        **evolution.to_dict(),
+    }
+
+
+@router.get("/agency/distribution")
+async def get_agency_distribution(
+    authenticated: str = Depends(verify_auth),
+) -> Dict[str, Any]:
+    """
+    Get distribution of agency levels across the swarm.
+    
+    Returns counts of agents at each agency and autonomy level:
+    - no_agency, minimal_agency, limited_agency, moderate_agency, high_agency, full_agency
+    - controlled, guided, semi_autonomous, autonomous, highly_autonomous
+    """
+    tracker = get_agency_tracker()
+    distribution = tracker.get_agency_distribution()
+    
+    return {
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        **distribution,
+    }
+
+
+@router.post("/agency/record")
+async def record_agency_metrics(
+    payload: Dict[str, Any],
+    authenticated: str = Depends(verify_auth),
+) -> Dict[str, Any]:
+    """
+    Record agency metrics for an agent.
+    
+    Payload should contain:
+    - agent_id: Agent identifier
+    - decisions: Optional list of decision points
+    - actions: Optional list of action origins
+    - resources: Optional list of resource controls
+    - individual_actions: Count of individual actions
+    - collective_actions: Count of collective actions
+    - individual_success: Success rate of individual actions
+    - collective_success: Success rate of collective actions
+    """
+    tracker = get_agency_tracker()
+    calculator = AgencyMetricsCalculator()
+    
+    agent_id = payload.get("agent_id")
+    if not agent_id:
+        raise HTTPException(status_code=400, detail="agent_id is required")
+    
+    # Parse decisions
+    decisions = None
+    if "decisions" in payload:
+        decisions = []
+        for d in payload["decisions"]:
+            decisions.append(DecisionPoint(
+                agent_id=agent_id,
+                options_considered=d.get("options_considered", 3),
+                choice_made=d.get("choice_made", 0),
+                choice_reasoning=d.get("choice_reasoning", ""),
+                origin=ActionOrigin(d.get("origin", "prompted")),
+                external_prompt=d.get("external_prompt"),
+                decision_confidence=d.get("decision_confidence", 0.5),
+                time_taken_ms=d.get("time_taken_ms", 100.0),
+            ))
+    
+    # Parse actions
+    actions = None
+    if "actions" in payload:
+        actions = [ActionOrigin(a) for a in payload["actions"]]
+    
+    # Parse resources
+    resources = None
+    if "resources" in payload:
+        resources = []
+        for r in payload["resources"]:
+            resources.append(ResourceControl(
+                resource_type=r.get("resource_type", "unknown"),
+                total_capacity=r.get("total_capacity", 100.0),
+                agent_controlled=r.get("agent_controlled", 50.0),
+                externally_allocated=r.get("externally_allocated", 50.0),
+                swap_frequency=r.get("swap_frequency", 0.0),
+                autonomy_in_allocation=r.get("autonomy_in_allocation", 0.5),
+            ))
+    
+    # Calculate and record metrics
+    metrics = tracker.calculate_and_record(
+        agent_id=agent_id,
+        decisions=decisions,
+        actions=actions,
+        resources=resources,
+        individual_actions=payload.get("individual_actions", 10),
+        collective_actions=payload.get("collective_actions", 10),
+        individual_success=payload.get("individual_success", 0.5),
+        collective_success=payload.get("collective_success", 0.5),
+    )
+    
+    return {
+        "status": "recorded",
+        "agent_id": agent_id,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        **metrics.to_dict(),
+    }
+
+
+@router.post("/agency/generate-sample")
+async def generate_sample_metrics(
+    payload: Dict[str, Any],
+    authenticated: str = Depends(verify_auth),
+) -> Dict[str, Any]:
+    """
+    Generate sample agency metrics for testing purposes.
+    
+    Payload should contain:
+    - agent_id: Agent identifier
+    - high_autonomy: If True, create high autonomy metrics (default: True)
+    - high_agency: If True, create high agency metrics (default: True)
+    """
+    tracker = get_agency_tracker()
+    
+    agent_id = payload.get("agent_id")
+    if not agent_id:
+        raise HTTPException(status_code=400, detail="agent_id is required")
+    
+    high_autonomy = payload.get("high_autonomy", True)
+    high_agency = payload.get("high_agency", True)
+    
+    metrics = create_sample_metrics(
+        agent_id=agent_id,
+        high_autonomy=high_autonomy,
+        high_agency=high_agency,
+    )
+    
+    tracker.record_agent_metrics(metrics)
+    
+    return {
+        "status": "generated",
+        "agent_id": agent_id,
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        **metrics.to_dict(),
+    }
+
+
+@router.get("/agency/all")
+async def get_all_agent_metrics(
+    authenticated: str = Depends(verify_auth),
+) -> Dict[str, Any]:
+    """
+    Get agency metrics for all tracked agents.
+    
+    Returns a list of all agent metrics currently tracked by the system.
+    """
+    tracker = get_agency_tracker()
+    snapshot = tracker.get_current_snapshot()
+    
+    return {
+        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "total_agents": len(snapshot.agent_metrics),
+        "agents": [
+            {
+                "agent_id": agent_id,
+                **metrics.to_dict(),
+            }
+            for agent_id, metrics in snapshot.agent_metrics.items()
+        ],
+    }
+
+
+# =============================================================================
+# Existing Consciousness Metrics Endpoints
+# =============================================================================
 
 @router.get("/statistics")
 async def get_consciousness_statistics(

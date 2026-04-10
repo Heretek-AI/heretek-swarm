@@ -21,6 +21,7 @@ Example:
 
 from heretek_swarm.api.main import app
 from heretek_swarm.api import websockets, consensus, plugins, observability
+from heretek_swarm.api import consciousness, emergent_intelligence, collective_evolution
 
 __all__ = [
     "app",
@@ -28,4 +29,7 @@ __all__ = [
     "consensus",
     "plugins",
     "observability",
+    "consciousness",
+    "emergent_intelligence",
+    "collective_evolution",
 ]
