@@ -126,7 +126,6 @@ class TestObservabilityAPI:
     def client(self, app):
         """Create test client."""
         return TestClient(app)
-    
     @pytest.fixture
     def mock_stream(self):
         """Mock metrics stream."""
