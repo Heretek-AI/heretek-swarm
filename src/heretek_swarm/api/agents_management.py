@@ -25,7 +25,6 @@ Enhanced with Behavior Profiling:
 - GET /api/agents/profiling/prometheus - Prometheus metrics export
 """
 
-import asyncio
 from dataclasses import field
 from typing import Any, Dict, List, Optional
 from datetime import datetime, timezone

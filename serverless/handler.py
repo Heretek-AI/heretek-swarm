@@ -20,7 +20,7 @@ import json
 import time
 import logging
 from datetime import datetime, timezone
-from typing import Dict, Any, Optional, Tuple
+from typing import Dict, Any
 from dataclasses import dataclass
 import structlog
 
@@ -254,7 +254,7 @@ def handle_agents_api(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     
     # Extract path parameters
     path_params = event.get("pathParameters", {})
-    instance_id = path_params.get("proxy", "").split("/")[-1] if path_params else None
+    _instance_id = path_params.get("proxy", "").split("/")[-1] if path_params else None
     
     # Simple routing based on path
     if "/profiling" in path:
@@ -464,7 +464,7 @@ def async_processor(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
 def process_agent_deploy(message_body: Dict[str, Any]) -> None:
     """Process agent deployment task."""
     agent_type = message_body.get("agent_type")
-    config = message_body.get("config", {})
+    _config = message_body.get("config", {})
     
     log.info("deploying_agent", agent_type=agent_type)
     # Implementation would deploy agent using runtime registry

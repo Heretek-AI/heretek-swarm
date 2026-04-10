@@ -13,7 +13,7 @@ Reference: MiniMax Audit Lines 585-725
 """
 
 import os
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 from contextlib import asynccontextmanager
 
 from fastapi import FastAPI, HTTPException, Depends
@@ -33,7 +33,6 @@ from heretek_swarm.config.service import (
 from heretek_swarm.config.loader import (
     initialize_config_loader,
     get_config,
-    get_config_loader,
 )
 
 # Import mem0 backend
@@ -198,7 +197,6 @@ logger.info("Rate limiting configured", enabled=rate_limit_enabled)
 async def check_gateway() -> Dict[str, Any]:
     """Check the EventMesh gateway status."""
     try:
-        from heretek_swarm.gateway import EventMesh
         # Check if event mesh is accessible
         # Note: In production, this would check actual connections
         return {

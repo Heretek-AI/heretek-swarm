@@ -14,7 +14,6 @@ import sys
 import argparse
 import re
 from pathlib import Path
-from typing import Optional
 import logging
 
 # Configure logging

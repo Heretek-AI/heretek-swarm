@@ -25,22 +25,16 @@ import structlog
 from heretek_swarm.consensus import (
     MAKERConsensus,
     ConsensusState,
-    ConsensusResult,
     Vote,
 )
 from heretek_swarm.consensus.deliberation import (
     DeliberationEngine,
     Argument,
-    CounterArgument,
     Evidence,
     Position,
-    ConsensusConfidence,
-    DissentRecord,
 )
 from heretek_swarm.consensus.audit import (
     ConsensusAuditTrail,
-    DecisionAudit,
-    DecisionOutcome,
 )
 
 logger = structlog.get_logger("api.consensus")

@@ -13,7 +13,6 @@ from fastapi import APIRouter, HTTPException, Depends
 import structlog
 
 from evaluation.evaluator import (
-    AgentEvaluator,
     get_evaluator,
     TestCase,
     EvaluationMetric,

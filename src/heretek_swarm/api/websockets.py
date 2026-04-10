@@ -16,10 +16,9 @@ import secrets
 from typing import Any, Dict, Optional, Tuple
 from datetime import datetime, timedelta, timezone
 
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect, HTTPException, Query
+from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Query
 import structlog
 
-from heretek_swarm.gateway import EventMesh
 
 logger = structlog.get_logger("api.websockets")
 
@@ -412,7 +411,7 @@ async def execution_websocket(
             try:
                 # Wait for messages from client (e.g., pause, cancel)
                 data = await asyncio.wait_for(websocket.receive_text(), timeout=30.0)
-                message = json.loads(data)
+                _message = json.loads(data)
                 
                 # Handle client commands
                 if message.get("command") == "cancel":
@@ -610,7 +609,7 @@ async def agent_events_websocket(
             try:
                 # Wait for client messages
                 data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
-                message = json.loads(data)
+                _message = json.loads(data)
                 
                 # Handle subscription/unsubscription to event types
                 if message.get("action") == "subscribe":
@@ -687,7 +686,7 @@ async def agent_status_websocket(
         while True:
             try:
                 data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
-                message = json.loads(data)
+                _message = json.loads(data)
                 
                 # Handle subscription/unsubscription
                 action = message.get("action")
@@ -787,7 +786,7 @@ async def workflow_progress_websocket(
         while True:
             try:
                 data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
-                message = json.loads(data)
+                _message = json.loads(data)
                 
                 # Handle subscription/unsubscription
                 action = message.get("action")
@@ -883,7 +882,7 @@ async def agent_metrics_websocket(
         while True:
             try:
                 data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
-                message = json.loads(data)
+                _message = json.loads(data)
                 
                 # Handle subscription/unsubscription
                 action = message.get("action")
@@ -978,7 +977,7 @@ async def dashboard_websocket(
             try:
                 # Wait for client messages (heartbeat, subscriptions)
                 data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
-                message = json.loads(data)
+                _message = json.loads(data)
                 
                 # Handle client requests
                 if message.get("action") == "ping":
@@ -1068,7 +1067,7 @@ async def observability_websocket(
             try:
                 # Wait for client messages (heartbeat, subscriptions)
                 data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
-                message = json.loads(data)
+                _message = json.loads(data)
                 
                 # Handle client requests
                 if message.get("action") == "ping":
@@ -1138,13 +1137,13 @@ async def all_agents_websocket(
     logger.info("All agents WebSocket connected")
     
     # Track this connection for broadcasting
-    all_agent_listeners = set([websocket])
+    _all_agent_listeners = set([websocket])
     
     try:
         while True:
             try:
                 data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
-                message = json.loads(data)
+                _message = json.loads(data)
                 
             except asyncio.TimeoutError:
                 await websocket.send_json({

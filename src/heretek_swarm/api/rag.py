@@ -12,8 +12,8 @@ from typing import Dict, List, Optional, Any
 from fastapi import APIRouter, HTTPException, Depends, UploadFile
 import structlog
 
-from rag.rag_pipeline import RAGPipeline, RAGConfig, RAGResult
-from rag.document_processor import DocumentProcessor, ProcessingConfig
+from rag.rag_pipeline import RAGPipeline
+from rag.document_processor import ProcessingConfig
 from ..gateway.auth import verify_auth
 
 logger = structlog.get_logger(__name__)
@@ -66,7 +66,7 @@ async def ingest_document(
         content = await file.read()
         
         # Build processing config
-        config = ProcessingConfig(
+        _config = ProcessingConfig(
             chunk_strategy=chunk_strategy,
             extract_metadata=True,
             normalize_whitespace=True,

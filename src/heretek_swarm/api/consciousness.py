@@ -7,16 +7,13 @@ and agent connectivity analysis.
 """
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, Optional
 from datetime import datetime, timedelta, timezone
 
 from ..gateway.auth import verify_auth
 from ..plugins.consciousness_enhanced import (
     EnhancedConsciousnessPlugin,
     ConsciousnessState,
-    IITConnectivity,
-    FEPMetrics,
-    ConsciousnessMetrics,
 )
 from ..plugins.manager import plugin_manager
 

@@ -14,7 +14,7 @@ Provides HTTP endpoints for:
 All endpoints require authentication and follow zero-trust principles.
 """
 
-from typing import Any, Dict, List, Optional
+from typing import Optional
 from datetime import datetime, timezone
 
 from fastapi import APIRouter, HTTPException, Depends, Query
@@ -22,14 +22,10 @@ import structlog
 
 from heretek_swarm.gateway.auth import verify_auth
 from heretek_swarm.collective import (
-    AdaptiveLearningRateController,
-    PatternBasedAgentAdaptor,
-    EmergentPatternDetector,
     CollectiveIntelligenceMetrics,
     MetricsExporter,
     EmergentPatternClass,
     EmergenceLevel,
-    MetricCategory,
 )
 
 logger = structlog.get_logger(__name__)

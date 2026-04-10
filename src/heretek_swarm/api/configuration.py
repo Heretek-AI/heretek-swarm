@@ -7,13 +7,11 @@ Provides CRUD operations through a RESTful API.
 
 from __future__ import annotations
 
-import json
 from datetime import datetime
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, Optional
 from uuid import UUID
 
 from fastapi import APIRouter, Depends, HTTPException, Query
-from pydantic import BaseModel, Field
 
 import structlog
 
@@ -22,28 +20,18 @@ from heretek_swarm.config.service import (
     get_config_service,
 )
 from heretek_swarm.config.models import (
-    UserConfiguration,
     UserConfigurationCreate,
     UserConfigurationUpdate,
-    LLMProvider,
     LLMProviderCreate,
     LLMProviderUpdate,
     LLMProviderTestRequest,
-    LLMProviderTestResponse,
-    EmbeddingProvider,
     EmbeddingProviderCreate,
     EmbeddingProviderUpdate,
     EmbeddingProviderTestRequest,
-    EmbeddingProviderTestResponse,
-    AgentConfig,
     AgentConfigCreate,
     AgentConfigUpdate,
-    ConfigAuditLog,
-    ConfigurationExport,
     ConfigurationImport,
     ImportOptions,
-    ImportResult,
-    HealthStatus,
 )
 from heretek_swarm.gateway.auth import verify_auth
 
@@ -651,7 +639,6 @@ async def export_configuration_bundle(
     Returns:
         Complete configuration export with metadata
     """
-    from datetime import datetime
     
     export_data = await service.export_configurations(exported_by=authenticated)
     

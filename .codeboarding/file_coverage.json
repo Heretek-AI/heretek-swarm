@@ -1,10 +1,19 @@
 {
   "version": 1,
-  "generated_at": "2026-04-06T22:16:22.299877+00:00",
+  "generated_at": "2026-04-09T01:43:06.884381+00:00",
   "analyzed_files": [
     "dashboard/frontend/src/App.tsx",
     "dashboard/frontend/src/api/agents.ts",
+    "dashboard/frontend/src/api/client.ts",
+    "dashboard/frontend/src/api/configuration.ts",
     "dashboard/frontend/src/api/consciousness.ts",
+    "dashboard/frontend/src/components/AgentMetricsGrid.tsx",
+    "dashboard/frontend/src/components/Agents/AgentCard.tsx",
+    "dashboard/frontend/src/components/Agents/AgentConfigPanel.tsx",
+    "dashboard/frontend/src/components/Agents/AgentControls.tsx",
+    "dashboard/frontend/src/components/Agents/AgentsPage.tsx",
+    "dashboard/frontend/src/components/Agents/DeployAgentModal.tsx",
+    "dashboard/frontend/src/components/Agents/index.ts",
     "dashboard/frontend/src/components/Canvas/AgentNode.tsx",
     "dashboard/frontend/src/components/Canvas/Canvas.tsx",
     "dashboard/frontend/src/components/Canvas/CanvasToolbar.tsx",
@@ -20,34 +29,76 @@
     "dashboard/frontend/src/components/Consciousness/AgentStatusGrid.tsx",
     "dashboard/frontend/src/components/Consciousness/ConsciousnessDashboard.tsx",
     "dashboard/frontend/src/components/Consciousness/ConsciousnessGauge.tsx",
+    "dashboard/frontend/src/components/Consciousness/ConsciousnessPage.tsx",
     "dashboard/frontend/src/components/Consciousness/RealTimeAgentPanel.tsx",
     "dashboard/frontend/src/components/Consciousness/index.ts",
     "dashboard/frontend/src/components/Consciousness/types.ts",
+    "dashboard/frontend/src/components/ConsciousnessMetricsPanel.tsx",
     "dashboard/frontend/src/components/Dashboard/Dashboard.tsx",
+    "dashboard/frontend/src/components/Dashboard/Layout.tsx",
     "dashboard/frontend/src/components/Dashboard/UnifiedDashboard.tsx",
+    "dashboard/frontend/src/components/Dashboard/index.ts",
+    "dashboard/frontend/src/components/Home/HomePage.tsx",
+    "dashboard/frontend/src/components/Home/index.ts",
+    "dashboard/frontend/src/components/Logs/LogsPage.tsx",
+    "dashboard/frontend/src/components/Logs/index.ts",
     "dashboard/frontend/src/components/Observability/A2AMessageFlow.tsx",
     "dashboard/frontend/src/components/Observability/LLMTrace.tsx",
     "dashboard/frontend/src/components/Observability/Observability.tsx",
     "dashboard/frontend/src/components/Observability/index.tsx",
+    "dashboard/frontend/src/components/Settings/AgentDefaultsSection.tsx",
+    "dashboard/frontend/src/components/Settings/DeveloperModeToggle.tsx",
+    "dashboard/frontend/src/components/Settings/EmbeddingProvidersSection.tsx",
+    "dashboard/frontend/src/components/Settings/ImportExportSection.tsx",
+    "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
+    "dashboard/frontend/src/components/Settings/SettingsPage.tsx",
+    "dashboard/frontend/src/components/Settings/SystemConfigSection.tsx",
+    "dashboard/frontend/src/components/Settings/index.ts",
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+    "dashboard/frontend/src/components/Setup/index.ts",
+    "dashboard/frontend/src/components/SwarmHealthDashboard.tsx",
+    "dashboard/frontend/src/components/UI/ComponentErrorBoundary.tsx",
+    "dashboard/frontend/src/components/UI/DataTable.tsx",
+    "dashboard/frontend/src/components/UI/DebugPanel.tsx",
+    "dashboard/frontend/src/components/UI/EmptyState.tsx",
+    "dashboard/frontend/src/components/UI/ErrorBoundary.tsx",
+    "dashboard/frontend/src/components/UI/LoadingSpinner.tsx",
+    "dashboard/frontend/src/components/UI/MetricCard.tsx",
+    "dashboard/frontend/src/components/UI/PerformanceOverlay.tsx",
+    "dashboard/frontend/src/components/UI/StatusBadge.tsx",
+    "dashboard/frontend/src/components/UI/Toast.tsx",
+    "dashboard/frontend/src/components/UI/index.ts",
+    "dashboard/frontend/src/components/Workflow/NodeConfigPanel.tsx",
     "dashboard/frontend/src/components/WorkflowBuilder/AgentNode.tsx",
     "dashboard/frontend/src/components/WorkflowBuilder/ConnectorNode.tsx",
     "dashboard/frontend/src/components/WorkflowBuilder/DecisionNode.tsx",
+    "dashboard/frontend/src/components/WorkflowBuilder/DynamicHandles.tsx",
     "dashboard/frontend/src/components/WorkflowBuilder/LLMNode.tsx",
     "dashboard/frontend/src/components/WorkflowBuilder/MemoryNode.tsx",
+    "dashboard/frontend/src/components/WorkflowBuilder/NodeGroup.tsx",
     "dashboard/frontend/src/components/WorkflowBuilder/ToolNode.tsx",
+    "dashboard/frontend/src/components/WorkflowBuilder/ValidationPanel.tsx",
     "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
     "dashboard/frontend/src/components/WorkflowBuilder/index.ts",
     "dashboard/frontend/src/components/WorkflowBuilder/types.ts",
+    "dashboard/frontend/src/hooks/useAgentHandles.ts",
+    "dashboard/frontend/src/hooks/useNodeGrouping.ts",
+    "dashboard/frontend/src/hooks/useRealTimeAgentUpdates.ts",
     "dashboard/frontend/src/hooks/useWebSocket.ts",
     "dashboard/frontend/src/main.tsx",
+    "dashboard/frontend/src/store/middleware/debugMiddleware.ts",
     "dashboard/frontend/src/stores/canvasStore.ts",
     "dashboard/frontend/src/stores/metricsStore.ts",
     "dashboard/frontend/src/types/reactflow.d.ts",
+    "dashboard/frontend/src/utils/logger.ts",
     "dashboard/frontend/src/vite-env.d.ts",
     "migrations/scripts/setup_qdrant_collections.py",
     "scripts/check_latency_baseline.py",
     "scripts/run_migration.py",
     "scripts/run_migrations.py",
+    "scripts/wire_agents.py",
+    "scripts/wire_agents_session44.py",
+    "serverless/handler.py",
     "src/__init__.py",
     "src/evaluation/__init__.py",
     "src/evaluation/evaluator.py",
@@ -67,6 +118,7 @@
     "src/heretek_swarm/actors/factory.py",
     "src/heretek_swarm/actors/habit_forge.py",
     "src/heretek_swarm/actors/handoff.py",
+    "src/heretek_swarm/actors/handoff_handlers.py",
     "src/heretek_swarm/actors/historian.py",
     "src/heretek_swarm/actors/langroid_adapter.py",
     "src/heretek_swarm/actors/metis.py",
@@ -74,14 +126,19 @@
     "src/heretek_swarm/actors/perceiver.py",
     "src/heretek_swarm/actors/perceiver_plus.py",
     "src/heretek_swarm/actors/prism.py",
+    "src/heretek_swarm/actors/profiling.py",
     "src/heretek_swarm/actors/sentinel.py",
     "src/heretek_swarm/actors/sentinel_prime.py",
+    "src/heretek_swarm/actors/stubs.py",
     "src/heretek_swarm/actors/supervisor.py",
     "src/heretek_swarm/actors/triad.py",
     "src/heretek_swarm/actors/validation.py",
     "src/heretek_swarm/api/__init__.py",
+    "src/heretek_swarm/api/agents_management.py",
+    "src/heretek_swarm/api/configuration.py",
     "src/heretek_swarm/api/consciousness.py",
     "src/heretek_swarm/api/consensus.py",
+    "src/heretek_swarm/api/emergent_intelligence.py",
     "src/heretek_swarm/api/evaluation.py",
     "src/heretek_swarm/api/main.py",
     "src/heretek_swarm/api/observability.py",
@@ -91,30 +148,88 @@
     "src/heretek_swarm/api/websockets.py",
     "src/heretek_swarm/api/workflows.py",
     "src/heretek_swarm/channels/__init__.py",
+    "src/heretek_swarm/channels/defaults.py",
     "src/heretek_swarm/channels/registry.py",
     "src/heretek_swarm/collective/__init__.py",
+    "src/heretek_swarm/collective/adaptive_learning.py",
+    "src/heretek_swarm/collective/agent_adaptation.py",
+    "src/heretek_swarm/collective/distributed_learning.py",
+    "src/heretek_swarm/collective/emergent_detection.py",
+    "src/heretek_swarm/collective/knowledge_transform.py",
+    "src/heretek_swarm/collective/learning.py",
+    "src/heretek_swarm/collective/metrics.py",
+    "src/heretek_swarm/collective/pattern_library.py",
     "src/heretek_swarm/collective/society.py",
+    "src/heretek_swarm/collective/swarm_intelligence.py",
+    "src/heretek_swarm/config/__init__.py",
+    "src/heretek_swarm/config/loader.py",
+    "src/heretek_swarm/config/models.py",
+    "src/heretek_swarm/config/service.py",
+    "src/heretek_swarm/consciousness/fep_active_inference.py",
+    "src/heretek_swarm/consciousness/iit_phi.py",
+    "src/heretek_swarm/consciousness/phi_training.py",
     "src/heretek_swarm/consensus/__init__.py",
+    "src/heretek_swarm/consensus/audit.py",
+    "src/heretek_swarm/consensus/deliberation.py",
+    "src/heretek_swarm/consensus/expertise.py",
     "src/heretek_swarm/consensus/maker.py",
+    "src/heretek_swarm/consensus/maker_enhanced.py",
     "src/heretek_swarm/consensus/raft_election.py",
+    "src/heretek_swarm/consensus/swarm_deliberation.py",
+    "src/heretek_swarm/embeddings/providers/__init__.py",
+    "src/heretek_swarm/embeddings/providers/base.py",
+    "src/heretek_swarm/embeddings/providers/factory.py",
+    "src/heretek_swarm/embeddings/providers/ollama_provider.py",
+    "src/heretek_swarm/embeddings/providers/openai_provider.py",
     "src/heretek_swarm/gateway/__init__.py",
     "src/heretek_swarm/gateway/a2a_protocol.py",
     "src/heretek_swarm/gateway/a2a_server.py",
     "src/heretek_swarm/gateway/auth.py",
+    "src/heretek_swarm/gateway/content_router.py",
     "src/heretek_swarm/gateway/event_mesh.py",
+    "src/heretek_swarm/gateway/jetstream_manager.py",
+    "src/heretek_swarm/gateway/message_replay.py",
     "src/heretek_swarm/gateway/nats_event_mesh.py",
+    "src/heretek_swarm/integrations/__init__.py",
+    "src/heretek_swarm/integrations/anthropic.py",
+    "src/heretek_swarm/integrations/autogen.py",
+    "src/heretek_swarm/integrations/crewai.py",
     "src/heretek_swarm/integrations/discord_bot.py",
+    "src/heretek_swarm/integrations/langgraph.py",
+    "src/heretek_swarm/integrations/manager.py",
+    "src/heretek_swarm/integrations/openai_assistants.py",
     "src/heretek_swarm/integrations/praison_handoffs.py",
     "src/heretek_swarm/integrations/slack_bot.py",
     "src/heretek_swarm/integrations/telegram_bot.py",
+    "src/heretek_swarm/interfaces/__init__.py",
+    "src/heretek_swarm/interfaces/providers.py",
+    "src/heretek_swarm/interfaces/registry.py",
     "src/heretek_swarm/knowledge/__init__.py",
     "src/heretek_swarm/knowledge/unified_access.py",
+    "src/heretek_swarm/llm/providers/__init__.py",
+    "src/heretek_swarm/llm/providers/base.py",
+    "src/heretek_swarm/llm/providers/factory.py",
+    "src/heretek_swarm/llm/providers/lemonade_provider.py",
+    "src/heretek_swarm/llm/providers/llamacpp_provider.py",
+    "src/heretek_swarm/llm/providers/minimax_provider.py",
+    "src/heretek_swarm/llm/providers/ollama_provider.py",
+    "src/heretek_swarm/llm/providers/openai_compatible.py",
+    "src/heretek_swarm/llm/providers/openai_provider.py",
+    "src/heretek_swarm/llm/providers/zai_provider.py",
     "src/heretek_swarm/memory/__init__.py",
+    "src/heretek_swarm/memory/access_patterns.py",
     "src/heretek_swarm/memory/base.py",
+    "src/heretek_swarm/memory/compression.py",
     "src/heretek_swarm/memory/eliza_memory.py",
+    "src/heretek_swarm/memory/migration_strategies.py",
     "src/heretek_swarm/memory/persistent.py",
+    "src/heretek_swarm/memory/prefetcher.py",
+    "src/heretek_swarm/memory/tiering.py",
+    "src/heretek_swarm/observability/__init__.py",
+    "src/heretek_swarm/observability/metrics.py",
     "src/heretek_swarm/orchestration/__init__.py",
     "src/heretek_swarm/orchestration/heavyswarm.py",
+    "src/heretek_swarm/orchestration/phase_handlers.py",
     "src/heretek_swarm/plugins/__init__.py",
     "src/heretek_swarm/plugins/consciousness.py",
     "src/heretek_swarm/plugins/consciousness_enhanced.py",
@@ -122,6 +237,9 @@
     "src/heretek_swarm/plugins/examples.py",
     "src/heretek_swarm/plugins/liberation.py",
     "src/heretek_swarm/plugins/manager.py",
+    "src/heretek_swarm/rag/__init__.py",
+    "src/heretek_swarm/rag/hybrid_retriever.py",
+    "src/heretek_swarm/rag/strategies.py",
     "src/heretek_swarm/runtime/__init__.py",
     "src/heretek_swarm/runtime/agent_runtime.py",
     "src/heretek_swarm/runtime/autonomous_runtime.py",
@@ -129,18 +247,33 @@
     "src/heretek_swarm/runtime/characters.py",
     "src/heretek_swarm/runtime/main_loop.py",
     "src/heretek_swarm/runtime/registry.py",
+    "src/heretek_swarm/runtime/registry_enhanced.py",
+    "src/heretek_swarm/runtime/scaling.py",
     "src/heretek_swarm/runtime/tools.py",
     "src/heretek_swarm/security/__init__.py",
+    "src/heretek_swarm/security/adversarial.py",
+    "src/heretek_swarm/security/ddos_protection.py",
     "src/heretek_swarm/security/guardrails.py",
+    "src/heretek_swarm/security/validators.py",
     "src/heretek_swarm/security/zero_trust.py",
     "src/heretek_swarm/state/__init__.py",
+    "src/heretek_swarm/state/event_store.py",
+    "src/heretek_swarm/state/repository.py",
     "src/heretek_swarm/tools/__init__.py",
     "src/heretek_swarm/tools/base.py",
     "src/heretek_swarm/tools/examples.py",
     "src/heretek_swarm/tools/mcp_tools.py",
+    "src/heretek_swarm/tools/registrars.py",
     "src/heretek_swarm/tools/registry.py",
+    "src/heretek_swarm/utils/__init__.py",
+    "src/heretek_swarm/utils/lazy_imports.py",
+    "src/heretek_swarm/validation/__init__.py",
+    "src/heretek_swarm/validation/agent_messages.py",
+    "src/heretek_swarm/validation/llm_output.py",
     "src/heretek_swarm/workflow/__init__.py",
+    "src/heretek_swarm/workflow/cycle_detector.py",
     "src/heretek_swarm/workflow/engine.py",
+    "src/heretek_swarm/workflow/validator.py",
     "src/memory/__init__.py",
     "src/memory/base.py",
     "src/memory/embeddings.py",
@@ -172,7 +305,15 @@
       "reason": "other"
     },
     {
+      "path": "DEEP_RESEARCH.md",
+      "reason": "other"
+    },
+    {
       "path": "Dockerfile",
+      "reason": "other"
+    },
+    {
+      "path": "PATH_TO_EMERGENCE.md",
       "reason": "other"
     },
     {
@@ -181,6 +322,18 @@
     },
     {
       "path": "README.md",
+      "reason": "other"
+    },
+    {
+      "path": "bandit_report.json",
+      "reason": "other"
+    },
+    {
+      "path": "codeboarding_results.md",
+      "reason": "other"
+    },
+    {
+      "path": "dashboard/frontend/DEBUG_MODE.md",
       "reason": "other"
     },
     {
@@ -200,8 +353,28 @@
       "reason": "other"
     },
     {
+      "path": "dashboard/frontend/postcss.config.js",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "dashboard/frontend/src/hooks/__tests__/useAgentHandles.test.tsx",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "dashboard/frontend/src/hooks/__tests__/useNodeGrouping.test.tsx",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "dashboard/frontend/src/hooks/__tests__/useRealTimeAgentUpdates.test.tsx",
+      "reason": "codeboardingignore"
+    },
+    {
       "path": "dashboard/frontend/src/index.css",
       "reason": "other"
+    },
+    {
+      "path": "dashboard/frontend/tailwind.config.js",
+      "reason": "codeboardingignore"
     },
     {
       "path": "dashboard/frontend/tsconfig.json",
@@ -214,6 +387,10 @@
     {
       "path": "dashboard/frontend/vite.config.ts",
       "reason": "codeboardingignore"
+    },
+    {
+      "path": "deploy.sh",
+      "reason": "other"
     },
     {
       "path": "docker/Dockerfile",
@@ -248,6 +425,10 @@
       "reason": "other"
     },
     {
+      "path": "docs/ARCHITECTURE.md",
+      "reason": "other"
+    },
+    {
       "path": "docs/AUTONOMOUS_WORKFLOW.md",
       "reason": "other"
     },
@@ -264,19 +445,15 @@
       "reason": "other"
     },
     {
-      "path": "docs/DEPLOYMENT_AUTONOMOUS.md",
-      "reason": "other"
-    },
-    {
       "path": "docs/EXPANSION_ROADMAP.md",
       "reason": "other"
     },
     {
-      "path": "docs/GATEWAY_COMMUNICATION.md",
+      "path": "docs/GAP_ANALYSIS_EXTERNAL_REPOS.md",
       "reason": "other"
     },
     {
-      "path": "docs/GITHUB_SUGGESTIONS.md",
+      "path": "docs/GITHUB_SUGGESTIONS_EVALUATION.md",
       "reason": "other"
     },
     {
@@ -288,7 +465,7 @@
       "reason": "other"
     },
     {
-      "path": "docs/README.md",
+      "path": "docs/P2_P3_Implementation_Plans.md",
       "reason": "other"
     },
     {
@@ -296,11 +473,31 @@
       "reason": "other"
     },
     {
+      "path": "docs/REMEDIATION_GUIDE.md",
+      "reason": "other"
+    },
+    {
+      "path": "docs/architecture/ARCHITECTURE_REALITY.md",
+      "reason": "other"
+    },
+    {
+      "path": "docs/architecture/EXTERNAL_PATTERNS_ANALYSIS.md",
+      "reason": "other"
+    },
+    {
       "path": "docs/architecture/actors-system.md",
       "reason": "other"
     },
     {
+      "path": "docs/architecture/collective-learning.md",
+      "reason": "other"
+    },
+    {
       "path": "docs/architecture/consensus-mechanism.md",
+      "reason": "other"
+    },
+    {
+      "path": "docs/architecture/emergent-intelligence.md",
       "reason": "other"
     },
     {
@@ -416,7 +613,43 @@
       "reason": "other"
     },
     {
+      "path": "migrations/005_create_collective_learning_tables.sql",
+      "reason": "other"
+    },
+    {
+      "path": "migrations/006_create_consensus_enhancement_tables.sql",
+      "reason": "other"
+    },
+    {
+      "path": "migrations/007_create_memory_optimization_tables.sql",
+      "reason": "other"
+    },
+    {
+      "path": "migrations/008_create_agent_wiring_state_tables.sql",
+      "reason": "other"
+    },
+    {
+      "path": "migrations/009_create_configuration_tables.sql",
+      "reason": "other"
+    },
+    {
       "path": "migrations/README.md",
+      "reason": "other"
+    },
+    {
+      "path": "migrations/rollbacks/005_rollback_collective_learning.sql",
+      "reason": "other"
+    },
+    {
+      "path": "migrations/rollbacks/006_rollback_consensus_enhancement.sql",
+      "reason": "other"
+    },
+    {
+      "path": "migrations/rollbacks/007_rollback_memory_optimization.sql",
+      "reason": "other"
+    },
+    {
+      "path": "migrations/rollbacks/008_rollback_agent_wiring_state.sql",
       "reason": "other"
     },
     {
@@ -432,6 +665,10 @@
       "reason": "other"
     },
     {
+      "path": "requirements.txt",
+      "reason": "other"
+    },
+    {
       "path": "scripts/deploy-k8s.sh",
       "reason": "other"
     },
@@ -442,6 +679,10 @@
     {
       "path": "scripts/test_mem0.py",
       "reason": "codeboardingignore"
+    },
+    {
+      "path": "serverless/serverless.yml",
+      "reason": "other"
     },
     {
       "path": "src/heretek_swarm/runtime/characters/alpha.json",
@@ -540,6 +781,10 @@
       "reason": "other"
     },
     {
+      "path": "test_results_full.txt",
+      "reason": "other"
+    },
+    {
       "path": "tests/__init__.py",
       "reason": "codeboardingignore"
     },
@@ -548,11 +793,91 @@
       "reason": "codeboardingignore"
     },
     {
+      "path": "tests/actors/test_base_actor.py",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/actors/test_empath.py",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/actors/test_metis.py",
+      "reason": "codeboardingignore"
+    },
+    {
       "path": "tests/actors/test_p1_fixes.py",
       "reason": "codeboardingignore"
     },
     {
+      "path": "tests/actors/test_perceiver.py",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/actors/test_profiling.py",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/collective/test_collective_learning.py",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/collective/test_emergent_detection.py",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/collective/test_session46_emergent_intelligence.py",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/collective/test_swarm_intelligence.py",
+      "reason": "codeboardingignore"
+    },
+    {
       "path": "tests/conftest.py",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/consciousness/__init__.py",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/consciousness/test_fep_active_inference.py",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/consciousness/test_iit_phi.py",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/consciousness/test_phi_training.py",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/consensus/test_audit.py",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/consensus/test_deliberation.py",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/consensus/test_expertise.py",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/consensus/test_maker.py",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/consensus/test_maker_persistence.py",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/consensus/test_maker_weighting.py",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/consensus/test_swarm_deliberation.py",
       "reason": "codeboardingignore"
     },
     {
@@ -565,6 +890,18 @@
     },
     {
       "path": "tests/fixtures/test_data.py",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/gateway/test_content_router.py",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/gateway/test_jetstream_manager.py",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/gateway/test_message_replay.py",
       "reason": "codeboardingignore"
     },
     {
@@ -632,6 +969,10 @@
       "reason": "codeboardingignore"
     },
     {
+      "path": "tests/integrations/test_session47_integrations.py",
+      "reason": "codeboardingignore"
+    },
+    {
       "path": "tests/knowledge/test_unified_access.py",
       "reason": "codeboardingignore"
     },
@@ -676,6 +1017,26 @@
       "reason": "codeboardingignore"
     },
     {
+      "path": "tests/memory/test_memory_optimization.py",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/memory/test_tiering_fix.py",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/memory/test_tiering_integration.py",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/observability/test_dashboard_api.py",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/observability/test_metrics_collector.py",
+      "reason": "codeboardingignore"
+    },
+    {
       "path": "tests/plugins/test_consciousness_enhanced.py",
       "reason": "codeboardingignore"
     },
@@ -684,11 +1045,55 @@
       "reason": "codeboardingignore"
     },
     {
+      "path": "tests/rag/__init__.py",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/rag/test_strategies.py",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/runtime/test_scaling.py",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/security/test_adversarial.py",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/security/test_output_validation.py",
+      "reason": "codeboardingignore"
+    },
+    {
       "path": "tests/security/test_p0_security_fixes.py",
       "reason": "codeboardingignore"
     },
     {
       "path": "tests/security/test_security.py",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/security/test_zero_trust.py",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/serverless/__init__.py",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/serverless/test_deployment.py",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/state/test_actor_integration.py",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/state/test_event_store.py",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/state/test_repository.py",
       "reason": "codeboardingignore"
     },
     {
@@ -742,15 +1147,43 @@
     {
       "path": "tests/unit/test_actor_factory.py",
       "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/validation/__init__.py",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/validation/test_agent_messages.py",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/validation/test_integration.py",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/validation/test_llm_output_validator.py",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/workflow/test_cycle_detector.py",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/workflow/test_engine_security.py",
+      "reason": "codeboardingignore"
+    },
+    {
+      "path": "tests/workflow/test_validator.py",
+      "reason": "codeboardingignore"
     }
   ],
   "summary": {
-    "total_files": 307,
-    "analyzed": 163,
-    "not_analyzed": 144,
+    "total_files": 515,
+    "analyzed": 296,
+    "not_analyzed": 219,
     "not_analyzed_by_reason": {
-      "other": 91,
-      "codeboardingignore": 53
+      "other": 114,
+      "codeboardingignore": 105
     }
   }
 }

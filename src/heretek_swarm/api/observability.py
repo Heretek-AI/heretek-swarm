@@ -19,15 +19,10 @@ import structlog
 import uuid
 
 from heretek_swarm.gateway.auth import verify_auth
-from heretek_swarm.security.zero_trust import ZeroTrustValidator, ZeroTrustResult, LayerResult, Severity
-from heretek_swarm.consciousness.iit_phi import PhiCalculator
-from heretek_swarm.consciousness.fep_active_inference import FreeEnergyCalculator
+from heretek_swarm.security.zero_trust import ZeroTrustValidator, ZeroTrustResult, LayerResult
 from src.heretek_swarm.observability.metrics import (
     SwarmMetricsCollector,
     RealTimeMetricsStream,
-    SwarmMetricsData,
-    ConsciousnessMetricsData,
-    AgentMetrics,
 )
 
 logger = structlog.get_logger(__name__)
@@ -742,9 +737,9 @@ async def websocket_traces(websocket: WebSocket, agent_id: str):
         # Stream new traces as they arrive
         while True:
             try:
-                message = await websocket.receive_json()
+                _message = await websocket.receive_json()
                 # Echo back for demo (in production, don't echo)
-                # await websocket.send_json(message)
+                # # await websocket.send_json(_message)
             except WebSocketDisconnect:
                 logger.info("websocket_disconnected", agent_id=agent_id)
                 break
@@ -1260,7 +1255,6 @@ async def execute_time_travel(
     
     try:
         # Import event store for state applier
-        from heretek_swarm.state.event_store import DomainEvent
         
         def state_applier(state: Dict[str, Any], event: Any) -> Dict[str, Any]:
             """Apply event to state."""
