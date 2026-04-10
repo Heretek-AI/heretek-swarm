@@ -1132,10 +1132,13 @@ class AgentActor:
             logger.info(f"[{self.agent_id}] Agent suspended")
 
     async def resume(self) -> None:
-        """Resume a suspended actor."""
-        if self.state == ActorState.SUSPENDED:
-            self.state = ActorState.ACTIVE
-            logger.info(f"[{self.agent_id}] Agent resumed")
+            """Resume a suspended or errored actor."""
+            if self.state == ActorState.SUSPENDED:
+                self.state = ActorState.ACTIVE
+                logger.info(f"[{self.agent_id}] Agent resumed from suspended state")
+            elif self.state == ActorState.ERROR:
+                self.state = ActorState.ACTIVE
+                logger.info(f"[{self.agent_id}] Agent recovered from error state")
 
     async def broadcast(
         self,

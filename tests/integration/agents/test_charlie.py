@@ -282,9 +282,9 @@ class TestCharlieAgentIntegration:
     async def test_error_recovery(self, charlie_agent):
         """Test agent error recovery."""
         await charlie_agent.spawn()
-        charlie_agent._state = ActorState.ERROR
+        charlie_agent.state = ActorState.ERROR
         await charlie_agent.resume()
-        assert charlie_agent._state == ActorState.ACTIVE
+        assert charlie_agent.state == ActorState.ACTIVE
 
     @pytest.mark.asyncio
     async def test_risk_mitigation_suggestions(self, spawned_charlie, mock_llm):

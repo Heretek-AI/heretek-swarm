@@ -617,7 +617,7 @@ def message_timeout() -> int:
 
 # ============================================================================
 # Autouse Fixtures
-# ============================================================================
+# =========================================================================# Autouse Fixtures
 
 
 @pytest.fixture(autouse=True)
@@ -632,3 +632,19 @@ def reset_async_state() -> None:
     except RuntimeError:
         # No running event loop - nothing to cancel
         pass
+
+
+@pytest.fixture(autouse=True)
+def cleanup_actor_states() -> None:
+    """Clean up actor state files between tests to prevent state pollution."""
+    import os
+    import shutil
+    state_dir = os.path.join(os.getcwd(), ".actor_states")
+    yield
+    if os.path.exists(state_dir):
+        for f in os.listdir(state_dir):
+            if f.endswith(".json"):
+                try:
+                    os.remove(os.path.join(state_dir, f))
+                except Exception:
+                    pass

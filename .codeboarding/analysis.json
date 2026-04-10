@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-10T04:50:31.174233+00:00",
+    "generated_at": "2026-04-10T06:55:14.758679+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 4,
@@ -927,10 +927,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.actors.base.AgentActor",
-          "start_line": 122,
-          "end_line": 1477,
+          "start_line": 117,
+          "end_line": 1475,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.base.AgentActor.get_actor_type",
@@ -1123,10 +1123,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.actors.base.AgentActor.resume",
-          "start_line": 1139,
-          "end_line": 1143,
+          "start_line": 1134,
+          "end_line": 1141,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.base.AgentActor.broadcast",
@@ -18178,9 +18178,9 @@
         {
           "qualified_name": "src.heretek_swarm.gateway.nats_event_mesh.ConnectionState",
           "start_line": 38,
-          "end_line": 44,
+          "end_line": 45,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.gateway.nats_event_mesh.Subscription",
@@ -18198,10 +18198,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh",
-          "start_line": 66,
-          "end_line": 762,
+          "start_line": 67,
+          "end_line": 772,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.__init__",
@@ -18212,10 +18212,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.is_connected",
-          "start_line": 166,
-          "end_line": 168,
+          "start_line": 167,
+          "end_line": 174,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.jetstream_enabled",
@@ -18225,18 +18225,18 @@
           "status": "unchanged"
         },
         {
-          "qualified_name": "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.client_count",
-          "start_line": 176,
-          "end_line": 178,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
           "qualified_name": "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.stream_count",
           "start_line": 181,
           "end_line": 183,
           "node_type": "METHOD",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.client_count",
+          "start_line": 182,
+          "end_line": 189,
+          "node_type": "METHOD",
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.connect",
@@ -18372,13 +18372,6 @@
           "status": "unchanged"
         },
         {
-          "qualified_name": "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback",
-          "start_line": 765,
-          "end_line": 809,
-          "node_type": "CLASS",
-          "status": "unchanged"
-        },
-        {
           "qualified_name": "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback.__init__",
           "start_line": 768,
           "end_line": 771,
@@ -18393,11 +18386,25 @@
           "status": "unchanged"
         },
         {
+          "qualified_name": "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback",
+          "start_line": 775,
+          "end_line": 823,
+          "node_type": "CLASS",
+          "status": "modified"
+        },
+        {
           "qualified_name": "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback.subscribe",
           "start_line": 782,
           "end_line": 795,
           "node_type": "METHOD",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback.subscription_count",
+          "start_line": 784,
+          "end_line": 786,
+          "node_type": "METHOD",
+          "status": "added"
         },
         {
           "qualified_name": "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback.unsubscribe",
@@ -20741,218 +20748,218 @@
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeEntry",
-          "start_line": 58,
-          "end_line": 91,
+          "start_line": 56,
+          "end_line": 89,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeEntry.to_dict",
-          "start_line": 80,
-          "end_line": 91,
+          "start_line": 78,
+          "end_line": 89,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryResult",
-          "start_line": 95,
-          "end_line": 123,
+          "start_line": 93,
+          "end_line": 121,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryResult.to_dict",
-          "start_line": 114,
-          "end_line": 123,
+          "start_line": 112,
+          "end_line": 121,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess",
           "start_line": 124,
-          "end_line": 608,
+          "end_line": 626,
           "node_type": "CLASS",
           "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess.__init__",
-          "start_line": 148,
-          "end_line": 168,
+          "start_line": 146,
+          "end_line": 166,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess.query",
           "start_line": 168,
-          "end_line": 350,
+          "end_line": 270,
           "node_type": "METHOD",
           "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess.query_with_strategy",
-          "start_line": 267,
-          "end_line": 359,
+          "start_line": 272,
+          "end_line": 368,
           "node_type": "METHOD",
-          "status": "deleted"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess._query_memory",
-          "start_line": 362,
-          "end_line": 393,
+          "start_line": 352,
+          "end_line": 383,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess._query_rag",
-          "start_line": 395,
-          "end_line": 427,
+          "start_line": 385,
+          "end_line": 417,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess._mmr_rerank",
-          "start_line": 429,
-          "end_line": 502,
+          "start_line": 419,
+          "end_line": 492,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess._compute_similarity",
-          "start_line": 504,
-          "end_line": 532,
+          "start_line": 494,
+          "end_line": 522,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess._get_content_string",
-          "start_line": 534,
-          "end_line": 545,
+          "start_line": 524,
+          "end_line": 535,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess._track_query_stats",
-          "start_line": 547,
-          "end_line": 562,
+          "start_line": 537,
+          "end_line": 552,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess.get_stats",
-          "start_line": 564,
-          "end_line": 574,
+          "start_line": 554,
+          "end_line": 564,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess.get_rag_strategy_stats",
-          "start_line": 576,
-          "end_line": 593,
+          "start_line": 566,
+          "end_line": 583,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess.export_prometheus_metrics",
-          "start_line": 595,
-          "end_line": 618,
+          "start_line": 585,
+          "end_line": 608,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.__init__",
+          "start_line": 625,
+          "end_line": 633,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder",
-          "start_line": 611,
-          "end_line": 722,
+          "start_line": 629,
+          "end_line": 736,
           "node_type": "CLASS",
           "status": "modified"
         },
         {
-          "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.__init__",
+          "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.query",
           "start_line": 635,
+          "end_line": 638,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.from_sources",
+          "start_line": 640,
           "end_line": 643,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
-          "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.query",
+          "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.with_limit",
           "start_line": 645,
           "end_line": 648,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
-          "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.from_sources",
+          "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.with_diversity",
           "start_line": 650,
           "end_line": 653,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
-          "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.with_limit",
+          "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.with_reranking",
           "start_line": 655,
           "end_line": 658,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
-          "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.with_diversity",
-          "start_line": 660,
-          "end_line": 663,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.with_reranking",
-          "start_line": 665,
-          "end_line": 668,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
           "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.with_source_weights",
-          "start_line": 670,
-          "end_line": 680,
+          "start_line": 660,
+          "end_line": 670,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.filtered_by",
+          "start_line": 672,
+          "end_line": 675,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.with_strategy",
+          "start_line": 677,
+          "end_line": 680,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.with_multihop",
           "start_line": 682,
           "end_line": 685,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
-          "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.with_strategy",
+          "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.with_reranking_options",
           "start_line": 687,
-          "end_line": 690,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.with_multihop",
-          "start_line": 692,
           "end_line": 695,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
-          "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.with_reranking_options",
-          "start_line": 697,
-          "end_line": 705,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
           "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.execute",
-          "start_line": 697,
-          "end_line": 722,
+          "start_line": 715,
+          "end_line": 736,
           "node_type": "METHOD",
           "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.knowledge.unified_access.create_unified_knowledge_access",
-          "start_line": 741,
-          "end_line": 795,
+          "start_line": 725,
+          "end_line": 779,
           "node_type": "FUNCTION",
           "status": "unchanged"
         }
@@ -41618,7 +41625,7 @@
       ]
     },
     "dashboard/frontend/src/components/WorkflowBuilder/types.ts": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.types.BaseNodeData",
@@ -41643,10 +41650,10 @@
         },
         {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.types.AgentType",
-          "start_line": 58,
-          "end_line": 70,
+          "start_line": 72,
+          "end_line": 104,
           "node_type": "ENUM",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.types.ToolNodeData",
@@ -41675,6 +41682,13 @@
           "end_line": 113,
           "node_type": "ENUM",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.types.AgentMetadata",
+          "start_line": 109,
+          "end_line": 118,
+          "node_type": "INTERFACE",
+          "status": "added"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.types.DecisionNodeData",
@@ -43314,6 +43328,10 @@
     "src/heretek_swarm/integrations/__init__.py": {
       "file_status": "modified",
       "methods": []
+    },
+    "src/heretek_swarm/consciousness/__init__.py": {
+      "file_status": "added",
+      "methods": []
     }
   },
   "methods_index": {
@@ -44304,10 +44322,10 @@
     "src/heretek_swarm/actors/base.py|src.heretek_swarm.actors.base.AgentActor": {
       "file_path": "src/heretek_swarm/actors/base.py",
       "qualified_name": "src.heretek_swarm.actors.base.AgentActor",
-      "start_line": 122,
-      "end_line": 1477,
+      "start_line": 117,
+      "end_line": 1475,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/base.py|src.heretek_swarm.actors.base.AgentActor.get_actor_type": {
       "file_path": "src/heretek_swarm/actors/base.py",
@@ -44528,10 +44546,10 @@
     "src/heretek_swarm/actors/base.py|src.heretek_swarm.actors.base.AgentActor.resume": {
       "file_path": "src/heretek_swarm/actors/base.py",
       "qualified_name": "src.heretek_swarm.actors.base.AgentActor.resume",
-      "start_line": 1139,
-      "end_line": 1143,
+      "start_line": 1134,
+      "end_line": 1141,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/base.py|src.heretek_swarm.actors.base.AgentActor.broadcast": {
       "file_path": "src/heretek_swarm/actors/base.py",
@@ -63585,9 +63603,9 @@
       "file_path": "src/heretek_swarm/gateway/nats_event_mesh.py",
       "qualified_name": "src.heretek_swarm.gateway.nats_event_mesh.ConnectionState",
       "start_line": 38,
-      "end_line": 44,
+      "end_line": 45,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/gateway/nats_event_mesh.py|src.heretek_swarm.gateway.nats_event_mesh.Subscription": {
       "file_path": "src/heretek_swarm/gateway/nats_event_mesh.py",
@@ -63608,10 +63626,10 @@
     "src/heretek_swarm/gateway/nats_event_mesh.py|src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh": {
       "file_path": "src/heretek_swarm/gateway/nats_event_mesh.py",
       "qualified_name": "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh",
-      "start_line": 66,
-      "end_line": 762,
+      "start_line": 67,
+      "end_line": 772,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/gateway/nats_event_mesh.py|src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.__init__": {
       "file_path": "src/heretek_swarm/gateway/nats_event_mesh.py",
@@ -63624,24 +63642,16 @@
     "src/heretek_swarm/gateway/nats_event_mesh.py|src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.is_connected": {
       "file_path": "src/heretek_swarm/gateway/nats_event_mesh.py",
       "qualified_name": "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.is_connected",
-      "start_line": 166,
-      "end_line": 168,
+      "start_line": 167,
+      "end_line": 174,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/gateway/nats_event_mesh.py|src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.jetstream_enabled": {
       "file_path": "src/heretek_swarm/gateway/nats_event_mesh.py",
       "qualified_name": "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.jetstream_enabled",
       "start_line": 171,
       "end_line": 173,
-      "type": "METHOD",
-      "status": "unchanged"
-    },
-    "src/heretek_swarm/gateway/nats_event_mesh.py|src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.client_count": {
-      "file_path": "src/heretek_swarm/gateway/nats_event_mesh.py",
-      "qualified_name": "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.client_count",
-      "start_line": 176,
-      "end_line": 178,
       "type": "METHOD",
       "status": "unchanged"
     },
@@ -63652,6 +63662,14 @@
       "end_line": 183,
       "type": "METHOD",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/gateway/nats_event_mesh.py|src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.client_count": {
+      "file_path": "src/heretek_swarm/gateway/nats_event_mesh.py",
+      "qualified_name": "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.client_count",
+      "start_line": 182,
+      "end_line": 189,
+      "type": "METHOD",
+      "status": "modified"
     },
     "src/heretek_swarm/gateway/nats_event_mesh.py|src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.connect": {
       "file_path": "src/heretek_swarm/gateway/nats_event_mesh.py",
@@ -63805,14 +63823,6 @@
       "type": "METHOD",
       "status": "unchanged"
     },
-    "src/heretek_swarm/gateway/nats_event_mesh.py|src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback": {
-      "file_path": "src/heretek_swarm/gateway/nats_event_mesh.py",
-      "qualified_name": "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback",
-      "start_line": 765,
-      "end_line": 809,
-      "type": "CLASS",
-      "status": "unchanged"
-    },
     "src/heretek_swarm/gateway/nats_event_mesh.py|src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback.__init__": {
       "file_path": "src/heretek_swarm/gateway/nats_event_mesh.py",
       "qualified_name": "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback.__init__",
@@ -63829,6 +63839,14 @@
       "type": "METHOD",
       "status": "unchanged"
     },
+    "src/heretek_swarm/gateway/nats_event_mesh.py|src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback": {
+      "file_path": "src/heretek_swarm/gateway/nats_event_mesh.py",
+      "qualified_name": "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback",
+      "start_line": 775,
+      "end_line": 823,
+      "type": "CLASS",
+      "status": "modified"
+    },
     "src/heretek_swarm/gateway/nats_event_mesh.py|src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback.subscribe": {
       "file_path": "src/heretek_swarm/gateway/nats_event_mesh.py",
       "qualified_name": "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback.subscribe",
@@ -63836,6 +63854,14 @@
       "end_line": 795,
       "type": "METHOD",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/gateway/nats_event_mesh.py|src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback.subscription_count": {
+      "file_path": "src/heretek_swarm/gateway/nats_event_mesh.py",
+      "qualified_name": "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback.subscription_count",
+      "start_line": 784,
+      "end_line": 786,
+      "type": "METHOD",
+      "status": "added"
     },
     "src/heretek_swarm/gateway/nats_event_mesh.py|src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback.unsubscribe": {
       "file_path": "src/heretek_swarm/gateway/nats_event_mesh.py",
@@ -66440,32 +66466,32 @@
     "src/heretek_swarm/knowledge/unified_access.py|src.heretek_swarm.knowledge.unified_access.KnowledgeEntry": {
       "file_path": "src/heretek_swarm/knowledge/unified_access.py",
       "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeEntry",
-      "start_line": 58,
-      "end_line": 91,
+      "start_line": 56,
+      "end_line": 89,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/knowledge/unified_access.py|src.heretek_swarm.knowledge.unified_access.KnowledgeEntry.to_dict": {
       "file_path": "src/heretek_swarm/knowledge/unified_access.py",
       "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeEntry.to_dict",
-      "start_line": 80,
-      "end_line": 91,
+      "start_line": 78,
+      "end_line": 89,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/knowledge/unified_access.py|src.heretek_swarm.knowledge.unified_access.KnowledgeQueryResult": {
       "file_path": "src/heretek_swarm/knowledge/unified_access.py",
       "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryResult",
-      "start_line": 95,
-      "end_line": 123,
+      "start_line": 93,
+      "end_line": 121,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/knowledge/unified_access.py|src.heretek_swarm.knowledge.unified_access.KnowledgeQueryResult.to_dict": {
       "file_path": "src/heretek_swarm/knowledge/unified_access.py",
       "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryResult.to_dict",
-      "start_line": 114,
-      "end_line": 123,
+      "start_line": 112,
+      "end_line": 121,
       "type": "METHOD",
       "status": "unchanged"
     },
@@ -66473,15 +66499,15 @@
       "file_path": "src/heretek_swarm/knowledge/unified_access.py",
       "qualified_name": "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess",
       "start_line": 124,
-      "end_line": 608,
+      "end_line": 626,
       "type": "CLASS",
       "status": "modified"
     },
     "src/heretek_swarm/knowledge/unified_access.py|src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess.__init__": {
       "file_path": "src/heretek_swarm/knowledge/unified_access.py",
       "qualified_name": "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess.__init__",
-      "start_line": 148,
-      "end_line": 168,
+      "start_line": 146,
+      "end_line": 166,
       "type": "METHOD",
       "status": "unchanged"
     },
@@ -66489,199 +66515,199 @@
       "file_path": "src/heretek_swarm/knowledge/unified_access.py",
       "qualified_name": "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess.query",
       "start_line": 168,
-      "end_line": 350,
+      "end_line": 270,
       "type": "METHOD",
       "status": "modified"
     },
     "src/heretek_swarm/knowledge/unified_access.py|src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess.query_with_strategy": {
       "file_path": "src/heretek_swarm/knowledge/unified_access.py",
       "qualified_name": "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess.query_with_strategy",
-      "start_line": 267,
-      "end_line": 359,
+      "start_line": 272,
+      "end_line": 368,
       "type": "METHOD",
-      "status": "deleted"
+      "status": "modified"
     },
     "src/heretek_swarm/knowledge/unified_access.py|src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess._query_memory": {
       "file_path": "src/heretek_swarm/knowledge/unified_access.py",
       "qualified_name": "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess._query_memory",
-      "start_line": 362,
-      "end_line": 393,
+      "start_line": 352,
+      "end_line": 383,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/knowledge/unified_access.py|src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess._query_rag": {
       "file_path": "src/heretek_swarm/knowledge/unified_access.py",
       "qualified_name": "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess._query_rag",
-      "start_line": 395,
-      "end_line": 427,
+      "start_line": 385,
+      "end_line": 417,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/knowledge/unified_access.py|src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess._mmr_rerank": {
       "file_path": "src/heretek_swarm/knowledge/unified_access.py",
       "qualified_name": "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess._mmr_rerank",
-      "start_line": 429,
-      "end_line": 502,
+      "start_line": 419,
+      "end_line": 492,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/knowledge/unified_access.py|src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess._compute_similarity": {
       "file_path": "src/heretek_swarm/knowledge/unified_access.py",
       "qualified_name": "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess._compute_similarity",
-      "start_line": 504,
-      "end_line": 532,
+      "start_line": 494,
+      "end_line": 522,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/knowledge/unified_access.py|src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess._get_content_string": {
       "file_path": "src/heretek_swarm/knowledge/unified_access.py",
       "qualified_name": "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess._get_content_string",
-      "start_line": 534,
-      "end_line": 545,
+      "start_line": 524,
+      "end_line": 535,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/knowledge/unified_access.py|src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess._track_query_stats": {
       "file_path": "src/heretek_swarm/knowledge/unified_access.py",
       "qualified_name": "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess._track_query_stats",
-      "start_line": 547,
-      "end_line": 562,
+      "start_line": 537,
+      "end_line": 552,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/knowledge/unified_access.py|src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess.get_stats": {
       "file_path": "src/heretek_swarm/knowledge/unified_access.py",
       "qualified_name": "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess.get_stats",
-      "start_line": 564,
-      "end_line": 574,
+      "start_line": 554,
+      "end_line": 564,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/knowledge/unified_access.py|src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess.get_rag_strategy_stats": {
       "file_path": "src/heretek_swarm/knowledge/unified_access.py",
       "qualified_name": "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess.get_rag_strategy_stats",
-      "start_line": 576,
-      "end_line": 593,
+      "start_line": 566,
+      "end_line": 583,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/knowledge/unified_access.py|src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess.export_prometheus_metrics": {
       "file_path": "src/heretek_swarm/knowledge/unified_access.py",
       "qualified_name": "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess.export_prometheus_metrics",
-      "start_line": 595,
-      "end_line": 618,
+      "start_line": 585,
+      "end_line": 608,
+      "type": "METHOD",
+      "status": "unchanged"
+    },
+    "src/heretek_swarm/knowledge/unified_access.py|src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.__init__": {
+      "file_path": "src/heretek_swarm/knowledge/unified_access.py",
+      "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.__init__",
+      "start_line": 625,
+      "end_line": 633,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/knowledge/unified_access.py|src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder": {
       "file_path": "src/heretek_swarm/knowledge/unified_access.py",
       "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder",
-      "start_line": 611,
-      "end_line": 722,
+      "start_line": 629,
+      "end_line": 736,
       "type": "CLASS",
       "status": "modified"
-    },
-    "src/heretek_swarm/knowledge/unified_access.py|src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.__init__": {
-      "file_path": "src/heretek_swarm/knowledge/unified_access.py",
-      "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.__init__",
-      "start_line": 635,
-      "end_line": 643,
-      "type": "METHOD",
-      "status": "unchanged"
     },
     "src/heretek_swarm/knowledge/unified_access.py|src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.query": {
       "file_path": "src/heretek_swarm/knowledge/unified_access.py",
       "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.query",
-      "start_line": 645,
-      "end_line": 648,
+      "start_line": 635,
+      "end_line": 638,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/knowledge/unified_access.py|src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.from_sources": {
       "file_path": "src/heretek_swarm/knowledge/unified_access.py",
       "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.from_sources",
-      "start_line": 650,
-      "end_line": 653,
+      "start_line": 640,
+      "end_line": 643,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/knowledge/unified_access.py|src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.with_limit": {
       "file_path": "src/heretek_swarm/knowledge/unified_access.py",
       "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.with_limit",
-      "start_line": 655,
-      "end_line": 658,
+      "start_line": 645,
+      "end_line": 648,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/knowledge/unified_access.py|src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.with_diversity": {
       "file_path": "src/heretek_swarm/knowledge/unified_access.py",
       "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.with_diversity",
-      "start_line": 660,
-      "end_line": 663,
+      "start_line": 650,
+      "end_line": 653,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/knowledge/unified_access.py|src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.with_reranking": {
       "file_path": "src/heretek_swarm/knowledge/unified_access.py",
       "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.with_reranking",
-      "start_line": 665,
-      "end_line": 668,
+      "start_line": 655,
+      "end_line": 658,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/knowledge/unified_access.py|src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.with_source_weights": {
       "file_path": "src/heretek_swarm/knowledge/unified_access.py",
       "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.with_source_weights",
-      "start_line": 670,
-      "end_line": 680,
+      "start_line": 660,
+      "end_line": 670,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/knowledge/unified_access.py|src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.filtered_by": {
       "file_path": "src/heretek_swarm/knowledge/unified_access.py",
       "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.filtered_by",
-      "start_line": 682,
-      "end_line": 685,
+      "start_line": 672,
+      "end_line": 675,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/knowledge/unified_access.py|src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.with_strategy": {
       "file_path": "src/heretek_swarm/knowledge/unified_access.py",
       "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.with_strategy",
-      "start_line": 687,
-      "end_line": 690,
+      "start_line": 677,
+      "end_line": 680,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/knowledge/unified_access.py|src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.with_multihop": {
       "file_path": "src/heretek_swarm/knowledge/unified_access.py",
       "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.with_multihop",
-      "start_line": 692,
-      "end_line": 695,
+      "start_line": 682,
+      "end_line": 685,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/knowledge/unified_access.py|src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.with_reranking_options": {
       "file_path": "src/heretek_swarm/knowledge/unified_access.py",
       "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.with_reranking_options",
-      "start_line": 697,
-      "end_line": 705,
+      "start_line": 687,
+      "end_line": 695,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/knowledge/unified_access.py|src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.execute": {
       "file_path": "src/heretek_swarm/knowledge/unified_access.py",
       "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.execute",
-      "start_line": 697,
-      "end_line": 722,
+      "start_line": 715,
+      "end_line": 736,
       "type": "METHOD",
       "status": "modified"
     },
     "src/heretek_swarm/knowledge/unified_access.py|src.heretek_swarm.knowledge.unified_access.create_unified_knowledge_access": {
       "file_path": "src/heretek_swarm/knowledge/unified_access.py",
       "qualified_name": "src.heretek_swarm.knowledge.unified_access.create_unified_knowledge_access",
-      "start_line": 741,
-      "end_line": 795,
+      "start_line": 725,
+      "end_line": 779,
       "type": "FUNCTION",
       "status": "unchanged"
     },
@@ -89528,10 +89554,10 @@
     "dashboard/frontend/src/components/WorkflowBuilder/types.ts|dashboard.frontend.src.components.WorkflowBuilder.types.AgentType": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/types.ts",
       "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.types.AgentType",
-      "start_line": 58,
-      "end_line": 70,
+      "start_line": 72,
+      "end_line": 104,
       "type": "ENUM",
-      "status": "unchanged"
+      "status": "modified"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/types.ts|dashboard.frontend.src.components.WorkflowBuilder.types.ToolNodeData": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/types.ts",
@@ -89564,6 +89590,14 @@
       "end_line": 113,
       "type": "ENUM",
       "status": "unchanged"
+    },
+    "dashboard/frontend/src/components/WorkflowBuilder/types.ts|dashboard.frontend.src.components.WorkflowBuilder.types.AgentMetadata": {
+      "file_path": "dashboard/frontend/src/components/WorkflowBuilder/types.ts",
+      "qualified_name": "dashboard.frontend.src.components.WorkflowBuilder.types.AgentMetadata",
+      "start_line": 109,
+      "end_line": 118,
+      "type": "INTERFACE",
+      "status": "added"
     },
     "dashboard/frontend/src/components/WorkflowBuilder/types.ts|dashboard.frontend.src.components.WorkflowBuilder.types.DecisionNodeData": {
       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/types.ts",
@@ -94457,8 +94491,8 @@
             "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.__init__",
             "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.is_connected",
             "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.jetstream_enabled",
-            "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.client_count",
             "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.stream_count",
+            "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.client_count",
             "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.connect",
             "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh._connect_to_server",
             "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh._enable_fallback",
@@ -94478,10 +94512,11 @@
             "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.request",
             "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.get_subscription_ids",
             "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.close_all",
-            "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback",
             "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback.__init__",
             "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback.publish",
+            "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback",
             "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback.subscribe",
+            "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback.subscription_count",
             "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback.unsubscribe",
             "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback.request",
             "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMeshMixin",
@@ -94902,8 +94937,8 @@
             "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess.get_stats",
             "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess.get_rag_strategy_stats",
             "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess.export_prometheus_metrics",
-            "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder",
             "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.__init__",
+            "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder",
             "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.query",
             "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.from_sources",
             "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.with_limit",
@@ -98294,8 +98329,8 @@
                 "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.__init__",
                 "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.is_connected",
                 "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.jetstream_enabled",
-                "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.client_count",
                 "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.stream_count",
+                "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.client_count",
                 "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.connect",
                 "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh._connect_to_server",
                 "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh._enable_fallback",
@@ -98315,10 +98350,11 @@
                 "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.request",
                 "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.get_subscription_ids",
                 "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.close_all",
-                "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback",
                 "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback.__init__",
                 "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback.publish",
+                "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback",
                 "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback.subscribe",
+                "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback.subscription_count",
                 "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback.unsubscribe",
                 "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback.request",
                 "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMeshMixin",
@@ -100050,8 +100086,8 @@
                     "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.__init__",
                     "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.is_connected",
                     "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.jetstream_enabled",
-                    "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.client_count",
                     "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.stream_count",
+                    "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.client_count",
                     "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.connect",
                     "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh._connect_to_server",
                     "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh._enable_fallback",
@@ -100071,10 +100107,11 @@
                     "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.request",
                     "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.get_subscription_ids",
                     "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.close_all",
-                    "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback",
                     "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback.__init__",
                     "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback.publish",
+                    "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback",
                     "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback.subscribe",
+                    "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback.subscription_count",
                     "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback.unsubscribe",
                     "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback.request",
                     "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMeshMixin",
@@ -100838,8 +100875,8 @@
                     "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.__init__",
                     "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.is_connected",
                     "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.jetstream_enabled",
-                    "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.client_count",
                     "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.stream_count",
+                    "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.client_count",
                     "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.connect",
                     "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh._connect_to_server",
                     "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh._enable_fallback",
@@ -100859,10 +100896,11 @@
                     "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.request",
                     "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.get_subscription_ids",
                     "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.close_all",
-                    "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback",
                     "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback.__init__",
                     "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback.publish",
+                    "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback",
                     "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback.subscribe",
+                    "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback.subscription_count",
                     "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback.unsubscribe",
                     "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback.request",
                     "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMeshMixin",
@@ -102432,8 +102470,8 @@
                     "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.__init__",
                     "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.is_connected",
                     "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.jetstream_enabled",
-                    "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.client_count",
                     "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.stream_count",
+                    "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.client_count",
                     "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.connect",
                     "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh._connect_to_server",
                     "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh._enable_fallback",
@@ -102453,10 +102491,11 @@
                     "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.request",
                     "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.get_subscription_ids",
                     "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.close_all",
-                    "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback",
                     "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback.__init__",
                     "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback.publish",
+                    "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback",
                     "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback.subscribe",
+                    "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback.subscription_count",
                     "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback.unsubscribe",
                     "src.heretek_swarm.gateway.nats_event_mesh._InMemoryFallback.request",
                     "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMeshMixin",
@@ -105616,8 +105655,8 @@
                 "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess.get_stats",
                 "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess.get_rag_strategy_stats",
                 "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess.export_prometheus_metrics",
-                "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder",
                 "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.__init__",
+                "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder",
                 "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.query",
                 "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.from_sources",
                 "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.with_limit",
@@ -111996,8 +112035,8 @@
                     "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess.get_stats",
                     "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess.get_rag_strategy_stats",
                     "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess.export_prometheus_metrics",
-                    "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder",
                     "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.__init__",
+                    "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder",
                     "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.query",
                     "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.from_sources",
                     "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.with_limit",
@@ -112362,8 +112401,8 @@
                         "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess.get_stats",
                         "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess.get_rag_strategy_stats",
                         "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess.export_prometheus_metrics",
-                        "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder",
                         "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.__init__",
+                        "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder",
                         "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.query",
                         "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.from_sources",
                         "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.with_limit",
@@ -112637,8 +112676,8 @@
                         "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess.get_stats",
                         "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess.get_rag_strategy_stats",
                         "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess.export_prometheus_metrics",
-                        "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder",
                         "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.__init__",
+                        "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder",
                         "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.query",
                         "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.from_sources",
                         "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.with_limit",
@@ -134719,7 +134758,7 @@
         },
         {
           "file_path": "dashboard/frontend/src/components/WorkflowBuilder/types.ts",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "dashboard.frontend.src.components.WorkflowBuilder.types.BaseNodeData",
             "dashboard.frontend.src.components.WorkflowBuilder.types.NodeType",
@@ -134729,6 +134768,7 @@
             "dashboard.frontend.src.components.WorkflowBuilder.types.ToolType",
             "dashboard.frontend.src.components.WorkflowBuilder.types.MemoryNodeData",
             "dashboard.frontend.src.components.WorkflowBuilder.types.MemoryType",
+            "dashboard.frontend.src.components.WorkflowBuilder.types.AgentMetadata",
             "dashboard.frontend.src.components.WorkflowBuilder.types.DecisionNodeData",
             "dashboard.frontend.src.components.WorkflowBuilder.types.DecisionBranch",
             "dashboard.frontend.src.components.WorkflowBuilder.types.ConnectorNodeData",
@@ -136265,7 +136305,7 @@
             },
             {
               "file_path": "dashboard/frontend/src/components/WorkflowBuilder/types.ts",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "dashboard.frontend.src.components.WorkflowBuilder.types.BaseNodeData",
                 "dashboard.frontend.src.components.WorkflowBuilder.types.NodeType",
@@ -136275,6 +136315,7 @@
                 "dashboard.frontend.src.components.WorkflowBuilder.types.ToolType",
                 "dashboard.frontend.src.components.WorkflowBuilder.types.MemoryNodeData",
                 "dashboard.frontend.src.components.WorkflowBuilder.types.MemoryType",
+                "dashboard.frontend.src.components.WorkflowBuilder.types.AgentMetadata",
                 "dashboard.frontend.src.components.WorkflowBuilder.types.DecisionNodeData",
                 "dashboard.frontend.src.components.WorkflowBuilder.types.DecisionBranch",
                 "dashboard.frontend.src.components.WorkflowBuilder.types.ConnectorNodeData",
@@ -138389,7 +138430,7 @@
                 },
                 {
                   "file_path": "dashboard/frontend/src/components/WorkflowBuilder/types.ts",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "dashboard.frontend.src.components.WorkflowBuilder.types.BaseNodeData",
                     "dashboard.frontend.src.components.WorkflowBuilder.types.NodeType",
@@ -138399,6 +138440,7 @@
                     "dashboard.frontend.src.components.WorkflowBuilder.types.ToolType",
                     "dashboard.frontend.src.components.WorkflowBuilder.types.MemoryNodeData",
                     "dashboard.frontend.src.components.WorkflowBuilder.types.MemoryType",
+                    "dashboard.frontend.src.components.WorkflowBuilder.types.AgentMetadata",
                     "dashboard.frontend.src.components.WorkflowBuilder.types.DecisionNodeData",
                     "dashboard.frontend.src.components.WorkflowBuilder.types.DecisionBranch",
                     "dashboard.frontend.src.components.WorkflowBuilder.types.ConnectorNodeData",
@@ -139812,7 +139854,7 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/components/WorkflowBuilder/types.ts",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "dashboard.frontend.src.components.WorkflowBuilder.types.BaseNodeData",
                         "dashboard.frontend.src.components.WorkflowBuilder.types.NodeType",
@@ -139822,6 +139864,7 @@
                         "dashboard.frontend.src.components.WorkflowBuilder.types.ToolType",
                         "dashboard.frontend.src.components.WorkflowBuilder.types.MemoryNodeData",
                         "dashboard.frontend.src.components.WorkflowBuilder.types.MemoryType",
+                        "dashboard.frontend.src.components.WorkflowBuilder.types.AgentMetadata",
                         "dashboard.frontend.src.components.WorkflowBuilder.types.DecisionNodeData",
                         "dashboard.frontend.src.components.WorkflowBuilder.types.DecisionBranch",
                         "dashboard.frontend.src.components.WorkflowBuilder.types.ConnectorNodeData",

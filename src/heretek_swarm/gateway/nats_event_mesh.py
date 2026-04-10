@@ -41,6 +41,7 @@ class ConnectionState(Enum):
     CONNECTING = "connecting"
     CONNECTED = "connected"
     RECONNECTING = "reconnecting"
+    CLOSING = "closing"
     CLOSED = "closed"
 
 
@@ -164,8 +165,13 @@ class NATSEventMesh:
 
     @property
     def is_connected(self) -> bool:
-        """Check if connected to NATS."""
-        return self._state == ConnectionState.CONNECTED and self._nc is not None
+        """Check if connected to NATS or using fallback."""
+        if self._state == ConnectionState.CONNECTED and self._nc is not None:
+            return True
+        # Also consider fallback mode as "connected"
+        if self._use_fallback and self._state == ConnectionState.CONNECTED:
+            return True
+        return False
 
     @property
     def jetstream_enabled(self) -> bool:
@@ -175,8 +181,12 @@ class NATSEventMesh:
     @property
     def client_count(self) -> int:
         """Get number of active subscriptions."""
-        return len([s for s in self._subscriptions.values() if s.active])
-
+        # Count subscriptions from both NATS and fallback
+        count = len([s for s in self._subscriptions.values() if s.active])
+        # Add fallback mesh subscriptions if in fallback mode
+        if self._use_fallback and self._fallback_mesh is not None:
+            count += self._fallback_mesh.subscription_count
+        return count
     @property
     def stream_count(self) -> int:
         """Get number of created streams."""
@@ -770,6 +780,10 @@ class _InMemoryFallback:
         self._sub_counter = 0
         self._pending: Dict[str, asyncio.Future] = {}
 
+    @property
+    def subscription_count(self) -> int:
+        """Get number of active subscriptions."""
+        return sum(len(subs) for subs in self._subscriptions.values())
     async def publish(self, subject: str, data: Dict[str, Any]) -> bool:
         """Publish to in-memory subscribers."""
         for sub in self._subscriptions.get(subject, []):

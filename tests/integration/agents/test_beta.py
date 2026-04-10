@@ -239,7 +239,7 @@ class TestBetaAgentIntegration:
         await spawned_beta.process_message(message)
 
         # Verify agent still active
-        assert spawned_beta._state == ActorState.ACTIVE
+        assert spawned_beta.state == ActorState.ACTIVE
 
     @pytest.mark.asyncio
     async def test_latency_baseline(self, spawned_beta, assert_latency_baseline):
@@ -263,7 +263,6 @@ class TestBetaAgentIntegration:
     @pytest.mark.asyncio
     async def test_state_persistence(self, spawned_beta, mock_db):
         """Test agent state persistence."""
-        # Add validation
         spawned_beta._validations["persist-test"] = {
             "content": "Persistent validation",
             "status": "valid",
@@ -281,6 +280,6 @@ class TestBetaAgentIntegration:
     async def test_error_recovery(self, beta_agent):
         """Test agent error recovery."""
         await beta_agent.spawn()
-        beta_agent._state = ActorState.ERROR
+        beta_agent.state = ActorState.ERROR
         await beta_agent.resume()
-        assert beta_agent._state == ActorState.ACTIVE
+        assert beta_agent.state == ActorState.ACTIVE

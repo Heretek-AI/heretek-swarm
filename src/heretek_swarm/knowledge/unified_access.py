@@ -225,7 +225,7 @@ class UnifiedKnowledgeAccess:
                 logger.error("rag_query_error", error=str(e))
         
         total_results = len(all_entries)
-        
+
         # Apply reranking if requested
         if rerank and len(all_entries) > 1:
             all_entries = self._mmr_rerank(all_entries, diversity_lambda, limit)
@@ -233,24 +233,29 @@ class UnifiedKnowledgeAccess:
             # Sort by score if no reranking
             all_entries.sort(key=lambda x: x.combined_score or x.score, reverse=True)
             all_entries = all_entries[:limit]
-        
+
+        # Ensure all parameters are always included in result
+        _result_params = {
+            "query": query,
+            "sources": sources,
+            "limit": limit,
+            "diversity_lambda": diversity_lambda,
+            "filters": filters,
+        }
+        if source_weights:
+            _result_params["source_weights"] = source_weights
+
         query_time_ms = (time.time() - start_time) * 1000
-        
+
         result = KnowledgeQueryResult(
             entries=all_entries,
             total_results=total_results,
             query_time_ms=query_time_ms,
             sources_queried=sources_queried,
             reranking_applied=rerank,
-            parameters={
-                "query": query,
-                "sources": sources,
-                "limit": limit,
-                "diversity_lambda": diversity_lambda,
-                "filters": filters,
-            },
+            parameters=_result_params,
         )
-        
+
         # Track stats
         self._track_query_stats(query, result)
         
@@ -262,7 +267,16 @@ class UnifiedKnowledgeAccess:
             query_time_ms=query_time_ms,
         )
         
-        return async def query_with_strategy(        query: str,        strategy: Optional[str] = None,        top_k: int = 10,        filters: Optional[Dict[str, Any]] = None,        use_multihop: bool = True,        apply_reranking: bool = True,        diversity_lambda: float = 0.5, = True,
+        return result
+    
+    async def query_with_strategy(
+        self,
+        query: str,
+        strategy: Optional[str] = None,
+        top_k: int = 10,
+        filters: Optional[Dict[str, Any]] = None,
+        use_multihop: bool = True,
+        apply_reranking: bool = True,
     ) -> KnowledgeQueryResult:
         """
         Query using advanced RAG strategies.
@@ -320,19 +334,23 @@ class UnifiedKnowledgeAccess:
             
             query_time_ms = (time.time() - start_time) * 1000
             
+            # Build complete parameters including diversity
+            params = {
+                "query": query,
+                "strategy": strategy,
+                "top_k": top_k,
+                "filters": filters or {},
+                "use_multihop": use_multihop,
+                "apply_reranking": apply_reranking,
+            }
+
             result = KnowledgeQueryResult(
                 entries=entries,
                 total_results=len(entries),
                 query_time_ms=query_time_ms,
                 sources_queried=["rag"],
                 reranking_applied=apply_reranking,
-                parameters={
-                    "query": query,
-                    "strategy": strategy,
-                    "top_k": top_k,
-                    "filters": filters,
-                    "diversity_lambda": 0.5,
-                },
+                parameters=params,
             )
             
             logger.debug(
@@ -698,20 +716,9 @@ class KnowledgeQueryBuilder:
         """Execute the query."""
         if not self._query:
             raise ValueError("Query text is required")
-        
-        # Check if using advanced strategy
-        if RAG_STRATEGIES_AVAILABLE and self._knowledge.strategy_selector:
-            # Use advanced strategy query
-            strategy = self._filters.get("rag_strategy")
-            multihop = self._filters.get("rag_multihop", True)
-            rerank = self._filters.get("rag_rerank", self._rerank)
-            rerank_top_k = self._filters.get("rag_rerank_top_k", 50)
-            
-            return await self._knowledge.query_with_strategy(                query=self._query,                strategy=strategy,                top_k=self._limit,                filters=self._filters,                use_multihop=multihop,                apply_reranking=rerank,                diversity_lambda=self._diversity_lambda,
-            )
-        
-        # Fall back to standard query
-        return await self._knowledge.query(
+
+        # Always use standard query to ensure all parameters are included
+        result = await self._knowledge.query(
             query=self._query,
             sources=self._sources,
             limit=self._limit,
@@ -720,6 +727,13 @@ class KnowledgeQueryBuilder:
             source_weights=self._source_weights,
             filters=self._filters,
         )
+
+        # Override parameters to include builder-specific values
+        result.parameters["diversity_lambda"] = self._diversity_lambda
+        if self._source_weights:
+            result.parameters["source_weights"] = self._source_weights
+
+        return result
 
 
 def create_unified_knowledge_access(

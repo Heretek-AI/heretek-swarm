@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-10T04:50:31.502663+00:00",
-  "overall_score": 0.9834315289215846,
+  "timestamp": "2026-04-10T07:01:15.162663+00:00",
+  "overall_score": 0.983111516058703,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -982,9 +982,9 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 327,
-      "findings_count": 327,
-      "warning_count": 37,
+      "total_entities_checked": 337,
+      "findings_count": 337,
+      "warning_count": 43,
       "score": 0.0,
       "finding_groups": [
         {
@@ -1037,8 +1037,8 @@
             {
               "entity_name": "[unused_variable] \"protocol\" is not accessed",
               "file_path": "src/heretek_swarm/actors/base.py",
-              "line_start": 1345,
-              "line_end": 1345,
+              "line_start": 1348,
+              "line_end": 1348,
               "metric_value": 0.0
             },
             {
@@ -1912,50 +1912,50 @@
             {
               "entity_name": "[unused_variable] \"stream_info\" is not accessed",
               "file_path": "src/heretek_swarm/gateway/nats_event_mesh.py",
-              "line_start": 334,
-              "line_end": 334,
+              "line_start": 344,
+              "line_end": 344,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"stream_name\" is not accessed",
               "file_path": "src/heretek_swarm/gateway/nats_event_mesh.py",
-              "line_start": 470,
-              "line_end": 470,
+              "line_start": 480,
+              "line_end": 480,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"durable_name\" is not accessed",
               "file_path": "src/heretek_swarm/gateway/nats_event_mesh.py",
-              "line_start": 471,
-              "line_end": 471,
+              "line_start": 481,
+              "line_end": 481,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"subject\" is not accessed",
               "file_path": "src/heretek_swarm/gateway/nats_event_mesh.py",
-              "line_start": 596,
-              "line_end": 596,
+              "line_start": 606,
+              "line_end": 606,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"sid\" is not accessed",
               "file_path": "src/heretek_swarm/gateway/nats_event_mesh.py",
-              "line_start": 797,
-              "line_end": 797,
+              "line_start": 811,
+              "line_end": 811,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"timeout\" is not accessed",
               "file_path": "src/heretek_swarm/gateway/nats_event_mesh.py",
-              "line_start": 805,
-              "line_end": 805,
+              "line_start": 819,
+              "line_end": 819,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"args\" is not accessed",
               "file_path": "src/heretek_swarm/gateway/nats_event_mesh.py",
-              "line_start": 826,
-              "line_end": 826,
+              "line_start": 840,
+              "line_end": 840,
               "metric_value": 0.0
             },
             {
@@ -2178,22 +2178,15 @@
             {
               "entity_name": "[unused_variable] \"mode\" is not accessed",
               "file_path": "src/heretek_swarm/knowledge/unified_access.py",
-              "line_start": 396,
-              "line_end": 396,
+              "line_start": 414,
+              "line_end": 414,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"query\" is not accessed",
               "file_path": "src/heretek_swarm/knowledge/unified_access.py",
-              "line_start": 537,
-              "line_end": 537,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"rerank_top_k\" is not accessed",
-              "file_path": "src/heretek_swarm/knowledge/unified_access.py",
-              "line_start": 708,
-              "line_end": 708,
+              "line_start": 555,
+              "line_end": 555,
               "metric_value": 0.0
             },
             {
@@ -2965,6 +2958,48 @@
               "line_start": 162,
               "line_end": 162,
               "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"PhiTrainingEnvironment\" is not accessed",
+              "file_path": "src/heretek_swarm/consciousness/__init__.py",
+              "line_start": 18,
+              "line_end": 18,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"TrainingScenario\" is not accessed",
+              "file_path": "src/heretek_swarm/consciousness/__init__.py",
+              "line_start": 19,
+              "line_end": 19,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"TrainingResult\" is not accessed",
+              "file_path": "src/heretek_swarm/consciousness/__init__.py",
+              "line_start": 20,
+              "line_end": 20,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"TrainingEpisode\" is not accessed",
+              "file_path": "src/heretek_swarm/consciousness/__init__.py",
+              "line_start": 21,
+              "line_end": 21,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"ScenarioType\" is not accessed",
+              "file_path": "src/heretek_swarm/consciousness/__init__.py",
+              "line_start": 22,
+              "line_end": 22,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"TrainingMode\" is not accessed",
+              "file_path": "src/heretek_swarm/consciousness/__init__.py",
+              "line_start": 23,
+              "line_end": 23,
+              "metric_value": 0.0
             }
           ]
         },
@@ -3196,6 +3231,48 @@
               "line_start": 162,
               "line_end": 162,
               "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"PhiTrainingEnvironment\" is not accessed",
+              "file_path": "src/heretek_swarm/consciousness/__init__.py",
+              "line_start": 18,
+              "line_end": 18,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"TrainingScenario\" is not accessed",
+              "file_path": "src/heretek_swarm/consciousness/__init__.py",
+              "line_start": 19,
+              "line_end": 19,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"TrainingResult\" is not accessed",
+              "file_path": "src/heretek_swarm/consciousness/__init__.py",
+              "line_start": 20,
+              "line_end": 20,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"TrainingEpisode\" is not accessed",
+              "file_path": "src/heretek_swarm/consciousness/__init__.py",
+              "line_start": 21,
+              "line_end": 21,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"ScenarioType\" is not accessed",
+              "file_path": "src/heretek_swarm/consciousness/__init__.py",
+              "line_start": 22,
+              "line_end": 22,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"TrainingMode\" is not accessed",
+              "file_path": "src/heretek_swarm/consciousness/__init__.py",
+              "line_start": 23,
+              "line_end": 23,
+              "metric_value": 0.0
             }
           ]
         },
@@ -3251,13 +3328,6 @@
               "file_path": "src/heretek_swarm/consciousness/fep_active_inference.py",
               "line_start": 1252,
               "line_end": 1252,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unreachable_code] Code is unreachable",
-              "file_path": "src/heretek_swarm/knowledge/unified_access.py",
-              "line_start": 267,
-              "line_end": 350,
               "metric_value": 0.0
             }
           ]
@@ -3722,8 +3792,14 @@
       "composite_risk_score": 80.0
     },
     {
+      "file_path": "src/heretek_swarm/consciousness/__init__.py",
+      "total_findings": 12,
+      "warning_findings": 6,
+      "composite_risk_score": 80.0
+    },
+    {
       "file_path": "src/heretek_swarm/knowledge/unified_access.py",
-      "total_findings": 13,
+      "total_findings": 11,
       "warning_findings": 5,
       "composite_risk_score": 75.0
     },
@@ -3802,12 +3878,6 @@
     {
       "file_path": "src/heretek_swarm/collective/agent_adaptation.py",
       "total_findings": 17,
-      "warning_findings": 2,
-      "composite_risk_score": 60.0
-    },
-    {
-      "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
-      "total_findings": 13,
       "warning_findings": 2,
       "composite_risk_score": 60.0
     }
