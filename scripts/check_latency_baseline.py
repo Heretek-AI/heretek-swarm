@@ -14,7 +14,7 @@ import sys
 from pathlib import Path
 
 
-def check_latency_baseline(benchmark_file: Path, baseline_ms: float) -> int:
+def check_latency_baseline(_benchmark_file: Path, _baseline_ms: float) -> int:
     """
     Check benchmark results against latency baseline.
     
@@ -27,18 +27,18 @@ def check_latency_baseline(benchmark_file: Path, baseline_ms: float) -> int:
         return 1
     
     with open(benchmark_file) as f:
-        results = json.load(f)
+        _results = json.load(f)
     
-    failures = []
-    passes = []
+    _failures = []
+    _passes = []
     
-    benchmarks = results.get("benchmarks", [])
+    _benchmarks = results.get("benchmarks", [])
     
     for bench in benchmarks:
-        name = bench.get("name", "unknown")
+        _name = bench.get("name", "unknown")
         # Convert to milliseconds (benchmarks usually in seconds)
-        mean_time_s = bench.get("stats", {}).get("mean", 0)
-        mean_time_ms = mean_time_s * 1000
+        _mean_time_s = bench.get("stats", {}).get("mean", 0)
+        _mean_time_ms = mean_time_s * 1000
         
         if mean_time_ms > baseline_ms:
             failures.append({
@@ -95,7 +95,7 @@ if __name__ == "__main__":
         print("  baseline-ms: Latency baseline in milliseconds (default: 100)")
         sys.exit(1)
     
-    benchmark_path = Path(sys.argv[1])
-    baseline = float(sys.argv[2]) if len(sys.argv) > 2 else 100.0
+    _benchmark_path = Path(sys.argv[1])
+    _baseline = float(sys.argv[2]) if len(sys.argv) > 2 else 100.0
     
     sys.exit(check_latency_baseline(benchmark_path, baseline))

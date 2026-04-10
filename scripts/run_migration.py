@@ -19,14 +19,14 @@ async def run_migration():
     """Run the swarm_memories table migration."""
     
     # Get database URL from environment
-    database_url = os.getenv(
+    _database_url = os.getenv(
         "DATABASE_URL",
         "postgresql+asyncpg://heretek:langfuse@localhost:5432/heretek_swarm"
     )
     
     # Convert to asyncpg format
     if database_url.startswith("postgresql+asyncpg://"):
-        database_url = database_url.replace("postgresql+asyncpg://", "postgresql://")
+        _database_url = database_url.replace("postgresql+asyncpg://", "postgresql://")
     
     print(f"Connecting to database: {database_url.split('@')[1] if '@' in database_url else 'localhost'}")
     
@@ -34,12 +34,12 @@ async def run_migration():
         import asyncpg
         
         # Connect to database
-        conn = await asyncpg.connect(database_url)
+        _conn = await asyncpg.connect(database_url)
         
         # Read migration file
-        migration_path = Path(__file__).parent.parent / "migrations" / "001_create_swarm_memories.sql"
+        _migration_path = Path(__file__).parent.parent / "migrations" / "001_create_swarm_memories.sql"
         with open(migration_path, 'r') as f:
-            migration_sql = f.read()
+            _migration_sql = f.read()
         
         print(f"Reading migration from: {migration_path}")
         
@@ -50,7 +50,7 @@ async def run_migration():
         print("✅ swarm_memories table created")
         
         # Verify table exists
-        result = await conn.fetchval("""
+        _result = await conn.fetchval("""
             SELECT EXISTS (
                 SELECT FROM information_schema.tables 
                 WHERE table_name = 'swarm_memories'
@@ -79,5 +79,5 @@ async def run_migration():
 
 
 if __name__ == "__main__":
-    success = asyncio.run(run_migration())
+    _success = asyncio.run(run_migration())
     sys.exit(0 if success else 1)

@@ -63,7 +63,7 @@ SESSION_INIT_BODY = """
         
         # Session 44: Consensus Integration
         self.deliberation_engine = deliberation_engine or SwarmDeliberationEngine(
-            max_rounds=5, consensus_threshold=0.75, min_participants=2
+            _max_rounds = 5, consensus_threshold=0.75, min_participants=2
         )
         
         # Session 44: Memory Optimization Integration
@@ -83,7 +83,7 @@ SESSION_METHODS = '''
     # Collective Learning Integration Methods
     # =========================================================================
 
-    async def _emit_pattern(self, item_id: str, item_type: str, outcome: str, content: Dict[str, Any]) -> None:
+    async def _emit_pattern(self, _item_id: str, _item_type: str, _outcome: str, _content: Dict[str, _Any]) -> None:
         """Emit pattern for collective learning."""
         if not self.pattern_extractor:
             return
@@ -93,12 +93,12 @@ SESSION_METHODS = '''
         
         try:
             await self.pattern_extractor.analyze_message(
-                message_id=f"{item_type}_{item_id}",
-                sender=self.agent_id,
-                recipient="broadcast",
-                message_type=f"{item_type}_completion",
-                content=content,
-                timestamp=datetime.now(timezone.utc).isoformat(),
+                _message_id = f"{item_type}_{item_id}",
+                _sender = self.agent_id,
+                _recipient = "broadcast",
+                _message_type = f"{item_type}_completion",
+                _content = content,
+                _timestamp = datetime.now(timezone.utc).isoformat(),
             )
             
             self._pattern_emitted.add(item_id)
@@ -106,15 +106,15 @@ SESSION_METHODS = '''
         except Exception as e:
             logger.warning("failed_to_emit_pattern", item_id=item_id, error=str(e))
 
-    async def _consume_patterns(self, pattern_types: Optional[List[PatternType]] = None) -> List[Dict[str, Any]]:
+    async def _consume_patterns(self, _pattern_types: Optional[List[PatternType]]) -> List[Dict[str, Any]]:
         """Consume patterns from collective learning."""
         if not self.pattern_extractor:
             return []
         
         try:
-            patterns = await self.pattern_extractor.extract_patterns(
-                time_window_hours=24,
-                pattern_types=pattern_types or [PatternType.SUCCESS, PatternType.DECISION],
+            _patterns = await self.pattern_extractor.extract_patterns(
+                _time_window_hours = 24,
+                _pattern_types = pattern_types or [PatternType.SUCCESS, PatternType.DECISION],
             )
             return [p.to_dict() for p in patterns if p.metadata.confidence >= 0.7]
         except Exception as e:
@@ -125,24 +125,18 @@ SESSION_METHODS = '''
     # Consensus Deliberation Integration Methods
     # =========================================================================
 
-    async def _initiate_deliberation(
-        self,
-        item_id: str,
-        proposal: str,
-        participating_agents: List[str],
-        domain: str = "general",
-    ) -> Optional[str]:
+    async def _initiate_deliberation(self, _item_id: str, _proposal: str, _participating_agents: List[str], _domain: str) -> Optional[str]:
         """Initiate swarm deliberation."""
         if not self.deliberation_engine:
             return None
         
         try:
-            deliberation_id = f"delib_{item_id}"
+            _deliberation_id = f"delib_{item_id}"
             self.deliberation_engine.start_deliberation(
-                deliberation_id=deliberation_id,
-                proposal=proposal[:200],
-                participants=participating_agents,
-                domain=domain,
+                _deliberation_id = deliberation_id,
+                _proposal = proposal[:200],
+                _participants = participating_agents,
+                _domain = domain,
             )
             self._active_deliberations[item_id] = deliberation_id
             
@@ -152,35 +146,28 @@ SESSION_METHODS = '''
             logger.error("failed_to_initiate_deliberation", item_id=item_id, error=str(e))
             return None
 
-    async def _submit_deliberation_position(
-        self,
-        item_id: str,
-        agent_id: str,
-        position: Position,
-        confidence: float,
-        argument: str,
-    ) -> bool:
+    async def _submit_deliberation_position(self, _item_id: str, _agent_id: str, _position: Position, _confidence: float, _argument: str) -> bool:
         """Submit agent position in deliberation."""
         if not self.deliberation_engine:
             return False
         
-        deliberation_id = self._active_deliberations.get(item_id)
+        _deliberation_id = self._active_deliberations.get(item_id)
         if not deliberation_id:
             return False
         
         try:
-            success = self.deliberation_engine.submit_position(
-                deliberation_id=deliberation_id,
+            _success = self.deliberation_engine.submit_position(
+                _deliberation_id = deliberation_id,
                 agent_id=agent_id,
-                position=position,
-                confidence=confidence,
-                argument=argument,
+                _position = position,
+                _confidence = confidence,
+                _argument = argument,
             )
             
             if success and self.access_analyzer:
                 self.access_analyzer.record_access(
-                    memory_id=f"delib_{deliberation_id}_{agent_id}",
-                    access_type="write",
+                    _memory_id = f"delib_{deliberation_id}_{agent_id}",
+                    _access_type = "write",
                     agent_id=agent_id,
                 )
             
@@ -189,17 +176,17 @@ SESSION_METHODS = '''
             logger.error("failed_to_submit_deliberation_position", error=str(e))
             return False
 
-    async def _finalize_deliberation(self, item_id: str) -> Optional[Any]:
+    async def _finalize_deliberation(self, _item_id: str) -> Optional[Any]:
         """Finalize deliberation and apply result."""
         if not self.deliberation_engine:
             return None
         
-        deliberation_id = self._active_deliberations.get(item_id)
+        _deliberation_id = self._active_deliberations.get(item_id)
         if not deliberation_id:
             return None
         
         try:
-            result = self.deliberation_engine.finalize_deliberation(deliberation_id)
+            _result = self.deliberation_engine.finalize_deliberation(deliberation_id)
             
             if result:
                 self.deliberation_engine.cleanup_deliberation(deliberation_id)
@@ -215,34 +202,34 @@ SESSION_METHODS = '''
     # Memory Optimization Integration Methods
     # =========================================================================
 
-    def _track_memory_access(self, item_id: str, item_type: str, access_type: str = "read") -> None:
+    def _track_memory_access(self, _item_id: str, _item_type: str, _access_type: str) -> None:
         """Track memory access patterns."""
         if not self.access_analyzer:
             return
         
-        memory_id = f"{item_type}_{item_id}"
+        _memory_id = f"{item_type}_{item_id}"
         self.access_analyzer.record_access(
-            memory_id=memory_id,
-            access_type=access_type,
+            _memory_id = memory_id,
+            _access_type = access_type,
             agent_id=self.agent_id,
         )
 
-    def _get_memory_tier(self, item_id: str, item_type: str) -> AccessTier:
+    def _get_memory_tier(self, _item_id: str, _item_type: str) -> AccessTier:
         """Get memory tier classification."""
         if not self.access_analyzer:
             return AccessTier.COLD
         
-        memory_id = f"{item_type}_{item_id}"
-        profile = self.access_analyzer.get_profile(memory_id)
+        _memory_id = f"{item_type}_{item_id}"
+        _profile = self.access_analyzer.get_profile(memory_id)
         return profile.tier if profile else AccessTier.COLD
 
-    async def _prefetch_relevant(self, agent_id: str, item_type: str) -> List[str]:
+    async def _prefetch_relevant(self, _agent_id: str, _item_type: str) -> List[str]:
         """Prefetch items an agent is likely to need."""
         if not self.access_analyzer:
             return []
         
         try:
-            predicted_memories = self.access_analyzer.predict_agent_access(agent_id)
+            _predicted_memories = self.access_analyzer.predict_agent_access(agent_id)
             return [
                 mem.replace(f"{item_type}_", "")
                 for mem in predicted_memories
@@ -272,37 +259,37 @@ SESSION_METHODS = '''
 '''
 
 
-def wire_agent_file(filepath: Path) -> bool:
+def wire_agent_file(_filepath: Path) -> bool:
     """Apply agent wiring to an agent file."""
     if not filepath.exists():
         print(f"File not found: {filepath}")
         return False
     
-    content = filepath.read_text()
-    original_content = content
+    _content = filepath.read_text()
+    _original_content = content
     
     # 1. Add imports after existing imports
     if "Session 44: Collective Learning Integration" not in content:
         # Find the last import line
-        lines = content.split('\n')
-        insert_idx = 0
+        _lines = content.split('\n')
+        _insert_idx = 0
         for i, line in enumerate(lines):
             if line.startswith('from ') or line.startswith('import '):
-                insert_idx = i + 1
+                _insert_idx = i + 1
         
         lines.insert(insert_idx, SESSION_44_IMPORTS)
-        content = '\n'.join(lines)
+        _content = '\n'.join(lines)
         print(f"  Added imports to {filepath.name}")
     
     # 2. Add __init__ parameters
     if "pattern_extractor: Optional[PatternExtractor]" not in content:
         # Find __init__ method and add parameters
         init_pattern = r'(def __init__\([^)]*config: Optional\[Dict\[str, Any\]\] = None,)'
-        match = re.search(init_pattern, content)
+        _match = re.search(init_pattern, content)
         if match:
-            insert_pos = match.end()
+            _insert_pos = match.end()
             # Find the closing parenthesis
-            paren_count = 1
+            _paren_count = 1
             i = insert_pos
             while i < len(content) and paren_count > 0:
                 if content[i] == '(':
@@ -312,37 +299,37 @@ def wire_agent_file(filepath: Path) -> bool:
                 i += 1
             
             # Insert before closing parenthesis
-            content = content[:i-1] + SESSION_44_INIT_PARAMS + content[i-1:]
+            _content = content[:i-1] + SESSION_44_INIT_PARAMS + content[i-1:]
             print(f"  Added __init__ parameters to {filepath.name}")
     
     # 3. Add __init__ body
     if "Session 44: Collective Learning Integration" in content and "self.pattern_extractor = pattern_extractor" not in content:
         # Find logger.info call after __init__ body starts and add before it
-        init_body_pattern = r'(logger\.info\([^)]*initialized[^)]*\))'
-        match = re.search(init_body_pattern, content, re.IGNORECASE)
+        _init_body_pattern = r'(logger\.info\([^)]*initialized[^)]*\))'
+        _match = re.search(init_body_pattern, content, re.IGNORECASE)
         if match:
-            insert_pos = match.start()
-            content = content[:insert_pos] + SESSION_44_INIT_BODY + "\n\n        " + content[insert_pos:]
+            _insert_pos = match.start()
+            _content = content[:insert_pos] + SESSION_44_INIT_BODY + "\n\n        " + content[insert_pos:]
             print(f"  Added __init__ body to {filepath.name}")
     
     # 4. Add integration methods at end of class (before last method)
     if "Session 44: Collective Learning Integration Methods" not in content:
         # Find the last method in the class and add after it
         # Look for the last async def or def pattern
-        method_pattern = r'(    async def|    def)'
-        matches = list(re.finditer(method_pattern, content))
+        _method_pattern = r'(    async def|    def)'
+        _matches = list(re.finditer(method_pattern, content))
         
         if matches:
             # Find a good insertion point - look for _send_error or similar utility method
-            insert_pos = matches[-1].start()
+            _insert_pos = matches[-1].start()
             
             # Try to find a better insertion point
             for match in reversed(matches):
                 if '_send_error' in content[match.start():match.start()+200]:
-                    insert_pos = match.start()
+                    _insert_pos = match.start()
                     break
             
-            content = content[:insert_pos] + SESSION_44_METHODS + "\n" + content[insert_pos:]
+            _content = content[:insert_pos] + SESSION_44_METHODS + "\n" + content[insert_pos:]
             print(f"  Added integration methods to {filepath.name}")
     
     # Write the modified content
@@ -358,7 +345,7 @@ def main():
     print("Agent Wiring Script")
     print("=" * 50)
     
-    agents_to_wire = [
+    _agents_to_wire = [
         "chronos.py",
         "coder.py",
         "coordinator.py",
@@ -377,9 +364,9 @@ def main():
         "prism.py",
     ]
     
-    wired_count = 0
+    _wired_count = 0
     for agent_file in agents_to_wire:
-        filepath = ACTORS_DIR / agent_file
+        _filepath = ACTORS_DIR / agent_file
         print(f"\nWiring {agent_file}...")
         
         if wire_agent_file(filepath):
@@ -396,7 +383,7 @@ def main():
 # Programmatic Functions for Agent Management
 # =============================================================================
 
-def discover_agents(actors_dir: Optional[Path] = None) -> List[Dict[str, Any]]:
+def discover_agents(_actors_dir: Optional[Path]) -> List[Dict[str, Any]]:
     """
     Discover all available agent types from the actors directory.
     
@@ -407,13 +394,13 @@ def discover_agents(actors_dir: Optional[Path] = None) -> List[Dict[str, Any]]:
         List of agent metadata dictionaries
     """
     if actors_dir is None:
-        actors_dir = ACTORS_DIR
+        _actors_dir = ACTORS_DIR
     
     if not actors_dir.exists():
         print(f"Actors directory does not exist: {actors_dir}")
         return []
     
-    discovered = []
+    _discovered = []
     
     for actor_file in actors_dir.glob("*.py"):
         if actor_file.name.startswith("_"):
@@ -421,28 +408,28 @@ def discover_agents(actors_dir: Optional[Path] = None) -> List[Dict[str, Any]]:
         
         try:
             # Extract class name from file name
-            class_name = "".join(part.capitalize() for part in actor_file.stem.split("_"))
+            _class_name = "".join(part.capitalize() for part in actor_file.stem.split("_"))
             
             # Read file to extract docstring and metadata
-            content = actor_file.read_text()
+            _content = actor_file.read_text()
             
             # Extract docstring (first string after class definition)
-            docstring = ""
+            _docstring = ""
             docstring_match = re.search(rf'class {class_name}.*?:\s*"""([^"]+)"""', content, re.DOTALL)
             if docstring_match:
-                docstring = docstring_match.group(1).strip().split("\n")[0]
+                _docstring = docstring_match.group(1).strip().split("\n")[0]
             
             # Extract topics if defined
-            topics = []
-            topics_match = re.search(r'topics\s*=\s*\[([^\]]+)\]', content)
+            _topics = []
+            _topics_match = re.search(r'topics\s*=\s*\[([^\]]+)\]', content)
             if topics_match:
-                topics = [t.strip().strip('"\'') for t in topics_match.group(1).split(",")]
+                _topics = [t.strip().strip('"\'') for t in topics_match.group(1).split(",")]
             
             # Extract capabilities if defined
-            capabilities = []
-            capabilities_match = re.search(r'capabilities\s*=\s*\[([^\]]+)\]', content)
+            _capabilities = []
+            _capabilities_match = re.search(r'capabilities\s*=\s*\[([^\]]+)\]', content)
             if capabilities_match:
-                capabilities = [c.strip().strip('"\'') for c in capabilities_match.group(1).split(",")]
+                _capabilities = [c.strip().strip('"\'') for c in capabilities_match.group(1).split(",")]
             
             discovered.append({
                 "type_name": class_name,
@@ -460,7 +447,7 @@ def discover_agents(actors_dir: Optional[Path] = None) -> List[Dict[str, Any]]:
     return discovered
 
 
-def get_agent_metadata(agent_type: str, actors_dir: Optional[Path] = None) -> Optional[Dict[str, Any]]:
+def get_agent_metadata(_agent_type: str, _actors_dir: Optional[Path]) -> Optional[Dict[str, Any]]:
     """
     Get metadata for a specific agent type.
     
@@ -471,7 +458,7 @@ def get_agent_metadata(agent_type: str, actors_dir: Optional[Path] = None) -> Op
     Returns:
         Agent metadata dictionary or None if not found
     """
-    agents = discover_agents(actors_dir)
+    _agents = discover_agents(actors_dir)
     
     for agent in agents:
         if agent["type_name"] == agent_type:
@@ -480,11 +467,7 @@ def get_agent_metadata(agent_type: str, actors_dir: Optional[Path] = None) -> Op
     return None
 
 
-def deploy_agent(
-    agent_type: str,
-    config: Optional[Dict[str, Any]] = None,
-    actors_dir: Optional[Path] = None,
-) -> Optional[Dict[str, Any]]:
+def deploy_agent(_agent_type: str, _config: Optional[Dict[str, _Any]], _actors_dir: Optional[Path]) -> Optional[Dict[str, Any]]:
     """
     Deploy a new agent instance programmatically.
     
@@ -500,18 +483,18 @@ def deploy_agent(
         Deployment configuration dictionary or None if agent type not found
     """
     # Validate agent type exists
-    metadata = get_agent_metadata(agent_type, actors_dir)
+    _metadata = get_agent_metadata(agent_type, actors_dir)
     if not metadata:
         print(f"Unknown agent type: {agent_type}")
         return None
     
     # Generate deployment configuration
     import uuid
-    instance_id = config.get("instance_id") if config else None
+    _instance_id = config.get("instance_id") if config else None
     if instance_id is None:
-        instance_id = f"{agent_type.lower()}_{uuid.uuid4().hex[:8]}"
+        _instance_id = f"{agent_type.lower()}_{uuid.uuid4().hex[:8]}"
     
-    deployment_config = {
+    _deployment_config = {
         "instance_id": instance_id,
         "agent_type": agent_type,
         "module_path": metadata["module_path"],
@@ -538,19 +521,19 @@ def get_deployed_agents_config() -> Dict[str, Dict[str, Any]]:
     Returns:
         Dictionary mapping instance IDs to configurations
     """
-    characters_dir = Path(__file__).parent.parent / "src" / "heretek_swarm" / "runtime" / "characters"
+    _characters_dir = Path(__file__).parent.parent / "src" / "heretek_swarm" / "runtime" / "characters"
     
     if not characters_dir.exists():
         return {}
     
-    deployed = {}
+    _deployed = {}
     
     for char_file in characters_dir.glob("*.json"):
         try:
             with open(char_file, 'r') as f:
-                character = json.load(f)
+                _character = json.load(f)
             
-            instance_id = char_file.stem
+            _instance_id = char_file.stem
             deployed[instance_id] = {
                 "name": character.get("name"),
                 "bio": character.get("bio"),
@@ -564,7 +547,7 @@ def get_deployed_agents_config() -> Dict[str, Dict[str, Any]]:
     return deployed
 
 
-def export_agent_config(agent_type: str, output_path: Optional[Path] = None) -> Optional[Path]:
+def export_agent_config(_agent_type: str, _output_path: Optional[Path]) -> Optional[Path]:
     """
     Export agent configuration to a JSON file.
     
@@ -575,16 +558,16 @@ def export_agent_config(agent_type: str, output_path: Optional[Path] = None) -> 
     Returns:
         Path to exported config file or None if failed
     """
-    metadata = get_agent_metadata(agent_type)
+    _metadata = get_agent_metadata(agent_type)
     if not metadata:
         print(f"Unknown agent type: {agent_type}")
         return None
     
     if output_path is None:
-        characters_dir = Path(__file__).parent.parent / "src" / "heretek_swarm" / "runtime" / "characters"
-        output_path = characters_dir / f"{agent_type.lower()}.json"
+        _characters_dir = Path(__file__).parent.parent / "src" / "heretek_swarm" / "runtime" / "characters"
+        _output_path = characters_dir / f"{agent_type.lower()}.json"
     
-    config = {
+    _config = {
         "name": agent_type,
         "bio": metadata.get("description", ""),
         "style": {
@@ -610,7 +593,7 @@ if __name__ == "__main__":
     print("Agent Discovery Demo")
     print("=" * 50)
     
-    agents = discover_agents()
+    _agents = discover_agents()
     for agent in agents[:5]:  # Show first 5
         print(f"\n{agent['type_name']}:")
         print(f"  Description: {agent.get('description', 'N/A')}")

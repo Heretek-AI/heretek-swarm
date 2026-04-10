@@ -3,7 +3,7 @@
 
 import os
 
-base_path = "C:/Users/derek/Desktop/Heretek-AI/heretek-swarm"
+_base_path = "C:/Users/derek/Desktop/Heretek-AI/heretek-swarm"
 
 # Prometheus configuration
 prometheus_yml = """# Prometheus scrape configuration for Heretek Swarm
@@ -49,7 +49,7 @@ scrape_configs:
 """
 
 # Write prometheus.yml
-prometheus_dir = os.path.join(base_path, "prometheus")
+_prometheus_dir = os.path.join(base_path, "prometheus")
 os.makedirs(prometheus_dir, exist_ok=True)
 with open(os.path.join(prometheus_dir, "prometheus.yml"), "w", encoding="utf-8") as f:
     f.write(prometheus_yml)
@@ -57,7 +57,7 @@ with open(os.path.join(prometheus_dir, "prometheus.yml"), "w", encoding="utf-8")
 print(f"Created: {os.path.join(prometheus_dir, 'prometheus.yml')}")
 
 # Docker compose overlay content (to be manually merged or used with -f flag)
-docker_compose_additions = """
+_docker_compose_additions = """
   # Add to existing heretek-swarm service:
     profiles:
       - default

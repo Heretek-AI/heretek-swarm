@@ -36,18 +36,12 @@ def get_api_key() -> Optional[str]:
     return os.environ.get("QDRANT_API_KEY")
 
 
-def create_collection_if_not_exists(
-    client: QdrantClient,
-    collection_name: str,
-    vector_size: int,
-    distance: str = "Cosine",
-    description: str = "",
-) -> bool:
+def create_collection_if_not_exists(_client: QdrantClient, _collection_name: str, _vector_size: int, _distance: str, _description: str) -> bool:
     """Create a collection if it doesn't already exist."""
     try:
         # Check if collection exists
-        collections = client.get_collections().collections
-        existing = [c.name for c in collections]
+        _collections = client.get_collections().collections
+        _existing = [c.name for c in collections]
 
         if collection_name in existing:
             print(f"✓ Collection '{collection_name}' already exists")
@@ -55,30 +49,30 @@ def create_collection_if_not_exists(
 
         # Create collection with optimized settings
         client.create_collection(
-            collection_name=collection_name,
-            vectors_config=VectorParams(
-                size=vector_size,
-                distance=Distance[distance.upper()],
+            _collection_name = collection_name,
+            _vectors_config = VectorParams(
+                _size = vector_size,
+                _distance = Distance[distance.upper()],
             ),
-            optimizers_config=OptimizersConfigDiff(
-                indexing_threshold=20000,
-                vacuum_min_vector_number=1000,
-                default_segment_number=2,
+            _optimizers_config = OptimizersConfigDiff(
+                _indexing_threshold = 20000,
+                _vacuum_min_vector_number = 1000,
+                _default_segment_number = 2,
             ),
-            hnsw_config=HnswConfigDiff(
-                m=16,
-                ef_construct=100,
-                full_scan_threshold=10000,
+            _hnsw_config = HnswConfigDiff(
+                _m = 16,
+                _ef_construct = 100,
+                _full_scan_threshold = 10000,
             ),
-            wal_config=WalConfigDiff(
-                wal_capacity_mb=32,
-                wal_segments_number=2,
+            _wal_config = WalConfigDiff(
+                _wal_capacity_mb = 32,
+                _wal_segments_number = 2,
             ),
-            quantization_config=QuantizationConfigDiff(
-                scalar=ScalarQuantization(
-                    type=ScalarType.INT8,
-                    quantile=0.99,
-                    always_ram=True,
+            _quantization_config = QuantizationConfigDiff(
+                _scalar = ScalarQuantization(
+                    _type = ScalarType.INT8,
+                    _quantile = 0.99,
+                    _always_ram = True,
                 )
             ),
         )
@@ -100,7 +94,7 @@ def setup_collections() -> dict:
     - heretek_memory_access: Memory access pattern vectors
     """
     # Collection definitions
-    collections = {
+    _collections = {
         "heretek_rag": {
             "vector_size": 1536,  # OpenAI text-embedding-3-small
             "distance": "Cosine",
@@ -140,28 +134,28 @@ def setup_collections() -> dict:
     }
 
     # Connect to Qdrant
-    url = get_qdrant_url()
-    api_key = get_api_key()
+    _url = get_qdrant_url()
+    _api_key = get_api_key()
 
     print(f"Connecting to Qdrant at {url}...")
     try:
-        client = QdrantClient(url=url, api_key=api_key)
+        _client = QdrantClient(url=url, api_key=api_key)
         print("✓ Connected to Qdrant")
     except Exception as e:
         print(f"✗ Failed to connect to Qdrant: {e}")
         return {"success": False, "error": str(e)}
 
     # Create collections
-    results = {"created": [], "existing": [], "failed": []}
+    _results = {"created": [], "existing": [], "failed": []}
 
     for name, config in collections.items():
         try:
-            created = create_collection_if_not_exists(
+            _created = create_collection_if_not_exists(
                 client,
-                collection_name=name,
-                vector_size=config["vector_size"],
-                distance=config["distance"],
-                description=config["description"],
+                _collection_name = name,
+                _vector_size = config["vector_size"],
+                _distance = config["distance"],
+                _description = config["description"],
             )
             if created:
                 results["created"].append(name)
@@ -173,7 +167,7 @@ def setup_collections() -> dict:
     # Create payload indexes for efficient filtering
     print("\nCreating payload indexes...")
 
-    indexes_to_create = [
+    _indexes_to_create = [
         # Original indexes (Session 1-44)
         ("heretek_rag", "source"),
         ("heretek_rag", "document_type"),
@@ -206,9 +200,9 @@ def setup_collections() -> dict:
     for collection, field in indexes_to_create:
         try:
             client.create_payload_index(
-                collection_name=collection,
-                field_name=field,
-                field_schema="keyword",
+                _collection_name = collection,
+                _field_name = field,
+                _field_schema = "keyword",
             )
             print(f"✓ Created index on {collection}.{field}")
         except Exception as e:
@@ -229,7 +223,7 @@ def main():
     print("=" * 60)
     print()
 
-    results = setup_collections()
+    _results = setup_collections()
 
     print()
     print("=" * 60)
@@ -239,8 +233,8 @@ def main():
     print(f"  Failed: {len(results.get('failed', []))}")
     print()
     print("Collections:")
-    for name in collections.keys():
-        status = "✓" if name in results.get("created", []) or name in results.get("existing", []) else "✗"
+    for name in collections:
+        _status = "✓" if name in results.get("created", []) or name in results.get("existing", []) else "✗"
         print(f"  {status} {name}")
     print("=" * 60)
 

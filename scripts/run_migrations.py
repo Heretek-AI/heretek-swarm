@@ -18,10 +18,10 @@ import logging
 
 # Configure logging
 logging.basicConfig(
-    level=logging.INFO,
-    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s"
+    _level = logging.INFO,
+    _format = "%(asctime)s - %(name)s - %(levelname)s - %(message)s"
 )
-logger = logging.getLogger(__name__)
+_logger = logging.getLogger(__name__)
 
 # Database configuration from environment
 DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://heretek:heretek@localhost:5432/heretek")
@@ -34,63 +34,63 @@ def get_migration_files() -> list[Path]:
         logger.error(f"Migrations directory not found: {MIGRATIONS_DIR}")
         return []
     
-    migration_files = sorted(MIGRATIONS_DIR.glob("*.sql"))
+    _migration_files = sorted(MIGRATIONS_DIR.glob("*.sql"))
     logger.info(f"Found {len(migration_files)} migration files")
     return migration_files
 
 
-def parse_migration_header(content: str) -> dict:
+def parse_migration_header(_content: str) -> dict:
     """Parse migration file header for metadata."""
-    header = {}
+    _header = {}
     # Extract migration number and description from comments
-    match = re.search(r"-- Migration: (\d+)", content)
+    _match = re.search(r"-- Migration: (\d+)", content)
     if match:
         header["version"] = match.group(1)
     
-    match = re.search(r"-- Description: (.+)", content)
+    _match = re.search(r"-- Description: (.+)", content)
     if match:
         header["description"] = match.group(1)
     
     return header
 
 
-def execute_migration(migration_file: Path) -> bool:
+def execute_migration(_migration_file: Path) -> bool:
     """Execute a single migration file against the database."""
     import psycopg2
     from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
     
-    content = migration_file.read_text()
-    metadata = parse_migration_header(content)
+    _content = migration_file.read_text()
+    _metadata = parse_migration_header(content)
     
     logger.info(f"Executing migration: {migration_file.name}")
     logger.info(f"  Description: {metadata.get('description', 'N/A')}")
     
     try:
         # Connect to database
-        conn = psycopg2.connect(DATABASE_URL)
+        _conn = psycopg2.connect(DATABASE_URL)
         conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
-        cursor = conn.cursor()
+        _cursor = conn.cursor()
         
         # Split and execute statements (handling semicolons)
         # Remove comment lines for execution
-        statements = []
-        current_stmt = []
+        _statements = []
+        _current_stmt = []
         
         for line in content.split("\n"):
-            stripped = line.strip()
+            _stripped = line.strip()
             # Skip pure comment lines but keep inline comments
             if stripped.startswith("--") and not stripped.startswith("-- Migration"):
                 continue
             current_stmt.append(line)
             if stripped.endswith(";"):
-                stmt = "\n".join(current_stmt)
+                _stmt = "\n".join(current_stmt)
                 if stmt.strip():
                     statements.append(stmt)
-                current_stmt = []
+                _current_stmt = []
         
         # Execute each statement
         for i, stmt in enumerate(statements):
-            stmt = stmt.strip()
+            _stmt = stmt.strip()
             if not stmt:
                 continue
             try:
@@ -121,8 +121,8 @@ def check_migration_status() -> None:
     import psycopg2
     
     try:
-        conn = psycopg2.connect(DATABASE_URL)
-        cursor = conn.cursor()
+        _conn = psycopg2.connect(DATABASE_URL)
+        _cursor = conn.cursor()
         
         # Check if migrations table exists
         cursor.execute("""
@@ -131,14 +131,14 @@ def check_migration_status() -> None:
                 WHERE table_name = 'schema_migrations'
             );
         """)
-        exists = cursor.fetchone()[0]
+        _exists = cursor.fetchone()[0]
         
         if not exists:
             logger.info("No migrations table found. Run migrations to create it.")
         else:
             # Get applied migrations
             cursor.execute("SELECT version, applied_at FROM schema_migrations ORDER BY version")
-            rows = cursor.fetchall()
+            _rows = cursor.fetchall()
             logger.info("Applied migrations:")
             for version, applied in rows:
                 logger.info(f"  {version}: {applied}")
@@ -150,7 +150,7 @@ def check_migration_status() -> None:
                 WHERE table_name = 'swarm_memories'
             );
         """)
-        exists = cursor.fetchone()[0]
+        _exists = cursor.fetchone()[0]
         
         if exists:
             logger.info("\nswarm_memories table exists")
@@ -161,7 +161,7 @@ def check_migration_status() -> None:
                 WHERE table_name = 'swarm_memories'
                 ORDER BY ordinal_position
             """)
-            columns = cursor.fetchall()
+            _columns = cursor.fetchall()
             logger.info("  Columns:")
             for col in columns:
                 logger.info(f"    - {col[0]}: {col[1]} (nullable: {col[2]})")
@@ -172,7 +172,7 @@ def check_migration_status() -> None:
                 FROM pg_indexes 
                 WHERE tablename = 'swarm_memories'
             """)
-            indexes = cursor.fetchall()
+            _indexes = cursor.fetchall()
             logger.info("  Indexes:")
             for idx_name, idx_def in indexes:
                 logger.info(f"    - {idx_name}")
@@ -194,9 +194,9 @@ def create_migrations_table() -> bool:
     from psycopg2.extensions import ISOLATION_LEVEL_AUTOCOMMIT
     
     try:
-        conn = psycopg2.connect(DATABASE_URL)
+        _conn = psycopg2.connect(DATABASE_URL)
         conn.set_isolation_level(ISOLATION_LEVEL_AUTOCOMMIT)
-        cursor = conn.cursor()
+        _cursor = conn.cursor()
         
         cursor.execute("""
             CREATE TABLE IF NOT EXISTS schema_migrations (
@@ -217,24 +217,24 @@ def create_migrations_table() -> bool:
 
 
 def main():
-    parser = argparse.ArgumentParser(description="Run database migrations")
+    _parser = argparse.ArgumentParser(description="Run database migrations")
     parser.add_argument(
         "--status", 
-        action="store_true", 
-        help="Check migration status"
+        _action = "store_true", 
+        _help = "Check migration status"
     )
     parser.add_argument(
         "--dry-run",
-        action="store_true",
-        help="Show what would be executed without running"
+        _action = "store_true",
+        _help = "Show what would be executed without running"
     )
     parser.add_argument(
         "--force",
-        action="store_true",
-        help="Force run all migrations (skip tracking)"
+        _action = "store_true",
+        _help = "Force run all migrations (skip tracking)"
     )
     
-    args = parser.parse_args()
+    _args = parser.parse_args()
     
     if args.status:
         check_migration_status()
@@ -245,7 +245,7 @@ def main():
         create_migrations_table()
     
     # Get and execute migrations
-    migration_files = get_migration_files()
+    _migration_files = get_migration_files()
     
     if args.dry_run:
         logger.info("Dry run - would execute:")
@@ -253,8 +253,8 @@ def main():
             logger.info(f"  - {mf.name}")
         return 0
     
-    success_count = 0
-    failed_count = 0
+    _success_count = 0
+    _failed_count = 0
     
     for mf in migration_files:
         if execute_migration(mf):

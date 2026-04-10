@@ -39,7 +39,7 @@ async def test_mem0_integration():
         qdrant_host = os.getenv("QDRANT_HOST", "localhost")
         qdrant_port = int(os.getenv("QDRANT_PORT", "6333"))
         
-        client = QdrantClient(host=qdrant_host, port=qdrant_port)
+        _client = QdrantClient(host=qdrant_host, port=qdrant_port)
         collections = client.get_collections()
         print(f"✅ Qdrant connected at {qdrant_host}:{qdrant_port}")
         print(f"   Collections: {[c.name for c in collections.collections]}")
@@ -53,14 +53,14 @@ async def test_mem0_integration():
         from memory.mem0_backend import Mem0Backend, Mem0Config
         
         # Create config
-        config = Mem0Config()
+        _config = Mem0Config()
         print(f"✅ Mem0Config created")
         print(f"   Vector store: {config.vector_store_provider}")
         print(f"   Qdrant: {config.qdrant_host}:{config.qdrant_port}")
         print(f"   Collection: {config.qdrant_collection}")
         
         # Check if OpenAI API key is available
-        api_key = config.openai_api_key or os.getenv("OPENAI_API_KEY")
+        _api_key = config.openai_api_key or os.getenv("OPENAI_API_KEY")
         if api_key:
             print(f"   OpenAI API key: {'✅ Set' if api_key else '❌ Not set'}")
         else:
@@ -68,7 +68,7 @@ async def test_mem0_integration():
             print("   Set with: export OPENAI_API_KEY=sk-...")
         
         # Try to initialize backend
-        backend = Mem0Backend(config)
+        _backend = Mem0Backend(config)
         print(f"\n✅ Mem0Backend created")
         
         # Try to initialize (may fail without API key)
@@ -78,9 +78,9 @@ async def test_mem0_integration():
             
             # Test a simple store operation (may fail without embeddings)
             try:
-                result = await backend.store(
-                    content={"text": "Test memory"},
-                    metadata={"test": True}
+                _result = await backend.store(
+                    _content = {"text": "Test memory"},
+                    _metadata = {"test": True}
                 )
                 print(f"✅ Memory stored: {result.id}")
             except Exception as e:
@@ -109,7 +109,7 @@ async def test_mem0_integration():
 
 async def main():
     """Run all tests."""
-    success = await test_mem0_integration()
+    _success = await test_mem0_integration()
     
     print("\n" + "=" * 60)
     if success:
@@ -123,5 +123,5 @@ async def main():
 
 
 if __name__ == "__main__":
-    success = asyncio.run(main())
+    _success = asyncio.run(main())
     sys.exit(0 if success else 1)
