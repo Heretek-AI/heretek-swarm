@@ -91,8 +91,8 @@ class MessageLineage(BaseModel):
     
     class Config:
         json_encoders = {
-            datetime: lambda v: v.isoformat(),
-            UUID: lambda v: str(v),
+            datetime: datetime.isoformat,
+            UUID: str,
         }
 
 
@@ -134,8 +134,8 @@ class StateTransition(BaseModel):
     
     class Config:
         json_encoders = {
-            datetime: lambda v: v.isoformat(),
-            UUID: lambda v: str(v),
+            datetime: datetime.isoformat,
+            UUID: str,
         }
 
 
@@ -203,9 +203,9 @@ class AgentState(BaseModel):
     
     class Config:
         json_encoders = {
-            datetime: lambda v: v.isoformat(),
-            UUID: lambda v: str(v),
-            set: lambda v: list(v),
+            datetime: datetime.isoformat,
+            UUID: str,
+            set: list,
         }
 
 
@@ -248,9 +248,9 @@ class ConversationState(BaseModel):
     
     class Config:
         json_encoders = {
-            datetime: lambda v: v.isoformat(),
-            UUID: lambda v: str(v),
-            set: lambda v: list(v),
+            datetime: datetime.isoformat,
+            UUID: str,
+            set: list,
         }
 
 
@@ -299,9 +299,9 @@ class SystemState(BaseModel):
     
     class Config:
         json_encoders = {
-            datetime: lambda v: v.isoformat(),
-            UUID: lambda v: str(v),
-            set: lambda v: list(v),
+            datetime: datetime.isoformat,
+            UUID: str,
+            set: list,
         }
 
 
@@ -355,8 +355,8 @@ class StateSnapshot(BaseModel):
     
     class Config:
         json_encoders = {
-            datetime: lambda v: v.isoformat(),
-            UUID: lambda v: str(v),
+            datetime: datetime.isoformat,
+            UUID: str,
         }
 
 
@@ -390,7 +390,7 @@ class StateDiff(BaseModel):
     
     class Config:
         json_encoders = {
-            datetime: lambda v: v.isoformat(),
-            UUID: lambda v: str(v),
-            set: lambda v: list(v),
+            datetime: datetime.isoformat,
+            UUID: str,
+            set: list,
         }

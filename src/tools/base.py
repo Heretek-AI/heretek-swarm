@@ -17,6 +17,7 @@ from uuid import UUID, uuid4
 
 import structlog
 from pydantic import BaseModel, Field, ValidationError
+from functools import partial
 
 logger = structlog.get_logger()
 
@@ -486,5 +487,5 @@ class SimpleTool(BaseTool[Dict[str, Any], Dict[str, Any]]):
             loop = asyncio.get_event_loop()
             return await loop.run_in_executor(
                 None,
-                lambda: self._func(**input_data)
+                partial(self._func, **input_data)
             )

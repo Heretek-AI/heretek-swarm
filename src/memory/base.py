@@ -79,8 +79,8 @@ class MemoryEntry(BaseModel):
     
     class Config:
         json_encoders = {
-            datetime: lambda v: v.isoformat(),
-            UUID: lambda v: str(v),
+            datetime: datetime.isoformat,
+            UUID: str,
         }
     
     def touch(self) -> "MemoryEntry":
@@ -153,8 +153,8 @@ class MemoryResult(BaseModel):
     
     class Config:
         json_encoders = {
-            datetime: lambda v: v.isoformat(),
-            UUID: lambda v: str(v),
+            datetime: datetime.isoformat,
+            UUID: str,
         }
 
 
