@@ -1,0 +1,100 @@
+{
+  "version": "1.0.0",
+  "app": {
+    "name": "Heretek Swarm",
+    "version": "1.0.0",
+    "environment": "development"
+  },
+  "theme": {
+    "mode": "dark",
+    "primaryColor": "#6366f1",
+    "accentColor": "#10b981"
+  },
+  "docker": {
+    "enabled": true,
+    "socketPath": null,
+    "composeFile": "docker-compose.yml"
+  },
+  "api": {
+    "url": "http://localhost:8000",
+    "timeout": 30,
+    "retryAttempts": 3
+  },
+  "modelProviders": [
+    {
+      "id": "default-ollama",
+      "type": "ollama",
+      "name": "Local Ollama",
+      "baseUrl": "http://localhost:11434",
+      "defaultModel": "llama3.1",
+      "models": ["llama3.1", "llama3", "llama2", "mistral", "codellama", "phi3", "qwen2", "deepseek-coder"],
+      "isEnabled": true,
+      "isDefault": true,
+      "priority": 1,
+      "supportsStreaming": true,
+      "supportsFunctionCalling": false,
+      "costPer1kInput": 0.0,
+      "costPer1kOutput": 0.0
+    }
+  ],
+  "embeddingProviders": [
+    {
+      "id": "default-ollama-embed",
+      "type": "ollama",
+      "name": "Local Ollama Embeddings",
+      "baseUrl": "http://localhost:11434",
+      "model": "nomic-embed-text",
+      "dimensions": 768,
+      "isEnabled": true,
+      "isDefault": true
+    }
+  ],
+  "observability": {
+    "prometheus": {
+      "enabled": true,
+      "url": "http://localhost:9090",
+      "scrapeInterval": 15
+    },
+    "loki": {
+      "enabled": true,
+      "url": "http://localhost:3100",
+      "serviceName": "heretek-swarm"
+    },
+    "opentelemetry": {
+      "enabled": true,
+      "endpoint": "http://localhost:4317",
+      "serviceName": "heretek-swarm"
+    },
+    "jaeger": {
+      "enabled": false,
+      "url": "http://localhost:14250"
+    }
+  },
+  "agents": {
+    "maxConcurrent": 10,
+    "heartbeatInterval": 30,
+    "taskTimeout": 300,
+    "retryAttempts": 3
+  },
+  "memory": {
+    "maxSize": 1000,
+    "defaultTTL": 86400,
+    "retentionDays": 30
+  },
+  "consensus": {
+    "minVotes": 3,
+    "confidenceThreshold": 0.75,
+    "timeout": 60
+  },
+  "security": {
+    "authEnabled": false,
+    "rateLimitEnabled": true,
+    "maxRequestsPerMinute": 100
+  },
+  "logging": {
+    "level": "INFO",
+    "format": "json",
+    "outputPaths": ["stdout", "file"],
+    "filePath": "~/.heretek-swarm/logs/app.log"
+  }
+}
