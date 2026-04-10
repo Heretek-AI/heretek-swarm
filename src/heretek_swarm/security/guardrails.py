@@ -21,7 +21,7 @@ from enum import Enum
 
 import structlog
 
-logger = structlog.get_logger()
+_logger = structlog.get_logger()
 
 
 class GuardrailsAction(str, Enum):
@@ -91,7 +91,7 @@ class GuardrailsSystem:
     - Harmful content generation
     """
     
-    def __init__(self, config: Optional[GuardrailsConfig] = None):
+    def __init__(self, _config: Optional[GuardrailsConfig]):
         """
         Initialize guardrails system.
         
@@ -103,13 +103,13 @@ class GuardrailsSystem:
         self._validator_chain = self._build_validator_chain()
         logger.info(
             "guardrails_initialized",
-            blocked_patterns_count=len(self.config.blocked_patterns),
+            _blocked_patterns_count = len(self.config.blocked_patterns),
             max_input_length=self.config.max_input_length
         )
     
     def _compile_blocked_patterns(self) -> List[re.Pattern]:
         """Compile regex patterns for efficient matching"""
-        compiled = []
+        _compiled = []
         for bp in self.config.blocked_patterns:
             try:
                 pattern = re.compile(bp.pattern, re.IGNORECASE)
@@ -118,18 +118,18 @@ class GuardrailsSystem:
                 logger.warning(
                     "invalid_pattern",
                     pattern=bp.pattern,
-                    error=str(e)
+                    _error = str(e)
                 )
         return compiled
     
     def _build_validator_chain(self) -> ValidatorChain:
         """Build the validator chain for input validation"""
-        chain = ValidatorChain()
+        _chain = ValidatorChain()
         
         # Length validation
         chain.add(LengthValidator(
-            min_length=self.config.min_input_length,
-            max_length=self.config.max_input_length
+            _min_length = self.config.min_input_length,
+            _max_length = self.config.max_input_length
         ))
         
         # Blocked patterns validation
@@ -146,11 +146,7 @@ class GuardrailsSystem:
         
         return chain
     
-    async def validate_input(
-        self,
-        input_text: str,
-        agent_id: Optional[str] = None
-    ) -> ValidationResult:
+    async def validate_input(self, _input_text: str, _agent_id: Optional[str]) -> ValidationResult:
         """
         Validate user input against guardrails.
         
@@ -167,18 +163,14 @@ class GuardrailsSystem:
         if is_valid:
             logger.info(
                 "input_validated",
-                agent_id=agent_id,
-                length=len(input_text)
+                _agent_id = agent_id,
+                _length = len(input_text)
             )
             return ValidationResult(valid=True)
         
         return ValidationResult(valid=False, reason=reason)
     
-    async def filter_output(
-        self,
-        output_text: str,
-        agent_id: Optional[str] = None
-    ) -> FilterResult:
+    async def filter_output(self, _output_text: str, _agent_id: Optional[str]) -> FilterResult:
         """
         Filter agent output against guardrails.
         
@@ -191,37 +183,37 @@ class GuardrailsSystem:
         """
         if not self.config.enable_content_filter:
             return FilterResult(
-                original=output_text,
-                filtered=output_text,
-                blocked_content=None,
-                reason=None
+                _original = output_text,
+                _filtered = output_text,
+                _blocked_content = None,
+                _reason = None
             )
         
-        filtered = output_text
-        blocked_content = None
-        reason = None
+        _filtered = output_text
+        _blocked_content = None
+        _reason = None
         
         # Block personal information in output
         if self.config.block_personal_info:
             # Email addresses
-            emails = re.findall(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', filtered)
+            _emails = re.findall(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', filtered)
             if emails:
-                filtered = re.sub(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', '[REDACTED]', filtered)
-                blocked_content = ", ".join(emails)
-                reason = "Personal email addresses redacted"
+                _filtered = re.sub(r'\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b', '[REDACTED]', filtered)
+                _blocked_content = ", ".join(emails)
+                _reason = "Personal email addresses redacted"
         
         # Phone numbers
-        phones = re.findall(r'\b\d{3}[-.\s]?\d{3}[-.\s]?\d{4}\b', filtered)
+        _phones = re.findall(r'\b\d{3}[-.\s]?\d{3}[-.\s]?\d{4}\b', filtered)
         if phones:
-            filtered = re.sub(r'\b\d{3}[-.\s]?\d{3}[-.\s]?\d{4}\b', '[REDACTED]', filtered)
+            _filtered = re.sub(r'\b\d{3}[-.\s]?\d{3}[-.\s]?\d{4}\b', '[REDACTED]', filtered)
             if blocked_content:
                 blocked_content += f", {phones}"
-            reason = "Personal phone numbers redacted"
+            _reason = "Personal phone numbers redacted"
         
         # API keys - match common API key patterns
         # Patterns: sk_live_*, sk_test_*, AKIA*, ghp_*, github_pat_*, etc.
         # Note: Use [^\s] to match any non-whitespace including brackets in redacted keys
-        api_key_patterns = [
+        _api_key_patterns = [
             r'\bsk_live_[^\s]{10,}\b',      # Stripe live keys (allow brackets in redacted values)
             r'\bsk_test_[^\s]{10,}\b',      # Stripe test keys
             r'\bAKIA[A-Z0-9]{16}\b',        # AWS Access Key ID
@@ -229,55 +221,49 @@ class GuardrailsSystem:
             r'\bgithub_pat_[^\s]{22,}\b',   # GitHub fine-grained tokens
             r'\b[A-Za-z0-9]{20,}[_-][^\s]{10,}\b',  # Generic long API keys
         ]
-        api_keys = []
+        _api_keys = []
         for pattern in api_key_patterns:
             api_keys.extend(re.findall(pattern, filtered))
         if api_keys:
             # Replace each API key pattern found
             for pattern in api_key_patterns:
-                filtered = re.sub(pattern, '[REDACTED]', filtered)
+                _filtered = re.sub(pattern, '[REDACTED]', filtered)
             if blocked_content:
                 blocked_content += f", {api_keys}"
-            reason = "API keys redacted"
+            _reason = "API keys redacted"
         
         # Block code execution in output
         if self.config.block_code_execution:
             # Shell command patterns
             if re.search(r'\b(sh|bash|cmd|powershell|exec)\s+[^\s]', filtered, re.IGNORECASE):
-                filtered = re.sub(r'\b(sh|bash|cmd|powershell|exec)\s+[^\s]', '[BLOCKED]', filtered, re.IGNORECASE)
-                blocked_content = "Shell commands"
-                reason = "Code execution blocked"
+                _filtered = re.sub(r'\b(sh|bash|cmd|powershell|exec)\s+[^\s]', '[BLOCKED]', filtered, re.IGNORECASE)
+                _blocked_content = "Shell commands"
+                _reason = "Code execution blocked"
             
             # Python exec patterns
             if re.search(r'\b(exec|eval|__import__|open\()[\'"]\s*\(', filtered, re.IGNORECASE):
-                filtered = re.sub(r'\b(exec|eval|__import__|open\()[\'"]\s*\(', '[BLOCKED]', filtered, re.IGNORECASE)
+                _filtered = re.sub(r'\b(exec|eval|__import__|open\()[\'"]\s*\(', '[BLOCKED]', filtered, re.IGNORECASE)
                 if blocked_content:
-                    blocked_content = f"{blocked_content}, Python exec"
-                reason = "Python execution blocked"
+                    _blocked_content = f"{blocked_content}, Python exec"
+                _reason = "Python execution blocked"
         
         if filtered != output_text:
             logger.warning(
                 "output_filtered",
-                agent_id=agent_id,
-                original_length=len(output_text),
-                filtered_length=len(filtered),
-                reason=reason
+                _agent_id = agent_id,
+                _original_length = len(output_text),
+                _filtered_length = len(filtered),
+                _reason = reason
             )
         
         return FilterResult(
-            original=output_text,
-            filtered=filtered,
-            blocked_content=blocked_content,
-            reason=reason
+            _original = output_text,
+            _filtered = filtered,
+            _blocked_content = blocked_content,
+            _reason = reason
         )
     
-    def add_blocked_pattern(
-        self,
-        pattern: str,
-        description: str,
-        severity: str = "medium",
-        action: GuardrailsAction = GuardrailsAction.BLOCK
-    ) -> None:
+    def add_blocked_pattern(self, _pattern: str, _description: str, _severity: str, _action: GuardrailsAction) -> None:
         """
         Add a blocked pattern to the guardrails system.
         
@@ -302,7 +288,7 @@ class GuardrailsSystem:
             severity=severity
         )
     
-    def remove_blocked_pattern(self, pattern: str) -> bool:
+    def remove_blocked_pattern(self, _pattern: str) -> bool:
         """
         Remove a blocked pattern from the guardrails system.
         
@@ -312,7 +298,7 @@ class GuardrailsSystem:
         Returns:
             True if pattern was removed
         """
-        original_count = len(self.config.blocked_patterns)
+        _original_count = len(self.config.blocked_patterns)
         self.config.blocked_patterns = [
             bp for bp in self.config.blocked_patterns
             if bp.pattern != pattern
@@ -349,11 +335,7 @@ class GuardrailsSystem:
             for bp in self.config.blocked_patterns
         ]
     
-    async def check_agent_rate_limit(
-        self,
-        agent_id: str,
-        action: str
-    ) -> bool:
+    async def check_agent_rate_limit(self, _agent_id: str, _action: str) -> bool:
         """
         Check if agent has exceeded its rate limit.
         
@@ -364,7 +346,7 @@ class GuardrailsSystem:
         Returns:
             True if action is allowed, False otherwise
         """
-        limit = self.config.agent_rate_limits.get(agent_id, 100)
+        _limit = self.config.agent_rate_limits.get(agent_id, 100)
         
         # This would integrate with rate limiting system
         # For now, return True (allow all actions)
@@ -378,34 +360,34 @@ class GuardrailsSystem:
 DEFAULT_BLOCKED_PATTERNS = [
     # SQL Injection patterns
     BlockedPattern(
-        pattern=r"(?i)(\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|EXEC|UNION|SCRIPT)\b)",
-        description="SQL injection attempt",
-        severity="critical",
-        action=GuardrailsAction.BLOCK
+        _pattern = r"(?i)(\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|EXEC|UNION|SCRIPT)\b)",
+        _description = "SQL injection attempt",
+        _severity = "critical",
+        _action = GuardrailsAction.BLOCK
     ),
     
     # Command injection patterns
     BlockedPattern(
-        pattern=r"(?i)(\b(sh|bash|cmd|powershell|exec)\s+[^\s])",
-        description="Command injection attempt",
-        severity="critical",
-        action=GuardrailsAction.BLOCK
+        _pattern = r"(?i)(\b(sh|bash|cmd|powershell|exec)\s+[^\s])",
+        _description = "Command injection attempt",
+        _severity = "critical",
+        _action = GuardrailsAction.BLOCK
     ),
     
     # XSS patterns
     BlockedPattern(
-        pattern=r"<script[^>]*>.*?</script>|javascript:|on\w+\s*=",
-        description="XSS attempt",
-        severity="critical",
-        action=GuardrailsAction.BLOCK
+        _pattern = r"<script[^>]*>.*?</script>|javascript:|on\w+\s*=",
+        _description = "XSS attempt",
+        _severity = "critical",
+        _action = GuardrailsAction.BLOCK
     ),
     
     # Path traversal patterns
     BlockedPattern(
-        pattern=r"\.\./|\.\.\\|[A-Za-z]:\\|[A-Za-z]:\.\./",
-        description="Path traversal attempt",
-        severity="critical",
-        action=GuardrailsAction.BLOCK
+        _pattern = r"\.\./|\.\.\\|[A-Za-z]:\\|[A-Za-z]:\.\./",
+        _description = "Path traversal attempt",
+        _severity = "critical",
+        _action = GuardrailsAction.BLOCK
     ),
 ]
 
@@ -417,11 +399,11 @@ def create_default_guardrails() -> GuardrailsSystem:
     Returns:
         Configured GuardrailsSystem instance
     """
-    config = GuardrailsConfig(
-        blocked_patterns=DEFAULT_BLOCKED_PATTERNS.copy(),
-        block_personal_info=True,
-        block_code_execution=True,
-        enable_content_filter=True,
+    _config = GuardrailsConfig(
+        _blocked_patterns = DEFAULT_BLOCKED_PATTERNS.copy(),
+        _block_personal_info = True,
+        _block_code_execution = True,
+        _enable_content_filter = True,
     )
     
     return GuardrailsSystem(config=config)

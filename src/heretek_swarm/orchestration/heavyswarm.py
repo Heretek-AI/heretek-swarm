@@ -41,7 +41,7 @@ from .phase_handlers import (
     DecisionPhaseHandler,
 )
 
-logger = structlog.get_logger("HeavySwarmWorkflow")
+_logger = structlog.get_logger("HeavySwarmWorkflow")
 
 
 class WorkflowPhase(Enum):
@@ -126,9 +126,9 @@ class HeavySwarmWorkflow:
             historian="historian",
         )
 
-        result = await workflow.execute(
-            topic="Should we deploy to production?",
-            context={"current_state": "staging", "tests_passed": True}
+        _result = await workflow.execute(
+            _topic = "Should we deploy to production?",
+            _context = {"current_state": "staging", "tests_passed": True}
         )
 
         print(f"Decision: {result.final_decision.decision}")
@@ -136,16 +136,7 @@ class HeavySwarmWorkflow:
         ```
     """
 
-    def __init__(
-        self,
-        name: Optional[str] = None,
-        triad_agents: Optional[List[str]] = None,
-        historian: Optional[str] = None,
-        steward: Optional[str] = None,
-        consensus_engine: Optional[MAKERConsensus] = None,
-        phase_timeout: float = 60.0,
-        enable_parallel_phases: bool = True,
-    ) -> None:
+    def __init__(self, _name: Optional[str], _triad_agents: Optional[List[str]], _historian: Optional[str], _steward: Optional[str], _consensus_engine: Optional[MAKERConsensus], _phase_timeout: float, _enable_parallel_phases: bool) -> None:
         """
         Initialize the HeavySwarm workflow.
 
@@ -178,7 +169,7 @@ class HeavySwarmWorkflow:
 
         logger.info(
             f"[{self.name}] HeavySwarm workflow initialized",
-            extra={
+            _extra = {
                 "triad_agents": self.triad_agents,
                 "historian": self.historian,
                 "steward": self.steward,
@@ -187,11 +178,11 @@ class HeavySwarmWorkflow:
 
     def _create_phase_handlers(self) -> PhaseHandlerRegistry:
         """Create and register phase handlers"""
-        registry = PhaseHandlerRegistry()
+        _registry = PhaseHandlerRegistry()
         # Note: Handlers are created lazily with agent references
         return registry
 
-    def _get_phase_handler(self, phase: WorkflowPhase) -> Optional[PhaseHandler]:
+    def _get_phase_handler(self, _phase: WorkflowPhase) -> Optional[PhaseHandler]:
         """Get or create a phase handler for the given phase"""
         if not self.agents:
             return None
@@ -208,7 +199,7 @@ class HeavySwarmWorkflow:
             return DecisionPhaseHandler(self.triad_agents, self.agents, self.consensus_engine)
         return None
 
-    def register_agent(self, agent_id: str, agent: AgentActor) -> None:
+    def register_agent(self, _agent_id: str, _agent: AgentActor) -> None:
         """
         Register an agent for use in workflows.
 
@@ -219,12 +210,7 @@ class HeavySwarmWorkflow:
         self.agents[agent_id] = agent
         logger.debug(f"[{self.name}] Registered agent: {agent_id}")
 
-    async def execute(
-        self,
-        topic: str,
-        context: Optional[Dict[str, Any]] = None,
-        workflow_id: Optional[str] = None,
-    ) -> WorkflowResult:
+    async def execute(self, _topic: str, _context: Optional[Dict[str, _Any]], _workflow_id: Optional[str]) -> WorkflowResult:
         """
         Execute the complete 5-phase HeavySwarm workflow.
 
@@ -237,27 +223,27 @@ class HeavySwarmWorkflow:
             Complete workflow result
         """
         workflow_id = workflow_id or self._generate_workflow_id()
-        started_at = datetime.now(timezone.utc)
+        _started_at = datetime.now(timezone.utc)
 
         logger.info(
             f"[{self.name}] Starting workflow {workflow_id}",
-            extra={"topic": topic},
+            _extra = {"topic": topic},
         )
 
         # Initialize workflow result
-        result = WorkflowResult(
+        _result = WorkflowResult(
             workflow_id=workflow_id,
-            topic=topic,
+            _topic = topic,
             state=WorkflowPhase.RESEARCH,
             phase_results={},
-            started_at=started_at.isoformat(),
+            _started_at = started_at.isoformat(),
         )
 
         self.active_workflows[workflow_id] = result
 
         try:
             # Phase 1: Research
-            research_result = await self._execute_phase(
+            _research_result = await self._execute_phase(
                 workflow_id,
                 WorkflowPhase.RESEARCH,
                 self._research_phase,
@@ -273,7 +259,7 @@ class HeavySwarmWorkflow:
 
             # Phase 2: Analysis
             result.state = WorkflowPhase.ANALYSIS
-            analysis_result = await self._execute_phase(
+            _analysis_result = await self._execute_phase(
                 workflow_id,
                 WorkflowPhase.ANALYSIS,
                 self._analysis_phase,
@@ -290,7 +276,7 @@ class HeavySwarmWorkflow:
 
             # Phase 3: Alternatives
             result.state = WorkflowPhase.ALTERNATIVES
-            alternatives_result = await self._execute_phase(
+            _alternatives_result = await self._execute_phase(
                 workflow_id,
                 WorkflowPhase.ALTERNATIVES,
                 self._alternatives_phase,
@@ -307,7 +293,7 @@ class HeavySwarmWorkflow:
 
             # Phase 4: Verification
             result.state = WorkflowPhase.VERIFICATION
-            verification_result = await self._execute_phase(
+            _verification_result = await self._execute_phase(
                 workflow_id,
                 WorkflowPhase.VERIFICATION,
                 self._verification_phase,
@@ -324,7 +310,7 @@ class HeavySwarmWorkflow:
 
             # Phase 5: Decision
             result.state = WorkflowPhase.DECISION
-            decision_result = await self._execute_phase(
+            _decision_result = await self._execute_phase(
                 workflow_id,
                 WorkflowPhase.DECISION,
                 self._decision_phase,
@@ -368,7 +354,7 @@ class HeavySwarmWorkflow:
 
             logger.info(
                 f"[{self.name}] Workflow {workflow_id} completed",
-                extra={
+                _extra = {
                     "state": result.state.value,
                     "duration_ms": result.total_duration_ms,
                 },
@@ -376,14 +362,7 @@ class HeavySwarmWorkflow:
 
         return result
 
-    async def _execute_phase(
-        self,
-        workflow_id: str,
-        phase: WorkflowPhase,
-        phase_func: Callable,
-        *args: Any,
-        **kwargs: Any,
-    ) -> PhaseResult:
+    async def _execute_phase(self, _workflow_id: str, _phase: WorkflowPhase, _phase_func: Callable, _*args: Any, _**kwargs: Any) -> PhaseResult:
         """
         Execute a single workflow phase with timeout.
 
@@ -397,58 +376,53 @@ class HeavySwarmWorkflow:
         Returns:
             Phase result
         """
-        started_at = datetime.now(timezone.utc)
+        _started_at = datetime.now(timezone.utc)
         logger.info(f"[{self.name}] Executing phase: {phase.value}")
 
         try:
             # Execute with timeout
-            output = await asyncio.wait_for(
+            _output = await asyncio.wait_for(
                 phase_func(workflow_id, *args, **kwargs),
-                timeout=self.phase_timeout,
+                _timeout = self.phase_timeout,
             )
 
-            duration_ms = (datetime.now(timezone.utc) - started_at).total_seconds() * 1000
+            _duration_ms = (datetime.now(timezone.utc) - started_at).total_seconds() * 1000
 
             return PhaseResult(
-                phase=phase,
-                success=True,
-                output=output,
-                duration_ms=duration_ms,
+                _phase = phase,
+                _success = True,
+                _output = output,
+                _duration_ms = duration_ms,
             )
 
         except asyncio.TimeoutError:
-            duration_ms = (datetime.now(timezone.utc) - started_at).total_seconds() * 1000
-            error_msg = f"Phase {phase.value} timed out after {self.phase_timeout}s"
+            _duration_ms = (datetime.now(timezone.utc) - started_at).total_seconds() * 1000
+            _error_msg = f"Phase {phase.value} timed out after {self.phase_timeout}s"
 
             return PhaseResult(
-                phase=phase,
-                success=False,
-                output={},
-                duration_ms=duration_ms,
-                errors=[error_msg],
+                _phase = phase,
+                _success = False,
+                _output = {},
+                _duration_ms = duration_ms,
+                _errors = [error_msg],
             )
 
         except Exception as e:
-            duration_ms = (datetime.now(timezone.utc) - started_at).total_seconds() * 1000
+            _duration_ms = (datetime.now(timezone.utc) - started_at).total_seconds() * 1000
 
             return PhaseResult(
-                phase=phase,
-                success=False,
-                output={},
-                duration_ms=duration_ms,
-                errors=[str(e)],
+                _phase = phase,
+                _success = False,
+                _output = {},
+                _duration_ms = duration_ms,
+                _errors = [str(e)],
             )
 
     # =========================================================================
     # Phase 1: Research
     # =========================================================================
 
-    async def _research_phase(
-        self,
-        workflow_id: str,
-        topic: str,
-        context: Optional[Dict[str, Any]] = None,
-    ) -> Dict[str, Any]:
+    async def _research_phase(self, _workflow_id: str, _topic: str, _context: Optional[Dict[str, _Any]]) -> Dict[str, Any]:
         """
         Phase 1: Research - Gather information and context.
 
@@ -468,7 +442,7 @@ class HeavySwarmWorkflow:
         """
         logger.info(f"[{self.name}] Research phase: Gathering information")
 
-        research_data = {
+        _research_data = {
             "topic": topic,
             "context": context or {},
             "historical_context": [],
@@ -479,11 +453,11 @@ class HeavySwarmWorkflow:
 
         # Query historian for context
         if self.historian in self.agents:
-            historian_agent = self.agents[self.historian]
+            _historian_agent = self.agents[self.historian]
             try:
-                deliberation_context = await historian_agent.provide_deliberation_context(
-                    deliberation_id=workflow_id,
-                    topic=topic,
+                _deliberation_context = await historian_agent.provide_deliberation_context(
+                    _deliberation_id = workflow_id,
+                    _topic = topic,
                 )
                 research_data["historical_context"] = deliberation_context.get(
                     "relevant_memories", []
@@ -496,11 +470,11 @@ class HeavySwarmWorkflow:
 
         # Synthesize knowledge if historian available
         if self.historian in self.agents:
-            historian_agent = self.agents[self.historian]
+            _historian_agent = self.agents[self.historian]
             try:
-                knowledge = await historian_agent.synthesize_knowledge(
-                    topic=topic,
-                    limit=10,
+                _knowledge = await historian_agent.synthesize_knowledge(
+                    _topic = topic,
+                    _limit = 10,
                 )
                 research_data["knowledge_summary"] = knowledge.get("summary", "")
             except Exception as e:
@@ -513,7 +487,7 @@ class HeavySwarmWorkflow:
 
         logger.info(
             f"[{self.name}] Research phase complete",
-            extra={
+            _extra = {
                 "historical_context_count": len(research_data["historical_context"]),
                 "constraints_count": len(research_data["constraints"]),
             },
@@ -525,13 +499,7 @@ class HeavySwarmWorkflow:
     # Phase 2: Analysis
     # =========================================================================
 
-    async def _analysis_phase(
-        self,
-        workflow_id: str,
-        topic: str,
-        context: Optional[Dict[str, Any]] = None,
-        research_data: Optional[Dict[str, Any]] = None,
-    ) -> Dict[str, Any]:
+    async def _analysis_phase(self, _workflow_id: str, _topic: str, _context: Optional[Dict[str, _Any]], _research_data: Optional[Dict[str, _Any]]) -> Dict[str, Any]:
         """
         Phase 2: Analysis - Analyze from multiple perspectives.
 
@@ -553,7 +521,7 @@ class HeavySwarmWorkflow:
         """
         logger.info(f"[{self.name}] Analysis phase: Multi-perspective analysis")
 
-        analysis_data = {
+        _analysis_data = {
             "topic": topic,
             "research_summary": research_data,
             "alpha_analysis": None,
@@ -565,11 +533,11 @@ class HeavySwarmWorkflow:
         }
 
         # Collect analysis from each triad member
-        triad_analyses = await self._collect_triad_analyses(
+        _triad_analyses = await self._collect_triad_analyses(
             workflow_id=workflow_id,
-            topic=topic,
-            research_data=research_data,
-            analysis_type="deep_analysis",
+            _topic = topic,
+            _research_data = research_data,
+            _analysis_type = "deep_analysis",
         )
 
         analysis_data["alpha_analysis"] = triad_analyses.get("alpha")
@@ -580,11 +548,11 @@ class HeavySwarmWorkflow:
         # Identify key insights
         for agent_id, analysis in triad_analyses.items():
             if analysis:
-                insights = analysis.get("insights", [])
+                _insights = analysis.get("insights", [])
                 analysis_data["key_insights"].extend(insights)
 
         # Identify disagreements
-        decisions = [
+        _decisions = [
             a.get("decision")
             for a in triad_analyses.values()
             if a and a.get("decision")
@@ -596,7 +564,7 @@ class HeavySwarmWorkflow:
 
         logger.info(
             f"[{self.name}] Analysis phase complete",
-            extra={
+            _extra = {
                 "perspectives_count": len(analysis_data["perspectives"]),
                 "insights_count": len(analysis_data["key_insights"]),
                 "disagreements_count": len(analysis_data["disagreements"]),
@@ -605,13 +573,7 @@ class HeavySwarmWorkflow:
 
         return analysis_data
 
-    async def _collect_triad_analyses(
-        self,
-        workflow_id: str,
-        topic: str,
-        research_data: Dict[str, Any],
-        analysis_type: str = "deep_analysis",
-    ) -> Dict[str, Dict[str, Any]]:
+    async def _collect_triad_analyses(self, _workflow_id: str, _topic: str, _research_data: Dict[str, _Any], _analysis_type: str) -> Dict[str, Dict[str, Any]]:
         """
         Collect analyses from all triad members.
 
@@ -624,21 +586,21 @@ class HeavySwarmWorkflow:
         Returns:
             Dictionary of agent_id -> analysis results
         """
-        analyses = {}
+        _analyses = {}
 
         for agent_id in self.triad_agents:
             if agent_id not in self.agents:
                 logger.warning(f"[{self.name}] Triad agent not found: {agent_id}")
                 continue
 
-            agent = self.agents[agent_id]
+            _agent = self.agents[agent_id]
 
             try:
                 # Send analysis request
                 await agent.send_to_actor(
-                    target_actor_id=agent_id,
-                    message_type="analysis_request",
-                    content={
+                    _target_actor_id = agent_id,
+                    _message_type = "analysis_request",
+                    _content = {
                         "workflow_id": workflow_id,
                         "topic": topic,
                         "research_data": research_data,
@@ -677,13 +639,7 @@ class HeavySwarmWorkflow:
     # Phase 3: Alternatives
     # =========================================================================
 
-    async def _alternatives_phase(
-        self,
-        workflow_id: str,
-        topic: str,
-        context: Optional[Dict[str, Any]] = None,
-        analysis_data: Optional[Dict[str, Any]] = None,
-    ) -> Dict[str, Any]:
+    async def _alternatives_phase(self, _workflow_id: str, _topic: str, _context: Optional[Dict[str, _Any]], _analysis_data: Optional[Dict[str, _Any]]) -> Dict[str, Any]:
         """
         Phase 3: Alternatives - Generate and evaluate solutions.
 
@@ -704,7 +660,7 @@ class HeavySwarmWorkflow:
         """
         logger.info(f"[{self.name}] Alternatives phase: Generating solutions")
 
-        alternatives_data = {
+        _alternatives_data = {
             "topic": topic,
             "analysis_summary": analysis_data,
             "alternatives": [],
@@ -720,22 +676,22 @@ class HeavySwarmWorkflow:
         }
 
         # Generate alternatives (would use LLM in full implementation)
-        alternatives = await self._generate_alternatives(
-            topic=topic,
-            analysis_data=analysis_data,
+        _alternatives = await self._generate_alternatives(
+            _topic = topic,
+            _analysis_data = analysis_data,
         )
         alternatives_data["alternatives"] = alternatives
 
         # Evaluate each alternative
         for alt in alternatives:
-            evaluation = await self._evaluate_alternative(alt, analysis_data)
+            _evaluation = await self._evaluate_alternative(alt, analysis_data)
             alt["evaluation"] = evaluation
 
         # Rank alternatives
-        ranked = sorted(
+        _ranked = sorted(
             alternatives,
-            key=lambda x: x.get("evaluation", {}).get("total_score", 0),
-            reverse=True,
+            _key = lambda x: x.get("evaluation", {}).get("total_score", 0),
+            _reverse = True,
         )
 
         if ranked:
@@ -747,7 +703,7 @@ class HeavySwarmWorkflow:
 
         logger.info(
             f"[{self.name}] Alternatives phase complete",
-            extra={
+            _extra = {
                 "alternatives_count": len(alternatives),
                 "recommended": alternatives_data["recommended_alternative"].get(
                     "id" if alternatives_data["recommended_alternative"] else "name",
@@ -758,14 +714,10 @@ class HeavySwarmWorkflow:
 
         return alternatives_data
 
-    async def _generate_alternatives(
-        self,
-        topic: str,
-        analysis_data: Dict[str, Any],
-    ) -> List[Dict[str, Any]]:
+    async def _generate_alternatives(self, _topic: str, _analysis_data: Dict[str, _Any]) -> List[Dict[str, Any]]:
         """Generate alternative solutions."""
         # Placeholder - would use LLM in full implementation
-        alternatives = [
+        _alternatives = [
             {
                 "id": "alt_1",
                 "name": "Conservative Approach",
@@ -787,11 +739,7 @@ class HeavySwarmWorkflow:
         ]
         return alternatives
 
-    async def _evaluate_alternative(
-        self,
-        alternative: Dict[str, Any],
-        analysis_data: Dict[str, Any],
-    ) -> Dict[str, Any]:
+    async def _evaluate_alternative(self, _alternative: Dict[str, _Any], _analysis_data: Dict[str, _Any]) -> Dict[str, Any]:
         """Evaluate a single alternative."""
         # Placeholder scoring
         return {
@@ -803,15 +751,12 @@ class HeavySwarmWorkflow:
             "total_score": 0.58,
         }
 
-    async def _identify_trade_offs(
-        self,
-        alternatives: List[Dict[str, Any]],
-    ) -> List[Dict[str, Any]]:
+    async def _identify_trade_offs(self, _alternatives: List[Dict[str, _Any]]) -> List[Dict[str, Any]]:
         """Identify trade-offs between alternatives."""
         if len(alternatives) < 2:
             return []
 
-        trade_offs = []
+        _trade_offs = []
         for i, alt1 in enumerate(alternatives[:-1]):
             for alt2 in alternatives[i + 1 :]:
                 trade_offs.append({
@@ -826,13 +771,7 @@ class HeavySwarmWorkflow:
     # Phase 4: Verification
     # =========================================================================
 
-    async def _verification_phase(
-        self,
-        workflow_id: str,
-        topic: str,
-        context: Optional[Dict[str, Any]] = None,
-        alternatives_data: Optional[Dict[str, Any]] = None,
-    ) -> Dict[str, Any]:
+    async def _verification_phase(self, _workflow_id: str, _topic: str, _context: Optional[Dict[str, _Any]], _alternatives_data: Optional[Dict[str, _Any]]) -> Dict[str, Any]:
         """
         Phase 4: Verification - Verify and validate solutions.
 
@@ -854,7 +793,7 @@ class HeavySwarmWorkflow:
         """
         logger.info(f"[{self.name}] Verification phase: Validating solutions")
 
-        verification_data = {
+        _verification_data = {
             "topic": topic,
             "recommended_alternative": alternatives_data.get(
                 "recommended_alternative", {}
@@ -867,7 +806,7 @@ class HeavySwarmWorkflow:
             "confidence": 0.0,
         }
 
-        recommended = alternatives_data.get("recommended_alternative")
+        _recommended = alternatives_data.get("recommended_alternative")
 
         if not recommended:
             verification_data["overall_valid"] = False
@@ -876,9 +815,9 @@ class HeavySwarmWorkflow:
 
         # Beta: Error detection
         if "beta" in self.agents:
-            beta_agent = self.agents["beta"]
+            _beta_agent = self.agents["beta"]
             try:
-                errors = await beta_agent._detect_errors(recommended)
+                _errors = await beta_agent._detect_errors(recommended)
                 verification_data["error_checks"] = errors
                 if errors:
                     verification_data["overall_valid"] = False
@@ -887,9 +826,9 @@ class HeavySwarmWorkflow:
 
         # Charlie: Risk assessment
         if "charlie" in self.agents:
-            charlie_agent = self.agents["charlie"]
+            _charlie_agent = self.agents["charlie"]
             try:
-                risk_assessment = await charlie_agent._assess_risks(recommended)
+                _risk_assessment = await charlie_agent._assess_risks(recommended)
                 verification_data["risk_assessments"] = risk_assessment.get(
                     "risks_identified", []
                 )
@@ -900,16 +839,16 @@ class HeavySwarmWorkflow:
                 logger.warning(f"[{self.name}] Charlie risk assessment failed: {e}")
 
         # Calculate overall confidence
-        error_count = len(verification_data["error_checks"])
-        risk_count = len(verification_data["risk_assessments"])
+        _error_count = len(verification_data["error_checks"])
+        _risk_count = len(verification_data["risk_assessments"])
 
-        base_confidence = recommended.get("evaluation", {}).get("total_score", 0.5)
-        penalty = (error_count * 0.1) + (risk_count * 0.05)
+        _base_confidence = recommended.get("evaluation", {}).get("total_score", 0.5)
+        _penalty = (error_count * 0.1) + (risk_count * 0.05)
         verification_data["confidence"] = max(0.0, base_confidence - penalty)
 
         logger.info(
             f"[{self.name}] Verification phase complete",
-            extra={
+            _extra = {
                 "overall_valid": verification_data["overall_valid"],
                 "confidence": verification_data["confidence"],
                 "errors_found": error_count,
@@ -923,13 +862,7 @@ class HeavySwarmWorkflow:
     # Phase 5: Decision
     # =========================================================================
 
-    async def _decision_phase(
-        self,
-        workflow_id: str,
-        topic: str,
-        context: Optional[Dict[str, Any]] = None,
-        verification_data: Optional[Dict[str, Any]] = None,
-    ) -> Dict[str, Any]:
+    async def _decision_phase(self, _workflow_id: str, _topic: str, _context: Optional[Dict[str, _Any]], _verification_data: Optional[Dict[str, _Any]]) -> Dict[str, Any]:
         """
         Phase 5: Decision - Reach final decision through consensus.
 
@@ -951,25 +884,25 @@ class HeavySwarmWorkflow:
         """
         logger.info(f"[{self.name}] Decision phase: Running consensus")
 
-        consensus_id = f"consensus_{workflow_id}"
+        _consensus_id = f"consensus_{workflow_id}"
 
         # Start consensus process
         self.consensus_engine.start_consensus(consensus_id)
 
         # Collect votes from triad
-        votes = await self._collect_triad_votes(
-            consensus_id=consensus_id,
-            topic=topic,
-            verification_data=verification_data,
+        _votes = await self._collect_triad_votes(
+            _consensus_id = consensus_id,
+            _topic = topic,
+            _verification_data = verification_data,
         )
 
         # Compute consensus
-        consensus_result = self.consensus_engine.compute_consensus(consensus_id)
+        _consensus_result = self.consensus_engine.compute_consensus(consensus_id)
 
         # Cleanup
         self.consensus_engine.cleanup_process(consensus_id)
 
-        decision_data = {
+        _decision_data = {
             "topic": topic,
             "consensus_id": consensus_id,
             "consensus_result": consensus_result,
@@ -985,7 +918,7 @@ class HeavySwarmWorkflow:
 
         logger.info(
             f"[{self.name}] Decision phase complete",
-            extra={
+            _extra = {
                 "decision": decision_data.get("recommended_action"),
                 "confidence": decision_data.get("confidence"),
                 "red_flags": len(decision_data.get("red_flags", [])),
@@ -994,12 +927,7 @@ class HeavySwarmWorkflow:
 
         return decision_data
 
-    async def _collect_triad_votes(
-        self,
-        consensus_id: str,
-        topic: str,
-        verification_data: Dict[str, Any],
-    ) -> List[Dict[str, Any]]:
+    async def _collect_triad_votes(self, _consensus_id: str, _topic: str, _verification_data: Dict[str, _Any]) -> List[Dict[str, Any]]:
         """
         Collect votes from triad members.
 
@@ -1011,16 +939,16 @@ class HeavySwarmWorkflow:
         Returns:
             List of votes
         """
-        votes = []
+        _votes = []
 
         for agent_id in self.triad_agents:
             if agent_id not in self.agents:
                 continue
 
-            agent = self.agents[agent_id]
+            _agent = self.agents[agent_id]
 
             # Simulate vote (would be real agent vote in full implementation)
-            vote = {
+            _vote = {
                 "agent_id": agent_id,
                 "decision": verification_data.get("recommended_alternative", {}).get(
                     "name", "unknown"
@@ -1030,10 +958,10 @@ class HeavySwarmWorkflow:
 
             # Add to consensus engine
             self.consensus_engine.add_vote(
-                consensus_id=consensus_id,
-                agent_id=agent_id,
-                decision=vote["decision"],
-                confidence=vote["confidence"],
+                _consensus_id = consensus_id,
+                _agent_id = agent_id,
+                _decision = vote["decision"],
+                _confidence = vote["confidence"],
             )
 
             votes.append(vote)
@@ -1046,7 +974,7 @@ class HeavySwarmWorkflow:
 
         return f"workflow_{uuid.uuid4().hex[:12]}"
 
-    def get_workflow_status(self, workflow_id: str) -> Optional[WorkflowResult]:
+    def get_workflow_status(self, _workflow_id: str) -> Optional[WorkflowResult]:
         """
         Get status of a workflow.
 
@@ -1069,15 +997,15 @@ class HeavySwarmWorkflow:
 
     def get_statistics(self) -> Dict[str, Any]:
         """Get workflow statistics."""
-        total_workflows = len(self.workflow_history)
-        completed = sum(
+        _total_workflows = len(self.workflow_history)
+        _completed = sum(
             1 for w in self.workflow_history if w.state == WorkflowPhase.COMPLETED
         )
-        failed = sum(
+        _failed = sum(
             1 for w in self.workflow_history if w.state == WorkflowPhase.FAILED
         )
 
-        avg_duration = (
+        _avg_duration = (
             sum(w.total_duration_ms for w in self.workflow_history) / total_workflows
             if total_workflows > 0
             else 0.0

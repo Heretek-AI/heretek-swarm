@@ -18,19 +18,19 @@ class LoggingPlugin(Plugin):
     def __init__(self):
         self.metadata = PluginMetadata(
             name="logging",
-            version="0.1.0",
-            description="Logs all messages passing through the system",
-            author="Heretek Swarm",
-            dependencies=[]
+            _version = "0.1.0",
+            _description = "Logs all messages passing through the system",
+            _author = "Heretek Swarm",
+            _dependencies = []
         )
         self.message_count = 0
 
-    async def on_load(self, runtime) -> None:
+    async def on_load(self, _runtime) -> None:
         """Called when plugin is loaded."""
         await super().on_load(runtime)
         print(f"LoggingPlugin loaded: {self.metadata.name}")
 
-    async def on_message(self, message: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    async def on_message(self, _message: Dict[str, _Any]) -> Optional[Dict[str, Any]]:
         """
         Handle incoming messages.
 
@@ -57,19 +57,19 @@ class MemoryEnhancementPlugin(Plugin):
     def __init__(self):
         self.metadata = PluginMetadata(
             name="memory_enhancement",
-            version="0.1.0",
-            description="Enhances memory with importance scoring",
-            author="Heretek Swarm",
-            dependencies=["memory"]
+            _version = "0.1.0",
+            _description = "Enhances memory with importance scoring",
+            _author = "Heretek Swarm",
+            _dependencies = ["memory"]
         )
         self.active_agents: Dict[str, Any] = {}
 
-    async def on_load(self, runtime) -> None:
+    async def on_load(self, _runtime) -> None:
         """Called when plugin is loaded."""
         await super().on_load(runtime)
         print(f"MemoryEnhancementPlugin loaded: {self.metadata.name}")
 
-    async def on_agent_spawn(self, agent_id: str) -> None:
+    async def on_agent_spawn(self, _agent_id: str) -> None:
         """
         Called when an agent is spawned.
 
@@ -82,7 +82,7 @@ class MemoryEnhancementPlugin(Plugin):
         }
         print(f"[MemoryEnhancementPlugin] Agent spawned: {agent_id}")
 
-    async def on_agent_terminate(self, agent_id: str) -> None:
+    async def on_agent_terminate(self, _agent_id: str) -> None:
         """
         Called when an agent is terminated.
 
@@ -90,12 +90,12 @@ class MemoryEnhancementPlugin(Plugin):
             agent_id: Agent identifier
         """
         if agent_id in self.active_agents:
-            stats = self.active_agents[agent_id]
+            _stats = self.active_agents[agent_id]
             print(f"[MemoryEnhancementPlugin] Agent terminated: {agent_id}")
             print(f"  Messages processed: {stats['message_count']}")
             del self.active_agents[agent_id]
 
-    async def on_message(self, message: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    async def on_message(self, _message: Dict[str, _Any]) -> Optional[Dict[str, Any]]:
         """
         Handle incoming messages.
 
@@ -106,13 +106,13 @@ class MemoryEnhancementPlugin(Plugin):
             Enhanced message with importance score
         """
         # Track message count for active agents
-        agent_id = message.get("agent_id")
+        _agent_id = message.get("agent_id")
         if agent_id and agent_id in self.active_agents:
             self.active_agents[agent_id]["message_count"] += 1
 
         # Add importance score based on message content
-        content = str(message.get("content", ""))
-        importance = self._calculate_importance(content)
+        _content = str(message.get("content", ""))
+        _importance = self._calculate_importance(content)
 
         # Return enhanced message
         return {
@@ -121,7 +121,7 @@ class MemoryEnhancementPlugin(Plugin):
             "enhanced_at": self._get_timestamp()
         }
 
-    def _calculate_importance(self, content: str) -> float:
+    def _calculate_importance(self, _content: str) -> float:
         """
         Calculate importance score based on content.
 
@@ -135,14 +135,14 @@ class MemoryEnhancementPlugin(Plugin):
             return 0.1
 
         # Simple heuristics
-        importance = 0.1
+        _importance = 0.1
 
         # Longer content is more important
         if len(content) > 100:
             importance += 0.2
 
         # Contains keywords
-        keywords = ["important", "urgent", "critical", "error", "warning"]
+        _keywords = ["important", "urgent", "critical", "error", "warning"]
         if any(keyword in content.lower() for keyword in keywords):
             importance += 0.3
 
@@ -165,15 +165,15 @@ class HealthMonitorPlugin(Plugin):
     def __init__(self):
         self.metadata = PluginMetadata(
             name="health_monitor",
-            version="0.1.0",
-            description="Monitors system health and performance",
-            author="Heretek Swarm",
-            dependencies=[]
+            _version = "0.1.0",
+            _description = "Monitors system health and performance",
+            _author = "Heretek Swarm",
+            _dependencies = []
         )
         self.health_status = "healthy"
         self.check_count = 0
 
-    async def on_load(self, runtime) -> None:
+    async def on_load(self, _runtime) -> None:
         """Called when plugin is loaded."""
         await super().on_load(runtime)
         print(f"HealthMonitorPlugin loaded: {self.metadata.name}")
@@ -199,7 +199,7 @@ class HealthMonitorPlugin(Plugin):
         # Check memory
         try:
             from memory.persistent import PersistentMemoryStore
-            memory_store = PersistentMemoryStore()
+            _memory_store = PersistentMemoryStore()
             await memory_store.connect()
             
             # Simple health check
@@ -210,7 +210,7 @@ class HealthMonitorPlugin(Plugin):
         
         print(f"[HealthMonitorPlugin] Health check #{self.check_count}: {self.health_status}")
 
-    async def on_message(self, message: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    async def on_message(self, _message: Dict[str, _Any]) -> Optional[Dict[str, Any]]:
         """
         Handle incoming messages.
 
@@ -239,7 +239,7 @@ AVAILABLE_PLUGINS = {
 }
 
 
-def get_plugin(plugin_name: str) -> Optional[type]:
+def get_plugin(_plugin_name: str) -> Optional[type]:
     """
     Get a plugin class by name.
 

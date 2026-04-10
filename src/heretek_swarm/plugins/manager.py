@@ -15,7 +15,7 @@ from enum import Enum
 
 import structlog
 
-logger = structlog.get_logger(__name__)
+_logger = structlog.get_logger(__name__)
 
 
 class PluginState(Enum):
@@ -61,7 +61,7 @@ class Plugin:
     state: PluginState = PluginState.UNLOADED
     runtime: Optional["PluginRuntime"] = None
 
-    async def on_load(self, runtime: "PluginRuntime") -> None:
+    async def on_load(self, _runtime: "PluginRuntime") -> None:
         """
         Called when plugin is loaded.
 
@@ -84,7 +84,7 @@ class Plugin:
         self.runtime = None
         logger.info("plugin_unloaded", plugin=self.metadata.name)
 
-    async def on_message(self, message: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    async def on_message(self, _message: Dict[str, _Any]) -> Optional[Dict[str, Any]]:
         """
         Handle a message from the runtime.
 
@@ -96,7 +96,7 @@ class Plugin:
         """
         return None
 
-    async def on_agent_spawn(self, agent_id: str) -> None:
+    async def on_agent_spawn(self, _agent_id: str) -> None:
         """
         Called when an agent is spawned.
 
@@ -105,7 +105,7 @@ class Plugin:
         """
         pass
 
-    async def on_agent_terminate(self, agent_id: str) -> None:
+    async def on_agent_terminate(self, _agent_id: str) -> None:
         """
         Called when an agent is terminated.
 
@@ -128,7 +128,7 @@ class PluginRuntime:
     message_handlers: Dict[str, List[Callable]] = field(default_factory=dict)
     _running: bool = False
 
-    def __init__(self, plugins_dir: Optional[Path] = None):
+    def __init__(self, _plugins_dir: Optional[Path]):
         """
         Initialize plugin runtime.
 
@@ -148,7 +148,7 @@ class PluginRuntime:
         Returns:
             List of discovered plugins
         """
-        discovered = []
+        _discovered = []
 
         if not self.plugins_dir.exists():
             logger.warning("plugins_dir_not_found", dir=str(self.plugins_dir))
@@ -159,25 +159,25 @@ class PluginRuntime:
                 continue
 
             # Look for plugin.py file
-            plugin_file = plugin_path / "plugin.py"
+            _plugin_file = plugin_path / "plugin.py"
             if not plugin_file.exists():
                 continue
 
             try:
                 # Import plugin module
                 spec = importlib.util.spec_from_file_location(plugin_path.name, str(plugin_file))
-                module = importlib.util.module_from_spec(spec)
+                _module = importlib.util.module_from_spec(spec)
                 
                 # Find plugin class
                 for name, obj in inspect.getmembers(module):
                     if inspect.isclass(obj) and issubclass(obj, Plugin) and obj is not Plugin:
-                        plugin = obj()
+                        _plugin = obj()
                         plugin.metadata = self._extract_metadata(plugin_path)
                         discovered.append(plugin)
                         logger.info(
                             "plugin_discovered",
                             plugin=plugin.metadata.name,
-                            version=plugin.metadata.version
+                            _version = plugin.metadata.version
                         )
                         break
 
@@ -186,7 +186,7 @@ class PluginRuntime:
 
         return discovered
 
-    def _extract_metadata(self, plugin_path: Path) -> PluginMetadata:
+    def _extract_metadata(self, _plugin_path: Path) -> PluginMetadata:
         """
         Extract metadata from plugin directory.
 
@@ -196,23 +196,23 @@ class PluginRuntime:
         Returns:
             PluginMetadata
         """
-        metadata_file = plugin_path / "metadata.json"
+        _metadata_file = plugin_path / "metadata.json"
 
         if metadata_file.exists():
             import json
             with open(metadata_file) as f:
-                data = json.load(f)
+                _data = json.load(f)
             return PluginMetadata(**data)
 
         # Default metadata
         return PluginMetadata(
             name=plugin_path.name,
-            version="0.1.0",
-            description="Plugin",
-            author="Unknown"
+            _version = "0.1.0",
+            _description = "Plugin",
+            _author = "Unknown"
         )
 
-    async def load_plugin(self, plugin: Plugin) -> bool:
+    async def load_plugin(self, _plugin: Plugin) -> bool:
         """
         Load a plugin.
 
@@ -233,7 +233,7 @@ class PluginRuntime:
                     logger.warning(
                         "plugin_dependency_not_found",
                         plugin=plugin.metadata.name,
-                        dependency=dep
+                        _dependency = dep
                     )
                     return False
 
@@ -254,7 +254,7 @@ class PluginRuntime:
             plugin.state = PluginState.ERROR
             return False
 
-    async def unload_plugin(self, plugin_name: str) -> bool:
+    async def unload_plugin(self, _plugin_name: str) -> bool:
         """
         Unload a plugin.
 
@@ -291,8 +291,8 @@ class PluginRuntime:
         Returns:
             Dictionary of plugin names to load status
         """
-        results = {}
-        discovered = await self.discover_plugins()
+        _results = {}
+        _discovered = await self.discover_plugins()
 
         for plugin in discovered:
             results[plugin.metadata.name] = await self.load_plugin(plugin)
@@ -301,17 +301,12 @@ class PluginRuntime:
 
     async def unload_all(self) -> None:
         """Unload all plugins."""
-        plugin_names = list(self.plugins.keys())
+        _plugin_names = list(self.plugins.keys())
 
         for plugin_name in plugin_names:
             await self.unload_plugin(plugin_name)
 
-    async def execute_plugin(
-        self,
-        plugin_name: str,
-        method: str,
-        **kwargs
-    ) -> Any:
+    async def execute_plugin(self, _plugin_name: str, _method: str, _**kwargs) -> Any:
         """
         Execute a method on a plugin.
 
@@ -331,14 +326,14 @@ class PluginRuntime:
         if not hasattr(plugin, method):
             raise AttributeError(f"Plugin has no method: {method}")
 
-        method_func = getattr(plugin, method)
+        _method_func = getattr(plugin, method)
 
         if not asyncio.iscoroutinefunction(method_func):
             return method_func(**kwargs)
 
         return await method_func(**kwargs)
 
-    async def broadcast_message(self, message: Dict[str, Any]) -> List[Dict[str, Any]]:
+    async def broadcast_message(self, _message: Dict[str, _Any]) -> List[Dict[str, Any]]:
         """
         Broadcast a message to all loaded plugins.
 
@@ -348,11 +343,11 @@ class PluginRuntime:
         Returns:
             List of responses from plugins
         """
-        responses = []
+        _responses = []
 
         for plugin_name, handler in self.message_handlers.items():
             try:
-                response = await handler(message)
+                _response = await handler(message)
                 if response:
                     responses.append({
                         "plugin": plugin_name,
@@ -367,7 +362,7 @@ class PluginRuntime:
 
         return responses
 
-    def get_plugin(self, plugin_name: str) -> Optional[Plugin]:
+    def get_plugin(self, _plugin_name: str) -> Optional[Plugin]:
         """
         Get a loaded plugin by name.
 
@@ -418,10 +413,10 @@ def get_plugin_runtime() -> PluginRuntime:
 # Sync alias for backwards compatibility
 # NOTE: This is intentionally a new PluginRuntime instance, not the global one
 # The async get_plugin_runtime should be used for the global instance
-plugin_manager = PluginRuntime()
+_plugin_manager = PluginRuntime()
 
 
-async def load_plugin_from_file(plugin_path: Path) -> Optional[Plugin]:
+async def load_plugin_from_file(_plugin_path: Path) -> Optional[Plugin]:
     """
     Load a plugin from a file path.
 
@@ -431,20 +426,20 @@ async def load_plugin_from_file(plugin_path: Path) -> Optional[Plugin]:
     Returns:
         Plugin instance or None
     """
-    runtime = await get_plugin_runtime()
+    _runtime = await get_plugin_runtime()
 
     try:
-        spec = importlib.util.spec_from_file_location("plugin", str(plugin_path))
-        module = importlib.util.module_from_spec(spec)
+        _spec = importlib.util.spec_from_file_location("plugin", str(plugin_path))
+        _module = importlib.util.module_from_spec(spec)
 
         for name, obj in inspect.getmembers(module):
             if inspect.isclass(obj) and issubclass(obj, Plugin) and obj is not Plugin:
-                plugin = obj()
+                _plugin = obj()
                 plugin.metadata = PluginMetadata(
-                    name=name,
-                    version="0.1.0",
-                    description="Plugin loaded from file",
-                    author="Unknown"
+                    _name = name,
+                    _version = "0.1.0",
+                    _description = "Plugin loaded from file",
+                    _author = "Unknown"
                 )
                 return plugin
 

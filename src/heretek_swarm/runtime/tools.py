@@ -13,7 +13,7 @@ from typing import Any, Callable, Dict, List, Optional, Set
 from datetime import datetime, timezone
 import structlog
 
-logger = structlog.get_logger(__name__)
+_logger = structlog.get_logger(__name__)
 
 # =============================================================================
 # Security: Command Whitelist
@@ -55,7 +55,7 @@ class ToolRegistry:
     Manages tool registration, discovery, and execution.
     """
     
-    def __init__(self, default_timeout: int = 30):
+    def __init__(self, _default_timeout: int):
         """
         Initialize tool registry.
         
@@ -65,13 +65,7 @@ class ToolRegistry:
         self._tools: Dict[str, Dict] = {}
         self.default_timeout = default_timeout
     
-    def register(
-        self,
-        name: str,
-        handler: Callable,
-        description: str,
-        parameters: Optional[Dict] = None,
-    ) -> None:
+    def register(self, _name: str, _handler: Callable, _description: str, _parameters: Optional[Dict]) -> None:
         """
         Register a tool.
         
@@ -89,7 +83,7 @@ class ToolRegistry:
         }
         logger.debug("tool_registered", tool=name)
     
-    def get(self, name: str) -> Optional[Dict]:
+    def get(self, _name: str) -> Optional[Dict]:
         """Get tool by name."""
         return self._tools.get(name)
     
@@ -104,7 +98,7 @@ class ToolRegistry:
             for name, tool in self._tools.items()
         ]
     
-    async def execute(self, name: str, timeout: Optional[int] = None, **params) -> Any:
+    async def execute(self, _name: str, _timeout: Optional[int], _**params) -> Any:
         """
         Execute a tool by name.
         
@@ -120,19 +114,19 @@ class ToolRegistry:
             ValueError: If tool not found
             asyncio.TimeoutError: If tool execution times out
         """
-        tool = self._tools.get(name)
+        _tool = self._tools.get(name)
         if not tool:
             raise ValueError(f"Unknown tool: {name}")
         
         # Use provided timeout, tool-specific timeout, or default
-        execution_timeout = timeout or tool["parameters"].get("timeout", self.default_timeout)
+        _execution_timeout = timeout or tool["parameters"].get("timeout", self.default_timeout)
         
         logger.info("tool_executing", tool=name, params=params, timeout=execution_timeout)
         
         try:
-            result = await asyncio.wait_for(
+            _result = await asyncio.wait_for(
                 tool["handler"](**params),
-                timeout=execution_timeout,
+                _timeout = execution_timeout,
             )
             logger.info("tool_executed", tool=name, success=True)
             return result
@@ -148,7 +142,7 @@ class ToolRegistry:
 # Built-in Tool Implementations
 # =============================================================================
 
-async def search_memory(query: str, agent_id: str, limit: int = 5, memory_backend=None):
+async def search_memory(_query: str, _agent_id: str, _limit: int, _memory_backend):
     """
     Search agent memory for relevant information.
     
@@ -163,13 +157,13 @@ async def search_memory(query: str, agent_id: str, limit: int = 5, memory_backen
     
     from memory.base import MemoryQuery
     
-    search_query = MemoryQuery(
-        query_text=query,
-        agent_ids=[agent_id],
-        limit=limit,
+    _search_query = MemoryQuery(
+        _query_text = query,
+        _agent_ids = [agent_id],
+        _limit = limit,
     )
     
-    result = await memory_backend.search(search_query)
+    _result = await memory_backend.search(search_query)
     
     return {
         "query": query,
@@ -185,12 +179,7 @@ async def search_memory(query: str, agent_id: str, limit: int = 5, memory_backen
     }
 
 
-async def call_agent(
-    agent_id: str,
-    message: str,
-    target_agent: str,
-    a2a_server=None,
-):
+async def call_agent(_agent_id: str, _message: str, _target_agent: str, _a2a_server = None):
     """
     Send message to another agent via A2A protocol.
     
@@ -204,7 +193,7 @@ async def call_agent(
         return {"error": "A2A server not available"}
     
     # Send via event mesh
-    success = await a2a_server.event_mesh.send_to_json(
+    _success = await a2a_server.event_mesh.send_to_json(
         target_agent,
         {
             "type": "message",
@@ -221,7 +210,7 @@ async def call_agent(
     }
 
 
-async def read_file(path: str, allowed_base_paths: Optional[List[str]] = None) -> Dict:
+async def read_file(_path: str, _allowed_base_paths: Optional[List[str]]) -> Dict:
     """
     Read contents of a file with path traversal protection.
     
@@ -234,25 +223,25 @@ async def read_file(path: str, allowed_base_paths: Optional[List[str]] = None) -
     """
     # Default to current working directory if not specified
     if allowed_base_paths is None:
-        allowed_base_paths = [os.getcwd()]
+        _allowed_base_paths = [os.getcwd()]
     
     # Resolve to absolute path
-    resolved_path = os.path.realpath(os.path.abspath(path))
+    _resolved_path = os.path.realpath(os.path.abspath(path))
     
     # Validate path is within allowed directories
-    path_allowed = False
+    _path_allowed = False
     for base_path in allowed_base_paths:
-        resolved_base = os.path.realpath(os.path.abspath(base_path))
+        _resolved_base = os.path.realpath(os.path.abspath(base_path))
         if resolved_path.startswith(resolved_base + os.sep) or resolved_path == resolved_base:
-            path_allowed = True
+            _path_allowed = True
             break
     
     if not path_allowed:
         logger.warning(
             "path_traversal_blocked",
-            requested_path=path,
-            resolved_path=resolved_path,
-            allowed_bases=allowed_base_paths
+            _requested_path = path,
+            _resolved_path = resolved_path,
+            _allowed_bases = allowed_base_paths
         )
         return {
             "success": False,
@@ -261,7 +250,7 @@ async def read_file(path: str, allowed_base_paths: Optional[List[str]] = None) -
     
     try:
         with open(path, 'r', encoding='utf-8') as f:
-            content = f.read()
+            _content = f.read()
         
         return {
             "success": True,
@@ -276,7 +265,7 @@ async def read_file(path: str, allowed_base_paths: Optional[List[str]] = None) -
         }
 
 
-async def write_file(path: str, content: str, allowed_base_paths: Optional[List[str]] = None) -> Dict:
+async def write_file(_path: str, _content: str, _allowed_base_paths: Optional[List[str]]) -> Dict:
     """
     Write content to a file with path traversal protection.
     
@@ -290,25 +279,25 @@ async def write_file(path: str, content: str, allowed_base_paths: Optional[List[
     """
     # Default to current working directory if not specified
     if allowed_base_paths is None:
-        allowed_base_paths = [os.getcwd()]
+        _allowed_base_paths = [os.getcwd()]
     
     # Resolve to absolute path
-    resolved_path = os.path.realpath(os.path.abspath(path))
+    _resolved_path = os.path.realpath(os.path.abspath(path))
     
     # Validate path is within allowed directories
-    path_allowed = False
+    _path_allowed = False
     for base_path in allowed_base_paths:
-        resolved_base = os.path.realpath(os.path.abspath(base_path))
+        _resolved_base = os.path.realpath(os.path.abspath(base_path))
         if resolved_path.startswith(resolved_base + os.sep) or resolved_path == resolved_base:
-            path_allowed = True
+            _path_allowed = True
             break
     
     if not path_allowed:
         logger.warning(
             "path_traversal_blocked",
-            requested_path=path,
-            resolved_path=resolved_path,
-            allowed_bases=allowed_base_paths
+            _requested_path = path,
+            _resolved_path = resolved_path,
+            _allowed_bases = allowed_base_paths
         )
         return {
             "success": False,
@@ -331,7 +320,7 @@ async def write_file(path: str, content: str, allowed_base_paths: Optional[List[
         }
 
 
-async def run_command(command: str, timeout: int = 30) -> Dict:
+async def run_command(_command: str, _timeout: int) -> Dict:
     """
     Execute shell command with security validation.
     
@@ -356,21 +345,21 @@ async def run_command(command: str, timeout: int = 30) -> Dict:
         }
     
     # Parse command to extract base command
-    parts = command.strip().split()
+    _parts = command.strip().split()
     if not parts:
         return {
             "success": False,
             "error": "Invalid command format"
         }
     
-    base_cmd = parts[0]
+    _base_cmd = parts[0]
     
     # Check if command is blocked (security critical)
     if base_cmd in BLOCKED_COMMANDS:
         logger.warning(
             "command_blocked",
-            command=base_cmd,
-            reason="Command in blocked list"
+            _command = base_cmd,
+            _reason = "Command in blocked list"
         )
         return {
             "success": False,
@@ -381,8 +370,8 @@ async def run_command(command: str, timeout: int = 30) -> Dict:
     if base_cmd not in ALLOWED_COMMANDS:
         logger.warning(
             "command_not_allowed",
-            command=base_cmd,
-            reason="Command not in whitelist"
+            _command = base_cmd,
+            _reason = "Command not in whitelist"
         )
         return {
             "success": False,
@@ -391,8 +380,8 @@ async def run_command(command: str, timeout: int = 30) -> Dict:
     
     # Sanitize arguments to prevent injection
     try:
-        sanitized_args = [shlex.quote(arg) for arg in parts[1:]]
-        safe_command = f"{base_cmd} {' '.join(sanitized_args)}"
+        _sanitized_args = [shlex.quote(arg) for arg in parts[1:]]
+        _safe_command = f"{base_cmd} {' '.join(sanitized_args)}"
     except Exception as e:
         logger.error("command_sanitization_failed", error=str(e))
         return {
@@ -402,23 +391,23 @@ async def run_command(command: str, timeout: int = 30) -> Dict:
     
     # Execute command with subprocess (no shell=True for security)
     try:
-        proc = await asyncio.create_subprocess_exec(
+        _proc = await asyncio.create_subprocess_exec(
             base_cmd,
             *parts[1:],  # Pass arguments as separate parameters
-            stdout=asyncio.subprocess.PIPE,
-            stderr=asyncio.subprocess.PIPE,
+            _stdout = asyncio.subprocess.PIPE,
+            _stderr = asyncio.subprocess.PIPE,
         )
         
         stdout, stderr = await asyncio.wait_for(
             proc.communicate(),
-            timeout=timeout,
+            _timeout = timeout,
         )
         
         # Log command execution
         logger.info(
             "command_executed",
-            command=base_cmd,
-            args_count=len(parts) - 1,
+            _command = base_cmd,
+            _args_count = len(parts) - 1,
             returncode=proc.returncode,
         )
         
@@ -455,14 +444,7 @@ async def run_command(command: str, timeout: int = 30) -> Dict:
         }
 
 
-async def http_request(
-    method: str,
-    url: str,
-    headers: Optional[Dict] = None,
-    body: Optional[Dict] = None,
-    timeout: int = 30,
-    max_retries: int = 1,
-) -> Dict:
+async def http_request(_method: str, _url: str, _headers: Optional[Dict], _body: Optional[Dict], _timeout: int, _max_retries: int) -> Dict:
     """
     Make HTTP request with timeout and retry support.
     
@@ -486,7 +468,7 @@ async def http_request(
     
     # Block private/internal IP ranges to prevent SSRF
     import re
-    private_ip_pattern = re.compile(
+    _private_ip_pattern = re.compile(
         r'^(127\.|10\.|172\.(1[6-9]|2[0-9]|3[0-1])\.|192\.168\.|0\.0\.0\.0|localhost)',
         re.IGNORECASE
     )
@@ -497,8 +479,8 @@ async def http_request(
             "error": "Access to internal addresses is not allowed",
         }
     
-    attempt = 0
-    last_error = None
+    _attempt = 0
+    _last_error = None
     
     while attempt <= max_retries:
         try:
@@ -507,10 +489,10 @@ async def http_request(
                     method,
                     url,
                     headers=headers,
-                    json=body,
-                    timeout=aiohttp.ClientTimeout(total=timeout),
+                    _json = body,
+                    _timeout = aiohttp.ClientTimeout(total=timeout),
                 ) as response:
-                    content = await response.text()
+                    _content = await response.text()
                     
                     return {
                         "success": response.status < 400,
@@ -519,14 +501,14 @@ async def http_request(
                         "body": content[:10000],  # Limit output size
                     }
         except asyncio.TimeoutError as e:
-            last_error = f"Request timed out after {timeout}s"
+            _last_error = f"Request timed out after {timeout}s"
             logger.warning("http_request_timeout", url=url, attempt=attempt + 1)
         except aiohttp.ClientError as e:
-            last_error = f"HTTP client error: {str(e)}"
+            _last_error = f"HTTP client error: {str(e)}"
             logger.error("http_request_client_error", url=url, error=str(e))
             break  # Don't retry client errors
         except Exception as e:
-            last_error = str(e)
+            _last_error = str(e)
             logger.error("http_request_error", url=url, error=str(e))
         
         attempt += 1
@@ -544,11 +526,7 @@ async def http_request(
 # Tool Registration
 # =============================================================================
 
-def register_builtin_tools(
-    registry: ToolRegistry,
-    memory_backend=None,
-    a2a_server=None,
-) -> None:
+def register_builtin_tools(_registry: ToolRegistry, _memory_backend = None, _a2a_server = None) -> None:
     """
     Register all built-in tools.
     
@@ -558,14 +536,14 @@ def register_builtin_tools(
         a2a_server: Optional A2A server
     """
     # Memory search (requires backend)
-    async def memory_search_wrapper(query: str, agent_id: str, limit: int = 5):
+    async def memory_search_wrapper(_query: str, _agent_id: str, _limit: int):
         return await search_memory(query, agent_id, limit, memory_backend)
     
     registry.register(
-        name="search_memory",
-        handler=memory_search_wrapper,
-        description="Search agent memory for relevant information",
-        parameters={
+        _name = "search_memory",
+        _handler = memory_search_wrapper,
+        _description = "Search agent memory for relevant information",
+        _parameters = {
             "query": "string (required): Search query",
             "agent_id": "string (required): Agent ID",
             "limit": "integer (optional): Max results (default: 5)",
@@ -573,14 +551,14 @@ def register_builtin_tools(
     )
     
     # Agent calling (requires A2A server)
-    async def agent_call_wrapper(agent_id: str, message: str, target: str):
+    async def agent_call_wrapper(_agent_id: str, _message: str, _target: str):
         return await call_agent(agent_id, message, target, a2a_server)
     
     registry.register(
-        name="call_agent",
-        handler=agent_call_wrapper,
-        description="Send message to another agent via A2A protocol",
-        parameters={
+        _name = "call_agent",
+        _handler = agent_call_wrapper,
+        _description = "Send message to another agent via A2A protocol",
+        _parameters = {
             "agent_id": "string (required): Your agent ID",
             "message": "string (required): Message content",
             "target": "string (required): Target agent ID",
@@ -589,17 +567,17 @@ def register_builtin_tools(
     
     # File operations
     registry.register(
-        name="read_file",
-        handler=read_file,
-        description="Read contents of a file",
-        parameters={"path": "string (required): File path"},
+        _name = "read_file",
+        _handler = read_file,
+        _description = "Read contents of a file",
+        _parameters = {"path": "string (required): File path"},
     )
     
     registry.register(
-        name="write_file",
-        handler=write_file,
-        description="Write content to a file",
-        parameters={
+        _name = "write_file",
+        _handler = write_file,
+        _description = "Write content to a file",
+        _parameters = {
             "path": "string (required): File path",
             "content": "string (required): Content to write",
         },
@@ -607,10 +585,10 @@ def register_builtin_tools(
     
     # Command execution (with security validation)
     registry.register(
-        name="run_command",
-        handler=run_command,
-        description="Execute shell command (whitelisted commands only, with argument sanitization)",
-        parameters={
+        _name = "run_command",
+        _handler = run_command,
+        _description = "Execute shell command (whitelisted commands only, with argument sanitization)",
+        _parameters = {
             "command": "string (required): Shell command from whitelist",
             "timeout": "integer (optional): Timeout in seconds (default: 30)",
         },
@@ -618,10 +596,10 @@ def register_builtin_tools(
     
     # HTTP requests
     registry.register(
-        name="http_request",
-        handler=http_request,
-        description="Make HTTP request",
-        parameters={
+        _name = "http_request",
+        _handler = http_request,
+        _description = "Make HTTP request",
+        _parameters = {
             "method": "string (required): HTTP method (GET, POST, etc)",
             "url": "string (required): URL",
             "headers": "object (optional): Request headers",
@@ -632,6 +610,6 @@ def register_builtin_tools(
     
     logger.info(
         "builtin_tools_registered",
-        count=len(registry.list_tools()),
-        tools=[t["name"] for t in registry.list_tools()],
+        _count = len(registry.list_tools()),
+        _tools = [t["name"] for t in registry.list_tools()],
     )

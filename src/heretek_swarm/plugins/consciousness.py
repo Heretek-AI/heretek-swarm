@@ -25,7 +25,7 @@ from typing import Any, Dict, List, Optional, Set
 
 import structlog
 
-logger = structlog.get_logger("ConsciousnessPlugin")
+_logger = structlog.get_logger("ConsciousnessPlugin")
 
 
 class ConsciousnessState(Enum):
@@ -173,11 +173,7 @@ class GlobalWorkspace:
     - Enables coordinated response
     """
 
-    def __init__(
-        self,
-        max_capacity: int = 100,
-        competition_threshold: float = 0.5,
-    ) -> None:
+    def __init__(self, _max_capacity: int, _competition_threshold: float) -> None:
         """
         Initialize the global workspace.
 
@@ -193,19 +189,13 @@ class GlobalWorkspace:
 
         logger.info(
             "Global Workspace initialized",
-            extra={
+            _extra = {
                 "max_capacity": max_capacity,
                 "competition_threshold": competition_threshold,
             },
         )
 
-    def submit(
-        self,
-        content: Dict[str, Any],
-        source: str,
-        priority: float = 0.5,
-        ttl: int = 60,
-    ) -> str:
+    def submit(self, _content: Dict[str, _Any], _source: str, _priority: float, _ttl: int) -> str:
         """
         Submit content to the global workspace.
 
@@ -226,20 +216,20 @@ class GlobalWorkspace:
             return ""
 
         # Create workspace item
-        item = GlobalWorkspaceItem(
+        _item = GlobalWorkspaceItem(
             id=str(uuid.uuid4()),
             content=content,
             priority=priority,
             source=source,
             timestamp=datetime.now(timezone.utc).isoformat(),
-            ttl=ttl,
+            _ttl = ttl,
         )
 
         # Check capacity
         if len(self.workspace) >= self.max_capacity:
             # Remove lowest priority item
             self.workspace.sort(key=lambda x: x.priority)
-            removed = self.workspace.pop(0)
+            _removed = self.workspace.pop(0)
             self.history.append(removed)
             logger.debug(f"Workspace full, removed item: {removed.id}")
 
@@ -248,7 +238,7 @@ class GlobalWorkspace:
 
         logger.info(
             f"Content submitted to workspace",
-            extra={
+            _extra = {
                 "item_id": item.id,
                 "source": source,
                 "priority": priority,
@@ -257,11 +247,7 @@ class GlobalWorkspace:
 
         return item.id
 
-    def get_contents(
-        self,
-        min_priority: float = 0.0,
-        limit: int = 10,
-    ) -> List[GlobalWorkspaceItem]:
+    def get_contents(self, _min_priority: float, _limit: int) -> List[GlobalWorkspaceItem]:
         """
         Get current workspace contents.
 
@@ -273,14 +259,14 @@ class GlobalWorkspace:
             List of workspace items
         """
         # Filter and sort by priority
-        filtered = [
+        _filtered = [
             item for item in self.workspace if item.priority >= min_priority
         ]
         filtered.sort(key=lambda x: x.priority, reverse=True)
 
         return filtered[:limit]
 
-    def attend_to(self, item_id: str) -> bool:
+    def attend_to(self, _item_id: str) -> bool:
         """
         Mark an item as attended to.
 
@@ -305,11 +291,11 @@ class GlobalWorkspace:
             Number of items removed
         """
         now = datetime.now(timezone.utc)
-        original_count = len(self.workspace)
+        _original_count = len(self.workspace)
 
-        active = []
+        _active = []
         for item in self.workspace:
-            item_time = datetime.fromisoformat(item.timestamp)
+            _item_time = datetime.fromisoformat(item.timestamp)
             age = (now - item_time).total_seconds()
             if age < item.ttl:
                 active.append(item)
@@ -317,19 +303,19 @@ class GlobalWorkspace:
                 self.history.append(item)
 
         self.workspace = active
-        removed_count = original_count - len(active)
+        _removed_count = original_count - len(active)
 
         if removed_count > 0:
             logger.info(f"Cleaned up {removed_count} expired workspace items")
 
         return removed_count
 
-    def subscribe(self, subscriber_id: str) -> None:
+    def subscribe(self, _subscriber_id: str) -> None:
         """Subscribe to workspace broadcasts."""
         self.subscribers.add(subscriber_id)
         logger.debug(f"Subscriber added: {subscriber_id}")
 
-    def unsubscribe(self, subscriber_id: str) -> None:
+    def unsubscribe(self, _subscriber_id: str) -> None:
         """Unsubscribe from workspace broadcasts."""
         self.subscribers.discard(subscriber_id)
 
@@ -366,11 +352,7 @@ class AttentionSchemaManager:
 
         logger.info("Attention Schema Manager initialized")
 
-    def create_schema(
-        self,
-        agent_id: str,
-        focus_target: Optional[str] = None,
-    ) -> AttentionSchema:
+    def create_schema(self, _agent_id: str, _focus_target: Optional[str]) -> AttentionSchema:
         """
         Create an attention schema for an agent.
 
@@ -395,12 +377,7 @@ class AttentionSchemaManager:
 
         return schema
 
-    def update_attention(
-        self,
-        agent_id: str,
-        focus_target: str,
-        intensity: float,
-    ) -> Optional[AttentionSchema]:
+    def update_attention(self, _agent_id: str, _focus_target: str, _intensity: float) -> Optional[AttentionSchema]:
         """
         Update an agent's attention state.
 
@@ -442,7 +419,7 @@ class AttentionSchemaManager:
 
         logger.debug(
             f"Updated attention for {agent_id}",
-            extra={
+            _extra = {
                 "focus": focus_target,
                 "intensity": intensity,
             },
@@ -450,11 +427,11 @@ class AttentionSchemaManager:
 
         return schema
 
-    def get_schema(self, agent_id: str) -> Optional[AttentionSchema]:
+    def get_schema(self, _agent_id: str) -> Optional[AttentionSchema]:
         """Get attention schema for an agent."""
         return self.schemas.get(agent_id)
 
-    def _calculate_metacognitive_awareness(self, agent_id: str) -> float:
+    def _calculate_metacognitive_awareness(self, _agent_id: str) -> float:
         """
         Calculate metacognitive awareness score.
 
@@ -469,37 +446,37 @@ class AttentionSchemaManager:
         Returns:
             Metacognitive awareness score (0.0-1.0)
         """
-        history = self.attention_history.get(agent_id, [])
+        _history = self.attention_history.get(agent_id, [])
 
         if len(history) < 2:
             return 0.3  # Base awareness
 
         # Calculate attention stability
-        recent = history[-10:]
-        intensity_variance = self._calculate_variance(
+        _recent = history[-10:]
+        _intensity_variance = self._calculate_variance(
             [h["intensity"] for h in recent]
         )
 
         # Lower variance = higher stability = higher awareness
-        stability = max(0.0, 1.0 - intensity_variance)
+        _stability = max(0.0, 1.0 - intensity_variance)
 
         # Calculate focus consistency
-        focus_targets = [h["new_focus"] for h in recent]
-        unique_targets = len(set(focus_targets))
-        consistency = 1.0 / unique_targets if unique_targets > 0 else 1.0
+        _focus_targets = [h["new_focus"] for h in recent]
+        _unique_targets = len(set(focus_targets))
+        _consistency = 1.0 / unique_targets if unique_targets > 0 else 1.0
 
         # Combine factors
-        awareness = (stability * 0.6) + (consistency * 0.4)
+        _awareness = (stability * 0.6) + (consistency * 0.4)
 
         return min(1.0, max(0.0, awareness))
 
-    def _calculate_variance(self, values: List[float]) -> float:
+    def _calculate_variance(self, _values: List[float]) -> float:
         """Calculate variance of a list of values."""
         if len(values) < 2:
             return 0.0
 
-        mean = sum(values) / len(values)
-        variance = sum((x - mean) ** 2 for x in values) / len(values)
+        _mean = sum(values) / len(values)
+        _variance = sum((x - mean) ** 2 for x in values) / len(values)
 
         return variance
 
@@ -530,12 +507,7 @@ class ConsciousnessPlugin:
     - Consciousness metrics and monitoring
     """
 
-    def __init__(
-        self,
-        gwt_threshold: float = 0.7,
-        iit_phi_threshold: float = 0.5,
-        ast_threshold: float = 0.6,
-    ) -> None:
+    def __init__(self, _gwt_threshold: float, _iit_phi_threshold: float, _ast_threshold: float) -> None:
         """
         Initialize the consciousness plugin.
 
@@ -562,7 +534,7 @@ class ConsciousnessPlugin:
 
         logger.info(
             "Consciousness Plugin initialized",
-            extra={
+            _extra = {
                 "gwt_threshold": gwt_threshold,
                 "iit_phi_threshold": iit_phi_threshold,
                 "ast_threshold": ast_threshold,
@@ -600,13 +572,7 @@ class ConsciousnessPlugin:
     # Global Workspace Operations
     # =========================================================================
 
-    def submit_to_workspace(
-        self,
-        source: str,
-        content: Dict[str, Any],
-        priority: float = 0.5,
-        ttl: int = 60,
-    ) -> str:
+    def submit_to_workspace(self, _source: str, _content: Dict[str, _Any], _priority: float, _ttl: int) -> str:
         """
         Submit content to the global workspace.
 
@@ -623,18 +589,14 @@ class ConsciousnessPlugin:
             content=content,
             source=source,
             priority=priority,
-            ttl=ttl,
+            _ttl = ttl,
         )
 
-    def get_workspace_contents(
-        self,
-        min_priority: float = 0.0,
-        limit: int = 10,
-    ) -> List[Dict[str, Any]]:
+    def get_workspace_contents(self, _min_priority: float, _limit: int) -> List[Dict[str, Any]]:
         """Get current workspace contents."""
-        items = self.global_workspace.get_contents(
-            min_priority=min_priority,
-            limit=limit,
+        _items = self.global_workspace.get_contents(
+            _min_priority = min_priority,
+            _limit = limit,
         )
 
         return [
@@ -653,12 +615,7 @@ class ConsciousnessPlugin:
     # Attention Schema Operations
     # =========================================================================
 
-    def update_agent_attention(
-        self,
-        agent_id: str,
-        focus_target: str,
-        intensity: float,
-    ) -> Optional[Dict[str, Any]]:
+    def update_agent_attention(self, _agent_id: str, _focus_target: str, _intensity: float) -> Optional[Dict[str, Any]]:
         """
         Update an agent's attention state.
 
@@ -670,10 +627,10 @@ class ConsciousnessPlugin:
         Returns:
             Updated schema or None
         """
-        schema = self.attention_manager.update_attention(
+        _schema = self.attention_manager.update_attention(
             agent_id=agent_id,
             focus_target=focus_target,
-            intensity=intensity,
+            _intensity = intensity,
         )
 
         if schema:
@@ -687,9 +644,9 @@ class ConsciousnessPlugin:
 
         return None
 
-    def get_attention_schema(self, agent_id: str) -> Optional[Dict[str, Any]]:
+    def get_attention_schema(self, _agent_id: str) -> Optional[Dict[str, Any]]:
         """Get attention schema for an agent."""
-        schema = self.attention_manager.get_schema(agent_id)
+        _schema = self.attention_manager.get_schema(agent_id)
 
         if schema:
             return {
@@ -705,14 +662,7 @@ class ConsciousnessPlugin:
     # Consciousness Metrics
     # =========================================================================
 
-    def calculate_consciousness_metrics(
-        self,
-        agent_id: str,
-        gwt_score: Optional[float] = None,
-        iit_phi: Optional[float] = None,
-        ast_competence: Optional[float] = None,
-        fep_score: Optional[float] = None,
-    ) -> ConsciousnessMetrics:
+    def calculate_consciousness_metrics(self, _agent_id: str, _gwt_score: Optional[float], _iit_phi: Optional[float], _ast_competence: Optional[float], _fep_score: Optional[float]) -> ConsciousnessMetrics:
         """
         Calculate consciousness metrics for an agent.
 
@@ -743,7 +693,7 @@ class ConsciousnessPlugin:
             ast_competence = self._calculate_ast_competence(agent_id)
 
         if fep_score is None:
-            fep_score = self._calculate_fep_free_energy(agent_id)
+            _fep_score = self._calculate_fep_free_energy(agent_id)
 
         # Calculate composite score (all four theories weighted equally)
         composite_score = (gwt_score + iit_phi + ast_competence + fep_score) / 4.0
@@ -785,7 +735,7 @@ class ConsciousnessPlugin:
 
         logger.info(
             f"Calculated consciousness metrics for {agent_id}",
-            extra={
+            _extra = {
                 "composite_score": composite_score,
                 "state": state.value,
                 "gwt_score": gwt_score,
@@ -797,7 +747,7 @@ class ConsciousnessPlugin:
 
         return metrics
 
-    def _calculate_gwt_score(self, agent_id: str) -> float:
+    def _calculate_gwt_score(self, _agent_id: str) -> float:
         """
         Calculate GWT score based on workspace participation.
 
@@ -808,8 +758,8 @@ class ConsciousnessPlugin:
             GWT score (0.0-1.0)
         """
         # Check workspace activity
-        workspace_items = self.global_workspace.get_contents(limit=100)
-        agent_submissions = sum(
+        _workspace_items = self.global_workspace.get_contents(limit=100)
+        _agent_submissions = sum(
             1 for item in workspace_items if item.source == agent_id
         )
 
@@ -817,11 +767,11 @@ class ConsciousnessPlugin:
         if agent_submissions == 0:
             return 0.3
 
-        participation_score = min(1.0, agent_submissions / 10.0)
+        _participation_score = min(1.0, agent_submissions / 10.0)
 
         return participation_score
 
-    def _estimate_iit_phi(self, agent_id: str) -> float:
+    def _estimate_iit_phi(self, _agent_id: str) -> float:
         """
         Calculate IIT Phi (integrated information) using connectivity matrix analysis.
 
@@ -843,30 +793,30 @@ class ConsciousnessPlugin:
         """
         try:
             # Get attention schema for baseline
-            schema = self.attention_manager.get_schema(agent_id)
+            _schema = self.attention_manager.get_schema(agent_id)
             
             # Build connectivity matrix from agent's interaction history
-            connectivity = self._build_connectivity_matrix(agent_id)
+            _connectivity = self._build_connectivity_matrix(agent_id)
             
             if not connectivity or len(connectivity) < 2:
                 # Not enough data for integration analysis
                 return schema.metacognitive_awareness * 0.5 if schema else 0.2
             
             # Calculate integration score
-            integration = self._calculate_integration(connectivity)
+            _integration = self._calculate_integration(connectivity)
             
             # Calculate information differentiation
-            differentiation = self._calculate_differentiation(agent_id)
+            _differentiation = self._calculate_differentiation(agent_id)
             
             # Phi = integration * differentiation (core IIT formula)
-            phi = integration * differentiation
+            _phi = integration * differentiation
             
             # Normalize to 0.0-1.0 range
-            phi = min(1.0, max(0.0, phi))
+            _phi = min(1.0, max(0.0, phi))
             
             logger.debug(
                 "IIT Phi calculated",
-                extra={
+                _extra = {
                     "agent_id": agent_id,
                     "integration": integration,
                     "differentiation": differentiation,
@@ -881,7 +831,7 @@ class ConsciousnessPlugin:
             # Fallback to attention-based estimate
             return schema.metacognitive_awareness * 0.5 if schema else 0.2
     
-    def _build_connectivity_matrix(self, agent_id: str) -> List[List[float]]:
+    def _build_connectivity_matrix(self, _agent_id: str) -> List[List[float]]:
         """
         Build connectivity matrix from agent interaction history.
         
@@ -895,38 +845,38 @@ class ConsciousnessPlugin:
             NxN connectivity matrix
         """
         # Get attention history for connectivity analysis
-        history = self.attention_manager.attention_history.get(agent_id, [])
+        _history = self.attention_manager.attention_history.get(agent_id, [])
         
         if len(history) < 2:
             return []
         
         # Extract unique focus targets as "nodes"
-        nodes = list(set(h.get("focus_target", "unknown") for h in history[-50:]))
+        _nodes = list(set(h.get("focus_target", "unknown") for h in history[-50:]))
         n = len(nodes)
         
         if n < 2:
             return []
         
         # Build adjacency matrix based on transition frequency
-        matrix = [[0.0] * n for _ in range(n)]
+        _matrix = [[0.0] * n for _ in range(n)]
         
         for i in range(len(history) - 1):
-            current = history[i].get("focus_target", "unknown")
-            next_focus = history[i + 1].get("focus_target", "unknown")
+            _current = history[i].get("focus_target", "unknown")
+            _next_focus = history[i + 1].get("focus_target", "unknown")
             
             if current in nodes and next_focus in nodes:
-                src_idx = nodes.index(current)
-                dst_idx = nodes.index(next_focus)
+                _src_idx = nodes.index(current)
+                _dst_idx = nodes.index(next_focus)
                 matrix[src_idx][dst_idx] += 1
         
         # Normalize matrix values to 0.0-1.0
-        max_val = max(max(row) for row in matrix)
+        _max_val = max(max(row) for row in matrix)
         if max_val > 0:
-            matrix = [[val / max_val for val in row] for row in matrix]
+            _matrix = [[val / max_val for val in row] for row in matrix]
         
         return matrix
     
-    def _calculate_integration(self, connectivity: List[List[float]]) -> float:
+    def _calculate_integration(self, _connectivity: List[List[float]]) -> float:
         """
         Calculate integration score from connectivity matrix.
         
@@ -950,21 +900,21 @@ class ConsciousnessPlugin:
                 return 0.0
             
             # Calculate row sums (total connectivity per node)
-            row_sums = [sum(row) for row in connectivity]
-            avg_connectivity = sum(row_sums) / n
+            _row_sums = [sum(row) for row in connectivity]
+            _avg_connectivity = sum(row_sums) / n
             
             # Calculate connectivity variance
-            variance = sum((s - avg_connectivity) ** 2 for s in row_sums) / n
+            _variance = sum((s - avg_connectivity) ** 2 for s in row_sums) / n
             
             # Low variance = more uniform integration
             # Normalize: lower variance = higher integration
-            integration = 1.0 / (1.0 + variance)
+            _integration = 1.0 / (1.0 + variance)
             
             # Factor in overall connectivity strength
-            connectivity_factor = min(1.0, avg_connectivity)
+            _connectivity_factor = min(1.0, avg_connectivity)
             
             # Combined integration score
-            integration = integration * (0.5 + 0.5 * connectivity_factor)
+            _integration = integration * (0.5 + 0.5 * connectivity_factor)
             
             return min(1.0, max(0.0, integration))
             
@@ -972,7 +922,7 @@ class ConsciousnessPlugin:
             logger.error(f"Integration calculation error: {e}")
             return 0.0
     
-    def _calculate_differentiation(self, agent_id: str) -> float:
+    def _calculate_differentiation(self, _agent_id: str) -> float:
         """
         Calculate information differentiation score.
         
@@ -988,31 +938,31 @@ class ConsciousnessPlugin:
         """
         try:
             # Get attention history for entropy calculation
-            history = self.attention_manager.attention_history.get(agent_id, [])
+            _history = self.attention_manager.attention_history.get(agent_id, [])
             
             if len(history) < 5:
                 return 0.3  # Default for insufficient data
             
             # Extract focus targets
-            targets = [h.get("focus_target", "unknown") for h in history[-50:]]
+            _targets = [h.get("focus_target", "unknown") for h in history[-50:]]
             
             # Calculate entropy (diversity of focus targets)
-            unique_targets = set(targets)
-            n_total = len(targets)
+            _unique_targets = set(targets)
+            _n_total = len(targets)
             
             if len(unique_targets) < 2:
                 return 0.1  # Low differentiation - always focused on same thing
             
             # Shannon entropy calculation
-            entropy = 0.0
+            _entropy = 0.0
             for target in unique_targets:
-                p = targets.count(target) / n_total
+                _p = targets.count(target) / n_total
                 if p > 0:
                     entropy -= p * (p if p == 1 else (p * (1 - p)))
             
             # Normalize entropy to 0.0-1.0
-            max_entropy = len(unique_targets) - 1
-            normalized_entropy = entropy / max_entropy if max_entropy > 0 else 0.0
+            _max_entropy = len(unique_targets) - 1
+            _normalized_entropy = entropy / max_entropy if max_entropy > 0 else 0.0
             
             return min(1.0, max(0.0, normalized_entropy))
             
@@ -1020,7 +970,7 @@ class ConsciousnessPlugin:
             logger.error(f"Differentiation calculation error: {e}")
             return 0.3
 
-    def _calculate_fep_free_energy(self, agent_id: str) -> float:
+    def _calculate_fep_free_energy(self, _agent_id: str) -> float:
         """
         Calculate Free Energy Principle (FEP) score.
 
@@ -1045,20 +995,20 @@ class ConsciousnessPlugin:
         """
         try:
             # Get attention history for prediction analysis
-            history = self.attention_manager.attention_history.get(agent_id, [])
+            _history = self.attention_manager.attention_history.get(agent_id, [])
             
             if len(history) < 5:
                 return 0.5  # Default for insufficient data
             
             # Calculate prediction error from attention stability
-            prediction_error = self._calculate_prediction_error(agent_id, history)
+            _prediction_error = self._calculate_prediction_error(agent_id, history)
             
             # Calculate entropy of internal states
-            entropy = self._calculate_state_entropy(history)
+            _entropy = self._calculate_state_entropy(history)
             
             # Free energy = prediction error - entropy
             # (simplified - actual FEP uses variational bounds)
-            free_energy = prediction_error - entropy
+            _free_energy = prediction_error - entropy
             
             # Invert and normalize: lower free energy = higher score
             # Range: free_energy can be negative to positive
@@ -1067,7 +1017,7 @@ class ConsciousnessPlugin:
             
             logger.debug(
                 "FEP calculated",
-                extra={
+                _extra = {
                     "agent_id": agent_id,
                     "prediction_error": prediction_error,
                     "entropy": entropy,
@@ -1082,11 +1032,7 @@ class ConsciousnessPlugin:
             logger.error(f"FEP calculation error: {e}")
             return 0.5
     
-    def _calculate_prediction_error(
-        self,
-        agent_id: str,
-        history: List[Dict[str, Any]]
-    ) -> float:
+    def _calculate_prediction_error(self, _agent_id: str, _history: List[Dict[str, _Any]]) -> float:
         """
         Calculate prediction error from attention history.
         
@@ -1103,28 +1049,28 @@ class ConsciousnessPlugin:
         if len(history) < 3:
             return 0.5
         
-        errors = []
+        _errors = []
         
         # Analyze transitions for predictability
         for i in range(2, len(history)):
-            prev_focus = history[i-2].get("focus_target", "")
-            curr_focus = history[i-1].get("focus_target", "")
-            actual_next = history[i].get("focus_target", "")
+            _prev_focus = history[i-2].get("focus_target", "")
+            _curr_focus = history[i-1].get("focus_target", "")
+            _actual_next = history[i].get("focus_target", "")
             
             # Simple prediction: expect continuation of pattern
             predicted = curr_focus  # Naive prediction: same as current
             
             # Error: 0 if prediction matches, 1 if different
-            error = 0.0 if predicted == actual_next else 1.0
+            _error = 0.0 if predicted == actual_next else 1.0
             errors.append(error)
         
         # Average prediction error
-        avg_error = sum(errors) / len(errors) if errors else 0.5
+        _avg_error = sum(errors) / len(errors) if errors else 0.5
         
         # Scale by intensity variance (more variance = more surprise)
-        intensities = [h.get("attention_intensity", 0.5) for h in history[-10:]]
+        _intensities = [h.get("attention_intensity", 0.5) for h in history[-10:]]
         if len(intensities) >= 2:
-            intensity_variance = sum(
+            _intensity_variance = sum(
                 (i - sum(intensities)/len(intensities)) ** 2
                 for i in intensities
             ) / len(intensities)
@@ -1133,7 +1079,7 @@ class ConsciousnessPlugin:
         
         return min(1.0, avg_error)
     
-    def _calculate_state_entropy(self, history: List[Dict[str, Any]]) -> float:
+    def _calculate_state_entropy(self, _history: List[Dict[str, _Any]]) -> float:
         """
         Calculate entropy of internal states from history.
         
@@ -1150,35 +1096,35 @@ class ConsciousnessPlugin:
             return 0.0
         
         # Count unique states (focus + intensity combinations)
-        states = []
+        _states = []
         for h in history:
-            focus = h.get("focus_target", "unknown")
-            intensity = h.get("attention_intensity", 0.5)
+            _focus = h.get("focus_target", "unknown")
+            _intensity = h.get("attention_intensity", 0.5)
             # Bin intensity into categories
-            intensity_bin = "low" if intensity < 0.33 else ("medium" if intensity < 0.66 else "high")
+            _intensity_bin = "low" if intensity < 0.33 else ("medium" if intensity < 0.66 else "high")
             states.append(f"{focus}_{intensity_bin}")
         
-        unique_states = set(states)
-        n_total = len(states)
+        _unique_states = set(states)
+        _n_total = len(states)
         
         if len(unique_states) < 2:
             return 0.1  # Low entropy - same state repeatedly
         
         # Calculate Shannon entropy
-        entropy = 0.0
+        _entropy = 0.0
         for state in unique_states:
-            count = states.count(state)
-            p = count / n_total
+            _count = states.count(state)
+            _p = count / n_total
             if p > 0:
                 entropy -= p * math.log2(p)
         
         # Normalize by maximum possible entropy
-        max_entropy = math.log2(len(unique_states))
-        normalized = entropy / max_entropy if max_entropy > 0 else 0.0
+        _max_entropy = math.log2(len(unique_states))
+        _normalized = entropy / max_entropy if max_entropy > 0 else 0.0
         
         return min(1.0, normalized)
 
-    def _calculate_ast_competence(self, agent_id: str) -> float:
+    def _calculate_ast_competence(self, _agent_id: str) -> float:
         """
         Calculate AST competence score.
 
@@ -1188,20 +1134,14 @@ class ConsciousnessPlugin:
         Returns:
             AST competence (0.0-1.0)
         """
-        schema = self.attention_manager.get_schema(agent_id)
+        _schema = self.attention_manager.get_schema(agent_id)
 
         if schema:
             return schema.metacognitive_awareness
 
         return 0.0
 
-    def _determine_consciousness_state(
-        self,
-        gwt_score: float,
-        iit_phi: float,
-        ast_competence: float,
-        fep_score: Optional[float] = None,
-    ) -> ConsciousnessState:
+    def _determine_consciousness_state(self, _gwt_score: float, _iit_phi: float, _ast_competence: float, _fep_score: Optional[float]) -> ConsciousnessState:
         """
         Determine consciousness state based on scores.
 
@@ -1216,9 +1156,9 @@ class ConsciousnessPlugin:
         """
         # Include FEP in calculation if available
         if fep_score is not None:
-            avg_score = (gwt_score + iit_phi + ast_competence + fep_score) / 4.0
+            _avg_score = (gwt_score + iit_phi + ast_competence + fep_score) / 4.0
         else:
-            avg_score = (gwt_score + iit_phi + ast_competence) / 3.0
+            _avg_score = (gwt_score + iit_phi + ast_competence) / 3.0
 
         if avg_score >= 0.9:
             return ConsciousnessState.HYPER_CONSCIOUS
@@ -1236,7 +1176,7 @@ class ConsciousnessPlugin:
         else:
             return ConsciousnessState.UNCONSCIOUS
 
-    def get_agent_metrics(self, agent_id: str) -> Optional[Dict[str, Any]]:
+    def get_agent_metrics(self, _agent_id: str) -> Optional[Dict[str, Any]]:
         """Get metrics for an agent."""
         metrics = self.agent_metrics.get(agent_id)
 
@@ -1263,24 +1203,24 @@ class ConsciousnessPlugin:
                 "collective_state": "unconscious",
             }
 
-        total_agents = len(self.agent_metrics)
-        conscious_agents = sum(
+        _total_agents = len(self.agent_metrics)
+        _conscious_agents = sum(
             1
             for m in self.agent_metrics.values()
             if m.state == ConsciousnessState.CONSCIOUS
         )
-        average_composite = (
+        _average_composite = (
             sum(m.composite_score for m in self.agent_metrics.values())
             / total_agents
         )
 
         # Determine collective state
         if conscious_agents / total_agents >= 0.5:
-            collective_state = "conscious"
+            _collective_state = "conscious"
         elif average_composite >= 0.2:
-            collective_state = "minimal-consciousness"
+            _collective_state = "minimal-consciousness"
         else:
-            collective_state = "unconscious"
+            _collective_state = "unconscious"
 
         return {
             "total_agents": total_agents,

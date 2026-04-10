@@ -23,10 +23,9 @@ from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional, Tuple
 
-import numpy as np
 import structlog
 
-logger = structlog.get_logger("ConsciousnessEnhanced")
+_logger = structlog.get_logger("ConsciousnessEnhanced")
 
 
 class ConsciousnessState(Enum):
@@ -124,7 +123,7 @@ class IITCalculator:
     - Information decomposition
     """
 
-    def __init__(self, max_agents: int = 50):
+    def __init__(self, _max_agents: int):
         """
         Initialize IIT calculator.
 
@@ -135,12 +134,7 @@ class IITCalculator:
         self.connectivity_history: List[IITConnectivity] = []
         self.interaction_matrix: Dict[Tuple[str, str], float] = defaultdict(float)
 
-    def record_interaction(
-        self,
-        from_agent: str,
-        to_agent: str,
-        strength: float = 1.0,
-    ) -> None:
+    def record_interaction(self, _from_agent: str, _to_agent: str, _strength: float) -> None:
         """
         Record interaction between agents.
 
@@ -151,10 +145,7 @@ class IITCalculator:
         """
         self.interaction_matrix[(from_agent, to_agent)] = strength
 
-    def calculate_phi(
-        self,
-        agent_ids: List[str],
-    ) -> IITConnectivity:
+    def calculate_phi(self, _agent_ids: List[str]) -> IITConnectivity:
         """
         Calculate IIT Phi for a set of agents.
 
@@ -168,32 +159,32 @@ class IITCalculator:
         if n < 2:
             return IITConnectivity(
                 phi=0.0,
-                integration=0.0,
-                information=0.0,
+                _integration = 0.0,
+                _information = 0.0,
                 timestamp=datetime.now(timezone.utc).isoformat(),
             )
 
         # Build connectivity matrix
-        matrix = self._build_connectivity_matrix(agent_ids)
+        _matrix = self._build_connectivity_matrix(agent_ids)
 
         # Calculate integration (Φ)
         phi = self._calculate_integration(matrix)
 
         # Calculate total information
-        information = self._calculate_total_information(matrix)
+        _information = self._calculate_total_information(matrix)
 
         # Calculate causal power
-        causal_power = self._calculate_causal_power(matrix)
+        _causal_power = self._calculate_causal_power(matrix)
 
         # Calculate integration score
-        integration = min(1.0, phi / (n * math.log2(n)) if n > 1 else 0.0)
+        _integration = min(1.0, phi / (n * math.log2(n)) if n > 1 else 0.0)
 
         connectivity = IITConnectivity(
-            connectivity_matrix=matrix.tolist(),
-            integration=integration,
-            information=information,
+            _connectivity_matrix = matrix.tolist(),
+            _integration = integration,
+            _information = information,
             phi=phi,
-            causal_power=causal_power,
+            _causal_power = causal_power,
             timestamp=datetime.now(timezone.utc).isoformat(),
         )
 
@@ -203,10 +194,7 @@ class IITCalculator:
 
         return connectivity
 
-    def _build_connectivity_matrix(
-        self,
-        agent_ids: List[str],
-    ) -> np.ndarray:
+    def _build_connectivity_matrix(self, _agent_ids: List[str]) -> np.ndarray:
         """
         Build connectivity matrix from interaction history.
 
@@ -217,21 +205,18 @@ class IITCalculator:
             Connectivity matrix as numpy array
         """
         n = len(agent_ids)
-        matrix = np.zeros((n, n))
+        _matrix = np.zeros((n, n))
 
         for i, from_id in enumerate(agent_ids):
             for j, to_id in enumerate(agent_ids):
                 if i == j:
                     continue
-                strength = self.interaction_matrix.get((from_id, to_id), 0.0)
+                _strength = self.interaction_matrix.get((from_id, to_id), 0.0)
                 matrix[i, j] = strength
 
         return matrix
 
-    def _calculate_integration(
-        self,
-        matrix: np.ndarray,
-    ) -> float:
+    def _calculate_integration(self, _matrix: np.ndarray) -> float:
         """
         Calculate integration (Φ) using eigenvalue decomposition.
 
@@ -248,19 +233,19 @@ class IITCalculator:
         """
         try:
             # Normalize matrix
-            row_sums = matrix.sum(axis=1, keepdims=True)
-            normalized = np.divide(
+            _row_sums = matrix.sum(axis=1, keepdims=True)
+            _normalized = np.divide(
                 matrix,
                 row_sums,
-                out=np.zeros_like(matrix),
-                where=row_sums != 0,
+                _out = np.zeros_like(matrix),
+                _where = row_sums != 0,
             )
 
             # Calculate eigenvalues
-            eigenvalues = np.linalg.eigvals(normalized)
+            _eigenvalues = np.linalg.eigvals(normalized)
 
             # Use real eigenvalues
-            real_eigenvalues = np.real(eigenvalues)
+            _real_eigenvalues = np.real(eigenvalues)
 
             # Phi is sum of positive eigenvalues (simplified)
             phi = np.sum(real_eigenvalues[real_eigenvalues > 0])
@@ -271,10 +256,7 @@ class IITCalculator:
             logger.error(f"Integration calculation error: {e}")
             return 0.0
 
-    def _calculate_total_information(
-        self,
-        matrix: np.ndarray,
-    ) -> float:
+    def _calculate_total_information(self, _matrix: np.ndarray) -> float:
         """
         Calculate total information in the system.
 
@@ -286,16 +268,16 @@ class IITCalculator:
         """
         try:
             # Shannon entropy of the distribution
-            row_sums = matrix.sum(axis=1)
-            total = row_sums.sum()
+            _row_sums = matrix.sum(axis=1)
+            _total = row_sums.sum()
 
             if total == 0:
                 return 0.0
 
-            probabilities = row_sums / total
-            probabilities = probabilities[probabilities > 0]
+            _probabilities = row_sums / total
+            _probabilities = probabilities[probabilities > 0]
 
-            entropy = -np.sum(probabilities * np.log2(probabilities))
+            _entropy = -np.sum(probabilities * np.log2(probabilities))
 
             return float(entropy)
 
@@ -303,10 +285,7 @@ class IITCalculator:
             logger.error(f"Information calculation error: {e}")
             return 0.0
 
-    def _calculate_causal_power(
-        self,
-        matrix: np.ndarray,
-    ) -> float:
+    def _calculate_causal_power(self, _matrix: np.ndarray) -> float:
         """
         Calculate causal influence power.
 
@@ -318,13 +297,13 @@ class IITCalculator:
         """
         try:
             # Use largest eigenvalue as measure of causal power
-            eigenvalues = np.linalg.eigvals(matrix)
-            real_eigenvalues = np.real(eigenvalues)
-            max_eigenvalue = np.max(real_eigenvalues)
+            _eigenvalues = np.linalg.eigvals(matrix)
+            _real_eigenvalues = np.real(eigenvalues)
+            _max_eigenvalue = np.max(real_eigenvalues)
 
             # Normalize to [0, 1]
             n = matrix.shape[0]
-            normalized = max_eigenvalue / n if n > 0 else 0.0
+            _normalized = max_eigenvalue / n if n > 0 else 0.0
 
             return min(1.0, max(0.0, float(normalized)))
 
@@ -332,7 +311,7 @@ class IITCalculator:
             logger.error(f"Causal power calculation error: {e}")
             return 0.0
 
-    def get_average_phi(self, window: int = 100) -> float:
+    def get_average_phi(self, _window: int) -> float:
         """
         Get average Phi over recent history.
 
@@ -345,7 +324,7 @@ class IITCalculator:
         if not self.connectivity_history:
             return 0.0
 
-        recent = self.connectivity_history[-window:]
+        _recent = self.connectivity_history[-window:]
         return sum(c.phi for c in recent) / len(recent)
 
 
@@ -360,7 +339,7 @@ class FEPTracker:
     - Minimize surprise through learning
     """
 
-    def __init__(self, learning_rate: float = 0.1):
+    def __init__(self, _learning_rate: float):
         """
         Initialize FEP tracker.
 
@@ -372,12 +351,7 @@ class FEPTracker:
         self.prediction_history: Dict[str, List[Dict[str, Any]]] = defaultdict(list)
         self.surprise_history: Dict[str, List[float]] = defaultdict(list)
 
-    def record_prediction(
-        self,
-        agent_id: str,
-        prediction: Dict[str, Any],
-        confidence: float = 0.5,
-    ) -> None:
+    def record_prediction(self, _agent_id: str, _prediction: Dict[str, _Any], _confidence: float) -> None:
         """
         Record a prediction from an agent.
 
@@ -395,11 +369,7 @@ class FEPTracker:
         if len(self.prediction_history[agent_id]) > 100:
             self.prediction_history[agent_id].pop(0)
 
-    def record_outcome(
-        self,
-        agent_id: str,
-        outcome: Dict[str, Any],
-    ) -> float:
+    def record_outcome(self, _agent_id: str, _outcome: Dict[str, _Any]) -> float:
         """
         Record actual outcome and calculate surprise.
 
@@ -414,9 +384,9 @@ class FEPTracker:
             return 0.5
 
         # Get most recent prediction
-        last_prediction = self.prediction_history[agent_id][-1]
+        _last_prediction = self.prediction_history[agent_id][-1]
         prediction = last_prediction["prediction"]
-        confidence = last_prediction["confidence"]
+        _confidence = last_prediction["confidence"]
 
         # Calculate surprise (prediction error)
         surprise = self._calculate_surprise(prediction, outcome)
@@ -437,7 +407,7 @@ class FEPTracker:
         metrics.free_energy = free_energy
 
         # Update prediction accuracy
-        accuracy = 1.0 - surprise
+        _accuracy = 1.0 - surprise
         metrics.prediction_accuracy = (
             metrics.prediction_accuracy * 0.9 + accuracy * 0.1
         )
@@ -446,11 +416,7 @@ class FEPTracker:
 
         return surprise
 
-    def _calculate_surprise(
-        self,
-        prediction: Dict[str, Any],
-        outcome: Dict[str, Any],
-    ) -> float:
+    def _calculate_surprise(self, _prediction: Dict[str, _Any], _outcome: Dict[str, _Any]) -> float:
         """
         Calculate surprise (prediction error).
 
@@ -466,14 +432,14 @@ class FEPTracker:
 
         try:
             # Compare key fields
-            common_keys = set(prediction.keys()) & set(outcome.keys())
+            _common_keys = set(prediction.keys()) & set(outcome.keys())
             if not common_keys:
                 return 0.5
 
-            errors = []
+            _errors = []
             for key in common_keys:
-                pred_val = prediction[key]
-                out_val = outcome[key]
+                _pred_val = prediction[key]
+                _out_val = outcome[key]
 
                 # Handle different types
                 if isinstance(pred_val, (int, float)) and isinstance(out_val, (int, float)):
@@ -494,12 +460,7 @@ class FEPTracker:
             logger.error(f"Surprise calculation error: {e}")
             return 0.5
 
-    def _calculate_free_energy(
-        self,
-        agent_id: str,
-        surprise: float,
-        confidence: float,
-    ) -> float:
+    def _calculate_free_energy(self, _agent_id: str, _surprise: float, _confidence: float) -> float:
         """
         Calculate free energy (KL divergence approximation).
 
@@ -516,12 +477,12 @@ class FEPTracker:
         # Simplified free energy calculation
         # FE = surprise - (1 - confidence) * learning_rate
 
-        information_gain = (1 - confidence) * self.learning_rate
+        _information_gain = (1 - confidence) * self.learning_rate
         free_energy = surprise - information_gain
 
         return max(0.0, free_energy)
 
-    def get_metrics(self, agent_id: str) -> Optional[FEPMetrics]:
+    def get_metrics(self, _agent_id: str) -> Optional[FEPMetrics]:
         """
         Get FEP metrics for an agent.
 
@@ -533,7 +494,7 @@ class FEPTracker:
         """
         return self.agent_metrics.get(agent_id)
 
-    def get_average_free_energy(self, agent_id: str, window: int = 50) -> float:
+    def get_average_free_energy(self, _agent_id: str, _window: int) -> float:
         """
         Get average free energy over recent history.
 
@@ -544,11 +505,11 @@ class FEPTracker:
         Returns:
             Average free energy value
         """
-        history = self.surprise_history.get(agent_id, [])
+        _history = self.surprise_history.get(agent_id, [])
         if not history:
             return 0.0
 
-        recent = history[-window:]
+        _recent = history[-window:]
         return sum(recent) / len(recent)
 
 
@@ -563,13 +524,7 @@ class EnhancedConsciousnessPlugin:
     - Free Energy Principle (FEP)
     """
 
-    def __init__(
-        self,
-        gwt_threshold: float = 0.7,
-        iit_phi_threshold: float = 0.5,
-        ast_threshold: float = 0.6,
-        fep_threshold: float = 0.4,
-    ) -> None:
+    def __init__(self, _gwt_threshold: float, _iit_phi_threshold: float, _ast_threshold: float, _fep_threshold: float) -> None:
         """
         Initialize enhanced consciousness plugin.
 
@@ -598,7 +553,7 @@ class EnhancedConsciousnessPlugin:
 
         logger.info(
             "Enhanced Consciousness Plugin initialized",
-            extra={
+            _extra = {
                 "gwt_threshold": gwt_threshold,
                 "iit_phi_threshold": iit_phi_threshold,
                 "ast_threshold": ast_threshold,
@@ -638,12 +593,7 @@ class EnhancedConsciousnessPlugin:
     # IIT Operations
     # =========================================================================
 
-    def record_interaction(
-        self,
-        from_agent: str,
-        to_agent: str,
-        strength: float = 1.0,
-    ) -> None:
+    def record_interaction(self, _from_agent: str, _to_agent: str, _strength: float) -> None:
         """
         Record interaction for IIT analysis.
 
@@ -654,10 +604,7 @@ class EnhancedConsciousnessPlugin:
         """
         self.iit_calculator.record_interaction(from_agent, to_agent, strength)
 
-    def calculate_iit_phi(
-        self,
-        agent_ids: List[str],
-    ) -> IITConnectivity:
+    def calculate_iit_phi(self, _agent_ids: List[str]) -> IITConnectivity:
         """
         Calculate IIT Phi for a set of agents.
 
@@ -673,12 +620,7 @@ class EnhancedConsciousnessPlugin:
     # FEP Operations
     # =========================================================================
 
-    def record_prediction(
-        self,
-        agent_id: str,
-        prediction: Dict[str, Any],
-        confidence: float = 0.5,
-    ) -> None:
+    def record_prediction(self, _agent_id: str, _prediction: Dict[str, _Any], _confidence: float) -> None:
         """
         Record prediction for FEP tracking.
 
@@ -689,11 +631,7 @@ class EnhancedConsciousnessPlugin:
         """
         self.fep_tracker.record_prediction(agent_id, prediction, confidence)
 
-    def record_outcome(
-        self,
-        agent_id: str,
-        outcome: Dict[str, Any],
-    ) -> float:
+    def record_outcome(self, _agent_id: str, _outcome: Dict[str, _Any]) -> float:
         """
         Record outcome and calculate surprise.
 
@@ -710,12 +648,7 @@ class EnhancedConsciousnessPlugin:
     # Enhanced Metrics
     # =========================================================================
 
-    def calculate_consciousness_metrics(
-        self,
-        agent_id: str,
-        gwt_score: float = 0.5,
-        ast_competence: float = 0.5,
-    ) -> ConsciousnessMetrics:
+    def calculate_consciousness_metrics(self, _agent_id: str, _gwt_score: float, _ast_competence: float) -> ConsciousnessMetrics:
         """
         Calculate comprehensive consciousness metrics.
 
@@ -731,12 +664,12 @@ class EnhancedConsciousnessPlugin:
         iit_phi = self.iit_calculator.get_average_phi()
 
         # Get FEP metrics
-        fep_metrics = self.fep_tracker.get_metrics(agent_id)
+        _fep_metrics = self.fep_tracker.get_metrics(agent_id)
         if fep_metrics:
             # Invert free energy (lower is better)
-            fep_score = max(0.0, 1.0 - fep_metrics.free_energy)
+            _fep_score = max(0.0, 1.0 - fep_metrics.free_energy)
         else:
-            fep_score = 0.5
+            _fep_score = 0.5
 
         # Calculate composite score
         composite = (
@@ -772,13 +705,7 @@ class EnhancedConsciousnessPlugin:
 
         return metrics
 
-    def _determine_state(
-        self,
-        gwt_score: float,
-        iit_phi: float,
-        ast_competence: float,
-        fep_score: float,
-    ) -> ConsciousnessState:
+    def _determine_state(self, _gwt_score: float, _iit_phi: float, _ast_competence: float, _fep_score: float) -> ConsciousnessState:
         """
         Determine consciousness state from metrics.
 
@@ -791,7 +718,7 @@ class EnhancedConsciousnessPlugin:
         Returns:
             Consciousness state
         """
-        avg_score = (gwt_score + iit_phi + ast_competence + fep_score) / 4.0
+        _avg_score = (gwt_score + iit_phi + ast_competence + fep_score) / 4.0
 
         if avg_score >= 0.95:
             return ConsciousnessState.TRANSCENDENT
@@ -811,7 +738,7 @@ class EnhancedConsciousnessPlugin:
         else:
             return ConsciousnessState.UNCONSCIOUS
 
-    def get_agent_metrics(self, agent_id: str) -> Optional[Dict[str, Any]]:
+    def get_agent_metrics(self, _agent_id: str) -> Optional[Dict[str, Any]]:
         """
         Get metrics for an agent.
 

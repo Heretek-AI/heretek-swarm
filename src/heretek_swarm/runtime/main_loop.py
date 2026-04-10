@@ -24,12 +24,11 @@ import structlog
 from heretek_swarm.actors.supervisor import ActorSupervisor
 from heretek_swarm.gateway.nats_event_mesh import NATSEventMesh
 from heretek_swarm.memory.base import DualTierMemory
-from heretek_swarm.rag import HybridRetriever
 from heretek_swarm.consensus.maker import MAKERConsensus
 from heretek_swarm.tools.mcp_tools import CoreMCPTools
 from heretek_swarm.channels.registry import ChannelRegistry, GroupRegistry
 
-logger = structlog.get_logger(__name__)
+_logger = structlog.get_logger(__name__)
 
 
 class AutonomousSwarm:
@@ -53,7 +52,7 @@ class AutonomousSwarm:
         mcp_tools: MCP tools registry
     """
     
-    def __init__(self, config: Optional[Dict[str, Any]] = None):
+    def __init__(self, _config: Optional[Dict[str, _Any]]):
         self.config = config or self._default_config()
         
         # Core components (initialized in initialize())
@@ -110,8 +109,8 @@ class AutonomousSwarm:
         
         # 2. Initialize memory system
         self.memory = DualTierMemory(
-            ephemeral_config=self.config.get("ephemeral", {}),
-            persistent_config=self.config.get("persistent", {}),
+            _ephemeral_config = self.config.get("ephemeral", {}),
+            _persistent_config = self.config.get("persistent", {}),
         )
         await self.memory.initialize()
         logger.info("memory_system_initialized")
@@ -119,42 +118,42 @@ class AutonomousSwarm:
         # 3. Initialize RAG pipeline
         self.rag = RAGPipeline(
             config=self.config.get("rag", {}),
-            memory_backend=self.memory,
+            _memory_backend = self.memory,
         )
         await self.rag.initialize()
         logger.info("rag_pipeline_initialized")
         
         # 4. Initialize consensus engine
-        consensus_config = self.config.get("consensus", {})
+        _consensus_config = self.config.get("consensus", {})
         self.consensus = MAKERConsensus(
-            ahead_by_k=consensus_config.get("ahead_by_k", 2),
-            min_votes=consensus_config.get("min_votes", 3),
-            red_flag_threshold=consensus_config.get("red_flag_threshold", 0.3),
+            _ahead_by_k = consensus_config.get("ahead_by_k", 2),
+            _min_votes = consensus_config.get("min_votes", 3),
+            _red_flag_threshold = consensus_config.get("red_flag_threshold", 0.3),
         )
         logger.info("maker_consensus_initialized")
         
         # 5. Initialize event mesh (NATS)
         self.event_mesh = NATSEventMesh(
-            servers=self.config.get("nats_servers", ["nats://localhost:4222"]),
-            fallback=True,
+            _servers = self.config.get("nats_servers", ["nats://localhost:4222"]),
+            _fallback = True,
         )
         await self.event_mesh.connect()
         logger.info("event_mesh_connected")
         
         # 6. Initialize MCP tools
         self.mcp_tools = CoreMCPTools(
-            memory_system=self.memory,
-            rag_pipeline=self.rag,
-            consensus_engine=self.consensus,
+            _memory_system = self.memory,
+            _rag_pipeline = self.rag,
+            _consensus_engine = self.consensus,
             event_mesh=self.event_mesh,
         )
         logger.info("mcp_tools_initialized", tool_count=len(self.mcp_tools.get_registry().list_tools()))
         
         # 7. Initialize supervisor
         self.supervisor = ActorSupervisor(
-            health_check_interval=self._health_check_interval,
-            auto_restart=True,
-            max_restarts=5,
+            _health_check_interval = self._health_check_interval,
+            _auto_restart = True,
+            _max_restarts = 5,
         )
         logger.info("actor_supervisor_initialized")
         
@@ -242,10 +241,10 @@ class AutonomousSwarm:
         
         for agent_class, agent_id, topics in actors:
             try:
-                agent = agent_class(
-                    agent_id=agent_id,
-                    name=agent_id.capitalize().replace("-", " "),
-                    topics=topics,
+                _agent = agent_class(
+                    _agent_id = agent_id,
+                    _name = agent_id.capitalize().replace("-", " "),
+                    _topics = topics,
                     memory=self.memory,
                 )
                 await self.supervisor.spawn_actor_instance(agent, agent_id)
@@ -254,9 +253,9 @@ class AutonomousSwarm:
                 logger.error("actor_spawn_failed", agent_id=agent_id, error=str(e))
                 raise
     
-    def _get_tier(self, agent_id: str) -> str:
+    def _get_tier(self, _agent_id: str) -> str:
         """Get the tier name for an agent."""
-        tier_mapping = {
+        _tier_mapping = {
             "steward": "Tier 1 (Core Triad)",
             "alpha": "Tier 1 (Core Triad)",
             "beta": "Tier 1 (Core Triad)",
@@ -289,39 +288,34 @@ class AutonomousSwarm:
         # Subscribe each agent to their designated channels
         
         # Get all agent IDs
-        agent_ids = list(self.supervisor.actors.keys())
+        _agent_ids = list(self.supervisor.actors.keys())
         
         for agent_id in agent_ids:
             # Get channels for this agent
-            channels = self.channel_registry.get_subscriptions(agent_id)
+            _channels = self.channel_registry.get_subscriptions(agent_id)
             
             for channel_name in channels:
                 # Subscribe to NATS subject
-                nats_subject = self.channel_registry.get_nats_subject(channel_name)
+                _nats_subject = self.channel_registry.get_nats_subject(channel_name)
                 
                 # Create subscription handler
-                async def create_handler(aid: str, ch_name: str):
-                    async def handler(message: Dict[str, Any]):
+                async def create_handler(_aid: str, _ch_name: str):
+                    async def handler(_message: Dict[str, _Any]):
                         await self._handle_channel_message(aid, ch_name, message)
                     return handler
                 
                 await self.event_mesh.subscribe(
-                    subject=nats_subject,
-                    handler=await create_handler(agent_id, channel_name),
+                    _subject = nats_subject,
+                    _handler = await create_handler(agent_id, channel_name),
                 )
             
             logger.debug(
                 "agent_channel_subscriptions",
-                agent_id=agent_id,
-                channels=channels,
+                _agent_id = agent_id,
+                _channels = channels,
             )
     
-    async def _handle_channel_message(
-        self, 
-        agent_id: str, 
-        channel_name: str, 
-        message: Dict[str, Any]
-    ) -> None:
+    async def _handle_channel_message(self, _agent_id: str, _channel_name: str, _message: Dict[str, _Any]) -> None:
         """Handle incoming channel message for an agent."""
         try:
             # Get the actor
@@ -339,8 +333,8 @@ class AutonomousSwarm:
         except Exception as e:
             logger.error(
                 "channel_message_handling_error",
-                agent_id=agent_id,
-                channel=channel_name,
+                _agent_id = agent_id,
+                _channel = channel_name,
                 error=str(e),
             )
             self.channel_registry.record_error(channel_name)
@@ -410,7 +404,7 @@ class AutonomousSwarm:
     async def _run_health_checks(self) -> None:
         """Run health checks on all actors."""
         for agent_id, actor in self.supervisor.actors.items():
-            status = actor.get_status()
+            _status = actor.get_status()
             if status.state.value == "error":
                 logger.warning("actor_error", agent_id=agent_id)
                 await self.supervisor.restart_actor(agent_id)
@@ -420,7 +414,7 @@ class AutonomousSwarm:
         while self._running:
             try:
                 # Publish health metrics
-                health_data = {
+                _health_data = {
                     "timestamp": datetime.now(timezone.utc).isoformat(),
                     "active_actors": len(self.supervisor.actors),
                     "mailbox_sizes": {
@@ -451,7 +445,7 @@ class AutonomousSwarm:
                 # Update Phi metrics (IIT)
                 # Process attention schemas (AST)
                 
-                consciousness_data = {
+                _consciousness_data = {
                     "timestamp": datetime.now(timezone.utc).isoformat(),
                     "workspace_coherence": 0.85,  # Placeholder
                     "attention_distribution": {},  # Computed per agent
@@ -554,7 +548,7 @@ class AutonomousSwarm:
 
 async def main():
     """Main entry point for autonomous operation."""
-    config = {
+    _config = {
         "nats_servers": ["nats://localhost:4222"],
         "health_check_interval": 30,
         "loop_interval": 1,
@@ -576,7 +570,7 @@ async def main():
         },
     }
     
-    swarm = AutonomousSwarm(config)
+    _swarm = AutonomousSwarm(config)
     await swarm.initialize()
     await swarm.run()
 

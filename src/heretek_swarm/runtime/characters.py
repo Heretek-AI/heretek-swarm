@@ -193,7 +193,7 @@ CHARACTERS: Dict[str, Dict] = {
 }
 
 
-def get_character(agent_id: str) -> Dict:
+def get_character(_agent_id: str) -> Dict:
     """Get character definition by agent ID."""
     return CHARACTERS.get(agent_id.lower(), STEWARD)
 
@@ -203,9 +203,9 @@ def get_all_characters() -> Dict[str, Dict]:
     return CHARACTERS.copy()
 
 
-def character_to_system_prompt(character: Dict) -> str:
+def character_to_system_prompt(_character: Dict) -> str:
     """Convert character to system prompt."""
-    parts = []
+    _parts = []
     
     parts.append(f"You are {character['name']}, {character['role']}.")
     parts.append(character['bio'])
@@ -217,7 +217,7 @@ def character_to_system_prompt(character: Dict) -> str:
         parts.append(f"Expertise: {', '.join(character['knowledge'])}")
     
     if character.get('style', {}).get('all'):
-        styles = character['style']['all']
+        _styles = character['style']['all']
         parts.append(f"Communication style: {', '.join(styles)}")
     
     return "\n\n".join(parts)

@@ -50,9 +50,9 @@ class Character:
     constraints: List[str] = field(default_factory=list)
     
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "Character":
+    def from_dict(cls, _data: Dict[str, _Any]) -> "Character":
         """Create a Character from a dictionary."""
-        style_data = data.get("style", {})
+        _style_data = data.get("style", {})
         style = CharacterStyle(
             all=style_data.get("all", []),
             chat=style_data.get("chat", []),
@@ -73,10 +73,10 @@ class Character:
         )
     
     @classmethod
-    def from_json(cls, json_path: Path) -> "Character":
+    def from_json(cls, _json_path: Path) -> "Character":
         """Load a character from a JSON file."""
         with open(json_path, "r", encoding="utf-8") as f:
-            data = json.load(f)
+            _data = json.load(f)
         return cls.from_dict(data)
     
     def to_dict(self) -> Dict[str, Any]:
@@ -103,23 +103,23 @@ class Character:
 class CharacterRegistry:
     """Registry for loading and managing characters."""
     
-    def __init__(self, characters_dir: Optional[Path] = None):
+    def __init__(self, _characters_dir: Optional[Path]):
         if characters_dir is None:
             characters_dir = Path(__file__).parent / "characters"
         self.characters_dir = Path(characters_dir)
         self._characters: Dict[str, Character] = {}
     
-    def load_character(self, name: str) -> Optional[Character]:
+    def load_character(self, _name: str) -> Optional[Character]:
         """Load a character by name."""
-        char_file = self.characters_dir / f"{name.lower()}.json"
+        _char_file = self.characters_dir / f"{name.lower()}.json"
         if char_file.exists():
             return Character.from_json(char_file)
         return None
     
-    def get_character(self, name: str) -> Optional[Character]:
+    def get_character(self, _name: str) -> Optional[Character]:
         """Get a character, loading if necessary."""
         if name not in self._characters:
-            char = self.load_character(name)
+            _char = self.load_character(name)
             if char:
                 self._characters[name] = char
         return self._characters.get(name)

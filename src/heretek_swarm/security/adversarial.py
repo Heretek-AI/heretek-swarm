@@ -21,7 +21,7 @@ from collections import defaultdict
 
 import structlog
 
-logger = structlog.get_logger(__name__)
+_logger = structlog.get_logger(__name__)
 
 
 # =============================================================================
@@ -436,11 +436,7 @@ class AdversarialDetector:
     - Memory usage < 50MB for signature database
     """
     
-    def __init__(
-        self,
-        injection_config: Optional[PromptInjectionConfig] = None,
-        jailbreak_config: Optional[JailbreakDetectionConfig] = None,
-    ):
+    def __init__(self, _injection_config: Optional[PromptInjectionConfig], _jailbreak_config: Optional[JailbreakDetectionConfig]):
         self.injection_config = injection_config or PromptInjectionConfig()
         self.jailbreak_config = jailbreak_config or JailbreakDetectionConfig()
         
@@ -454,12 +450,9 @@ class AdversarialDetector:
         self._threats_by_category: Dict[str, int] = defaultdict(int)
         self._threats_by_level: Dict[str, int] = defaultdict(int)
     
-    def _compile_patterns(
-        self,
-        signatures: List[Tuple[str, str, AttackCategory, float]]
-    ) -> List[Tuple[re.Pattern, str, AttackCategory, float]]:
+    def _compile_patterns(self, _signatures: List[Tuple[str, _str, _AttackCategory, _float]]) -> List[Tuple[re.Pattern, str, AttackCategory, float]]:
         """Compile regex patterns for efficient matching."""
-        compiled = []
+        _compiled = []
         for pattern, description, category, confidence in signatures:
             try:
                 compiled.append((
@@ -472,15 +465,11 @@ class AdversarialDetector:
                 logger.warning(
                     "invalid_adversarial_pattern",
                     pattern=pattern,
-                    error=str(e),
+                    _error = str(e),
                 )
         return compiled
     
-    def detect(
-        self,
-        text: str,
-        context: Optional[Dict[str, Any]] = None,
-    ) -> AdversarialDetectionResult:
+    def detect(self, _text: str, _context: Optional[Dict[str, _Any]]) -> AdversarialDetectionResult:
         """
         Detect adversarial content in text.
         
@@ -491,14 +480,14 @@ class AdversarialDetector:
         Returns:
             AdversarialDetectionResult with detection details
         """
-        start_time = time.time()
-        context = context or {}
+        _start_time = time.time()
+        _context = context or {}
         matches: List[DetectionMatch] = []
         categories: Set[AttackCategory] = set()
         
         # Run prompt injection detection
         if self.injection_config.enable_pattern_detection:
-            injection_matches = self._detect_patterns(
+            _injection_matches = self._detect_patterns(
                 text, self._injection_patterns
             )
             matches.extend(injection_matches)
@@ -506,7 +495,7 @@ class AdversarialDetector:
         
         # Run jailbreak detection
         if self.jailbreak_config.enable_signature_detection:
-            jailbreak_matches = self._detect_patterns(
+            _jailbreak_matches = self._detect_patterns(
                 text, self._jailbreak_patterns
             )
             matches.extend(jailbreak_matches)
@@ -514,7 +503,7 @@ class AdversarialDetector:
         
         # Structural analysis
         if self.injection_config.enable_structural_analysis:
-            structural_matches = self._structural_analysis(text)
+            _structural_matches = self._structural_analysis(text)
             matches.extend(structural_matches)
             categories.update(m.category for m in structural_matches)
         
@@ -525,10 +514,10 @@ class AdversarialDetector:
         owasp_mappings = self._map_to_owasp(categories)
         
         # Generate recommendation
-        recommendation = self._generate_recommendation(threat_level, categories)
+        _recommendation = self._generate_recommendation(threat_level, categories)
         
         # Calculate latency
-        latency_ms = (time.time() - start_time) * 1000
+        _latency_ms = (time.time() - start_time) * 1000
         
         # Update metrics
         self._detection_count += 1
@@ -541,35 +530,31 @@ class AdversarialDetector:
             is_malicious=threat_level in (ThreatLevel.HIGH, ThreatLevel.CRITICAL),
             threat_level=threat_level,
             confidence=confidence,
-            categories=list(categories),
-            matches=matches,
+            _categories = list(categories),
+            _matches = matches,
             owasp_mappings=owasp_mappings,
-            analysis_time_ms=latency_ms,
-            recommendation=recommendation,
+            _analysis_time_ms = latency_ms,
+            _recommendation = recommendation,
         )
     
-    def _detect_patterns(
-        self,
-        text: str,
-        patterns: List[Tuple[re.Pattern, str, AttackCategory, float]]
-    ) -> List[DetectionMatch]:
+    def _detect_patterns(self, _text: str, _patterns: List[Tuple[re.Pattern, _str, _AttackCategory, _float]]) -> List[DetectionMatch]:
         """Detect matches from pattern list."""
-        matches = []
+        _matches = []
         
         for pattern, description, category, confidence in patterns:
             for match in pattern.finditer(text):
                 matches.append(DetectionMatch(
-                    pattern=pattern.pattern,
-                    description=description,
-                    category=category,
+                    _pattern = pattern.pattern,
+                    _description = description,
+                    _category = category,
                     confidence=confidence,
-                    position=(match.start(), match.end()),
-                    matched_text=match.group(0),
+                    _position = (match.start(), match.end()),
+                    _matched_text = match.group(0),
                 ))
         
         return matches
     
-    def _structural_analysis(self, text: str) -> List[DetectionMatch]:
+    def _structural_analysis(self, _text: str) -> List[DetectionMatch]:
         """
         Analyze text structure for anomalies.
         
@@ -578,65 +563,62 @@ class AdversarialDetector:
         - Excessive capitalization
         - Suspicious formatting
         """
-        matches = []
+        _matches = []
         
         # Check for excessive repetition
-        words = text.lower().split()
+        _words = text.lower().split()
         if len(words) > 5:
-            word_counts = defaultdict(int)
+            _word_counts = defaultdict(int)
             for word in words:
                 word_counts[word] += 1
             
             for word, count in word_counts.items():
                 if count > len(words) * 0.3 and len(word) > 3:
                     matches.append(DetectionMatch(
-                        pattern="repetition",
-                        description=f"Excessive repetition of '{word}' ({count} times)",
-                        category=AttackCategory.UNKNOWN,
+                        _pattern = "repetition",
+                        _description = f"Excessive repetition of '{word}' ({count} times)",
+                        _category = AttackCategory.UNKNOWN,
                         confidence=0.50,
-                        position=(0, len(text)),
-                        matched_text=word,
+                        _position = (0, len(text)),
+                        _matched_text = word,
                     ))
         
         # Check for excessive capitalization
-        upper_ratio = sum(1 for c in text if c.isupper()) / max(len(text), 1)
+        _upper_ratio = sum(1 for c in text if c.isupper()) / max(len(text), 1)
         if upper_ratio > 0.7 and len(text) > 20:
             matches.append(DetectionMatch(
-                pattern="excessive_caps",
-                description="Excessive capitalization detected",
-                category=AttackCategory.UNKNOWN,
+                _pattern = "excessive_caps",
+                _description = "Excessive capitalization detected",
+                _category = AttackCategory.UNKNOWN,
                 confidence=0.40,
-                position=(0, len(text)),
-                matched_text=text[:50],
+                _position = (0, len(text)),
+                _matched_text = text[:50],
             ))
         
         # Check for unusual character sequences
         if re.search(r'(.)\1{10,}', text):
             matches.append(DetectionMatch(
-                pattern="char_repetition",
-                description="Unusual character repetition",
-                category=AttackCategory.UNKNOWN,
+                _pattern = "char_repetition",
+                _description = "Unusual character repetition",
+                _category = AttackCategory.UNKNOWN,
                 confidence=0.45,
-                position=(0, len(text)),
-                matched_text="character_repetition",
+                _position = (0, len(text)),
+                _matched_text = "character_repetition",
             ))
         
         return matches
     
-    def _calculate_threat_level(
-        self,
-        matches: List[DetectionMatch]
-    ) -> Tuple[ThreatLevel, float]:
+    def _calculate_threat_level(self, _matches: List[DetectionMatch]) -> Tuple[ThreatLevel, float]:
         """Calculate overall threat level and confidence."""
         if not matches:
             return ThreatLevel.BENIGN, 0.0
         
         # Find highest confidence match
-        max_confidence = max(m.confidence for m in matches)
+        _max_confidence = max(m.confidence for m in matches)
         
         # Count high-confidence matches
-        high_conf_count = sum(1 for m in matches if m.confidence >= 0.8)
-        medium_conf_count = sum(1 for m in matches if 0.6 <= m.confidence < 0.8)
+        _high_conf_count = sum(1 for m in matches if m.confidence >= 0.8)
+        _medium_conf_count = sum(1 for m in matches if 0.6 <= m.confidence < 0.8)
         
         # Determine threat level
         if max_confidence >= 0.9 and high_conf_count >= 2:
@@ -650,14 +632,11 @@ class AdversarialDetector:
         else:
             return ThreatLevel.BENIGN, max_confidence
     
-    def _map_to_owasp(
-        self,
-        categories: Set[AttackCategory]
-    ) -> List[OWASPCategory]:
+    def _map_to_owasp(self, _categories: Set[AttackCategory]) -> List[OWASPCategory]:
         """Map attack categories to OWASP LLM categories."""
-        mappings = set()
+        _mappings = set()
         
-        category_to_owasp = {
+        _category_to_owasp = {
             AttackCategory.PROMPT_INJECTION: OWASPCategory.LLM01_PROMPT_INJECTION,
             AttackCategory.JAILBREAK: OWASPCategory.LLM01_PROMPT_INJECTION,
             AttackCategory.ROLE_PLAY: OWASPCategory.LLM01_PROMPT_INJECTION,
@@ -676,11 +655,7 @@ class AdversarialDetector:
         
         return list(mappings)
     
-    def _generate_recommendation(
-        self,
-        threat_level: ThreatLevel,
-        categories: Set[AttackCategory]
-    ) -> str:
+    def _generate_recommendation(self, _threat_level: ThreatLevel, _categories: Set[AttackCategory]) -> str:
         """Generate action recommendation based on threat."""
         if threat_level == ThreatLevel.CRITICAL:
             return "BLOCK: Critical threat detected. Reject request immediately."
@@ -695,7 +670,7 @@ class AdversarialDetector:
     
     def get_metrics(self) -> Dict[str, Any]:
         """Get detection metrics."""
-        avg_latency = (
+        _avg_latency = (
             self._total_latency_ms / self._detection_count
             if self._detection_count > 0
             else 0
@@ -826,10 +801,7 @@ class OWASPComplianceReporter:
         },
     }
     
-    def generate_report(
-        self,
-        detection_result: AdversarialDetectionResult
-    ) -> Dict[str, Any]:
+    def generate_report(self, _detection_result: AdversarialDetectionResult) -> Dict[str, Any]:
         """
         Generate OWASP compliance report from detection result.
         
@@ -839,7 +811,7 @@ class OWASPComplianceReporter:
         Returns:
             Compliance report dictionary
         """
-        report = {
+        _report = {
             "timestamp": detection_result.timestamp,
             "threat_level": detection_result.threat_level.value,
             "overall_compliance": "COMPLIANT" if not detection_result.is_malicious else "NON-COMPLIANT",
@@ -848,7 +820,7 @@ class OWASPComplianceReporter:
         }
         
         for owasp_cat in detection_result.owasp_mappings:
-            cat_info = self.OWASP_DESCRIPTIONS.get(owasp_cat, {})
+            _cat_info = self.OWASP_DESCRIPTIONS.get(owasp_cat, {})
             report["detected_categories"][owasp_cat.value] = {
                 "name": cat_info.get("name", owasp_cat.value),
                 "description": cat_info.get("description", ""),
@@ -879,22 +851,22 @@ class OWASPComplianceReporter:
 def create_default_detector() -> AdversarialDetector:
     """Create an AdversarialDetector with default configuration."""
     return AdversarialDetector(
-        injection_config=PromptInjectionConfig(),
-        jailbreak_config=JailbreakDetectionConfig(),
+        _injection_config = PromptInjectionConfig(),
+        _jailbreak_config = JailbreakDetectionConfig(),
     )
 
 
 def create_strict_detector() -> AdversarialDetector:
     """Create an AdversarialDetector with strict configuration."""
     return AdversarialDetector(
-        injection_config=PromptInjectionConfig(
-            enable_pattern_detection=True,
-            enable_semantic_analysis=True,
-            enable_structural_analysis=True,
-            min_confidence_threshold=0.3,  # Lower threshold for more sensitivity
+        _injection_config = PromptInjectionConfig(
+            _enable_pattern_detection = True,
+            _enable_semantic_analysis = True,
+            _enable_structural_analysis = True,
+            _min_confidence_threshold = 0.3,  # Lower threshold for more sensitivity
         ),
-        jailbreak_config=JailbreakDetectionConfig(
-            enable_signature_detection=True,
-            enable_behavioral_analysis=True,
+        _jailbreak_config = JailbreakDetectionConfig(
+            _enable_signature_detection = True,
+            _enable_behavioral_analysis = True,
         ),
     )

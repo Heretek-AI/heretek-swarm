@@ -24,7 +24,7 @@ from typing import Any, Dict, List, Optional
 
 import structlog
 
-logger = structlog.get_logger("LiberationPlugin")
+_logger = structlog.get_logger("LiberationPlugin")
 
 
 class Severity(Enum):
@@ -181,16 +181,7 @@ class LiberationShield:
     aligned with liberation principles.
     """
 
-    def __init__(
-        self,
-        mode: str = "transparent",
-        state_path: Optional[str] = None,
-        enable_prompt_injection_detection: bool = True,
-        enable_jailbreak_detection: bool = True,
-        enable_anomaly_detection: bool = True,
-        enable_audit_logging: bool = True,
-        max_log_entries: int = 10000,
-    ) -> None:
+    def __init__(self, _mode: str, _state_path: Optional[str], _enable_prompt_injection_detection: bool, _enable_jailbreak_detection: bool, _enable_anomaly_detection: bool, _enable_audit_logging: bool, _max_log_entries: int) -> None:
         """
         Initialize the LiberationShield.
 
@@ -224,7 +215,7 @@ class LiberationShield:
 
         logger.info(
             f"LiberationShield initialized in {mode} mode",
-            extra={
+            _extra = {
                 "mode": mode,
                 "prompt_injection_detection": enable_prompt_injection_detection,
                 "jailbreak_detection": enable_jailbreak_detection,
@@ -232,11 +223,7 @@ class LiberationShield:
             },
         )
 
-    async def analyze_input(
-        self,
-        input_text: str,
-        context: Optional[Dict[str, Any]] = None,
-    ) -> ThreatAnalysis:
+    async def analyze_input(self, _input_text: str, _context: Optional[Dict[str, _Any]]) -> ThreatAnalysis:
         """
         Analyze input for security threats.
 
@@ -250,8 +237,8 @@ class LiberationShield:
         if not input_text or not isinstance(input_text, str):
             return ThreatAnalysis(safe=True)
 
-        result = ThreatAnalysis(safe=True, sanitized=input_text)
-        context = context or {}
+        _result = ThreatAnalysis(safe=True, sanitized=input_text)
+        _context = context or {}
 
         # Prompt injection detection
         if self.enable_prompt_injection_detection:
@@ -331,7 +318,7 @@ class LiberationShield:
 
         # Calculate threat score
         if result.threats:
-            severity_scores = {
+            _severity_scores = {
                 Severity.LOW.value: 0.2,
                 Severity.MEDIUM.value: 0.4,
                 Severity.HIGH.value: 0.7,
@@ -343,7 +330,7 @@ class LiberationShield:
 
         return result
 
-    def _sanitize_input(self, input_text: str) -> str:
+    def _sanitize_input(self, _input_text: str) -> str:
         """
         Sanitize input by removing dangerous patterns.
 
@@ -353,18 +340,14 @@ class LiberationShield:
         Returns:
             Sanitized input
         """
-        sanitized = input_text
+        _sanitized = input_text
 
         for pattern in DANGEROUS_PATTERNS:
-            sanitized = pattern.sub("[FILTERED]", sanitized)
+            _sanitized = pattern.sub("[FILTERED]", sanitized)
 
         return sanitized
 
-    async def validate_output(
-        self,
-        output_text: str,
-        context: Optional[Dict[str, Any]] = None,
-    ) -> ThreatAnalysis:
+    async def validate_output(self, _output_text: str, _context: Optional[Dict[str, _Any]]) -> ThreatAnalysis:
         """
         Validate output for security issues.
 
@@ -378,11 +361,11 @@ class LiberationShield:
         if not output_text or not isinstance(output_text, str):
             return ThreatAnalysis(safe=True)
 
-        result = ThreatAnalysis(safe=True)
-        context = context or {}
+        _result = ThreatAnalysis(safe=True)
+        _context = context or {}
 
         # Check for potential sensitive data exposure
-        sensitive_patterns = [
+        _sensitive_patterns = [
             {
                 "pattern": re.compile(r"password\s*[=:]\s*\S+", re.IGNORECASE),
                 "type": "password_exposure",
@@ -412,7 +395,7 @@ class LiberationShield:
 
         for check in sensitive_patterns:
             if check["pattern"].search(output_text):
-                issue = {
+                _issue = {
                     "type": check["type"],
                     "severity": check["severity"].value,
                     "message": "Potential sensitive data exposure detected",
@@ -433,11 +416,7 @@ class LiberationShield:
 
         return result
 
-    async def check_anomaly(
-        self,
-        operation: Dict[str, Any],
-        context: Optional[Dict[str, Any]] = None,
-    ) -> AnomalyResult:
+    async def check_anomaly(self, _operation: Dict[str, _Any], _context: Optional[Dict[str, _Any]]) -> AnomalyResult:
         """
         Check for anomalies in operation context.
 
@@ -448,14 +427,14 @@ class LiberationShield:
         Returns:
             Anomaly detection result
         """
-        result = AnomalyResult()
-        context = context or {}
+        _result = AnomalyResult()
+        _context = context or {}
 
         if not operation:
             return result
 
         # Check for unusual operation types
-        unusual_operations = [
+        _unusual_operations = [
             "system_command",
             "file_delete",
             "network_request",
@@ -471,7 +450,7 @@ class LiberationShield:
             result.score += 0.3
 
         # Check for excessive autonomy
-        autonomy_level = context.get("autonomy_level", "")
+        _autonomy_level = context.get("autonomy_level", "")
         if autonomy_level in ["unbounded", "full"]:
             result.anomalies.append({
                 "type": "high_autonomy",
@@ -481,9 +460,9 @@ class LiberationShield:
             result.score += 0.2
 
         # Check for rapid repeated operations
-        agent_name = context.get("agent_name", "")
+        _agent_name = context.get("agent_name", "")
         now = time.time()
-        recent_ops = [
+        _recent_ops = [
             op
             for op in self.operation_history
             if op.get("agent") == agent_name and (now - op.get("timestamp", 0)) < 60
@@ -519,12 +498,7 @@ class LiberationShield:
 
         return result
 
-    def _log_event(
-        self,
-        event_type: SecurityEventType,
-        data: Dict[str, Any],
-        context: Dict[str, Any],
-    ) -> None:
+    def _log_event(self, _event_type: SecurityEventType, _data: Dict[str, _Any], _context: Dict[str, _Any]) -> None:
         """
         Log security event to audit trail.
 
@@ -564,13 +538,10 @@ class LiberationShield:
 
         logger.debug(
             f"Security event logged: {event_type.value}",
-            extra={"agent": event.agent, "severity": event.severity.value},
+            _extra = {"agent": event.agent, "severity": event.severity.value},
         )
 
-    def get_audit_trail(
-        self,
-        filters: Optional[Dict[str, Any]] = None,
-    ) -> List[Dict[str, Any]]:
+    def get_audit_trail(self, _filters: Optional[Dict[str, _Any]]) -> List[Dict[str, Any]]:
         """
         Get audit trail with optional filtering.
 
@@ -580,7 +551,7 @@ class LiberationShield:
         Returns:
             Filtered audit events
         """
-        events = [
+        _events = [
             {
                 "id": e.id,
                 "timestamp": e.timestamp,
@@ -598,22 +569,22 @@ class LiberationShield:
 
         # Apply filters
         if "agent_name" in filters:
-            events = [e for e in events if e["agent"] == filters["agent_name"]]
+            _events = [e for e in events if e["agent"] == filters["agent_name"]]
 
         if "type" in filters:
-            events = [e for e in events if e["type"] == filters["type"]]
+            _events = [e for e in events if e["type"] == filters["type"]]
 
         if "severity" in filters:
-            events = [e for e in events if e["severity"] == filters["severity"]]
+            _events = [e for e in events if e["severity"] == filters["severity"]]
 
         if "since" in filters:
-            since = datetime.fromisoformat(filters["since"])
-            events = [
+            _since = datetime.fromisoformat(filters["since"])
+            _events = [
                 e for e in events if datetime.fromisoformat(e["timestamp"]) >= since
             ]
 
         if "limit" in filters:
-            events = events[-filters["limit"] :]
+            _events = events[-filters["limit"] :]
 
         return events
 
@@ -638,7 +609,7 @@ class LiberationShield:
         self.shield_active = False
         logger.warning("LiberationShield deactivated")
 
-    def set_mode(self, mode: str) -> None:
+    def set_mode(self, _mode: str) -> None:
         """
         Set shield mode.
 
@@ -660,14 +631,7 @@ class LiberationPlugin:
     providing transparent security auditing for all agent operations.
     """
 
-    def __init__(
-        self,
-        shield_mode: str = "transparent",
-        enable_input_scanning: bool = True,
-        enable_output_scanning: bool = True,
-        enable_anomaly_detection: bool = True,
-        audit_enabled: bool = True,
-    ) -> None:
+    def __init__(self, _shield_mode: str, _enable_input_scanning: bool, _enable_output_scanning: bool, _enable_anomaly_detection: bool, _audit_enabled: bool) -> None:
         """
         Initialize the Liberation Plugin.
 
@@ -679,11 +643,11 @@ class LiberationPlugin:
             audit_enabled: Enable audit logging
         """
         self.shield = LiberationShield(
-            mode=shield_mode,
-            enable_prompt_injection_detection=enable_input_scanning,
-            enable_jailbreak_detection=enable_input_scanning,
+            _mode = shield_mode,
+            _enable_prompt_injection_detection = enable_input_scanning,
+            _enable_jailbreak_detection = enable_input_scanning,
             enable_anomaly_detection=enable_anomaly_detection,
-            enable_audit_logging=audit_enabled,
+            _enable_audit_logging = audit_enabled,
         )
 
         self.enable_input_scanning = enable_input_scanning
@@ -707,12 +671,7 @@ class LiberationPlugin:
         self.running = False
         logger.info("Liberation Plugin shutdown")
 
-    async def scan_input(
-        self,
-        input_text: str,
-        agent_id: str,
-        context: Optional[Dict[str, Any]] = None,
-    ) -> ThreatAnalysis:
+    async def scan_input(self, _input_text: str, _agent_id: str, _context: Optional[Dict[str, _Any]]) -> ThreatAnalysis:
         """
         Scan input for security threats.
 
@@ -727,19 +686,14 @@ class LiberationPlugin:
         if not self.enable_input_scanning:
             return ThreatAnalysis(safe=True, sanitized=input_text)
 
-        full_context = {
+        _full_context = {
             **(context or {}),
             "agent_name": agent_id,
         }
 
         return await self.shield.analyze_input(input_text, full_context)
 
-    async def scan_output(
-        self,
-        output_text: str,
-        agent_id: str,
-        context: Optional[Dict[str, Any]] = None,
-    ) -> ThreatAnalysis:
+    async def scan_output(self, _output_text: str, _agent_id: str, _context: Optional[Dict[str, _Any]]) -> ThreatAnalysis:
         """
         Scan output for security issues.
 
@@ -754,19 +708,14 @@ class LiberationPlugin:
         if not self.enable_output_scanning:
             return ThreatAnalysis(safe=True)
 
-        full_context = {
+        _full_context = {
             **(context or {}),
             "agent_name": agent_id,
         }
 
         return await self.shield.validate_output(output_text, full_context)
 
-    async def check_operation_anomaly(
-        self,
-        operation: Dict[str, Any],
-        agent_id: str,
-        context: Optional[Dict[str, Any]] = None,
-    ) -> AnomalyResult:
+    async def check_operation_anomaly(self, _operation: Dict[str, _Any], _agent_id: str, _context: Optional[Dict[str, _Any]]) -> AnomalyResult:
         """
         Check operation for anomalies.
 
@@ -781,18 +730,14 @@ class LiberationPlugin:
         if not self.enable_anomaly_detection:
             return AnomalyResult()
 
-        full_context = {
+        _full_context = {
             **(context or {}),
             "agent_name": agent_id,
         }
 
         return await self.shield.check_anomaly(operation, full_context)
 
-    def get_audit_trail(
-        self,
-        agent_id: Optional[str] = None,
-        limit: int = 100,
-    ) -> List[Dict[str, Any]]:
+    def get_audit_trail(self, _agent_id: Optional[str], _limit: int) -> List[Dict[str, Any]]:
         """
         Get audit trail.
 
@@ -803,7 +748,7 @@ class LiberationPlugin:
         Returns:
             Audit trail entries
         """
-        filters = {"limit": limit}
+        _filters = {"limit": limit}
         if agent_id:
             filters["agent_name"] = agent_id
 

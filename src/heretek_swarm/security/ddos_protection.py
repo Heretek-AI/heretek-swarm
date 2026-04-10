@@ -20,7 +20,7 @@ from typing import Any, Dict, List, Optional, Set, Tuple
 from collections import defaultdict
 import structlog
 
-logger = structlog.get_logger(__name__)
+_logger = structlog.get_logger(__name__)
 
 
 # =============================================================================
@@ -183,7 +183,7 @@ class RateLimitResult:
     
     def to_headers(self) -> Dict[str, str]:
         """Convert to HTTP headers."""
-        headers = {
+        _headers = {
             "X-RateLimit-Limit": str(self.tier.value),
             "X-RateLimit-Remaining": str(self.remaining_minute),
             "X-RateLimit-Reset": str(self.reset_seconds),
@@ -218,21 +218,13 @@ class TokenBucket:
     average rate limit through token refill.
     """
     
-    def __init__(
-        self,
-        capacity: int,
-        refill_rate: float,  # tokens per second
-    ):
+    def __init__(self, _capacity: int, _refill_rate: float, _# tokens per second):
         self.capacity = capacity
         self.refill_rate = refill_rate
         self._tokens: Dict[str, Tuple[float, float]] = {}  # key -> (tokens, last_refill)
         self._lock = asyncio.Lock()
     
-    async def consume(
-        self,
-        key: str,
-        tokens: int = 1,
-    ) -> Tuple[bool, int]:
+    async def consume(self, _key: str, _tokens: int) -> Tuple[bool, int]:
         """
         Try to consume tokens from the bucket.
         
@@ -244,7 +236,7 @@ class TokenBucket:
             (success, remaining_tokens)
         """
         async with self._lock:
-            now = time.time()
+            _now = time.time()
             
             # Get or create bucket
             if key not in self._tokens:
@@ -253,9 +245,9 @@ class TokenBucket:
             current_tokens, last_refill = self._tokens[key]
             
             # Refill tokens
-            elapsed = now - last_refill
-            new_tokens = current_tokens + (elapsed * self.refill_rate)
-            current_tokens = min(new_tokens, float(self.capacity))
+            _elapsed = now - last_refill
+            _new_tokens = current_tokens + (elapsed * self.refill_rate)
+            _current_tokens = min(new_tokens, float(self.capacity))
             
             # Try to consume
             if current_tokens >= tokens:
@@ -266,15 +258,15 @@ class TokenBucket:
                 self._tokens[key] = (current_tokens, now)
                 return False, int(current_tokens)
     
-    def get_tokens(self, key: str) -> int:
+    def get_tokens(self, _key: str) -> int:
         """Get current token count for a key."""
         if key not in self._tokens:
             return self.capacity
         
-        now = time.time()
+        _now = time.time()
         current_tokens, last_refill = self._tokens[key]
-        elapsed = now - last_refill
-        new_tokens = current_tokens + (elapsed * self.refill_rate)
+        _elapsed = now - last_refill
+        _new_tokens = current_tokens + (elapsed * self.refill_rate)
         return int(min(new_tokens, float(self.capacity)))
 
 
@@ -299,11 +291,7 @@ class RateLimiter:
     - No impact on legitimate traffic
     """
     
-    def __init__(
-        self,
-        config: Optional[RateLimitConfig] = None,
-        redis_client: Optional[Any] = None,
-    ):
+    def __init__(self, _config: Optional[RateLimitConfig], _redis_client: Optional[Any]):
         self.config = config or RateLimitConfig()
         self._redis = redis_client
         self._redis_available = False
@@ -315,8 +303,8 @@ class RateLimiter:
         # Initialize token buckets for each tier
         for tier, tier_config in self.config.tiers.items():
             self._token_buckets[tier] = TokenBucket(
-                capacity=tier_config.burst_size,
-                refill_rate=float(tier_config.requests_per_second),
+                _capacity = tier_config.burst_size,
+                _refill_rate = float(tier_config.requests_per_second),
             )
         
         # Metrics
@@ -339,12 +327,7 @@ class RateLimiter:
             logger.warning("redis not installed - using in-memory rate limiting")
             self._redis_available = False
     
-    async def check_rate_limit(
-        self,
-        identifier: str,
-        tier: UserTier = UserTier.ANONYMOUS,
-        endpoint: Optional[str] = None,
-    ) -> RateLimitResult:
+    async def check_rate_limit(self, _identifier: str, _tier: UserTier, _endpoint: Optional[str]) -> RateLimitResult:
         """
         Check if request is allowed under rate limits.
         
@@ -356,25 +339,25 @@ class RateLimiter:
         Returns:
             RateLimitResult with allow status and remaining limits
         """
-        start_time = time.time()
-        tier_config = self.config.tiers[tier]
+        _start_time = time.time()
+        _tier_config = self.config.tiers[tier]
         
         # Build key
-        key_parts = [self.config.key_prefix, tier.value, identifier]
+        _key_parts = [self.config.key_prefix, tier.value, identifier]
         if endpoint:
             key_parts.append(endpoint)
         key = ":".join(key_parts)
         
         # Check token bucket (for burst control)
         if self.config.enable_token_bucket:
-            bucket = self._token_buckets[tier]
+            _bucket = self._token_buckets[tier]
             allowed, remaining_tokens = await bucket.consume(key)
         else:
             allowed, remaining_tokens = True, tier_config.burst_size
         
         # Check sliding window limits
-        minute_key = f"{key}:minute"
-        hour_key = f"{key}:hour"
+        _minute_key = f"{key}:minute"
+        _hour_key = f"{key}:hour"
         
         minute_allowed, minute_remaining, minute_reset = await self._check_sliding_window(
             minute_key,
@@ -389,48 +372,43 @@ class RateLimiter:
         )
         
         # Determine overall allow
-        overall_allowed = allowed and minute_allowed and hour_allowed
+        _overall_allowed = allowed and minute_allowed and hour_allowed
         
         # Calculate retry-after
-        retry_after = None
+        _retry_after = None
         if not overall_allowed:
-            retry_after = max(
+            _retry_after = max(
                 minute_reset if not minute_allowed else 0,
                 hour_reset if not hour_allowed else 0,
             )
         
         # Update metrics
-        latency_ms = (time.time() - start_time) * 1000
+        _latency_ms = (time.time() - start_time) * 1000
         self._check_count += 1
         self._total_latency_ms += latency_ms
         if not overall_allowed:
             self._blocked_count += 1
         
         return RateLimitResult(
-            allowed=overall_allowed,
-            tier=tier,
-            remaining_tokens=remaining_tokens,
-            remaining_minute=minute_remaining,
-            remaining_hour=hour_remaining,
-            reset_seconds=max(minute_reset, hour_reset),
-            retry_after=retry_after,
+            _allowed = overall_allowed,
+            _tier = tier,
+            _remaining_tokens = remaining_tokens,
+            _remaining_minute = minute_remaining,
+            _remaining_hour = hour_remaining,
+            _reset_seconds = max(minute_reset, hour_reset),
+            _retry_after = retry_after,
             key=key,
         )
     
-    async def _check_sliding_window(
-        self,
-        key: str,
-        limit: int,
-        window_seconds: int,
-    ) -> Tuple[bool, int, int]:
+    async def _check_sliding_window(self, _key: str, _limit: int, _window_seconds: int) -> Tuple[bool, int, int]:
         """
         Check sliding window rate limit.
         
         Returns:
             (allowed, remaining, reset_seconds)
         """
-        now = time.time()
-        window_start = now - window_seconds
+        _now = time.time()
+        _window_start = now - window_seconds
         
         # Clean old requests
         self._request_counts[key] = [
@@ -438,37 +416,37 @@ class RateLimiter:
             if t > window_start
         ]
         
-        current_count = len(self._request_counts[key])
+        _current_count = len(self._request_counts[key])
         
         if current_count >= limit:
             # Calculate reset time
-            oldest = min(self._request_counts[key]) if self._request_counts[key] else now
-            reset_in = int(oldest + window_seconds - now)
+            _oldest = min(self._request_counts[key]) if self._request_counts[key] else now
+            _reset_in = int(oldest + window_seconds - now)
             return False, 0, max(0, reset_in)
         
         # Record request
         self._request_counts[key].append(now)
-        remaining = limit - len(self._request_counts[key])
-        reset_in = window_seconds
+        _remaining = limit - len(self._request_counts[key])
+        _reset_in = window_seconds
         
         return True, remaining, reset_in
     
-    async def reset(self, identifier: str, tier: UserTier = UserTier.ANONYMOUS):
+    async def reset(self, _identifier: str, _tier: UserTier):
         """Reset rate limits for an identifier."""
-        key = f"{self.config.key_prefix}:{tier.value}:{identifier}"
+        _key = f"{self.config.key_prefix}:{tier.value}:{identifier}"
         
         # Clear sliding windows
         self._request_counts.pop(f"{key}:minute", None)
         self._request_counts.pop(f"{key}:hour", None)
         
         # Reset token bucket
-        bucket = self._token_buckets[tier]
+        _bucket = self._token_buckets[tier]
         async with bucket._lock:
             bucket._tokens.pop(key, None)
     
     def get_metrics(self) -> Dict[str, Any]:
         """Get rate limiter metrics."""
-        avg_latency = (
+        _avg_latency = (
             self._total_latency_ms / self._check_count
             if self._check_count > 0
             else 0
@@ -506,10 +484,7 @@ class DDoSDetector:
     - False positive rate < 0.1%
     """
     
-    def __init__(
-        self,
-        config: Optional[DDoSDetectionConfig] = None,
-    ):
+    def __init__(self, _config: Optional[DDoSDetectionConfig]):
         self.config = config or DDoSDetectionConfig()
         
         # Baseline tracking
@@ -527,14 +502,9 @@ class DDoSDetector:
         self._detection_count = 0
         self._attack_count = 0
     
-    def record_request(
-        self,
-        ip: str,
-        request_hash: str,
-        country: Optional[str] = None,
-    ):
+    def record_request(self, _ip: str, _request_hash: str, _country: Optional[str]):
         """Record a request for DDoS analysis."""
-        now = time.time()
+        _now = time.time()
         
         # Record request
         self._request_history.append((now, ip, request_hash))
@@ -547,7 +517,7 @@ class DDoSDetector:
             self._country_counts[country] += 1
         
         # Clean old requests (outside detection window)
-        cutoff = now - self.config.detection_window_seconds
+        _cutoff = now - self.config.detection_window_seconds
         while self._request_history and self._request_history[0][0] < cutoff:
             old_time, old_ip, old_hash = self._request_history.pop(0)
             self._request_patterns[old_hash] -= 1
@@ -555,7 +525,7 @@ class DDoSDetector:
                 del self._request_patterns[old_hash]
         
         # Update RPS
-        window_requests = len(self._request_history)
+        _window_requests = len(self._request_history)
         self._current_rps = window_requests / self.config.detection_window_seconds
         
         # Update baseline (exponential moving average)
@@ -573,13 +543,13 @@ class DDoSDetector:
             DDoSDetectionResult with attack status and details
         """
         self._detection_count += 1
-        attack_indicators = []
+        _attack_indicators = []
         affected_ips: Set[str] = set()
         details: Dict[str, Any] = {}
         
         # Check for request spike
         if self.config.enable_spike_detection and self._baseline_rps > 0:
-            spike_ratio = self._current_rps / max(self._baseline_rps, 0.1)
+            _spike_ratio = self._current_rps / max(self._baseline_rps, 0.1)
             if spike_ratio > self.config.spike_multiplier:
                 attack_indicators.append("request_spike")
                 details["spike_ratio"] = spike_ratio
@@ -588,7 +558,7 @@ class DDoSDetector:
         
         # Check for geographic anomaly
         if self.config.enable_geo_anomaly:
-            unique_countries = len(self._country_counts)
+            _unique_countries = len(self._country_counts)
             if unique_countries > self.config.max_countries:
                 attack_indicators.append("geo_anomaly")
                 details["unique_countries"] = unique_countries
@@ -607,13 +577,13 @@ class DDoSDetector:
         if is_attack:
             self._attack_count += 1
             severity = self._calculate_severity(len(attack_indicators))
-            action = self._determine_action(severity)
+            _action = self._determine_action(severity)
         else:
             severity = DDoSSeverity.NONE
-            action = MitigationAction.NONE
+            _action = MitigationAction.NONE
         
         # Get affected IPs from recent requests
-        cutoff = time.time() - self.config.detection_window_seconds
+        _cutoff = time.time() - self.config.detection_window_seconds
         for req_time, ip, _ in self._request_history:
             if req_time >= cutoff:
                 affected_ips.add(ip)
@@ -623,12 +593,12 @@ class DDoSDetector:
             severity=severity,
             attack_type=attack_indicators,
             affected_ips=list(affected_ips),
-            confidence=min(len(attack_indicators) * 0.4, 1.0),
+            _confidence = min(len(attack_indicators) * 0.4, 1.0),
             recommended_action=action,
             details=details,
         )
     
-    def _calculate_severity(self, indicator_count: int) -> DDoSSeverity:
+    def _calculate_severity(self, _indicator_count: int) -> DDoSSeverity:
         """Calculate attack severity from indicator count."""
         if indicator_count >= 3:
             return DDoSSeverity.CRITICAL
@@ -638,7 +608,7 @@ class DDoSDetector:
             return DDoSSeverity.MEDIUM
         return DDoSSeverity.LOW
     
-    def _determine_action(self, severity: DDoSSeverity) -> MitigationAction:
+    def _determine_action(self, _severity: DDoSSeverity) -> MitigationAction:
         """Determine mitigation action from severity."""
         if severity == DDoSSeverity.CRITICAL:
             return MitigationAction.PERM_BLOCK
@@ -678,10 +648,7 @@ class DDoSMitigator:
     - False positive rate < 0.1%
     """
     
-    def __init__(
-        self,
-        config: Optional[MitigationConfig] = None,
-    ):
+    def __init__(self, _config: Optional[MitigationConfig]):
         self.config = config or MitigationConfig()
         
         # Block lists
@@ -700,7 +667,7 @@ class DDoSMitigator:
         self._blocks_applied = 0
         self._blocks_expired = 0
     
-    def is_blocked(self, ip: str, country: Optional[str] = None) -> Tuple[bool, str]:
+    def is_blocked(self, _ip: str, _country: Optional[str]) -> Tuple[bool, str]:
         """
         Check if an IP is blocked.
         
@@ -726,20 +693,16 @@ class DDoSMitigator:
         
         return False, ""
     
-    def apply_mitigation(
-        self,
-        detection_result: DDoSDetectionResult,
-        config: Optional[MitigationConfig] = None,
-    ) -> Dict[str, Any]:
+    def apply_mitigation(self, _detection_result: DDoSDetectionResult, _config: Optional[MitigationConfig]) -> Dict[str, Any]:
         """
         Apply mitigation based on detection result.
         
         Returns:
             Mitigation action summary
         """
-        config = config or self.config
-        action = detection_result.recommended_action
-        actions_taken = []
+        _config = config or self.config
+        _action = detection_result.recommended_action
+        _actions_taken = []
         
         if action == MitigationAction.NONE:
             return {"action": "none", "actions_taken": []}
@@ -783,7 +746,7 @@ class DDoSMitigator:
             "affected_count": len(detection_result.affected_ips),
         }
     
-    def unblock(self, ip: str):
+    def unblock(self, _ip: str):
         """Remove all blocks for an IP."""
         self._temp_blocks.pop(ip, None)
         self._perm_blocks.discard(ip)
@@ -800,8 +763,8 @@ class DDoSMitigator:
     
     def cleanup_expired(self):
         """Clean up expired temporary blocks."""
-        now = time.time()
-        expired = [ip for ip, expiry in self._temp_blocks.items() if now >= expiry]
+        _now = time.time()
+        _expired = [ip for ip, expiry in self._temp_blocks.items() if now >= expiry]
         for ip in expired:
             del self._temp_blocks[ip]
             self._blocks_expired += 1
@@ -834,24 +797,12 @@ class DDoSProtection:
     - Comprehensive metrics
     """
     
-    def __init__(
-        self,
-        rate_limit_config: Optional[RateLimitConfig] = None,
-        detection_config: Optional[DDoSDetectionConfig] = None,
-        mitigation_config: Optional[MitigationConfig] = None,
-    ):
+    def __init__(self, _rate_limit_config: Optional[RateLimitConfig], _detection_config: Optional[DDoSDetectionConfig], _mitigation_config: Optional[MitigationConfig]):
         self.rate_limiter = RateLimiter(rate_limit_config)
         self.detector = DDoSDetector(detection_config)
         self.mitigator = DDoSMitigator(mitigation_config)
     
-    async def check_request(
-        self,
-        ip: str,
-        tier: UserTier = UserTier.ANONYMOUS,
-        endpoint: Optional[str] = None,
-        country: Optional[str] = None,
-        request_hash: Optional[str] = None,
-    ) -> Tuple[RateLimitResult, Optional[DDoSDetectionResult]]:
+    async def check_request(self, _ip: str, _tier: UserTier, _endpoint: Optional[str], _country: Optional[str], _request_hash: Optional[str]) -> Tuple[RateLimitResult, Optional[DDoSDetectionResult]]:
         """
         Check a request against rate limits and DDoS protection.
         
@@ -869,33 +820,33 @@ class DDoSProtection:
         is_blocked, block_reason = self.mitigator.is_blocked(ip, country)
         if is_blocked:
             return RateLimitResult(
-                allowed=False,
-                tier=tier,
-                remaining_tokens=0,
-                remaining_minute=0,
-                remaining_hour=0,
-                reset_seconds=300,
-                retry_after=300,
+                _allowed = False,
+                _tier = tier,
+                _remaining_tokens = 0,
+                _remaining_minute = 0,
+                _remaining_hour = 0,
+                _reset_seconds = 300,
+                _retry_after = 300,
             ), None
         
         # Check rate limit
-        rate_result = await self.rate_limiter.check_rate_limit(ip, tier, endpoint)
+        _rate_result = await self.rate_limiter.check_rate_limit(ip, tier, endpoint)
         
         # Record for DDoS analysis
         if request_hash:
             self.detector.record_request(ip, request_hash, country)
         
         # Run DDoS detection periodically
-        ddos_result = None
+        _ddos_result = None
         if self.detector._detection_count % 100 == 0:  # Every 100 requests
-            ddos_result = self.detector.detect()
+            _ddos_result = self.detector.detect()
             if ddos_result.is_attack:
                 self.mitigator.apply_mitigation(ddos_result)
                 logger.warning(
                     "ddos_attack_detected",
-                    severity=ddos_result.severity.value,
-                    attack_type=ddos_result.attack_type,
-                    affected_ips=len(ddos_result.affected_ips),
+                    _severity = ddos_result.severity.value,
+                    _attack_type = ddos_result.attack_type,
+                    _affected_ips = len(ddos_result.affected_ips),
                 )
         
         # Apply throttle factor if active
@@ -903,13 +854,13 @@ class DDoSProtection:
             import random
             if random.random() > self.mitigator.get_throttle_factor():
                 return RateLimitResult(
-                    allowed=False,
-                    tier=tier,
-                    remaining_tokens=0,
-                    remaining_minute=0,
-                    remaining_hour=0,
-                    reset_seconds=60,
-                    retry_after=60,
+                    _allowed = False,
+                    _tier = tier,
+                    _remaining_tokens = 0,
+                    _remaining_minute = 0,
+                    _remaining_hour = 0,
+                    _reset_seconds = 60,
+                    _retry_after = 60,
                 ), ddos_result
         
         return rate_result, ddos_result
@@ -930,34 +881,34 @@ class DDoSProtection:
 def create_default_protection() -> DDoSProtection:
     """Create DDoS protection with default configuration."""
     return DDoSProtection(
-        rate_limit_config=RateLimitConfig(),
-        detection_config=DDoSDetectionConfig(),
-        mitigation_config=MitigationConfig(),
+        _rate_limit_config = RateLimitConfig(),
+        _detection_config = DDoSDetectionConfig(),
+        _mitigation_config = MitigationConfig(),
     )
 
 
 def create_strict_protection() -> DDoSProtection:
     """Create DDoS protection with strict configuration."""
     return DDoSProtection(
-        rate_limit_config=RateLimitConfig(
-            tiers={
+        _rate_limit_config = RateLimitConfig(
+            _tiers = {
                 UserTier.ANONYMOUS: TierConfig(
-                    requests_per_second=5,
-                    requests_per_minute=30,
-                    requests_per_hour=300,
-                    burst_size=10,
+                    _requests_per_second = 5,
+                    _requests_per_minute = 30,
+                    _requests_per_hour = 300,
+                    _burst_size = 10,
                 ),
                 UserTier.AUTHENTICATED: TierConfig.authenticated(),
                 UserTier.PREMIUM: TierConfig.premium(),
                 UserTier.INTERNAL: TierConfig.internal(),
             }
         ),
-        detection_config=DDoSDetectionConfig(
-            spike_multiplier=5.0,  # More sensitive
-            identical_request_threshold=50,
+        _detection_config = DDoSDetectionConfig(
+            _spike_multiplier = 5.0,  # More sensitive
+            _identical_request_threshold = 50,
         ),
-        mitigation_config=MitigationConfig(
-            temp_block_duration_seconds=600,  # 10 minutes
-            enable_geo_fencing=True,
+        _mitigation_config = MitigationConfig(
+            _temp_block_duration_seconds = 600,  # 10 minutes
+            _enable_geo_fencing = True,
         ),
     )

@@ -26,7 +26,7 @@ from .autonomous_runtime_config import (
 from .agent_runtime import AgentRuntime
 from ..actors.supervisor import ActorSupervisor
 
-logger = structlog.get_logger("AutonomousRuntime")
+_logger = structlog.get_logger("AutonomousRuntime")
 
 
 @dataclass
@@ -54,7 +54,7 @@ class AutonomousRuntime:
     - Alert notifications
     """
 
-    def __init__(self, config: AutonomousRuntimeConfig):
+    def __init__(self, _config: AutonomousRuntimeConfig):
         """
         Initialize autonomous runtime.
 
@@ -90,7 +90,7 @@ class AutonomousRuntime:
         # Initialize agent runtime
         self.agent_runtime = AgentRuntime(
             supervisor=self.supervisor,
-            character_configs=self.config.agent_configs,
+            _character_configs = self.config.agent_configs,
         )
         await self.agent_runtime.initialize()
 
@@ -111,7 +111,7 @@ class AutonomousRuntime:
         await self._start_initial_agents()
 
         # Start background tasks
-        tasks = [
+        _tasks = [
             self._monitoring_loop(),
             self._scaling_loop(),
             self._state_persistence_loop(),
@@ -183,9 +183,9 @@ class AutonomousRuntime:
 
         # Check agent health
         if self.supervisor:
-            failed_agents = []
+            _failed_agents = []
             for agent_id, actor in self.supervisor.actors.items():
-                status = actor.get_status()
+                _status = actor.get_status()
                 # Fix: Use ActorState enum values for comparison (uppercase)
                 from heretek_swarm.actors.base import ActorState
                 if status and status.state in [ActorState.SUSPENDED, ActorState.TERMINATED, ActorState.ERROR]:
@@ -201,12 +201,12 @@ class AutonomousRuntime:
         # Check API health
         await self._check_api_health()
 
-    async def _restart_agents(self, agent_ids: List[str]) -> None:
+    async def _restart_agents(self, _agent_ids: List[str]) -> None:
         """Restart failed agents."""
         for agent_id in agent_ids:
             try:
                 # Check restart attempts (P1-8 fix: use dedicated dict instead of __dict__)
-                attempts = self._restart_attempts.get(agent_id, 0)
+                _attempts = self._restart_attempts.get(agent_id, 0)
 
                 if attempts >= self.config.max_restart_attempts:
                     logger.error(f"Max restart attempts reached for {agent_id}")
@@ -221,7 +221,7 @@ class AutonomousRuntime:
                     await self.supervisor.terminate_actor(agent_id)
 
                 # Restart agent
-                config_path = self.config.agent_configs.get(agent_id)
+                _config_path = self.config.agent_configs.get(agent_id)
                 if config_path and config_path.exists():
                     await self.agent_runtime.spawn_agent(agent_id, str(config_path))
                     self.state.total_agent_restarts += 1
@@ -242,7 +242,7 @@ class AutonomousRuntime:
             import psutil
 
             memory = psutil.virtual_memory()
-            usage_percent = memory.percent
+            _usage_percent = memory.percent
 
             if usage_percent > self.config.memory_usage_threshold * 100:
                 await self._send_alert(
@@ -262,11 +262,11 @@ class AutonomousRuntime:
 
             start_time = time.time()
             async with httpx.AsyncClient() as client:
-                response = await client.get(
+                _response = await client.get(
                     f"http://{self.config.api_host}:{self.config.api_port}/api/health/live",
-                    timeout=5.0,
+                    _timeout = 5.0,
                 )
-            latency_ms = (time.time() - start_time) * 1000
+            _latency_ms = (time.time() - start_time) * 1000
 
             if latency_ms > self.config.high_latency_threshold_ms:
                 await self._send_alert(
@@ -317,8 +317,8 @@ class AutonomousRuntime:
         try:
             import psutil
 
-            cpu = psutil.cpu_percent(interval=1)
-            memory = psutil.virtual_memory().percent
+            _cpu = psutil.cpu_percent(interval=1)
+            _memory = psutil.virtual_memory().percent
 
             # Average CPU and memory
             return (cpu + memory) / 200
@@ -334,7 +334,7 @@ class AutonomousRuntime:
         # P2-1 fix: Use timezone-aware datetime
         # Check cooldown
         if self._last_scale_up_time:
-            time_since = datetime.now(timezone.utc) - self._last_scale_up_time
+            _time_since = datetime.now(timezone.utc) - self._last_scale_up_time
             if time_since.total_seconds() < self.config.scale_up_cooldown_minutes * 60:
                 return
 
@@ -343,14 +343,14 @@ class AutonomousRuntime:
             return
 
         # Add new agent
-        available_agents = [
+        _available_agents = [
             name for name in self.config.agent_configs.keys()
             if name not in (self.supervisor.actors if self.supervisor else {})
         ]
 
         if available_agents:
-            agent_name = available_agents[0]
-            config_path = self.config.agent_configs[agent_name]
+            _agent_name = available_agents[0]
+            _config_path = self.config.agent_configs[agent_name]
 
             try:
                 # P2-1 fix: Use timezone-aware datetime
@@ -365,7 +365,7 @@ class AutonomousRuntime:
         """Scale down by removing idle agents."""
         # Check cooldown and minimum uptime
         if self._last_scale_down_time:
-            time_since = datetime.now(timezone.utc) - self._last_scale_down_time
+            _time_since = datetime.now(timezone.utc) - self._last_scale_down_time
             if time_since.total_seconds() < self.config.scale_down_cooldown_minutes * 60:
                 return
 
@@ -374,7 +374,7 @@ class AutonomousRuntime:
             return
 
         # Find idle agent to remove
-        idle_agent = await self._find_idle_agent()
+        _idle_agent = await self._find_idle_agent()
         if idle_agent:
             try:
                 # P2-1 fix: Use timezone-aware datetime
@@ -391,22 +391,22 @@ class AutonomousRuntime:
             return None
 
         for agent_id, actor in self.supervisor.actors.items():
-            status = actor.get_status()
+            _status = actor.get_status()
             if status:
                 # Check if agent has been idle for a while
                 if status.last_activity:
                     # Fix: Parse ISO format timestamp string to datetime
                     try:
-                        last_activity_str = status.last_activity
+                        _last_activity_str = status.last_activity
                         # Handle both string and datetime types
                         if isinstance(last_activity_str, str):
                             # Parse ISO format timestamp
-                            last_activity_dt = datetime.fromisoformat(last_activity_str.replace('Z', '+00:00'))
+                            _last_activity_dt = datetime.fromisoformat(last_activity_str.replace('Z', '+00:00'))
                         else:
-                            last_activity_dt = last_activity_str
+                            _last_activity_dt = last_activity_str
                         
                         # P2-1 fix: Use timezone-aware datetime
-                        idle_time = datetime.now(timezone.utc) - last_activity_dt
+                        _idle_time = datetime.now(timezone.utc) - last_activity_dt
                         if idle_time.total_seconds() > self.config.min_uptime_before_scale_down * 60:
                             return agent_id
                     except (ValueError, TypeError) as e:
@@ -433,9 +433,9 @@ class AutonomousRuntime:
     async def _save_state(self) -> None:
         """Save current state to disk."""
         # P2-1 fix: Use timezone-aware datetime
-        state_file = Path(self.config.log_directory) / "runtime_state.json"
+        _state_file = Path(self.config.log_directory) / "runtime_state.json"
 
-        state_data = {
+        _state_data = {
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "uptime_seconds": self.state.uptime_seconds,
             "total_agent_restarts": self.state.total_agent_restarts,
@@ -453,7 +453,7 @@ class AutonomousRuntime:
 
     async def _load_state(self) -> None:
         """Load saved state from disk."""
-        state_file = Path(self.config.log_directory) / "runtime_state.json"
+        _state_file = Path(self.config.log_directory) / "runtime_state.json"
 
         if not state_file.exists():
             return
@@ -461,7 +461,7 @@ class AutonomousRuntime:
         try:
             with open(state_file, "r") as f:
                 import json
-                state_data = json.load(f)
+                _state_data = json.load(f)
 
             self.state.total_agent_restarts = state_data.get("total_agent_restarts", 0)
             self.state.total_failures = state_data.get("total_failures", 0)
@@ -490,9 +490,9 @@ class AutonomousRuntime:
             return
 
         # Collect agent metrics
-        agent_metrics = []
+        _agent_metrics = []
         for agent_id, actor in self.supervisor.actors.items():
-            status = actor.get_status()
+            _status = actor.get_status()
             if status:
                 agent_metrics.append({
                     "agent_id": agent_id,
@@ -536,13 +536,13 @@ class AutonomousRuntime:
             return
         
         try:
-            plugin = ConsciousnessEnhancedPlugin()
+            _plugin = ConsciousnessEnhancedPlugin()
         except Exception as e:
             logger.warning(f"Failed to instantiate ConsciousnessEnhancedPlugin: {e}")
             return
 
         try:
-            stats = plugin.get_statistics()
+            _stats = plugin.get_statistics()
             logger.info(
                 f"Consciousness stats: "
                 f"agents={stats.get('total_agents', 0)}, "
@@ -552,7 +552,7 @@ class AutonomousRuntime:
 
             # Check for consciousness drop
             if stats.get("conscious_agents", 0) > 0:
-                consciousness_ratio = stats["conscious_agents"] / stats["total_agents"]
+                _consciousness_ratio = stats["conscious_agents"] / stats["total_agents"]
                 if consciousness_ratio < self.config.consciousness_drop_threshold:
                     await self._send_alert(
                         "consciousness_drop",
@@ -562,13 +562,13 @@ class AutonomousRuntime:
         except Exception as e:
             logger.error(f"Consciousness metrics collection error: {e}")
 
-    async def _send_alert(self, alert_type: str, data: Dict[str, Any]) -> None:
+    async def _send_alert(self, _alert_type: str, _data: Dict[str, _Any]) -> None:
         """Send alert notification."""
         # P2-1 fix: Use timezone-aware datetime
         # Check cooldown
-        last_time = self._last_alert_time.get(alert_type)
+        _last_time = self._last_alert_time.get(alert_type)
         if last_time:
-            time_since = datetime.now(timezone.utc) - last_time
+            _time_since = datetime.now(timezone.utc) - last_time
             if time_since.total_seconds() < 300:  # 5 minute cooldown
                 return
 
@@ -587,7 +587,7 @@ class AutonomousRuntime:
         if self.config.alert_config.email_enabled:
             await self._send_email_alert(alert_type, data)
 
-    async def _send_slack_alert(self, alert_type: str, data: Dict[str, Any]) -> None:
+    async def _send_slack_alert(self, _alert_type: str, _data: Dict[str, _Any]) -> None:
         """Send alert to Slack."""
         # P1-9 fix: Specific ImportError handling
         try:
@@ -597,25 +597,25 @@ class AutonomousRuntime:
             return
         
         try:
-            bot = SlackBot(
-                token=os.getenv("SLACK_BOT_TOKEN"),
-                signing_secret=os.getenv("SLACK_SIGNING_SECRET"),
-                agent_id="runtime_monitor",
-                supervisor=self.supervisor,
+            _bot = SlackBot(
+                _token = os.getenv("SLACK_BOT_TOKEN"),
+                _signing_secret = os.getenv("SLACK_SIGNING_SECRET"),
+                _agent_id = "runtime_monitor",
+                _supervisor = self.supervisor,
             )
 
-            message = f"🚨 Alert: {alert_type}\n"
+            _message = f"🚨 Alert: {alert_type}\n"
             message += f"```json\n{data}\n```"
 
             await bot.send_notification(
-                channel=self.config.alert_config.slack_channel,
-                message=message,
+                _channel = self.config.alert_config.slack_channel,
+                _message = message,
             )
 
         except Exception as e:
             logger.error(f"Failed to send Slack alert: {e}")
 
-    async def _send_discord_alert(self, alert_type: str, data: Dict[str, Any]) -> None:
+    async def _send_discord_alert(self, _alert_type: str, _data: Dict[str, _Any]) -> None:
         """Send alert to Discord."""
         # P1-9 fix: Specific ImportError handling
         try:
@@ -625,14 +625,14 @@ class AutonomousRuntime:
             return
         
         try:
-            bot = DiscordBot(
-                token=os.getenv("DISCORD_BOT_TOKEN"),
-                agent_id="runtime_monitor",
-                prefix="!",
-                supervisor=self.supervisor,
+            _bot = DiscordBot(
+                _token = os.getenv("DISCORD_BOT_TOKEN"),
+                _agent_id = "runtime_monitor",
+                _prefix = "!",
+                _supervisor = self.supervisor,
             )
 
-            message = f"🚨 Alert: {alert_type}\n"
+            _message = f"🚨 Alert: {alert_type}\n"
             message += f"```json\n{data}\n```"
 
             # Note: Discord bot would need channel reference
@@ -641,20 +641,20 @@ class AutonomousRuntime:
         except Exception as e:
             logger.error(f"Failed to send Discord alert: {e}")
 
-    async def _send_email_alert(self, alert_type: str, data: Dict[str, Any]) -> None:
+    async def _send_email_alert(self, _alert_type: str, _data: Dict[str, _Any]) -> None:
         """Send alert via email."""
         try:
             import smtplib
             from email.mime.text import MIMEText
             from email.mime.multipart import MIMEMultipart
 
-            msg = MIMEMultipart()
+            _msg = MIMEMultipart()
             msg["From"] = os.getenv("SMTP_FROM", "noreply@heretek.swarm")
             msg["To"] = ", ".join(self.config.alert_config.email_recipients)
             msg["Subject"] = f"Heretek Swarm Alert: {alert_type}"
 
             # P2-1 fix: Use timezone-aware datetime
-            body = f"Alert Type: {alert_type}\n\n"
+            _body = f"Alert Type: {alert_type}\n\n"
             body += f"Data:\n{data}\n\n"
             body += f"Timestamp: {datetime.now(timezone.utc).isoformat()}"
 
@@ -689,7 +689,7 @@ class AutonomousRuntime:
         }
 
 
-async def start_autonomous_runtime(config: AutonomousRuntimeConfig) -> AutonomousRuntime:
+async def start_autonomous_runtime(_config: AutonomousRuntimeConfig) -> AutonomousRuntime:
     """
     Start autonomous runtime with signal handling.
 
@@ -699,11 +699,11 @@ async def start_autonomous_runtime(config: AutonomousRuntimeConfig) -> Autonomou
     Returns:
         AutonomousRuntime instance
     """
-    runtime = AutonomousRuntime(config)
+    _runtime = AutonomousRuntime(config)
     await runtime.initialize()
 
     # Setup signal handlers
-    def signal_handler(signum, frame):
+    def signal_handler(_signum, _frame):
         logger.info(f"Received signal {signum}, shutting down...")
         asyncio.create_task(runtime.stop())
 

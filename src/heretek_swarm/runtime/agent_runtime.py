@@ -11,7 +11,7 @@ from typing import Any, Callable, Dict, List, Optional
 from datetime import datetime, timezone
 import structlog
 
-logger = structlog.get_logger(__name__)
+_logger = structlog.get_logger(__name__)
 
 
 class AgentState(Enum):
@@ -44,13 +44,7 @@ class AgentRuntime:
     Pattern stolen from elizaOS/packages/core/runtime/
     """
     
-    def __init__(
-        self,
-        agent_id: str,
-        model_provider: str = "openai",
-        model_name: str = "gpt-4o",
-        character: Optional[Dict] = None,
-    ):
+    def __init__(self, _agent_id: str, _model_provider: str, _model_name: str, _character: Optional[Dict]):
         self.agent_id = agent_id
         self.model_provider = model_provider
         self.model_name = model_name
@@ -60,13 +54,13 @@ class AgentRuntime:
         self._tools: Dict[str, Callable] = {}
         self._initialized = False
     
-    async def initialize(self, memory_backend=None) -> None:
+    async def initialize(self, _memory_backend) -> None:
         """Initialize runtime with memory backend."""
         self._memory = memory_backend
         self._initialized = True
         logger.info("agent_runtime_initialized", agent_id=self.agent_id)
     
-    def register_tool(self, name: str, handler: Callable) -> None:
+    def register_tool(self, _name: str, _handler: Callable) -> None:
         """Register a tool with the runtime."""
         self._tools[name] = handler
         logger.debug("tool_registered", agent_id=self.agent_id, tool=name)
@@ -75,7 +69,7 @@ class AgentRuntime:
         """Get list of registered tools."""
         return list(self._tools.keys())
     
-    async def think(self, prompt: str) -> str:
+    async def think(self, _prompt: str) -> str:
         """
         Process input and generate response.
         
@@ -90,17 +84,17 @@ class AgentRuntime:
         
         try:
             # Get relevant memories
-            memories = []
+            _memories = []
             if self._memory:
                 try:
                     from memory.base import MemoryQuery
-                    query = MemoryQuery(
-                        query_text=prompt,
-                        agent_ids=[self.agent_id],
-                        limit=5,
+                    _query = MemoryQuery(
+                        _query_text = prompt,
+                        _agent_ids = [self.agent_id],
+                        _limit = 5,
                     )
-                    result = await self._memory.search(query)
-                    memories = result.entries[:5]
+                    _result = await self._memory.search(query)
+                    _memories = result.entries[:5]
                 except Exception as e:
                     logger.warning("memory_search_failed", error=str(e))
             
@@ -108,7 +102,7 @@ class AgentRuntime:
             context = self._build_context(memories, prompt)
             
             # Generate response via LiteLLM
-            response = await self._call_llm(context)
+            _response = await self._call_llm(context)
             
             # Store in conversation history
             self.context.conversation_history.append({
@@ -131,7 +125,7 @@ class AgentRuntime:
         finally:
             self.context.state = AgentState.IDLE
     
-    async def act(self, action: str, params: Dict) -> Any:
+    async def act(self, _action: str, _params: Dict) -> Any:
         """
         Execute an action using registered tools.
         
@@ -149,18 +143,18 @@ class AgentRuntime:
             if action not in self._tools:
                 raise ValueError(f"Unknown action: {action}")
             
-            result = await self._tools[action](**params)
+            _result = await self._tools[action](**params)
             
             # Store action in memory
             if self._memory:
                 try:
                     from memory.base import MemoryEntry, MemoryType, MemoryTier
-                    entry = MemoryEntry(
+                    _entry = MemoryEntry(
                         agent_id=self.agent_id,
                         content=f"Executed {action} with {params}",
-                        memory_type=MemoryType.EPISODIC,
-                        tier=MemoryTier.PERSISTENT,
-                        metadata={"type": "action", "action": action, "result": str(result)},
+                        _memory_type = MemoryType.EPISODIC,
+                        _tier = MemoryTier.PERSISTENT,
+                        _metadata = {"type": "action", "action": action, "result": str(result)},
                     )
                     await self._memory.store(entry)
                 except Exception as e:
@@ -175,7 +169,7 @@ class AgentRuntime:
         finally:
             self.context.state = AgentState.IDLE
     
-    def _build_context(self, memories: List, prompt: str) -> str:
+    def _build_context(self, _memories: List, _prompt: str) -> str:
         """
         Build LLM context with memories and character.
         
@@ -186,27 +180,27 @@ class AgentRuntime:
         Returns:
             Formatted context string
         """
-        context_parts = []
+        _context_parts = []
         
         # Character system prompt
         if self.character:
-            bio = self.character.get("bio", "")
+            _bio = self.character.get("bio", "")
             if bio:
                 context_parts.append(f"System: {bio}")
             
-            style = self.character.get("style", {}).get("all", [])
+            _style = self.character.get("style", {}).get("all", [])
             if style:
                 context_parts.append(f"Style: {', '.join(style)}")
         
         # Memories
         if memories:
-            memory_texts = [m.content for m in memories[:5]]
+            _memory_texts = [m.content for m in memories[:5]]
             context_parts.append(f"Memories:\n" + "\n".join(f"- {m}" for m in memory_texts))
         
         # Conversation history (last 10)
-        recent_history = self.context.conversation_history[-10:]
+        _recent_history = self.context.conversation_history[-10:]
         if recent_history:
-            history_text = "\n".join(f"{h['role']}: {h['content']}" for h in recent_history)
+            _history_text = "\n".join(f"{h['role']}: {h['content']}" for h in recent_history)
             context_parts.append(f"History:\n{history_text}")
         
         # Current prompt
@@ -214,7 +208,7 @@ class AgentRuntime:
         
         return "\n\n".join(context_parts)
     
-    async def _call_llm(self, context: str) -> str:
+    async def _call_llm(self, _context: str) -> str:
         """
         Call LLM for response generation.
         
@@ -228,10 +222,10 @@ class AgentRuntime:
             import litellm
             litellm.api_key = __import__('os').getenv("OPENAI_API_KEY")
             
-            response = await litellm.acompletion(
+            _response = await litellm.acompletion(
                 model=f"{self.model_provider}/{self.model_name}",
-                messages=[{"role": "user", "content": context}],
-                max_tokens=1000,
+                _messages = [{"role": "user", "content": context}],
+                _max_tokens = 1000,
             )
             
             return response.choices[0].message.content

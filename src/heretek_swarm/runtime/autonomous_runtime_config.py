@@ -35,7 +35,7 @@ class AutonomousRuntimeConfig:
     # Workflow Configuration
     default_workflows: List[str] = field(default_factory=list)
     workflow_directory: Path = field(
-        default_factory=lambda: Path(__file__).parent.parent.parent.parent / "workflows"
+        _default_factory = lambda: Path(__file__).parent.parent.parent.parent / "workflows"
     )
 
     # Monitoring Configuration
@@ -65,7 +65,7 @@ class AutonomousRuntimeConfig:
     # RAG Configuration
     rag_enabled: bool = True
     rag_document_directory: Path = field(
-        default_factory=lambda: Path(__file__).parent.parent.parent.parent / "documents"
+        _default_factory = lambda: Path(__file__).parent.parent.parent.parent / "documents"
     )
 
     # Platform Integration Configuration
@@ -96,7 +96,7 @@ class AutonomousRuntimeConfig:
     log_level: str = "INFO"
     log_format: str = "json"
     log_directory: Path = field(
-        default_factory=lambda: Path(__file__).parent.parent.parent.parent / "logs"
+        _default_factory = lambda: Path(__file__).parent.parent.parent.parent / "logs"
     )
 
 
@@ -161,75 +161,75 @@ async def load_config_from_env() -> AutonomousRuntimeConfig:
     # Try to load from ConfigLoader if available (database-backed)
     try:
         from heretek_swarm.config.loader import get_config_loader
-        loader = get_config_loader()
+        _loader = get_config_loader()
         
         if loader._initialized:
             # Load from database with environment fallback
-            monitoring_enabled = await loader.get_async("runtime.monitoring_enabled", default=os.getenv("MONITORING_ENABLED", "true"))
-            auto_restart_enabled = await loader.get_async("runtime.auto_restart_enabled", default=os.getenv("AUTO_RESTART_ENABLED", "true"))
-            consciousness_enabled = await loader.get_async("consciousness.enabled", default=os.getenv("CONSCIOUSNESS_ENABLED", "true"))
-            rag_enabled = await loader.get_async("rag.enabled", default=os.getenv("RAG_ENABLED", "true"))
-            discord_enabled = await loader.get_async("integrations.discord_enabled", default=os.getenv("DISCORD_BOT_ENABLED", "false"))
-            telegram_enabled = await loader.get_async("integrations.telegram_enabled", default=os.getenv("TELEGRAM_BOT_ENABLED", "false"))
-            slack_enabled = await loader.get_async("integrations.slack_enabled", default=os.getenv("SLACK_BOT_ENABLED", "false"))
-            api_host = await loader.get_async("api.host", default=os.getenv("API_HOST", "0.0.0.0"))
-            api_port = await loader.get_async("api.port", default=int(os.getenv("API_PORT", "8000")))
-            database_url = await loader.get_async("database.url", default=os.getenv("DATABASE_URL"))
-            redis_url = await loader.get_async("redis.url", default=os.getenv("REDIS_URL", "redis://localhost:6379"))
-            qdrant_url = await loader.get_async("qdrant.url", default=os.getenv("QDRANT_URL", "http://localhost:6333"))
-            log_level = await loader.get_async("logging.level", default=os.getenv("LOG_LEVEL", "INFO"))
+            _monitoring_enabled = await loader.get_async("runtime.monitoring_enabled", default=os.getenv("MONITORING_ENABLED", "true"))
+            _auto_restart_enabled = await loader.get_async("runtime.auto_restart_enabled", default=os.getenv("AUTO_RESTART_ENABLED", "true"))
+            _consciousness_enabled = await loader.get_async("consciousness.enabled", default=os.getenv("CONSCIOUSNESS_ENABLED", "true"))
+            _rag_enabled = await loader.get_async("rag.enabled", default=os.getenv("RAG_ENABLED", "true"))
+            _discord_enabled = await loader.get_async("integrations.discord_enabled", default=os.getenv("DISCORD_BOT_ENABLED", "false"))
+            _telegram_enabled = await loader.get_async("integrations.telegram_enabled", default=os.getenv("TELEGRAM_BOT_ENABLED", "false"))
+            _slack_enabled = await loader.get_async("integrations.slack_enabled", default=os.getenv("SLACK_BOT_ENABLED", "false"))
+            _api_host = await loader.get_async("api.host", default=os.getenv("API_HOST", "0.0.0.0"))
+            _api_port = await loader.get_async("api.port", default=int(os.getenv("API_PORT", "8000")))
+            _database_url = await loader.get_async("database.url", default=os.getenv("DATABASE_URL"))
+            _redis_url = await loader.get_async("redis.url", default=os.getenv("REDIS_URL", "redis://localhost:6379"))
+            _qdrant_url = await loader.get_async("qdrant.url", default=os.getenv("QDRANT_URL", "http://localhost:6333"))
+            _log_level = await loader.get_async("logging.level", default=os.getenv("LOG_LEVEL", "INFO"))
             
             # Convert string values to bool if needed
             if isinstance(monitoring_enabled, str):
-                monitoring_enabled = monitoring_enabled.lower() == "true"
+                _monitoring_enabled = monitoring_enabled.lower() == "true"
             if isinstance(auto_restart_enabled, str):
-                auto_restart_enabled = auto_restart_enabled.lower() == "true"
+                _auto_restart_enabled = auto_restart_enabled.lower() == "true"
             if isinstance(consciousness_enabled, str):
-                consciousness_enabled = consciousness_enabled.lower() == "true"
+                _consciousness_enabled = consciousness_enabled.lower() == "true"
             if isinstance(rag_enabled, str):
-                rag_enabled = rag_enabled.lower() == "true"
+                _rag_enabled = rag_enabled.lower() == "true"
             if isinstance(discord_enabled, str):
-                discord_enabled = discord_enabled.lower() == "true"
+                _discord_enabled = discord_enabled.lower() == "true"
             if isinstance(telegram_enabled, str):
-                telegram_enabled = telegram_enabled.lower() == "true"
+                _telegram_enabled = telegram_enabled.lower() == "true"
             if isinstance(slack_enabled, str):
-                slack_enabled = slack_enabled.lower() == "true"
+                _slack_enabled = slack_enabled.lower() == "true"
             
             return AutonomousRuntimeConfig(
-                monitoring_enabled=monitoring_enabled,
-                auto_restart_enabled=auto_restart_enabled,
-                consciousness_plugin_enabled=consciousness_enabled,
-                rag_enabled=rag_enabled,
-                discord_bot_enabled=discord_enabled,
-                telegram_bot_enabled=telegram_enabled,
-                slack_bot_enabled=slack_enabled,
-                api_host=str(api_host),
-                api_port=int(api_port),
-                database_url=database_url,
-                redis_url=str(redis_url),
-                qdrant_url=str(qdrant_url),
-                log_level=str(log_level),
+                _monitoring_enabled = monitoring_enabled,
+                _auto_restart_enabled = auto_restart_enabled,
+                _consciousness_plugin_enabled = consciousness_enabled,
+                _rag_enabled = rag_enabled,
+                _discord_bot_enabled = discord_enabled,
+                _telegram_bot_enabled = telegram_enabled,
+                _slack_bot_enabled = slack_enabled,
+                _api_host = str(api_host),
+                _api_port = int(api_port),
+                _database_url = database_url,
+                _redis_url = str(redis_url),
+                _qdrant_url = str(qdrant_url),
+                _log_level = str(log_level),
             )
     except Exception as e:
         import structlog
-        logger = structlog.get_logger("config.runtime")
+        _logger = structlog.get_logger("config.runtime")
         logger.warning("Failed to load config from database, using environment fallback", error=str(e))
     
     # Fallback to direct environment variable loading
     return AutonomousRuntimeConfig(
-        monitoring_enabled=os.getenv("MONITORING_ENABLED", "true").lower() == "true",
-        auto_restart_enabled=os.getenv("AUTO_RESTART_ENABLED", "true").lower() == "true",
-        consciousness_plugin_enabled=os.getenv("CONSCIOUSNESS_ENABLED", "true").lower() == "true",
-        rag_enabled=os.getenv("RAG_ENABLED", "true").lower() == "true",
-        discord_bot_enabled=os.getenv("DISCORD_BOT_ENABLED", "false").lower() == "true",
-        telegram_bot_enabled=os.getenv("TELEGRAM_BOT_ENABLED", "false").lower() == "true",
-        slack_bot_enabled=os.getenv("SLACK_BOT_ENABLED", "false").lower() == "true",
-        api_host=os.getenv("API_HOST", "0.0.0.0"),
-        api_port=int(os.getenv("API_PORT", "8000")),
-        database_url=os.getenv("DATABASE_URL"),
-        redis_url=os.getenv("REDIS_URL", "redis://localhost:6379"),
-        qdrant_url=os.getenv("QDRANT_URL", "http://localhost:6333"),
-        log_level=os.getenv("LOG_LEVEL", "INFO"),
+        _monitoring_enabled = os.getenv("MONITORING_ENABLED", "true").lower() == "true",
+        _auto_restart_enabled = os.getenv("AUTO_RESTART_ENABLED", "true").lower() == "true",
+        _consciousness_plugin_enabled = os.getenv("CONSCIOUSNESS_ENABLED", "true").lower() == "true",
+        _rag_enabled = os.getenv("RAG_ENABLED", "true").lower() == "true",
+        _discord_bot_enabled = os.getenv("DISCORD_BOT_ENABLED", "false").lower() == "true",
+        _telegram_bot_enabled = os.getenv("TELEGRAM_BOT_ENABLED", "false").lower() == "true",
+        _slack_bot_enabled = os.getenv("SLACK_BOT_ENABLED", "false").lower() == "true",
+        _api_host = os.getenv("API_HOST", "0.0.0.0"),
+        _api_port = int(os.getenv("API_PORT", "8000")),
+        _database_url = os.getenv("DATABASE_URL"),
+        _redis_url = os.getenv("REDIS_URL", "redis://localhost:6379"),
+        _qdrant_url = os.getenv("QDRANT_URL", "http://localhost:6333"),
+        _log_level = os.getenv("LOG_LEVEL", "INFO"),
     )
 
 
@@ -243,7 +243,7 @@ def load_config_from_env_sync() -> AutonomousRuntimeConfig:
     import asyncio
     
     try:
-        loop = asyncio.get_event_loop()
+        _loop = asyncio.get_event_loop()
         if loop.is_running():
             # If loop is running, we can't use run_until_complete
             # Return environment-only config
@@ -262,17 +262,17 @@ def _load_config_from_env_sync_fallback() -> AutonomousRuntimeConfig:
         AutonomousRuntimeConfig instance
     """
     return AutonomousRuntimeConfig(
-        monitoring_enabled=os.getenv("MONITORING_ENABLED", "true").lower() == "true",
-        auto_restart_enabled=os.getenv("AUTO_RESTART_ENABLED", "true").lower() == "true",
-        consciousness_plugin_enabled=os.getenv("CONSCIOUSNESS_ENABLED", "true").lower() == "true",
-        rag_enabled=os.getenv("RAG_ENABLED", "true").lower() == "true",
-        discord_bot_enabled=os.getenv("DISCORD_BOT_ENABLED", "false").lower() == "true",
-        telegram_bot_enabled=os.getenv("TELEGRAM_BOT_ENABLED", "false").lower() == "true",
-        slack_bot_enabled=os.getenv("SLACK_BOT_ENABLED", "false").lower() == "true",
-        api_host=os.getenv("API_HOST", "0.0.0.0"),
-        api_port=int(os.getenv("API_PORT", "8000")),
-        database_url=os.getenv("DATABASE_URL"),
-        redis_url=os.getenv("REDIS_URL", "redis://localhost:6379"),
-        qdrant_url=os.getenv("QDRANT_URL", "http://localhost:6333"),
-        log_level=os.getenv("LOG_LEVEL", "INFO"),
+        _monitoring_enabled = os.getenv("MONITORING_ENABLED", "true").lower() == "true",
+        _auto_restart_enabled = os.getenv("AUTO_RESTART_ENABLED", "true").lower() == "true",
+        _consciousness_plugin_enabled = os.getenv("CONSCIOUSNESS_ENABLED", "true").lower() == "true",
+        _rag_enabled = os.getenv("RAG_ENABLED", "true").lower() == "true",
+        _discord_bot_enabled = os.getenv("DISCORD_BOT_ENABLED", "false").lower() == "true",
+        _telegram_bot_enabled = os.getenv("TELEGRAM_BOT_ENABLED", "false").lower() == "true",
+        _slack_bot_enabled = os.getenv("SLACK_BOT_ENABLED", "false").lower() == "true",
+        _api_host = os.getenv("API_HOST", "0.0.0.0"),
+        _api_port = int(os.getenv("API_PORT", "8000")),
+        _database_url = os.getenv("DATABASE_URL"),
+        _redis_url = os.getenv("REDIS_URL", "redis://localhost:6379"),
+        _qdrant_url = os.getenv("QDRANT_URL", "http://localhost:6333"),
+        _log_level = os.getenv("LOG_LEVEL", "INFO"),
     )

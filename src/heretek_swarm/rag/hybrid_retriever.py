@@ -15,12 +15,12 @@ Usage:
     from heretek_swarm.rag.hybrid_retriever import HybridRetriever, HybridRetrieverConfig
     
     config = HybridRetrieverConfig()
-    retriever = HybridRetriever(config)
+    _retriever = HybridRetriever(config)
     await retriever.initialize()
     
-    results = await retriever.retrieve(
+    _results = await retriever.retrieve(
         query="What is the capital of France?",
-        top_k=5,
+        _top_k = 5,
     )
 """
 
@@ -43,7 +43,7 @@ from .strategies import (
     StrategySelector,
 )
 
-logger = structlog.get_logger(__name__)
+_logger = structlog.get_logger(__name__)
 
 
 class FusionMethod(str, Enum):
@@ -151,7 +151,7 @@ class RateLimiter:
     excessive query rates.
     """
     
-    def __init__(self, queries_per_minute: int):
+    def __init__(self, _queries_per_minute: int):
         self.queries_per_minute = queries_per_minute
         self._queries: List[datetime] = []
         self._lock = asyncio.Lock()
@@ -164,8 +164,8 @@ class RateLimiter:
             True if token acquired, False if rate limited
         """
         async with self._lock:
-            now = datetime.now(timezone.utc)
-            window_start = now.timestamp() - 60  # 1 minute window
+            _now = datetime.now(timezone.utc)
+            _window_start = now.timestamp() - 60  # 1 minute window
             
             # Remove old queries outside the window
             self._queries = [
@@ -180,7 +180,7 @@ class RateLimiter:
             
             return False
     
-    async def wait_for_token(self, timeout: float = 60.0) -> bool:
+    async def wait_for_token(self, _timeout: float) -> bool:
         """
         Wait for a rate limit token with timeout.
         
@@ -190,7 +190,7 @@ class RateLimiter:
         Returns:
             True if token acquired, False if timeout
         """
-        start_time = time.time()
+        _start_time = time.time()
         
         while time.time() - start_time < timeout:
             if await self.acquire():
@@ -201,9 +201,9 @@ class RateLimiter:
     
     def get_remaining(self) -> int:
         """Get remaining queries in current window."""
-        now = datetime.now(timezone.utc)
-        window_start = now.timestamp() - 60
-        current_count = sum(1 for q in self._queries if q.timestamp() > window_start)
+        _now = datetime.now(timezone.utc)
+        _window_start = now.timestamp() - 60
+        _current_count = sum(1 for q in self._queries if q.timestamp() > window_start)
         return max(0, self.queries_per_minute - current_count)
 
 
@@ -224,14 +224,7 @@ class HybridRetriever:
     - Zero-trust authentication support
     """
     
-    def __init__(
-        self,
-        config: Optional[HybridRetrieverConfig] = None,
-        embedding_provider: Optional[Any] = None,
-        vector_store: Optional[Any] = None,
-        sparse_index: Optional[Any] = None,
-        cross_encoder: Optional[Any] = None,
-    ):
+    def __init__(self, _config: Optional[HybridRetrieverConfig], _embedding_provider: Optional[Any], _vector_store: Optional[Any], _sparse_index: Optional[Any], _cross_encoder: Optional[Any]):
         self.config = config or HybridRetrieverConfig()
         self.embedding_provider = embedding_provider
         self.vector_store = vector_store
@@ -265,18 +258,18 @@ class HybridRetriever:
         
         try:
             # Create strategy config
-            strategy_config = RAGStrategyConfig(
-                dense_enabled=self.embedding_provider is not None,
-                sparse_enabled=self.sparse_index is not None,
-                hybrid_enabled=True,
+            _strategy_config = RAGStrategyConfig(
+                _dense_enabled = self.embedding_provider is not None,
+                _sparse_enabled = self.sparse_index is not None,
+                _hybrid_enabled = True,
                 dense_weight=self.config.dense_weight,
                 sparse_weight=self.config.sparse_weight,
                 fusion_method=self.config.fusion_method.value,
                 rrf_k=self.config.rrf_k,
-                multi_hop_enabled=self.config.enable_multihop,
-                max_hops=self.config.max_hops,
-                re_ranking_enabled=self.config.enable_reranking,
-                re_rank_limit=self.config.rerank_top_k,
+                _multi_hop_enabled = self.config.enable_multihop,
+                _max_hops = self.config.max_hops,
+                _re_ranking_enabled = self.config.enable_reranking,
+                _re_rank_limit = self.config.rerank_top_k,
                 cache_enabled=self.config.cache_enabled,
                 cache_ttl_seconds=self.config.cache_ttl_seconds,
             )
@@ -285,7 +278,7 @@ class HybridRetriever:
             self._strategy_selector = create_strategy_selector(
                 config=strategy_config,
                 embedding_provider=self.embedding_provider,
-                vector_store=self.vector_store,
+                _vector_store = self.vector_store,
                 sparse_index=self.sparse_index,
                 cross_encoder=self.cross_encoder,
             )
@@ -293,35 +286,35 @@ class HybridRetriever:
             # Create dedicated reranker
             if self.config.enable_reranking and self.cross_encoder:
                 self._reranker = ReRankingStrategy(
-                    cross_encoder=self.cross_encoder,
-                    re_rank_limit=self.config.rerank_top_k,
+                    _cross_encoder = self.cross_encoder,
+                    _re_rank_limit = self.config.rerank_top_k,
                 )
             
             self._state = RetrieverState.READY
             logger.info("hybrid_retriever_initialized",
-                       dense_enabled=self.embedding_provider is not None,
-                       sparse_enabled=self.sparse_index is not None,
-                       reranking_enabled=self.config.enable_reranking)
+                       _dense_enabled = self.embedding_provider is not None,
+                       _sparse_enabled = self.sparse_index is not None,
+                       _reranking_enabled = self.config.enable_reranking)
             
         except Exception as e:
             self._state = RetrieverState.ERROR
             logger.error("hybrid_retriever_initialization_failed", error=str(e))
             raise
     
-    def _hash_query(self, query: str) -> str:
+    def _hash_query(self, _query: str) -> str:
         """Create hash of query for caching."""
         import hashlib
-        return hashlib.md5(query.lower().strip().encode()).hexdigest()
+        return hashlib.sha256(query.lower().strip().encode()).hexdigest()
     
-    def _get_from_cache(self, query_hash: str) -> Optional[List[RetrievalResult]]:
+    def _get_from_cache(self, _query_hash: str) -> Optional[List[RetrievalResult]]:
         """Get cached results if available and not expired."""
         if not self.config.cache_enabled:
             return None
         
-        entry = self._query_cache.get(query_hash)
+        _entry = self._query_cache.get(query_hash)
         if entry:
             results, created_at = entry
-            age = (datetime.now(timezone.utc) - created_at).total_seconds()
+            _age = (datetime.now(timezone.utc) - created_at).total_seconds()
             if age < self.config.cache_ttl_seconds:
                 self._metrics.cache_hits += 1
                 return results
@@ -329,7 +322,7 @@ class HybridRetriever:
         self._metrics.cache_misses += 1
         return None
     
-    def _store_in_cache(self, query_hash: str, results: List[RetrievalResult]) -> None:
+    def _store_in_cache(self, _query_hash: str, _results: List[RetrievalResult]) -> None:
         """Store results in cache."""
         if not self.config.cache_enabled:
             return
@@ -338,34 +331,30 @@ class HybridRetriever:
         
         # Clean old cache
         if len(self._query_cache) > 1000:
-            now = datetime.now(timezone.utc)
-            expired = [
+            _now = datetime.now(timezone.utc)
+            _expired = [
                 k for k, (_, created_at) in self._query_cache.items()
                 if (now - created_at).total_seconds() > self.config.cache_ttl_seconds
             ]
             for k in expired:
                 del self._query_cache[k]
     
-    def _normalize_scores(self, results: List[RetrievalResult]) -> List[RetrievalResult]:
+    def _normalize_scores(self, _results: List[RetrievalResult]) -> List[RetrievalResult]:
         """Normalize scores to 0-1 range using min-max normalization."""
         if not results:
             return results
         
-        scores = [r.score for r in results]
+        _scores = [r.score for r in results]
         min_score = min(scores)
-        max_score = max(scores)
-        score_range = max_score - min_score if max_score > min_score else 1.0
+        _max_score = max(scores)
+        _score_range = max_score - min_score if max_score > min_score else 1.0
         
         for result in results:
             result.score = (result.score - min_score) / score_range
         
         return results
     
-    def _fuse_results(
-        self,
-        dense_results: List[RetrievalResult],
-        sparse_results: List[RetrievalResult],
-    ) -> List[RetrievalResult]:
+    def _fuse_results(self, _dense_results: List[RetrievalResult], _sparse_results: List[RetrievalResult]) -> List[RetrievalResult]:
         """
         Fuse results from dense and sparse retrieval.
         
@@ -396,26 +385,22 @@ class HybridRetriever:
         else:
             return self._reciprocal_rank_fusion(dense_results, sparse_results)
     
-    def _reciprocal_rank_fusion(
-        self,
-        dense_results: List[RetrievalResult],
-        sparse_results: List[RetrievalResult],
-    ) -> List[RetrievalResult]:
+    def _reciprocal_rank_fusion(self, _dense_results: List[RetrievalResult], _sparse_results: List[RetrievalResult]) -> List[RetrievalResult]:
         """Apply Reciprocal Rank Fusion (RRF)."""
         # Build rank maps
         dense_ranks: Dict[str, int] = {r.source: i + 1 for i, r in enumerate(dense_results)}
         sparse_ranks: Dict[str, int] = {r.source: i + 1 for i, r in enumerate(sparse_results)}
         
         # Calculate RRF scores
-        all_sources = set(dense_ranks.keys()) | set(sparse_ranks.keys())
+        _all_sources = set(dense_ranks.keys()) | set(sparse_ranks.keys())
         rrf_scores: Dict[str, float] = {}
         source_to_result: Dict[str, RetrievalResult] = {}
         
         for source in all_sources:
-            dense_rank = dense_ranks.get(source, len(dense_results) + 1)
-            sparse_rank = sparse_ranks.get(source, len(sparse_results) + 1)
+            _dense_rank = dense_ranks.get(source, len(dense_results) + 1)
+            _sparse_rank = sparse_ranks.get(source, len(sparse_results) + 1)
             
-            rrf_score = 0.0
+            _rrf_score = 0.0
             if dense_rank <= len(dense_results):
                 rrf_score += self.config.dense_weight / (self.config.rrf_k + dense_rank)
             if sparse_rank <= len(sparse_results):
@@ -438,38 +423,34 @@ class HybridRetriever:
                         break
         
         # Sort and build fused results
-        sorted_sources = sorted(rrf_scores.keys(), key=lambda s: rrf_scores[s], reverse=True)
-        fused_results = []
+        _sorted_sources = sorted(rrf_scores.keys(), key=lambda s: rrf_scores[s], reverse=True)
+        _fused_results = []
         
         for source in sorted_sources:
-            result = source_to_result.get(source)
+            _result = source_to_result.get(source)
             if result:
                 result.score = rrf_scores[source]
                 fused_results.append(result)
         
         return fused_results
     
-    def _weighted_sum_fusion(
-        self,
-        dense_results: List[RetrievalResult],
-        sparse_results: List[RetrievalResult],
-    ) -> List[RetrievalResult]:
+    def _weighted_sum_fusion(self, _dense_results: List[RetrievalResult], _sparse_results: List[RetrievalResult]) -> List[RetrievalResult]:
         """Apply weighted sum fusion with score normalization."""
         # Normalize scores
-        dense_normalized = self._normalize_scores(dense_results.copy())
-        sparse_normalized = self._normalize_scores(sparse_results.copy())
+        _dense_normalized = self._normalize_scores(dense_results.copy())
+        _sparse_normalized = self._normalize_scores(sparse_results.copy())
         
         # Build score maps
         dense_scores: Dict[str, float] = {r.source: r.score for r in dense_normalized}
         sparse_scores: Dict[str, float] = {r.source: r.score for r in sparse_normalized}
         
         # Combine scores
-        all_sources = set(dense_scores.keys()) | set(sparse_scores.keys())
+        _all_sources = set(dense_scores.keys()) | set(sparse_scores.keys())
         combined_scores: Dict[str, float] = {}
         source_to_result: Dict[str, RetrievalResult] = {}
         
         for source in all_sources:
-            combined_score = (
+            _combined_score = (
                 self.config.dense_weight * dense_scores.get(source, 0) +
                 self.config.sparse_weight * sparse_scores.get(source, 0)
             )
@@ -483,34 +464,26 @@ class HybridRetriever:
                     break
         
         # Sort and build results
-        sorted_sources = sorted(combined_scores.keys(), key=lambda s: combined_scores[s], reverse=True)
-        fused_results = []
+        _sorted_sources = sorted(combined_scores.keys(), key=lambda s: combined_scores[s], reverse=True)
+        _fused_results = []
         
         for source in sorted_sources:
-            result = source_to_result.get(source)
+            _result = source_to_result.get(source)
             if result:
                 result.score = combined_scores[source]
                 fused_results.append(result)
         
         return fused_results
     
-    def _normalized_sum_fusion(
-        self,
-        dense_results: List[RetrievalResult],
-        sparse_results: List[RetrievalResult],
-    ) -> List[RetrievalResult]:
+    def _normalized_sum_fusion(self, _dense_results: List[RetrievalResult], _sparse_results: List[RetrievalResult]) -> List[RetrievalResult]:
         """Apply normalized sum fusion (equal weights)."""
         self.config.dense_weight = 0.5
         self.config.sparse_weight = 0.5
         return self._weighted_sum_fusion(dense_results, sparse_results)
     
-    def _max_score_fusion(
-        self,
-        dense_results: List[RetrievalResult],
-        sparse_results: List[RetrievalResult],
-    ) -> List[RetrievalResult]:
+    def _max_score_fusion(self, _dense_results: List[RetrievalResult], _sparse_results: List[RetrievalResult]) -> List[RetrievalResult]:
         """Apply max score fusion (take maximum score from either method)."""
-        all_results = {}
+        _all_results = {}
         
         for result in dense_results + sparse_results:
             if result.source not in all_results:
@@ -523,37 +496,25 @@ class HybridRetriever:
                     all_results[result.source] = result
         
         # Sort by score
-        fused_results = sorted(all_results.values(), key=lambda r: r.score, reverse=True)
+        _fused_results = sorted(all_results.values(), key=lambda r: r.score, reverse=True)
         return fused_results
     
-    async def _apply_reranking(
-        self,
-        query: str,
-        results: List[RetrievalResult],
-        top_k: int,
-    ) -> List[RetrievalResult]:
+    async def _apply_reranking(self, _query: str, _results: List[RetrievalResult], _top_k: int) -> List[RetrievalResult]:
         """Apply cross-encoder re-ranking to results."""
         if not self._reranker or not results:
             return results[:top_k]
         
-        reranked = await self._reranker.retrieve(
+        _reranked = await self._reranker.retrieve(
             query=query,
-            top_k=top_k,
-            initial_results=results,
+            _top_k = top_k,
+            _initial_results = results,
         )
         
         return reranked
     
-    def _record_query(
-        self,
-        query: str,
-        latency_ms: float,
-        results_count: int,
-        strategy: str,
-        cache_hit: bool,
-    ) -> None:
+    def _record_query(self, _query: str, _latency_ms: float, _results_count: int, _strategy: str, _cache_hit: bool) -> None:
         """Record query in history and update metrics."""
-        now = datetime.now(timezone.utc)
+        _now = datetime.now(timezone.utc)
         
         # Update metrics
         self._metrics.total_queries += 1
@@ -576,12 +537,12 @@ class HybridRetriever:
         )
         
         # Record history entry
-        entry = QueryHistoryEntry(
+        _entry = QueryHistoryEntry(
             query=query,
-            timestamp=now,
-            latency_ms=latency_ms,
-            results_count=results_count,
-            strategy_used=strategy,
+            _timestamp = now,
+            _latency_ms = latency_ms,
+            _results_count = results_count,
+            _strategy_used = strategy,
             cache_hit=cache_hit,
         )
         self._query_history.append(entry)
@@ -590,15 +551,7 @@ class HybridRetriever:
         if len(self._query_history) > self._max_history:
             self._query_history = self._query_history[-self._max_history:]
     
-    async def retrieve(
-        self,
-        query: str,
-        top_k: int = 5,
-        filters: Optional[Dict[str, Any]] = None,
-        use_multihop: Optional[bool] = None,
-        apply_reranking: Optional[bool] = None,
-        authenticated: bool = True,
-    ) -> List[RetrievalResult]:
+    async def retrieve(self, _query: str, _top_k: int, _filters: Optional[Dict[str, _Any]], _use_multihop: Optional[bool], _apply_reranking: Optional[bool], _authenticated: bool) -> List[RetrievalResult]:
         """
         Retrieve relevant documents using hybrid retrieval.
         
@@ -620,7 +573,7 @@ class HybridRetriever:
         if self._state != RetrieverState.READY:
             raise RetrieverNotReady(f"Retriever state: {self._state.value}")
         
-        start_time = time.time()
+        _start_time = time.time()
         cache_hit = False
         
         # Check rate limit (skip for authenticated requests if configured)
@@ -632,84 +585,78 @@ class HybridRetriever:
                 )
         
         # Check cache
-        query_hash = self._hash_query(query)
-        cached_results = self._get_from_cache(query_hash)
+        _query_hash = self._hash_query(query)
+        _cached_results = self._get_from_cache(query_hash)
         if cached_results:
             cache_hit = True
-            latency_ms = (time.time() - start_time) * 1000
+            _latency_ms = (time.time() - start_time) * 1000
             self._record_query(query, latency_ms, len(cached_results), "cache", True)
             return cached_results[:top_k]
         
         try:
             # Determine strategy
-            strategy = RetrievalStrategyType.HYBRID
+            _strategy = RetrievalStrategyType.HYBRID
             
             if self.config.query_classification_enabled:
-                query_type = self._classifier.classify(query)
+                _query_type = self._classifier.classify(query)
                 if query_type == QueryType.MULTI_STEP and (use_multihop is not False):
-                    strategy = RetrievalStrategyType.MULTI_HOP
+                    _strategy = RetrievalStrategyType.MULTI_HOP
             
             # Get strategy from selector
             if not self._strategy_selector:
                 raise RetrieverError("Strategy selector not initialized")
             
             # Execute retrieval
-            results = await self._strategy_selector.retrieve(
-                query=query,
-                top_k=self.config.rerank_top_k if apply_reranking else top_k,
-                strategy=strategy,
-                filters=filters,
+            _results = await self._strategy_selector.retrieve(
+                _query = query,
+                _top_k = self.config.rerank_top_k if apply_reranking else top_k,
+                _strategy = strategy,
+                _filters = filters,
             )
             
             # Apply re-ranking if enabled
             if (apply_reranking or self.config.enable_reranking) and self._reranker and results:
-                results = await self._apply_reranking(query, results, top_k)
+                _results = await self._apply_reranking(query, results, top_k)
             
             # Apply score threshold
             if self.config.min_score_threshold > 0:
-                results = [r for r in results if r.score >= self.config.min_score_threshold]
+                _results = [r for r in results if r.score >= self.config.min_score_threshold]
             
             # Limit to top_k
-            results = results[:top_k]
+            _results = results[:top_k]
             
             # Normalize scores if configured
             if self.config.normalize_scores and results:
-                results = self._normalize_scores(results)
+                _results = self._normalize_scores(results)
             
             # Cache results
             self._store_in_cache(query_hash, results)
             
             # Record metrics
-            latency_ms = (time.time() - start_time) * 1000
+            _latency_ms = (time.time() - start_time) * 1000
             self._metrics.successful_queries += 1
             self._record_query(query, latency_ms, len(results), strategy.value, cache_hit)
             
             logger.debug("hybrid_retrieval_completed",
-                        query=query[:50] if len(query) > 50 else query,
-                        results_count=len(results),
-                        latency_ms=latency_ms,
-                        strategy=strategy.value,
+                        _query = query[:50] if len(query) > 50 else query,
+                        _results_count = len(results),
+                        _latency_ms = latency_ms,
+                        _strategy = strategy.value,
                         cache_hit=cache_hit)
             
             return results
             
         except Exception as e:
             self._metrics.failed_queries += 1
-            latency_ms = (time.time() - start_time) * 1000
+            _latency_ms = (time.time() - start_time) * 1000
             self._record_query(query, latency_ms, 0, "error", cache_hit)
             
             logger.error("hybrid_retrieval_error",
-                        query=query[:50] if len(query) > 50 else query,
-                        error=str(e))
+                        _query = query[:50] if len(query) > 50 else query,
+                        _error = str(e))
             raise RetrieverError(f"Retrieval failed: {str(e)}")
     
-    async def retrieve_with_context(
-        self,
-        query: str,
-        context: Optional[str] = None,
-        top_k: int = 5,
-        **kwargs
-    ) -> Tuple[str, List[RetrievalResult]]:
+    async def retrieve_with_context(self, _query: str, _context: Optional[str], _top_k: int, _**kwargs) -> Tuple[str, List[RetrievalResult]]:
         """
         Retrieve and format results with context.
         
@@ -722,17 +669,17 @@ class HybridRetriever:
         Returns:
             Tuple of (formatted context string, retrieval results)
         """
-        results = await self.retrieve(query, top_k, **kwargs)
+        _results = await self.retrieve(query, top_k, **kwargs)
         
         # Format context from results
-        context_parts = []
+        _context_parts = []
         if context:
             context_parts.append(f"Context: {context}")
         
         for i, result in enumerate(results, 1):
             context_parts.append(f"[{i}] {result.content}")
         
-        formatted_context = "\n\n".join(context_parts)
+        _formatted_context = "\n\n".join(context_parts)
         
         return formatted_context, results
     
@@ -761,7 +708,7 @@ class HybridRetriever:
     
     def export_prometheus_metrics(self) -> str:
         """Export metrics in Prometheus format."""
-        lines = [
+        _lines = [
             "# HELP heretek_rag_total_queries Total RAG queries",
             "# TYPE heretek_rag_total_queries counter",
             f"heretek_rag_total_queries {self._metrics.total_queries}",
@@ -817,13 +764,7 @@ class RateLimitExceeded(RetrieverError):
 
 
 # Convenience function for creating configured retriever
-def create_hybrid_retriever(
-    config: Optional[HybridRetrieverConfig] = None,
-    embedding_provider: Optional[Any] = None,
-    vector_store: Optional[Any] = None,
-    sparse_index: Optional[Any] = None,
-    cross_encoder: Optional[Any] = None,
-) -> HybridRetriever:
+def create_hybrid_retriever(_config: Optional[HybridRetrieverConfig], _embedding_provider: Optional[Any], _vector_store: Optional[Any], _sparse_index: Optional[Any], _cross_encoder: Optional[Any]) -> HybridRetriever:
     """
     Create and initialize a hybrid retriever.
     
@@ -837,11 +778,11 @@ def create_hybrid_retriever(
     Returns:
         Initialized HybridRetriever instance
     """
-    retriever = HybridRetriever(
-        config=config,
-        embedding_provider=embedding_provider,
-        vector_store=vector_store,
-        sparse_index=sparse_index,
-        cross_encoder=cross_encoder,
+    _retriever = HybridRetriever(
+        _config = config,
+        _embedding_provider = embedding_provider,
+        _vector_store = vector_store,
+        _sparse_index = sparse_index,
+        _cross_encoder = cross_encoder,
     )
     return retriever
