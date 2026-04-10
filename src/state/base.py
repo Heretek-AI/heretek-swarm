@@ -10,7 +10,7 @@ from enum import Enum
 from typing import Any, Dict, List, Optional, Set
 from uuid import UUID, uuid4
 
-from pydantic import BaseModel, Field, field_validator
+from pydantic import BaseModel, Field
 
 
 class StateStatus(str, Enum):
@@ -90,7 +90,7 @@ class MessageLineage(BaseModel):
     metadata: Dict[str, Any] = Field(default_factory=dict)
     
     class Config:
-        json_encoders = {
+        _json_encoders = {
             datetime: datetime.isoformat,
             UUID: str,
         }
@@ -133,7 +133,7 @@ class StateTransition(BaseModel):
     metadata: Dict[str, Any] = Field(default_factory=dict)
     
     class Config:
-        json_encoders = {
+        _json_encoders = {
             datetime: datetime.isoformat,
             UUID: str,
         }
@@ -188,10 +188,10 @@ class AgentState(BaseModel):
         import hashlib
         import json
         
-        state_dict = self.model_dump(
-            exclude={"state_hash", "updated_at", "last_active_at"}
+        _state_dict = self.model_dump(
+            _exclude = {"state_hash", "updated_at", "last_active_at"}
         )
-        state_json = json.dumps(state_dict, sort_keys=True, default=str)
+        _state_json = json.dumps(state_dict, sort_keys=True, default=str)
         return hashlib.sha256(state_json.encode()).hexdigest()
     
     def touch(self) -> "AgentState":
@@ -202,7 +202,7 @@ class AgentState(BaseModel):
         return self
     
     class Config:
-        json_encoders = {
+        _json_encoders = {
             datetime: datetime.isoformat,
             UUID: str,
             set: list,
@@ -247,7 +247,7 @@ class ConversationState(BaseModel):
     version: int = Field(default=1, ge=1)
     
     class Config:
-        json_encoders = {
+        _json_encoders = {
             datetime: datetime.isoformat,
             UUID: str,
             set: list,
@@ -298,7 +298,7 @@ class SystemState(BaseModel):
     snapshot_id: Optional[UUID] = Field(None, description="Latest snapshot")
     
     class Config:
-        json_encoders = {
+        _json_encoders = {
             datetime: datetime.isoformat,
             UUID: str,
             set: list,
@@ -349,12 +349,12 @@ class StateSnapshot(BaseModel):
         import hashlib
         import json
         
-        snapshot_dict = self.model_dump(exclude={"state_hash"})
-        snapshot_json = json.dumps(snapshot_dict, sort_keys=True, default=str)
+        _snapshot_dict = self.model_dump(exclude={"state_hash"})
+        _snapshot_json = json.dumps(snapshot_dict, sort_keys=True, default=str)
         return hashlib.sha256(snapshot_json.encode()).hexdigest()
     
     class Config:
-        json_encoders = {
+        _json_encoders = {
             datetime: datetime.isoformat,
             UUID: str,
         }
@@ -389,7 +389,7 @@ class StateDiff(BaseModel):
     size_bytes: int = Field(default=0, ge=0)
     
     class Config:
-        json_encoders = {
+        _json_encoders = {
             datetime: datetime.isoformat,
             UUID: str,
             set: list,

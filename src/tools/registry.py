@@ -12,17 +12,16 @@ Provides runtime tool discovery, registration, and management with:
 import importlib
 import inspect
 import pkgutil
-from datetime import datetime, timedelta, timezone
-from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Set, Type
+from datetime import datetime, timezone
+from typing import Any, Dict, List, Optional, Set, Type
 from uuid import UUID, uuid4
 
 import structlog
 from pydantic import BaseModel, Field
 
-from .base import BaseTool, SimpleTool, ToolContext, ToolExecutionResult, ToolMetadata, ToolStatus
+from .base import BaseTool, ToolContext, ToolExecutionResult, ToolMetadata, ToolStatus
 
-logger = structlog.get_logger()
+_logger = structlog.get_logger()
 
 
 class ToolRegistryConfig(BaseModel):
@@ -31,7 +30,7 @@ class ToolRegistryConfig(BaseModel):
     # Discovery
     auto_discover: bool = Field(default=True, description="Auto-discover tools on startup")
     discovery_paths: List[str] = Field(
-        default_factory=lambda: ["src.tools", "heretek_swarm.tools", "heretek_swarm.tools.examples"],
+        _default_factory = lambda: ["src.tools", "heretek_swarm.tools", "heretek_swarm.tools.examples"],
         description="Python paths to search for tools"
     )
     
@@ -82,7 +81,7 @@ class ToolRegistryEntry(BaseModel):
     last_used_at: Optional[datetime] = Field(None)
     
     class Config:
-        arbitrary_types_allowed = True
+        _arbitrary_types_allowed = True
 
 
 class ToolRegistry:
@@ -98,24 +97,24 @@ class ToolRegistry:
     - Performance tracking
     
     Usage:
-        registry = ToolRegistry()
+        _registry = ToolRegistry()
         await registry.initialize()
         
         # Get tool by name
         tool = await registry.get_tool("memory_search")
         
         # Execute tool
-        result = await registry.execute_tool(
+        _result = await registry.execute_tool(
             "memory_search",
             {"query": "find documents"},
             context
         )
         
         # List tools by category
-        tools = registry.list_tools(category="memory")
+        _tools = registry.list_tools(category="memory")
     """
     
-    def __init__(self, config: Optional[ToolRegistryConfig] = None):
+    def __init__(self, _config: Optional[ToolRegistryConfig]):
         self.config = config or ToolRegistryConfig()
         
         # Tool storage
@@ -151,8 +150,8 @@ class ToolRegistry:
             except Exception as e:
                 logger.error(
                     "tool_preload_failed",
-                    tool_name=tool_name,
-                    error=str(e)
+                    _tool_name = tool_name,
+                    _error = str(e)
                 )
         
         # Start health monitoring
@@ -161,7 +160,7 @@ class ToolRegistry:
         
         logger.info(
             "tool_registry_initialized",
-            total_tools=len(self._tools)
+            _total_tools = len(self._tools)
         )
     
     async def shutdown(self) -> None:
@@ -189,11 +188,11 @@ class ToolRegistry:
             except Exception as e:
                 logger.error(
                     "tool_discovery_failed",
-                    path=path,
-                    error=str(e)
+                    _path = path,
+                    _error = str(e)
                 )
     
-    async def _discover_tools_in_path(self, path: str) -> None:
+    async def _discover_tools_in_path(self, _path: str) -> None:
         """Discover tools in a specific Python path"""
         try:
             module = importlib.import_module(path)
@@ -210,11 +209,11 @@ class ToolRegistry:
         except Exception as e:
             logger.warning(
                 "path_discovery_failed",
-                path=path,
-                error=str(e)
+                _path = path,
+                _error = str(e)
             )
     
-    async def _discover_tools_in_module(self, module_path: str) -> None:
+    async def _discover_tools_in_module(self, _module_path: str) -> None:
         """Discover tools in a specific module"""
         try:
             module = importlib.import_module(module_path)
@@ -229,14 +228,10 @@ class ToolRegistry:
             logger.warning(
                 "module_discovery_failed",
                 module=module_path,
-                error=str(e)
+                _error = str(e)
             )
     
-    async def _register_tool_class(
-        self,
-        tool_class: Type[BaseTool],
-        module_path: str
-    ) -> None:
+    async def _register_tool_class(self, _tool_class: Type[BaseTool], _module_path: str) -> None:
         """Register a tool class"""
         try:
             # Create instance to get metadata
@@ -246,7 +241,7 @@ class ToolRegistry:
             metadata = instance.get_metadata()
             
             # Create registry entry
-            entry = ToolRegistryEntry(
+            _entry = ToolRegistryEntry(
                 tool_id=metadata.tool_id,
                 name=metadata.name,
                 metadata=metadata,
@@ -272,7 +267,7 @@ class ToolRegistry:
             
             logger.debug(
                 "tool_registered",
-                tool_name=metadata.name,
+                _tool_name = metadata.name,
                 category=metadata.category
             )
         
@@ -281,14 +276,14 @@ class ToolRegistry:
                 "tool_registration_failed",
                 module=module_path,
                 class_name=tool_class.__name__,
-                error=str(e)
+                _error = str(e)
             )
     
-    def register_tool(self, tool: BaseTool) -> None:
+    def register_tool(self, _tool: BaseTool) -> None:
         """Manually register a tool instance"""
         metadata = tool.get_metadata()
         
-        entry = ToolRegistryEntry(
+        _entry = ToolRegistryEntry(
             tool_id=metadata.tool_id,
             name=metadata.name,
             metadata=metadata,
@@ -310,12 +305,12 @@ class ToolRegistry:
         
         logger.info(
             "tool_manually_registered",
-            tool_name=metadata.name
+            _tool_name = metadata.name
         )
     
-    async def _load_tool(self, tool_name: str) -> Optional[BaseTool]:
+    async def _load_tool(self, _tool_name: str) -> Optional[BaseTool]:
         """Load a tool instance"""
-        entry = self._tools.get(tool_name)
+        _entry = self._tools.get(tool_name)
         
         if not entry:
             logger.warning("tool_not_found", tool_name=tool_name)
@@ -347,7 +342,7 @@ class ToolRegistry:
             
             logger.info(
                 "tool_loaded",
-                tool_name=tool_name,
+                _tool_name = tool_name,
                 module=entry.module_path
             )
             
@@ -356,8 +351,8 @@ class ToolRegistry:
         except Exception as e:
             logger.error(
                 "tool_load_failed",
-                tool_name=tool_name,
-                error=str(e)
+                _tool_name = tool_name,
+                _error = str(e)
             )
             entry.consecutive_failures += 1
             
@@ -367,13 +362,13 @@ class ToolRegistry:
                 entry.metadata.status = ToolStatus.DISABLED
                 logger.warning(
                     "tool_auto_disabled",
-                    tool_name=tool_name,
-                    failures=entry.consecutive_failures
+                    _tool_name = tool_name,
+                    _failures = entry.consecutive_failures
                 )
             
             return None
     
-    def _get_cached_tool(self, tool_id: UUID) -> Optional[BaseTool]:
+    def _get_cached_tool(self, _tool_id: UUID) -> Optional[BaseTool]:
         """Get tool from cache"""
         if not self.config.cache_enabled:
             return None
@@ -383,9 +378,9 @@ class ToolRegistry:
             return None
         
         # Check TTL
-        timestamp = self._cache_timestamps.get(tool_id)
+        _timestamp = self._cache_timestamps.get(tool_id)
         if timestamp:
-            age = (datetime.now(timezone.utc) - timestamp).total_seconds()
+            _age = (datetime.now(timezone.utc) - timestamp).total_seconds()
             if age > self.config.cache_ttl_seconds:
                 # Expired
                 del self._cache[tool_id]
@@ -396,15 +391,15 @@ class ToolRegistry:
         self._cache_hits += 1
         return self._cache[tool_id]
     
-    async def get_tool(self, tool_name: str) -> Optional[BaseTool]:
+    async def get_tool(self, _tool_name: str) -> Optional[BaseTool]:
         """Get a tool by name"""
-        entry = self._tools.get(tool_name)
+        _entry = self._tools.get(tool_name)
         
         if not entry:
             return None
         
         # Check cache first
-        cached = self._get_cached_tool(entry.tool_id)
+        _cached = self._get_cached_tool(entry.tool_id)
         if cached:
             return cached
         
@@ -414,38 +409,33 @@ class ToolRegistry:
         
         return entry.instance
     
-    async def execute_tool(
-        self,
-        tool_name: str,
-        input_data: Dict[str, Any],
-        context: Optional[ToolContext] = None
-    ) -> ToolExecutionResult:
+    async def execute_tool(self, _tool_name: str, _input_data: Dict[str, _Any], _context: Optional[ToolContext]) -> ToolExecutionResult:
         """Execute a tool by name"""
-        start_time = datetime.now(timezone.utc)
+        _start_time = datetime.now(timezone.utc)
         
         # Get tool
         tool = await self.get_tool(tool_name)
         
         if not tool:
             return ToolExecutionResult(
-                execution_id=uuid4(),
+                _execution_id = uuid4(),
                 tool_id=uuid4(),
-                tool_name=tool_name,
+                _tool_name = tool_name,
                 status=ToolStatus.FAILED,
                 error=f"Tool not found: {tool_name}",
-                execution_time_ms=0,
-                started_at=start_time,
-                completed_at=datetime.now(timezone.utc)
+                _execution_time_ms = 0,
+                _started_at = start_time,
+                _completed_at = datetime.now(timezone.utc)
             )
         
         # Execute
-        result = await tool.run(input_data, context)
+        _result = await tool.run(input_data, context)
         
         # Update metrics
         self._total_executions += 1
         
         # Update entry
-        entry = self._tools.get(tool_name)
+        _entry = self._tools.get(tool_name)
         if entry:
             entry.usage_count += 1
             entry.last_used_at = datetime.now(timezone.utc)
@@ -453,14 +443,9 @@ class ToolRegistry:
         
         return result
     
-    def list_tools(
-        self,
-        category: Optional[str] = None,
-        tags: Optional[List[str]] = None,
-        enabled_only: bool = True
-    ) -> List[ToolMetadata]:
+    def list_tools(self, _category: Optional[str], _tags: Optional[List[str]], _enabled_only: bool) -> List[ToolMetadata]:
         """List tools with optional filtering"""
-        tools = []
+        _tools = []
         
         for name, entry in self._tools.items():
             # Filter by enabled
@@ -488,21 +473,17 @@ class ToolRegistry:
         """Get all tool tags"""
         return list(self._tools_by_tag.keys())
     
-    def search_tools(
-        self,
-        query: str,
-        limit: int = 10
-    ) -> List[ToolMetadata]:
+    def search_tools(self, _query: str, _limit: int) -> List[ToolMetadata]:
         """Search tools by name, description, or tags"""
-        query_lower = query.lower()
-        results = []
+        _query_lower = query.lower()
+        _results = []
         
         for name, entry in self._tools.items():
             if not entry.metadata.enabled:
                 continue
             
             # Search in name, description, tags
-            score = 0
+            _score = 0
             
             if query_lower in name.lower():
                 score += 3
@@ -521,9 +502,9 @@ class ToolRegistry:
     
     def get_stats(self) -> Dict[str, Any]:
         """Get registry statistics"""
-        total_tools = len(self._tools)
-        loaded_tools = sum(1 for e in self._tools.values() if e.loaded)
-        enabled_tools = sum(1 for e in self._tools.values() if e.metadata.enabled)
+        _total_tools = len(self._tools)
+        _loaded_tools = sum(1 for e in self._tools.values() if e.loaded)
+        _enabled_tools = sum(1 for e in self._tools.values() if e.metadata.enabled)
         
         return {
             "total_tools": total_tools,
@@ -542,9 +523,9 @@ class ToolRegistry:
             "total_executions": self._total_executions,
         }
     
-    async def reload_tool(self, tool_name: str) -> bool:
+    async def reload_tool(self, _tool_name: str) -> bool:
         """Reload a tool (hot reload)"""
-        entry = self._tools.get(tool_name)
+        _entry = self._tools.get(tool_name)
         
         if not entry:
             return False
@@ -558,7 +539,7 @@ class ToolRegistry:
             
             # Reload module
             if entry.module_path:
-                module = importlib.import_module(entry.module_path)
+                _module = importlib.import_module(entry.module_path)
                 importlib.reload(module)
             
             # Reload tool
@@ -569,7 +550,7 @@ class ToolRegistry:
             
             logger.info(
                 "tool_reloaded",
-                tool_name=tool_name
+                _tool_name = tool_name
             )
             
             return True
@@ -577,8 +558,8 @@ class ToolRegistry:
         except Exception as e:
             logger.error(
                 "tool_reload_failed",
-                tool_name=tool_name,
-                error=str(e)
+                _tool_name = tool_name,
+                _error = str(e)
             )
             
             return False
@@ -596,7 +577,7 @@ def get_registry() -> ToolRegistry:
     return _registry
 
 
-async def initialize_registry(config: Optional[ToolRegistryConfig] = None) -> ToolRegistry:
+async def initialize_registry(_config: Optional[ToolRegistryConfig]) -> ToolRegistry:
     """Initialize the global registry"""
     global _registry
     _registry = ToolRegistry(config)

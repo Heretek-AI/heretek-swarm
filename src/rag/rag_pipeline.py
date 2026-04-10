@@ -14,12 +14,9 @@ Pattern stolen from:
 - Flowise RAG components
 """
 
-import os
 from dataclasses import dataclass, field
-from datetime import datetime
 from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
-import asyncio
 
 import structlog
 
@@ -43,7 +40,7 @@ from .retriever import (
     SearchMode,
 )
 
-logger = structlog.get_logger(__name__)
+_logger = structlog.get_logger(__name__)
 
 
 @dataclass
@@ -115,11 +112,7 @@ class RAGPipeline:
     Pattern stolen from elizaOS document-ingestion plugin.
     """
     
-    def __init__(
-        self,
-        config: Optional[RAGConfig] = None,
-        memory_backend: Optional[Any] = None,
-    ):
+    def __init__(self, _config: Optional[RAGConfig], _memory_backend: Optional[Any]):
         self.config = config or RAGConfig()
         self._memory_backend = memory_backend
         
@@ -152,11 +145,7 @@ class RAGPipeline:
         self._initialized = True
         logger.info("rag_pipeline_initialized")
     
-    async def ingest_file(
-        self,
-        file_path: Union[str, Path],
-        metadata: Optional[Dict[str, Any]] = None,
-    ) -> ProcessedDocument:
+    async def ingest_file(self, _file_path: Union[str, _Path], _metadata: Optional[Dict[str, _Any]]) -> ProcessedDocument:
         """
         Ingest a file into the RAG system.
         
@@ -171,17 +160,17 @@ class RAGPipeline:
             await self.initialize()
         
         import time
-        start_time = time.time()
+        _start_time = time.time()
         
         # Process document
-        doc = await self._processor.process_file(file_path, metadata)
+        _doc = await self._processor.process_file(file_path, metadata)
         
         # Generate embeddings for chunks
-        chunk_texts = [c.content for c in doc.chunks]
-        embeddings = await self._embedding_service.embed_batch(chunk_texts)
+        _chunk_texts = [c.content for c in doc.chunks]
+        _embeddings = await self._embedding_service.embed_batch(chunk_texts)
         
         # Index chunks
-        documents = []
+        _documents = []
         for i, chunk in enumerate(doc.chunks):
             documents.append({
                 "id": chunk.id,
@@ -207,23 +196,17 @@ class RAGPipeline:
         if self.config.persist_processed:
             await self._persist_document(doc)
         
-        elapsed = (time.time() - start_time) * 1000
+        _elapsed = (time.time() - start_time) * 1000
         logger.info(
             "file_ingested",
-            path=str(file_path),
+            _path = str(file_path),
             chunks=len(doc.chunks),
-            time_ms=elapsed,
+            _time_ms = elapsed,
         )
         
         return doc
     
-    async def ingest_directory(
-        self,
-        directory: Union[str, Path],
-        recursive: bool = True,
-        extensions: Optional[List[str]] = None,
-        metadata: Optional[Dict[str, Any]] = None,
-    ) -> List[ProcessedDocument]:
+    async def ingest_directory(self, _directory: Union[str, _Path], _recursive: bool, _extensions: Optional[List[str]], _metadata: Optional[Dict[str, _Any]]) -> List[ProcessedDocument]:
         """
         Ingest all files in a directory.
         
@@ -236,50 +219,44 @@ class RAGPipeline:
         Returns:
             List of ProcessedDocuments
         """
-        dir_path = Path(directory)
+        _dir_path = Path(directory)
         if not dir_path.is_dir():
             raise ValueError(f"Not a directory: {directory}")
         
         # Find files
         if recursive:
-            pattern = "**/*"
+            _pattern = "**/*"
         else:
-            pattern = "*"
+            _pattern = "*"
         
-        files = list(dir_path.glob(pattern))
+        _files = list(dir_path.glob(pattern))
         
         # Filter by extension
         if extensions:
-            extensions_set = set(e.lower() for e in extensions)
-            files = [f for f in files if f.suffix.lower() in extensions_set]
+            _extensions_set = set(e.lower() for e in extensions)
+            _files = [f for f in files if f.suffix.lower() in extensions_set]
         else:
             # Filter to supported types
-            supported = {".txt", ".md", ".html", ".json", ".py", ".js", ".ts"}
-            files = [f for f in files if f.suffix.lower() in supported]
+            _supported = {".txt", ".md", ".html", ".json", ".py", ".js", ".ts"}
+            _files = [f for f in files if f.suffix.lower() in supported]
         
         # Process files
-        results = []
+        _results = []
         for file_path in files:
             if file_path.is_file():
                 try:
-                    doc = await self.ingest_file(file_path, metadata)
+                    _doc = await self.ingest_file(file_path, metadata)
                     results.append(doc)
                 except Exception as e:
                     logger.warning(
                         "file_ingest_failed",
-                        path=str(file_path),
-                        error=str(e),
+                        _path = str(file_path),
+                        _error = str(e),
                     )
         
         return results
     
-    async def ingest_text(
-        self,
-        content: str,
-        source: str,
-        doc_type: DocumentType = DocumentType.TEXT,
-        metadata: Optional[Dict[str, Any]] = None,
-    ) -> ProcessedDocument:
+    async def ingest_text(self, _content: str, _source: str, _doc_type: DocumentType, _metadata: Optional[Dict[str, _Any]]) -> ProcessedDocument:
         """
         Ingest raw text content.
         
@@ -296,19 +273,19 @@ class RAGPipeline:
             await self.initialize()
         
         # Process content
-        doc = await self._processor.process_content(
+        _doc = await self._processor.process_content(
             content=content,
             source_path=source,
-            doc_type=doc_type,
+            _doc_type = doc_type,
             metadata=metadata,
         )
         
         # Generate embeddings
-        chunk_texts = [c.content for c in doc.chunks]
-        embeddings = await self._embedding_service.embed_batch(chunk_texts)
+        _chunk_texts = [c.content for c in doc.chunks]
+        _embeddings = await self._embedding_service.embed_batch(chunk_texts)
         
         # Index chunks
-        documents = []
+        _documents = []
         for i, chunk in enumerate(doc.chunks):
             documents.append({
                 "id": chunk.id,
@@ -330,12 +307,7 @@ class RAGPipeline:
         
         return doc
     
-    async def query(
-        self,
-        query: str,
-        top_k: int = 5,
-        filters: Optional[Dict[str, Any]] = None,
-    ) -> RAGResult:
+    async def query(self, _query: str, _top_k: int, _filters: Optional[Dict[str, _Any]]) -> RAGResult:
         """
         Query the RAG system.
         
@@ -351,71 +323,71 @@ class RAGPipeline:
             await self.initialize()
         
         import time
-        start_time = time.time()
+        _start_time = time.time()
         
         # Generate query embedding
-        embed_start = time.time()
-        query_embedding_result = await self._embedding_service.embed(query)
-        embed_time = (time.time() - embed_start) * 1000
+        _embed_start = time.time()
+        _query_embedding_result = await self._embedding_service.embed(query)
+        _embed_time = (time.time() - embed_start) * 1000
         
         # Retrieve documents
-        retrieve_start = time.time()
-        original_top_k = self.config.retrieval.top_k
+        _retrieve_start = time.time()
+        _original_top_k = self.config.retrieval.top_k
         self.config.retrieval.top_k = top_k
-        documents = await self._retriever.search(
-            query=query,
-            query_embedding=query_embedding_result.embedding,
-            filters=filters,
+        _documents = await self._retriever.search(
+            _query = query,
+            _query_embedding = query_embedding_result.embedding,
+            _filters = filters,
         )
         self.config.retrieval.top_k = original_top_k
-        retrieve_time = (time.time() - retrieve_start) * 1000
+        _retrieve_time = (time.time() - retrieve_start) * 1000
         
         # Assemble context
         context, token_count = self._assemble_context(documents)
         
         # Calculate total time
-        total_time = (time.time() - start_time) * 1000
+        _total_time = (time.time() - start_time) * 1000
         
         # Update stats
         self._stats["queries_processed"] += 1
         self._stats["total_retrieval_time_ms"] += retrieve_time
         
         return RAGResult(
-            query=query,
-            documents=documents,
+            _query = query,
+            _documents = documents,
             context=context,
-            total_tokens=token_count,
-            retrieval_time_ms=retrieve_time,
-            embedding_time_ms=embed_time,
-            total_time_ms=total_time,
+            _total_tokens = token_count,
+            _retrieval_time_ms = retrieve_time,
+            _embedding_time_ms = embed_time,
+            _total_time_ms = total_time,
         )
     
-    def _assemble_context(self, documents: List[SearchResult]) -> tuple[str, int]:
+    def _assemble_context(self, _documents: List[SearchResult]) -> tuple[str, int]:
         """
         Assemble context from retrieved documents.
         
         Token-aware assembly that respects max_context_tokens.
         """
-        max_tokens = self.config.max_context_tokens - self.config.context_window_buffer
+        _max_tokens = self.config.max_context_tokens - self.config.context_window_buffer
         
-        context_parts = []
-        total_tokens = 0
+        _context_parts = []
+        _total_tokens = 0
         
         for doc in documents:
             # Estimate tokens (rough: 1 token ≈ 4 characters)
-            doc_tokens = len(doc.content) // 4
+            _doc_tokens = len(doc.content) // 4
             
             if total_tokens + doc_tokens > max_tokens:
                 # Truncate to fit
-                remaining_tokens = max_tokens - total_tokens
+                _remaining_tokens = max_tokens - total_tokens
                 if remaining_tokens > 50:
-                    truncated_content = doc.content[:remaining_tokens * 4]
+                    _truncated_content = doc.content[:remaining_tokens * 4]
                     context_parts.append(f"[Document {doc.id}]\n{truncated_content}...")
                     total_tokens += remaining_tokens
                 break
             
             # Build document entry
-            parts = []
+            _parts = []
             
             if self.config.include_source_paths and doc.source_path:
                 parts.append(f"Source: {doc.source_path}")
@@ -425,26 +397,26 @@ class RAGPipeline:
             
             parts.append(doc.content)
             
-            doc_text = "\n".join(parts)
+            _doc_text = "\n".join(parts)
             context_parts.append(doc_text)
             total_tokens += doc_tokens
         
-        context = "\n\n---\n\n".join(context_parts)
+        _context = "\n\n---\n\n".join(context_parts)
         return context, total_tokens
     
-    async def _persist_document(self, doc: ProcessedDocument) -> None:
+    async def _persist_document(self, _doc: ProcessedDocument) -> None:
         """Persist processed document to disk."""
         import json
         
-        path = Path(self.config.processed_dir) / f"{doc.id}.json"
+        _path = Path(self.config.processed_dir) / f"{doc.id}.json"
         with open(path, "w") as f:
             json.dump(doc.to_dict(), f, indent=2)
     
     def get_stats(self) -> Dict[str, Any]:
         """Get pipeline statistics."""
-        avg_retrieval_time = 0
+        _avg_retrieval_time = 0
         if self._stats["queries_processed"] > 0:
-            avg_retrieval_time = (
+            _avg_retrieval_time = (
                 self._stats["total_retrieval_time_ms"] / 
                 self._stats["queries_processed"]
             )

@@ -42,7 +42,7 @@ _tracer: trace.Tracer | None = None
 _config: TracingConfig | None = None
 
 
-def init_tracing(config: TracingConfig | None = None) -> trace.Tracer:
+def init_tracing(_config: TracingConfig | None) -> trace.Tracer:
     """
     Initialize OpenTelemetry tracing.
     
@@ -57,26 +57,26 @@ def init_tracing(config: TracingConfig | None = None) -> trace.Tracer:
     if _tracer is not None:
         return _tracer
     
-    config = config or TracingConfig()
+    _config = config or TracingConfig()
     _config = config
     
     # Create resource with service metadata
-    resource = Resource.create({
+    _resource = Resource.create({
         "service.name": config.service_name,
         "service.version": config.service_version,
         "deployment.environment": config.environment,
     })
     
     # Create tracer provider
-    provider = TracerProvider(resource=resource)
+    _provider = TracerProvider(resource=resource)
     
     # Add exporters
     if config.otlp_endpoint:
-        otlp_exporter = OTLPSpanExporter(endpoint=config.otlp_endpoint)
+        _otlp_exporter = OTLPSpanExporter(endpoint=config.otlp_endpoint)
         provider.add_span_processor(BatchSpanProcessor(otlp_exporter))
     
     if config.console_export:
-        console_exporter = ConsoleSpanExporter()
+        _console_exporter = ConsoleSpanExporter()
         provider.add_span_processor(BatchSpanProcessor(console_exporter))
     
     # Set global tracer provider
@@ -141,11 +141,7 @@ class SpanAttributes:
 
 # ============== TRACING DECORATORS ==============
 
-def traced(
-    name: str | None = None,
-    kind: trace.SpanKind = trace.SpanKind.INTERNAL,
-    attributes: dict[str, Any] | None = None,
-) -> Callable[[F], F]:
+def traced(_name: str | None, _kind: trace.SpanKind, _attributes: dict[str, _Any] | None) -> Callable[[F], F]:
     """
     Decorator to trace a function as a span.
     
@@ -157,19 +153,19 @@ def traced(
     Returns:
         Decorated function.
     """
-    def decorator(func: F) -> F:
-        span_name = name or func.__name__
+    def decorator(_func: F) -> F:
+        _span_name = name or func.__name__
         
         @wraps(func)
-        def sync_wrapper(*args, **kwargs):
-            tracer = get_tracer()
+        def sync_wrapper(_*args, _**kwargs):
+            _tracer = get_tracer()
             with tracer.start_as_current_span(
                 span_name,
-                kind=kind,
-                attributes=attributes,
+                _kind = kind,
+                _attributes = attributes,
             ) as span:
                 try:
-                    result = func(*args, **kwargs)
+                    _result = func(*args, **kwargs)
                     span.set_status(Status(StatusCode.OK))
                     return result
                 except Exception as e:
@@ -178,15 +174,15 @@ def traced(
                     raise
         
         @wraps(func)
-        async def async_wrapper(*args, **kwargs):
-            tracer = get_tracer()
+        async def async_wrapper(_*args, _**kwargs):
+            _tracer = get_tracer()
             with tracer.start_as_current_span(
                 span_name,
-                kind=kind,
-                attributes=attributes,
+                _kind = kind,
+                _attributes = attributes,
             ) as span:
                 try:
-                    result = await func(*args, **kwargs)
+                    _result = await func(*args, **kwargs)
                     span.set_status(Status(StatusCode.OK))
                     return result
                 except Exception as e:
@@ -202,9 +198,7 @@ def traced(
     return decorator
 
 
-def traced_agent_method(
-    operation: str,
-) -> Callable[[F], F]:
+def traced_agent_method(_operation: str) -> Callable[[F], F]:
     """
     Decorator for agent methods with standard agent attributes.
     
@@ -214,24 +208,24 @@ def traced_agent_method(
     Returns:
         Decorated method.
     """
-    def decorator(func: F) -> F:
+    def decorator(_func: F) -> F:
         @wraps(func)
-        def wrapper(self, *args, **kwargs):
-            tracer = get_tracer()
-            agent_id = getattr(self, "agent_id", "unknown")
-            agent_type = getattr(self, "agent_type", "unknown")
+        def wrapper(self, _*args, _**kwargs):
+            _tracer = get_tracer()
+            _agent_id = getattr(self, "agent_id", "unknown")
+            _agent_type = getattr(self, "agent_type", "unknown")
             
             with tracer.start_as_current_span(
                 f"agent.{agent_type}.{operation}",
-                kind=trace.SpanKind.INTERNAL,
-                attributes={
+                _kind = trace.SpanKind.INTERNAL,
+                _attributes = {
                     SpanAttributes.AGENT_ID: agent_id,
                     SpanAttributes.AGENT_TYPE: agent_type,
                     "operation": operation,
                 },
             ) as span:
                 try:
-                    result = func(self, *args, **kwargs)
+                    _result = func(self, *args, **kwargs)
                     span.set_status(Status(StatusCode.OK))
                     return result
                 except Exception as e:
@@ -240,22 +234,22 @@ def traced_agent_method(
                     raise
         
         @wraps(func)
-        async def async_wrapper(self, *args, **kwargs):
-            tracer = get_tracer()
-            agent_id = getattr(self, "agent_id", "unknown")
-            agent_type = getattr(self, "agent_type", "unknown")
+        async def async_wrapper(self, _*args, _**kwargs):
+            _tracer = get_tracer()
+            _agent_id = getattr(self, "agent_id", "unknown")
+            _agent_type = getattr(self, "agent_type", "unknown")
             
             with tracer.start_as_current_span(
                 f"agent.{agent_type}.{operation}",
-                kind=trace.SpanKind.INTERNAL,
-                attributes={
+                _kind = trace.SpanKind.INTERNAL,
+                _attributes = {
                     SpanAttributes.AGENT_ID: agent_id,
                     SpanAttributes.AGENT_TYPE: agent_type,
                     "operation": operation,
                 },
             ) as span:
                 try:
-                    result = await func(self, *args, **kwargs)
+                    _result = await func(self, *args, **kwargs)
                     span.set_status(Status(StatusCode.OK))
                     return result
                 except Exception as e:
@@ -277,11 +271,7 @@ LATENCY_BASELINE_MS = 100  # <100ms requirement
 
 
 @contextmanager
-def track_latency(
-    operation: str,
-    baseline_ms: float = LATENCY_BASELINE_MS,
-    attributes: dict[str, Any] | None = None,
-):
+def track_latency(_operation: str, _baseline_ms: float, _attributes: dict[str, _Any] | None):
     """
     Context manager to track latency and flag if baseline exceeded.
     
@@ -293,27 +283,27 @@ def track_latency(
     Yields:
         Span for adding additional attributes.
     """
-    tracer = get_tracer()
-    attrs = attributes or {}
+    _tracer = get_tracer()
+    _attrs = attributes or {}
     attrs[SpanAttributes.LATENCY_BASELINE_MS] = baseline_ms
     
-    start_time = time.perf_counter()
+    _start_time = time.perf_counter()
     
     with tracer.start_as_current_span(
         f"latency.{operation}",
-        attributes=attrs,
+        _attributes = attrs,
     ) as span:
         try:
             yield span
             
-            elapsed_ms = (time.perf_counter() - start_time) * 1000
+            _elapsed_ms = (time.perf_counter() - start_time) * 1000
             span.set_attribute(SpanAttributes.MESSAGE_LATENCY_MS, elapsed_ms)
             
             if elapsed_ms > baseline_ms:
                 span.set_attribute(SpanAttributes.LATENCY_EXCEEDED, True)
                 span.add_event(
                     "latency_baseline_exceeded",
-                    attributes={
+                    _attributes = {
                         "actual_ms": elapsed_ms,
                         "baseline_ms": baseline_ms,
                         "overage_ms": elapsed_ms - baseline_ms,
@@ -328,19 +318,14 @@ def track_latency(
                 span.set_status(Status(StatusCode.OK))
                 
         except Exception as e:
-            elapsed_ms = (time.perf_counter() - start_time) * 1000
+            _elapsed_ms = (time.perf_counter() - start_time) * 1000
             span.set_attribute(SpanAttributes.MESSAGE_LATENCY_MS, elapsed_ms)
             span.set_status(Status(StatusCode.ERROR, str(e)))
             span.record_exception(e)
             raise
 
 
-def trace_message_flow(
-    sender_id: str,
-    receiver_id: str,
-    message_type: str,
-    correlation_id: str | None = None,
-) -> trace.Span:
+def trace_message_flow(_sender_id: str, _receiver_id: str, _message_type: str, _correlation_id: str | None) -> trace.Span:
     """
     Create a span for A2A message flow tracing.
     
@@ -353,9 +338,9 @@ def trace_message_flow(
     Returns:
         Span for the message flow.
     """
-    tracer = get_tracer()
+    _tracer = get_tracer()
     
-    attributes = {
+    _attributes = {
         SpanAttributes.MESSAGE_SENDER: sender_id,
         SpanAttributes.MESSAGE_RECEIVER: receiver_id,
         SpanAttributes.MESSAGE_TYPE: message_type,
@@ -366,18 +351,14 @@ def trace_message_flow(
     
     return tracer.start_as_current_span(
         f"message.{message_type}",
-        kind=trace.SpanKind.PRODUCER,
-        attributes=attributes,
+        _kind = trace.SpanKind.PRODUCER,
+        _attributes = attributes,
     )
 
 
 # ============== CONSENSUS TRACING ==============
 
-def trace_consensus_round(
-    consensus_id: str,
-    round_number: int,
-    participants: list[str],
-) -> trace.Span:
+def trace_consensus_round(_consensus_id: str, _round_number: int, _participants: list[str]) -> trace.Span:
     """
     Create a span for consensus round tracing.
     
@@ -389,12 +370,12 @@ def trace_consensus_round(
     Returns:
         Span for the consensus round.
     """
-    tracer = get_tracer()
+    _tracer = get_tracer()
     
     return tracer.start_as_current_span(
         f"consensus.round_{round_number}",
-        kind=trace.SpanKind.INTERNAL,
-        attributes={
+        _kind = trace.SpanKind.INTERNAL,
+        _attributes = {
             SpanAttributes.CONSENSUS_ID: consensus_id,
             SpanAttributes.CONSENSUS_ROUND: round_number,
             "consensus.participants": ",".join(participants),
@@ -402,11 +383,7 @@ def trace_consensus_round(
     )
 
 
-def record_vote(
-    agent_id: str,
-    vote: str,
-    reasoning: str | None = None,
-) -> None:
+def record_vote(_agent_id: str, _vote: str, _reasoning: str | None) -> None:
     """
     Record a consensus vote in the current span.
     
@@ -415,11 +392,11 @@ def record_vote(
         vote: The vote value (approve, reject, abstain).
         reasoning: Optional reasoning for the vote.
     """
-    current_span = trace.get_current_span()
+    _current_span = trace.get_current_span()
     
     current_span.add_event(
         "consensus_vote",
-        attributes={
+        _attributes = {
             SpanAttributes.AGENT_ID: agent_id,
             SpanAttributes.CONSENSUS_VOTE: vote,
             "vote.reasoning": reasoning or "",

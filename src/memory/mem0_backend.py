@@ -13,7 +13,7 @@ This adapter integrates mem0 with the existing Heretek Swarm memory interface.
 
 import os
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional
+from typing import Dict, List, Optional
 from uuid import UUID, uuid4
 
 import structlog
@@ -21,7 +21,7 @@ from pydantic import BaseModel, Field
 
 from .base import MemoryEntry, MemoryQuery, MemoryResult, MemoryTier, MemoryType
 
-logger = structlog.get_logger()
+_logger = structlog.get_logger()
 
 
 class Mem0Config(BaseModel):
@@ -47,7 +47,7 @@ class Mem0Config(BaseModel):
 
     def get_mem0_config(self) -> dict:
         """Convert to mem0 configuration format"""
-        api_key = self.openai_api_key or os.getenv("OPENAI_API_KEY")
+        _api_key = self.openai_api_key or os.getenv("OPENAI_API_KEY")
 
         return {
             "vector_store": {
@@ -91,10 +91,7 @@ class Mem0Backend:
     - Preserves metadata and memory types
     """
 
-    def __init__(
-        self,
-        config: Optional[Mem0Config] = None,
-    ):
+    def __init__(self, _config: Optional[Mem0Config]):
         self.config = config or Mem0Config()
         self._memory = None
         self._initialized = False
@@ -103,7 +100,7 @@ class Mem0Backend:
         self._operation_times: List[float] = []
         self._max_samples = 1000
 
-    def _track_latency(self, elapsed_ms: float) -> None:
+    def _track_latency(self, _elapsed_ms: float) -> None:
         """Track operation latency"""
         self._operation_times.append(elapsed_ms)
         if len(self._operation_times) > self._max_samples:
@@ -122,14 +119,14 @@ class Mem0Backend:
 
             logger.info(
                 "mem0_backend_initialized",
-                vector_store=self.config.vector_store_provider,
-                llm_model=self.config.llm_model,
+                _vector_store = self.config.vector_store_provider,
+                _llm_model = self.config.llm_model,
             )
 
         except ImportError:
             logger.warning(
                 "mem0_not_installed",
-                message="pip install mem0ai to use mem0 backend",
+                _message = "pip install mem0ai to use mem0 backend",
             )
             raise
         except Exception as e:
@@ -142,10 +139,7 @@ class Mem0Backend:
         self._initialized = False
         logger.info("mem0_backend_shutdown")
 
-    async def store(
-        self,
-        entry: MemoryEntry,
-    ) -> str:
+    async def store(self, _entry: MemoryEntry) -> str:
         """
         Store a memory entry using mem0.
 
@@ -158,13 +152,13 @@ class Mem0Backend:
         if not self._initialized:
             await self.initialize()
 
-        start_time = datetime.now(timezone.utc)
+        _start_time = datetime.now(timezone.utc)
 
         try:
             # Store in mem0 with agent_id as user_id
-            result = self._memory.add(
+            _result = self._memory.add(
                 entry.content,
-                user_id=entry.agent_id,
+                _user_id = entry.agent_id,
                 metadata={
                     "memory_type": entry.memory_type.value,
                     "session_id": str(entry.session_id) if entry.session_id else None,
@@ -177,17 +171,17 @@ class Mem0Backend:
                 }
             )
 
-            elapsed_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
+            _elapsed_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
             self._track_latency(elapsed_ms)
 
             # Extract memory ID from result
-            memory_id = result.get("id", str(entry.id))
+            _memory_id = result.get("id", str(entry.id))
 
             logger.debug(
                 "mem0_memory_stored",
-                memory_id=memory_id,
+                _memory_id = memory_id,
                 agent_id=entry.agent_id,
-                elapsed_ms=elapsed_ms,
+                _elapsed_ms = elapsed_ms,
             )
 
             return memory_id
@@ -195,30 +189,24 @@ class Mem0Backend:
         except Exception as e:
             logger.error(
                 "mem0_store_failed",
-                entry_id=str(entry.id),
-                error=str(e),
+                _entry_id = str(entry.id),
+                _error = str(e),
             )
             raise
 
-    async def store_batch(
-        self,
-        entries: List[MemoryEntry],
-    ) -> List[str]:
+    async def store_batch(self, _entries: List[MemoryEntry]) -> List[str]:
         """Store multiple entries efficiently"""
         if not entries:
             return []
 
-        memory_ids = []
+        _memory_ids = []
         for entry in entries:
-            memory_id = await self.store(entry)
+            _memory_id = await self.store(entry)
             memory_ids.append(memory_id)
 
         return memory_ids
 
-    async def search(
-        self,
-        query: MemoryQuery,
-    ) -> MemoryResult:
+    async def search(self, _query: MemoryQuery) -> MemoryResult:
         """
         Search memories using mem0 semantic search.
 
@@ -231,62 +219,59 @@ class Mem0Backend:
         if not self._initialized:
             await self.initialize()
 
-        start_time = datetime.now(timezone.utc)
+        _start_time = datetime.now(timezone.utc)
 
         try:
             # Build mem0 search parameters
-            results = []
+            _results = []
 
             if query.query_text:
                 # Semantic search with mem0
                 for agent_id in (query.agent_ids or ["default"]):
-                    search_results = self._memory.search(
+                    _search_results = self._memory.search(
                         query.query_text,
-                        user_id=agent_id,
-                        limit=query.limit,
+                        _user_id = agent_id,
+                        _limit = query.limit,
                     )
 
                     for result in search_results.get("results", []):
-                        entry = self._mem0_result_to_entry(result, agent_id)
+                        _entry = self._mem0_result_to_entry(result, agent_id)
                         results.append(entry)
 
             # Sort by score/importance
             results.sort(key=lambda e: e.importance_score, reverse=True)
 
             # Apply pagination
-            total_count = len(results)
-            paginated = results[query.offset:query.offset + query.limit]
+            _total_count = len(results)
+            _paginated = results[query.offset:query.offset + query.limit]
 
-            elapsed_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
+            _elapsed_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
             self._track_latency(elapsed_ms)
 
             logger.debug(
                 "mem0_search_completed",
-                query=query.query_text,
-                total_count=total_count,
-                returned_count=len(paginated),
-                elapsed_ms=elapsed_ms,
+                _query = query.query_text,
+                _total_count = total_count,
+                _returned_count = len(paginated),
+                _elapsed_ms = elapsed_ms,
             )
 
             return MemoryResult(
-                entries=paginated,
-                total_count=total_count,
-                offset=query.offset,
-                limit=query.limit,
+                _entries = paginated,
+                _total_count = total_count,
+                _offset = query.offset,
+                _limit = query.limit,
             )
 
         except Exception as e:
             logger.error(
                 "mem0_search_failed",
-                query=query.query_text,
-                error=str(e),
+                _query = query.query_text,
+                _error = str(e),
             )
             raise
 
-    async def get_all(
-        self,
-        agent_id: str,
-    ) -> List[MemoryEntry]:
+    async def get_all(self, _agent_id: str) -> List[MemoryEntry]:
         """
         Get all memories for an agent.
 
@@ -299,24 +284,24 @@ class Mem0Backend:
         if not self._initialized:
             await self.initialize()
 
-        start_time = datetime.now(timezone.utc)
+        _start_time = datetime.now(timezone.utc)
 
         try:
-            results = self._memory.get_all(user_id=agent_id)
+            _results = self._memory.get_all(user_id=agent_id)
 
-            entries = []
+            _entries = []
             for result in results.get("results", []):
-                entry = self._mem0_result_to_entry(result, agent_id)
+                _entry = self._mem0_result_to_entry(result, agent_id)
                 entries.append(entry)
 
-            elapsed_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
+            _elapsed_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
             self._track_latency(elapsed_ms)
 
             logger.debug(
                 "mem0_get_all_completed",
-                agent_id=agent_id,
-                count=len(entries),
-                elapsed_ms=elapsed_ms,
+                _agent_id = agent_id,
+                _count = len(entries),
+                _elapsed_ms = elapsed_ms,
             )
 
             return entries
@@ -324,15 +309,12 @@ class Mem0Backend:
         except Exception as e:
             logger.error(
                 "mem0_get_all_failed",
-                agent_id=agent_id,
-                error=str(e),
+                _agent_id = agent_id,
+                _error = str(e),
             )
             raise
 
-    async def delete(
-        self,
-        memory_id: str,
-    ) -> bool:
+    async def delete(self, _memory_id: str) -> bool:
         """
         Delete a memory by ID.
 
@@ -345,18 +327,18 @@ class Mem0Backend:
         if not self._initialized:
             await self.initialize()
 
-        start_time = datetime.now(timezone.utc)
+        _start_time = datetime.now(timezone.utc)
 
         try:
             self._memory.delete(memory_id)
 
-            elapsed_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
+            _elapsed_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
             self._track_latency(elapsed_ms)
 
             logger.debug(
                 "mem0_memory_deleted",
-                memory_id=memory_id,
-                elapsed_ms=elapsed_ms,
+                _memory_id = memory_id,
+                _elapsed_ms = elapsed_ms,
             )
 
             return True
@@ -364,36 +346,32 @@ class Mem0Backend:
         except Exception as e:
             logger.error(
                 "mem0_delete_failed",
-                memory_id=memory_id,
-                error=str(e),
+                _memory_id = memory_id,
+                _error = str(e),
             )
             return False
 
-    def _mem0_result_to_entry(
-        self,
-        result: dict,
-        agent_id: str,
-    ) -> MemoryEntry:
+    def _mem0_result_to_entry(self, _result: dict, _agent_id: str) -> MemoryEntry:
         """Convert mem0 result to MemoryEntry"""
-        metadata = result.get("metadata", {})
+        _metadata = result.get("metadata", {})
 
         return MemoryEntry(
-            id=UUID(metadata.get("heretek_id", str(uuid4()))),
-            agent_id=agent_id,
-            session_id=UUID(metadata["session_id"]) if metadata.get("session_id") else None,
-            content=result.get("memory", ""),
-            content_type="text/plain",
-            metadata={k: v for k, v in metadata.items()
+            _id = UUID(metadata.get("heretek_id", str(uuid4()))),
+            _agent_id = agent_id,
+            _session_id = UUID(metadata["session_id"]) if metadata.get("session_id") else None,
+            _content = result.get("memory", ""),
+            _content_type = "text/plain",
+            _metadata = {k: v for k, v in metadata.items()
                      if k not in ["memory_type", "session_id", "tags", "importance_score",
                                   "parent_id", "source_agent", "heretek_id"]},
-            memory_type=MemoryType(metadata.get("memory_type", "semantic")),
-            tier=MemoryTier.PERSISTENT,
-            tags=metadata.get("tags", []),
-            parent_id=UUID(metadata["parent_id"]) if metadata.get("parent_id") else None,
-            source_agent=metadata.get("source_agent"),
-            created_at=datetime.fromisoformat(result["created_at"]) if result.get("created_at") else datetime.now(timezone.utc),
-            updated_at=datetime.fromisoformat(result["updated_at"]) if result.get("updated_at") else datetime.now(timezone.utc),
-            importance_score=metadata.get("importance_score", 0.5),
+            _memory_type = MemoryType(metadata.get("memory_type", "semantic")),
+            _tier = MemoryTier.PERSISTENT,
+            _tags = metadata.get("tags", []),
+            _parent_id = UUID(metadata["parent_id"]) if metadata.get("parent_id") else None,
+            _source_agent = metadata.get("source_agent"),
+            _created_at = datetime.fromisoformat(result["created_at"]) if result.get("created_at") else datetime.now(timezone.utc),
+            _updated_at = datetime.fromisoformat(result["updated_at"]) if result.get("updated_at") else datetime.now(timezone.utc),
+            _importance_score = metadata.get("importance_score", 0.5),
         )
 
     def get_latency_stats(self) -> Dict[str, float]:
@@ -401,8 +379,8 @@ class Mem0Backend:
         if not self._operation_times:
             return {"p50": 0, "p95": 0, "p99": 0, "avg": 0}
 
-        sorted_times = sorted(self._operation_times)
-        count = len(sorted_times)
+        _sorted_times = sorted(self._operation_times)
+        _count = len(sorted_times)
 
         return {
             "p50": sorted_times[int(count * 0.5)],

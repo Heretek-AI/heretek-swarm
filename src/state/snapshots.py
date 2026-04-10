@@ -7,7 +7,6 @@ for the multi-agent system.
 
 import asyncio
 import gzip
-import hashlib
 import json
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
@@ -28,7 +27,7 @@ from .base import (
     StateTransition
 )
 
-logger = structlog.get_logger()
+_logger = structlog.get_logger()
 
 
 class SnapshotConfig(BaseModel):
@@ -62,7 +61,7 @@ class SnapshotStore:
     Supports both file-based and database storage.
     """
     
-    def __init__(self, config: SnapshotConfig):
+    def __init__(self, _config: SnapshotConfig):
         self.config = config
         self.storage_path = Path(config.storage_path)
         self._ensure_storage()
@@ -76,37 +75,33 @@ class SnapshotStore:
         (self.storage_path / "incremental").mkdir(exist_ok=True)
         (self.storage_path / "temp").mkdir(exist_ok=True)
     
-    def _get_snapshot_path(
-        self,
-        snapshot_id: UUID,
-        snapshot_type: str = "full"
-    ) -> Path:
+    def _get_snapshot_path(self, _snapshot_id: UUID, _snapshot_type: str) -> Path:
         """Get path for snapshot file"""
-        filename = f"{snapshot_id}.json"
+        _filename = f"{snapshot_id}.json"
         if self.config.compress_snapshots:
             filename += ".gz"
         
         return self.storage_path / snapshot_type / filename
     
-    async def save(self, snapshot: StateSnapshot) -> int:
+    async def save(self, _snapshot: StateSnapshot) -> int:
         """Save snapshot to storage"""
-        path = self._get_snapshot_path(
+        _path = self._get_snapshot_path(
             snapshot.snapshot_id,
             snapshot.snapshot_type
         )
         
         # Serialize
-        data = snapshot.model_dump_json(indent=2)
-        bytes_data = data.encode("utf-8")
+        _data = snapshot.model_dump_json(indent=2)
+        _bytes_data = data.encode("utf-8")
         
         # Compress if enabled
         if self.config.compress_snapshots:
-            bytes_data = gzip.compress(bytes_data)
+            _bytes_data = gzip.compress(bytes_data)
         
         # Write atomically
-        temp_path = self.storage_path / "temp" / f"{snapshot.snapshot_id}.tmp"
+        _temp_path = self.storage_path / "temp" / f"{snapshot.snapshot_id}.tmp"
         
-        loop = asyncio.get_event_loop()
+        _loop = asyncio.get_event_loop()
         await loop.run_in_executor(
             None,
             lambda: temp_path.write_bytes(bytes_data)
@@ -120,52 +115,48 @@ class SnapshotStore:
         
         return len(bytes_data)
     
-    async def load(self, snapshot_id: UUID) -> Optional[StateSnapshot]:
+    async def load(self, _snapshot_id: UUID) -> Optional[StateSnapshot]:
         """Load snapshot from storage"""
         # Try full first, then incremental
         for snapshot_type in ["full", "incremental"]:
-            path = self._get_snapshot_path(snapshot_id, snapshot_type)
+            _path = self._get_snapshot_path(snapshot_id, snapshot_type)
             
             if path.exists():
-                loop = asyncio.get_event_loop()
-                bytes_data = await loop.run_in_executor(None, path.read_bytes)
+                _loop = asyncio.get_event_loop()
+                _bytes_data = await loop.run_in_executor(None, path.read_bytes)
                 
                 # Decompress if needed
                 if self.config.compress_snapshots:
-                    bytes_data = gzip.decompress(bytes_data)
+                    _bytes_data = gzip.decompress(bytes_data)
                 
-                data = bytes_data.decode("utf-8")
+                _data = bytes_data.decode("utf-8")
                 return StateSnapshot.model_validate_json(data)
         
         return None
     
-    async def delete(self, snapshot_id: UUID) -> bool:
+    async def delete(self, _snapshot_id: UUID) -> bool:
         """Delete snapshot from storage"""
         for snapshot_type in ["full", "incremental"]:
-            path = self._get_snapshot_path(snapshot_id, snapshot_type)
+            _path = self._get_snapshot_path(snapshot_id, snapshot_type)
             
             if path.exists():
-                loop = asyncio.get_event_loop()
+                _loop = asyncio.get_event_loop()
                 await loop.run_in_executor(None, path.unlink)
                 return True
         
         return False
     
-    async def list_snapshots(
-        self,
-        scope: Optional[str] = None,
-        limit: int = 100
-    ) -> List[Dict[str, Any]]:
+    async def list_snapshots(self, _scope: Optional[str], _limit: int) -> List[Dict[str, Any]]:
         """List available snapshots"""
-        snapshots = []
+        _snapshots = []
         
         for snapshot_type in ["full", "incremental"]:
-            type_path = self.storage_path / snapshot_type
+            _type_path = self.storage_path / snapshot_type
             
             for path in type_path.glob("*.json*" if not self.config.compress_snapshots else "*.gz"):
                 try:
                     # Parse snapshot ID from filename
-                    snapshot_id_str = path.stem.replace(".json", "")
+                    _snapshot_id_str = path.stem.replace(".json", "")
                     snapshot_id = UUID(snapshot_id_str)
                     
                     # Load just metadata (first few KB)
@@ -183,7 +174,7 @@ class SnapshotStore:
                 except Exception as e:
                     logger.warning(
                         "snapshot_list_error",
-                        path=str(path),
+                        _path = str(path),
                         error=str(e)
                     )
         
@@ -205,7 +196,7 @@ class SnapshotManager:
     - Compression and retention
     """
     
-    def __init__(self, config: Optional[SnapshotConfig] = None):
+    def __init__(self, _config: Optional[SnapshotConfig]):
         self.config = config or SnapshotConfig()
         self.store = SnapshotStore(self.config)
         
@@ -231,7 +222,7 @@ class SnapshotManager:
     async def initialize(self) -> None:
         """Initialize snapshot manager"""
         # Load existing snapshots into index
-        snapshots = await self.store.list_snapshots(limit=1000)
+        _snapshots = await self.store.list_snapshots(limit=1000)
         
         for meta in snapshots:
             snapshot_id = UUID(meta["snapshot_id"])
@@ -266,9 +257,9 @@ class SnapshotManager:
         
         logger.info(
             "snapshot_manager_initialized",
-            existing_snapshots=len(snapshots),
+            _existing_snapshots = len(snapshots),
             auto_snapshot=self.config.auto_snapshot_enabled,
-            auto_cleanup=self.config.auto_cleanup_enabled
+            _auto_cleanup = self.config.auto_cleanup_enabled
         )
     
     async def shutdown(self) -> None:
@@ -285,7 +276,7 @@ class SnapshotManager:
         
         logger.info("snapshot_manager_shutdown")
     
-    def _cache_get(self, snapshot_id: UUID) -> Optional[StateSnapshot]:
+    def _cache_get(self, _snapshot_id: UUID) -> Optional[StateSnapshot]:
         """Get from cache"""
         if snapshot_id in self._cache:
             # Update access order
@@ -295,28 +286,17 @@ class SnapshotManager:
             return self._cache[snapshot_id]
         return None
     
-    def _cache_set(self, snapshot: StateSnapshot) -> None:
+    def _cache_set(self, _snapshot: StateSnapshot) -> None:
         """Set in cache with LRU eviction"""
         # Evict if at capacity
         while len(self._cache) >= self._cache_size and self._cache_order:
-            oldest = self._cache_order.pop(0)
+            _oldest = self._cache_order.pop(0)
             del self._cache[oldest]
         
         self._cache[snapshot.snapshot_id] = snapshot
         self._cache_order.append(snapshot.snapshot_id)
     
-    async def create_snapshot(
-        self,
-        system_state: Optional[SystemState] = None,
-        agent_states: Optional[Dict[str, AgentState]] = None,
-        conversation_states: Optional[Dict[str, ConversationState]] = None,
-        message_lineage: Optional[Dict[str, Any]] = None,
-        scope: str = "system",
-        scope_ids: Optional[List[str]] = None,
-        trigger: str = "manual",
-        description: Optional[str] = None,
-        snapshot_type: str = "full"
-    ) -> StateSnapshot:
+    async def create_snapshot(self, _system_state: Optional[SystemState], _agent_states: Optional[Dict[str, _AgentState]], _conversation_states: Optional[Dict[str, _ConversationState]], _message_lineage: Optional[Dict[str, _Any]], _scope: str, _scope_ids: Optional[List[str]], _trigger: str, _description: Optional[str], _snapshot_type: str) -> StateSnapshot:
         """
         Create a new state snapshot.
         
@@ -336,21 +316,21 @@ class SnapshotManager:
         """
         snapshot = StateSnapshot(
             snapshot_id=uuid4(),
-            snapshot_type=snapshot_type,
+            _snapshot_type = snapshot_type,
             scope=scope,
-            scope_ids=scope_ids or [],
+            _scope_ids = scope_ids or [],
             system_state=system_state,
             agent_states=agent_states or {},
             conversation_states=conversation_states or {},
             message_lineage=message_lineage or {},
-            trigger=trigger,
-            description=description
+            _trigger = trigger,
+            _description = description
         )
         
         # Set parent to most recent snapshot of same scope
         if self._by_time:
             for created_at, recent_id in self._by_time:
-                recent = await self.get_snapshot(recent_id)
+                _recent = await self.get_snapshot(recent_id)
                 if recent and recent.scope == scope:
                     snapshot.parent_snapshot_id = recent.snapshot_id
                     break
@@ -360,7 +340,7 @@ class SnapshotManager:
         
         # Set expiration
         snapshot.expires_at = datetime.now(timezone.utc) + timedelta(
-            days=self.config.default_retention_days
+            _days = self.config.default_retention_days
         )
         
         # Save to store
@@ -382,49 +362,42 @@ class SnapshotManager:
         
         logger.info(
             "snapshot_created",
-            snapshot_id=str(snapshot.snapshot_id),
+            _snapshot_id = str(snapshot.snapshot_id),
             scope=scope,
-            trigger=trigger,
+            _trigger = trigger,
             size_bytes=size_bytes
         )
         
         return snapshot
     
-    async def get_snapshot(self, snapshot_id: UUID) -> Optional[StateSnapshot]:
+    async def get_snapshot(self, _snapshot_id: UUID) -> Optional[StateSnapshot]:
         """Get a snapshot by ID"""
         # Check cache
-        cached = self._cache_get(snapshot_id)
+        _cached = self._cache_get(snapshot_id)
         if cached:
             return cached
         
         # Load from store
-        snapshot = await self.store.load(snapshot_id)
+        _snapshot = await self.store.load(snapshot_id)
         if snapshot:
             self._cache_set(snapshot)
         
         return snapshot
     
-    async def get_latest_snapshot(
-        self,
-        scope: str = "system"
-    ) -> Optional[StateSnapshot]:
+    async def get_latest_snapshot(self, _scope: str) -> Optional[StateSnapshot]:
         """Get the most recent snapshot for a scope"""
         for created_at, snapshot_id in self._by_time:
-            snapshot = await self.get_snapshot(snapshot_id)
+            _snapshot = await self.get_snapshot(snapshot_id)
             if snapshot and snapshot.scope == scope:
                 return snapshot
         
         return None
     
-    async def list_snapshots(
-        self,
-        scope: Optional[str] = None,
-        limit: int = 100
-    ) -> List[Dict[str, Any]]:
+    async def list_snapshots(self, _scope: Optional[str], _limit: int) -> List[Dict[str, Any]]:
         """List available snapshots"""
         return await self.store.list_snapshots(scope, limit)
     
-    async def delete_snapshot(self, snapshot_id: UUID) -> bool:
+    async def delete_snapshot(self, _snapshot_id: UUID) -> bool:
         """Delete a snapshot"""
         # Remove from indices
         self._by_time = [
@@ -444,42 +417,38 @@ class SnapshotManager:
             self._cache_order.remove(snapshot_id)
         
         # Delete from store
-        deleted = await self.store.delete(snapshot_id)
+        _deleted = await self.store.delete(snapshot_id)
         
         if deleted:
             logger.info("snapshot_deleted", snapshot_id=str(snapshot_id))
         
         return deleted
     
-    async def compute_diff(
-        self,
-        from_snapshot_id: UUID,
-        to_snapshot_id: UUID
-    ) -> Optional[StateDiff]:
+    async def compute_diff(self, _from_snapshot_id: UUID, _to_snapshot_id: UUID) -> Optional[StateDiff]:
         """
         Compute diff between two snapshots.
         
         Returns the changes needed to go from from_snapshot to to_snapshot.
         """
-        from_snapshot = await self.get_snapshot(from_snapshot_id)
-        to_snapshot = await self.get_snapshot(to_snapshot_id)
+        _from_snapshot = await self.get_snapshot(from_snapshot_id)
+        _to_snapshot = await self.get_snapshot(to_snapshot_id)
         
         if not from_snapshot or not to_snapshot:
             return None
         
-        diff = StateDiff(
-            from_snapshot_id=from_snapshot_id,
-            to_snapshot_id=to_snapshot_id
+        _diff = StateDiff(
+            _from_snapshot_id = from_snapshot_id,
+            _to_snapshot_id = to_snapshot_id
         )
         
         # Diff agent states
-        all_agent_ids = set(from_snapshot.agent_states.keys()) | set(
+        _all_agent_ids = set(from_snapshot.agent_states.keys()) | set(
             to_snapshot.agent_states.keys()
         )
         
         for agent_id in all_agent_ids:
-            from_agent = from_snapshot.agent_states.get(agent_id)
-            to_agent = to_snapshot.agent_states.get(agent_id)
+            _from_agent = from_snapshot.agent_states.get(agent_id)
+            _to_agent = to_snapshot.agent_states.get(agent_id)
             
             if from_agent is None and to_agent:
                 # Added
@@ -497,13 +466,13 @@ class SnapshotManager:
                     }
         
         # Diff conversation states
-        all_conv_ids = set(from_snapshot.conversation_states.keys()) | set(
+        _all_conv_ids = set(from_snapshot.conversation_states.keys()) | set(
             to_snapshot.conversation_states.keys()
         )
         
         for conv_id in all_conv_ids:
-            from_conv = from_snapshot.conversation_states.get(conv_id)
-            to_conv = to_snapshot.conversation_states.get(conv_id)
+            _from_conv = from_snapshot.conversation_states.get(conv_id)
+            _to_conv = to_snapshot.conversation_states.get(conv_id)
             
             if from_conv is None and to_conv:
                 diff.added_conversations[conv_id] = to_conv
@@ -526,25 +495,21 @@ class SnapshotManager:
         
         return diff
     
-    async def apply_diff(
-        self,
-        from_snapshot_id: UUID,
-        diff: StateDiff
-    ) -> Optional[StateSnapshot]:
+    async def apply_diff(self, _from_snapshot_id: UUID, _diff: StateDiff) -> Optional[StateSnapshot]:
         """
         Apply a diff to create a new snapshot.
         
         This is used for incremental snapshot restoration.
         """
-        from_snapshot = await self.get_snapshot(from_snapshot_id)
+        _from_snapshot = await self.get_snapshot(from_snapshot_id)
         
         if not from_snapshot:
             return None
         
         # Start with from snapshot
-        new_agent_states = dict(from_snapshot.agent_states)
-        new_conv_states = dict(from_snapshot.conversation_states)
-        new_message_lineage = dict(from_snapshot.message_lineage)
+        _new_agent_states = dict(from_snapshot.agent_states)
+        _new_conv_states = dict(from_snapshot.conversation_states)
+        _new_message_lineage = dict(from_snapshot.message_lineage)
         
         # Apply additions
         for agent_id, agent_state in diff.added_agents.items():
@@ -573,12 +538,12 @@ class SnapshotManager:
         
         # Create new snapshot
         return await self.create_snapshot(
-            system_state=from_snapshot.system_state,
-            agent_states=new_agent_states,
-            conversation_states=new_conv_states,
-            message_lineage=new_message_lineage,
-            scope=from_snapshot.scope,
-            trigger=f"diff_from_{from_snapshot_id}"
+            _system_state = from_snapshot.system_state,
+            _agent_states = new_agent_states,
+            _conversation_states = new_conv_states,
+            _message_lineage = new_message_lineage,
+            _scope = from_snapshot.scope,
+            _trigger = f"diff_from_{from_snapshot_id}"
         )
     
     async def _auto_snapshot_loop(self) -> None:
@@ -591,8 +556,8 @@ class SnapshotManager:
                 
                 # Create automatic snapshot
                 await self.create_snapshot(
-                    trigger="auto",
-                    description="Automatic scheduled snapshot"
+                    _trigger = "auto",
+                    _description = "Automatic scheduled snapshot"
                 )
                 
             except asyncio.CancelledError:
@@ -607,12 +572,12 @@ class SnapshotManager:
                 # Run cleanup daily
                 await asyncio.sleep(86400)
                 
-                cutoff = datetime.now(timezone.utc) - timedelta(
-                    days=self.config.default_retention_days
+                _cutoff = datetime.now(timezone.utc) - timedelta(
+                    _days = self.config.default_retention_days
                 )
                 
                 # Find expired snapshots
-                to_delete = []
+                _to_delete = []
                 for created_at, snapshot_id in self._by_time:
                     if created_at < cutoff:
                         to_delete.append(snapshot_id)
@@ -623,12 +588,12 @@ class SnapshotManager:
                 
                 # Enforce max snapshots limit
                 while len(self._by_time) > self.config.max_snapshots:
-                    oldest_id = self._by_time[-1][1]
+                    _oldest_id = self._by_time[-1][1]
                     await self.delete_snapshot(oldest_id)
                 
                 logger.info(
                     "snapshot_cleanup_completed",
-                    deleted_count=len(to_delete)
+                    _deleted_count = len(to_delete)
                 )
             
             except asyncio.CancelledError:

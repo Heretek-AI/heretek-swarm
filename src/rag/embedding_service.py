@@ -15,13 +15,13 @@ import os
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Any, Dict, List, Optional, Union
+from typing import Any, Dict, List, Optional
 import asyncio
 import hashlib
 
 import structlog
 
-logger = structlog.get_logger(__name__)
+_logger = structlog.get_logger(__name__)
 
 
 class EmbeddingProvider(Enum):
@@ -89,32 +89,32 @@ class EmbeddingResult:
 class EmbeddingCache:
     """Simple in-memory cache for embeddings."""
     
-    def __init__(self, ttl_seconds: int = 86400):
+    def __init__(self, _ttl_seconds: int):
         self._cache: Dict[str, EmbeddingResult] = {}
         self._ttl = ttl_seconds
     
-    def _hash(self, text: str, model: str) -> str:
+    def _hash(self, _text: str, _model: str) -> str:
         """Generate cache key."""
-        content = f"{model}:{text}"
+        _content = f"{model}:{text}"
         return hashlib.sha256(content.encode()).hexdigest()
     
-    def get(self, text: str, model: str) -> Optional[EmbeddingResult]:
+    def get(self, _text: str, _model: str) -> Optional[EmbeddingResult]:
         """Get cached embedding if not expired."""
-        key = self._hash(text, model)
+        _key = self._hash(text, model)
         if key in self._cache:
-            result = self._cache[key]
+            _result = self._cache[key]
             # Check TTL
-            created = datetime.fromisoformat(result.created_at)
-            age = (datetime.now(timezone.utc) - created).total_seconds()
+            _created = datetime.fromisoformat(result.created_at)
+            _age = (datetime.now(timezone.utc) - created).total_seconds()
             if age < self._ttl:
                 return result
             else:
                 del self._cache[key]
         return None
     
-    def set(self, text: str, model: str, result: EmbeddingResult) -> None:
+    def set(self, _text: str, _model: str, _result: EmbeddingResult) -> None:
         """Cache an embedding."""
-        key = self._hash(text, model)
+        _key = self._hash(text, model)
         self._cache[key] = result
     
     def clear(self) -> None:
@@ -135,7 +135,7 @@ class EmbeddingService:
     Pattern stolen from elizaOS embedding service.
     """
     
-    def __init__(self, config: Optional[EmbeddingConfig] = None):
+    def __init__(self, _config: Optional[EmbeddingConfig]):
         self.config = config or EmbeddingConfig()
         self._cache = EmbeddingCache(self.config.cache_ttl_seconds) if self.config.enable_cache else None
         self._client = None
@@ -163,7 +163,7 @@ class EmbeddingService:
         try:
             from openai import AsyncOpenAI
             
-            api_key = self.config.openai_api_key or os.getenv("OPENAI_API_KEY")
+            _api_key = self.config.openai_api_key or os.getenv("OPENAI_API_KEY")
             if not api_key:
                 raise ValueError("OpenAI API key required")
             
@@ -179,7 +179,7 @@ class EmbeddingService:
             
             self._client = SentenceTransformer(
                 self.config.st_model,
-                device=self.config.st_device,
+                _device = self.config.st_device,
             )
             logger.debug("sentence_transformers_initialized", model=self.config.st_model)
         except ImportError:
@@ -190,7 +190,7 @@ class EmbeddingService:
         try:
             import cohere
             
-            api_key = self.config.cohere_api_key or os.getenv("COHERE_API_KEY")
+            _api_key = self.config.cohere_api_key or os.getenv("COHERE_API_KEY")
             if not api_key:
                 raise ValueError("Cohere API key required")
             
@@ -204,7 +204,7 @@ class EmbeddingService:
         try:
             import voyageai
             
-            api_key = self.config.voyage_api_key or os.getenv("VOYAGE_API_KEY")
+            _api_key = self.config.voyage_api_key or os.getenv("VOYAGE_API_KEY")
             if not api_key:
                 raise ValueError("Voyage API key required")
             
@@ -213,7 +213,7 @@ class EmbeddingService:
         except ImportError:
             raise ImportError("Install voyageai: pip install voyageai")
     
-    async def embed(self, text: str) -> EmbeddingResult:
+    async def embed(self, _text: str) -> EmbeddingResult:
         """
         Generate embedding for a single text.
         
@@ -228,23 +228,23 @@ class EmbeddingService:
         
         # Check cache
         if self._cache:
-            cached = self._cache.get(text, self._get_model_name())
+            _cached = self._cache.get(text, self._get_model_name())
             if cached:
                 return cached
         
         # Generate embedding
         if self.config.provider == EmbeddingProvider.OPENAI:
-            result = await self._embed_openai([text])
-            result = result[0]
+            _result = await self._embed_openai([text])
+            _result = result[0]
         elif self.config.provider == EmbeddingProvider.SENTENCE_TRANSFORMERS:
-            result = await self._embed_st([text])
-            result = result[0]
+            _result = await self._embed_st([text])
+            _result = result[0]
         elif self.config.provider == EmbeddingProvider.COHERE:
-            result = await self._embed_cohere([text])
-            result = result[0]
+            _result = await self._embed_cohere([text])
+            _result = result[0]
         elif self.config.provider == EmbeddingProvider.VOYAGE:
-            result = await self._embed_voyage([text])
-            result = result[0]
+            _result = await self._embed_voyage([text])
+            _result = result[0]
         else:
             raise ValueError(f"Unknown provider: {self.config.provider}")
         
@@ -254,7 +254,7 @@ class EmbeddingService:
         
         return result
     
-    async def embed_batch(self, texts: List[str]) -> List[EmbeddingResult]:
+    async def embed_batch(self, _texts: List[str]) -> List[EmbeddingResult]:
         """
         Generate embeddings for multiple texts.
         
@@ -271,43 +271,43 @@ class EmbeddingService:
             return []
         
         # Check cache for all texts
-        results = [None] * len(texts)
-        uncached_indices = []
-        uncached_texts = []
+        _results = [None] * len(texts)
+        _uncached_indices = []
+        _uncached_texts = []
         
         if self._cache:
-            model = self._get_model_name()
+            _model = self._get_model_name()
             for i, text in enumerate(texts):
-                cached = self._cache.get(text, model)
+                _cached = self._cache.get(text, model)
                 if cached:
                     results[i] = cached
                 else:
                     uncached_indices.append(i)
                     uncached_texts.append(text)
         else:
-            uncached_indices = list(range(len(texts)))
-            uncached_texts = texts
+            _uncached_indices = list(range(len(texts)))
+            _uncached_texts = texts
         
         # Process uncached texts in batches
         if uncached_texts:
             for i in range(0, len(uncached_texts), self.config.batch_size):
                 batch = uncached_texts[i:i + self.config.batch_size]
-                batch_indices = uncached_indices[i:i + self.config.batch_size]
+                _batch_indices = uncached_indices[i:i + self.config.batch_size]
                 
                 if self.config.provider == EmbeddingProvider.OPENAI:
-                    batch_results = await self._embed_openai(batch)
+                    _batch_results = await self._embed_openai(batch)
                 elif self.config.provider == EmbeddingProvider.SENTENCE_TRANSFORMERS:
-                    batch_results = await self._embed_st(batch)
+                    _batch_results = await self._embed_st(batch)
                 elif self.config.provider == EmbeddingProvider.COHERE:
-                    batch_results = await self._embed_cohere(batch)
+                    _batch_results = await self._embed_cohere(batch)
                 elif self.config.provider == EmbeddingProvider.VOYAGE:
-                    batch_results = await self._embed_voyage(batch)
+                    _batch_results = await self._embed_voyage(batch)
                 else:
                     raise ValueError(f"Unknown provider: {self.config.provider}")
                 
                 # Store results
                 for j, result in enumerate(batch_results):
-                    idx = batch_indices[j]
+                    _idx = batch_indices[j]
                     results[idx] = result
                     
                     # Cache
@@ -316,25 +316,25 @@ class EmbeddingService:
         
         return results
     
-    async def _embed_openai(self, texts: List[str]) -> List[EmbeddingResult]:
+    async def _embed_openai(self, _texts: List[str]) -> List[EmbeddingResult]:
         """Generate embeddings using OpenAI."""
-        model = self.config.openai_model
-        results = []
+        _model = self.config.openai_model
+        _results = []
         
         for attempt in range(self.config.max_retries):
             try:
-                response = await self._client.embeddings.create(
-                    input=texts,
-                    model=model,
-                    dimensions=self.config.openai_dimensions,
+                _response = await self._client.embeddings.create(
+                    _input = texts,
+                    _model = model,
+                    _dimensions = self.config.openai_dimensions,
                 )
                 
                 for i, item in enumerate(response.data):
                     results.append(EmbeddingResult(
                         embedding=item.embedding,
-                        text_hash=hashlib.sha256(texts[i].encode()).hexdigest(),
-                        model=model,
-                        dimensions=len(item.embedding),
+                        _text_hash = hashlib.sha256(texts[i].encode()).hexdigest(),
+                        _model = model,
+                        _dimensions = len(item.embedding),
                     ))
                 
                 return results
@@ -344,66 +344,66 @@ class EmbeddingService:
                 else:
                     raise
     
-    async def _embed_st(self, texts: List[str]) -> List[EmbeddingResult]:
+    async def _embed_st(self, _texts: List[str]) -> List[EmbeddingResult]:
         """Generate embeddings using Sentence Transformers."""
-        model = self.config.st_model
+        _model = self.config.st_model
         
         # Run in thread pool since ST is synchronous
-        loop = asyncio.get_event_loop()
+        _loop = asyncio.get_event_loop()
         embeddings = await loop.run_in_executor(
             None,
             lambda: self._client.encode(texts, convert_to_numpy=True),
         )
         
-        results = []
+        _results = []
         for i, embedding in enumerate(embeddings):
             results.append(EmbeddingResult(
                 embedding=embedding.tolist(),
-                text_hash=hashlib.sha256(texts[i].encode()).hexdigest(),
-                model=model,
-                dimensions=len(embedding),
+                _text_hash = hashlib.sha256(texts[i].encode()).hexdigest(),
+                _model = model,
+                _dimensions = len(embedding),
             ))
         
         return results
     
-    async def _embed_cohere(self, texts: List[str]) -> List[EmbeddingResult]:
+    async def _embed_cohere(self, _texts: List[str]) -> List[EmbeddingResult]:
         """Generate embeddings using Cohere."""
-        model = self.config.cohere_model
+        _model = self.config.cohere_model
         
-        response = await self._client.embed(
-            texts=texts,
-            model=model,
-            input_type="search_document",
+        _response = await self._client.embed(
+            _texts = texts,
+            _model = model,
+            _input_type = "search_document",
         )
         
-        results = []
+        _results = []
         for i, embedding in enumerate(response.embeddings):
             results.append(EmbeddingResult(
-                embedding=embedding,
-                text_hash=hashlib.sha256(texts[i].encode()).hexdigest(),
-                model=model,
-                dimensions=len(embedding),
+                _embedding = embedding,
+                _text_hash = hashlib.sha256(texts[i].encode()).hexdigest(),
+                _model = model,
+                _dimensions = len(embedding),
             ))
         
         return results
     
-    async def _embed_voyage(self, texts: List[str]) -> List[EmbeddingResult]:
+    async def _embed_voyage(self, _texts: List[str]) -> List[EmbeddingResult]:
         """Generate embeddings using Voyage AI."""
-        model = self.config.voyage_model
+        _model = self.config.voyage_model
         
-        response = await self._client.embed(
-            texts=texts,
-            model=model,
-            input_type="document",
+        _response = await self._client.embed(
+            _texts = texts,
+            _model = model,
+            _input_type = "document",
         )
         
-        results = []
+        _results = []
         for i, embedding in enumerate(response.embeddings):
             results.append(EmbeddingResult(
-                embedding=embedding,
-                text_hash=hashlib.sha256(texts[i].encode()).hexdigest(),
-                model=model,
-                dimensions=len(embedding),
+                _embedding = embedding,
+                _text_hash = hashlib.sha256(texts[i].encode()).hexdigest(),
+                _model = model,
+                _dimensions = len(embedding),
             ))
         
         return results
@@ -426,7 +426,7 @@ class EmbeddingService:
             return self.config.openai_dimensions
         elif self.config.provider == EmbeddingProvider.SENTENCE_TRANSFORMERS:
             # Common ST model dimensions
-            dims = {
+            _dims = {
                 "all-MiniLM-L6-v2": 384,
                 "all-mpnet-base-v2": 768,
                 "multi-qa-mpnet-base-dot-v1": 768,

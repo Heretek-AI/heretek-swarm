@@ -8,7 +8,7 @@ and state transitions for the multi-agent system.
 import asyncio
 import hashlib
 import json
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Set
 from uuid import UUID, uuid4
 
@@ -30,7 +30,7 @@ from .base import (
 from .lineage import LineageTracker, LineageConfig
 from .snapshots import SnapshotManager, SnapshotConfig
 
-logger = structlog.get_logger()
+_logger = structlog.get_logger()
 
 
 class StateConfig(BaseModel):
@@ -72,7 +72,7 @@ class StateManager:
     - Enables replay and debugging
     """
     
-    def __init__(self, config: Optional[StateConfig] = None):
+    def __init__(self, _config: Optional[StateConfig]):
         self.config = config or StateConfig()
         
         # Initialize subsystems
@@ -100,7 +100,7 @@ class StateManager:
         self._rollbacks = 0
         self._recoveries = 0
     
-    async def initialize(self, initial_system_state: Optional[SystemState] = None) -> None:
+    async def initialize(self, _initial_system_state: Optional[SystemState]) -> None:
         """Initialize state manager"""
         # Initialize subsystems
         await self.snapshots.initialize()
@@ -117,7 +117,7 @@ class StateManager:
             await self._restore_from_snapshot(latest)
             logger.info(
                 "state_restored_from_snapshot",
-                snapshot_id=str(latest.snapshot_id)
+                _snapshot_id = str(latest.snapshot_id)
             )
         
         # Start background sync
@@ -126,8 +126,8 @@ class StateManager:
         
         logger.info(
             "state_manager_initialized",
-            agents=len(self._agents),
-            conversations=len(self._conversations)
+            _agents = len(self._agents),
+            _conversations = len(self._conversations)
         )
     
     async def shutdown(self) -> None:
@@ -151,13 +151,7 @@ class StateManager:
     
     # Agent State Management
     
-    async def register_agent(
-        self,
-        agent_id: str,
-        agent_type: str,
-        parent_agent_id: Optional[str] = None,
-        initial_state: Optional[Dict[str, Any]] = None
-    ) -> AgentState:
+    async def register_agent(self, _agent_id: str, _agent_type: str, _parent_agent_id: Optional[str], _initial_state: Optional[Dict[str, _Any]]) -> AgentState:
         """Register a new agent"""
         if len(self._agents) >= self.config.max_agents:
             raise RuntimeError("Maximum agents limit reached")
@@ -168,7 +162,7 @@ class StateManager:
         # Create agent state
         agent = AgentState(
             agent_id=agent_id,
-            agent_type=agent_type,
+            _agent_type = agent_type,
             parent_agent_id=parent_agent_id,
             working_memory=initial_state or {},
             status=StateStatus.ACTIVE
@@ -186,30 +180,24 @@ class StateManager:
         
         # Record transition
         await self._record_transition(
-            transition_type=TransitionType.INITIALIZE,
+            _transition_type = TransitionType.INITIALIZE,
             agent_id=agent_id,
-            changes={"action": "agent_registered", "agent_type": agent_type}
+            _changes = {"action": "agent_registered", "agent_type": agent_type}
         )
         
         logger.info(
             "agent_registered",
             agent_id=agent_id,
-            agent_type=agent_type
+            _agent_type = agent_type
         )
         
         return agent
     
-    async def get_agent_state(self, agent_id: str) -> Optional[AgentState]:
+    async def get_agent_state(self, _agent_id: str) -> Optional[AgentState]:
         """Get current state of an agent"""
         return self._agents.get(agent_id)
     
-    async def update_agent_state(
-        self,
-        agent_id: str,
-        updates: Dict[str, Any],
-        working_memory_updates: Optional[Dict[str, Any]] = None,
-        context_updates: Optional[Dict[str, Any]] = None
-    ) -> Optional[AgentState]:
+    async def update_agent_state(self, _agent_id: str, _updates: Dict[str, _Any], _working_memory_updates: Optional[Dict[str, _Any]], _context_updates: Optional[Dict[str, _Any]]) -> Optional[AgentState]:
         """Update agent state"""
         agent = self._agents.get(agent_id)
         if not agent:
@@ -227,36 +215,31 @@ class StateManager:
         
         # Record transition
         await self._record_transition(
-            transition_type=TransitionType.UPDATE,
+            _transition_type = TransitionType.UPDATE,
             agent_id=agent_id,
-            changes=updates
+            _changes = updates
         )
         
         self._state_changes += 1
         
         return agent
     
-    async def update_agent_status(
-        self,
-        agent_id: str,
-        status: StateStatus,
-        current_task: Optional[str] = None
-    ) -> Optional[AgentState]:
+    async def update_agent_status(self, _agent_id: str, _status: StateStatus, _current_task: Optional[str]) -> Optional[AgentState]:
         """Update agent status"""
         agent = self._agents.get(agent_id)
         if not agent:
             return None
         
-        old_status = agent.status
+        _old_status = agent.status
         agent.status = status
         agent.current_task = current_task
         agent.touch()
         
         # Record transition
         await self._record_transition(
-            transition_type=TransitionType.UPDATE,
+            _transition_type = TransitionType.UPDATE,
             agent_id=agent_id,
-            changes={
+            _changes = {
                 "status_change": f"{old_status.value} -> {status.value}",
                 "current_task": current_task
             }
@@ -264,7 +247,7 @@ class StateManager:
         
         return agent
     
-    async def deregister_agent(self, agent_id: str) -> bool:
+    async def deregister_agent(self, _agent_id: str) -> bool:
         """Deregister an agent"""
         agent = self._agents.get(agent_id)
         if not agent:
@@ -285,22 +268,16 @@ class StateManager:
         
         # Record transition
         await self._record_transition(
-            transition_type=TransitionType.UPDATE,
+            _transition_type = TransitionType.UPDATE,
             agent_id=agent_id,
-            changes={"action": "agent_deregistered"}
+            _changes = {"action": "agent_deregistered"}
         )
         
         return True
     
     # Conversation State Management
     
-    async def start_conversation(
-        self,
-        initiator_agent_id: str,
-        participant_ids: Optional[Set[str]] = None,
-        topic: Optional[str] = None,
-        goal: Optional[str] = None
-    ) -> ConversationState:
+    async def start_conversation(self, _initiator_agent_id: str, _participant_ids: Optional[Set[str]], _topic: Optional[str], _goal: Optional[str]) -> ConversationState:
         """Start a new conversation"""
         if initiator_agent_id not in self._agents:
             raise ValueError(f"Initiator agent {initiator_agent_id} not registered")
@@ -308,14 +285,14 @@ class StateManager:
         # Create conversation
         conversation = ConversationState(
             conversation_id=uuid4(),
-            initiator_agent_id=initiator_agent_id,
+            _initiator_agent_id = initiator_agent_id,
             participant_ids=participant_ids or {initiator_agent_id},
-            topic=topic,
-            goal=goal,
+            _topic = topic,
+            _goal = goal,
             status=StateStatus.ACTIVE
         )
         
-        conv_id = str(conversation.conversation_id)
+        _conv_id = str(conversation.conversation_id)
         
         # Store
         self._conversations[conv_id] = conversation
@@ -336,9 +313,9 @@ class StateManager:
         
         # Record transition
         await self._record_transition(
-            transition_type=TransitionType.INITIALIZE,
+            _transition_type = TransitionType.INITIALIZE,
             conversation_id=conv_id,
-            changes={
+            _changes = {
                 "action": "conversation_started",
                 "initiator": initiator_agent_id
             }
@@ -347,26 +324,17 @@ class StateManager:
         logger.info(
             "conversation_started",
             conversation_id=conv_id,
-            initiator=initiator_agent_id,
-            participants=list(conversation.participant_ids)
+            _initiator = initiator_agent_id,
+            _participants = list(conversation.participant_ids)
         )
         
         return conversation
     
-    async def get_conversation_state(
-        self,
-        conversation_id: UUID
-    ) -> Optional[ConversationState]:
+    async def get_conversation_state(self, _conversation_id: UUID) -> Optional[ConversationState]:
         """Get conversation state"""
         return self._conversations.get(str(conversation_id))
     
-    async def update_conversation_state(
-        self,
-        conversation_id: UUID,
-        context_updates: Optional[Dict[str, Any]] = None,
-        decision: Optional[Dict[str, Any]] = None,
-        artifact: Optional[Dict[str, Any]] = None
-    ) -> Optional[ConversationState]:
+    async def update_conversation_state(self, _conversation_id: UUID, _context_updates: Optional[Dict[str, _Any]], _decision: Optional[Dict[str, _Any]], _artifact: Optional[Dict[str, _Any]]) -> Optional[ConversationState]:
         """Update conversation state"""
         conv = self._conversations.get(str(conversation_id))
         if not conv:
@@ -386,10 +354,7 @@ class StateManager:
         
         return conv
     
-    async def complete_conversation(
-        self,
-        conversation_id: UUID
-    ) -> Optional[ConversationState]:
+    async def complete_conversation(self, _conversation_id: UUID) -> Optional[ConversationState]:
         """Mark conversation as completed"""
         conv = self._conversations.get(str(conversation_id))
         if not conv:
@@ -409,24 +374,16 @@ class StateManager:
         
         # Record transition
         await self._record_transition(
-            transition_type=TransitionType.COMPLETE,
+            _transition_type = TransitionType.COMPLETE,
             conversation_id=str(conversation_id),
-            changes={"action": "conversation_completed"}
+            _changes = {"action": "conversation_completed"}
         )
         
         return conv
     
     # Message Tracking
     
-    async def record_message(
-        self,
-        conversation_id: UUID,
-        sender_agent_id: str,
-        content: Any,
-        message_type: MessageType = MessageType.TASK,
-        receiver_agent_id: Optional[str] = None,
-        parent_message_id: Optional[UUID] = None
-    ) -> MessageLineage:
+    async def record_message(self, _conversation_id: UUID, _sender_agent_id: str, _content: Any, _message_type: MessageType, _receiver_agent_id: Optional[str], _parent_message_id: Optional[UUID]) -> MessageLineage:
         """Record a message with lineage tracking"""
         # Update conversation
         conv = self._conversations.get(str(conversation_id))
@@ -443,12 +400,12 @@ class StateManager:
         
         # Record lineage
         lineage = await self.lineage.record_message(
-            content=content,
+            _content = content,
             conversation_id=conversation_id,
-            sender_agent_id=sender_agent_id,
-            receiver_agent_id=receiver_agent_id,
-            message_type=message_type,
-            parent_message_id=parent_message_id
+            _sender_agent_id = sender_agent_id,
+            _receiver_agent_id = receiver_agent_id,
+            _message_type = message_type,
+            _parent_message_id = parent_message_id
         )
         
         # Update conversation root/latest
@@ -461,15 +418,10 @@ class StateManager:
     
     # Snapshot Management
     
-    async def create_snapshot(
-        self,
-        scope: str = "system",
-        trigger: str = "manual",
-        description: Optional[str] = None
-    ) -> StateSnapshot:
+    async def create_snapshot(self, _scope: str, _trigger: str, _description: Optional[str]) -> StateSnapshot:
         """Create a state snapshot"""
         # Convert message lineage
-        lineage_data = {}
+        _lineage_data = {}
         for msg_id, node in self.lineage._nodes.items():
             lineage_data[str(msg_id)] = node.lineage.model_dump()
         
@@ -478,30 +430,27 @@ class StateManager:
             agent_states=self._agents,
             conversation_states=self._conversations,
             message_lineage=lineage_data,
-            scope=scope,
-            trigger=trigger,
-            description=description
+            _scope = scope,
+            _trigger = trigger,
+            _description = description
         )
     
-    async def rollback_to_snapshot(
-        self,
-        snapshot_id: UUID
-    ) -> bool:
+    async def rollback_to_snapshot(self, _snapshot_id: UUID) -> bool:
         """Rollback to a previous snapshot"""
         snapshot = await self.snapshots.get_snapshot(snapshot_id)
         if not snapshot:
             return False
         
         # Verify we can rollback (not too many versions ahead)
-        current_version = self._system.version if self._system else 0
-        snapshot_version = snapshot.system_state.version if snapshot.system_state else 0
+        _current_version = self._system.version if self._system else 0
+        _snapshot_version = snapshot.system_state.version if snapshot.system_state else 0
         
         if current_version - snapshot_version > self.config.snapshots.max_rollback_depth:
             logger.warning(
                 "rollback_too_far",
-                current_version=current_version,
-                snapshot_version=snapshot_version,
-                max_depth=self.config.snapshots.max_rollback_depth
+                _current_version = current_version,
+                _snapshot_version = snapshot_version,
+                _max_depth = self.config.snapshots.max_rollback_depth
             )
             return False
         
@@ -509,8 +458,8 @@ class StateManager:
         
         # Record transition
         await self._record_transition(
-            transition_type=TransitionType.ROLLBACK,
-            changes={
+            _transition_type = TransitionType.ROLLBACK,
+            _changes = {
                 "snapshot_id": str(snapshot_id),
                 "from_version": current_version,
                 "to_version": snapshot_version
@@ -521,13 +470,13 @@ class StateManager:
         
         logger.info(
             "state_rolled_back",
-            snapshot_id=str(snapshot_id),
-            to_version=snapshot_version
+            _snapshot_id = str(snapshot_id),
+            _to_version = snapshot_version
         )
         
         return True
     
-    async def _restore_from_snapshot(self, snapshot: StateSnapshot) -> None:
+    async def _restore_from_snapshot(self, _snapshot: StateSnapshot) -> None:
         """Restore state from a snapshot"""
         # Restore system state
         if snapshot.system_state:
@@ -555,30 +504,24 @@ class StateManager:
     
     # Transition Tracking
     
-    async def _record_transition(
-        self,
-        transition_type: TransitionType,
-        agent_id: Optional[str] = None,
-        conversation_id: Optional[str] = None,
-        changes: Optional[Dict[str, Any]] = None
-    ) -> None:
+    async def _record_transition(self, _transition_type: TransitionType, _agent_id: Optional[str], _conversation_id: Optional[str], _changes: Optional[Dict[str, _Any]]) -> None:
         """Record a state transition"""
         # Generate a state_id from agent_id or conversation_id for tracking
-        state_id_str = agent_id or conversation_id or "system"
+        _state_id_str = agent_id or conversation_id or "system"
         state_id = uuid4()  # Generate a unique state ID for this transition
         
-        transition = StateTransition(
-            transition_id=uuid4(),
-            state_id=state_id,
-            transition_type=transition_type,
-            triggered_by=agent_id or "system",
-            trigger_reason=changes.get("reason") if changes else None,
+        _transition = StateTransition(
+            _transition_id = uuid4(),
+            _state_id = state_id,
+            _transition_type = transition_type,
+            _triggered_by = agent_id or "system",
+            _trigger_reason = changes.get("reason") if changes else None,
             previous_state_hash=None,  # Could compute hash of previous state if needed
-            new_state_hash=hashlib.sha256(json.dumps(changes or {}, sort_keys=True).encode()).hexdigest(),
-            delta=changes or {},
+            _new_state_hash = hashlib.sha256(json.dumps(changes or {}, sort_keys=True).encode()).hexdigest(),
+            _delta = changes or {},
             message_id=None,  # Could link to message if available
-            can_rollback=True,
-            rollback_data=changes if changes else None,
+            _can_rollback = True,
+            _rollback_data = changes if changes else None,
         )
         
         self._transitions.append(transition)
@@ -587,20 +530,15 @@ class StateManager:
         if len(self._transitions) > self._max_transitions:
             self._transitions = self._transitions[-self._max_transitions:]
     
-    def get_transition_history(
-        self,
-        agent_id: Optional[str] = None,
-        conversation_id: Optional[str] = None,
-        limit: int = 100
-    ) -> List[StateTransition]:
+    def get_transition_history(self, _agent_id: Optional[str], _conversation_id: Optional[str], _limit: int) -> List[StateTransition]:
         """Get transition history"""
-        transitions = self._transitions
+        _transitions = self._transitions
         
         if agent_id:
-            transitions = [t for t in transitions if t.agent_id == agent_id]
+            _transitions = [t for t in transitions if t.agent_id == agent_id]
         
         if conversation_id:
-            transitions = [t for t in transitions if t.conversation_id == conversation_id]
+            _transitions = [t for t in transitions if t.conversation_id == conversation_id]
         
         return transitions[-limit:]
     
@@ -615,8 +553,8 @@ class StateManager:
                 # Auto-snapshot if enabled
                 if self.config.persist_state_changes:
                     await self.create_snapshot(
-                        trigger="auto_sync",
-                        description="Periodic state sync"
+                        _trigger = "auto_sync",
+                        _description = "Periodic state sync"
                     )
             
             except asyncio.CancelledError:
@@ -626,17 +564,13 @@ class StateManager:
     
     # Query Operations
     
-    async def get_agent_conversations(
-        self,
-        agent_id: str,
-        active_only: bool = True
-    ) -> List[ConversationState]:
+    async def get_agent_conversations(self, _agent_id: str, _active_only: bool) -> List[ConversationState]:
         """Get conversations for an agent"""
-        conv_ids = self._agent_conversations.get(agent_id, set())
+        _conv_ids = self._agent_conversations.get(agent_id, set())
         
-        conversations = []
+        _conversations = []
         for conv_id in conv_ids:
-            conv = self._conversations.get(conv_id)
+            _conv = self._conversations.get(conv_id)
             if conv:
                 if not active_only or conv.status == StateStatus.ACTIVE:
                     conversations.append(conv)
@@ -658,8 +592,8 @@ class StateManager:
     
     def get_stats(self) -> Dict[str, Any]:
         """Get state management statistics"""
-        snapshot_stats = self.snapshots.get_stats()
-        lineage_stats = self.lineage.get_stats()
+        _snapshot_stats = self.snapshots.get_stats()
+        _lineage_stats = self.lineage.get_stats()
         
         return {
             "agents": {

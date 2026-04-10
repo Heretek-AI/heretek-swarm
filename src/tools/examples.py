@@ -7,7 +7,6 @@ type-safe, Python-native Swarms tools.
 
 from datetime import datetime, timezone
 from typing import Dict, List, Optional
-from uuid import UUID
 
 from pydantic import BaseModel, Field
 
@@ -47,34 +46,30 @@ class MemorySearchTool(BaseTool[MemorySearchInput, MemorySearchOutput]):
     
     def __init__(self):
         super().__init__(
-            name="memory_search",
-            description="Search across persistent and ephemeral memory with semantic search",
-            category="memory",
-            tags=["search", "memory", "retrieval"],
-            requires_memory=True
+            _name = "memory_search",
+            _description = "Search across persistent and ephemeral memory with semantic search",
+            _category = "memory",
+            _tags = ["search", "memory", "retrieval"],
+            _requires_memory = True
         )
     
-    async def execute(
-        self,
-        input_data: MemorySearchInput,
-        context: ToolContext
-    ) -> MemorySearchOutput:
+    async def execute(self, _input_data: MemorySearchInput, _context: ToolContext) -> MemorySearchOutput:
         """Execute memory search"""
-        start_time = datetime.now(timezone.utc)
+        _start_time = datetime.now(timezone.utc)
         
         # Placeholder implementation
         # In production, this would integrate with the DualTierMemorySystem
-        results = []
+        _results = []
         
         # Simulate search
         await asyncio.sleep(0.01)  # Simulate query time
         
-        query_time_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
+        _query_time_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
         
         return MemorySearchOutput(
-            results=results,
-            total_count=len(results),
-            query_time_ms=query_time_ms
+            _results = results,
+            _total_count = len(results),
+            _query_time_ms = query_time_ms
         )
 
 
@@ -116,57 +111,53 @@ class HealthCheckTool(BaseTool[HealthCheckInput, HealthCheckOutput]):
     
     def __init__(self):
         super().__init__(
-            name="health_check",
-            description="Check health of system services (Redis, PostgreSQL, LiteLLM, etc)",
-            category="system",
-            tags=["health", "monitoring", "diagnostics"]
+            _name = "health_check",
+            _description = "Check health of system services (Redis, PostgreSQL, LiteLLM, etc)",
+            _category = "system",
+            _tags = ["health", "monitoring", "diagnostics"]
         )
     
-    async def execute(
-        self,
-        input_data: HealthCheckInput,
-        context: ToolContext
-    ) -> HealthCheckOutput:
+    async def execute(self, _input_data: HealthCheckInput, _context: ToolContext) -> HealthCheckOutput:
         """Execute health checks"""
-        services = input_data.services or ["redis", "postgres", "litellm"]
+        _services = input_data.services or ["redis", "postgres", "litellm"]
         
-        results = []
-        overall_healthy = True
+        _results = []
+        _overall_healthy = True
         
         for service in services:
-            status = await self._check_service(service)
+            _status = await self._check_service(service)
             results.append(status)
             
             if not status.healthy:
-                overall_healthy = False
+                _overall_healthy = False
         
         return HealthCheckOutput(
-            overall_healthy=overall_healthy,
-            services=results
+            _overall_healthy = overall_healthy,
+            _services = results
         )
     
-    async def _check_service(self, service: str) -> ServiceStatus:
+    async def _check_service(self, _service: str) -> ServiceStatus:
         """Check individual service health"""
         import asyncio
         
-        start_time = datetime.now(timezone.utc)
+        _start_time = datetime.now(timezone.utc)
         
         try:
             # Simulate health check
             await asyncio.sleep(0.01)
             
-            latency_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
+            _latency_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
             
             return ServiceStatus(
-                name=service,
-                healthy=True,
-                latency_ms=latency_ms
+                _name = service,
+                _healthy = True,
+                _latency_ms = latency_ms
             )
         except Exception as e:
             return ServiceStatus(
-                name=service,
-                healthy=False,
-                error=str(e)
+                _name = service,
+                _healthy = False,
+                _error = str(e)
             )
 
 
@@ -203,17 +194,13 @@ class ConsensusVoteTool(BaseTool[ConsensusVoteInput, ConsensusVoteOutput]):
     
     def __init__(self):
         super().__init__(
-            name="consensus_vote",
-            description="Record votes in consensus-based decisions with BFT protocol",
-            category="governance",
-            tags=["consensus", "voting", "governance", "bft"]
+            _name = "consensus_vote",
+            _description = "Record votes in consensus-based decisions with BFT protocol",
+            _category = "governance",
+            _tags = ["consensus", "voting", "governance", "bft"]
         )
     
-    async def execute(
-        self,
-        input_data: ConsensusVoteInput,
-        context: ToolContext
-    ) -> ConsensusVoteOutput:
+    async def execute(self, _input_data: ConsensusVoteInput, _context: ToolContext) -> ConsensusVoteOutput:
         """Record a consensus vote"""
         import uuid
         
@@ -222,17 +209,17 @@ class ConsensusVoteTool(BaseTool[ConsensusVoteInput, ConsensusVoteOutput]):
             raise ValueError(f"Invalid vote: {input_data.vote}")
         
         # Record vote (placeholder)
-        vote_id = str(uuid.uuid4())
+        _vote_id = str(uuid.uuid4())
         
         # Simulate vote tally
-        tally = {"yes": 5, "no": 2, "abstain": 1}
-        quorum_reached = sum(tally.values()) >= 7
+        _tally = {"yes": 5, "no": 2, "abstain": 1}
+        _quorum_reached = sum(tally.values()) >= 7
         
         return ConsensusVoteOutput(
-            vote_recorded=True,
-            vote_id=vote_id,
-            quorum_reached=quorum_reached,
-            current_tally=tally
+            _vote_recorded = True,
+            _vote_id = vote_id,
+            _quorum_reached = quorum_reached,
+            _current_tally = tally
         )
 
 
@@ -247,27 +234,21 @@ class LegacyWrapperTool(SimpleTool):
     Allows gradual migration while maintaining compatibility.
     """
     
-    def __init__(
-        self,
-        name: str,
-        script_path: str,
-        description: str,
-        category: str = "legacy"
-    ):
+    def __init__(self, _name: str, _script_path: str, _description: str, _category: str):
         import subprocess
         
-        async def execute_shell(**kwargs):
+        async def execute_shell(_**kwargs):
             """Execute shell script with arguments"""
             import asyncio
             
-            cmd = [script_path]
+            _cmd = [script_path]
             for key, value in kwargs.items():
                 cmd.extend([f"--{key}", str(value)])
             
-            process = await asyncio.create_subprocess_exec(
+            _process = await asyncio.create_subprocess_exec(
                 *cmd,
-                stdout=asyncio.subprocess.PIPE,
-                stderr=asyncio.subprocess.PIPE
+                _stdout = asyncio.subprocess.PIPE,
+                _stderr = asyncio.subprocess.PIPE
             )
             
             stdout, stderr = await process.communicate()
@@ -280,12 +261,12 @@ class LegacyWrapperTool(SimpleTool):
             }
         
         super().__init__(
-            name=name,
-            description=description,
-            func=execute_shell,
-            category=category,
-            tags=["legacy", "shell", "wrapper"],
-            timeout_seconds=60.0
+            _name = name,
+            _description = description,
+            _func = execute_shell,
+            _category = category,
+            _tags = ["legacy", "shell", "wrapper"],
+            _timeout_seconds = 60.0
         )
 
 
@@ -308,16 +289,12 @@ def create_consensus_vote_tool() -> ConsensusVoteTool:
     return ConsensusVoteTool()
 
 
-def create_legacy_wrapper(
-    name: str,
-    script_path: str,
-    description: str
-) -> LegacyWrapperTool:
+def create_legacy_wrapper(_name: str, _script_path: str, _description: str) -> LegacyWrapperTool:
     """Factory function for legacy wrapper tools"""
     return LegacyWrapperTool(
-        name=name,
-        script_path=script_path,
-        description=description
+        _name = name,
+        _script_path = script_path,
+        _description = description
     )
 
 

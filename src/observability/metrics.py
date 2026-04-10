@@ -18,10 +18,10 @@ try:
     OTEL_AVAILABLE = True
 except ImportError:
     OTEL_AVAILABLE = False
-    otel_metrics = None
-    PrometheusMetricReader = None
-    MeterProvider = None
-    Resource = None
+    _otel_metrics = None
+    _PrometheusMetricReader = None
+    _MeterProvider = None
+    _Resource = None
 
 # ============== CONFIGURATION ==============
 
@@ -41,7 +41,7 @@ class MetricsConfig:
 _meter: Any | None = None
 
 
-def init_metrics(config: MetricsConfig | None = None) -> Any:
+def init_metrics(_config: MetricsConfig | None) -> Any:
     """
     Initialize OpenTelemetry metrics.
     
@@ -60,24 +60,24 @@ def init_metrics(config: MetricsConfig | None = None) -> Any:
         # Return mock meter when opentelemetry is not available
         return MockMeter()
     
-    config = config or MetricsConfig()
+    _config = config or MetricsConfig()
     
     # Create resource
-    resource = Resource.create({
+    _resource = Resource.create({
         "service.name": config.service_name,
     })
     
     # Create readers
-    readers = []
+    _readers = []
     
     if config.enable_prometheus:
-        prometheus_reader = PrometheusMetricReader(port=config.prometheus_port)
+        _prometheus_reader = PrometheusMetricReader(port=config.prometheus_port)
         readers.append(prometheus_reader)
     
     # Create meter provider
-    provider = MeterProvider(
-        resource=resource,
-        metric_readers=readers,
+    _provider = MeterProvider(
+        _resource = resource,
+        _metric_readers = readers,
     )
     
     otel_metrics.set_meter_provider(provider)
@@ -98,31 +98,31 @@ def get_meter() -> Any:
 class MockMeter:
     """Mock meter for testing when opentelemetry is not available."""
     
-    def create_gauge(self, name: str, description: str = "", unit: str = "") -> "MockInstrument":
+    def create_gauge(self, _name: str, _description: str, _unit: str) -> "MockInstrument":
         return MockInstrument(name, "gauge")
     
-    def create_counter(self, name: str, description: str = "", unit: str = "") -> "MockInstrument":
+    def create_counter(self, _name: str, _description: str, _unit: str) -> "MockInstrument":
         return MockInstrument(name, "counter")
     
-    def create_histogram(self, name: str, description: str = "", unit: str = "") -> "MockInstrument":
+    def create_histogram(self, _name: str, _description: str, _unit: str) -> "MockInstrument":
         return MockInstrument(name, "histogram")
 
 
 class MockInstrument:
     """Mock instrument for testing."""
     
-    def __init__(self, name: str, instrument_type: str):
+    def __init__(self, _name: str, _instrument_type: str):
         self.name = name
         self.instrument_type = instrument_type
         self.values: List[float] = []
     
-    def set(self, value: float, attributes: Dict[str, Any] = None) -> None:
+    def set(self, _value: float, _attributes: Dict[str, _Any]) -> None:
         self.values.append(value)
     
-    def add(self, value: float, attributes: Dict[str, Any] = None) -> None:
+    def add(self, _value: float, _attributes: Dict[str, _Any]) -> None:
         self.values.append(value)
     
-    def record(self, value: float, attributes: Dict[str, Any] = None) -> None:
+    def record(self, _value: float, _attributes: Dict[str, _Any]) -> None:
         self.values.append(value)
 
 
@@ -143,106 +143,106 @@ class SwarmMetrics:
     _instance: "SwarmMetrics | None" = None
     
     def __init__(self) -> None:
-        meter = get_meter()
+        _meter = get_meter()
         
         # ============== AGENT METRICS ==============
         
         self.agents_active = meter.create_gauge(
-            name="heretek_agents_active",
-            description="Number of currently active agents",
-            unit="1",
+            _name = "heretek_agents_active",
+            _description = "Number of currently active agents",
+            _unit = "1",
         )
         
         self.agent_tasks_total = meter.create_counter(
-            name="heretek_agent_tasks_total",
-            description="Total number of tasks executed by agents",
-            unit="1",
+            _name = "heretek_agent_tasks_total",
+            _description = "Total number of tasks executed by agents",
+            _unit = "1",
         )
         
         self.agent_task_duration = meter.create_histogram(
-            name="heretek_agent_task_duration_seconds",
-            description="Duration of agent task execution",
-            unit="s",
+            _name = "heretek_agent_task_duration_seconds",
+            _description = "Duration of agent task execution",
+            _unit = "s",
         )
         
         self.agent_errors_total = meter.create_counter(
-            name="heretek_agent_errors_total",
-            description="Total number of agent errors",
-            unit="1",
+            _name = "heretek_agent_errors_total",
+            _description = "Total number of agent errors",
+            _unit = "1",
         )
         
         # ============== MESSAGE METRICS ==============
         
         self.messages_sent_total = meter.create_counter(
-            name="heretek_messages_sent_total",
-            description="Total number of A2A messages sent",
-            unit="1",
+            _name = "heretek_messages_sent_total",
+            _description = "Total number of A2A messages sent",
+            _unit = "1",
         )
         
         self.messages_received_total = meter.create_counter(
-            name="heretek_messages_received_total",
-            description="Total number of A2A messages received",
-            unit="1",
+            _name = "heretek_messages_received_total",
+            _description = "Total number of A2A messages received",
+            _unit = "1",
         )
         
         self.message_latency = meter.create_histogram(
-            name="heretek_message_latency_seconds",
-            description="A2A message delivery latency",
-            unit="s",
+            _name = "heretek_message_latency_seconds",
+            _description = "A2A message delivery latency",
+            _unit = "s",
         )
         
         self.messages_failed_total = meter.create_counter(
-            name="heretek_messages_failed_total",
-            description="Total number of failed message deliveries",
-            unit="1",
+            _name = "heretek_messages_failed_total",
+            _description = "Total number of failed message deliveries",
+            _unit = "1",
         )
         
         # ============== CONSENSUS METRICS ==============
         
         self.consensus_rounds_total = meter.create_counter(
-            name="heretek_consensus_rounds_total",
-            description="Total number of consensus rounds",
-            unit="1",
+            _name = "heretek_consensus_rounds_total",
+            _description = "Total number of consensus rounds",
+            _unit = "1",
         )
         
         self.consensus_duration = meter.create_histogram(
-            name="heretek_consensus_duration_seconds",
-            description="Duration of consensus rounds",
-            unit="s",
+            _name = "heretek_consensus_duration_seconds",
+            _description = "Duration of consensus rounds",
+            _unit = "s",
         )
         
         self.consensus_timeouts_total = meter.create_counter(
-            name="heretek_consensus_timeouts_total",
-            description="Total number of consensus timeouts",
-            unit="1",
+            _name = "heretek_consensus_timeouts_total",
+            _description = "Total number of consensus timeouts",
+            _unit = "1",
         )
         
         # ============== STATE METRICS ==============
         
         self.state_checkpoints_total = meter.create_counter(
-            name="heretek_state_checkpoints_total",
-            description="Total number of state checkpoints created",
-            unit="1",
+            _name = "heretek_state_checkpoints_total",
+            _description = "Total number of state checkpoints created",
+            _unit = "1",
         )
         
         self.state_rollbacks_total = meter.create_counter(
-            name="heretek_state_rollbacks_total",
-            description="Total number of state rollbacks",
-            unit="1",
+            _name = "heretek_state_rollbacks_total",
+            _description = "Total number of state rollbacks",
+            _unit = "1",
         )
         
         self.state_rollback_duration = meter.create_histogram(
-            name="heretek_state_rollback_duration_seconds",
-            description="Duration of state rollbacks",
-            unit="s",
+            _name = "heretek_state_rollback_duration_seconds",
+            _description = "Duration of state rollbacks",
+            _unit = "s",
         )
         
         # ============== LATENCY GATE METRICS ==============
         
         self.latency_baseline_exceeded_total = meter.create_counter(
-            name="heretek_latency_baseline_exceeded_total",
-            description="Total number of operations exceeding latency baseline",
-            unit="1",
+            _name = "heretek_latency_baseline_exceeded_total",
+            _description = "Total number of operations exceeding latency baseline",
+            _unit = "1",
         )
         
     @classmethod
@@ -379,7 +379,7 @@ class SwarmMetricsCollector:
     
     Example:
         ```python
-        collector = SwarmMetricsCollector()
+        _collector = SwarmMetricsCollector()
         
         # Collect agent metrics
         agent_metrics = collector.collect_agent_metrics("alpha")
@@ -395,11 +395,7 @@ class SwarmMetricsCollector:
         ```
     """
     
-    def __init__(
-        self,
-        phi_calculator: Optional[Any] = None,
-        fep_calculator: Optional[Any] = None,
-    ):
+    def __init__(self, _phi_calculator: Optional[Any], _fep_calculator: Optional[Any]):
         """
         Initialize the metrics collector.
         
@@ -425,33 +421,27 @@ class SwarmMetricsCollector:
         
         self._last_collection_time: Optional[datetime] = None
     
-    def register_agent_state_callback(self, callback: Callable[[], Dict[str, str]]) -> None:
+    def register_agent_state_callback(self, _callback: Callable[[], _Dict[str, _str]]) -> None:
         """Register a callback to fetch agent states."""
         self._agent_state_callbacks.append(callback)
     
-    def register_consciousness_callback(self, callback: Callable[[], Dict[str, Any]]) -> None:
+    def register_consciousness_callback(self, _callback: Callable[[], _Dict[str, _Any]]) -> None:
         """Register a callback to fetch consciousness metrics."""
         self._consciousness_callbacks.append(callback)
     
-    def update_agent_state(self, agent_id: str, state: str) -> None:
+    def update_agent_state(self, _agent_id: str, _state: str) -> None:
         """Update an agent's state (active, idle, offline)."""
         self._agent_states[agent_id] = state
         if agent_id not in self._agent_metrics:
             self._agent_metrics[agent_id] = AgentMetrics(agent_id=agent_id, agent_type="unknown")
         self._agent_metrics[agent_id].last_activity = datetime.now(timezone.utc).isoformat()
     
-    def record_agent_task(
-        self,
-        agent_id: str,
-        duration_seconds: float,
-        success: bool,
-        agent_type: str = "unknown",
-    ) -> None:
+    def record_agent_task(self, _agent_id: str, _duration_seconds: float, _success: bool, _agent_type: str) -> None:
         """Record an agent task completion."""
         if agent_id not in self._agent_metrics:
             self._agent_metrics[agent_id] = AgentMetrics(agent_id=agent_id, agent_type=agent_type)
         
-        metrics = self._agent_metrics[agent_id]
+        _metrics = self._agent_metrics[agent_id]
         metrics.agent_type = agent_type
         metrics.last_activity = datetime.now(timezone.utc).isoformat()
         
@@ -479,17 +469,12 @@ class SwarmMetricsCollector:
             self._metrics.agent_tasks_total.add(1, {"agent_type": agent_type})
         self._metrics.agent_task_duration.record(duration_seconds)
     
-    def record_agent_message(
-        self,
-        agent_id: str,
-        sent: bool,
-        latency_seconds: float = 0.0,
-    ) -> None:
+    def record_agent_message(self, _agent_id: str, _sent: bool, _latency_seconds: float) -> None:
         """Record an agent message sent or received."""
         if agent_id not in self._agent_metrics:
             self._agent_metrics[agent_id] = AgentMetrics(agent_id=agent_id, agent_type="unknown")
         
-        metrics = self._agent_metrics[agent_id]
+        _metrics = self._agent_metrics[agent_id]
         metrics.last_activity = datetime.now(timezone.utc).isoformat()
         
         if sent:
@@ -506,7 +491,7 @@ class SwarmMetricsCollector:
         if latency_seconds > 0:
             self._metrics.message_latency.record(latency_seconds)
     
-    def record_agent_error(self, agent_id: str, error_type: str = "unknown") -> None:
+    def record_agent_error(self, _agent_id: str, _error_type: str) -> None:
         """Record an agent error."""
         if agent_id not in self._agent_metrics:
             self._agent_metrics[agent_id] = AgentMetrics(agent_id=agent_id, agent_type="unknown")
@@ -515,7 +500,7 @@ class SwarmMetricsCollector:
         self._agent_metrics[agent_id].last_activity = datetime.now(timezone.utc).isoformat()
         self._metrics.agent_errors_total.add(1, {"agent_id": agent_id, "error_type": error_type})
     
-    def collect_agent_metrics(self, agent_id: str) -> AgentMetrics:
+    def collect_agent_metrics(self, _agent_id: str) -> AgentMetrics:
         """
         Collect per-agent performance metrics.
         
@@ -526,11 +511,11 @@ class SwarmMetricsCollector:
             AgentMetrics with current metrics for the agent
         """
         if agent_id in self._agent_metrics:
-            metrics = self._agent_metrics[agent_id]
+            _metrics = self._agent_metrics[agent_id]
             # Update state from callbacks
             for callback in self._agent_state_callbacks:
                 try:
-                    states = callback()
+                    _states = callback()
                     if agent_id in states:
                         self._agent_states[agent_id] = states[agent_id]
                 except Exception:
@@ -570,18 +555,18 @@ class SwarmMetricsCollector:
         )
         
         # Calculate swarm health score
-        overall_health = self.calculate_health_score()
+        _overall_health = self.calculate_health_score()
         
-        data = SwarmMetricsData(
+        _data = SwarmMetricsData(
             total_agents=total_agents,
             active_agents=active_agents,
             idle_agents=idle_agents,
             total_tasks_completed=total_tasks_completed,
             total_tasks_failed=total_tasks_failed,
-            avg_task_duration_seconds=avg_task_duration,
+            _avg_task_duration_seconds = avg_task_duration,
             total_messages_sent=total_messages_sent,
             total_messages_received=total_messages_received,
-            overall_health_score=overall_health,
+            _overall_health_score = overall_health,
         )
         
         self._swarm_metrics_history.append(data)
@@ -602,7 +587,7 @@ class SwarmMetricsCollector:
         # Collect from callbacks
         for callback in self._consciousness_callbacks:
             try:
-                result = callback()
+                _result = callback()
                 if "phi_scores" in result:
                     agent_phi_scores.update(result["phi_scores"])
                 if "fep_scores" in result:
@@ -611,30 +596,30 @@ class SwarmMetricsCollector:
                 pass
         
         # Calculate aggregate phi metrics
-        phi_values = list(agent_phi_scores.values())
+        _phi_values = list(agent_phi_scores.values())
         phi_avg = sum(phi_values) / max(1, len(phi_values)) if phi_values else 0.0
         phi_max = max(phi_values) if phi_values else 0.0
-        phi_min = min(phi_values) if phi_values else 0.0
+        _phi_min = min(phi_values) if phi_values else 0.0
         
         # Calculate aggregate FEP metrics
-        fep_values = list(agent_fep_scores.values())
-        fep_avg = sum(fep_values) / max(1, len(fep_values)) if fep_values else 0.0
+        _fep_values = list(agent_fep_scores.values())
+        _fep_avg = sum(fep_values) / max(1, len(fep_values)) if fep_values else 0.0
         
         # Determine integration/differentiation levels
-        integration_level = self._determine_integration_level(agent_phi_scores)
-        differentiation_level = self._determine_differentiation_level(agent_phi_scores)
+        _integration_level = self._determine_integration_level(agent_phi_scores)
+        _differentiation_level = self._determine_differentiation_level(agent_phi_scores)
         
-        data = ConsciousnessMetricsData(
-            phi_score=phi_avg,
+        _data = ConsciousnessMetricsData(
+            _phi_score = phi_avg,
             phi_max=phi_max,
-            phi_min=phi_min,
+            _phi_min = phi_min,
             phi_avg=phi_avg,
-            integration_level=integration_level,
-            differentiation_level=differentiation_level,
-            free_energy=fep_avg,
+            _integration_level = integration_level,
+            _differentiation_level = differentiation_level,
+            _free_energy = fep_avg,
             free_energy_avg=fep_avg,
             agent_phi_scores=agent_phi_scores,
-            agent_fep_scores=agent_fep_scores,
+            _agent_fep_scores = agent_fep_scores,
         )
         
         self._consciousness_metrics_history.append(data)
@@ -657,39 +642,39 @@ class SwarmMetricsCollector:
             return 0.0
         
         # Agent success rate component (40%)
-        avg_success_rate = sum(m.success_rate for m in self._agent_metrics.values()) / len(self._agent_metrics)
-        success_component = avg_success_rate * 40
+        _avg_success_rate = sum(m.success_rate for m in self._agent_metrics.values()) / len(self._agent_metrics)
+        _success_component = avg_success_rate * 40
         
         # Agent availability component (30%)
         total_agents = len(self._agent_states)
-        active_idle_agents = sum(1 for s in self._agent_states.values() if s in ("active", "idle"))
-        availability = active_idle_agents / max(1, total_agents)
-        availability_component = availability * 30
+        _active_idle_agents = sum(1 for s in self._agent_states.values() if s in ("active", "idle"))
+        _availability = active_idle_agents / max(1, total_agents)
+        _availability_component = availability * 30
         
         # Message delivery component (20%)
-        total_sent = sum(m.messages_sent for m in self._agent_metrics.values())
-        total_received = sum(m.messages_received for m in self._agent_metrics.values())
-        message_success = min(1.0, total_received / max(1, total_sent))
-        message_component = message_success * 20
+        _total_sent = sum(m.messages_sent for m in self._agent_metrics.values())
+        _total_received = sum(m.messages_received for m in self._agent_metrics.values())
+        _message_success = min(1.0, total_received / max(1, total_sent))
+        _message_component = message_success * 20
         
         # Consciousness metrics component (10%)
-        consciousness_score = 0.0
+        _consciousness_score = 0.0
         for callback in self._consciousness_callbacks:
             try:
-                result = callback()
+                _result = callback()
                 if "phi_avg" in result:
-                    consciousness_score = result["phi_avg"] * 10
+                    _consciousness_score = result["phi_avg"] * 10
                     break
             except Exception:
                 pass
         
         return min(100.0, max(0.0, success_component + availability_component + message_component + consciousness_score))
     
-    def get_agent_metrics_history(self, limit: int = 100) -> List[SwarmMetricsData]:
+    def get_agent_metrics_history(self, _limit: int) -> List[SwarmMetricsData]:
         """Get recent swarm metrics history."""
         return self._swarm_metrics_history[-limit:]
     
-    def get_consciousness_metrics_history(self, limit: int = 100) -> List[ConsciousnessMetricsData]:
+    def get_consciousness_metrics_history(self, _limit: int) -> List[ConsciousnessMetricsData]:
         """Get recent consciousness metrics history."""
         return self._consciousness_metrics_history[-limit:]
     
@@ -705,26 +690,26 @@ class SwarmMetricsCollector:
         """Get the timestamp of the last metrics collection."""
         return self._last_collection_time
     
-    def _calculate_agent_health(self, metrics: AgentMetrics) -> float:
+    def _calculate_agent_health(self, _metrics: AgentMetrics) -> float:
         """Calculate health score for a single agent (0-100)."""
         # Success rate component (50%)
-        success_component = metrics.success_rate * 50
+        _success_component = metrics.success_rate * 50
         
         # Error rate component (30%) - inverse of error rate
         total_tasks = metrics.tasks_completed + metrics.tasks_failed
-        error_rate = metrics.error_count / max(1, total_tasks)
-        error_component = (1 - error_rate) * 30
+        _error_rate = metrics.error_count / max(1, total_tasks)
+        _error_component = (1 - error_rate) * 30
         
         # Activity component (20%)
-        activity_component = 20 if metrics.last_activity else 0
+        _activity_component = 20 if metrics.last_activity else 0
         
         return min(100.0, max(0.0, success_component + error_component + activity_component))
     
-    def _determine_integration_level(self, phi_scores: Dict[str, float]) -> str:
+    def _determine_integration_level(self, _phi_scores: Dict[str, _float]) -> str:
         """Determine qualitative integration level from phi scores."""
         if not phi_scores:
             return "unknown"
-        avg_phi = sum(phi_scores.values()) / len(phi_scores)
+        _avg_phi = sum(phi_scores.values()) / len(phi_scores)
         if avg_phi >= 0.9:
             return "very_high"
         elif avg_phi >= 0.7:
@@ -736,13 +721,13 @@ class SwarmMetricsCollector:
         else:
             return "minimal"
     
-    def _determine_differentiation_level(self, phi_scores: Dict[str, float]) -> str:
+    def _determine_differentiation_level(self, _phi_scores: Dict[str, _float]) -> str:
         """Determine differentiation level from phi score variance."""
         if not phi_scores or len(phi_scores) < 2:
             return "unknown"
-        values = list(phi_scores.values())
-        avg = sum(values) / len(values)
-        variance = sum((v - avg) ** 2 for v in values) / len(values)
+        _values = list(phi_scores.values())
+        _avg = sum(values) / len(values)
+        _variance = sum((v - avg) ** 2 for v in values) / len(values)
         if variance >= 0.3:
             return "very_high"
         elif variance >= 0.2:
@@ -794,14 +779,14 @@ class RealTimeMetricsStream:
             print(f"Health: {metrics['health_score']}")
         
         # Get snapshot
-        snapshot = stream.get_metrics_snapshot()
+        _snapshot = stream.get_metrics_snapshot()
         
         # Export Prometheus format
-        prometheus_data = stream.export_prometheus_format()
+        _prometheus_data = stream.export_prometheus_format()
         ```
     """
     
-    def __init__(self, collector: SwarmMetricsCollector):
+    def __init__(self, _collector: SwarmMetricsCollector):
         """
         Initialize the real-time metrics stream.
         
@@ -814,7 +799,7 @@ class RealTimeMetricsStream:
         self._prometheus_cache: str = ""
         self._last_prometheus_update: Optional[datetime] = None
     
-    async def stream_metrics(self, interval_seconds: int = 5) -> AsyncIterator[Dict[str, Any]]:
+    async def stream_metrics(self, _interval_seconds: int) -> AsyncIterator[Dict[str, Any]]:
         """
         Stream metrics at regular intervals.
         
@@ -831,7 +816,7 @@ class RealTimeMetricsStream:
                 # Collect fresh metrics
                 swarm = self._collector.collect_swarm_metrics()
                 consciousness = self._collector.collect_consciousness_metrics()
-                agents = self._collector.get_all_agent_metrics()
+                _agents = self._collector.get_all_agent_metrics()
                 health = self._collector.calculate_health_score()
                 
                 # Create snapshot
@@ -867,7 +852,7 @@ class RealTimeMetricsStream:
             # Collect initial metrics
             swarm = self._collector.collect_swarm_metrics()
             consciousness = self._collector.collect_consciousness_metrics()
-            agents = self._collector.get_all_agent_metrics()
+            _agents = self._collector.get_all_agent_metrics()
             health = self._collector.calculate_health_score()
             
             self._snapshot = MetricsSnapshot(
@@ -904,8 +889,8 @@ class RealTimeMetricsStream:
         if self._snapshot is None:
             return
         
-        lines = []
-        timestamp_ms = int(datetime.now(timezone.utc).timestamp() * 1000)
+        _lines = []
+        _timestamp_ms = int(datetime.now(timezone.utc).timestamp() * 1000)
         
         # Swarm metrics
         lines.append("# HELP heretek_swarm_health_score Overall swarm health score")
@@ -955,7 +940,7 @@ class RealTimeMetricsStream:
         
         # Per-agent metrics
         for agent_id, metrics in self._snapshot.agent_metrics.items():
-            safe_id = agent_id.replace("-", "_").replace(".", "_")
+            _safe_id = agent_id.replace("-", "_").replace(".", "_")
             
             lines.append(f"# HELP heretek_agent_health_score Health score for agent {agent_id}")
             lines.append("# TYPE heretek_agent_health_score gauge")
@@ -971,7 +956,7 @@ class RealTimeMetricsStream:
         
         # Agent Phi scores
         for agent_id, phi in self._snapshot.consciousness_metrics.agent_phi_scores.items():
-            safe_id = agent_id.replace("-", "_").replace(".", "_")
+            _safe_id = agent_id.replace("-", "_").replace(".", "_")
             lines.append("# HELP heretek_agent_phi_score Phi score for agent")
             lines.append("# TYPE heretek_agent_phi_score gauge")
             lines.append(f"heretek_agent_phi_score{{agent_id=\"{safe_id}\"}} {phi}")
@@ -982,40 +967,40 @@ class RealTimeMetricsStream:
 
 # ============== CONVENIENCE FUNCTIONS ==============
 
-def record_message_sent(message_type: str, sender_type: str) -> None:
+def record_message_sent(_message_type: str, _sender_type: str) -> None:
     """Record a sent message."""
-    metrics = SwarmMetrics.get_instance()
+    _metrics = SwarmMetrics.get_instance()
     metrics.messages_sent_total.add(1, {
         "message_type": message_type,
         "sender_type": sender_type,
     })
 
 
-def record_message_latency(latency_ms: float, exceeded_baseline: bool) -> None:
+def record_message_latency(_latency_ms: float, _exceeded_baseline: bool) -> None:
     """Record message latency."""
-    metrics = SwarmMetrics.get_instance()
+    _metrics = SwarmMetrics.get_instance()
     metrics.message_latency.record(latency_ms / 1000)  # Convert to seconds
     
     if exceeded_baseline:
         metrics.latency_baseline_exceeded_total.add(1)
 
 
-def record_task_completion(agent_type: str, duration_seconds: float) -> None:
+def record_task_completion(_agent_type: str, _duration_seconds: float) -> None:
     """Record task completion."""
-    metrics = SwarmMetrics.get_instance()
+    _metrics = SwarmMetrics.get_instance()
     metrics.agent_tasks_total.add(1, {"agent_type": agent_type})
     metrics.agent_task_duration.record(duration_seconds)
 
 
-def record_consensus_round(outcome: str, duration_seconds: float) -> None:
+def record_consensus_round(_outcome: str, _duration_seconds: float) -> None:
     """Record consensus round completion."""
-    metrics = SwarmMetrics.get_instance()
+    _metrics = SwarmMetrics.get_instance()
     metrics.consensus_rounds_total.add(1, {"outcome": outcome})
     metrics.consensus_duration.record(duration_seconds)
 
 
-def record_state_rollback(success: bool, duration_seconds: float) -> None:
+def record_state_rollback(_success: bool, _duration_seconds: float) -> None:
     """Record state rollback."""
-    metrics = SwarmMetrics.get_instance()
+    _metrics = SwarmMetrics.get_instance()
     metrics.state_rollbacks_total.add(1, {"success": str(success).lower()})
     metrics.state_rollback_duration.record(duration_seconds)

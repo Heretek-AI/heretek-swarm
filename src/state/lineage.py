@@ -16,7 +16,7 @@ from pydantic import BaseModel, Field
 
 from .base import MessageLineage, MessageType
 
-logger = structlog.get_logger()
+_logger = structlog.get_logger()
 
 
 class LineageConfig(BaseModel):
@@ -48,13 +48,13 @@ class LineageNode:
     Optimized for fast traversal and lookups.
     """
     
-    def __init__(self, lineage: MessageLineage):
+    def __init__(self, _lineage: MessageLineage):
         self.lineage = lineage
         self.children: List[UUID] = []
         self.parent: Optional[UUID] = lineage.parent_message_id
         self._lock = asyncio.Lock()
     
-    def add_child(self, child_id: UUID) -> None:
+    def add_child(self, _child_id: UUID) -> None:
         """Add a child message"""
         if child_id not in self.children:
             self.children.append(child_id)
@@ -77,7 +77,7 @@ class LineageTracker:
     - Integrity verification
     """
     
-    def __init__(self, config: Optional[LineageConfig] = None):
+    def __init__(self, _config: Optional[LineageConfig]):
         self.config = config or LineageConfig()
         
         # In-memory storage
@@ -95,13 +95,13 @@ class LineageTracker:
         self._cache_hits = 0
         self._queries = 0
     
-    def _compute_hash(self, content: Any) -> str:
+    def _compute_hash(self, _content: Any) -> str:
         """Compute SHA256 hash of content"""
         import json
-        content_str = json.dumps(content, sort_keys=True, default=str)
+        _content_str = json.dumps(content, sort_keys=True, default=str)
         return hashlib.sha256(content_str.encode()).hexdigest()
     
-    def _cache_get(self, message_id: UUID) -> Optional[MessageLineage]:
+    def _cache_get(self, _message_id: UUID) -> Optional[MessageLineage]:
         """Get from cache"""
         if message_id in self._cache:
             self._cache_hits += 1
@@ -112,28 +112,17 @@ class LineageTracker:
             return self._cache[message_id]
         return None
     
-    def _cache_set(self, message_id: UUID, lineage: MessageLineage) -> None:
+    def _cache_set(self, _message_id: UUID, _lineage: MessageLineage) -> None:
         """Set in cache with LRU eviction"""
         # Evict if at capacity
         while len(self._cache) >= self.config.cache_size and self._cache_order:
-            oldest = self._cache_order.pop(0)
+            _oldest = self._cache_order.pop(0)
             del self._cache[oldest]
         
         self._cache[message_id] = lineage
         self._cache_order.append(message_id)
     
-    async def record_message(
-        self,
-        content: Any,
-        conversation_id: UUID,
-        sender_agent_id: str,
-        receiver_agent_id: Optional[str] = None,
-        message_type: MessageType = MessageType.TASK,
-        parent_message_id: Optional[UUID] = None,
-        correlation_id: Optional[UUID] = None,
-        tags: Optional[List[str]] = None,
-        metadata: Optional[Dict[str, Any]] = None
-    ) -> MessageLineage:
+    async def record_message(self, _content: Any, _conversation_id: UUID, _sender_agent_id: str, _receiver_agent_id: Optional[str], _message_type: MessageType, _parent_message_id: Optional[UUID], _correlation_id: Optional[UUID], _tags: Optional[List[str]], _metadata: Optional[Dict[str, _Any]]) -> MessageLineage:
         """
         Record a new message in the lineage.
         
@@ -152,19 +141,19 @@ class LineageTracker:
             The created lineage entry
         """
         # Compute content hash
-        content_hash = self._compute_hash(content) if self.config.track_content_hash else ""
-        content_size = len(str(content).encode())
+        _content_hash = self._compute_hash(content) if self.config.track_content_hash else ""
+        _content_size = len(str(content).encode())
         
         # Determine root and ancestors
         root_message_id: UUID
         ancestor_ids: List[UUID] = []
         depth: int = 0
-        is_root = parent_message_id is None
+        _is_root = parent_message_id is None
         
         if parent_message_id:
-            parent_node = self._nodes.get(parent_message_id)
+            _parent_node = self._nodes.get(parent_message_id)
             if parent_node:
-                root_message_id = parent_node.lineage.root_message_id
+                _root_message_id = parent_node.lineage.root_message_id
                 ancestor_ids = parent_node.lineage.ancestor_ids + [parent_message_id]
                 depth = parent_node.lineage.depth + 1
                 
@@ -177,39 +166,39 @@ class LineageTracker:
                     )
             else:
                 # Parent not found, this becomes root
-                is_root = True
+                _is_root = True
         
         # Generate message_id first so we can use it for root
         message_id = uuid4()
         
         # For root messages, root_message_id = message_id
         if is_root:
-            root_message_id = message_id
+            _root_message_id = message_id
         
         # Create lineage entry
         lineage = MessageLineage(
             message_id=message_id,
             conversation_id=conversation_id,
             parent_message_id=parent_message_id,
-            root_message_id=root_message_id,
+            _root_message_id = root_message_id,
             ancestor_ids=ancestor_ids,
             depth=depth,
-            message_type=message_type,
-            sender_agent_id=sender_agent_id,
-            receiver_agent_id=receiver_agent_id,
-            content_hash=content_hash,
-            content_size_bytes=content_size,
-            correlation_id=correlation_id,
-            tags=tags or [],
-            metadata=metadata or {}
+            _message_type = message_type,
+            _sender_agent_id = sender_agent_id,
+            _receiver_agent_id = receiver_agent_id,
+            _content_hash = content_hash,
+            _content_size_bytes = content_size,
+            _correlation_id = correlation_id,
+            _tags = tags or [],
+            _metadata = metadata or {}
         )
         
         # Create node
-        node = LineageNode(lineage)
+        _node = LineageNode(lineage)
         
         # Update parent's children
         if parent_message_id and parent_message_id in self._nodes:
-            parent_node = self._nodes[parent_message_id]
+            _parent_node = self._nodes[parent_message_id]
             parent_node.add_child(lineage.message_id)
             
             # Track branch points
@@ -240,37 +229,33 @@ class LineageTracker:
         
         logger.debug(
             "message_lineage_recorded",
-            message_id=str(lineage.message_id),
+            _message_id = str(lineage.message_id),
             conversation_id=str(conversation_id),
-            sender=sender_agent_id,
-            receiver=receiver_agent_id,
+            _sender = sender_agent_id,
+            _receiver = receiver_agent_id,
             depth=depth
         )
         
         return lineage
     
-    async def get_lineage(self, message_id: UUID) -> Optional[MessageLineage]:
+    async def get_lineage(self, _message_id: UUID) -> Optional[MessageLineage]:
         """Get lineage for a message"""
         self._queries += 1
         
         # Check cache first
-        cached = self._cache_get(message_id)
+        _cached = self._cache_get(message_id)
         if cached:
             return cached
         
         # Look up in nodes
-        node = self._nodes.get(message_id)
+        _node = self._nodes.get(message_id)
         if node:
             self._cache_set(message_id, node.lineage)
             return node.lineage
         
         return None
     
-    async def get_ancestry(
-        self,
-        message_id: UUID,
-        include_content: bool = False
-    ) -> List[MessageLineage]:
+    async def get_ancestry(self, _message_id: UUID, _include_content: bool) -> List[MessageLineage]:
         """
         Get complete ancestry of a message.
         
@@ -281,7 +266,7 @@ class LineageTracker:
             return []
         
         # Collect ancestors
-        ancestors = []
+        _ancestors = []
         
         for ancestor_id in lineage.ancestor_ids:
             ancestor = await self.get_lineage(ancestor_id)
@@ -293,21 +278,17 @@ class LineageTracker:
         
         return ancestors
     
-    async def get_descendants(
-        self,
-        message_id: UUID,
-        max_depth: int = 10
-    ) -> List[MessageLineage]:
+    async def get_descendants(self, _message_id: UUID, _max_depth: int) -> List[MessageLineage]:
         """
         Get all descendants of a message.
         
         Performs breadth-first traversal.
         """
-        node = self._nodes.get(message_id)
+        _node = self._nodes.get(message_id)
         if not node:
             return []
         
-        descendants = []
+        _descendants = []
         visited: Set[UUID] = set()
         queue: List[Tuple[UUID, int]] = [(message_id, 0)]
         
@@ -321,7 +302,7 @@ class LineageTracker:
                 continue
             
             visited.add(current_id)
-            current_node = self._nodes.get(current_id)
+            _current_node = self._nodes.get(current_id)
             
             if current_node:
                 if current_id != message_id:
@@ -332,21 +313,17 @@ class LineageTracker:
         
         return descendants
     
-    async def get_conversation_messages(
-        self,
-        conversation_id: UUID,
-        limit: int = 100
-    ) -> List[MessageLineage]:
+    async def get_conversation_messages(self, _conversation_id: UUID, _limit: int) -> List[MessageLineage]:
         """Get all messages in a conversation"""
-        root_id = self._conversation_roots.get(conversation_id)
+        _root_id = self._conversation_roots.get(conversation_id)
         if not root_id:
             return []
         
         # Get all descendants
-        all_messages = await self.get_descendants(root_id, max_depth=100)
+        _all_messages = await self.get_descendants(root_id, max_depth=100)
         
         # Add root
-        root = await self.get_lineage(root_id)
+        _root = await self.get_lineage(root_id)
         if root:
             all_messages.insert(0, root)
         
@@ -355,15 +332,11 @@ class LineageTracker:
         
         return all_messages[:limit]
     
-    async def get_agent_messages(
-        self,
-        agent_id: str,
-        limit: int = 100
-    ) -> List[MessageLineage]:
+    async def get_agent_messages(self, _agent_id: str, _limit: int) -> List[MessageLineage]:
         """Get messages involving an agent"""
-        message_ids = self._agent_messages.get(agent_id, set())
+        _message_ids = self._agent_messages.get(agent_id, set())
         
-        messages = []
+        _messages = []
         for msg_id in list(message_ids)[:limit]:
             lineage = await self.get_lineage(msg_id)
             if lineage:
@@ -374,12 +347,9 @@ class LineageTracker:
         
         return messages[:limit]
     
-    async def find_branch_points(
-        self,
-        conversation_id: Optional[UUID] = None
-    ) -> List[MessageLineage]:
+    async def find_branch_points(self, _conversation_id: Optional[UUID]) -> List[MessageLineage]:
         """Find all branch points in lineage tree"""
-        branch_points = []
+        _branch_points = []
         
         for node in self._nodes.values():
             if node.is_branch_point():
@@ -388,11 +358,7 @@ class LineageTracker:
         
         return branch_points
     
-    async def get_message_path(
-        self,
-        from_message_id: UUID,
-        to_message_id: UUID
-    ) -> Optional[List[UUID]]:
+    async def get_message_path(self, _from_message_id: UUID, _to_message_id: UUID) -> Optional[List[UUID]]:
         """
         Find path between two messages.
         
@@ -422,7 +388,7 @@ class LineageTracker:
                         queue.append((ancestor_id, path + [ancestor_id]))
             
             # Check descendants
-            node = self._nodes.get(current_id)
+            _node = self._nodes.get(current_id)
             if node:
                 for child_id in node.children:
                     if child_id not in visited:
@@ -430,23 +396,23 @@ class LineageTracker:
         
         return None
     
-    async def mark_delivered(self, message_id: UUID) -> bool:
+    async def mark_delivered(self, _message_id: UUID) -> bool:
         """Mark a message as delivered"""
-        node = self._nodes.get(message_id)
+        _node = self._nodes.get(message_id)
         if node:
             node.lineage.delivered_at = datetime.now(timezone.utc)
             return True
         return False
     
-    async def mark_processed(self, message_id: UUID) -> bool:
+    async def mark_processed(self, _message_id: UUID) -> bool:
         """Mark a message as processed"""
-        node = self._nodes.get(message_id)
+        _node = self._nodes.get(message_id)
         if node:
             node.lineage.processed_at = datetime.now(timezone.utc)
             return True
         return False
     
-    async def verify_integrity(self, message_id: UUID) -> bool:
+    async def verify_integrity(self, _message_id: UUID) -> bool:
         """Verify integrity of a message and its ancestors"""
         lineage = await self.get_lineage(message_id)
         if not lineage:
@@ -457,8 +423,8 @@ class LineageTracker:
             if ancestor_id not in self._nodes:
                 logger.warning(
                     "lineage_integrity_missing_ancestor",
-                    message_id=str(message_id),
-                    missing_ancestor=str(ancestor_id)
+                    _message_id = str(message_id),
+                    _missing_ancestor = str(ancestor_id)
                 )
                 return False
         
@@ -467,8 +433,8 @@ class LineageTracker:
             if lineage.parent_message_id not in self._nodes:
                 logger.warning(
                     "lineage_integrity_missing_parent",
-                    message_id=str(message_id),
-                    parent_id=str(lineage.parent_message_id)
+                    _message_id = str(message_id),
+                    _parent_id = str(lineage.parent_message_id)
                 )
                 return False
         
@@ -476,15 +442,15 @@ class LineageTracker:
     
     def get_stats(self) -> Dict[str, Any]:
         """Get lineage statistics"""
-        avg_depth = 0.0
-        max_depth = 0
+        _avg_depth = 0.0
+        _max_depth = 0
         
         if self._nodes:
-            depths = [n.lineage.depth for n in self._nodes.values()]
-            avg_depth = sum(depths) / len(depths)
-            max_depth = max(depths)
+            _depths = [n.lineage.depth for n in self._nodes.values()]
+            _avg_depth = sum(depths) / len(depths)
+            _max_depth = max(depths)
         
-        cache_hit_rate = (
+        _cache_hit_rate = (
             self._cache_hits / self._queries if self._queries > 0 else 0
         )
         
@@ -500,11 +466,11 @@ class LineageTracker:
             "total_queries": self._queries,
         }
     
-    async def cleanup_expired(self, days: int = 30) -> int:
+    async def cleanup_expired(self, _days: int) -> int:
         """Remove expired lineage entries"""
-        cutoff = datetime.now(timezone.utc) - timedelta(days=days)
+        _cutoff = datetime.now(timezone.utc) - timedelta(days=days)
         
-        to_remove = []
+        _to_remove = []
         for message_id, node in self._nodes.items():
             if node.lineage.created_at < cutoff:
                 to_remove.append(message_id)
@@ -515,7 +481,7 @@ class LineageTracker:
         
         logger.info(
             "lineage_cleanup_completed",
-            removed_count=len(to_remove)
+            _removed_count = len(to_remove)
         )
         
         return len(to_remove)

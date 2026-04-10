@@ -36,7 +36,7 @@ class EmbeddingVector(BaseModel):
     
     @field_validator('vector')
     @classmethod
-    def validate_vector_length(cls, v: List[float]) -> List[float]:
+    def validate_vector_length(cls, _v: List[float]) -> List[float]:
         if len(v) == 0:
             raise ValueError("Vector cannot be empty")
         return v
@@ -78,7 +78,7 @@ class MemoryEntry(BaseModel):
     relevance_score: Optional[float] = Field(None, ge=0.0, le=1.0)
     
     class Config:
-        json_encoders = {
+        _json_encoders = {
             datetime: datetime.isoformat,
             UUID: str,
         }
@@ -119,8 +119,8 @@ class MemoryQuery(BaseModel):
     
     # Tier selection
     tiers: List[MemoryTier] = Field(
-        default=[MemoryTier.EPHEMERAL, MemoryTier.PERSISTENT],
-        description="Memory tiers to search"
+        _default = [MemoryTier.EPHEMERAL, MemoryTier.PERSISTENT],
+        _description = "Memory tiers to search"
     )
     
     # Ranking
@@ -130,7 +130,7 @@ class MemoryQuery(BaseModel):
     
     @field_validator('query_vector')
     @classmethod
-    def validate_query_vector(cls, v: Optional[List[float]]) -> Optional[List[float]]:
+    def validate_query_vector(cls, _v: Optional[List[float]]) -> Optional[List[float]]:
         if v is not None and len(v) == 0:
             raise ValueError("Query vector cannot be empty")
         return v
@@ -152,7 +152,7 @@ class MemoryResult(BaseModel):
     next_offset: Optional[int] = Field(None)
     
     class Config:
-        json_encoders = {
+        _json_encoders = {
             datetime: datetime.isoformat,
             UUID: str,
         }

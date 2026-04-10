@@ -20,7 +20,7 @@ from pathlib import Path
 from typing import Any, Dict, List, Optional, Union
 import structlog
 
-logger = structlog.get_logger(__name__)
+_logger = structlog.get_logger(__name__)
 
 
 class ChunkStrategy(Enum):
@@ -170,7 +170,7 @@ class DocumentProcessor:
     Pattern stolen from elizaOS document-ingestion plugin.
     """
     
-    def __init__(self, config: Optional[ProcessingConfig] = None):
+    def __init__(self, _config: Optional[ProcessingConfig]):
         self.config = config or ProcessingConfig()
         self._supported_extensions = {
             ".txt": DocumentType.TEXT,
@@ -196,21 +196,17 @@ class DocumentProcessor:
             ".pdf": DocumentType.PDF,
         }
     
-    def detect_type(self, file_path: Union[str, Path]) -> DocumentType:
+    def detect_type(self, _file_path: Union[str, _Path]) -> DocumentType:
         """Detect document type from file extension."""
         ext = Path(file_path).suffix.lower()
         return self._supported_extensions.get(ext, DocumentType.UNKNOWN)
     
-    def generate_id(self, content: str, source: str) -> str:
+    def generate_id(self, _content: str, _source: str) -> str:
         """Generate unique ID for document or chunk."""
-        hash_input = f"{source}:{content[:100]}"
+        _hash_input = f"{source}:{content[:100]}"
         return hashlib.sha256(hash_input.encode()).hexdigest()[:16]
     
-    async def process_file(
-        self,
-        file_path: Union[str, Path],
-        metadata: Optional[Dict[str, Any]] = None,
-    ) -> ProcessedDocument:
+    async def process_file(self, _file_path: Union[str, _Path], _metadata: Optional[Dict[str, _Any]]) -> ProcessedDocument:
         """
         Process a file and return chunked document.
         
@@ -222,29 +218,29 @@ class DocumentProcessor:
             ProcessedDocument with chunks
         """
         import time
-        start_time = time.time()
+        _start_time = time.time()
         
-        path = Path(file_path)
+        _path = Path(file_path)
         if not path.exists():
             raise FileNotFoundError(f"File not found: {file_path}")
         
         # Check file size
-        file_size_mb = path.stat().st_size / (1024 * 1024)
+        _file_size_mb = path.stat().st_size / (1024 * 1024)
         if file_size_mb > self.config.max_file_size_mb:
             raise ValueError(
                 f"File too large: {file_size_mb:.2f}MB > {self.config.max_file_size_mb}MB"
             )
         
         # Detect type and load content
-        doc_type = self.detect_type(path)
-        content = await self._load_file(path, doc_type)
+        _doc_type = self.detect_type(path)
+        _content = await self._load_file(path, doc_type)
         
         # Process content
-        processed = await self.process_content(
-            content=content,
-            source_path=str(path),
-            doc_type=doc_type,
-            metadata=metadata,
+        _processed = await self.process_content(
+            _content = content,
+            _source_path = str(path),
+            _doc_type = doc_type,
+            _metadata = metadata,
         )
         
         # Add processing time
@@ -252,13 +248,7 @@ class DocumentProcessor:
         
         return processed
     
-    async def process_content(
-        self,
-        content: str,
-        source_path: str,
-        doc_type: DocumentType = DocumentType.TEXT,
-        metadata: Optional[Dict[str, Any]] = None,
-    ) -> ProcessedDocument:
+    async def process_content(self, _content: str, _source_path: str, _doc_type: DocumentType, _metadata: Optional[Dict[str, _Any]]) -> ProcessedDocument:
         """
         Process raw content and return chunked document.
         
@@ -272,63 +262,63 @@ class DocumentProcessor:
             ProcessedDocument with chunks
         """
         import time
-        start_time = time.time()
+        _start_time = time.time()
         
         # Clean content based on type
-        cleaned = self._clean_content(content, doc_type)
+        _cleaned = self._clean_content(content, doc_type)
         
         # Extract metadata if enabled
-        doc_metadata = metadata or {}
+        _doc_metadata = metadata or {}
         if self.config.extract_metadata:
             doc_metadata.update(self._extract_metadata(cleaned, doc_type))
         
         # Generate document ID
-        doc_id = self.generate_id(cleaned, source_path)
+        _doc_id = self.generate_id(cleaned, source_path)
         
         # Chunk the content
-        chunks = self._chunk_content(
-            content=cleaned,
-            document_id=doc_id,
-            source_path=source_path,
-            doc_type=doc_type,
+        _chunks = self._chunk_content(
+            _content = cleaned,
+            _document_id = doc_id,
+            _source_path = source_path,
+            _doc_type = doc_type,
         )
         
         # Limit chunks
         if len(chunks) > self.config.max_chunks_per_document:
             logger.warning(
                 "chunks_limited",
-                source=source_path,
-                original=len(chunks),
-                limit=self.config.max_chunks_per_document,
+                _source = source_path,
+                _original = len(chunks),
+                _limit = self.config.max_chunks_per_document,
             )
-            chunks = chunks[:self.config.max_chunks_per_document]
+            _chunks = chunks[:self.config.max_chunks_per_document]
         
         # Calculate statistics
-        total_chars = len(cleaned)
-        total_lines = cleaned.count("\n") + 1
+        _total_chars = len(cleaned)
+        _total_lines = cleaned.count("\n") + 1
         
         return ProcessedDocument(
-            id=doc_id,
-            source_path=source_path,
-            source_type=doc_type,
-            chunks=chunks,
-            title=doc_metadata.get("title"),
-            author=doc_metadata.get("author"),
-            total_characters=total_chars,
-            total_lines=total_lines,
+            _id = doc_id,
+            _source_path = source_path,
+            _source_type = doc_type,
+            _chunks = chunks,
+            _title = doc_metadata.get("title"),
+            _author = doc_metadata.get("author"),
+            _total_characters = total_chars,
+            _total_lines = total_lines,
             total_chunks=len(chunks),
-            processing_time_ms=(time.time() - start_time) * 1000,
+            _processing_time_ms = (time.time() - start_time) * 1000,
             chunk_strategy=self.config.chunk_strategy,
         )
     
-    async def _load_file(self, path: Path, doc_type: DocumentType) -> str:
+    async def _load_file(self, _path: Path, _doc_type: DocumentType) -> str:
         """Load file content based on type."""
         if doc_type == DocumentType.PDF:
             # PDF requires special handling
             try:
                 import pypdf
-                reader = pypdf.PdfReader(str(path))
-                text = ""
+                _reader = pypdf.PdfReader(str(path))
+                _text = ""
                 for page in reader.pages:
                     text += page.extract_text() + "\n"
                 return text
@@ -340,58 +330,54 @@ class DocumentProcessor:
         with open(path, "r", encoding="utf-8", errors="replace") as f:
             return f.read()
     
-    def _clean_content(self, content: str, doc_type: DocumentType) -> str:
+    def _clean_content(self, _content: str, _doc_type: DocumentType) -> str:
         """Clean and normalize content."""
         # HTML cleaning
         if doc_type == DocumentType.HTML and self.config.clean_html:
-            content = self._strip_html(content)
+            _content = self._strip_html(content)
         
         # Whitespace normalization
         if self.config.normalize_whitespace:
-            content = self._normalize_whitespace(content)
+            _content = self._normalize_whitespace(content)
         
         # URL removal
         if self.config.remove_urls:
-            content = self._remove_urls(content)
+            _content = self._remove_urls(content)
         
         return content.strip()
     
-    def _strip_html(self, content: str) -> str:
+    def _strip_html(self, _content: str) -> str:
         """Strip HTML tags and extract text."""
         # Simple regex-based HTML stripping
         # For production, consider using BeautifulSoup
-        content = re.sub(r"<script[^>]*>.*?</script>", "", content, flags=re.DOTALL)
-        content = re.sub(r"<style[^>]*>.*?</style>", "", content, flags=re.DOTALL)
-        content = re.sub(r"<[^>]+>", " ", content)
-        content = re.sub(r"&nbsp;", " ", content)
-        content = re.sub(r"&[a-z]+;", "", content)
+        _content = re.sub(r"<script[^>]*>.*?</script>", "", content, flags=re.DOTALL)
+        _content = re.sub(r"<style[^>]*>.*?</style>", "", content, flags=re.DOTALL)
+        _content = re.sub(r"<[^>]+>", " ", content)
+        _content = re.sub(r"&nbsp;", " ", content)
+        _content = re.sub(r"&[a-z]+;", "", content)
         return content
     
-    def _normalize_whitespace(self, content: str) -> str:
+    def _normalize_whitespace(self, _content: str) -> str:
         """Normalize whitespace in content."""
         # Replace multiple spaces with single space
-        content = re.sub(r"[ \t]+", " ", content)
+        _content = re.sub(r"[ \t]+", " ", content)
         # Replace multiple newlines with double newline
-        content = re.sub(r"\n{3,}", "\n\n", content)
+        _content = re.sub(r"\n{3,}", "\n\n", content)
         return content
     
-    def _remove_urls(self, content: str) -> str:
+    def _remove_urls(self, _content: str) -> str:
         """Remove URLs from content."""
-        url_pattern = r"https?://[^\s]+"
+        _url_pattern = r"https?://[^\s]+"
         return re.sub(url_pattern, "", content)
     
-    def _extract_metadata(
-        self,
-        content: str,
-        doc_type: DocumentType,
-    ) -> Dict[str, Any]:
+    def _extract_metadata(self, _content: str, _doc_type: DocumentType) -> Dict[str, Any]:
         """Extract metadata from content."""
-        metadata = {}
+        _metadata = {}
         
         # Extract title from first line or heading
-        lines = content.strip().split("\n")
+        _lines = content.strip().split("\n")
         if lines:
-            first_line = lines[0].strip()
+            _first_line = lines[0].strip()
             # Markdown heading
             if first_line.startswith("#"):
                 metadata["title"] = first_line.lstrip("# ").strip()
@@ -404,34 +390,28 @@ class DocumentProcessor:
         
         return metadata
     
-    def _extract_keywords(self, content: str) -> List[str]:
+    def _extract_keywords(self, _content: str) -> List[str]:
         """Extract keywords from content using simple frequency analysis."""
         # Simple keyword extraction based on word frequency
         # For production, consider using KeyBERT or similar
-        words = re.findall(r"\b[a-zA-Z]{4,}\b", content.lower())
+        _words = re.findall(r"\b[a-zA-Z]{4,}\b", content.lower())
         
         # Filter common words
-        stop_words = {
+        _stop_words = {
             "this", "that", "these", "those", "with", "from", "have",
             "been", "were", "they", "their", "what", "when", "where",
             "which", "while", "about", "would", "could", "should",
         }
-        words = [w for w in words if w not in stop_words]
+        _words = [w for w in words if w not in stop_words]
         
         # Count frequency
         from collections import Counter
-        word_counts = Counter(words)
+        _word_counts = Counter(words)
         
         # Return top keywords
         return [w for w, _ in word_counts.most_common(self.config.keyword_count)]
     
-    def _chunk_content(
-        self,
-        content: str,
-        document_id: str,
-        source_path: str,
-        doc_type: DocumentType,
-    ) -> List[DocumentChunk]:
+    def _chunk_content(self, _content: str, _document_id: str, _source_path: str, _doc_type: DocumentType) -> List[DocumentChunk]:
         """Chunk content using configured strategy."""
         if self.config.chunk_strategy == ChunkStrategy.RECURSIVE:
             return self._chunk_recursive(content, document_id, source_path, doc_type)
@@ -443,88 +423,82 @@ class DocumentProcessor:
             # Default to recursive
             return self._chunk_recursive(content, document_id, source_path, doc_type)
     
-    def _chunk_recursive(
-        self,
-        content: str,
-        document_id: str,
-        source_path: str,
-        doc_type: DocumentType,
-    ) -> List[DocumentChunk]:
+    def _chunk_recursive(self, _content: str, _document_id: str, _source_path: str, _doc_type: DocumentType) -> List[DocumentChunk]:
         """
         Recursively chunk content by paragraphs, then sentences.
         
         Pattern stolen from LangChain's RecursiveCharacterTextSplitter.
         """
-        chunks = []
+        _chunks = []
         
         # Split by paragraphs first
-        paragraphs = content.split("\n\n")
+        _paragraphs = content.split("\n\n")
         
-        current_chunk = ""
-        current_start = 0
-        chunk_index = 0
+        _current_chunk = ""
+        _current_start = 0
+        _chunk_index = 0
         
         for para in paragraphs:
             # If paragraph alone exceeds chunk size, split by sentences
             if len(para) > self.config.chunk_size:
-                sentences = self._split_sentences(para)
+                _sentences = self._split_sentences(para)
                 for sentence in sentences:
                     if len(current_chunk) + len(sentence) > self.config.chunk_size:
                         if current_chunk and len(current_chunk) >= self.config.min_chunk_size:
-                            chunk = self._create_chunk(
-                                content=current_chunk.strip(),
-                                document_id=document_id,
-                                source_path=source_path,
-                                doc_type=doc_type,
-                                chunk_index=chunk_index,
-                                start_char=current_start,
+                            _chunk = self._create_chunk(
+                                _content = current_chunk.strip(),
+                                _document_id = document_id,
+                                _source_path = source_path,
+                                _doc_type = doc_type,
+                                _chunk_index = chunk_index,
+                                _start_char = current_start,
                             )
                             chunks.append(chunk)
                             chunk_index += 1
                         
                         # Start new chunk with overlap
                         if self.config.chunk_overlap > 0 and current_chunk:
-                            overlap_text = current_chunk[-self.config.chunk_overlap:]
-                            current_chunk = overlap_text + " " + sentence
+                            _overlap_text = current_chunk[-self.config.chunk_overlap:]
+                            _current_chunk = overlap_text + " " + sentence
                         else:
-                            current_chunk = sentence
-                        current_start = current_start + len(current_chunk) - len(sentence)
+                            _current_chunk = sentence
+                        _current_start = current_start + len(current_chunk) - len(sentence)
                     else:
                         current_chunk += " " + sentence if current_chunk else sentence
             else:
                 # Check if adding paragraph exceeds chunk size
                 if len(current_chunk) + len(para) + 2 > self.config.chunk_size:
                     if current_chunk and len(current_chunk) >= self.config.min_chunk_size:
-                        chunk = self._create_chunk(
-                            content=current_chunk.strip(),
-                            document_id=document_id,
-                            source_path=source_path,
-                            doc_type=doc_type,
-                            chunk_index=chunk_index,
-                            start_char=current_start,
+                        _chunk = self._create_chunk(
+                            _content = current_chunk.strip(),
+                            _document_id = document_id,
+                            _source_path = source_path,
+                            _doc_type = doc_type,
+                            _chunk_index = chunk_index,
+                            _start_char = current_start,
                         )
                         chunks.append(chunk)
                         chunk_index += 1
                     
                     # Start new chunk with overlap
                     if self.config.chunk_overlap > 0 and current_chunk:
-                        overlap_text = current_chunk[-self.config.chunk_overlap:]
-                        current_chunk = overlap_text + "\n\n" + para
+                        _overlap_text = current_chunk[-self.config.chunk_overlap:]
+                        _current_chunk = overlap_text + "\n\n" + para
                     else:
-                        current_chunk = para
-                    current_start = current_start + len(current_chunk) - len(para)
+                        _current_chunk = para
+                    _current_start = current_start + len(current_chunk) - len(para)
                 else:
                     current_chunk += "\n\n" + para if current_chunk else para
         
         # Add final chunk
         if current_chunk and len(current_chunk) >= self.config.min_chunk_size:
-            chunk = self._create_chunk(
-                content=current_chunk.strip(),
-                document_id=document_id,
-                source_path=source_path,
-                doc_type=doc_type,
-                chunk_index=chunk_index,
-                start_char=current_start,
+            _chunk = self._create_chunk(
+                _content = current_chunk.strip(),
+                _document_id = document_id,
+                _source_path = source_path,
+                _doc_type = doc_type,
+                _chunk_index = chunk_index,
+                _start_char = current_start,
             )
             chunks.append(chunk)
         
@@ -535,27 +509,21 @@ class DocumentProcessor:
         
         return chunks
     
-    def _chunk_fixed_size(
-        self,
-        content: str,
-        document_id: str,
-        source_path: str,
-        doc_type: DocumentType,
-    ) -> List[DocumentChunk]:
+    def _chunk_fixed_size(self, _content: str, _document_id: str, _source_path: str, _doc_type: DocumentType) -> List[DocumentChunk]:
         """Chunk content by fixed character size."""
-        chunks = []
+        _chunks = []
         
         for i in range(0, len(content), self.config.chunk_size - self.config.chunk_overlap):
-            chunk_content = content[i:i + self.config.chunk_size]
+            _chunk_content = content[i:i + self.config.chunk_size]
             
             if len(chunk_content) >= self.config.min_chunk_size:
-                chunk = self._create_chunk(
-                    content=chunk_content,
-                    document_id=document_id,
-                    source_path=source_path,
-                    doc_type=doc_type,
-                    chunk_index=len(chunks),
-                    start_char=i,
+                _chunk = self._create_chunk(
+                    _content = chunk_content,
+                    _document_id = document_id,
+                    _source_path = source_path,
+                    _doc_type = doc_type,
+                    _chunk_index = len(chunks),
+                    _start_char = i,
                 )
                 chunks.append(chunk)
         
@@ -565,45 +533,39 @@ class DocumentProcessor:
         
         return chunks
     
-    def _chunk_by_sentence(
-        self,
-        content: str,
-        document_id: str,
-        source_path: str,
-        doc_type: DocumentType,
-    ) -> List[DocumentChunk]:
+    def _chunk_by_sentence(self, _content: str, _document_id: str, _source_path: str, _doc_type: DocumentType) -> List[DocumentChunk]:
         """Chunk content by sentence boundaries."""
-        chunks = []
-        sentences = self._split_sentences(content)
+        _chunks = []
+        _sentences = self._split_sentences(content)
         
-        current_chunk = ""
-        chunk_index = 0
+        _current_chunk = ""
+        _chunk_index = 0
         
         for sentence in sentences:
             if len(current_chunk) + len(sentence) > self.config.chunk_size:
                 if current_chunk:
-                    chunk = self._create_chunk(
-                        content=current_chunk.strip(),
-                        document_id=document_id,
-                        source_path=source_path,
-                        doc_type=doc_type,
-                        chunk_index=chunk_index,
-                        start_char=0,
+                    _chunk = self._create_chunk(
+                        _content = current_chunk.strip(),
+                        _document_id = document_id,
+                        _source_path = source_path,
+                        _doc_type = doc_type,
+                        _chunk_index = chunk_index,
+                        _start_char = 0,
                     )
                     chunks.append(chunk)
                     chunk_index += 1
-                current_chunk = sentence
+                _current_chunk = sentence
             else:
                 current_chunk += " " + sentence if current_chunk else sentence
         
         if current_chunk:
-            chunk = self._create_chunk(
-                content=current_chunk.strip(),
-                document_id=document_id,
-                source_path=source_path,
-                doc_type=doc_type,
-                chunk_index=chunk_index,
-                start_char=0,
+            _chunk = self._create_chunk(
+                _content = current_chunk.strip(),
+                _document_id = document_id,
+                _source_path = source_path,
+                _doc_type = doc_type,
+                _chunk_index = chunk_index,
+                _start_char = 0,
             )
             chunks.append(chunk)
         
@@ -613,37 +575,29 @@ class DocumentProcessor:
         
         return chunks
     
-    def _split_sentences(self, text: str) -> List[str]:
+    def _split_sentences(self, _text: str) -> List[str]:
         """Split text into sentences."""
         # Simple sentence splitting
         # For production, consider using spaCy or nltk
-        sentence_endings = r"(?<=[.!?])\s+"
-        sentences = re.split(sentence_endings, text)
+        _sentence_endings = r"(?<=[.!?])\s+"
+        _sentences = re.split(sentence_endings, text)
         return [s.strip() for s in sentences if s.strip()]
     
-    def _create_chunk(
-        self,
-        content: str,
-        document_id: str,
-        source_path: str,
-        doc_type: DocumentType,
-        chunk_index: int,
-        start_char: int,
-    ) -> DocumentChunk:
+    def _create_chunk(self, _content: str, _document_id: str, _source_path: str, _doc_type: DocumentType, _chunk_index: int, _start_char: int) -> DocumentChunk:
         """Create a document chunk."""
-        chunk_id = self.generate_id(content, f"{document_id}:{chunk_index}")
+        _chunk_id = self.generate_id(content, f"{document_id}:{chunk_index}")
         
         return DocumentChunk(
-            id=chunk_id,
-            document_id=document_id,
-            content=content,
-            chunk_index=chunk_index,
-            total_chunks=0,  # Updated later
-            source_path=source_path,
-            source_type=doc_type,
-            start_char=start_char,
-            end_char=start_char + len(content),
-            metadata={
+            _id = chunk_id,
+            _document_id = document_id,
+            _content = content,
+            _chunk_index = chunk_index,
+            _total_chunks = 0,  # Updated later
+            _source_path = source_path,
+            _source_type = doc_type,
+            _start_char = start_char,
+            _end_char = start_char + len(content),
+            _metadata = {
                 "char_count": len(content),
                 "word_count": len(content.split()),
             },
