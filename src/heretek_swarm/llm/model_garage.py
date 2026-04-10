@@ -90,13 +90,20 @@ class ProviderConfig:
     available_models: List[str] = field(default_factory=list)
     is_enabled: bool = True
     is_default: bool = False
-    priority: int = 100  # Lower = higher priority
-    max_rpm: Optional[int] = None  # Requests per minute
-    max_tpm: Optional[int] = None  # Tokens per minute
+    priority: int = 100
+    max_rpm: Optional[int] = None
+    max_tpm: Optional[int] = None
     timeout: float = 60.0
     retry_count: int = 3
     retry_delay: float = 1.0
-    health_status: str = "unknown            "id": self.id,
+    health_status: str = "unknown"
+    last_health_check: Optional[str] = None
+    error_message: Optional[str] = None
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary."""
+        return {
+            "id": self.id,
             "name": self.name,
             "provider_type": self.provider_type.value,
             "base_url": self.base_url,
@@ -109,8 +116,6 @@ class ProviderConfig:
             "max_rpm": self.max_rpm,
             "max_tpm": self.max_tpm,
             "health_status": self.health_status,
-            "last_health_check": self.last_health_check,
-            "error_message": self.error_message,
         }
 
 
@@ -217,7 +222,7 @@ class LLMProvider(ABC):
     def __init__(self, config: ProviderConfig):
         self.config = config
         self._client: Optional[httpx.AsyncClient] = None
-        self._rate_limiter = asyncio.Semaphore(10)  # Concurrent requests
+        self._rate_limiter = asyncio.Semaphore(10)
         self._last_request_time: float = 0
 
     @abstractmethod
@@ -230,10 +235,14 @@ class LLMProvider(ABC):
         """Stream chat completion tokens."""
         pass
 
-    @abstractmethod
     async def health_check(self) -> bool:
         """Check if the provider is healthy."""
-        pass
+        try:
+            client = await self._get_client()
+            response = await client.get("/")
+            return response.status_code < 500
+        except Exception:
+            return False
 
     async def close(self) -> None:
         """Close the provider."""
@@ -308,6 +317,28 @@ class OpenAIProvider(LLMProvider):
                 logger.error("OpenAI completion failed", error=str(e))
                 raise
 
+    async def stream(self, request: LLMRequest) -> AsyncIterator[str]:
+        await self._rate_limit()
+        async with self._rate_limiter:
+            client = await self._get_client()
+            model = request.model or self.config.default_model or "gpt-4o"
+            payload = request.to_dict()
+            payload["model"] = model
+            payload["stream"] = True
+
+            async with client.stream("POST", "/chat/completions", json=payload) as response:
+                response.raise_for_status()
+                async for line in response.aiter_lines():
+                    if line:
+                        try:
+                            data = json.loads(line)
+                            if "choices" in data and len(data["choices"]) > 0:
+                                delta = data["choices"][0].get("delta", {})
+                                if "content" in delta:
+                                    yield delta["content"]
+                        except json.JSONDecodeError:
+                            continue
+
 
 class OllamaProvider(LLMProvider):
     """Ollama local API provider."""
@@ -318,7 +349,6 @@ class OllamaProvider(LLMProvider):
             client = await self._get_client()
             start_time = time.time()
 
-            # Ollama format
             model = request.model or self.config.default_model or "llama3.1"
             payload = {
                 "model": model,
@@ -340,18 +370,15 @@ class OllamaProvider(LLMProvider):
                 latency_ms = (time.time() - start_time) * 1000
                 message = data.get("message", {})
 
-                # Calculate usage (Ollama doesn't provide this)
-                usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0}
-
                 return LLMResponse(
                     content=message.get("content", ""),
                     model=model,
                     provider=ProviderType.OLLAMA,
-                    usage=usage,
+                    usage={"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0},
                     finish_reason=data.get("done_reason"),
                     raw_response=data,
                     latency_ms=latency_ms,
-                    cost=0.0,  # Local, no cost
+                    cost=0.0,
                 )
             except Exception as e:
                 logger.error("Ollama completion failed", error=str(e))
@@ -361,15 +388,12 @@ class OllamaProvider(LLMProvider):
         await self._rate_limit()
         async with self._rate_limiter:
             client = await self._get_client()
-
             model = request.model or self.config.default_model or "llama3.1"
             payload = {
                 "model": model,
                 "messages": [m.to_dict() for m in request.messages],
                 "stream": True,
-                "options": {
-                    "temperature": request.temperature,
-                }
+                "options": {"temperature": request.temperature}
             }
 
             async with client.stream("POST", "/api/chat", json=payload) as response:
@@ -389,10 +413,6 @@ class OllamaProvider(LLMProvider):
 class MiniMaxProvider(LLMProvider):
     """MiniMax API provider."""
 
-    def __init__(self, config: ProviderConfig):
-        super().__init__(config)
-        self.group_id = config.metadata.get("group_id")
-
     async def complete(self, request: LLMRequest) -> LLMResponse:
         await self._rate_limit()
         async with self._rate_limiter:
@@ -406,8 +426,8 @@ class MiniMaxProvider(LLMProvider):
                 "temperature": request.temperature,
                 "max_tokens": request.max_tokens or 2048,
             }
-            if self.group_id:
-                payload["group_id"] = self.group_id
+            if self.config.metadata.get("group_id"):
+                payload["group_id"] = self.config.metadata["group_id"]
 
             try:
                 response = await client.post("/text/chatcompletion_v2", json=payload)
@@ -431,6 +451,10 @@ class MiniMaxProvider(LLMProvider):
                 logger.error("MiniMax completion failed", error=str(e))
                 raise
 
+    async def stream(self, request: LLMRequest) -> AsyncIterator[str]:
+        # MiniMax streaming implementation similar to others
+        raise NotImplementedError("MiniMax streaming not yet implemented")
+
 
 class AnthropicProvider(LLMProvider):
     """Anthropic Claude API provider."""
@@ -443,7 +467,6 @@ class AnthropicProvider(LLMProvider):
 
             model = request.model or self.config.default_model or "claude-3-5-sonnet-20241022"
 
-            # Convert messages to Anthropic format
             anthropic_messages = []
             system_prompt = ""
             for msg in request.messages:
@@ -468,8 +491,11 @@ class AnthropicProvider(LLMProvider):
 
                 latency_ms = (time.time() - start_time) * 1000
 
+                content = data.get("content", [{"text": ""}])
+                text = content[0].get("text", "") if content else ""
+
                 return LLMResponse(
-                    content=data.get("content", [{"text": ""}])[0].get("text", ""),
+                    content=text,
                     model=model,
                     provider=ProviderType.ANTHROPIC,
                     usage=data.get("usage", {}),
@@ -480,6 +506,9 @@ class AnthropicProvider(LLMProvider):
             except Exception as e:
                 logger.error("Anthropic completion failed", error=str(e))
                 raise
+
+    async def stream(self, request: LLMRequest) -> AsyncIterator[str]:
+        raise NotImplementedError("Anthropic streaming not yet implemented")
 
 
 class OpenAICompatibleProvider(LLMProvider):
@@ -521,6 +550,10 @@ class OpenAICompatibleProvider(LLMProvider):
                 logger.error("OpenAI-compatible completion failed", error=str(e))
                 raise
 
+    async def stream(self, request: LLMRequest) -> AsyncIterator[str]:
+        # Similar streaming implementation to OpenAIProvider
+        raise NotImplementedError("OpenAI-compatible streaming not yet implemented")
+
 
 # ============================================================================
 # Provider Registry
@@ -555,24 +588,6 @@ class ModelGarage:
     - Cost optimization
     - Health monitoring
     - Unified OpenAI-compatible API
-
-    Configuration is loaded from ~/.heretek-swarm/config.json
-
-    Example:
-        garage = ModelGarage()
-
-        # Complete a request
-        response = await garage.complete(
-            messages=[ChatMessage(role="user", content="Hello!")],
-            model="gpt-4o"
-        )
-        print(response.content)
-
-        # Or specify provider preference
-        response = await garage.complete(
-            messages=[ChatMessage(role="user", content="Hello!")],
-            provider_preference=["ollama", "openai"]  # Try Ollama first, fallback to OpenAI
-        )
     """
 
     def __init__(
@@ -580,34 +595,13 @@ class ModelGarage:
         config_file: Optional[Path] = None,
         default_provider: Optional[ProviderType] = None,
     ):
-        """
-        Initialize the Model Garage.
-
-        Args:
-            config_file: Path to configuration file (default: ~/.heretek-swarm/config.json)
-            default_provider: Default provider to use if not specified
-        """
         self.config_file = config_file or HERETEK_CONFIG_FILE
         self._providers: Dict[str, LLMProvider] = {}
         self._provider_configs: Dict[str, ProviderConfig] = {}
         self._initialized = False
+        self._default_provider = default_provider or ProviderType.OLLAMA
 
-        # Load configuration
         self._load_config()
-
-        # Set default provider
-        if default_provider:
-            self._default_provider = default_provider
-        elif self._provider_configs:
-            # Use the default provider from config
-            for config in self._provider_configs.values():
-                if config.is_default:
-                    self._default_provider = config.provider_type
-                    break
-            else:
-                self._default_provider = ProviderType.OLLAMA  # Fallback to Ollama
-        else:
-            self._default_provider = ProviderType.OLLAMA
 
     def _load_config(self) -> None:
         """Load provider configuration from file."""
@@ -637,7 +631,6 @@ class ModelGarage:
 
                 logger.info("Loaded provider configuration", count=len(self._provider_configs))
             else:
-                # Create default config
                 self._create_default_config()
         except Exception as e:
             logger.error("Failed to load configuration", error=str(e))
@@ -666,8 +659,6 @@ class ModelGarage:
             with open(self.config_file, "w") as f:
                 json.dump(default_config, f, indent=2)
             logger.info("Created default configuration", path=str(self.config_file))
-
-            # Reload config
             self._load_config()
         except Exception as e:
             logger.error("Failed to create default configuration", error=str(e))
@@ -779,28 +770,16 @@ class ModelGarage:
     ) -> LLMResponse:
         """
         Complete a chat request with automatic provider routing.
-
-        Args:
-            messages: List of chat messages
-            model: Model to use (optional, uses provider default)
-            provider_id: Specific provider ID to use
-            provider_preference: List of provider types to try in order
-            **kwargs: Additional request parameters
-
-        Returns:
-            LLMResponse from the selected provider
         """
         if not self._initialized:
             await self.initialize()
 
-        # Build request
         request = LLMRequest(
             messages=messages,
             model=model,
             **{k: v for k, v in kwargs.items() if v is not None}
         )
 
-        # Determine providers to try
         if provider_id:
             providers_to_try = [provider_id] if provider_id in self._providers else []
         elif provider_preference:
@@ -809,7 +788,6 @@ class ModelGarage:
                 if cfg.provider_type in provider_preference and pid in self._providers
             ]
         else:
-            # Use default provider, then fallbacks
             providers_to_try = []
             for cfg in sorted(self._provider_configs.values(), key=lambda c: c.priority):
                 if cfg.is_enabled and cfg.id in self._providers:
@@ -820,7 +798,6 @@ class ModelGarage:
         if not providers_to_try:
             raise ValueError("No available providers")
 
-        # Try providers in order
         last_error = None
         for pid in providers_to_try:
             provider = self._providers.get(pid)
@@ -828,26 +805,13 @@ class ModelGarage:
                 continue
 
             try:
-                logger.debug(
-                    "Attempting completion",
-                    provider=pid,
-                    model=model or provider.config.default_model
-                )
+                logger.debug("Attempting completion", provider=pid, model=model or provider.config.default_model)
                 response = await provider.complete(request)
-                logger.info(
-                    "Completion successful",
-                    provider=pid,
-                    model=response.model,
-                    latency_ms=response.latency_ms
-                )
+                logger.info("Completion successful", provider=pid, model=response.model, latency_ms=response.latency_ms)
                 return response
             except Exception as e:
                 last_error = e
-                logger.warning(
-                    "Provider failed, trying next",
-                    provider=pid,
-                    error=str(e)
-                )
+                logger.warning("Provider failed, trying next", provider=pid, error=str(e))
 
         raise last_error or RuntimeError("All providers failed")
 
@@ -858,18 +822,7 @@ class ModelGarage:
         provider_id: Optional[str] = None,
         **kwargs,
     ) -> AsyncIterator[str]:
-        """
-        Stream chat completion tokens.
-
-        Args:
-            messages: List of chat messages
-            model: Model to use
-            provider_id: Specific provider ID to use
-            **kwargs: Additional request parameters
-
-        Yields:
-            String tokens from the completion
-        """
+        """Stream chat completion tokens."""
         if not self._initialized:
             await self.initialize()
 
@@ -880,12 +833,10 @@ class ModelGarage:
             **{k: v for k, v in kwargs.items() if v is not None}
         )
 
-        # Get provider
         provider = None
         if provider_id and provider_id in self._providers:
             provider = self._providers[provider_id]
         else:
-            # Find first provider that supports streaming
             for cfg in sorted(self._provider_configs.values(), key=lambda c: c.priority):
                 if cfg.is_enabled and cfg.id in self._providers:
                     provider = self._providers[cfg.id]
@@ -931,20 +882,16 @@ async def initialize_model_garage() -> ModelGarage:
 
 async def main():
     """Example usage of ModelGarage."""
-    # Initialize
     garage = await initialize_model_garage()
 
-    # List available providers
     providers = garage.list_providers()
     print("Available providers:", json.dumps(providers, indent=2))
 
-    # Complete a request
     response = await garage.complete(
         messages=[
             ChatMessage(role="system", content="You are a helpful AI assistant."),
             ChatMessage(role="user", content="What is the capital of France?"),
-        ],
-        model="gpt-4o"  # Optional: specify model
+        ]
     )
 
     print(f"Response: {response.content}")
@@ -952,7 +899,6 @@ async def main():
     print(f"Provider: {response.provider.value}")
     print(f"Latency: {response.latency_ms:.2f}ms")
 
-    # Clean up
     await garage.close()
 
 
