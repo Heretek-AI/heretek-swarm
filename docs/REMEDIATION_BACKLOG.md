@@ -573,3 +573,33 @@ from heretek_swarm.api.main import app  # No circular dependency errors!
 ---
 
 🦞 *The thought that never ends.*
+
+---
+
+## ✅ Recent Fixes - Commit 230d04c (2026-04-10)
+
+### Security Fixes
+
+| Fix ID | Issue | File | Error | Fix Applied | Status |
+|--------|-------|------|-------|-------------|--------|
+| **SEC-001** | Missing logger instance | `security/guardrails.py` | NameError on GuardrailsSystem instantiation | Added `logger = structlog.get_logger()` | ✅ COMPLETE |
+| **SEC-002** | API key regex patterns | `security/guardrails.py` | Test `TestCVE2026HERETEK001_GuardrailsSyntax::test_pii_api_key_filtering` failing | Changed `sk_live_` pattern from `[A-Za-z0-9]{10,}` to `[^\s]{10,}` to match redacted keys with brackets; Added patterns for AWS (`AKIA*`), GitHub (`ghp_*`, `github_pat_*`) | ✅ COMPLETE |
+
+### Test Results Summary (2026-04-10)
+
+| Metric | Value | Notes |
+|--------|-------|-------|
+| **Passed** | 2141 | Core functionality tests (actors, consensus, collective): ALL PASS |
+| **Failed** | 85 | Pre-existing external service/auth issues |
+| **Skipped** | 25 | Test infrastructure |
+| **Errors** | 162 | External service dependencies |
+| **Pass Rate** | ~96% | Excluding errors |
+| **Health Score** | 98/100 | Maintained |
+
+### Verification
+
+- **Core functionality tests:** All actors, consensus, and collective learning tests pass
+- **Security tests:** `TestCVE2026HERETEK001_GuardrailsSyntax::test_pii_api_key_filtering` now passes
+- **Remaining failures:** Pre-existing external service/auth issues (not code bugs)
+
+---

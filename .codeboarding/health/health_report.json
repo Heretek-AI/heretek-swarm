@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-10T02:07:39.768780+00:00",
-  "overall_score": 0.9881275551921505,
+  "timestamp": "2026-04-10T03:14:22.114898+00:00",
+  "overall_score": 0.9880306102426581,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -982,8 +982,8 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 181,
-      "findings_count": 181,
+      "total_entities_checked": 184,
+      "findings_count": 184,
       "warning_count": 2,
       "score": 0.0,
       "finding_groups": [
@@ -2243,6 +2243,27 @@
               "file_path": "serverless/handler.py",
               "line_start": 607,
               "line_end": 607,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"action\" is not accessed",
+              "file_path": "src/heretek_swarm/security/guardrails.py",
+              "line_start": 355,
+              "line_end": 355,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"limit\" is not accessed",
+              "file_path": "src/heretek_swarm/security/guardrails.py",
+              "line_start": 367,
+              "line_end": 367,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"categories\" is not accessed",
+              "file_path": "src/heretek_swarm/security/adversarial.py",
+              "line_start": 682,
+              "line_end": 682,
               "metric_value": 0.0
             }
           ]

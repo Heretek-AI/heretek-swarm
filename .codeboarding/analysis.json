@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-10T02:07:39.443246+00:00",
+    "generated_at": "2026-04-10T03:14:21.603199+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 4,
@@ -27526,7 +27526,7 @@
       ]
     },
     "src/heretek_swarm/security/guardrails.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.security.guardrails.GuardrailsAction",
@@ -27565,10 +27565,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.security.guardrails.GuardrailsSystem",
-          "start_line": 81,
-          "end_line": 355,
+          "start_line": 83,
+          "end_line": 371,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.security.guardrails.GuardrailsSystem.__init__",
@@ -27600,10 +27600,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.security.guardrails.GuardrailsSystem.filter_output",
-          "start_line": 175,
-          "end_line": 256,
+          "start_line": 177,
+          "end_line": 272,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.security.guardrails.GuardrailsSystem.add_blocked_pattern",
@@ -32900,7 +32900,7 @@
       ]
     },
     "src/heretek_swarm/security/adversarial.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.security.adversarial.ThreatLevel",
@@ -43295,6 +43295,14 @@
           "status": "unchanged"
         }
       ]
+    },
+    ".actor_states/test-term.json": {
+      "file_status": "modified",
+      "methods": []
+    },
+    "docs/REMEDIATION_BACKLOG.md": {
+      "file_status": "modified",
+      "methods": []
     }
   },
   "methods_index": {
@@ -73997,10 +74005,10 @@
     "src/heretek_swarm/security/guardrails.py|src.heretek_swarm.security.guardrails.GuardrailsSystem": {
       "file_path": "src/heretek_swarm/security/guardrails.py",
       "qualified_name": "src.heretek_swarm.security.guardrails.GuardrailsSystem",
-      "start_line": 81,
-      "end_line": 355,
+      "start_line": 83,
+      "end_line": 371,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/security/guardrails.py|src.heretek_swarm.security.guardrails.GuardrailsSystem.__init__": {
       "file_path": "src/heretek_swarm/security/guardrails.py",
@@ -74037,10 +74045,10 @@
     "src/heretek_swarm/security/guardrails.py|src.heretek_swarm.security.guardrails.GuardrailsSystem.filter_output": {
       "file_path": "src/heretek_swarm/security/guardrails.py",
       "qualified_name": "src.heretek_swarm.security.guardrails.GuardrailsSystem.filter_output",
-      "start_line": 175,
-      "end_line": 256,
+      "start_line": 177,
+      "end_line": 272,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/security/guardrails.py|src.heretek_swarm.security.guardrails.GuardrailsSystem.add_blocked_pattern": {
       "file_path": "src/heretek_swarm/security/guardrails.py",
@@ -96032,7 +96040,7 @@
         },
         {
           "file_path": "src/heretek_swarm/security/guardrails.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.security.guardrails.GuardrailsAction",
             "src.heretek_swarm.security.guardrails.BlockedPattern",
@@ -118882,7 +118890,7 @@
             },
             {
               "file_path": "src/heretek_swarm/security/guardrails.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.security.guardrails.GuardrailsAction",
                 "src.heretek_swarm.security.guardrails.BlockedPattern",
@@ -119120,7 +119128,7 @@
               "file_methods": [
                 {
                   "file_path": "src/heretek_swarm/security/guardrails.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.security.guardrails.GuardrailsAction",
                     "src.heretek_swarm.security.guardrails.BlockedPattern",
@@ -125456,7 +125464,7 @@
         },
         {
           "file_path": "src/heretek_swarm/security/adversarial.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.security.adversarial.ThreatLevel",
             "src.heretek_swarm.security.adversarial.AttackCategory",
@@ -125530,7 +125538,7 @@
             },
             {
               "file_path": "src/heretek_swarm/security/adversarial.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.security.adversarial.ThreatLevel",
                 "src.heretek_swarm.security.adversarial.AttackCategory",
@@ -125604,7 +125612,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/security/adversarial.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.security.adversarial.ThreatLevel",
                     "src.heretek_swarm.security.adversarial.AttackCategory",
@@ -125671,7 +125679,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/security/adversarial.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.security.adversarial.ThreatLevel",
                     "src.heretek_swarm.security.adversarial.AttackCategory",
@@ -125741,7 +125749,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/security/adversarial.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.security.adversarial.ThreatLevel",
                     "src.heretek_swarm.security.adversarial.AttackCategory",
@@ -125823,7 +125831,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/security/adversarial.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.security.adversarial.ThreatLevel",
                     "src.heretek_swarm.security.adversarial.AttackCategory",
@@ -125978,7 +125986,7 @@
             },
             {
               "file_path": "src/heretek_swarm/security/adversarial.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.security.adversarial.ThreatLevel",
                 "src.heretek_swarm.security.adversarial.AttackCategory",
@@ -126073,7 +126081,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/security/adversarial.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.security.adversarial.ThreatLevel",
                     "src.heretek_swarm.security.adversarial.AttackCategory",
@@ -126197,7 +126205,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/security/adversarial.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.security.adversarial.ThreatLevel",
                     "src.heretek_swarm.security.adversarial.AttackCategory",
@@ -126279,7 +126287,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/security/adversarial.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.security.adversarial.ThreatLevel",
                     "src.heretek_swarm.security.adversarial.AttackCategory",
@@ -126372,7 +126380,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/security/adversarial.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.security.adversarial.ThreatLevel",
                     "src.heretek_swarm.security.adversarial.AttackCategory",
@@ -126552,7 +126560,7 @@
             },
             {
               "file_path": "src/heretek_swarm/security/adversarial.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.security.adversarial.ThreatLevel",
                 "src.heretek_swarm.security.adversarial.AttackCategory",
@@ -126622,7 +126630,7 @@
             },
             {
               "file_path": "src/heretek_swarm/security/adversarial.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.security.adversarial.ThreatLevel",
                 "src.heretek_swarm.security.adversarial.AttackCategory",
@@ -126689,7 +126697,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/security/adversarial.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.security.adversarial.ThreatLevel",
                     "src.heretek_swarm.security.adversarial.AttackCategory",
@@ -126761,7 +126769,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/security/adversarial.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.security.adversarial.ThreatLevel",
                     "src.heretek_swarm.security.adversarial.AttackCategory",
@@ -126825,7 +126833,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/security/adversarial.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.security.adversarial.ThreatLevel",
                     "src.heretek_swarm.security.adversarial.AttackCategory",
@@ -126895,7 +126903,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/security/adversarial.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.security.adversarial.ThreatLevel",
                     "src.heretek_swarm.security.adversarial.AttackCategory",
@@ -126965,7 +126973,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/security/adversarial.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.security.adversarial.ThreatLevel",
                     "src.heretek_swarm.security.adversarial.AttackCategory",
@@ -127198,7 +127206,7 @@
             },
             {
               "file_path": "src/heretek_swarm/security/adversarial.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.security.adversarial.ThreatLevel",
                 "src.heretek_swarm.security.adversarial.AttackCategory",
@@ -127271,7 +127279,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/security/adversarial.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.security.adversarial.ThreatLevel",
                     "src.heretek_swarm.security.adversarial.AttackCategory",
@@ -127341,7 +127349,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/security/adversarial.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.security.adversarial.ThreatLevel",
                     "src.heretek_swarm.security.adversarial.AttackCategory",
@@ -127413,7 +127421,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/security/adversarial.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.security.adversarial.ThreatLevel",
                     "src.heretek_swarm.security.adversarial.AttackCategory",
@@ -127457,7 +127465,7 @@
               "file_methods": [
                 {
                   "file_path": "src/heretek_swarm/security/adversarial.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.security.adversarial.ThreatLevel",
                     "src.heretek_swarm.security.adversarial.AttackCategory",
@@ -127524,7 +127532,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/security/adversarial.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.security.adversarial.ThreatLevel",
                     "src.heretek_swarm.security.adversarial.AttackCategory",
