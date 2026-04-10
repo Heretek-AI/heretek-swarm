@@ -1,4 +1,3 @@
-import sys
 
 content = """# Heretek Swarm - Autonomous Runtime Docker Compose
 # Full stack for 24/7 continuous operation
@@ -205,7 +204,7 @@ services:
 # VOLUMES.0/16
 """
 
-output_path = "C:/Users/derek/Desktop/Heretek-AI/heretek-swarm/docker-compose.autonomous.yml"
+_output_path = "C:/Users/derek/Desktop/Heretek-AI/heretek-swarm/docker-compose.autonomous.yml"
 
 with open(output_path, "w", encoding="utf-8") as f:
     f.write(content)
