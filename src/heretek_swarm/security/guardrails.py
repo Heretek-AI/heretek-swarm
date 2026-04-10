@@ -21,6 +21,8 @@ from enum import Enum
 
 import structlog
 
+logger = structlog.get_logger()
+
 
 class GuardrailsAction(str, Enum):
     """Actions to take when guardrails are triggered"""
