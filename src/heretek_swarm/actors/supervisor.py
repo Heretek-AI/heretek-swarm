@@ -16,7 +16,7 @@ import structlog
 from heretek_swarm.actors.base import AgentActor, ActorState, ActorStatus
 from heretek_swarm.actors.factory import ActorConfig
 
-logger = structlog.get_logger("ActorSupervisor")
+_logger = structlog.get_logger("ActorSupervisor")
 
 
 # Global supervisor instance
@@ -47,7 +47,7 @@ class ActorSupervisor:
 
     Example:
         ```python
-        supervisor = ActorSupervisor()
+        _supervisor = ActorSupervisor()
 
         # Spawn actors
         await supervisor.spawn_actor(MyActor, "actor-1", topics=["topic1"])
@@ -57,21 +57,14 @@ class ActorSupervisor:
         await supervisor.start_monitoring()
 
         # Get status
-        status = await supervisor.get_actor_status("actor-1")
+        _status = await supervisor.get_actor_status("actor-1")
 
         # Terminate all
         await supervisor.terminate_all()
         ```
     """
 
-    def __init__(
-        self,
-        name: Optional[str] = None,
-        health_check_interval: float = 5.0,
-        auto_restart: bool = True,
-        max_restarts: int = 3,
-        db_pool: Optional[Any] = None,
-    ) -> None:
+    def __init__(self, _name: Optional[str], _health_check_interval: float, _auto_restart: bool, _max_restarts: int, _db_pool: Optional[Any]) -> None:
         """
         Initialize the supervisor.
 
@@ -103,7 +96,7 @@ class ActorSupervisor:
 
         logger.info(
             f"[{self.name}] Supervisor initialized",
-            extra={
+            _extra = {
                 "health_check_interval": health_check_interval,
                 "auto_restart": auto_restart,
                 "max_restarts": max_restarts,
@@ -121,13 +114,7 @@ class ActorSupervisor:
         # Initialization is handled in __init__, this method is for API compatibility
         pass
 
-    async def spawn_actor(
-        self,
-        actor_class: Type[AgentActor],
-        actor_id: str,
-        actor_type: Optional[str] = None,
-        **kwargs: Any,
-    ) -> AgentActor:
+    async def spawn_actor(self, _actor_class: Type[AgentActor], _actor_id: str, _actor_type: Optional[str], _**kwargs: Any) -> AgentActor:
         """
         Spawn a new actor.
 
@@ -165,18 +152,18 @@ class ActorSupervisor:
             self.restart_counts[actor_id] = 0
 
             # Store configuration for restart capability
-            config = ActorConfig(
-                actor_type=actor_type or actor_class.__name__,
+            _config = ActorConfig(
+                _actor_type = actor_type or actor_class.__name__,
                 class_ref=actor_class,
                 init_kwargs={"agent_id": actor_id, **kwargs},
                 capabilities=actor.capabilities.copy(),
-                actor_id=actor_id,
+                _actor_id = actor_id,
             )
             self.actor_configs[actor_id] = config
 
             logger.info(
                 f"[{self.name}] Actor {actor_id} spawned",
-                extra={"actor_class": actor_class.__name__, "actor_type": actor_type},
+                _extra = {"actor_class": actor_class.__name__, "actor_type": actor_type},
             )
 
             return actor
@@ -187,7 +174,7 @@ class ActorSupervisor:
             # P1-10f fix: Comprehensive exception handling for spawn failures
             logger.error(
                 f"[{self.name}] Failed to spawn actor {actor_id}: {e}",
-                exc_info=True,
+                _exc_info = True,
             )
             # Clean up partial state if actor was partially registered
             self.actors.pop(actor_id, None)
@@ -195,7 +182,7 @@ class ActorSupervisor:
             self.actor_configs.pop(actor_id, None)
             raise
 
-    async def terminate_actor(self, actor_id: str) -> None:
+    async def terminate_actor(self, _actor_id: str) -> None:
         """
         Terminate an actor.
 
@@ -213,7 +200,7 @@ class ActorSupervisor:
         except Exception as e:
             logger.error(
                 f"[{self.name}] Error terminating actor {actor_id}: {e}",
-                exc_info=True,
+                _exc_info = True,
             )
             # Still attempt cleanup even if terminate failed
             actor.state = ActorState.ERROR
@@ -231,14 +218,14 @@ class ActorSupervisor:
         """Terminate all actors."""
         logger.info(f"[{self.name}] Terminating all actors...")
 
-        actor_ids = list(self.actors.keys())
-        tasks = [self.terminate_actor(actor_id) for actor_id in actor_ids]
+        _actor_ids = list(self.actors.keys())
+        _tasks = [self.terminate_actor(actor_id) for actor_id in actor_ids]
 
         await asyncio.gather(*tasks, return_exceptions=True)
 
         logger.info(f"[{self.name}] All actors terminated")
 
-    async def get_actor_status(self, actor_id: str) -> Optional[ActorStatus]:
+    async def get_actor_status(self, _actor_id: str) -> Optional[ActorStatus]:
         """
         Get status of an actor.
 
@@ -299,7 +286,7 @@ class ActorSupervisor:
         while self._running:
             try:
                 for actor_id, actor in list(self.actors.items()):
-                    status = actor.get_status()
+                    _status = actor.get_status()
 
                     # Check for terminated actors - CLEAN UP
                     if status.state == ActorState.TERMINATED:
@@ -335,7 +322,7 @@ class ActorSupervisor:
                 logger.error(f"[{self.name}] Monitor error: {e}", exc_info=True)
                 await asyncio.sleep(5.0)
 
-    async def _attempt_restart(self, actor_id: str) -> None:
+    async def _attempt_restart(self, _actor_id: str) -> None:
         """
         Attempt to restart a failed actor using stored configuration.
 
@@ -360,7 +347,7 @@ class ActorSupervisor:
 
         try:
             # Get stored configuration
-            config = self.actor_configs.get(actor_id)
+            _config = self.actor_configs.get(actor_id)
             if config is None:
                 logger.error(
                     f"[{self.name}] No configuration found for actor {actor_id}",
@@ -375,10 +362,10 @@ class ActorSupervisor:
 
             # Re-spawn using stored configuration
             actor_class = config.class_ref
-            init_kwargs = config.init_kwargs
+            _init_kwargs = config.init_kwargs
 
             # Create new instance
-            new_actor = actor_class(**init_kwargs)
+            _new_actor = actor_class(**init_kwargs)
             await new_actor.spawn()
 
             # Register new actor
@@ -387,14 +374,14 @@ class ActorSupervisor:
 
             logger.info(
                 f"[{self.name}] Actor {actor_id} successfully restarted",
-                extra={"restart_count": self.restart_counts[actor_id]},
+                _extra = {"restart_count": self.restart_counts[actor_id]},
             )
 
         except Exception as e:
             logger.error(f"[{self.name}] Restart failed for {actor_id}: {e}", exc_info=True)
             self.restart_counts[actor_id] = restart_count + 1
 
-    async def respawn_actor(self, actor_id: str) -> bool:
+    async def respawn_actor(self, _actor_id: str) -> bool:
         """
         Manually trigger actor respawn using stored configuration.
 
@@ -411,7 +398,7 @@ class ActorSupervisor:
             logger.warning(f"[{self.name}] Cannot respawn actor {actor_id}: not found")
             return False
 
-        config = self.actor_configs.get(actor_id)
+        _config = self.actor_configs.get(actor_id)
         if config is None:
             logger.error(f"[{self.name}] No configuration found for actor {actor_id}")
             return False
@@ -427,10 +414,10 @@ class ActorSupervisor:
 
             # Re-spawn using stored configuration
             actor_class = config.class_ref
-            init_kwargs = config.init_kwargs
+            _init_kwargs = config.init_kwargs
 
             # Create new instance
-            new_actor = actor_class(**init_kwargs)
+            _new_actor = actor_class(**init_kwargs)
             await new_actor.spawn()
 
             # Register new actor
@@ -447,7 +434,7 @@ class ActorSupervisor:
         """Save states of all actors."""
         logger.info(f"[{self.name}] Saving all actor states...")
 
-        tasks = [actor.save_state() for actor in self.actors.values()]
+        _tasks = [actor.save_state() for actor in self.actors.values()]
         await asyncio.gather(*tasks, return_exceptions=True)
 
         logger.info(f"[{self.name}] All states saved")
@@ -456,7 +443,7 @@ class ActorSupervisor:
         """Load states for all actors."""
         logger.info(f"[{self.name}] Loading all actor states...")
 
-        tasks = [actor.load_state() for actor in self.actors.values()]
+        _tasks = [actor.load_state() for actor in self.actors.values()]
         await asyncio.gather(*tasks, return_exceptions=True)
 
         logger.info(f"[{self.name}] All states loaded")
@@ -468,7 +455,7 @@ class ActorSupervisor:
         Returns:
             Statistics dictionary
         """
-        statuses = [actor.get_status() for actor in self.actors.values()]
+        _statuses = [actor.get_status() for actor in self.actors.values()]
 
         return {
             "total_actors": len(self.actors),
@@ -491,11 +478,7 @@ class ActorSupervisor:
             "monitoring_active": self._running,
         }
 
-    async def broadcast_to_all(
-        self,
-        content: Dict[str, Any],
-        message_type: str = "broadcast",
-    ) -> None:
+    async def broadcast_to_all(self, _content: Dict[str, _Any], _message_type: str) -> None:
         """
         Broadcast a message to all actors.
 
@@ -507,13 +490,13 @@ class ActorSupervisor:
             f"[{self.name}] Broadcasting to {len(self.actors)} actors",
         )
 
-        tasks = [
+        _tasks = [
             actor.broadcast(content, message_type)
             for actor in self.actors.values()
         ]
         await asyncio.gather(*tasks, return_exceptions=True)
 
-    def find_actors_by_capability(self, capability: str) -> List[str]:
+    def find_actors_by_capability(self, _capability: str) -> List[str]:
         """
         Find actors with a specific capability.
 
@@ -529,7 +512,7 @@ class ActorSupervisor:
             if capability in actor.capabilities
         ]
 
-    def find_actors_by_topic(self, topic: str) -> List[str]:
+    def find_actors_by_topic(self, _topic: str) -> List[str]:
         """
         Find actors subscribed to a specific topic.
 

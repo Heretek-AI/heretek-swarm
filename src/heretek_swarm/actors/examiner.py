@@ -28,7 +28,7 @@ from heretek_swarm.actors.validation import validate_message as validate_message
 from heretek_swarm.collective.learning import PatternExtractor, PatternType
 
 # Alias for use in handlers
-validate_message = validate_message_schema
+_validate_message = validate_message_schema
 
 # Session 44: Consensus Integration
 from heretek_swarm.consensus.swarm_deliberation import SwarmDeliberationEngine, Position
@@ -40,7 +40,7 @@ from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer, AccessTi
 from heretek_swarm.security.zero_trust import ZeroTrustValidator
 
 
-logger = structlog.get_logger("ExaminerAgent")
+_logger = structlog.get_logger("ExaminerAgent")
 
 
 class TestType(str, Enum):
@@ -156,12 +156,12 @@ class ExaminerAgent(AgentActor):
     through comprehensive testing, validation, and verification.
     """
     
-    def __init__(self, agent_id: str = None, config: Dict[str, Any] = None):
+    def __init__(self, _agent_id: str, _config: Dict[str, _Any]):
         super().__init__(
             agent_id=agent_id,
-            name="Examiner",
-            description="Quality Assurance & Testing Specialist",
-            config=config or {}
+            _name = "Examiner",
+            _description = "Quality Assurance & Testing Specialist",
+            _config = config or {}
         )
         
         # Test execution state
@@ -187,7 +187,7 @@ class ExaminerAgent(AgentActor):
         
         # Session 44: Consensus Integration
         self.deliberation_engine = deliberation_engine or SwarmDeliberationEngine(
-            max_rounds=5, consensus_threshold=0.75, min_participants=2
+            _max_rounds = 5, consensus_threshold=0.75, min_participants=2
         )
         
         # Session 44: Memory Optimization Integration
@@ -204,7 +204,7 @@ class ExaminerAgent(AgentActor):
         logger.info(
             "ExaminerAgent initialized",
             agent_id=self.agent_id,
-            coverage_threshold=self._coverage_threshold
+            _coverage_threshold = self._coverage_threshold
         )
     
     def get_handlers(self) -> Dict[str, callable]:
@@ -219,7 +219,7 @@ class ExaminerAgent(AgentActor):
             "get_bug_status": self._handle_get_bug_status,
         }
     
-    async def _handle_create_test_plan(self, message: ActorMessage) -> Optional[Dict[str, Any]]:
+    async def _handle_create_test_plan(self, _message: ActorMessage) -> Optional[Dict[str, Any]]:
         """
         Create a comprehensive test plan for a target.
         
@@ -234,23 +234,23 @@ class ExaminerAgent(AgentActor):
         try:
             content = validate_message(message.content, "ExaminerCreateTestPlan")
             target = content.get("target", "unknown")
-            test_types = content.get("test_types", ["unit"])
-            priority = content.get("priority", "medium")
-            requirements = content.get("requirements", [])
+            _test_types = content.get("test_types", ["unit"])
+            _priority = content.get("priority", "medium")
+            _requirements = content.get("requirements", [])
             
             logger.info(
                 "Creating test plan",
                 target=target,
-                test_types=test_types,
-                priority=priority
+                _test_types = test_types,
+                _priority = priority
             )
             
             # Generate test plan using LLM
-            test_plan = await self._generate_test_plan(
+            _test_plan = await self._generate_test_plan(
                 target=target,
-                test_types=test_types,
-                priority=priority,
-                requirements=requirements
+                _test_types = test_types,
+                _priority = priority,
+                _requirements = requirements
             )
             
             return {
@@ -264,7 +264,7 @@ class ExaminerAgent(AgentActor):
             logger.error("Failed to create test plan", error=str(e))
             return {"status": "error", "error": str(e)}
     
-    async def _handle_execute_tests(self, message: ActorMessage) -> Optional[Dict[str, Any]]:
+    async def _handle_execute_tests(self, _message: ActorMessage) -> Optional[Dict[str, Any]]:
         """
         Execute a test suite and return results.
         
@@ -277,26 +277,26 @@ class ExaminerAgent(AgentActor):
         """
         try:
             content = validate_message(message.content, "ExaminerExecuteTests")
-            test_suite_id = content.get("test_suite_id")
+            _test_suite_id = content.get("test_suite_id")
             test_cases = content.get("test_cases", [])
-            timeout = content.get("timeout", self._default_timeout)
+            _timeout = content.get("timeout", self._default_timeout)
             
             logger.info(
                 "Executing tests",
-                test_suite_id=test_suite_id,
-                test_count=len(test_cases)
+                _test_suite_id = test_suite_id,
+                _test_count = len(test_cases)
             )
             
             # Create test suite
-            suite = TestSuite(
+            _suite = TestSuite(
                 id=test_suite_id or f"suite_{datetime.now(timezone.utc).timestamp()}",
-                name=content.get("name", "Test Suite"),
+                _name = content.get("name", "Test Suite"),
                 test_cases=[]
             )
             
             # Execute each test case
             for tc in test_cases:
-                result = await self._execute_test_case(tc, timeout)
+                _result = await self._execute_test_case(tc, timeout)
                 suite.test_cases.append(result)
                 
                 # Update counters
@@ -332,7 +332,7 @@ class ExaminerAgent(AgentActor):
             logger.error("Failed to execute tests", error=str(e))
             return {"status": "error", "error": str(e)}
     
-    async def _handle_validate_decision(self, message: ActorMessage) -> Optional[Dict[str, Any]]:
+    async def _handle_validate_decision(self, _message: ActorMessage) -> Optional[Dict[str, Any]]:
         """
         Validate a decision from the Triad.
         
@@ -346,23 +346,23 @@ class ExaminerAgent(AgentActor):
         """
         try:
             content = validate_message(message.content, "ExaminerValidateDecision")
-            decision_id = content.get("decision_id")
-            decision_type = content.get("decision_type", "unknown")
-            decision_content = content.get("content", "")
-            context = content.get("context", {})
+            _decision_id = content.get("decision_id")
+            _decision_type = content.get("decision_type", "unknown")
+            _decision_content = content.get("content", "")
+            _context = content.get("context", {})
             
             logger.info(
                 "Validating decision",
-                decision_id=decision_id,
-                decision_type=decision_type
+                _decision_id = decision_id,
+                _decision_type = decision_type
             )
             
             # Validate decision using LLM
-            validation_result = await self._validate_decision_content(
-                decision_id=decision_id,
-                decision_type=decision_type,
+            _validation_result = await self._validate_decision_content(
+                _decision_id = decision_id,
+                _decision_type = decision_type,
                 content=decision_content,
-                context=context
+                _context = context
             )
             
             return {
@@ -378,7 +378,7 @@ class ExaminerAgent(AgentActor):
             logger.error("Failed to validate decision", error=str(e))
             return {"status": "error", "error": str(e)}
     
-    async def _handle_analyze_quality(self, message: ActorMessage) -> Optional[Dict[str, Any]]:
+    async def _handle_analyze_quality(self, _message: ActorMessage) -> Optional[Dict[str, Any]]:
         """
         Analyze quality of code, decision, or component.
         
@@ -392,27 +392,27 @@ class ExaminerAgent(AgentActor):
         try:
             content = validate_message(message.content, "ExaminerAnalyzeQuality")
             target = content.get("target", "")
-            target_type = content.get("target_type", "code")
-            metrics = content.get("metrics", list(QualityMetric))
+            _target_type = content.get("target_type", "code")
+            _metrics = content.get("metrics", list(QualityMetric))
             
             logger.info(
                 "Analyzing quality",
-                target_type=target_type,
-                metrics=metrics
+                _target_type = target_type,
+                _metrics = metrics
             )
             
             # Analyze quality metrics
-            quality_results = await self._analyze_quality_metrics(
+            _quality_results = await self._analyze_quality_metrics(
                 target=target,
-                target_type=target_type,
-                metrics=metrics
+                _target_type = target_type,
+                _metrics = metrics
             )
             
             # Calculate overall score
             overall_score = self._calculate_overall_score(quality_results)
             
             # Store metrics
-            target_key = f"{target_type}:{target[:50]}"
+            _target_key = f"{target_type}:{target[:50]}"
             self._quality_metrics[target_key] = quality_results
             
             return {
@@ -427,7 +427,7 @@ class ExaminerAgent(AgentActor):
             logger.error("Failed to analyze quality", error=str(e))
             return {"status": "error", "error": str(e)}
     
-    async def _handle_report_bug(self, message: ActorMessage) -> Optional[Dict[str, Any]]:
+    async def _handle_report_bug(self, _message: ActorMessage) -> Optional[Dict[str, Any]]:
         """
         Report a bug or issue.
         
@@ -447,15 +447,15 @@ class ExaminerAgent(AgentActor):
             
             # Create bug record
             self._bug_counter += 1
-            bug = Bug(
+            _bug = Bug(
                 id=f"bug_{self._bug_counter}",
                 title=content.get("title", "Untitled Bug"),
-                description=content.get("description", ""),
+                _description = content.get("description", ""),
                 severity=SeverityLevel(content.get("severity", "medium")),
                 component=content.get("component", "unknown"),
-                steps_to_reproduce=content.get("steps_to_reproduce", []),
-                expected_behavior=content.get("expected_behavior", ""),
-                actual_behavior=content.get("actual_behavior", ""),
+                _steps_to_reproduce = content.get("steps_to_reproduce", []),
+                _expected_behavior = content.get("expected_behavior", ""),
+                _actual_behavior = content.get("actual_behavior", ""),
                 detected_at=datetime.now(timezone.utc),
                 metadata=content.get("metadata", {})
             )
@@ -463,14 +463,14 @@ class ExaminerAgent(AgentActor):
             # Store bug with LRU eviction
             if len(self._bugs) >= self.max_bugs:
                 # Remove oldest bug
-                oldest_id = next(iter(self._bugs))
+                _oldest_id = next(iter(self._bugs))
                 del self._bugs[oldest_id]
             
             self._bugs[bug.id] = bug
             
             logger.info(
                 "Bug reported",
-                bug_id=bug.id,
+                _bug_id = bug.id,
                 severity=bug.severity.value,
                 component=bug.component
             )
@@ -486,7 +486,7 @@ class ExaminerAgent(AgentActor):
             logger.error("Failed to report bug", error=str(e))
             return {"status": "error", "error": str(e)}
     
-    async def _handle_get_quality_report(self, message: ActorMessage) -> Optional[Dict[str, Any]]:
+    async def _handle_get_quality_report(self, _message: ActorMessage) -> Optional[Dict[str, Any]]:
         """
         Get comprehensive quality report for a target.
         
@@ -501,35 +501,35 @@ class ExaminerAgent(AgentActor):
         try:
             content = validate_message(message.content, "ExaminerGetQualityReport")
             target = content.get("target", "system")
-            include_tests = content.get("include_tests", True)
-            include_bugs = content.get("include_bugs", True)
-            include_metrics = content.get("include_metrics", True)
+            _include_tests = content.get("include_tests", True)
+            _include_bugs = content.get("include_bugs", True)
+            _include_metrics = content.get("include_metrics", True)
             
             logger.info("Generating quality report", target=target)
             
             # Gather report data
-            test_suites = list(self._test_suites.values()) if include_tests else []
-            bugs = [b for b in self._bugs.values() if b.component == target] if include_bugs else []
-            metrics = self._quality_metrics.get(f"system:{target}", {}) if include_metrics else {}
+            _test_suites = list(self._test_suites.values()) if include_tests else []
+            _bugs = [b for b in self._bugs.values() if b.component == target] if include_bugs else []
+            _metrics = self._quality_metrics.get(f"system:{target}", {}) if include_metrics else {}
             
             # Calculate overall score
             overall_score = self._calculate_system_score(test_suites, bugs, metrics)
             
             # Generate summary using LLM
             summary = await self._generate_quality_summary(
-                test_suites=test_suites,
-                bugs=bugs,
-                metrics=metrics,
+                _test_suites = test_suites,
+                _bugs = bugs,
+                _metrics = metrics,
                 overall_score=overall_score
             )
             
-            report = QualityReport(
+            _report = QualityReport(
                 id=f"report_{datetime.now(timezone.utc).timestamp()}",
                 generated_at=datetime.now(timezone.utc),
                 target=target,
-                test_suites=test_suites,
-                bugs=bugs,
-                metrics=metrics,
+                _test_suites = test_suites,
+                _bugs = bugs,
+                _metrics = metrics,
                 overall_score=overall_score,
                 summary=summary,
                 recommendations=self._generate_recommendations(test_suites, bugs, metrics),
@@ -563,7 +563,7 @@ class ExaminerAgent(AgentActor):
             logger.error("Failed to generate quality report", error=str(e))
             return {"status": "error", "error": str(e)}
     
-    async def _handle_get_bug_status(self, message: ActorMessage) -> Optional[Dict[str, Any]]:
+    async def _handle_get_bug_status(self, _message: ActorMessage) -> Optional[Dict[str, Any]]:
         """
         Get status of reported bugs.
         
@@ -575,14 +575,14 @@ class ExaminerAgent(AgentActor):
         }
         """
         try:
-            content = validate_message(message.content, "ExaminerGetBugStatus")
-            bug_id = content.get("bug_id")
+            _content = validate_message(message.content, "ExaminerGetBugStatus")
+            _bug_id = content.get("bug_id")
             component = content.get("component")
             severity = content.get("severity")
             
             if bug_id:
                 # Get specific bug
-                bug = self._bugs.get(bug_id)
+                _bug = self._bugs.get(bug_id)
                 if bug:
                     return {
                         "status": "success",
@@ -598,11 +598,11 @@ class ExaminerAgent(AgentActor):
                 return {"status": "error", "error": f"Bug {bug_id} not found"}
             
             # Filter bugs
-            filtered_bugs = list(self._bugs.values())
+            _filtered_bugs = list(self._bugs.values())
             if component:
-                filtered_bugs = [b for b in filtered_bugs if b.component == component]
+                _filtered_bugs = [b for b in filtered_bugs if b.component == component]
             if severity:
-                filtered_bugs = [b for b in filtered_bugs if b.severity.value == severity]
+                _filtered_bugs = [b for b in filtered_bugs if b.severity.value == severity]
             
             return {
                 "status": "success",
@@ -626,16 +626,10 @@ class ExaminerAgent(AgentActor):
     
     # Internal helper methods
     
-    async def _generate_test_plan(
-        self,
-        target: str,
-        test_types: List[str],
-        priority: str,
-        requirements: List[str]
-    ) -> Dict[str, Any]:
+    async def _generate_test_plan(self, _target: str, _test_types: List[str], _priority: str, _requirements: List[str]) -> Dict[str, Any]:
         """Generate test plan using LLM."""
         try:
-            prompt = f"""Generate a comprehensive test plan for: {target}
+            _prompt = f"""Generate a comprehensive test plan for: {target}
 
 Test Types Required: {', '.join(test_types)}
 Priority: {priority}
@@ -650,10 +644,10 @@ Provide a structured test plan with:
 
 Format as JSON with keys: objectives, test_cases, success_criteria, risks"""
 
-            response = await self.run_with_llm(
-                prompt=prompt,
-                timeout=60,
-                temperature=0.3
+            _response = await self.run_with_llm(
+                _prompt = prompt,
+                _timeout = 60,
+                _temperature = 0.3
             )
             
             # Try to parse as JSON
@@ -677,57 +671,57 @@ Format as JSON with keys: objectives, test_cases, success_criteria, risks"""
                 "risks": [str(e)]
             }
     
-    async def _execute_test_case(self, test_case: Dict[str, Any], timeout: int) -> TestCase:
+    async def _execute_test_case(self, _test_case: Dict[str, _Any], _timeout: int) -> TestCase:
         """Execute a single test case."""
-        start_time = datetime.now(timezone.utc)
+        _start_time = datetime.now(timezone.utc)
         
         try:
-            tc_id = test_case.get("id", f"tc_{start_time.timestamp()}")
-            tc_name = test_case.get("name", "Unnamed Test")
-            tc_type = TestType(test_case.get("test_type", "unit"))
+            _tc_id = test_case.get("id", f"tc_{start_time.timestamp()}")
+            _tc_name = test_case.get("name", "Unnamed Test")
+            _tc_type = TestType(test_case.get("test_type", "unit"))
             
             # Execute test logic (placeholder for actual test execution)
             # In production, this would integrate with pytest, unittest, etc.
-            result = await asyncio.wait_for(
+            _result = await asyncio.wait_for(
                 self._run_test_logic(test_case),
-                timeout=timeout
+                _timeout = timeout
             )
             
             return TestCase(
-                id=tc_id,
-                name=tc_name,
-                test_type=tc_type,
-                description=test_case.get("description", ""),
-                status=TestStatus.PASSED if result.get("passed") else TestStatus.FAILED,
-                execution_time_ms=(datetime.now(timezone.utc) - start_time).total_seconds() * 1000,
-                assertions_passed=result.get("assertions_passed", 0),
-                assertions_total=result.get("assertions_total", 0),
+                _id = tc_id,
+                _name = tc_name,
+                _test_type = tc_type,
+                _description = test_case.get("description", ""),
+                _status = TestStatus.PASSED if result.get("passed") else TestStatus.FAILED,
+                _execution_time_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000,
+                _assertions_passed = result.get("assertions_passed", 0),
+                _assertions_total = result.get("assertions_total", 0),
                 coverage_percent=result.get("coverage"),
                 metadata=result.get("metadata", {})
             )
             
         except asyncio.TimeoutError:
             return TestCase(
-                id=test_case.get("id", "unknown"),
-                name=test_case.get("name", "Unnamed Test"),
-                test_type=TestType(test_case.get("test_type", "unit")),
-                description=test_case.get("description", ""),
-                status=TestStatus.ERROR,
-                execution_time_ms=(datetime.now(timezone.utc) - start_time).total_seconds() * 1000,
-                error_message=f"Test timed out after {timeout}s"
+                _id = test_case.get("id", "unknown"),
+                _name = test_case.get("name", "Unnamed Test"),
+                _test_type = TestType(test_case.get("test_type", "unit")),
+                _description = test_case.get("description", ""),
+                _status = TestStatus.ERROR,
+                _execution_time_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000,
+                _error_message = f"Test timed out after {timeout}s"
             )
         except Exception as e:
             return TestCase(
-                id=test_case.get("id", "unknown"),
-                name=test_case.get("name", "Unnamed Test"),
-                test_type=TestType(test_case.get("test_type", "unit")),
-                description=test_case.get("description", ""),
-                status=TestStatus.ERROR,
-                execution_time_ms=(datetime.now(timezone.utc) - start_time).total_seconds() * 1000,
-                error_message=str(e)
+                _id = test_case.get("id", "unknown"),
+                _name = test_case.get("name", "Unnamed Test"),
+                _test_type = TestType(test_case.get("test_type", "unit")),
+                _description = test_case.get("description", ""),
+                _status = TestStatus.ERROR,
+                _execution_time_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000,
+                _error_message = str(e)
             )
     
-    async def _run_test_logic(self, test_case: Dict[str, Any]) -> Dict[str, Any]:
+    async def _run_test_logic(self, _test_case: Dict[str, _Any]) -> Dict[str, Any]:
         """
         Execute actual test logic.
         
@@ -749,13 +743,7 @@ Format as JSON with keys: objectives, test_cases, success_criteria, risks"""
             "coverage": test_case.get("expected_coverage", 95.0)
         }
     
-    async def _validate_decision_content(
-        self,
-        decision_id: str,
-        decision_type: str,
-        content: str,
-        context: Dict[str, Any]
-    ) -> Dict[str, Any]:
+    async def _validate_decision_content(self, _decision_id: str, _decision_type: str, _content: str, _context: Dict[str, _Any]) -> Dict[str, Any]:
         """Validate decision content using LLM."""
         try:
             prompt = f"""Validate this decision from the Triad:
@@ -774,10 +762,10 @@ Evaluate for:
 
 Return JSON with keys: valid (bool), confidence (0-1), issues (list), recommendations (list)"""
 
-            response = await self.run_with_llm(
-                prompt=prompt,
-                timeout=60,
-                temperature=0.2
+            _response = await self.run_with_llm(
+                _prompt = prompt,
+                _timeout = 60,
+                _temperature = 0.2
             )
             
             import json
@@ -800,14 +788,9 @@ Return JSON with keys: valid (bool), confidence (0-1), issues (list), recommenda
                 "recommendations": ["Retry validation"]
             }
     
-    async def _analyze_quality_metrics(
-        self,
-        target: str,
-        target_type: str,
-        metrics: List[QualityMetric]
-    ) -> Dict[QualityMetric, float]:
+    async def _analyze_quality_metrics(self, _target: str, _target_type: str, _metrics: List[QualityMetric]) -> Dict[QualityMetric, float]:
         """Analyze quality metrics for target."""
-        results = {}
+        _results = {}
         
         for metric in metrics:
             try:
@@ -828,49 +811,49 @@ Return JSON with keys: valid (bool), confidence (0-1), issues (list), recommenda
         
         return results
     
-    async def _measure_coverage(self, target: str) -> float:
+    async def _measure_coverage(self, _target: str) -> float:
         """Measure code coverage."""
         # Placeholder: integrate with coverage.py
         return 85.0
     
-    async def _measure_complexity(self, target: str) -> float:
+    async def _measure_complexity(self, _target: str) -> float:
         """Measure cyclomatic complexity (inverted score)."""
         # Placeholder: integrate with radon or mccabe
         return 75.0
     
-    async def _measure_security(self, target: str) -> float:
+    async def _measure_security(self, _target: str) -> float:
         """Measure security score (inverted - lower vulnerabilities = higher score)."""
         # Placeholder: integrate with bandit, safety
         return 90.0
     
-    async def _measure_performance(self, target: str) -> float:
+    async def _measure_performance(self, _target: str) -> float:
         """Measure performance score."""
         # Placeholder: benchmark execution
         return 80.0
     
-    async def _estimate_metric(self, target: str, metric: QualityMetric) -> float:
+    async def _estimate_metric(self, _target: str, _metric: QualityMetric) -> float:
         """Estimate metric using LLM."""
         try:
-            prompt = f"""Estimate {metric.value} for: {target[:500]}
+            _prompt = f"""Estimate {metric.value} for: {target[:500]}
 
 Return a score from 0-100."""
             
-            response = await self.run_with_llm(prompt=prompt, timeout=30)
+            _response = await self.run_with_llm(prompt=prompt, timeout=30)
             # Extract number from response
             import re
-            match = re.search(r'(\d+(?:\.\d+)?)', response)
+            _match = re.search(r'(\d+(?:\.\d+)?)', response)
             if match:
                 return min(100.0, float(match.group(1)))
             return 50.0
         except:
             return 50.0
     
-    def _calculate_overall_score(self, metrics: Dict[QualityMetric, float]) -> float:
+    def _calculate_overall_score(self, _metrics: Dict[QualityMetric, _float]) -> float:
         """Calculate weighted overall quality score."""
         if not metrics:
             return 0.0
         
-        weights = {
+        _weights = {
             QualityMetric.CODE_COVERAGE: 0.25,
             QualityMetric.CYCLOMATIC_COMPLEXITY: 0.15,
             QualityMetric.SECURITY_VULNERABILITIES: 0.25,
@@ -880,41 +863,36 @@ Return a score from 0-100."""
         }
         
         total = 0.0
-        total_weight = 0.0
+        _total_weight = 0.0
         
         for metric, value in metrics.items():
-            weight = weights.get(metric, 0.1)
+            _weight = weights.get(metric, 0.1)
             total += value * weight
             total_weight += weight
         
         return (total / total_weight) if total_weight > 0 else 0.0
     
-    def _calculate_system_score(
-        self,
-        test_suites: List[TestSuite],
-        bugs: List[Bug],
-        metrics: Dict[QualityMetric, float]
-    ) -> float:
+    def _calculate_system_score(self, _test_suites: List[TestSuite], _bugs: List[Bug], _metrics: Dict[QualityMetric, _float]) -> float:
         """Calculate overall system quality score."""
-        scores = []
+        _scores = []
         
         # Test pass rate
         if test_suites:
-            total_passed = sum(s.passed for s in test_suites)
-            total_tests = sum(s.total for s in test_suites)
+            _total_passed = sum(s.passed for s in test_suites)
+            _total_tests = sum(s.total for s in test_suites)
             if total_tests > 0:
                 scores.append((total_passed / total_tests) * 100 * 0.4)
         
         # Bug impact
         if bugs:
-            severity_weights = {
+            _severity_weights = {
                 SeverityLevel.CRITICAL: 10,
                 SeverityLevel.HIGH: 5,
                 SeverityLevel.MEDIUM: 2,
                 SeverityLevel.LOW: 1,
                 SeverityLevel.INFO: 0.5
             }
-            bug_score = sum(severity_weights.get(b.severity, 1) for b in bugs)
+            _bug_score = sum(severity_weights.get(b.severity, 1) for b in bugs)
             # More bugs = lower score
             scores.append(max(0, 100 - bug_score * 2) * 0.3)
         else:
@@ -922,32 +900,27 @@ Return a score from 0-100."""
         
         # Quality metrics
         if metrics:
-            metric_score = self._calculate_overall_score(metrics)
+            _metric_score = self._calculate_overall_score(metrics)
             scores.append(metric_score * 0.3)
         
         return sum(scores) if scores else 0.0
     
-    def _generate_recommendations(
-        self,
-        test_suites: List[TestSuite],
-        bugs: List[Bug],
-        metrics: Dict[QualityMetric, float]
-    ) -> List[str]:
+    def _generate_recommendations(self, _test_suites: List[TestSuite], _bugs: List[Bug], _metrics: Dict[QualityMetric, _float]) -> List[str]:
         """Generate quality improvement recommendations."""
-        recommendations = []
+        _recommendations = []
         
         # Test recommendations
         if test_suites:
-            total_failed = sum(s.failed for s in test_suites)
+            _total_failed = sum(s.failed for s in test_suites)
             if total_failed > 0:
                 recommendations.append(f"Fix {total_failed} failing tests")
             
-            avg_coverage = sum(s.coverage_percent or 0 for s in test_suites) / len(test_suites)
+            _avg_coverage = sum(s.coverage_percent or 0 for s in test_suites) / len(test_suites)
             if avg_coverage < self._coverage_threshold:
                 recommendations.append(f"Increase test coverage from {avg_coverage:.1f}% to {self._coverage_threshold}%")
         
         # Bug recommendations
-        critical_bugs = [b for b in bugs if b.severity == SeverityLevel.CRITICAL]
+        _critical_bugs = [b for b in bugs if b.severity == SeverityLevel.CRITICAL]
         if critical_bugs:
             recommendations.append(f"Address {len(critical_bugs)} critical bugs immediately")
         
@@ -963,7 +936,7 @@ Return a score from 0-100."""
     # Session 44: Collective Learning Integration Methods
     # =========================================================================
 
-    async def _emit_pattern(self, item_id: str, item_type: str, outcome: str, content: Dict[str, Any]) -> None:
+    async def _emit_pattern(self, _item_id: str, _item_type: str, _outcome: str, _content: Dict[str, _Any]) -> None:
         """Emit pattern for collective learning."""
         if not self.pattern_extractor:
             return
@@ -973,12 +946,12 @@ Return a score from 0-100."""
         
         try:
             await self.pattern_extractor.analyze_message(
-                message_id=f"{item_type}_{item_id}",
-                sender=self.agent_id,
-                recipient="broadcast",
-                message_type=f"{item_type}_completion",
-                content=content,
-                timestamp=datetime.now(timezone.utc).isoformat(),
+                _message_id = f"{item_type}_{item_id}",
+                _sender = self.agent_id,
+                _recipient = "broadcast",
+                _message_type = f"{item_type}_completion",
+                _content = content,
+                _timestamp = datetime.now(timezone.utc).isoformat(),
             )
             
             self._pattern_emitted.add(item_id)
@@ -986,15 +959,15 @@ Return a score from 0-100."""
         except Exception as e:
             logger.warning("failed_to_emit_pattern", item_id=item_id, error=str(e))
 
-    async def _consume_patterns(self, pattern_types: Optional[List[PatternType]] = None) -> List[Dict[str, Any]]:
+    async def _consume_patterns(self, _pattern_types: Optional[List[PatternType]]) -> List[Dict[str, Any]]:
         """Consume patterns from collective learning."""
         if not self.pattern_extractor:
             return []
         
         try:
-            patterns = await self.pattern_extractor.extract_patterns(
-                time_window_hours=24,
-                pattern_types=pattern_types or [PatternType.SUCCESS, PatternType.DECISION],
+            _patterns = await self.pattern_extractor.extract_patterns(
+                _time_window_hours = 24,
+                _pattern_types = pattern_types or [PatternType.SUCCESS, PatternType.DECISION],
             )
             return [p.to_dict() for p in patterns if p.metadata.confidence >= 0.7]
         except Exception as e:
@@ -1005,24 +978,18 @@ Return a score from 0-100."""
     # Session 44: Consensus Deliberation Integration Methods
     # =========================================================================
 
-    async def _initiate_deliberation(
-        self,
-        item_id: str,
-        proposal: str,
-        participating_agents: List[str],
-        domain: str = "general",
-    ) -> Optional[str]:
+    async def _initiate_deliberation(self, _item_id: str, _proposal: str, _participating_agents: List[str], _domain: str) -> Optional[str]:
         """Initiate swarm deliberation."""
         if not self.deliberation_engine:
             return None
         
         try:
-            deliberation_id = f"delib_{item_id}"
+            _deliberation_id = f"delib_{item_id}"
             self.deliberation_engine.start_deliberation(
-                deliberation_id=deliberation_id,
-                proposal=proposal[:200],
-                participants=participating_agents,
-                domain=domain,
+                _deliberation_id = deliberation_id,
+                _proposal = proposal[:200],
+                _participants = participating_agents,
+                _domain = domain,
             )
             self._active_deliberations[item_id] = deliberation_id
             
@@ -1032,35 +999,28 @@ Return a score from 0-100."""
             logger.error("failed_to_initiate_deliberation", item_id=item_id, error=str(e))
             return None
 
-    async def _submit_deliberation_position(
-        self,
-        item_id: str,
-        agent_id: str,
-        position: Position,
-        confidence: float,
-        argument: str,
-    ) -> bool:
+    async def _submit_deliberation_position(self, _item_id: str, _agent_id: str, _position: Position, _confidence: float, _argument: str) -> bool:
         """Submit agent position in deliberation."""
         if not self.deliberation_engine:
             return False
         
-        deliberation_id = self._active_deliberations.get(item_id)
+        _deliberation_id = self._active_deliberations.get(item_id)
         if not deliberation_id:
             return False
         
         try:
-            success = self.deliberation_engine.submit_position(
-                deliberation_id=deliberation_id,
+            _success = self.deliberation_engine.submit_position(
+                _deliberation_id = deliberation_id,
                 agent_id=agent_id,
-                position=position,
-                confidence=confidence,
-                argument=argument,
+                _position = position,
+                _confidence = confidence,
+                _argument = argument,
             )
             
             if success and self.access_analyzer:
                 self.access_analyzer.record_access(
-                    memory_id=f"delib_{deliberation_id}_{agent_id}",
-                    access_type="write",
+                    _memory_id = f"delib_{deliberation_id}_{agent_id}",
+                    _access_type = "write",
                     agent_id=agent_id,
                 )
             
@@ -1069,17 +1029,17 @@ Return a score from 0-100."""
             logger.error("failed_to_submit_deliberation_position", error=str(e))
             return False
 
-    async def _finalize_deliberation(self, item_id: str) -> Optional[Any]:
+    async def _finalize_deliberation(self, _item_id: str) -> Optional[Any]:
         """Finalize deliberation and apply result."""
         if not self.deliberation_engine:
             return None
         
-        deliberation_id = self._active_deliberations.get(item_id)
+        _deliberation_id = self._active_deliberations.get(item_id)
         if not deliberation_id:
             return None
         
         try:
-            result = self.deliberation_engine.finalize_deliberation(deliberation_id)
+            _result = self.deliberation_engine.finalize_deliberation(deliberation_id)
             
             if result:
                 self.deliberation_engine.cleanup_deliberation(deliberation_id)
@@ -1095,34 +1055,34 @@ Return a score from 0-100."""
     # Session 44: Memory Optimization Integration Methods
     # =========================================================================
 
-    def _track_memory_access(self, item_id: str, item_type: str, access_type: str = "read") -> None:
+    def _track_memory_access(self, _item_id: str, _item_type: str, _access_type: str) -> None:
         """Track memory access patterns."""
         if not self.access_analyzer:
             return
         
-        memory_id = f"{item_type}_{item_id}"
+        _memory_id = f"{item_type}_{item_id}"
         self.access_analyzer.record_access(
-            memory_id=memory_id,
-            access_type=access_type,
+            _memory_id = memory_id,
+            _access_type = access_type,
             agent_id=self.agent_id,
         )
 
-    def _get_memory_tier(self, item_id: str, item_type: str) -> AccessTier:
+    def _get_memory_tier(self, _item_id: str, _item_type: str) -> AccessTier:
         """Get memory tier classification."""
         if not self.access_analyzer:
             return AccessTier.COLD
         
-        memory_id = f"{item_type}_{item_id}"
-        profile = self.access_analyzer.get_profile(memory_id)
+        _memory_id = f"{item_type}_{item_id}"
+        _profile = self.access_analyzer.get_profile(memory_id)
         return profile.tier if profile else AccessTier.COLD
 
-    async def _prefetch_relevant(self, agent_id: str, item_type: str) -> List[str]:
+    async def _prefetch_relevant(self, _agent_id: str, _item_type: str) -> List[str]:
         """Prefetch items an agent is likely to need."""
         if not self.access_analyzer:
             return []
         
         try:
-            predicted_memories = self.access_analyzer.predict_agent_access(agent_id)
+            _predicted_memories = self.access_analyzer.predict_agent_access(agent_id)
             return [
                 mem.replace(f"{item_type}_", "")
                 for mem in predicted_memories
@@ -1150,16 +1110,10 @@ Return a score from 0-100."""
         }
 
 
-    async def _generate_quality_summary(
-        self,
-        test_suites: List[TestSuite],
-        bugs: List[Bug],
-        metrics: Dict[QualityMetric, float],
-        overall_score: float
-    ) -> str:
+    async def _generate_quality_summary(self, _test_suites: List[TestSuite], _bugs: List[Bug], _metrics: Dict[QualityMetric, _float], _overall_score: float) -> str:
         """Generate quality summary using LLM."""
         try:
-            prompt = f"""Generate a quality summary:
+            _prompt = f"""Generate a quality summary:
 
 Overall Score: {overall_score:.1f}/100
 Test Suites: {len(test_suites)} ({sum(s.passed for s in test_suites)} passed, {sum(s.failed for s in test_suites)} failed)
@@ -1168,7 +1122,7 @@ Metrics: {len(metrics)} measured
 
 Provide a 2-3 sentence summary of the quality status."""
 
-            response = await self.run_with_llm(prompt=prompt, timeout=30)
+            _response = await self.run_with_llm(prompt=prompt, timeout=30)
             return response.strip()
         except:
             return f"Quality score: {overall_score:.1f}/100. {len(bugs)} bugs detected. {sum(s.failed for s in test_suites)} tests failing."

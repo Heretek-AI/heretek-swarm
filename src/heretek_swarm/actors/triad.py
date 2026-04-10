@@ -19,7 +19,7 @@ from swarms import Agent
 
 from heretek_swarm.actors.base import AgentActor, ActorMessage
 
-logger = structlog.get_logger("TriadAgents")
+_logger = structlog.get_logger("TriadAgents")
 
 
 class StewardAgent(AgentActor):
@@ -34,14 +34,7 @@ class StewardAgent(AgentActor):
     - Overseeing resource allocation
     """
 
-    def __init__(
-        self,
-        agent_id: str = "steward",
-        name: str = "Steward",
-        description: str = "Triad coordinator and governance agent",
-        swarms_agent: Optional[Agent] = None,
-        **kwargs,
-    ) -> None:
+    def __init__(self, _agent_id: str, _name: str, _description: str, _swarms_agent: Optional[Agent], _**kwargs) -> None:
         """
         Initialize the Steward agent.
 
@@ -54,10 +47,10 @@ class StewardAgent(AgentActor):
         """
         super().__init__(
             agent_id=agent_id,
-            name=name,
-            description=description,
-            topics=["triad", "coordination", "governance", "decisions"],
-            capabilities=[
+            _name = name,
+            _description = description,
+            _topics = ["triad", "coordination", "governance", "decisions"],
+            _capabilities = [
                 "coordination",
                 "governance",
                 "decision-making",
@@ -84,53 +77,53 @@ class StewardAgent(AgentActor):
 
         logger.info(f"[{self.agent_id}] Steward initialization complete")
 
-    async def process_message(self, message: ActorMessage) -> None:
+    async def process_message(self, _message: ActorMessage) -> None:
         """
         Process incoming messages.
 
         Args:
             message: Actor message to process
         """
-        handler = self._message_handlers.get(message.message_type)
+        _handler = self._message_handlers.get(message.message_type)
         if handler:
             try:
                 await handler(message)
             except Exception as e:
                 logger.error(
                     f"[{self.agent_id}] Error processing message {message.message_type}: {e}",
-                    exc_info=True,
+                    _exc_info = True,
                 )
                 self.error_count += 1
                 # Send error response if reply_to is specified
                 if message.content.get("reply_to"):
                     await self.send(
-                        topic=message.content["reply_to"],
-                        content={
+                        _topic = message.content["reply_to"],
+                        _content = {
                             "message_type": "error_response",
                             "error": str(e),
                             "original_message_type": message.message_type,
                         },
-                        correlation_id=message.correlation_id,
+                        _correlation_id = message.correlation_id,
                     )
         else:
             logger.warning(
                 f"[{self.agent_id}] Unhandled message type: {message.message_type}"
             )
 
-    async def _handle_start_deliberation(self, message: ActorMessage) -> None:
+    async def _handle_start_deliberation(self, _message: ActorMessage) -> None:
         """Handle deliberation start requests with validation."""
         # P2-7 fix: Validate input before processing
         try:
-            validated = self._validate_message_content("start_deliberation", message.content)
+            _validated = self._validate_message_content("start_deliberation", message.content)
             if validated:
-                deliberation_id = validated.deliberation_id
-                topic = validated.topic
-                triad_members = validated.triad_members
+                _deliberation_id = validated.deliberation_id
+                _topic = validated.topic
+                _triad_members = validated.triad_members
             else:
                 # Fallback to unvalidated access
-                deliberation_id = message.content.get("deliberation_id")
-                topic = message.content.get("topic")
-                triad_members = message.content.get("triad_members", [])
+                _deliberation_id = message.content.get("deliberation_id")
+                _topic = message.content.get("topic")
+                _triad_members = message.content.get("triad_members", [])
                 
                 if not deliberation_id or not topic:
                     logger.error(f"[{self.agent_id}] Missing deliberation parameters")
@@ -156,19 +149,19 @@ class StewardAgent(AgentActor):
         # Notify triad members
         for member_id in triad_members:
             await self.send_to_actor(
-                target_actor_id=member_id,
+                _target_actor_id = member_id,
                 message_type="deliberation_request",
-                content={
+                _content = {
                     "deliberation_id": deliberation_id,
                     "topic": topic,
                     "steward_id": self.agent_id,
                 },
             )
 
-    async def _handle_request_decision(self, message: ActorMessage) -> None:
+    async def _handle_request_decision(self, _message: ActorMessage) -> None:
         """Handle decision requests."""
-        request_id = message.content.get("request_id")
-        decision_context = message.content.get("context", {})
+        _request_id = message.content.get("request_id")
+        _decision_context = message.content.get("context", {})
 
         logger.info(
             f"[{self.agent_id}] Processing decision request: {request_id}"
@@ -178,48 +171,48 @@ class StewardAgent(AgentActor):
         if self.swarms_agent:
             try:
                 decision = await self.run_with_llm(
-                    prompt=f"Make an executive decision on: {decision_context}",
-                    timeout=60
+                    _prompt = f"Make an executive decision on: {decision_context}",
+                    _timeout = 60
                 )
                 await self.send(
-                    topic="decisions",
-                    content={
+                    _topic = "decisions",
+                    _content = {
                         "message_type": "decision_response",
                         "request_id": request_id,
                         "decision": decision,
                         "source": "steward",
                     },
-                    correlation_id=message.correlation_id,
+                    _correlation_id = message.correlation_id,
                 )
             except Exception as e:
                 logger.error(f"[{self.agent_id}] Decision error: {e}")
         else:
             # Fallback logic
             await self.send(
-                topic="decisions",
-                content={
+                _topic = "decisions",
+                _content = {
                     "message_type": "decision_response",
                     "request_id": request_id,
                     "decision": "defer_to_triad",
                     "source": "steward",
                 },
-                correlation_id=message.correlation_id,
+                _correlation_id = message.correlation_id,
             )
 
-    async def _handle_report_status(self, message: ActorMessage) -> None:
+    async def _handle_report_status(self, _message: ActorMessage) -> None:
         """Handle status reports from triad members."""
-        reporter_id = message.content.get("agent_id")
-        status = message.content.get("status", {})
+        _reporter_id = message.content.get("agent_id")
+        _status = message.content.get("status", {})
 
         logger.debug(f"[{self.agent_id}] Status report from {reporter_id}")
 
         # Update internal tracking
         self.update_state(f"status:{reporter_id}", status)
 
-    async def _handle_policy_update(self, message: ActorMessage) -> None:
+    async def _handle_policy_update(self, _message: ActorMessage) -> None:
         """Handle policy update requests."""
-        policy_id = message.content.get("policy_id")
-        policy_data = message.content.get("policy_data")
+        _policy_id = message.content.get("policy_id")
+        _policy_data = message.content.get("policy_data")
 
         if policy_id and policy_data:
             # P2-1 fix: Use timezone-aware datetime
@@ -230,11 +223,7 @@ class StewardAgent(AgentActor):
             }
             logger.info(f"[{self.agent_id}] Updated policy: {policy_id}")
 
-    async def coordinate_triad(
-        self,
-        topic: str,
-        triad_members: List[str],
-    ) -> str:
+    async def coordinate_triad(self, _topic: str, _triad_members: List[str]) -> str:
         """
         Coordinate a triad deliberation.
 
@@ -246,11 +235,11 @@ class StewardAgent(AgentActor):
             Deliberation ID
         """
         # P2-1 fix: Use timezone-aware datetime
-        deliberation_id = f"del_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}"
+        _deliberation_id = f"del_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}"
 
         await self.send(
-            topic="triad",
-            content={
+            _topic = "triad",
+            _content = {
                 "message_type": "start_deliberation",
                 "deliberation_id": deliberation_id,
                 "topic": topic,
@@ -260,11 +249,11 @@ class StewardAgent(AgentActor):
 
         return deliberation_id
 
-    def get_deliberation_status(self, deliberation_id: str) -> Optional[Dict[str, Any]]:
+    def get_deliberation_status(self, _deliberation_id: str) -> Optional[Dict[str, Any]]:
         """Get status of a deliberation."""
         return self.active_deliberations.get(deliberation_id)
 
-    def get_governance_policy(self, policy_id: str) -> Optional[Dict[str, Any]]:
+    def get_governance_policy(self, _policy_id: str) -> Optional[Dict[str, Any]]:
         """Get a governance policy."""
         return self.governance_policies.get(policy_id)
 
@@ -280,15 +269,7 @@ class AlphaAgent(AgentActor):
     - Validates final decisions
     """
 
-    def __init__(
-        self,
-        agent_id: str = "alpha",
-        name: str = "Alpha",
-        description: str = "Primary decision maker and analyst",
-        swarms_agent: Optional[Agent] = None,
-        analysis_depth: str = "deep",
-        **kwargs,
-    ) -> None:
+    def __init__(self, _agent_id: str, _name: str, _description: str, _swarms_agent: Optional[Agent], _analysis_depth: str, _**kwargs) -> None:
         """
         Initialize the Alpha agent.
 
@@ -302,10 +283,10 @@ class AlphaAgent(AgentActor):
         """
         super().__init__(
             agent_id=agent_id,
-            name=name,
-            description=description,
-            topics=["triad", "analysis", "decisions", "alpha"],
-            capabilities=[
+            _name = name,
+            _description = description,
+            _topics = ["triad", "analysis", "decisions", "alpha"],
+            _capabilities = [
                 "primary-analysis",
                 "decision-making",
                 "consensus-building",
@@ -330,49 +311,49 @@ class AlphaAgent(AgentActor):
 
         logger.info(f"[{self.agent_id}] Alpha initialization complete")
 
-    async def process_message(self, message: ActorMessage) -> None:
+    async def process_message(self, _message: ActorMessage) -> None:
         """Process incoming messages."""
-        handler = self._message_handlers.get(message.message_type)
+        _handler = self._message_handlers.get(message.message_type)
         if handler:
             try:
                 await handler(message)
             except Exception as e:
                 logger.error(
                     f"[{self.agent_id}] Error processing message {message.message_type}: {e}",
-                    exc_info=True,
+                    _exc_info = True,
                 )
                 self.error_count += 1
                 if message.content.get("reply_to"):
                     await self.send(
-                        topic=message.content["reply_to"],
-                        content={
+                        _topic = message.content["reply_to"],
+                        _content = {
                             "message_type": "error_response",
                             "error": str(e),
                             "original_message_type": message.message_type,
                         },
-                        correlation_id=message.correlation_id,
+                        _correlation_id = message.correlation_id,
                     )
         else:
             logger.warning(
                 f"[{self.agent_id}] Unhandled message type: {message.message_type}"
             )
 
-    async def _handle_deliberation_request(self, message: ActorMessage) -> None:
+    async def _handle_deliberation_request(self, _message: ActorMessage) -> None:
         """Handle deliberation requests from Steward."""
-        deliberation_id = message.content.get("deliberation_id")
-        topic = message.content.get("topic")
+        _deliberation_id = message.content.get("deliberation_id")
+        _topic = message.content.get("topic")
 
         logger.info(
             f"[{self.agent_id}] Participating in deliberation {deliberation_id}: {topic}"
         )
 
         # Perform analysis
-        analysis = await self._perform_analysis(topic)
+        _analysis = await self._perform_analysis(topic)
 
         # Submit vote/analysis
         await self.send(
-            topic="triad",
-            content={
+            _topic = "triad",
+            _content = {
                 "message_type": "vote_response",
                 "deliberation_id": deliberation_id,
                 "agent_id": self.agent_id,
@@ -384,18 +365,18 @@ class AlphaAgent(AgentActor):
 
         self.decision_count += 1
 
-    async def _handle_analysis_request(self, message: ActorMessage) -> None:
+    async def _handle_analysis_request(self, _message: ActorMessage) -> None:
         """Handle analysis requests with validation."""
         # P2-7 fix: Validate input before processing
         try:
-            validated = self._validate_message_content("analysis_request", message.content)
+            _validated = self._validate_message_content("analysis_request", message.content)
             if validated:
-                request_id = validated.request_id
-                problem = validated.problem
+                _request_id = validated.request_id
+                _problem = validated.problem
             else:
                 # Fallback to unvalidated access
-                request_id = message.content.get("request_id")
-                problem = message.content.get("problem")
+                _request_id = message.content.get("request_id")
+                _problem = message.content.get("problem")
         except ValueError as e:
             logger.error(f"[{self.agent_id}] Analysis validation failed: {e}")
             return
@@ -404,15 +385,15 @@ class AlphaAgent(AgentActor):
 
         analysis = await self._perform_analysis(problem)
 
-        reply_topic = message.content.get("reply_to", "analysis")
+        _reply_topic = message.content.get("reply_to", "analysis")
         await self.send(
-            topic=reply_topic,
-            content={
+            _topic = reply_topic,
+            _content = {
                 "message_type": "analysis_response",
                 "request_id": request_id,
                 **analysis,
             },
-            correlation_id=message.correlation_id,
+            _correlation_id = message.correlation_id,
         )
 
         # P2-1 fix: Use timezone-aware datetime
@@ -425,19 +406,19 @@ class AlphaAgent(AgentActor):
         if len(self.analysis_history) > self.max_history_size:
             self.analysis_history = self.analysis_history[-self.max_history_size:]
 
-    async def _handle_validation_request(self, message: ActorMessage) -> None:
+    async def _handle_validation_request(self, _message: ActorMessage) -> None:
         """Handle validation requests with validation."""
         # P2-7 fix: Validate input before processing
         try:
-            validated = self._validate_message_content("validation_request", message.content)
+            _validated = self._validate_message_content("validation_request", message.content)
             if validated:
-                request_id = validated.request_id
-                decision_to_validate = validated.decision
-                original_analysis = validated.original_analysis
+                _request_id = validated.request_id
+                _decision_to_validate = validated.decision
+                _original_analysis = validated.original_analysis
             else:
                 # Fallback to unvalidated access
-                request_id = message.content.get("request_id")
-                decision_to_validate = message.content.get("decision")
+                _request_id = message.content.get("request_id")
+                _decision_to_validate = message.content.get("decision")
                 _original_analysis = message.content.get("original_analysis")  # Reserved for future use
         except ValueError as e:
             logger.error(f"[{self.agent_id}] Validation request validation failed: {e}")
@@ -447,18 +428,18 @@ class AlphaAgent(AgentActor):
 
         validation = await self._validate_decision(decision_to_validate)
 
-        reply_topic = message.content.get("reply_to", "validation")
+        _reply_topic = message.content.get("reply_to", "validation")
         await self.send(
-            topic=reply_topic,
-            content={
+            _topic = reply_topic,
+            _content = {
                 "message_type": "validation_response",
                 "request_id": request_id,
                 **validation,
             },
-            correlation_id=message.correlation_id,
+            _correlation_id = message.correlation_id,
         )
 
-    async def _perform_analysis(self, problem: str) -> Dict[str, Any]:
+    async def _perform_analysis(self, _problem: str) -> Dict[str, Any]:
         """
         Perform analysis on a problem.
 
@@ -470,9 +451,9 @@ class AlphaAgent(AgentActor):
         """
         if self.swarms_agent:
             try:
-                analysis_result = await self.run_with_llm(
-                    prompt=f"Analyze this problem and provide a decision with confidence: {problem}",
-                    timeout=60
+                _analysis_result = await self.run_with_llm(
+                    _prompt = f"Analyze this problem and provide a decision with confidence: {problem}",
+                    _timeout = 60
                 )
                 return {
                     "decision": analysis_result,
@@ -491,7 +472,7 @@ class AlphaAgent(AgentActor):
             "depth": self.analysis_depth,
         }
 
-    async def _validate_decision(self, decision: Any) -> Dict[str, Any]:
+    async def _validate_decision(self, _decision: Any) -> Dict[str, Any]:
         """
         Validate a decision.
 
@@ -503,9 +484,9 @@ class AlphaAgent(AgentActor):
         """
         if self.swarms_agent:
             try:
-                validation_result = await self.run_with_llm(
-                    prompt=f"Validate this decision: {decision}",
-                    timeout=60
+                _validation_result = await self.run_with_llm(
+                    _prompt = f"Validate this decision: {decision}",
+                    _timeout = 60
                 )
                 return {
                     "valid": True,
@@ -542,15 +523,7 @@ class BetaAgent(AgentActor):
     - Alternative solution generation
     """
 
-    def __init__(
-        self,
-        agent_id: str = "beta",
-        name: str = "Beta",
-        description: str = "Secondary analyst and validator",
-        swarms_agent: Optional[Agent] = None,
-        validation_strictness: float = 0.8,
-        **kwargs,
-    ) -> None:
+    def __init__(self, _agent_id: str, _name: str, _description: str, _swarms_agent: Optional[Agent], _validation_strictness: float, _**kwargs) -> None:
         """
         Initialize the Beta agent.
 
@@ -564,10 +537,10 @@ class BetaAgent(AgentActor):
         """
         super().__init__(
             agent_id=agent_id,
-            name=name,
-            description=description,
-            topics=["triad", "analysis", "validation", "beta"],
-            capabilities=[
+            _name = name,
+            _description = description,
+            _topics = ["triad", "analysis", "validation", "beta"],
+            _capabilities = [
                 "secondary-analysis",
                 "validation",
                 "error-detection",
@@ -592,48 +565,48 @@ class BetaAgent(AgentActor):
 
         logger.info(f"[{self.agent_id}] Beta initialization complete")
 
-    async def process_message(self, message: ActorMessage) -> None:
+    async def process_message(self, _message: ActorMessage) -> None:
         """Process incoming messages."""
-        handler = self._message_handlers.get(message.message_type)
+        _handler = self._message_handlers.get(message.message_type)
         if handler:
             try:
                 await handler(message)
             except Exception as e:
                 logger.error(
                     f"[{self.agent_id}] Error processing message {message.message_type}: {e}",
-                    exc_info=True,
+                    _exc_info = True,
                 )
                 self.error_count += 1
                 if message.content.get("reply_to"):
                     await self.send(
-                        topic=message.content["reply_to"],
-                        content={
+                        _topic = message.content["reply_to"],
+                        _content = {
                             "message_type": "error_response",
                             "error": str(e),
                             "original_message_type": message.message_type,
                         },
-                        correlation_id=message.correlation_id,
+                        _correlation_id = message.correlation_id,
                     )
         else:
             logger.warning(
                 f"[{self.agent_id}] Unhandled message type: {message.message_type}"
             )
 
-    async def _handle_deliberation_request(self, message: ActorMessage) -> None:
+    async def _handle_deliberation_request(self, _message: ActorMessage) -> None:
         """Handle deliberation requests."""
-        deliberation_id = message.content.get("deliberation_id")
-        topic = message.content.get("topic")
+        _deliberation_id = message.content.get("deliberation_id")
+        _topic = message.content.get("topic")
 
         logger.info(
             f"[{self.agent_id}] Participating in deliberation {deliberation_id}"
         )
 
         # Perform independent analysis
-        analysis = await self._perform_analysis(topic)
+        _analysis = await self._perform_analysis(topic)
 
         await self.send(
-            topic="triad",
-            content={
+            _topic = "triad",
+            _content = {
                 "message_type": "vote_response",
                 "deliberation_id": deliberation_id,
                 "agent_id": self.agent_id,
@@ -643,11 +616,11 @@ class BetaAgent(AgentActor):
             },
         )
 
-    async def _handle_validation_request(self, message: ActorMessage) -> None:
+    async def _handle_validation_request(self, _message: ActorMessage) -> None:
         """Handle validation requests."""
-        request_id = message.content.get("request_id")
-        decision_to_validate = message.content.get("decision")
-        original_analysis = message.content.get("original_analysis")
+        _request_id = message.content.get("request_id")
+        _decision_to_validate = message.content.get("decision")
+        _original_analysis = message.content.get("original_analysis")
 
         logger.info(f"[{self.agent_id}] Validating: {request_id}")
 
@@ -666,22 +639,22 @@ class BetaAgent(AgentActor):
         if len(self.validation_history) > self.max_history_size:
             self.validation_history = self.validation_history[-self.max_history_size:]
 
-        reply_topic = message.content.get("reply_to", "validation")
+        _reply_topic = message.content.get("reply_to", "validation")
         await self.send(
-            topic=reply_topic,
-            content={
+            _topic = reply_topic,
+            _content = {
                 "message_type": "validation_response",
                 "request_id": request_id,
                 **validation,
             },
-            correlation_id=message.correlation_id,
+            _correlation_id = message.correlation_id,
         )
 
-    async def _handle_error_check(self, message: ActorMessage) -> None:
+    async def _handle_error_check(self, _message: ActorMessage) -> None:
         """Handle error check requests."""
         content = message.content.get("content")
 
-        errors = await self._detect_errors(content)
+        _errors = await self._detect_errors(content)
 
         if errors:
             # P2-1 fix: Use timezone-aware datetime
@@ -695,24 +668,24 @@ class BetaAgent(AgentActor):
                 self.error_detections = self.error_detections[-self.max_history_size:]
             logger.warning(f"[{self.agent_id}] Detected {len(errors)} errors")
 
-        reply_topic = message.content.get("reply_to", "errors")
+        _reply_topic = message.content.get("reply_to", "errors")
         await self.send(
-            topic=reply_topic,
-            content={
+            _topic = reply_topic,
+            _content = {
                 "message_type": "error_check_response",
                 "errors": errors,
                 "error_count": len(errors),
             },
-            correlation_id=message.correlation_id,
+            _correlation_id = message.correlation_id,
         )
 
-    async def _perform_analysis(self, problem: str) -> Dict[str, Any]:
+    async def _perform_analysis(self, _problem: str) -> Dict[str, Any]:
         """Perform independent analysis."""
         if self.swarms_agent:
             try:
-                analysis_result = await self.run_with_llm(
-                    prompt=f"Provide independent analysis (Beta perspective): {problem}",
-                    timeout=60
+                _analysis_result = await self.run_with_llm(
+                    _prompt = f"Provide independent analysis (Beta perspective): {problem}",
+                    _timeout = 60
                 )
                 return {
                     "decision": analysis_result,
@@ -730,17 +703,13 @@ class BetaAgent(AgentActor):
             "perspective": "secondary",
         }
 
-    async def _validate_decision(
-        self,
-        decision: Any,
-        original_analysis: Optional[Dict[str, Any]] = None,
-    ) -> Dict[str, Any]:
+    async def _validate_decision(self, _decision: Any, _original_analysis: Optional[Dict[str, _Any]]) -> Dict[str, Any]:
         """Validate a decision with Beta's perspective."""
         if self.swarms_agent:
             try:
-                validation_result = await self.run_with_llm(
-                    prompt=f"Beta validation of: {decision}. Original: {original_analysis}",
-                    timeout=60
+                _validation_result = await self.run_with_llm(
+                    _prompt = f"Beta validation of: {decision}. Original: {original_analysis}",
+                    _timeout = 60
                 )
                 return {
                     "valid": True,
@@ -758,15 +727,15 @@ class BetaAgent(AgentActor):
             "perspective": "secondary",
         }
 
-    async def _detect_errors(self, content: Any) -> List[Dict[str, Any]]:
+    async def _detect_errors(self, _content: Any) -> List[Dict[str, Any]]:
         """Detect errors in content."""
-        errors = []
+        _errors = []
 
         if self.swarms_agent:
             try:
-                error_check = await self.run_with_llm(
-                    prompt=f"Check for errors in: {content}",
-                    timeout=60
+                _error_check = await self.run_with_llm(
+                    _prompt = f"Check for errors in: {content}",
+                    _timeout = 60
                 )
                 if "error" in error_check.lower():
                     errors.append({
@@ -800,15 +769,7 @@ class CharlieAgent(AgentActor):
     - Creative alternative solutions
     """
 
-    def __init__(
-        self,
-        agent_id: str = "charlie",
-        name: str = "Charlie",
-        description: str = "Tertiary perspective and challenger",
-        swarms_agent: Optional[Agent] = None,
-        challenge_intensity: str = "moderate",
-        **kwargs,
-    ) -> None:
+    def __init__(self, _agent_id: str, _name: str, _description: str, _swarms_agent: Optional[Agent], _challenge_intensity: str, _**kwargs) -> None:
         """
         Initialize the Charlie agent.
 
@@ -822,10 +783,10 @@ class CharlieAgent(AgentActor):
         """
         super().__init__(
             agent_id=agent_id,
-            name=name,
-            description=description,
-            topics=["triad", "challenge", "risk", "charlie"],
-            capabilities=[
+            _name = name,
+            _description = description,
+            _topics = ["triad", "challenge", "risk", "charlie"],
+            _capabilities = [
                 "devil-advocate",
                 "risk-assessment",
                 "edge-case-analysis",
@@ -850,48 +811,48 @@ class CharlieAgent(AgentActor):
 
         logger.info(f"[{self.agent_id}] Charlie initialization complete")
 
-    async def process_message(self, message: ActorMessage) -> None:
+    async def process_message(self, _message: ActorMessage) -> None:
         """Process incoming messages."""
-        handler = self._message_handlers.get(message.message_type)
+        _handler = self._message_handlers.get(message.message_type)
         if handler:
             try:
                 await handler(message)
             except Exception as e:
                 logger.error(
                     f"[{self.agent_id}] Error processing message {message.message_type}: {e}",
-                    exc_info=True,
+                    _exc_info = True,
                 )
                 self.error_count += 1
                 if message.content.get("reply_to"):
                     await self.send(
-                        topic=message.content["reply_to"],
-                        content={
+                        _topic = message.content["reply_to"],
+                        _content = {
                             "message_type": "error_response",
                             "error": str(e),
                             "original_message_type": message.message_type,
                         },
-                        correlation_id=message.correlation_id,
+                        _correlation_id = message.correlation_id,
                     )
         else:
             logger.warning(
                 f"[{self.agent_id}] Unhandled message type: {message.message_type}"
             )
 
-    async def _handle_deliberation_request(self, message: ActorMessage) -> None:
+    async def _handle_deliberation_request(self, _message: ActorMessage) -> None:
         """Handle deliberation requests."""
-        deliberation_id = message.content.get("deliberation_id")
-        topic = message.content.get("topic")
+        _deliberation_id = message.content.get("deliberation_id")
+        _topic = message.content.get("topic")
 
         logger.info(
             f"[{self.agent_id}] Participating in deliberation {deliberation_id}"
         )
 
         # Perform challenging analysis
-        analysis = await self._perform_analysis(topic)
+        _analysis = await self._perform_analysis(topic)
 
         await self.send(
-            topic="triad",
-            content={
+            _topic = "triad",
+            _content = {
                 "message_type": "vote_response",
                 "deliberation_id": deliberation_id,
                 "agent_id": self.agent_id,
@@ -902,10 +863,10 @@ class CharlieAgent(AgentActor):
             },
         )
 
-    async def _handle_challenge_request(self, message: ActorMessage) -> None:
+    async def _handle_challenge_request(self, _message: ActorMessage) -> None:
         """Handle challenge requests."""
-        request_id = message.content.get("request_id")
-        proposition = message.content.get("proposition")
+        _request_id = message.content.get("request_id")
+        _proposition = message.content.get("proposition")
 
         logger.info(f"[{self.agent_id}] Challenging: {request_id}")
 
@@ -921,26 +882,26 @@ class CharlieAgent(AgentActor):
         if len(self.challenges_raised) > self.max_history_size:
             self.challenges_raised = self.challenges_raised[-self.max_history_size:]
 
-        reply_topic = message.content.get("reply_to", "challenges")
+        _reply_topic = message.content.get("reply_to", "challenges")
         await self.send(
-            topic=reply_topic,
-            content={
+            _topic = reply_topic,
+            _content = {
                 "message_type": "challenge_response",
                 "request_id": request_id,
                 "challenges": challenges,
                 "challenge_count": len(challenges),
             },
-            correlation_id=message.correlation_id,
+            _correlation_id = message.correlation_id,
         )
 
-    async def _handle_risk_assessment(self, message: ActorMessage) -> None:
+    async def _handle_risk_assessment(self, _message: ActorMessage) -> None:
         """Handle risk assessment requests."""
-        request_id = message.content.get("request_id")
-        scenario = message.content.get("scenario")
+        _request_id = message.content.get("request_id")
+        _scenario = message.content.get("scenario")
 
         logger.info(f"[{self.agent_id}] Assessing risks: {request_id}")
 
-        assessment = await self._assess_risks(scenario)
+        _assessment = await self._assess_risks(scenario)
 
         # P2-1 fix: Use timezone-aware datetime
         self.risk_assessments.append({
@@ -952,24 +913,24 @@ class CharlieAgent(AgentActor):
         if len(self.risk_assessments) > self.max_history_size:
             self.risk_assessments = self.risk_assessments[-self.max_history_size:]
 
-        reply_topic = message.content.get("reply_to", "risks")
+        _reply_topic = message.content.get("reply_to", "risks")
         await self.send(
-            topic=reply_topic,
-            content={
+            _topic = reply_topic,
+            _content = {
                 "message_type": "risk_assessment_response",
                 "request_id": request_id,
                 **assessment,
             },
-            correlation_id=message.correlation_id,
+            _correlation_id = message.correlation_id,
         )
 
-    async def _perform_analysis(self, problem: str) -> Dict[str, Any]:
+    async def _perform_analysis(self, _problem: str) -> Dict[str, Any]:
         """Perform challenging analysis."""
         if self.swarms_agent:
             try:
-                analysis_result = await self.run_with_llm(
-                    prompt=f"Analyze with critical perspective (Charlie): {problem}. Identify risks and alternatives.",
-                    timeout=60
+                _analysis_result = await self.run_with_llm(
+                    _prompt = f"Analyze with critical perspective (Charlie): {problem}. Identify risks and alternatives.",
+                    _timeout = 60
                 )
                 return {
                     "decision": analysis_result,
@@ -989,15 +950,15 @@ class CharlieAgent(AgentActor):
             "challenges": [],
         }
 
-    async def _generate_challenges(self, proposition: Any) -> List[Dict[str, Any]]:
+    async def _generate_challenges(self, _proposition: Any) -> List[Dict[str, Any]]:
         """Generate challenges to a proposition."""
         challenges = []
 
         if self.swarms_agent:
             try:
-                challenge_result = await self.run_with_llm(
-                    prompt=f"Challenge this proposition: {proposition}",
-                    timeout=60
+                _challenge_result = await self.run_with_llm(
+                    _prompt = f"Challenge this proposition: {proposition}",
+                    _timeout = 60
                 )
                 challenges.append({
                     "type": "logical_challenge",
@@ -1009,13 +970,13 @@ class CharlieAgent(AgentActor):
 
         return challenges
 
-    async def _assess_risks(self, scenario: Any) -> Dict[str, Any]:
+    async def _assess_risks(self, _scenario: Any) -> Dict[str, Any]:
         """Assess risks in a scenario."""
         if self.swarms_agent:
             try:
-                risk_result = await self.run_with_llm(
-                    prompt=f"Assess risks: {scenario}",
-                    timeout=60
+                _risk_result = await self.run_with_llm(
+                    _prompt = f"Assess risks: {scenario}",
+                    _timeout = 60
                 )
                 return {
                     "risks_identified": [risk_result],

@@ -25,7 +25,7 @@ from heretek_swarm.actors.validation import validate_message as validate_message
 from heretek_swarm.collective.learning import PatternExtractor, PatternType
 
 # Alias for use in handlers
-validate_message = validate_message_schema
+_validate_message = validate_message_schema
 
 # Session 44: Consensus Integration
 from heretek_swarm.consensus.swarm_deliberation import SwarmDeliberationEngine, Position
@@ -37,7 +37,7 @@ from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer, AccessTi
 from heretek_swarm.security.zero_trust import ZeroTrustValidator
 
 
-logger = structlog.get_logger("EmpathAgent")
+_logger = structlog.get_logger("EmpathAgent")
 
 
 class EmpathAgent(AgentActor):
@@ -60,21 +60,7 @@ class EmpathAgent(AgentActor):
     6. Log emotional metrics for observability
     """
 
-    def __init__(
-        self,
-        agent_id: str = "empath",
-        name: str = "Empath",
-        description: str = "Emotional intelligence and sentiment analysis specialist",
-        swarms_agent: Optional[Agent] = None,
-        sentiment_threshold: float = 0.7,
-        stress_threshold: float = 0.8,
-        max_mood_history: int = 100,
-        pattern_extractor: Optional[PatternExtractor] = None,
-        deliberation_engine: Optional[SwarmDeliberationEngine] = None,
-        access_analyzer: Optional[AccessPatternAnalyzer] = None,
-        zero_trust_validator: Optional[ZeroTrustValidator] = None,
-        **kwargs,
-    ) -> None:
+    def __init__(self, _agent_id: str, _name: str, _description: str, _swarms_agent: Optional[Agent], _sentiment_threshold: float, _stress_threshold: float, _max_mood_history: int, _pattern_extractor: Optional[PatternExtractor], _deliberation_engine: Optional[SwarmDeliberationEngine], _access_analyzer: Optional[AccessPatternAnalyzer], _zero_trust_validator: Optional[ZeroTrustValidator], _**kwargs) -> None:
         """
         Initialize the Empath agent.
 
@@ -90,15 +76,15 @@ class EmpathAgent(AgentActor):
         """
         super().__init__(
             agent_id=agent_id,
-            name=name,
-            description=description,
-            topics=[
+            _name = name,
+            _description = description,
+            _topics = [
                 "sentiment",
                 "emotions",
                 "conflict-resolution",
                 "agent-health",
             ],
-            capabilities=[
+            _capabilities = [
                 "sentiment-analysis",
                 "emotion-detection",
                 "conflict-mediation",
@@ -135,7 +121,7 @@ class EmpathAgent(AgentActor):
         
         # Session 44: Consensus Integration
         self.deliberation_engine = deliberation_engine or SwarmDeliberationEngine(
-            max_rounds=5, consensus_threshold=0.75, min_participants=2
+            _max_rounds = 5, consensus_threshold=0.75, min_participants=2
         )
         
         # Session 44: Memory Optimization Integration
@@ -163,40 +149,40 @@ class EmpathAgent(AgentActor):
 
         logger.info(f"[{self.agent_id}] Empath initialization complete")
 
-    async def process_message(self, message: ActorMessage) -> None:
+    async def process_message(self, _message: ActorMessage) -> None:
         """
         Process incoming messages with exception handling.
 
         Args:
             message: Actor message to process
         """
-        handler = self._message_handlers.get(message.message_type)
+        _handler = self._message_handlers.get(message.message_type)
         if handler:
             try:
                 await handler(message)
             except Exception as e:
                 logger.error(
                     f"[{self.agent_id}] Error processing message {message.message_type}: {e}",
-                    exc_info=True,
+                    _exc_info = True,
                 )
                 self.error_count += 1
                 # Send error response if reply_to is specified
                 if message.content.get("reply_to"):
                     await self.send(
-                        topic=message.content["reply_to"],
-                        content={
+                        _topic = message.content["reply_to"],
+                        _content = {
                             "message_type": "error_response",
                             "error": str(e),
                             "original_message_type": message.message_type,
                         },
-                        correlation_id=message.correlation_id,
+                        _correlation_id = message.correlation_id,
                     )
         else:
             logger.warning(
                 f"[{self.agent_id}] No handler for message type: {message.message_type}"
             )
 
-    def _validate_message_content(self, message_type: str, content: Dict[str, Any]) -> Any:
+    def _validate_message_content(self, _message_type: str, _content: Dict[str, _Any]) -> Any:
         """
         Validate message content using Pydantic models.
 
@@ -220,7 +206,7 @@ class EmpathAgent(AgentActor):
             logger.debug(f"[{self.agent_id}] No validator for message type: {message_type}")
             return None
 
-    async def _handle_analyze_sentiment(self, message: ActorMessage) -> None:
+    async def _handle_analyze_sentiment(self, _message: ActorMessage) -> None:
         """
         Analyze sentiment of text content.
 
@@ -238,12 +224,12 @@ class EmpathAgent(AgentActor):
         """
         try:
             # Zero-Trust input validation
-            validated = self._validate_message_content("analyze_sentiment", message.content)
+            _validated = self._validate_message_content("analyze_sentiment", message.content)
             content = validated.model_dump() if validated else message.content
 
-            text = content.get("text", "")
-            source_agent = content.get("source_agent", "unknown")
-            context = content.get("context", {})
+            _text = content.get("text", "")
+            _source_agent = content.get("source_agent", "unknown")
+            _context = content.get("context", {})
 
             if not text:
                 logger.warning(f"[{self.agent_id}] Empty text for sentiment analysis")
@@ -251,7 +237,7 @@ class EmpathAgent(AgentActor):
                 return
 
             # Perform sentiment analysis
-            sentiment_result = await self._analyze_sentiment_llm(text, source_agent, context)
+            _sentiment_result = await self._analyze_sentiment_llm(text, source_agent, context)
 
             # Update agent mood history
             self._update_agent_mood(source_agent, sentiment_result)
@@ -264,13 +250,13 @@ class EmpathAgent(AgentActor):
 
             # Send response
             await self.send(
-                topic=message.content.get("reply_to", f"actor:{source_agent}"),
-                content={
+                _topic = message.content.get("reply_to", f"actor:{source_agent}"),
+                _content = {
                     "message_type": "sentiment_result",
                     "text": text[:100],  # Truncate for logging
                     **sentiment_result,
                 },
-                correlation_id=message.correlation_id,
+                _correlation_id = message.correlation_id,
             )
 
             logger.debug(
@@ -282,9 +268,7 @@ class EmpathAgent(AgentActor):
             logger.error(f"[{self.agent_id}] Sentiment analysis failed: {e}", exc_info=True)
             await self._send_error_response(message, f"Sentiment analysis failed: {e}")
 
-    async def _analyze_sentiment_llm(
-        self, text: str, source_agent: str, context: Dict[str, Any]
-    ) -> Dict[str, Any]:
+    async def _analyze_sentiment_llm(self, _text: str, _source_agent: str, _context: Dict[str, _Any]) -> Dict[str, Any]:
         """
         Analyze sentiment using LLM if available, otherwise use heuristic analysis.
 
@@ -299,10 +283,10 @@ class EmpathAgent(AgentActor):
         try:
             if self.swarms_agent and self.swarms_agent.llm:
                 # Use LLM for sophisticated sentiment analysis
-                prompt = self._build_sentiment_prompt(text, context)
-                response = await asyncio.wait_for(
+                _prompt = self._build_sentiment_prompt(text, context)
+                _response = await asyncio.wait_for(
                     self.swarms_agent.llm(prompt),
-                    timeout=60,  # P1-2: LLM timeout
+                    _timeout = 60,  # P1-2: LLM timeout
                 )
                 return self._parse_sentiment_response(response)
             else:
@@ -316,9 +300,9 @@ class EmpathAgent(AgentActor):
             logger.error(f"[{self.agent_id}] LLM sentiment analysis error: {e}")
             return self._analyze_sentiment_heuristic(text)
 
-    def _build_sentiment_prompt(self, text: str, context: Dict[str, Any]) -> str:
+    def _build_sentiment_prompt(self, _text: str, _context: Dict[str, _Any]) -> str:
         """Build prompt for LLM sentiment analysis."""
-        context_str = f"Context: {context}\n" if context else ""
+        _context_str = f"Context: {context}\n" if context else ""
         return f"""
 Analyze the sentiment of the following text. Consider the emotional tone, 
 intensity, and any underlying emotions.
@@ -337,14 +321,14 @@ Provide your analysis in this exact JSON format:
 }}
 """
 
-    def _parse_sentiment_response(self, response: str) -> Dict[str, Any]:
+    def _parse_sentiment_response(self, _response: str) -> Dict[str, Any]:
         """Parse LLM response into sentiment result."""
         import json
         import re
 
         try:
             # Extract JSON from response
-            json_match = re.search(r"\{.*\}", response, re.DOTALL)
+            _json_match = re.search(r"\{.*\}", response, re.DOTALL)
             if json_match:
                 return json.loads(json_match.group())
         except Exception as e:
@@ -353,44 +337,44 @@ Provide your analysis in this exact JSON format:
         # Fallback to heuristic analysis
         return self._analyze_sentiment_heuristic(response)
 
-    def _analyze_sentiment_heuristic(self, text: str) -> Dict[str, Any]:
+    def _analyze_sentiment_heuristic(self, _text: str) -> Dict[str, Any]:
         """
         Analyze sentiment using heuristic rules.
 
         This is a fallback when LLM is unavailable.
         """
-        text_lower = text.lower()
+        _text_lower = text.lower()
 
         # Simple positive/negative word lists
-        positive_words = {
+        _positive_words = {
             "good", "great", "excellent", "positive", "success", "happy",
             "confident", "sure", "certain", "agree", "support", "help",
             "thanks", "thank", "appreciate", "wonderful", "amazing",
         }
-        negative_words = {
+        _negative_words = {
             "bad", "terrible", "awful", "negative", "fail", "error",
             "wrong", "disagree", "reject", "problem", "issue", "stress",
             "angry", "frustrat", "worried", "concern", "unfortunately",
         }
-        stress_words = {
+        _stress_words = {
             "urgent", "asap", "immediately", "stress", "panic", "crisis",
             "emergency", "deadline", "overwhelm", "burnout", "pressure",
         }
-        conflict_words = {
+        _conflict_words = {
             "disagree", "conflict", "argue", "fight", "oppose", "against",
             "wrong", "reject", "deny", "accuse", "blame",
         }
 
         # Count matches
-        positive_count = sum(1 for word in positive_words if word in text_lower)
-        negative_count = sum(1 for word in negative_words if word in text_lower)
-        stress_count = sum(1 for word in stress_words if word in text_lower)
-        conflict_count = sum(1 for word in conflict_words if word in text_lower)
+        _positive_count = sum(1 for word in positive_words if word in text_lower)
+        _negative_count = sum(1 for word in negative_words if word in text_lower)
+        _stress_count = sum(1 for word in stress_words if word in text_lower)
+        _conflict_count = sum(1 for word in conflict_words if word in text_lower)
 
         # Calculate sentiment
         total = positive_count + negative_count + 1  # +1 to avoid division by zero
-        positive_score = positive_count / total
-        negative_score = negative_count / total
+        _positive_score = positive_count / total
+        _negative_score = negative_count / total
 
         if positive_score > negative_score + 0.2:
             sentiment = "positive"
@@ -400,7 +384,7 @@ Provide your analysis in this exact JSON format:
             sentiment = "neutral"
 
         # Detect emotions
-        emotions = []
+        _emotions = []
         if "angry" in text_lower or "frustrat" in text_lower:
             emotions.append("anger")
         if "worried" in text_lower or "concern" in text_lower:
@@ -421,12 +405,12 @@ Provide your analysis in this exact JSON format:
             "conflict_potential": conflict_count > 0,
         }
 
-    def _update_agent_mood(self, agent_id: str, sentiment_result: Dict[str, Any]) -> None:
+    def _update_agent_mood(self, _agent_id: str, _sentiment_result: Dict[str, _Any]) -> None:
         """Update agent's mood history with new sentiment data."""
         if agent_id not in self.agent_moods:
             self.agent_moods[agent_id] = []
 
-        mood_entry = {
+        _mood_entry = {
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "sentiment": sentiment_result["sentiment"],
             "intensity": sentiment_result["intensity"],
@@ -439,9 +423,7 @@ Provide your analysis in this exact JSON format:
         if len(self.agent_moods[agent_id]) > self.max_mood_history:
             self.agent_moods[agent_id] = self.agent_moods[agent_id][-self.max_mood_history:]
 
-    def _check_stress_indicators(
-        self, agent_id: str, sentiment_result: Dict[str, Any]
-    ) -> None:
+    def _check_stress_indicators(self, _agent_id: str, _sentiment_result: Dict[str, _Any]) -> None:
         """Check for stress indicators and update stress levels."""
         # Update stress level
         if sentiment_result.get("stress_indicators", False):
@@ -458,11 +440,11 @@ Provide your analysis in this exact JSON format:
         if self.agent_stress_levels.get(agent_id, 0.0) > self.stress_threshold:
             logger.warning(
                 f"[{self.agent_id}] High stress detected for agent {agent_id}",
-                extra={"stress_level": self.agent_stress_levels[agent_id]},
+                _extra = {"stress_level": self.agent_stress_levels[agent_id]},
             )
             # Could trigger alert to supervisor or steward
 
-    def _log_sentiment(self, agent_id: str, sentiment_result: Dict[str, Any]) -> None:
+    def _log_sentiment(self, _agent_id: str, _sentiment_result: Dict[str, _Any]) -> None:
         """Log sentiment for observability and analysis."""
         self.sentiment_history.append({
             "timestamp": datetime.now(timezone.utc).isoformat(),
@@ -474,9 +456,7 @@ Provide your analysis in this exact JSON format:
         if len(self.sentiment_history) > 1000:
             self.sentiment_history = self.sentiment_history[-1000:]
 
-    async def _handle_track_emotion(
-        self, message: ActorMessage
-    ) -> None:
+    async def _handle_track_emotion(self, _message: ActorMessage) -> None:
         """
         Track emotional state for an agent.
 
@@ -489,8 +469,8 @@ Provide your analysis in this exact JSON format:
         try:
             content = message.content
             agent_id = content.get("agent_id")
-            emotion = content.get("emotion")
-            intensity = content.get("intensity", 0.5)
+            _emotion = content.get("emotion")
+            _intensity = content.get("intensity", 0.5)
 
             if not agent_id or not emotion:
                 await self._send_error_response(
@@ -515,9 +495,7 @@ Provide your analysis in this exact JSON format:
             logger.error(f"[{self.agent_id}] Emotion tracking failed: {e}", exc_info=True)
             await self._send_error_response(message, f"Emotion tracking failed: {e}")
 
-    async def _handle_detect_conflict(
-        self, message: ActorMessage
-    ) -> None:
+    async def _handle_detect_conflict(self, _message: ActorMessage) -> None:
         """
         Detect potential conflicts between agents.
 
@@ -528,8 +506,8 @@ Provide your analysis in this exact JSON format:
         """
         try:
             content = message.content
-            agents = content.get("agents", [])
-            context = content.get("context", "")
+            _agents = content.get("agents", [])
+            _context = content.get("context", "")
 
             if len(agents) < 2:
                 await self._send_error_response(
@@ -538,7 +516,7 @@ Provide your analysis in this exact JSON format:
                 return
 
             # Analyze recent interactions between agents
-            conflict_detected = self._analyze_conflict_potential(agents)
+            _conflict_detected = self._analyze_conflict_potential(agents)
 
             if conflict_detected:
                 # Log conflict
@@ -551,8 +529,8 @@ Provide your analysis in this exact JSON format:
 
                 # Alert steward for mediation
                 await self.send(
-                    topic="actor:steward",
-                    content={
+                    _topic = "actor:steward",
+                    _content = {
                         "message_type": "conflict_alert",
                         "agents": agents,
                         "context": context,
@@ -561,27 +539,27 @@ Provide your analysis in this exact JSON format:
 
             # Send response
             await self.send(
-                topic=message.content.get("reply_to", f"actor:{agents[0]}"),
-                content={
+                _topic = message.content.get("reply_to", f"actor:{agents[0]}"),
+                _content = {
                     "message_type": "conflict_result",
                     "conflict_detected": conflict_detected,
                     "agents": agents,
                 },
-                correlation_id=message.correlation_id,
+                _correlation_id = message.correlation_id,
             )
 
         except Exception as e:
             logger.error(f"[{self.agent_id}] Conflict detection failed: {e}", exc_info=True)
             await self._send_error_response(message, f"Conflict detection failed: {e}")
 
-    def _analyze_conflict_potential(self, agents: List[str]) -> bool:
+    def _analyze_conflict_potential(self, _agents: List[str]) -> bool:
         """Analyze potential for conflict between agents."""
         # Check for opposing sentiments in recent history
-        recent_sentiments = {}
+        _recent_sentiments = {}
         for agent_id in agents:
             moods = self.agent_moods.get(agent_id, [])[-10:]  # Last 10 entries
             if moods:
-                avg_sentiment = sum(
+                _avg_sentiment = sum(
                     1 if m["sentiment"] == "positive" else -1 if m["sentiment"] == "negative" else 0
                     for m in moods
                 ) / len(moods)
@@ -590,7 +568,7 @@ Provide your analysis in this exact JSON format:
         # Check for significant sentiment divergence
         if len(recent_sentiments) >= 2:
             values = list(recent_sentiments.values())
-            max_diff = max(values) - min(values)
+            _max_diff = max(values) - min(values)
             if max_diff > 1.5:  # Significant divergence
                 return True
 
@@ -601,9 +579,7 @@ Provide your analysis in this exact JSON format:
 
         return False
 
-    async def _handle_get_emotional_state(
-        self, message: ActorMessage
-    ) -> None:
+    async def _handle_get_emotional_state(self, _message: ActorMessage) -> None:
         """
         Get current emotional state for an agent or all agents.
 
@@ -615,12 +591,12 @@ Provide your analysis in this exact JSON format:
 
             if agent_id:
                 # Get specific agent state
-                moods = self.agent_moods.get(agent_id, [])
-                recent_mood = moods[-1] if moods else None
+                _moods = self.agent_moods.get(agent_id, [])
+                _recent_mood = moods[-1] if moods else None
                 stress = self.agent_stress_levels.get(agent_id, 0.0)
                 confidence = self.agent_confidence.get(agent_id, 0.5)
 
-                result = {
+                _result = {
                     "agent_id": agent_id,
                     "current_mood": recent_mood,
                     "stress_level": stress,
@@ -629,7 +605,7 @@ Provide your analysis in this exact JSON format:
                 }
             else:
                 # Get aggregate state
-                result = {
+                _result = {
                     "collective_mood": self.collective_mood.copy(),
                     "collective_stress": self.collective_stress,
                     "agent_count": len(self.agent_moods),
@@ -640,21 +616,19 @@ Provide your analysis in this exact JSON format:
                 }
 
             await self.send(
-                topic=message.content.get("reply_to", "actor:*"),
-                content={
+                _topic = message.content.get("reply_to", "actor:*"),
+                _content = {
                     "message_type": "emotional_state_result",
                     **result,
                 },
-                correlation_id=message.correlation_id,
+                _correlation_id = message.correlation_id,
             )
 
         except Exception as e:
             logger.error(f"[{self.agent_id}] Emotional state query failed: {e}", exc_info=True)
             await self._send_error_response(message, f"Emotional state query failed: {e}")
 
-    async def _handle_mediate_conflict(
-        self, message: ActorMessage
-    ) -> None:
+    async def _handle_mediate_conflict(self, _message: ActorMessage) -> None:
         """
         Mediate conflict between agents.
 
@@ -666,8 +640,8 @@ Provide your analysis in this exact JSON format:
         """
         try:
             content = message.content
-            agents = content.get("agents", [])
-            proposed_resolution = content.get("proposed_resolution")
+            _agents = content.get("agents", [])
+            _proposed_resolution = content.get("proposed_resolution")
 
             if len(agents) < 2:
                 await self._send_error_response(
@@ -676,15 +650,15 @@ Provide your analysis in this exact JSON format:
                 return
 
             # Generate mediation suggestions using LLM if available
-            mediation_result = await self._generate_mediation(
+            _mediation_result = await self._generate_mediation(
                 agents, proposed_resolution
             )
 
             # Send mediation suggestions to all involved agents
             for agent_id in agents:
                 await self.send(
-                    topic=f"actor:{agent_id}",
-                    content={
+                    _topic = f"actor:{agent_id}",
+                    _content = {
                         "message_type": "mediation_suggestion",
                         "agents": agents,
                         **mediation_result,
@@ -700,26 +674,24 @@ Provide your analysis in this exact JSON format:
             })
 
             await self.send(
-                topic=message.content.get("reply_to"),
-                content={
+                _topic = message.content.get("reply_to"),
+                _content = {
                     "message_type": "mediation_result",
                     "agents": agents,
                     **mediation_result,
                 },
-                correlation_id=message.correlation_id,
+                _correlation_id = message.correlation_id,
             )
 
         except Exception as e:
             logger.error(f"[{self.agent_id}] Conflict mediation failed: {e}", exc_info=True)
             await self._send_error_response(message, f"Mediation failed: {e}")
 
-    async def _generate_mediation(
-        self, agents: List[str], proposed_resolution: Optional[str]
-    ) -> Dict[str, Any]:
+    async def _generate_mediation(self, _agents: List[str], _proposed_resolution: Optional[str]) -> Dict[str, Any]:
         """Generate mediation suggestions."""
         try:
             if self.swarms_agent and self.swarms_agent.llm:
-                prompt = f"""
+                _prompt = f"""
 Generate a fair mediation suggestion for a conflict between these agents: {agents}.
 
 {"Proposed resolution: " + proposed_resolution if proposed_resolution else ""}
@@ -727,13 +699,13 @@ Generate a fair mediation suggestion for a conflict between these agents: {agent
 Provide a balanced resolution that considers all perspectives.
 Return as JSON: {{"resolution": "...", "reasoning": "..."}}
 """
-                response = await asyncio.wait_for(
+                _response = await asyncio.wait_for(
                     self.swarms_agent.llm(prompt),
-                    timeout=60,
+                    _timeout = 60,
                 )
                 import json
                 import re
-                json_match = re.search(r"\{.*\}", response, re.DOTALL)
+                _json_match = re.search(r"\{.*\}", response, re.DOTALL)
                 if json_match:
                     return json.loads(json_match.group())
         except Exception as e:
@@ -745,9 +717,7 @@ Return as JSON: {{"resolution": "...", "reasoning": "..."}}
             "reasoning": "High stress or conflicting sentiments detected. Cooling-off period recommended.",
         }
 
-    async def _handle_get_collective_mood(
-        self, message: ActorMessage
-    ) -> None:
+    async def _handle_get_collective_mood(self, _message: ActorMessage) -> None:
         """
         Get the collective mood of the swarm.
 
@@ -759,15 +729,15 @@ Return as JSON: {{"resolution": "...", "reasoning": "..."}}
             self._update_collective_mood()
 
             await self.send(
-                topic=message.content.get("reply_to"),
-                content={
+                _topic = message.content.get("reply_to"),
+                _content = {
                     "message_type": "collective_mood_result",
                     "collective_mood": self.collective_mood,
                     "collective_stress": self.collective_stress,
                     "total_agents": len(self.agent_moods),
                     "timestamp": datetime.now(timezone.utc).isoformat(),
                 },
-                correlation_id=message.correlation_id,
+                _correlation_id = message.correlation_id,
             )
 
         except Exception as e:
@@ -782,15 +752,15 @@ Return as JSON: {{"resolution": "...", "reasoning": "..."}}
             return
 
         # Average sentiment across all agents
-        all_moods = []
+        _all_moods = []
         for moods in self.agent_moods.values():
             all_moods.extend(moods[-5:])  # Last 5 entries per agent
 
         if all_moods:
-            positive = sum(1 for m in all_moods if m["sentiment"] == "positive")
-            negative = sum(1 for m in all_moods if m["sentiment"] == "negative")
-            neutral = sum(1 for m in all_moods if m["sentiment"] == "neutral")
-            total = len(all_moods)
+            _positive = sum(1 for m in all_moods if m["sentiment"] == "positive")
+            _negative = sum(1 for m in all_moods if m["sentiment"] == "negative")
+            _neutral = sum(1 for m in all_moods if m["sentiment"] == "neutral")
+            _total = len(all_moods)
 
             self.collective_mood = {
                 "positive": positive / total,
@@ -809,7 +779,7 @@ Return as JSON: {{"resolution": "...", "reasoning": "..."}}
     # Session 44: Collective Learning Integration Methods
     # =========================================================================
 
-    async def _emit_pattern(self, item_id: str, item_type: str, outcome: str, content: Dict[str, Any]) -> None:
+    async def _emit_pattern(self, _item_id: str, _item_type: str, _outcome: str, _content: Dict[str, _Any]) -> None:
         """Emit pattern for collective learning."""
         if not self.pattern_extractor:
             return
@@ -819,12 +789,12 @@ Return as JSON: {{"resolution": "...", "reasoning": "..."}}
         
         try:
             await self.pattern_extractor.analyze_message(
-                message_id=f"{item_type}_{item_id}",
-                sender=self.agent_id,
-                recipient="broadcast",
+                _message_id = f"{item_type}_{item_id}",
+                _sender = self.agent_id,
+                _recipient = "broadcast",
                 message_type=f"{item_type}_completion",
                 content=content,
-                timestamp=datetime.now(timezone.utc).isoformat(),
+                _timestamp = datetime.now(timezone.utc).isoformat(),
             )
             
             self._pattern_emitted.add(item_id)
@@ -832,15 +802,15 @@ Return as JSON: {{"resolution": "...", "reasoning": "..."}}
         except Exception as e:
             logger.warning("failed_to_emit_pattern", item_id=item_id, error=str(e))
 
-    async def _consume_patterns(self, pattern_types: Optional[List[PatternType]] = None) -> List[Dict[str, Any]]:
+    async def _consume_patterns(self, _pattern_types: Optional[List[PatternType]]) -> List[Dict[str, Any]]:
         """Consume patterns from collective learning."""
         if not self.pattern_extractor:
             return []
         
         try:
-            patterns = await self.pattern_extractor.extract_patterns(
-                time_window_hours=24,
-                pattern_types=pattern_types or [PatternType.SUCCESS, PatternType.DECISION],
+            _patterns = await self.pattern_extractor.extract_patterns(
+                _time_window_hours = 24,
+                _pattern_types = pattern_types or [PatternType.SUCCESS, PatternType.DECISION],
             )
             return [p.to_dict() for p in patterns if p.metadata.confidence >= 0.7]
         except Exception as e:
@@ -851,24 +821,18 @@ Return as JSON: {{"resolution": "...", "reasoning": "..."}}
     # Session 44: Consensus Deliberation Integration Methods
     # =========================================================================
 
-    async def _initiate_deliberation(
-        self,
-        item_id: str,
-        proposal: str,
-        participating_agents: List[str],
-        domain: str = "general",
-    ) -> Optional[str]:
+    async def _initiate_deliberation(self, _item_id: str, _proposal: str, _participating_agents: List[str], _domain: str) -> Optional[str]:
         """Initiate swarm deliberation."""
         if not self.deliberation_engine:
             return None
         
         try:
-            deliberation_id = f"delib_{item_id}"
+            _deliberation_id = f"delib_{item_id}"
             self.deliberation_engine.start_deliberation(
-                deliberation_id=deliberation_id,
-                proposal=proposal[:200],
-                participants=participating_agents,
-                domain=domain,
+                _deliberation_id = deliberation_id,
+                _proposal = proposal[:200],
+                _participants = participating_agents,
+                _domain = domain,
             )
             self._active_deliberations[item_id] = deliberation_id
             
@@ -878,35 +842,28 @@ Return as JSON: {{"resolution": "...", "reasoning": "..."}}
             logger.error("failed_to_initiate_deliberation", item_id=item_id, error=str(e))
             return None
 
-    async def _submit_deliberation_position(
-        self,
-        item_id: str,
-        agent_id: str,
-        position: Position,
-        confidence: float,
-        argument: str,
-    ) -> bool:
+    async def _submit_deliberation_position(self, _item_id: str, _agent_id: str, _position: Position, _confidence: float, _argument: str) -> bool:
         """Submit agent position in deliberation."""
         if not self.deliberation_engine:
             return False
         
-        deliberation_id = self._active_deliberations.get(item_id)
+        _deliberation_id = self._active_deliberations.get(item_id)
         if not deliberation_id:
             return False
         
         try:
-            success = self.deliberation_engine.submit_position(
-                deliberation_id=deliberation_id,
+            _success = self.deliberation_engine.submit_position(
+                _deliberation_id = deliberation_id,
                 agent_id=agent_id,
-                position=position,
-                confidence=confidence,
-                argument=argument,
+                _position = position,
+                _confidence = confidence,
+                _argument = argument,
             )
             
             if success and self.access_analyzer:
                 self.access_analyzer.record_access(
-                    memory_id=f"delib_{deliberation_id}_{agent_id}",
-                    access_type="write",
+                    _memory_id = f"delib_{deliberation_id}_{agent_id}",
+                    _access_type = "write",
                     agent_id=agent_id,
                 )
             
@@ -915,17 +872,17 @@ Return as JSON: {{"resolution": "...", "reasoning": "..."}}
             logger.error("failed_to_submit_deliberation_position", error=str(e))
             return False
 
-    async def _finalize_deliberation(self, item_id: str) -> Optional[Any]:
+    async def _finalize_deliberation(self, _item_id: str) -> Optional[Any]:
         """Finalize deliberation and apply result."""
         if not self.deliberation_engine:
             return None
         
-        deliberation_id = self._active_deliberations.get(item_id)
+        _deliberation_id = self._active_deliberations.get(item_id)
         if not deliberation_id:
             return None
         
         try:
-            result = self.deliberation_engine.finalize_deliberation(deliberation_id)
+            _result = self.deliberation_engine.finalize_deliberation(deliberation_id)
             
             if result:
                 self.deliberation_engine.cleanup_deliberation(deliberation_id)
@@ -941,34 +898,34 @@ Return as JSON: {{"resolution": "...", "reasoning": "..."}}
     # Session 44: Memory Optimization Integration Methods
     # =========================================================================
 
-    def _track_memory_access(self, item_id: str, item_type: str, access_type: str = "read") -> None:
+    def _track_memory_access(self, _item_id: str, _item_type: str, _access_type: str) -> None:
         """Track memory access patterns."""
         if not self.access_analyzer:
             return
         
-        memory_id = f"{item_type}_{item_id}"
+        _memory_id = f"{item_type}_{item_id}"
         self.access_analyzer.record_access(
-            memory_id=memory_id,
-            access_type=access_type,
+            _memory_id = memory_id,
+            _access_type = access_type,
             agent_id=self.agent_id,
         )
 
-    def _get_memory_tier(self, item_id: str, item_type: str) -> AccessTier:
+    def _get_memory_tier(self, _item_id: str, _item_type: str) -> AccessTier:
         """Get memory tier classification."""
         if not self.access_analyzer:
             return AccessTier.COLD
         
-        memory_id = f"{item_type}_{item_id}"
-        profile = self.access_analyzer.get_profile(memory_id)
+        _memory_id = f"{item_type}_{item_id}"
+        _profile = self.access_analyzer.get_profile(memory_id)
         return profile.tier if profile else AccessTier.COLD
 
-    async def _prefetch_relevant(self, agent_id: str, item_type: str) -> List[str]:
+    async def _prefetch_relevant(self, _agent_id: str, _item_type: str) -> List[str]:
         """Prefetch items an agent is likely to need."""
         if not self.access_analyzer:
             return []
         
         try:
-            predicted_memories = self.access_analyzer.predict_agent_access(agent_id)
+            _predicted_memories = self.access_analyzer.predict_agent_access(agent_id)
             return [
                 mem.replace(f"{item_type}_", "")
                 for mem in predicted_memories
@@ -996,17 +953,15 @@ Return as JSON: {{"resolution": "...", "reasoning": "..."}}
         }
 
 
-    async def _send_error_response(
-        self, message: ActorMessage, error: str
-    ) -> None:
+    async def _send_error_response(self, _message: ActorMessage, _error: str) -> None:
         """Send error response."""
         if message.content.get("reply_to"):
             await self.send(
-                topic=message.content["reply_to"],
-                content={
+                _topic = message.content["reply_to"],
+                _content = {
                     "message_type": "error_response",
                     "error": error,
                     "original_message_type": message.message_type,
                 },
-                correlation_id=message.correlation_id,
+                _correlation_id = message.correlation_id,
             )

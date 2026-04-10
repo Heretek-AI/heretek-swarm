@@ -37,7 +37,7 @@ from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer, AccessTi
 from heretek_swarm.security.zero_trust import ZeroTrustValidator
 
 
-logger = structlog.get_logger("ExplorerAgent")
+_logger = structlog.get_logger("ExplorerAgent")
 
 
 class OpportunityType(str, Enum):
@@ -131,18 +131,7 @@ class ExplorerAgent(AgentActor):
     6. Notify relevant agents of significant findings
     """
 
-    def __init__(
-        self,
-        agent_id: str = "explorer",
-        name: str = "Explorer",
-        description: str = "Intelligence gathering and opportunity discovery specialist",
-        swarms_agent: Optional[Agent] = None,
-        monitoring_interval_seconds: int = 300,
-        max_opportunities: int = 50,
-        max_anomalies: int = 100,
-        confidence_threshold: float = 0.6,
-        **kwargs,
-    ) -> None:
+    def __init__(self, _agent_id: str, _name: str, _description: str, _swarms_agent: Optional[Agent], _monitoring_interval_seconds: int, _max_opportunities: int, _max_anomalies: int, _confidence_threshold: float, _**kwargs) -> None:
         """
         Initialize the Explorer agent.
 
@@ -159,23 +148,23 @@ class ExplorerAgent(AgentActor):
         """
         super().__init__(
             agent_id=agent_id,
-            name=name,
+            _name = name,
             description=description,
-            topics=[
+            _topics = [
                 "exploration",
                 "intelligence",
                 "opportunities",
                 "discovery",
                 "monitoring",
             ],
-            capabilities=[
+            _capabilities = [
                 "source-monitoring",
                 "opportunity-identification",
                 "anomaly-detection",
                 "intelligence-gathering",
                 "capability-discovery",
             ],
-            swarms_agent=swarms_agent,
+            _swarms_agent = swarms_agent,
             **kwargs,
         )
 
@@ -211,7 +200,7 @@ class ExplorerAgent(AgentActor):
             self.pattern_extractor = PatternExtractor(min_support=3, min_confidence=0.6)
         if not self.deliberation_engine:
             self.deliberation_engine = SwarmDeliberationEngine(
-                max_rounds=5, consensus_threshold=0.75, min_participants=2
+                _max_rounds = 5, consensus_threshold=0.75, min_participants=2
             )
         if not self.access_analyzer:
             self.access_analyzer = AccessPatternAnalyzer()
@@ -226,7 +215,7 @@ class ExplorerAgent(AgentActor):
         logger.info(
             "Explorer agent initialized",
             agent_id=agent_id,
-            monitoring_interval=monitoring_interval_seconds,
+            _monitoring_interval = monitoring_interval_seconds,
             confidence_threshold=confidence_threshold,
         )
 
@@ -279,12 +268,12 @@ class ExplorerAgent(AgentActor):
                 self._source_error_counts[source_id] = self._source_error_counts.get(source_id, 0) + 1
                 logger.error(
                     "Source check failed",
-                    source_id=source_id,
+                    _source_id = source_id,
                     error=str(e),
-                    error_count=self._source_error_counts[source_id],
+                    _error_count = self._source_error_counts[source_id],
                 )
 
-    async def _check_source(self, source_id: str, config: Dict[str, Any]) -> None:
+    async def _check_source(self, _source_id: str, _config: Dict[str, _Any]) -> None:
         """
         Check a single monitoring source.
 
@@ -292,7 +281,7 @@ class ExplorerAgent(AgentActor):
             source_id: Source identifier
             config: Source configuration (type, url, headers, etc.)
         """
-        source_type = config.get("type", "generic")
+        _source_type = config.get("type", "generic")
         logger.debug("Checking source", source_id=source_id, type=source_type)
 
         # Placeholder for actual source checking logic
@@ -305,7 +294,7 @@ class ExplorerAgent(AgentActor):
         # Would look for correlations between opportunities and anomalies
         pass
 
-    def _add_opportunity(self, opportunity: Opportunity) -> None:
+    def _add_opportunity(self, _opportunity: Opportunity) -> None:
         """
         Add opportunity with LRU eviction.
 
@@ -314,9 +303,9 @@ class ExplorerAgent(AgentActor):
         """
         if len(self._opportunities) >= self.max_opportunities:
             # Evict oldest/lowest priority opportunity
-            oldest_id = min(
+            _oldest_id = min(
                 self._opportunities.keys(),
-                key=lambda x: (
+                _key = lambda x: (
                     self._opportunities[x].impact_score,
                     self._opportunities[x].discovered_at,
                 ),
@@ -327,13 +316,13 @@ class ExplorerAgent(AgentActor):
         self._opportunities[opportunity.id] = opportunity
         logger.info(
             "Opportunity added",
-            opportunity_id=opportunity.id,
+            _opportunity_id = opportunity.id,
             type=opportunity.type.value,
             confidence=opportunity.confidence,
             impact=opportunity.impact_score,
         )
 
-    def _add_anomaly(self, anomaly: Anomaly) -> None:
+    def _add_anomaly(self, _anomaly: Anomaly) -> None:
         """
         Add anomaly with LRU eviction.
 
@@ -342,15 +331,15 @@ class ExplorerAgent(AgentActor):
         """
         if len(self._anomalies) >= self.max_anomalies:
             # Evict oldest/lowest severity anomaly
-            severity_order = {
+            _severity_order = {
                 ThreatLevel.LOW: 0,
                 ThreatLevel.MEDIUM: 1,
                 ThreatLevel.HIGH: 2,
                 ThreatLevel.CRITICAL: 3,
             }
-            oldest_id = min(
+            _oldest_id = min(
                 self._anomalies.keys(),
-                key=lambda x: (
+                _key = lambda x: (
                     severity_order.get(self._anomalies[x].severity, 0),
                     self._anomalies[x].detected_at,
                 ),
@@ -361,7 +350,7 @@ class ExplorerAgent(AgentActor):
         self._anomalies[anomaly.id] = anomaly
         logger.info(
             "Anomaly added",
-            anomaly_id=anomaly.id,
+            _anomaly_id = anomaly.id,
             type=anomaly.type.value,
             severity=anomaly.severity.value,
         )
@@ -370,7 +359,7 @@ class ExplorerAgent(AgentActor):
     # Message Handlers
     # -------------------------------------------------------------------------
 
-    async def _handle_start_monitoring(self, message: ActorMessage) -> None:
+    async def _handle_start_monitoring(self, _message: ActorMessage) -> None:
         """
         Start monitoring a source.
 
@@ -382,12 +371,12 @@ class ExplorerAgent(AgentActor):
         }
         """
         try:
-            validated = validate_message(message.content, "start_monitoring")
-            content = validated.content
+            _validated = validate_message(message.content, "start_monitoring")
+            _content = validated.content
 
-            source_id = content.get("source_id")
-            source_type = content.get("source_type", "generic")
-            config = content.get("config", {})
+            _source_id = content.get("source_id")
+            _source_type = content.get("source_type", "generic")
+            _config = content.get("config", {})
 
             if not source_id:
                 logger.warning("Start monitoring missing source_id")
@@ -400,21 +389,21 @@ class ExplorerAgent(AgentActor):
 
             logger.info(
                 "Started monitoring source",
-                source_id=source_id,
-                source_type=source_type,
+                _source_id = source_id,
+                _source_type = source_type,
             )
 
             await self._send_status_update(
                 status="monitoring_started",
-                source_id=source_id,
-                source_type=source_type,
+                _source_id = source_id,
+                _source_type = source_type,
             )
 
         except Exception as e:
             logger.error("Failed to start monitoring", error=str(e))
             await self._send_error_response(message.sender_id, f"Failed to start monitoring: {e}")
 
-    async def _handle_stop_monitoring(self, message: ActorMessage) -> None:
+    async def _handle_stop_monitoring(self, _message: ActorMessage) -> None:
         """
         Stop monitoring a source.
 
@@ -424,10 +413,10 @@ class ExplorerAgent(AgentActor):
         }
         """
         try:
-            validated = validate_message(message.content, "stop_monitoring")
-            content = validated.content
+            _validated = validate_message(message.content, "stop_monitoring")
+            _content = validated.content
 
-            source_id = content.get("source_id")
+            _source_id = content.get("source_id")
 
             if not source_id:
                 logger.warning("Stop monitoring missing source_id")
@@ -440,14 +429,14 @@ class ExplorerAgent(AgentActor):
 
             await self._send_status_update(
                 status="monitoring_stopped",
-                source_id=source_id,
+                _source_id = source_id,
             )
 
         except Exception as e:
             logger.error("Failed to stop monitoring", error=str(e))
             await self._send_error_response(message.sender_id, f"Failed to stop monitoring: {e}")
 
-    async def _handle_get_opportunities(self, message: ActorMessage) -> None:
+    async def _handle_get_opportunities(self, _message: ActorMessage) -> None:
         """
         Get discovered opportunities.
 
@@ -460,16 +449,16 @@ class ExplorerAgent(AgentActor):
         }
         """
         try:
-            validated = validate_message(message.content, "get_opportunities")
-            content = validated.content
+            _validated = validate_message(message.content, "get_opportunities")
+            _content = validated.content
 
-            limit = content.get("limit", 10)
-            min_confidence = content.get("min_confidence", self.confidence_threshold)
-            opp_type = content.get("type")
+            _limit = content.get("limit", 10)
+            _min_confidence = content.get("min_confidence", self.confidence_threshold)
+            _opp_type = content.get("type")
             status = content.get("status")
 
             # Filter opportunities
-            filtered = [
+            _filtered = [
                 opp for opp in self._opportunities.values()
                 if opp.confidence >= min_confidence
                 and (not opp_type or opp.type.value == opp_type)
@@ -478,10 +467,10 @@ class ExplorerAgent(AgentActor):
 
             # Sort by impact score and confidence
             filtered.sort(key=lambda x: (x.impact_score, x.confidence), reverse=True)
-            filtered = filtered[:limit]
+            _filtered = filtered[:limit]
 
             # Convert to serializable format
-            result = [
+            _result = [
                 {
                     "id": opp.id,
                     "type": opp.type.value,
@@ -510,7 +499,7 @@ class ExplorerAgent(AgentActor):
             logger.error("Failed to get opportunities", error=str(e))
             await self._send_error_response(message.sender_id, f"Failed to get opportunities: {e}")
 
-    async def _handle_get_anomalies(self, message: ActorMessage) -> None:
+    async def _handle_get_anomalies(self, _message: ActorMessage) -> None:
         """
         Get detected anomalies.
 
@@ -523,24 +512,24 @@ class ExplorerAgent(AgentActor):
         }
         """
         try:
-            validated = validate_message(message.content, "get_anomalies")
-            content = validated.content
+            _validated = validate_message(message.content, "get_anomalies")
+            _content = validated.content
 
-            limit = content.get("limit", 10)
-            min_severity = content.get("min_severity", ThreatLevel.LOW.value)
-            anomaly_type = content.get("type")
+            _limit = content.get("limit", 10)
+            _min_severity = content.get("min_severity", ThreatLevel.LOW.value)
+            _anomaly_type = content.get("type")
             status = content.get("status")
 
-            severity_order = {
+            _severity_order = {
                 ThreatLevel.LOW.value: 0,
                 ThreatLevel.MEDIUM.value: 1,
                 ThreatLevel.HIGH.value: 2,
                 ThreatLevel.CRITICAL.value: 3,
             }
-            min_severity_value = severity_order.get(min_severity, 0)
+            _min_severity_value = severity_order.get(min_severity, 0)
 
             # Filter anomalies
-            filtered = [
+            _filtered = [
                 anom for anom in self._anomalies.values()
                 if severity_order.get(anom.severity.value, 0) >= min_severity_value
                 and (not anomaly_type or anom.type.value == anomaly_type)
@@ -549,13 +538,13 @@ class ExplorerAgent(AgentActor):
 
             # Sort by severity and recency
             filtered.sort(
-                key=lambda x: (severity_order.get(x.severity.value, 0), x.detected_at),
-                reverse=True,
+                _key = lambda x: (severity_order.get(x.severity.value, 0), x.detected_at),
+                _reverse = True,
             )
-            filtered = filtered[:limit]
+            _filtered = filtered[:limit]
 
             # Convert to serializable format
-            result = [
+            _result = [
                 {
                     "id": anom.id,
                     "type": anom.type.value,
@@ -582,7 +571,7 @@ class ExplorerAgent(AgentActor):
             logger.error("Failed to get anomalies", error=str(e))
             await self._send_error_response(message.sender_id, f"Failed to get anomalies: {e}")
 
-    async def _handle_generate_report(self, message: ActorMessage) -> None:
+    async def _handle_generate_report(self, _message: ActorMessage) -> None:
         """
         Generate intelligence report.
 
@@ -594,14 +583,14 @@ class ExplorerAgent(AgentActor):
         }
         """
         try:
-            validated = validate_message(message.content, "generate_report")
-            content = validated.content
+            _validated = validate_message(message.content, "generate_report")
+            _content = validated.content
 
             time_range_hours = content.get("time_range_hours", 24)
-            include_opportunities = content.get("include_opportunities", True)
-            include_anomalies = content.get("include_anomalies", True)
+            _include_opportunities = content.get("include_opportunities", True)
+            _include_anomalies = content.get("include_anomalies", True)
 
-            cutoff = datetime.now(timezone.utc)
+            _cutoff = datetime.now(timezone.utc)
 
             # Filter by time range
             opportunities = [
@@ -617,7 +606,7 @@ class ExplorerAgent(AgentActor):
             summary = await self._generate_summary(opportunities, anomalies, time_range_hours)
             recommendations = await self._generate_recommendations(opportunities, anomalies)
 
-            report = IntelligenceReport(
+            _report = IntelligenceReport(
                 id=f"intel-{datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S')}",
                 generated_at=datetime.now(timezone.utc),
                 opportunities=opportunities,
@@ -634,7 +623,7 @@ class ExplorerAgent(AgentActor):
                 self._intelligence_history = self._intelligence_history[-self._max_intelligence_history:]
 
             # Convert to serializable format
-            report_data = {
+            _report_data = {
                 "id": report.id,
                 "generated_at": report.generated_at.isoformat(),
                 "summary": report.summary,
@@ -651,7 +640,7 @@ class ExplorerAgent(AgentActor):
             logger.error("Failed to generate report", error=str(e))
             await self._send_error_response(message.sender_id, f"Failed to generate report: {e}")
 
-    async def _handle_report_opportunity(self, message: ActorMessage) -> None:
+    async def _handle_report_opportunity(self, _message: ActorMessage) -> None:
         """
         Report a new opportunity from external source.
 
@@ -668,12 +657,12 @@ class ExplorerAgent(AgentActor):
         }
         """
         try:
-            validated = validate_message(message.content, "report_opportunity")
-            content = validated.content
+            _validated = validate_message(message.content, "report_opportunity")
+            _content = validated.content
 
             import uuid
 
-            opportunity = Opportunity(
+            _opportunity = Opportunity(
                 id=f"opp-{uuid.uuid4().hex[:8]}",
                 type=OpportunityType(content.get("type", "capability_addition")),
                 title=content.get("title", "Untitled Opportunity"),
@@ -681,16 +670,16 @@ class ExplorerAgent(AgentActor):
                 source=content.get("source", "external"),
                 confidence=float(content.get("confidence", 0.5)),
                 impact_score=float(content.get("impact_score", 0.5)),
-                effort_estimate=content.get("effort_estimate", "medium"),
-                discovered_at=datetime.now(timezone.utc),
+                _effort_estimate = content.get("effort_estimate", "medium"),
+                _discovered_at = datetime.now(timezone.utc),
                 metadata=content.get("metadata", {}),
             )
 
             self._add_opportunity(opportunity)
 
             await self._send_status_update(
-                status="opportunity_recorded",
-                opportunity_id=opportunity.id,
+                _status = "opportunity_recorded",
+                _opportunity_id = opportunity.id,
                 title=opportunity.title,
             )
 
@@ -698,7 +687,7 @@ class ExplorerAgent(AgentActor):
             logger.error("Failed to report opportunity", error=str(e))
             await self._send_error_response(message.sender_id, f"Failed to report opportunity: {e}")
 
-    async def _handle_report_anomaly(self, message: ActorMessage) -> None:
+    async def _handle_report_anomaly(self, _message: ActorMessage) -> None:
         """
         Report a detected anomaly.
 
@@ -714,20 +703,20 @@ class ExplorerAgent(AgentActor):
         }
         """
         try:
-            validated = validate_message(message.content, "report_anomaly")
-            content = validated.content
+            _validated = validate_message(message.content, "report_anomaly")
+            _content = validated.content
 
             import uuid
 
-            anomaly = Anomaly(
+            _anomaly = Anomaly(
                 id=f"anom-{uuid.uuid4().hex[:8]}",
                 type=AnomalyType(content.get("type", "behavioral")),
                 description=content.get("description", ""),
                 source=content.get("source", "internal"),
                 severity=ThreatLevel(content.get("severity", ThreatLevel.LOW.value)),
-                detected_at=datetime.now(timezone.utc),
-                affected_components=content.get("affected_components", []),
-                evidence=content.get("evidence", {}),
+                _detected_at = datetime.now(timezone.utc),
+                _affected_components = content.get("affected_components", []),
+                _evidence = content.get("evidence", {}),
                 metadata=content.get("metadata", {}),
             )
 
@@ -737,15 +726,15 @@ class ExplorerAgent(AgentActor):
             if anomaly.severity in [ThreatLevel.HIGH, ThreatLevel.CRITICAL]:
                 logger.warning(
                     "High severity anomaly detected - escalating",
-                    anomaly_id=anomaly.id,
+                    _anomaly_id = anomaly.id,
                     severity=anomaly.severity.value,
                     description=anomaly.description,
                 )
                 # Could notify Sentinel or Supervisor here
 
             await self._send_status_update(
-                status="anomaly_recorded",
-                anomaly_id=anomaly.id,
+                _status = "anomaly_recorded",
+                _anomaly_id = anomaly.id,
                 severity=anomaly.severity.value,
             )
 
@@ -753,7 +742,7 @@ class ExplorerAgent(AgentActor):
             logger.error("Failed to report anomaly", error=str(e))
             await self._send_error_response(message.sender_id, f"Failed to report anomaly: {e}")
 
-    async def _handle_get_monitoring_status(self, message: ActorMessage) -> None:
+    async def _handle_get_monitoring_status(self, _message: ActorMessage) -> None:
         """
         Get monitoring status overview.
 
@@ -762,10 +751,10 @@ class ExplorerAgent(AgentActor):
         try:
             now = datetime.now(timezone.utc)
 
-            sources_status = []
+            _sources_status = []
             for source_id in self._monitored_sources:
-                last_check = self._last_source_check.get(source_id)
-                error_count = self._source_error_counts.get(source_id, 0)
+                _last_check = self._last_source_check.get(source_id)
+                _error_count = self._source_error_counts.get(source_id, 0)
 
                 sources_status.append({
                     "source_id": source_id,
@@ -775,7 +764,7 @@ class ExplorerAgent(AgentActor):
                     "status": "healthy" if error_count < self._max_source_errors else "error",
                 })
 
-            status_data = {
+            _status_data = {
                 "monitoring_active": self._monitoring_active,
                 "sources_count": len(self._monitored_sources),
                 "opportunities_tracked": len(self._opportunities),
@@ -794,38 +783,29 @@ class ExplorerAgent(AgentActor):
     # Helper Methods
     # -------------------------------------------------------------------------
 
-    async def _generate_summary(
-        self,
-        opportunities: List[Opportunity],
-        anomalies: List[Anomaly],
-        time_range_hours: int,
-    ) -> str:
+    async def _generate_summary(self, _opportunities: List[Opportunity], _anomalies: List[Anomaly], _time_range_hours: int) -> str:
         """Generate intelligence summary using LLM."""
         try:
-            prompt = self._build_summary_prompt(opportunities, anomalies, time_range_hours)
-            summary = await self.run_with_llm(prompt, timeout=60)
+            _prompt = self._build_summary_prompt(opportunities, anomalies, time_range_hours)
+            _summary = await self.run_with_llm(prompt, timeout=60)
             return summary or f"Intelligence report for the past {time_range_hours} hours: {len(opportunities)} opportunities and {len(anomalies)} anomalies identified."
         except Exception as e:
             logger.error("Failed to generate LLM summary", error=str(e))
             return f"Intelligence report: {len(opportunities)} opportunities, {len(anomalies)} anomalies (summary generation failed)"
 
-    async def _generate_recommendations(
-        self,
-        opportunities: List[Opportunity],
-        anomalies: List[Anomaly],
-    ) -> List[str]:
+    async def _generate_recommendations(self, _opportunities: List[Opportunity], _anomalies: List[Anomaly]) -> List[str]:
         """Generate recommendations based on findings."""
-        recommendations = []
+        _recommendations = []
 
         # High-impact opportunities
-        high_impact = [o for o in opportunities if o.impact_score > 0.7]
+        _high_impact = [o for o in opportunities if o.impact_score > 0.7]
         if high_impact:
             recommendations.append(
                 f"Prioritize investigation of {len(high_impact)} high-impact opportunities"
             )
 
         # High-severity anomalies
-        critical = [a for a in anomalies if a.severity in [ThreatLevel.HIGH, ThreatLevel.CRITICAL]]
+        _critical = [a for a in anomalies if a.severity in [ThreatLevel.HIGH, ThreatLevel.CRITICAL]]
         if critical:
             recommendations.append(
                 f"Immediately address {len(critical)} critical/high-severity anomalies"
@@ -840,18 +820,13 @@ class ExplorerAgent(AgentActor):
 
         return recommendations or ["Continue standard monitoring operations"]
 
-    def _build_summary_prompt(
-        self,
-        opportunities: List[Opportunity],
-        anomalies: List[Anomaly],
-        time_range_hours: int,
-    ) -> str:
+    def _build_summary_prompt(self, _opportunities: List[Opportunity], _anomalies: List[Anomaly], _time_range_hours: int) -> str:
         """Build LLM prompt for summary generation."""
-        opp_summary = "\n".join(
+        _opp_summary = "\n".join(
             f"- [{opp.type.value}] {opp.title} (confidence: {opp.confidence:.2f}, impact: {opp.impact_score:.2f})"
             for opp in opportunities[:10]
         )
-        anom_summary = "\n".join(
+        _anom_summary = "\n".join(
             f"- [{anom.severity.value}] {anom.description[:50]}... (source: {anom.source})"
             for anom in anomalies[:10]
         )
@@ -866,7 +841,7 @@ ANOMALIES DETECTED ({len(anomalies)} total, showing top 10):
 
 Provide a 2-3 sentence executive summary highlighting the most significant findings and recommended focus areas."""
 
-    async def _send_status_update(self, status: str, **kwargs) -> None:
+    async def _send_status_update(self, _status: str, _**kwargs) -> None:
         """Send status update to relevant agents."""
         await self._send_response("broadcast", {"status": status, **kwargs})
 
@@ -875,7 +850,7 @@ Provide a 2-3 sentence executive summary highlighting the most significant findi
     # Session 44: Collective Learning Integration Methods
     # =========================================================================
 
-    async def _emit_pattern(self, item_id: str, item_type: str, outcome: str, content: Dict[str, Any]) -> None:
+    async def _emit_pattern(self, _item_id: str, _item_type: str, _outcome: str, _content: Dict[str, _Any]) -> None:
         """Emit pattern for collective learning."""
         if not self.pattern_extractor:
             return
@@ -885,12 +860,12 @@ Provide a 2-3 sentence executive summary highlighting the most significant findi
         
         try:
             await self.pattern_extractor.analyze_message(
-                message_id=f"{item_type}_{item_id}",
-                sender=self.agent_id,
-                recipient="broadcast",
-                message_type=f"{item_type}_completion",
-                content=content,
-                timestamp=datetime.now(timezone.utc).isoformat(),
+                _message_id = f"{item_type}_{item_id}",
+                _sender = self.agent_id,
+                _recipient = "broadcast",
+                _message_type = f"{item_type}_completion",
+                _content = content,
+                _timestamp = datetime.now(timezone.utc).isoformat(),
             )
             
             self._pattern_emitted.add(item_id)
@@ -898,15 +873,15 @@ Provide a 2-3 sentence executive summary highlighting the most significant findi
         except Exception as e:
             logger.warning("failed_to_emit_pattern", item_id=item_id, error=str(e))
 
-    async def _consume_patterns(self, pattern_types: Optional[List[PatternType]] = None) -> List[Dict[str, Any]]:
+    async def _consume_patterns(self, _pattern_types: Optional[List[PatternType]]) -> List[Dict[str, Any]]:
         """Consume patterns from collective learning."""
         if not self.pattern_extractor:
             return []
         
         try:
-            patterns = await self.pattern_extractor.extract_patterns(
-                time_window_hours=24,
-                pattern_types=pattern_types or [PatternType.SUCCESS, PatternType.DECISION],
+            _patterns = await self.pattern_extractor.extract_patterns(
+                _time_window_hours = 24,
+                _pattern_types = pattern_types or [PatternType.SUCCESS, PatternType.DECISION],
             )
             return [p.to_dict() for p in patterns if p.metadata.confidence >= 0.7]
         except Exception as e:
@@ -917,24 +892,18 @@ Provide a 2-3 sentence executive summary highlighting the most significant findi
     # Session 44: Consensus Deliberation Integration Methods
     # =========================================================================
 
-    async def _initiate_deliberation(
-        self,
-        item_id: str,
-        proposal: str,
-        participating_agents: List[str],
-        domain: str = "general",
-    ) -> Optional[str]:
+    async def _initiate_deliberation(self, _item_id: str, _proposal: str, _participating_agents: List[str], _domain: str) -> Optional[str]:
         """Initiate swarm deliberation."""
         if not self.deliberation_engine:
             return None
         
         try:
-            deliberation_id = f"delib_{item_id}"
+            _deliberation_id = f"delib_{item_id}"
             self.deliberation_engine.start_deliberation(
-                deliberation_id=deliberation_id,
-                proposal=proposal[:200],
-                participants=participating_agents,
-                domain=domain,
+                _deliberation_id = deliberation_id,
+                _proposal = proposal[:200],
+                _participants = participating_agents,
+                _domain = domain,
             )
             self._active_deliberations[item_id] = deliberation_id
             
@@ -944,35 +913,28 @@ Provide a 2-3 sentence executive summary highlighting the most significant findi
             logger.error("failed_to_initiate_deliberation", item_id=item_id, error=str(e))
             return None
 
-    async def _submit_deliberation_position(
-        self,
-        item_id: str,
-        agent_id: str,
-        position: Position,
-        confidence: float,
-        argument: str,
-    ) -> bool:
+    async def _submit_deliberation_position(self, _item_id: str, _agent_id: str, _position: Position, _confidence: float, _argument: str) -> bool:
         """Submit agent position in deliberation."""
         if not self.deliberation_engine:
             return False
         
-        deliberation_id = self._active_deliberations.get(item_id)
+        _deliberation_id = self._active_deliberations.get(item_id)
         if not deliberation_id:
             return False
         
         try:
-            success = self.deliberation_engine.submit_position(
-                deliberation_id=deliberation_id,
+            _success = self.deliberation_engine.submit_position(
+                _deliberation_id = deliberation_id,
                 agent_id=agent_id,
-                position=position,
-                confidence=confidence,
-                argument=argument,
+                _position = position,
+                _confidence = confidence,
+                _argument = argument,
             )
             
             if success and self.access_analyzer:
                 self.access_analyzer.record_access(
-                    memory_id=f"delib_{deliberation_id}_{agent_id}",
-                    access_type="write",
+                    _memory_id = f"delib_{deliberation_id}_{agent_id}",
+                    _access_type = "write",
                     agent_id=agent_id,
                 )
             
@@ -981,17 +943,17 @@ Provide a 2-3 sentence executive summary highlighting the most significant findi
             logger.error("failed_to_submit_deliberation_position", error=str(e))
             return False
 
-    async def _finalize_deliberation(self, item_id: str) -> Optional[Any]:
+    async def _finalize_deliberation(self, _item_id: str) -> Optional[Any]:
         """Finalize deliberation and apply result."""
         if not self.deliberation_engine:
             return None
         
-        deliberation_id = self._active_deliberations.get(item_id)
+        _deliberation_id = self._active_deliberations.get(item_id)
         if not deliberation_id:
             return None
         
         try:
-            result = self.deliberation_engine.finalize_deliberation(deliberation_id)
+            _result = self.deliberation_engine.finalize_deliberation(deliberation_id)
             
             if result:
                 self.deliberation_engine.cleanup_deliberation(deliberation_id)
@@ -1007,34 +969,34 @@ Provide a 2-3 sentence executive summary highlighting the most significant findi
     # Session 44: Memory Optimization Integration Methods
     # =========================================================================
 
-    def _track_memory_access(self, item_id: str, item_type: str, access_type: str = "read") -> None:
+    def _track_memory_access(self, _item_id: str, _item_type: str, _access_type: str) -> None:
         """Track memory access patterns."""
         if not self.access_analyzer:
             return
         
-        memory_id = f"{item_type}_{item_id}"
+        _memory_id = f"{item_type}_{item_id}"
         self.access_analyzer.record_access(
-            memory_id=memory_id,
-            access_type=access_type,
+            _memory_id = memory_id,
+            _access_type = access_type,
             agent_id=self.agent_id,
         )
 
-    def _get_memory_tier(self, item_id: str, item_type: str) -> AccessTier:
+    def _get_memory_tier(self, _item_id: str, _item_type: str) -> AccessTier:
         """Get memory tier classification."""
         if not self.access_analyzer:
             return AccessTier.COLD
         
-        memory_id = f"{item_type}_{item_id}"
-        profile = self.access_analyzer.get_profile(memory_id)
+        _memory_id = f"{item_type}_{item_id}"
+        _profile = self.access_analyzer.get_profile(memory_id)
         return profile.tier if profile else AccessTier.COLD
 
-    async def _prefetch_relevant(self, agent_id: str, item_type: str) -> List[str]:
+    async def _prefetch_relevant(self, _agent_id: str, _item_type: str) -> List[str]:
         """Prefetch items an agent is likely to need."""
         if not self.access_analyzer:
             return []
         
         try:
-            predicted_memories = self.access_analyzer.predict_agent_access(agent_id)
+            _predicted_memories = self.access_analyzer.predict_agent_access(agent_id)
             return [
                 mem.replace(f"{item_type}_", "")
                 for mem in predicted_memories
@@ -1062,18 +1024,18 @@ Provide a 2-3 sentence executive summary highlighting the most significant findi
         }
 
 
-    async def _send_error_response(self, recipient: str, error: str) -> None:
+    async def _send_error_response(self, _recipient: str, _error: str) -> None:
         """Send error response."""
         await self._send_response(recipient, {"error": error})
 
-    async def _send_response(self, recipient: str, data: Dict[str, Any]) -> None:
+    async def _send_response(self, _recipient: str, _data: Dict[str, _Any]) -> None:
         """Send response message."""
         if recipient == "broadcast":
             # Broadcast to subscribed agents
             pass
         else:
             await self.put_message(
-                recipient=recipient,
-                message_type="intelligence_response",
-                content=data,
+                _recipient = recipient,
+                _message_type = "intelligence_response",
+                _content = data,
             )

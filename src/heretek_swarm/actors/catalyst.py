@@ -13,7 +13,6 @@ Date: 2026-04-06
 Version: 1.0.0
 """
 
-from __future__ import annotations
 
 import uuid
 from dataclasses import dataclass, field
@@ -38,7 +37,7 @@ from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer, AccessTi
 # Session 44: Zero-Trust Validation
 from heretek_swarm.security.zero_trust import ZeroTrustValidator
 
-logger = structlog.get_logger(__name__)
+_logger = structlog.get_logger(__name__)
 
 
 class ChangeStatus(Enum):
@@ -163,19 +162,11 @@ class CatalystAgent(AgentActor):
     - notify_stakeholders: Send change notifications
     """
 
-    def __init__(
-        self,
-        agent_id: Optional[str] = None,
-        config: Optional[Dict[str, Any]] = None,
-        # Session 44: Integration components
-        pattern_extractor: Optional[PatternExtractor] = None,
-        deliberation_engine: Optional[SwarmDeliberationEngine] = None,
-        access_analyzer: Optional[AccessPatternAnalyzer] = None,
-        zero_trust_validator: Optional[ZeroTrustValidator] = None,
-    ):
+    def __init__(self, _agent_id: Optional[str], _config: Optional[Dict[str, _Any]], _# Session 44: Integration components
+        pattern_extractor: Optional[PatternExtractor], _deliberation_engine: Optional[SwarmDeliberationEngine], _access_analyzer: Optional[AccessPatternAnalyzer], _zero_trust_validator: Optional[ZeroTrustValidator]):
         super().__init__(
             agent_id=agent_id or f"catalyst_{uuid.uuid4().hex[:8]}",
-            config=config or {},
+            _config = config or {},
         )
 
         # Change management
@@ -198,7 +189,7 @@ class CatalystAgent(AgentActor):
         
         # Session 44: Consensus Integration
         self.deliberation_engine = deliberation_engine or SwarmDeliberationEngine(
-            max_rounds=5, consensus_threshold=0.75, min_participants=2
+            _max_rounds = 5, consensus_threshold=0.75, min_participants=2
         )
         
         # Session 44: Memory Optimization Integration
@@ -214,23 +205,23 @@ class CatalystAgent(AgentActor):
         logger.info(
             "catalyst_initialized",
             agent_id=self.agent_id,
-            max_changes=self._max_changes,
-            collective_learning_enabled=self.pattern_extractor is not None,
-            consensus_enabled=self.deliberation_engine is not None,
-            memory_optimization_enabled=self.access_analyzer is not None,
+            _max_changes = self._max_changes,
+            _collective_learning_enabled = self.pattern_extractor is not None,
+            _consensus_enabled = self.deliberation_engine is not None,
+            _memory_optimization_enabled = self.access_analyzer is not None,
         )
 
-    async def _validate_message(self, message: ActorMessage) -> Dict[str, Any]:
+    async def _validate_message(self, _message: ActorMessage) -> Dict[str, Any]:
         """Validate incoming message content."""
         try:
-            validated = validate_message(message.message_type, message.content)
+            _validated = validate_message(message.message_type, message.content)
             if hasattr(validated, 'dict'):
                 return validated.dict()
             return validated
         except Exception:
             return message.content
 
-    async def _handle_propose_change(self, message: ActorMessage) -> None:
+    async def _handle_propose_change(self, _message: ActorMessage) -> None:
         """
         Propose a new change request.
 
@@ -246,7 +237,7 @@ class CatalystAgent(AgentActor):
         - metadata: Optional[Dict]
         """
         try:
-            content = await self._validate_message(message)
+            _content = await self._validate_message(message)
 
             if len(self._changes) >= self._max_changes:
                 await self._send_error(
@@ -272,10 +263,10 @@ class CatalystAgent(AgentActor):
             change = ChangeRequest(
                 change_id=change_id,
                 title=content.get("title", "Untitled Change"),
-                description=content.get("description", ""),
+                _description = content.get("description", ""),
                 change_type=change_type,
                 impact_level=impact_level,
-                requested_by=message.sender_id,
+                _requested_by = message.sender_id,
                 affected_components=content.get("affected_components", []),
                 rollback_plan=content.get("rollback_plan", ""),
                 required_approvals=content.get("required_approvals", 1),
@@ -288,7 +279,7 @@ class CatalystAgent(AgentActor):
                 "change_proposed",
                 change_id=change_id,
                 title=change.title,
-                type=change_type.value,
+                _type = change_type.value,
                 impact=impact_level.value,
             )
 
@@ -299,8 +290,8 @@ class CatalystAgent(AgentActor):
                 message.sender_id,
                 ActorMessage(
                     message_type="change_proposed",
-                    content={"change": change.to_dict()},
-                    sender_id=self.agent_id,
+                    _content = {"change": change.to_dict()},
+                    _sender_id = self.agent_id,
                 ),
             )
 
@@ -312,7 +303,7 @@ class CatalystAgent(AgentActor):
                 message.message_type,
             )
 
-    async def _handle_analyze_change(self, message: ActorMessage) -> None:
+    async def _handle_analyze_change(self, _message: ActorMessage) -> None:
         """
         Analyze change impact.
 
@@ -320,7 +311,7 @@ class CatalystAgent(AgentActor):
         - change_id: str
         """
         try:
-            content = await self._validate_message(message)
+            _content = await self._validate_message(message)
             change_id = content.get("change_id")
 
             if not change_id or change_id not in self._changes:
@@ -335,7 +326,7 @@ class CatalystAgent(AgentActor):
             change.status = ChangeStatus.ANALYZING
 
             # Perform impact analysis
-            analysis = {
+            _analysis = {
                 "change_id": change_id,
                 "impact_assessment": {
                     "affected_components": change.affected_components,
@@ -356,8 +347,8 @@ class CatalystAgent(AgentActor):
                 message.sender_id,
                 ActorMessage(
                     message_type="change_analyzed",
-                    content={"analysis": analysis},
-                    sender_id=self.agent_id,
+                    _content = {"analysis": analysis},
+                    _sender_id = self.agent_id,
                 ),
             )
 
@@ -369,7 +360,7 @@ class CatalystAgent(AgentActor):
                 message.message_type,
             )
 
-    async def _handle_approve_change(self, message: ActorMessage) -> None:
+    async def _handle_approve_change(self, _message: ActorMessage) -> None:
         """
         Approve a change request.
 
@@ -380,10 +371,10 @@ class CatalystAgent(AgentActor):
         - comments: Optional[str]
         """
         try:
-            content = await self._validate_message(message)
+            _content = await self._validate_message(message)
             change_id = content.get("change_id")
-            approver_id = content.get("approver_id", message.sender_id)
-            approved = content.get("approved", False)
+            _approver_id = content.get("approver_id", message.sender_id)
+            _approved = content.get("approved", False)
 
             if not change_id or change_id not in self._changes:
                 await self._send_error(
@@ -396,44 +387,44 @@ class CatalystAgent(AgentActor):
             change = self._changes[change_id]
             change.approval_status[approver_id] = approved
 
-            approval_count = sum(1 for v in change.approval_status.values() if v)
-            needs_more_approvals = approval_count < change.required_approvals
+            _approval_count = sum(1 for v in change.approval_status.values() if v)
+            _needs_more_approvals = approval_count < change.required_approvals
 
             if approved and not needs_more_approvals:
                 change.status = ChangeStatus.APPROVED
                 logger.info(
                     "change_approved",
                     change_id=change_id,
-                    approver=approver_id,
-                    approval_count=approval_count,
+                    _approver = approver_id,
+                    _approval_count = approval_count,
                 )
             elif approved:
                 logger.info(
                     "change_partial_approval",
                     change_id=change_id,
-                    approver=approver_id,
-                    approval_count=approval_count,
-                    needed=change.required_approvals,
+                    _approver = approver_id,
+                    _approval_count = approval_count,
+                    _needed = change.required_approvals,
                 )
             else:
                 logger.info(
                     "change_rejected",
                     change_id=change_id,
-                    approver=approver_id,
+                    _approver = approver_id,
                 )
 
             await self.send(
                 message.sender_id,
                 ActorMessage(
                     message_type="change_approval_recorded",
-                    content={
+                    _content = {
                         "change_id": change_id,
                         "approved": approved,
                         "approval_count": approval_count,
                         "required": change.required_approvals,
                         "status": change.status.value,
                     },
-                    sender_id=self.agent_id,
+                    _sender_id = self.agent_id,
                 ),
             )
 
@@ -445,7 +436,7 @@ class CatalystAgent(AgentActor):
                 message.message_type,
             )
 
-    async def _handle_schedule_change(self, message: ActorMessage) -> None:
+    async def _handle_schedule_change(self, _message: ActorMessage) -> None:
         """
         Schedule an approved change.
 
@@ -454,7 +445,7 @@ class CatalystAgent(AgentActor):
         - scheduled_at: str (ISO8601)
         """
         try:
-            content = await self._validate_message(message)
+            _content = await self._validate_message(message)
             change_id = content.get("change_id")
             scheduled_at = content.get("scheduled_at")
 
@@ -482,7 +473,7 @@ class CatalystAgent(AgentActor):
             logger.info(
                 "change_scheduled",
                 change_id=change_id,
-                scheduled_at=change.scheduled_at.isoformat(),
+                _scheduled_at = change.scheduled_at.isoformat(),
             )
 
             await self._notify_stakeholders(change_id, f"Change scheduled: {change.title}")
@@ -491,8 +482,8 @@ class CatalystAgent(AgentActor):
                 message.sender_id,
                 ActorMessage(
                     message_type="change_scheduled",
-                    content={"change": change.to_dict()},
-                    sender_id=self.agent_id,
+                    _content = {"change": change.to_dict()},
+                    _sender_id = self.agent_id,
                 ),
             )
 
@@ -504,7 +495,7 @@ class CatalystAgent(AgentActor):
                 message.message_type,
             )
 
-    async def _handle_execute_change(self, message: ActorMessage) -> None:
+    async def _handle_execute_change(self, _message: ActorMessage) -> None:
         """
         Execute a scheduled change.
 
@@ -512,7 +503,7 @@ class CatalystAgent(AgentActor):
         - change_id: str
         """
         try:
-            content = await self._validate_message(message)
+            _content = await self._validate_message(message)
             change_id = content.get("change_id")
 
             if not change_id or change_id not in self._changes:
@@ -540,8 +531,8 @@ class CatalystAgent(AgentActor):
                 message.sender_id,
                 ActorMessage(
                     message_type="change_started",
-                    content={"change": change.to_dict()},
-                    sender_id=self.agent_id,
+                    _content = {"change": change.to_dict()},
+                    _sender_id = self.agent_id,
                 ),
             )
 
@@ -553,7 +544,7 @@ class CatalystAgent(AgentActor):
                 message.message_type,
             )
 
-    async def _handle_request_rollback(self, message: ActorMessage) -> None:
+    async def _handle_request_rollback(self, _message: ActorMessage) -> None:
         """
         Request a rollback of a change.
 
@@ -562,9 +553,9 @@ class CatalystAgent(AgentActor):
         - reason: str
         """
         try:
-            content = await self._validate_message(message)
+            _content = await self._validate_message(message)
             change_id = content.get("change_id")
-            reason = content.get("reason", "Unspecified")
+            _reason = content.get("reason", "Unspecified")
 
             if not change_id or change_id not in self._changes:
                 await self._send_error(
@@ -585,14 +576,14 @@ class CatalystAgent(AgentActor):
                 return
 
             # Create rollback change request
-            rollback_id = f"rollback_{change_id}"
+            _rollback_id = f"rollback_{change_id}"
             rollback = ChangeRequest(
                 change_id=rollback_id,
                 title=f"Rollback: {change.title}",
-                description=f"Rolling back {change_id} due to: {reason}",
+                _description = f"Rolling back {change_id} due to: {reason}",
                 change_type=ChangeType.ROLLBACK,
                 impact_level=change.impact_level,
-                requested_by=message.sender_id,
+                _requested_by = message.sender_id,
                 affected_components=change.affected_components,
                 rollback_plan="",  # Rollback of a rollback
                 metadata={"original_change_id": change_id, "rollback_reason": reason},
@@ -603,16 +594,16 @@ class CatalystAgent(AgentActor):
             logger.info(
                 "rollback_requested",
                 change_id=change_id,
-                rollback_id=rollback_id,
-                reason=reason,
+                _rollback_id = rollback_id,
+                _reason = reason,
             )
 
             await self.send(
                 message.sender_id,
                 ActorMessage(
                     message_type="rollback_requested",
-                    content={"rollback": rollback.to_dict()},
-                    sender_id=self.agent_id,
+                    _content = {"rollback": rollback.to_dict()},
+                    _sender_id = self.agent_id,
                 ),
             )
 
@@ -624,7 +615,7 @@ class CatalystAgent(AgentActor):
                 message.message_type,
             )
 
-    async def _handle_execute_rollback(self, message: ActorMessage) -> None:
+    async def _handle_execute_rollback(self, _message: ActorMessage) -> None:
         """
         Execute a rollback.
 
@@ -632,7 +623,7 @@ class CatalystAgent(AgentActor):
         - change_id: str (original change to rollback)
         """
         try:
-            content = await self._validate_message(message)
+            _content = await self._validate_message(message)
             change_id = content.get("change_id")
 
             if not change_id or change_id not in self._changes:
@@ -661,8 +652,8 @@ class CatalystAgent(AgentActor):
                 message.sender_id,
                 ActorMessage(
                     message_type="rollback_executed",
-                    content={"change": change.to_dict()},
-                    sender_id=self.agent_id,
+                    _content = {"change": change.to_dict()},
+                    _sender_id = self.agent_id,
                 ),
             )
 
@@ -674,7 +665,7 @@ class CatalystAgent(AgentActor):
                 message.message_type,
             )
 
-    async def _handle_get_change_status(self, message: ActorMessage) -> None:
+    async def _handle_get_change_status(self, _message: ActorMessage) -> None:
         """
         Get status of a change.
 
@@ -682,7 +673,7 @@ class CatalystAgent(AgentActor):
         - change_id: str
         """
         try:
-            content = await self._validate_message(message)
+            _content = await self._validate_message(message)
             change_id = content.get("change_id")
 
             if not change_id or change_id not in self._changes:
@@ -699,8 +690,8 @@ class CatalystAgent(AgentActor):
                 message.sender_id,
                 ActorMessage(
                     message_type="change_status",
-                    content={"change": change.to_dict()},
-                    sender_id=self.agent_id,
+                    _content = {"change": change.to_dict()},
+                    _sender_id = self.agent_id,
                 ),
             )
 
@@ -712,7 +703,7 @@ class CatalystAgent(AgentActor):
                 message.message_type,
             )
 
-    async def _handle_get_change_history(self, message: ActorMessage) -> None:
+    async def _handle_get_change_history(self, _message: ActorMessage) -> None:
         """
         Get change history.
 
@@ -722,30 +713,30 @@ class CatalystAgent(AgentActor):
         - status: Optional[str]
         """
         try:
-            content = await self._validate_message(message)
-            limit = min(content.get("limit", 50), 100)
+            _content = await self._validate_message(message)
+            _limit = min(content.get("limit", 50), 100)
             change_type = content.get("change_type")
             status = content.get("status")
 
-            history = self._history.copy()
+            _history = self._history.copy()
 
             # Filter by change_type
             if change_type:
-                history = [h for h in history if h.get("change_type") == change_type]
+                _history = [h for h in history if h.get("change_type") == change_type]
 
             # Filter by status
             if status:
-                history = [h for h in history if h.get("status") == status]
+                _history = [h for h in history if h.get("status") == status]
 
             # Limit results
-            history = history[-limit:]
+            _history = history[-limit:]
 
             await self.send(
                 message.sender_id,
                 ActorMessage(
                     message_type="change_history",
-                    content={"history": history, "count": len(history)},
-                    sender_id=self.agent_id,
+                    _content = {"history": history, "count": len(history)},
+                    _sender_id = self.agent_id,
                 ),
             )
 
@@ -757,7 +748,7 @@ class CatalystAgent(AgentActor):
                 message.message_type,
             )
 
-    async def _handle_notify_stakeholders(self, message: ActorMessage) -> None:
+    async def _handle_notify_stakeholders(self, _message: ActorMessage) -> None:
         """
         Send notifications to stakeholders.
 
@@ -767,10 +758,10 @@ class CatalystAgent(AgentActor):
         - recipients: Optional[List[str]]
         """
         try:
-            content = await self._validate_message(message)
+            _content = await self._validate_message(message)
             change_id = content.get("change_id")
-            notification_message = content.get("message", "")
-            recipients = content.get("recipients", list(self._stakeholders))
+            _notification_message = content.get("message", "")
+            _recipients = content.get("recipients", list(self._stakeholders))
 
             if not change_id or change_id not in self._changes:
                 await self._send_error(
@@ -780,11 +771,11 @@ class CatalystAgent(AgentActor):
                 )
                 return
 
-            notification_id = f"notif_{uuid.uuid4().hex[:12]}"
-            notification = ChangeNotification(
-                notification_id=notification_id,
+            _notification_id = f"notif_{uuid.uuid4().hex[:12]}"
+            _notification = ChangeNotification(
+                _notification_id = notification_id,
                 change_id=change_id,
-                recipients=recipients,
+                _recipients = recipients,
                 message=notification_message,
             )
 
@@ -792,22 +783,22 @@ class CatalystAgent(AgentActor):
 
             # Trim notifications if needed
             if len(self._notifications) > self._max_notifications:
-                oldest = sorted(self._notifications.keys())[0]
+                _oldest = sorted(self._notifications.keys())[0]
                 del self._notifications[oldest]
 
             logger.info(
                 "stakeholders_notified",
-                notification_id=notification_id,
+                _notification_id = notification_id,
                 change_id=change_id,
-                recipient_count=len(recipients),
+                _recipient_count = len(recipients),
             )
 
             await self.send(
                 message.sender_id,
                 ActorMessage(
                     message_type="notification_sent",
-                    content={"notification": notification.to_dict()},
-                    sender_id=self.agent_id,
+                    _content = {"notification": notification.to_dict()},
+                    _sender_id = self.agent_id,
                 ),
             )
 
@@ -819,51 +810,51 @@ class CatalystAgent(AgentActor):
                 message.message_type,
             )
 
-    async def _notify_stakeholders(self, change_id: str, message: str) -> None:
+    async def _notify_stakeholders(self, _change_id: str, _message: str) -> None:
         """Internal helper to notify all stakeholders."""
         if not self._stakeholders:
             return
 
-        notification_id = f"notif_{uuid.uuid4().hex[:12]}"
-        notification = ChangeNotification(
-            notification_id=notification_id,
+        _notification_id = f"notif_{uuid.uuid4().hex[:12]}"
+        _notification = ChangeNotification(
+            _notification_id = notification_id,
             change_id=change_id,
-            recipients=list(self._stakeholders),
-            message=message,
+            _recipients = list(self._stakeholders),
+            _message = message,
         )
 
         self._notifications[notification_id] = notification
 
         # Trim if needed
         if len(self._notifications) > self._max_notifications:
-            oldest = sorted(self._notifications.keys())[0]
+            _oldest = sorted(self._notifications.keys())[0]
             del self._notifications[oldest]
 
-    def _calculate_risk_score(self, change: ChangeRequest) -> float:
+    def _calculate_risk_score(self, _change: ChangeRequest) -> float:
         """Calculate risk score for a change (0.0-1.0)."""
-        base_scores = {
+        _base_scores = {
             ImpactLevel.LOW: 0.1,
             ImpactLevel.MEDIUM: 0.3,
             ImpactLevel.HIGH: 0.6,
             ImpactLevel.CRITICAL: 0.9,
         }
 
-        score = base_scores.get(change.impact_level, 0.3)
+        _score = base_scores.get(change.impact_level, 0.3)
 
         # Increase score based on affected components
-        component_factor = min(len(change.affected_components) * 0.05, 0.2)
+        _component_factor = min(len(change.affected_components) * 0.05, 0.2)
         score += component_factor
 
         # Increase score for complex change types
-        complex_types = {ChangeType.DEPLOYMENT, ChangeType.MIGRATION, ChangeType.UPGRADE}
+        _complex_types = {ChangeType.DEPLOYMENT, ChangeType.MIGRATION, ChangeType.UPGRADE}
         if change.change_type in complex_types:
             score += 0.1
 
         return min(score, 1.0)
 
-    def _generate_recommendations(self, change: ChangeRequest) -> List[str]:
+    def _generate_recommendations(self, _change: ChangeRequest) -> List[str]:
         """Generate recommendations for a change."""
-        recommendations = []
+        _recommendations = []
 
         if change.impact_level == ImpactLevel.CRITICAL:
             recommendations.append("Consider breaking this change into smaller increments")
@@ -884,13 +875,13 @@ class CatalystAgent(AgentActor):
 
         return recommendations
 
-    def _record_change_event(self, change_id: str, event_type: str) -> None:
+    def _record_change_event(self, _change_id: str, _event_type: str) -> None:
         """Record a change event in history."""
         change = self._changes.get(change_id)
         if not change:
             return
 
-        event = {
+        _event = {
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "change_id": change_id,
             "change_type": change.change_type.value,
@@ -909,7 +900,7 @@ class CatalystAgent(AgentActor):
     # Session 44: Collective Learning Integration Methods
     # =========================================================================
 
-    async def _emit_change_pattern(self, change: ChangeRequest, outcome: str) -> None:
+    async def _emit_change_pattern(self, _change: ChangeRequest, _outcome: str) -> None:
         """
         Emit pattern for collective learning when change is completed.
         
@@ -925,18 +916,18 @@ class CatalystAgent(AgentActor):
         
         try:
             await self.pattern_extractor.analyze_message(
-                message_id=f"change_{change.change_id}",
-                sender=self.agent_id,
-                recipient="broadcast",
-                message_type="change_completion",
-                content={
+                _message_id = f"change_{change.change_id}",
+                _sender = self.agent_id,
+                _recipient = "broadcast",
+                _message_type = "change_completion",
+                _content = {
                     "change_type": change.change_type.value,
                     "impact_level": change.impact_level.value,
                     "outcome": outcome,
                     "affected_components": change.affected_components,
                     "approval_count": sum(1 for v in change.approval_status.values() if v),
                 },
-                timestamp=change.completed_at.isoformat() if change.completed_at else datetime.now(timezone.utc).isoformat(),
+                _timestamp = change.completed_at.isoformat() if change.completed_at else datetime.now(timezone.utc).isoformat(),
             )
             
             self._pattern_emitted_changes.add(change.change_id)
@@ -950,9 +941,9 @@ class CatalystAgent(AgentActor):
             return []
         
         try:
-            patterns = await self.pattern_extractor.extract_patterns(
-                time_window_hours=24,
-                pattern_types=[PatternType.SUCCESS, PatternType.DECISION],
+            _patterns = await self.pattern_extractor.extract_patterns(
+                _time_window_hours = 24,
+                _pattern_types = [PatternType.SUCCESS, PatternType.DECISION],
             )
             return [p.to_dict() for p in patterns if p.metadata.confidence >= 0.7]
         except Exception as e:
@@ -963,22 +954,18 @@ class CatalystAgent(AgentActor):
     # Session 44: Consensus Deliberation Integration Methods
     # =========================================================================
 
-    async def _initiate_deliberation_for_change(
-        self,
-        change: ChangeRequest,
-        participating_agents: List[str],
-    ) -> Optional[str]:
+    async def _initiate_deliberation_for_change(self, _change: ChangeRequest, _participating_agents: List[str]) -> Optional[str]:
         """Initiate swarm deliberation for high-impact change approval."""
         if not self.deliberation_engine:
             return None
         
         try:
-            deliberation_id = f"delib_{change.change_id}"
+            _deliberation_id = f"delib_{change.change_id}"
             self.deliberation_engine.start_deliberation(
-                deliberation_id=deliberation_id,
-                proposal=f"Approve change: {change.title[:100]}",
-                participants=participating_agents,
-                domain="change_management",
+                _deliberation_id = deliberation_id,
+                _proposal = f"Approve change: {change.title[:100]}",
+                _participants = participating_agents,
+                _domain = "change_management",
             )
             self._active_deliberations[change.change_id] = deliberation_id
             
@@ -988,35 +975,28 @@ class CatalystAgent(AgentActor):
             logger.error("failed_to_initiate_deliberation", change_id=change.change_id, error=str(e))
             return None
 
-    async def _submit_deliberation_position(
-        self,
-        change: ChangeRequest,
-        agent_id: str,
-        position: Position,
-        confidence: float,
-        argument: str,
-    ) -> bool:
+    async def _submit_deliberation_position(self, _change: ChangeRequest, _agent_id: str, _position: Position, _confidence: float, _argument: str) -> bool:
         """Submit agent position in change deliberation."""
         if not self.deliberation_engine:
             return False
         
-        deliberation_id = self._active_deliberations.get(change.change_id)
+        _deliberation_id = self._active_deliberations.get(change.change_id)
         if not deliberation_id:
             return False
         
         try:
-            success = self.deliberation_engine.submit_position(
-                deliberation_id=deliberation_id,
+            _success = self.deliberation_engine.submit_position(
+                _deliberation_id = deliberation_id,
                 agent_id=agent_id,
-                position=position,
-                confidence=confidence,
-                argument=argument,
+                _position = position,
+                _confidence = confidence,
+                _argument = argument,
             )
             
             if success and self.access_analyzer:
                 self.access_analyzer.record_access(
-                    memory_id=f"delib_{deliberation_id}_{agent_id}",
-                    access_type="write",
+                    _memory_id = f"delib_{deliberation_id}_{agent_id}",
+                    _access_type = "write",
                     agent_id=agent_id,
                 )
             
@@ -1025,17 +1005,17 @@ class CatalystAgent(AgentActor):
             logger.error("failed_to_submit_deliberation_position", deliberation_id=deliberation_id, error=str(e))
             return False
 
-    async def _finalize_deliberation(self, change: ChangeRequest) -> Optional[Any]:
+    async def _finalize_deliberation(self, _change: ChangeRequest) -> Optional[Any]:
         """Finalize deliberation and apply result to change approval."""
         if not self.deliberation_engine:
             return None
         
-        deliberation_id = self._active_deliberations.get(change.change_id)
+        _deliberation_id = self._active_deliberations.get(change.change_id)
         if not deliberation_id:
             return None
         
         try:
-            result = self.deliberation_engine.finalize_deliberation(deliberation_id)
+            _result = self.deliberation_engine.finalize_deliberation(deliberation_id)
             
             if result:
                 change.approval_status[f"deliberation_{deliberation_id}"] = (
@@ -1061,34 +1041,34 @@ class CatalystAgent(AgentActor):
     # Session 44: Memory Optimization Integration Methods
     # =========================================================================
 
-    def _track_change_memory_access(self, change_id: str, access_type: str = "read") -> None:
+    def _track_change_memory_access(self, _change_id: str, _access_type: str) -> None:
         """Track memory access patterns for change data."""
         if not self.access_analyzer:
             return
         
-        memory_id = f"change_{change_id}"
+        _memory_id = f"change_{change_id}"
         self.access_analyzer.record_access(
-            memory_id=memory_id,
-            access_type=access_type,
+            _memory_id = memory_id,
+            _access_type = access_type,
             agent_id=self.agent_id,
         )
 
-    def _get_change_memory_tier(self, change_id: str) -> AccessTier:
+    def _get_change_memory_tier(self, _change_id: str) -> AccessTier:
         """Get memory tier classification for a change."""
         if not self.access_analyzer:
             return AccessTier.COLD
         
-        memory_id = f"change_{change_id}"
-        profile = self.access_analyzer.get_profile(memory_id)
+        _memory_id = f"change_{change_id}"
+        _profile = self.access_analyzer.get_profile(memory_id)
         return profile.tier if profile else AccessTier.COLD
 
-    async def _prefetch_relevant_changes(self, agent_id: str) -> List[str]:
+    async def _prefetch_relevant_changes(self, _agent_id: str) -> List[str]:
         """Prefetch changes an agent is likely to need."""
         if not self.access_analyzer:
             return []
         
         try:
-            predicted_memories = self.access_analyzer.predict_agent_access(agent_id)
+            _predicted_memories = self.access_analyzer.predict_agent_access(agent_id)
             return [
                 mem.replace("change_", "")
                 for mem in predicted_memories
@@ -1115,19 +1095,14 @@ class CatalystAgent(AgentActor):
             },
         }
 
-    async def _send_error(
-        self,
-        recipient: str,
-        error_message: str,
-        original_type: str,
-    ) -> None:
+    async def _send_error(self, _recipient: str, _error_message: str, _original_type: str) -> None:
         """Send error response."""
         await self.send(
             recipient,
             ActorMessage(
-                message_type="error",
-                content={"error": error_message, "original_type": original_type},
-                sender_id=self.agent_id,
+                _message_type = "error",
+                _content = {"error": error_message, "original_type": original_type},
+                _sender_id = self.agent_id,
             ),
         )
 

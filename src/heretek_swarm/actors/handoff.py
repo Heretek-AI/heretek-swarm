@@ -32,7 +32,7 @@ from heretek_swarm.memory.access_patterns import AccessTier
 # Session 44: Zero-Trust Validation
 
 
-logger = structlog.get_logger(__name__)
+_logger = structlog.get_logger(__name__)
 
 
 @dataclass
@@ -65,7 +65,7 @@ class HandoffValidator:
     REQUIRED_FIELDS: Set[str] = frozenset({"from_agent_id", "to_agent_id", "context"})
     
     @classmethod
-    def validate(cls, from_agent_id: str, to_agent_id: str, context: Dict[str, Any]) -> None:
+    def validate(cls, _from_agent_id: str, _to_agent_id: str, _context: Dict[str, _Any]) -> None:
         """
         Validate handoff parameters.
         
@@ -82,7 +82,7 @@ class HandoffValidator:
         cls._validate_agent_ids(from_agent_id, to_agent_id)
     
     @classmethod
-    def _validate_fields(cls, from_agent_id: str, to_agent_id: str, context: Dict[str, Any]) -> None:
+    def _validate_fields(cls, _from_agent_id: str, _to_agent_id: str, _context: Dict[str, _Any]) -> None:
         """Validate required fields are present."""
         if not from_agent_id or not isinstance(from_agent_id, str):
             raise ValueError("from_agent_id must be a non-empty string")
@@ -94,16 +94,16 @@ class HandoffValidator:
             raise ValueError("context must be a non-empty dictionary")
     
     @classmethod
-    def _validate_context_size(cls, context: Dict[str, Any]) -> None:
+    def _validate_context_size(cls, _context: Dict[str, _Any]) -> None:
         """Validate context size is within limits."""
-        context_size = sys.getsizeof(str(context))
+        _context_size = sys.getsizeof(str(context))
         if context_size > cls.MAX_CONTEXT_SIZE:
             raise ValueError(
                 f"Context size ({context_size} bytes) exceeds maximum allowed ({cls.MAX_CONTEXT_SIZE} bytes)"
             )
     
     @classmethod
-    def _validate_agent_ids(cls, from_agent_id: str, to_agent_id: str) -> None:
+    def _validate_agent_ids(cls, _from_agent_id: str, _to_agent_id: str) -> None:
         """Validate agent IDs are different."""
         if from_agent_id == to_agent_id:
             raise ValueError("from_agent_id and to_agent_id must be different")
@@ -118,7 +118,7 @@ class AgentHandoff:
     
     MAX_ACTIVE_HANDOFFS = 100  # Maximum concurrent handoffs
     
-    def __init__(self, historian):
+    def __init__(self, _historian):
         """
         Initialize handoff mechanism.
         
@@ -130,13 +130,7 @@ class AgentHandoff:
         self._handoff_timestamps: List[datetime] = []  # For rate limiting
         self._validator = HandoffValidator()
     
-    async def execute_handoff(
-        self,
-        from_agent_id: str,
-        to_agent_id: str,
-        context: Dict[str, Any],
-        reason: str = "task_specialization"
-    ) -> HandoffResult:
+    async def execute_handoff(self, _from_agent_id: str, _to_agent_id: str, _context: Dict[str, _Any], _reason: str) -> HandoffResult:
         """
         Execute handoff between two agents.
         
@@ -158,8 +152,8 @@ class AgentHandoff:
         except ValueError as e:
             logger.error("handoff_validation_failed", error=str(e))
             return HandoffResult(
-                success=False,
-                handoff_id="",
+                _success = False,
+                _handoff_id = "",
                 error=f"Validation failed: {str(e)}"
             )
         
@@ -169,43 +163,43 @@ class AgentHandoff:
         except ValueError as e:
             logger.error("handoff_rate_limit_exceeded", error=str(e))
             return HandoffResult(
-                success=False,
-                handoff_id="",
+                _success = False,
+                _handoff_id = "",
                 error=str(e)
             )
         
         # P2-1 fix: Use timezone-aware datetime
-        handoff_id = str(uuid.uuid4())
-        timestamp = datetime.now(timezone.utc).isoformat()
+        _handoff_id = str(uuid.uuid4())
+        _timestamp = datetime.now(timezone.utc).isoformat()
         
         # Check active handoffs limit (P0-11 fix)
         if len(self._active_handoffs) >= self.MAX_ACTIVE_HANDOFFS:
             logger.error(
                 "handoff_limit_exceeded",
-                active_count=len(self._active_handoffs),
-                max_allowed=self.MAX_ACTIVE_HANDOFFS
+                _active_count = len(self._active_handoffs),
+                _max_allowed = self.MAX_ACTIVE_HANDOFFS
             )
             return HandoffResult(
-                success=False,
-                handoff_id="",
+                _success = False,
+                _handoff_id = "",
                 error=f"Maximum active handoffs exceeded ({self.MAX_ACTIVE_HANDOFFS})"
             )
         
         # Prepare context package
-        context_package = HandoffContext(
-            source=from_agent_id,
-            destination=to_agent_id,
-            context=context,
-            timestamp=timestamp,
-            handoff_id=handoff_id
+        _context_package = HandoffContext(
+            _source = from_agent_id,
+            _destination = to_agent_id,
+            _context = context,
+            _timestamp = timestamp,
+            _handoff_id = handoff_id
         )
         
         logger.info(
             "handoff_initiated",
-            handoff_id=handoff_id,
-            from_agent=from_agent_id,
-            to_agent=to_agent_id,
-            reason=reason
+            _handoff_id = handoff_id,
+            _from_agent = from_agent_id,
+            _to_agent = to_agent_id,
+            _reason = reason
         )
         
         try:
@@ -215,42 +209,42 @@ class AgentHandoff:
             # CRITICAL FIX: Actually transfer context to destination agent
             # Get actor registry and send context to destination
             from heretek_swarm.actors.supervisor import get_supervisor
-            supervisor = get_supervisor()
+            _supervisor = get_supervisor()
             if supervisor and to_agent_id in supervisor.actors:
-                destination_actor = supervisor.actors[to_agent_id]
+                _destination_actor = supervisor.actors[to_agent_id]
                 # Send handoff message with full context
                 await destination_actor.put_message(
                     ActorMessage(
-                        sender=from_agent_id,
-                        message_type="handoff_request",
-                        content={
+                        _sender = from_agent_id,
+                        _message_type = "handoff_request",
+                        _content = {
                             "handoff_id": handoff_id,
                             "from_agent": from_agent_id,
                             "context": context,
                             "reason": reason,
                             "timestamp": timestamp,
                         },
-                        timestamp=timestamp,
-                        correlation_id=handoff_id,
+                        _timestamp = timestamp,
+                        _correlation_id = handoff_id,
                     )
                 )
                 logger.info(
                     "handoff_context_transferred",
-                    handoff_id=handoff_id,
-                    to_agent=to_agent_id
+                    _handoff_id = handoff_id,
+                    _to_agent = to_agent_id
                 )
             else:
                 logger.warning(
                     "handoff_destination_not_found",
-                    handoff_id=handoff_id,
-                    to_agent=to_agent_id
+                    _handoff_id = handoff_id,
+                    _to_agent = to_agent_id
                 )
             
             # Log handoff to historian (P1-4: Check method existence)
             if self.historian and hasattr(self.historian, 'log_event'):
                 await self.historian.log_event(
-                    event_type="agent_handoff",
-                    data={
+                    _event_type = "agent_handoff",
+                    _data = {
                         "handoff_id": handoff_id,
                         "from_agent": from_agent_id,
                         "to_agent": to_agent_id,
@@ -262,26 +256,26 @@ class AgentHandoff:
             
             logger.info(
                 "handoff_completed",
-                handoff_id=handoff_id,
-                status="success"
+                _handoff_id = handoff_id,
+                _status = "success"
             )
             
             return HandoffResult(
-                success=True,
-                handoff_id=handoff_id,
+                _success = True,
+                _handoff_id = handoff_id,
                 error=None
             )
             
         except Exception as e:
             logger.error(
                 "handoff_failed",
-                handoff_id=handoff_id,
+                _handoff_id = handoff_id,
                 error=str(e)
             )
             
             return HandoffResult(
-                success=False,
-                handoff_id=handoff_id,
+                _success = False,
+                _handoff_id = handoff_id,
                 error=str(e)
             )
     
@@ -294,7 +288,7 @@ class AgentHandoff:
         """
         # P2-1 fix: Use timezone-aware datetime
         now = datetime.now(timezone.utc)
-        one_minute_ago = now.replace(microsecond=0)
+        _one_minute_ago = now.replace(microsecond=0)
         
         # Remove timestamps older than 1 minute
         self._handoff_timestamps = [
@@ -311,11 +305,7 @@ class AgentHandoff:
         # Record this handoff
         self._handoff_timestamps.append(now)
     
-    async def complete_handoff(
-        self,
-        handoff_id: str,
-        result: Dict[str, Any]
-    ) -> bool:
+    async def complete_handoff(self, _handoff_id: str, _result: Dict[str, _Any]) -> bool:
         """
         Complete an active handoff with results.
         
@@ -329,19 +319,19 @@ class AgentHandoff:
         if handoff_id not in self._active_handoffs:
             logger.warning(
                 "handoff_not_found",
-                handoff_id=handoff_id
+                _handoff_id = handoff_id
             )
             return False
         
-        context_package = self._active_handoffs[handoff_id]
+        _context_package = self._active_handoffs[handoff_id]
         
         # Log completion to historian
         # P1-4: Check method existence
         if self.historian and hasattr(self.historian, 'log_event'):
             await self.historian.log_event(
                 # P2-1 fix: Use timezone-aware datetime
-                event_type="handoff_completed",
-                data={
+                _event_type = "handoff_completed",
+                _data = {
                     "handoff_id": handoff_id,
                     "result": result,
                     "timestamp": datetime.now(timezone.utc).isoformat()
@@ -353,8 +343,8 @@ class AgentHandoff:
         
         logger.info(
             "handoff_completed",
-            handoff_id=handoff_id,
-            status="success"
+            _handoff_id = handoff_id,
+            _status = "success"
         )
         
         return True
@@ -368,7 +358,7 @@ class AgentHandoff:
         """
         return self._active_handoffs.copy()
     
-    async def cancel_handoff(self, handoff_id: str) -> bool:
+    async def cancel_handoff(self, _handoff_id: str) -> bool:
         """
         Cancel an active handoff.
         
@@ -381,7 +371,7 @@ class AgentHandoff:
         if handoff_id not in self._active_handoffs:
             logger.warning(
                 "handoff_not_found",
-                handoff_id=handoff_id
+                _handoff_id = handoff_id
             )
             return False
         
@@ -390,8 +380,8 @@ class AgentHandoff:
         if self.historian and hasattr(self.historian, 'log_event'):
             # P2-1 fix: Use timezone-aware datetime
             await self.historian.log_event(
-                event_type="handoff_cancelled",
-                data={
+                _event_type = "handoff_cancelled",
+                _data = {
                     "handoff_id": handoff_id,
                     "timestamp": datetime.now(timezone.utc).isoformat()
                 }
@@ -402,8 +392,8 @@ class AgentHandoff:
         
         logger.info(
             "handoff_cancelled",
-            handoff_id=handoff_id,
-            status="success"
+            _handoff_id = handoff_id,
+            _status = "success"
         )
         
         return True
@@ -416,11 +406,11 @@ class AgentHandoff:
 class HandoffStrategy:
     """Base class for handoff strategies"""
     
-    async def should_handoff(self, context: Dict[str, Any]) -> bool:
+    async def should_handoff(self, _context: Dict[str, _Any]) -> bool:
         """Determine if handoff should occur"""
         raise NotImplementedError
     
-    async def select_destination(self, context: Dict[str, Any]) -> str:
+    async def select_destination(self, _context: Dict[str, _Any]) -> str:
         """Select destination agent for handoff"""
         raise NotImplementedError
 
@@ -438,14 +428,14 @@ class TaskTypeStrategy(HandoffStrategy):
         "safety": "sentinel",
     }
     
-    async def should_handoff(self, context: Dict[str, Any]) -> bool:
+    async def should_handoff(self, _context: Dict[str, _Any]) -> bool:
         """Check if task type matches a specialized agent"""
-        task_type = context.get("task_type")
+        _task_type = context.get("task_type")
         return task_type in self.TASK_AGENTS
     
-    async def select_destination(self, context: Dict[str, Any]) -> str:
+    async def select_destination(self, _context: Dict[str, _Any]) -> str:
         """Select destination based on task type"""
-        task_type = context.get("task_type")
+        _task_type = context.get("task_type")
         return self.TASK_AGENTS.get(task_type, "steward")
 
 
@@ -454,14 +444,14 @@ class PerformanceStrategy(HandoffStrategy):
     
     PERFORMANCE_THRESHOLD = 0.7  # 70% success rate threshold
     
-    async def should_handoff(self, context: Dict[str, Any]) -> bool:
+    async def should_handoff(self, _context: Dict[str, _Any]) -> bool:
         """Check if agent performance is below threshold"""
-        success_rate = context.get("success_rate", 1.0)
+        _success_rate = context.get("success_rate", 1.0)
         return success_rate < self.PERFORMANCE_THRESHOLD
     
-    async def select_destination(self, context: Dict[str, Any]) -> str:
+    async def select_destination(self, _context: Dict[str, _Any]) -> str:
         """Select best performing agent"""
-        agent_performance = context.get("agent_performance", {})
+        _agent_performance = context.get("agent_performance", {})
         
         # P1-5 fix: Handle empty dict
         if not agent_performance:
@@ -469,7 +459,7 @@ class PerformanceStrategy(HandoffStrategy):
             return "steward"
         
         # Find agent with highest success rate
-        best_agent = max(
+        _best_agent = max(
             agent_performance.items(),
             key=lambda x: x[1].get("success_rate", 0.0)
         )
@@ -482,14 +472,14 @@ class LoadBalancingStrategy(HandoffStrategy):
     
     MAX_CONCURRENT_TASKS = 5
     
-    async def should_handoff(self, context: Dict[str, Any]) -> bool:
+    async def should_handoff(self, _context: Dict[str, _Any]) -> bool:
         """Check if agent is overloaded"""
-        current_tasks = context.get("current_tasks", 0)
+        _current_tasks = context.get("current_tasks", 0)
         return current_tasks >= self.MAX_CONCURRENT_TASKS
     
-    async def select_destination(self, context: Dict[str, Any]) -> str:
+    async def select_destination(self, _context: Dict[str, _Any]) -> str:
         """Select least loaded agent"""
-        agent_load = context.get("agent_load", {})
+        _agent_load = context.get("agent_load", {})
         
         # P1-5 fix: Handle empty dict
         if not agent_load:
@@ -497,9 +487,9 @@ class LoadBalancingStrategy(HandoffStrategy):
             return "steward"
         
         # Find agent with lowest task count
-        least_loaded = min(
+        _least_loaded = min(
             agent_load.items(),
-            key=lambda x: x[1].get("task_count", 0)
+            _key = lambda x: x[1].get("task_count", 0)
         )
         
         return least_loaded[0] if least_loaded else "steward"
@@ -512,7 +502,7 @@ class HandoffOrchestrator:
     Manages the handoff lifecycle and ensures proper context transfer.
     """
     
-    def __init__(self, handoff: AgentHandoff):
+    def __init__(self, _handoff: AgentHandoff):
         """
         Initialize orchestrator.
         
@@ -527,7 +517,7 @@ class HandoffOrchestrator:
             "load_balancing": LoadBalancingStrategy(),
         }
     
-    def set_strategy(self, strategy_name: str) -> bool:
+    def set_strategy(self, _strategy_name: str) -> bool:
         """
         Set the handoff strategy.
         
@@ -541,7 +531,7 @@ class HandoffOrchestrator:
             logger.warning(
                 "strategy_not_found",
                 strategy=strategy_name,
-                available=list(self._strategy_map.keys())
+                _available = list(self._strategy_map.keys())
             )
             return False
         
@@ -557,7 +547,7 @@ class HandoffOrchestrator:
     # Session 44: Collective Learning Integration Methods
     # =========================================================================
 
-    async def _emit_pattern(self, item_id: str, item_type: str, outcome: str, content: Dict[str, Any]) -> None:
+    async def _emit_pattern(self, _item_id: str, _item_type: str, _outcome: str, _content: Dict[str, _Any]) -> None:
         """Emit pattern for collective learning."""
         if not self.pattern_extractor:
             return
@@ -567,12 +557,12 @@ class HandoffOrchestrator:
         
         try:
             await self.pattern_extractor.analyze_message(
-                message_id=f"{item_type}_{item_id}",
-                sender=self.agent_id,
-                recipient="broadcast",
-                message_type=f"{item_type}_completion",
-                content=content,
-                timestamp=datetime.now(timezone.utc).isoformat(),
+                _message_id = f"{item_type}_{item_id}",
+                _sender = self.agent_id,
+                _recipient = "broadcast",
+                _message_type = f"{item_type}_completion",
+                _content = content,
+                _timestamp = datetime.now(timezone.utc).isoformat(),
             )
             
             self._pattern_emitted.add(item_id)
@@ -580,15 +570,15 @@ class HandoffOrchestrator:
         except Exception as e:
             logger.warning("failed_to_emit_pattern", item_id=item_id, error=str(e))
 
-    async def _consume_patterns(self, pattern_types: Optional[List[PatternType]] = None) -> List[Dict[str, Any]]:
+    async def _consume_patterns(self, _pattern_types: Optional[List[PatternType]]) -> List[Dict[str, Any]]:
         """Consume patterns from collective learning."""
         if not self.pattern_extractor:
             return []
         
         try:
-            patterns = await self.pattern_extractor.extract_patterns(
-                time_window_hours=24,
-                pattern_types=pattern_types or [PatternType.SUCCESS, PatternType.DECISION],
+            _patterns = await self.pattern_extractor.extract_patterns(
+                _time_window_hours = 24,
+                _pattern_types = pattern_types or [PatternType.SUCCESS, PatternType.DECISION],
             )
             return [p.to_dict() for p in patterns if p.metadata.confidence >= 0.7]
         except Exception as e:
@@ -599,24 +589,18 @@ class HandoffOrchestrator:
     # Session 44: Consensus Deliberation Integration Methods
     # =========================================================================
 
-    async def _initiate_deliberation(
-        self,
-        item_id: str,
-        proposal: str,
-        participating_agents: List[str],
-        domain: str = "general",
-    ) -> Optional[str]:
+    async def _initiate_deliberation(self, _item_id: str, _proposal: str, _participating_agents: List[str], _domain: str) -> Optional[str]:
         """Initiate swarm deliberation."""
         if not self.deliberation_engine:
             return None
         
         try:
-            deliberation_id = f"delib_{item_id}"
+            _deliberation_id = f"delib_{item_id}"
             self.deliberation_engine.start_deliberation(
-                deliberation_id=deliberation_id,
-                proposal=proposal[:200],
-                participants=participating_agents,
-                domain=domain,
+                _deliberation_id = deliberation_id,
+                _proposal = proposal[:200],
+                _participants = participating_agents,
+                _domain = domain,
             )
             self._active_deliberations[item_id] = deliberation_id
             
@@ -626,35 +610,28 @@ class HandoffOrchestrator:
             logger.error("failed_to_initiate_deliberation", item_id=item_id, error=str(e))
             return None
 
-    async def _submit_deliberation_position(
-        self,
-        item_id: str,
-        agent_id: str,
-        position: Position,
-        confidence: float,
-        argument: str,
-    ) -> bool:
+    async def _submit_deliberation_position(self, _item_id: str, _agent_id: str, _position: Position, _confidence: float, _argument: str) -> bool:
         """Submit agent position in deliberation."""
         if not self.deliberation_engine:
             return False
         
-        deliberation_id = self._active_deliberations.get(item_id)
+        _deliberation_id = self._active_deliberations.get(item_id)
         if not deliberation_id:
             return False
         
         try:
-            success = self.deliberation_engine.submit_position(
-                deliberation_id=deliberation_id,
+            _success = self.deliberation_engine.submit_position(
+                _deliberation_id = deliberation_id,
                 agent_id=agent_id,
-                position=position,
-                confidence=confidence,
-                argument=argument,
+                _position = position,
+                _confidence = confidence,
+                _argument = argument,
             )
             
             if success and self.access_analyzer:
                 self.access_analyzer.record_access(
-                    memory_id=f"delib_{deliberation_id}_{agent_id}",
-                    access_type="write",
+                    _memory_id = f"delib_{deliberation_id}_{agent_id}",
+                    _access_type = "write",
                     agent_id=agent_id,
                 )
             
@@ -663,17 +640,17 @@ class HandoffOrchestrator:
             logger.error("failed_to_submit_deliberation_position", error=str(e))
             return False
 
-    async def _finalize_deliberation(self, item_id: str) -> Optional[Any]:
+    async def _finalize_deliberation(self, _item_id: str) -> Optional[Any]:
         """Finalize deliberation and apply result."""
         if not self.deliberation_engine:
             return None
         
-        deliberation_id = self._active_deliberations.get(item_id)
+        _deliberation_id = self._active_deliberations.get(item_id)
         if not deliberation_id:
             return None
         
         try:
-            result = self.deliberation_engine.finalize_deliberation(deliberation_id)
+            _result = self.deliberation_engine.finalize_deliberation(deliberation_id)
             
             if result:
                 self.deliberation_engine.cleanup_deliberation(deliberation_id)
@@ -689,34 +666,34 @@ class HandoffOrchestrator:
     # Session 44: Memory Optimization Integration Methods
     # =========================================================================
 
-    def _track_memory_access(self, item_id: str, item_type: str, access_type: str = "read") -> None:
+    def _track_memory_access(self, _item_id: str, _item_type: str, _access_type: str) -> None:
         """Track memory access patterns."""
         if not self.access_analyzer:
             return
         
-        memory_id = f"{item_type}_{item_id}"
+        _memory_id = f"{item_type}_{item_id}"
         self.access_analyzer.record_access(
-            memory_id=memory_id,
-            access_type=access_type,
+            _memory_id = memory_id,
+            _access_type = access_type,
             agent_id=self.agent_id,
         )
 
-    def _get_memory_tier(self, item_id: str, item_type: str) -> AccessTier:
+    def _get_memory_tier(self, _item_id: str, _item_type: str) -> AccessTier:
         """Get memory tier classification."""
         if not self.access_analyzer:
             return AccessTier.COLD
         
-        memory_id = f"{item_type}_{item_id}"
-        profile = self.access_analyzer.get_profile(memory_id)
+        _memory_id = f"{item_type}_{item_id}"
+        _profile = self.access_analyzer.get_profile(memory_id)
         return profile.tier if profile else AccessTier.COLD
 
-    async def _prefetch_relevant(self, agent_id: str, item_type: str) -> List[str]:
+    async def _prefetch_relevant(self, _agent_id: str, _item_type: str) -> List[str]:
         """Prefetch items an agent is likely to need."""
         if not self.access_analyzer:
             return []
         
         try:
-            predicted_memories = self.access_analyzer.predict_agent_access(agent_id)
+            _predicted_memories = self.access_analyzer.predict_agent_access(agent_id)
             return [
                 mem.replace(f"{item_type}_", "")
                 for mem in predicted_memories
@@ -744,12 +721,7 @@ class HandoffOrchestrator:
         }
 
 
-    async def evaluate_and_handoff(
-        self,
-        from_agent_id: str,
-        context: Dict[str, Any],
-        reason: str = "automatic"
-    ) -> Optional[HandoffResult]:
+    async def evaluate_and_handoff(self, _from_agent_id: str, _context: Dict[str, _Any], _reason: str) -> Optional[HandoffResult]:
         """
         Evaluate if handoff is needed and execute if so.
         
@@ -766,25 +738,25 @@ class HandoffOrchestrator:
             return None
         
         # Evaluate if handoff should occur
-        should_handoff = await self.strategy.should_handoff(context)
+        _should_handoff = await self.strategy.should_handoff(context)
         
         if not should_handoff:
             return None
         
         # Select destination agent
-        to_agent_id = await self.strategy.select_destination(context)
+        _to_agent_id = await self.strategy.select_destination(context)
         
         if to_agent_id == from_agent_id:
             logger.warning(
                 "handoff_same_agent",
-                agent_id=from_agent_id
+                _agent_id = from_agent_id
             )
             return None
         
         # Execute handoff
         return await self.handoff.execute_handoff(
-            from_agent_id=from_agent_id,
-            to_agent_id=to_agent_id,
-            context=context,
-            reason=reason
+            _from_agent_id = from_agent_id,
+            _to_agent_id = to_agent_id,
+            _context = context,
+            _reason = reason
         )

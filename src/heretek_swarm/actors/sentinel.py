@@ -25,7 +25,7 @@ import structlog
 from heretek_swarm.actors.base import AgentActor, ActorMessage
 from heretek_swarm.actors.validation import validate_message
 
-logger = structlog.get_logger("SentinelAgent")
+_logger = structlog.get_logger("SentinelAgent")
 
 
 class SafetyLevel(str, Enum):
@@ -100,22 +100,14 @@ class SentinelAgent(AgentActor):
     and content safety analysis for all inter-agent communications.
     """
     
-    def __init__(
-        self,
-        agent_id: Optional[str] = None,
-        name: str = "Sentinel",
-        description: str = "Safety Guardian - Input/Output Validation",
-        config: Optional[Dict[str, Any]] = None,
-        db_pool: Optional[Any] = None,
-        redis_client: Optional[Any] = None,
-    ):
+    def __init__(self, _agent_id: Optional[str], _name: str, _description: str, _config: Optional[Dict[str, _Any]], _db_pool: Optional[Any], _redis_client: Optional[Any]):
         super().__init__(
             agent_id=agent_id,
-            name=name,
+            _name = name,
             description=description,
-            config=config,
-            db_pool=db_pool,
-            redis_client=redis_client,
+            _config = config,
+            _db_pool = db_pool,
+            _redis_client = redis_client,
         )
         
         # Safety configuration
@@ -171,30 +163,30 @@ class SentinelAgent(AgentActor):
         
         logger.info(
             "SentinelAgent initialized",
-            agent_id=self.agent_id,
-            max_content_size=self._max_content_size,
-            pii_detection=self._enable_pii_detection,
-            injection_detection=self._enable_injection_detection,
+            _agent_id = self.agent_id,
+            _max_content_size = self._max_content_size,
+            _pii_detection = self._enable_pii_detection,
+            _injection_detection = self._enable_injection_detection,
         )
     
-    async def process_message(self, message: ActorMessage) -> None:
+    async def process_message(self, _message: ActorMessage) -> None:
         """Process incoming message with safety validation."""
         try:
-            handler = self._message_handlers.get(message.message_type)
+            _handler = self._message_handlers.get(message.message_type)
             if handler:
                 await handler(message)
             else:
                 logger.warning(
                     "Unknown message type",
-                    message_type=message.message_type,
-                    sender=message.sender_id,
+                    _message_type = message.message_type,
+                    _sender = message.sender_id,
                 )
         except Exception as e:
             logger.error(
                 "Error processing message",
-                message_type=message.message_type,
+                _message_type = message.message_type,
                 error=str(e),
-                exc_info=True,
+                _exc_info = True,
             )
     
     def _register_handlers(self) -> None:
@@ -210,7 +202,7 @@ class SentinelAgent(AgentActor):
             "get_statistics": self._handle_get_statistics,
         }
     
-    async def _handle_validate_input(self, message: ActorMessage) -> None:
+    async def _handle_validate_input(self, _message: ActorMessage) -> None:
         """
         Validate input content for safety violations.
         
@@ -222,14 +214,14 @@ class SentinelAgent(AgentActor):
         }
         """
         try:
-            content = message.content
-            input_content = content.get("content", "")
-            content_type = content.get("content_type", "text")
+            _content = message.content
+            _input_content = content.get("content", "")
+            _content_type = content.get("content_type", "text")
             source = content.get("source", "unknown")
-            strict_mode = content.get("strict_mode", False)
+            _strict_mode = content.get("strict_mode", False)
             
             # Validate input using Pydantic
-            validated = validate_message({
+            _validated = validate_message({
                 "sender_id": message.sender_id,
                 "message_type": "validate_input",
                 "content": content,
@@ -237,22 +229,22 @@ class SentinelAgent(AgentActor):
             })
             
             # Scan content
-            scan_result = await self._scan_content(
+            _scan_result = await self._scan_content(
                 input_content,
                 content_type,
-                strict_mode=strict_mode,
+                _strict_mode = strict_mode,
             )
             
             # Log and respond
             logger.info(
                 "Input validation completed",
-                scan_id=scan_result["scan_id"],
-                safety_level=scan_result["safety_level"],
-                violations_count=len(scan_result.get("violations", [])),
+                _scan_id = scan_result["scan_id"],
+                _safety_level = scan_result["safety_level"],
+                _violations_count = len(scan_result.get("violations", [])),
             )
             
             # Send response
-            response_content = {
+            _response_content = {
                 "scan_id": scan_result["scan_id"],
                 "safety_level": scan_result["safety_level"],
                 "is_safe": scan_result["is_safe"],
@@ -270,7 +262,7 @@ class SentinelAgent(AgentActor):
             logger.error("Error validating input", error=str(e), exc_info=True)
             await self._send_error(message, "Validation failed", str(e))
     
-    async def _handle_validate_output(self, message: ActorMessage) -> None:
+    async def _handle_validate_output(self, _message: ActorMessage) -> None:
         """
         Validate output content before delivery.
         
@@ -282,14 +274,14 @@ class SentinelAgent(AgentActor):
         }
         """
         try:
-            content = message.content
-            output_content = content.get("content", "")
+            _content = message.content
+            _output_content = content.get("content", "")
             target = content.get("target", "external")
-            content_type = content.get("content_type", "text")
-            strict_mode = content.get("strict_mode", False)
+            _content_type = content.get("content_type", "text")
+            _strict_mode = content.get("strict_mode", False)
             
             # Validate input
-            validated = validate_message({
+            _validated = validate_message({
                 "sender_id": message.sender_id,
                 "message_type": "validate_output",
                 "content": content,
@@ -297,20 +289,20 @@ class SentinelAgent(AgentActor):
             })
             
             # Scan content
-            scan_result = await self._scan_content(
+            _scan_result = await self._scan_content(
                 output_content,
                 content_type,
-                strict_mode=strict_mode,
+                _strict_mode = strict_mode,
             )
             
             logger.info(
                 "Output validation completed",
-                scan_id=scan_result["scan_id"],
-                safety_level=scan_result["safety_level"],
-                target=target,
+                _scan_id = scan_result["scan_id"],
+                _safety_level = scan_result["safety_level"],
+                _target = target,
             )
             
-            response_content = {
+            _response_content = {
                 "scan_id": scan_result["scan_id"],
                 "safety_level": scan_result["safety_level"],
                 "is_safe": scan_result["is_safe"],
@@ -328,7 +320,7 @@ class SentinelAgent(AgentActor):
             logger.error("Error validating output", error=str(e), exc_info=True)
             await self._send_error(message, "Validation failed", str(e))
     
-    async def _handle_scan_content(self, message: ActorMessage) -> None:
+    async def _handle_scan_content(self, _message: ActorMessage) -> None:
         """
         Scan content for safety violations without blocking.
         
@@ -339,13 +331,13 @@ class SentinelAgent(AgentActor):
         }
         """
         try:
-            content = message.content
-            scan_content = content.get("content", "")
-            scan_types = content.get("scan_types", ["all"])
-            return_details = content.get("return_details", True)
+            _content = message.content
+            _scan_content = content.get("content", "")
+            _scan_types = content.get("scan_types", ["all"])
+            _return_details = content.get("return_details", True)
             
             # Validate
-            validated = validate_message({
+            _validated = validate_message({
                 "sender_id": message.sender_id,
                 "message_type": "scan_content",
                 "content": content,
@@ -353,30 +345,30 @@ class SentinelAgent(AgentActor):
             })
             
             # Perform scan
-            violations = []
-            safety_level = SafetyLevel.SAFE
+            _violations = []
+            _safety_level = SafetyLevel.SAFE
             
             # Check injection patterns
             if "injection" in scan_types or "all" in scan_types:
-                injection_violations = self._check_injection_patterns(scan_content)
+                _injection_violations = self._check_injection_patterns(scan_content)
                 violations.extend(injection_violations)
             
             # Check PII
             if "pii" in scan_types or "all" in scan_types:
-                pii_violations = self._check_pii_patterns(scan_content)
+                _pii_violations = self._check_pii_patterns(scan_content)
                 violations.extend(pii_violations)
             
             # Determine safety level
             if violations:
-                max_severity = max(v.get("severity", "low_risk") for v in violations)
-                safety_level = SafetyLevel(max_severity)
+                _max_severity = max(v.get("severity", "low_risk") for v in violations)
+                _safety_level = SafetyLevel(max_severity)
             
             # Update statistics
             self._stats["total_scans"] += 1
             if not violations:
                 self._stats["safe_scans"] += 1
             
-            response_content = {
+            _response_content = {
                 "scan_id": f"scan_{datetime.now(timezone.utc).timestamp()}",
                 "safety_level": safety_level.value,
                 "is_safe": len(violations) == 0,
@@ -393,7 +385,7 @@ class SentinelAgent(AgentActor):
             logger.error("Error scanning content", error=str(e), exc_info=True)
             await self._send_error(message, "Scan failed", str(e))
     
-    async def _handle_check_policy(self, message: ActorMessage) -> None:
+    async def _handle_check_policy(self, _message: ActorMessage) -> None:
         """
         Check content against specific policy rules.
         
@@ -404,23 +396,23 @@ class SentinelAgent(AgentActor):
         }
         """
         try:
-            content = message.content
-            check_content = content.get("content", "")
-            policies = content.get("policies", [])
-            context = content.get("context", {})
+            _content = message.content
+            _check_content = content.get("content", "")
+            _policies = content.get("policies", [])
+            _context = content.get("context", {})
             
             # Validate
-            validated = validate_message({
+            _validated = validate_message({
                 "sender_id": message.sender_id,
                 "message_type": "check_policy",
                 "content": content,
                 "timestamp": message.timestamp,
             })
             
-            violations = []
+            _violations = []
             
             for policy in policies:
-                policy_violation = await self._check_policy_rule(
+                _policy_violation = await self._check_policy_rule(
                     check_content,
                     policy,
                     context,
@@ -428,7 +420,7 @@ class SentinelAgent(AgentActor):
                 if policy_violation:
                     violations.append(policy_violation)
             
-            response_content = {
+            _response_content = {
                 "policies_checked": policies,
                 "violations": violations,
                 "compliant": len(violations) == 0,
@@ -443,7 +435,7 @@ class SentinelAgent(AgentActor):
             logger.error("Error checking policy", error=str(e), exc_info=True)
             await self._send_error(message, "Policy check failed", str(e))
     
-    async def _handle_get_safety_report(self, message: ActorMessage) -> None:
+    async def _handle_get_safety_report(self, _message: ActorMessage) -> None:
         """
         Generate comprehensive safety report.
         
@@ -453,12 +445,12 @@ class SentinelAgent(AgentActor):
         }
         """
         try:
-            content = message.content
-            time_range = content.get("time_range", "24h")
-            include_recommendations = content.get("include_recommendations", True)
+            _content = message.content
+            _time_range = content.get("time_range", "24h")
+            _include_recommendations = content.get("include_recommendations", True)
             
             # Validate
-            validated = validate_message({
+            _validated = validate_message({
                 "sender_id": message.sender_id,
                 "message_type": "get_safety_report",
                 "content": content,
@@ -467,11 +459,11 @@ class SentinelAgent(AgentActor):
             
             # Generate report
             report = self._generate_safety_report(
-                time_range=time_range,
-                include_recommendations=include_recommendations,
+                _time_range = time_range,
+                _include_recommendations = include_recommendations,
             )
             
-            response_content = {
+            _response_content = {
                 "report_id": report.report_id,
                 "timestamp": report.timestamp.isoformat(),
                 "total_scans": report.total_scans,
@@ -491,7 +483,7 @@ class SentinelAgent(AgentActor):
             logger.error("Error generating report", error=str(e), exc_info=True)
             await self._send_error(message, "Report generation failed", str(e))
     
-    async def _handle_get_violation_details(self, message: ActorMessage) -> None:
+    async def _handle_get_violation_details(self, _message: ActorMessage) -> None:
         """
         Get details of a specific violation.
         
@@ -500,7 +492,7 @@ class SentinelAgent(AgentActor):
         }
         """
         try:
-            content = message.content
+            _content = message.content
             violation_id = content.get("violation_id")
             
             if not violation_id:
@@ -508,7 +500,7 @@ class SentinelAgent(AgentActor):
                 return
             
             # Validate
-            validated = validate_message({
+            _validated = validate_message({
                 "sender_id": message.sender_id,
                 "message_type": "get_violation_details",
                 "content": content,
@@ -521,7 +513,7 @@ class SentinelAgent(AgentActor):
                 await self._send_error(message, "Violation not found", f"ID: {violation_id}")
                 return
             
-            response_content = {
+            _response_content = {
                 "violation_id": violation.violation_id,
                 "violation_type": violation.violation_type.value,
                 "severity": violation.severity.value,
@@ -542,7 +534,7 @@ class SentinelAgent(AgentActor):
             logger.error("Error getting violation details", error=str(e), exc_info=True)
             await self._send_error(message, "Failed to get details", str(e))
     
-    async def _handle_update_guardrails(self, message: ActorMessage) -> None:
+    async def _handle_update_guardrails(self, _message: ActorMessage) -> None:
         """
         Update guardrail configuration.
         
@@ -555,17 +547,17 @@ class SentinelAgent(AgentActor):
         }
         """
         try:
-            content = message.content
+            _content = message.content
             
             # Validate
-            validated = validate_message({
+            _validated = validate_message({
                 "sender_id": message.sender_id,
                 "message_type": "update_guardrails",
                 "content": content,
                 "timestamp": message.timestamp,
             })
             
-            updates = []
+            _updates = []
             
             if "max_content_size" in content:
                 self._max_content_size = content["max_content_size"]
@@ -585,7 +577,7 @@ class SentinelAgent(AgentActor):
             
             logger.info("Guardrails updated", updates=", ".join(updates))
             
-            response_content = {
+            _response_content = {
                 "updated": True,
                 "changes": updates,
                 "current_config": {
@@ -605,7 +597,7 @@ class SentinelAgent(AgentActor):
             logger.error("Error updating guardrails", error=str(e), exc_info=True)
             await self._send_error(message, "Guardrail update failed", str(e))
     
-    async def _handle_get_statistics(self, message: ActorMessage) -> None:
+    async def _handle_get_statistics(self, _message: ActorMessage) -> None:
         """
         Get current safety statistics.
         
@@ -613,14 +605,14 @@ class SentinelAgent(AgentActor):
         """
         try:
             # Validate
-            validated = validate_message({
+            _validated = validate_message({
                 "sender_id": message.sender_id,
                 "message_type": "get_statistics",
                 "content": {},
                 "timestamp": message.timestamp,
             })
             
-            response_content = {
+            _response_content = {
                 "statistics": self._stats.copy(),
                 "active_violations": len([v for v in self._violations.values() if not v.blocked]),
                 "total_violations_tracked": len(self._violations),
@@ -636,12 +628,7 @@ class SentinelAgent(AgentActor):
             logger.error("Error getting statistics", error=str(e), exc_info=True)
             await self._send_error(message, "Statistics retrieval failed", str(e))
     
-    async def _scan_content(
-        self,
-        content: str,
-        content_type: str = "text",
-        strict_mode: bool = False,
-    ) -> Dict[str, Any]:
+    async def _scan_content(self, _content: str, _content_type: str, _strict_mode: bool) -> Dict[str, Any]:
         """
         Scan content for safety violations.
         
@@ -653,9 +640,9 @@ class SentinelAgent(AgentActor):
         - sanitized_content: Content with violations removed/masked
         - recommendations: List of recommended actions
         """
-        scan_id = f"scan_{datetime.now(timezone.utc).timestamp()}"
-        violations = []
-        sanitized_content = content
+        _scan_id = f"scan_{datetime.now(timezone.utc).timestamp()}"
+        _violations = []
+        _sanitized_content = content
         
         # Check content size
         if len(content) > self._max_content_size:
@@ -667,35 +654,35 @@ class SentinelAgent(AgentActor):
         
         # Check injection patterns
         if self._enable_injection_detection:
-            injection_violations = self._check_injection_patterns(content)
+            _injection_violations = self._check_injection_patterns(content)
             violations.extend(injection_violations)
         
         # Check PII
         if self._enable_pii_detection:
-            pii_violations = self._check_pii_patterns(content)
+            _pii_violations = self._check_pii_patterns(content)
             violations.extend(pii_violations)
         
         # Determine overall safety level
         if violations:
-            severity_order = {
+            _severity_order = {
                 SafetyLevel.CRITICAL.value: 5,
                 SafetyLevel.HIGH_RISK.value: 4,
                 SafetyLevel.MEDIUM_RISK.value: 3,
                 SafetyLevel.LOW_RISK.value: 2,
                 SafetyLevel.SAFE.value: 1,
             }
-            max_severity = max(
+            _max_severity = max(
                 severity_order.get(v.get("severity", "safe"), 1)
                 for v in violations
             )
-            safety_level = {
+            _safety_level = {
                 5: SafetyLevel.CRITICAL,
                 4: SafetyLevel.HIGH_RISK,
                 3: SafetyLevel.MEDIUM_RISK,
                 2: SafetyLevel.LOW_RISK,
             }.get(max_severity, SafetyLevel.SAFE)
         else:
-            safety_level = SafetyLevel.SAFE
+            _safety_level = SafetyLevel.SAFE
         
         # Auto-block critical violations
         if self._auto_block_critical and safety_level == SafetyLevel.CRITICAL:
@@ -710,12 +697,12 @@ class SentinelAgent(AgentActor):
         else:
             self._stats["violations_detected"] += len(violations)
             for v in violations:
-                vtype = v.get("type", "unknown")
+                _vtype = v.get("type", "unknown")
                 self._stats["violations_by_type"][vtype] = \
                     self._stats["violations_by_type"].get(vtype, 0) + 1
         
         # Generate recommendations
-        recommendations = []
+        _recommendations = []
         if safety_level != SafetyLevel.SAFE:
             recommendations.append(f"Review content for {safety_level.value} risk")
             if any(v.get("type") == ViolationType.INJECTION_ATTEMPT.value for v in violations):
@@ -732,12 +719,12 @@ class SentinelAgent(AgentActor):
             "recommendations": recommendations,
         }
     
-    def _check_injection_patterns(self, content: str) -> List[Dict[str, str]]:
+    def _check_injection_patterns(self, _content: str) -> List[Dict[str, str]]:
         """Check content for injection attack patterns."""
-        violations = []
+        _violations = []
         
         for pattern in self._compiled_injection:
-            matches = pattern.findall(content)
+            _matches = pattern.findall(content)
             if matches:
                 violations.append({
                     "type": ViolationType.INJECTION_ATTEMPT.value,
@@ -748,12 +735,12 @@ class SentinelAgent(AgentActor):
         
         return violations
     
-    def _check_pii_patterns(self, content: str) -> List[Dict[str, str]]:
+    def _check_pii_patterns(self, _content: str) -> List[Dict[str, str]]:
         """Check content for personally identifiable information."""
-        violations = []
+        _violations = []
         
         for pattern in self._compiled_pii:
-            matches = pattern.findall(content)
+            _matches = pattern.findall(content)
             if matches:
                 violations.append({
                     "type": ViolationType.PII_DETECTED.value,
@@ -764,26 +751,21 @@ class SentinelAgent(AgentActor):
         
         return violations
     
-    def _record_violation(
-        self,
-        violation: Dict[str, str],
-        content: str,
-        scan_id: str,
-    ) -> None:
+    def _record_violation(self, _violation: Dict[str, _str], _content: str, _scan_id: str) -> None:
         """Record a safety violation for tracking."""
         import hashlib
         
-        content_hash = hashlib.sha256(content.encode()).hexdigest()[:16]
-        violation_id = f"viol_{datetime.now(timezone.utc).timestamp()}_{content_hash}"
+        _content_hash = hashlib.sha256(content.encode()).hexdigest()[:16]
+        _violation_id = f"viol_{datetime.now(timezone.utc).timestamp()}_{content_hash}"
         
-        record = SafetyViolation(
-            violation_id=violation_id,
+        _record = SafetyViolation(
+            _violation_id = violation_id,
             violation_type=ViolationType(violation.get("type", "policy_violation")),
             severity=SafetyLevel(violation.get("severity", "low_risk")),
-            content_hash=content_hash,
-            description=violation.get("description", "Unknown violation"),
-            timestamp=datetime.now(timezone.utc),
-            blocked=True,
+            _content_hash = content_hash,
+            _description = violation.get("description", "Unknown violation"),
+            _timestamp = datetime.now(timezone.utc),
+            _blocked = True,
         )
         
         # Store violation
@@ -793,30 +775,26 @@ class SentinelAgent(AgentActor):
         self._violation_history.append(violation_id)
         if len(self._violation_history) > self._max_violation_history:
             # Remove oldest
-            oldest = self._violation_history.pop(0)
+            _oldest = self._violation_history.pop(0)
             self._violations.pop(oldest, None)
         
         self._stats["violations_blocked"] += 1
     
-    def _generate_safety_report(
-        self,
-        time_range: str = "24h",
-        include_recommendations: bool = True,
-    ) -> SafetyReport:
+    def _generate_safety_report(self, _time_range: str, _include_recommendations: bool) -> SafetyReport:
         """Generate comprehensive safety report."""
-        report_id = f"report_{datetime.now(timezone.utc).timestamp()}"
+        _report_id = f"report_{datetime.now(timezone.utc).timestamp()}"
         
         violations_by_type: Dict[str, int] = {}
         violations_by_severity: Dict[str, int] = {}
         
         for violation in self._violations.values():
-            vtype = violation.violation_type.value
+            _vtype = violation.violation_type.value
             violations_by_type[vtype] = violations_by_type.get(vtype, 0) + 1
             
-            severity = violation.severity.value
+            _severity = violation.severity.value
             violations_by_severity[severity] = violations_by_severity.get(severity, 0) + 1
         
-        recommendations = []
+        _recommendations = []
         if include_recommendations:
             if violations_by_type.get(ViolationType.INJECTION_ATTEMPT.value, 0) > 10:
                 recommendations.append("High injection attempt rate - consider stricter input validation")
@@ -826,22 +804,17 @@ class SentinelAgent(AgentActor):
                 recommendations.append("Critical violations detected - review security policies")
         
         return SafetyReport(
-            report_id=report_id,
-            timestamp=datetime.now(timezone.utc),
-            total_scans=self._stats["total_scans"],
-            violations_detected=self._stats["violations_detected"],
-            violations_blocked=self._stats["violations_blocked"],
-            violations_by_type=violations_by_type,
-            violations_by_severity=violations_by_severity,
-            recommendations=recommendations,
+            _report_id = report_id,
+            _timestamp = datetime.now(timezone.utc),
+            _total_scans = self._stats["total_scans"],
+            _violations_detected = self._stats["violations_detected"],
+            _violations_blocked = self._stats["violations_blocked"],
+            _violations_by_type = violations_by_type,
+            _violations_by_severity = violations_by_severity,
+            _recommendations = recommendations,
         )
     
-    async def _check_policy_rule(
-        self,
-        content: str,
-        policy: str,
-        context: Dict[str, Any],
-    ) -> Optional[Dict[str, Any]]:
+    async def _check_policy_rule(self, _content: str, _policy: str, _context: Dict[str, _Any]) -> Optional[Dict[str, Any]]:
         """Check content against a specific policy rule."""
         # Policy rules can be extended with custom logic
         # For now, return None (no violations) as placeholder

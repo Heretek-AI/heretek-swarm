@@ -13,7 +13,6 @@ Date: 2026-04-06
 Version: 1.0.0
 """
 
-from __future__ import annotations
 
 import uuid
 from dataclasses import dataclass, field
@@ -38,7 +37,7 @@ from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer, AccessTi
 # Session 44: Zero-Trust Validation
 from heretek_swarm.security.zero_trust import ZeroTrustValidator
 
-logger = structlog.get_logger(__name__)
+_logger = structlog.get_logger(__name__)
 
 
 class TaskStatus(Enum):
@@ -146,20 +145,11 @@ class CoordinatorAgent(AgentActor):
     - get_coordination_report: Generate coordination status report
     """
 
-    def __init__(
-        self,
-        agent_id: Optional[str] = None,
-        config: Optional[Dict[str, Any]] = None,
-    
-        # Session 44: Integration components
-        pattern_extractor: Optional[PatternExtractor] = None,
-        deliberation_engine: Optional[SwarmDeliberationEngine] = None,
-        access_analyzer: Optional[AccessPatternAnalyzer] = None,
-        zero_trust_validator: Optional[ZeroTrustValidator] = None,
-):
+    def __init__(self, _agent_id: Optional[str], _config: Optional[Dict[str, _Any]], _# Session 44: Integration components
+        pattern_extractor: Optional[PatternExtractor], _deliberation_engine: Optional[SwarmDeliberationEngine], _access_analyzer: Optional[AccessPatternAnalyzer], _zero_trust_validator: Optional[ZeroTrustValidator]):
         super().__init__(
             agent_id=agent_id or f"coordinator_{uuid.uuid4().hex[:8]}",
-            config=config or {},
+            _config = config or {},
         )
 
         # Task tracking
@@ -185,7 +175,7 @@ class CoordinatorAgent(AgentActor):
         
         # Session 44: Consensus Integration
         self.deliberation_engine = deliberation_engine or SwarmDeliberationEngine(
-            max_rounds=5, consensus_threshold=0.75, min_participants=2
+            _max_rounds = 5, consensus_threshold=0.75, min_participants=2
         )
         
         # Session 44: Memory Optimization Integration
@@ -202,14 +192,14 @@ class CoordinatorAgent(AgentActor):
         logger.info(
             "coordinator_initialized",
             agent_id=self.agent_id,
-            max_tasks=self._max_tasks,
-            max_agents=self._max_agents,
+            _max_tasks = self._max_tasks,
+            _max_agents = self._max_agents,
         )
 
-    async def _validate_message(self, message: ActorMessage) -> Dict[str, Any]:
+    async def _validate_message(self, _message: ActorMessage) -> Dict[str, Any]:
         """Validate incoming message content."""
         try:
-            validated = validate_message(message.message_type, message.content)
+            _validated = validate_message(message.message_type, message.content)
             if hasattr(validated, 'dict'):
                 return validated.dict()
             return validated
@@ -217,7 +207,7 @@ class CoordinatorAgent(AgentActor):
             # Fallback: return content as-is for unknown message types
             return message.content
 
-    async def _handle_create_task(self, message: ActorMessage) -> None:
+    async def _handle_create_task(self, _message: ActorMessage) -> None:
         """
         Create a new coordinated task.
 
@@ -232,15 +222,15 @@ class CoordinatorAgent(AgentActor):
         - metadata: Optional[Dict] - Additional metadata
         """
         try:
-            content = await self._validate_message(message)
+            _content = await self._validate_message(message)
             # Create TaskRequest from content - inline construction
-            request_data = {
+            _request_data = {
                 "task_id": content.get("task_id"),
                 "name": content.get("name", "unnamed"),
                 "description": content.get("description", ""),
                 "assigned_agents": content.get("assigned_agents", []),
             }
-            request = CoordinatedTask(**request_data)
+            _request = CoordinatedTask(**request_data)
 
             # Check task limit
             if len(self._tasks) >= self._max_tasks:
@@ -251,7 +241,7 @@ class CoordinatorAgent(AgentActor):
                 )
                 return
 
-            task_id = request.task_id or f"task_{uuid.uuid4().hex[:12]}"
+            _task_id = request.task_id or f"task_{uuid.uuid4().hex[:12]}"
 
             # Check for duplicate
             if task_id in self._tasks:
@@ -263,14 +253,14 @@ class CoordinatorAgent(AgentActor):
                 return
 
             # Create task
-            dep_type = DependencyType(request.dependency_type or "sequential")
-            task = CoordinatedTask(
-                task_id=task_id,
-                name=request.name,
-                description=request.description,
-                assigned_agents=request.assigned_agents or [],
+            _dep_type = DependencyType(request.dependency_type or "sequential")
+            _task = CoordinatedTask(
+                _task_id = task_id,
+                _name = request.name,
+                _description = request.description,
+                _assigned_agents = request.assigned_agents or [],
                 dependencies=request.dependencies or [],
-                dependency_type=dep_type,
+                _dependency_type = dep_type,
                 priority=request.priority or 5,
                 metadata=request.metadata or {},
             )
@@ -302,8 +292,8 @@ class CoordinatorAgent(AgentActor):
 
             logger.info(
                 "task_created",
-                task_id=task_id,
-                name=request.name,
+                _task_id = task_id,
+                _name = request.name,
                 dependencies=len(task.dependencies),
                 status=task.status.value,
             )
@@ -312,8 +302,8 @@ class CoordinatorAgent(AgentActor):
                 message.sender_id,
                 ActorMessage(
                     message_type="task_created",
-                    content={"task_id": task_id, "status": task.status.value},
-                    sender_id=self.agent_id,
+                    _content = {"task_id": task_id, "status": task.status.value},
+                    _sender_id = self.agent_id,
                 ),
             )
 
@@ -325,7 +315,7 @@ class CoordinatorAgent(AgentActor):
                 message.message_type,
             )
 
-    async def _handle_update_task(self, message: ActorMessage) -> None:
+    async def _handle_update_task(self, _message: ActorMessage) -> None:
         """
         Update task status or metadata.
 
@@ -337,8 +327,8 @@ class CoordinatorAgent(AgentActor):
         - error_message: Optional[str] - Error if failed
         """
         try:
-            content = await self._validate_message(message)
-            task_id = content.get("task_id")
+            _content = await self._validate_message(message)
+            _task_id = content.get("task_id")
 
             if not task_id or task_id not in self._tasks:
                 await self._send_error(
@@ -348,12 +338,12 @@ class CoordinatorAgent(AgentActor):
                 )
                 return
 
-            task = self._tasks[task_id]
-            updates = []
+            _task = self._tasks[task_id]
+            _updates = []
 
             # Update status
             if "status" in content:
-                old_status = task.status
+                _old_status = task.status
                 task.status = TaskStatus(content["status"])
                 updates.append(f"status: {old_status.value} -> {task.status.value}")
 
@@ -386,16 +376,16 @@ class CoordinatorAgent(AgentActor):
 
             logger.info(
                 "task_updated",
-                task_id=task_id,
-                updates=updates,
+                _task_id = task_id,
+                _updates = updates,
             )
 
             await self.send(
                 message.sender_id,
                 ActorMessage(
                     message_type="task_updated",
-                    content={"task_id": task_id, "updates": updates},
-                    sender_id=self.agent_id,
+                    _content = {"task_id": task_id, "updates": updates},
+                    _sender_id = self.agent_id,
                 ),
             )
 
@@ -407,7 +397,7 @@ class CoordinatorAgent(AgentActor):
                 message.message_type,
             )
 
-    async def _handle_get_task_status(self, message: ActorMessage) -> None:
+    async def _handle_get_task_status(self, _message: ActorMessage) -> None:
         """
         Get status of a specific task.
 
@@ -415,8 +405,8 @@ class CoordinatorAgent(AgentActor):
         - task_id: str - Task to query
         """
         try:
-            content = await self._validate_message(message)
-            task_id = content.get("task_id")
+            _content = await self._validate_message(message)
+            _task_id = content.get("task_id")
 
             if not task_id or task_id not in self._tasks:
                 await self._send_error(
@@ -426,19 +416,19 @@ class CoordinatorAgent(AgentActor):
                 )
                 return
 
-            task = self._tasks[task_id]
-            dependents = list(self._dependency_graph.get(task_id, []))
+            _task = self._tasks[task_id]
+            _dependents = list(self._dependency_graph.get(task_id, []))
 
             await self.send(
                 message.sender_id,
                 ActorMessage(
                     message_type="task_status",
-                    content={
+                    _content = {
                         "task": task.to_dict(),
                         "dependents": dependents,
                         "dependency_count": len(task.dependencies),
                     },
-                    sender_id=self.agent_id,
+                    _sender_id = self.agent_id,
                 ),
             )
 
@@ -450,7 +440,7 @@ class CoordinatorAgent(AgentActor):
                 message.message_type,
             )
 
-    async def _handle_get_workflow_status(self, message: ActorMessage) -> None:
+    async def _handle_get_workflow_status(self, _message: ActorMessage) -> None:
         """
         Get status of all tasks in a workflow.
 
@@ -458,37 +448,37 @@ class CoordinatorAgent(AgentActor):
         - workflow_id: str - Workflow to query (optional, returns all if not provided)
         """
         try:
-            content = await self._validate_message(message)
-            workflow_id = content.get("workflow_id")
+            _content = await self._validate_message(message)
+            _workflow_id = content.get("workflow_id")
 
             if workflow_id:
-                task_ids = self._task_queues.get(workflow_id, [])
-                tasks = [self._tasks[tid].to_dict() for tid in task_ids if tid in self._tasks]
+                _task_ids = self._task_queues.get(workflow_id, [])
+                _tasks = [self._tasks[tid].to_dict() for tid in task_ids if tid in self._tasks]
             else:
-                tasks = [task.to_dict() for task in self._tasks.values()]
+                _tasks = [task.to_dict() for task in self._tasks.values()]
 
             # Calculate summary
-            status_counts = {}
-            total_progress = 0.0
+            _status_counts = {}
+            _total_progress = 0.0
             for task in tasks:
                 status = task["status"]
                 status_counts[status] = status_counts.get(status, 0) + 1
                 total_progress += task.get("progress", 0.0)
 
-            avg_progress = total_progress / len(tasks) if tasks else 0.0
+            _avg_progress = total_progress / len(tasks) if tasks else 0.0
 
             await self.send(
                 message.sender_id,
                 ActorMessage(
                     message_type="workflow_status",
-                    content={
+                    _content = {
                         "workflow_id": workflow_id or "all",
                         "task_count": len(tasks),
                         "status_counts": status_counts,
                         "average_progress": avg_progress,
                         "tasks": tasks,
                     },
-                    sender_id=self.agent_id,
+                    _sender_id = self.agent_id,
                 ),
             )
 
@@ -500,7 +490,7 @@ class CoordinatorAgent(AgentActor):
                 message.message_type,
             )
 
-    async def _handle_assign_agent(self, message: ActorMessage) -> None:
+    async def _handle_assign_agent(self, _message: ActorMessage) -> None:
         """
         Assign an agent to the coordination system.
 
@@ -509,7 +499,7 @@ class CoordinatorAgent(AgentActor):
         - metadata: Optional[Dict] - Additional agent metadata
         """
         try:
-            content = await self._validate_message(message)
+            _content = await self._validate_message(message)
             agent_id = content.get("agent_id")
 
             if not agent_id:
@@ -544,15 +534,15 @@ class CoordinatorAgent(AgentActor):
             logger.info(
                 "agent_assigned",
                 agent_id=agent_id,
-                total_agents=len(self._agents),
+                _total_agents = len(self._agents),
             )
 
             await self.send(
                 message.sender_id,
                 ActorMessage(
                     message_type="agent_assigned",
-                    content={"agent_id": agent_id, "status": "assigned"},
-                    sender_id=self.agent_id,
+                    _content = {"agent_id": agent_id, "status": "assigned"},
+                    _sender_id = self.agent_id,
                 ),
             )
 
@@ -564,7 +554,7 @@ class CoordinatorAgent(AgentActor):
                 message.message_type,
             )
 
-    async def _handle_update_agent_state(self, message: ActorMessage) -> None:
+    async def _handle_update_agent_state(self, _message: ActorMessage) -> None:
         """
         Update an agent's state.
 
@@ -575,7 +565,7 @@ class CoordinatorAgent(AgentActor):
         - load: Optional[float] - Load 0.0-1.0
         """
         try:
-            content = await self._validate_message(message)
+            _content = await self._validate_message(message)
             agent_id = content.get("agent_id")
 
             if not agent_id or agent_id not in self._agents:
@@ -600,8 +590,8 @@ class CoordinatorAgent(AgentActor):
                 message.sender_id,
                 ActorMessage(
                     message_type="agent_state_updated",
-                    content={"agent_id": agent_id, "state": agent.to_dict()},
-                    sender_id=self.agent_id,
+                    _content = {"agent_id": agent_id, "state": agent.to_dict()},
+                    _sender_id = self.agent_id,
                 ),
             )
 
@@ -613,7 +603,7 @@ class CoordinatorAgent(AgentActor):
                 message.message_type,
             )
 
-    async def _handle_resolve_dependencies(self, message: ActorMessage) -> None:
+    async def _handle_resolve_dependencies(self, _message: ActorMessage) -> None:
         """
         Resolve task dependencies and return execution order.
 
@@ -621,28 +611,28 @@ class CoordinatorAgent(AgentActor):
         - task_ids: Optional[List[str]] - Tasks to analyze (all if not provided)
         """
         try:
-            content = await self._validate_message(message)
-            task_ids = content.get("task_ids", list(self._tasks.keys()))
+            _content = await self._validate_message(message)
+            _task_ids = content.get("task_ids", list(self._tasks.keys()))
 
             # Build subgraph
-            subgraph = {tid: self._reverse_deps.get(tid, set()) for tid in task_ids if tid in self._tasks}
+            _subgraph = {tid: self._reverse_deps.get(tid, set()) for tid in task_ids if tid in self._tasks}
 
             # Topological sort
-            sorted_tasks = self._topological_sort(subgraph)
+            _sorted_tasks = self._topological_sort(subgraph)
 
             # Identify parallel groups
-            parallel_groups = self._identify_parallel_groups(sorted_tasks, subgraph)
+            _parallel_groups = self._identify_parallel_groups(sorted_tasks, subgraph)
 
             await self.send(
                 message.sender_id,
                 ActorMessage(
                     message_type="dependency_resolution",
-                    content={
+                    _content = {
                         "execution_order": sorted_tasks,
                         "parallel_groups": parallel_groups,
                         "critical_path": self._find_critical_path(sorted_tasks, subgraph),
                     },
-                    sender_id=self.agent_id,
+                    _sender_id = self.agent_id,
                 ),
             )
 
@@ -654,7 +644,7 @@ class CoordinatorAgent(AgentActor):
                 message.message_type,
             )
 
-    async def _handle_start_workflow(self, message: ActorMessage) -> None:
+    async def _handle_start_workflow(self, _message: ActorMessage) -> None:
         """
         Start execution of a coordinated workflow.
 
@@ -663,9 +653,9 @@ class CoordinatorAgent(AgentActor):
         - task_ids: List[str] - Tasks in the workflow
         """
         try:
-            content = await self._validate_message(message)
-            workflow_id = content.get("workflow_id")
-            task_ids = content.get("task_ids", [])
+            _content = await self._validate_message(message)
+            _workflow_id = content.get("workflow_id")
+            _task_ids = content.get("task_ids", [])
 
             if not workflow_id:
                 await self._send_error(
@@ -679,31 +669,31 @@ class CoordinatorAgent(AgentActor):
             self._task_queues[workflow_id] = task_ids
 
             # Update task statuses
-            ready_tasks = []
+            _ready_tasks = []
             for task_id in task_ids:
                 if task_id in self._tasks:
-                    task = self._tasks[task_id]
+                    _task = self._tasks[task_id]
                     if not task.dependencies:
                         task.status = TaskStatus.READY
                         ready_tasks.append(task_id)
 
             logger.info(
                 "workflow_started",
-                workflow_id=workflow_id,
-                task_count=len(task_ids),
-                ready_count=len(ready_tasks),
+                _workflow_id = workflow_id,
+                _task_count = len(task_ids),
+                _ready_count = len(ready_tasks),
             )
 
             await self.send(
                 message.sender_id,
                 ActorMessage(
                     message_type="workflow_started",
-                    content={
+                    _content = {
                         "workflow_id": workflow_id,
                         "ready_tasks": ready_tasks,
                         "blocked_tasks": len(task_ids) - len(ready_tasks),
                     },
-                    sender_id=self.agent_id,
+                    _sender_id = self.agent_id,
                 ),
             )
 
@@ -715,7 +705,7 @@ class CoordinatorAgent(AgentActor):
                 message.message_type,
             )
 
-    async def _handle_cancel_workflow(self, message: ActorMessage) -> None:
+    async def _handle_cancel_workflow(self, _message: ActorMessage) -> None:
         """
         Cancel a running workflow.
 
@@ -723,8 +713,8 @@ class CoordinatorAgent(AgentActor):
         - workflow_id: str - Workflow to cancel
         """
         try:
-            content = await self._validate_message(message)
-            workflow_id = content.get("workflow_id")
+            _content = await self._validate_message(message)
+            _workflow_id = content.get("workflow_id")
 
             if not workflow_id or workflow_id not in self._task_queues:
                 await self._send_error(
@@ -734,12 +724,12 @@ class CoordinatorAgent(AgentActor):
                 )
                 return
 
-            task_ids = self._task_queues[workflow_id]
-            cancelled = []
+            _task_ids = self._task_queues[workflow_id]
+            _cancelled = []
 
             for task_id in task_ids:
                 if task_id in self._tasks:
-                    task = self._tasks[task_id]
+                    _task = self._tasks[task_id]
                     if task.status not in (TaskStatus.COMPLETED, TaskStatus.FAILED, TaskStatus.CANCELLED):
                         task.status = TaskStatus.CANCELLED
                         task.completed_at = datetime.now(timezone.utc)
@@ -750,19 +740,19 @@ class CoordinatorAgent(AgentActor):
 
             logger.info(
                 "workflow_cancelled",
-                workflow_id=workflow_id,
-                cancelled_count=len(cancelled),
+                _workflow_id = workflow_id,
+                _cancelled_count = len(cancelled),
             )
 
             await self.send(
                 message.sender_id,
                 ActorMessage(
                     message_type="workflow_cancelled",
-                    content={
+                    _content = {
                         "workflow_id": workflow_id,
                         "cancelled_tasks": cancelled,
                     },
-                    sender_id=self.agent_id,
+                    _sender_id = self.agent_id,
                 ),
             )
 
@@ -774,7 +764,7 @@ class CoordinatorAgent(AgentActor):
                 message.message_type,
             )
 
-    async def _handle_get_coordination_report(self, message: ActorMessage) -> None:
+    async def _handle_get_coordination_report(self, _message: ActorMessage) -> None:
         """
         Generate coordination status report.
 
@@ -782,7 +772,7 @@ class CoordinatorAgent(AgentActor):
         """
         try:
             # Task statistics
-            task_stats = {
+            _task_stats = {
                 "total": len(self._tasks),
                 "by_status": {},
                 "by_priority": {},
@@ -796,7 +786,7 @@ class CoordinatorAgent(AgentActor):
                 task_stats["by_priority"][priority] = task_stats["by_priority"].get(priority, 0) + 1
 
             # Agent statistics
-            agent_stats = {
+            _agent_stats = {
                 "total": len(self._agents),
                 "idle": sum(1 for a in self._agents.values() if a.status == "idle"),
                 "busy": sum(1 for a in self._agents.values() if a.status == "busy"),
@@ -804,14 +794,14 @@ class CoordinatorAgent(AgentActor):
             }
 
             # Workflow statistics
-            workflow_stats = {
+            _workflow_stats = {
                 "total": len(self._task_queues),
                 "workflows": {
                     wid: len(tids) for wid, tids in self._task_queues.items()
                 },
             }
 
-            report = {
+            _report = {
                 "timestamp": datetime.now(timezone.utc).isoformat(),
                 "task_statistics": task_stats,
                 "agent_statistics": agent_stats,
@@ -823,8 +813,8 @@ class CoordinatorAgent(AgentActor):
                 message.sender_id,
                 ActorMessage(
                     message_type="coordination_report",
-                    content=report,
-                    sender_id=self.agent_id,
+                    _content = report,
+                    _sender_id = self.agent_id,
                 ),
             )
 
@@ -836,16 +826,16 @@ class CoordinatorAgent(AgentActor):
                 message.message_type,
             )
 
-    async def _unblock_dependents(self, completed_task_id: str) -> None:
+    async def _unblock_dependents(self, _completed_task_id: str) -> None:
         """Unblock tasks that were waiting on the completed task."""
-        dependents = self._dependency_graph.get(completed_task_id, set())
+        _dependents = self._dependency_graph.get(completed_task_id, set())
 
         for dep_id in dependents:
             if dep_id in self._tasks:
-                task = self._tasks[dep_id]
+                _task = self._tasks[dep_id]
                 if task.status == TaskStatus.BLOCKED:
                     # Check if all dependencies are satisfied
-                    remaining_deps = [
+                    _remaining_deps = [
                         d for d in task.dependencies
                         if d in self._tasks and self._tasks[d].status != TaskStatus.COMPLETED
                     ]
@@ -854,19 +844,19 @@ class CoordinatorAgent(AgentActor):
                         task.status = TaskStatus.READY
                         logger.info(
                             "task_unblocked",
-                            task_id=dep_id,
+                            _task_id = dep_id,
                         )
 
-    def _topological_sort(self, graph: Dict[str, Set[str]]) -> List[str]:
+    def _topological_sort(self, _graph: Dict[str, _Set[str]]) -> List[str]:
         """Perform topological sort on dependency graph."""
-        in_degree = {node: len(deps) for node, deps in graph.items()}
-        queue = [node for node, degree in in_degree.items() if degree == 0]
-        result = []
+        _in_degree = {node: len(deps) for node, deps in graph.items()}
+        _queue = [node for node, degree in in_degree.items() if degree == 0]
+        _result = []
 
         while queue:
             # Sort by priority for deterministic ordering
             queue.sort(key=lambda x: -self._tasks.get(x, CoordinatedTask(x, "", "", [])).priority)
-            node = queue.pop(0)
+            _node = queue.pop(0)
             result.append(node)
 
             for dependent in self._dependency_graph.get(node, set()):
@@ -877,17 +867,17 @@ class CoordinatorAgent(AgentActor):
 
         return result
 
-    def _identify_parallel_groups(self, sorted_tasks: List[str], graph: Dict[str, Set[str]]) -> List[List[str]]:
+    def _identify_parallel_groups(self, _sorted_tasks: List[str], _graph: Dict[str, _Set[str]]) -> List[List[str]]:
         """Identify groups of tasks that can run in parallel."""
         if not sorted_tasks:
             return []
 
-        groups = []
-        current_group = []
-        completed = set()
+        _groups = []
+        _current_group = []
+        _completed = set()
 
         for task_id in sorted_tasks:
-            deps = graph.get(task_id, set())
+            _deps = graph.get(task_id, set())
 
             # If all dependencies are in completed, can add to current group
             if all(d in completed for d in deps):
@@ -896,14 +886,14 @@ class CoordinatorAgent(AgentActor):
                 if current_group:
                     groups.append(current_group)
                     completed.update(current_group)
-                current_group = [task_id]
+                _current_group = [task_id]
 
         if current_group:
             groups.append(current_group)
 
         return groups
 
-    def _find_critical_path(self, sorted_tasks: List[str], graph: Dict[str, Set[str]]) -> List[str]:
+    def _find_critical_path(self, _sorted_tasks: List[str], _graph: Dict[str, _Set[str]]) -> List[str]:
         """Find the critical path (longest dependency chain)."""
         if not sorted_tasks:
             return []
@@ -912,10 +902,10 @@ class CoordinatorAgent(AgentActor):
         longest_path: Dict[str, List[str]] = {task: [task] for task in sorted_tasks}
 
         for task_id in sorted_tasks:
-            deps = graph.get(task_id, set())
+            _deps = graph.get(task_id, set())
             for dep in deps:
                 if dep in longest_path:
-                    candidate_path = longest_path[dep] + [task_id]
+                    _candidate_path = longest_path[dep] + [task_id]
                     if len(candidate_path) > len(longest_path[task_id]):
                         longest_path[task_id] = candidate_path
 
@@ -929,7 +919,7 @@ class CoordinatorAgent(AgentActor):
     # Session 44: Collective Learning Integration Methods
     # =========================================================================
 
-    async def _emit_pattern(self, item_id: str, item_type: str, outcome: str, content: Dict[str, Any]) -> None:
+    async def _emit_pattern(self, _item_id: str, _item_type: str, _outcome: str, _content: Dict[str, _Any]) -> None:
         """Emit pattern for collective learning."""
         if not self.pattern_extractor:
             return
@@ -939,12 +929,12 @@ class CoordinatorAgent(AgentActor):
         
         try:
             await self.pattern_extractor.analyze_message(
-                message_id=f"{item_type}_{item_id}",
-                sender=self.agent_id,
-                recipient="broadcast",
-                message_type=f"{item_type}_completion",
-                content=content,
-                timestamp=datetime.now(timezone.utc).isoformat(),
+                _message_id = f"{item_type}_{item_id}",
+                _sender = self.agent_id,
+                _recipient = "broadcast",
+                _message_type = f"{item_type}_completion",
+                _content = content,
+                _timestamp = datetime.now(timezone.utc).isoformat(),
             )
             
             self._pattern_emitted.add(item_id)
@@ -952,15 +942,15 @@ class CoordinatorAgent(AgentActor):
         except Exception as e:
             logger.warning("failed_to_emit_pattern", item_id=item_id, error=str(e))
 
-    async def _consume_patterns(self, pattern_types: Optional[List[PatternType]] = None) -> List[Dict[str, Any]]:
+    async def _consume_patterns(self, _pattern_types: Optional[List[PatternType]]) -> List[Dict[str, Any]]:
         """Consume patterns from collective learning."""
         if not self.pattern_extractor:
             return []
         
         try:
-            patterns = await self.pattern_extractor.extract_patterns(
-                time_window_hours=24,
-                pattern_types=pattern_types or [PatternType.SUCCESS, PatternType.DECISION],
+            _patterns = await self.pattern_extractor.extract_patterns(
+                _time_window_hours = 24,
+                _pattern_types = pattern_types or [PatternType.SUCCESS, PatternType.DECISION],
             )
             return [p.to_dict() for p in patterns if p.metadata.confidence >= 0.7]
         except Exception as e:
@@ -971,24 +961,18 @@ class CoordinatorAgent(AgentActor):
     # Session 44: Consensus Deliberation Integration Methods
     # =========================================================================
 
-    async def _initiate_deliberation(
-        self,
-        item_id: str,
-        proposal: str,
-        participating_agents: List[str],
-        domain: str = "general",
-    ) -> Optional[str]:
+    async def _initiate_deliberation(self, _item_id: str, _proposal: str, _participating_agents: List[str], _domain: str) -> Optional[str]:
         """Initiate swarm deliberation."""
         if not self.deliberation_engine:
             return None
         
         try:
-            deliberation_id = f"delib_{item_id}"
+            _deliberation_id = f"delib_{item_id}"
             self.deliberation_engine.start_deliberation(
-                deliberation_id=deliberation_id,
-                proposal=proposal[:200],
-                participants=participating_agents,
-                domain=domain,
+                _deliberation_id = deliberation_id,
+                _proposal = proposal[:200],
+                _participants = participating_agents,
+                _domain = domain,
             )
             self._active_deliberations[item_id] = deliberation_id
             
@@ -998,35 +982,28 @@ class CoordinatorAgent(AgentActor):
             logger.error("failed_to_initiate_deliberation", item_id=item_id, error=str(e))
             return None
 
-    async def _submit_deliberation_position(
-        self,
-        item_id: str,
-        agent_id: str,
-        position: Position,
-        confidence: float,
-        argument: str,
-    ) -> bool:
+    async def _submit_deliberation_position(self, _item_id: str, _agent_id: str, _position: Position, _confidence: float, _argument: str) -> bool:
         """Submit agent position in deliberation."""
         if not self.deliberation_engine:
             return False
         
-        deliberation_id = self._active_deliberations.get(item_id)
+        _deliberation_id = self._active_deliberations.get(item_id)
         if not deliberation_id:
             return False
         
         try:
-            success = self.deliberation_engine.submit_position(
-                deliberation_id=deliberation_id,
+            _success = self.deliberation_engine.submit_position(
+                _deliberation_id = deliberation_id,
                 agent_id=agent_id,
-                position=position,
-                confidence=confidence,
-                argument=argument,
+                _position = position,
+                _confidence = confidence,
+                _argument = argument,
             )
             
             if success and self.access_analyzer:
                 self.access_analyzer.record_access(
-                    memory_id=f"delib_{deliberation_id}_{agent_id}",
-                    access_type="write",
+                    _memory_id = f"delib_{deliberation_id}_{agent_id}",
+                    _access_type = "write",
                     agent_id=agent_id,
                 )
             
@@ -1035,17 +1012,17 @@ class CoordinatorAgent(AgentActor):
             logger.error("failed_to_submit_deliberation_position", error=str(e))
             return False
 
-    async def _finalize_deliberation(self, item_id: str) -> Optional[Any]:
+    async def _finalize_deliberation(self, _item_id: str) -> Optional[Any]:
         """Finalize deliberation and apply result."""
         if not self.deliberation_engine:
             return None
         
-        deliberation_id = self._active_deliberations.get(item_id)
+        _deliberation_id = self._active_deliberations.get(item_id)
         if not deliberation_id:
             return None
         
         try:
-            result = self.deliberation_engine.finalize_deliberation(deliberation_id)
+            _result = self.deliberation_engine.finalize_deliberation(deliberation_id)
             
             if result:
                 self.deliberation_engine.cleanup_deliberation(deliberation_id)
@@ -1061,34 +1038,34 @@ class CoordinatorAgent(AgentActor):
     # Session 44: Memory Optimization Integration Methods
     # =========================================================================
 
-    def _track_memory_access(self, item_id: str, item_type: str, access_type: str = "read") -> None:
+    def _track_memory_access(self, _item_id: str, _item_type: str, _access_type: str) -> None:
         """Track memory access patterns."""
         if not self.access_analyzer:
             return
         
-        memory_id = f"{item_type}_{item_id}"
+        _memory_id = f"{item_type}_{item_id}"
         self.access_analyzer.record_access(
-            memory_id=memory_id,
-            access_type=access_type,
+            _memory_id = memory_id,
+            _access_type = access_type,
             agent_id=self.agent_id,
         )
 
-    def _get_memory_tier(self, item_id: str, item_type: str) -> AccessTier:
+    def _get_memory_tier(self, _item_id: str, _item_type: str) -> AccessTier:
         """Get memory tier classification."""
         if not self.access_analyzer:
             return AccessTier.COLD
         
-        memory_id = f"{item_type}_{item_id}"
-        profile = self.access_analyzer.get_profile(memory_id)
+        _memory_id = f"{item_type}_{item_id}"
+        _profile = self.access_analyzer.get_profile(memory_id)
         return profile.tier if profile else AccessTier.COLD
 
-    async def _prefetch_relevant(self, agent_id: str, item_type: str) -> List[str]:
+    async def _prefetch_relevant(self, _agent_id: str, _item_type: str) -> List[str]:
         """Prefetch items an agent is likely to need."""
         if not self.access_analyzer:
             return []
         
         try:
-            predicted_memories = self.access_analyzer.predict_agent_access(agent_id)
+            _predicted_memories = self.access_analyzer.predict_agent_access(agent_id)
             return [
                 mem.replace(f"{item_type}_", "")
                 for mem in predicted_memories
@@ -1116,19 +1093,14 @@ class CoordinatorAgent(AgentActor):
         }
 
 
-    async def _send_error(
-        self,
-        recipient: str,
-        error_message: str,
-        original_type: str,
-    ) -> None:
+    async def _send_error(self, _recipient: str, _error_message: str, _original_type: str) -> None:
         """Send error response."""
         await self.send(
             recipient,
             ActorMessage(
-                message_type="error",
-                content={"error": error_message, "original_type": original_type},
-                sender_id=self.agent_id,
+                _message_type = "error",
+                _content = {"error": error_message, "original_type": original_type},
+                _sender_id = self.agent_id,
             ),
         )
 

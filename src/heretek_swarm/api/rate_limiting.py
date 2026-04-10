@@ -20,7 +20,7 @@ from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 import structlog
 
-logger = structlog.get_logger(__name__)
+_logger = structlog.get_logger(__name__)
 
 # Try to import slowapi
 try:
@@ -30,7 +30,7 @@ try:
     SLOWAPI_AVAILABLE = True
 except ImportError:
     SLOWAPI_AVAILABLE = False
-    Limiter = None
+    _Limiter = None
     logger.warning("slowapi not installed - rate limiting disabled")
 
 
@@ -45,12 +45,7 @@ class InMemoryRateLimiter:
         self._requests: dict[str, list[float]] = {}
         self._lock = None  # Async lock for thread safety
     
-    async def is_allowed(
-        self,
-        key: str,
-        limit: int,
-        window_seconds: int,
-    ) -> tuple[bool, int, int]:
+    async def is_allowed(self, _key: str, _limit: int, _window_seconds: int) -> tuple[bool, int, int]:
         """
         Check if request is allowed.
         
@@ -67,8 +62,8 @@ class InMemoryRateLimiter:
             self._lock = asyncio.Lock()
         
         async with self._lock:
-            now = time.time()
-            window_start = now - window_seconds
+            _now = time.time()
+            _window_start = now - window_seconds
             
             # Get or create request list
             if key not in self._requests:
@@ -81,25 +76,25 @@ class InMemoryRateLimiter:
             ]
             
             # Check limit
-            current_count = len(self._requests[key])
+            _current_count = len(self._requests[key])
             
             if current_count >= limit:
                 # Calculate reset time
-                oldest = min(self._requests[key]) if self._requests[key] else now
-                reset_in = int(oldest + window_seconds - now)
+                _oldest = min(self._requests[key]) if self._requests[key] else now
+                _reset_in = int(oldest + window_seconds - now)
                 return False, 0, max(0, reset_in)
             
             # Record request
             self._requests[key].append(now)
-            remaining = limit - len(self._requests[key])
-            reset_in = window_seconds
+            _remaining = limit - len(self._requests[key])
+            _reset_in = window_seconds
             
             return True, remaining, reset_in
     
-    def cleanup_old(self, max_age_seconds: int = 3600):
+    def cleanup_old(self, _max_age_seconds: int):
         """Clean up old entries to prevent memory growth."""
-        now = time.time()
-        cutoff = now - max_age_seconds
+        _now = time.time()
+        _cutoff = now - max_age_seconds
         
         for key in list(self._requests.keys()):
             self._requests[key] = [
@@ -146,16 +141,16 @@ RATE_LIMITS = {
 }
 
 
-def get_client_ip(request: Request) -> str:
+def get_client_ip(_request: Request) -> str:
     """Extract client IP from request, handling proxies."""
     # Check X-Forwarded-For header (reverse proxy)
-    forwarded = request.headers.get("X-Forwarded-For")
+    _forwarded = request.headers.get("X-Forwarded-For")
     if forwarded:
         # Take first IP (original client)
         return forwarded.split(",")[0].strip()
     
     # Check X-Real-IP header
-    real_ip = request.headers.get("X-Real-IP")
+    _real_ip = request.headers.get("X-Real-IP")
     if real_ip:
         return real_ip
     
@@ -173,12 +168,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
     Falls back to in-memory limiting if slowapi unavailable.
     """
     
-    def __init__(
-        self,
-        app: FastAPI,
-        default_limit: str = "100/minute",
-        enabled: bool = True,
-    ):
+    def __init__(self, _app: FastAPI, _default_limit: str, _enabled: bool):
         super().__init__(app)
         self.default_limit = default_limit
         self.enabled = enabled
@@ -186,16 +176,16 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         # Parse default limit
         self._default_requests, self._default_window = self._parse_limit(default_limit)
     
-    def _parse_limit(self, limit: str) -> tuple[int, int]:
+    def _parse_limit(self, _limit: str) -> tuple[int, int]:
         """Parse rate limit string like '100/minute' into (requests, seconds)."""
-        parts = limit.split("/")
+        _parts = limit.split("/")
         if len(parts) != 2:
             return 100, 60
         
-        count = int(parts[0])
-        unit = parts[1].lower()
+        _count = int(parts[0])
+        _unit = parts[1].lower()
         
-        unit_seconds = {
+        _unit_seconds = {
             "second": 1,
             "seconds": 1,
             "minute": 60,
@@ -206,10 +196,10 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             "days": 86400,
         }
         
-        seconds = unit_seconds.get(unit, 60)
+        _seconds = unit_seconds.get(unit, 60)
         return count, seconds
     
-    def _get_limit_for_path(self, path: str) -> tuple[int, int]:
+    def _get_limit_for_path(self, _path: str) -> tuple[int, int]:
         """Get rate limit for a specific path."""
         # Exact match
         if path in RATE_LIMITS:
@@ -219,14 +209,14 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         for pattern, limit in RATE_LIMITS.items():
             if "{" in pattern:
                 # Convert pattern to simple prefix match
-                prefix = pattern.split("{")[0]
+                _prefix = pattern.split("{")[0]
                 if path.startswith(prefix):
                     return self._parse_limit(limit)
         
         # Default
         return self._default_requests, self._default_window
     
-    async def dispatch(self, request: Request, call_next: Callable) -> Response:
+    async def dispatch(self, _request: Request, _call_next: Callable) -> Response:
         """Process request with rate limiting."""
         if not self.enabled:
             return await call_next(request)
@@ -240,30 +230,30 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             return await call_next(request)
         
         # Get client IP
-        client_ip = get_client_ip(request)
+        _client_ip = get_client_ip(request)
         
         # Get limit for path
         limit, window = self._get_limit_for_path(request.url.path)
         
         # Check rate limit
         allowed, remaining, reset_in = await _memory_limiter.is_allowed(
-            key=f"{client_ip}:{request.url.path}",
+            _key = f"{client_ip}:{request.url.path}",
             limit=limit,
-            window_seconds=window,
+            _window_seconds = window,
         )
         
         if not allowed:
             logger.warning(
                 "rate_limit_exceeded",
-                client_ip=client_ip,
-                path=request.url.path,
+                _client_ip = client_ip,
+                _path = request.url.path,
                 limit=limit,
-                window=window,
+                _window = window,
             )
             
             return JSONResponse(
-                status_code=429,
-                content={
+                _status_code = 429,
+                _content = {
                     "error": "Rate limit exceeded",
                     "detail": f"Limit of {limit} requests per {window} seconds exceeded",
                     "retry_after": reset_in,
@@ -277,7 +267,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
             )
         
         # Process request
-        response = await call_next(request)
+        _response = await call_next(request)
         
         # Add rate limit headers
         response.headers["X-RateLimit-Limit"] = str(limit)
@@ -287,7 +277,7 @@ class RateLimitMiddleware(BaseHTTPMiddleware):
         return response
 
 
-def setup_rate_limiting(app: FastAPI, enabled: bool = True) -> None:
+def setup_rate_limiting(_app: FastAPI, _enabled: bool) -> None:
     """
     Setup rate limiting for FastAPI app.
     
@@ -302,19 +292,19 @@ def setup_rate_limiting(app: FastAPI, enabled: bool = True) -> None:
     if SLOWAPI_AVAILABLE:
         # Use slowapi for production
         limiter = Limiter(
-            key_func=get_remote_address,
-            default_limits=[RATE_LIMITS["default"]],
-            storage_uri=os.getenv("REDIS_URL", "memory://"),
+            _key_func = get_remote_address,
+            _default_limits = [RATE_LIMITS["default"]],
+            _storage_uri = os.getenv("REDIS_URL", "memory://"),
         )
         
         app.state.limiter = limiter
         
         # Add exception handler
         @app.exception_handler(RateLimitExceeded)
-        async def rate_limit_handler(request: Request, exc: RateLimitExceeded):
+        async def rate_limit_handler(_request: Request, _exc: RateLimitExceeded):
             return JSONResponse(
-                status_code=429,
-                content={
+                _status_code = 429,
+                _content = {
                     "error": "Rate limit exceeded",
                     "detail": str(exc.detail),
                 },
@@ -325,14 +315,14 @@ def setup_rate_limiting(app: FastAPI, enabled: bool = True) -> None:
         # Use in-memory middleware
         app.add_middleware(
             RateLimitMiddleware,
-            default_limit=RATE_LIMITS["default"],
-            enabled=True,
+            _default_limit = RATE_LIMITS["default"],
+            _enabled = True,
         )
         logger.info("rate_limiting_enabled", backend="memory")
 
 
 # Decorator for custom rate limits on endpoints
-def rate_limit(limit: str):
+def rate_limit(_limit: str):
     """
     Decorator to apply custom rate limit to an endpoint.
     
@@ -342,7 +332,7 @@ def rate_limit(limit: str):
         async def my_endpoint():
             ...
     """
-    def decorator(func):
+    def decorator(_func):
         func._rate_limit = limit
         return func
     return decorator

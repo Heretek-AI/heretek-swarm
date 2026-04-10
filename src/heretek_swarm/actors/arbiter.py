@@ -37,7 +37,7 @@ from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer, AccessTi
 # Session 44: Zero-Trust Validation
 from heretek_swarm.security.zero_trust import ZeroTrustValidator
 
-logger = structlog.get_logger("ArbiterAgent")
+_logger = structlog.get_logger("ArbiterAgent")
 
 
 class ConflictType(str, Enum):
@@ -140,27 +140,15 @@ class ArbiterAgent(AgentActor):
     healthy inter-agent relationships across the Collective.
     """
     
-    def __init__(
-        self,
-        agent_id: Optional[str] = None,
-        name: str = "Arbiter",
-        description: str = "Conflict Resolution & Dispute Mediation",
-        config: Optional[Dict[str, Any]] = None,
-        db_pool: Optional[Any] = None,
-        redis_client: Optional[Any] = None,
-        # Session 44: Integration components
-        pattern_extractor: Optional[PatternExtractor] = None,
-        deliberation_engine: Optional[SwarmDeliberationEngine] = None,
-        access_analyzer: Optional[AccessPatternAnalyzer] = None,
-        zero_trust_validator: Optional[ZeroTrustValidator] = None,
-    ):
+    def __init__(self, _agent_id: Optional[str], _name: str, _description: str, _config: Optional[Dict[str, _Any]], _db_pool: Optional[Any], _redis_client: Optional[Any], _# Session 44: Integration components
+        pattern_extractor: Optional[PatternExtractor], _deliberation_engine: Optional[SwarmDeliberationEngine], _access_analyzer: Optional[AccessPatternAnalyzer], _zero_trust_validator: Optional[ZeroTrustValidator]):
         super().__init__(
             agent_id=agent_id,
-            name=name,
+            _name = name,
             description=description,
-            config=config,
-            db_pool=db_pool,
-            redis_client=redis_client,
+            _config = config,
+            _db_pool = db_pool,
+            _redis_client = redis_client,
         )
         
         # Configuration
@@ -193,7 +181,7 @@ class ArbiterAgent(AgentActor):
         # Session 44: Consensus Integration
         # SwarmDeliberationEngine for multi-party dispute resolution
         self.deliberation_engine = deliberation_engine or SwarmDeliberationEngine(
-            max_rounds=5, consensus_threshold=0.75, min_participants=2
+            _max_rounds = 5, consensus_threshold=0.75, min_participants=2
         )
         
         # Session 44: Memory Optimization Integration
@@ -224,11 +212,11 @@ class ArbiterAgent(AgentActor):
         logger.info(
             "Arbiter Agent initialized",
             agent_id=self.agent_id,
-            auto_resolution=self._auto_resolution,
-            escalation_threshold=self._escalation_threshold,
+            _auto_resolution = self._auto_resolution,
+            _escalation_threshold = self._escalation_threshold,
         )
     
-    async def process_message(self, message: ActorMessage) -> None:
+    async def process_message(self, _message: ActorMessage) -> None:
         """
         Process incoming message with conflict resolution.
         
@@ -237,39 +225,39 @@ class ArbiterAgent(AgentActor):
         """
         try:
             # Session 44: Track memory access for this message processing
-            memory_id = f"arbiter_msg_{message.message_type}_{message.sender_id}"
+            _memory_id = f"arbiter_msg_{message.message_type}_{message.sender_id}"
             if self.access_analyzer:
                 self.access_analyzer.record_access(
-                    memory_id=memory_id,
-                    access_type="read",
+                    _memory_id = memory_id,
+                    _access_type = "read",
                     agent_id=self.agent_id,
                 )
             
             # Session 44: Zero-trust validation of incoming message
             if self.zero_trust_validator:
-                validation_result = self.zero_trust_validator.validate_message(message.content)
+                _validation_result = self.zero_trust_validator.validate_message(message.content)
                 if not validation_result.get("valid", True):
                     logger.warning(
                         "Zero-trust validation failed",
-                        message_type=message.message_type,
-                        reason=validation_result.get("reason", "unknown"),
+                        _message_type = message.message_type,
+                        _reason = validation_result.get("reason", "unknown"),
                     )
             
-            handler = self._message_handlers.get(message.message_type)
+            _handler = self._message_handlers.get(message.message_type)
             if handler:
                 await handler(message)
             else:
                 logger.warning(
                     "Unknown message type",
-                    message_type=message.message_type,
+                    _message_type = message.message_type,
                     sender=message.sender_id,
                 )
         except Exception as e:
             logger.error(
                 "Error processing message",
-                message_type=message.message_type,
-                error=str(e),
-                exc_info=True,
+                _message_type = message.message_type,
+                _error = str(e),
+                _exc_info = True,
             )
     
     def _register_handlers(self) -> None:
@@ -290,7 +278,7 @@ class ArbiterAgent(AgentActor):
             "register_interaction": self._handle_register_interaction,
         }
     
-    async def _handle_report_conflict(self, message: ActorMessage) -> None:
+    async def _handle_report_conflict(self, _message: ActorMessage) -> None:
         """
         Report an inter-agent conflict.
         
@@ -304,9 +292,9 @@ class ArbiterAgent(AgentActor):
         }
         """
         try:
-            content = message.content
-            conflict_type_str = content.get("conflict_type")
-            severity_str = content.get("severity", ConflictSeverity.MEDIUM.value)
+            _content = message.content
+            _conflict_type_str = content.get("conflict_type")
+            _severity_str = content.get("severity", ConflictSeverity.MEDIUM.value)
             parties = content.get("parties", [])
             description = content.get("description", "")
             context = content.get("context", {})
@@ -358,13 +346,13 @@ class ArbiterAgent(AgentActor):
             self._update_relationships_for_conflict(conflict)
             
             # Auto-resolution if enabled
-            resolution_result = None
+            _resolution_result = None
             if self._auto_resolution:
-                resolution_result = await self._attempt_auto_resolution(conflict)
+                _resolution_result = await self._attempt_auto_resolution(conflict)
             
             # LRU cleanup
             if len(self._conflict_history) > self._max_conflicts:
-                oldest = self._conflict_history.pop(0)
+                _oldest = self._conflict_history.pop(0)
                 self._conflicts.pop(oldest, None)
             
             logger.warning(
@@ -373,10 +361,10 @@ class ArbiterAgent(AgentActor):
                 conflict_type=conflict_type.value,
                 severity=severity.value,
                 parties=parties,
-                auto_resolution=resolution_result is not None,
+                _auto_resolution = resolution_result is not None,
             )
             
-            response_content = {
+            _response_content = {
                 "conflict_id": conflict_id,
                 "status": conflict.status.value,
                 "severity": severity.value,
@@ -394,7 +382,7 @@ class ArbiterAgent(AgentActor):
             logger.error("Error reporting conflict", error=str(e), exc_info=True)
             await self._send_error(message, "Conflict report failed", str(e))
     
-    async def _handle_request_arbitration(self, message: ActorMessage) -> None:
+    async def _handle_request_arbitration(self, _message: ActorMessage) -> None:
         """
         Request formal arbitration for a conflict.
         
@@ -407,12 +395,12 @@ class ArbiterAgent(AgentActor):
         }
         """
         try:
-            content = message.content
+            _content = message.content
             conflict_id = content.get("conflict_id")
             parties = content.get("parties", [])
-            dispute = content.get("dispute", "")
-            desired_outcome = content.get("desired_outcome")
-            urgency = content.get("urgency", "normal")
+            _dispute = content.get("dispute", "")
+            _desired_outcome = content.get("desired_outcome")
+            _urgency = content.get("urgency", "normal")
             
             # Validate
             validate_message({
@@ -446,9 +434,9 @@ class ArbiterAgent(AgentActor):
             self._pending_arbitrations[conflict_id].append(message.sender_id)
             
             # Check if all parties are present
-            all_parties_present = all(p in self._pending_arbitrations[conflict_id] for p in conflict.parties)
+            _all_parties_present = all(p in self._pending_arbitrations[conflict_id] for p in conflict.parties)
             
-            response_content = {
+            _response_content = {
                 "conflict_id": conflict_id,
                 "arbitration_status": "in_progress",
                 "parties_registered": len(self._pending_arbitrations[conflict_id]),
@@ -466,7 +454,7 @@ class ArbiterAgent(AgentActor):
             logger.error("Error requesting arbitration", error=str(e), exc_info=True)
             await self._send_error(message, "Arbitration request failed", str(e))
     
-    async def _handle_mediate_dispute(self, message: ActorMessage) -> None:
+    async def _handle_mediate_dispute(self, _message: ActorMessage) -> None:
         """
         Request mediation for a dispute.
         
@@ -478,11 +466,11 @@ class ArbiterAgent(AgentActor):
         }
         """
         try:
-            content = message.content
+            _content = message.content
             _ = content.get("conflict_id")  # Required for message contract
-            dispute_description = content.get("dispute_description", "")
-            other_party = content.get("other_party")
-            proposed_solution = content.get("proposed_solution")
+            _dispute_description = content.get("dispute_description", "")
+            _other_party = content.get("other_party")
+            _proposed_solution = content.get("proposed_solution")
             
             # Validate
             validate_message({
@@ -493,14 +481,14 @@ class ArbiterAgent(AgentActor):
                 })
 
                 # Perform mediation:
-            mediation_result = await self._conduct_mediation(
+            _mediation_result = await self._conduct_mediation(
                 sender=message.sender_id,
-                other_party=other_party,
-                dispute=dispute_description,
-                proposed_solution=proposed_solution,
+                _other_party = other_party,
+                _dispute = dispute_description,
+                _proposed_solution = proposed_solution,
             )
             
-            response_content = {
+            _response_content = {
                 "mediation_status": mediation_result["status"],
                 "resolution_achieved": mediation_result["resolved"],
                 "agreement": mediation_result.get("agreement"),
@@ -516,7 +504,7 @@ class ArbiterAgent(AgentActor):
             logger.error("Error mediating dispute", error=str(e), exc_info=True)
             await self._send_error(message, "Mediation failed", str(e))
     
-    async def _handle_resolve_contention(self, message: ActorMessage) -> None:
+    async def _handle_resolve_contention(self, _message: ActorMessage) -> None:
         """
         Resolve resource or task contention.
         
@@ -528,14 +516,14 @@ class ArbiterAgent(AgentActor):
         }
         """
         try:
-            content = message.content
-            contention_type = content.get("contention_type", "resource")
-            resource = content.get("resource")
-            competing_agents = content.get("competing_agents", [])
-            priority_override = content.get("priority_override", {})
+            _content = message.content
+            _contention_type = content.get("contention_type", "resource")
+            _resource = content.get("resource")
+            _competing_agents = content.get("competing_agents", [])
+            _priority_override = content.get("priority_override", {})
             
             # Validate
-            validated = validate_message({
+            _validated = validate_message({
                 "sender_id": message.sender_id,
                 "message_type": "resolve_contention",
                 "content": content,
@@ -545,22 +533,22 @@ class ArbiterAgent(AgentActor):
             # Resolve based on contention type
             if contention_type == "resource":
                 resolution = await self._resolve_resource_contention(
-                    resource=resource,
-                    competing_agents=competing_agents,
-                    priority_override=priority_override,
+                    _resource = resource,
+                    _competing_agents = competing_agents,
+                    _priority_override = priority_override,
                 )
             elif contention_type == "task":
                 resolution = await self._resolve_task_contention(
-                    competing_agents=competing_agents,
-                    priority_override=priority_override,
+                    _competing_agents = competing_agents,
+                    _priority_override = priority_override,
                 )
             else:
                 resolution = await self._resolve_generic_contention(
-                    contention_type=contention_type,
-                    competing_agents=competing_agents,
+                    _contention_type = contention_type,
+                    _competing_agents = competing_agents,
                 )
             
-            response_content = {
+            _response_content = {
                 "resolution": resolution,
                 "assigned_to": resolution.get("winner"),
                 "reasoning": resolution.get("reasoning"),
@@ -576,7 +564,7 @@ class ArbiterAgent(AgentActor):
             logger.error("Error resolving contention", error=str(e), exc_info=True)
             await self._send_error(message, "Contention resolution failed", str(e))
     
-    async def _handle_get_conflict_details(self, message: ActorMessage) -> None:
+    async def _handle_get_conflict_details(self, _message: ActorMessage) -> None:
         """
         Get detailed information about a specific conflict.
         
@@ -585,7 +573,7 @@ class ArbiterAgent(AgentActor):
         }
         """
         try:
-            content = message.content
+            _content = message.content
             conflict_id = content.get("conflict_id")
             
             if not conflict_id:
@@ -597,7 +585,7 @@ class ArbiterAgent(AgentActor):
                 await self._send_error(message, "Conflict not found", conflict_id)
                 return
             
-            response_content = {
+            _response_content = {
                 "conflict_id": conflict.conflict_id,
                 "conflict_type": conflict.conflict_type.value,
                 "severity": conflict.severity.value,
@@ -622,7 +610,7 @@ class ArbiterAgent(AgentActor):
             logger.error("Error getting conflict details", error=str(e), exc_info=True)
             await self._send_error(message, "Failed to get conflict details", str(e))
     
-    async def _handle_get_active_conflicts(self, message: ActorMessage) -> None:
+    async def _handle_get_active_conflicts(self, _message: ActorMessage) -> None:
         """
         Get all active (unresolved) conflicts.
         
@@ -633,12 +621,12 @@ class ArbiterAgent(AgentActor):
         }
         """
         try:
-            content = message.content
-            severity_filter = content.get("severity_filter")
-            party_filter = content.get("party_filter")
-            limit = content.get("limit", 100)
+            _content = message.content
+            _severity_filter = content.get("severity_filter")
+            _party_filter = content.get("party_filter")
+            _limit = content.get("limit", 100)
             
-            active_conflicts = [
+            _active_conflicts = [
                 c for c in self._conflicts.values()
                 if c.status not in [ResolutionStatus.RESOLVED, ResolutionStatus.FAILED]
             ]
@@ -646,15 +634,15 @@ class ArbiterAgent(AgentActor):
             # Apply filters
             if severity_filter:
                 try:
-                    min_severity = ConflictSeverity(severity_filter)
-                    severity_order = {
+                    _min_severity = ConflictSeverity(severity_filter)
+                    _severity_order = {
                         ConflictSeverity.LOW: 0,
                         ConflictSeverity.MEDIUM: 1,
                         ConflictSeverity.HIGH: 2,
                         ConflictSeverity.CRITICAL: 3,
                     }
-                    min_order = severity_order.get(min_severity, 0)
-                    active_conflicts = [
+                    _min_order = severity_order.get(min_severity, 0)
+                    _active_conflicts = [
                         c for c in active_conflicts
                         if severity_order.get(c.severity, 0) >= min_order
                     ]
@@ -662,27 +650,27 @@ class ArbiterAgent(AgentActor):
                     pass
             
             if party_filter:
-                active_conflicts = [
+                _active_conflicts = [
                     c for c in active_conflicts
                     if party_filter in c.parties
                 ]
             
             # Sort by severity
-            severity_order = {
+            _severity_order = {
                 ConflictSeverity.CRITICAL: 3,
                 ConflictSeverity.HIGH: 2,
                 ConflictSeverity.MEDIUM: 1,
                 ConflictSeverity.LOW: 0,
             }
             active_conflicts.sort(
-                key=lambda x: severity_order.get(x.severity, 0),
-                reverse=True,
+                _key = lambda x: severity_order.get(x.severity, 0),
+                _reverse = True,
             )
             
             # Apply limit
-            active_conflicts = active_conflicts[:limit]
+            _active_conflicts = active_conflicts[:limit]
             
-            response_content = {
+            _response_content = {
                 "active_conflicts_count": len(active_conflicts),
                 "conflicts": [
                     {
@@ -703,7 +691,7 @@ class ArbiterAgent(AgentActor):
             logger.error("Error getting active conflicts", error=str(e), exc_info=True)
             await self._send_error(message, "Failed to get active conflicts", str(e))
     
-    async def _handle_propose_resolution(self, message: ActorMessage) -> None:
+    async def _handle_propose_resolution(self, _message: ActorMessage) -> None:
         """
         Propose a resolution for a conflict.
         
@@ -715,11 +703,11 @@ class ArbiterAgent(AgentActor):
         }
         """
         try:
-            content = message.content
+            _content = message.content
             conflict_id = content.get("conflict_id")
-            resolution_strategy = content.get("resolution_strategy")
-            proposal = content.get("proposal", {})
-            rationale = content.get("rationale", "")
+            _resolution_strategy = content.get("resolution_strategy")
+            _proposal = content.get("proposal", {})
+            _rationale = content.get("rationale", "")
             
             if not conflict_id:
                 await self._send_error(message, "Missing conflict_id")
@@ -741,7 +729,7 @@ class ArbiterAgent(AgentActor):
             
             conflict.proposed_resolutions.append(proposed)
             
-            response_content = {
+            _response_content = {
                 "conflict_id": conflict_id,
                 "proposal_accepted": True,
                 "total_proposals": len(conflict.proposed_resolutions),
@@ -757,7 +745,7 @@ class ArbiterAgent(AgentActor):
             logger.error("Error proposing resolution", error=str(e), exc_info=True)
             await self._send_error(message, "Proposal failed", str(e))
     
-    async def _handle_accept_resolution(self, message: ActorMessage) -> None:
+    async def _handle_accept_resolution(self, _message: ActorMessage) -> None:
         """
         Accept a proposed resolution.
         
@@ -768,10 +756,10 @@ class ArbiterAgent(AgentActor):
         }
         """
         try:
-            content = message.content
+            _content = message.content
             conflict_id = content.get("conflict_id")
-            proposal_index = content.get("proposal_index", -1)
-            resolution_data = content.get("resolution_data")
+            _proposal_index = content.get("proposal_index", -1)
+            _resolution_data = content.get("resolution_data")
             
             if not conflict_id:
                 await self._send_error(message, "Missing conflict_id")
@@ -803,7 +791,7 @@ class ArbiterAgent(AgentActor):
             # Update relationships
             self._update_relationships_for_resolution(conflict)
             
-            response_content = {
+            _response_content = {
                 "conflict_id": conflict_id,
                 "resolution_accepted": True,
                 "status": ResolutionStatus.RESOLVED.value,
@@ -819,7 +807,7 @@ class ArbiterAgent(AgentActor):
             logger.error("Error accepting resolution", error=str(e), exc_info=True)
             await self._send_error(message, "Acceptance failed", str(e))
     
-    async def _handle_get_relationship_status(self, message: ActorMessage) -> None:
+    async def _handle_get_relationship_status(self, _message: ActorMessage) -> None:
         """
         Get relationship status between two agents.
         
@@ -829,7 +817,7 @@ class ArbiterAgent(AgentActor):
         }
         """
         try:
-            content = message.content
+            _content = message.content
             agent_a = content.get("agent_a")
             agent_b = content.get("agent_b")
             
@@ -838,18 +826,18 @@ class ArbiterAgent(AgentActor):
                 return
             
             # Normalize key (alphabetically ordered)
-            key = tuple(sorted([agent_a, agent_b]))
-            relationship = self._relationships.get(key)
+            _key = tuple(sorted([agent_a, agent_b]))
+            _relationship = self._relationships.get(key)
             
             if not relationship:
-                response_content = {
+                _response_content = {
                     "agent_a": agent_a,
                     "agent_b": agent_b,
                     "relationship_exists": False,
                     "health_score": 0.5,  # Default neutral
                 }
             else:
-                response_content = {
+                _response_content = {
                     "agent_a": relationship.agent_a,
                     "agent_b": relationship.agent_b,
                     "health_score": relationship.health_score,
@@ -870,7 +858,7 @@ class ArbiterAgent(AgentActor):
             logger.error("Error getting relationship status", error=str(e), exc_info=True)
             await self._send_error(message, "Failed to get relationship status", str(e))
     
-    async def _handle_get_relationship_health(self, message: ActorMessage) -> None:
+    async def _handle_get_relationship_health(self, _message: ActorMessage) -> None:
         """
         Get overall relationship health across the Collective.
         
@@ -879,18 +867,18 @@ class ArbiterAgent(AgentActor):
         }
         """
         try:
-            content = message.content
-            include_details = content.get("include_details", False)
+            _content = message.content
+            _include_details = content.get("include_details", False)
             
             # Calculate aggregate health
             if self._relationships:
-                avg_health = sum(r.health_score for r in self._relationships.values()) / len(self._relationships)
-                avg_trust = sum(r.trust_level for r in self._relationships.values()) / len(self._relationships)
+                _avg_health = sum(r.health_score for r in self._relationships.values()) / len(self._relationships)
+                _avg_trust = sum(r.trust_level for r in self._relationships.values()) / len(self._relationships)
             else:
-                avg_health = 1.0
-                avg_trust = 1.0
+                _avg_health = 1.0
+                _avg_trust = 1.0
             
-            response_content = {
+            _response_content = {
                 "total_relationships": len(self._relationships),
                 "average_health_score": avg_health,
                 "average_trust_level": avg_trust,
@@ -917,7 +905,7 @@ class ArbiterAgent(AgentActor):
             logger.error("Error getting relationship health", error=str(e), exc_info=True)
             await self._send_error(message, "Relationship health check failed", str(e))
     
-    async def _handle_update_relationship(self, message: ActorMessage) -> None:
+    async def _handle_update_relationship(self, _message: ActorMessage) -> None:
         """
         Update relationship metrics based on interaction.
         
@@ -929,23 +917,23 @@ class ArbiterAgent(AgentActor):
         }
         """
         try:
-            content = message.content
-            other_agent = content.get("other_agent")
-            interaction_type = content.get("interaction_type", "neutral")
-            outcome = content.get("outcome", "neutral")
-            trust_delta = content.get("trust_delta", 0.0)
+            _content = message.content
+            _other_agent = content.get("other_agent")
+            _interaction_type = content.get("interaction_type", "neutral")
+            _outcome = content.get("outcome", "neutral")
+            _trust_delta = content.get("trust_delta", 0.0)
             
             if not other_agent:
                 await self._send_error(message, "Missing other_agent")
                 return
             
             # Get or create relationship
-            key = tuple(sorted([message.sender_id, other_agent]))
+            _key = tuple(sorted([message.sender_id, other_agent]))
             
             if key not in self._relationships:
                 self._relationships[key] = Relationship(
-                    agent_a=key[0],
-                    agent_b=key[1],
+                    _agent_a = key[0],
+                    _agent_b = key[1],
                     health_score=0.7,  # Start slightly positive
                     interaction_count=0,
                     conflict_count=0,
@@ -954,7 +942,7 @@ class ArbiterAgent(AgentActor):
                     trust_level=0.5,  # Start neutral
                 )
             
-            relationship = self._relationships[key]
+            _relationship = self._relationships[key]
             
             # Update metrics
             relationship.interaction_count += 1
@@ -973,7 +961,7 @@ class ArbiterAgent(AgentActor):
             # Apply decay to health score
             relationship.health_score = max(0.0, relationship.health_score - self._relationship_decay)
             
-            response_content = {
+            _response_content = {
                 "relationship_updated": True,
                 "health_score": relationship.health_score,
                 "trust_level": relationship.trust_level,
@@ -989,7 +977,7 @@ class ArbiterAgent(AgentActor):
             logger.error("Error updating relationship", error=str(e), exc_info=True)
             await self._send_error(message, "Relationship update failed", str(e))
     
-    async def _handle_get_arbitration_report(self, message: ActorMessage) -> None:
+    async def _handle_get_arbitration_report(self, _message: ActorMessage) -> None:
         """
         Generate comprehensive arbitration report.
         
@@ -999,39 +987,39 @@ class ArbiterAgent(AgentActor):
         }
         """
         try:
-            content = message.content
-            time_range = content.get("time_range", "24h")
-            include_recommendations = content.get("include_recommendations", True)
+            _content = message.content
+            _time_range = content.get("time_range", "24h")
+            _include_recommendations = content.get("include_recommendations", True)
             
             # Calculate statistics
-            active_conflicts = len([
+            _active_conflicts = len([
                 c for c in self._conflicts.values()
                 if c.status not in [ResolutionStatus.RESOLVED, ResolutionStatus.FAILED]
             ])
-            resolved_conflicts = len([
+            _resolved_conflicts = len([
                 c for c in self._conflicts.values()
                 if c.status == ResolutionStatus.RESOLVED
             ])
-            failed_resolutions = len([
+            _failed_resolutions = len([
                 c for c in self._conflicts.values()
                 if c.status == ResolutionStatus.FAILED
             ])
             
-            conflicts_by_type = dict(self._stats["conflicts_by_type"])
-            conflicts_by_severity = dict(self._stats["conflicts_by_severity"])
+            _conflicts_by_type = dict(self._stats["conflicts_by_type"])
+            _conflicts_by_severity = dict(self._stats["conflicts_by_severity"])
             
             # Relationship health summary
-            relationship_health = {
+            _relationship_health = {
                 f"{r.agent_a}-{r.agent_b}": r.health_score
                 for r in self._relationships.values()
             }
             
             # Generate recommendations
-            recommendations = []
+            _recommendations = []
             if include_recommendations:
-                recommendations = self._generate_recommendations()
+                _recommendations = self._generate_recommendations()
             
-            report = {
+            _report = {
                 "report_id": f"arb_report_{datetime.now(timezone.utc).timestamp()}",
                 "timestamp": datetime.now(timezone.utc).isoformat(),
                 "time_range": time_range,
@@ -1057,7 +1045,7 @@ class ArbiterAgent(AgentActor):
             logger.error("Error generating arbitration report", error=str(e), exc_info=True)
             await self._send_error(message, "Report generation failed", str(e))
     
-    async def _handle_register_interaction(self, message: ActorMessage) -> None:
+    async def _handle_register_interaction(self, _message: ActorMessage) -> None:
         """
         Register an inter-agent interaction for relationship tracking.
         
@@ -1069,23 +1057,23 @@ class ArbiterAgent(AgentActor):
         }
         """
         try:
-            content = message.content
-            other_agent = content.get("other_agent")
-            interaction_type = content.get("interaction_type", "communication")
-            outcome = content.get("outcome", "neutral")
-            success = content.get("success", True)
+            _content = message.content
+            _other_agent = content.get("other_agent")
+            _interaction_type = content.get("interaction_type", "communication")
+            _outcome = content.get("outcome", "neutral")
+            _success = content.get("success", True)
             
             if not other_agent:
                 await self._send_error(message, "Missing other_agent")
                 return
             
             # Update relationship
-            key = tuple(sorted([message.sender_id, other_agent]))
+            _key = tuple(sorted([message.sender_id, other_agent]))
             
             if key not in self._relationships:
                 self._relationships[key] = Relationship(
-                    agent_a=key[0],
-                    agent_b=key[1],
+                    _agent_a = key[0],
+                    _agent_b = key[1],
                     health_score=0.7,
                     interaction_count=0,
                     conflict_count=0,
@@ -1094,7 +1082,7 @@ class ArbiterAgent(AgentActor):
                     trust_level=0.5,
                 )
             
-            relationship = self._relationships[key]
+            _relationship = self._relationships[key]
             relationship.interaction_count += 1
             relationship.last_interaction = datetime.now(timezone.utc)
             
@@ -1103,7 +1091,7 @@ class ArbiterAgent(AgentActor):
                 relationship.health_score = min(1.0, relationship.health_score + 0.02)
                 relationship.trust_level = min(1.0, relationship.trust_level + 0.01)
             
-            response_content = {
+            _response_content = {
                 "interaction_registered": True,
                 "relationship_health": relationship.health_score,
                 "trust_level": relationship.trust_level,
@@ -1122,48 +1110,48 @@ class ArbiterAgent(AgentActor):
         """Generate unique conflict ID."""
         import hashlib
         timestamp = datetime.now(timezone.utc).timestamp()
-        random_suffix = hashlib.sha256(str(timestamp).encode()).hexdigest()[:8]
+        _random_suffix = hashlib.sha256(str(timestamp).encode()).hexdigest()[:8]
         return f"CONFLICT_{int(timestamp)}_{random_suffix}"
     
-    def _update_relationships_for_conflict(self, conflict: Conflict) -> None:
+    def _update_relationships_for_conflict(self, _conflict: Conflict) -> None:
         """Update relationship records when a conflict is reported."""
         # Decrement health for all party pairs
         for i, party_a in enumerate(conflict.parties):
             for party_b in conflict.parties[i+1:]:
-                key = tuple(sorted([party_a, party_b]))
+                _key = tuple(sorted([party_a, party_b]))
                 
                 if key not in self._relationships:
                     self._relationships[key] = Relationship(
-                        agent_a=key[0],
-                        agent_b=key[1],
+                        _agent_a = key[0],
+                        _agent_b = key[1],
                         health_score=0.7,
-                        interaction_count=0,
+                        _interaction_count = 0,
                         conflict_count=0,
-                        cooperation_count=0,
-                        last_interaction=datetime.now(timezone.utc),
+                        _cooperation_count = 0,
+                        _last_interaction = datetime.now(timezone.utc),
                         trust_level=0.5,
                     )
                 
-                relationship = self._relationships[key]
+                _relationship = self._relationships[key]
                 relationship.conflict_count += 1
                 relationship.health_score = max(0.0, relationship.health_score - 0.1)
                 relationship.trust_level = max(0.0, relationship.trust_level - 0.05)
     
-    def _update_relationships_for_resolution(self, conflict: Conflict) -> None:
+    def _update_relationships_for_resolution(self, _conflict: Conflict) -> None:
         """Update relationship records when a conflict is resolved."""
         for i, party_a in enumerate(conflict.parties):
             for party_b in conflict.parties[i+1:]:
-                key = tuple(sorted([party_a, party_b]))
+                _key = tuple(sorted([party_a, party_b]))
                 
                 if key in self._relationships:
-                    relationship = self._relationships[key]
+                    _relationship = self._relationships[key]
                     relationship.health_score = min(1.0, relationship.health_score + 0.1)
                     relationship.trust_level = min(1.0, relationship.trust_level + 0.05)
     
-    async def _attempt_auto_resolution(self, conflict: Conflict) -> Optional[Dict[str, Any]]:
+    async def _attempt_auto_resolution(self, _conflict: Conflict) -> Optional[Dict[str, Any]]:
         """Attempt automatic resolution based on conflict type and severity."""
         # Select strategy based on conflict type
-        strategy_map = {
+        _strategy_map = {
             ConflictType.RESOURCE_CONTENTION: ResolutionStrategy.RESOURCE_POOLING,
             ConflictType.TASK_OVERLAP: ResolutionStrategy.TASK_REASSIGNMENT,
             ConflictType.PRIORITY_DISPUTE: ResolutionStrategy.PRIORITY_BASED,
@@ -1176,7 +1164,7 @@ class ArbiterAgent(AgentActor):
             ConflictType.DEADLOCK: ResolutionStrategy.ESCALATION,
         }
         
-        strategy = strategy_map.get(conflict.conflict_type, ResolutionStrategy.MEDIATION)
+        _strategy = strategy_map.get(conflict.conflict_type, ResolutionStrategy.MEDIATION)
         
         # Skip auto-resolution for critical conflicts
         if conflict.severity == ConflictSeverity.CRITICAL:
@@ -1184,15 +1172,15 @@ class ArbiterAgent(AgentActor):
         
         # Execute resolution strategy
         if strategy in self._resolution_strategies:
-            result = await self._resolution_strategies[strategy](conflict)
+            _result = await self._resolution_strategies[strategy](conflict)
             return result
         
         return None
     
-    async def _resolve_negotiation(self, conflict: Conflict) -> Dict[str, Any]:
+    async def _resolve_negotiation(self, _conflict: Conflict) -> Dict[str, Any]:
         """Negotiation-based resolution."""
         # Generate compromise proposal
-        proposal = {
+        _proposal = {
             "strategy": "negotiation",
             "approach": "find_common_ground",
             "suggested_compromise": "Equal resource sharing with time-boxed access",
@@ -1200,9 +1188,9 @@ class ArbiterAgent(AgentActor):
         conflict.proposed_resolutions.append(proposal)
         return {"status": "proposal_generated", "strategy": "negotiation"}
     
-    async def _resolve_mediation(self, conflict: Conflict) -> Dict[str, Any]:
+    async def _resolve_mediation(self, _conflict: Conflict) -> Dict[str, Any]:
         """Mediation-based resolution."""
-        proposal = {
+        _proposal = {
             "strategy": "mediation",
             "approach": "facilitated_dialogue",
             "mediator_notes": "Parties encouraged to find mutually beneficial solution",
@@ -1210,7 +1198,7 @@ class ArbiterAgent(AgentActor):
         conflict.proposed_resolutions.append(proposal)
         return {"status": "mediation_initiated", "strategy": "mediation"}
     
-    async def _resolve_arbitration(self, conflict: Conflict) -> Dict[str, Any]:
+    async def _resolve_arbitration(self, _conflict: Conflict) -> Dict[str, Any]:
         """
         Arbitration-based resolution (binding decision).
         
@@ -1218,7 +1206,7 @@ class ArbiterAgent(AgentActor):
         and memory access tracking.
         """
         # Make binding decision based on evidence
-        decision = {
+        _decision = {
             "strategy": "arbitration",
             "binding": True,
             "decision": "Based on evidence, ruling in favor of party with stronger justification",
@@ -1236,10 +1224,10 @@ class ArbiterAgent(AgentActor):
         
         return {"status": "arbitration_complete", "decision": decision}
     
-    async def _resolve_priority_based(self, conflict: Conflict) -> Dict[str, Any]:
+    async def _resolve_priority_based(self, _conflict: Conflict) -> Dict[str, Any]:
         """Priority-based resolution."""
         # Assign based on priority (would need priority data from context)
-        proposal = {
+        _proposal = {
             "strategy": "priority_based",
             "approach": "assign_to_highest_priority",
             "note": "Priority data required from parties",
@@ -1247,9 +1235,9 @@ class ArbiterAgent(AgentActor):
         conflict.proposed_resolutions.append(proposal)
         return {"status": "priority_check_required", "strategy": "priority_based"}
     
-    async def _resolve_round_robin(self, conflict: Conflict) -> Dict[str, Any]:
+    async def _resolve_round_robin(self, _conflict: Conflict) -> Dict[str, Any]:
         """Round-robin resource allocation."""
-        proposal = {
+        _proposal = {
             "strategy": "round_robin",
             "approach": "alternating_access",
             "schedule": "Equal time slices with rotation",
@@ -1257,9 +1245,9 @@ class ArbiterAgent(AgentActor):
         conflict.proposed_resolutions.append(proposal)
         return {"status": "round_robin_proposed", "strategy": "round_robin"}
     
-    async def _resolve_resource_pooling(self, conflict: Conflict) -> Dict[str, Any]:
+    async def _resolve_resource_pooling(self, _conflict: Conflict) -> Dict[str, Any]:
         """Resource pooling resolution."""
-        proposal = {
+        _proposal = {
             "strategy": "resource_pooling",
             "approach": "shared_resource_pool",
             "allocation_method": "dynamic_based_on_need",
@@ -1267,9 +1255,9 @@ class ArbiterAgent(AgentActor):
         conflict.proposed_resolutions.append(proposal)
         return {"status": "pooling_proposed", "strategy": "resource_pooling"}
     
-    async def _resolve_task_reassignment(self, conflict: Conflict) -> Dict[str, Any]:
+    async def _resolve_task_reassignment(self, _conflict: Conflict) -> Dict[str, Any]:
         """Task reassignment resolution."""
-        proposal = {
+        _proposal = {
             "strategy": "task_reassignment",
             "approach": "redistribute_tasks",
             "note": "Task boundaries to be clarified",
@@ -1277,15 +1265,15 @@ class ArbiterAgent(AgentActor):
         conflict.proposed_resolutions.append(proposal)
         return {"status": "reassignment_proposed", "strategy": "task_reassignment"}
     
-    async def _resolve_escalation(self, conflict: Conflict) -> Dict[str, Any]:
+    async def _resolve_escalation(self, _conflict: Conflict) -> Dict[str, Any]:
         """Escalation to higher authority."""
         conflict.status = ResolutionStatus.ESCALATED
         self._stats["resolutions_escalated"] += 1
         return {"status": "escalated", "strategy": "escalation", "escalated_to": "supervisor"}
     
-    async def _resolve_compromise(self, conflict: Conflict) -> Dict[str, Any]:
+    async def _resolve_compromise(self, _conflict: Conflict) -> Dict[str, Any]:
         """Compromise-based resolution."""
-        proposal = {
+        _proposal = {
             "strategy": "compromise",
             "approach": "mutual_concessions",
             "suggested_terms": "Each party concedes on lower-priority items",
@@ -1293,9 +1281,9 @@ class ArbiterAgent(AgentActor):
         conflict.proposed_resolutions.append(proposal)
         return {"status": "compromise_proposed", "strategy": "compromise"}
     
-    async def _resolve_consensus_vote(self, conflict: Conflict) -> Dict[str, Any]:
+    async def _resolve_consensus_vote(self, _conflict: Conflict) -> Dict[str, Any]:
         """Consensus vote resolution."""
-        proposal = {
+        _proposal = {
             "strategy": "consensus_vote",
             "approach": "majority_decision",
             "voting_parties": conflict.parties,
@@ -1303,18 +1291,12 @@ class ArbiterAgent(AgentActor):
         conflict.proposed_resolutions.append(proposal)
         return {"status": "vote_scheduled", "strategy": "consensus_vote"}
     
-    async def _conduct_mediation(
-        self,
-        sender: str,
-        other_party: str,
-        dispute: str,
-        proposed_solution: Optional[str] = None,
-    ) -> Dict[str, Any]:
+    async def _conduct_mediation(self, _sender: str, _other_party: str, _dispute: str, _proposed_solution: Optional[str]) -> Dict[str, Any]:
         """Conduct mediation between two parties."""
         # Check if other party is available
         # In a real implementation, this would message the other party
         
-        mediation_result = {
+        _mediation_result = {
             "status": "mediation_complete",
             "resolved": False,
             "agreement": None,
@@ -1335,7 +1317,7 @@ class ArbiterAgent(AgentActor):
             ]
         else:
             # Generate mediated solution
-            mediated_solution = f"Both parties agree to cooperate on: {dispute}"
+            _mediated_solution = f"Both parties agree to cooperate on: {dispute}"
             mediation_result["resolved"] = True
             mediation_result["agreement"] = {
                 "solution": mediated_solution,
@@ -1344,25 +1326,20 @@ class ArbiterAgent(AgentActor):
             }
         
         # Update relationship
-        key = tuple(sorted([sender, other_party]))
+        _key = tuple(sorted([sender, other_party]))
         if key in self._relationships:
             self._relationships[key].health_score = min(1.0, self._relationships[key].health_score + 0.1)
         
         return mediation_result
     
-    async def _resolve_resource_contention(
-        self,
-        resource: Optional[str],
-        competing_agents: List[str],
-        priority_override: Dict[str, int],
-    ) -> Dict[str, Any]:
+    async def _resolve_resource_contention(self, _resource: Optional[str], _competing_agents: List[str], _priority_override: Dict[str, _int]) -> Dict[str, Any]:
         """Resolve contention over a resource."""
         if not competing_agents:
             return {"winner": None, "reasoning": "No competing agents"}
         
         # Use priority if available
         if priority_override:
-            winner = max(competing_agents, key=lambda a: priority_override.get(a, 0))
+            _winner = max(competing_agents, key=lambda a: priority_override.get(a, 0))
             return {
                 "winner": winner,
                 "reasoning": "Highest priority agent selected",
@@ -1370,7 +1347,7 @@ class ArbiterAgent(AgentActor):
             }
         
         # Default: first agent gets resource (could be improved with more sophisticated logic)
-        winner = competing_agents[0]
+        _winner = competing_agents[0]
         return {
             "winner": winner,
             "reasoning": "First-come-first-served (no priority data)",
@@ -1378,11 +1355,7 @@ class ArbiterAgent(AgentActor):
             "suggestion": "Implement priority-based allocation for better fairness",
         }
     
-    async def _resolve_task_contention(
-        self,
-        competing_agents: List[str],
-        priority_override: Dict[str, int],
-    ) -> Dict[str, Any]:
+    async def _resolve_task_contention(self, _competing_agents: List[str], _priority_override: Dict[str, _int]) -> Dict[str, Any]:
         """Resolve contention over task ownership."""
         if not competing_agents:
             return {"assigned_to": None, "reasoning": "No competing agents"}
@@ -1397,11 +1370,7 @@ class ArbiterAgent(AgentActor):
             ],
         }
     
-    async def _resolve_generic_contention(
-        self,
-        contention_type: str,
-        competing_agents: List[str],
-    ) -> Dict[str, Any]:
+    async def _resolve_generic_contention(self, _contention_type: str, _competing_agents: List[str]) -> Dict[str, Any]:
         """Resolve generic contention."""
         return {
             "contention_type": contention_type,
@@ -1410,9 +1379,9 @@ class ArbiterAgent(AgentActor):
             "next_step": "Schedule mediation session",
         }
     
-    def _get_next_steps(self, conflict: Conflict) -> List[str]:
+    def _get_next_steps(self, _conflict: Conflict) -> List[str]:
         """Get recommended next steps for a conflict."""
-        steps = []
+        _steps = []
         
         if conflict.status == ResolutionStatus.PENDING:
             steps.append("Awaiting auto-resolution or manual intervention")
@@ -1436,7 +1405,7 @@ class ArbiterAgent(AgentActor):
         Session 44: Enhanced with collective learning pattern analysis
         and memory access pattern insights.
         """
-        recommendations = []
+        _recommendations = []
         
         # Check conflict volume
         if self._stats["total_conflicts"] > 50:
@@ -1451,7 +1420,7 @@ class ArbiterAgent(AgentActor):
             )
         
         # Check relationship health
-        unhealthy_relationships = [
+        _unhealthy_relationships = [
             r for r in self._relationships.values()
             if r.health_score < 0.3
         ]
@@ -1462,9 +1431,9 @@ class ArbiterAgent(AgentActor):
         
         # Session 44: Add collective learning insights
         if self.pattern_extractor:
-            validated_patterns = self.pattern_extractor.get_validated_patterns(
-                pattern_type=PatternType.FAILURE,
-                min_confidence=0.5,
+            _validated_patterns = self.pattern_extractor.get_validated_patterns(
+                _pattern_type = PatternType.FAILURE,
+                _min_confidence = 0.5,
             )
             if validated_patterns:
                 recommendations.append(
@@ -1473,7 +1442,7 @@ class ArbiterAgent(AgentActor):
         
         # Session 44: Add memory optimization insights
         if self.access_analyzer:
-            stats = self.access_analyzer.get_statistics()
+            _stats = self.access_analyzer.get_statistics()
             if stats.frozen_count > stats.unique_memories * 0.5:
                 recommendations.append(
                     f"High frozen memory ratio ({stats.frozen_count}/{stats.unique_memories}) - consider archive cleanup"
@@ -1488,7 +1457,7 @@ class ArbiterAgent(AgentActor):
     # Session 44: Collective Learning Integration Methods
     # =========================================================================
 
-    async def _emit_conflict_pattern(self, conflict: Conflict, outcome: str) -> None:
+    async def _emit_conflict_pattern(self, _conflict: Conflict, _outcome: str) -> None:
         """
         Emit pattern for collective learning when conflict is resolved.
         
@@ -1506,18 +1475,18 @@ class ArbiterAgent(AgentActor):
         try:
             # Analyze conflict resolution as a pattern
             await self.pattern_extractor.analyze_message(
-                message_id=f"conflict_{conflict.conflict_id}",
-                sender=self.agent_id,
-                recipient="broadcast",
-                message_type="conflict_resolution",
-                content={
+                _message_id = f"conflict_{conflict.conflict_id}",
+                _sender = self.agent_id,
+                _recipient = "broadcast",
+                _message_type = "conflict_resolution",
+                _content = {
                     "conflict_type": conflict.conflict_type.value,
                     "severity": conflict.severity.value,
                     "parties": conflict.parties,
                     "outcome": outcome,
                     "resolution_strategy": conflict.selected_resolution.get("strategy") if conflict.selected_resolution else None,
                 },
-                timestamp=conflict.timestamp.isoformat(),
+                _timestamp = conflict.timestamp.isoformat(),
             )
             
             self._pattern_emitted_conflicts.add(conflict.conflict_id)
@@ -1525,13 +1494,13 @@ class ArbiterAgent(AgentActor):
             logger.info(
                 "conflict_pattern_emitted",
                 conflict_id=conflict.conflict_id,
-                outcome=outcome,
+                _outcome = outcome,
             )
         except Exception as e:
             logger.warning(
                 "failed_to_emit_conflict_pattern",
                 conflict_id=conflict.conflict_id,
-                error=str(e),
+                _error = str(e),
             )
 
     async def _consume_resolution_patterns(self) -> List[Dict[str, Any]]:
@@ -1546,9 +1515,9 @@ class ArbiterAgent(AgentActor):
         
         try:
             # Extract patterns from recent history
-            patterns = await self.pattern_extractor.extract_patterns(
-                time_window_hours=24,
-                pattern_types=[PatternType.SUCCESS, PatternType.HANDOFF, PatternType.DECISION],
+            _patterns = await self.pattern_extractor.extract_patterns(
+                _time_window_hours = 24,
+                _pattern_types = [PatternType.SUCCESS, PatternType.HANDOFF, PatternType.DECISION],
             )
             
             # Return high-confidence patterns for resolution guidance
@@ -1559,7 +1528,7 @@ class ArbiterAgent(AgentActor):
         except Exception as e:
             logger.warning(
                 "failed_to_consume_patterns",
-                error=str(e),
+                _error = str(e),
             )
             return []
 
@@ -1567,11 +1536,7 @@ class ArbiterAgent(AgentActor):
     # Session 44: Consensus Deliberation Integration Methods
     # =========================================================================
 
-    async def _initiate_deliberation_for_conflict(
-        self,
-        conflict: Conflict,
-        participating_agents: List[str],
-    ) -> Optional[str]:
+    async def _initiate_deliberation_for_conflict(self, _conflict: Conflict, _participating_agents: List[str]) -> Optional[str]:
         """
         Initiate swarm deliberation for complex conflict resolution.
         
@@ -1586,14 +1551,14 @@ class ArbiterAgent(AgentActor):
             return None
         
         try:
-            deliberation_id = f"delib_{conflict.conflict_id}"
+            _deliberation_id = f"delib_{conflict.conflict_id}"
             
             # Start deliberation with conflict domain
             self.deliberation_engine.start_deliberation(
-                deliberation_id=deliberation_id,
-                proposal=f"Resolve conflict: {conflict.description[:100]}",
-                participants=participating_agents,
-                domain="conflict_resolution",
+                _deliberation_id = deliberation_id,
+                _proposal = f"Resolve conflict: {conflict.description[:100]}",
+                _participants = participating_agents,
+                _domain = "conflict_resolution",
             )
             
             # Store mapping
@@ -1601,9 +1566,9 @@ class ArbiterAgent(AgentActor):
             
             logger.info(
                 "deliberation_initiated",
-                deliberation_id=deliberation_id,
+                _deliberation_id = deliberation_id,
                 conflict_id=conflict.conflict_id,
-                participants=len(participating_agents),
+                _participants = len(participating_agents),
             )
             
             return deliberation_id
@@ -1611,18 +1576,11 @@ class ArbiterAgent(AgentActor):
             logger.error(
                 "failed_to_initiate_deliberation",
                 conflict_id=conflict.conflict_id,
-                error=str(e),
+                _error = str(e),
             )
             return None
 
-    async def _submit_deliberation_position(
-        self,
-        conflict: Conflict,
-        agent_id: str,
-        position: Position,
-        confidence: float,
-        argument: str,
-    ) -> bool:
+    async def _submit_deliberation_position(self, _conflict: Conflict, _agent_id: str, _position: Position, _confidence: float, _argument: str) -> bool:
         """
         Submit agent position in conflict deliberation.
         
@@ -1639,25 +1597,25 @@ class ArbiterAgent(AgentActor):
         if not self.deliberation_engine:
             return False
         
-        deliberation_id = self._active_deliberations.get(conflict.conflict_id)
+        _deliberation_id = self._active_deliberations.get(conflict.conflict_id)
         if not deliberation_id:
             return False
         
         try:
-            success = self.deliberation_engine.submit_position(
-                deliberation_id=deliberation_id,
+            _success = self.deliberation_engine.submit_position(
+                _deliberation_id = deliberation_id,
                 agent_id=agent_id,
-                position=position,
-                confidence=confidence,
-                argument=argument,
+                _position = position,
+                _confidence = confidence,
+                _argument = argument,
             )
             
             if success:
                 # Track memory access for deliberation
                 if self.access_analyzer:
                     self.access_analyzer.record_access(
-                        memory_id=f"delib_{deliberation_id}_{agent_id}",
-                        access_type="write",
+                        _memory_id = f"delib_{deliberation_id}_{agent_id}",
+                        _access_type = "write",
                         agent_id=agent_id,
                     )
             
@@ -1665,12 +1623,12 @@ class ArbiterAgent(AgentActor):
         except Exception as e:
             logger.error(
                 "failed_to_submit_deliberation_position",
-                deliberation_id=deliberation_id,
-                error=str(e),
+                _deliberation_id = deliberation_id,
+                _error = str(e),
             )
             return False
 
-    async def _finalize_deliberation(self, conflict: Conflict) -> Optional[DeliberationResult]:
+    async def _finalize_deliberation(self, _conflict: Conflict) -> Optional[DeliberationResult]:
         """
         Finalize deliberation and apply result to conflict.
         
@@ -1683,12 +1641,12 @@ class ArbiterAgent(AgentActor):
         if not self.deliberation_engine:
             return None
         
-        deliberation_id = self._active_deliberations.get(conflict.conflict_id)
+        _deliberation_id = self._active_deliberations.get(conflict.conflict_id)
         if not deliberation_id:
             return None
         
         try:
-            result = self.deliberation_engine.finalize_deliberation(deliberation_id)
+            _result = self.deliberation_engine.finalize_deliberation(deliberation_id)
             
             if result:
                 # Apply deliberation result to conflict
@@ -1708,16 +1666,16 @@ class ArbiterAgent(AgentActor):
                 
                 logger.info(
                     "deliberation_finalized",
-                    deliberation_id=deliberation_id,
-                    consensus_score=result.consensus_score,
+                    _deliberation_id = deliberation_id,
+                    _consensus_score = result.consensus_score,
                 )
             
             return result
         except Exception as e:
             logger.error(
                 "failed_to_finalize_deliberation",
-                deliberation_id=deliberation_id,
-                error=str(e),
+                _deliberation_id = deliberation_id,
+                _error = str(e),
             )
             return None
 
@@ -1725,7 +1683,7 @@ class ArbiterAgent(AgentActor):
     # Session 44: Memory Optimization Integration Methods
     # =========================================================================
 
-    def _track_resolution_memory_access(self, conflict_id: str, access_type: str = "read") -> None:
+    def _track_resolution_memory_access(self, _conflict_id: str, _access_type: str) -> None:
         """
         Track memory access patterns for conflict resolution data.
         
@@ -1736,14 +1694,14 @@ class ArbiterAgent(AgentActor):
         if not self.access_analyzer:
             return
         
-        memory_id = f"conflict_{conflict_id}"
+        _memory_id = f"conflict_{conflict_id}"
         self.access_analyzer.record_access(
-            memory_id=memory_id,
-            access_type=access_type,
+            _memory_id = memory_id,
+            _access_type = access_type,
             agent_id=self.agent_id,
         )
 
-    def _get_conflict_memory_tier(self, conflict_id: str) -> AccessTier:
+    def _get_conflict_memory_tier(self, _conflict_id: str) -> AccessTier:
         """
         Get memory tier classification for a conflict.
         
@@ -1756,12 +1714,12 @@ class ArbiterAgent(AgentActor):
         if not self.access_analyzer:
             return AccessTier.COLD
         
-        memory_id = f"conflict_{conflict_id}"
-        profile = self.access_analyzer.get_profile(memory_id)
+        _memory_id = f"conflict_{conflict_id}"
+        _profile = self.access_analyzer.get_profile(memory_id)
         
         return profile.tier if profile else AccessTier.COLD
 
-    async def _prefetch_relevant_conflicts(self, agent_id: str) -> List[str]:
+    async def _prefetch_relevant_conflicts(self, _agent_id: str) -> List[str]:
         """
         Prefetch conflicts an agent is likely to need based on access patterns.
         
@@ -1775,10 +1733,10 @@ class ArbiterAgent(AgentActor):
             return []
         
         try:
-            predicted_memories = self.access_analyzer.predict_agent_access(agent_id)
+            _predicted_memories = self.access_analyzer.predict_agent_access(agent_id)
             
             # Extract conflict IDs from memory IDs
-            predicted_conflicts = [
+            _predicted_conflicts = [
                 mem.replace("conflict_", "")
                 for mem in predicted_memories
                 if mem.startswith("conflict_")
@@ -1789,7 +1747,7 @@ class ArbiterAgent(AgentActor):
             logger.warning(
                 "failed_to_prefetch_conflicts",
                 agent_id=agent_id,
-                error=str(e),
+                _error = str(e),
             )
             return []
 
@@ -1800,7 +1758,7 @@ class ArbiterAgent(AgentActor):
         Returns:
             Status dictionary with learning metrics
         """
-        status = {
+        _status = {
             "agent_id": self.agent_id,
             "collective_learning": {
                 "patterns_extracted": len(self.pattern_extractor._validated_patterns) if self.pattern_extractor else 0,

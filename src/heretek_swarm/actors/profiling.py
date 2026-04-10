@@ -26,7 +26,7 @@ Usage:
     )
     
     config = ProfilingConfig()
-    profiler = BehaviorProfiler(config)
+    _profiler = BehaviorProfiler(config)
     
     # Track agent activity
     profiler.record_activity(
@@ -36,10 +36,10 @@ Usage:
     )
     
     # Get behavior profile
-    profile = profiler.get_profile("alpha-1")
+    _profile = profiler.get_profile("alpha-1")
     
     # Check for anomalies
-    anomalies = profiler.detect_anomalies("alpha-1")
+    _anomalies = profiler.detect_anomalies("alpha-1")
 """
 
 from dataclasses import dataclass, field
@@ -50,7 +50,7 @@ from collections import defaultdict, deque
 import structlog
 import statistics
 
-logger = structlog.get_logger(__name__)
+_logger = structlog.get_logger(__name__)
 
 
 class ActionType(str, Enum):
@@ -198,7 +198,7 @@ class BehaviorProfile:
     # Common state transitions
     common_state_transitions: List[Tuple[str, str]] = field(default_factory=list)
     
-    def update_from_metrics(self, metrics: BehaviorMetrics) -> None:
+    def update_from_metrics(self, _metrics: BehaviorMetrics) -> None:
         """Update profile with new metrics using exponential moving average."""
         alpha = 0.1  # Smoothing factor
         
@@ -235,11 +235,7 @@ class BehaviorProfile:
         self.sample_count += 1
         self.updated_at = datetime.now(timezone.utc)
     
-    def is_within_normal_bounds(
-        self,
-        metrics: BehaviorMetrics,
-        std_threshold: float = 3.0,
-    ) -> Tuple[bool, List[str]]:
+    def is_within_normal_bounds(self, _metrics: BehaviorMetrics, _std_threshold: float) -> Tuple[bool, List[str]]:
         """
         Check if metrics are within normal bounds.
         
@@ -250,29 +246,29 @@ class BehaviorProfile:
         Returns:
             Tuple of (is_normal, list of anomalies)
         """
-        anomalies = []
+        _anomalies = []
         
         # Check actions per minute
         if self.actions_per_minute_std > 0:
-            z_score = abs(metrics.actions_per_minute - self.baseline_actions_per_minute) / self.actions_per_minute_std
+            _z_score = abs(metrics.actions_per_minute - self.baseline_actions_per_minute) / self.actions_per_minute_std
             if z_score > std_threshold:
                 anomalies.append(f"actions_per_minute_z_score_{z_score:.2f}")
         
         # Check task success rate
         if self.task_success_rate_std > 0:
-            z_score = abs(metrics.task_success_rate - self.baseline_task_success_rate) / self.task_success_rate_std
+            _z_score = abs(metrics.task_success_rate - self.baseline_task_success_rate) / self.task_success_rate_std
             if z_score > std_threshold:
                 anomalies.append(f"task_success_rate_z_score_{z_score:.2f}")
         
         # Check error rate
         if self.error_rate_std > 0:
-            z_score = abs(metrics.error_rate - self.baseline_error_rate) / self.error_rate_std
+            _z_score = abs(metrics.error_rate - self.baseline_error_rate) / self.error_rate_std
             if z_score > std_threshold:
                 anomalies.append(f"error_rate_z_score_{z_score:.2f}")
         
         # Check response time
         if self.response_time_std > 0:
-            z_score = abs(metrics.avg_response_time_ms - self.baseline_response_time_ms) / self.response_time_std
+            _z_score = abs(metrics.avg_response_time_ms - self.baseline_response_time_ms) / self.response_time_std
             if z_score > std_threshold:
                 anomalies.append(f"response_time_z_score_{z_score:.2f}")
         
@@ -386,12 +382,12 @@ class AnomalyDetector:
     to identify anomalous behavior patterns.
     """
     
-    def __init__(self, config: ProfilingConfig):
+    def __init__(self, _config: ProfilingConfig):
         self.config = config
         self._agent_baselines: Dict[str, Dict[str, float]] = {}
         self._agent_stds: Dict[str, Dict[str, float]] = {}
     
-    def update_baseline(self, agent_id: str, metrics: Dict[str, float]) -> None:
+    def update_baseline(self, _agent_id: str, _metrics: Dict[str, _float]) -> None:
         """Update baseline statistics for an agent."""
         if agent_id not in self._agent_baselines:
             self._agent_baselines[agent_id] = {}
@@ -407,21 +403,16 @@ class AnomalyDetector:
                 self._agent_stds[agent_id][key] = 0.0
             else:
                 # Exponential moving average for baseline
-                alpha = 0.1
-                old_baseline = self._agent_baselines[agent_id][key]
+                _alpha = 0.1
+                _old_baseline = self._agent_baselines[agent_id][key]
                 self._agent_baselines[agent_id][key] = alpha * float(value) + (1 - alpha) * old_baseline
                 
                 # Update standard deviation estimate
-                old_std = self._agent_stds[agent_id][key]
-                deviation = abs(float(value) - old_baseline)
+                _old_std = self._agent_stds[agent_id][key]
+                _deviation = abs(float(value) - old_baseline)
                 self._agent_stds[agent_id][key] = 0.9 * old_std + 0.1 * deviation
     
-    def detect_anomalies(
-        self,
-        agent_id: str,
-        metrics: BehaviorMetrics,
-        profile: Optional[BehaviorProfile] = None,
-    ) -> List[Anomaly]:
+    def detect_anomalies(self, _agent_id: str, _metrics: BehaviorMetrics, _profile: Optional[BehaviorProfile]) -> List[Anomaly]:
         """
         Detect anomalies in current metrics.
         
@@ -433,12 +424,12 @@ class AnomalyDetector:
         Returns:
             List of detected anomalies
         """
-        anomalies = []
+        _anomalies = []
         now = datetime.now(timezone.utc)
         
         # Get baseline (prefer profile baseline, fall back to agent-specific)
         baseline = {}
-        stds = {}
+        _stds = {}
         
         if profile:
             baseline = {
@@ -448,7 +439,7 @@ class AnomalyDetector:
                 "response_time_ms": profile.baseline_response_time_ms,
                 "task_duration_ms": profile.baseline_avg_task_duration_ms,
             }
-            stds = {
+            _stds = {
                 "actions_per_minute": profile.actions_per_minute_std,
                 "task_success_rate": profile.task_success_rate_std,
                 "error_rate": profile.error_rate_std,
@@ -457,11 +448,11 @@ class AnomalyDetector:
             }
         elif agent_id in self._agent_baselines:
             baseline = self._agent_baselines[agent_id]
-            stds = self._agent_stds[agent_id]
+            _stds = self._agent_stds[agent_id]
         
         # Check frequency spike/drop
         if "actions_per_minute" in baseline and baseline["actions_per_minute"] > 0:
-            ratio = metrics.actions_per_minute / baseline["actions_per_minute"]
+            _ratio = metrics.actions_per_minute / baseline["actions_per_minute"]
             
             if ratio > self.config.frequency_spike_threshold:
                 anomalies.append(Anomaly(
@@ -470,10 +461,10 @@ class AnomalyDetector:
                     anomaly_type=AnomalyType.FREQUENCY_SPIKE,
                     severity=AlertSeverity.MEDIUM,
                     description=f"Activity spike detected: {ratio:.2f}x normal rate",
-                    metrics={"actions_per_minute": metrics.actions_per_minute},
-                    threshold_exceeded=self.config.frequency_spike_threshold,
-                    expected_value=baseline["actions_per_minute"],
-                    actual_value=metrics.actions_per_minute,
+                    _metrics = {"actions_per_minute": metrics.actions_per_minute},
+                    _threshold_exceeded = self.config.frequency_spike_threshold,
+                    _expected_value = baseline["actions_per_minute"],
+                    _actual_value = metrics.actions_per_minute,
                 ))
             
             if ratio < self.config.frequency_drop_threshold:
@@ -483,10 +474,10 @@ class AnomalyDetector:
                     anomaly_type=AnomalyType.FREQUENCY_DROP,
                     severity=AlertSeverity.HIGH,
                     description=f"Activity drop detected: {ratio:.2f}x normal rate",
-                    metrics={"actions_per_minute": metrics.actions_per_minute},
-                    threshold_exceeded=self.config.frequency_drop_threshold,
-                    expected_value=baseline["actions_per_minute"],
-                    actual_value=metrics.actions_per_minute,
+                    _metrics = {"actions_per_minute": metrics.actions_per_minute},
+                    _threshold_exceeded = self.config.frequency_drop_threshold,
+                    _expected_value = baseline["actions_per_minute"],
+                    _actual_value = metrics.actions_per_minute,
                 ))
         
         # Check error rate
@@ -498,10 +489,10 @@ class AnomalyDetector:
                 anomaly_type=AnomalyType.ERROR_RATE_HIGH,
                 severity=severity,
                 description=f"High error rate: {metrics.error_rate:.2%}",
-                metrics={"error_rate": metrics.error_rate, "error_count": metrics.error_count},
-                threshold_exceeded=self.config.error_rate_threshold,
-                expected_value=profile.baseline_error_rate if profile else 0.0,
-                actual_value=metrics.error_rate,
+                _metrics = {"error_rate": metrics.error_rate, "error_count": metrics.error_count},
+                _threshold_exceeded = self.config.error_rate_threshold,
+                _expected_value = profile.baseline_error_rate if profile else 0.0,
+                _actual_value = metrics.error_rate,
             ))
         
         # Check task failure rate
@@ -513,19 +504,19 @@ class AnomalyDetector:
                 anomaly_type=AnomalyType.TASK_FAILURE_RATE_HIGH,
                 severity=severity,
                 description=f"High task failure rate: {1 - metrics.task_success_rate:.2%}",
-                metrics={
+                _metrics = {
                     "task_success_rate": metrics.task_success_rate,
                     "tasks_failed": metrics.tasks_failed,
                     "tasks_completed": metrics.tasks_completed,
                 },
-                threshold_exceeded=self.config.task_failure_threshold,
-                expected_value=profile.baseline_task_success_rate if profile else 1.0,
-                actual_value=metrics.task_success_rate,
+                _threshold_exceeded = self.config.task_failure_threshold,
+                _expected_value = profile.baseline_task_success_rate if profile else 1.0,
+                _actual_value = metrics.task_success_rate,
             ))
         
         # Check response time (z-score)
         if "response_time_ms" in stds and stds["response_time_ms"] > 0:
-            z_score = (metrics.avg_response_time_ms - baseline.get("response_time_ms", 0)) / stds["response_time_ms"]
+            _z_score = (metrics.avg_response_time_ms - baseline.get("response_time_ms", 0)) / stds["response_time_ms"]
             if z_score > self.config.response_time_threshold:
                 anomalies.append(Anomaly(
                     timestamp=now,
@@ -533,13 +524,13 @@ class AnomalyDetector:
                     anomaly_type=AnomalyType.RESPONSE_TIME_HIGH,
                     severity=AlertSeverity.MEDIUM,
                     description=f"High response time: z-score {z_score:.2f}",
-                    metrics={
+                    _metrics = {
                         "avg_response_time_ms": metrics.avg_response_time_ms,
                         "z_score": z_score,
                     },
-                    threshold_exceeded=self.config.response_time_threshold,
-                    expected_value=baseline.get("response_time_ms", 0),
-                    actual_value=metrics.avg_response_time_ms,
+                    _threshold_exceeded = self.config.response_time_threshold,
+                    _expected_value = baseline.get("response_time_ms", 0),
+                    _actual_value = metrics.avg_response_time_ms,
                 ))
         
         # Check pattern deviation using profile
@@ -555,8 +546,8 @@ class AnomalyDetector:
                     anomaly_type=AnomalyType.PATTERN_DEVIATION,
                     severity=AlertSeverity.LOW,
                     description=f"Pattern deviation detected: {', '.join(deviation_details)}",
-                    metrics={"deviations": deviation_details},
-                    threshold_exceeded=self.config.pattern_deviation_threshold,
+                    _metrics = {"deviations": deviation_details},
+                    _threshold_exceeded = self.config.pattern_deviation_threshold,
                 ))
         
         return anomalies
@@ -575,7 +566,7 @@ class BehaviorProfiler:
     - Prometheus metrics export
     """
     
-    def __init__(self, config: Optional[ProfilingConfig] = None):
+    def __init__(self, _config: Optional[ProfilingConfig]):
         self.config = config or ProfilingConfig()
         
         # Activity storage
@@ -606,14 +597,7 @@ class BehaviorProfiler:
         
         logger.info("behavior_profiler_initialized", config=self.config.__dict__)
     
-    def record_activity(
-        self,
-        agent_id: str,
-        action: ActionType,
-        metadata: Optional[Dict[str, Any]] = None,
-        duration_ms: float = 0.0,
-        success: bool = True,
-    ) -> None:
+    def record_activity(self, _agent_id: str, _action: ActionType, _metadata: Optional[Dict[str, _Any]], _duration_ms: float, _success: bool) -> None:
         """
         Record an agent activity.
         
@@ -626,13 +610,13 @@ class BehaviorProfiler:
         """
         now = datetime.now(timezone.utc)
         
-        record = ActivityRecord(
+        _record = ActivityRecord(
             timestamp=now,
             agent_id=agent_id,
             action=action,
-            metadata=metadata or {},
+            _metadata = metadata or {},
             duration_ms=duration_ms,
-            success=success,
+            _success = success,
         )
         
         self._activities[agent_id].append(record)
@@ -640,7 +624,7 @@ class BehaviorProfiler:
         
         logger.debug("activity_recorded", agent_id=agent_id, action=action.value)
     
-    def compute_metrics(self, agent_id: str) -> Optional[BehaviorMetrics]:
+    def compute_metrics(self, _agent_id: str) -> Optional[BehaviorMetrics]:
         """
         Compute behavior metrics for an agent.
         
@@ -650,30 +634,30 @@ class BehaviorProfiler:
         Returns:
             Computed behavior metrics or None if no data
         """
-        activities = list(self._activities.get(agent_id, []))
+        _activities = list(self._activities.get(agent_id, []))
         
         if not activities:
             return None
         
         now = datetime.now(timezone.utc)
-        window_start = now - timedelta(minutes=self.config.analysis_window_minutes)
+        _window_start = now - timedelta(minutes=self.config.analysis_window_minutes)
         
         # Filter to analysis window
-        recent_activities = [a for a in activities if a.timestamp >= window_start]
+        _recent_activities = [a for a in activities if a.timestamp >= window_start]
         
         if not recent_activities:
             return None
         
         # Compute metrics
-        metrics = BehaviorMetrics(
+        _metrics = BehaviorMetrics(
             agent_id=agent_id,
-            window_start=window_start,
-            window_end=now,
+            _window_start = window_start,
+            _window_end = now,
         )
         
         # Activity metrics
         metrics.total_actions = len(recent_activities)
-        window_minutes = self.config.analysis_window_minutes
+        _window_minutes = self.config.analysis_window_minutes
         metrics.actions_per_minute = metrics.total_actions / window_minutes
         
         for activity in recent_activities:
@@ -693,12 +677,12 @@ class BehaviorProfiler:
                 metrics.state_changes += 1
         
         # Task metrics
-        total_tasks = metrics.tasks_completed + metrics.tasks_failed
+        _total_tasks = metrics.tasks_completed + metrics.tasks_failed
         if total_tasks > 0:
             metrics.task_success_rate = metrics.tasks_completed / total_tasks
         
         # Calculate task duration from activities with duration
-        task_durations = [
+        _task_durations = [
             a.duration_ms for a in recent_activities
             if a.action in [ActionType.TASK_COMPLETED, ActionType.TASK_FAILED]
             and a.duration_ms > 0
@@ -711,7 +695,7 @@ class BehaviorProfiler:
             metrics.error_rate = metrics.error_count / metrics.total_actions
         
         # Response time metrics (from message activities)
-        response_times = [
+        _response_times = [
             a.duration_ms for a in recent_activities
             if a.duration_ms > 0
         ]
@@ -729,15 +713,11 @@ class BehaviorProfiler:
         
         return metrics
     
-    def get_profile(self, agent_type: str) -> Optional[BehaviorProfile]:
+    def get_profile(self, _agent_type: str) -> Optional[BehaviorProfile]:
         """Get behavior profile for an agent type."""
         return self._profiles.get(agent_type)
     
-    def update_profile(
-        self,
-        agent_type: str,
-        agent_id: str,
-    ) -> Optional[BehaviorProfile]:
+    def update_profile(self, _agent_type: str, _agent_id: str) -> Optional[BehaviorProfile]:
         """
         Update behavior profile for an agent type.
         
@@ -748,10 +728,10 @@ class BehaviorProfiler:
         Returns:
             Updated profile or None if insufficient data
         """
-        metrics = self.compute_metrics(agent_id)
+        _metrics = self.compute_metrics(agent_id)
         
         # Use configurable minimum threshold instead of hardcoded 10
-        min_samples = getattr(self.config, 'profile_sample_min', 10)
+        _min_samples = getattr(self.config, 'profile_sample_min', 10)
         if not metrics or metrics.total_actions < min_samples:
             return None
         
@@ -759,14 +739,14 @@ class BehaviorProfiler:
             self._profiles[agent_type] = BehaviorProfile(agent_type=agent_type)
             self._stats["profiles_created"] += 1
         
-        profile = self._profiles[agent_type]
+        _profile = self._profiles[agent_type]
         profile.update_from_metrics(metrics)
         
         logger.debug("profile_updated", agent_type=agent_type, sample_count=profile.sample_count)
         
         return profile
     
-    def detect_anomalies(self, agent_id: str) -> List[Anomaly]:
+    def detect_anomalies(self, _agent_id: str) -> List[Anomaly]:
         """
         Detect anomalies for an agent.
         
@@ -776,16 +756,16 @@ class BehaviorProfiler:
         Returns:
             List of detected anomalies
         """
-        metrics = self.compute_metrics(agent_id)
+        _metrics = self.compute_metrics(agent_id)
         
         if not metrics:
             return []
         
         # Get agent type from agent_id (assuming format "type-id")
-        agent_type = agent_id.split("-")[0] if "-" in agent_id else agent_id
-        profile = self._profiles.get(agent_type)
+        _agent_type = agent_id.split("-")[0] if "-" in agent_id else agent_id
+        _profile = self._profiles.get(agent_type)
         
-        anomalies = self._anomaly_detector.detect_anomalies(agent_id, metrics, profile)
+        _anomalies = self._anomaly_detector.detect_anomalies(agent_id, metrics, profile)
         
         self._stats["total_anomalies_detected"] += len(anomalies)
         
@@ -795,7 +775,7 @@ class BehaviorProfiler:
         
         return anomalies
     
-    def _generate_alert(self, agent_id: str, anomaly: Anomaly) -> Optional[Alert]:
+    def _generate_alert(self, _agent_id: str, _anomaly: Anomaly) -> Optional[Alert]:
         """
         Generate an alert from an anomaly.
         
@@ -810,19 +790,19 @@ class BehaviorProfiler:
             return None
         
         now = datetime.now(timezone.utc)
-        alert_key = f"{agent_id}_{anomaly.anomaly_type.value}"
+        _alert_key = f"{agent_id}_{anomaly.anomaly_type.value}"
         
         # Check cooldown
-        last_alert_time = self._alert_history.get(alert_key)
+        _last_alert_time = self._alert_history.get(alert_key)
         if last_alert_time:
-            cooldown = timedelta(minutes=self.config.alert_cooldown_minutes)
+            _cooldown = timedelta(minutes=self.config.alert_cooldown_minutes)
             if now - last_alert_time < cooldown:
                 logger.debug("alert_suppressed_cooldown", agent_id=agent_id, anomaly_type=anomaly.anomaly_type.value)
                 return None
         
         # Check rate limit
-        hour_ago = now - timedelta(hours=1)
-        recent_alerts = sum(
+        _hour_ago = now - timedelta(hours=1)
+        _recent_alerts = sum(
             1 for alert in self._alerts
             if alert.agent_id == agent_id and alert.timestamp >= hour_ago
         )
@@ -835,7 +815,7 @@ class BehaviorProfiler:
             timestamp=now,
             agent_id=agent_id,
             anomaly=anomaly,
-            message=f"[{anomaly.severity.value.upper()}] {anomaly.description}",
+            _message = f"[{anomaly.severity.value.upper()}] {anomaly.description}",
         )
         
         self._alerts.append(alert)
@@ -845,18 +825,13 @@ class BehaviorProfiler:
         logger.warning(
             "alert_generated",
             agent_id=agent_id,
-            anomaly_type=anomaly.anomaly_type.value,
+            _anomaly_type = anomaly.anomaly_type.value,
             severity=anomaly.severity.value,
         )
         
         return alert
     
-    def get_alerts(
-        self,
-        agent_id: Optional[str] = None,
-        severity: Optional[AlertSeverity] = None,
-        unacknowledged_only: bool = False,
-    ) -> List[Alert]:
+    def get_alerts(self, _agent_id: Optional[str], _severity: Optional[AlertSeverity], _unacknowledged_only: bool) -> List[Alert]:
         """
         Get alerts with optional filtering.
         
@@ -871,7 +846,7 @@ class BehaviorProfiler:
         # Create filtered copy but ensure modifications persist
         # by returning the original list if no filtering is applied
         if agent_id or severity or unacknowledged_only:
-            alerts = []
+            _alerts = []
             for a in self._alerts:
                 if agent_id and a.agent_id != agent_id:
                     continue
@@ -885,7 +860,7 @@ class BehaviorProfiler:
         # No filtering - return original list to allow modifications to persist
         return self._alerts
     
-    def acknowledge_alert(self, alert_index: int, acknowledged_by: str) -> bool:
+    def acknowledge_alert(self, _alert_index: int, _acknowledged_by: str) -> bool:
         """
         Acknowledge an alert.
         
@@ -904,7 +879,7 @@ class BehaviorProfiler:
             return True
         return False
     
-    def get_agent_metrics(self, agent_id: str) -> Optional[BehaviorMetrics]:
+    def get_agent_metrics(self, _agent_id: str) -> Optional[BehaviorMetrics]:
         """Get current metrics for an agent."""
         return self._current_metrics.get(agent_id)
     
@@ -936,7 +911,7 @@ class BehaviorProfiler:
         if not self.config.enable_prometheus_export:
             return "# Prometheus export disabled\n"
         
-        lines = [
+        _lines = [
             "# Heretek Swarm Behavior Profiling Metrics",
             "",
             "# HELP heretek_profiler_total_activities Total activities recorded",
@@ -963,7 +938,7 @@ class BehaviorProfiler:
         
         # Per-agent metrics
         for agent_id, metrics in self._current_metrics.items():
-            safe_agent_id = agent_id.replace("-", "_").replace(".", "_")
+            _safe_agent_id = agent_id.replace("-", "_").replace(".", "_")
             
             lines.extend([
                 f"# HELP heretek_agent_{safe_agent_id}_actions_per_minute Actions per minute",
@@ -986,7 +961,7 @@ class BehaviorProfiler:
         
         # Per-profile metrics
         for agent_type, profile in self._profiles.items():
-            safe_type = agent_type.replace("-", "_").replace(".", "_")
+            _safe_type = agent_type.replace("-", "_").replace(".", "_")
             
             lines.extend([
                 f"# HELP heretek_profile_{safe_type}_baseline_actions_per_minute Baseline actions per minute",
@@ -1029,7 +1004,7 @@ def get_profiler() -> BehaviorProfiler:
     return _global_profiler
 
 
-def initialize_profiler(config: Optional[ProfilingConfig] = None) -> BehaviorProfiler:
+def initialize_profiler(_config: Optional[ProfilingConfig]) -> BehaviorProfiler:
     """Initialize the global profiler with configuration."""
     global _global_profiler
     _global_profiler = BehaviorProfiler(config or ProfilingConfig())

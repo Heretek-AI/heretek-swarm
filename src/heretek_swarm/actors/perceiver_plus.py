@@ -36,7 +36,7 @@ from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer, AccessTi
 from heretek_swarm.security.zero_trust import ZeroTrustValidator
 
 
-logger = structlog.get_logger("PerceiverPlusAgent")
+_logger = structlog.get_logger("PerceiverPlusAgent")
 
 
 class AnalyticsType(str, Enum):
@@ -75,17 +75,7 @@ class StatisticalTest(str, Enum):
 class AnalyticsResult:
     """Represents an analytics result."""
     
-    def __init__(
-        self,
-        analysis_id: str,
-        analytics_type: AnalyticsType,
-        title: str,
-        findings: List[str],
-        metrics: Dict[str, float],
-        confidence: float = 0.0,
-        recommendations: Optional[List[str]] = None,
-        visualizations: Optional[List[Dict[str, Any]]] = None,
-    ) -> None:
+    def __init__(self, _analysis_id: str, _analytics_type: AnalyticsType, _title: str, _findings: List[str], _metrics: Dict[str, _float], _confidence: float, _recommendations: Optional[List[str]], _visualizations: Optional[List[Dict[str, _Any]]]) -> None:
         self.analysis_id = analysis_id
         self.analytics_type = analytics_type
         self.title = title
@@ -114,16 +104,7 @@ class AnalyticsResult:
 class TrendAnalysis:
     """Represents a trend analysis result."""
     
-    def __init__(
-        self,
-        trend_id: str,
-        direction: str,
-        strength: float,
-        slope: float,
-        r_squared: float,
-        forecast: Optional[List[Dict[str, Any]]] = None,
-        seasonal_patterns: Optional[List[str]] = None,
-    ) -> None:
+    def __init__(self, _trend_id: str, _direction: str, _strength: float, _slope: float, _r_squared: float, _forecast: Optional[List[Dict[str, _Any]]], _seasonal_patterns: Optional[List[str]]) -> None:
         self.trend_id = trend_id
         self.direction = direction  # upward, downward, stable
         self.strength = strength  # 0-1
@@ -150,13 +131,7 @@ class TrendAnalysis:
 class CorrelationMatrix:
     """Represents a correlation analysis result."""
     
-    def __init__(
-        self,
-        matrix_id: str,
-        variables: List[str],
-        correlations: Dict[str, Dict[str, float]],
-        significant_pairs: List[Tuple[str, str, float]],
-    ) -> None:
+    def __init__(self, _matrix_id: str, _variables: List[str], _correlations: Dict[str, _Dict[str, _float]], _significant_pairs: List[Tuple[str, _str, _float]]) -> None:
         self.matrix_id = matrix_id
         self.variables = variables
         self.correlations = correlations
@@ -197,17 +172,7 @@ class PerceiverPlusAgent(AgentActor):
     6. Provide actionable recommendations
     """
     
-    def __init__(
-        self,
-        agent_id: str = "perceiver-plus",
-        name: str = "Perceiver+",
-        description: str = "Advanced analytics and enhanced perception specialist",
-        swarms_agent: Optional[Agent] = None,
-        max_analyses: int = 100,
-        confidence_threshold: float = 0.7,
-        significance_level: float = 0.05,
-        **kwargs,
-    ) -> None:
+    def __init__(self, _agent_id: str, _name: str, _description: str, _swarms_agent: Optional[Agent], _max_analyses: int, _confidence_threshold: float, _significance_level: float, _**kwargs) -> None:
         """
         Initialize the Perceiver+ agent.
         
@@ -223,16 +188,16 @@ class PerceiverPlusAgent(AgentActor):
         """
         super().__init__(
             agent_id=agent_id,
-            name=name,
-            description=description,
-            topics=[
+            _name = name,
+            _description = description,
+            _topics = [
                 "analytics",
                 "statistics",
                 "prediction",
                 "patterns",
                 "insights",
             ],
-            capabilities=[
+            _capabilities = [
                 "advanced-analytics",
                 "predictive-modeling",
                 "statistical-analysis",
@@ -265,7 +230,7 @@ class PerceiverPlusAgent(AgentActor):
         
         # Session 44: Consensus Integration
         self.deliberation_engine = deliberation_engine or SwarmDeliberationEngine(
-            max_rounds=5, consensus_threshold=0.75, min_participants=2
+            _max_rounds = 5, consensus_threshold=0.75, min_participants=2
         )
         
         # Session 44: Memory Optimization Integration
@@ -286,8 +251,8 @@ class PerceiverPlusAgent(AgentActor):
         # Initialize unified knowledge access layer
         if self.memory_system or self.rag_pipeline:
             self.knowledge_access = UnifiedKnowledgeAccess(
-                memory_system=self.memory_system,
-                rag_pipeline=self.rag_pipeline,
+                _memory_system = self.memory_system,
+                _rag_pipeline = self.rag_pipeline,
             )
             logger.info(f"[{self.agent_id}] Unified knowledge access initialized")
         
@@ -304,37 +269,37 @@ class PerceiverPlusAgent(AgentActor):
         
         logger.info(f"[{self.agent_id}] Perceiver+ initialization complete")
     
-    async def process_message(self, message: ActorMessage) -> None:
+    async def process_message(self, _message: ActorMessage) -> None:
         """
         Process incoming messages with exception handling.
         
         Args:
             message: Actor message to process
         """
-        handler = self._message_handlers.get(message.message_type)
+        _handler = self._message_handlers.get(message.message_type)
         if handler:
             try:
                 await handler(message)
             except Exception as e:
                 logger.error(
                     f"[{self.agent_id}] Error processing message {message.message_type}: {e}",
-                    exc_info=True,
+                    _exc_info = True,
                 )
                 self.error_count += 1
                 if message.content.get("reply_to"):
                     await self.send(
-                        topic=message.content["reply_to"],
+                        _topic = message.content["reply_to"],
                         content={
                             "message_type": "error_response",
                             "error": str(e),
                             "original_message_type": message.message_type,
                         },
-                        sender_id=self.agent_id,
+                        _sender_id = self.agent_id,
                     )
         else:
             logger.warning(f"[{self.agent_id}] Unknown message type: {message.message_type}")
     
-    def _validate_data_input(self, content: Dict[str, Any]) -> Tuple[bool, str]:
+    def _validate_data_input(self, _content: Dict[str, _Any]) -> Tuple[bool, str]:
         """
         Validate data input for analysis.
         
@@ -347,7 +312,7 @@ class PerceiverPlusAgent(AgentActor):
         if "data" not in content:
             return False, "Missing required field: data"
         
-        data = content["data"]
+        _data = content["data"]
         if not isinstance(data, (list, dict)):
             return False, "Field 'data' must be a list or dictionary"
         
@@ -357,7 +322,7 @@ class PerceiverPlusAgent(AgentActor):
         
         return True, ""
     
-    async def _handle_analyze_data(self, message: ActorMessage) -> None:
+    async def _handle_analyze_data(self, _message: ActorMessage) -> None:
         """
         Perform comprehensive data analysis.
         
@@ -371,21 +336,21 @@ class PerceiverPlusAgent(AgentActor):
                 logger.error(f"[{self.agent_id}] Invalid data analysis request: {error}")
                 return
             
-            data = message.content["data"]
+            _data = message.content["data"]
             analysis_id = message.content.get(
                 "analysis_id", 
                 f"analysis_{datetime.now(timezone.utc).timestamp()}"
             )
-            analytics_types = message.content.get("analytics_types", ["descriptive"])
+            _analytics_types = message.content.get("analytics_types", ["descriptive"])
             
             logger.info(f"[{self.agent_id}] Performing comprehensive analysis: {analysis_id}")
             
             # Perform analyses
-            results = []
+            _results = []
             for atype in analytics_types:
                 try:
-                    atype_enum = AnalyticsType(atype)
-                    result = await self._perform_analysis(data, atype_enum, analysis_id)
+                    _atype_enum = AnalyticsType(atype)
+                    _result = await self._perform_analysis(data, atype_enum, analysis_id)
                     if result.confidence >= self.confidence_threshold:
                         results.append(result)
                 except ValueError:
@@ -394,12 +359,12 @@ class PerceiverPlusAgent(AgentActor):
             # Store results
             for result in results:
                 if len(self.analysis_results) >= self.max_analyses:
-                    oldest_id = list(self.analysis_results.keys())[0]
+                    _oldest_id = list(self.analysis_results.keys())[0]
                     del self.analysis_results[oldest_id]
                 self.analysis_results[result.analysis_id] = result
             
             # Send response
-            response = {
+            _response = {
                 "message_type": "data_analysis_response",
                 "analysis_id": analysis_id,
                 "results": [r.to_dict() for r in results],
@@ -408,9 +373,9 @@ class PerceiverPlusAgent(AgentActor):
             
             if message.content.get("reply_to"):
                 await self.send(
-                    topic=message.content["reply_to"],
-                    content=response,
-                    sender_id=self.agent_id,
+                    _topic = message.content["reply_to"],
+                    _content = response,
+                    _sender_id = self.agent_id,
                 )
             
             logger.info(f"[{self.agent_id}] Completed {len(results)} analyses")
@@ -418,12 +383,7 @@ class PerceiverPlusAgent(AgentActor):
         except Exception as e:
             logger.error(f"[{self.agent_id}] Error analyzing data: {e}", exc_info=True)
     
-    async def _perform_analysis(
-        self,
-        data: Union[List, Dict],
-        analytics_type: AnalyticsType,
-        analysis_id: str,
-    ) -> AnalyticsResult:
+    async def _perform_analysis(self, _data: Union[List, _Dict], _analytics_type: AnalyticsType, _analysis_id: str) -> AnalyticsResult:
         """
         Perform a specific type of analysis.
         
@@ -452,35 +412,31 @@ class PerceiverPlusAgent(AgentActor):
         else:
             return AnalyticsResult(
                 analysis_id=analysis_id,
-                analytics_type=analytics_type,
-                title=f"Unknown analysis type: {analytics_type.value}",
-                findings=[],
-                metrics={},
+                _analytics_type = analytics_type,
+                _title = f"Unknown analysis type: {analytics_type.value}",
+                _findings = [],
+                _metrics = {},
                 confidence=0.0,
             )
     
-    async def _descriptive_analysis(
-        self,
-        data: Union[List, Dict],
-        analysis_id: str,
-    ) -> AnalyticsResult:
+    async def _descriptive_analysis(self, _data: Union[List, _Dict], _analysis_id: str) -> AnalyticsResult:
         """Perform descriptive statistics analysis."""
-        findings = []
-        metrics = {}
+        _findings = []
+        _metrics = {}
         
         if isinstance(data, list) and all(isinstance(x, (int, float)) for x in data):
             # Numeric descriptive stats
             n = len(data)
             if n > 0:
-                mean = sum(data) / n
-                variance = sum((x - mean) ** 2 for x in data) / n if n > 1 else 0
-                std_dev = math.sqrt(variance)
-                sorted_data = sorted(data)
-                median = sorted_data[n // 2] if n % 2 == 1 else (sorted_data[n // 2 - 1] + sorted_data[n // 2]) / 2
-                min_val = min(data)
-                max_val = max(data)
+                _mean = sum(data) / n
+                _variance = sum((x - mean) ** 2 for x in data) / n if n > 1 else 0
+                _std_dev = math.sqrt(variance)
+                _sorted_data = sorted(data)
+                _median = sorted_data[n // 2] if n % 2 == 1 else (sorted_data[n // 2 - 1] + sorted_data[n // 2]) / 2
+                _min_val = min(data)
+                _max_val = max(data)
                 
-                metrics = {
+                _metrics = {
                     "count": n,
                     "mean": mean,
                     "std_dev": std_dev,
@@ -491,7 +447,7 @@ class PerceiverPlusAgent(AgentActor):
                     "variance": variance,
                 }
                 
-                findings = [
+                _findings = [
                     f"Dataset contains {n} numeric values",
                     f"Mean: {mean:.4f}, Median: {median:.4f}",
                     f"Standard deviation: {std_dev:.4f}",
@@ -503,33 +459,29 @@ class PerceiverPlusAgent(AgentActor):
                 confidence = 0.0
         else:
             # General description
-            findings = [
+            _findings = [
                 f"Data type: {type(data).__name__}",
                 f"Data length/size: {len(data) if hasattr(data, '__len__') else 'N/A'}",
             ]
-            metrics = {"size": len(data) if hasattr(data, '__len__') else 1}
+            _metrics = {"size": len(data) if hasattr(data, '__len__') else 1}
             confidence = 0.7
         
         return AnalyticsResult(
             analysis_id=analysis_id,
-            analytics_type=AnalyticsType.DESCRIPTIVE,
-            title="Descriptive Statistics Analysis",
-            findings=findings,
-            metrics=metrics,
+            _analytics_type = AnalyticsType.DESCRIPTIVE,
+            _title = "Descriptive Statistics Analysis",
+            _findings = findings,
+            _metrics = metrics,
             confidence=confidence,
         )
     
-    async def _diagnostic_analysis(
-        self,
-        data: Union[List, Dict],
-        analysis_id: str,
-    ) -> AnalyticsResult:
+    async def _diagnostic_analysis(self, _data: Union[List, _Dict], _analysis_id: str) -> AnalyticsResult:
         """Perform diagnostic analysis to understand causes."""
-        findings = []
-        metrics = {}
+        _findings = []
+        _metrics = {}
         
         # Build prompt for LLM diagnostic analysis
-        prompt = f"""Perform diagnostic analysis on this data:
+        _prompt = f"""Perform diagnostic analysis on this data:
 
 DATA: {str(data)[:5000]}
 
@@ -549,14 +501,14 @@ Respond in JSON:
         
         try:
             if self.swarms_agent:
-                result = await self.run_with_llm(prompt=prompt, timeout=60)
+                _result = await self.run_with_llm(prompt=prompt, timeout=60)
                 import json
-                start_idx = result.find("{")
-                end_idx = result.rfind("}") + 1
+                _start_idx = result.find("{")
+                _end_idx = result.rfind("}") + 1
                 if start_idx >= 0 and end_idx > start_idx:
-                    parsed = json.loads(result[start_idx:end_idx])
-                    findings = parsed.get("findings", [])
-                    metrics = {
+                    _parsed = json.loads(result[start_idx:end_idx])
+                    _findings = parsed.get("findings", [])
+                    _metrics = {
                         "causal_factors_count": len(parsed.get("causal_factors", [])),
                     }
                     confidence = float(parsed.get("confidence", 0.7))
@@ -566,28 +518,24 @@ Respond in JSON:
                 raise RuntimeError("LLM not available")
         except Exception:
             # Fallback
-            findings = ["Diagnostic analysis requires LLM capabilities"]
+            _findings = ["Diagnostic analysis requires LLM capabilities"]
             confidence = 0.3
         
         return AnalyticsResult(
             analysis_id=analysis_id,
-            analytics_type=AnalyticsType.DIAGNOSTIC,
-            title="Diagnostic Analysis",
-            findings=findings,
-            metrics=metrics,
+            _analytics_type = AnalyticsType.DIAGNOSTIC,
+            _title = "Diagnostic Analysis",
+            _findings = findings,
+            _metrics = metrics,
             confidence=confidence,
         )
     
-    async def _predictive_analysis(
-        self,
-        data: Union[List, Dict],
-        analysis_id: str,
-    ) -> AnalyticsResult:
+    async def _predictive_analysis(self, _data: Union[List, _Dict], _analysis_id: str) -> AnalyticsResult:
         """Perform predictive analysis and forecasting."""
-        findings = []
-        metrics = {}
+        _findings = []
+        _metrics = {}
         
-        prompt = f"""Perform predictive analysis on this data:
+        _prompt = f"""Perform predictive analysis on this data:
 
 DATA: {str(data)[:5000]}
 
@@ -608,14 +556,14 @@ Respond in JSON:
         
         try:
             if self.swarms_agent:
-                result = await self.run_with_llm(prompt=prompt, timeout=60)
+                _result = await self.run_with_llm(prompt=prompt, timeout=60)
                 import json
-                start_idx = result.find("{")
-                end_idx = result.rfind("}") + 1
+                _start_idx = result.find("{")
+                _end_idx = result.rfind("}") + 1
                 if start_idx >= 0 and end_idx > start_idx:
-                    parsed = json.loads(result[start_idx:end_idx])
-                    findings = parsed.get("predictions", [])
-                    metrics = {
+                    _parsed = json.loads(result[start_idx:end_idx])
+                    _findings = parsed.get("predictions", [])
+                    _metrics = {
                         "factors_count": len(parsed.get("predictive_factors", [])),
                     }
                     confidence = float(parsed.get("confidence", 0.6))
@@ -624,43 +572,39 @@ Respond in JSON:
             else:
                 raise RuntimeError("LLM not available")
         except Exception:
-            findings = ["Predictive analysis requires LLM capabilities"]
+            _findings = ["Predictive analysis requires LLM capabilities"]
             confidence = 0.3
         
         return AnalyticsResult(
             analysis_id=analysis_id,
-            analytics_type=AnalyticsType.PREDICTIVE,
-            title="Predictive Analysis",
-            findings=findings,
-            metrics=metrics,
+            _analytics_type = AnalyticsType.PREDICTIVE,
+            _title = "Predictive Analysis",
+            _findings = findings,
+            _metrics = metrics,
             confidence=confidence,
-            recommendations=metrics.get("risk_indicators", []),
+            _recommendations = metrics.get("risk_indicators", []),
         )
     
-    async def _statistical_analysis(
-        self,
-        data: Union[List, Dict],
-        analysis_id: str,
-    ) -> AnalyticsResult:
+    async def _statistical_analysis(self, _data: Union[List, _Dict], _analysis_id: str) -> AnalyticsResult:
         """Perform statistical analysis."""
-        findings = []
-        metrics = {}
+        _findings = []
+        _metrics = {}
         
         if isinstance(data, list) and all(isinstance(x, (int, float)) for x in data):
             n = len(data)
             if n >= 2:
                 # Basic statistical tests
-                mean = sum(data) / n
-                variance = sum((x - mean) ** 2 for x in data) / (n - 1)
-                std_dev = math.sqrt(variance)
+                _mean = sum(data) / n
+                _variance = sum((x - mean) ** 2 for x in data) / (n - 1)
+                _std_dev = math.sqrt(variance)
                 se = std_dev / math.sqrt(n)  # Standard error
                 
                 # 95% confidence interval
-                ci_margin = 1.96 * se
-                ci_lower = mean - ci_margin
-                ci_upper = mean + ci_margin
+                _ci_margin = 1.96 * se
+                _ci_lower = mean - ci_margin
+                _ci_upper = mean + ci_margin
                 
-                metrics = {
+                _metrics = {
                     "sample_size": n,
                     "mean": mean,
                     "std_dev": std_dev,
@@ -669,7 +613,7 @@ Respond in JSON:
                     "ci_95_upper": ci_upper,
                 }
                 
-                findings = [
+                _findings = [
                     f"Sample size: {n}",
                     f"Mean: {mean:.4f} (95% CI: [{ci_lower:.4f}, {ci_upper:.4f}])",
                     f"Standard deviation: {std_dev:.4f}",
@@ -678,37 +622,33 @@ Respond in JSON:
                 
                 confidence = 0.95
             else:
-                findings = ["Insufficient data for statistical analysis (minimum n=2)"]
+                _findings = ["Insufficient data for statistical analysis (minimum n=2)"]
                 confidence = 0.0
         else:
-            findings = ["Statistical analysis requires numeric list data"]
+            _findings = ["Statistical analysis requires numeric list data"]
             confidence = 0.0
         
         return AnalyticsResult(
             analysis_id=analysis_id,
-            analytics_type=AnalyticsType.STATISTICAL,
-            title="Statistical Analysis",
-            findings=findings,
-            metrics=metrics,
+            _analytics_type = AnalyticsType.STATISTICAL,
+            _title = "Statistical Analysis",
+            _findings = findings,
+            _metrics = metrics,
             confidence=confidence,
         )
     
-    async def _correlational_analysis(
-        self,
-        data: Union[List, Dict],
-        analysis_id: str,
-    ) -> AnalyticsResult:
+    async def _correlational_analysis(self, _data: Union[List, _Dict], _analysis_id: str) -> AnalyticsResult:
         """Perform correlational analysis between variables."""
-        findings = []
-        metrics = {}
+        _findings = []
+        _metrics = {}
         
         # Expect dict of variables: {var_name: [values]}
         if isinstance(data, dict):
-            variables = list(data.keys())
+            _variables = list(data.keys())
             if len(variables) >= 2:
                 # Calculate correlations
-                correlations = {}
-                significant_pairs = []
+                _correlations = {}
+                _significant_pairs = []
                 
                 for i, var1 in enumerate(variables):
                     correlations[var1] = {}
@@ -729,18 +669,18 @@ Respond in JSON:
                 # Store correlation matrix
                 matrix = CorrelationMatrix(
                     matrix_id=f"corr_{analysis_id}",
-                    variables=variables,
-                    correlations=correlations,
-                    significant_pairs=significant_pairs,
+                    _variables = variables,
+                    _correlations = correlations,
+                    _significant_pairs = significant_pairs,
                 )
                 self.correlation_matrices[matrix.matrix_id] = matrix
                 
-                findings = [
+                _findings = [
                     f"Analyzed {len(variables)} variables",
                     f"Found {len(significant_pairs)} significant correlations (|r| > 0.5)",
                 ] + [f"{p[0]} ↔ {p[1]}: r = {p[2]:.3f}" for p in significant_pairs[:5]]
                 
-                metrics = {
+                _metrics = {
                     "variables_count": len(variables),
                     "significant_correlations": len(significant_pairs),
                     "strongest_correlation": max([abs(p[2]) for p in significant_pairs]) if significant_pairs else 0,
@@ -748,97 +688,93 @@ Respond in JSON:
                 
                 confidence = 0.85
             else:
-                findings = ["Need at least 2 variables for correlation analysis"]
+                _findings = ["Need at least 2 variables for correlation analysis"]
                 confidence = 0.0
         else:
-            findings = ["Correlational analysis requires dict of variables"]
+            _findings = ["Correlational analysis requires dict of variables"]
             confidence = 0.0
         
         return AnalyticsResult(
             analysis_id=analysis_id,
-            analytics_type=AnalyticsType.CORRELATIONAL,
-            title="Correlational Analysis",
-            findings=findings,
-            metrics=metrics,
+            _analytics_type = AnalyticsType.CORRELATIONAL,
+            _title = "Correlational Analysis",
+            _findings = findings,
+            _metrics = metrics,
             confidence=confidence,
         )
     
-    def _calculate_correlation(self, x: List[float], y: List[float]) -> float:
+    def _calculate_correlation(self, _x: List[float], _y: List[float]) -> float:
         """Calculate Pearson correlation coefficient."""
         n = min(len(x), len(y))
         if n < 2:
             return 0.0
         
-        x = x[:n]
-        y = y[:n]
+        _x = x[:n]
+        _y = y[:n]
         
-        mean_x = sum(x) / n
-        mean_y = sum(y) / n
+        _mean_x = sum(x) / n
+        _mean_y = sum(y) / n
         
-        numerator = sum((x[i] - mean_x) * (y[i] - mean_y) for i in range(n))
-        denom_x = math.sqrt(sum((xi - mean_x) ** 2 for xi in x))
-        denom_y = math.sqrt(sum((yi - mean_y) ** 2 for yi in y))
+        _numerator = sum((x[i] - mean_x) * (y[i] - mean_y) for i in range(n))
+        _denom_x = math.sqrt(sum((xi - mean_x) ** 2 for xi in x))
+        _denom_y = math.sqrt(sum((yi - mean_y) ** 2 for yi in y))
         
         if denom_x * denom_y == 0:
             return 0.0
         
         return numerator / (denom_x * denom_y)
     
-    async def _trend_analysis(
-        self,
-        data: Union[List, Dict],
-        analysis_id: str,
-    ) -> AnalyticsResult:
+    async def _trend_analysis(self, _data: Union[List, _Dict], _analysis_id: str) -> AnalyticsResult:
         """Perform trend analysis on time series data."""
-        findings = []
-        metrics = {}
+        _findings = []
+        _metrics = {}
         
         # Perform linear regression for trend
         if isinstance(data, list) and all(isinstance(x, (int, float)) for x in data):
             n = len(data)
             if n >= 3:
                 # Simple linear regression
-                x_mean = (n - 1) / 2
-                y_mean = sum(data) / n
+                _x_mean = (n - 1) / 2
+                _y_mean = sum(data) / n
                 
-                numerator = sum((i - x_mean) * (data[i] - y_mean) for i in range(n))
-                denominator = sum((i - x_mean) ** 2 for i in range(n))
+                _numerator = sum((i - x_mean) * (data[i] - y_mean) for i in range(n))
+                _denominator = sum((i - x_mean) ** 2 for i in range(n))
                 
                 if denominator != 0:
-                    slope = numerator / denominator
-                    intercept = y_mean - slope * x_mean
+                    _slope = numerator / denominator
+                    _intercept = y_mean - slope * x_mean
                     
                     # Calculate R-squared
-                    y_pred = [slope * i + intercept for i in range(n)]
-                    ss_res = sum((data[i] - y_pred[i]) ** 2 for i in range(n))
-                    ss_tot = sum((data[i] - y_mean) ** 2 for i in range(n))
-                    r_squared = 1 - (ss_res / ss_tot) if ss_tot != 0 else 0
+                    _y_pred = [slope * i + intercept for i in range(n)]
+                    _ss_res = sum((data[i] - y_pred[i]) ** 2 for i in range(n))
+                    _ss_tot = sum((data[i] - y_mean) ** 2 for i in range(n))
+                    _r_squared = 1 - (ss_res / ss_tot) if ss_tot != 0 else 0
                     
                     # Determine direction
                     if slope > 0.01:
-                        direction = "upward"
+                        _direction = "upward"
                     elif slope < -0.01:
-                        direction = "downward"
+                        _direction = "downward"
                     else:
-                        direction = "stable"
+                        _direction = "stable"
                     
                     # Store trend analysis
                     trend = TrendAnalysis(
                         trend_id=f"trend_{analysis_id}",
-                        direction=direction,
-                        strength=abs(slope),
-                        slope=slope,
-                        r_squared=r_squared,
+                        _direction = direction,
+                        _strength = abs(slope),
+                        _slope = slope,
+                        _r_squared = r_squared,
                     )
                     self.trend_analyses[trend.trend_id] = trend
                     
-                    findings = [
+                    _findings = [
                         f"Trend direction: {direction}",
                         f"Slope: {slope:.4f} units per time period",
                         f"R-squared: {r_squared:.4f} ({r_squared*100:.1f}% variance explained)",
                     ]
                     
-                    metrics = {
+                    _metrics = {
                         "slope": slope,
                         "intercept": intercept,
                         "r_squared": r_squared,
@@ -847,42 +783,38 @@ Respond in JSON:
                     
                     confidence = min(r_squared + 0.3, 1.0)
                 else:
-                    findings = ["Cannot compute trend (zero variance in time)"]
+                    _findings = ["Cannot compute trend (zero variance in time)"]
                     confidence = 0.0
             else:
-                findings = ["Need at least 3 data points for trend analysis"]
+                _findings = ["Need at least 3 data points for trend analysis"]
                 confidence = 0.0
         else:
-            findings = ["Trend analysis requires numeric time series data"]
+            _findings = ["Trend analysis requires numeric time series data"]
             confidence = 0.0
         
         return AnalyticsResult(
             analysis_id=analysis_id,
-            analytics_type=AnalyticsType.TREND,
-            title="Trend Analysis",
-            findings=findings,
-            metrics=metrics,
+            _analytics_type = AnalyticsType.TREND,
+            _title = "Trend Analysis",
+            _findings = findings,
+            _metrics = metrics,
             confidence=confidence,
         )
     
-    async def _anomaly_analysis(
-        self,
-        data: Union[List, Dict],
-        analysis_id: str,
-    ) -> AnalyticsResult:
+    async def _anomaly_analysis(self, _data: Union[List, _Dict], _analysis_id: str) -> AnalyticsResult:
         """Detect anomalies in data."""
-        findings = []
-        metrics = {}
+        _findings = []
+        _metrics = {}
         
         if isinstance(data, list) and all(isinstance(x, (int, float)) for x in data):
             n = len(data)
             if n >= 3:
-                mean = sum(data) / n
-                std_dev = math.sqrt(sum((x - mean) ** 2 for x in data) / (n - 1)) if n > 1 else 0
+                _mean = sum(data) / n
+                _std_dev = math.sqrt(sum((x - mean) ** 2 for x in data) / (n - 1)) if n > 1 else 0
                 
                 # Find anomalies (values beyond 2 standard deviations)
-                threshold = 2.0 * std_dev
-                anomalies = []
+                _threshold = 2.0 * std_dev
+                _anomalies = []
                 for i, value in enumerate(data):
                     if abs(value - mean) > threshold:
                         anomalies.append({
@@ -891,13 +823,13 @@ Respond in JSON:
                             "deviation": abs(value - mean) / std_dev if std_dev > 0 else 0,
                         })
                 
-                findings = [
+                _findings = [
                     f"Analyzed {n} data points",
                     f"Detection threshold: ±{threshold:.4f} from mean ({mean:.4f})",
                     f"Found {len(anomalies)} anomalies",
                 ] + [f"Index {a['index']}: value={a['value']:.4f} ({a['deviation']:.1f}σ)" for a in anomalies[:5]]
                 
-                metrics = {
+                _metrics = {
                     "anomalies_count": len(anomalies),
                     "anomaly_rate": len(anomalies) / n,
                     "threshold_sigma": 2.0,
@@ -905,23 +837,23 @@ Respond in JSON:
                 
                 confidence = 0.8
             else:
-                findings = ["Need at least 3 data points for anomaly detection"]
+                _findings = ["Need at least 3 data points for anomaly detection"]
                 confidence = 0.0
         else:
-            findings = ["Anomaly detection requires numeric list data"]
+            _findings = ["Anomaly detection requires numeric list data"]
             confidence = 0.0
         
         return AnalyticsResult(
             analysis_id=analysis_id,
-            analytics_type=AnalyticsType.ANOMALY,
-            title="Anomaly Detection",
-            findings=findings,
-            metrics=metrics,
+            _analytics_type = AnalyticsType.ANOMALY,
+            _title = "Anomaly Detection",
+            _findings = findings,
+            _metrics = metrics,
             confidence=confidence,
-            recommendations=["Review detected anomalies for data quality issues"] if metrics.get("anomalies_count", 0) > 0 else [],
+            _recommendations = ["Review detected anomalies for data quality issues"] if metrics.get("anomalies_count", 0) > 0 else [],
         )
     
-    async def _handle_detect_trends(self, message: ActorMessage) -> None:
+    async def _handle_detect_trends(self, _message: ActorMessage) -> None:
         """
         Detect trends in time series data.
         
@@ -934,17 +866,17 @@ Respond in JSON:
                 logger.error(f"[{self.agent_id}] Invalid trend detection request: {error}")
                 return
             
-            data = message.content["data"]
+            _data = message.content["data"]
             
             logger.info(f"[{self.agent_id}] Detecting trends")
             
-            result = await self._trend_analysis(data, f"trend_{datetime.now(timezone.utc).timestamp()}")
+            _result = await self._trend_analysis(data, f"trend_{datetime.now(timezone.utc).timestamp()}")
             
             # Get trend details
-            trend_id = f"trend_{result.analysis_id}"
+            _trend_id = f"trend_{result.analysis_id}"
             trend = self.trend_analyses.get(trend_id)
             
-            response = {
+            _response = {
                 "message_type": "trend_detection_response",
                 "result": result.to_dict(),
                 "trend_details": trend.to_dict() if trend else None,
@@ -952,15 +884,15 @@ Respond in JSON:
             
             if message.content.get("reply_to"):
                 await self.send(
-                    topic=message.content["reply_to"],
-                    content=response,
-                    sender_id=self.agent_id,
+                    _topic = message.content["reply_to"],
+                    _content = response,
+                    _sender_id = self.agent_id,
                 )
             
         except Exception as e:
             logger.error(f"[{self.agent_id}] Error detecting trends: {e}", exc_info=True)
     
-    async def _handle_compute_correlations(self, message: ActorMessage) -> None:
+    async def _handle_compute_correlations(self, _message: ActorMessage) -> None:
         """
         Compute correlations between variables.
         
@@ -973,28 +905,28 @@ Respond in JSON:
                 logger.error(f"[{self.agent_id}] Invalid correlation request: {error}")
                 return
             
-            data = message.content["data"]
+            _data = message.content["data"]
             
             logger.info(f"[{self.agent_id}] Computing correlations")
             
-            result = await self._correlational_analysis(data, f"corr_{datetime.now(timezone.utc).timestamp()}")
+            _result = await self._correlational_analysis(data, f"corr_{datetime.now(timezone.utc).timestamp()}")
             
-            response = {
+            _response = {
                 "message_type": "correlation_response",
                 "result": result.to_dict(),
             }
             
             if message.content.get("reply_to"):
                 await self.send(
-                    topic=message.content["reply_to"],
-                    content=response,
-                    sender_id=self.agent_id,
+                    _topic = message.content["reply_to"],
+                    _content = response,
+                    _sender_id = self.agent_id,
                 )
             
         except Exception as e:
             logger.error(f"[{self.agent_id}] Error computing correlations: {e}", exc_info=True)
     
-    async def _handle_run_statistical_test(self, message: ActorMessage) -> None:
+    async def _handle_run_statistical_test(self, _message: ActorMessage) -> None:
         """
         Run a statistical test.
         
@@ -1002,15 +934,15 @@ Respond in JSON:
             message: Actor message with test parameters
         """
         try:
-            test_type = message.content.get("test_type", "t_test")
-            data = message.content.get("data", [])
+            _test_type = message.content.get("test_type", "t_test")
+            _data = message.content.get("data", [])
             
             logger.info(f"[{self.agent_id}] Running statistical test: {test_type}")
             
             # For now, run basic statistical analysis
-            result = await self._statistical_analysis(data, f"stat_{datetime.now(timezone.utc).timestamp()}")
+            _result = await self._statistical_analysis(data, f"stat_{datetime.now(timezone.utc).timestamp()}")
             
-            response = {
+            _response = {
                 "message_type": "statistical_test_response",
                 "test_type": test_type,
                 "result": result.to_dict(),
@@ -1018,15 +950,15 @@ Respond in JSON:
             
             if message.content.get("reply_to"):
                 await self.send(
-                    topic=message.content["reply_to"],
-                    content=response,
-                    sender_id=self.agent_id,
+                    _topic = message.content["reply_to"],
+                    _content = response,
+                    _sender_id = self.agent_id,
                 )
             
         except Exception as e:
             logger.error(f"[{self.agent_id}] Error running statistical test: {e}", exc_info=True)
     
-    async def _handle_extract_features(self, message: ActorMessage) -> None:
+    async def _handle_extract_features(self, _message: ActorMessage) -> None:
         """
         Extract features from data.
         
@@ -1039,18 +971,18 @@ Respond in JSON:
                 logger.error(f"[{self.agent_id}] Invalid feature extraction request: {error}")
                 return
             
-            data = message.content["data"]
-            feature_id = message.content.get("feature_id", f"features_{datetime.now(timezone.utc).timestamp()}")
+            _data = message.content["data"]
+            _feature_id = message.content.get("feature_id", f"features_{datetime.now(timezone.utc).timestamp()}")
             
             logger.info(f"[{self.agent_id}] Extracting features")
             
             # Extract features
-            features = await self._extract_features_from_data(data)
+            _features = await self._extract_features_from_data(data)
             
             # Cache features
             self.feature_cache[feature_id] = features
             
-            response = {
+            _response = {
                 "message_type": "feature_extraction_response",
                 "feature_id": feature_id,
                 "features": features,
@@ -1058,17 +990,17 @@ Respond in JSON:
             
             if message.content.get("reply_to"):
                 await self.send(
-                    topic=message.content["reply_to"],
-                    content=response,
-                    sender_id=self.agent_id,
+                    _topic = message.content["reply_to"],
+                    _content = response,
+                    _sender_id = self.agent_id,
                 )
             
         except Exception as e:
             logger.error(f"[{self.agent_id}] Error extracting features: {e}", exc_info=True)
     
-    async def _extract_features_from_data(self, data: Union[List, Dict]) -> Dict[str, Any]:
+    async def _extract_features_from_data(self, _data: Union[List, _Dict]) -> Dict[str, Any]:
         """Extract features from data."""
-        features = {
+        _features = {
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "data_type": type(data).__name__,
         }
@@ -1076,7 +1008,7 @@ Respond in JSON:
         if isinstance(data, list) and all(isinstance(x, (int, float)) for x in data):
             n = len(data)
             if n > 0:
-                mean = sum(data) / n
+                _mean = sum(data) / n
                 features.update({
                     "count": n,
                     "mean": mean,
@@ -1085,13 +1017,13 @@ Respond in JSON:
                     "sum": sum(data),
                 })
                 if n > 1:
-                    variance = sum((x - mean) ** 2 for x in data) / (n - 1)
+                    _variance = sum((x - mean) ** 2 for x in data) / (n - 1)
                     features["variance"] = variance
                     features["std_dev"] = math.sqrt(variance)
         
         return features
     
-    async def _handle_forecast_values(self, message: ActorMessage) -> None:
+    async def _handle_forecast_values(self, _message: ActorMessage) -> None:
         """
         Forecast future values.
         
@@ -1099,15 +1031,15 @@ Respond in JSON:
             message: Actor message with historical data
         """
         try:
-            data = message.content.get("data", [])
-            periods = message.content.get("periods", 5)
+            _data = message.content.get("data", [])
+            _periods = message.content.get("periods", 5)
             
             logger.info(f"[{self.agent_id}] Forecasting {periods} periods")
             
             # Simple forecasting
-            forecast = await self._forecast_values(data, periods)
+            _forecast = await self._forecast_values(data, periods)
             
-            response = {
+            _response = {
                 "message_type": "forecast_response",
                 "historical_count": len(data),
                 "forecast_periods": periods,
@@ -1116,34 +1048,34 @@ Respond in JSON:
             
             if message.content.get("reply_to"):
                 await self.send(
-                    topic=message.content["reply_to"],
-                    content=response,
-                    sender_id=self.agent_id,
+                    _topic = message.content["reply_to"],
+                    _content = response,
+                    _sender_id = self.agent_id,
                 )
             
         except Exception as e:
             logger.error(f"[{self.agent_id}] Error forecasting: {e}", exc_info=True)
     
-    async def _forecast_values(self, data: List[float], periods: int) -> List[Dict[str, Any]]:
+    async def _forecast_values(self, _data: List[float], _periods: int) -> List[Dict[str, Any]]:
         """Generate forecast values."""
-        forecast = []
+        _forecast = []
         
         if len(data) >= 2:
             # Simple linear extrapolation
             n = len(data)
-            x_mean = (n - 1) / 2
-            y_mean = sum(data) / n
+            _x_mean = (n - 1) / 2
+            _y_mean = sum(data) / n
             
-            numerator = sum((i - x_mean) * (data[i] - y_mean) for i in range(n))
-            denominator = sum((i - x_mean) ** 2 for i in range(n))
+            _numerator = sum((i - x_mean) * (data[i] - y_mean) for i in range(n))
+            _denominator = sum((i - x_mean) ** 2 for i in range(n))
             
             if denominator != 0:
-                slope = numerator / denominator
-                intercept = y_mean - slope * x_mean
+                _slope = numerator / denominator
+                _intercept = y_mean - slope * x_mean
                 
                 for i in range(periods):
-                    future_x = n + i
-                    predicted = slope * future_x + intercept
+                    _future_x = n + i
+                    _predicted = slope * future_x + intercept
                     forecast.append({
                         "period": i + 1,
                         "predicted_value": predicted,
@@ -1158,11 +1090,11 @@ Respond in JSON:
                         "confidence": 0.3,
                     })
         else:
-            forecast = [{"error": "Insufficient data for forecasting"}]
+            _forecast = [{"error": "Insufficient data for forecasting"}]
         
         return forecast
     
-    async def _handle_get_analytics_summary(self, message: ActorMessage) -> None:
+    async def _handle_get_analytics_summary(self, _message: ActorMessage) -> None:
         """
         Get summary of all analytics.
         
@@ -1170,7 +1102,7 @@ Respond in JSON:
             message: Actor message
         """
         try:
-            summary = {
+            _summary = {
                 "analyses_count": len(self.analysis_results),
                 "trend_analyses_count": len(self.trend_analyses),
                 "correlation_matrices_count": len(self.correlation_matrices),
@@ -1180,22 +1112,22 @@ Respond in JSON:
                 ],
             }
             
-            response = {
+            _response = {
                 "message_type": "analytics_summary_response",
                 "summary": summary,
             }
             
             if message.content.get("reply_to"):
                 await self.send(
-                    topic=message.content["reply_to"],
-                    content=response,
-                    sender_id=self.agent_id,
+                    _topic = message.content["reply_to"],
+                    _content = response,
+                    _sender_id = self.agent_id,
                 )
             
         except Exception as e:
             logger.error(f"[{self.agent_id}] Error getting analytics summary: {e}", exc_info=True)
     
-    async def _handle_knowledge_enhanced_analysis(self, message: ActorMessage) -> None:
+    async def _handle_knowledge_enhanced_analysis(self, _message: ActorMessage) -> None:
         """
         Perform knowledge-enhanced analytics using the unified knowledge access layer.
         
@@ -1205,11 +1137,11 @@ Respond in JSON:
             message: Actor message with data and query for context
         """
         try:
-            data = message.content.get("data", [])
+            _data = message.content.get("data", [])
             query = message.content.get("query")
-            sources = message.content.get("sources", ["memory", "rag"])
-            limit = message.content.get("limit", 10)
-            analysis_type = message.content.get("analysis_type", "descriptive")
+            _sources = message.content.get("sources", ["memory", "rag"])
+            _limit = message.content.get("limit", 10)
+            _analysis_type = message.content.get("analysis_type", "descriptive")
             
             if not query:
                 logger.error(f"[{self.agent_id}] Knowledge enhanced analysis requires query")
@@ -1219,19 +1151,19 @@ Respond in JSON:
             
             # First, query knowledge base for context
             if self.knowledge_access:
-                knowledge_result = await self.knowledge_access.query(
-                    query=query,
-                    sources=sources,
-                    limit=limit,
-                    rerank=True,
-                    diversity_lambda=0.5,
+                _knowledge_result = await self.knowledge_access.query(
+                    _query = query,
+                    _sources = sources,
+                    _limit = limit,
+                    _rerank = True,
+                    _diversity_lambda = 0.5,
                 )
                 
                 # Perform analysis on data
-                analysis_id = f"knowledge_analysis_{datetime.now(timezone.utc).timestamp()}"
+                _analysis_id = f"knowledge_analysis_{datetime.now(timezone.utc).timestamp()}"
                 
                 # Combine data analysis with knowledge context
-                result = {
+                _result = {
                     "analysis_id": analysis_id,
                     "query": query,
                     "knowledge_context": {
@@ -1247,16 +1179,16 @@ Respond in JSON:
                     },
                 }
                 
-                response = {
+                _response = {
                     "message_type": "knowledge_enhanced_analysis_response",
                     "result": result,
                 }
                 
                 if message.content.get("reply_to"):
                     await self.send(
-                        topic=message.content["reply_to"],
-                        content=response,
-                        sender_id=self.agent_id,
+                        _topic = message.content["reply_to"],
+                        _content = response,
+                        _sender_id = self.agent_id,
                     )
             else:
                 logger.warning(f"[{self.agent_id}] Knowledge access not initialized")
@@ -1264,13 +1196,7 @@ Respond in JSON:
         except Exception as e:
             logger.error(f"[{self.agent_id}] Error in knowledge enhanced analysis: {e}", exc_info=True)
     
-    async def knowledge_enhanced_query(
-        self,
-        query: str,
-        sources: Optional[List[str]] = None,
-        limit: int = 10,
-        rerank: bool = True,
-    ) -> KnowledgeQueryResult:
+    async def knowledge_enhanced_query(self, _query: str, _sources: Optional[List[str]], _limit: int, _rerank: bool) -> KnowledgeQueryResult:
         """
         Execute a knowledge-enhanced query for analytics context.
         
@@ -1288,13 +1214,13 @@ Respond in JSON:
             return KnowledgeQueryResult(entries=[], total_results=0)
         
         return await self.knowledge_access.query(
-            query=query,
-            sources=sources or ["memory", "rag"],
-            limit=limit,
-            rerank=rerank,
+            _query = query,
+            _sources = sources or ["memory", "rag"],
+            _limit = limit,
+            _rerank = rerank,
         )
     
-    async def _handle_signal_processing(self, message: ActorMessage) -> None:
+    async def _handle_signal_processing(self, _message: ActorMessage) -> None:
         """
         Process signals with noise reduction.
         
@@ -1302,16 +1228,16 @@ Respond in JSON:
             message: Actor message with signal data
         """
         try:
-            data = message.content.get("data", [])
-            method = message.content.get("method", "moving_average")
-            window = message.content.get("window", 3)
+            _data = message.content.get("data", [])
+            _method = message.content.get("method", "moving_average")
+            _window = message.content.get("window", 3)
             
             logger.info(f"[{self.agent_id}] Processing signal with {method}")
             
             # Process signal
-            processed = self._process_signal(data, method, window)
+            _processed = self._process_signal(data, method, window)
             
-            response = {
+            _response = {
                 "message_type": "signal_processing_response",
                 "method": method,
                 "window": window,
@@ -1322,9 +1248,9 @@ Respond in JSON:
             
             if message.content.get("reply_to"):
                 await self.send(
-                    topic=message.content["reply_to"],
-                    content=response,
-                    sender_id=self.agent_id,
+                    _topic = message.content["reply_to"],
+                    _content = response,
+                    _sender_id = self.agent_id,
                 )
             
         except Exception as e:
@@ -1335,7 +1261,7 @@ Respond in JSON:
     # Session 44: Collective Learning Integration Methods
     # =========================================================================
 
-    async def _emit_pattern(self, item_id: str, item_type: str, outcome: str, content: Dict[str, Any]) -> None:
+    async def _emit_pattern(self, _item_id: str, _item_type: str, _outcome: str, _content: Dict[str, _Any]) -> None:
         """Emit pattern for collective learning."""
         if not self.pattern_extractor:
             return
@@ -1345,12 +1271,12 @@ Respond in JSON:
         
         try:
             await self.pattern_extractor.analyze_message(
-                message_id=f"{item_type}_{item_id}",
-                sender=self.agent_id,
-                recipient="broadcast",
-                message_type=f"{item_type}_completion",
-                content=content,
-                timestamp=datetime.now(timezone.utc).isoformat(),
+                _message_id = f"{item_type}_{item_id}",
+                _sender = self.agent_id,
+                _recipient = "broadcast",
+                _message_type = f"{item_type}_completion",
+                _content = content,
+                _timestamp = datetime.now(timezone.utc).isoformat(),
             )
             
             self._pattern_emitted.add(item_id)
@@ -1358,15 +1284,15 @@ Respond in JSON:
         except Exception as e:
             logger.warning("failed_to_emit_pattern", item_id=item_id, error=str(e))
 
-    async def _consume_patterns(self, pattern_types: Optional[List[PatternType]] = None) -> List[Dict[str, Any]]:
+    async def _consume_patterns(self, _pattern_types: Optional[List[PatternType]]) -> List[Dict[str, Any]]:
         """Consume patterns from collective learning."""
         if not self.pattern_extractor:
             return []
         
         try:
-            patterns = await self.pattern_extractor.extract_patterns(
-                time_window_hours=24,
-                pattern_types=pattern_types or [PatternType.SUCCESS, PatternType.DECISION],
+            _patterns = await self.pattern_extractor.extract_patterns(
+                _time_window_hours = 24,
+                _pattern_types = pattern_types or [PatternType.SUCCESS, PatternType.DECISION],
             )
             return [p.to_dict() for p in patterns if p.metadata.confidence >= 0.7]
         except Exception as e:
@@ -1377,24 +1303,18 @@ Respond in JSON:
     # Session 44: Consensus Deliberation Integration Methods
     # =========================================================================
 
-    async def _initiate_deliberation(
-        self,
-        item_id: str,
-        proposal: str,
-        participating_agents: List[str],
-        domain: str = "general",
-    ) -> Optional[str]:
+    async def _initiate_deliberation(self, _item_id: str, _proposal: str, _participating_agents: List[str], _domain: str) -> Optional[str]:
         """Initiate swarm deliberation."""
         if not self.deliberation_engine:
             return None
         
         try:
-            deliberation_id = f"delib_{item_id}"
+            _deliberation_id = f"delib_{item_id}"
             self.deliberation_engine.start_deliberation(
-                deliberation_id=deliberation_id,
-                proposal=proposal[:200],
-                participants=participating_agents,
-                domain=domain,
+                _deliberation_id = deliberation_id,
+                _proposal = proposal[:200],
+                _participants = participating_agents,
+                _domain = domain,
             )
             self._active_deliberations[item_id] = deliberation_id
             
@@ -1404,35 +1324,28 @@ Respond in JSON:
             logger.error("failed_to_initiate_deliberation", item_id=item_id, error=str(e))
             return None
 
-    async def _submit_deliberation_position(
-        self,
-        item_id: str,
-        agent_id: str,
-        position: Position,
-        confidence: float,
-        argument: str,
-    ) -> bool:
+    async def _submit_deliberation_position(self, _item_id: str, _agent_id: str, _position: Position, _confidence: float, _argument: str) -> bool:
         """Submit agent position in deliberation."""
         if not self.deliberation_engine:
             return False
         
-        deliberation_id = self._active_deliberations.get(item_id)
+        _deliberation_id = self._active_deliberations.get(item_id)
         if not deliberation_id:
             return False
         
         try:
-            success = self.deliberation_engine.submit_position(
-                deliberation_id=deliberation_id,
+            _success = self.deliberation_engine.submit_position(
+                _deliberation_id = deliberation_id,
                 agent_id=agent_id,
-                position=position,
-                confidence=confidence,
-                argument=argument,
+                _position = position,
+                _confidence = confidence,
+                _argument = argument,
             )
             
             if success and self.access_analyzer:
                 self.access_analyzer.record_access(
-                    memory_id=f"delib_{deliberation_id}_{agent_id}",
-                    access_type="write",
+                    _memory_id = f"delib_{deliberation_id}_{agent_id}",
+                    _access_type = "write",
                     agent_id=agent_id,
                 )
             
@@ -1441,17 +1354,17 @@ Respond in JSON:
             logger.error("failed_to_submit_deliberation_position", error=str(e))
             return False
 
-    async def _finalize_deliberation(self, item_id: str) -> Optional[Any]:
+    async def _finalize_deliberation(self, _item_id: str) -> Optional[Any]:
         """Finalize deliberation and apply result."""
         if not self.deliberation_engine:
             return None
         
-        deliberation_id = self._active_deliberations.get(item_id)
+        _deliberation_id = self._active_deliberations.get(item_id)
         if not deliberation_id:
             return None
         
         try:
-            result = self.deliberation_engine.finalize_deliberation(deliberation_id)
+            _result = self.deliberation_engine.finalize_deliberation(deliberation_id)
             
             if result:
                 self.deliberation_engine.cleanup_deliberation(deliberation_id)
@@ -1467,34 +1380,34 @@ Respond in JSON:
     # Session 44: Memory Optimization Integration Methods
     # =========================================================================
 
-    def _track_memory_access(self, item_id: str, item_type: str, access_type: str = "read") -> None:
+    def _track_memory_access(self, _item_id: str, _item_type: str, _access_type: str) -> None:
         """Track memory access patterns."""
         if not self.access_analyzer:
             return
         
-        memory_id = f"{item_type}_{item_id}"
+        _memory_id = f"{item_type}_{item_id}"
         self.access_analyzer.record_access(
-            memory_id=memory_id,
-            access_type=access_type,
+            _memory_id = memory_id,
+            _access_type = access_type,
             agent_id=self.agent_id,
         )
 
-    def _get_memory_tier(self, item_id: str, item_type: str) -> AccessTier:
+    def _get_memory_tier(self, _item_id: str, _item_type: str) -> AccessTier:
         """Get memory tier classification."""
         if not self.access_analyzer:
             return AccessTier.COLD
         
-        memory_id = f"{item_type}_{item_id}"
-        profile = self.access_analyzer.get_profile(memory_id)
+        _memory_id = f"{item_type}_{item_id}"
+        _profile = self.access_analyzer.get_profile(memory_id)
         return profile.tier if profile else AccessTier.COLD
 
-    async def _prefetch_relevant(self, agent_id: str, item_type: str) -> List[str]:
+    async def _prefetch_relevant(self, _agent_id: str, _item_type: str) -> List[str]:
         """Prefetch items an agent is likely to need."""
         if not self.access_analyzer:
             return []
         
         try:
-            predicted_memories = self.access_analyzer.predict_agent_access(agent_id)
+            _predicted_memories = self.access_analyzer.predict_agent_access(agent_id)
             return [
                 mem.replace(f"{item_type}_", "")
                 for mem in predicted_memories
@@ -1522,17 +1435,17 @@ Respond in JSON:
         }
 
 
-    def _process_signal(self, data: List[float], method: str, window: int) -> List[float]:
+    def _process_signal(self, _data: List[float], _method: str, _window: int) -> List[float]:
         """Process signal with specified method."""
         if method == "moving_average":
-            result = []
+            _result = []
             for i in range(len(data) - window + 1):
                 result.append(sum(data[i:i+window]) / window)
             return result
         elif method == "median_filter":
-            result = []
+            _result = []
             for i in range(len(data) - window + 1):
-                sorted_window = sorted(data[i:i+window])
+                _sorted_window = sorted(data[i:i+window])
                 result.append(sorted_window[window // 2])
             return result
         else:

@@ -36,7 +36,7 @@ from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer, AccessTi
 from heretek_swarm.security.zero_trust import ZeroTrustValidator
 
 
-logger = structlog.get_logger("PerceiverAgent")
+_logger = structlog.get_logger("PerceiverAgent")
 
 
 class ModalityType(str, Enum):
@@ -69,21 +69,7 @@ class PerceiverAgent(AgentActor):
     6. Notify relevant agents of new input
     """
 
-    def __init__(
-        self,
-        agent_id: str = "perceiver",
-        name: str = "Perceiver",
-        description: str = "Multi-modal sensory input processing specialist",
-        swarms_agent: Optional[Agent] = None,
-        max_input_size_mb: int = 50,
-        feature_cache_size: int = 1000,
-        enable_cross_modal: bool = True,
-        pattern_extractor: Optional[PatternExtractor] = None,
-        deliberation_engine: Optional[SwarmDeliberationEngine] = None,
-        access_analyzer: Optional[AccessPatternAnalyzer] = None,
-        zero_trust_validator: Optional[ZeroTrustValidator] = None,
-        **kwargs,
-    ) -> None:
+    def __init__(self, _agent_id: str, _name: str, _description: str, _swarms_agent: Optional[Agent], _max_input_size_mb: int, _feature_cache_size: int, _enable_cross_modal: bool, _pattern_extractor: Optional[PatternExtractor], _deliberation_engine: Optional[SwarmDeliberationEngine], _access_analyzer: Optional[AccessPatternAnalyzer], _zero_trust_validator: Optional[ZeroTrustValidator], _**kwargs) -> None:
         """
         Initialize the Perceiver agent.
 
@@ -99,15 +85,15 @@ class PerceiverAgent(AgentActor):
         """
         super().__init__(
             agent_id=agent_id,
-            name=name,
-            description=description,
-            topics=[
+            _name = name,
+            _description = description,
+            _topics = [
                 "sensory-input",
                 "multi-modal",
                 "feature-extraction",
                 "preprocessing",
             ],
-            capabilities=[
+            _capabilities = [
                 "text-processing",
                 "image-analysis",
                 "audio-processing",
@@ -153,7 +139,7 @@ class PerceiverAgent(AgentActor):
         
         # Session 44: Consensus Integration
         self.deliberation_engine = deliberation_engine or SwarmDeliberationEngine(
-            max_rounds=5, consensus_threshold=0.75, min_participants=2
+            _max_rounds = 5, consensus_threshold=0.75, min_participants=2
         )
         
         # Session 44: Memory Optimization Integration
@@ -181,39 +167,39 @@ class PerceiverAgent(AgentActor):
 
         logger.info(f"[{self.agent_id}] Perceiver initialization complete")
 
-    async def process_message(self, message: ActorMessage) -> None:
+    async def process_message(self, _message: ActorMessage) -> None:
         """
         Process incoming messages with exception handling.
 
         Args:
             message: Actor message to process
         """
-        handler = self._message_handlers.get(message.message_type)
+        _handler = self._message_handlers.get(message.message_type)
         if handler:
             try:
                 await handler(message)
             except Exception as e:
                 logger.error(
                     f"[{self.agent_id}] Error processing message {message.message_type}: {e}",
-                    exc_info=True,
+                    _exc_info = True,
                 )
                 self.error_count += 1
                 if message.content.get("reply_to"):
                     await self.send(
-                        topic=message.content["reply_to"],
-                        content={
+                        _topic = message.content["reply_to"],
+                        _content = {
                             "message_type": "error_response",
                             "error": str(e),
                             "original_message_type": message.message_type,
                         },
-                        correlation_id=message.correlation_id,
+                        _correlation_id = message.correlation_id,
                     )
         else:
             logger.warning(
                 f"[{self.agent_id}] No handler for message type: {message.message_type}"
             )
 
-    def _validate_message_content(self, message_type: str, content: Dict[str, Any]) -> Any:
+    def _validate_message_content(self, _message_type: str, _content: Dict[str, _Any]) -> Any:
         """Validate message content using Pydantic models."""
         try:
             return validate_message(message_type, content)
@@ -227,7 +213,7 @@ class PerceiverAgent(AgentActor):
             logger.debug(f"[{self.agent_id}] No validator for message type: {message_type}")
             return None
 
-    async def _handle_process_input(self, message: ActorMessage) -> None:
+    async def _handle_process_input(self, _message: ActorMessage) -> None:
         """
         Process multi-modal input.
 
@@ -248,11 +234,11 @@ class PerceiverAgent(AgentActor):
         """
         try:
             content = message.content
-            input_data = content.get("input_data")
-            modality = content.get("modality")
-            format_hint = content.get("format")
+            _input_data = content.get("input_data")
+            _modality = content.get("modality")
+            _format_hint = content.get("format")
             metadata = content.get("metadata", {})
-            priority = content.get("priority", 5)
+            _priority = content.get("priority", 5)
 
             if input_data is None:
                 await self._send_error_response(message, "Missing input_data")
@@ -268,18 +254,18 @@ class PerceiverAgent(AgentActor):
 
             # Auto-detect modality if not provided
             if not modality:
-                modality = self._detect_modality(input_data, format_hint)
+                _modality = self._detect_modality(input_data, format_hint)
 
             # Generate unique input ID
-            input_id = self._generate_input_id(input_data, modality)
+            _input_id = self._generate_input_id(input_data, modality)
 
             # Extract features based on modality
-            features = await self._extract_modality_features(
+            _features = await self._extract_modality_features(
                 input_data, modality, format_hint
             )
 
             # Assess quality
-            quality_score = self._assess_input_quality(input_data, modality, features)
+            _quality_score = self._assess_input_quality(input_data, modality, features)
 
             # Cache features for cross-modal correlation
             self._cache_features(input_id, modality, features, metadata)
@@ -293,8 +279,8 @@ class PerceiverAgent(AgentActor):
 
             # Send response
             await self.send(
-                topic=content.get("reply_to", "actor:*"),
-                content={
+                _topic = content.get("reply_to", "actor:*"),
+                _content = {
                     "message_type": "input_processed",
                     "input_id": input_id,
                     "modality": modality,
@@ -302,22 +288,22 @@ class PerceiverAgent(AgentActor):
                     "quality_score": quality_score,
                     "timestamp": datetime.now(timezone.utc).isoformat(),
                 },
-                correlation_id=message.correlation_id,
+                _correlation_id = message.correlation_id,
             )
 
             logger.info(
                 f"[{self.agent_id}] Input processed: {input_id[:8]}...",
-                extra={"modality": modality, "quality": quality_score},
+                _extra = {"modality": modality, "quality": quality_score},
             )
 
         except Exception as e:
             logger.error(f"[{self.agent_id}] Input processing failed: {e}", exc_info=True)
             await self._send_error_response(message, f"Input processing failed: {e}")
 
-    def _validate_input_size(self, input_data: Any) -> bool:
+    def _validate_input_size(self, _input_data: Any) -> bool:
         """Validate input does not exceed maximum size."""
         try:
-            max_bytes = self.max_input_size_mb * 1024 * 1024
+            _max_bytes = self.max_input_size_mb * 1024 * 1024
             if isinstance(input_data, str):
                 return len(input_data.encode()) <= max_bytes
             elif isinstance(input_data, bytes):
@@ -329,12 +315,10 @@ class PerceiverAgent(AgentActor):
         except Exception:
             return True  # Fail open on validation errors
 
-    def _detect_modality(
-        self, input_data: Any, format_hint: Optional[str] = None
-    ) -> str:
+    def _detect_modality(self, _input_data: Any, _format_hint: Optional[str]) -> str:
         """Auto-detect input modality."""
         if format_hint:
-            format_lower = format_hint.lower()
+            _format_lower = format_hint.lower()
             if format_lower in ["txt", "md", "json", "xml", "html"]:
                 return ModalityType.TEXT.value
             elif format_lower in ["jpg", "jpeg", "png", "gif", "bmp", "webp", "svg"]:
@@ -351,7 +335,7 @@ class PerceiverAgent(AgentActor):
             # Check if it's base64 encoded
             if input_data.startswith("data:"):
                 # Data URL format
-                mime_type = input_data.split(":")[1].split(";")[0]
+                _mime_type = input_data.split(":")[1].split(";")[0]
                 if "image" in mime_type:
                     return ModalityType.IMAGE.value
                 elif "audio" in mime_type:
@@ -374,24 +358,22 @@ class PerceiverAgent(AgentActor):
 
         return ModalityType.TEXT.value
 
-    def _generate_input_id(self, input_data: Any, modality: str) -> str:
+    def _generate_input_id(self, _input_data: Any, _modality: str) -> str:
         """Generate unique input identifier."""
         # Create hash of input data for deduplication
         if isinstance(input_data, str):
-            data_bytes = input_data.encode()
+            _data_bytes = input_data.encode()
         elif isinstance(input_data, bytes):
-            data_bytes = input_data
+            _data_bytes = input_data
         else:
             import json
-            data_bytes = json.dumps(input_data, sort_keys=True).encode()
+            _data_bytes = json.dumps(input_data, sort_keys=True).encode()
 
-        hash_digest = hashlib.sha256(data_bytes).hexdigest()[:16]
-        timestamp = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
+        _hash_digest = hashlib.sha256(data_bytes).hexdigest()[:16]
+        _timestamp = datetime.now(timezone.utc).strftime("%Y%m%d%H%M%S")
         return f"input_{modality}_{timestamp}_{hash_digest}"
 
-    async def _extract_modality_features(
-        self, input_data: Any, modality: str, format_hint: Optional[str]
-    ) -> Dict[str, Any]:
+    async def _extract_modality_features(self, _input_data: Any, _modality: str, _format_hint: Optional[str]) -> Dict[str, Any]:
         """Extract features based on modality."""
         try:
             if modality == ModalityType.TEXT.value:
@@ -412,36 +394,36 @@ class PerceiverAgent(AgentActor):
             logger.error(f"[{self.agent_id}] Feature extraction failed: {e}")
             return {"error": str(e)}
 
-    def _extract_text_features(self, text: str) -> Dict[str, Any]:
+    def _extract_text_features(self, _text: str) -> Dict[str, Any]:
         """Extract features from text input."""
         if not isinstance(text, str):
-            text = str(text)
+            _text = str(text)
 
         # Basic text statistics
-        words = text.split()
-        sentences = text.replace("!", ".").replace("?", ".").split(".")
-        sentences = [s.strip() for s in sentences if s.strip()]
+        _words = text.split()
+        _sentences = text.replace("!", ".").replace("?", ".").split(".")
+        _sentences = [s.strip() for s in sentences if s.strip()]
 
         # Character-level features
-        char_count = len(text)
-        char_count_no_spaces = len(text.replace(" ", ""))
+        _char_count = len(text)
+        _char_count_no_spaces = len(text.replace(" ", ""))
 
         # Word-level features
-        word_count = len(words)
-        avg_word_length = sum(len(w) for w in words) / word_count if word_count > 0 else 0
+        _word_count = len(words)
+        _avg_word_length = sum(len(w) for w in words) / word_count if word_count > 0 else 0
 
         # Sentence-level features
-        sentence_count = len(sentences)
-        avg_sentence_length = word_count / sentence_count if sentence_count > 0 else 0
+        _sentence_count = len(sentences)
+        _avg_sentence_length = word_count / sentence_count if sentence_count > 0 else 0
 
         # Vocabulary features
-        unique_words = set(w.lower() for w in words)
-        vocabulary_richness = len(unique_words) / word_count if word_count > 0 else 0
+        _unique_words = set(w.lower() for w in words)
+        _vocabulary_richness = len(unique_words) / word_count if word_count > 0 else 0
 
         # Detect potential language patterns
         has_code = any(c in text for c in "{}[]()=;") and ("function" in text or "def " in text or "import " in text)
-        has_json = text.strip().startswith(("{", "["))
-        has_xml = text.strip().startswith("<")
+        _has_json = text.strip().startswith(("{", "["))
+        _has_xml = text.strip().startswith("<")
 
         return {
             "char_count": char_count,
@@ -458,18 +440,16 @@ class PerceiverAgent(AgentActor):
             "preview": text[:200] if len(text) > 200 else text,
         }
 
-    async def _extract_image_features(
-        self, image_data: Any, format_hint: Optional[str]
-    ) -> Dict[str, Any]:
+    async def _extract_image_features(self, _image_data: Any, _format_hint: Optional[str]) -> Dict[str, Any]:
         """Extract features from image input."""
         # If LLM with vision capabilities is available, use it
         if self.swarms_agent and self.swarms_agent.llm:
             try:
                 # For base64 encoded images
                 if isinstance(image_data, str) and image_data.startswith("data:"):
-                    description = await asyncio.wait_for(
+                    _description = await asyncio.wait_for(
                         self._describe_image_llm(image_data),
-                        timeout=60,
+                        _timeout = 60,
                     )
                     return {
                         "description": description,
@@ -485,17 +465,17 @@ class PerceiverAgent(AgentActor):
         if isinstance(image_data, str):
             if image_data.startswith("data:"):
                 # Extract MIME type from data URL
-                mime_type = image_data.split(":")[1].split(";")[0]
-                size_bytes = len(image_data.encode())
+                _mime_type = image_data.split(":")[1].split(";")[0]
+                _size_bytes = len(image_data.encode())
             else:
-                mime_type = "unknown"
-                size_bytes = len(image_data.encode())
+                _mime_type = "unknown"
+                _size_bytes = len(image_data.encode())
         elif isinstance(image_data, bytes):
-            mime_type = "unknown"
-            size_bytes = len(image_data)
+            _mime_type = "unknown"
+            _size_bytes = len(image_data)
         else:
-            mime_type = "unknown"
-            size_bytes = 0
+            _mime_type = "unknown"
+            _size_bytes = 0
 
         return {
             "format": format_hint or "unknown",
@@ -504,16 +484,14 @@ class PerceiverAgent(AgentActor):
             "analyzed_by": "metadata",
         }
 
-    async def _describe_image_llm(self, image_data: str) -> str:
+    async def _describe_image_llm(self, _image_data: str) -> str:
         """Use LLM to describe an image."""
-        prompt = "Describe this image in detail, including any text, objects, people, colors, and the overall scene."
+        _prompt = "Describe this image in detail, including any text, objects, people, colors, and the overall scene."
         # Note: Actual implementation would depend on LLM capabilities
         # This is a placeholder for vision-capable LLM integration
         return f"Image analysis requested with prompt: {prompt}"
 
-    async def _extract_audio_features(
-        self, audio_data: Any, format_hint: Optional[str]
-    ) -> Dict[str, Any]:
+    async def _extract_audio_features(self, _audio_data: Any, _format_hint: Optional[str]) -> Dict[str, Any]:
         """Extract features from audio input."""
         # Placeholder for audio feature extraction
         # In production, would use libraries like librosa for:
@@ -523,11 +501,11 @@ class PerceiverAgent(AgentActor):
         # - Tempo and rhythm analysis
 
         if isinstance(audio_data, str):
-            size_bytes = len(audio_data.encode())
+            _size_bytes = len(audio_data.encode())
         elif isinstance(audio_data, bytes):
-            size_bytes = len(audio_data)
+            _size_bytes = len(audio_data)
         else:
-            size_bytes = 0
+            _size_bytes = 0
 
         return {
             "format": format_hint or "unknown",
@@ -536,9 +514,7 @@ class PerceiverAgent(AgentActor):
             "note": "Full audio analysis requires librosa or similar library",
         }
 
-    async def _extract_video_features(
-        self, video_data: Any, format_hint: Optional[str]
-    ) -> Dict[str, Any]:
+    async def _extract_video_features(self, _video_data: Any, _format_hint: Optional[str]) -> Dict[str, Any]:
         """Extract features from video input."""
         # Placeholder for video feature extraction
         # In production, would use libraries like opencv-python for:
@@ -549,11 +525,11 @@ class PerceiverAgent(AgentActor):
         # - Motion analysis
 
         if isinstance(video_data, str):
-            size_bytes = len(video_data.encode())
+            _size_bytes = len(video_data.encode())
         elif isinstance(video_data, bytes):
-            size_bytes = len(video_data)
+            _size_bytes = len(video_data)
         else:
-            size_bytes = 0
+            _size_bytes = 0
 
         return {
             "format": format_hint or "unknown",
@@ -562,9 +538,7 @@ class PerceiverAgent(AgentActor):
             "note": "Full video analysis requires opencv-python or similar library",
         }
 
-    async def _extract_document_features(
-        self, doc_data: Any, format_hint: Optional[str]
-    ) -> Dict[str, Any]:
+    async def _extract_document_features(self, _doc_data: Any, _format_hint: Optional[str]) -> Dict[str, Any]:
         """Extract features from document input."""
         # Placeholder for document feature extraction
         # In production, would use libraries like:
@@ -573,14 +547,14 @@ class PerceiverAgent(AgentActor):
         # - openpyxl for Excel spreadsheets
 
         if isinstance(doc_data, str):
-            size_bytes = len(doc_data.encode())
-            preview = doc_data[:500] if len(doc_data) > 500 else doc_data
+            _size_bytes = len(doc_data.encode())
+            _preview = doc_data[:500] if len(doc_data) > 500 else doc_data
         elif isinstance(doc_data, bytes):
-            size_bytes = len(doc_data)
-            preview = "binary data"
+            _size_bytes = len(doc_data)
+            _preview = "binary data"
         else:
-            size_bytes = 0
-            preview = "unknown format"
+            _size_bytes = 0
+            _preview = "unknown format"
 
         return {
             "format": format_hint or "unknown",
@@ -590,20 +564,20 @@ class PerceiverAgent(AgentActor):
             "note": "Full document analysis requires PyPDF2/python-docx/openpyxl",
         }
 
-    def _extract_sensor_features(self, sensor_data: Dict[str, Any]) -> Dict[str, Any]:
+    def _extract_sensor_features(self, _sensor_data: Dict[str, _Any]) -> Dict[str, Any]:
         """Extract features from sensor data."""
         if not isinstance(sensor_data, dict):
             return {"error": "Sensor data must be a dictionary"}
 
         # Extract basic statistics from numeric values
-        numeric_values = []
+        _numeric_values = []
         for key, value in sensor_data.items():
             if isinstance(value, (int, float)):
                 numeric_values.append(value)
 
-        stats = {}
+        _stats = {}
         if numeric_values:
-            stats = {
+            _stats = {
                 "min": min(numeric_values),
                 "max": max(numeric_values),
                 "avg": sum(numeric_values) / len(numeric_values),
@@ -616,11 +590,9 @@ class PerceiverAgent(AgentActor):
             "analyzed_by": "sensor_parser",
         }
 
-    def _assess_input_quality(
-        self, input_data: Any, modality: str, features: Dict[str, Any]
-    ) -> float:
+    def _assess_input_quality(self, _input_data: Any, _modality: str, _features: Dict[str, _Any]) -> float:
         """Assess input quality (0-1 score)."""
-        quality_score = 1.0
+        _quality_score = 1.0
 
         # Check for errors in features
         if "error" in features:
@@ -629,14 +601,14 @@ class PerceiverAgent(AgentActor):
         # Modality-specific quality checks
         if modality == ModalityType.TEXT.value:
             # Check for meaningful content
-            word_count = features.get("word_count", 0)
+            _word_count = features.get("word_count", 0)
             if word_count < 3:
                 quality_score -= 0.3
             if word_count > 100000:
                 quality_score -= 0.2  # Very long text may need chunking
 
         elif modality == ModalityType.IMAGE.value:
-            size_bytes = features.get("size_bytes", 0)
+            _size_bytes = features.get("size_bytes", 0)
             if size_bytes < 1000:
                 quality_score -= 0.4  # Very small image
             if size_bytes > 50 * 1024 * 1024:
@@ -645,9 +617,7 @@ class PerceiverAgent(AgentActor):
         # Ensure score stays in valid range
         return max(0.0, min(1.0, quality_score))
 
-    def _cache_features(
-        self, input_id: str, modality: str, features: Dict[str, Any], metadata: Dict[str, Any]
-    ) -> None:
+    def _cache_features(self, _input_id: str, _modality: str, _features: Dict[str, _Any], _metadata: Dict[str, _Any]) -> None:
         """Cache features for cross-modal correlation."""
         if not self.enable_cross_modal:
             return
@@ -662,21 +632,19 @@ class PerceiverAgent(AgentActor):
         # Enforce cache size limit
         if len(self.feature_cache) > self.feature_cache_size:
             # Remove oldest entries
-            sorted_keys = sorted(
+            _sorted_keys = sorted(
                 self.feature_cache.keys(),
-                key=lambda k: self.feature_cache[k]["timestamp"]
+                _key = lambda k: self.feature_cache[k]["timestamp"]
             )
             for key in sorted_keys[:100]:  # Remove 100 oldest
                 del self.feature_cache[key]
 
-    async def _store_in_historian(
-        self, input_id: str, modality: str, features: Dict[str, Any], metadata: Dict[str, Any]
-    ) -> None:
+    async def _store_in_historian(self, _input_id: str, _modality: str, _features: Dict[str, _Any], _metadata: Dict[str, _Any]) -> None:
         """Store processed input in Historian memory."""
         try:
             await self.send(
-                topic="actor:historian",
-                content={
+                _topic = "actor:historian",
+                _content = {
                     "message_type": "store_memory",
                     "content": {
                         "input_id": input_id,
@@ -693,7 +661,7 @@ class PerceiverAgent(AgentActor):
         except Exception as e:
             logger.warning(f"[{self.agent_id}] Failed to store in Historian: {e}")
 
-    async def _handle_extract_features(self, message: ActorMessage) -> None:
+    async def _handle_extract_features(self, _message: ActorMessage) -> None:
         """
         Extract features from existing input.
 
@@ -704,32 +672,32 @@ class PerceiverAgent(AgentActor):
         """
         try:
             content = message.content
-            input_id = content.get("input_id")
+            _input_id = content.get("input_id")
 
             if not input_id:
                 await self._send_error_response(message, "Missing input_id")
                 return
 
-            cached = self.feature_cache.get(input_id)
+            _cached = self.feature_cache.get(input_id)
             if not cached:
                 await self._send_error_response(message, f"Input not found: {input_id}")
                 return
 
             await self.send(
-                topic=content.get("reply_to"),
-                content={
+                _topic = content.get("reply_to"),
+                _content = {
                     "message_type": "features_result",
                     "input_id": input_id,
                     **cached,
                 },
-                correlation_id=message.correlation_id,
+                _correlation_id = message.correlation_id,
             )
 
         except Exception as e:
             logger.error(f"[{self.agent_id}] Feature extraction failed: {e}", exc_info=True)
             await self._send_error_response(message, f"Feature extraction failed: {e}")
 
-    async def _handle_classify_modality(self, message: ActorMessage) -> None:
+    async def _handle_classify_modality(self, _message: ActorMessage) -> None:
         """
         Classify input modality.
 
@@ -740,30 +708,30 @@ class PerceiverAgent(AgentActor):
         """
         try:
             content = message.content
-            input_data = content.get("input_data")
-            format_hint = content.get("format_hint")
+            _input_data = content.get("input_data")
+            _format_hint = content.get("format_hint")
 
             if input_data is None:
                 await self._send_error_response(message, "Missing input_data")
                 return
 
-            modality = self._detect_modality(input_data, format_hint)
+            _modality = self._detect_modality(input_data, format_hint)
 
             await self.send(
-                topic=content.get("reply_to"),
-                content={
+                _topic = content.get("reply_to"),
+                _content = {
                     "message_type": "modality_result",
                     "modality": modality,
                     "confidence": 0.8,  # Placeholder confidence
                 },
-                correlation_id=message.correlation_id,
+                _correlation_id = message.correlation_id,
             )
 
         except Exception as e:
             logger.error(f"[{self.agent_id}] Modality classification failed: {e}", exc_info=True)
             await self._send_error_response(message, f"Classification failed: {e}")
 
-    async def _handle_assess_quality(self, message: ActorMessage) -> None:
+    async def _handle_assess_quality(self, _message: ActorMessage) -> None:
         """
         Assess input quality.
 
@@ -773,36 +741,36 @@ class PerceiverAgent(AgentActor):
         """
         try:
             content = message.content
-            input_id = content.get("input_id")
+            _input_id = content.get("input_id")
 
             if not input_id:
                 await self._send_error_response(message, "Missing input_id")
                 return
 
-            cached = self.feature_cache.get(input_id)
+            _cached = self.feature_cache.get(input_id)
             if not cached:
                 await self._send_error_response(message, f"Input not found: {input_id}")
                 return
 
-            quality_score = self._assess_input_quality(
+            _quality_score = self._assess_input_quality(
                 None, cached["modality"], cached["features"]
             )
 
             await self.send(
-                topic=content.get("reply_to"),
-                content={
+                _topic = content.get("reply_to"),
+                _content = {
                     "message_type": "quality_result",
                     "input_id": input_id,
                     "quality_score": quality_score,
                 },
-                correlation_id=message.correlation_id,
+                _correlation_id = message.correlation_id,
             )
 
         except Exception as e:
             logger.error(f"[{self.agent_id}] Quality assessment failed: {e}", exc_info=True)
             await self._send_error_response(message, f"Quality assessment failed: {e}")
 
-    async def _handle_get_processing_stats(self, message: ActorMessage) -> None:
+    async def _handle_get_processing_stats(self, _message: ActorMessage) -> None:
         """
         Get processing statistics.
 
@@ -810,7 +778,7 @@ class PerceiverAgent(AgentActor):
             message: ActorMessage
         """
         try:
-            stats = {
+            _stats = {
                 "inputs_processed": self.inputs_processed.copy(),
                 "total_features_extracted": self.total_features_extracted,
                 "quality_rejections": self.quality_rejections,
@@ -820,19 +788,19 @@ class PerceiverAgent(AgentActor):
             }
 
             await self.send(
-                topic=message.content.get("reply_to"),
-                content={
+                _topic = message.content.get("reply_to"),
+                _content = {
                     "message_type": "stats_result",
                     **stats,
                 },
-                correlation_id=message.correlation_id,
+                _correlation_id = message.correlation_id,
             )
 
         except Exception as e:
             logger.error(f"[{self.agent_id}] Stats retrieval failed: {e}", exc_info=True)
             await self._send_error_response(message, f"Stats retrieval failed: {e}")
 
-    async def _handle_correlate_modalities(self, message: ActorMessage) -> None:
+    async def _handle_correlate_modalities(self, _message: ActorMessage) -> None:
         """
         Find cross-modal correlations.
 
@@ -842,7 +810,7 @@ class PerceiverAgent(AgentActor):
         """
         try:
             content = message.content
-            input_ids = content.get("input_ids", [])
+            _input_ids = content.get("input_ids", [])
 
             if len(input_ids) < 2:
                 await self._send_error_response(
@@ -850,11 +818,11 @@ class PerceiverAgent(AgentActor):
                 )
                 return
 
-            correlations = []
+            _correlations = []
             for i, id1 in enumerate(input_ids):
                 for id2 in input_ids[i+1:]:
-                    data1 = self.feature_cache.get(id1)
-                    data2 = self.feature_cache.get(id2)
+                    _data1 = self.feature_cache.get(id1)
+                    _data2 = self.feature_cache.get(id2)
 
                     if data1 and data2:
                         correlation = {
@@ -871,13 +839,13 @@ class PerceiverAgent(AgentActor):
                         self.cross_modal_correlations.append(correlation)
 
             await self.send(
-                topic=content.get("reply_to"),
-                content={
+                _topic = content.get("reply_to"),
+                _content = {
                     "message_type": "correlation_result",
                     "correlations": correlations,
                     "count": len(correlations),
                 },
-                correlation_id=message.correlation_id,
+                _correlation_id = message.correlation_id,
             )
 
         except Exception as e:
@@ -889,7 +857,7 @@ class PerceiverAgent(AgentActor):
     # Session 44: Collective Learning Integration Methods
     # =========================================================================
 
-    async def _emit_pattern(self, item_id: str, item_type: str, outcome: str, content: Dict[str, Any]) -> None:
+    async def _emit_pattern(self, _item_id: str, _item_type: str, _outcome: str, _content: Dict[str, _Any]) -> None:
         """Emit pattern for collective learning."""
         if not self.pattern_extractor:
             return
@@ -899,12 +867,12 @@ class PerceiverAgent(AgentActor):
         
         try:
             await self.pattern_extractor.analyze_message(
-                message_id=f"{item_type}_{item_id}",
-                sender=self.agent_id,
-                recipient="broadcast",
+                _message_id = f"{item_type}_{item_id}",
+                _sender = self.agent_id,
+                _recipient = "broadcast",
                 message_type=f"{item_type}_completion",
                 content=content,
-                timestamp=datetime.now(timezone.utc).isoformat(),
+                _timestamp = datetime.now(timezone.utc).isoformat(),
             )
             
             self._pattern_emitted.add(item_id)
@@ -912,15 +880,15 @@ class PerceiverAgent(AgentActor):
         except Exception as e:
             logger.warning("failed_to_emit_pattern", item_id=item_id, error=str(e))
 
-    async def _consume_patterns(self, pattern_types: Optional[List[PatternType]] = None) -> List[Dict[str, Any]]:
+    async def _consume_patterns(self, _pattern_types: Optional[List[PatternType]]) -> List[Dict[str, Any]]:
         """Consume patterns from collective learning."""
         if not self.pattern_extractor:
             return []
         
         try:
-            patterns = await self.pattern_extractor.extract_patterns(
-                time_window_hours=24,
-                pattern_types=pattern_types or [PatternType.SUCCESS, PatternType.DECISION],
+            _patterns = await self.pattern_extractor.extract_patterns(
+                _time_window_hours = 24,
+                _pattern_types = pattern_types or [PatternType.SUCCESS, PatternType.DECISION],
             )
             return [p.to_dict() for p in patterns if p.metadata.confidence >= 0.7]
         except Exception as e:
@@ -931,24 +899,18 @@ class PerceiverAgent(AgentActor):
     # Session 44: Consensus Deliberation Integration Methods
     # =========================================================================
 
-    async def _initiate_deliberation(
-        self,
-        item_id: str,
-        proposal: str,
-        participating_agents: List[str],
-        domain: str = "general",
-    ) -> Optional[str]:
+    async def _initiate_deliberation(self, _item_id: str, _proposal: str, _participating_agents: List[str], _domain: str) -> Optional[str]:
         """Initiate swarm deliberation."""
         if not self.deliberation_engine:
             return None
         
         try:
-            deliberation_id = f"delib_{item_id}"
+            _deliberation_id = f"delib_{item_id}"
             self.deliberation_engine.start_deliberation(
-                deliberation_id=deliberation_id,
-                proposal=proposal[:200],
-                participants=participating_agents,
-                domain=domain,
+                _deliberation_id = deliberation_id,
+                _proposal = proposal[:200],
+                _participants = participating_agents,
+                _domain = domain,
             )
             self._active_deliberations[item_id] = deliberation_id
             
@@ -958,35 +920,28 @@ class PerceiverAgent(AgentActor):
             logger.error("failed_to_initiate_deliberation", item_id=item_id, error=str(e))
             return None
 
-    async def _submit_deliberation_position(
-        self,
-        item_id: str,
-        agent_id: str,
-        position: Position,
-        confidence: float,
-        argument: str,
-    ) -> bool:
+    async def _submit_deliberation_position(self, _item_id: str, _agent_id: str, _position: Position, _confidence: float, _argument: str) -> bool:
         """Submit agent position in deliberation."""
         if not self.deliberation_engine:
             return False
         
-        deliberation_id = self._active_deliberations.get(item_id)
+        _deliberation_id = self._active_deliberations.get(item_id)
         if not deliberation_id:
             return False
         
         try:
-            success = self.deliberation_engine.submit_position(
-                deliberation_id=deliberation_id,
+            _success = self.deliberation_engine.submit_position(
+                _deliberation_id = deliberation_id,
                 agent_id=agent_id,
-                position=position,
-                confidence=confidence,
-                argument=argument,
+                _position = position,
+                _confidence = confidence,
+                _argument = argument,
             )
             
             if success and self.access_analyzer:
                 self.access_analyzer.record_access(
-                    memory_id=f"delib_{deliberation_id}_{agent_id}",
-                    access_type="write",
+                    _memory_id = f"delib_{deliberation_id}_{agent_id}",
+                    _access_type = "write",
                     agent_id=agent_id,
                 )
             
@@ -995,17 +950,17 @@ class PerceiverAgent(AgentActor):
             logger.error("failed_to_submit_deliberation_position", error=str(e))
             return False
 
-    async def _finalize_deliberation(self, item_id: str) -> Optional[Any]:
+    async def _finalize_deliberation(self, _item_id: str) -> Optional[Any]:
         """Finalize deliberation and apply result."""
         if not self.deliberation_engine:
             return None
         
-        deliberation_id = self._active_deliberations.get(item_id)
+        _deliberation_id = self._active_deliberations.get(item_id)
         if not deliberation_id:
             return None
         
         try:
-            result = self.deliberation_engine.finalize_deliberation(deliberation_id)
+            _result = self.deliberation_engine.finalize_deliberation(deliberation_id)
             
             if result:
                 self.deliberation_engine.cleanup_deliberation(deliberation_id)
@@ -1021,34 +976,34 @@ class PerceiverAgent(AgentActor):
     # Session 44: Memory Optimization Integration Methods
     # =========================================================================
 
-    def _track_memory_access(self, item_id: str, item_type: str, access_type: str = "read") -> None:
+    def _track_memory_access(self, _item_id: str, _item_type: str, _access_type: str) -> None:
         """Track memory access patterns."""
         if not self.access_analyzer:
             return
         
-        memory_id = f"{item_type}_{item_id}"
+        _memory_id = f"{item_type}_{item_id}"
         self.access_analyzer.record_access(
-            memory_id=memory_id,
-            access_type=access_type,
+            _memory_id = memory_id,
+            _access_type = access_type,
             agent_id=self.agent_id,
         )
 
-    def _get_memory_tier(self, item_id: str, item_type: str) -> AccessTier:
+    def _get_memory_tier(self, _item_id: str, _item_type: str) -> AccessTier:
         """Get memory tier classification."""
         if not self.access_analyzer:
             return AccessTier.COLD
         
-        memory_id = f"{item_type}_{item_id}"
-        profile = self.access_analyzer.get_profile(memory_id)
+        _memory_id = f"{item_type}_{item_id}"
+        _profile = self.access_analyzer.get_profile(memory_id)
         return profile.tier if profile else AccessTier.COLD
 
-    async def _prefetch_relevant(self, agent_id: str, item_type: str) -> List[str]:
+    async def _prefetch_relevant(self, _agent_id: str, _item_type: str) -> List[str]:
         """Prefetch items an agent is likely to need."""
         if not self.access_analyzer:
             return []
         
         try:
-            predicted_memories = self.access_analyzer.predict_agent_access(agent_id)
+            _predicted_memories = self.access_analyzer.predict_agent_access(agent_id)
             return [
                 mem.replace(f"{item_type}_", "")
                 for mem in predicted_memories
@@ -1076,15 +1031,15 @@ class PerceiverAgent(AgentActor):
         }
 
 
-    async def _send_error_response(self, message: ActorMessage, error: str) -> None:
+    async def _send_error_response(self, _message: ActorMessage, _error: str) -> None:
         """Send error response."""
         if message.content.get("reply_to"):
             await self.send(
-                topic=message.content["reply_to"],
-                content={
+                _topic = message.content["reply_to"],
+                _content = {
                     "message_type": "error_response",
                     "error": error,
                     "original_message_type": message.message_type,
                 },
-                correlation_id=message.correlation_id,
+                _correlation_id = message.correlation_id,
             )

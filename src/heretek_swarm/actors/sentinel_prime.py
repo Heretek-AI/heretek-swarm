@@ -28,7 +28,7 @@ import structlog
 from heretek_swarm.actors.base import AgentActor, ActorMessage
 from heretek_swarm.actors.validation import validate_message
 
-logger = structlog.get_logger("SentinelPrimeAgent")
+_logger = structlog.get_logger("SentinelPrimeAgent")
 
 
 class ThreatLevel(str, Enum):
@@ -136,22 +136,14 @@ class SentinelPrimeAgent(AgentActor):
     security intelligence for the Collective.
     """
     
-    def __init__(
-        self,
-        agent_id: Optional[str] = None,
-        name: str = "Sentinel-Prime",
-        description: str = "Security Commander - Threat Response",
-        config: Optional[Dict[str, Any]] = None,
-        db_pool: Optional[Any] = None,
-        redis_client: Optional[Any] = None,
-    ):
+    def __init__(self, _agent_id: Optional[str], _name: str, _description: str, _config: Optional[Dict[str, _Any]], _db_pool: Optional[Any], _redis_client: Optional[Any]):
         super().__init__(
             agent_id=agent_id,
-            name=name,
+            _name = name,
             description=description,
-            config=config,
-            db_pool=db_pool,
-            redis_client=redis_client,
+            _config = config,
+            _db_pool = db_pool,
+            _redis_client = redis_client,
         )
         
         # Security configuration
@@ -204,29 +196,29 @@ class SentinelPrimeAgent(AgentActor):
         
         logger.info(
             "Sentinel-Prime Agent initialized",
-            agent_id=self.agent_id,
-            auto_response=self._auto_response_enabled,
-            alert_threshold=self._alert_threshold,
+            _agent_id = self.agent_id,
+            _auto_response = self._auto_response_enabled,
+            _alert_threshold = self._alert_threshold,
         )
     
-    async def process_message(self, message: ActorMessage) -> None:
+    async def process_message(self, _message: ActorMessage) -> None:
         """Process incoming message with security validation."""
         try:
-            handler = self._message_handlers.get(message.message_type)
+            _handler = self._message_handlers.get(message.message_type)
             if handler:
                 await handler(message)
             else:
                 logger.warning(
                     "Unknown message type",
-                    message_type=message.message_type,
-                    sender=message.sender_id,
+                    _message_type = message.message_type,
+                    _sender = message.sender_id,
                 )
         except Exception as e:
             logger.error(
                 "Error processing message",
-                message_type=message.message_type,
+                _message_type = message.message_type,
                 error=str(e),
-                exc_info=True,
+                _exc_info = True,
             )
     
     def _register_handlers(self) -> None:
@@ -246,7 +238,7 @@ class SentinelPrimeAgent(AgentActor):
             "update_config": self._handle_update_config,
         }
     
-    async def _handle_report_threat(self, message: ActorMessage) -> None:
+    async def _handle_report_threat(self, _message: ActorMessage) -> None:
         """
         Report a potential security threat.
         
@@ -261,9 +253,9 @@ class SentinelPrimeAgent(AgentActor):
         }
         """
         try:
-            content = message.content
-            threat_type_str = content.get("threat_type")
-            threat_level_str = content.get("threat_level", ThreatLevel.MEDIUM.value)
+            _content = message.content
+            _threat_type_str = content.get("threat_type")
+            _threat_level_str = content.get("threat_level", ThreatLevel.MEDIUM.value)
             source = content.get("source")
             target = content.get("target")
             description = content.get("description", "")
@@ -271,7 +263,7 @@ class SentinelPrimeAgent(AgentActor):
             indicators = content.get("indicators", [])
             
             # Validate
-            validated = validate_message({
+            _validated = validate_message({
                 "sender_id": message.sender_id,
                 "message_type": "report_threat",
                 "content": content,
@@ -327,7 +319,7 @@ class SentinelPrimeAgent(AgentActor):
             
             # LRU cleanup
             if len(self._incident_history) > self._max_incidents:
-                oldest = self._incident_history.pop(0)
+                _oldest = self._incident_history.pop(0)
                 self._incidents.pop(oldest, None)
             
             logger.warning(
@@ -337,10 +329,10 @@ class SentinelPrimeAgent(AgentActor):
                 threat_level=threat_level.value,
                 source=source,
                 target=target,
-                auto_response=len(response_actions) > 0,
+                _auto_response = len(response_actions) > 0,
             )
             
-            response_content = {
+            _response_content = {
                 "incident_id": incident_id,
                 "status": incident.status.value,
                 "threat_level": threat_level.value,
@@ -358,7 +350,7 @@ class SentinelPrimeAgent(AgentActor):
             logger.error("Error reporting threat", error=str(e), exc_info=True)
             await self._send_error(message, "Threat report failed", str(e))
     
-    async def _handle_analyze_threat(self, message: ActorMessage) -> None:
+    async def _handle_analyze_threat(self, _message: ActorMessage) -> None:
         """
         Analyze a reported threat for correlation and severity.
         
@@ -369,10 +361,10 @@ class SentinelPrimeAgent(AgentActor):
         }
         """
         try:
-            content = message.content
+            _content = message.content
             incident_id = content.get("incident_id")
-            correlate = content.get("correlate", True)
-            deep_analysis = content.get("deep_analysis", False)
+            _correlate = content.get("correlate", True)
+            _deep_analysis = content.get("deep_analysis", False)
             
             if not incident_id:
                 await self._send_error(message, "Missing incident_id")
@@ -384,7 +376,7 @@ class SentinelPrimeAgent(AgentActor):
                 return
             
             # Perform analysis
-            analysis_result = {
+            _analysis_result = {
                 "incident_id": incident_id,
                 "severity_score": self._calculate_severity_score(incident),
                 "correlated_incidents": [],
@@ -395,7 +387,7 @@ class SentinelPrimeAgent(AgentActor):
             
             # Correlation analysis
             if correlate:
-                correlated = self._find_correlated_incidents(incident)
+                _correlated = self._find_correlated_incidents(incident)
                 analysis_result["correlated_incidents"] = [
                     {"incident_id": c.incident_id, "correlation_score": 0.8}
                     for c in correlated[:5]
@@ -407,7 +399,7 @@ class SentinelPrimeAgent(AgentActor):
                 analysis_result["ioc_matches"] = self._match_iocs(incident)
                 analysis_result["mitre_techniques"] = self._map_mitre_techniques(incident)
             
-            response_content = {
+            _response_content = {
                 "incident_id": incident_id,
                 "analysis": analysis_result,
                 "updated_threat_level": incident.threat_level.value,
@@ -419,7 +411,7 @@ class SentinelPrimeAgent(AgentActor):
             logger.error("Error analyzing threat", error=str(e), exc_info=True)
             await self._send_error(message, "Threat analysis failed", str(e))
     
-    async def _handle_get_incident_details(self, message: ActorMessage) -> None:
+    async def _handle_get_incident_details(self, _message: ActorMessage) -> None:
         """
         Get detailed information about a specific incident.
         
@@ -428,7 +420,7 @@ class SentinelPrimeAgent(AgentActor):
         }
         """
         try:
-            content = message.content
+            _content = message.content
             incident_id = content.get("incident_id")
             
             if not incident_id:
@@ -440,7 +432,7 @@ class SentinelPrimeAgent(AgentActor):
                 await self._send_error(message, "Incident not found", incident_id)
                 return
             
-            response_content = {
+            _response_content = {
                 "incident_id": incident.incident_id,
                 "threat_type": incident.threat_type.value,
                 "threat_level": incident.threat_level.value,
@@ -470,7 +462,7 @@ class SentinelPrimeAgent(AgentActor):
             logger.error("Error getting incident details", error=str(e), exc_info=True)
             await self._send_error(message, "Failed to get incident details", str(e))
     
-    async def _handle_get_active_incidents(self, message: ActorMessage) -> None:
+    async def _handle_get_active_incidents(self, _message: ActorMessage) -> None:
         """
         Get all active (non-closed) incidents.
         
@@ -480,11 +472,11 @@ class SentinelPrimeAgent(AgentActor):
         }
         """
         try:
-            content = message.content
-            threat_level_filter = content.get("threat_level_filter")
-            limit = content.get("limit", 100)
+            _content = message.content
+            _threat_level_filter = content.get("threat_level_filter")
+            _limit = content.get("limit", 100)
             
-            active_incidents = [
+            _active_incidents = [
                 inc for inc in self._incidents.values()
                 if inc.status not in [IncidentStatus.CLOSED, IncidentStatus.REMEDIATED]
             ]
@@ -492,16 +484,16 @@ class SentinelPrimeAgent(AgentActor):
             # Filter by threat level
             if threat_level_filter:
                 try:
-                    min_level = ThreatLevel(threat_level_filter)
-                    level_order = {
+                    _min_level = ThreatLevel(threat_level_filter)
+                    _level_order = {
                         ThreatLevel.INFORMATIONAL: 0,
                         ThreatLevel.LOW: 1,
                         ThreatLevel.MEDIUM: 2,
                         ThreatLevel.HIGH: 3,
                         ThreatLevel.CRITICAL: 4,
                     }
-                    min_order = level_order.get(min_level, 0)
-                    active_incidents = [
+                    _min_order = level_order.get(min_level, 0)
+                    _active_incidents = [
                         inc for inc in active_incidents
                         if level_order.get(inc.threat_level, 0) >= min_order
                     ]
@@ -509,7 +501,7 @@ class SentinelPrimeAgent(AgentActor):
                     pass
             
             # Sort by threat level (highest first)
-            level_order = {
+            _level_order = {
                 ThreatLevel.CRITICAL: 4,
                 ThreatLevel.HIGH: 3,
                 ThreatLevel.MEDIUM: 2,
@@ -517,14 +509,14 @@ class SentinelPrimeAgent(AgentActor):
                 ThreatLevel.INFORMATIONAL: 0,
             }
             active_incidents.sort(
-                key=lambda x: level_order.get(x.threat_level, 0),
-                reverse=True,
+                _key = lambda x: level_order.get(x.threat_level, 0),
+                _reverse = True,
             )
             
             # Apply limit
-            active_incidents = active_incidents[:limit]
+            _active_incidents = active_incidents[:limit]
             
-            response_content = {
+            _response_content = {
                 "active_incidents_count": len(active_incidents),
                 "incidents": [
                     {
@@ -546,7 +538,7 @@ class SentinelPrimeAgent(AgentActor):
             logger.error("Error getting active incidents", error=str(e), exc_info=True)
             await self._send_error(message, "Failed to get active incidents", str(e))
     
-    async def _handle_respond_to_incident(self, message: ActorMessage) -> None:
+    async def _handle_respond_to_incident(self, _message: ActorMessage) -> None:
         """
         Execute response actions for an incident.
         
@@ -557,10 +549,10 @@ class SentinelPrimeAgent(AgentActor):
         }
         """
         try:
-            content = message.content
+            _content = message.content
             incident_id = content.get("incident_id")
-            actions = content.get("actions", [])
-            manual = content.get("manual", False)
+            _actions = content.get("actions", [])
+            _manual = content.get("manual", False)
             
             if not incident_id:
                 await self._send_error(message, "Missing incident_id")
@@ -571,12 +563,12 @@ class SentinelPrimeAgent(AgentActor):
                 await self._send_error(message, "Incident not found", incident_id)
                 return
             
-            executed_actions = []
+            _executed_actions = []
             
             for action_str in actions:
                 try:
-                    action = ResponseAction(action_str)
-                    result = await self._execute_response_action(incident, action)
+                    _action = ResponseAction(action_str)
+                    _result = await self._execute_response_action(incident, action)
                     if result:
                         executed_actions.append(action)
                         incident.response_actions.append(action)
@@ -596,7 +588,7 @@ class SentinelPrimeAgent(AgentActor):
             else:
                 self._stats["auto_responses_triggered"] += len(executed_actions)
             
-            response_content = {
+            _response_content = {
                 "incident_id": incident_id,
                 "executed_actions": [a.value for a in executed_actions],
                 "new_status": incident.status.value,
@@ -609,7 +601,7 @@ class SentinelPrimeAgent(AgentActor):
             logger.error("Error responding to incident", error=str(e), exc_info=True)
             await self._send_error(message, "Response execution failed", str(e))
     
-    async def _handle_add_threat_indicator(self, message: ActorMessage) -> None:
+    async def _handle_add_threat_indicator(self, _message: ActorMessage) -> None:
         """
         Add a threat indicator to the intelligence database.
         
@@ -622,8 +614,8 @@ class SentinelPrimeAgent(AgentActor):
         }
         """
         try:
-            content = message.content
-            indicator_data = {
+            _content = message.content
+            _indicator_data = {
                 "indicator_type": content.get("indicator_type", "unknown"),
                 "value": content.get("value", ""),
                 "confidence": content.get("confidence", 0.5),
@@ -642,10 +634,10 @@ class SentinelPrimeAgent(AgentActor):
             self._indicator_cache[indicator.value] = indicator
             if len(self._indicator_cache) > self._max_indicator_cache:
                 # Remove oldest
-                oldest_key = next(iter(self._indicator_cache))
+                _oldest_key = next(iter(self._indicator_cache))
                 self._indicator_cache.pop(oldest_key)
             
-            response_content = {
+            _response_content = {
                 "indicator_id": indicator.indicator_id,
                 "type": indicator.indicator_type,
                 "value": indicator.value,
@@ -659,7 +651,7 @@ class SentinelPrimeAgent(AgentActor):
             logger.error("Error adding threat indicator", error=str(e), exc_info=True)
             await self._send_error(message, "Failed to add indicator", str(e))
     
-    async def _handle_check_indicator(self, message: ActorMessage) -> None:
+    async def _handle_check_indicator(self, _message: ActorMessage) -> None:
         """
         Check if a value matches any known threat indicator.
         
@@ -669,14 +661,14 @@ class SentinelPrimeAgent(AgentActor):
         }
         """
         try:
-            content = message.content
+            _content = message.content
             value = content.get("value", "")
             indicator_type = content.get("indicator_type")
             
             # Check cache first
-            cached = self._indicator_cache.get(value)
+            _cached = self._indicator_cache.get(value)
             if cached:
-                response_content = {
+                _response_content = {
                     "value": value,
                     "match_found": True,
                     "indicator": {
@@ -696,7 +688,7 @@ class SentinelPrimeAgent(AgentActor):
                     if indicator_type and indicator.indicator_type != indicator_type:
                         continue
                     
-                    response_content = {
+                    _response_content = {
                         "value": value,
                         "match_found": True,
                         "indicator": {
@@ -710,7 +702,7 @@ class SentinelPrimeAgent(AgentActor):
                     await self._send_response(message, response_content)
                     return
             
-            response_content = {
+            _response_content = {
                 "value": value,
                 "match_found": False,
                 "source": "not_found",
@@ -721,7 +713,7 @@ class SentinelPrimeAgent(AgentActor):
             logger.error("Error checking indicator", error=str(e), exc_info=True)
             await self._send_error(message, "Indicator check failed", str(e))
     
-    async def _handle_get_threat_report(self, message: ActorMessage) -> None:
+    async def _handle_get_threat_report(self, _message: ActorMessage) -> None:
         """
         Generate comprehensive threat intelligence report.
         
@@ -732,33 +724,33 @@ class SentinelPrimeAgent(AgentActor):
         }
         """
         try:
-            content = message.content
-            time_range = content.get("time_range", "24h")
-            include_indicators = content.get("include_indicators", False)
-            include_recommendations = content.get("include_recommendations", True)
+            _content = message.content
+            _time_range = content.get("time_range", "24h")
+            _include_indicators = content.get("include_indicators", False)
+            _include_recommendations = content.get("include_recommendations", True)
             
             # Calculate statistics
-            incidents_by_level = dict(self._stats["incidents_by_level"])
-            incidents_by_type = dict(self._stats["incidents_by_type"])
+            _incidents_by_level = dict(self._stats["incidents_by_level"])
+            _incidents_by_type = dict(self._stats["incidents_by_type"])
             
-            active_threats = sum(
+            _active_threats = sum(
                 1 for inc in self._incidents.values()
                 if inc.status in [IncidentStatus.DETECTED, IncidentStatus.INVESTIGATING]
             )
-            contained_threats = sum(
+            _contained_threats = sum(
                 1 for inc in self._incidents.values()
                 if inc.status in [IncidentStatus.CONTAINED, IncidentStatus.REMEDIATED]
             )
             
             # Get top indicators
-            top_indicators = []
+            _top_indicators = []
             if include_indicators:
-                sorted_indicators = sorted(
+                _sorted_indicators = sorted(
                     self._threat_indicators.values(),
-                    key=lambda x: x.confidence,
-                    reverse=True,
+                    _key = lambda x: x.confidence,
+                    _reverse = True,
                 )[:20]
-                top_indicators = [
+                _top_indicators = [
                     {
                         "indicator_id": i.indicator_id,
                         "type": i.indicator_type,
@@ -770,11 +762,11 @@ class SentinelPrimeAgent(AgentActor):
                 ]
             
             # Generate recommendations
-            recommendations = []
+            _recommendations = []
             if include_recommendations:
-                recommendations = self._generate_strategic_recommendations()
+                _recommendations = self._generate_strategic_recommendations()
             
-            report = {
+            _report = {
                 "report_id": f"threat_report_{datetime.now(timezone.utc).timestamp()}",
                 "timestamp": datetime.now(timezone.utc).isoformat(),
                 "time_range": time_range,
@@ -797,7 +789,7 @@ class SentinelPrimeAgent(AgentActor):
             logger.error("Error generating threat report", error=str(e), exc_info=True)
             await self._send_error(message, "Threat report generation failed", str(e))
     
-    async def _handle_block_source(self, message: ActorMessage) -> None:
+    async def _handle_block_source(self, _message: ActorMessage) -> None:
         """
         Block a source from communicating with the Collective.
         
@@ -808,10 +800,10 @@ class SentinelPrimeAgent(AgentActor):
         }
         """
         try:
-            content = message.content
+            _content = message.content
             source = content.get("source")
-            duration = content.get("duration")
-            reason = content.get("reason", "manual_block")
+            _duration = content.get("duration")
+            _reason = content.get("reason", "manual_block")
             
             if not source:
                 await self._send_error(message, "Missing source")
@@ -826,11 +818,11 @@ class SentinelPrimeAgent(AgentActor):
             logger.warning(
                 "Source blocked",
                 source=source,
-                duration=duration,
-                reason=reason,
+                _duration = duration,
+                _reason = reason,
             )
             
-            response_content = {
+            _response_content = {
                 "source": source,
                 "blocked": True,
                 "duration": duration,
@@ -843,7 +835,7 @@ class SentinelPrimeAgent(AgentActor):
             logger.error("Error blocking source", error=str(e), exc_info=True)
             await self._send_error(message, "Block operation failed", str(e))
     
-    async def _handle_isolate_actor(self, message: ActorMessage) -> None:
+    async def _handle_isolate_actor(self, _message: ActorMessage) -> None:
         """
         Isolate an actor from the Collective.
         
@@ -854,10 +846,10 @@ class SentinelPrimeAgent(AgentActor):
         }
         """
         try:
-            content = message.content
-            actor_id = content.get("actor_id")
-            duration = content.get("duration")
-            reason = content.get("reason", "security_isolation")
+            _content = message.content
+            _actor_id = content.get("actor_id")
+            _duration = content.get("duration")
+            _reason = content.get("reason", "security_isolation")
             
             if not actor_id:
                 await self._send_error(message, "Missing actor_id")
@@ -871,12 +863,12 @@ class SentinelPrimeAgent(AgentActor):
             
             logger.warning(
                 "Actor isolated",
-                actor_id=actor_id,
-                duration=duration,
-                reason=reason,
+                _actor_id = actor_id,
+                _duration = duration,
+                _reason = reason,
             )
             
-            response_content = {
+            _response_content = {
                 "actor_id": actor_id,
                 "isolated": True,
                 "duration": duration,
@@ -889,10 +881,10 @@ class SentinelPrimeAgent(AgentActor):
             logger.error("Error isolating actor", error=str(e), exc_info=True)
             await self._send_error(message, "Isolation operation failed", str(e))
     
-    async def _handle_get_statistics(self, message: ActorMessage) -> None:
+    async def _handle_get_statistics(self, _message: ActorMessage) -> None:
         """Get current security statistics."""
         try:
-            response_content = {
+            _response_content = {
                 "statistics": {
                     "total_incidents": self._stats["total_incidents"],
                     "incidents_by_level": dict(self._stats["incidents_by_level"]),
@@ -919,10 +911,10 @@ class SentinelPrimeAgent(AgentActor):
             logger.error("Error getting statistics", error=str(e), exc_info=True)
             await self._send_error(message, "Statistics retrieval failed", str(e))
     
-    async def _handle_update_config(self, message: ActorMessage) -> None:
+    async def _handle_update_config(self, _message: ActorMessage) -> None:
         """Update security configuration."""
         try:
-            content = message.content
+            _content = message.content
             
             if "auto_response_enabled" in content:
                 self._auto_response_enabled = content["auto_response_enabled"]
@@ -936,7 +928,7 @@ class SentinelPrimeAgent(AgentActor):
             if "max_incidents" in content:
                 self._max_incidents = content["max_incidents"]
             
-            response_content = {
+            _response_content = {
                 "updated": True,
                 "current_config": {
                     "auto_response_enabled": self._auto_response_enabled,
@@ -954,10 +946,10 @@ class SentinelPrimeAgent(AgentActor):
     def _create_incident_id(self) -> str:
         """Generate unique incident ID."""
         timestamp = datetime.now(timezone.utc).timestamp()
-        random_suffix = hashlib.sha256(str(timestamp).encode()).hexdigest()[:8]
+        _random_suffix = hashlib.sha256(str(timestamp).encode()).hexdigest()[:8]
         return f"INC_{int(timestamp)}_{random_suffix}"
     
-    def _create_indicator(self, data: Dict[str, Any]) -> Optional[ThreatIndicator]:
+    def _create_indicator(self, _data: Dict[str, _Any]) -> Optional[ThreatIndicator]:
         """Create a threat indicator from data."""
         try:
             indicator_id = f"IND_{hashlib.sha256(data.get('value', '').encode()).hexdigest()[:12]}"
@@ -965,11 +957,11 @@ class SentinelPrimeAgent(AgentActor):
             
             return ThreatIndicator(
                 indicator_id=indicator_id,
-                indicator_type=data.get("indicator_type", "unknown"),
+                _indicator_type = data.get("indicator_type", "unknown"),
                 value=data.get("value", ""),
                 confidence=float(data.get("confidence", 0.5)),
-                first_seen=now,
-                last_seen=now,
+                _first_seen = now,
+                _last_seen = now,
                 source=data.get("source", "unknown"),
                 tags=data.get("tags", []),
             )
@@ -977,9 +969,9 @@ class SentinelPrimeAgent(AgentActor):
             logger.error("Error creating indicator", error=str(e))
             return None
     
-    async def _auto_respond(self, incident: SecurityIncident) -> List[ResponseAction]:
+    async def _auto_respond(self, _incident: SecurityIncident) -> List[ResponseAction]:
         """Execute automatic response to an incident."""
-        actions = []
+        _actions = []
         
         # Determine response based on threat level
         if incident.threat_level == ThreatLevel.CRITICAL:
@@ -1020,11 +1012,7 @@ class SentinelPrimeAgent(AgentActor):
         
         return actions
     
-    async def _execute_response_action(
-        self,
-        incident: SecurityIncident,
-        action: ResponseAction,
-    ) -> bool:
+    async def _execute_response_action(self, _incident: SecurityIncident, _action: ResponseAction) -> bool:
         """Execute a specific response action."""
         try:
             if action == ResponseAction.ALERT:
@@ -1090,9 +1078,9 @@ class SentinelPrimeAgent(AgentActor):
             logger.error("Error executing response action", action=action.value, error=str(e))
             return False
     
-    def _calculate_severity_score(self, incident: SecurityIncident) -> float:
+    def _calculate_severity_score(self, _incident: SecurityIncident) -> float:
         """Calculate numerical severity score for an incident."""
-        base_scores = {
+        _base_scores = {
             ThreatLevel.CRITICAL: 10.0,
             ThreatLevel.HIGH: 7.5,
             ThreatLevel.MEDIUM: 5.0,
@@ -1100,7 +1088,7 @@ class SentinelPrimeAgent(AgentActor):
             ThreatLevel.INFORMATIONAL: 1.0,
         }
         
-        score = base_scores.get(incident.threat_level, 5.0)
+        _score = base_scores.get(incident.threat_level, 5.0)
         
         # Adjust based on indicators
         score += len(incident.indicators) * 0.5
@@ -1111,19 +1099,15 @@ class SentinelPrimeAgent(AgentActor):
         
         return min(score, 10.0)
     
-    def _find_correlated_incidents(
-        self,
-        incident: SecurityIncident,
-        max_results: int = 10,
-    ) -> List[SecurityIncident]:
+    def _find_correlated_incidents(self, _incident: SecurityIncident, _max_results: int) -> List[SecurityIncident]:
         """Find incidents correlated with the given incident."""
-        correlated = []
+        _correlated = []
         
         for other in self._incidents.values():
             if other.incident_id == incident.incident_id:
                 continue
             
-            correlation_score = 0.0
+            _correlation_score = 0.0
             
             # Same source actor
             if incident.source_actor and incident.source_actor == other.source_actor:
@@ -1138,7 +1122,7 @@ class SentinelPrimeAgent(AgentActor):
                 correlation_score += 0.2
             
             # Shared indicators
-            shared_indicators = set(
+            _shared_indicators = set(
                 i.value for i in incident.indicators
             ) & set(i.value for i in other.indicators)
             correlation_score += len(shared_indicators) * 0.1
@@ -1149,10 +1133,10 @@ class SentinelPrimeAgent(AgentActor):
         correlated.sort(key=self._calculate_severity_score, reverse=True)
         return correlated[:max_results]
     
-    def _reconstruct_attack_chain(self, incident: SecurityIncident) -> List[Dict[str, Any]]:
+    def _reconstruct_attack_chain(self, _incident: SecurityIncident) -> List[Dict[str, Any]]:
         """Reconstruct the attack chain leading to this incident."""
-        chain = []
-        correlated = self._find_correlated_incidents(incident, max_results=20)
+        _chain = []
+        _correlated = self._find_correlated_incidents(incident, max_results=20)
         
         # Sort by timestamp
         correlated.sort(key=lambda x: x.timestamp)
@@ -1167,13 +1151,13 @@ class SentinelPrimeAgent(AgentActor):
         
         return chain
     
-    def _match_iocs(self, incident: SecurityIncident) -> List[Dict[str, Any]]:
+    def _match_iocs(self, _incident: SecurityIncident) -> List[Dict[str, Any]]:
         """Match indicators of compromise against known threat intelligence."""
-        matches = []
+        _matches = []
         
         for indicator in incident.indicators:
             if indicator.value in self._indicator_cache:
-                cached = self._indicator_cache[indicator.value]
+                _cached = self._indicator_cache[indicator.value]
                 matches.append({
                     "indicator": indicator.value,
                     "matched_threat": cached.indicator_id,
@@ -1183,9 +1167,9 @@ class SentinelPrimeAgent(AgentActor):
         
         return matches
     
-    def _map_mitre_techniques(self, incident: SecurityIncident) -> List[str]:
+    def _map_mitre_techniques(self, _incident: SecurityIncident) -> List[str]:
         """Map incident to MITRE ATT&CK techniques."""
-        technique_mapping = {
+        _technique_mapping = {
             ThreatType.SQL_INJECTION: ["T1190", "T1059"],
             ThreatType.XSS_ATTACK: ["T1189", "T1059"],
             ThreatType.UNAUTHORIZED_ACCESS: ["T1078", "T1133"],
@@ -1197,9 +1181,9 @@ class SentinelPrimeAgent(AgentActor):
         
         return technique_mapping.get(incident.threat_type, [])
     
-    def _generate_recommendations(self, incident: SecurityIncident) -> List[str]:
+    def _generate_recommendations(self, _incident: SecurityIncident) -> List[str]:
         """Generate remediation recommendations for an incident."""
-        recommendations = []
+        _recommendations = []
         
         if incident.threat_level in [ThreatLevel.CRITICAL, ThreatLevel.HIGH]:
             recommendations.append("Immediately isolate affected systems")
@@ -1222,17 +1206,17 @@ class SentinelPrimeAgent(AgentActor):
     
     def _generate_strategic_recommendations(self) -> List[str]:
         """Generate strategic security recommendations based on overall threat landscape."""
-        recommendations = []
+        _recommendations = []
         
         # Check incident trends
-        critical_count = self._stats["incidents_by_level"].get("critical", 0)
+        _critical_count = self._stats["incidents_by_level"].get("critical", 0)
         if critical_count > 5:
             recommendations.append(
                 f"High critical incident count ({critical_count}) - consider security architecture review"
             )
         
         # Check for specific threat patterns
-        sql_injection_count = self._stats["incidents_by_type"].get("sql_injection", 0)
+        _sql_injection_count = self._stats["incidents_by_type"].get("sql_injection", 0)
         if sql_injection_count > 10:
             recommendations.append(
                 f" Elevated SQL injection attempts ({sql_injection_count}) - implement WAF rules"
@@ -1249,13 +1233,13 @@ class SentinelPrimeAgent(AgentActor):
         
         return recommendations
     
-    async def _schedule_unblock(self, source: str, duration: int) -> None:
+    async def _schedule_unblock(self, _source: str, _duration: int) -> None:
         """Schedule automatic unblocking of a source."""
         await asyncio.sleep(duration)
         self._blocked_sources.discard(source)
         logger.info("Source automatically unblocked", source=source)
     
-    async def _schedule_unisolate(self, actor_id: str, duration: int) -> None:
+    async def _schedule_unisolate(self, _actor_id: str, _duration: int) -> None:
         """Schedule automatic un-isolation of an actor."""
         await asyncio.sleep(duration)
         self._isolated_actors.discard(actor_id)

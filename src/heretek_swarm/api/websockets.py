@@ -20,7 +20,7 @@ from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Query
 import structlog
 
 
-logger = structlog.get_logger("api.websockets")
+_logger = structlog.get_logger("api.websockets")
 
 # =============================================================================
 # Authentication Configuration
@@ -29,7 +29,7 @@ logger = structlog.get_logger("api.websockets")
 class WebSocketAuthManager:
     """Manages authentication for WebSocket connections."""
     
-    def __init__(self, secret_key: Optional[str] = None):
+    def __init__(self, _secret_key: Optional[str]):
         self.secret_key = secret_key or os.environ.get("WEBSOCKET_SECRET_KEY", secrets.token_hex(32))
         self._valid_tokens: Dict[str, Dict[str, Any]] = {}
         self._token_expiry = timedelta(hours=24)
@@ -37,9 +37,9 @@ class WebSocketAuthManager:
         self._rate_limit_window = 60  # seconds
         self._rate_limit_max = 100  # max requests per window
     
-    def generate_token(self, user_id: str, metadata: Optional[Dict] = None) -> str:
+    def generate_token(self, _user_id: str, _metadata: Optional[Dict]) -> str:
         """Generate an authentication token for a user."""
-        token = secrets.token_urlsafe(32)
+        _token = secrets.token_urlsafe(32)
         self._valid_tokens[token] = {
             "user_id": user_id,
             "created_at": datetime.now(timezone.utc),
@@ -48,7 +48,7 @@ class WebSocketAuthManager:
         }
         return token
     
-    def validate_token(self, token: str) -> Tuple[bool, Optional[str], Optional[str]]:
+    def validate_token(self, _token: str) -> Tuple[bool, Optional[str], Optional[str]]:
         """
         Validate an authentication token.
         
@@ -61,21 +61,21 @@ class WebSocketAuthManager:
         if token not in self._valid_tokens:
             return False, None, "Invalid token"
         
-        token_data = self._valid_tokens[token]
+        _token_data = self._valid_tokens[token]
         if datetime.now(timezone.utc) > token_data["expires_at"]:
             del self._valid_tokens[token]
             return False, None, "Token expired"
         
         return True, token_data["user_id"], None
     
-    def revoke_token(self, token: str) -> bool:
+    def revoke_token(self, _token: str) -> bool:
         """Revoke a token."""
         if token in self._valid_tokens:
             del self._valid_tokens[token]
             return True
         return False
     
-    def check_rate_limit(self, user_id: str) -> bool:
+    def check_rate_limit(self, _user_id: str) -> bool:
         """
         Check if user has exceeded rate limit.
         
@@ -104,17 +104,17 @@ class WebSocketAuthManager:
     def cleanup_expired(self) -> int:
         """Remove expired tokens. Returns count of removed tokens."""
         now = datetime.now(timezone.utc)
-        expired = [t for t, data in self._valid_tokens.items() if now > data["expires_at"]]
+        _expired = [t for t, data in self._valid_tokens.items() if now > data["expires_at"]]
         for token in expired:
             del self._valid_tokens[token]
         return len(expired)
 
 
 # Global auth manager instance
-ws_auth_manager = WebSocketAuthManager()
+_ws_auth_manager = WebSocketAuthManager()
 
 
-async def authenticate_websocket(websocket: WebSocket, token: Optional[str]) -> Tuple[bool, Optional[str], Optional[str]]:
+async def authenticate_websocket(_websocket: WebSocket, _token: Optional[str]) -> Tuple[bool, Optional[str], Optional[str]]:
     """
     Authenticate a WebSocket connection.
     
@@ -132,7 +132,7 @@ async def authenticate_websocket(websocket: WebSocket, token: Optional[str]) -> 
     return True, user_id, None
 
 # Create WebSocket router
-router = APIRouter()
+_router = APIRouter()
 
 # =============================================================================
 # Connection Manager
@@ -151,7 +151,7 @@ class ConnectionManager:
         self.workflow_progress_listeners: Dict[str, set[WebSocket]] = {}  # workflow_id -> websockets
         self.metrics_listeners: Dict[str, set[WebSocket]] = {}  # agent_id -> websockets
     
-    async def connect_execution(self, websocket: WebSocket, execution_id: str):
+    async def connect_execution(self, _websocket: WebSocket, _execution_id: str):
         """Connect to execution updates channel."""
         await websocket.accept()
         if execution_id not in self.execution_watchers:
@@ -159,47 +159,47 @@ class ConnectionManager:
         self.execution_watchers[execution_id].add(websocket)
         logger.info("WebSocket connected to execution", execution_id=execution_id)
     
-    def disconnect_execution(self, websocket: WebSocket, execution_id: str):
+    def disconnect_execution(self, _websocket: WebSocket, _execution_id: str):
         """Disconnect from execution updates."""
         if execution_id in self.execution_watchers:
             self.execution_watchers[execution_id].discard(websocket)
             if not self.execution_watchers[execution_id]:
                 del self.execution_watchers[execution_id]
     
-    async def connect_a2a(self, websocket: WebSocket):
+    async def connect_a2a(self, _websocket: WebSocket):
         """Connect to A2A message stream."""
         await websocket.accept()
         self.a2a_listeners.add(websocket)
         logger.info("WebSocket connected to A2A stream")
     
-    def disconnect_a2a(self, websocket: WebSocket):
+    def disconnect_a2a(self, _websocket: WebSocket):
         """Disconnect from A2A message stream."""
         self.a2a_listeners.discard(websocket)
     
-    async def connect_dashboard(self, websocket: WebSocket):
+    async def connect_dashboard(self, _websocket: WebSocket):
         """Connect to dashboard updates channel."""
         await websocket.accept()
         self.dashboard_listeners.add(websocket)
         logger.info("WebSocket connected to dashboard")
     
-    def disconnect_dashboard(self, websocket: WebSocket):
+    def disconnect_dashboard(self, _websocket: WebSocket):
         """Disconnect from dashboard updates."""
         self.dashboard_listeners.discard(websocket)
     
-    async def connect_observability(self, websocket: WebSocket):
+    async def connect_observability(self, _websocket: WebSocket):
         """Connect to observability updates channel."""
         await websocket.accept()
         self.observability_listeners.add(websocket)
         logger.info("WebSocket connected to observability")
     
-    def disconnect_observability(self, websocket: WebSocket):
+    def disconnect_observability(self, _websocket: WebSocket):
         """Disconnect from observability updates."""
         self.observability_listeners.discard(websocket)
     
-    async def broadcast_execution(self, execution_id: str, data: Dict[str, Any]):
+    async def broadcast_execution(self, _execution_id: str, _data: Dict[str, _Any]):
         """Broadcast execution update to all watchers."""
         if execution_id in self.execution_watchers:
-            disconnected = set()
+            _disconnected = set()
             for websocket in self.execution_watchers[execution_id]:
                 try:
                     await websocket.send_json(data)
@@ -209,9 +209,9 @@ class ConnectionManager:
             for ws in disconnected:
                 self.execution_watchers[execution_id].discard(ws)
     
-    async def broadcast_a2a(self, data: Dict[str, Any]):
+    async def broadcast_a2a(self, _data: Dict[str, _Any]):
         """Broadcast A2A message to all listeners."""
-        disconnected = set()
+        _disconnected = set()
         for websocket in self.a2a_listeners:
             try:
                 await websocket.send_json(data)
@@ -220,9 +220,9 @@ class ConnectionManager:
         for ws in disconnected:
             self.a2a_listeners.discard(ws)
     
-    async def broadcast_dashboard(self, data: Dict[str, Any]):
+    async def broadcast_dashboard(self, _data: Dict[str, _Any]):
         """Broadcast dashboard update to all listeners."""
-        disconnected = set()
+        _disconnected = set()
         for websocket in self.dashboard_listeners:
             try:
                 await websocket.send_json(data)
@@ -231,9 +231,9 @@ class ConnectionManager:
         for ws in disconnected:
             self.dashboard_listeners.discard(ws)
     
-    async def broadcast_observability(self, data: Dict[str, Any]):
+    async def broadcast_observability(self, _data: Dict[str, _Any]):
         """Broadcast observability update to all listeners."""
-        disconnected = set()
+        _disconnected = set()
         for websocket in self.observability_listeners:
             try:
                 await websocket.send_json(data)
@@ -242,7 +242,7 @@ class ConnectionManager:
         for ws in disconnected:
             self.observability_listeners.discard(ws)
     
-    async def broadcast_agent_status(self, agent_id: str, data: Dict[str, Any]):
+    async def broadcast_agent_status(self, _agent_id: str, _data: Dict[str, _Any]):
         """Broadcast agent status update to specific listener."""
         if agent_id in self.agent_status_listeners:
             websocket = self.agent_status_listeners[agent_id]
@@ -255,10 +255,10 @@ class ConnectionManager:
             except Exception:
                 del self.agent_status_listeners[agent_id]
     
-    async def broadcast_workflow_progress(self, workflow_id: str, data: Dict[str, Any]):
+    async def broadcast_workflow_progress(self, _workflow_id: str, _data: Dict[str, _Any]):
         """Broadcast workflow progress update to all listeners."""
         if workflow_id in self.workflow_progress_listeners:
-            disconnected = set()
+            _disconnected = set()
             for websocket in self.workflow_progress_listeners[workflow_id]:
                 try:
                     await websocket.send_json({
@@ -271,10 +271,10 @@ class ConnectionManager:
             for ws in disconnected:
                 self.workflow_progress_listeners[workflow_id].discard(ws)
     
-    async def broadcast_metrics(self, agent_id: str, data: Dict[str, Any]):
+    async def broadcast_metrics(self, _agent_id: str, _data: Dict[str, _Any]):
         """Broadcast metrics update to all listeners for an agent."""
         if agent_id in self.metrics_listeners:
-            disconnected = set()
+            _disconnected = set()
             for websocket in self.metrics_listeners[agent_id]:
                 try:
                     await websocket.send_json({
@@ -287,35 +287,35 @@ class ConnectionManager:
             for ws in disconnected:
                 self.metrics_listeners[agent_id].discard(ws)
     
-    def subscribe_agent_status(self, agent_id: str, websocket: WebSocket):
+    def subscribe_agent_status(self, _agent_id: str, _websocket: WebSocket):
         """Subscribe to agent status updates."""
         self.agent_status_listeners[agent_id] = websocket
     
-    def unsubscribe_agent_status(self, agent_id: str):
+    def unsubscribe_agent_status(self, _agent_id: str):
         """Unsubscribe from agent status updates."""
         if agent_id in self.agent_status_listeners:
             del self.agent_status_listeners[agent_id]
     
-    def subscribe_workflow_progress(self, workflow_id: str, websocket: WebSocket):
+    def subscribe_workflow_progress(self, _workflow_id: str, _websocket: WebSocket):
         """Subscribe to workflow progress updates."""
         if workflow_id not in self.workflow_progress_listeners:
             self.workflow_progress_listeners[workflow_id] = set()
         self.workflow_progress_listeners[workflow_id].add(websocket)
     
-    def unsubscribe_workflow_progress(self, workflow_id: str, websocket: WebSocket):
+    def unsubscribe_workflow_progress(self, _workflow_id: str, _websocket: WebSocket):
         """Unsubscribe from workflow progress updates."""
         if workflow_id in self.workflow_progress_listeners:
             self.workflow_progress_listeners[workflow_id].discard(websocket)
             if not self.workflow_progress_listeners[workflow_id]:
                 del self.workflow_progress_listeners[workflow_id]
     
-    def subscribe_metrics(self, agent_id: str, websocket: WebSocket):
+    def subscribe_metrics(self, _agent_id: str, _websocket: WebSocket):
         """Subscribe to agent metrics updates."""
         if agent_id not in self.metrics_listeners:
             self.metrics_listeners[agent_id] = set()
         self.metrics_listeners[agent_id].add(websocket)
     
-    def unsubscribe_metrics(self, agent_id: str, websocket: WebSocket):
+    def unsubscribe_metrics(self, _agent_id: str, _websocket: WebSocket):
         """Unsubscribe from agent metrics updates."""
         if agent_id in self.metrics_listeners:
             self.metrics_listeners[agent_id].discard(websocket)
@@ -324,7 +324,7 @@ class ConnectionManager:
 
 
 # Global connection manager
-manager = ConnectionManager()
+_manager = ConnectionManager()
 
 # In-memory store for agent states
 _agent_states: Dict[str, Dict[str, Any]] = {}
@@ -394,7 +394,7 @@ async def execution_websocket(
         })
         
         # Track execution state in memory (simplified - in production use Redis)
-        execution_state = {
+        _execution_state = {
             "execution_id": execution_id,
             "status": "running",
             "progress": 0.0,
@@ -439,7 +439,7 @@ async def execution_websocket(
 _execution_store: Dict[str, Dict[str, Any]] = {}
 
 
-async def get_execution_update(execution_id: str) -> Dict[str, Any]:
+async def get_execution_update(_execution_id: str) -> Dict[str, Any]:
     """
     Get current execution state.
     
@@ -512,18 +512,18 @@ async def a2a_websocket(
     try:
         import redis.asyncio as redis
         
-        redis_url = os.environ.get("REDIS_URL", "redis://localhost:6379")
+        _redis_url = os.environ.get("REDIS_URL", "redis://localhost:6379")
         r = redis.from_url(redis_url)
         
         # Create pub/sub for A2A messages
-        pubsub = r.pubsub()
+        _pubsub = r.pubsub()
         await pubsub.subscribe("a2a:messages")
         
         try:
             # Listen for messages
             async for message in pubsub.listen():
                 if message["type"] == "message":
-                    data = json.loads(message["data"])
+                    _data = json.loads(message["data"])
                     await websocket.send_json(data)
                     
         except WebSocketDisconnect:
@@ -608,12 +608,12 @@ async def agent_events_websocket(
         while True:
             try:
                 # Wait for client messages
-                data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
+                _data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
                 _message = json.loads(data)
                 
                 # Handle subscription/unsubscription to event types
                 if message.get("action") == "subscribe":
-                    event_type = message.get("event_type")
+                    _event_type = message.get("event_type")
                     logger.info("Subscribed to event", agent_id=agent_id, event_type=event_type)
                     
             except asyncio.TimeoutError:
@@ -680,18 +680,18 @@ async def agent_status_websocket(
     await websocket.accept()
     logger.info("Agent status WebSocket connected", agent_id=agent_id)
     
-    subscribed_agents = set()
+    _subscribed_agents = set()
     
     try:
         while True:
             try:
-                data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
+                _data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
                 _message = json.loads(data)
                 
                 # Handle subscription/unsubscription
-                action = message.get("action")
+                _action = message.get("action")
                 if action == "subscribe":
-                    sub_agent_id = message.get("agentId") or agent_id
+                    _sub_agent_id = message.get("agentId") or agent_id
                     if sub_agent_id:
                         manager.subscribe_agent_status(sub_agent_id, websocket)
                         subscribed_agents.add(sub_agent_id)
@@ -706,7 +706,7 @@ async def agent_status_websocket(
                             })
                 
                 elif action == "unsubscribe":
-                    sub_agent_id = message.get("agentId") or agent_id
+                    _sub_agent_id = message.get("agentId") or agent_id
                     if sub_agent_id in subscribed_agents:
                         manager.unsubscribe_agent_status(sub_agent_id)
                         subscribed_agents.discard(sub_agent_id)
@@ -780,25 +780,25 @@ async def workflow_progress_websocket(
     await websocket.accept()
     logger.info("Workflow progress WebSocket connected", workflow_id=workflow_id)
     
-    subscribed_workflows = set()
+    _subscribed_workflows = set()
     
     try:
         while True:
             try:
-                data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
+                _data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
                 _message = json.loads(data)
                 
                 # Handle subscription/unsubscription
-                action = message.get("action")
+                _action = message.get("action")
                 if action == "subscribe":
-                    sub_workflow_id = message.get("workflowId") or workflow_id
+                    _sub_workflow_id = message.get("workflowId") or workflow_id
                     if sub_workflow_id:
                         manager.subscribe_workflow_progress(sub_workflow_id, websocket)
                         subscribed_workflows.add(sub_workflow_id)
                         logger.info("Subscribed to workflow progress", workflow_id=sub_workflow_id)
                 
                 elif action == "unsubscribe":
-                    sub_workflow_id = message.get("workflowId") or workflow_id
+                    _sub_workflow_id = message.get("workflowId") or workflow_id
                     if sub_workflow_id in subscribed_workflows:
                         manager.unsubscribe_workflow_progress(sub_workflow_id, websocket)
                         subscribed_workflows.discard(sub_workflow_id)
@@ -876,25 +876,25 @@ async def agent_metrics_websocket(
     await websocket.accept()
     logger.info("Agent metrics WebSocket connected", agent_id=agent_id)
     
-    subscribed_agents = set()
+    _subscribed_agents = set()
     
     try:
         while True:
             try:
-                data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
+                _data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
                 _message = json.loads(data)
                 
                 # Handle subscription/unsubscription
-                action = message.get("action")
+                _action = message.get("action")
                 if action == "subscribe":
-                    sub_agent_id = message.get("agentId") or agent_id
+                    _sub_agent_id = message.get("agentId") or agent_id
                     if sub_agent_id:
                         manager.subscribe_metrics(sub_agent_id, websocket)
                         subscribed_agents.add(sub_agent_id)
                         logger.info("Subscribed to agent metrics", agent_id=sub_agent_id)
                 
                 elif action == "unsubscribe":
-                    sub_agent_id = message.get("agentId") or agent_id
+                    _sub_agent_id = message.get("agentId") or agent_id
                     if sub_agent_id in subscribed_agents:
                         manager.unsubscribe_metrics(sub_agent_id, websocket)
                         subscribed_agents.discard(sub_agent_id)
@@ -965,7 +965,7 @@ async def dashboard_websocket(
     logger.info("Dashboard WebSocket connected")
     
     # Track subscriptions
-    subscriptions = {
+    _subscriptions = {
         "agent_status": False,
         "workflow_progress": False,
         "metrics": False,
@@ -976,7 +976,7 @@ async def dashboard_websocket(
         while True:
             try:
                 # Wait for client messages (heartbeat, subscriptions)
-                data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
+                _data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
                 _message = json.loads(data)
                 
                 # Handle client requests
@@ -988,13 +988,13 @@ async def dashboard_websocket(
                 
                 # Handle channel subscriptions
                 elif message.get("action") == "subscribe":
-                    channel = message.get("channel")
+                    _channel = message.get("channel")
                     if channel in subscriptions:
                         subscriptions[channel] = True
                         logger.info("Dashboard subscribed to channel", channel=channel)
                 
                 elif message.get("action") == "unsubscribe":
-                    channel = message.get("channel")
+                    _channel = message.get("channel")
                     if channel in subscriptions:
                         subscriptions[channel] = False
                         logger.info("Dashboard unsubscribed from channel", channel=channel)
@@ -1066,7 +1066,7 @@ async def observability_websocket(
         while True:
             try:
                 # Wait for client messages (heartbeat, subscriptions)
-                data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
+                _data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
                 _message = json.loads(data)
                 
                 # Handle client requests
@@ -1142,7 +1142,7 @@ async def all_agents_websocket(
     try:
         while True:
             try:
-                data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
+                _data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
                 _message = json.loads(data)
                 
             except asyncio.TimeoutError:
@@ -1161,7 +1161,7 @@ async def all_agents_websocket(
 # Helper Functions for Broadcasting Updates
 # =============================================================================
 
-async def send_agent_status_update(agent_id: str, status: str, current_task: Optional[str] = None):
+async def send_agent_status_update(_agent_id: str, _status: str, _current_task: Optional[str]):
     """
     Send an agent status update to all subscribers.
     
@@ -1170,7 +1170,7 @@ async def send_agent_status_update(agent_id: str, status: str, current_task: Opt
         status: Agent status (active, idle, processing, error)
         current_task: Optional current task description
     """
-    update = {
+    _update = {
         "status": status,
         "currentTask": current_task,
         "lastHeartbeat": datetime.now(timezone.utc).isoformat(),
@@ -1179,12 +1179,7 @@ async def send_agent_status_update(agent_id: str, status: str, current_task: Opt
     await manager.broadcast_agent_status(agent_id, update)
 
 
-async def send_workflow_progress_update(
-    workflow_id: str,
-    current_node: str,
-    phase: str,
-    progress: int
-):
+async def send_workflow_progress_update(_workflow_id: str, _current_node: str, _phase: str, _progress: int):
     """
     Send a workflow progress update to all subscribers.
     
@@ -1194,7 +1189,7 @@ async def send_workflow_progress_update(
         phase: Workflow phase (plan, analyze, execute, validate, report)
         progress: Progress percentage (0-100)
     """
-    update = {
+    _update = {
         "currentNode": current_node,
         "phase": phase,
         "progress": progress,
@@ -1202,13 +1197,7 @@ async def send_workflow_progress_update(
     await manager.broadcast_workflow_progress(workflow_id, update)
 
 
-async def send_agent_metrics_update(
-    agent_id: str,
-    phi: Optional[float] = None,
-    coherence: Optional[float] = None,
-    load: Optional[float] = None,
-    queue_size: Optional[int] = None
-):
+async def send_agent_metrics_update(_agent_id: str, _phi: Optional[float], _coherence: Optional[float], _load: Optional[float], _queue_size: Optional[int]):
     """
     Send agent metrics update to all subscribers.
     
@@ -1219,7 +1208,7 @@ async def send_agent_metrics_update(
         load: Load percentage (optional)
         queue_size: Queue size (optional)
     """
-    metrics = {}
+    _metrics = {}
     if phi is not None:
         metrics["phi"] = phi
     if coherence is not None:

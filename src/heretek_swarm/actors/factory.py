@@ -14,7 +14,7 @@ import structlog
 
 from heretek_swarm.actors.base import AgentActor
 
-logger = structlog.get_logger("ActorFactory")
+_logger = structlog.get_logger("ActorFactory")
 
 
 @dataclass
@@ -47,7 +47,7 @@ class ActorFactory:
 
     Example:
         ```python
-        factory = ActorFactory()
+        _factory = ActorFactory()
 
         # Register an actor class
         factory.register_actor_class(
@@ -57,10 +57,10 @@ class ActorFactory:
         )
 
         # Create actor instance
-        actor = factory.create_actor("my-actor", actor_id="instance-1")
+        _actor = factory.create_actor("my-actor", actor_id="instance-1")
 
         # Get configuration info
-        config = factory.get_actor_info("instance-1")
+        _config = factory.get_actor_info("instance-1")
         ```
     """
 
@@ -72,12 +72,7 @@ class ActorFactory:
 
         logger.info("[ActorFactory] Factory initialized")
 
-    def register_actor_class(
-        self,
-        name: str,
-        cls: Type[AgentActor],
-        kwargs: Optional[Dict[str, Any]] = None,
-    ) -> None:
+    def register_actor_class(self, _name: str, _cls: Type[AgentActor], _kwargs: Optional[Dict[str, _Any]]) -> None:
         """
         Register an actor class with optional default parameters.
 
@@ -97,15 +92,10 @@ class ActorFactory:
 
         logger.info(
             f"[ActorFactory] Registered actor class '{name}'",
-            extra={"class_name": cls.__name__},
+            _extra = {"class_name": cls.__name__},
         )
 
-    def create_actor(
-        self,
-        actor_type: str,
-        actor_id: Optional[str] = None,
-        **override_kwargs: Any,
-    ) -> AgentActor:
+    def create_actor(self, _actor_type: str, _actor_id: Optional[str], _**override_kwargs: Any) -> AgentActor:
         """
         Create an actor instance from registered configuration.
 
@@ -123,33 +113,33 @@ class ActorFactory:
         if actor_type not in self._registry:
             raise ValueError(f"Actor type '{actor_type}' is not registered")
 
-        cls = self._registry[actor_type]
-        base_kwargs = self._default_kwargs.get(actor_type, {})
+        _cls = self._registry[actor_type]
+        _base_kwargs = self._default_kwargs.get(actor_type, {})
 
         # Merge base kwargs with overrides
-        init_kwargs = {**base_kwargs, **override_kwargs}
+        _init_kwargs = {**base_kwargs, **override_kwargs}
 
         # Create actor instance
-        actor = cls(**init_kwargs)
+        _actor = cls(**init_kwargs)
 
         # Store configuration for future recreation
-        config = ActorConfig(
-            actor_type=actor_type,
-            class_ref=cls,
-            init_kwargs=init_kwargs,
-            capabilities=actor.capabilities.copy(),
-            actor_id=actor.agent_id,
+        _config = ActorConfig(
+            _actor_type = actor_type,
+            _class_ref = cls,
+            _init_kwargs = init_kwargs,
+            _capabilities = actor.capabilities.copy(),
+            _actor_id = actor.agent_id,
         )
         self._instances[actor.agent_id] = config
 
         logger.info(
             f"[ActorFactory] Created actor instance '{actor.agent_id}'",
-            extra={"actor_type": actor_type},
+            _extra = {"actor_type": actor_type},
         )
 
         return actor
 
-    def get_actor_info(self, actor_id: str) -> Optional[ActorConfig]:
+    def get_actor_info(self, _actor_id: str) -> Optional[ActorConfig]:
         """
         Retrieve stored configuration for an actor instance.
 
@@ -179,7 +169,7 @@ class ActorFactory:
         """
         return self._instances.copy()
 
-    def unregister_actor_class(self, name: str) -> None:
+    def unregister_actor_class(self, _name: str) -> None:
         """
         Unregister an actor class.
 

@@ -16,9 +16,9 @@ from rag.rag_pipeline import RAGPipeline
 from rag.document_processor import ProcessingConfig
 from ..gateway.auth import verify_auth
 
-logger = structlog.get_logger(__name__)
+_logger = structlog.get_logger(__name__)
 
-router = APIRouter(prefix="/api/rag", tags=["rag"])
+_router = APIRouter(prefix="/api/rag", tags=["rag"])
 
 # Global RAG pipeline instance
 _rag_pipeline: Optional[RAGPipeline] = None
@@ -59,24 +59,24 @@ async def ingest_document(
     Returns:
         Processing result with chunk count and vector storage status
     """
-    pipeline = await get_rag_pipeline()
+    _pipeline = await get_rag_pipeline()
     
     try:
         # Read file content
-        content = await file.read()
+        _content = await file.read()
         
         # Build processing config
         _config = ProcessingConfig(
             chunk_strategy=chunk_strategy,
-            extract_metadata=True,
-            normalize_whitespace=True,
+            _extract_metadata = True,
+            _normalize_whitespace = True,
         )
         
         # Process document
-        result = await pipeline.ingest_file(
-            file_path=file.filename,
-            content=content.decode('utf-8'),
-            metadata=metadata,
+        _result = await pipeline.ingest_file(
+            _file_path = file.filename,
+            _content = content.decode('utf-8'),
+            _metadata = metadata,
         )
         
         logger.info(
@@ -116,19 +116,19 @@ async def ingest_batch(
     Returns:
         Batch processing results
     """
-    pipeline = await get_rag_pipeline()
+    _pipeline = await get_rag_pipeline()
     
-    results = []
+    _results = []
     total_chunks = 0
-    total_vectors = 0
+    _total_vectors = 0
     
     for file in files:
         try:
-            content = await file.read()
-            result = await pipeline.ingest_file(
-                file_path=file.filename,
-                content=content.decode('utf-8'),
-                metadata=metadata,
+            _content = await file.read()
+            _result = await pipeline.ingest_file(
+                _file_path = file.filename,
+                _content = content.decode('utf-8'),
+                _metadata = metadata,
             )
             
             results.append({
@@ -150,9 +150,9 @@ async def ingest_batch(
     
     logger.info(
         "batch_ingest_completed",
-        total_files=len(files),
+        _total_files = len(files),
         total_chunks=total_chunks,
-        total_vectors=total_vectors,
+        _total_vectors = total_vectors,
     )
     
     return {
@@ -186,19 +186,19 @@ async def query_rag(
     Returns:
         Search results with documents and context
     """
-    pipeline = await get_rag_pipeline()
+    _pipeline = await get_rag_pipeline()
     
     try:
-        result = await pipeline.query(
-            query_text=query,
+        _result = await pipeline.query(
+            _query_text = query,
             top_k=top_k,
-            search_mode=search_mode,
+            _search_mode = search_mode,
         )
         
         logger.info(
             "rag_query_executed",
-            query=query,
-            documents_found=len(result.documents),
+            _query = query,
+            _documents_found = len(result.documents),
             retrieval_time_ms=result.retrieval_time_ms,
         )
         
@@ -234,13 +234,13 @@ async def list_documents(
     Returns:
         List of documents with metadata
     """
-    pipeline = await get_rag_pipeline()
+    _pipeline = await get_rag_pipeline()
     
     try:
         # Get all documents from vector store
-        documents = await pipeline.list_documents(
-            limit=limit,
-            offset=offset,
+        _documents = await pipeline.list_documents(
+            _limit = limit,
+            _offset = offset,
         )
         
         logger.info("documents_listed", count=len(documents))
@@ -272,10 +272,10 @@ async def get_document(
     Returns:
         Document details with chunks
     """
-    pipeline = await get_rag_pipeline()
+    _pipeline = await get_rag_pipeline()
     
     try:
-        document = await pipeline.get_document(document_id)
+        _document = await pipeline.get_document(document_id)
         
         if not document:
             raise HTTPException(status_code=404, detail="Document not found")
@@ -316,10 +316,10 @@ async def delete_document(
     Returns:
         Success message
     """
-    pipeline = await get_rag_pipeline()
+    _pipeline = await get_rag_pipeline()
     
     try:
-        success = await pipeline.delete_document(document_id)
+        _success = await pipeline.delete_document(document_id)
         
         if not success:
             raise HTTPException(status_code=404, detail="Document not found")
@@ -352,7 +352,7 @@ async def get_rag_config(
     Returns:
         RAG pipeline configuration
     """
-    pipeline = await get_rag_pipeline()
+    _pipeline = await get_rag_pipeline()
     
     return {
         "chunking": {
@@ -393,12 +393,12 @@ async def update_rag_config(
     Returns:
         Updated configuration
     """
-    pipeline = await get_rag_pipeline()
+    _pipeline = await get_rag_pipeline()
     
     try:
         # Update chunking config
         if "chunking" in config:
-            chunking = config["chunking"]
+            _chunking = config["chunking"]
             if "strategy" in chunking:
                 pipeline.config.processing.chunk_strategy = chunking["strategy"]
             if "chunk_size" in chunking:
@@ -426,7 +426,7 @@ async def update_rag_config(
         
         # Update storage config
         if "storage" in config:
-            storage = config["storage"]
+            _storage = config["storage"]
             if "collection_name" in storage:
                 pipeline.config.collection_name = storage["collection_name"]
             if "persist_processed" in storage:

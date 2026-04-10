@@ -24,9 +24,9 @@ from ..workflow.validator import (
 )
 from ..gateway.auth import verify_auth
 
-logger = structlog.get_logger(__name__)
+_logger = structlog.get_logger(__name__)
 
-router = APIRouter(prefix="/api/workflows", tags=["workflows"])
+_router = APIRouter(prefix="/api/workflows", tags=["workflows"])
 
 # In-memory storage for workflows (in production, use database)
 _workflows: Dict[str, Workflow] = {}
@@ -47,7 +47,7 @@ async def create_workflow(
     Returns:
         Created workflow with ID
     """
-    engine = get_workflow_engine()
+    _engine = get_workflow_engine()
 
     # Create workflow from definition
     workflow = await engine.load_workflow(workflow_definition)
@@ -78,7 +78,7 @@ async def list_workflows(
     Returns:
         List of workflows
     """
-    engine = get_workflow_engine()
+    _engine = get_workflow_engine()
 
     return {
         "workflows": [
@@ -108,12 +108,12 @@ async def get_workflow(
     Returns:
         Workflow definition
     """
-    engine = get_workflow_engine()
+    _engine = get_workflow_engine()
 
     if workflow_id not in engine.workflows:
         raise HTTPException(status_code=404, detail="Workflow not found")
 
-    workflow = engine.workflows[workflow_id]
+    _workflow = engine.workflows[workflow_id]
 
     return {
         "id": workflow.id,
@@ -143,14 +143,14 @@ async def execute_workflow(
     Returns:
         Execution result
     """
-    engine = get_workflow_engine()
+    _engine = get_workflow_engine()
 
     if workflow_id not in engine.workflows:
         raise HTTPException(status_code=404, detail="Workflow not found")
 
-    result = await engine.execute_workflow(
-        workflow_id=workflow_id,
-        input_data=input_data
+    _result = await engine.execute_workflow(
+        _workflow_id = workflow_id,
+        _input_data = input_data
     )
 
     logger.info("workflow_executed", workflow_id=workflow_id, status=result.status)
@@ -182,7 +182,7 @@ async def delete_workflow(
     Returns:
         204 No Content on success
     """
-    engine = get_workflow_engine()
+    _engine = get_workflow_engine()
 
     if workflow_id not in engine.workflows:
         raise HTTPException(status_code=404, detail="Workflow not found")
@@ -210,11 +210,11 @@ async def get_workflow_status(
     Returns:
         Current execution status
     """
-    engine = get_workflow_engine()
+    _engine = get_workflow_engine()
 
-    execution_id = f"exec_{workflow_id}_{workflow_id}"
+    _execution_id = f"exec_{workflow_id}_{workflow_id}"
 
-    context = engine.active_executions.get(execution_id)
+    _context = engine.active_executions.get(execution_id)
 
     if not context:
         return {
@@ -250,11 +250,11 @@ async def cancel_workflow(
     Returns:
         Cancellation confirmation
     """
-    engine = get_workflow_engine()
+    _engine = get_workflow_engine()
 
-    execution_id = f"exec_{workflow_id}_{workflow_id}"
+    _execution_id = f"exec_{workflow_id}_{workflow_id}"
 
-    success = await engine.cancel_workflow(execution_id)
+    _success = await engine.cancel_workflow(execution_id)
 
     if success:
         return {
@@ -288,15 +288,15 @@ async def validate_workflow_endpoint(
     Returns:
         Validation result with errors, warnings, and info messages
     """
-    engine = get_workflow_engine()
+    _engine = get_workflow_engine()
     
     if workflow_id not in engine.workflows:
         raise HTTPException(status_code=404, detail="Workflow not found")
     
-    workflow = engine.workflows[workflow_id]
+    _workflow = engine.workflows[workflow_id]
     
     # Convert workflow to validation format
-    workflow_definition = {
+    _workflow_definition = {
         "id": workflow.id,
         "name": workflow.name,
         "nodes": [
@@ -320,15 +320,15 @@ async def validate_workflow_endpoint(
     }
     
     # Validate
-    validator = WorkflowValidator()
-    result = validator.validate(workflow_definition)
+    _validator = WorkflowValidator()
+    _result = validator.validate(workflow_definition)
     
     logger.info(
         "workflow_validated",
-        workflow_id=workflow_id,
-        valid=result.valid,
-        error_count=len(result.errors),
-        warning_count=len(result.warnings),
+        _workflow_id = workflow_id,
+        _valid = result.valid,
+        _error_count = len(result.errors),
+        _warning_count = len(result.warnings),
     )
     
     return result.to_dict()
@@ -351,14 +351,14 @@ async def validate_workflow_draft(
     Returns:
         Validation result with errors, warnings, and info messages
     """
-    validator = WorkflowValidator()
-    result = validator.validate(workflow_definition)
+    _validator = WorkflowValidator()
+    _result = validator.validate(workflow_definition)
     
     logger.info(
         "workflow_draft_validated",
-        valid=result.valid,
-        error_count=len(result.errors),
-        warning_count=len(result.warnings),
+        _valid = result.valid,
+        _error_count = len(result.errors),
+        _warning_count = len(result.warnings),
     )
     
     return result.to_dict()

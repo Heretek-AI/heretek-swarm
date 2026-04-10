@@ -9,7 +9,7 @@ from dataclasses import dataclass
 
 import structlog
 
-logger = structlog.get_logger(__name__)
+_logger = structlog.get_logger(__name__)
 
 
 @dataclass
@@ -33,15 +33,10 @@ class HandoffResult:
 class HandoffValidationHandler:
     """Handler for handoff validation phase"""
     
-    def __init__(self, validator: Any):
+    def __init__(self, _validator: Any):
         self._validator = validator
     
-    async def validate(
-        self,
-        from_agent_id: str,
-        to_agent_id: str,
-        context: Dict[str, Any]
-    ) -> Tuple[bool, Optional[str]]:
+    async def validate(self, _from_agent_id: str, _to_agent_id: str, _context: Dict[str, _Any]) -> Tuple[bool, Optional[str]]:
         """Validate handoff request"""
         try:
             self._validator.validate(from_agent_id, to_agent_id, context)
@@ -54,7 +49,7 @@ class HandoffValidationHandler:
 class HandoffRateLimitHandler:
     """Handler for handoff rate limiting"""
     
-    def __init__(self, handoff_timestamps: List[Any], max_per_minute: int = 10):
+    def __init__(self, _handoff_timestamps: List[Any], _max_per_minute: int):
         self._handoff_timestamps = handoff_timestamps
         self.MAX_HANDOFFS_PER_MINUTE = max_per_minute
     
@@ -63,7 +58,7 @@ class HandoffRateLimitHandler:
         from datetime import datetime, timezone
         
         now = datetime.now(timezone.utc)
-        one_minute_ago = now.replace(microsecond=0)
+        _one_minute_ago = now.replace(microsecond=0)
         
         # Remove old timestamps
         self._handoff_timestamps[:] = [
@@ -85,52 +80,44 @@ class HandoffRateLimitHandler:
 class HandoffTransferHandler:
     """Handler for context transfer between agents"""
     
-    def __init__(self, supervisor_getter: Any, actor_message_class: Any):
+    def __init__(self, _supervisor_getter: Any, _actor_message_class: Any):
         self._get_supervisor = supervisor_getter
         self._ActorMessage = actor_message_class
     
-    async def transfer_context(
-        self,
-        handoff_id: str,
-        from_agent_id: str,
-        to_agent_id: str,
-        context: Dict[str, Any],
-        reason: str,
-        timestamp: str
-    ) -> Tuple[bool, Optional[str]]:
+    async def transfer_context(self, _handoff_id: str, _from_agent_id: str, _to_agent_id: str, _context: Dict[str, _Any], _reason: str, _timestamp: str) -> Tuple[bool, Optional[str]]:
         """Transfer context to destination agent"""
-        supervisor = self._get_supervisor()
+        _supervisor = self._get_supervisor()
         
         if supervisor and to_agent_id in supervisor.actors:
-            destination_actor = supervisor.actors[to_agent_id]
+            _destination_actor = supervisor.actors[to_agent_id]
             
             await destination_actor.put_message(
                 self._ActorMessage(
-                    sender=from_agent_id,
-                    message_type="handoff_request",
-                    content={
+                    _sender = from_agent_id,
+                    _message_type = "handoff_request",
+                    _content = {
                         "handoff_id": handoff_id,
                         "from_agent": from_agent_id,
                         "context": context,
                         "reason": reason,
                         "timestamp": timestamp,
                     },
-                    timestamp=timestamp,
-                    correlation_id=handoff_id,
+                    _timestamp = timestamp,
+                    _correlation_id = handoff_id,
                 )
             )
             
             logger.info(
                 "handoff_context_transferred",
-                handoff_id=handoff_id,
-                to_agent=to_agent_id
+                _handoff_id = handoff_id,
+                _to_agent = to_agent_id
             )
             return True, None
         
         logger.warning(
             "handoff_destination_not_found",
-            handoff_id=handoff_id,
-            to_agent=to_agent_id
+            _handoff_id = handoff_id,
+            _to_agent = to_agent_id
         )
         return False, f"Destination agent {to_agent_id} not found"
 
@@ -138,23 +125,15 @@ class HandoffTransferHandler:
 class HandoffLoggingHandler:
     """Handler for historian logging"""
     
-    def __init__(self, historian: Optional[Any] = None):
+    def __init__(self, _historian: Optional[Any]):
         self._historian = historian
     
-    async def log_handoff(
-        self,
-        handoff_id: str,
-        from_agent_id: str,
-        to_agent_id: str,
-        reason: str,
-        timestamp: str,
-        context: Dict[str, Any]
-    ) -> None:
+    async def log_handoff(self, _handoff_id: str, _from_agent_id: str, _to_agent_id: str, _reason: str, _timestamp: str, _context: Dict[str, _Any]) -> None:
         """Log handoff to historian"""
         if self._historian and hasattr(self._historian, 'log_event'):
             await self._historian.log_event(
-                event_type="agent_handoff",
-                data={
+                _event_type = "agent_handoff",
+                _data = {
                     "handoff_id": handoff_id,
                     "from_agent": from_agent_id,
                     "to_agent": to_agent_id,
@@ -168,29 +147,14 @@ class HandoffLoggingHandler:
 class HandoffProcessor:
     """Main processor that chains all handoff handlers"""
     
-    def __init__(
-        self,
-        validator: Any,
-        handoff_timestamps: List[Any],
-        supervisor_getter: Any,
-        actor_message_class: Any,
-        historian: Optional[Any] = None,
-        max_active_handoffs: int = 100
-    ):
+    def __init__(self, _validator: Any, _handoff_timestamps: List[Any], _supervisor_getter: Any, _actor_message_class: Any, _historian: Optional[Any], _max_active_handoffs: int):
         self._validation_handler = HandoffValidationHandler(validator)
         self._rate_limit_handler = HandoffRateLimitHandler(handoff_timestamps)
         self._transfer_handler = HandoffTransferHandler(supervisor_getter, actor_message_class)
         self._logging_handler = HandoffLoggingHandler(historian)
         self.MAX_ACTIVE_HANDOFFS = max_active_handoffs
     
-    async def process(
-        self,
-        from_agent_id: str,
-        to_agent_id: str,
-        context: Dict[str, Any],
-        reason: str,
-        active_handoffs_count: int
-    ) -> HandoffResult:
+    async def process(self, _from_agent_id: str, _to_agent_id: str, _context: Dict[str, _Any], _reason: str, _active_handoffs_count: int) -> HandoffResult:
         """Process handoff through all phases"""
         import uuid
         from datetime import datetime, timezone
@@ -214,15 +178,15 @@ class HandoffProcessor:
             return HandoffResult(success=False, handoff_id="", error=error)
         
         # Generate handoff ID and timestamp
-        handoff_id = str(uuid.uuid4())
-        timestamp = datetime.now(timezone.utc).isoformat()
+        _handoff_id = str(uuid.uuid4())
+        _timestamp = datetime.now(timezone.utc).isoformat()
         
         logger.info(
             "handoff_initiated",
-            handoff_id=handoff_id,
-            from_agent=from_agent_id,
-            to_agent=to_agent_id,
-            reason=reason
+            _handoff_id = handoff_id,
+            _from_agent = from_agent_id,
+            _to_agent = to_agent_id,
+            _reason = reason
         )
         
         # Phase 4: Context transfer

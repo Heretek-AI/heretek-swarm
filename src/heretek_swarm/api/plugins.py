@@ -19,10 +19,10 @@ from datetime import datetime, timezone
 from fastapi import APIRouter, HTTPException
 import structlog
 
-logger = structlog.get_logger("api.plugins")
+_logger = structlog.get_logger("api.plugins")
 
 # Create router
-router = APIRouter(prefix="/api/plugins", tags=["plugins"])
+_router = APIRouter(prefix="/api/plugins", tags=["plugins"])
 
 # Plugin state management
 _plugin_states: Dict[str, Dict[str, Any]] = {}
@@ -73,7 +73,7 @@ async def get_all_plugins():
     Returns:
         List of plugins with name, status, and configuration
     """
-    plugins = []
+    _plugins = []
     for plugin_id, state in _plugin_states.items():
         plugins.append({
             "id": plugin_id,
@@ -92,7 +92,7 @@ async def get_all_plugins():
 
 
 @router.get("/{plugin_id}")
-async def get_plugin(plugin_id: str):
+async def get_plugin(_plugin_id: str):
     """
     Get details of a specific plugin.
     
@@ -105,7 +105,7 @@ async def get_plugin(plugin_id: str):
     if plugin_id not in _plugin_states:
         raise HTTPException(404, f"Plugin {plugin_id} not found")
     
-    state = _plugin_states[plugin_id]
+    _state = _plugin_states[plugin_id]
     
     return {
         "id": plugin_id,
@@ -122,7 +122,7 @@ async def get_plugin(plugin_id: str):
 # =============================================================================
 
 @router.post("/{plugin_id}/enable")
-async def enable_plugin(plugin_id: str):
+async def enable_plugin(_plugin_id: str):
     """
     Enable a plugin.
     
@@ -147,7 +147,7 @@ async def enable_plugin(plugin_id: str):
 
 
 @router.post("/{plugin_id}/disable")
-async def disable_plugin(plugin_id: str):
+async def disable_plugin(_plugin_id: str):
     """
     Disable a plugin.
     
@@ -176,7 +176,7 @@ async def disable_plugin(plugin_id: str):
 # =============================================================================
 
 @router.get("/{plugin_id}/config")
-async def get_plugin_config(plugin_id: str):
+async def get_plugin_config(_plugin_id: str):
     """
     Get current configuration for a plugin.
     
@@ -196,7 +196,7 @@ async def get_plugin_config(plugin_id: str):
 
 
 @router.put("/{plugin_id}/config")
-async def update_plugin_config(plugin_id: str, config: Dict[str, Any]):
+async def update_plugin_config(_plugin_id: str, _config: Dict[str, _Any]):
     """
     Update configuration for a plugin.
     
@@ -211,7 +211,7 @@ async def update_plugin_config(plugin_id: str, config: Dict[str, Any]):
         raise HTTPException(404, f"Plugin {plugin_id} not found")
     
     # Validate and update config
-    current_config = _plugin_states[plugin_id]["config"]
+    _current_config = _plugin_states[plugin_id]["config"]
     current_config.update(config)
     
     # Type validation for known fields
@@ -219,13 +219,13 @@ async def update_plugin_config(plugin_id: str, config: Dict[str, Any]):
         if "workspace_capacity" in config and not isinstance(config["workspace_capacity"], int):
             raise HTTPException(400, "workspace_capacity must be an integer")
         if "attention_threshold" in config:
-            threshold = config["attention_threshold"]
+            _threshold = config["attention_threshold"]
             if not isinstance(threshold, (int, float)) or not 0.0 <= threshold <= 1.0:
                 raise HTTPException(400, "attention_threshold must be between 0.0 and 1.0")
     
     elif plugin_id == "liberation":
         if "red_flag_sensitivity" in config:
-            sensitivity = config["red_flag_sensitivity"]
+            _sensitivity = config["red_flag_sensitivity"]
             if not isinstance(sensitivity, (int, float)) or not 0.0 <= sensitivity <= 1.0:
                 raise HTTPException(400, "red_flag_sensitivity must be between 0.0 and 1.0")
     
@@ -244,7 +244,7 @@ async def update_plugin_config(plugin_id: str, config: Dict[str, Any]):
 # =============================================================================
 
 @router.get("/{plugin_id}/metrics")
-async def get_plugin_metrics(plugin_id: str):
+async def get_plugin_metrics(_plugin_id: str):
     """
     Get runtime metrics for a plugin.
     
@@ -257,7 +257,7 @@ async def get_plugin_metrics(plugin_id: str):
     if plugin_id not in _plugin_states:
         raise HTTPException(404, f"Plugin {plugin_id} not found")
     
-    state = _plugin_states[plugin_id]
+    _state = _plugin_states[plugin_id]
     
     # Return basic metrics - in production these would come from actual plugin
     if plugin_id == "consciousness":
@@ -297,7 +297,7 @@ async def get_plugin_metrics(plugin_id: str):
 # =============================================================================
 
 @router.get("/{plugin_id}/status")
-async def get_plugin_status(plugin_id: str):
+async def get_plugin_status(_plugin_id: str):
     """
     Get overall status of a plugin.
     
@@ -310,7 +310,7 @@ async def get_plugin_status(plugin_id: str):
     if plugin_id not in _plugin_states:
         raise HTTPException(404, f"Plugin {plugin_id} not found")
     
-    state = _plugin_states[plugin_id]
+    _state = _plugin_states[plugin_id]
     
     return {
         "plugin_id": plugin_id,
@@ -326,7 +326,7 @@ async def get_plugin_status(plugin_id: str):
 # =============================================================================
 
 @router.post("/{plugin_id}/reset")
-async def reset_plugin(plugin_id: str):
+async def reset_plugin(_plugin_id: str):
     """
     Reset a plugin to default configuration.
     

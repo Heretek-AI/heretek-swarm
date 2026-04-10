@@ -39,7 +39,7 @@ from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer, AccessTi
 from heretek_swarm.security.zero_trust import ZeroTrustValidator
 
 
-logger = structlog.get_logger("HistorianAgent")
+_logger = structlog.get_logger("HistorianAgent")
 
 
 class LRUCache:
@@ -49,7 +49,7 @@ class LRUCache:
     Provides automatic eviction of least-recently-used items when capacity is exceeded.
     """
     
-    def __init__(self, max_size: int = 100):
+    def __init__(self, _max_size: int):
         """
         Initialize LRU cache.
         
@@ -61,7 +61,7 @@ class LRUCache:
         self.hits = 0
         self.misses = 0
     
-    def get(self, key: str, default: Any = None) -> Any:
+    def get(self, _key: str, _default: Any) -> Any:
         """
         Get item from cache.
         
@@ -81,7 +81,7 @@ class LRUCache:
         self.hits += 1
         return self._cache[key]
     
-    def set(self, key: str, value: Any) -> None:
+    def set(self, _key: str, _value: Any) -> None:
         """
         Set item in cache.
         
@@ -104,7 +104,7 @@ class LRUCache:
         self.hits = 0
         self.misses = 0
     
-    def invalidate(self, key: str) -> bool:
+    def invalidate(self, _key: str) -> bool:
         """
         Invalidate a specific cache entry.
         
@@ -119,7 +119,7 @@ class LRUCache:
             return True
         return False
     
-    def invalidate_pattern(self, pattern: str) -> int:
+    def invalidate_pattern(self, _pattern: str) -> int:
         """
         Invalidate all cache entries matching a pattern.
         
@@ -130,7 +130,7 @@ class LRUCache:
             Number of entries invalidated
         """
         import fnmatch
-        keys_to_remove = [
+        _keys_to_remove = [
             key for key in self._cache.keys()
             if fnmatch.fnmatch(key, pattern)
         ]
@@ -138,7 +138,7 @@ class LRUCache:
             del self._cache[key]
         return len(keys_to_remove)
     
-    def __contains__(self, key: str) -> bool:
+    def __contains__(self, _key: str) -> bool:
         """Check if key is in cache."""
         return key in self._cache
     
@@ -149,7 +149,7 @@ class LRUCache:
     def get_statistics(self) -> Dict[str, Any]:
         """Get cache statistics."""
         total = self.hits + self.misses
-        hit_rate = (self.hits / total * 100) if total > 0 else 0.0
+        _hit_rate = (self.hits / total * 100) if total > 0 else 0.0
         return {
             "size": len(self._cache),
             "max_size": self.max_size,
@@ -172,22 +172,7 @@ class HistorianAgent(AgentActor):
     - Tracks decision lineage
     """
 
-    def __init__(
-        self,
-        agent_id: str = "historian",
-        name: str = "Historian",
-        description: str = "Memory and context provider for the Triad",
-        swarms_agent: Optional[Agent] = None,
-        memory_system: Optional[DualTierMemory] = None,
-        context_window: int = 10,
-        context_cache_max_size: int = 100,
-        pattern_cache_max_size: int = 50,
-        pattern_extractor: Optional[PatternExtractor] = None,
-        deliberation_engine: Optional[SwarmDeliberationEngine] = None,
-        access_analyzer: Optional[AccessPatternAnalyzer] = None,
-        zero_trust_validator: Optional[ZeroTrustValidator] = None,
-        **kwargs,
-    ) -> None:
+    def __init__(self, _agent_id: str, _name: str, _description: str, _swarms_agent: Optional[Agent], _memory_system: Optional[DualTierMemory], _context_window: int, _context_cache_max_size: int, _pattern_cache_max_size: int, _pattern_extractor: Optional[PatternExtractor], _deliberation_engine: Optional[SwarmDeliberationEngine], _access_analyzer: Optional[AccessPatternAnalyzer], _zero_trust_validator: Optional[ZeroTrustValidator], _**kwargs) -> None:
         """
         Initialize the Historian agent.
 
@@ -204,10 +189,10 @@ class HistorianAgent(AgentActor):
         """
         super().__init__(
             agent_id=agent_id,
-            name=name,
-            description=description,
-            topics=["triad", "memory", "context", "history", "lineage"],
-            capabilities=[
+            _name = name,
+            _description = description,
+            _topics = ["triad", "memory", "context", "history", "lineage"],
+            _capabilities = [
                 "memory-storage",
                 "memory-retrieval",
                 "context-provision",
@@ -236,7 +221,7 @@ class HistorianAgent(AgentActor):
         
         # Session 44: Consensus Integration
         self.deliberation_engine = deliberation_engine or SwarmDeliberationEngine(
-            max_rounds=5, consensus_threshold=0.75, min_participants=2
+            _max_rounds = 5, consensus_threshold=0.75, min_participants=2
         )
         
         # Session 44: Memory Optimization Integration
@@ -261,13 +246,13 @@ class HistorianAgent(AgentActor):
         if self.rag_pipeline:
             self.knowledge_access = UnifiedKnowledgeAccess(
                 memory_system=self.memory_system,
-                rag_pipeline=self.rag_pipeline,
+                _rag_pipeline = self.rag_pipeline,
             )
             logger.info(f"[{self.agent_id}] Unified knowledge access initialized")
         else:
             self.knowledge_access = UnifiedKnowledgeAccess(
                 memory_system=self.memory_system,
-                rag_pipeline=None,
+                _rag_pipeline = None,
             )
             logger.info(f"[{self.agent_id}] Knowledge access initialized (memory only)")
 
@@ -281,66 +266,66 @@ class HistorianAgent(AgentActor):
 
         logger.info(f"[{self.agent_id}] Historian initialization complete")
 
-    async def process_message(self, message: ActorMessage) -> None:
+    async def process_message(self, _message: ActorMessage) -> None:
         """Process incoming messages."""
-        handler = self._message_handlers.get(message.message_type)
+        _handler = self._message_handlers.get(message.message_type)
         if handler:
             try:
                 await handler(message)
             except Exception as e:
                 logger.error(
                     f"[{self.agent_id}] Error processing message {message.message_type}: {e}",
-                    exc_info=True,
+                    _exc_info = True,
                 )
                 self.error_count += 1
                 # Send error response if reply_to is specified
                 if message.content.get("reply_to"):
                     await self.send(
-                        topic=message.content["reply_to"],
+                        _topic = message.content["reply_to"],
                         content={
                             "message_type": "error_response",
                             "error": str(e),
                             "original_message_type": message.message_type,
                         },
-                        correlation_id=message.correlation_id,
+                        _correlation_id = message.correlation_id,
                     )
         else:
             logger.warning(
                 f"[{self.agent_id}] Unhandled message type: {message.message_type}"
             )
 
-    async def _handle_store_memory(self, message: ActorMessage) -> None:
+    async def _handle_store_memory(self, _message: ActorMessage) -> None:
         """Handle memory storage requests with validation."""
         # P2-7 fix: Validate input before processing
         try:
-            validated = self._validate_message_content("store_memory", message.content)
+            _validated = self._validate_message_content("store_memory", message.content)
             if validated:
                 content = validated.content
                 metadata = validated.metadata
-                ttl = validated.ttl
-                persistent = validated.persistent
+                _ttl = validated.ttl
+                _persistent = validated.persistent
             else:
                 # Fallback to unvalidated access
                 content = message.content.get("content")
                 metadata = message.content.get("metadata", {})
-                ttl = message.content.get("ttl")
-                persistent = message.content.get("persistent", False)
+                _ttl = message.content.get("ttl")
+                _persistent = message.content.get("persistent", False)
         except ValueError as e:
             logger.error(f"[{self.agent_id}] Store memory validation failed: {e}")
             return
 
         logger.debug(f"[{self.agent_id}] Storing memory")
 
-        entry = await self.store_memory(
+        _entry = await self.store_memory(
             content=content,
             metadata=metadata,
-            ttl=ttl,
-            persistent=persistent,
+            _ttl = ttl,
+            _persistent = persistent,
         )
 
-        reply_topic = message.content.get("reply_to", "memory")
+        _reply_topic = message.content.get("reply_to", "memory")
         await self.send(
-            topic=reply_topic,
+            _topic = reply_topic,
             content={
                 "message_type": "store_memory_response",
                 "memory_id": entry.id,
@@ -350,21 +335,21 @@ class HistorianAgent(AgentActor):
             correlation_id=message.correlation_id,
         )
 
-    async def _handle_retrieve_context(self, message: ActorMessage) -> None:
+    async def _handle_retrieve_context(self, _message: ActorMessage) -> None:
         """Handle context retrieval requests with validation."""
         # P2-7 fix: Validate input before processing
         try:
-            validated = self._validate_message_content("retrieve_context", message.content)
+            _validated = self._validate_message_content("retrieve_context", message.content)
             if validated:
                 # Extract topic from filters or use default
-                topic = validated.filters.get("topic") if hasattr(validated, 'filters') else message.content.get("topic")
-                filters = validated.filters if hasattr(validated, 'filters') else message.content.get("filters", {})
-                window_size = validated.limit if hasattr(validated, 'limit') else message.content.get("window_size", self.context_window)
+                _topic = validated.filters.get("topic") if hasattr(validated, 'filters') else message.content.get("topic")
+                _filters = validated.filters if hasattr(validated, 'filters') else message.content.get("filters", {})
+                _window_size = validated.limit if hasattr(validated, 'limit') else message.content.get("window_size", self.context_window)
             else:
                 # Fallback to unvalidated access
-                topic = message.content.get("topic")
-                filters = message.content.get("filters", {})
-                window_size = message.content.get("window_size", self.context_window)
+                _topic = message.content.get("topic")
+                _filters = message.content.get("filters", {})
+                _window_size = message.content.get("window_size", self.context_window)
         except ValueError as e:
             logger.error(f"[{self.agent_id}] Retrieve context validation failed: {e}")
             return
@@ -372,14 +357,14 @@ class HistorianAgent(AgentActor):
         logger.debug(f"[{self.agent_id}] Retrieving context for: {topic}")
 
         context = await self.retrieve_context(
-            topic=topic,
-            filters=filters,
-            window_size=window_size,
+            _topic = topic,
+            _filters = filters,
+            _window_size = window_size,
         )
 
-        reply_topic = message.content.get("reply_to", "context")
+        _reply_topic = message.content.get("reply_to", "context")
         await self.send(
-            topic=reply_topic,
+            _topic = reply_topic,
             content={
                 "message_type": "retrieve_context_response",
                 "topic": topic,
@@ -389,35 +374,35 @@ class HistorianAgent(AgentActor):
             correlation_id=message.correlation_id,
         )
 
-    async def _handle_query_history(self, message: ActorMessage) -> None:
+    async def _handle_query_history(self, _message: ActorMessage) -> None:
         """Handle history query requests with validation."""
         # P2-7 fix: Validate input before processing
         try:
-            validated = self._validate_message_content("query_history", message.content)
+            _validated = self._validate_message_content("query_history", message.content)
             if validated:
                 query_text = validated.query_text
-                filters = validated.filters
-                limit = validated.limit
+                _filters = validated.filters
+                _limit = validated.limit
             else:
                 # Fallback to unvalidated access
                 query_text = message.content.get("query_text")
-                filters = message.content.get("filters", {})
-                limit = message.content.get("limit", 10)
+                _filters = message.content.get("filters", {})
+                _limit = message.content.get("limit", 10)
         except ValueError as e:
             logger.error(f"[{self.agent_id}] Query history validation failed: {e}")
             return
 
         logger.debug(f"[{self.agent_id}] Querying history: {query_text}")
 
-        results = await self.query_history(
-            query_text=query_text,
-            filters=filters,
-            limit=limit,
+        _results = await self.query_history(
+            _query_text = query_text,
+            _filters = filters,
+            _limit = limit,
         )
 
-        reply_topic = message.content.get("reply_to", "history")
+        _reply_topic = message.content.get("reply_to", "history")
         await self.send(
-            topic=reply_topic,
+            _topic = reply_topic,
             content={
                 "message_type": "query_history_response",
                 "query": query_text,
@@ -427,18 +412,18 @@ class HistorianAgent(AgentActor):
             correlation_id=message.correlation_id,
         )
 
-    async def _handle_track_lineage(self, message: ActorMessage) -> None:
+    async def _handle_track_lineage(self, _message: ActorMessage) -> None:
         """Handle lineage tracking requests with validation."""
         # P2-7 fix: Validate input before processing
         try:
-            validated = self._validate_message_content("track_lineage", message.content)
+            _validated = self._validate_message_content("track_lineage", message.content)
             if validated:
-                decision_id = validated.decision_id
-                parent_ids = validated.parent_ids
+                _decision_id = validated.decision_id
+                _parent_ids = validated.parent_ids
             else:
                 # Fallback to unvalidated access
-                decision_id = message.content.get("decision_id")
-                parent_ids = message.content.get("parent_ids", [])
+                _decision_id = message.content.get("decision_id")
+                _parent_ids = message.content.get("parent_ids", [])
         except ValueError as e:
             logger.error(f"[{self.agent_id}] Track lineage validation failed: {e}")
             return
@@ -446,13 +431,13 @@ class HistorianAgent(AgentActor):
         logger.debug(f"[{self.agent_id}] Tracking lineage for: {decision_id}")
 
         await self.track_decision_lineage(
-            decision_id=decision_id,
-            parent_ids=parent_ids,
+            _decision_id = decision_id,
+            _parent_ids = parent_ids,
         )
 
-        reply_topic = message.content.get("reply_to", "lineage")
+        _reply_topic = message.content.get("reply_to", "lineage")
         await self.send(
-            topic=reply_topic,
+            _topic = reply_topic,
             content={
                 "message_type": "track_lineage_response",
                 "decision_id": decision_id,
@@ -461,27 +446,27 @@ class HistorianAgent(AgentActor):
             correlation_id=message.correlation_id,
         )
 
-    async def _handle_pattern_match(self, message: ActorMessage) -> None:
+    async def _handle_pattern_match(self, _message: ActorMessage) -> None:
         """Handle pattern matching requests with validation."""
         # P2-7 fix: Validate input before processing
         try:
-            validated = self._validate_message_content("pattern_match", message.content)
+            _validated = self._validate_message_content("pattern_match", message.content)
             if validated:
-                current_situation = validated.query_text if hasattr(validated, 'query_text') else message.content.get("situation")
+                _current_situation = validated.query_text if hasattr(validated, 'query_text') else message.content.get("situation")
             else:
                 # Fallback to unvalidated access
-                current_situation = message.content.get("situation")
+                _current_situation = message.content.get("situation")
         except ValueError as e:
             logger.error(f"[{self.agent_id}] Pattern match validation failed: {e}")
             return
 
         logger.debug(f"[{self.agent_id}] Matching patterns for: {current_situation}")
 
-        patterns = await self.match_patterns(current_situation)
+        _patterns = await self.match_patterns(current_situation)
 
-        reply_topic = message.content.get("reply_to", "patterns")
+        _reply_topic = message.content.get("reply_to", "patterns")
         await self.send(
-            topic=reply_topic,
+            _topic = reply_topic,
             content={
                 "message_type": "pattern_match_response",
                 "situation": current_situation,
@@ -491,15 +476,15 @@ class HistorianAgent(AgentActor):
             correlation_id=message.correlation_id,
         )
 
-    async def _handle_unified_query(self, message: ActorMessage) -> None:
+    async def _handle_unified_query(self, _message: ActorMessage) -> None:
         """Handle unified knowledge query requests using the knowledge access layer."""
         try:
-            query_text = message.content.get("query")
-            sources = message.content.get("sources", ["memory", "rag"])
-            limit = message.content.get("limit", 10)
+            _query_text = message.content.get("query")
+            _sources = message.content.get("sources", ["memory", "rag"])
+            _limit = message.content.get("limit", 10)
             rerank = message.content.get("rerank", True)
-            diversity_lambda = message.content.get("diversity_lambda", 0.5)
-            filters = message.content.get("filters", {})
+            _diversity_lambda = message.content.get("diversity_lambda", 0.5)
+            _filters = message.content.get("filters", {})
             
             if not query_text:
                 logger.error(f"[{self.agent_id}] Unified query requires query text")
@@ -508,19 +493,19 @@ class HistorianAgent(AgentActor):
             logger.debug(f"[{self.agent_id}] Executing unified query: {query_text[:50]}")
             
             # Execute unified query
-            result = await self.knowledge_access.query(
+            _result = await self.knowledge_access.query(
                 query=query_text,
-                sources=sources,
-                limit=limit,
-                rerank=rerank,
-                diversity_lambda=diversity_lambda,
-                filters=filters,
+                _sources = sources,
+                _limit = limit,
+                _rerank = rerank,
+                _diversity_lambda = diversity_lambda,
+                _filters = filters,
             )
             
             # Send response
-            reply_topic = message.content.get("reply_to", "knowledge")
+            _reply_topic = message.content.get("reply_to", "knowledge")
             await self.send(
-                topic=reply_topic,
+                _topic = reply_topic,
                 content={
                     "message_type": "unified_query_response",
                     "query": query_text,
@@ -537,23 +522,15 @@ class HistorianAgent(AgentActor):
             logger.error(f"[{self.agent_id}] Unified query error: {e}", exc_info=True)
             if message.content.get("reply_to"):
                 await self.send(
-                    topic=message.content["reply_to"],
+                    _topic = message.content["reply_to"],
                     content={
                         "message_type": "error_response",
                         "error": str(e),
                     },
-                    correlation_id=message.correlation_id,
+                    _correlation_id = message.correlation_id,
                 )
 
-    async def unified_query(
-        self,
-        query: str,
-        sources: Optional[List[str]] = None,
-        limit: int = 10,
-        rerank: bool = True,
-        diversity_lambda: float = 0.5,
-        filters: Optional[Dict[str, Any]] = None,
-    ) -> KnowledgeQueryResult:
+    async def unified_query(self, _query: str, _sources: Optional[List[str]], _limit: int, _rerank: bool, _diversity_lambda: float, _filters: Optional[Dict[str, _Any]]) -> KnowledgeQueryResult:
         """
         Execute a unified knowledge query.
         
@@ -574,21 +551,14 @@ class HistorianAgent(AgentActor):
         
         return await self.knowledge_access.query(
             query=query,
-            sources=sources or ["memory", "rag"],
-            limit=limit,
-            rerank=rerank,
-            diversity_lambda=diversity_lambda,
-            filters=filters or {},
+            _sources = sources or ["memory", "rag"],
+            _limit = limit,
+            _rerank = rerank,
+            _diversity_lambda = diversity_lambda,
+            _filters = filters or {},
         )
 
-    async def store_memory(
-        self,
-        content: Dict[str, Any],
-        metadata: Optional[Dict[str, Any]] = None,
-        ttl: Optional[int] = None,
-        persistent: bool = False,
-        lineage: Optional[List[str]] = None,
-    ) -> MemoryEntry:
+    async def store_memory(self, _content: Dict[str, _Any], _metadata: Optional[Dict[str, _Any]], _ttl: Optional[int], _persistent: bool, _lineage: Optional[List[str]]) -> MemoryEntry:
         """
         Store a memory.
 
@@ -604,30 +574,25 @@ class HistorianAgent(AgentActor):
         """
         # Add agent metadata
         # P2-1 fix: Use timezone-aware datetime
-        full_metadata = {
+        _full_metadata = {
             **(metadata or {}),
             "agent_id": self.agent_id,
             "stored_at": datetime.now(timezone.utc).isoformat(),
         }
 
-        entry = await self.memory_system.store(
+        _entry = await self.memory_system.store(
             content=content,
             metadata=full_metadata,
-            ttl=ttl,
+            _ttl = ttl,
             lineage=lineage,
-            persistent=persistent,
+            _persistent = persistent,
         )
 
         logger.debug(f"[{self.agent_id}] Stored memory {entry.id}")
 
         return entry
 
-    async def retrieve_context(
-        self,
-        topic: str,
-        filters: Optional[Dict[str, Any]] = None,
-        window_size: int = 10,
-    ) -> List[Dict[str, Any]]:
+    async def retrieve_context(self, _topic: str, _filters: Optional[Dict[str, _Any]], _window_size: int) -> List[Dict[str, Any]]:
         """
         Retrieve context for a topic.
 
@@ -640,21 +605,21 @@ class HistorianAgent(AgentActor):
             List of context entries
         """
         # Check cache first
-        cache_key = f"{topic}:{window_size}"
-        cached = self.context_cache.get(cache_key)
+        _cache_key = f"{topic}:{window_size}"
+        _cached = self.context_cache.get(cache_key)
         if cached is not None:
             logger.debug(f"[{self.agent_id}] Context cache hit for: {topic}")
             return cached
 
         # Build query filters
-        query_filters = filters or {}
+        _query_filters = filters or {}
         if topic:
             query_filters["topic"] = topic
 
         # Query memory
-        results = await self.memory_system.query(
-            filters=query_filters,
-            limit=window_size,
+        _results = await self.memory_system.query(
+            _filters = query_filters,
+            _limit = window_size,
         )
 
         # Update cache (with automatic LRU eviction)
@@ -674,12 +639,7 @@ class HistorianAgent(AgentActor):
 
         return context
 
-    async def query_history(
-        self,
-        query_text: Optional[str] = None,
-        filters: Optional[Dict[str, Any]] = None,
-        limit: int = 10,
-    ) -> List[Dict[str, Any]]:
+    async def query_history(self, _query_text: Optional[str], _filters: Optional[Dict[str, _Any]], _limit: int) -> List[Dict[str, Any]]:
         """
         Query historical memories.
 
@@ -691,10 +651,10 @@ class HistorianAgent(AgentActor):
         Returns:
             List of matching memories
         """
-        results = await self.memory_system.query(
-            query_text=query_text,
-            filters=filters,
-            limit=limit,
+        _results = await self.memory_system.query(
+            _query_text = query_text,
+            _filters = filters,
+            _limit = limit,
         )
 
         return [
@@ -708,11 +668,7 @@ class HistorianAgent(AgentActor):
             for e in results
         ]
 
-    async def track_decision_lineage(
-        self,
-        decision_id: str,
-        parent_ids: List[str],
-    ) -> None:
+    async def track_decision_lineage(self, _decision_id: str, _parent_ids: List[str]) -> None:
         """
         Track lineage for a decision.
 
@@ -733,14 +689,14 @@ class HistorianAgent(AgentActor):
                 "lineage": True,
                 "decision_id": decision_id,
             },
-            persistent=True,
+            _persistent = True,
         )
 
         logger.debug(
             f"[{self.agent_id}] Tracked lineage for {decision_id}: {parent_ids}"
         )
 
-    async def get_lineage(self, decision_id: str) -> List[str]:
+    async def get_lineage(self, _decision_id: str) -> List[str]:
         """
         Get lineage for a decision.
 
@@ -752,11 +708,7 @@ class HistorianAgent(AgentActor):
         """
         return self.decision_lineage.get(decision_id, [])
 
-    async def match_patterns(
-        self,
-        situation: str,
-        threshold: float = 0.7,
-    ) -> List[Dict[str, Any]]:
+    async def match_patterns(self, _situation: str, _threshold: float) -> List[Dict[str, Any]]:
         """
         Match current situation against historical patterns.
 
@@ -768,22 +720,22 @@ class HistorianAgent(AgentActor):
             List of matched patterns
         """
         # Check cache first
-        cached = self.pattern_cache.get(situation)
+        _cached = self.pattern_cache.get(situation)
         if cached is not None:
             return cached
         
-        matched = []
+        _matched = []
 
         # Query for similar situations
-        results = await self.memory_system.query(
-            query_text=situation,
-            filters={"type": "situation"},
-            limit=5,
+        _results = await self.memory_system.query(
+            _query_text = situation,
+            _filters = {"type": "situation"},
+            _limit = 5,
         )
 
         for entry in results:
             # Compute actual similarity using text comparison
-            similarity = self._compute_similarity(situation, str(entry.content))
+            _similarity = self._compute_similarity(situation, str(entry.content))
             if similarity >= threshold:
                 matched.append({
                     "situation": entry.content,
@@ -800,7 +752,7 @@ class HistorianAgent(AgentActor):
 
         return matched
 
-    def _compute_similarity(self, text1: str, text2: str) -> float:
+    def _compute_similarity(self, _text1: str, _text2: str) -> float:
         """
         Compute similarity between two texts using cosine similarity on character n-grams.
         
@@ -812,48 +764,44 @@ class HistorianAgent(AgentActor):
             Similarity score between 0.0 and 1.0
         """
         # Simple cosine similarity using character 2-grams
-        def get_ngrams(text: str, n: int = 2) -> Dict[str, int]:
+        def get_ngrams(_text: str, _n: int) -> Dict[str, int]:
             """Get character n-grams with frequencies."""
-            text = text.lower().strip()
-            ngrams = {}
+            _text = text.lower().strip()
+            _ngrams = {}
             for i in range(len(text) - n + 1):
-                ngram = text[i:i+n]
+                _ngram = text[i:i+n]
                 ngrams[ngram] = ngrams.get(ngram, 0) + 1
             return ngrams
         
-        def cosine_similarity(vec1: Dict[str, int], vec2: Dict[str, int]) -> float:
+        def cosine_similarity(_vec1: Dict[str, _int], _vec2: Dict[str, _int]) -> float:
             """Compute cosine similarity between two frequency vectors."""
             # Get all unique keys
-            all_keys = set(vec1.keys()) | set(vec2.keys())
+            _all_keys = set(vec1.keys()) | set(vec2.keys())
             
             # Compute dot product and magnitudes
-            dot_product = 0.0
-            mag1 = 0.0
-            mag2 = 0.0
+            _dot_product = 0.0
+            _mag1 = 0.0
+            _mag2 = 0.0
             
             for key in all_keys:
-                v1 = vec1.get(key, 0)
-                v2 = vec2.get(key, 0)
+                _v1 = vec1.get(key, 0)
+                _v2 = vec2.get(key, 0)
                 dot_product += v1 * v2
                 mag1 += v1 * v1
                 mag2 += v2 * v2
             
-            if mag1 == 0 or mag2 == 0:
+            if mag1 in (0, 0):
                 return 0.0
             
             return dot_product / (mag1 ** 0.5 * mag2 ** 0.5)
         
         # Get n-grams for both texts
-        ngrams1 = get_ngrams(text1)
-        ngrams2 = get_ngrams(text2)
+        _ngrams1 = get_ngrams(text1)
+        _ngrams2 = get_ngrams(text2)
         
         return cosine_similarity(ngrams1, ngrams2)
 
-    async def provide_deliberation_context(
-        self,
-        deliberation_id: str,
-        topic: str,
-    ) -> Dict[str, Any]:
+    async def provide_deliberation_context(self, _deliberation_id: str, _topic: str) -> Dict[str, Any]:
         """
         Provide comprehensive context for a deliberation.
 
@@ -869,16 +817,16 @@ class HistorianAgent(AgentActor):
         )
 
         # Retrieve relevant context
-        context_entries = await self.retrieve_context(
-            topic=topic,
-            window_size=self.context_window,
+        _context_entries = await self.retrieve_context(
+            _topic = topic,
+            _window_size = self.context_window,
         )
 
         # Match patterns
-        patterns = await self.match_patterns(topic)
+        _patterns = await self.match_patterns(topic)
 
         # Get lineage if exists
-        lineage = await self.get_lineage(deliberation_id)
+        _lineage = await self.get_lineage(deliberation_id)
 
         # P2-1 fix: Use timezone-aware datetime
         context = {
@@ -901,17 +849,12 @@ class HistorianAgent(AgentActor):
                 "deliberation_id": deliberation_id,
                 "topic": topic,
             },
-            persistent=True,
+            _persistent = True,
         )
 
         return context
 
-    async def synthesize_knowledge(
-        self,
-        topic: str,
-        limit: int = 20,
-        timeout: int = 60,
-    ) -> Dict[str, Any]:
+    async def synthesize_knowledge(self, _topic: str, _limit: int, _timeout: int) -> Dict[str, Any]:
         """
         Synthesize knowledge from historical executions.
 
@@ -926,9 +869,9 @@ class HistorianAgent(AgentActor):
         logger.info(f"[{self.agent_id}] Synthesizing knowledge for: {topic}")
 
         # Retrieve relevant memories
-        results = await self.memory_system.query(
-            query_text=topic,
-            limit=limit,
+        _results = await self.memory_system.query(
+            _query_text = topic,
+            _limit = limit,
         )
 
         if not results:
@@ -941,10 +884,10 @@ class HistorianAgent(AgentActor):
         # Synthesize (would use LLM in full implementation)
         if self.swarms_agent:
             try:
-                memory_texts = [str(e.content) for e in results]
+                _memory_texts = [str(e.content) for e in results]
                 synthesis_prompt = f"Synthesize knowledge from these memories: {memory_texts}"
                 # P0-14 fix: Add timeout to LLM call
-                synthesis = await self.run_with_llm(prompt=synthesis_prompt, timeout=timeout)
+                _synthesis = await self.run_with_llm(prompt=synthesis_prompt, timeout=timeout)
 
                 # P2-1 fix: Use timezone-aware datetime
                 return {
@@ -980,7 +923,7 @@ class HistorianAgent(AgentActor):
 
     def get_memory_statistics(self) -> Dict[str, Any]:
         """Get memory system statistics."""
-        memory_stats = self.memory_system.get_statistics()
+        _memory_stats = self.memory_system.get_statistics()
 
         return {
             "total_memories": memory_stats.get("combined_total", 0),
@@ -995,7 +938,7 @@ class HistorianAgent(AgentActor):
     # Session 44: Collective Learning Integration Methods
     # =========================================================================
 
-    async def _emit_pattern(self, item_id: str, item_type: str, outcome: str, content: Dict[str, Any]) -> None:
+    async def _emit_pattern(self, _item_id: str, _item_type: str, _outcome: str, _content: Dict[str, _Any]) -> None:
         """Emit pattern for collective learning."""
         if not self.pattern_extractor:
             return
@@ -1005,12 +948,12 @@ class HistorianAgent(AgentActor):
         
         try:
             await self.pattern_extractor.analyze_message(
-                message_id=f"{item_type}_{item_id}",
-                sender=self.agent_id,
-                recipient="broadcast",
-                message_type=f"{item_type}_completion",
-                content=content,
-                timestamp=datetime.now(timezone.utc).isoformat(),
+                _message_id = f"{item_type}_{item_id}",
+                _sender = self.agent_id,
+                _recipient = "broadcast",
+                _message_type = f"{item_type}_completion",
+                _content = content,
+                _timestamp = datetime.now(timezone.utc).isoformat(),
             )
             
             self._pattern_emitted.add(item_id)
@@ -1018,15 +961,15 @@ class HistorianAgent(AgentActor):
         except Exception as e:
             logger.warning("failed_to_emit_pattern", item_id=item_id, error=str(e))
 
-    async def _consume_patterns(self, pattern_types: Optional[List[PatternType]] = None) -> List[Dict[str, Any]]:
+    async def _consume_patterns(self, _pattern_types: Optional[List[PatternType]]) -> List[Dict[str, Any]]:
         """Consume patterns from collective learning."""
         if not self.pattern_extractor:
             return []
         
         try:
-            patterns = await self.pattern_extractor.extract_patterns(
-                time_window_hours=24,
-                pattern_types=pattern_types or [PatternType.SUCCESS, PatternType.DECISION],
+            _patterns = await self.pattern_extractor.extract_patterns(
+                _time_window_hours = 24,
+                _pattern_types = pattern_types or [PatternType.SUCCESS, PatternType.DECISION],
             )
             return [p.to_dict() for p in patterns if p.metadata.confidence >= 0.7]
         except Exception as e:
@@ -1037,24 +980,18 @@ class HistorianAgent(AgentActor):
     # Session 44: Consensus Deliberation Integration Methods
     # =========================================================================
 
-    async def _initiate_deliberation(
-        self,
-        item_id: str,
-        proposal: str,
-        participating_agents: List[str],
-        domain: str = "general",
-    ) -> Optional[str]:
+    async def _initiate_deliberation(self, _item_id: str, _proposal: str, _participating_agents: List[str], _domain: str) -> Optional[str]:
         """Initiate swarm deliberation."""
         if not self.deliberation_engine:
             return None
         
         try:
-            deliberation_id = f"delib_{item_id}"
+            _deliberation_id = f"delib_{item_id}"
             self.deliberation_engine.start_deliberation(
-                deliberation_id=deliberation_id,
-                proposal=proposal[:200],
-                participants=participating_agents,
-                domain=domain,
+                _deliberation_id = deliberation_id,
+                _proposal = proposal[:200],
+                _participants = participating_agents,
+                _domain = domain,
             )
             self._active_deliberations[item_id] = deliberation_id
             
@@ -1064,35 +1001,28 @@ class HistorianAgent(AgentActor):
             logger.error("failed_to_initiate_deliberation", item_id=item_id, error=str(e))
             return None
 
-    async def _submit_deliberation_position(
-        self,
-        item_id: str,
-        agent_id: str,
-        position: Position,
-        confidence: float,
-        argument: str,
-    ) -> bool:
+    async def _submit_deliberation_position(self, _item_id: str, _agent_id: str, _position: Position, _confidence: float, _argument: str) -> bool:
         """Submit agent position in deliberation."""
         if not self.deliberation_engine:
             return False
         
-        deliberation_id = self._active_deliberations.get(item_id)
+        _deliberation_id = self._active_deliberations.get(item_id)
         if not deliberation_id:
             return False
         
         try:
-            success = self.deliberation_engine.submit_position(
-                deliberation_id=deliberation_id,
+            _success = self.deliberation_engine.submit_position(
+                _deliberation_id = deliberation_id,
                 agent_id=agent_id,
-                position=position,
-                confidence=confidence,
-                argument=argument,
+                _position = position,
+                _confidence = confidence,
+                _argument = argument,
             )
             
             if success and self.access_analyzer:
                 self.access_analyzer.record_access(
-                    memory_id=f"delib_{deliberation_id}_{agent_id}",
-                    access_type="write",
+                    _memory_id = f"delib_{deliberation_id}_{agent_id}",
+                    _access_type = "write",
                     agent_id=agent_id,
                 )
             
@@ -1101,17 +1031,17 @@ class HistorianAgent(AgentActor):
             logger.error("failed_to_submit_deliberation_position", error=str(e))
             return False
 
-    async def _finalize_deliberation(self, item_id: str) -> Optional[Any]:
+    async def _finalize_deliberation(self, _item_id: str) -> Optional[Any]:
         """Finalize deliberation and apply result."""
         if not self.deliberation_engine:
             return None
         
-        deliberation_id = self._active_deliberations.get(item_id)
+        _deliberation_id = self._active_deliberations.get(item_id)
         if not deliberation_id:
             return None
         
         try:
-            result = self.deliberation_engine.finalize_deliberation(deliberation_id)
+            _result = self.deliberation_engine.finalize_deliberation(deliberation_id)
             
             if result:
                 self.deliberation_engine.cleanup_deliberation(deliberation_id)
@@ -1127,34 +1057,34 @@ class HistorianAgent(AgentActor):
     # Session 44: Memory Optimization Integration Methods
     # =========================================================================
 
-    def _track_memory_access(self, item_id: str, item_type: str, access_type: str = "read") -> None:
+    def _track_memory_access(self, _item_id: str, _item_type: str, _access_type: str) -> None:
         """Track memory access patterns."""
         if not self.access_analyzer:
             return
         
-        memory_id = f"{item_type}_{item_id}"
+        _memory_id = f"{item_type}_{item_id}"
         self.access_analyzer.record_access(
-            memory_id=memory_id,
-            access_type=access_type,
+            _memory_id = memory_id,
+            _access_type = access_type,
             agent_id=self.agent_id,
         )
 
-    def _get_memory_tier(self, item_id: str, item_type: str) -> AccessTier:
+    def _get_memory_tier(self, _item_id: str, _item_type: str) -> AccessTier:
         """Get memory tier classification."""
         if not self.access_analyzer:
             return AccessTier.COLD
         
-        memory_id = f"{item_type}_{item_id}"
-        profile = self.access_analyzer.get_profile(memory_id)
+        _memory_id = f"{item_type}_{item_id}"
+        _profile = self.access_analyzer.get_profile(memory_id)
         return profile.tier if profile else AccessTier.COLD
 
-    async def _prefetch_relevant(self, agent_id: str, item_type: str) -> List[str]:
+    async def _prefetch_relevant(self, _agent_id: str, _item_type: str) -> List[str]:
         """Prefetch items an agent is likely to need."""
         if not self.access_analyzer:
             return []
         
         try:
-            predicted_memories = self.access_analyzer.predict_agent_access(agent_id)
+            _predicted_memories = self.access_analyzer.predict_agent_access(agent_id)
             return [
                 mem.replace(f"{item_type}_", "")
                 for mem in predicted_memories
