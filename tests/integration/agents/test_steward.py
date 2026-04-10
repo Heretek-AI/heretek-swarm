@@ -10,8 +10,8 @@ import pytest_asyncio
 from datetime import datetime
 from unittest.mock import AsyncMock, MagicMock, patch
 
-from src.heretek_swarm.actors.triad import StewardAgent
-from src.heretek_swarm.actors.base import ActorMessage, ActorState
+from heretek_swarm.actors.triad import StewardAgent
+from heretek_swarm.actors.base import ActorMessage, ActorState
 
 
 pytestmark = pytest.mark.integration

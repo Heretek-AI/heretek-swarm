@@ -23,8 +23,8 @@ import structlog
 
 from heretek_swarm.actors.supervisor import ActorSupervisor
 from heretek_swarm.gateway.nats_event_mesh import NATSEventMesh
-from heretek_swarm.memory.unified import DualTierMemory
-from heretek_swarm.rag.rag_pipeline import RAGPipeline
+from heretek_swarm.memory.base import DualTierMemory
+from heretek_swarm.rag import HybridRetriever
 from heretek_swarm.consensus.maker import MAKERConsensus
 from heretek_swarm.tools.mcp_tools import CoreMCPTools
 from heretek_swarm.channels.registry import ChannelRegistry, GroupRegistry
@@ -86,8 +86,8 @@ class AutonomousSwarm:
             "scaling_interval": 60,
             "ephemeral": {"ttl_seconds": 3600},
             "persistent": {
-                "connection_string": "postgresql://heretek:password@localhost/heretek_swarm",
-            },
+                            "connection_string": os.getenv("DATABASE_URL", "postgresql://heretek:password@localhost/heretek_swarm"),
+                        },
             "rag": {
                 "embedding_provider": "openai",
                 "collection_name": "heretek_documents",

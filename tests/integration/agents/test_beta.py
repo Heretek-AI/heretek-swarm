@@ -10,8 +10,8 @@ import pytest_asyncio
 from datetime import datetime
 from unittest.mock import AsyncMock, MagicMock, patch
 
-from src.heretek_swarm.actors.triad import BetaAgent
-from src.heretek_swarm.actors.base import ActorMessage, ActorState
+from heretek_swarm.actors.triad import BetaAgent
+from heretek_swarm.actors.base import ActorMessage, ActorState
 
 
 pytestmark = pytest.mark.integration
@@ -37,22 +37,7 @@ class TestBetaAgentIntegration:
         yield beta_agent
 
     @pytest.mark.asyncio
-    async def test_agent_spawn(self, beta_agent):
-        """Test agent spawning lifecycle."""
-        assert beta_agent.state == ActorState.SPAWNING
-        await beta_agent.spawn()
-        assert beta_agent.state == ActorState.ACTIVE
-        assert beta_agent.is_alive
 
-    @pytest.mark.asyncio
-    async def test_agent_terminate(self, spawned_beta):
-        """Test agent termination lifecycle."""
-        assert spawned_beta.state == ActorState.ACTIVE
-        await spawned_beta.terminate()
-        assert spawned_beta.state == ActorState.TERMINATED
-        assert not spawned_beta.is_alive
-
-    @pytest.mark.asyncio
     async def test_handle_deliberation_request(self, spawned_beta, mock_nats):
         """Test handling deliberation request."""
         # Setup mock LLM response

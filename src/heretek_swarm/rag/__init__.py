@@ -3,5 +3,5 @@ RAG (Retrieval-Augmented Generation) package for Heretek Swarm.
 
 Provides vector search, document retrieval, and context augmentation capabilities.
 """
-
-__all__ = []
+from heretek_swarm.rag.hybrid_retriever import HybridRetriever, HybridRetrieverConfig
+__all__ = ["HybridRetriever", "HybridRetrieverConfig"]

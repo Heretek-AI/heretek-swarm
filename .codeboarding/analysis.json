@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-10T07:57:40.198049+00:00",
+    "generated_at": "2026-04-10T13:43:32.471825+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 4,
@@ -26275,10 +26275,10 @@
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.runtime.main_loop.AutonomousSwarm",
-          "start_line": 36,
-          "end_line": 549,
+          "start_line": 35,
+          "end_line": 548,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.runtime.main_loop.AutonomousSwarm.__init__",
@@ -26289,10 +26289,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._default_config",
-          "start_line": 79,
-          "end_line": 101,
+          "start_line": 78,
+          "end_line": 100,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.runtime.main_loop.AutonomousSwarm.initialize",
@@ -33543,7 +33543,7 @@
           "start_line": 28,
           "end_line": 53,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.tools.registry.ToolRegistryEntry",
@@ -43339,6 +43339,10 @@
     },
     "verify_imports.py": {
       "file_status": "deleted",
+      "methods": []
+    },
+    "src/heretek_swarm/rag/__init__.py": {
+      "file_status": "modified",
       "methods": []
     }
   },
@@ -72602,10 +72606,10 @@
     "src/heretek_swarm/runtime/main_loop.py|src.heretek_swarm.runtime.main_loop.AutonomousSwarm": {
       "file_path": "src/heretek_swarm/runtime/main_loop.py",
       "qualified_name": "src.heretek_swarm.runtime.main_loop.AutonomousSwarm",
-      "start_line": 36,
-      "end_line": 549,
+      "start_line": 35,
+      "end_line": 548,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/runtime/main_loop.py|src.heretek_swarm.runtime.main_loop.AutonomousSwarm.__init__": {
       "file_path": "src/heretek_swarm/runtime/main_loop.py",
@@ -72618,10 +72622,10 @@
     "src/heretek_swarm/runtime/main_loop.py|src.heretek_swarm.runtime.main_loop.AutonomousSwarm._default_config": {
       "file_path": "src/heretek_swarm/runtime/main_loop.py",
       "qualified_name": "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._default_config",
-      "start_line": 79,
-      "end_line": 101,
+      "start_line": 78,
+      "end_line": 100,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/runtime/main_loop.py|src.heretek_swarm.runtime.main_loop.AutonomousSwarm.initialize": {
       "file_path": "src/heretek_swarm/runtime/main_loop.py",
@@ -80685,7 +80689,7 @@
       "start_line": 28,
       "end_line": 53,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/tools/registry.py|src.tools.registry.ToolRegistryEntry": {
       "file_path": "src/tools/registry.py",

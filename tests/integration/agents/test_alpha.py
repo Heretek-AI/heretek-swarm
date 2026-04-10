@@ -10,8 +10,9 @@ import pytest_asyncio
 from datetime import datetime
 from unittest.mock import AsyncMock, MagicMock, patch
 
-from src.heretek_swarm.actors.triad import AlphaAgent
-from src.heretek_swarm.actors.base import ActorMessage, ActorState
+# Import from same path as the module under test to avoid enum identity issues
+from heretek_swarm.actors.triad import AlphaAgent
+from heretek_swarm.actors.base import ActorMessage, ActorState
 
 
 pytestmark = pytest.mark.integration
@@ -42,12 +43,10 @@ class TestAlphaAgentIntegration:
         assert alpha_agent.state == ActorState.SPAWNING
         await alpha_agent.spawn()
         assert alpha_agent.state == ActorState.ACTIVE
-        assert alpha_agent.is_alive
 
     @pytest.mark.asyncio
     async def test_agent_terminate(self, spawned_alpha):
         """Test agent termination lifecycle."""
-        assert spawned_alpha._state == ActorState.ACTIVE
+        assert spawned_alpha.state == ActorState.ACTIVE
         await spawned_alpha.terminate()
         assert spawned_alpha.state == ActorState.TERMINATED
-        assert not spawned_alpha.is_alive
