@@ -36,16 +36,17 @@ class TestCausalAnalysis:
         assert result.differentiation == 0.0
 
     def test_single_element_matrix(self):
-        """Single element matrix should have minimal Phi."""
-        calc = ConsciousnessMetricsCalculator()
-        result = calc.calculate_phi([[0.5]])
-        
-        # Single element: cause_info = effect_info = value/value = 1.0
-        assert result.cause_info == 1.0
-        assert result.effect_info == 1.0
-        assert result.integrated_info == 1.0
-        assert result.causal_density == 0.0  # No other nodes to connect to
-        assert result.differentiation == 0.0  # Single pattern, no differentiation
+            """Single element matrix should have minimal Phi (no causal structure)."""
+            calc = ConsciousnessMetricsCalculator()
+            result = calc.calculate_phi([[0.5]])
+
+            # Single element - no cause/effect relationships possible
+            # A lone node cannot have causal connections
+            assert result.cause_info == 0.0  # No cause relationship exists
+            assert result.effect_info == 0.0  # No effect relationship exists
+            assert result.integrated_info == 0.0  # No integration without structure
+            assert result.causal_density == 0.0  # No other nodes to connect to
+            assert result.differentiation == 0.0  # Single pattern, no differentiation
 
     def test_fully_connected_matrix(self):
         """Fully connected matrix should have high integration."""

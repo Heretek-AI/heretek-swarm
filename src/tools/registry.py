@@ -31,7 +31,7 @@ class ToolRegistryConfig(BaseModel):
     # Discovery
     auto_discover: bool = Field(default=True, description="Auto-discover tools on startup")
     discovery_paths: List[str] = Field(
-        default_factory=lambda: ["heretek_swarm.tools"],
+        default_factory=lambda: ["src.tools", "heretek_swarm.tools", "heretek_swarm.tools.examples"],
         description="Python paths to search for tools"
     )
     
