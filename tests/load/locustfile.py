@@ -14,7 +14,6 @@ import time
 import random
 from uuid import uuid4
 from locust import HttpUser, task, between, events
-from locust.runners import MasterRunner, WorkerRunner
 
 
 # =============================================================================
@@ -28,7 +27,7 @@ class SpikeLoadShape:
     Tests system behavior under sudden traffic surge.
     Expected: System should handle spike gracefully, recover after spike ends.
     """
-    stages = [
+    _stages = [
         {"duration": 60, "users": 10, "spawn_rate": 2},    # Baseline
         {"duration": 120, "users": 100, "spawn_rate": 20},  # Spike
         {"duration": 180, "users": 100, "spawn_rate": 0},   # Hold
@@ -44,7 +43,7 @@ class EnduranceLoadShape:
     Tests for memory leaks, resource exhaustion, degradation over time.
     Expected: Stable performance throughout test duration.
     """
-    stages = [
+    _stages = [
         {"duration": 300, "users": 50, "spawn_rate": 5},    # Ramp up
         {"duration": 3600, "users": 50, "spawn_rate": 0},    # Hold for 1 hour
         {"duration": 3900, "users": 0, "spawn_rate": -10},   # Ramp down
@@ -58,7 +57,7 @@ class BreakingPointLoadShape:
     Gradually increases load until system fails.
     Expected: Identify maximum sustainable load and failure mode.
     """
-    stages = [
+    _stages = [
         {"duration": 120, "users": 10, "spawn_rate": 2},
         {"duration": 240, "users": 50, "spawn_rate": 5},
         {"duration": 360, "users": 100, "spawn_rate": 10},
@@ -75,7 +74,7 @@ class RecoveryLoadShape:
     Tests system ability to recover after overload.
     Expected: System should recover and return to normal operation.
     """
-    stages = [
+    _stages = [
         {"duration": 60, "users": 20, "spawn_rate": 5},     # Normal load
         {"duration": 180, "users": 500, "spawn_rate": 50},  # Overload
         {"duration": 240, "users": 20, "spawn_rate": -50},  # Recovery
@@ -97,8 +96,8 @@ class APIUser(HttpUser):
     host = "http://localhost:8000"
     
     # Test data
-    test_agent_id = None
-    test_memory_id = None
+    _test_agent_id = None
+    _test_memory_id = None
     auth_token = None
     
     def on_start(self):
@@ -114,7 +113,7 @@ class APIUser(HttpUser):
     @task(2)
     def get_agents(self):
         """Test agents listing endpoint"""
-        headers = {}
+        _headers = {}
         if self.auth_token:
             headers["Authorization"] = f"Bearer {self.auth_token}"
         
@@ -123,8 +122,8 @@ class APIUser(HttpUser):
     @task(2)
     def get_agent_status(self):
         """Test individual agent status"""
-        agent_id = f"agent-{random.randint(1, 23)}"
-        headers = {}
+        _agent_id = f"agent-{random.randint(1, 23)}"
+        _headers = {}
         if self.auth_token:
             headers["Authorization"] = f"Bearer {self.auth_token}"
         
@@ -133,11 +132,11 @@ class APIUser(HttpUser):
     @task(1)
     def search_memory(self):
         """Test memory search endpoint"""
-        headers = {}
+        _headers = {}
         if self.auth_token:
             headers["Authorization"] = f"Bearer {self.auth_token}"
         
-        queries = [
+        _queries = [
             "test query",
             "agent memory",
             "conversation history",
@@ -148,15 +147,15 @@ class APIUser(HttpUser):
         self.client.post(
             "/api/memory/search",
             json={"query": random.choice(queries), "limit": 10},
-            headers=headers,
-            name="Search Memory"
+            _headers = headers,
+            _name = "Search Memory"
         )
     
     @task(1)
     def get_consciousness_metrics(self):
         """Test consciousness metrics endpoint"""
-        agent_id = f"agent-{random.randint(1, 23)}"
-        headers = {}
+        _agent_id = f"agent-{random.randint(1, 23)}"
+        _headers = {}
         if self.auth_token:
             headers["Authorization"] = f"Bearer {self.auth_token}"
         
@@ -165,7 +164,7 @@ class APIUser(HttpUser):
     @task(1)
     def get_event_mesh_stats(self):
         """Test event mesh statistics"""
-        headers = {}
+        _headers = {}
         if self.auth_token:
             headers["Authorization"] = f"Bearer {self.auth_token}"
         
@@ -190,11 +189,11 @@ class HeavyUser(HttpUser):
     @task(2)
     def create_agent(self):
         """Test agent creation - write operation"""
-        headers = {}
+        _headers = {}
         if self.auth_token:
             headers["Authorization"] = f"Bearer {self.auth_token}"
         
-        agent_data = {
+        _agent_data = {
             "agent_id": f"test-agent-{uuid4()}",
             "agent_type": "worker",
             "character": {
@@ -205,19 +204,19 @@ class HeavyUser(HttpUser):
         
         self.client.post(
             "/api/agents",
-            json=agent_data,
-            headers=headers,
-            name="Create Agent"
+            _json = agent_data,
+            _headers = headers,
+            _name = "Create Agent"
         )
     
     @task(2)
     def store_memory(self):
         """Test memory storage - write operation"""
-        headers = {}
+        _headers = {}
         if self.auth_token:
             headers["Authorization"] = f"Bearer {self.auth_token}"
         
-        memory_data = {
+        _memory_data = {
             "agent_id": f"agent-{random.randint(1, 23)}",
             "content": f"Load test memory content {uuid4()}",
             "memory_type": "episodic",
@@ -227,19 +226,19 @@ class HeavyUser(HttpUser):
         
         self.client.post(
             "/api/memory/store",
-            json=memory_data,
-            headers=headers,
-            name="Store Memory"
+            _json = memory_data,
+            _headers = headers,
+            _name = "Store Memory"
         )
     
     @task(1)
     def send_agent_message(self):
         """Test agent message sending - complex operation"""
-        headers = {}
+        _headers = {}
         if self.auth_token:
             headers["Authorization"] = f"Bearer {self.auth_token}"
         
-        message_data = {
+        _message_data = {
             "target_agent": f"agent-{random.randint(1, 23)}",
             "message_type": "request",
             "content": {
@@ -251,19 +250,19 @@ class HeavyUser(HttpUser):
         
         self.client.post(
             "/api/agents/message",
-            json=message_data,
-            headers=headers,
-            name="Send Agent Message"
+            _json = message_data,
+            _headers = headers,
+            _name = "Send Agent Message"
         )
     
     @task(1)
     def initiate_consensus(self):
         """Test consensus initiation - multi-agent operation"""
-        headers = {}
+        _headers = {}
         if self.auth_token:
             headers["Authorization"] = f"Bearer {self.auth_token}"
         
-        consensus_data = {
+        _consensus_data = {
             "proposal_id": f"prop-{uuid4()}",
             "description": f"Load test consensus {random.randint(1, 100)}",
             "participants": [f"agent-{i}" for i in range(1, random.randint(4, 10))],
@@ -272,9 +271,9 @@ class HeavyUser(HttpUser):
         
         self.client.post(
             "/api/consensus/initiate",
-            json=consensus_data,
-            headers=headers,
-            name="Initiate Consensus"
+            _json = consensus_data,
+            _headers = headers,
+            _name = "Initiate Consensus"
         )
 
 
@@ -284,7 +283,7 @@ class WebSocketUser(HttpUser):
     
     Tests: Real-time communication, message streaming
     """
-    wait_time = between(0.1, 1)  # Short wait time for real-time ops
+    _wait_time = between(0.1, 1)  # Short wait time for real-time ops
     host = "ws://localhost:8000"
     
     @task
@@ -300,32 +299,32 @@ class WebSocketUser(HttpUser):
 # =============================================================================
 
 @events.request.add_listener
-def on_request(request_type, name, response_time, response_length, exception, **kwargs):
+def on_request(_request_type, _name, _response_time, _response_length, _exception, _**kwargs):
     """Log slow requests"""
     if response_time > 1000:  # > 1 second
         print(f"SLOW REQUEST: {name} took {response_time}ms")
 
 
 @events.test_start.add_listener
-def on_test_start(environment, **kwargs):
+def on_test_start(_environment, _**kwargs):
     """Called when load test starts"""
     print(f"Load test starting - Target host: {environment.host}")
     print(f"Performance targets: p95 < 100ms, p99 < 500ms")
 
 
 @events.test_stop.add_listener
-def on_test_stop(environment, **kwargs):
+def on_test_stop(_environment, _**kwargs):
     """Called when load test stops"""
-    stats = environment.stats
+    _stats = environment.stats
     
     print("\n" + "=" * 60)
     print("LOAD TEST RESULTS")
     print("=" * 60)
     
     # Overall statistics
-    total_requests = stats.total.num_requests
-    total_failures = stats.total.num_failures
-    failure_rate = (total_failures / total_requests * 100) if total_requests > 0 else 0
+    _total_requests = stats.total.num_requests
+    _total_failures = stats.total.num_failures
+    _failure_rate = (total_failures / total_requests * 100) if total_requests > 0 else 0
     
     print(f"Total Requests: {total_requests}")
     print(f"Total Failures: {total_failures}")
@@ -339,8 +338,8 @@ def on_test_stop(environment, **kwargs):
     print(f"  Avg:  {stats.total.avg_response_time:.2f}ms")
     
     # Performance assessment
-    p95 = stats.total.get_response_time_percentile(0.95)
-    p99 = stats.total.get_response_time_percentile(0.99)
+    _p95 = stats.total.get_response_time_percentile(0.95)
+    _p99 = stats.total.get_response_time_percentile(0.99)
     
     print(f"\nPerformance Assessment:")
     if p95 < 100 and p99 < 500:

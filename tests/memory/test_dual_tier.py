@@ -1,8 +1,6 @@
 """Dual-tier memory system tests."""
-import pytest
-from heretek_swarm.memory.base import MemoryEntry, MemoryQuery
+from heretek_swarm.memory.base import MemoryEntry
 from heretek_swarm.memory import MemoryType, MemoryTier, DualTierMemorySystem
-from heretek_swarm.memory.eliza_memory import ElizaMemoryEntry
 
 
 class TestMemoryEntry:
@@ -10,7 +8,7 @@ class TestMemoryEntry:
 
     def test_create_memory_entry(self):
         """Test basic entry creation"""
-        entry = MemoryEntry(
+        _entry = MemoryEntry(
             content="Test memory content",
             metadata={"agent_id": "agent-1"}
         )
@@ -24,7 +22,7 @@ class TestMemoryEntry:
 
     def test_entry_touch(self):
         """Test access tracking"""
-        entry = MemoryEntry(content="Test")
+        _entry = MemoryEntry(content="Test")
         entry.touch()
         assert entry.access_count == 1
         assert entry.last_accessed_at is not None
@@ -35,5 +33,5 @@ class TestDualTierMemory:
 
     def test_dual_tier_creation(self):
         """Test creating dual tier memory"""
-        memory = DualTierMemorySystem()
+        _memory = DualTierMemorySystem()
         assert memory is not None
