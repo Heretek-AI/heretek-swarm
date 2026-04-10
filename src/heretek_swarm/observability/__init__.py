@@ -78,7 +78,10 @@ class LogEntry:
     function: Optional[str] = None
     line: Optional[int] = None
     trace_id: Optional[str] = None
-    span_id: Optional[str]        """Convert to dictionary for JSON serialization."""
+    span_id: Optional[str] = None
+
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert to dictionary for JSON serialization."""
         return asdict(self)
 
 
@@ -549,17 +552,14 @@ class ObservabilityManager:
     ) -> None:
         """
         Log with structured metadata.
-
-        Args:
-            level: Log level
-            message: Log message
-            agent_id:": message,
+        """
+        log_dict = {
+            "message": message,
             "agent_id": agent_id,
             "task_id": task_id,
             "session_id": session_id,
             **metadata,
         }
-
         log_func = getattr(structlog.get_logger(), level.value.lower())
         log_func(**log_dict)
 
