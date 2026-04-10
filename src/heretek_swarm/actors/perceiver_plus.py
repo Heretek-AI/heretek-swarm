@@ -499,8 +499,13 @@ Respond in JSON:
     "confidence": 0.0
 }}"""
         
-        try:
-            if self.swarms_agent:
+        # Fallback values
+        _findings = ["Diagnostic analysis requires LLM capabilities"]
+        confidence = 0.3
+        metrics = {}
+
+        if self.swarms_agent:
+            try:
                 _result = await self.run_with_llm(prompt=prompt, timeout=60)
                 import json
                 _start_idx = result.find("{")
@@ -512,14 +517,8 @@ Respond in JSON:
                         "causal_factors_count": len(parsed.get("causal_factors", [])),
                     }
                     confidence = float(parsed.get("confidence", 0.7))
-                else:
-                    raise ValueError("No JSON found")
-            else:
-                raise RuntimeError("LLM not available")
-        except Exception:
-            # Fallback
-            _findings = ["Diagnostic analysis requires LLM capabilities"]
-            confidence = 0.3
+            except Exception:
+                pass  # Use fallback values set above
         
         return AnalyticsResult(
             analysis_id=analysis_id,
@@ -554,8 +553,13 @@ Respond in JSON:
     "confidence": 0.0
 }}"""
         
-        try:
-            if self.swarms_agent:
+        # Fallback values
+        _findings = ["Predictive analysis requires LLM capabilities"]
+        confidence = 0.3
+        metrics = {}
+
+        if self.swarms_agent:
+            try:
                 _result = await self.run_with_llm(prompt=prompt, timeout=60)
                 import json
                 _start_idx = result.find("{")
@@ -567,13 +571,8 @@ Respond in JSON:
                         "factors_count": len(parsed.get("predictive_factors", [])),
                     }
                     confidence = float(parsed.get("confidence", 0.6))
-                else:
-                    raise ValueError("No JSON found")
-            else:
-                raise RuntimeError("LLM not available")
-        except Exception:
-            _findings = ["Predictive analysis requires LLM capabilities"]
-            confidence = 0.3
+            except Exception:
+                pass  # Use fallback values set above
         
         return AnalyticsResult(
             analysis_id=analysis_id,
