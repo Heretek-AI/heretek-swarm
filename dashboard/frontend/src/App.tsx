@@ -17,6 +17,7 @@ import { ErrorBoundary } from './components/UI/ErrorBoundary';
 import { DebugPanel } from './components/UI/DebugPanel';
 import { PerformanceOverlay } from './components/UI/PerformanceOverlay';
 import { SetupWizard } from './components/Setup';
+import { useSetupStore } from './stores/setupStore';
 import { setToastInstance } from './api/client';
 
 // Legacy components (keep for compatibility)
@@ -50,15 +51,44 @@ const navItems: NavItem[] = [
 function DashboardContent() {
   const [currentView, setCurrentView] = useState<View>('home');
   const [systemStatus, setSystemStatus] = useState<'healthy' | 'degraded' | 'offline'>('healthy');
-  const [showSetup, setShowSetup] = useState(false);
   const toast = useToast();
+  
+  // Setup store integration
+  const { 
+    isConfigured, 
+    isRerunning,
+    config,
+    setRerunning,
+    resetSetup,
+  } = useSetupStore();
+  
+  const [showSetup, setShowSetup] = useState(false);
+  const [isInitialized, setIsInitialized] = useState(false);
 
-  // Check if setup is needed
+  // Check if setup is needed on mount
   useEffect(() => {
-    const isConfigured = localStorage.getItem('swarm_configured') === 'true';
-    if (!isConfigured) {
-      setShowSetup(true);
-    }
+    const checkConfiguration = () => {
+      const storedConfigured = localStorage.getItem('swarm_configured') === 'true';
+      const storedApiHost = localStorage.getItem('swarm_api_host');
+      
+      if (!storedConfigured || !storedApiHost) {
+        // Not configured or no stored API host - show setup
+        setShowSetup(true);
+      } else {
+        // Restore config from localStorage if not in store
+        if (!config.apiHost) {
+          useSetupStore.getState().setConfig({
+            apiHost: storedApiHost,
+            apiKey: localStorage.getItem('swarm_api_key') || '',
+            wsHost: localStorage.getItem('swarm_ws_host') || '',
+          });
+        }
+        setShowSetup(false);
+      }
+      setIsInitialized(true);
+    };
+    
+    checkConfiguration();
   }, []);
 
   // Set toast instance for API client
@@ -71,8 +101,14 @@ function DashboardContent() {
   // Check system health periodically
   const checkSystemHealth = useCallback(async () => {
     try {
-      const API_URL = import.meta.env.VITE_API_URL || '';
-      const response = await fetch(`${API_URL}/api/health`);
+      // Use stored API host or fall back to environment variable
+      const apiHost = localStorage.getItem('swarm_api_host') || import.meta.env.VITE_API_URL || '';
+      if (!apiHost) {
+        setSystemStatus('offline');
+        return;
+      }
+      
+      const response = await fetch(`${apiHost}/api/health`);
       if (!response.ok) {
         setSystemStatus('offline');
         return;
@@ -98,14 +134,31 @@ function DashboardContent() {
   }, []);
 
   useEffect(() => {
-    checkSystemHealth();
-    const interval = setInterval(checkSystemHealth, 30000); // Check every 30 seconds
-    return () => clearInterval(interval);
-  }, [checkSystemHealth]);
+    // Only check health if not showing setup
+    if (!showSetup && isInitialized) {
+      checkSystemHealth();
+      const interval = setInterval(checkSystemHealth, 30000); // Check every 30 seconds
+      return () => clearInterval(interval);
+    }
+  }, [checkSystemHealth, showSetup, isInitialized]);
 
   const handleNavClick = useCallback((navId: string) => {
     setCurrentView(navId as View);
   }, []);
+
+  // Handle setup completion
+  const handleSetupComplete = useCallback(() => {
+    setShowSetup(false);
+    // Trigger health check after setup
+    setTimeout(checkSystemHealth, 1000);
+  }, [checkSystemHealth]);
+
+  // Handle re-running setup from settings
+  const handleRerunSetup = useCallback(() => {
+    resetSetup();
+    setRerunning(true);
+    setShowSetup(true);
+  }, [resetSetup, setRerunning]);
 
   const renderView = () => {
     switch (currentView) {
@@ -120,7 +173,7 @@ function DashboardContent() {
       case 'logs':
         return <LogsPage />;
       case 'settings':
-        return <SettingsPage />;
+        return <SettingsPage onRerunSetup={handleRerunSetup} />;
       // Legacy views
       case 'legacy-dashboard':
         return <Dashboard />;
@@ -135,10 +188,22 @@ function DashboardContent() {
     }
   };
 
+  // Don't render until we've checked configuration
+  if (!isInitialized) {
+    return (
+      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+        <div className="text-center">
+          <div className="w-12 h-12 border-4 border-blue-500 border-t-transparent rounded-full animate-spin mx-auto" />
+          <p className="mt-4 text-gray-400">Loading...</p>
+        </div>
+      </div>
+    );
+  }
+
   return (
     <>
       {showSetup ? (
-        <SetupWizard onComplete={() => setShowSetup(false)} />
+        <SetupWizard onComplete={handleSetupComplete} />
       ) : (
         <DashboardLayout
           activeNav={currentView}

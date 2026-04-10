@@ -22,6 +22,10 @@ interface TabConfig {
   icon: string;
 }
 
+interface SettingsPageProps {
+  onRerunSetup?: () => void;
+}
+
 const tabs: TabConfig[] = [
   { id: 'llm', label: 'LLM Providers', icon: '🤖' },
   { id: 'embedding', label: 'Embedding', icon: '📊' },
@@ -30,27 +34,44 @@ const tabs: TabConfig[] = [
   { id: 'import', label: 'Import/Export', icon: '📁' },
 ];
 
-export function SettingsPage() {
+export function SettingsPage({ onRerunSetup }: SettingsPageProps) {
   const [activeTab, setActiveTab] = useState<string>('llm');
-  const [apiKey, setApiKey] = useState(localStorage.getItem('api_key') || '');
-  const [apiUrl, setApiUrl] = useState(import.meta.env.VITE_API_URL || '');
+  const [apiKey, setApiKey] = useState(localStorage.getItem('swarm_api_key') || '');
+  const [apiUrl, setApiUrl] = useState(localStorage.getItem('swarm_api_host') || '');
+  const [showResetConfirm, setShowResetConfirm] = useState(false);
   const toast = useToast();
 
   const handleSaveApiKey = useCallback(() => {
-    localStorage.setItem('api_key', apiKey);
+    localStorage.setItem('swarm_api_key', apiKey);
     toast.success('API Key Saved', 'Your API key has been stored locally');
   }, [apiKey, toast]);
 
   const handleSaveApiUrl = useCallback(() => {
-    localStorage.setItem('api_url', apiUrl);
+    localStorage.setItem('swarm_api_host', apiUrl);
+    // Also update WebSocket URL
+    const wsUrl = apiUrl.replace(/^http/, 'ws');
+    localStorage.setItem('swarm_ws_host', wsUrl);
     toast.success('API URL Saved', 'The API URL will be used on next refresh');
   }, [apiUrl, toast]);
 
   const handleClearApiKey = useCallback(() => {
-    localStorage.removeItem('api_key');
+    localStorage.removeItem('swarm_api_key');
     setApiKey('');
     toast.info('API Key Cleared', 'Your API key has been removed');
   }, [toast]);
+
+  const handleResetConfiguration = useCallback(() => {
+    // Clear all configuration
+    localStorage.removeItem('swarm_api_host');
+    localStorage.removeItem('swarm_api_key');
+    localStorage.removeItem('swarm_ws_host');
+    localStorage.removeItem('swarm_configured');
+    toast.info('Configuration Reset', 'Setup wizard will run on next load');
+    setShowResetConfirm(false);
+    if (onRerunSetup) {
+      onRerunSetup();
+    }
+  }, [toast, onRerunSetup]);
 
   const renderTabContent = () => {
     switch (activeTab) {
@@ -79,19 +100,23 @@ export function SettingsPage() {
         </p>
       </div>
 
+
       {/* Developer Mode Toggle */}
       <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
         <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
           <span>🔧</span> Developer Tools
         </h2>
+
         <DeveloperModeToggle />
       </div>
+
 
       {/* Connection Settings */}
       <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
         <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
           <span>🔌</span> Connection Settings
         </h2>
+
         <div className="space-y-4">
           {/* API Key */}
           <div>
@@ -112,6 +137,7 @@ export function SettingsPage() {
               >
                 Save
               </button>
+
               {apiKey && (
                 <button
                   onClick={handleClearApiKey}
@@ -119,24 +145,28 @@ export function SettingsPage() {
                 >
                   Clear
                 </button>
+
               )}
             </div>
             <p className="text-xs text-gray-500 mt-1">
               Your API key is stored locally in your browser and used for authenticated requests.
             </p>
+
           </div>
+
 
           {/* API URL */}
           <div>
             <label className="block text-sm font-medium text-gray-400 mb-2">
               API URL
             </label>
+
             <div className="flex gap-2">
               <input
                 type="text"
                 value={apiUrl}
                 onChange={(e) => setApiUrl(e.target.value)}
-                placeholder="API base URL (leave empty for relative path)"
+                placeholder="API base URL (e.g., http://localhost:8000)"
                 className="flex-1 px-4 py-2 bg-gray-900 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               />
               <button
@@ -146,12 +176,60 @@ export function SettingsPage() {
                 Save
               </button>
             </div>
+
             <p className="text-xs text-gray-500 mt-1">
               Leave empty to use the relative path (recommended for nginx proxy setup).
             </p>
           </div>
         </div>
+
       </div>
+
+
+      {/* Reset Configuration */}
+      <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
+        <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+          <span>🔄</span> Configuration Management
+        </h2>
+
+        {!showResetConfirm ? (
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-sm text-gray-300">Reset Configuration</p>
+              <p className="text-xs text-gray-500">
+                Run the setup wizard again to reconfigure your connection settings
+              </p>
+            </div>
+            <button
+              onClick={() => setShowResetConfirm(true)}
+              className="px-4 py-2 bg-yellow-600/20 hover:bg-yellow-600/30 border border-yellow-600/50 hover:border-yellow-500 text-yellow-400 rounded-lg text-sm font-medium transition-colors"
+            >
+              Reset Wizard
+            </button>
+          </div>
+        ) : (
+          <div className="bg-yellow-500/10 border border-yellow-500/30 rounded-lg p-4">
+            <p className="text-sm text-yellow-300 mb-3">
+              Are you sure you want to reset the configuration? The setup wizard will run again on the next page load.
+            </p>
+            <div className="flex gap-2">
+              <button
+                onClick={handleResetConfiguration}
+                className="px-4 py-2 bg-yellow-600 hover:bg-yellow-700 text-white rounded-lg text-sm font-medium transition-colors"
+              >
+                Yes, Reset
+              </button>
+              <button
+                onClick={() => setShowResetConfirm(false)}
+                className="px-4 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-sm font-medium transition-colors"
+              >
+                Cancel
+              </button>
+            </div>
+          </div>
+        )}
+      </div>
+
 
       {/* Tab Navigation */}
       <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl">
@@ -169,43 +247,49 @@ export function SettingsPage() {
               >
                 <span>{tab.icon}</span>
                 <span>{tab.label}</span>
+
               </button>
+
             ))}
           </nav>
+
         </div>
+
 
         {/* Tab Content */}
         <div className="p-6">
           {renderTabContent()}
         </div>
+
       </div>
+
 
       {/* About Section */}
       <div className="bg-gray-800/50 backdrop-blur-sm border border-gray-700 rounded-xl p-6">
         <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
           <span>ℹ️</span> About
         </h2>
+
         <div className="space-y-3 text-sm">
           <div className="flex items-center justify-between py-2 border-b border-gray-700">
             <span className="text-gray-400">Version</span>
             <span className="text-white font-mono">0.2.0</span>
           </div>
+
           <div className="flex items-center justify-between py-2 border-b border-gray-700">
             <span className="text-gray-400">Build</span>
             <span className="text-white font-mono">2026.04</span>
           </div>
+
           <div className="flex items-center justify-between py-2">
             <span className="text-gray-400">Repository</span>
             <a
               href="https://github.com/heretek/heretek-swarm"
               target="_blank"
               rel="noopener noreferrer"
-              className="text-blue-400 hover:text-blue-300 flex items-center gap-1"
+              className="text-blue-400 hover:text-blue-300 hover:underline"
             >
-              heretek/heretek-swarm
-              <svg className="w-3 h-3" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M10 6H6a2 2 0 00-2 2v10a2 2 0 002 2h10a2 2 0 002-2v-4M14 4h6m0 0v6m0-6L10 14" />
-              </svg>
+              GitHub →
             </a>
           </div>
         </div>
