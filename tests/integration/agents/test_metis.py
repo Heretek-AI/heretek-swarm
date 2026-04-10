@@ -8,37 +8,37 @@ import asyncio
 import pytest
 import pytest_asyncio
 from datetime import datetime
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import patch
 
 from src.heretek_swarm.actors.metis import MetisAgent
 from src.heretek_swarm.actors.base import ActorMessage, ActorState
 
 
-pytestmark = pytest.mark.integration
+_pytestmark = pytest.mark.integration
 
 
 class TestMetisAgentIntegration:
     """Integration tests for MetisAgent."""
 
     @pytest_asyncio.fixture
-    async def metis_agent(self, mock_nats, mock_llm, mock_db):
+    async def metis_agent(self, _mock_nats, _mock_llm, _mock_db):
         """Create MetisAgent with mock dependencies."""
         with patch('src.heretek_swarm.actors.metis.get_nats_event_mesh', return_value=mock_nats):
             with patch('src.heretek_swarm.actors.base.get_llm_provider', return_value=mock_llm):
                 with patch('src.heretek_swarm.actors.metis.get_db_pool', return_value=mock_db):
-                    agent = MetisAgent(agent_id="metis-test-001")
+                    _agent = MetisAgent(agent_id="metis-test-001")
                     yield agent
                     if agent._state != ActorState.TERMINATED:
                         await agent.terminate()
 
     @pytest_asyncio.fixture
-    async def spawned_metis(self, metis_agent):
+    async def spawned_metis(self, _metis_agent):
         """Create and spawn MetisAgent."""
         await metis_agent.spawn()
         yield metis_agent
 
     @pytest.mark.asyncio
-    async def test_agent_spawn(self, metis_agent):
+    async def test_agent_spawn(self, _metis_agent):
         """Test agent spawning lifecycle."""
         assert metis_agent._state == ActorState.SPAWNING
         await metis_agent.spawn()
@@ -46,7 +46,7 @@ class TestMetisAgentIntegration:
         assert metis_agent.is_alive
 
     @pytest.mark.asyncio
-    async def test_agent_terminate(self, spawned_metis):
+    async def test_agent_terminate(self, _spawned_metis):
         """Test agent termination lifecycle."""
         assert spawned_metis._state == ActorState.ACTIVE
         await spawned_metis.terminate()
@@ -54,7 +54,7 @@ class TestMetisAgentIntegration:
         assert not spawned_metis.is_alive
 
     @pytest.mark.asyncio
-    async def test_handle_create_strategic_plan(self, spawned_metis, mock_nats, mock_llm):
+    async def test_handle_create_strategic_plan(self, _spawned_metis, _mock_nats, _mock_llm):
         """Test handling strategic plan creation."""
         # Setup mock LLM
         mock_llm.register_response(
@@ -63,16 +63,16 @@ class TestMetisAgentIntegration:
         )
 
         # Create message
-        message = ActorMessage(
-            message_type="create_strategic_plan",
-            content={
+        _message = ActorMessage(
+            _message_type = "create_strategic_plan",
+            _content = {
                 "objective": "Achieve market leadership",
                 "timeline": "12 months",
                 "constraints": ["budget", "resources"],
             },
-            sender="coordinator",
-            recipient="metis-test-001",
-            timestamp=datetime.utcnow().isoformat(),
+            _sender = "coordinator",
+            _recipient = "metis-test-001",
+            _timestamp = datetime.utcnow().isoformat(),
         )
 
         # Process message
@@ -82,7 +82,7 @@ class TestMetisAgentIntegration:
         assert len(spawned_metis._plans) > 0
 
     @pytest.mark.asyncio
-    async def test_handle_allocate_resources(self, spawned_metis, mock_llm):
+    async def test_handle_allocate_resources(self, _spawned_metis, _mock_llm):
         """Test handling resource allocation."""
         # Setup mock LLM
         mock_llm.register_response(
@@ -91,16 +91,16 @@ class TestMetisAgentIntegration:
         )
 
         # Create message
-        message = ActorMessage(
-            message_type="allocate_resources",
-            content={
+        _message = ActorMessage(
+            _message_type = "allocate_resources",
+            _content = {
                 "plan_id": "plan-001",
                 "resources": {"budget": 1000000, "headcount": 50},
                 "priorities": ["product", "growth"],
             },
-            sender="coordinator",
-            recipient="metis-test-001",
-            timestamp=datetime.utcnow().isoformat(),
+            _sender = "coordinator",
+            _recipient = "metis-test-001",
+            _timestamp = datetime.utcnow().isoformat(),
         )
 
         # Process message
@@ -110,7 +110,7 @@ class TestMetisAgentIntegration:
         assert "plan-001" in spawned_metis._allocations
 
     @pytest.mark.asyncio
-    async def test_handle_assess_risks(self, spawned_metis, mock_llm):
+    async def test_handle_assess_risks(self, _spawned_metis, _mock_llm):
         """Test handling risk assessment."""
         # Setup mock LLM
         mock_llm.register_response(
@@ -119,15 +119,15 @@ class TestMetisAgentIntegration:
         )
 
         # Create message
-        message = ActorMessage(
-            message_type="assess_risks",
-            content={
+        _message = ActorMessage(
+            _message_type = "assess_risks",
+            _content = {
                 "plan_id": "plan-001",
                 "scenario": "Market expansion",
             },
-            sender="steward",
-            recipient="metis-test-001",
-            timestamp=datetime.utcnow().isoformat(),
+            _sender = "steward",
+            _recipient = "metis-test-001",
+            _timestamp = datetime.utcnow().isoformat(),
         )
 
         # Process message
@@ -137,7 +137,7 @@ class TestMetisAgentIntegration:
         assert "plan-001" in spawned_metis._risk_assessments
 
     @pytest.mark.asyncio
-    async def test_handle_analyze_scenarios(self, spawned_metis, mock_llm):
+    async def test_handle_analyze_scenarios(self, _spawned_metis, _mock_llm):
         """Test handling scenario analysis."""
         # Setup mock LLM
         mock_llm.register_response(
@@ -146,26 +146,26 @@ class TestMetisAgentIntegration:
         )
 
         # Create message
-        message = ActorMessage(
-            message_type="analyze_scenarios",
-            content={
+        _message = ActorMessage(
+            _message_type = "analyze_scenarios",
+            _content = {
                 "scenarios": ["optimistic", "baseline", "pessimistic"],
                 "variables": ["market", "competition", "resources"],
             },
-            sender="coordinator",
-            recipient="metis-test-001",
-            timestamp=datetime.utcnow().isoformat(),
+            _sender = "coordinator",
+            _recipient = "metis-test-001",
+            _timestamp = datetime.utcnow().isoformat(),
         )
 
         # Process message
         await spawned_metis.process_message(message)
 
         # Verify scenarios analyzed
-        stats = await spawned_metis.get_strategic_summary()
+        _stats = await spawned_metis.get_strategic_summary()
         assert stats["total_scenarios"] >= 1
 
     @pytest.mark.asyncio
-    async def test_handle_set_strategic_objective(self, spawned_metis, mock_llm):
+    async def test_handle_set_strategic_objective(self, _spawned_metis, _mock_llm):
         """Test handling strategic objective setting."""
         # Setup mock LLM
         mock_llm.register_response(
@@ -174,16 +174,16 @@ class TestMetisAgentIntegration:
         )
 
         # Create message
-        message = ActorMessage(
-            message_type="set_strategic_objective",
-            content={
+        _message = ActorMessage(
+            _message_type = "set_strategic_objective",
+            _content = {
                 "objective": "Increase market share by 25%",
                 "key_results": ["KPI 1", "KPI 2", "KPI 3"],
                 "deadline": "2024-12-31",
             },
-            sender="governance",
-            recipient="metis-test-001",
-            timestamp=datetime.utcnow().isoformat(),
+            _sender = "governance",
+            _recipient = "metis-test-001",
+            _timestamp = datetime.utcnow().isoformat(),
         )
 
         # Process message
@@ -193,7 +193,7 @@ class TestMetisAgentIntegration:
         assert len(spawned_metis._objectives) > 0
 
     @pytest.mark.asyncio
-    async def test_handle_get_plan_status(self, spawned_metis, mock_nats):
+    async def test_handle_get_plan_status(self, _spawned_metis, _mock_nats):
         """Test handling plan status request."""
         # Setup plan
         spawned_metis._plans["plan-status-001"] = {
@@ -204,12 +204,12 @@ class TestMetisAgentIntegration:
         }
 
         # Create message
-        message = ActorMessage(
-            message_type="get_plan_status",
-            content={"plan_id": "plan-status-001"},
-            sender="monitor",
-            recipient="metis-test-001",
-            timestamp=datetime.utcnow().isoformat(),
+        _message = ActorMessage(
+            _message_type = "get_plan_status",
+            _content = {"plan_id": "plan-status-001"},
+            _sender = "monitor",
+            _recipient = "metis-test-001",
+            _timestamp = datetime.utcnow().isoformat(),
         )
 
         # Process message
@@ -219,7 +219,7 @@ class TestMetisAgentIntegration:
         assert len(mock_nats.published_messages) > 0
 
     @pytest.mark.asyncio
-    async def test_generate_strategic_plan(self, spawned_metis, mock_llm):
+    async def test_generate_strategic_plan(self, _spawned_metis, _mock_llm):
         """Test generating strategic plan."""
         # Setup mock LLM
         mock_llm.register_response(
@@ -228,9 +228,9 @@ class TestMetisAgentIntegration:
         )
 
         # Generate plan
-        plan = await spawned_metis._generate_strategic_plan(
-            objective="Launch new product",
-            context={"market": "enterprise", "timeline": "6 months"}
+        _plan = await spawned_metis._generate_strategic_plan(
+            _objective = "Launch new product",
+            _context = {"market": "enterprise", "timeline": "6 months"}
         )
 
         # Verify plan
@@ -238,7 +238,7 @@ class TestMetisAgentIntegration:
         assert "phases" in plan or "steps" in plan
 
     @pytest.mark.asyncio
-    async def test_optimize_resource_allocation(self, spawned_metis, mock_llm):
+    async def test_optimize_resource_allocation(self, _spawned_metis, _mock_llm):
         """Test optimizing resource allocation."""
         # Setup mock LLM
         mock_llm.register_response(
@@ -247,17 +247,17 @@ class TestMetisAgentIntegration:
         )
 
         # Optimize
-        allocation = await spawned_metis._optimize_resource_allocation(
-            plan_id="plan-opt-001",
-            resources={"budget": 500000, "people": 20},
-            constraints=["time", "budget"]
+        _allocation = await spawned_metis._optimize_resource_allocation(
+            _plan_id = "plan-opt-001",
+            _resources = {"budget": 500000, "people": 20},
+            _constraints = ["time", "budget"]
         )
 
         # Verify allocation
         assert isinstance(allocation, dict)
 
     @pytest.mark.asyncio
-    async def test_assess_plan_risks(self, spawned_metis, mock_llm):
+    async def test_assess_plan_risks(self, _spawned_metis, _mock_llm):
         """Test assessing plan risks."""
         # Setup mock LLM
         mock_llm.register_response(
@@ -266,16 +266,16 @@ class TestMetisAgentIntegration:
         )
 
         # Assess risks
-        risks = await spawned_metis._assess_plan_risks(
-            plan_id="plan-risk-001",
-            scenario="aggressive growth"
+        _risks = await spawned_metis._assess_plan_risks(
+            _plan_id = "plan-risk-001",
+            _scenario = "aggressive growth"
         )
 
         # Verify risks
         assert isinstance(risks, list)
 
     @pytest.mark.asyncio
-    async def test_generate_scenarios(self, spawned_metis, mock_llm):
+    async def test_generate_scenarios(self, _spawned_metis, _mock_llm):
         """Test generating scenarios."""
         # Setup mock LLM
         mock_llm.register_response(
@@ -284,9 +284,9 @@ class TestMetisAgentIntegration:
         )
 
         # Generate scenarios
-        scenarios = await spawned_metis._generate_scenarios(
-            plan_id="plan-scenario-001",
-            variables=["market_growth", "competition", "regulation"]
+        _scenarios = await spawned_metis._generate_scenarios(
+            _plan_id = "plan-scenario-001",
+            _variables = ["market_growth", "competition", "regulation"]
         )
 
         # Verify scenarios
@@ -294,7 +294,7 @@ class TestMetisAgentIntegration:
         assert len(scenarios) >= 3
 
     @pytest.mark.asyncio
-    async def test_concurrent_planning(self, spawned_metis, mock_nats):
+    async def test_concurrent_planning(self, _spawned_metis, _mock_nats):
         """Test handling multiple concurrent plans."""
         # Create multiple plans
         for i in range(5):
@@ -305,19 +305,19 @@ class TestMetisAgentIntegration:
             }
 
         # Verify all plans tracked
-        summary = await spawned_metis.get_strategic_summary()
+        _summary = await spawned_metis.get_strategic_summary()
         assert summary["total_plans"] >= 5
 
     @pytest.mark.asyncio
-    async def test_message_validation(self, spawned_metis):
+    async def test_message_validation(self, _spawned_metis):
         """Test message validation."""
         # Create invalid message
-        message = ActorMessage(
-            message_type="create_strategic_plan",
-            content={},  # Missing required fields
-            sender="test",
-            recipient="metis-test-001",
-            timestamp=datetime.utcnow().isoformat(),
+        _message = ActorMessage(
+            _message_type = "create_strategic_plan",
+            _content = {},  # Missing required fields
+            _sender = "test",
+            _recipient = "metis-test-001",
+            _timestamp = datetime.utcnow().isoformat(),
         )
 
         # Process should handle validation error gracefully
@@ -327,26 +327,26 @@ class TestMetisAgentIntegration:
         assert spawned_metis._state == ActorState.ACTIVE
 
     @pytest.mark.asyncio
-    async def test_latency_baseline(self, spawned_metis, assert_latency_baseline):
+    async def test_latency_baseline(self, _spawned_metis, _assert_latency_baseline):
         """Test message processing latency meets baseline."""
         import time
 
-        message = ActorMessage(
-            message_type="get_plan_status",
-            content={"plan_id": "test"},
-            sender="test",
-            recipient="metis-test-001",
-            timestamp=datetime.utcnow().isoformat(),
+        _message = ActorMessage(
+            _message_type = "get_plan_status",
+            _content = {"plan_id": "test"},
+            _sender = "test",
+            _recipient = "metis-test-001",
+            _timestamp = datetime.utcnow().isoformat(),
         )
 
-        start = time.time()
+        _start = time.time()
         await spawned_metis.process_message(message)
-        latency_ms = (time.time() - start) * 1000
+        _latency_ms = (time.time() - start) * 1000
 
         assert_latency_baseline(latency_ms, "metis_message_process")
 
     @pytest.mark.asyncio
-    async def test_state_persistence(self, spawned_metis, mock_db):
+    async def test_state_persistence(self, _spawned_metis, _mock_db):
         """Test agent state persistence."""
         # Add plan
         spawned_metis._plans["persist-test"] = {
@@ -360,11 +360,11 @@ class TestMetisAgentIntegration:
             await spawned_metis.save_state()
 
         # Verify state saved
-        table = mock_db.get_table("agent_states")
+        _table = mock_db.get_table("agent_states")
         assert len(table) > 0
 
     @pytest.mark.asyncio
-    async def test_error_recovery(self, metis_agent):
+    async def test_error_recovery(self, _metis_agent):
         """Test agent error recovery."""
         await metis_agent.spawn()
         metis_agent._state = ActorState.ERROR

@@ -12,10 +12,9 @@ from dataclasses import dataclass, field
 from typing import Any, Generic, TypeVar
 
 import pytest
-from pydantic import BaseModel
 
 # Import observability for tracing
-from src.observability import track_latency, LATENCY_BASELINE_MS
+from src.observability import LATENCY_BASELINE_MS
 
 
 # ============== CONFIGURATION ==============
@@ -66,14 +65,14 @@ class LatencyMetrics:
     def p99_ms(self) -> float:
         return self._percentile(99)
     
-    def _percentile(self, percentile: float) -> float:
+    def _percentile(self, _percentile: float) -> float:
         if not self.samples:
             return 0.0
-        sorted_samples = sorted(self.samples)
-        index = int(len(sorted_samples) * percentile / 100)
+        _sorted_samples = sorted(self.samples)
+        _index = int(len(sorted_samples) * percentile / 100)
         return sorted_samples[min(index, len(sorted_samples) - 1)]
     
-    def exceeds_baseline(self, baseline_ms: float) -> bool:
+    def exceeds_baseline(self, _baseline_ms: float) -> bool:
         return self.max_ms > baseline_ms
     
     def to_dict(self) -> dict[str, Any]:
@@ -116,35 +115,35 @@ class AgentValidator(ABC):
     Subclass this to create validators for specific agent types.
     """
     
-    def __init__(self, config: HarnessConfig | None = None):
+    def __init__(self, _config: HarnessConfig | None):
         self.config = config or HarnessConfig()
         self._latency_samples: list[float] = []
     
     @abstractmethod
-    async def validate_initialization(self, agent: Any) -> ValidationResult[bool]:
+    async def validate_initialization(self, _agent: Any) -> ValidationResult[bool]:
         """Validate agent initializes correctly."""
         pass
     
     @abstractmethod
-    async def validate_capabilities(self, agent: Any, required: list[str]) -> ValidationResult[bool]:
+    async def validate_capabilities(self, _agent: Any, _required: list[str]) -> ValidationResult[bool]:
         """Validate agent has required capabilities."""
         pass
     
     @abstractmethod
-    async def validate_messaging(self, agent: Any) -> ValidationResult[LatencyMetrics]:
+    async def validate_messaging(self, _agent: Any) -> ValidationResult[LatencyMetrics]:
         """Validate agent messaging and capture latency metrics."""
         pass
     
     @abstractmethod
-    async def validate_task_execution(self, agent: Any) -> ValidationResult[LatencyMetrics]:
+    async def validate_task_execution(self, _agent: Any) -> ValidationResult[LatencyMetrics]:
         """Validate agent task execution and capture latency metrics."""
         pass
     
-    def _measure_latency(self, operation: str) -> "_LatencyContext":
+    def _measure_latency(self, _operation: str) -> "_LatencyContext":
         """Create a latency measurement context."""
         return _LatencyContext(self._latency_samples, operation)
     
-    def _get_metrics(self, operation: str) -> LatencyMetrics:
+    def _get_metrics(self, _operation: str) -> LatencyMetrics:
         """Get latency metrics for collected samples."""
         return LatencyMetrics(operation=operation, samples=self._latency_samples.copy())
 
@@ -152,7 +151,7 @@ class AgentValidator(ABC):
 class _LatencyContext:
     """Context manager for measuring operation latency."""
     
-    def __init__(self, samples: list[float], operation: str):
+    def __init__(self, _samples: list[float], _operation: str):
         self._samples = samples
         self._operation = operation
         self._start: float = 0.0
@@ -162,7 +161,7 @@ class _LatencyContext:
         self._start = time.perf_counter()
         return self
     
-    def __exit__(self, *args) -> None:
+    def __exit__(self, _*args) -> None:
         self._elapsed_ms = (time.perf_counter() - self._start) * 1000
         self._samples.append(self._elapsed_ms)
     
@@ -176,9 +175,9 @@ class _LatencyContext:
 class StandardAgentValidator(AgentValidator):
     """Standard validator implementation for generic agents."""
     
-    async def validate_initialization(self, agent: Any) -> ValidationResult[bool]:
+    async def validate_initialization(self, _agent: Any) -> ValidationResult[bool]:
         """Validate agent initializes correctly."""
-        errors = []
+        _errors = []
         
         try:
             # Check required attributes
@@ -190,35 +189,35 @@ class StandardAgentValidator(AgentValidator):
             
             # Check initial state
             if hasattr(agent, "get_state"):
-                state = await agent.get_state() if asyncio.iscoroutinefunction(agent.get_state) else agent.get_state()
+                _state = await agent.get_state() if asyncio.iscoroutinefunction(agent.get_state) else agent.get_state()
                 if not state:
                     errors.append("Agent state is None after initialization")
             
             if errors:
                 return ValidationResult(
-                    success=False,
-                    message="Agent initialization failed",
-                    errors=errors,
+                    _success = False,
+                    _message = "Agent initialization failed",
+                    _errors = errors,
                 )
             
             return ValidationResult(
-                success=True,
-                message="Agent initialized successfully",
-                value=True,
+                _success = True,
+                _message = "Agent initialized successfully",
+                _value = True,
             )
             
         except Exception as e:
             return ValidationResult(
-                success=False,
-                message=f"Initialization error: {e}",
-                errors=[str(e)],
+                _success = False,
+                _message = f"Initialization error: {e}",
+                _errors = [str(e)],
             )
     
-    async def validate_capabilities(self, agent: Any, required: list[str]) -> ValidationResult[bool]:
+    async def validate_capabilities(self, _agent: Any, _required: list[str]) -> ValidationResult[bool]:
         """Validate agent has required capabilities."""
-        missing = []
+        _missing = []
         
-        agent_capabilities = getattr(agent, "capabilities", [])
+        _agent_capabilities = getattr(agent, "capabilities", [])
         
         for cap in required:
             if cap not in agent_capabilities:
@@ -226,24 +225,24 @@ class StandardAgentValidator(AgentValidator):
         
         if missing:
             return ValidationResult(
-                success=False,
-                message=f"Missing capabilities: {missing}",
-                value=False,
-                errors=[f"Missing: {cap}" for cap in missing],
+                _success = False,
+                _message = f"Missing capabilities: {missing}",
+                _value = False,
+                _errors = [f"Missing: {cap}" for cap in missing],
             )
         
         return ValidationResult(
-            success=True,
-            message="All required capabilities present",
-            value=True,
+            _success = True,
+            _message = "All required capabilities present",
+            _value = True,
         )
     
-    async def validate_messaging(self, agent: Any) -> ValidationResult[LatencyMetrics]:
+    async def validate_messaging(self, _agent: Any) -> ValidationResult[LatencyMetrics]:
         """Validate agent messaging and capture latency metrics."""
         self._latency_samples = []
         
         # Simulate message send operations
-        num_samples = 10
+        _num_samples = 10
         
         for _ in range(num_samples):
             with self._measure_latency("message_send"):
@@ -257,19 +256,19 @@ class StandardAgentValidator(AgentValidator):
                         # Agent doesn't have real implementation yet
                         await asyncio.sleep(0.001)  # Simulate minimal latency
         
-        metrics = self._get_metrics("message_send")
+        _metrics = self._get_metrics("message_send")
         
         return ValidationResult(
-            success=not metrics.exceeds_baseline(self.config.latency_baseline_ms),
-            message="Messaging validation complete",
-            value=metrics,
+            _success = not metrics.exceeds_baseline(self.config.latency_baseline_ms),
+            _message = "Messaging validation complete",
+            _value = metrics,
         )
     
-    async def validate_task_execution(self, agent: Any) -> ValidationResult[LatencyMetrics]:
+    async def validate_task_execution(self, _agent: Any) -> ValidationResult[LatencyMetrics]:
         """Validate agent task execution and capture latency metrics."""
         self._latency_samples = []
         
-        num_samples = 5
+        _num_samples = 5
         
         for _ in range(num_samples):
             with self._measure_latency("task_execution"):
@@ -282,18 +281,18 @@ class StandardAgentValidator(AgentValidator):
                     except NotImplementedError:
                         await asyncio.sleep(0.005)  # Simulate task latency
         
-        metrics = self._get_metrics("task_execution")
+        _metrics = self._get_metrics("task_execution")
         
         return ValidationResult(
-            success=not metrics.exceeds_baseline(self.config.latency_baseline_ms),
-            message="Task execution validation complete",
-            value=metrics,
+            _success = not metrics.exceeds_baseline(self.config.latency_baseline_ms),
+            _message = "Task execution validation complete",
+            _value = metrics,
         )
 
 
 # ============== FIXTURE FACTORY ==============
 
-def create_validator(config: HarnessConfig | None = None) -> AgentValidator:
+def create_validator(_config: HarnessConfig | None) -> AgentValidator:
     """Factory function to create a standard agent validator."""
     return StandardAgentValidator(config)
 
@@ -307,20 +306,14 @@ def harness_config() -> HarnessConfig:
 
 
 @pytest.fixture
-def agent_validator(harness_config: HarnessConfig) -> AgentValidator:
+def agent_validator(_harness_config: HarnessConfig) -> AgentValidator:
     """Create an agent validator instance."""
     return create_validator(harness_config)
 
 
 # ============== BENCHMARK UTILITIES ==============
 
-def benchmark_sync(
-    func: callable,
-    *args,
-    iterations: int = 100,
-    warmup: int = 10,
-    **kwargs,
-) -> LatencyMetrics:
+def benchmark_sync(_func: callable, _*args, _iterations: int, _warmup: int, _**kwargs) -> LatencyMetrics:
     """
     Benchmark a synchronous function.
     
@@ -339,23 +332,17 @@ def benchmark_sync(
         func(*args, **kwargs)
     
     # Benchmark
-    samples = []
+    _samples = []
     for _ in range(iterations):
-        start = time.perf_counter()
+        _start = time.perf_counter()
         func(*args, **kwargs)
-        elapsed_ms = (time.perf_counter() - start) * 1000
+        _elapsed_ms = (time.perf_counter() - start) * 1000
         samples.append(elapsed_ms)
     
     return LatencyMetrics(operation=func.__name__, samples=samples)
 
 
-async def benchmark_async(
-    func: callable,
-    *args,
-    iterations: int = 100,
-    warmup: int = 10,
-    **kwargs,
-) -> LatencyMetrics:
+async def benchmark_async(_func: callable, _*args, _iterations: int, _warmup: int, _**kwargs) -> LatencyMetrics:
     """
     Benchmark an async function.
     
@@ -374,11 +361,11 @@ async def benchmark_async(
         await func(*args, **kwargs)
     
     # Benchmark
-    samples = []
+    _samples = []
     for _ in range(iterations):
-        start = time.perf_counter()
+        _start = time.perf_counter()
         await func(*args, **kwargs)
-        elapsed_ms = (time.perf_counter() - start) * 1000
+        _elapsed_ms = (time.perf_counter() - start) * 1000
         samples.append(elapsed_ms)
     
     return LatencyMetrics(operation=func.__name__, samples=samples)

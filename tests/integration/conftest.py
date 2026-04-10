@@ -11,7 +11,6 @@ import asyncio
 import re
 import time
 from collections import defaultdict
-from dataclasses import dataclass, field
 from datetime import datetime
 from typing import Any, Callable, Dict, List, Optional, Set
 from unittest.mock import AsyncMock, MagicMock, Mock
@@ -55,12 +54,12 @@ class MockNATSEventMesh:
         self._subscriptions.clear()
         self._request_handlers.clear()
 
-    async def publish(self, subject: str, data: Dict[str, Any], reply: Optional[str] = None) -> bool:
+    async def publish(self, _subject: str, _data: Dict[str, _Any], _reply: Optional[str]) -> bool:
         """Publish message to subject."""
         if not self._connected:
             return False
 
-        message = {
+        _message = {
             "subject": subject,
             "data": data,
             "reply": reply,
@@ -81,19 +80,19 @@ class MockNATSEventMesh:
         if reply:
             for req_pattern, req_handler in self._request_handlers.items():
                 if self._matches_pattern(subject, req_pattern):
-                    response = await req_handler(data)
+                    _response = await req_handler(data)
                     await self.publish(reply, response)
 
         return True
 
-    async def subscribe(self, subject_pattern: str, callback: Callable) -> str:
+    async def subscribe(self, _subject_pattern: str, _callback: Callable) -> str:
         """Subscribe to subject pattern."""
         async with self._lock:
-            subscription_id = f"sub_{len(self._subscriptions)}_{subject_pattern}"
+            _subscription_id = f"sub_{len(self._subscriptions)}_{subject_pattern}"
             self._subscriptions[subject_pattern].append(callback)
             return subscription_id
 
-    async def unsubscribe(self, subscription_id: str) -> bool:
+    async def unsubscribe(self, _subscription_id: str) -> bool:
         """Unsubscribe from subject."""
         async with self._lock:
             for pattern, handlers in self._subscriptions.items():
@@ -103,15 +102,15 @@ class MockNATSEventMesh:
                         return True
             return False
 
-    async def request(self, subject: str, data: Dict[str, Any], timeout: int = 5) -> Dict[str, Any]:
+    async def request(self, _subject: str, _data: Dict[str, _Any], _timeout: int) -> Dict[str, Any]:
         """Send request and wait for response."""
         if not self._connected:
             raise TimeoutError("Not connected")
 
-        response_queue = asyncio.Queue()
-        reply_subject = f"_INBOX.{time.time()}"
+        _response_queue = asyncio.Queue()
+        _reply_subject = f"_INBOX.{time.time()}"
 
-        async def response_handler(subj, msg):
+        async def response_handler(_subj, _msg):
             await response_queue.put(msg)
 
         await self.subscribe(reply_subject, response_handler)
@@ -119,18 +118,18 @@ class MockNATSEventMesh:
         await self.publish(subject, data, reply=reply_subject)
 
         try:
-            response = await asyncio.wait_for(response_queue.get(), timeout=timeout)
+            _response = await asyncio.wait_for(response_queue.get(), timeout=timeout)
             return response
         except asyncio.TimeoutError:
             raise TimeoutError(f"Request to {subject} timed out")
 
-    def register_request_handler(self, subject_pattern: str, handler: Callable) -> None:
+    def register_request_handler(self, _subject_pattern: str, _handler: Callable) -> None:
         """Register handler for request-reply pattern."""
         self._request_handlers[subject_pattern] = handler
 
-    def _matches_pattern(self, subject: str, pattern: str) -> bool:
+    def _matches_pattern(self, _subject: str, _pattern: str) -> bool:
         """Check if subject matches pattern (supports * and >)."""
-        regex_pattern = pattern.replace(".", r"\.").replace("*", r"[^.]+").replace(">", r".*")
+        _regex_pattern = pattern.replace(".", r"\.").replace("*", r"[^.]+").replace(">", r".*")
         return bool(re.match(f"^{regex_pattern}$", subject))
 
     def clear_messages(self) -> None:
@@ -145,7 +144,7 @@ async def mock_nats() -> MockNATSEventMesh:
 
 
 @pytest_asyncio.fixture
-async def connected_nats(mock_nats: MockNATSEventMesh) -> MockNATSEventMesh:
+async def connected_nats(_mock_nats: MockNATSEventMesh) -> MockNATSEventMesh:
     """Create connected mock NATS Event Mesh."""
     await mock_nats.connect()
     yield mock_nats
@@ -167,22 +166,22 @@ class MockLLMProvider:
         self._default_response: str = "OK"
         self._latency_ms: float = 50.0
 
-    def register_response(self, prompt_pattern: str, response: str) -> None:
+    def register_response(self, _prompt_pattern: str, _response: str) -> None:
         """Register a response for a prompt pattern."""
         self._responses[prompt_pattern] = response
 
-    def set_default_response(self, response: str) -> None:
+    def set_default_response(self, _response: str) -> None:
         """Set default response when no pattern matches."""
         self._default_response = response
 
-    def set_latency(self, latency_ms: float) -> None:
+    def set_latency(self, _latency_ms: float) -> None:
         """Set mock latency in milliseconds."""
         self._latency_ms = latency_ms
 
-    async def generate(self, prompt: str, **kwargs) -> str:
+    async def generate(self, _prompt: str, _**kwargs) -> str:
         """Generate response based on prompt pattern."""
         self._call_count += 1
-        start_time = time.time()
+        _start_time = time.time()
 
         # Record call
         self._call_history.append({
@@ -222,7 +221,7 @@ async def mock_llm() -> MockLLMProvider:
 
 
 @pytest_asyncio.fixture
-async def mock_llm_with_responses(mock_llm: MockLLMProvider) -> MockLLMProvider:
+async def mock_llm_with_responses(_mock_llm: MockLLMProvider) -> MockLLMProvider:
     """Create mock LLM provider with common responses registered."""
     mock_llm.register_response("analyze", "Analysis: The situation requires careful consideration. Key factors identified.")
     mock_llm.register_response("validate", "Validation: Content appears valid. No issues detected.")
@@ -257,12 +256,12 @@ class MockDatabase:
         self._connected = False
         self._tables.clear()
 
-    async def execute(self, query: str, params: tuple = None) -> List[Dict[str, Any]]:
+    async def execute(self, _query: str, _params: tuple) -> List[Dict[str, Any]]:
         """Execute SQL-like query (simplified)."""
         if not self._connected:
             raise ConnectionError("Database not connected")
 
-        query_lower = query.lower()
+        _query_lower = query.lower()
 
         if query_lower.startswith("insert"):
             return await self._execute_insert(query, params)
@@ -275,47 +274,47 @@ class MockDatabase:
         else:
             return []
 
-    async def _execute_insert(self, query: str, params: tuple) -> List[Dict[str, Any]]:
+    async def _execute_insert(self, _query: str, _params: tuple) -> List[Dict[str, Any]]:
         """Execute INSERT query."""
-        match = re.search(r"into\s+(\w+)\s*\(([^)]+)\)\s*values\s*\(([^)]+)\)", query, re.I)
+        _match = re.search(r"into\s+(\w+)\s*\(([^)]+)\)\s*values\s*\(([^)]+)\)", query, re.I)
         if match:
             table, cols, vals = match.groups()
-            columns = [c.strip() for c in cols.split(",")]
-            values = [v.strip().strip("'") for v in vals.split(",")]
-            record = dict(zip(columns, values))
+            _columns = [c.strip() for c in cols.split(",")]
+            _values = [v.strip().strip("'") for v in vals.split(",")]
+            _record = dict(zip(columns, values))
             record["id"] = len(self._tables[table]) + 1
             record["created_at"] = datetime.utcnow().isoformat()
             self._tables[table].append(record)
             return [{"id": record["id"]}]
         return []
 
-    async def _execute_select(self, query: str, params: tuple) -> List[Dict[str, Any]]:
+    async def _execute_select(self, _query: str, _params: tuple) -> List[Dict[str, Any]]:
         """Execute SELECT query."""
-        match = re.search(r"from\s+(\w+)(?:\s+where\s+(.+))?", query, re.I)
+        _match = re.search(r"from\s+(\w+)(?:\s+where\s+(.+))?", query, re.I)
         if match:
             table, where_clause = match.groups()
-            results = self._tables.get(table, []).copy()
+            _results = self._tables.get(table, []).copy()
 
             if where_clause:
-                results = self._apply_where(results, where_clause, params)
+                _results = self._apply_where(results, where_clause, params)
 
             return results
         return []
 
-    async def _execute_update(self, query: str, params: tuple) -> List[Dict[str, Any]]:
+    async def _execute_update(self, _query: str, _params: tuple) -> List[Dict[str, Any]]:
         """Execute UPDATE query."""
-        match = re.search(r"update\s+(\w+)\s+set\s+([^ ]+)(?:\s+where\s+(.+))?", query, re.I)
+        _match = re.search(r"update\s+(\w+)\s+set\s+([^ ]+)(?:\s+where\s+(.+))?", query, re.I)
         if match:
             table, set_clause, where_clause = match.groups()
-            updates = {}
+            _updates = {}
             for assignment in set_clause.split(","):
                 if "=" in assignment:
                     key, val = assignment.split("=", 1)
                     updates[key.strip()] = val.strip().strip("'")
 
-            records = self._tables.get(table, [])
+            _records = self._tables.get(table, [])
             if where_clause:
-                records = self._apply_where(records, where_clause, params)
+                _records = self._apply_where(records, where_clause, params)
 
             for record in records:
                 record.update(updates)
@@ -324,15 +323,15 @@ class MockDatabase:
             return [{"updated": len(records)}]
         return []
 
-    async def _execute_delete(self, query: str, params: tuple) -> List[Dict[str, Any]]:
+    async def _execute_delete(self, _query: str, _params: tuple) -> List[Dict[str, Any]]:
         """Execute DELETE query."""
-        match = re.search(r"from\s+(\w+)(?:\s+where\s+(.+))?", query, re.I)
+        _match = re.search(r"from\s+(\w+)(?:\s+where\s+(.+))?", query, re.I)
         if match:
             table, where_clause = match.groups()
-            records = self._tables.get(table, [])
+            _records = self._tables.get(table, [])
 
             if where_clause:
-                to_delete = self._apply_where(records, where_clause, params)
+                _to_delete = self._apply_where(records, where_clause, params)
                 for record in to_delete:
                     records.remove(record)
                 return [{"deleted": len(to_delete)}]
@@ -340,35 +339,35 @@ class MockDatabase:
             return []
         return []
 
-    def _apply_where(self, records: List[Dict], where_clause: str, params: tuple) -> List[Dict]:
+    def _apply_where(self, _records: List[Dict], _where_clause: str, _params: tuple) -> List[Dict]:
         """Apply WHERE clause filtering."""
-        results = []
+        _results = []
         for record in records:
             if self._evaluate_condition(record, where_clause, params):
                 results.append(record)
         return results
 
-    def _evaluate_condition(self, record: Dict, condition: str, params: tuple) -> bool:
+    def _evaluate_condition(self, _record: Dict, _condition: str, _params: tuple) -> bool:
         """Evaluate WHERE condition against record."""
         if "=" in condition:
             key, val = condition.split("=", 1)
-            key = key.strip()
-            val = val.strip().strip("'")
+            _key = key.strip()
+            _val = val.strip().strip("'")
             return str(record.get(key, "")) == val
         return True
 
-    async def create_table(self, table_name: str, schema: Dict[str, str]) -> bool:
+    async def create_table(self, _table_name: str, _schema: Dict[str, _str]) -> bool:
         """Create table with schema."""
         if table_name not in self._tables:
             self._tables[table_name] = []
             return True
         return False
 
-    def get_table(self, table_name: str) -> List[Dict[str, Any]]:
+    def get_table(self, _table_name: str) -> List[Dict[str, Any]]:
         """Get table contents."""
         return self._tables.get(table_name, []).copy()
 
-    def clear_table(self, table_name: str) -> None:
+    def clear_table(self, _table_name: str) -> None:
         """Clear table contents."""
         self._tables[table_name] = []
 
@@ -380,7 +379,7 @@ async def mock_db() -> MockDatabase:
 
 
 @pytest_asyncio.fixture
-async def initialized_db(mock_db: MockDatabase) -> MockDatabase:
+async def initialized_db(_mock_db: MockDatabase) -> MockDatabase:
     """Create initialized mock database with common tables."""
     await mock_db.connect()
     await mock_db.create_table("agent_states", {
@@ -490,13 +489,13 @@ def latency_tracker() -> Dict[str, List[float]]:
 
 
 @pytest.fixture
-def measure_latency(latency_tracker: Dict[str, List[float]]) -> Callable:
+def measure_latency(_latency_tracker: Dict[str, _List[float]]) -> Callable:
     """Context manager to measure latency."""
 
-    async def _measure(operation_name: str, coro):
-        start = time.time()
-        result = await coro
-        latency_ms = (time.time() - start) * 1000
+    async def _measure(_operation_name: str, _coro):
+        _start = time.time()
+        _result = await coro
+        _latency_ms = (time.time() - start) * 1000
         latency_tracker[operation_name].append(latency_ms)
         return result
 
@@ -507,7 +506,7 @@ def measure_latency(latency_tracker: Dict[str, List[float]]) -> Callable:
 def assert_latency_baseline() -> Callable:
     """Assert latency meets baseline requirements."""
 
-    def _assert(latency_ms: float, operation: str = "operation", baseline_ms: float = 100.0) -> None:
+    def _assert(_latency_ms: float, _operation: str, _baseline_ms: float) -> None:
         assert latency_ms < baseline_ms, f"{operation} latency {latency_ms:.2f}ms exceeds baseline {baseline_ms}ms"
 
     return _assert
@@ -538,9 +537,9 @@ async def triad_mailboxes() -> Dict[str, asyncio.Queue]:
 @pytest.fixture
 def mock_actor_registry() -> Dict[str, MagicMock]:
     """Create mock actor registry."""
-    registry = {}
+    _registry = {}
     for agent_name in ["steward", "alpha", "beta", "charlie", "coordinator", "historian"]:
-        mock_agent = MagicMock()
+        _mock_agent = MagicMock()
         mock_agent.agent_id = f"{agent_name}-001"
         mock_agent.is_alive = True
         mock_agent.send = AsyncMock()
@@ -597,7 +596,7 @@ def edge_case_samples() -> List[Dict[str, Any]]:
 @pytest.fixture
 def test_event_loop() -> asyncio.AbstractEventLoop:
     """Create test event loop."""
-    loop = asyncio.new_event_loop()
+    _loop = asyncio.new_event_loop()
     asyncio.set_event_loop(loop)
     yield loop
     loop.close()
@@ -625,8 +624,8 @@ def reset_async_state() -> None:
     """Reset async state between tests."""
     yield
     try:
-        loop = asyncio.get_running_loop()
-        pending = asyncio.all_tasks(loop)
+        _loop = asyncio.get_running_loop()
+        _pending = asyncio.all_tasks(loop)
         for task in pending:
             task.cancel()
     except RuntimeError:
@@ -639,7 +638,7 @@ def cleanup_actor_states() -> None:
     """Clean up actor state files between tests to prevent state pollution."""
     import os
     import shutil
-    state_dir = os.path.join(os.getcwd(), ".actor_states")
+    _state_dir = os.path.join(os.getcwd(), ".actor_states")
     yield
     if os.path.exists(state_dir):
         for f in os.listdir(state_dir):

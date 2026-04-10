@@ -8,36 +8,36 @@ import asyncio
 import pytest
 import pytest_asyncio
 from datetime import datetime
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import patch
 
 from heretek_swarm.actors.triad import CharlieAgent
 from heretek_swarm.actors.base import ActorMessage, ActorState
 
 
-pytestmark = pytest.mark.integration
+_pytestmark = pytest.mark.integration
 
 
 class TestCharlieAgentIntegration:
     """Integration tests for CharlieAgent."""
 
     @pytest_asyncio.fixture
-    async def charlie_agent(self, mock_nats, mock_llm):
+    async def charlie_agent(self, _mock_nats, _mock_llm):
         """Create CharlieAgent with mock dependencies."""
         with patch('src.heretek_swarm.actors.stubs.get_nats_event_mesh', return_value=mock_nats):
             with patch('src.heretek_swarm.actors.stubs.get_llm_provider', return_value=mock_llm):
-                agent = CharlieAgent(agent_id="charlie-test-001")
+                _agent = CharlieAgent(agent_id="charlie-test-001")
                 yield agent
                 if agent._state != ActorState.TERMINATED:
                     await agent.terminate()
 
     @pytest_asyncio.fixture
-    async def spawned_charlie(self, charlie_agent):
+    async def spawned_charlie(self, _charlie_agent):
         """Create and spawn CharlieAgent."""
         await charlie_agent.spawn()
         yield charlie_agent
 
     @pytest.mark.asyncio
-    async def test_agent_spawn(self, charlie_agent):
+    async def test_agent_spawn(self, _charlie_agent):
         """Test agent spawning lifecycle."""
         assert charlie_agent._state == ActorState.SPAWNING
         await charlie_agent.spawn()
@@ -45,7 +45,7 @@ class TestCharlieAgentIntegration:
         assert charlie_agent.is_alive
 
     @pytest.mark.asyncio
-    async def test_agent_terminate(self, spawned_charlie):
+    async def test_agent_terminate(self, _spawned_charlie):
         """Test agent termination lifecycle."""
         assert spawned_charlie._state == ActorState.ACTIVE
         await spawned_charlie.terminate()
@@ -53,7 +53,7 @@ class TestCharlieAgentIntegration:
         assert not spawned_charlie.is_alive
 
     @pytest.mark.asyncio
-    async def test_handle_deliberation_request(self, spawned_charlie, mock_nats):
+    async def test_handle_deliberation_request(self, _spawned_charlie, _mock_nats):
         """Test handling deliberation request."""
         # Setup mock LLM response
         spawned_charlie._llm_provider.register_response(
@@ -62,17 +62,17 @@ class TestCharlieAgentIntegration:
         )
 
         # Create message
-        message = ActorMessage(
-            message_type="deliberation_request",
-            content={
+        _message = ActorMessage(
+            _message_type = "deliberation_request",
+            _content = {
                 "session_id": "delib-charlie-001",
                 "problem": "Evaluate new feature proposal",
                 "alpha_analysis": {"recommendation": "approve"},
                 "beta_validation": {"valid": True},
             },
-            sender="steward",
-            recipient="charlie-test-001",
-            timestamp=datetime.utcnow().isoformat(),
+            _sender = "steward",
+            _recipient = "charlie-test-001",
+            _timestamp = datetime.utcnow().isoformat(),
         )
 
         # Process message
@@ -82,7 +82,7 @@ class TestCharlieAgentIntegration:
         assert "delib-charlie-001" in spawned_charlie._challenges
 
     @pytest.mark.asyncio
-    async def test_handle_challenge_request(self, spawned_charlie, mock_llm):
+    async def test_handle_challenge_request(self, _spawned_charlie, _mock_llm):
         """Test handling challenge request."""
         # Setup mock LLM
         mock_llm.register_response(
@@ -91,26 +91,26 @@ class TestCharlieAgentIntegration:
         )
 
         # Create message
-        message = ActorMessage(
-            message_type="challenge_request",
-            content={
+        _message = ActorMessage(
+            _message_type = "challenge_request",
+            _content = {
                 "proposition": {"decision": "deploy to production"},
                 "context": {"timeline": "aggressive", "resources": "limited"},
             },
-            sender="steward",
-            recipient="charlie-test-001",
-            timestamp=datetime.utcnow().isoformat(),
+            _sender = "steward",
+            _recipient = "charlie-test-001",
+            _timestamp = datetime.utcnow().isoformat(),
         )
 
         # Process message
         await spawned_charlie.process_message(message)
 
         # Verify challenges generated
-        stats = spawned_charlie.get_challenge_statistics()
+        _stats = spawned_charlie.get_challenge_statistics()
         assert stats["total_challenges"] >= 1
 
     @pytest.mark.asyncio
-    async def test_handle_risk_assessment(self, spawned_charlie, mock_llm):
+    async def test_handle_risk_assessment(self, _spawned_charlie, _mock_llm):
         """Test handling risk assessment request."""
         # Setup mock LLM
         mock_llm.register_response(
@@ -119,26 +119,26 @@ class TestCharlieAgentIntegration:
         )
 
         # Create message
-        message = ActorMessage(
-            message_type="risk_assessment",
-            content={
+        _message = ActorMessage(
+            _message_type = "risk_assessment",
+            _content = {
                 "scenario": "Rapid scaling of infrastructure",
                 "factors": ["cost", "reliability", "security"],
             },
-            sender="coordinator",
-            recipient="charlie-test-001",
-            timestamp=datetime.utcnow().isoformat(),
+            _sender = "coordinator",
+            _recipient = "charlie-test-001",
+            _timestamp = datetime.utcnow().isoformat(),
         )
 
         # Process message
         await spawned_charlie.process_message(message)
 
         # Verify risk assessment completed
-        stats = spawned_charlie.get_challenge_statistics()
+        _stats = spawned_charlie.get_challenge_statistics()
         assert stats["total_risk_assessments"] >= 1
 
     @pytest.mark.asyncio
-    async def test_perform_analysis(self, spawned_charlie, mock_llm):
+    async def test_perform_analysis(self, _spawned_charlie, _mock_llm):
         """Test performing devil's advocate analysis."""
         # Setup mock LLM
         mock_llm.register_response(
@@ -147,8 +147,8 @@ class TestCharlieAgentIntegration:
         )
 
         # Perform analysis
-        result = await spawned_charlie._perform_analysis(
-            problem="Should we migrate to microservices?"
+        _result = await spawned_charlie._perform_analysis(
+            _problem = "Should we migrate to microservices?"
         )
 
         # Verify result
@@ -156,7 +156,7 @@ class TestCharlieAgentIntegration:
         assert "challenges" in result or "risks" in result
 
     @pytest.mark.asyncio
-    async def test_generate_challenges(self, spawned_charlie, mock_llm):
+    async def test_generate_challenges(self, _spawned_charlie, _mock_llm):
         """Test generating challenges."""
         # Setup mock LLM
         mock_llm.register_response(
@@ -165,15 +165,15 @@ class TestCharlieAgentIntegration:
         )
 
         # Generate challenges
-        challenges = await spawned_charlie._generate_challenges(
-            proposition={"decision": "adopt new technology"}
+        _challenges = await spawned_charlie._generate_challenges(
+            _proposition = {"decision": "adopt new technology"}
         )
 
         # Verify challenges
         assert isinstance(challenges, list)
 
     @pytest.mark.asyncio
-    async def test_assess_risks(self, spawned_charlie, mock_llm):
+    async def test_assess_risks(self, _spawned_charlie, _mock_llm):
         """Test assessing risks."""
         # Setup mock LLM
         mock_llm.register_response(
@@ -182,8 +182,8 @@ class TestCharlieAgentIntegration:
         )
 
         # Assess risks
-        result = await spawned_charlie._assess_risks(
-            scenario="Major system refactor"
+        _result = await spawned_charlie._assess_risks(
+            _scenario = "Major system refactor"
         )
 
         # Verify result
@@ -191,7 +191,7 @@ class TestCharlieAgentIntegration:
         assert "risks" in result or "assessment" in result
 
     @pytest.mark.asyncio
-    async def test_challenge_with_context(self, spawned_charlie, mock_llm):
+    async def test_challenge_with_context(self, _spawned_charlie, _mock_llm):
         """Test challenging with full Triad context."""
         # Setup mock LLM
         mock_llm.register_response(
@@ -200,17 +200,17 @@ class TestCharlieAgentIntegration:
         )
 
         # Generate challenges with context
-        challenges = await spawned_charlie._generate_challenges(
-            proposition={"decision": "approve"},
-            alpha_findings={"analysis": "positive"},
-            beta_findings={"validation": "passed"}
+        _challenges = await spawned_charlie._generate_challenges(
+            _proposition = {"decision": "approve"},
+            _alpha_findings = {"analysis": "positive"},
+            _beta_findings = {"validation": "passed"}
         )
 
         # Verify challenges generated
         assert challenges is not None
 
     @pytest.mark.asyncio
-    async def test_concurrent_challenges(self, spawned_charlie, mock_nats):
+    async def test_concurrent_challenges(self, _spawned_charlie, _mock_nats):
         """Test handling multiple concurrent challenges."""
         # Simulate multiple challenges
         for i in range(5):
@@ -221,19 +221,19 @@ class TestCharlieAgentIntegration:
             }
 
         # Verify all challenges tracked
-        stats = spawned_charlie.get_challenge_statistics()
+        _stats = spawned_charlie.get_challenge_statistics()
         assert stats["total_challenges"] >= 5
 
     @pytest.mark.asyncio
-    async def test_message_validation(self, spawned_charlie):
+    async def test_message_validation(self, _spawned_charlie):
         """Test message validation."""
         # Create invalid message
-        message = ActorMessage(
-            message_type="challenge_request",
-            content={},  # Missing required fields
-            sender="test",
-            recipient="charlie-test-001",
-            timestamp=datetime.utcnow().isoformat(),
+        _message = ActorMessage(
+            _message_type = "challenge_request",
+            _content = {},  # Missing required fields
+            _sender = "test",
+            _recipient = "charlie-test-001",
+            _timestamp = datetime.utcnow().isoformat(),
         )
 
         # Process should handle validation error gracefully
@@ -243,26 +243,26 @@ class TestCharlieAgentIntegration:
         assert spawned_charlie._state == ActorState.ACTIVE
 
     @pytest.mark.asyncio
-    async def test_latency_baseline(self, spawned_charlie, assert_latency_baseline):
+    async def test_latency_baseline(self, _spawned_charlie, _assert_latency_baseline):
         """Test message processing latency meets baseline."""
         import time
 
-        message = ActorMessage(
-            message_type="challenge_request",
-            content={"proposition": {}},
-            sender="test",
-            recipient="charlie-test-001",
-            timestamp=datetime.utcnow().isoformat(),
+        _message = ActorMessage(
+            _message_type = "challenge_request",
+            _content = {"proposition": {}},
+            _sender = "test",
+            _recipient = "charlie-test-001",
+            _timestamp = datetime.utcnow().isoformat(),
         )
 
-        start = time.time()
+        _start = time.time()
         await spawned_charlie.process_message(message)
-        latency_ms = (time.time() - start) * 1000
+        _latency_ms = (time.time() - start) * 1000
 
         assert_latency_baseline(latency_ms, "charlie_message_process")
 
     @pytest.mark.asyncio
-    async def test_state_persistence(self, spawned_charlie, mock_db):
+    async def test_state_persistence(self, _spawned_charlie, _mock_db):
         """Test agent state persistence."""
         # Add challenge
         spawned_charlie._challenges["persist-test"] = {
@@ -275,11 +275,11 @@ class TestCharlieAgentIntegration:
             await spawned_charlie.save_state()
 
         # Verify state saved
-        table = mock_db.get_table("agent_states")
+        _table = mock_db.get_table("agent_states")
         assert len(table) > 0
 
     @pytest.mark.asyncio
-    async def test_error_recovery(self, charlie_agent):
+    async def test_error_recovery(self, _charlie_agent):
         """Test agent error recovery."""
         await charlie_agent.spawn()
         charlie_agent.state = ActorState.ERROR
@@ -287,7 +287,7 @@ class TestCharlieAgentIntegration:
         assert charlie_agent.state == ActorState.ACTIVE
 
     @pytest.mark.asyncio
-    async def test_risk_mitigation_suggestions(self, spawned_charlie, mock_llm):
+    async def test_risk_mitigation_suggestions(self, _spawned_charlie, _mock_llm):
         """Test generating risk mitigations."""
         # Setup mock LLM
         mock_llm.register_response(
@@ -296,8 +296,8 @@ class TestCharlieAgentIntegration:
         )
 
         # Assess risks with mitigations
-        result = await spawned_charlie._assess_risks(
-            scenario="Database migration"
+        _result = await spawned_charlie._assess_risks(
+            _scenario = "Database migration"
         )
 
         # Verify result includes mitigations

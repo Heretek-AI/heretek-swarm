@@ -6,7 +6,6 @@ Provides consistent test data across test suites.
 """
 
 from dataclasses import dataclass, field
-from typing import Any
 import uuid
 
 
@@ -21,7 +20,7 @@ class MockAgent:
     reputation: float = 1.0
     status: str = "idle"
     
-    async def send_message(self, message: dict) -> dict:
+    async def send_message(self, _message: dict) -> dict:
         """Mock send message."""
         return {"status": "sent", "message_id": str(uuid.uuid4())}
     
@@ -29,7 +28,7 @@ class MockAgent:
         """Mock receive message."""
         return {"status": "received"}
     
-    async def execute_task(self, task: dict) -> dict:
+    async def execute_task(self, _task: dict) -> dict:
         """Mock execute task."""
         return {"status": "completed", "result": "success"}
     
@@ -41,16 +40,12 @@ class MockAgent:
         }
 
 
-def create_mock_agent(
-    agent_id: str | None = None,
-    agent_type: str = "worker",
-    capabilities: list[str] | None = None,
-) -> MockAgent:
+def create_mock_agent(_agent_id: str | None, _agent_type: str, _capabilities: list[str] | None) -> MockAgent:
     """Create a mock agent with default values."""
     return MockAgent(
-        agent_id=agent_id or f"agent-{uuid.uuid4().hex[:8]}",
-        agent_type=agent_type,
-        capabilities=capabilities or ["task_execution", "messaging"],
+        _agent_id = agent_id or f"agent-{uuid.uuid4().hex[:8]}",
+        _agent_type = agent_type,
+        _capabilities = capabilities or ["task_execution", "messaging"],
     )
 
 
@@ -87,17 +82,17 @@ def create_agent_roster() -> list[MockAgent]:
     """Create a full roster of 22 mock agents."""
     return [
         create_mock_agent(
-            agent_id=f"{agent_type}-primary",
-            agent_type=agent_type,
-            capabilities=_get_capabilities_for_type(agent_type),
+            _agent_id = f"{agent_type}-primary",
+            _agent_type = agent_type,
+            _capabilities = _get_capabilities_for_type(agent_type),
         )
         for agent_type in AGENT_TYPES
     ]
 
 
-def _get_capabilities_for_type(agent_type: str) -> list[str]:
+def _get_capabilities_for_type(_agent_type: str) -> list[str]:
     """Get capabilities for a specific agent type."""
-    capability_map = {
+    _capability_map = {
         "steward": ["orchestration", "final_authorization", "task_delegation"],
         "alpha": ["deliberation", "consensus", "leadership"],
         "beta": ["critique", "analysis", "consensus"],
@@ -126,12 +121,7 @@ def _get_capabilities_for_type(agent_type: str) -> list[str]:
 
 # ============== MESSAGE FIXTURES ==============
 
-def create_test_message(
-    sender_id: str = "sender-1",
-    receiver_id: str = "receiver-1",
-    message_type: str = "task_request",
-    payload: dict | None = None,
-) -> dict:
+def create_test_message(_sender_id: str, _receiver_id: str, _message_type: str, _payload: dict | None) -> dict:
     """Create a test message."""
     return {
         "message_id": f"msg-{uuid.uuid4().hex[:8]}",
@@ -143,11 +133,7 @@ def create_test_message(
     }
 
 
-def create_consensus_message(
-    proposal_id: str,
-    vote: str,
-    reasoning: str = "",
-) -> dict:
+def create_consensus_message(_proposal_id: str, _vote: str, _reasoning: str) -> dict:
     """Create a consensus vote message."""
     return {
         "message_id": f"consensus-{uuid.uuid4().hex[:8]}",
@@ -162,11 +148,7 @@ def create_consensus_message(
 
 # ============== TASK FIXTURES ==============
 
-def create_test_task(
-    task_type: str = "analysis",
-    complexity: str = "medium",
-    priority: str = "normal",
-) -> dict:
+def create_test_task(_task_type: str, _complexity: str, _priority: str) -> dict:
     """Create a test task."""
     return {
         "task_id": f"task-{uuid.uuid4().hex[:8]}",
@@ -179,10 +161,7 @@ def create_test_task(
 
 # ============== STATE FIXTURES ==============
 
-def create_agent_state(
-    agent_id: str,
-    status: str = "idle",
-) -> dict:
+def create_agent_state(_agent_id: str, _status: str) -> dict:
     """Create an agent state snapshot."""
     return {
         "agent_id": agent_id,

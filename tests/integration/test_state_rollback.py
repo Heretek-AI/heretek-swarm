@@ -9,7 +9,6 @@ import time
 
 import pytest
 
-from tests.conftest import AgentState
 
 
 @pytest.mark.integration
@@ -56,14 +55,14 @@ class TestStateRollback:
     
     @pytest.mark.asyncio
     @pytest.mark.latency
-    async def test_rollback_latency(self, assert_latency_baseline) -> None:
+    async def test_rollback_latency(self, _assert_latency_baseline) -> None:
         """Test state rollback completes within latency baseline."""
-        start = time.perf_counter()
+        _start = time.perf_counter()
         # TODO: Implement rollback
-        elapsed_ms = (time.perf_counter() - start) * 1000
+        _elapsed_ms = (time.perf_counter() - start) * 1000
         
         # Placeholder
-        elapsed_ms = 25.0
+        _elapsed_ms = 25.0
         
         assert_latency_baseline(elapsed_ms, "state_rollback")
     

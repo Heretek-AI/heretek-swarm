@@ -7,7 +7,6 @@ Tests the event-driven communication layer for distributed agent coordination.
 
 import asyncio
 import time
-from typing import Any
 
 import pytest
 
@@ -53,22 +52,22 @@ class TestA2AMessaging:
     
     @pytest.mark.asyncio
     @pytest.mark.latency
-    async def test_message_latency_under_load(self, assert_latency_baseline) -> None:
+    async def test_message_latency_under_load(self, _assert_latency_baseline) -> None:
         """Test message latency remains under 100ms under moderate load."""
-        num_messages = 100
-        latencies = []
+        _num_messages = 100
+        _latencies = []
         
         for _ in range(num_messages):
-            start = time.perf_counter()
+            _start = time.perf_counter()
             # TODO: Send and receive message
-            elapsed_ms = (time.perf_counter() - start) * 1000
+            _elapsed_ms = (time.perf_counter() - start) * 1000
             latencies.append(elapsed_ms)
         
         # Placeholder
-        latencies = [5.0] * num_messages
+        _latencies = [5.0] * num_messages
         
-        avg_latency = sum(latencies) / len(latencies)
-        max_latency = max(latencies)
+        _avg_latency = sum(latencies) / len(latencies)
+        _max_latency = max(latencies)
         
         assert_latency_baseline(avg_latency, "avg_message_latency")
         assert_latency_baseline(max_latency, "max_message_latency")
