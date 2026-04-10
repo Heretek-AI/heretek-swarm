@@ -218,13 +218,27 @@ class GuardrailsSystem:
                 blocked_content += f", {phones}"
             reason = "Personal phone numbers redacted"
         
-        # API keys
-        api_keys = re.findall(r'\b[A-Za-z0-9]{20,}[_-][A-Za-z0-9]{10,}\b', filtered)
+        # API keys - match common API key patterns
+        # Patterns: sk_live_*, sk_test_*, AKIA*, ghp_*, github_pat_*, etc.
+        # Note: Use [^\s] to match any non-whitespace including brackets in redacted keys
+        api_key_patterns = [
+            r'\bsk_live_[^\s]{10,}\b',      # Stripe live keys (allow brackets in redacted values)
+            r'\bsk_test_[^\s]{10,}\b',      # Stripe test keys
+            r'\bAKIA[A-Z0-9]{16}\b',        # AWS Access Key ID
+            r'\bghp_[A-Za-z0-9]{36}\b',    # GitHub personal access tokens
+            r'\bgithub_pat_[^\s]{22,}\b',   # GitHub fine-grained tokens
+            r'\b[A-Za-z0-9]{20,}[_-][^\s]{10,}\b',  # Generic long API keys
+        ]
+        api_keys = []
+        for pattern in api_key_patterns:
+            api_keys.extend(re.findall(pattern, filtered))
         if api_keys:
-            filtered = re.sub(r'\b[A-Za-z0-9]{20,}[_-][A-Za-z0-9]{10,}\b', '[REDACTED]', filtered)
+            # Replace each API key pattern found
+            for pattern in api_key_patterns:
+                filtered = re.sub(pattern, '[REDACTED]', filtered)
             if blocked_content:
                 blocked_content += f", {api_keys}"
-                reason = "API keys redacted"
+            reason = "API keys redacted"
         
         # Block code execution in output
         if self.config.block_code_execution:
