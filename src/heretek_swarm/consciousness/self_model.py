@@ -63,7 +63,16 @@ class Belief:
             "created_at": self.created_at,
             "updated_at": self.updated_at,
             "supporting_evidence": self.supporting_evidence,
-            "conflicting_beliefs": self.conflicting_bUAL
+            "conflicting_beliefs": self.conflicting_beliefs,
+        }
+    
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "Belief":
+        belief_type_str = data.get("belief_type", "factual")
+        try:
+            belief_type = BeliefType(belief_type_str)
+        except ValueError:
+            belief_type = BeliefType.FACTUAL
         return cls(
             belief_id=data.get("belief_id", str(uuid.uuid4())),
             state=data.get("state", ""),
@@ -106,7 +115,16 @@ class Goal:
             "parent_goal_id": self.parent_goal_id,
             "progress": self.progress,
             "associated_beliefs": self.associated_beliefs,
-            "blockedError:
+            "blocked_by": self.blocked_by,
+            "depends_on": self.depends_on,
+        }
+    
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "Goal":
+        status_str = data.get("status", "active")
+        try:
+            status = GoalStatus(status_str)
+        except ValueError:
             status = GoalStatus.ACTIVE
         return cls(
             goal_id=data.get("goal_id", str(uuid.uuid4())),
@@ -141,7 +159,15 @@ class Capability:
             "name": self.name,
             "level": self.level,
             "experience_count": self.experience_count,
-            "success_rate str(uuid.uuid4())),
+            "success_rate": self.success_rate,
+            "last_used": self.last_used,
+            "confidence": self.confidence,
+        }
+    
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "Capability":
+        return cls(
+            capability_id=data.get("capability_id", str(uuid.uuid4())),
             name=data.get("name", ""),
             level=data.get("level", 0.5),
             experience_count=data.get("experience_count", 0),
@@ -171,7 +197,12 @@ class Limitation:
         }
     
     @classmethod
-    def from_dict(clsaware_at", datetime.now(timezone.utc).isoformat()),
+    def from_dict(cls, data: Dict[str, Any]) -> "Limitation":
+        return cls(
+            limitation_id=data.get("limitation_id", str(uuid.uuid4())),
+            description=data.get("description", ""),
+            severity=data.get("severity", 0.5),
+            aware_at=data.get("aware_at", datetime.now(timezone.utc).isoformat()),
             workaround=data.get("workaround"),
             mitigatable=data.get("mitigatable", False),
         )
@@ -194,7 +225,14 @@ class Preference:
             "preference_key": self.preference_key,
             "value": self.value,
             "strength": self.strength,
-           .uuid4())),
+            "learned_from": self.learned_from,
+            "updated_at": self.updated_at,
+        }
+    
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "Preference":
+        return cls(
+            preference_id=data.get("preference_id", str(uuid.uuid4())),
             category=data.get("category", "general"),
             preference_key=data.get("preference_key", ""),
             value=data.get("value"),
@@ -220,7 +258,15 @@ class SelfModelSnapshot:
             "timestamp": self.timestamp,
             "belief_count": self.belief_count,
             "active_goal_count": self.active_goal_count,
-            "goal_clarity": self.goal_clar(uuid.uuid4())),
+            "goal_clarity": self.goal_clarity,
+            "self_coherence": self.self_coherence,
+            "summary": self.summary,
+        }
+    
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "SelfModelSnapshot":
+        return cls(
+            snapshot_id=data.get("snapshot_id", str(uuid.uuid4())),
             timestamp=data.get("timestamp", datetime.now(timezone.utc).isoformat()),
             belief_count=data.get("belief_count", 0),
             active_goal_count=data.get("active_goal_count", 0),
@@ -683,7 +729,11 @@ class SelfModel:
             "history": [s.to_dict() for s in self.history[-100:]],
             "update_count": self._update_count,
         }
-items()}
+    
+    @classmethod
+    def from_dict(cls, data: Dict[str, Any]) -> "SelfModel":
+        agent_id = data.get("agent_id", str(uuid.uuid4()))
+        beliefs = {k: Belief.from_dict(v) for k, v in data.get("beliefs", {}).items()}
         goals = {k: Goal.from_dict(v) for k, v in data.get("goals", {}).items()}
         capabilities = {k: Capability.from_dict(v) for k, v in data.get("capabilities", {}).items()}
         limitations = {k: Limitation.from_dict(v) for k, v in data.get("limitations", {}).items()}
@@ -729,9 +779,12 @@ items()}
         negation_words = ["not", "no", "never", "don't", "doesn't", "isn't", "aren't", "wasn't", "weren't"]
         for neg in negation_words:
             if neg in state1_lower or neg in state2_lower:
-                if state1_lower.replace(neg, "").strip() in state2_lower:
+                # Remove negation and normalize whitespace
+                state1_without_neg = " ".join(state1_lower.replace(neg, "").split())
+                state2_without_neg = " ".join(state2_lower.replace(neg, "").split())
+                if state1_without_neg in state2_lower or state2_without_neg in state1_lower:
                     return True
-                if state2_lower.replace(neg, "").strip() in state1_lower:
+                if state2_without_neg in state1_lower or state1_without_neg in state2_lower:
                     return True
         return False
     
