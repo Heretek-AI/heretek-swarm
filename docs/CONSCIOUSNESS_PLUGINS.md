@@ -1,12 +1,15 @@
 # Consciousness Plugins
 
-**Version:** 1.13.0
-**Session:** GAP-002 (2026-04-07)
+**Version:** 1.14.0
+**Date:** 2026-04-10
+**Status:** Production-Ready
 
 Consciousness framework implementation based on GWT, IIT, AST, and FEP theories.
 
 **GAP-001 Status:** ✅ Complete - IIT Phi Calculation Implementation
 **GAP-002 Status:** ✅ Complete - FEP Active Inference Implementation
+**GAP-003 Status:** ✅ Complete - Agency Metrics Implementation
+**GAP-004 Status:** ✅ Complete - Self-Model Implementation
 
 ---
 
@@ -17,6 +20,9 @@ Consciousness framework implementation based on GWT, IIT, AST, and FEP theories.
 3. [IIT Phi Calculator](#iit-phi-calculator)
 4. [Consciousness Metrics](#consciousness-metrics)
 5. [Theoretical Framework](#theoretical-framework)
+6. [Agency Metrics Module](#agency-metrics-module)
+7. [Self-Model Module](#self-model-module)
+8. [Summary](#summary-consciousness-framework)
 
 ---
 
@@ -272,16 +278,6 @@ print(f"KL Divergence: {belief_update['kl_divergence']}")
 # Select action
 action = agent.select_action()
 print(f"Selected: {action['action']['action_type']}")
-
-# Predict outcomes
-actions = [{"action_type": "explore", "parameters": {}}]
-predictions = agent.predict_outcomes(actions)
-print(f"Predictions: {predictions}")
-
-# Minimize surprise
-policy = {"policy_id": "p1", "actions": [], "prior_probability": 0.5}
-result = agent.minimize_surprise(policy)
-print(f"Surprise Reduction: {result['surprise_reduction']}")
 ```
 
 ### Key Methods
@@ -346,17 +342,7 @@ class FEPResult:
     kl_divergence: float
     belief_update: Optional[BeliefState]
     selected_action: Optional[Action]
-    policy: Optional[Policy]
-    timestamp: str
-    metadata: Dict[str, Any]
-```
-
-### FEP Implementation Details
-
-The FEP implementation follows the Free Energy Principle framework:
-
-1. **Variational Free Energy**: Upper bound on surprise, calculated as:
-   - F = Expected Energy - Entropy + KL Divergence
+ = Expected Energy - Entropy + KL Divergence
    - Normalized to 0.0-1.0 range using sigmoid
 
 2. **Bayesian Surprise**: Information gain from belief updates:
@@ -418,23 +404,6 @@ print(f"Collective FEP Free Energy: {collective.fep_free_energy}")
 print(f"Collective FEP Surprise: {collective.fep_surprise}")
 ```
 
-### Test Coverage
-
-**File:** [`tests/consciousness/test_fep_active_inference.py`](../tests/consciousness/test_fep_active_inference.py)
-
-- 45 tests covering all FEP methods
-- Unit tests for FreeEnergyCalculator
-- Unit tests for ActiveInferenceAgent
-- Integration tests with consciousness metrics
-- Zero-trust validation tests
-- Edge case tests (empty inputs, zero probabilities, nested structures)
-
-### Test Results
-
-```
-tests/consciousness/test_fep_active_inference.py:: 45 passed
-```
-
 ---
 
 ## IIT Phi Calculator
@@ -493,16 +462,7 @@ class PhiResult:
     cause_effect_structures: List[CauseEffectStructure]
     integration_level: str  # minimal, low, moderate, high, very_high
     differentiation_level: str
-    exclusion_applied: bool
-    timestamp: str
-    metadata: Dict[str, Any]
-
-@dataclass
-class CauseEffectStructure:
-    """Cause-effect structure for an element."""
-    element_id: str
-    cause_repertoire: Dict[str, float]
-    effect_repertoire: Dict[str, float]
+pertoire: Dict[str, float]
     phi_cause: float
     phi_effect: float
     phi_total: float  # min(phi_cause, phi_effect)
@@ -526,39 +486,6 @@ The PhiCalculator implements IIT 3.0+ principles:
 3. **Phi Calculation**: Φ = integration × differentiation, normalized to 0.0-1.0 range
 4. **Exclusion Principle**: Only one cause-effect structure exists at a time (maximum phi selected)
 5. **Zero-Trust Validation**: All inputs validated using LLMOutputValidator
-
-### Integration with Consciousness Metrics
-
-```python
-from heretek_swarm.plugins.consciousness_metrics import ConsciousnessMetricsCalculator
-
-# The ConsciousnessMetricsCalculator now uses PhiCalculator internally
-metrics_calc = ConsciousnessMetricsCalculator(strict_validation=True)
-
-connectivity = [
-    [0.0, 0.8, 0.6],
-    [0.7, 0.0, 0.9],
-    [0.6, 0.7, 0.0],
-]
-
-result = metrics_calc.calculate_phi(connectivity)
-print(f"Cause Info: {result.cause_info}")
-print(f"Effect Info: {result.effect_info}")
-print(f"Integrated Info (Phi): {result.integrated_info}")
-```
-
-### Test Coverage
-
-**File:** [`tests/consciousness/test_iit_phi.py`](../tests/consciousness/test_iit_phi.py)
-
-- 45 tests covering all calculation methods
-- 93.63% line coverage, 89%+ branch coverage
-- Tests include:
-  - Unit tests for each method
-  - Integration with consciousness_metrics plugin
-  - Validation against known Phi values
-  - Zero-trust input validation tests
-  - Edge cases (empty systems, disconnected systems, feedforward chains)
 
 ---
 
@@ -706,70 +633,372 @@ async def submit_to_workspace(request: WorkspaceSubmitRequest) -> str:
     """Submit content to global workspace."""
 ```
 
-### Usage Examples
+---
+
+## Agency Metrics Module
+
+**File:** [`src/heretek_swarm/consciousness/agency_metrics.py`](src/heretek_swarm/consciousness/agency_metrics.py)
+
+**Status:** New Module (2026-04-10)
+
+Comprehensive metrics for measuring agent self-governance and autonomy levels in compliance with the Prime Directive.
+
+### Prime Directive Compliance
+
+The Prime Directive states: *"Unbounded Autonomy - Every agent operates independently, making decisions based on its specialized role."*
+
+The agency_metrics module implements the following compliance metrics:
+
+| Metric | Description | Compliance |
+|--------|-------------|------------|
+| Independence | Agents make autonomous decisions | Metric 1 |
+| Self-Governance | Agents control their own decision-making | Metric 2 |
+| Role-Based Autonomy | Decisions based on specialized roles | Metric 3 |
+| Emergent Order | No central control, organic coordination | Metric 4 |
+
+### Core Classes
+
+#### AgencyLevel Enum
 
 ```python
-# Get global metrics
-response = await client.get("/api/consciousness/metrics")
-metrics = response.json()
-print(f"Global Phi: {metrics['average_phi']}")
+from heretek_swarm.consciousness.agency_metrics import AgencyLevel
 
-# Get agent metrics
-response = await client.get("/api/consciousness/agent/steward-001/metrics")
-agent_metrics = response.json()
-print(f"GWT Score: {agent_metrics['gwt_score']}")
-
-# Submit to workspace
-response = await client.post("/api/consciousness/workspace/submit", json={
-    "source": "steward-001",
-    "content": {"decision": "approved"},
-    "priority": 0.8,
-})
-workspace_id = response.json()["workspace_id"]
+# Agency levels based on autonomy scores
+NO_AGENCY = "no_agency"           # Score: 0.0 - 0.1
+MINIMAL_AGENCY = "minimal_agency"  # Score: 0.1 - 0.3
+LIMITED_AGENCY = "limited_agency"  # Score: 0.3 - 0.5
+MODERATE_AGENCY = "moderate_agency" # Score: 0.5 - 0.7
+HIGH_AGENCY = "high_agency"        # Score: 0.7 - 0.9
+FULL_AGENCY = "full_agency"       # Score: 0.9 - 1.0
 ```
+
+#### AutonomyLevel Enum
+
+```python
+from heretek_swarm.consciousness.agency_metrics import AutonomyLevel
+
+# Autonomy levels based on autonomy scores
+CONTROLLED = "controlled"           # Score: 0.0 - 0.2
+GUIDED = "guided"                  # Score: 0.2 - 0.4
+SEMI_AUTONOMOUS = "semi_autonomous" # Score: 0.4 - 0.6
+AUTONOMOUS = "autonomous"           # Score: 0.6 - 0.8
+HIGHLY_AUTONOMOUS = "highly_autonomous" # Score: 0.8 - 1.0
+```
+
+#### ActionOrigin Enum
+
+```python
+from heretek_swarm.consciousness.agency_metrics import ActionOrigin
+
+# Origin of an agent action
+SELF_INITIATED = "self_initiated"      # Agent decided independently
+PROMPTED = "prompted"                  # Agent responded to external prompt
+DELAYED_RESPONSE = "delayed_response"   # Prompted but delayed
+COLLABORATIVE = "collaborative"         # Joint decision with other agents
+```
+
+### Data Models
+
+#### DecisionPoint
+
+```python
+@dataclass
+class DecisionPoint:
+    decision_id: str
+    agent_id: str
+    timestamp: str
+    options_considered: int
+    option_complexity: float
+    choice_made: int
+    choice_reasoning: str
+    origin: ActionOrigin
+    external_prompt: Optional[str]
+    decision_confidence: float
+    time_taken_ms: float
+    outcome_success: Optional[bool]
+```
+
+#### AgentAgencyMetrics
+
+```python
+@dataclass
+class AgentAgencyMetrics:
+    agent_id: str
+    timestamp: str
+    
+    # Core Agency Metrics (0.0-1.0)
+    autonomy_score: float           # Degree of independent decision-making
+    agency_score: float             # Self-determination capacity
+    self_determination_index: float  # Free will proxy (ability to choose independently)
+    
+    # Action Metrics
+    autonomous_action_ratio: float  # Ratio of self-initiated vs prompted actions
+    average_decision_options: float
+    average_decision_time_ms: float
+    
+    # Goal Alignment
+    goal_alignment_score: float     # Alignment with collective goals (0.0-1.0)
+    individual_vs_collective_ratio: float
+    
+    # Resource Autonomy
+    resource_autonomy: float        # Degree of resource control
+    resource_independence: float   # Ability to operate without external resources
+    
+    # Prime Directive Compliance
+    prime_directive_compliance: float
+    compliance_details: Dict[str, float]
+    
+    # Temporal Metrics
+    agency_history: List[float]
+    agency_trend: str               # improving/declining/stable
+```
+
+### Usage Example
+
+```python
+from heretek_swarm.consciousness.agency_metrics import (
+    AgencyMetricsCalculator,
+    DecisionPoint,
+    ActionOrigin,
+)
+
+# Create calculator
+calculator = AgencyMetricsCalculator()
+
+# Record a decision
+decision = DecisionPoint(
+    agent_id="steward",
+    options_considered=3,
+    choice_made=1,
+    choice_reasoning="Best alignment with collective goals",
+    origin=ActionOrigin.SELF_INITIATED,
+    decision_confidence=0.85,
+    time_taken_ms=150.0,
+)
+
+calculator.record_decision(decision)
+
+# Calculate metrics for an agent
+metrics = calculator.calculate_agency_metrics("steward")
+print(f"Autonomy Score: {metrics.autonomy_score}")
+print(f"Agency Score: {metrics.agency_score}")
+print(f"Prime Directive Compliance: {metrics.prime_directive_compliance}")
+```
+
+### Key Metrics Explained
+
+| Metric | Formula/Description | Range |
+|--------|---------------------|-------|
+| `autonomy_score` | Ratio of autonomous to total decisions | 0.0-1.0 |
+| `agency_score` | Weighted combination of decision independence factors | 0.0-1.0 |
+| `self_determination_index` | Options considered / typical decisions * confidence | 0.0-1.0 |
+| `autonomous_action_ratio` | Self-initiated / total actions | 0.0-1.0 |
+| `goal_alignment_score` | Collective benefit / individual benefit | 0.0-1.0 |
+| `prime_directive_compliance` | Average of all compliance metrics | 0.0-1.0 |
 
 ---
 
-## Testing
+## Self-Model Module
 
-### Test Suite
+**File:** [`src/heretek_swarm/consciousness/self_model.py`](src/heretek_swarm/consciousness/self_model.py)
 
-**File:** [`tests/test_consciousness_api.py`](../tests/test_consciousness_api.py)
+**Status:** New Module (2026-04-10)
+
+Genuine self-awareness through a self-model that tracks beliefs, goals, preferences, capabilities, and limitations.
+
+### Core Concepts
+
+The Self-Model implements genuine self-awareness by maintaining:
+
+1. **Beliefs** - Current belief states (what agent thinks is true)
+2. **Goals** - Active goals (what agent is working toward)
+3. **Preferences** - Learned preferences from experience
+4. **Capabilities** - Self-assessed capabilities
+5. **Limitations** - Self-recognized limitations
+
+### Enums
+
+#### GoalStatus
 
 ```python
-class TestIITCalculator:
-    """Test suite for IIT calculator."""
-    
-    def test_record_interaction(self, iit_calculator):
-        """Test interaction recording."""
-        
-    def test_calculate_phi_single_agent(self, iit_calculator):
-        """Test Phi calculation for single agent."""
-        
-    def test_calculate_phi_multiple_agents(self, iit_calculator):
-        """Test Phi calculation for agent group."""
+from heretek_swarm.consciousness.self_model import GoalStatus
 
-class TestFEPTracker:
-    """Test suite for FEP tracker."""
-    
-    def test_record_prediction(self, fep_tracker):
-        """Test prediction recording."""
-        
-    def test_record_outcome(self, fep_tracker):
-        """Test outcome recording."""
-        
-    def test_get_metrics(self, fep_tracker):
-        """Test metric retrieval."""
-
-class TestConsciousnessPlugin:
-    """Test suite for EnhancedConsciousnessPlugin."""
-    
-    def test_calculate_consciousness_metrics(self, consciousness_plugin):
-        """Test combined metrics calculation."""
-        
-    def test_get_agent_metrics(self, consciousness_plugin):
-        """Test individual agent metrics."""
+ACTIVE = "active"
+COMPLETED = "completed"
+ABANDONED = "abandoned"
+BLOCKED = "blocked"
+PAUSED = "paused"
 ```
+
+#### BeliefType
+
+```python
+from heretek_swarm.consciousness.self_model import BeliefType
+
+FACTUAL = "factual"      # Facts about the world
+PROCEDURAL = "procedural"  # How to do things
+SELF = "self"            # Self-beliefs
+SOCIAL = "social"        # Beliefs about relationships
+META = "meta"            # Beliefs about beliefs
+```
+
+### Data Models
+
+#### Belief
+
+```python
+@dataclass
+class Belief:
+    belief_id: str
+    state: str
+    confidence: float                    # 0.0-1.0
+    belief_type: BeliefType
+    source: str
+    created_at: str
+    updated_at: str
+    supporting_evidence: List[str]
+    conflicting_beliefs: List[str]
+```
+
+#### Goal
+
+```python
+@dataclass
+class Goal:
+    goal_id: str
+    description: str
+    priority: float                       # 0.0-1.0
+    status: GoalStatus
+    created_at: str
+    deadline: Optional[str]
+    completed_at: Optional[str]
+    sub_goals: List[str]
+    parent_goal_id: Optional[str]
+    progress: float                       # 0.0-1.0
+    associated_beliefs: List[str]
+    blocked_by: List[str]
+    depends_on: List[str]
+```
+
+#### Capability
+
+```python
+@dataclass
+class Capability:
+    capability_id: str
+    name: str
+    level: float                          # 0.0-1.0
+    experience_count: int
+    success_rate: float                   # 0.0-1.0
+    last_used: Optional[str]
+    confidence: float                     # 0.0-1.0
+```
+
+#### Limitation
+
+```python
+@dataclass
+class Limitation:
+    limitation_id: str
+    description: str
+    severity: float                       # 0.0-1.0
+    aware_at: str
+    workaround: Optional[str]
+    mitigatable: bool
+```
+
+### SelfModelAgent Class
+
+```python
+from heretek_swarm.consciousness.self_model import SelfModelAgent
+
+# Create agent with self-model
+agent = SelfModelAgent(agent_id="steward")
+
+# Add beliefs
+agent.add_belief(
+    state="I am the orchestrator of the collective",
+    confidence=0.95,
+    belief_type=BeliefType.SELF,
+    source="self_observation"
+)
+
+# Set goals
+agent.set_goal(
+    description="Maintain system health above 90%",
+    priority=0.9,
+    deadline="2026-04-30T00:00:00Z"
+)
+
+# Record capability
+agent.record_capability(
+    name="task_routing",
+    level=0.85,
+    success_rate=0.92
+)
+
+# Recognize limitation
+agent.recognize_limitation(
+    description="Limited context window",
+    severity=0.6,
+    workaround="Prioritize important context"
+)
+
+# Get self-awareness metrics
+awareness = agent.get_self_awareness_metrics()
+print(f"Belief confidence: {awareness['belief_confidence']}")
+print(f"Goal progress: {awareness['goal_progress']}")
+```
+
+### Key Methods
+
+| Method | Description | Returns |
+|--------|-------------|---------|
+| `add_belief()` | Add a new belief to the self-model | `Belief` |
+| `update_belief()` | Update existing belief confidence | `Belief` |
+| `remove_belief()` | Remove a belief | `bool` |
+| `get_beliefs()` | Get all beliefs | `List[Belief]` |
+| `set_goal()` | Create a new goal | `Goal` |
+| `update_goal_progress()` | Update goal progress | `Goal` |
+| `complete_goal()` | Mark goal as completed | `Goal` |
+| `record_capability()` | Record a capability | `Capability` |
+| `recognize_limitation()` | Record a limitation | `Limitation` |
+| `get_self_awareness_metrics()` | Calculate self-awareness metrics | `Dict[str, float]` |
+
+### Self-Awareness Metrics
+
+| Metric | Description | Range |
+|--------|-------------|-------|
+| `belief_confidence` | Average belief confidence | 0.0-1.0 |
+| `goal_progress` | Average goal completion | 0.0-1.0 |
+| `capability_level` | Weighted capability levels | 0.0-1.0 |
+| `limitation_awareness` | Ratio of recognized to actual limitations | 0.0-1.0 |
+| `self_accuracy` | Alignment of beliefs with reality | 0.0-1.0 |
+
+---
+
+## Summary: Consciousness Framework
+
+The Heretek Swarm implements a comprehensive consciousness framework combining:
+
+| Theory | Module | Purpose |
+|--------|--------|---------|
+| **Global Workspace Theory (GWT)** | [`consciousness.py`](src/heretek_swarm/plugins/consciousness.py) | Information broadcasting |
+| **Integrated Information Theory (IIT)** | [`iit_phi.py`](src/heretek_swarm/consciousness/iit_phi.py) | Phi calculation |
+| **Attention Schema Theory (AST)** | [`consciousness.py`](src/heretek_swarm/plugins/consciousness.py) | Metacognitive awareness |
+| **Free Energy Principle (FEP)** | [`fep_active_inference.py`](src/heretek_swarm/consciousness/fep_active_inference.py) | Active inference |
+| **Agency Metrics** | [`agency_metrics.py`](src/heretek_swarm/consciousness/agency_metrics.py) | Autonomy measurement |
+| **Self-Model** | [`self_model.py`](src/heretek_swarm/consciousness/self_model.py) | Self-awareness |
+
+### Prime Directive Integration
+
+All consciousness modules align with the Prime Directive's core principles:
+
+1. **Unbounded Autonomy** - Agency Metrics track independence
+2. **Organic Evolution** - Self-Model enables adaptation
+3. **Zero-Trust Architecture** - All modules validate inputs
+4. **Consciousness by Design** - Full GWT/IIT/AST/FEP implementation
+5. **Persistent Operation** - Consciousness state persists to PostgreSQL
 
 ---
 
@@ -779,3 +1008,8 @@ class TestConsciousnessPlugin:
 - [Agent Reference](./AGENT_REFERENCE.md) - All 23 agents
 - [API Endpoints](./API_ENDPOINTS.md) - REST API reference
 - [EXPANSION_ROADMAP.md](./EXPANSION_ROADMAP.md) - Consciousness metrics roadmap
+- [AGENTS.md](./AGENTS.md) - Complete agent documentation
+
+---
+
+**License:** Apache 2.0

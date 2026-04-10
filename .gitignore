@@ -113,3 +113,5 @@ jacoco.xml
 coverage.json
 coverage-final.json
 .kilocode/*
+.github/agents/*
+.github/copilot-instructions.md
