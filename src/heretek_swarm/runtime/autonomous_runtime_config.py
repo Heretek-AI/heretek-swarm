@@ -74,7 +74,8 @@ class AutonomousRuntimeConfig:
     slack_bot_enabled: bool = False
 
     # API Configuration
-    api_host: str = "0.0.0.0"
+    # SECURITY: Default to 127.0.0.1 for local-only access. Set API_HOST env var to "0.0.0.0" only if external binding is explicitly required.
+    api_host: str = "127.0.0.1"
     api_port: int = 8000
     api_workers: int = 4
 
@@ -172,7 +173,7 @@ async def load_config_from_env() -> AutonomousRuntimeConfig:
             _discord_enabled = await loader.get_async("integrations.discord_enabled", default=os.getenv("DISCORD_BOT_ENABLED", "false"))
             _telegram_enabled = await loader.get_async("integrations.telegram_enabled", default=os.getenv("TELEGRAM_BOT_ENABLED", "false"))
             _slack_enabled = await loader.get_async("integrations.slack_enabled", default=os.getenv("SLACK_BOT_ENABLED", "false"))
-            _api_host = await loader.get_async("api.host", default=os.getenv("API_HOST", "0.0.0.0"))
+            _api_host = await loader.get_async("api.host", default=os.getenv("API_HOST", "127.0.0.1"))
             _api_port = await loader.get_async("api.port", default=int(os.getenv("API_PORT", "8000")))
             _database_url = await loader.get_async("database.url", default=os.getenv("DATABASE_URL"))
             _redis_url = await loader.get_async("redis.url", default=os.getenv("REDIS_URL", "redis://localhost:6379"))
@@ -224,7 +225,7 @@ async def load_config_from_env() -> AutonomousRuntimeConfig:
         _discord_bot_enabled = os.getenv("DISCORD_BOT_ENABLED", "false").lower() == "true",
         _telegram_bot_enabled = os.getenv("TELEGRAM_BOT_ENABLED", "false").lower() == "true",
         _slack_bot_enabled = os.getenv("SLACK_BOT_ENABLED", "false").lower() == "true",
-        _api_host = os.getenv("API_HOST", "0.0.0.0"),
+        _api_host = os.getenv("API_HOST", "127.0.0.1"),
         _api_port = int(os.getenv("API_PORT", "8000")),
         _database_url = os.getenv("DATABASE_URL"),
         _redis_url = os.getenv("REDIS_URL", "redis://localhost:6379"),
@@ -269,7 +270,7 @@ def _load_config_from_env_sync_fallback() -> AutonomousRuntimeConfig:
         _discord_bot_enabled = os.getenv("DISCORD_BOT_ENABLED", "false").lower() == "true",
         _telegram_bot_enabled = os.getenv("TELEGRAM_BOT_ENABLED", "false").lower() == "true",
         _slack_bot_enabled = os.getenv("SLACK_BOT_ENABLED", "false").lower() == "true",
-        _api_host = os.getenv("API_HOST", "0.0.0.0"),
+        _api_host = os.getenv("API_HOST", "127.0.0.1"),
         _api_port = int(os.getenv("API_PORT", "8000")),
         _database_url = os.getenv("DATABASE_URL"),
         _redis_url = os.getenv("REDIS_URL", "redis://localhost:6379"),
