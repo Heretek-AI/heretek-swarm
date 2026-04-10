@@ -557,10 +557,10 @@ class LLMOutputValidator:
         Returns:
             True if code is safe, False otherwise
         """
-        for compiled_pattern in self._compiled_patterns.values():
-            if compiled_pattern.search(code):
-                return False
-        return True
+        return all(
+            not compiled_pattern.search(code)
+            for compiled_pattern in self._compiled_patterns.values()
+        )
     
     def is_safe_text(self, text: str) -> bool:
         """
