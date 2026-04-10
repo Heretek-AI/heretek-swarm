@@ -5,7 +5,6 @@ Factory for creating LLM provider instances based on configuration.
 Supports dynamic provider instantiation and registry.
 """
 
-from __future__ import annotations
 
 from typing import Any, Dict, List, Optional, Type
 
@@ -20,7 +19,7 @@ from .zai_provider import ZAIProvider
 from .minimax_provider import MiniMaxProvider
 from .lemonade_provider import LemonadeProvider
 
-logger = structlog.get_logger("llm.providers.factory")
+_logger = structlog.get_logger("llm.providers.factory")
 
 # Provider registry mapping provider types to implementation classes
 PROVIDER_REGISTRY: Dict[str, Type[LLMProviderBase]] = {
@@ -34,7 +33,7 @@ PROVIDER_REGISTRY: Dict[str, Type[LLMProviderBase]] = {
 }
 
 
-def register_provider(provider_type: str, provider_class: Type[LLMProviderBase]) -> None:
+def register_provider(_provider_type: str, _provider_class: Type[LLMProviderBase]) -> None:
     """
     Register a new provider implementation.
     
@@ -46,7 +45,7 @@ def register_provider(provider_type: str, provider_class: Type[LLMProviderBase])
     logger.info("Provider registered", provider_type=provider_type)
 
 
-def unregister_provider(provider_type: str) -> None:
+def unregister_provider(_provider_type: str) -> None:
     """
     Unregister a provider implementation.
     
@@ -58,7 +57,7 @@ def unregister_provider(provider_type: str) -> None:
         logger.info("Provider unregistered", provider_type=provider_type)
 
 
-def get_provider_class(provider_type: str) -> Type[LLMProviderBase]:
+def get_provider_class(_provider_type: str) -> Type[LLMProviderBase]:
     """
     Get the provider class for a given type.
     
@@ -72,7 +71,7 @@ def get_provider_class(provider_type: str) -> Type[LLMProviderBase]:
         ProviderConfigurationError: If the provider type is not registered
     """
     if provider_type not in PROVIDER_REGISTRY:
-        available = ", ".join(PROVIDER_REGISTRY.keys())
+        _available = ", ".join(PROVIDER_REGISTRY.keys())
         raise ProviderConfigurationError(
             f"Unknown provider type: {provider_type}. Available: {available}"
         )
@@ -89,10 +88,7 @@ def list_available_providers() -> List[str]:
     return list(PROVIDER_REGISTRY.keys())
 
 
-def create_llm_provider(
-    provider_type: str,
-    config: Dict[str, Any],
-) -> LLMProviderBase:
+def create_llm_provider(_provider_type: str, _config: Dict[str, _Any]) -> LLMProviderBase:
     """
     Create an LLM provider instance from configuration.
     
@@ -146,7 +142,7 @@ def create_llm_provider(
                 api_key=api_key,
                 base_url=base_url or "https://api.openai.com/v1",
                 default_model=default_model,
-                organization=config.get("organization"),
+                _organization = config.get("organization"),
                 extra_config=extra_config,
             )
         
@@ -189,12 +185,12 @@ def create_llm_provider(
         elif provider_type == "minimax":
             if not api_key:
                 raise ProviderConfigurationError("MiniMax provider requires api_key")
-            group_id = config.get("group_id")
+            _group_id = config.get("group_id")
             if not group_id:
                 raise ProviderConfigurationError("MiniMax provider requires group_id")
             return MiniMaxProvider(
                 api_key=api_key,
-                group_id=group_id,
+                _group_id = group_id,
                 base_url=base_url or "https://api.minimax.chat/v1",
                 default_model=default_model,
                 extra_config=extra_config,
@@ -223,10 +219,7 @@ def create_llm_provider(
         )
 
 
-def create_llm_provider_from_db_config(
-    db_config: Any,
-    api_key_decrypt_func: Optional[callable] = None,
-) -> LLMProviderBase:
+def create_llm_provider_from_db_config(_db_config: Any, _api_key_decrypt_func: Optional[callable]) -> LLMProviderBase:
     """
     Create an LLM provider instance from a database configuration model.
     
@@ -240,10 +233,10 @@ def create_llm_provider_from_db_config(
     Example:
         provider = create_llm_provider_from_db_config(
             db_llm_provider,
-            api_key_decrypt_func=decrypt_api_key
+            _api_key_decrypt_func = decrypt_api_key
         )
     """
-    config = {
+    _config = {
         "base_url": db_config.base_url,
         "api_key": None,
         "default_model": db_config.default_model,
@@ -257,7 +250,7 @@ def create_llm_provider_from_db_config(
     return create_llm_provider(db_config.provider_type, config)
 
 
-def get_provider_info(provider_type: str) -> Dict[str, Any]:
+def get_provider_info(_provider_type: str) -> Dict[str, Any]:
     """
     Get information about a provider type.
     
@@ -273,17 +266,17 @@ def get_provider_info(provider_type: str) -> Dict[str, Any]:
     # (with minimal config to avoid errors)
     try:
         if provider_type == "openai":
-            temp_provider = provider_class(api_key="temp", base_url="https://api.openai.com/v1")
+            _temp_provider = provider_class(api_key="temp", base_url="https://api.openai.com/v1")
         elif provider_type in ["ollama", "llamacpp", "lemonade", "openai_compatible"]:
-            temp_provider = provider_class(base_url="http://localhost")
+            _temp_provider = provider_class(base_url="http://localhost")
         elif provider_type == "zai":
-            temp_provider = provider_class(api_key="temp")
+            _temp_provider = provider_class(api_key="temp")
         elif provider_type == "minimax":
-            temp_provider = provider_class(api_key="temp", group_id="temp")
+            _temp_provider = provider_class(api_key="temp", group_id="temp")
         else:
-            temp_provider = provider_class()
+            _temp_provider = provider_class()
         
-        capabilities = temp_provider.capabilities
+        _capabilities = temp_provider.capabilities
         
         return {
             "provider_type": provider_type,

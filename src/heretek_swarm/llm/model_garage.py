@@ -18,23 +18,20 @@ Supports:
 Configuration: ~/.heretek-swarm/config.json
 """
 
-from __future__ import annotations
 
 import asyncio
 import json
-import logging
-import os
 import time
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Any, AsyncIterator, Callable, Dict, List, Optional, Type, Union
+from typing import Any, AsyncIterator, Dict, List, Optional, Type, Union
 
 import httpx
 import structlog
 
-logger = structlog.get_logger("model_garage")
+_logger = structlog.get_logger("model_garage")
 
 # ============================================================================
 # Configuration
@@ -219,26 +216,26 @@ class LLMResponse:
 class LLMProvider(ABC):
     """Abstract base class for LLM providers."""
 
-    def __init__(self, config: ProviderConfig):
+    def __init__(self, _config: ProviderConfig):
         self.config = config
         self._client: Optional[httpx.AsyncClient] = None
         self._rate_limiter = asyncio.Semaphore(10)
         self._last_request_time: float = 0
 
     @abstractmethod
-    async def complete(self, request: LLMRequest) -> LLMResponse:
+    async def complete(self, _request: LLMRequest) -> LLMResponse:
         """Complete a chat request."""
         pass
 
     @abstractmethod
-    async def stream(self, request: LLMRequest) -> AsyncIterator[str]:
+    async def stream(self, _request: LLMRequest) -> AsyncIterator[str]:
         """Stream chat completion tokens."""
         pass
 
     async def health_check(self) -> bool:
         """Check if the provider is healthy."""
         try:
-            client = await self._get_client()
+            _client = await self._get_client()
             response = await client.get("/")
             return response.status_code < 500
         except Exception:
@@ -259,16 +256,16 @@ class LLMProvider(ABC):
 
             self._client = httpx.AsyncClient(
                 base_url=self.config.base_url.rstrip("/"),
-                headers=headers,
-                timeout=httpx.Timeout(self.config.timeout, connect=10.0),
+                _headers = headers,
+                _timeout = httpx.Timeout(self.config.timeout, connect=10.0),
             )
         return self._client
 
     async def _rate_limit(self) -> None:
         """Apply rate limiting."""
         if self.config.max_rpm:
-            min_interval = 60.0 / self.config.max_rpm
-            elapsed = time.time() - self._last_request_time
+            _min_interval = 60.0 / self.config.max_rpm
+            _elapsed = time.time() - self._last_request_time
             if elapsed < min_interval:
                 await asyncio.sleep(min_interval - elapsed)
         self._last_request_time = time.time()
@@ -281,33 +278,33 @@ class LLMProvider(ABC):
 class OpenAIProvider(LLMProvider):
     """OpenAI API provider."""
 
-    async def complete(self, request: LLMRequest) -> LLMResponse:
+    async def complete(self, _request: LLMRequest) -> LLMResponse:
         await self._rate_limit()
         async with self._rate_limiter:
-            client = await self._get_client()
-            start_time = time.time()
+            _client = await self._get_client()
+            _start_time = time.time()
 
             model = request.model or self.config.default_model or "gpt-4o"
-            payload = request.to_dict()
+            _payload = request.to_dict()
             payload["model"] = model
 
             try:
-                response = await client.post("/chat/completions", json=payload)
+                _response = await client.post("/chat/completions", json=payload)
                 response.raise_for_status()
-                data = response.json()
+                _data = response.json()
 
                 latency_ms = (time.time() - start_time) * 1000
-                choice = data["choices"][0]
-                message = choice.get("message", {})
+                _choice = data["choices"][0]
+                _message = choice.get("message", {})
 
                 return LLMResponse(
                     content=message.get("content", ""),
                     model=data.get("model", model),
                     provider=ProviderType.OPENAI,
-                    usage=data.get("usage", {}),
-                    finish_reason=choice.get("finish_reason"),
-                    tool_calls=message.get("tool_calls", []),
-                    raw_response=data,
+                    _usage = data.get("usage", {}),
+                    _finish_reason = choice.get("finish_reason"),
+                    _tool_calls = message.get("tool_calls", []),
+                    _raw_response = data,
                     latency_ms=latency_ms,
                 )
             except httpx.HTTPStatusError as e:
@@ -317,12 +314,12 @@ class OpenAIProvider(LLMProvider):
                 logger.error("OpenAI completion failed", error=str(e))
                 raise
 
-    async def stream(self, request: LLMRequest) -> AsyncIterator[str]:
+    async def stream(self, _request: LLMRequest) -> AsyncIterator[str]:
         await self._rate_limit()
         async with self._rate_limiter:
-            client = await self._get_client()
+            _client = await self._get_client()
             model = request.model or self.config.default_model or "gpt-4o"
-            payload = request.to_dict()
+            _payload = request.to_dict()
             payload["model"] = model
             payload["stream"] = True
 
@@ -331,9 +328,9 @@ class OpenAIProvider(LLMProvider):
                 async for line in response.aiter_lines():
                     if line:
                         try:
-                            data = json.loads(line)
+                            _data = json.loads(line)
                             if "choices" in data and len(data["choices"]) > 0:
-                                delta = data["choices"][0].get("delta", {})
+                                _delta = data["choices"][0].get("delta", {})
                                 if "content" in delta:
                                     yield delta["content"]
                         except json.JSONDecodeError:
@@ -343,14 +340,14 @@ class OpenAIProvider(LLMProvider):
 class OllamaProvider(LLMProvider):
     """Ollama local API provider."""
 
-    async def complete(self, request: LLMRequest) -> LLMResponse:
+    async def complete(self, _request: LLMRequest) -> LLMResponse:
         await self._rate_limit()
         async with self._rate_limiter:
-            client = await self._get_client()
-            start_time = time.time()
+            _client = await self._get_client()
+            _start_time = time.time()
 
             model = request.model or self.config.default_model or "llama3.1"
-            payload = {
+            _payload = {
                 "model": model,
                 "messages": [m.to_dict() for m in request.messages],
                 "stream": False,
@@ -363,9 +360,9 @@ class OllamaProvider(LLMProvider):
                 payload["options"]["num_predict"] = request.max_tokens
 
             try:
-                response = await client.post("/api/chat", json=payload)
+                _response = await client.post("/api/chat", json=payload)
                 response.raise_for_status()
-                data = response.json()
+                _data = response.json()
 
                 latency_ms = (time.time() - start_time) * 1000
                 message = data.get("message", {})
@@ -374,22 +371,22 @@ class OllamaProvider(LLMProvider):
                     content=message.get("content", ""),
                     model=model,
                     provider=ProviderType.OLLAMA,
-                    usage={"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0},
-                    finish_reason=data.get("done_reason"),
-                    raw_response=data,
+                    _usage = {"prompt_tokens": 0, "completion_tokens": 0, "total_tokens": 0},
+                    _finish_reason = data.get("done_reason"),
+                    _raw_response = data,
                     latency_ms=latency_ms,
-                    cost=0.0,
+                    _cost = 0.0,
                 )
             except Exception as e:
                 logger.error("Ollama completion failed", error=str(e))
                 raise
 
-    async def stream(self, request: LLMRequest) -> AsyncIterator[str]:
+    async def stream(self, _request: LLMRequest) -> AsyncIterator[str]:
         await self._rate_limit()
         async with self._rate_limiter:
-            client = await self._get_client()
+            _client = await self._get_client()
             model = request.model or self.config.default_model or "llama3.1"
-            payload = {
+            _payload = {
                 "model": model,
                 "messages": [m.to_dict() for m in request.messages],
                 "stream": True,
@@ -401,7 +398,7 @@ class OllamaProvider(LLMProvider):
                 async for line in response.aiter_lines():
                     if line:
                         try:
-                            data = json.loads(line)
+                            _data = json.loads(line)
                             if "message" in data and "content" in data["message"]:
                                 yield data["message"]["content"]
                             if data.get("done"):
@@ -413,14 +410,14 @@ class OllamaProvider(LLMProvider):
 class MiniMaxProvider(LLMProvider):
     """MiniMax API provider."""
 
-    async def complete(self, request: LLMRequest) -> LLMResponse:
+    async def complete(self, _request: LLMRequest) -> LLMResponse:
         await self._rate_limit()
         async with self._rate_limiter:
-            client = await self._get_client()
-            start_time = time.time()
+            _client = await self._get_client()
+            _start_time = time.time()
 
             model = request.model or self.config.default_model or "abab6.5s"
-            payload = {
+            _payload = {
                 "model": model,
                 "messages": [m.to_dict() for m in request.messages],
                 "temperature": request.temperature,
@@ -430,28 +427,28 @@ class MiniMaxProvider(LLMProvider):
                 payload["group_id"] = self.config.metadata["group_id"]
 
             try:
-                response = await client.post("/text/chatcompletion_v2", json=payload)
+                _response = await client.post("/text/chatcompletion_v2", json=payload)
                 response.raise_for_status()
-                data = response.json()
+                _data = response.json()
 
                 latency_ms = (time.time() - start_time) * 1000
-                choice = data["choices"][0]
-                message = choice.get("message", {})
+                _choice = data["choices"][0]
+                _message = choice.get("message", {})
 
                 return LLMResponse(
                     content=message.get("content", ""),
                     model=model,
                     provider=ProviderType.MINIMAX,
-                    usage=data.get("usage", {}),
-                    finish_reason=choice.get("finish_reason"),
-                    raw_response=data,
+                    _usage = data.get("usage", {}),
+                    _finish_reason = choice.get("finish_reason"),
+                    _raw_response = data,
                     latency_ms=latency_ms,
                 )
             except Exception as e:
                 logger.error("MiniMax completion failed", error=str(e))
                 raise
 
-    async def stream(self, request: LLMRequest) -> AsyncIterator[str]:
+    async def stream(self, _request: LLMRequest) -> AsyncIterator[str]:
         # MiniMax streaming implementation similar to others
         raise NotImplementedError("MiniMax streaming not yet implemented")
 
@@ -459,16 +456,16 @@ class MiniMaxProvider(LLMProvider):
 class AnthropicProvider(LLMProvider):
     """Anthropic Claude API provider."""
 
-    async def complete(self, request: LLMRequest) -> LLMResponse:
+    async def complete(self, _request: LLMRequest) -> LLMResponse:
         await self._rate_limit()
         async with self._rate_limiter:
-            client = await self._get_client()
-            start_time = time.time()
+            _client = await self._get_client()
+            _start_time = time.time()
 
             model = request.model or self.config.default_model or "claude-3-5-sonnet-20241022"
 
-            anthropic_messages = []
-            system_prompt = ""
+            _anthropic_messages = []
+            _system_prompt = ""
             for msg in request.messages:
                 if msg.role == "system":
                     system_prompt += msg.content + "\n"
@@ -485,72 +482,72 @@ class AnthropicProvider(LLMProvider):
                 payload["system"] = system_prompt
 
             try:
-                response = await client.post("/v1/messages", json=payload)
+                _response = await client.post("/v1/messages", json=payload)
                 response.raise_for_status()
-                data = response.json()
+                _data = response.json()
 
                 latency_ms = (time.time() - start_time) * 1000
 
                 content = data.get("content", [{"text": ""}])
-                text = content[0].get("text", "") if content else ""
+                _text = content[0].get("text", "") if content else ""
 
                 return LLMResponse(
                     content=text,
                     model=model,
                     provider=ProviderType.ANTHROPIC,
-                    usage=data.get("usage", {}),
-                    finish_reason=data.get("stop_reason"),
-                    raw_response=data,
+                    _usage = data.get("usage", {}),
+                    _finish_reason = data.get("stop_reason"),
+                    _raw_response = data,
                     latency_ms=latency_ms,
                 )
             except Exception as e:
                 logger.error("Anthropic completion failed", error=str(e))
                 raise
 
-    async def stream(self, request: LLMRequest) -> AsyncIterator[str]:
+    async def stream(self, _request: LLMRequest) -> AsyncIterator[str]:
         raise NotImplementedError("Anthropic streaming not yet implemented")
 
 
 class OpenAICompatibleProvider(LLMProvider):
     """Generic OpenAI-compatible API provider."""
 
-    async def complete(self, request: LLMRequest) -> LLMResponse:
+    async def complete(self, _request: LLMRequest) -> LLMResponse:
         await self._rate_limit()
         async with self._rate_limiter:
-            client = await self._get_client()
-            start_time = time.time()
+            _client = await self._get_client()
+            _start_time = time.time()
 
             model = request.model or self.config.default_model
             if not model:
                 raise ValueError("Model must be specified for OpenAI-compatible providers")
 
-            payload = request.to_dict()
+            _payload = request.to_dict()
             payload["model"] = model
 
             try:
-                response = await client.post("/chat/completions", json=payload)
+                _response = await client.post("/chat/completions", json=payload)
                 response.raise_for_status()
-                data = response.json()
+                _data = response.json()
 
                 latency_ms = (time.time() - start_time) * 1000
-                choice = data["choices"][0]
-                message = choice.get("message", {})
+                _choice = data["choices"][0]
+                _message = choice.get("message", {})
 
                 return LLMResponse(
                     content=message.get("content", ""),
                     model=data.get("model", model),
                     provider=ProviderType.OPENAI_COMPATIBLE,
-                    usage=data.get("usage", {}),
-                    finish_reason=choice.get("finish_reason"),
-                    tool_calls=message.get("tool_calls", []),
-                    raw_response=data,
+                    _usage = data.get("usage", {}),
+                    _finish_reason = choice.get("finish_reason"),
+                    _tool_calls = message.get("tool_calls", []),
+                    _raw_response = data,
                     latency_ms=latency_ms,
                 )
             except Exception as e:
                 logger.error("OpenAI-compatible completion failed", error=str(e))
                 raise
 
-    async def stream(self, request: LLMRequest) -> AsyncIterator[str]:
+    async def stream(self, _request: LLMRequest) -> AsyncIterator[str]:
         # Similar streaming implementation to OpenAIProvider
         raise NotImplementedError("OpenAI-compatible streaming not yet implemented")
 
@@ -568,7 +565,7 @@ PROVIDER_CLASSES: Dict[ProviderType, Type[LLMProvider]] = {
 }
 
 
-def register_provider_class(provider_type: ProviderType, provider_class: Type[LLMProvider]) -> None:
+def register_provider_class(_provider_type: ProviderType, _provider_class: Type[LLMProvider]) -> None:
     """Register a custom provider class."""
     PROVIDER_CLASSES[provider_type] = provider_class
 
@@ -590,11 +587,7 @@ class ModelGarage:
     - Unified OpenAI-compatible API
     """
 
-    def __init__(
-        self,
-        config_file: Optional[Path] = None,
-        default_provider: Optional[ProviderType] = None,
-    ):
+    def __init__(self, _config_file: Optional[Path], _default_provider: Optional[ProviderType]):
         self.config_file = config_file or HERETEK_CONFIG_FILE
         self._providers: Dict[str, LLMProvider] = {}
         self._provider_configs: Dict[str, ProviderConfig] = {}
@@ -608,9 +601,9 @@ class ModelGarage:
         try:
             if self.config_file.exists():
                 with open(self.config_file, "r") as f:
-                    config_data = json.load(f)
+                    _config_data = json.load(f)
 
-                providers = config_data.get("modelProviders", [])
+                _providers = config_data.get("modelProviders", [])
                 for p in providers:
                     provider_type = ProviderType(p.get("type", "openai"))
                     config = ProviderConfig(
@@ -638,7 +631,7 @@ class ModelGarage:
 
     def _create_default_config(self) -> None:
         """Create default configuration file."""
-        default_config = {
+        _default_config = {
             "version": "1.0.0",
             "modelProviders": [
                 {
@@ -666,9 +659,9 @@ class ModelGarage:
     def _save_config(self) -> None:
         """Save provider configuration to file."""
         try:
-            config_data = {"version": "1.0.0", "modelProviders": []}
+            _config_data = {"version": "1.0.0", "modelProviders": []}
             for config in self._provider_configs.values():
-                provider_data = {
+                _provider_data = {
                     "id": config.id,
                     "type": config.provider_type.value,
                     "name": config.name,
@@ -717,12 +710,12 @@ class ModelGarage:
         self._initialized = False
         logger.info("Model Garage closed")
 
-    def add_provider(self, config: ProviderConfig) -> None:
+    def add_provider(self, _config: ProviderConfig) -> None:
         """Add a new provider configuration."""
         self._provider_configs[config.id] = config
         self._save_config()
 
-    def remove_provider(self, provider_id: str) -> None:
+    def remove_provider(self, _provider_id: str) -> None:
         """Remove a provider configuration."""
         if provider_id in self._provider_configs:
             del self._provider_configs[provider_id]
@@ -730,7 +723,7 @@ class ModelGarage:
             del self._providers[provider_id]
         self._save_config()
 
-    def get_provider_config(self, provider_id: str) -> Optional[ProviderConfig]:
+    def get_provider_config(self, _provider_id: str) -> Optional[ProviderConfig]:
         """Get provider configuration by ID."""
         return self._provider_configs.get(provider_id)
 
@@ -738,10 +731,10 @@ class ModelGarage:
         """List all configured providers."""
         return [config.to_dict() for config in self._provider_configs.values()]
 
-    async def health_check(self, provider_id: Optional[str] = None) -> Dict[str, bool]:
+    async def health_check(self, _provider_id: Optional[str]) -> Dict[str, bool]:
         """Check health of providers."""
-        results = {}
-        providers_to_check = (
+        _results = {}
+        _providers_to_check = (
             {provider_id: self._providers[provider_id]}
             if provider_id
             else self._providers
@@ -749,7 +742,7 @@ class ModelGarage:
 
         for pid, provider in providers_to_check.items():
             try:
-                healthy = await provider.health_check()
+                _healthy = await provider.health_check()
                 results[pid] = healthy
                 provider.config.health_status = "healthy" if healthy else "unhealthy"
             except Exception as e:
@@ -760,35 +753,28 @@ class ModelGarage:
 
         return results
 
-    async def complete(
-        self,
-        messages: List[ChatMessage],
-        model: Optional[str] = None,
-        provider_id: Optional[str] = None,
-        provider_preference: Optional[List[ProviderType]] = None,
-        **kwargs,
-    ) -> LLMResponse:
+    async def complete(self, _messages: List[ChatMessage], _model: Optional[str], _provider_id: Optional[str], _provider_preference: Optional[List[ProviderType]], _**kwargs) -> LLMResponse:
         """
         Complete a chat request with automatic provider routing.
         """
         if not self._initialized:
             await self.initialize()
 
-        request = LLMRequest(
-            messages=messages,
+        _request = LLMRequest(
+            _messages = messages,
             model=model,
             **{k: v for k, v in kwargs.items() if v is not None}
         )
 
         if provider_id:
-            providers_to_try = [provider_id] if provider_id in self._providers else []
+            _providers_to_try = [provider_id] if provider_id in self._providers else []
         elif provider_preference:
-            providers_to_try = [
+            _providers_to_try = [
                 pid for pid, cfg in self._provider_configs.items()
                 if cfg.provider_type in provider_preference and pid in self._providers
             ]
         else:
-            providers_to_try = []
+            _providers_to_try = []
             for cfg in sorted(self._provider_configs.values(), key=lambda c: c.priority):
                 if cfg.is_enabled and cfg.id in self._providers:
                     providers_to_try.append(cfg.id)
@@ -798,7 +784,7 @@ class ModelGarage:
         if not providers_to_try:
             raise ValueError("No available providers")
 
-        last_error = None
+        _last_error = None
         for pid in providers_to_try:
             provider = self._providers.get(pid)
             if not provider:
@@ -806,28 +792,22 @@ class ModelGarage:
 
             try:
                 logger.debug("Attempting completion", provider=pid, model=model or provider.config.default_model)
-                response = await provider.complete(request)
+                _response = await provider.complete(request)
                 logger.info("Completion successful", provider=pid, model=response.model, latency_ms=response.latency_ms)
                 return response
             except Exception as e:
-                last_error = e
+                _last_error = e
                 logger.warning("Provider failed, trying next", provider=pid, error=str(e))
 
         raise last_error or RuntimeError("All providers failed")
 
-    async def stream(
-        self,
-        messages: List[ChatMessage],
-        model: Optional[str] = None,
-        provider_id: Optional[str] = None,
-        **kwargs,
-    ) -> AsyncIterator[str]:
+    async def stream(self, _messages: List[ChatMessage], _model: Optional[str], _provider_id: Optional[str], _**kwargs) -> AsyncIterator[str]:
         """Stream chat completion tokens."""
         if not self._initialized:
             await self.initialize()
 
-        request = LLMRequest(
-            messages=messages,
+        _request = LLMRequest(
+            _messages = messages,
             model=model,
             stream=True,
             **{k: v for k, v in kwargs.items() if v is not None}
@@ -882,13 +862,13 @@ async def initialize_model_garage() -> ModelGarage:
 
 async def main():
     """Example usage of ModelGarage."""
-    garage = await initialize_model_garage()
+    _garage = await initialize_model_garage()
 
-    providers = garage.list_providers()
+    _providers = garage.list_providers()
     print("Available providers:", json.dumps(providers, indent=2))
 
-    response = await garage.complete(
-        messages=[
+    _response = await garage.complete(
+        _messages = [
             ChatMessage(role="system", content="You are a helpful AI assistant."),
             ChatMessage(role="user", content="What is the capital of France?"),
         ]

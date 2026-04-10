@@ -7,11 +7,10 @@ Supports local LLM inference with GGUF quantized models.
 Reference: https://github.com/ggerganov/llama.cpp/blob/master/examples/server/README.md
 """
 
-from __future__ import annotations
 
 import json
 import time
-from typing import Any, AsyncIterator, Dict, List, Optional
+from typing import AsyncIterator, Dict, List, Optional
 
 import httpx
 import structlog
@@ -26,7 +25,7 @@ from .base import (
     ProviderUnavailableError,
 )
 
-logger = structlog.get_logger("llm.providers.llamacpp")
+_logger = structlog.get_logger("llm.providers.llamacpp")
 
 
 class LlamaCppProvider(LLMProviderBase):
@@ -40,18 +39,13 @@ class LlamaCppProvider(LLMProviderBase):
     - GPU acceleration via cuBLAS, Vulkan, etc.
     
     Example:
-        provider = LlamaCppProvider(
+        _provider = LlamaCppProvider(
             base_url="http://localhost:8080",
             default_model="llama-2-7b-chat.Q4_K_M.gguf"
         )
     """
 
-    def __init__(
-        self,
-        base_url: str = "http://localhost:8080",
-        default_model: Optional[str] = None,
-        extra_config: Optional[Dict[str, Any]] = None,
-    ):
+    def __init__(self, _base_url: str, _default_model: Optional[str], _extra_config: Optional[Dict[str, _Any]]):
         """
         Initialize the llama.cpp provider.
         
@@ -61,7 +55,7 @@ class LlamaCppProvider(LLMProviderBase):
             extra_config: Additional configuration
         """
         super().__init__(
-            provider_name="llamacpp",
+            _provider_name = "llamacpp",
             base_url=base_url,
             api_key=None,  # llama.cpp doesn't require authentication
             default_model=default_model,
@@ -73,27 +67,27 @@ class LlamaCppProvider(LLMProviderBase):
     def _init_capabilities(self) -> ProviderCapabilities:
         """Initialize provider capabilities."""
         return ProviderCapabilities(
-            supports_streaming=True,
-            supports_function_calling=False,
-            supports_vision=False,
-            supports_json_mode=False,
-            max_context_length=self.extra_config.get("max_context_length", 4096),
-            max_output_tokens=self.extra_config.get("max_output_tokens", 512),
+            _supports_streaming = True,
+            _supports_function_calling = False,
+            _supports_vision = False,
+            _supports_json_mode = False,
+            _max_context_length = self.extra_config.get("max_context_length", 4096),
+            _max_output_tokens = self.extra_config.get("max_output_tokens", 512),
             default_temperature=0.8,  # llama.cpp default
-            temperature_range=(0.0, 2.0),
+            _temperature_range = (0.0, 2.0),
         )
 
     async def _get_client(self) -> httpx.AsyncClient:
         """Get or create the HTTP client."""
         if self._client is None or self._client.is_closed:
             self._client = httpx.AsyncClient(
-                base_url=self.base_url,
-                headers={"Content-Type": "application/json"},
-                timeout=httpx.Timeout(120.0, connect=10.0),
+                _base_url = self.base_url,
+                _headers = {"Content-Type": "application/json"},
+                _timeout = httpx.Timeout(120.0, connect=10.0),
             )
         return self._client
 
-    async def complete(self, request: LLMRequest) -> LLMResponse:
+    async def complete(self, _request: LLMRequest) -> LLMResponse:
         """
         Complete a chat request non-streaming.
         
@@ -103,15 +97,15 @@ class LlamaCppProvider(LLMProviderBase):
         Returns:
             The LLM response
         """
-        client = await self._get_client()
-        start_time = time.time()
+        _client = await self._get_client()
+        _start_time = time.time()
         
         # Convert messages to llama.cpp format
         # llama.cpp server uses a prompt format
-        prompt = self._format_prompt(request.messages)
+        _prompt = self._format_prompt(request.messages)
         
         # Build llama.cpp-specific payload
-        payload = {
+        _payload = {
             "prompt": prompt,
             "temperature": request.temperature,
             "top_p": request.top_p,
@@ -129,56 +123,56 @@ class LlamaCppProvider(LLMProviderBase):
         
         logger.debug(
             "Sending llama.cpp completion request",
-            prompt_length=len(prompt),
+            _prompt_length = len(prompt),
         )
         
         try:
-            response = await client.post(
+            _response = await client.post(
                 "/completion",
-                json=payload,
+                _json = payload,
             )
             
             if response.status_code >= 500:
                 raise ProviderUnavailableError(
                     "llama.cpp service unavailable",
-                    provider="llamacpp",
+                    _provider = "llamacpp",
                 )
             elif response.status_code != 200:
                 raise ProviderError(
                     f"llama.cpp API error: {response.status_code} - {response.text[:200]}",
-                    provider="llamacpp",
+                    _provider = "llamacpp",
                 )
             
-            data = response.json()
-            latency_ms = (time.time() - start_time) * 1000
+            _data = response.json()
+            _latency_ms = (time.time() - start_time) * 1000
             
             content = data.get("content", "")
             
             # Calculate approximate token usage
-            prompt_tokens = self._estimate_tokens(prompt)
-            completion_tokens = self._estimate_tokens(content)
+            _prompt_tokens = self._estimate_tokens(prompt)
+            _completion_tokens = self._estimate_tokens(content)
             
             return LLMResponse(
                 content=content,
-                model=self.default_model or "llamacpp",
-                usage={
+                _model = self.default_model or "llamacpp",
+                _usage = {
                     "prompt_tokens": prompt_tokens,
                     "completion_tokens": completion_tokens,
                     "total_tokens": prompt_tokens + completion_tokens,
                 },
-                finish_reason="stop",
-                raw_response=data,
-                latency_ms=latency_ms,
+                _finish_reason = "stop",
+                _raw_response = data,
+                _latency_ms = latency_ms,
             )
             
         except httpx.RequestError as e:
             raise ProviderUnavailableError(
                 f"Request failed: {e}. Is llama.cpp server running?",
-                provider="llamacpp",
-                cause=e,
+                _provider = "llamacpp",
+                _cause = e,
             )
 
-    async def stream(self, request: LLMRequest) -> AsyncIterator[str]:
+    async def stream(self, _request: LLMRequest) -> AsyncIterator[str]:
         """
         Stream a chat completion.
         
@@ -188,11 +182,11 @@ class LlamaCppProvider(LLMProviderBase):
         Yields:
             Chunks of the completion text
         """
-        client = await self._get_client()
+        _client = await self._get_client()
         
-        prompt = self._format_prompt(request.messages)
+        _prompt = self._format_prompt(request.messages)
         
-        payload = {
+        _payload = {
             "prompt": prompt,
             "temperature": request.temperature,
             "top_p": request.top_p,
@@ -205,19 +199,19 @@ class LlamaCppProvider(LLMProviderBase):
         
         logger.debug(
             "Sending llama.cpp streaming request",
-            prompt_length=len(prompt),
+            _prompt_length = len(prompt),
         )
         
         try:
             async with client.stream(
                 "POST",
                 "/completion",
-                json=payload,
+                _json = payload,
             ) as response:
                 if response.status_code != 200:
                     raise ProviderError(
                         f"llama.cpp API error: {response.status_code}",
-                        provider="llamacpp",
+                        _provider = "llamacpp",
                     )
                 
                 async for line in response.aiter_lines():
@@ -228,7 +222,7 @@ class LlamaCppProvider(LLMProviderBase):
                     # or JSON with "content" field
                     try:
                         if line.startswith("{"):
-                            chunk = json.loads(line)
+                            _chunk = json.loads(line)
                             content = chunk.get("content", "")
                         else:
                             content = line
@@ -243,17 +237,17 @@ class LlamaCppProvider(LLMProviderBase):
         except httpx.RequestError as e:
             raise ProviderUnavailableError(
                 f"Stream request failed: {e}",
-                provider="llamacpp",
-                cause=e,
+                _provider = "llamacpp",
+                _cause = e,
             )
 
-    def _format_prompt(self, messages: List[Message]) -> str:
+    def _format_prompt(self, _messages: List[Message]) -> str:
         """
         Format messages into a prompt for llama.cpp.
         
         Uses a simple chat format. Can be customized based on the model.
         """
-        formatted = ""
+        _formatted = ""
         
         for msg in messages:
             if msg.role == "system":
@@ -268,9 +262,9 @@ class LlamaCppProvider(LLMProviderBase):
         
         return formatted
 
-    def _estimate_tokens(self, text: str) -> int:
+    def _estimate_tokens(self, _text: str) -> int:
         """Estimate token count from text."""
-        total_chars = len(text)
+        _total_chars = len(text)
         # Rough estimate: 1 token ≈ 4 characters for English text
         return max(1, total_chars // 4)
 
@@ -285,7 +279,7 @@ class LlamaCppProvider(LLMProviderBase):
             return [self.default_model]
         return []
 
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
+    async def __aexit__(self, _exc_type, _exc_val, _exc_tb):
         """Cleanup HTTP client."""
         if self._client and not self._client.is_closed:
             await self._client.aclose()

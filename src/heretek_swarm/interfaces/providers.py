@@ -16,7 +16,7 @@ class LLMProviderInterface(ABC):
     """
     
     @abstractmethod
-    async def complete(self, prompt: str, **kwargs) -> Any:
+    async def complete(self, _prompt: str, _**kwargs) -> Any:
         """Generate a completion from a prompt.
         
         Args:
@@ -29,7 +29,7 @@ class LLMProviderInterface(ABC):
         pass
     
     @abstractmethod
-    async def chat(self, messages: List[Dict[str, Any]], **kwargs) -> Any:
+    async def chat(self, _messages: List[Dict[str, _Any]], _**kwargs) -> Any:
         """Generate a chat completion.
         
         Args:
@@ -42,7 +42,7 @@ class LLMProviderInterface(ABC):
         pass
     
     @abstractmethod
-    async def embed(self, text: str) -> List[float]:
+    async def embed(self, _text: str) -> List[float]:
         """Generate embeddings for text.
         
         Args:
@@ -54,7 +54,7 @@ class LLMProviderInterface(ABC):
         pass
     
     @abstractmethod
-    async def initialize(self, config: Dict[str, Any]) -> None:
+    async def initialize(self, _config: Dict[str, _Any]) -> None:
         """Initialize the provider with configuration.
         
         Args:
@@ -88,7 +88,7 @@ class EmbeddingProviderInterface(ABC):
     """
     
     @abstractmethod
-    async def embed(self, text: str) -> List[float]:
+    async def embed(self, _text: str) -> List[float]:
         """Generate embeddings for a single text.
         
         Args:
@@ -100,7 +100,7 @@ class EmbeddingProviderInterface(ABC):
         pass
     
     @abstractmethod
-    async def embed_batch(self, texts: List[str]) -> List[List[float]]:
+    async def embed_batch(self, _texts: List[str]) -> List[List[float]]:
         """Generate embeddings for multiple texts.
         
         Args:
@@ -112,7 +112,7 @@ class EmbeddingProviderInterface(ABC):
         pass
     
     @abstractmethod
-    async def initialize(self, config: Dict[str, Any]) -> None:
+    async def initialize(self, _config: Dict[str, _Any]) -> None:
         """Initialize the provider with configuration.
         
         Args:

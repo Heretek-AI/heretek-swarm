@@ -18,7 +18,7 @@ class ProviderRegistryInterface(ABC):
     """
     
     @abstractmethod
-    def get_llm_provider(self, name: str) -> Optional[LLMProviderInterface]:
+    def get_llm_provider(self, _name: str) -> Optional[LLMProviderInterface]:
         """Get an LLM provider by name.
         
         Args:
@@ -30,7 +30,7 @@ class ProviderRegistryInterface(ABC):
         pass
     
     @abstractmethod
-    def get_embedding_provider(self, name: str) -> Optional[EmbeddingProviderInterface]:
+    def get_embedding_provider(self, _name: str) -> Optional[EmbeddingProviderInterface]:
         """Get an embedding provider by name.
         
         Args:
@@ -60,11 +60,7 @@ class ProviderRegistryInterface(ABC):
         pass
     
     @abstractmethod
-    def register_llm_provider(
-        self, 
-        name: str, 
-        provider_class: Type[LLMProviderInterface]
-    ) -> None:
+    def register_llm_provider(self, _name: str, _provider_class: Type[LLMProviderInterface]) -> None:
         """Register an LLM provider class.
         
         Args:
@@ -74,11 +70,7 @@ class ProviderRegistryInterface(ABC):
         pass
     
     @abstractmethod
-    def register_embedding_provider(
-        self, 
-        name: str, 
-        provider_class: Type[EmbeddingProviderInterface]
-    ) -> None:
+    def register_embedding_provider(self, _name: str, _provider_class: Type[EmbeddingProviderInterface]) -> None:
         """Register an embedding provider class.
         
         Args:
@@ -88,7 +80,7 @@ class ProviderRegistryInterface(ABC):
         pass
     
     @abstractmethod
-    def get_provider_info(self, name: str) -> Optional[Dict[str, Any]]:
+    def get_provider_info(self, _name: str) -> Optional[Dict[str, Any]]:
         """Get provider information.
         
         Args:

@@ -5,7 +5,6 @@ Abstract base class for all LLM providers in Heretek Swarm.
 Defines the interface that all providers must implement.
 """
 
-from __future__ import annotations
 
 import time
 from abc import ABC, abstractmethod
@@ -14,10 +13,10 @@ from typing import Any, AsyncIterator, Callable, Dict, List, Optional, Union
 
 import structlog
 
-logger = structlog.get_logger("llm.providers.base")
+_logger = structlog.get_logger("llm.providers.base")
 
 # Type alias for streaming callback
-StreamingCallback = Callable[[str], None]
+_StreamingCallback = Callable[[str], None]
 
 
 @dataclass
@@ -31,7 +30,7 @@ class Message:
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert message to dictionary."""
-        result = {"role": self.role, "content": self.content}
+        _result = {"role": self.role, "content": self.content}
         if self.name:
             result["name"] = self.name
         if self.tool_calls:
@@ -62,7 +61,7 @@ class LLMRequest:
 
     def to_dict(self) -> Dict[str, Any]:
         """Convert request to dictionary for API calls."""
-        result = {
+        _result = {
             "messages": [m.to_dict() for m in self.messages],
             "temperature": self.temperature,
             "max_tokens": self.max_tokens,
@@ -148,20 +147,13 @@ class LLMProviderBase(ABC):
     
     Example usage:
         provider = OpenAIProvider(api_key="sk-...", base_url="...")
-        response = await provider.complete(messages=[...])
+        _response = await provider.complete(messages=[...])
         
         async for chunk in provider.stream(messages=[...]):
             print(chunk, end="")
     """
 
-    def __init__(
-        self,
-        provider_name: str,
-        base_url: str,
-        api_key: Optional[str] = None,
-        default_model: Optional[str] = None,
-        extra_config: Optional[Dict[str, Any]] = None,
-    ):
+    def __init__(self, _provider_name: str, _base_url: str, _api_key: Optional[str], _default_model: Optional[str], _extra_config: Optional[Dict[str, _Any]]):
         """
         Initialize the LLM provider.
         
@@ -183,8 +175,8 @@ class LLMProviderBase(ABC):
         logger.debug(
             "LLM provider initialized",
             provider_name=provider_name,
-            base_url=base_url,
-            has_api_key=api_key is not None,
+            _base_url = base_url,
+            _has_api_key = api_key is not None,
         )
 
     @abstractmethod
@@ -198,7 +190,7 @@ class LLMProviderBase(ABC):
         return self._capabilities
 
     @abstractmethod
-    async def complete(self, request: LLMRequest) -> LLMResponse:
+    async def complete(self, _request: LLMRequest) -> LLMResponse:
         """
         Complete a chat request non-streaming.
         
@@ -214,10 +206,7 @@ class LLMProviderBase(ABC):
         pass
 
     @abstractmethod
-    async def stream(
-        self,
-        request: LLMRequest,
-    ) -> AsyncIterator[str]:
+    async def stream(self, _request: LLMRequest) -> AsyncIterator[str]:
         """
         Stream a chat completion.
         
@@ -232,12 +221,7 @@ class LLMProviderBase(ABC):
         """
         pass
 
-    async def complete_with_retry(
-        self,
-        request: LLMRequest,
-        max_retries: int = 3,
-        retry_delay: float = 1.0,
-    ) -> LLMResponse:
+    async def complete_with_retry(self, _request: LLMRequest, _max_retries: int, _retry_delay: float) -> LLMResponse:
         """
         Complete a request with automatic retries.
         
@@ -252,20 +236,20 @@ class LLMProviderBase(ABC):
         Raises:
             ProviderError: If all retries fail
         """
-        last_error = None
+        _last_error = None
         
         for attempt in range(max_retries):
             try:
                 return await self.complete(request)
             except Exception as e:
-                last_error = e
+                _last_error = e
                 if attempt < max_retries - 1:
                     logger.warning(
                         "LLM request failed, retrying",
                         provider=self.provider_name,
-                        attempt=attempt + 1,
-                        max_retries=max_retries,
-                        error=str(e),
+                        _attempt = attempt + 1,
+                        _max_retries = max_retries,
+                        _error = str(e),
                     )
                     await asyncio.sleep(retry_delay * (attempt + 1))
         
@@ -275,7 +259,7 @@ class LLMProviderBase(ABC):
             cause=last_error,
         )
 
-    async def test_connectivity(self, model: Optional[str] = None) -> ConnectivityTestResult:
+    async def test_connectivity(self, _model: Optional[str]) -> ConnectivityTestResult:
         """
         Test connectivity to the provider.
         
@@ -285,34 +269,34 @@ class LLMProviderBase(ABC):
         Returns:
             Connectivity test result
         """
-        start_time = time.time()
+        _start_time = time.time()
         
         try:
-            test_request = LLMRequest(
-                messages=[Message(role="user", content="Hello, this is a connectivity test.")],
+            _test_request = LLMRequest(
+                _messages = [Message(role="user", content="Hello, this is a connectivity test.")],
                 model=model or self.default_model,
-                max_tokens=10,
+                _max_tokens = 10,
             )
             
-            response = await self.complete(test_request)
-            latency_ms = (time.time() - start_time) * 1000
+            _response = await self.complete(test_request)
+            _latency_ms = (time.time() - start_time) * 1000
             
             return ConnectivityTestResult(
-                success=True,
-                provider_name=self.provider_name,
-                model_used=response.model,
-                response_text=response.content,
-                latency_ms=latency_ms,
+                _success = True,
+                _provider_name = self.provider_name,
+                _model_used = response.model,
+                _response_text = response.content,
+                _latency_ms = latency_ms,
             )
             
         except Exception as e:
-            latency_ms = (time.time() - start_time) * 1000
+            _latency_ms = (time.time() - start_time) * 1000
             return ConnectivityTestResult(
-                success=False,
-                provider_name=self.provider_name,
-                model_used=model or self.default_model,
-                latency_ms=latency_ms,
-                error=str(e),
+                _success = False,
+                _provider_name = self.provider_name,
+                _model_used = model or self.default_model,
+                _latency_ms = latency_ms,
+                _error = str(e),
             )
 
     async def list_models(self) -> List[str]:
@@ -327,7 +311,7 @@ class LLMProviderBase(ABC):
         """
         raise NotImplementedError("Model listing not supported for this provider")
 
-    def _get_model(self, model: Optional[str]) -> str:
+    def _get_model(self, _model: Optional[str]) -> str:
         """Get the model to use, falling back to default if needed."""
         if model:
             return model
@@ -339,7 +323,7 @@ class LLMProviderBase(ABC):
         """Async context manager entry."""
         return self
 
-    async def __aexit__(self, exc_type, exc_val, exc_tb):
+    async def __aexit__(self, _exc_type, _exc_val, _exc_tb):
         """Async context manager exit."""
         pass
 
@@ -358,12 +342,7 @@ class ConnectivityTestResult:
 class ProviderError(Exception):
     """Exception raised for provider-related errors."""
     
-    def __init__(
-        self,
-        message: str,
-        provider: Optional[str] = None,
-        cause: Optional[Exception] = None,
-    ):
+    def __init__(self, _message: str, _provider: Optional[str], _cause: Optional[Exception]):
         self.message = message
         self.provider = provider
         self.cause = cause
@@ -371,11 +350,11 @@ class ProviderError(Exception):
     
     def format_message(self) -> str:
         """Format the error message."""
-        msg = self.message
+        _msg = self.message
         if self.provider:
-            msg = f"[{self.provider}] {msg}"
+            _msg = f"[{self.provider}] {msg}"
         if self.cause:
-            msg = f"{msg} (caused by: {self.cause})"
+            _msg = f"{msg} (caused by: {self.cause})"
         return msg
 
 
@@ -391,12 +370,7 @@ class ProviderAuthenticationError(ProviderError):
 
 class ProviderRateLimitError(ProviderError):
     """Exception raised when rate limited."""
-    def __init__(
-        self,
-        message: str,
-        provider: Optional[str] = None,
-        retry_after: Optional[float] = None,
-    ):
+    def __init__(self, _message: str, _provider: Optional[str], _retry_after: Optional[float]):
         self.retry_after = retry_after
         super().__init__(message, provider)
 

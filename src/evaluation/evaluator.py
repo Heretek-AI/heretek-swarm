@@ -6,16 +6,15 @@ and performance benchmarking. Inspired by Harbor and RagaAI-Catalyst patterns.
 """
 
 import asyncio
-import logging
 import time
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Callable, Type
+from typing import Any, Dict, List, Optional
 from dataclasses import dataclass, field
 from enum import Enum
 
 import structlog
 
-logger = structlog.get_logger(__name__)
+_logger = structlog.get_logger(__name__)
 
 
 class EvaluationStatus(Enum):
@@ -172,34 +171,30 @@ class AgentEvaluator:
 
     Example:
         ```python
-        evaluator = AgentEvaluator()
+        _evaluator = AgentEvaluator()
 
         # Create test cases
-        test_cases = [
+        _test_cases = [
             TestCase(
                 id="test-1",
-                name="Basic query",
+                _name = "Basic query",
                 input_data={"query": "What is 2+2?"},
                 expected_output={"answer": "4"}
             )
         ]
 
         # Evaluate agent
-        result = await evaluator.evaluate_agent(
+        _result = await evaluator.evaluate_agent(
             agent_id="my-agent",
             agent=my_agent,
-            test_cases=test_cases
+            _test_cases = test_cases
         )
 
         print(f"Success rate: {result.metrics.success_rate:.2%}")
         ```
     """
 
-    def __init__(
-        self,
-        timeout: int = 30,
-        parallel: bool = True,
-    ):
+    def __init__(self, _timeout: int, _parallel: bool):
         """
         Initialize evaluator.
 
@@ -217,13 +212,7 @@ class AgentEvaluator:
             parallel=parallel,
         )
 
-    async def evaluate_agent(
-        self,
-        agent_id: str,
-        agent: Any,
-        test_cases: List[TestCase],
-        evaluation_id: Optional[str] = None,
-    ) -> EvaluationResult:
+    async def evaluate_agent(self, _agent_id: str, _agent: Any, _test_cases: List[TestCase], _evaluation_id: Optional[str]) -> EvaluationResult:
         """
         Evaluate an agent against test cases.
 
@@ -237,39 +226,39 @@ class AgentEvaluator:
             EvaluationResult with test results and metrics
         """
         if evaluation_id is None:
-            evaluation_id = f"eval-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S%f')}"
+            _evaluation_id = f"eval-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S%f')}"
 
-        started_at = datetime.now(timezone.utc).isoformat()
-        start_time = time.time()
+        _started_at = datetime.now(timezone.utc).isoformat()
+        _start_time = time.time()
 
         logger.info(
             "evaluation_started",
             agent_id=agent_id,
-            evaluation_id=evaluation_id,
-            test_cases_count=len(test_cases),
+            _evaluation_id = evaluation_id,
+            _test_cases_count = len(test_cases),
         )
 
         # Execute test cases
         if self.parallel:
-            test_results = await self._execute_parallel(agent, test_cases)
+            _test_results = await self._execute_parallel(agent, test_cases)
         else:
-            test_results = await self._execute_sequential(agent, test_cases)
+            _test_results = await self._execute_sequential(agent, test_cases)
 
         # Calculate metrics
         metrics = self._calculate_metrics(test_results)
 
-        completed_at = datetime.now(timezone.utc).isoformat()
-        total_time = time.time() - start_time
+        _completed_at = datetime.now(timezone.utc).isoformat()
+        _total_time = time.time() - start_time
 
-        result = EvaluationResult(
+        _result = EvaluationResult(
             agent_id=agent_id,
-            evaluation_id=evaluation_id,
-            status=EvaluationStatus.COMPLETED,
-            test_results=test_results,
+            _evaluation_id = evaluation_id,
+            _status = EvaluationStatus.COMPLETED,
+            _test_results = test_results,
             metrics=metrics,
-            started_at=started_at,
-            completed_at=completed_at,
-            total_time=total_time,
+            _started_at = started_at,
+            _completed_at = completed_at,
+            _total_time = total_time,
         )
 
         self._evaluations[evaluation_id] = result
@@ -277,54 +266,42 @@ class AgentEvaluator:
         logger.info(
             "evaluation_completed",
             agent_id=agent_id,
-            evaluation_id=evaluation_id,
-            success_rate=metrics.success_rate,
-            total_time=total_time,
+            _evaluation_id = evaluation_id,
+            _success_rate = metrics.success_rate,
+            _total_time = total_time,
         )
 
         return result
 
-    async def _execute_parallel(
-        self,
-        agent: Any,
-        test_cases: List[TestCase],
-    ) -> List[TestResult]:
+    async def _execute_parallel(self, _agent: Any, _test_cases: List[TestCase]) -> List[TestResult]:
         """Execute test cases in parallel."""
-        tasks = [
+        _tasks = [
             self._execute_test_case(agent, test_case)
             for test_case in test_cases
         ]
         return await asyncio.gather(*tasks, return_exceptions=True)
 
-    async def _execute_sequential(
-        self,
-        agent: Any,
-        test_cases: List[TestCase],
-    ) -> List[TestResult]:
+    async def _execute_sequential(self, _agent: Any, _test_cases: List[TestCase]) -> List[TestResult]:
         """Execute test cases sequentially."""
-        results = []
+        _results = []
         for test_case in test_cases:
-            result = await self._execute_test_case(agent, test_case)
+            _result = await self._execute_test_case(agent, test_case)
             results.append(result)
         return results
 
-    async def _execute_test_case(
-        self,
-        agent: Any,
-        test_case: TestCase,
-    ) -> TestResult:
+    async def _execute_test_case(self, _agent: Any, _test_case: TestCase) -> TestResult:
         """Execute a single test case."""
-        start_time = time.time()
+        _start_time = time.time()
 
         try:
             # Execute agent
             if hasattr(agent, "execute"):
-                output = await asyncio.wait_for(
+                _output = await asyncio.wait_for(
                     agent.execute(test_case.input_data),
                     timeout=self.timeout,
                 )
             elif hasattr(agent, "run"):
-                output = await asyncio.wait_for(
+                _output = await asyncio.wait_for(
                     agent.run(test_case.input_data),
                     timeout=self.timeout,
                 )
@@ -350,10 +327,10 @@ class AgentEvaluator:
                 success = False
 
             return TestResult(
-                test_case_id=test_case.id,
+                _test_case_id = test_case.id,
                 success=success,
-                output=output,
-                expected=test_case.expected_output,
+                _output = output,
+                _expected = test_case.expected_output,
                 execution_time=execution_time,
                 validation_errors=validation_errors,
             )
@@ -362,11 +339,11 @@ class AgentEvaluator:
             execution_time = time.time() - start_time
             logger.warning(
                 "test_case_timeout",
-                test_case_id=test_case.id,
+                _test_case_id = test_case.id,
                 timeout=self.timeout,
             )
             return TestResult(
-                test_case_id=test_case.id,
+                _test_case_id = test_case.id,
                 success=False,
                 error=TimeoutError(f"Test case timed out after {self.timeout}s"),
                 execution_time=execution_time,
@@ -377,30 +354,26 @@ class AgentEvaluator:
             execution_time = time.time() - start_time
             logger.error(
                 "test_case_failed",
-                test_case_id=test_case.id,
-                error=str(e),
+                _test_case_id = test_case.id,
+                _error = str(e),
             )
             return TestResult(
-                test_case_id=test_case.id,
+                _test_case_id = test_case.id,
                 success=False,
-                error=e,
+                _error = e,
                 execution_time=execution_time,
                 validation_errors=[str(e)],
             )
 
-    def _validate_output(
-        self,
-        output: Any,
-        constraints: Optional[OutputConstraints],
-    ) -> List[str]:
+    def _validate_output(self, _output: Any, _constraints: Optional[OutputConstraints]) -> List[str]:
         """Validate output against constraints."""
-        errors = []
+        _errors = []
 
         if constraints is None:
             return errors
 
         # Check length constraints
-        output_str = str(output)
+        _output_str = str(output)
         if constraints.max_length is not None:
             if len(output_str) > constraints.max_length:
                 errors.append(f"Output exceeds max length of {constraints.max_length}")
@@ -428,50 +401,47 @@ class AgentEvaluator:
 
         return errors
 
-    def _calculate_metrics(self, test_results: List[TestResult]) -> QualityMetrics:
+    def _calculate_metrics(self, _test_results: List[TestResult]) -> QualityMetrics:
         """Calculate quality metrics from test results."""
         if not test_results:
             return QualityMetrics()
 
         # Success rate
-        success_count = sum(1 for r in test_results if r.success)
-        success_rate = (success_count / len(test_results)) * 100
+        _success_count = sum(1 for r in test_results if r.success)
+        _success_rate = (success_count / len(test_results)) * 100
 
         # Average execution time
-        avg_time = sum(r.execution_time for r in test_results) / len(test_results)
+        _avg_time = sum(r.execution_time for r in test_results) / len(test_results)
 
         # Constraint compliance
-        total_constraints = sum(
+        _total_constraints = sum(
             1 for r in test_results if not r.validation_errors
         )
-        constraint_compliance = (total_constraints / len(test_results)) * 100
+        _constraint_compliance = (total_constraints / len(test_results)) * 100
 
         # Output quality (based on validation errors)
-        total_errors = sum(len(r.validation_errors) for r in test_results)
-        output_quality = max(0, 100 - (total_errors / len(test_results)) * 100)
+        _total_errors = sum(len(r.validation_errors) for r in test_results)
+        _output_quality = max(0, 100 - (total_errors / len(test_results)) * 100)
 
         return QualityMetrics(
-            success_rate=success_rate,
-            response_time=avg_time,
-            constraint_compliance=constraint_compliance,
-            output_quality=output_quality,
+            _success_rate = success_rate,
+            _response_time = avg_time,
+            _constraint_compliance = constraint_compliance,
+            _output_quality = output_quality,
         )
 
-    def get_evaluation(self, evaluation_id: str) -> Optional[EvaluationResult]:
+    def get_evaluation(self, _evaluation_id: str) -> Optional[EvaluationResult]:
         """Get evaluation result by ID."""
         return self._evaluations.get(evaluation_id)
 
-    def list_evaluations(self, agent_id: Optional[str] = None) -> List[EvaluationResult]:
+    def list_evaluations(self, _agent_id: Optional[str]) -> List[EvaluationResult]:
         """List all evaluations, optionally filtered by agent."""
-        evaluations = list(self._evaluations.values())
+        _evaluations = list(self._evaluations.values())
         if agent_id:
             return [e for e in evaluations if e.agent_id == agent_id]
         return evaluations
 
-    def compare_agents(
-        self,
-        agent_evaluations: Dict[str, EvaluationResult],
-    ) -> Dict[str, QualityMetrics]:
+    def compare_agents(self, _agent_evaluations: Dict[str, _EvaluationResult]) -> Dict[str, QualityMetrics]:
         """
         Compare multiple agents by their evaluation metrics.
 
@@ -481,7 +451,7 @@ class AgentEvaluator:
         Returns:
             Dict mapping agent_id to QualityMetrics
         """
-        comparison = {}
+        _comparison = {}
         for agent_id, evaluation in agent_evaluations.items():
             if evaluation.metrics:
                 comparison[agent_id] = evaluation.metrics
