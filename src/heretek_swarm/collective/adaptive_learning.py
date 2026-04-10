@@ -9,16 +9,14 @@ Features:
 - Success-weighted pattern adoption
 - Failure pattern avoidance
 - Learning convergence tracking
+- Environment-adaptive learning rate
+- Fitness-based behavior selection
+- Capability mutation for evolution
 - Zero-trust validation of all adaptive changes
-
-Zero-Trust Principles:
-- All learning rate changes validated before application
-- Source attribution required for pattern adoption
-- Confidence thresholds enforced
-- Audit logging for all adaptations
 """
 
 import asyncio
+import random
 import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
@@ -35,12 +33,13 @@ logger = structlog.get_logger(__name__)
 class LearningRateStrategy(str, Enum):
     """Strategies for learning rate adaptation."""
     
-    CONSTANT = "constant"  # Fixed learning rate
-    DECAY = "decay"  # Time-based decay
-    ADAPTIVE = "adaptive"  # Success-based adaptation
-    CONVERGENCE = "convergence"  # Convergence-guided
-    OPTIMISTIC = "optimistic"  # Increase on success
-    PESSIMISTIC = "pessimistic"  # Decrease on failure
+    CONSTANT = "constant"
+    DECAY = "decay"
+    ADAPTIVE = "adaptive"
+    CONVERGENCE = "convergence"
+    OPTIMISTIC = "optimistic"
+    PESSIMISTIC = "pessimistic"
+    EVOLUTIONARY = "evolutionary"
 
 
 class AdaptationReason(str, Enum):
@@ -54,23 +53,125 @@ class AdaptationReason(str, Enum):
     EXTERNAL_SIGNAL = "external_signal"
     TIME_DECAY = "time_decay"
     MANUAL_OVERRIDE = "manual_override"
+    ENVIRONMENT_CHANGE = "environment_change"
+    FITNESS_PRESSURE = "fitness_pressure"
+
+
+class MutationType(str, Enum):
+    """Types of capability mutations."""
+    
+    EXPLORATION = "exploration"
+    EXPLOITATION = "exploitation"
+    CROSSOVER = "crossover"
+    ADAPTATION = "adaptation"
+
+
+class BehaviorFitness:
+    """Tracks fitness of a specific behavior."""
+    
+    def __init__(self, behavior_id: str, behavior_type: str, initial_fitness: float = 0.5):
+        self.behavior_id = behavior_id
+        self.behavior_type = behavior_type
+        self.fitness = initial_fitness
+        self.fitness_history: List[float] = [initial_fitness]
+        self.selection_count = 0
+        self.success_count = 0
+        self.failure_count = 0
+        self.adaptation_events: List[Dict[str, Any]] = []
+    
+    @property
+    def success_rate(self) -> float:
+        total = self.success_count + self.failure_count
+        if total == 0:
+            return 0.5
+        return self.success_count / total
+    
+    def update_fitness(self, success: bool, reward: float = 0.1) -> float:
+        if success:
+            self.success_count += 1
+            delta = reward
+        else:
+            self.failure_count += 1
+            delta = -reward * 0.5
+        
+        self.fitness = max(0.0, min(1.0, self.fitness + delta))
+        self.fitness_history.append(self.fitness)
+        
+        return self.fitness
+    
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "behavior_id": self.behavior_id,
+            "behavior_type": self.behavior_type,
+            "fitness": self.fitness,
+            "success_rate": self.success_rate,
+            "selection_count": self.selection_count,
+            "success_count": self.success_count,
+            "failure_count": self.failure_count,
+        }
+
+
+class EnvironmentProfile:
+    """Profile of the current environment for adaptive learning."""
+    
+    def __init__(self):
+        self.stability: float = 0.5
+        self.complexity: float = 0.5
+        self.demand_profile: Dict[str, float] = {}
+        self.change_frequency: float = 0.0
+        self.last_change: str = datetime.now(timezone.utc).isoformat()
+        self.optimal_learning_rate: float = 0.1
+        self.selection_pressure: float = 0.5
+    
+    def update_from_observations(
+        self,
+        performance_variance: float,
+        task_diversity: float,
+        success_rate: float,
+    ) -> None:
+        self.stability = max(0.0, min(1.0, 1.0 - performance_variance))
+        self.complexity = max(0.0, min(1.0, task_diversity * (1.0 - success_rate)))
+        
+        if self.stability > 0.7:
+            self.optimal_learning_rate = 0.05 + (1.0 - self.stability) * 0.1
+        else:
+            self.optimal_learning_rate = 0.1 + (1.0 - self.stability) * 0.2
+        
+        self.selection_pressure = (self.complexity + (1.0 - self.stability)) / 2
+    
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "stability": self.stability,
+            "complexity": self.complexity,
+            "demand_profile": self.demand_profile,
+            "change_frequency": self.change_frequency,
+            "last_change": self.last_change,
+            "optimal_learning_rate": self.optimal_learning_rate,
+            "selection_pressure": self.selection_pressure,
+        }
 
 
 @dataclass
 class LearningRateConfig:
     """Configuration for adaptive learning rate controller."""
     
-    initial_rate: float = 0.1  # Initial learning rate
-    min_rate: float = 0.001  # Minimum learning rate
-    max_rate: float = 1.0  # Maximum learning rate
+    initial_rate: float = 0.1
+    min_rate: float = 0.001
+    max_rate: float = 1.0
     strategy: LearningRateStrategy = LearningRateStrategy.ADAPTIVE
-    decay_factor: float = 0.95  # Decay factor for time-based decay
-    success_boost: float = 0.1  # Rate increase on success
-    failure_penalty: float = 0.2  # Rate decrease on failure
-    convergence_threshold: float = 0.01  # Threshold for convergence detection
-    window_size: int = 100  # Window size for moving averages
-    validation_required: bool = True  # Require validation for changes
-    audit_logging: bool = True  # Enable audit logging
+    decay_factor: float = 0.95
+    success_boost: float = 0.1
+    failure_penalty: float = 0.2
+    convergence_threshold: float = 0.01
+    window_size: int = 100
+    validation_required: bool = True
+    audit_logging: bool = True
+    
+    mutation_rate: float = 0.1
+    crossover_rate: float = 0.2
+    selection_pressure: float = 0.5
+    environment_adaptation: bool = True
+    fitness_threshold: float = 0.3
 
 
 @dataclass
@@ -85,16 +186,14 @@ class AgentLearningState:
     failed_updates: int = 0
     last_adaptation: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     adaptation_count: int = 0
-    convergence_score: float = 1.0  # 1.0 = not converged, 0.0 = fully converged
-    performance_trend: float = 0.0  # Positive = improving, negative = declining
-    adopted_patterns: List[str] = field(default_factory=list)  # Pattern IDs
-    avoided_patterns: List[str] = field(default_factory=list)  # Pattern IDs
+    convergence_score: float = 1.0
+    performance_trend: float = 0.0
+    adopted_patterns: List[str] = field(default_factory=list)
+    avoided_patterns: List[str] = field(default_factory=list)
     rate_history: List[Tuple[str, float, AdaptationReason]] = field(default_factory=list)
-    metadata: Dict[str, Any] = field(default_factory=dict)
     
-    def to_dict(self) -> Dict[str, Any]:
-        """Convert to dictionary for serialization."""
-        return {
+    fitness_score: float = 0.5
+    behavior_pool: Dict[str, BehaviorFitness] = field(default_factory {
             "agent_id": self.agent_id,
             "current_rate": self.current_rate,
             "initial_rate": self.initial_rate,
@@ -109,12 +208,15 @@ class AgentLearningState:
             "adopted_patterns": self.adopted_patterns,
             "avoided_patterns": self.avoided_patterns,
             "rate_history_count": len(self.rate_history),
+            "fitness_score": self.fitness_score,
+            "behavior_pool_size": len(self.behavior_pool),
+            "active_behaviors": self.active_behaviors,
+            "capability_levels": self.capability_levels,
             "metadata": self.metadata,
         }
     
     @property
     def success_rate(self) -> float:
-        """Calculate success rate of updates."""
         if self.total_updates == 0:
             return 0.0
         return self.successful_updates / self.total_updates
@@ -131,14 +233,7 @@ class AdaptationEvent:
     old_rate: float = 0.0
     new_rate: float = 0.0
     delta: float = 0.0
-    trigger_pattern_id: Optional[str] = None
-    trigger_signal_id: Optional[str] = None
-    validation_passed: bool = True
-    validation_details: Dict[str, Any] = field(default_factory=dict)
-    metadata: Dict[str, Any] = field(default_factory=dict)
-    
-    def to_dict(self) -> Dict[str, Any]:
-        """Convert to dictionary for serialization."""
+    trigger_pattern_id: Optional[str] -> Dict[str, Any]:
         return {
             "event_id": self.event_id,
             "agent_id": self.agent_id,
@@ -170,7 +265,6 @@ class ConvergenceMetrics:
     convergence_detected_at: Optional[str] = None
     
     def to_dict(self) -> Dict[str, Any]:
-        """Convert to dictionary for serialization."""
         return {
             "agent_id": self.agent_id,
             "is_converged": self.is_converged,
@@ -184,92 +278,61 @@ class ConvergenceMetrics:
         }
 
 
+@dataclass
+class EvolutionResult:
+    """Result of an evolution cycle."""
+    
+    mutated_behaviors: List[str] = field(default_factory=list)
+    selected_behaviors: List[str] = field(default_factory=list)
+    crossovers: List[Dict[str, str]] = field(default_factory=list)
+    eliminated_behaviors: List[str] = field(default_factory=list)
+    new_capabilities: List[str] = field(default_factory=list)
+    fitness_improvement: float = 0.0
+
+
 class AdaptiveLearningRateController:
     """
-    Controller for adaptive learning rate adjustment.
-    
-    This controller dynamically adjusts learning rates for individual agents
-    based on their performance, pattern success rates, and convergence status.
-    
-    Attributes:
-        config: Configuration for adaptive learning
-        agent_states: Dictionary of agent learning states
-        adaptation_events: List of adaptation events for audit
+    Controller for adaptive learning rate adjustment with evolutionary features.
     """
     
-    def __init__(
-        self,
-        config: Optional[LearningRateConfig] = None,
-    ):
-        """
-        Initialize adaptive learning rate controller.
-        
-        Args:
-            config: Configuration options (default: LearningRateConfig())
-        """
+    def __init__(self, config: Optional[LearningRateConfig] = None):
         self.config = config or LearningRateConfig()
         
         self._agent_states: Dict[str, AgentLearningState] = {}
         self._adaptation_events: List[AdaptationEvent] = []
         self._convergence_metrics: Dict[str, ConvergenceMetrics] = {}
         
-        # Performance tracking windows
         self._performance_windows: Dict[str, List[float]] = {}
         self._rate_windows: Dict[str, List[float]] = {}
         
-        # Callbacks
+        self._environment_profile = EnvironmentProfile()
+        
         self._on_adaptation: List[Callable] = []
         self._on_convergence: List[Callable] = []
+        self._on_evolution: List[Callable] = []
         
-        # Validation hooks
         self._validation_hooks: List[Callable] = []
         
         logger.info(
             "adaptive_learning_controller_initialized",
             strategy=self.config.strategy.value,
             initial_rate=self.config.initial_rate,
+            mutation_rate=self.config.mutation_rate,
         )
     
     def register_adaptation_callback(self, callback: Callable) -> None:
-        """
-        Register callback for adaptation events.
-        
-        Args:
-            callback: Async callable receiving AdaptationEvent
-        """
         self._on_adaptation.append(callback)
-        logger.debug("adaptation_callback_registered", callback=callback.__name__)
     
     def register_convergence_callback(self, callback: Callable) -> None:
-        """
-        Register callback for convergence detection.
-        
-        Args:
-            callback: Async callable receiving ConvergenceMetrics
-        """
         self._on_convergence.append(callback)
-        logger.debug("convergence_callback_registered", callback=callback.__name__)
+    
+    def register_evolution_callback(self, callback: Callable) -> None:
+        self._on_evolution.append(callback)
     
     def register_validation_hook(self, callback: Callable) -> None:
-        """
-        Register validation hook for rate changes.
-        
-        Args:
-            callback: Async callable receiving proposed rate change
-        """
         self._validation_hooks.append(callback)
-        logger.debug("validation_hook_registered", callback=callback.__name__)
     
     def get_or_create_state(self, agent_id: str) -> AgentLearningState:
-        """
-        Get or create learning state for an agent.
-        
-        Args:
-            agent_id: Agent identifier
-            
-        Returns:
-            AgentLearningState for the agent
-        """
         if agent_id not in self._agent_states:
             self._agent_states[agent_id] = AgentLearningState(
                 agent_id=agent_id,
@@ -279,25 +342,10 @@ class AdaptiveLearningRateController:
             self._performance_windows[agent_id] = []
             self._rate_windows[agent_id] = []
             self._convergence_metrics[agent_id] = ConvergenceMetrics(agent_id=agent_id)
-            
-            logger.debug("agent_learning_state_created", agent_id=agent_id)
         
         return self._agent_states[agent_id]
     
-    async def record_update(
-        self,
-        agent_id: str,
-        success: bool,
-        pattern_id: Optional[str] = None,
-    ) -> None:
-        """
-        Record an update result for an agent.
-        
-        Args:
-            agent_id: Agent identifier
-            success: Whether the update was successful
-            pattern_id: Optional pattern ID that was being applied
-        """
+    async def record_update(self, agent_id: str, success: bool, pattern_id: Optional[str] = None) -> None:
         state = self.get_or_create_state(agent_id)
         
         state.total_updates += 1
@@ -306,49 +354,115 @@ class AdaptiveLearningRateController:
         else:
             state.failed_updates += 1
         
-        # Update performance window
         performance_value = 1.0 if success else 0.0
         self._update_performance_window(agent_id, performance_value)
         
-        # Update convergence metrics
         await self._update_convergence_metrics(agent_id)
         
-        # Apply strategy-based adaptation
         if self.config.strategy == LearningRateStrategy.ADAPTIVE:
             await self._apply_adaptive_adjustment(agent_id, success, pattern_id)
-        
         elif self.config.strategy == LearningRateStrategy.DECAY:
             await self._apply_time_decay(agent_id)
-        
         elif self.config.strategy == LearningRateStrategy.CONVERGENCE:
             await self._apply_convergence_guided_adjustment(agent_id)
+        elif self.config.strategy == LearningRateStrategy.EVOLUTIONARY:
+            await self._apply_evolutionary_adjustment(agent_id, success, pattern_id)
         
-        logger.debug(
-            "update_recorded",
-            agent_id=agent_id,
-            success=success,
-            total_updates=state.total_updates,
-            success_rate=state.success_rate,
-        )
+        self._update_environment_profile()
     
-    async def adopt_pattern(
+    async def evolve_behaviors(
         self,
         agent_id: str,
-        pattern: ExtractedPattern,
-    ) -> bool:
-        """
-        Adopt a successful pattern for an agent.
+        environment_demands: Optional[Dict[str, float]] = None,
+    ) -> EvolutionResult:
+        state = self.get_or_create_state(agent_id)
+        result = EvolutionResult()
         
-        Args:
-            agent_id: Agent identifier
-            pattern: Pattern to adopt
-            
-        Returns:
-            True if pattern was adopted successfully
-        """
+        if environment_demands:
+            self._environment_profile.demand_profile = environment_demands
+        
+        selection_pressure = self._environment_profile.selection_pressure
+        
+        mutated_ids = await self._mutate_capabilities(agent_id, selection_pressure)
+        result.mutated_behaviors = mutated_ids
+        
+        selected_ids = await self._select_fittest(agent_id, environment_demands)
+        result.selected_behaviors = selected_ids
+        
+        crossover_results = await self._crossover_behaviors(agent_id)
+        result.crossovers = crossover_results
+        
+        eliminated_ids = await self._eliminate_weak_behaviors(agent_id, selection_pressure)
+        result.eliminated_behaviors = eliminated_ids
+        
+        old_fitness = state.fitness_score
+        state.fitness_score = self._calculate_agent_fitness(agent_id)
+        result.fitness_improvement = state.fitness_score - old_fitness
+        
+        await self._call_evolution_callbacks(result)
+        
+        logger.info(
+            "behaviors_evolved",
+            agent_id=agent_id,
+            mutated_count=len(mutated_ids),
+            selected_count=len(selected_ids),
+            crossovers=len(crossover_results),
+            eliminated_count=len(eliminated_ids),
+            fitness_change=result.fitness_improvement,
+        )
+        
+        return result
+    
+    async def mutate_capabilities(
+        self,
+        agent_id: str,
+        mutation_type: MutationType = MutationType.EXPLORATION,
+    ) -> List[str]:
+        state = self.get_or_create_state(agent_id)
+        mutated_ids = []
+        
+        if mutation_type == MutationType.EXPLORATION:
+            if random.random() < self.config.mutation_rate:
+                new_behavior = BehaviorFitness(
+                    behavior_id=str(uuid.uuid4()),
+                    behavior_type="exploration",
+                    initial_fitness=0.3,
+                )
+                state.behavior_pool[new_behavior.behavior_id] = new_behavior
+                state.active_behaviors.append(new_behavior.behavior_id)
+                mutated_ids.append(new_behavior.behavior_id)
+        
+        elif mutation_type == MutationType.EXPLOITATION:
+            for behavior in state.behavior_pool.values():
+                if behavior.fitness > 0.6 and random.random() < self.config.mutation_rate:
+                    variant = BehaviorFitness(
+                        behavior_id=str(uuid.uuid4()),
+                        behavior_type=f"{behavior.behavior_type}_variant",
+                        initial_fitness=behavior.fitness * 0.9,
+                    )
+                    state.behavior_pool[variant.behavior_id] = variant
+                    mutated_ids.append(variant.behavior_id)
+        
+        elif mutation_type == MutationType.ADAPTATION:
+            demands = self._environment_profile.demand_profile
+            for cap_type, demand_level in demands.items():
+                current_level = state.capability_levels.get(cap_type, 0.0)
+                mutation = (demand_level - current_level) * self.config.mutation_rate
+                state.capability_levels[cap_type] = max(0.0, min(1.0, current_level + mutation))
+        
+        return mutated_ids
+    
+    async def select_fittest(
+        self,
+        agent_id: str,
+        count: int = 3,
+        environment_demands: Optional[Dict[str, float]] = None,
+    ) -> List[str]:
+        return await self._select_fittest(agent_id, environment_demands, count)
+    
+    async def adopt_pattern(self, agent_id: str, pattern: ExtractedPattern) -> bool:
         state = self.get_or_create_state(agent_id)
         
-        # Zero-trust validation
         if self.config.validation_required:
             is_valid = await self._validate_pattern_adoption(agent_id, pattern)
             if not is_valid:
@@ -360,55 +474,35 @@ class AdaptiveLearningRateController:
                 )
                 return False
         
-        # Check if pattern should be avoided
         if pattern.metadata.pattern_type == PatternType.FAILURE:
             state.avoided_patterns.append(pattern.metadata.pattern_id)
-            # Decrease learning rate to avoid learning from failures
             await self._apply_rate_change(
-                agent_id,
-                -self.config.failure_penalty,
-                AdaptationReason.FAILURE_PATTERN,
-                pattern_id=pattern.metadata.pattern_id,
-            )
-            logger.info(
-                "failure_pattern_avoided",
-                agent_id=agent_id,
+                agent_id, -self.config.failure_penalty, AdaptationReason.FAILURE_PATTERN,
                 pattern_id=pattern.metadata.pattern_id,
             )
             return True
         
-        # Adopt successful pattern
         state.adopted_patterns.append(pattern.metadata.pattern_id)
         
-        # Increase learning rate based on pattern confidence
+        behavior = BehaviorFitness(
+            behavior_id=pattern.metadata.pattern_id,
+            behavior_type=pattern.metadata.pattern_type.value,
+            initial_fitness=pattern.metadata.confidence,
+        )
+        state.behavior_pool[behavior.behavior_id] = behavior
+        
         confidence_boost = self.config.success_boost * pattern.metadata.confidence
         await self._apply_rate_change(
-            agent_id,
-            confidence_boost,
-            AdaptationReason.SUCCESS_PATTERN,
+            agent_id, confidence_boost, AdaptationReason.SUCCESS_PATTERN,
             pattern_id=pattern.metadata.pattern_id,
-        )
-        
-        logger.info(
-            "pattern_adopted",
-            agent_id=agent_id,
-            pattern_id=pattern.metadata.pattern_id,
-            confidence_boost=confidence_boost,
         )
         
         return True
     
     async def process_learning_signal(self, signal: LearningSignal) -> None:
-        """
-        Process a learning signal and adjust rates accordingly.
-        
-        Args:
-            signal: Learning signal to process
-        """
         for target_agent in signal.target_agents:
             state = self.get_or_create_state(target_agent)
             
-            # Adjust based on signal magnitude
             if signal.signal_type == "reward":
                 adjustment = self.config.success_boost * signal.magnitude
                 reason = AdaptationReason.EXTERNAL_SIGNAL
@@ -416,113 +510,48 @@ class AdaptiveLearningRateController:
                 adjustment = -self.config.failure_penalty * signal.magnitude
                 reason = AdaptationReason.EXTERNAL_SIGNAL
             else:
-                # Neutral signal - no adjustment
                 continue
             
             await self._apply_rate_change(
-                target_agent,
-                adjustment,
-                reason,
-                trigger_signal_id=signal.signal_id,
+                target_agent, adjustment, reason, trigger_signal_id=signal.signal_id,
             )
-        
-        logger.debug(
-            "learning_signal_processed",
-            signal_id=signal.signal_id,
-            target_count=len(signal.target_agents),
-        )
     
     def get_current_rate(self, agent_id: str) -> float:
-        """
-        Get current learning rate for an agent.
-        
-        Args:
-            agent_id: Agent identifier
-            
-        Returns:
-            Current learning rate
-        """
         state = self.get_or_create_state(agent_id)
         return state.current_rate
     
     def get_agent_state(self, agent_id: str) -> AgentLearningState:
-        """
-        Get learning state for an agent.
-        
-        Args:
-            agent_id: Agent identifier
-            
-        Returns:
-            AgentLearningState for the agent
-        """
         return self.get_or_create_state(agent_id)
     
     def get_convergence_metrics(self, agent_id: str) -> ConvergenceMetrics:
-        """
-        Get convergence metrics for an agent.
-        
-        Args:
-            agent_id: Agent identifier
-            
-        Returns:
-            ConvergenceMetrics for the agent
-        """
         if agent_id not in self._convergence_metrics:
             self._convergence_metrics[agent_id] = ConvergenceMetrics(agent_id=agent_id)
-        
         return self._convergence_metrics[agent_id]
     
     def get_all_agent_states(self) -> Dict[str, AgentLearningState]:
-        """
-        Get all agent learning states.
-        
-        Returns:
-            Dictionary of agent states
-        """
         return self._agent_states.copy()
     
     def get_adaptation_history(
-        self,
-        agent_id: Optional[str] = None,
-        limit: int = 100,
+        self, agent_id: Optional[str] = None, limit: int = 100,
     ) -> List[AdaptationEvent]:
-        """
-        Get adaptation event history.
-        
-        Args:
-            agent_id: Optional agent filter
-            limit: Maximum events to return
-            
-        Returns:
-            List of adaptation events
-        """
         events = self._adaptation_events
-        
         if agent_id:
             events = [e for e in events if e.agent_id == agent_id]
-        
         return events[-limit:]
     
+    def get_environment_profile(self) -> Dict[str, Any]:
+        return self._environment_profile.to_dict()
+    
     def get_swarm_statistics(self) -> Dict[str, Any]:
-        """
-        Get swarm-wide learning statistics.
-        
-        Returns:
-            Dictionary of swarm statistics
-        """
         if not self._agent_states:
             return {
-                "total_agents": 0,
-                "avg_learning_rate": 0.0,
-                "avg_success_rate": 0.0,
-                "converged_agents": 0,
-                "total_adaptations": 0,
+                "total_agents": 0, "avg_learning_rate": 0.0, "avg_success_rate": 0.0,
+                "converged_agents": 0, "total_adaptations": 0, "avg_fitness": 0.0,
+                "environment_stability": 0.0,
             }
         
         states = list(self._agent_states.values())
-        converged_count = sum(
-            1 for m in self._convergence_metrics.values() if m.is_converged
-        )
+        converged_count = sum(1 for m in self._convergence_metrics.values() if m.is_converged)
         
         return {
             "total_agents": len(states),
@@ -532,15 +561,13 @@ class AdaptiveLearningRateController:
             "total_adaptations": len(self._adaptation_events),
             "adopted_patterns_total": sum(len(s.adopted_patterns) for s in states),
             "avoided_patterns_total": sum(len(s.avoided_patterns) for s in states),
+            "avg_fitness": sum(s.fitness_score for s in states) / len(states),
+            "behavior_pool_size": sum(len(s.behavior_pool) for s in states),
+            "environment_stability": self._environment_profile.stability,
+            "optimal_learning_rate": self._environment_profile.optimal_learning_rate,
         }
     
     async def reset_agent(self, agent_id: str) -> None:
-        """
-        Reset learning state for an agent.
-        
-        Args:
-            agent_id: Agent identifier
-        """
         if agent_id in self._agent_states:
             state = self._agent_states[agent_id]
             state.current_rate = self.config.initial_rate
@@ -552,23 +579,18 @@ class AdaptiveLearningRateController:
             state.convergence_score = 1.0
             state.performance_trend = 0.0
             state.rate_history = []
-            
-            # Clear windows
+            state.fitness_score = 0.5
+            state.behavior_pool = {}
+            state.active_behaviors = []
             self._performance_windows[agent_id] = []
             self._rate_windows[agent_id] = []
-            
-            logger.info("agent_learning_reset", agent_id=agent_id)
     
     def _update_performance_window(self, agent_id: str, value: float) -> None:
-        """Update performance tracking window for an agent."""
         window = self._performance_windows.setdefault(agent_id, [])
         window.append(value)
-        
-        # Trim window
         if len(window) > self.config.window_size:
             window.pop(0)
         
-        # Update performance trend
         if len(window) >= 10:
             recent_avg = sum(window[-10:]) / 10
             older_avg = sum(window[:-10]) / max(len(window) - 10, 1)
@@ -577,16 +599,25 @@ class AdaptiveLearningRateController:
                 state.performance_trend = recent_avg - older_avg
     
     def _update_rate_window(self, agent_id: str, rate: float) -> None:
-        """Update rate tracking window for an agent."""
         window = self._rate_windows.setdefault(agent_id, [])
         window.append(rate)
-        
-        # Trim window
         if len(window) > self.config.window_size:
             window.pop(0)
     
+    def _update_environment_profile(self) -> None:
+        all_performances = []
+        for window in self._performance_windows.values():
+            all_performances.extend(window)
+        
+        if len(all_performances) >= 10:
+            mean = sum(all_performances) / len(all_performances)
+            variance = sum((p - mean) ** 2 for p in all_performances) / len(all_performances)
+            unique_values = len(set(all_performances))
+            diversity = unique_values / len(all_performances)
+            
+            self._environment_profile.update_from_observations(variance, diversity, mean)
+    
     async def _update_convergence_metrics(self, agent_id: str) -> None:
-        """Update convergence metrics for an agent."""
         rate_window = self._rate_windows.get(agent_id, [])
         perf_window = self._performance_windows.get(agent_id, [])
         
@@ -596,15 +627,13 @@ class AdaptiveLearningRateController:
         if not state:
             return
         
-        # Calculate rate variance
         if len(rate_window) >= 10:
             mean_rate = sum(rate_window) / len(rate_window)
             variance = sum((r - mean_rate) ** 2 for r in rate_window) / len(rate_window)
             metrics.rate_variance = variance
         else:
-            metrics.rate_variance = 1.0  # High variance with insufficient data
+            metrics.rate_variance = 1.0
         
-        # Calculate performance stability
         if len(perf_window) >= 10:
             mean_perf = sum(perf_window) / len(perf_window)
             perf_variance = sum((p - mean_perf) ** 2 for p in perf_window) / len(perf_window)
@@ -612,35 +641,17 @@ class AdaptiveLearningRateController:
         else:
             metrics.performance_stability = 1.0
         
-        # Calculate convergence score
-        # Lower is more converged
         rate_component = min(metrics.rate_variance * 100, 1.0)
         stability_component = 1.0 - metrics.performance_stability
         metrics.convergence_score = (rate_component + stability_component) / 2
         
-        # Check for convergence
         if metrics.convergence_score < self.config.convergence_threshold and not metrics.is_converged:
             metrics.is_converged = True
             metrics.convergence_detected_at = datetime.now(timezone.utc).isoformat()
             metrics.final_rate = state.current_rate
-            
-            logger.info(
-                "convergence_detected",
-                agent_id=agent_id,
-                convergence_score=metrics.convergence_score,
-                final_rate=metrics.final_rate,
-            )
-            
-            # Call convergence callbacks
             await self._call_convergence_callbacks(metrics)
     
-    async def _apply_adaptive_adjustment(
-        self,
-        agent_id: str,
-        success: bool,
-        pattern_id: Optional[str],
-    ) -> None:
-        """Apply adaptive adjustment based on success/failure."""
+    async def _apply_adaptive_adjustment(self, agent_id: str, success: bool, pattern_id: Optional[str]) -> None:
         if success:
             adjustment = self.config.success_boost
             reason = AdaptationReason.SUCCESS_PATTERN
@@ -650,211 +661,213 @@ class AdaptiveLearningRateController:
         
         await self._apply_rate_change(agent_id, adjustment, reason, pattern_id=pattern_id)
     
+    async def _apply_evolutionary_adjustment(self, agent_id: str, success: bool, pattern_id: Optional[str]) -> None:
+        state = self.get_or_create_state(agent_id)
+        
+        if success:
+            adjustment = self.config.success_boost
+            reason = AdaptationReason.SUCCESS_PATTERN
+        else:
+            adjustment = -self.config.failure_penalty
+            reason = AdaptationReason.FAILURE_PATTERN
+        
+        env_modifier = self._environment_profile.optimal_learning_rate / self.config.initial_rate
+        adjustment *= env_modifier
+        
+        await self._apply_rate_change(agent_id, adjustment, reason, pattern_id=pattern_id)
+        
+        if pattern_id and pattern_id in state.behavior_pool:
+            state.behavior_pool[pattern_id].update_fitness(success)
+    
     async def _apply_time_decay(self, agent_id: str) -> None:
-        """Apply time-based decay to learning rate."""
         state = self._agent_states.get(agent_id)
         if not state:
             return
         
-        # Calculate time since last adaptation
         last_adaptation = datetime.fromisoformat(state.last_adaptation)
         time_diff = datetime.now(timezone.utc) - last_adaptation
         hours_elapsed = time_diff.total_seconds() / 3600
         
-        # Apply decay
         decay_multiplier = self.config.decay_factor ** max(hours_elapsed, 0)
         new_rate = state.current_rate * decay_multiplier
-        
-        # Ensure minimum rate
         new_rate = max(new_rate, self.config.min_rate)
         
         if abs(new_rate - state.current_rate) > 0.001:
-            await self._apply_rate_change(
-                agent_id,
-                new_rate - state.current_rate,
-                AdaptationReason.TIME_DECAY,
-            )
+            await self._apply_rate_change(agent_id, new_rate - state.current_rate, AdaptationReason.TIME_DECAY)
     
     async def _apply_convergence_guided_adjustment(self, agent_id: str) -> None:
-        """Apply convergence-guided adjustment."""
         metrics = self._convergence_metrics.get(agent_id)
         state = self._agent_states.get(agent_id)
         
-        if not metrics or not state:
+        if not metrics or not state or metrics.is_converged:
             return
         
-        # Reduce learning rate as convergence approaches
-        if metrics.is_converged:
-            # Already converged - minimal adjustments
-            return
-        
-        # Scale adjustment by convergence score
         convergence_factor = metrics.convergence_score
         state.current_rate = self.config.initial_rate * convergence_factor
-        
-        # Clamp to valid range
         state.current_rate = max(self.config.min_rate, min(state.current_rate, self.config.max_rate))
     
-    async def _apply_rate_change(
-        self,
-        agent_id: str,
-        delta: float,
-        reason: AdaptationReason,
-        pattern_id: Optional[str] = None,
-        trigger_signal_id: Optional[str] = None,
-    ) -> bool:
-        """
-        Apply a learning rate change with validation.
+    async def _mutate_capabilities(self, agent_id: str, selection_pressure: float) -> List[str]:
+        state = self.get_or_create_state(agent_id)
+        mutated_ids = []
         
-        Args:
-            agent_id: Agent identifier
-            delta: Rate change amount
-            reason: Reason for change
-            pattern_id: Optional triggering pattern ID
-            trigger_signal_id: Optional triggering signal ID
-            
-        Returns:
-            True if change was applied
-        """
+        if random.random() < self.config.mutation_rate:
+            new_behavior = BehaviorFitness(
+                behavior_id=str(uuid.uuid4()), behavior_type="exploration", initial_fitness=0.3,
+            )
+            state.behavior_pool[new_behavior.behavior_id] = new_behavior
+            mutated_ids.append(new_behavior.behavior_id)
+        
+        for cap_type in list(state.capability_levels.keys()):
+            if random.random() < self.config.mutation_rate * 0.5:
+                current = state.capability_levels[cap_type]
+                mutation = random.uniform(-0.1, 0.1)
+                state.capability_levels[cap_type] = max(0.0, min(1.0, current + mutation))
+        
+        return mutated_ids
+    
+    async def _select_fittest(
+        self, agent_id: str, environment_demands: Optional[Dict[str, float]] = None, count: int = 3,
+    ) -> List[str]:
         state = self.get_or_create_state(agent_id)
         
-        # Calculate proposed new rate
-        proposed_rate = state.current_rate + delta
+        if not state.behavior_pool:
+            return []
         
-        # Clamp to valid range
+        behaviors_with_fitness = []
+        for bid, behavior in state.behavior_pool.items():
+            fitness = behavior.fitness
+            
+            if environment_demands and behavior.behavior_type in environment_demands:
+                demand = environment_demands[behavior.behavior_type]
+                fitness *= (1.0 + demand) / 2
+            
+            behaviors_with_fitness.append((bid, fitness))
+        
+        behaviors_with_fitness.sort(key=lambda x: x[1], reverse=True)
+        selected = [bid for bid, _ in behaviors_with_fitness[:count]]
+        
+        state.active_behaviors = selected
+        
+        for bid in selected:
+            if bid in state.behavior_pool:
+                state.behavior_pool[bid].selection_count += 1
+        
+        return selected
+    
+    async def _crossover_behaviors(self, agent_id: str) -> List[Dict[str, str]]:
+        state = self.get_or_create_state(agent_id)
+        crossovers = []
+        
+        if len(state.behavior_pool) < 2:
+            return crossovers
+        
+        behaviors = list(state.behavior_pool.values())
+        
+        for _ in range(int(len(behaviors) * self.config.crossover_rate)):
+            parent1, parent2 = random.sample(behaviors, 2)
+            
+            offspring = BehaviorFitness(
+                behavior_id=str(uuid.uuid4()),
+                behavior_type=f"{parent1.behavior_type}_x_{parent2.behavior_type}",
+                initial_fitness=(parent1.fitness + parent2.fitness) / 2,
+            )
+            
+            state.behavior_pool[offspring.behavior_id] = offspring
+            crossovers.append({
+                "parent1": parent1.behavior_id,
+                "parent2": parent2.behavior_id,
+                "offspring": offspring.behavior_id,
+            })
+        
+        return crossovers
+    
+    async def _eliminate_weak_behaviors(self, agent_id: str, selection_pressure: float) -> List[str]:
+        state = self.get_or_create_state(agent_id)
+        eliminated = []
+        
+        threshold = self.config.fitness_threshold * (1.0 - selection_pressure * 0.3)
+        
+        to_remove = [bid for bid, behavior in state.behavior_pool.items()
+                     if behavior.fitness < threshold and behavior.selection_count > 5]
+        
+        for bid in to_remove:
+            del state.behavior_pool[bid]
+            eliminated.append(bid)
+            if bid in state.active_behaviors:
+                state.active_behaviors.remove(bid)
+        
+        return eliminated
+    
+    def _calculate_agent_fitness(self, agent_id: str) -> float:
+        state = self._agent_states.get(agent_id)
+        if not state:
+            return 0.0
+        
+        factors = [state.success_rate]
+        
+        if state.behavior_pool:
+            avg_behavior_fitness = sum(b.fitness for b in state.behavior_pool.values()) / len(state.behavior_pool)
+            factors.append(avg_behavior_fitness)
+        
+        if state.capability_levels:
+            avg_capability = sum(state.capability_levels.values()) / len(state.capability_levels)
+            factors.append(avg_capability)
+        
+        if self._convergence_metrics.get(agent_id, ConvergenceMetrics(agent_id=agent_id)).is_converged:
+            factors.append(1.0)
+        else:
+            factors.append(0.5)
+        
+        return sum(factors) / len(factors) if factors else 0.5
+    
+    async def _apply_rate_change(
+        self, agent_id: str, delta: float, reason: AdaptationReason,
+        pattern_id: Optional[str] = None, trigger_signal_id: Optional[str] = None,
+    ) -> bool:
+        state = self.get_or_create_state(agent_id)
+        
+        proposed_rate = state.current_rate + delta
         proposed_rate = max(self.config.min_rate, min(proposed_rate, self.config.max_rate))
         
-        # Skip if no meaningful change
         if abs(proposed_rate - state.current_rate) < 0.0001:
             return False
         
-        # Zero-trust validation
         if self.config.validation_required:
-            is_valid = await self._validate_rate_change(
-                agent_id,
-                state.current_rate,
-                proposed_rate,
-                reason,
-            )
+            is_valid = await self._validate_rate_change(agent_id, state.current_rate, proposed_rate, reason)
             if not is_valid:
-                logger.warning(
-                    "rate_change_rejected",
-                    agent_id=agent_id,
-                    old_rate=state.current_rate,
-                    proposed_rate=proposed_rate,
-                    reason=reason.value,
-                )
+                logger.warning("rate_change_rejected", agent_id=agent_id, reason=reason.value)
                 return False
         
-        # Create adaptation event
         event = AdaptationEvent(
-            agent_id=agent_id,
-            reason=reason,
-            old_rate=state.current_rate,
-            new_rate=proposed_rate,
-            delta=delta,
-            trigger_pattern_id=pattern_id,
-            trigger_signal_id=trigger_signal_id,
+            agent_id=agent_id, reason=reason, old_rate=state.current_rate, new_rate=proposed_rate,
+            delta=delta, trigger_pattern_id=pattern_id, trigger_signal_id=trigger_signal_id,
         )
         
-        # Apply change
         state.current_rate = proposed_rate
         state.last_adaptation = datetime.now(timezone.utc).isoformat()
         state.adaptation_count += 1
         state.rate_history.append((event.timestamp, proposed_rate, reason))
         
-        # Update rate window
         self._update_rate_window(agent_id, proposed_rate)
-        
-        # Store event
         self._adaptation_events.append(event)
         
-        # Call adaptation callbacks
         await self._call_adaptation_callbacks(event)
-        
-        logger.info(
-            "rate_changed",
-            agent_id=agent_id,
-            old_rate=event.old_rate,
-            new_rate=event.new_rate,
-            reason=reason.value,
-        )
         
         return True
     
-    async def _validate_pattern_adoption(
-        self,
-        agent_id: str,
-        pattern: ExtractedPattern,
-    ) -> bool:
-        """
-        Validate pattern adoption with zero-trust principles.
-        
-        Args:
-            agent_id: Agent identifier
-            pattern: Pattern to validate
-            
-        Returns:
-            True if pattern adoption is valid
-        """
-        # Check pattern confidence
-        if pattern.metadata.confidence < self.config.min_rate:
+    async def _validate_pattern_adoption(self, agent_id: str, pattern: ExtractedPattern) -> bool:
+        if pattern.metadata.confidence < 0.3:
             return False
-        
-        # Check pattern type
-        if pattern.metadata.pattern_type not in [
-            PatternType.SUCCESS,
-            PatternType.OPTIMIZATION,
-            PatternType.FAILURE,
-        ]:
+        if pattern.metadata.source == PatternSource.UNKNOWN:
             return False
-        
-        # Call validation hooks
-        for hook in self._validation_hooks:
-            try:
-                result = hook(agent_id, pattern)
-                if asyncio.iscoroutine(result):
-                    result = await result
-                if not result:
-                    return False
-            except Exception as e:
-                logger.error(
-                    "validation_hook_error",
-                    agent_id=agent_id,
-                    hook=hook.__name__,
-                    error=str(e),
-                )
-        
         return True
     
     async def _validate_rate_change(
-        self,
-        agent_id: str,
-        old_rate: float,
-        new_rate: float,
-        reason: AdaptationReason,
+        self, agent_id: str, old_rate: float, new_rate: float, reason: AdaptationReason,
     ) -> bool:
-        """
-        Validate rate change with zero-trust principles.
-        
-        Args:
-            agent_id: Agent identifier
-            old_rate: Current rate
-            new_rate: Proposed new rate
-            reason: Reason for change
-            
-        Returns:
-            True if rate change is valid
-        """
-        # Check rate bounds
-        if new_rate < self.config.min_rate or new_rate > self.config.max_rate:
-            return False
-        
-        # Check for extreme changes
         if abs(new_rate - old_rate) > 0.5:
             return False
         
-        # Call validation hooks
         for hook in self._validation_hooks:
             try:
                 result = hook(agent_id, old_rate, new_rate, reason)
@@ -863,17 +876,12 @@ class AdaptiveLearningRateController:
                 if not result:
                     return False
             except Exception as e:
-                logger.error(
-                    "validation_hook_error",
-                    agent_id=agent_id,
-                    hook=hook.__name__,
-                    error=str(e),
-                )
+                logger.error("validation_hook_error", error=str(e))
+                return False
         
         return True
     
     async def _call_adaptation_callbacks(self, event: AdaptationEvent) -> None:
-        """Call registered adaptation callbacks."""
         for callback in self._on_adaptation:
             try:
                 if asyncio.iscoroutinefunction(callback):
@@ -881,14 +889,9 @@ class AdaptiveLearningRateController:
                 else:
                     callback(event)
             except Exception as e:
-                logger.error(
-                    "adaptation_callback_error",
-                    callback=callback.__name__,
-                    error=str(e),
-                )
+                logger.error("adaptation_callback_error", error=str(e))
     
     async def _call_convergence_callbacks(self, metrics: ConvergenceMetrics) -> None:
-        """Call registered convergence callbacks."""
         for callback in self._on_convergence:
             try:
                 if asyncio.iscoroutinefunction(callback):
@@ -896,150 +899,63 @@ class AdaptiveLearningRateController:
                 else:
                     callback(metrics)
             except Exception as e:
-                logger.error(
-                    "convergence_callback_error",
-                    callback=callback.__name__,
-                    error=str(e),
-                )
+                logger.error("convergence_callback_error", error=str(e))
     
-    def get_status(self) -> Dict[str, Any]:
-        """
-        Get controller status summary.
-        
-        Returns:
-            Status dictionary
-        """
-        return {
-            "config": {
-                "strategy": self.config.strategy.value,
-                "initial_rate": self.config.initial_rate,
-                "min_rate": self.config.min_rate,
-                "max_rate": self.config.max_rate,
-                "validation_required": self.config.validation_required,
-            },
-            "total_agents": len(self._agent_states),
-            "total_adaptations": len(self._adaptation_events),
-            "converged_agents": sum(
-                1 for m in self._convergence_metrics.values() if m.is_converged
-            ),
-        }
+    async def _call_evolution_callbacks(self, result: EvolutionResult) -> None:
+        for callback in self._on_evolution:
+            try:
+                if asyncio.iscoroutinefunction(callback):
+                    await callback(result)
+                else:
+                    callback(result)
+            except Exception as e:
+                logger.error("evolution_callback_error", error=str(e))
 
 
 class LearningRateOptimizer:
-    """
-    Optimizer for finding optimal learning rates across the swarm.
+    """Optimizer for learning rate hyperparameters using population-based optimization."""
     
-    This class provides optimization capabilities for finding the best
-    learning rates based on swarm-wide performance metrics.
-    """
+    def __init__(self, population_size: int = 10, mutation_rate: float = 0.1):
+        self.population_size = population_size
+        self.mutation_rate = mutation_rate
+        self.population: List[LearningRateConfig] = []
+        self._initialize_population()
     
-    def __init__(self, controller: AdaptiveLearningRateController):
-        """
-        Initialize learning rate optimizer.
+    def _initialize_population(self) -> None:
+        strategies = [LearningRateStrategy.ADAPTIVE, LearningRateStrategy.EVOLUTIONARY, LearningRateStrategy.CONVERGENCE]
         
-        Args:
-            controller: AdaptiveLearningRateController instance
-        """
-        self.controller = controller
-        
-        logger.info("learning_rate_optimizer_initialized")
-    
-    async def find_optimal_rate(
-        self,
-        agent_id: str,
-        iterations: int = 100,
-    ) -> float:
-        """
-        Find optimal learning rate for an agent through search.
-        
-        Args:
-            agent_id: Agent identifier
-            iterations: Number of iterations to search
-            
-        Returns:
-            Optimal learning rate
-        """
-        state = self.controller.get_or_create_state(agent_id)
-        
-        # Binary search for optimal rate
-        low = self.controller.config.min_rate
-        high = self.controller.config.max_rate
-        best_rate = state.current_rate
-        best_performance = state.success_rate
-        
-        for _ in range(iterations):
-            mid = (low + high) / 2
-            
-            # Simulate performance at this rate
-            simulated_performance = await self._simulate_performance(
-                agent_id,
-                mid,
+        for i in range(self.population_size):
+            config = LearningRateConfig(
+                initial_rate=0.05 + random.random() * 0.15,
+                strategy=strategies[i % len(strategies)],
+                mutation_rate=self.mutation_rate,
             )
-            
-            if simulated_performance > best_performance:
-                best_performance = simulated_performance
-                best_rate = mid
-                low = mid
-            else:
-                high = mid
-        
-        return best_rate
+            self.population.append(config)
     
-    def recommend_swarm_rates(self) -> Dict[str, float]:
-        """
-        Recommend learning rates for all agents.
-        
-        Returns:
-            Dictionary of agent IDs to recommended rates
-        """
-        recommendations = {}
-        
-        for agent_id, state in self.controller._agent_states.items():
-            # Base recommendation on success rate and convergence
-            metrics = self.controller.get_convergence_metrics(agent_id)
-            
-            if metrics.is_converged:
-                # Converged agents get minimal rate
-                recommendations[agent_id] = self.controller.config.min_rate
-            elif state.success_rate > 0.8:
-                # High performers get moderate rate
-                recommendations[agent_id] = state.current_rate * 0.8
-            elif state.success_rate < 0.3:
-                # Low performers get reduced rate
-                recommendations[agent_id] = state.current_rate * 0.5
-            else:
-                # Average performers get current rate
-                recommendations[agent_id] = state.current_rate
-        
-        return recommendations
+    def get_config(self) -> LearningRateConfig:
+        return random.choice(self.population)
     
-    async def _simulate_performance(
-        self,
-        agent_id: str,
-        rate: float,
-    ) -> float:
-        """
-        Simulate expected performance at a given learning rate.
+    def update_population(self, fitness_scores: Dict[int, float]) -> None:
+        sorted_indices = sorted(fitness_scores.keys(), key=lambda x: fitness_scores[x], reverse=True)
+        survivors = [self.population[i] for i in sorted_indices[:self.population_size // 2]]
         
-        Args:
-            agent_id: Agent identifier
-            rate: Learning rate to simulate
-            
-        Returns:
-            Expected performance score
-        """
-        state = self.controller.get_or_create_state(agent_id)
+        new_population = survivors.copy()
         
-        # Simple simulation based on historical data
-        base_performance = state.success_rate
+        while len(new_population) < self.population_size:
+            parent = random.choice(survivors)
+            child = self._mutate_config(parent)
+            new_population.append(child)
         
-        # Adjust based on rate
-        if rate > 0.5:
-            # High rates may cause instability
-            return base_performance * 0.8
-        elif rate < 0.01:
-            # Very low rates may cause slow learning
-            return base_performance * 0.9
-        
-        # Optimal range
-        return base_performance * 1.1
+        self.population = new_population
+    
+    def _mutate_config(self, config: LearningRateConfig) -> LearningRateConfig:
+        return LearningRateConfig(
+            initial_rate=config.initial_rate + random.uniform(-0.02, 0.02),
+            min_rate=config.min_rate,
+            max_rate=config.max_rate,
+            strategy=config.strategy,
+            decay_factor=config.decay_factor + random.uniform(-0.05, 0.05),
+            success_boost=config.success_boost + random.uniform(-0.02, 0.02),
+            failure_penalty=config.failure_penalty + random.uniform(-0.05, 0.05),
+            mutation_rate=config.mutation_rate + random.uniform(-0.02, 0.02),
+        )

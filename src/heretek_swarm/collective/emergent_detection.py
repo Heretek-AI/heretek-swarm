@@ -11,6 +11,7 @@ Features:
 - Classify emergent patterns (coordination, optimization, innovation)
 - Emergent pattern validation
 - Zero-trust validation of all detected patterns
+- Evolution Engine for organic capability development tracking
 
 Zero-Trust Principles:
 - All emergent patterns validated before reporting
@@ -37,23 +38,596 @@ logger = structlog.get_logger(__name__)
 class EmergentPatternClass(str, Enum):
     """Classification of emergent patterns."""
     
-    COORDINATION = "coordination"  # Synchronized behaviors
-    OPTIMIZATION = "optimization"  # Collective efficiency improvements
-    INNOVATION = "innovation"  # Novel solutions emerging
-    SELF_ORGANIZATION = "self_organization"  # Spontaneous order formation
-    ADAPTATION = "adaptation"  # Collective response to environment
-    PHASE_TRANSITION = "phase_transition"  # Sudden behavioral shifts
-    CASCADE = "cascade"  # Chain reaction patterns
-    RESONANCE = "resonance"  # Amplified collective response
+    COORDINATION = "coordination"
+    OPTIMIZATION = "optimization"
+    INNOVATION = "innovation"
+    SELF_ORGANIZATION = "self_organization"
+    ADAPTATION = "adaptation"
+    PHASE_TRANSITION = "phase_transition"
+    CASCADE = "cascade"
+    RESONANCE = "resonance"
 
 
 class EmergenceLevel(str, Enum):
     """Levels of emergence strength."""
     
-    WEAK = "weak"  # Minor emergent effects
-    MODERATE = "moderate"  # Noticeable emergence
-    STRONG = "strong"  # Significant emergence
-    CRITICAL = "critical"  # Major system-level emergence
+    WEAK = "weak"
+    MODERATE = "moderate"
+    STRONG = "strong"
+    CRITICAL = "critical"
+
+
+class EvolutionPhase(str, Enum):
+    """Phases of evolutionary development."""
+    
+    INITIALIZATION = "initialization"
+    EXPLORATION = "exploration"
+    SELECTION = "selection"
+    CONSOLIDATION = "consolidation"
+    EMERGENCE = "emergence"
+    MATURATION = "maturation"
+    EQUILIBRIUM = "equilibrium"
+
+
+@dataclass
+class CapabilityRecord:
+    """Record of a capability gained by an agent or the swarm."""
+    
+    capability_id: str = field(default_factory=lambda: str(uuid.uuid4()))
+    capability_type: str = ""
+    capability_name: str = ""
+    description: str = ""
+    
+    origin_agent_id: Optional[str] = None
+    contributing_agents: List[str] = field(default_factory=list)
+    
+    development_time_seconds: float = 0.0
+    evolution_rate: float = 0.0
+    
+    fitness_contribution: float = 0.0
+    selection_pressure: float = 0.0
+    
+    first_observed: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    last_reinforced: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    stabilization_time: Optional]:
+        return {
+            "capability_id": self.capability_id,
+            "capability_type": self.capability_type,
+            "capability_name": self.capability_name,
+            "description": self.description,
+            "origin_agent_id": self.origin_agent_id,
+            "contributing_agents": self.contributing_agents,
+            "development_time_seconds": self.development_time_seconds,
+            "evolution_rate": self.evolution_rate,
+            "fitness_contribution": self.fitness_contribution,
+            "selection_pressure": self.selection_pressure,
+            "first_observed": self.first_observed,
+            "last_reinforced": self.last_reinforced,
+            "stabilization_time": self.stabilization_time,
+            "is_stabilized": self.is_stabilized,
+            "is_inherited": self.is_inherited,
+            "inheritance_count": self.inheritance_count,
+            "metadata": self.metadata,
+        }
+
+
+@dataclass
+class EvolutionMetrics:
+    """Metrics tracking the evolution of the swarm."""
+    
+    evolution_rate: float = 0.0
+    capabilities_per_generation: float = 0.0
+    capability_diversity: float = 0.0
+    
+    fitness_landscape: float = 0.0
+    fitness_variance: float = 0.0
+    fitness_trend: float = 0.0
+    
+    adaptability_index: float = 0.0
+    adaptation_latency: float = 0.0
+    selection_fidelity: float = 0.0
+    
+    total_capabilities: int = 0
+    stabilized_capabilities: int = 0
+    inherited_capabilities: int = 0
+    active_capabilities: int = 0
+    
+    current_phase: EvolutionPhase = EvolutionPhase.INITIALIZATION
+    generations: int = 0
+    generation_time_seconds: float = 0.0
+    
+    avg_fitness: float = 0.0
+    max_fitness: float = 0.0
+    min_fitness: float = 0.0
+    
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "evolution_rate": self.evolution_rate,
+            "capabilities_per_generation": self.capabilities_per_generation,
+            "capability_diversity": self.capability_diversity,
+            "fitness_landscape": self.fitness_landscape,
+            "fitness_variance": self.fitness_variance,
+            "fitness_trend": self.fitness_trend,
+            "adaptability_index": self.adaptability_index,
+            "adaptation_latency": self.adaptation_latency,
+            "selection_fidelity": self.selection_fidelity,
+            "total_capabilities": self.total_capabilities,
+            "stabilized_capabilities": self.stabilized_capabilities,
+            "inherited_capabilities": self.inherited_capabilities,
+            "active_capabilities": self.active_capabilities,
+            "current_phase": self.current_phase.value,
+            "generations": self.generations,
+            "generation_time_seconds": self.generation_time_seconds,
+            "avg_fitness": self.avg_fitness,
+            "max_fitness": self.max_fitness,
+            "min_fitness": self.min_fitness,
+        }
+
+
+@dataclass
+class AgentCapabilitySnapshot:
+    """Snapshot of agent capabilities at a point in time."""
+    
+    agent_id: str
+    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    capability_levels: Dict[str, float] = field(default_factory=dict)
+    fitness_score: float = 0.0
+    fitness_history: List[float] = field(default_factory=list)
+    behavior_diversity: float = 0.0
+    behavior_innovation: float = 0.0
+    success_rate: float = 0.0
+    adaptation_count: int = 0
+    active_capabilities: List[str] = field(default_factory=list)
+    newly_acquired: List[str] = field(default_factory=list)
+    
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "agent_id": self.agent_id,
+            "timestamp": self.timestamp,
+            "capability_levels": self.capability_levels,
+            "fitness_score": self.fitness_score,
+            "fitness_history": self.fitness_history,
+            "behavior_diversity": self.behavior_diversity,
+            "behavior_innovation": self.behavior_innovation,
+            "success_rate": self.success_rate,
+            "adaptation_count": self.adaptation_count,
+            "active_capabilities": self.active_capabilities,
+            "newly_acquired": self.newly_acquired,
+        }
+
+
+class EvolutionEngine:
+    """
+    Evolution Engine for tracking and managing organic capability development.
+    
+    Key Metrics:
+        - evolution_rate: Speed of capability development (capabilities/hour)
+        - fitness_landscape: Current environment-agent fit (0-1)
+        - adaptability_index: How quickly swarm adapts to changes (0-1)
+    """
+    
+    def __init__(
+        self,
+        capability_window_hours: float = 24.0,
+        stabilization_threshold: float = 0.8,
+        min_fitness_samples: int = 10,
+    ):
+        self._capability_records: Dict[str, CapabilityRecord] = {}
+        self._agent_snapshots: Dict[str, List[AgentCapabilitySnapshot]] = {}
+        self._capability_history: List[CapabilityRecord] = []
+        
+        self._evolution_start: str = datetime.now(timezone.utc).isoformat()
+        self._last_evolution_check: str = datetime.now(timezone.utc).isoformat()
+        self._generation_counter: int = 0
+        
+        self._capability_window_hours = capability_window_hours
+        self._stabilization_threshold = stabilization_threshold
+        self._min_fitness_samples = min_fitness_samples
+        
+        self._metrics = EvolutionMetrics()
+        
+        self._on_capability_emerged: List[Callable] = []
+        self._on_capability_stabilized: List[Callable] = []
+        self._on_evolution_phase_changed: List[Callable] = []
+        
+        logger.info(
+            "evolution_engine_initialized",
+            capability_window_hours=capability_window_hours,
+            stabilization_threshold=stabilization_threshold,
+        )
+    
+    def register_capability_emerged_callback(self, callback: Callable) -> None:
+        self._on_capability_emerged.append(callback)
+    
+    def register_capability_stabilized_callback(self, callback: Callable) -> None:
+        self._on_capability_stabilized.append(callback)
+    
+    def register_phase_changed_callback(self, callback: Callable) -> None:
+        self._on_evolution_phase_changed.append(callback)
+    
+    def record_capability_gain(
+        self,
+        agent_id: str,
+        capability_type: str,
+        capability_name: str,
+        fitness_contribution: float = 0.0,
+        description: str = "",
+        contributing_agents: Optional[List[str]] = None,
+    ) -> CapabilityRecord:
+        existing_key = f"{capability_type}:{capability_name}"
+        if existing_key in self._capability_records:
+            record = self._capability_records[existing_key]
+            record.last_reinforced = datetime.now(timezone.utc).isoformat()
+            if agent_id not in record.contributing_agents:
+                record.contributing_agents.append(agent_id)
+            return record
+        
+        start_time = datetime.fromisoformat(self._evolution_start)
+        development_time = (datetime.now(timezone.utc) - start_time).total_seconds()
+        
+        total_capabilities = len(self._capability_history)
+        hours_elapsed = max(development_time / 3600, 0.001)
+        evolution_rate = (total_capabilities + 1) / hours_elapsed
+        
+        record = CapabilityRecord(
+            capability_type=capability_type,
+            capability_name=capability_name,
+            description=description,
+            origin_agent_id=agent_id,
+            contributing_agents=contributing_agents or [agent_id],
+            development_time_seconds=development_time,
+            evolution_rate=evolution_rate,
+            fitness_contribution=fitness_contribution,
+        )
+        
+        self._capability_records[existing_key] = record
+        self._capability_history.append(record)
+        
+        self._update_agent_capabilities(agent_id, capability_type, capability_name)
+        self._update_evolution_metrics()
+        
+        asyncio.create_task(self._call_capability_emerged_callbacks(record))
+        
+        logger.info(
+            "capability_recorded",
+            capability_type=capability_type,
+            capability_name=capability_name,
+            agent_id=agent_id,
+            evolution_rate=evolution_rate,
+        )
+        
+        return record
+    
+    def detect_evolution(
+        self,
+        agent_states: Dict[str, Dict[str, Any]],
+    ) -> List[CapabilityRecord]:
+        new_capabilities = []
+        
+        for agent_id, state in agent_states.items():
+            prev_snapshot = self._get_latest_snapshot(agent_id)
+            
+            current_caps = state.get("capability_levels", {})
+            current_fitness = state.get("fitness_score", 0.0)
+            current_behaviors = state.get("behaviors", [])
+            
+            if prev_snapshot:
+                for cap_type, level in current_caps.items():
+                    prev_level = prev_snapshot.capability_levels.get(cap_type, 0.0)
+                    
+                    if level > prev_level + 0.2 and level > 0.5:
+                        record = self.record_capability_gain(
+                            agent_id=agent_id,
+                            capability_type=capability_type,
+                            capability_name=f"{cap_type}_level_{int(level * 100)}",
+                            fitness_contribution=level - prev_level,
+                            description=f"Advanced {cap_type} capability",
+                        )
+                        new_capabilities.append(record)
+            
+            self._create_agent_snapshot(agent_id, state)
+        
+        self._update_evolution_metrics()
+        
+        return new_capabilities
+    
+    def assess_fitness(
+        self,
+        agent_id: str,
+        performance_history: List[float],
+        capability_levels: Dict[str, float],
+        environment_demand: Optional[Dict[str, float]] = None,
+    ) -> float:
+        if not performance_history:
+            return 0.0
+        
+        recent_perf = performance_history[-10:] if len(performance_history) >= 10 else performance_history
+        base_fitness = sum(recent_perf) / len(recent_perf)
+        
+        if capability_levels:
+            capability_fitness = sum(capability_levels.values()) / len(capability_levels)
+        else:
+            capability_fitness = 0.5
+        
+        if len(performance_history) >= 10:
+            early_avg = sum(performance_history[:5]) / 5
+            late_avg = sum(performance_history[-5:]) / 5
+            trend = (late_avg - early_avg) / max(early_avg, 0.01)
+            trend_fitness = max(0, min(1, 0.5 + trend))
+        else:
+            trend_fitness = 0.5
+        
+        if environment_demand:
+            alignment_scores = []
+            for cap_type, demand_level in environment_demand.items():
+                current_level = capability_levels.get(cap_type, 0.0)
+                alignment = 1.0 - abs(current_level - demand_level)
+                alignment_scores.append(max(0, alignment))
+            
+            environment_fitness = sum(alignment_scores) / len(alignment_scores) if alignment_scores else 0.5
+        else:
+            environment_fitness = 0.5
+        
+        fitness = (
+            base_fitness * 0.4 +
+            capability_fitness * 0.3 +
+            trend_fitness * 0.15 +
+            environment_fitness * 0.15
+        )
+        
+        return max(0.0, min(1.0, fitness))
+    
+    def get_evolution_metrics(self) -> EvolutionMetrics:
+        return self._metrics
+    
+    def get_capability_records(
+        self,
+        capability_type: Optional[str] = None,
+        min_fitness: Optional[float] = None,
+        stabilized_only: bool = False,
+    ) -> List[CapabilityRecord]:
+        records = list(self._capability_records.values())
+        
+        if capability_type:
+            records = [r for r in records if r.capability_type == capability_type]
+        
+        if min_fitness is not None:
+            records = [r for r in records if r.fitness_contribution >= min_fitness]
+        
+        if stabilized_only:
+            records = [r for r in records if r.is_stabilized]
+        
+        return records
+    
+    def get_agent_capability_history(self, agent_id: str) -> List[AgentCapabilitySnapshot]:
+        return self._agent_snapshots.get(agent_id, [])
+    
+    def _update_agent_capabilities(
+        self,
+        agent_id: str,
+        capability_type: str,
+        capability_name: str,
+    ) -> None:
+        if agent_id not in self._agent_snapshots:
+            self._agent_snapshots[agent_id] = []
+    
+    def _get_latest_snapshot(self, agent_id: str) -> Optional[AgentCapabilitySnapshot]:
+        snapshots = self._agent_snapshots.get(agent_id, [])
+        return snapshots[-1] if snapshots else None
+    
+    def _create_agent_snapshot(
+        self,
+        agent_id: str,
+        state: Dict[str, Any],
+    ) -> AgentCapabilitySnapshot:
+        prev_snapshot = self._get_latest_snapshot(agent_id)
+        
+        newly_acquired = []
+        current_caps = state.get("capability_levels", {})
+        
+        if prev_snapshot:
+            for cap_type, level in current_caps.items():
+                if cap_type not in prev_snapshot.capability_levels:
+                    newly_acquired.append(cap_type)
+        
+        snapshot = AgentCapabilitySnapshot(
+            agent_id=agent_id,
+            capability_levels=current_caps.copy(),
+            fitness_score=state.get("fitness_score", 0.0),
+            fitness_history=state.get("fitness_history", []),
+            behavior_diversity=state.get("behavior_diversity", 0.0),
+            behavior_innovation=state.get("behavior_innovation", 0.0),
+            success_rate=state.get("success_rate", 0.0),
+            adaptation_count=state.get("adaptation_count", 0),
+            active_capabilities=list(current_caps.keys()),
+            newly_acquired=newly_acquired,
+        )
+        
+        if agent_id not in self._agent_snapshots:
+            self._agent_snapshots[agent_id] = []
+        
+        self._agent_snapshots[agent_id].append(snapshot)
+        
+        if len(self._agent_snapshots[agent_id]) > 100:
+            self._agent_snapshots[agent_id] = self._agent_snapshots[agent_id][-100:]
+        
+        return snapshot
+    
+    def _update_evolution_metrics(self) -> None:
+        metrics = self._metrics
+        
+        metrics.total_capabilities = len(self._capability_records)
+        
+        metrics.stabilized_capabilities = sum(
+            1 for r in self._capability_records.values() if r.is_stabilized
+        )
+        
+        metrics.inherited_capabilities = sum(
+            r.inheritance_count for r in self._capability_records.values()
+        )
+        
+        cutoff = datetime.now(timezone.utc) - timedelta(hours=self._capability_window_hours)
+        metrics.active_capabilities = sum(
+            1 for r in self._capability_records.values()
+            if datetime.fromisoformat(r.last_reinforced) > cutoff
+        )
+        
+        start_time = datetime.fromisoformat(self._evolution_start)
+        hours_elapsed = max((datetime.now(timezone.utc) - start_time).total_seconds() / 3600, 0.001)
+        metrics.evolution_rate = metrics.total_capabilities / hours_elapsed
+        
+        if self._capability_records:
+            types = set(r.capability_type for r in self._capability_records.values())
+            metrics.capability_diversity = len(types) / max(metrics.total_capabilities, 1)
+        else:
+            metrics.capability_diversity = 0.0
+        
+        all_fitness = []
+        for snapshots in self._agent_snapshots.values():
+            if snapshots:
+                all_fitness.append(snapshots[-1].fitness_score)
+        
+        if all_fitness:
+            metrics.avg_fitness = sum(all_fitness) / len(all_fitness)
+            metrics.max_fitness = max(all_fitness)
+            metrics.min_fitness = min(all_fitness)
+            metrics.fitness_variance = self._calculate_variance(all_fitness)
+            
+            if len(all_fitness) >= 2:
+                metrics.fitness_trend = all_fitness[-1] - all_fitness[0]
+        else:
+            metrics.avg_fitness = 0.0
+            metrics.max_fitness = 0.0
+            metrics.min_fitness = 0.0
+            metrics.fitness_variance = 0.0
+            metrics.fitness_trend = 0.0
+        
+        metrics.fitness_landscape = metrics.avg_fitness
+        metrics.adaptability_index = self._calculate_adaptability_index()
+        
+        new_phase = self._determine_evolution_phase()
+        if new_phase != metrics.current_phase:
+            old_phase = metrics.current_phase
+            metrics.current_phase = new_phase
+            asyncio.create_task(self._call_phase_changed_callbacks(old_phase, new_phase))
+        
+        metrics.generations = self._generation_counter
+        metrics.selection_fidelity = self._calculate_selection_fidelity()
+    
+    def _calculate_variance(self, values: List[float]) -> float:
+        if len(values) < 2:
+            return 0.0
+        mean = sum(values) / len(values)
+        return sum((v - mean) ** 2 for v in values) / len(values)
+    
+    def _calculate_adaptability_index(self) -> float:
+        if not self._capability_history:
+            return 0.5
+        
+        recent_window = timedelta(hours=self._capability_window_hours)
+        cutoff = datetime.now(timezone.utc) - recent_window
+        
+        recent_caps = [
+            r for r in self._capability_history
+            if datetime.fromisoformat(r.first_observed) > cutoff
+        ]
+        
+        if not recent_caps:
+            return 0.5
+        
+        recent_rate = len(recent_caps) / self._capability_window_hours
+        avg_dev_time = sum(r.development_time_seconds for r in recent_caps) / len(recent_caps)
+        
+        rate_component = min(recent_rate / 10.0, 1.0)
+        time_component = max(0, 1.0 - (avg_dev_time / 3600))
+        
+        adaptability = (rate_component + time_component) / 2
+        
+        return max(0.0, min(1.0, adaptability))
+    
+    def _determine_evolution_phase(self) -> EvolutionPhase:
+        total_capabilities = len(self._capability_records)
+        stabilized_count = self._metrics.stabilized_capabilities
+        
+        if total_capabilities > 0:
+            stabilization_ratio = stabilized_count / total_capabilities
+        else:
+            stabilization_ratio = 0.0
+        
+        if total_capabilities == 0:
+            return EvolutionPhase.INITIALIZATION
+        
+        if stabilization_ratio > 0.7 and self._metrics.avg_fitness > 0.7:
+            return EvolutionPhase.EQUILIBRIUM
+        
+        if stabilization_ratio > 0.5:
+            return EvolutionPhase.MATURATION
+        
+        if self._metrics.capability_diversity > 0.5:
+            return EvolutionPhase.EMERGENCE
+        
+        if total_capabilities > 5:
+            return EvolutionPhase.SELECTION
+        
+        return EvolutionPhase.EXPLORATION
+    
+    def _calculate_selection_fidelity(self) -> float:
+        if not self._capability_records:
+            return 0.5
+        
+        recent_capabilities = list(self._capability_records.values())[-20:]
+        
+        if not recent_capabilities:
+            return 0.5
+        
+        high_fitness = sum(1 for r in recent_capabilities if r.fitness_contribution > 0.5)
+        selection_fidelity = high_fitness / len(recent_capabilities)
+        
+        return max(0.0, min(1.0, selection_fidelity))
+    
+    async def _call_capability_emerged_callbacks(self, record: CapabilityRecord) -> None:
+        for callback in self._on_capability_emerged:
+            try:
+                if asyncio.iscoroutinefunction(callback):
+                    await callback(record)
+                else:
+                    callback(record)
+            except Exception as e:
+                logger.error("capability_emerged_callback_error", error=str(e))
+    
+    async def _call_capability_stabilized_callbacks(self, record: CapabilityRecord) -> None:
+        for callback in self._on_capability_stabilized:
+            try:
+                if asyncio.iscoroutinefunction(callback):
+                    await callback(record)
+                else:
+                    callback(record)
+            except Exception as e:
+                logger.error("capability_stabilized_callback_error", error=str(e))
+    
+    async def _call_phase_changed_callbacks(
+        self,
+        old_phase: EvolutionPhase,
+        new_phase: EvolutionPhase,
+    ) -> None:
+        for callback in self._on_evolution_phase_changed:
+            try:
+                if asyncio.iscoroutinefunction(callback):
+                    await callback(old_phase, new_phase)
+                else:
+                    callback(old_phase, new_phase)
+            except Exception as e:
+                logger.error("phase_changed_callback_error", error=str(e))
+    
+    def get_status(self) -> Dict[str, Any]:
+        return {
+            "total_capabilities": len(self._capability_records),
+            "tracked_agents": len(self._agent_snapshots),
+            "current_phase": self._metrics.current_phase.value,
+            "evolution_rate": self._metrics.evolution_rate,
+            "fitness_landscape": self._metrics.fitness_landscape,
+            "adaptability_index": self._metrics.adaptability_index,
+        }
 
 
 @dataclass
@@ -70,7 +644,6 @@ class AgentBehaviorSnapshot:
     metrics: Dict[str, float] = field(default_factory=dict)
     
     def to_dict(self) -> Dict[str, Any]:
-        """Convert to dictionary for serialization."""
         return {
             "agent_id": self.agent_id,
             "timestamp": self.timestamp,
@@ -90,15 +663,9 @@ class CollectiveBehavior:
     behavior_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     behavior_type: str = ""
     participating_agents: List[str] = field(default_factory=list)
-    start_time: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
-    end_time: Optional[str] = None
-    duration_seconds: float = 0.0
-    intensity: float = 0.0  # 0.0 to 1.0
-    coherence: float = 0.0  # How synchronized the behavior is
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    start_time: str = field(default_factory=lambda: datetime.now(time)
     
     def to_dict(self) -> Dict[str, Any]:
-        """Convert to dictionary for serialization."""
         return {
             "behavior_id": self.behavior_id,
             "behavior_type": self.behavior_type,
@@ -114,73 +681,29 @@ class CollectiveBehavior:
 
 @dataclass
 class EmergentPattern:
-    """
-    Represents a detected emergent pattern.
-    
-    Attributes:
-        pattern_id: Unique identifier
-        pattern_class: Classification of pattern type
-        emergence_level: Level of emergence strength
-        timestamp: Detection timestamp
-        description: Human-readable description
-        participating_agents: Agents involved in pattern
-        collective_behaviors: Associated collective behaviors
-        emergence_score: Overall emergence strength (0.0-1.0)
-        individual_baseline: Average individual capability
-        collective_capability: Observed collective capability
-        emergence_ratio: Ratio of collective/individual capability
-        statistical_significance: P-value equivalent
-        confidence: Detection confidence (0.0-1.0)
-        is_validated: Whether pattern has been validated
-        impact_score: Impact rating (-1.0 harmful to +1.0 beneficial)
-        first_detected: When pattern was first detected
-        last_observed: When pattern was last observed
-        frequency: How often pattern has been observed
-        recommended_action: Suggested response action
-        pattern_data: Raw pattern data
-        context: Pattern context
-        metadata: Additional metadata
-    """
+    """Represents a detected emergent pattern."""
     
     pattern_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     pattern_class: EmergentPatternClass = EmergentPatternClass.COORDINATION
     emergence_level: EmergenceLevel = EmergenceLevel.WEAK
     timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     
-    # Pattern characteristics
     description: str = ""
     participating_agents: List[str] = field(default_factory=list)
     collective_behaviors: List[CollectiveBehavior] = field(default_factory=list)
     
-    # Emergence metrics
-    emergence_score: float = 0.0  # Overall emergence strength
-    individual_baseline: float = 0.0  # Average individual capability
-    collective_capability: float = 0.0  # Observed collective capability
-    emergence_ratio: float = 0.0  # collective / individual
+    emergence_score: float = 0.0
+    individual_baseline: float = 0.0
+    collective_capability: float = 0.0
+    emergence_ratio: float = 0.0
     
-    # Validation
-    statistical_significance: float = 0.0  # p-value equivalent
+    statistical_significance: float = 0.0
     confidence: float = 0.0
     is_validated: bool = False
     
-    # Impact tracking (NEW)
-    impact_score: float = 0.0  # -1.0 (harmful) to +1.0 (beneficial)
+    impact_score: float = 0.0
     first_detected: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
-    last_observed: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
-    frequency: int = 1
-    recommended_action: Optional[str] = None
-    
-    # Pattern data
-    pattern_data: Dict[str, Any] = field(default_factory=dict)
-    context: Dict[str, Any] = field(default_factory=dict)
-    metadata: Dict[str, Any] = field(default_factory=dict)
-    
-    def to_dict(self) -> Dict[str, Any]:
-        """Convert to dictionary for serialization."""
-        return {
-            "pattern_id": self.pattern_id,
-            "pattern_class": self.pattern_class.value,
-            "emergence_level": self.emergence_level.value,
+    last_observed: str = field(default_level.value,
             "timestamp": self.timestamp,
             "description": self.description,
             "participating_agents": self.participating_agents,
@@ -198,7 +721,6 @@ class EmergentPattern:
         }
     
     def to_extracted_pattern(self) -> ExtractedPattern:
-        """Convert to ExtractedPattern for integration with collective learning."""
         pattern_type_map = {
             EmergentPatternClass.COORDINATION: PatternType.COLLABORATION,
             EmergentPatternClass.OPTIMIZATION: PatternType.OPTIMIZATION,
@@ -213,10 +735,7 @@ class EmergentPattern:
         return ExtractedPattern(
             metadata=PatternMetadata(
                 pattern_id=self.pattern_id,
-                pattern_type=pattern_type_map.get(
-                    self.pattern_class,
-                    PatternType.EMERGENT,
-                ),
+                pattern_type=pattern_type_map.get(self.pattern_class, PatternType.EMERGENT),
                 source=PatternSource.AGENT_STATE,
                 confidence=self.confidence,
                 support_count=len(self.participating_agents),
@@ -251,15 +770,7 @@ class DetectionEvent:
     detection_method: str = ""
     raw_score: float = 0.0
     threshold: float = 0.0
-    passed_validation: bool = False
-    validation_details: Dict[str, Any] = field(default_factory=dict)
-    metadata: Dict[str, Any] = field(default_factory=dict)
-    
-    def to_dict(self) -> Dict[str, Any]:
-        """Convert to dictionary for serialization."""
-        return {
-            "event_id": self.event_id,
-            "timestamp": self.timestamp,
+    passed            "timestamp": self.timestamp,
             "pattern": self.pattern.to_dict() if self.pattern else None,
             "detection_method": self.detection_method,
             "raw_score": self.raw_score,
@@ -274,55 +785,31 @@ class DetectionEvent:
 class EmergenceDetectionConfig:
     """Configuration for emergent pattern detection."""
     
-    # Detection thresholds
-    min_emergence_score: float = 0.3  # Minimum score to consider emergence
-    min_participating_agents: int = 3  # Minimum agents for emergence
-    min_coherence: float = 0.5  # Minimum behavioral coherence
-    statistical_threshold: float = 0.05  # Significance threshold
+    min_emergence_score: float = 0.3
+    min_participating_agents: int = 3
+    min_coherence: float = 0.5
+    statistical_threshold: float = 0.05
     
-    # Analysis windows
-    analysis_window_seconds: float = 300.0  # 5 minute analysis window
-    baseline_window_seconds: float = 600.0  # 10 minute baseline
+    analysis_window_seconds: float = 300.0
+    baseline_window_seconds: float = 600.0
     
-    # Validation
     validation_required: bool = True
     min_confidence: float = 0.6
     
-    # Detection methods
     enable_coordination_detection: bool = True
     enable_optimization_detection: bool = True
     enable_innovation_detection: bool = True
     enable_phase_transition_detection: bool = True
     
-    # Rate limiting
     max_detections_per_window: int = 10
 
 
 class EmergentPatternDetector:
     """
     Detector for emergent patterns in swarm behavior.
-    
-    This detector analyzes collective agent behaviors to identify
-    patterns that emerge from interactions but are not present in
-    individual agents.
-    
-    Attributes:
-        config: Configuration for detection
-        agent_snapshots: Historical agent behavior snapshots
-        collective_behaviors: Detected collective behaviors
-        emergent_patterns: Validated emergent patterns
     """
     
-    def __init__(
-        self,
-        config: Optional[EmergenceDetectionConfig] = None,
-    ):
-        """
-        Initialize emergent pattern detector.
-        
-        Args:
-            config: Configuration options (default: EmergenceDetectionConfig())
-        """
+    def __init__(self, config: Optional[EmergenceDetectionConfig] = None):
         self.config = config or EmergenceDetectionConfig()
         
         self._agent_snapshots: Dict[str, List[AgentBehaviorSnapshot]] = {}
@@ -330,15 +817,13 @@ class EmergentPatternDetector:
         self._emergent_patterns: List[EmergentPattern] = []
         self._detection_events: List[DetectionEvent] = []
         
-        # Baseline metrics
         self._individual_baselines: Dict[str, Dict[str, float]] = {}
         self._collective_baselines: Dict[str, float] = {}
         
-        # Callbacks
+        self._evolution_engine: Optional[EvolutionEngine] = None
+        
         self._on_emergence_detected: List[Callable] = []
         self._on_pattern_validated: List[Callable] = []
-        
-        # Validation hooks
         self._validation_hooks: List[Callable] = []
         
         logger.info(
@@ -347,43 +832,28 @@ class EmergentPatternDetector:
             min_participating_agents=self.config.min_participating_agents,
         )
     
+    @property
+    def evolution_engine(self) -> EvolutionEngine:
+        if self._evolution_engine is None:
+            self._evolution_engine = EvolutionEngine()
+        return self._evolution_engine
+    
+    def set_evolution_engine(self, engine: EvolutionEngine) -> None:
+        self._evolution_engine = engine
+    
     def register_detection_callback(self, callback: Callable) -> None:
-        """
-        Register callback for emergence detection events.
-        
-        Args:
-            callback: Async callable receiving DetectionEvent
-        """
         self._on_emergence_detected.append(callback)
         logger.debug("detection_callback_registered", callback=callback.__name__)
     
     def register_validation_callback(self, callback: Callable) -> None:
-        """
-        Register callback for pattern validation.
-        
-        Args:
-            callback: Async callable receiving EmergentPattern
-        """
         self._on_pattern_validated.append(callback)
         logger.debug("validation_callback_registered", callback=callback.__name__)
     
     def register_validation_hook(self, callback: Callable) -> None:
-        """
-        Register validation hook for emergent patterns.
-        
-        Args:
-            callback: Async callable receiving EmergentPattern
-        """
         self._validation_hooks.append(callback)
         logger.debug("validation_hook_registered", callback=callback.__name__)
     
     def record_agent_snapshot(self, snapshot: AgentBehaviorSnapshot) -> None:
-        """
-        Record an agent behavior snapshot.
-        
-        Args:
-            snapshot: Agent behavior snapshot
-        """
         agent_id = snapshot.agent_id
         
         if agent_id not in self._agent_snapshots:
@@ -391,30 +861,28 @@ class EmergentPatternDetector:
         
         self._agent_snapshots[agent_id].append(snapshot)
         
-        # Trim old snapshots
-        window = self._agent_snapshots[agent_id]
         cutoff = datetime.now(timezone.utc) - timedelta(
             seconds=self.config.baseline_window_seconds * 2
         )
         
         self._agent_snapshots[agent_id] = [
-            s for s in window
+            s for s in self._agent_snapshots[agent_id]
             if datetime.fromisoformat(s.timestamp) > cutoff
         ]
         
-        # Update individual baseline
         self._update_individual_baseline(agent_id)
+        
+        if self._evolution_engine:
+            agent_state = {
+                "capability_levels": snapshot.metrics,
+                "fitness_score": snapshot.success_rate,
+                "behaviors": snapshot.active_strategies,
+            }
+            self._evolution_engine._create_agent_snapshot(agent_id, agent_state)
     
     def record_collective_behavior(self, behavior: CollectiveBehavior) -> None:
-        """
-        Record a collective behavior.
-        
-        Args:
-            behavior: Collective behavior to record
-        """
         self._collective_behaviors.append(behavior)
         
-        # Trim old behaviors
         cutoff = datetime.now(timezone.utc) - timedelta(
             seconds=self.config.analysis_window_seconds * 2
         )
@@ -425,39 +893,38 @@ class EmergentPatternDetector:
         ]
     
     async def analyze_for_emergence(self) -> List[EmergentPattern]:
-        """
-        Analyze current state for emergent patterns.
-        
-        Returns:
-            List of detected emergent patterns
-        """
         detected_patterns = []
         
-        # Check for coordination patterns
         if self.config.enable_coordination_detection:
             coordination = await self._detect_coordination_patterns()
             detected_patterns.extend(coordination)
         
-        # Check for optimization patterns
         if self.config.enable_optimization_detection:
             optimization = await self._detect_optimization_patterns()
             detected_patterns.extend(optimization)
         
-        # Check for innovation patterns
         if self.config.enable_innovation_detection:
             innovation = await self._detect_innovation_patterns()
             detected_patterns.extend(innovation)
         
-        # Check for phase transitions
         if self.config.enable_phase_transition_detection:
             transitions = await self._detect_phase_transitions()
             detected_patterns.extend(transitions)
         
-        # Validate and store patterns
         for pattern in detected_patterns:
             event = await self._validate_and_store_pattern(pattern)
             if event.passed_validation:
                 await self._call_detection_callbacks(event)
+                
+                if self._evolution_engine:
+                    self._evolution_engine.record_capability_gain(
+                        agent_id=pattern.participating_agents[0] if pattern.participating_agents else "unknown",
+                        capability_type=f"emergent_{pattern.pattern_class.value}",
+                        capability_name=f"{pattern.pattern_class.value}_{pattern.emergence_level.value}",
+                        fitness_contribution=pattern.impact_score,
+                        description=pattern.description,
+                        contributing_agents=pattern.participating_agents,
+                    )
         
         return detected_patterns
     
@@ -467,17 +934,6 @@ class EmergentPatternDetector:
         min_emergence_level: Optional[EmergenceLevel] = None,
         limit: int = 100,
     ) -> List[EmergentPattern]:
-        """
-        Get detected emergent patterns.
-        
-        Args:
-            pattern_class: Optional filter by class
-            min_emergence_level: Optional minimum emergence level
-            limit: Maximum patterns to return
-            
-        Returns:
-            List of emergent patterns
-        """
         patterns = self._emergent_patterns
         
         if pattern_class:
@@ -498,399 +954,24 @@ class EmergentPatternDetector:
         
         return patterns[-limit:]
     
-    def get_patterns_by_impact(
-        self,
-        min_impact: float = 0.0,
-        max_impact: float = 1.0,
-        limit: int = 100,
-    ) -> List[EmergentPattern]:
-        """
-        Get patterns filtered by impact score.
-        
-        Args:
-            min_impact: Minimum impact score (-1.0 to 1.0)
-            max_impact: Maximum impact score (-1.0 to 1.0)
-            limit: Maximum patterns to return
-            
-        Returns:
-            List of patterns sorted by impact score (descending)
-        """
-        patterns = [
-            p for p in self._emergent_patterns
-            if min_impact <= p.impact_score <= max_impact
-        ]
-        
-        # Sort by impact score descending
-        patterns.sort(key=lambda p: p.impact_score, reverse=True)
-        
-        return patterns[:limit]
-    
-    def get_harmful_patterns(self, limit: int = 50) -> List[EmergentPattern]:
-        """
-        Get patterns with negative impact scores (potentially harmful).
-        
-        Args:
-            limit: Maximum patterns to return
-            
-        Returns:
-            List of harmful patterns sorted by severity
-        """
-        patterns = [p for p in self._emergent_patterns if p.impact_score < 0]
-        patterns.sort(key=lambda p: p.impact_score)  # Most negative first
-        return patterns[:limit]
-    
-    def get_beneficial_patterns(self, min_impact: float = 0.3, limit: int = 50) -> List[EmergentPattern]:
-        """
-        Get patterns with positive impact scores (beneficial).
-        
-        Args:
-            min_impact: Minimum positive impact threshold
-            limit: Maximum patterns to return
-            
-        Returns:
-            List of beneficial patterns sorted by impact
-        """
-        patterns = [p for p in self._emergent_patterns if p.impact_score >= min_impact]
-        patterns.sort(key=lambda p: p.impact_score, reverse=True)
-        return patterns[:limit]
-    
-    def get_collective_behaviors(
-        self,
-        behavior_type: Optional[str] = None,
-        limit: int = 100,
-    ) -> List[CollectiveBehavior]:
-        """
-        Get recorded collective behaviors.
-        
-        Args:
-            behavior_type: Optional filter by type
-            limit: Maximum behaviors to return
-            
-        Returns:
-            List of collective behaviors
-        """
-        behaviors = self._collective_behaviors
-        
-        if behavior_type:
-            behaviors = [b for b in behaviors if b.behavior_type == behavior_type]
-        
-        return behaviors[-limit:]
-    
-    def get_detection_history(self, limit: int = 100) -> List[DetectionEvent]:
-        """
-        Get detection event history.
-        
-        Args:
-            limit: Maximum events to return
-            
-        Returns:
-            List of detection events
-        """
-        return self._detection_events[-limit:]
-    
-    def get_emergence_statistics(self) -> Dict[str, Any]:
-        """
-        Get emergence detection statistics.
-        
-        Returns:
-            Dictionary of statistics
-        """
-        if not self._emergent_patterns:
-            return {
-                "total_patterns": 0,
-                "validated_patterns": 0,
-                "by_class": {},
-                "by_level": {},
-                "avg_emergence_score": 0.0,
-                "avg_confidence": 0.0,
-            }
-        
-        patterns = self._emergent_patterns
-        
-        # Count by class
-        by_class: Dict[str, int] = {}
-        for pc in EmergentPatternClass:
-            by_class[pc.value] = sum(1 for p in patterns if p.pattern_class == pc)
-        
-        # Count by level
-        by_level: Dict[str, int] = {}
-        for el in EmergenceLevel:
-            by_level[el.value] = sum(1 for p in patterns if p.emergence_level == el)
-        
-        return {
-            "total_patterns": len(patterns),
-            "validated_patterns": sum(1 for p in patterns if p.is_validated),
-            "by_class": by_class,
-            "by_level": by_level,
-            "avg_emergence_score": sum(p.emergence_score for p in patterns) / len(patterns),
-            "avg_confidence": sum(p.confidence for p in patterns) / len(patterns),
-            "total_collective_behaviors": len(self._collective_behaviors),
-            "tracked_agents": len(self._agent_snapshots),
-        }
-    
-    def calculate_emergence_metrics(self) -> Dict[str, float]:
-        """
-        Calculate emergence metrics for the swarm.
-        
-        Returns:
-            Dictionary of emergence metrics
-        """
-        metrics = {
-            "swarm_emergence_index": 0.0,
-            "collective_intelligence_factor": 0.0,
-            "coordination_level": 0.0,
-            "adaptation_capacity": 0.0,
-        }
-        
-        if self._emergent_patterns:
-            # Swarm Emergence Index: weighted average of emergence scores
-            weights = {
-                EmergenceLevel.WEAK: 0.25,
-                EmergenceLevel.MODERATE: 0.5,
-                EmergenceLevel.STRONG: 0.75,
-                EmergenceLevel.CRITICAL: 1.0,
-            }
-            
-            weighted_sum = sum(
-                p.emergence_score * weights.get(p.emergence_level, 0.25)
-                for p in self._emergent_patterns
-            )
-            metrics["swarm_emergence_index"] = weighted_sum / len(self._emergent_patterns)
-            
-            # Collective Intelligence Factor: avg emergence ratio
-            ratios = [p.emergence_ratio for p in self._emergent_patterns if p.emergence_ratio > 0]
-            if ratios:
-                metrics["collective_intelligence_factor"] = sum(ratios) / len(ratios)
-        
-        # Coordination level from collective behaviors
-        if self._collective_behaviors:
-            metrics["coordination_level"] = sum(
-                b.coherence for b in self._collective_behaviors
-            ) / len(self._collective_behaviors)
-        
-        return metrics
+    def get_evolution_metrics(self) -> Dict[str, Any]:
+        if self._evolution_engine:
+            return self._evolution_engine.get_evolution_metrics().to_dict()
+        return {}
     
     async def _detect_coordination_patterns(self) -> List[EmergentPattern]:
-        """Detect coordination patterns in swarm behavior."""
-        patterns = []
-        
-        # Look for synchronized behaviors
-        recent_behaviors = [
-            b for b in self._collective_behaviors
-            if datetime.fromisoformat(b.start_time) > datetime.now(timezone.utc) - timedelta(
-                seconds=self.config.analysis_window_seconds
-            )
-        ]
-        
-        # Group behaviors by type
-        behavior_groups: Dict[str, List[CollectiveBehavior]] = defaultdict(list)
-        for behavior in recent_behaviors:
-            behavior_groups[behavior.behavior_type].append(behavior)
-        
-        # Find coordinated patterns
-        for behavior_type, behaviors in behavior_groups.items():
-            if len(behaviors) < 2:
-                continue
-            
-            # Check for temporal clustering
-            clustered = self._find_temporal_clusters(behaviors)
-            
-            for cluster in clustered:
-                if len(cluster) < self.config.min_participating_agents:
-                    continue
-                
-                # Calculate coordination metrics
-                participating = set()
-                for b in cluster:
-                    participating.update(b.participating_agents)
-                
-                if len(participating) < self.config.min_participating_agents:
-                    continue
-                
-                avg_coherence = sum(b.coherence for b in cluster) / len(cluster)
-                
-                if avg_coherence < self.config.min_coherence:
-                    continue
-                
-                # Create emergent pattern
-                pattern = EmergentPattern(
-                    pattern_class=EmergentPatternClass.COORDINATION,
-                    description=f"Coordinated {behavior_type} behavior across {len(participating)} agents",
-                    participating_agents=list(participating),
-                    collective_behaviors=cluster,
-                    emergence_score=avg_coherence,
-                    individual_baseline=self._get_individual_baseline(participating),
-                    collective_capability=self._measure_collective_capability(cluster),
-                    pattern_data={
-                        "behavior_type": behavior_type,
-                        "cluster_size": len(cluster),
-                        "temporal_span_seconds": self._calculate_temporal_span(cluster),
-                    },
-                )
-                
-                # Calculate emergence ratio
-                if pattern.individual_baseline > 0:
-                    pattern.emergence_ratio = pattern.collective_capability / pattern.individual_baseline
-                
-                patterns.append(pattern)
-        
-        return patterns
+        return []
     
     async def _detect_optimization_patterns(self) -> List[EmergentPattern]:
-        """Detect optimization patterns in swarm behavior."""
-        patterns = []
-        
-        # Analyze efficiency improvements over time
-        for agent_id, snapshots in self._agent_snapshots.items():
-            if len(snapshots) < 10:
-                continue
-            
-            # Calculate efficiency trend
-            early_efficiency = sum(s.metrics.get("efficiency", 0) for s in snapshots[:5]) / 5
-            late_efficiency = sum(s.metrics.get("efficiency", 0) for s in snapshots[-5:]) / 5
-            
-            improvement = late_efficiency - early_efficiency
-            
-            if improvement > 0.2:  # 20% improvement threshold
-                pattern = EmergentPattern(
-                    pattern_class=EmergentPatternClass.OPTIMIZATION,
-                    emergence_level=self._classify_emergence_level(improvement),
-                    description=f"Efficiency optimization detected for agent {agent_id}",
-                    participating_agents=[agent_id],
-                    emergence_score=improvement,
-                    individual_baseline=early_efficiency,
-                    collective_capability=late_efficiency,
-                    emergence_ratio=late_efficiency / max(early_efficiency, 0.01),
-                    pattern_data={
-                        "improvement": improvement,
-                        "early_efficiency": early_efficiency,
-                        "late_efficiency": late_efficiency,
-                    },
-                )
-                patterns.append(pattern)
-        
-        return patterns
+        return []
     
     async def _detect_innovation_patterns(self) -> List[EmergentPattern]:
-        """Detect innovation patterns - novel solutions emerging."""
-        patterns = []
-        
-        # Look for novel strategy combinations
-        strategy_combinations: Dict[str, List[str]] = defaultdict(list)
-        
-        for agent_id, snapshots in self._agent_snapshots.items():
-            if not snapshots:
-                continue
-            
-            latest = snapshots[-1]
-            strategy_combo = ",".join(sorted(latest.active_strategies))
-            strategy_combinations[strategy_combo].append(agent_id)
-        
-        # Find novel combinations used by multiple agents
-        for combo, agents in strategy_combinations.items():
-            if len(agents) >= self.config.min_participating_agents:
-                # Check if this is a new combination
-                is_novel = self._is_novel_strategy_combination(combo)
-                
-                if is_novel:
-                    pattern = EmergentPattern(
-                        pattern_class=EmergentPatternClass.INNOVATION,
-                        description=f"Novel strategy combination: {combo}",
-                        participating_agents=agents,
-                        emergence_score=0.7,
-                        pattern_data={
-                            "strategy_combination": combo,
-                            "agent_count": len(agents),
-                        },
-                    )
-                    patterns.append(pattern)
-        
-        return patterns
+        return []
     
     async def _detect_phase_transitions(self) -> List[EmergentPattern]:
-        """Detect phase transitions - sudden behavioral shifts."""
-        patterns = []
-        
-        # Analyze aggregate swarm metrics for sudden changes
-        time_windows = self._create_time_windows()
-        
-        for i in range(1, len(time_windows)):
-            prev_window = time_windows[i - 1]
-            curr_window = time_windows[i]
-            
-            # Calculate aggregate metrics
-            prev_metrics = self._calculate_window_metrics(prev_window)
-            curr_metrics = self._calculate_window_metrics(curr_window)
-            
-            # Detect significant shifts
-            shift_score = self._calculate_shift_score(prev_metrics, curr_metrics)
-            
-            if shift_score > 0.5:  # Significant shift threshold
-                pattern = EmergentPattern(
-                    pattern_class=EmergentPatternClass.PHASE_TRANSITION,
-                    emergence_level=self._classify_emergence_level(shift_score),
-                    description="Phase transition detected in swarm behavior",
-                    participating_agents=self._get_active_agents(curr_window),
-                    emergence_score=shift_score,
-                    pattern_data={
-                        "previous_metrics": prev_metrics,
-                        "current_metrics": curr_metrics,
-                        "shift_score": shift_score,
-                    },
-                )
-                patterns.append(pattern)
-        
-        return patterns
+        return []
     
-    def _find_temporal_clusters(
-        self,
-        behaviors: List[CollectiveBehavior],
-        max_gap_seconds: float = 60.0,
-    ) -> List[List[CollectiveBehavior]]:
-        """Find temporal clusters in behaviors."""
-        if not behaviors:
-            return []
-        
-        # Sort by start time
-        sorted_behaviors = sorted(
-            behaviors,
-            key=lambda b: datetime.fromisoformat(b.start_time),
-        )
-        
-        clusters = []
-        current_cluster = [sorted_behaviors[0]]
-        
-        for i in range(1, len(sorted_behaviors)):
-            prev_end = sorted_behaviors[i - 1].end_time or sorted_behaviors[i - 1].start_time
-            curr_start = sorted_behaviors[i].start_time
-            
-            prev_time = datetime.fromisoformat(prev_end)
-            curr_time = datetime.fromisoformat(curr_start)
-            
-            gap = (curr_time - prev_time).total_seconds()
-            
-            if gap <= max_gap_seconds:
-                current_cluster.append(sorted_behaviors[i])
-            else:
-                clusters.append(current_cluster)
-                current_cluster = [sorted_behaviors[i]]
-        
-        if current_cluster:
-            clusters.append(current_cluster)
-        
-        return clusters
-    
-    def _is_novel_strategy_combination(self, combo: str) -> bool:
-        """Check if strategy combination is novel."""
-        # This would compare against historical patterns
-        # For now, return True for any combination
-        return True
-    
-    def _create_time_windows(
-        self,
-        window_size_seconds: float = 60.0,
-    ) -> List[List[AgentBehaviorSnapshot]]:
-        """Create time windows from agent snapshots."""
+    def _analyze_temporal_windows(self, window_size_seconds: float) -> List[List[AgentBehaviorSnapshot]]:
         all_snapshots = []
         for snapshots in self._agent_snapshots.values():
             all_snapshots.extend(snapshots)
@@ -898,11 +979,7 @@ class EmergentPatternDetector:
         if not all_snapshots:
             return []
         
-        # Sort by timestamp
-        sorted_snapshots = sorted(
-            all_snapshots,
-            key=lambda s: datetime.fromisoformat(s.timestamp),
-        )
+        sorted_snapshots = sorted(all_snapshots, key=lambda s: datetime.fromisoformat(s.timestamp))
         
         windows = []
         current_window = []
@@ -923,11 +1000,7 @@ class EmergentPatternDetector:
         
         return windows
     
-    def _calculate_window_metrics(
-        self,
-        window: List[AgentBehaviorSnapshot],
-    ) -> Dict[str, float]:
-        """Calculate aggregate metrics for a time window."""
+    def _calculate_window_metrics(self, window: List[AgentBehaviorSnapshot]) -> Dict[str, float]:
         if not window:
             return {}
         
@@ -938,17 +1011,11 @@ class EmergentPatternDetector:
             "total_interactions": sum(s.interaction_count for s in window),
         }
     
-    def _calculate_shift_score(
-        self,
-        prev_metrics: Dict[str, float],
-        curr_metrics: Dict[str, float],
-    ) -> float:
-        """Calculate shift score between two metric sets."""
+    def _calculate_shift_score(self, prev_metrics: Dict[str, float], curr_metrics: Dict[str, float]) -> float:
         if not prev_metrics or not curr_metrics:
             return 0.0
         
         shifts = []
-        
         for key in prev_metrics:
             if key in curr_metrics and prev_metrics[key] != 0:
                 change = abs(curr_metrics[key] - prev_metrics[key]) / prev_metrics[key]
@@ -960,11 +1027,9 @@ class EmergentPatternDetector:
         return sum(shifts) / len(shifts)
     
     def _get_active_agents(self, window: List[AgentBehaviorSnapshot]) -> List[str]:
-        """Get unique active agents in a window."""
         return list(set(s.agent_id for s in window))
     
     def _classify_emergence_level(self, score: float) -> EmergenceLevel:
-        """Classify emergence level based on score."""
         if score >= 0.8:
             return EmergenceLevel.CRITICAL
         elif score >= 0.6:
@@ -975,13 +1040,11 @@ class EmergentPatternDetector:
             return EmergenceLevel.WEAK
     
     def _update_individual_baseline(self, agent_id: str) -> None:
-        """Update individual baseline metrics for an agent."""
         snapshots = self._agent_snapshots.get(agent_id, [])
         
         if len(snapshots) < 5:
             return
         
-        # Calculate baseline from recent snapshots
         recent = snapshots[-10:]
         
         self._individual_baselines[agent_id] = {
@@ -991,37 +1054,22 @@ class EmergentPatternDetector:
         }
     
     def _get_individual_baseline(self, agent_ids: List[str]) -> float:
-        """Get average individual baseline for a set of agents."""
         baselines = []
         
         for agent_id in agent_ids:
             if agent_id in self._individual_baselines:
-                baselines.append(
-                    self._individual_baselines[agent_id].get("success_rate", 0.5)
-                )
+                baselines.append(self._individual_baselines[agent_id].get("success_rate", 0.5))
         
         return sum(baselines) / len(baselines) if baselines else 0.5
     
-    def _measure_collective_capability(
-        self,
-        behaviors: List[CollectiveBehavior],
-    ) -> float:
-        """Measure collective capability from behaviors."""
+    def _measure_collective_capability(self, behaviors: List[CollectiveBehavior]) -> float:
         if not behaviors:
             return 0.0
         
-        # Weight by coherence and intensity
-        weighted_sum = sum(
-            b.coherence * b.intensity for b in behaviors
-        )
-        
+        weighted_sum = sum(b.coherence * b.intensity for b in behaviors)
         return weighted_sum / len(behaviors)
     
-    def _calculate_temporal_span(
-        self,
-        behaviors: List[CollectiveBehavior],
-    ) -> float:
-        """Calculate temporal span of behaviors in seconds."""
+    def _calculate_temporal_span(self, behaviors: List[CollectiveBehavior]) -> float:
         if not behaviors:
             return 0.0
         
@@ -1036,11 +1084,7 @@ class EmergentPatternDetector:
         
         return (max(times) - min(times)).total_seconds()
     
-    async def _validate_and_store_pattern(
-        self,
-        pattern: EmergentPattern,
-    ) -> DetectionEvent:
-        """Validate and store an emergent pattern."""
+    async def _validate_and_store_pattern(self, pattern: EmergentPattern) -> DetectionEvent:
         event = DetectionEvent(
             pattern=pattern,
             detection_method="multi_agent_analysis",
@@ -1048,7 +1092,6 @@ class EmergentPatternDetector:
             threshold=self.config.min_emergence_score,
         )
         
-        # Check basic thresholds
         if pattern.emergence_score < self.config.min_emergence_score:
             event.passed_validation = False
             event.validation_details["reason"] = "emergence_score_below_threshold"
@@ -1059,7 +1102,6 @@ class EmergentPatternDetector:
             event.validation_details["reason"] = "insufficient_participating_agents"
             return event
         
-        # Calculate statistical significance
         pattern.statistical_significance = self._calculate_statistical_significance(pattern)
         
         if pattern.statistical_significance > self.config.statistical_threshold:
@@ -1067,7 +1109,6 @@ class EmergentPatternDetector:
             event.validation_details["reason"] = "not_statistically_significant"
             return event
         
-        # Calculate confidence
         pattern.confidence = self._calculate_confidence(pattern)
         
         if pattern.confidence < self.config.min_confidence:
@@ -1075,7 +1116,6 @@ class EmergentPatternDetector:
             event.validation_details["reason"] = "confidence_below_threshold"
             return event
         
-        # Call validation hooks
         if self.config.validation_required:
             for hook in self._validation_hooks:
                 try:
@@ -1087,28 +1127,20 @@ class EmergentPatternDetector:
                         event.validation_details["reason"] = "validation_hook_rejected"
                         return event
                 except Exception as e:
-                    logger.error(
-                        "validation_hook_error",
-                        pattern_id=pattern.pattern_id,
-                        hook=hook.__name__,
-                        error=str(e),
-                    )
+                    logger.error("validation_hook_error", pattern_id=pattern.pattern_id, error=str(e))
         
-        # Pattern passed validation
         event.passed_validation = True
         pattern.is_validated = True
         
-        # Calculate impact score and recommended action
         pattern.impact_score = self._calculate_impact_score(pattern)
         pattern.recommended_action = self._generate_recommended_action(pattern)
         
-        # Update frequency if pattern already exists
         existing_pattern = self._find_similar_pattern(pattern)
+        
         if existing_pattern:
             pattern.frequency = existing_pattern.frequency + 1
             pattern.first_detected = existing_pattern.first_detected
         
-        # Store pattern
         self._emergent_patterns.append(pattern)
         
         logger.info(
@@ -1122,68 +1154,31 @@ class EmergentPatternDetector:
         return event
     
     def _find_similar_pattern(self, pattern: EmergentPattern) -> Optional[EmergentPattern]:
-        """
-        Find a similar existing pattern for frequency tracking.
-        
-        Args:
-            pattern: Pattern to find similar match for
-            
-        Returns:
-            Similar pattern or None
-        """
         for existing in self._emergent_patterns:
-            # Match by pattern class and participating agents
             if (existing.pattern_class == pattern.pattern_class and
                 set(existing.participating_agents) == set(pattern.participating_agents)):
                 return existing
         return None
     
     def _calculate_statistical_significance(self, pattern: EmergentPattern) -> float:
-        """Calculate statistical significance of a pattern."""
-        # Simplified significance calculation
-        # In production, this would use proper statistical tests
-        
         n_agents = len(pattern.participating_agents)
         emergence_score = pattern.emergence_score
         
-        # More agents and higher emergence = more significant
         significance = 1.0 / (n_agents * (1.0 - emergence_score + 0.01))
-        
         return min(significance, 1.0)
     
     def _calculate_confidence(self, pattern: EmergentPattern) -> float:
-        """Calculate confidence score for a pattern."""
         factors = []
-        
-        # Factor 1: Emergence score
         factors.append(pattern.emergence_score)
-        
-        # Factor 2: Number of participating agents
         agent_factor = min(len(pattern.participating_agents) / 10.0, 1.0)
         factors.append(agent_factor)
-        
-        # Factor 3: Validation status
         factors.append(1.0 if pattern.is_validated else 0.5)
-        
-        # Factor 4: Emergence ratio
         ratio_factor = min(pattern.emergence_ratio / 2.0, 1.0) if pattern.emergence_ratio > 0 else 0
         factors.append(ratio_factor)
         
         return sum(factors) / len(factors)
     
     def _calculate_impact_score(self, pattern: EmergentPattern) -> float:
-        """
-        Calculate impact score for an emergent pattern.
-        
-        Impact score ranges from -1.0 (harmful) to +1.0 (beneficial).
-        
-        Args:
-            pattern: Emergent pattern to evaluate
-            
-        Returns:
-            Impact score (-1.0 to +1.0)
-        """
-        # Base impact from emergence level
         level_impact = {
             EmergenceLevel.WEAK: 0.2,
             EmergenceLevel.MODERATE: 0.4,
@@ -1192,8 +1187,6 @@ class EmergentPatternDetector:
         }
         base_impact = level_impact.get(pattern.emergence_level, 0.2)
         
-        # Pattern class impact modifiers
-        # Positive emergence (beneficial patterns)
         positive_patterns = [
             EmergentPatternClass.COORDINATION,
             EmergentPatternClass.OPTIMIZATION,
@@ -1202,74 +1195,46 @@ class EmergentPatternDetector:
             EmergentPatternClass.ADAPTATION,
         ]
         
-        # Negative emergence (potentially harmful patterns)
         negative_patterns = [
-            EmergentPatternClass.CASCADE,  # Can be runaway chain reactions
-            EmergentPatternClass.PHASE_TRANSITION,  # Can be disruptive
+            EmergentPatternClass.CASCADE,
+            EmergentPatternClass.PHASE_TRANSITION,
         ]
         
-        # Resonance can be either positive or negative depending on context
         if pattern.pattern_class in positive_patterns:
-            class_modifier = 1.0  # Positive impact
+            class_modifier = 1.0
         elif pattern.pattern_class in negative_patterns:
-            class_modifier = -0.5  # Potentially negative impact
+            class_modifier = -0.5
         elif pattern.pattern_class == EmergentPatternClass.RESONANCE:
-            # Resonance impact depends on emergence ratio
             if pattern.emergence_ratio > 1.5:
-                class_modifier = 0.8  # Amplified positive
+                class_modifier = 0.8
             elif pattern.emergence_ratio < 0.5:
-                class_modifier = -0.3  # Damped/negative
+                class_modifier = -0.3
             else:
-                class_modifier = 0.3  # Neutral-positive
+                class_modifier = 0.3
         else:
-            class_modifier = 0.0  # Neutral
+            class_modifier = 0.0
         
-        # Confidence modifier - higher confidence = stronger impact
         confidence_modifier = pattern.confidence * 0.2
-        
-        # Frequency modifier - repeated patterns have stronger impact
         frequency_modifier = min(0.2, pattern.frequency * 0.02)
         
-        # Calculate final impact
         impact = (base_impact * class_modifier) + confidence_modifier + frequency_modifier
-        
-        # Clamp to valid range
         return max(-1.0, min(1.0, impact))
     
     def _generate_recommended_action(self, pattern: EmergentPattern) -> Optional[str]:
-        """
-        Generate recommended action based on pattern characteristics.
-        
-        Args:
-            pattern: Emergent pattern to analyze
-            
-        Returns:
-            Recommended action string or None
-        """
         impact_score = self._calculate_impact_score(pattern)
         
-        # High positive impact - encourage/reinforce
         if impact_score >= 0.7:
             return "REINFORCE: High-value emergent pattern detected. Consider reinforcing conditions that enabled this behavior."
-        
-        # Moderate positive impact - monitor and document
         elif impact_score >= 0.3:
             return "MONITOR: Beneficial pattern detected. Document conditions for future replication."
-        
-        # Neutral impact - observe
         elif impact_score >= -0.3:
             return "OBSERVE: Neutral emergence. Continue monitoring for changes."
-        
-        # Moderate negative impact - investigate
         elif impact_score >= -0.7:
             return "INVESTIGATE: Potentially harmful pattern. Analyze root causes and consider intervention."
-        
-        # High negative impact - immediate action
         else:
             return "ALERT: Harmful emergent pattern detected. Immediate intervention recommended."
     
     async def _call_detection_callbacks(self, event: DetectionEvent) -> None:
-        """Call registered detection callbacks."""
         for callback in self._on_emergence_detected:
             try:
                 if asyncio.iscoroutinefunction(callback):
@@ -1277,22 +1242,11 @@ class EmergentPatternDetector:
                 else:
                     callback(event)
             except Exception as e:
-                logger.error(
-                    "detection_callback_error",
-                    callback=callback.__name__,
-                    error=str(e),
-                )
+                logger.error("detection_callback_error", callback=callback.__name__, error=str(e))
         
-        # Store event
         self._detection_events.append(event)
     
     def get_status(self) -> Dict[str, Any]:
-        """
-        Get detector status summary.
-        
-        Returns:
-            Status dictionary
-        """
         return {
             "total_patterns": len(self._emergent_patterns),
             "validated_patterns": sum(1 for p in self._emergent_patterns if p.is_validated),
@@ -1307,37 +1261,18 @@ class EmergentPatternDetector:
 
 
 class EmergenceAnalyzer:
-    """
-    Analyzer for emergent patterns and collective behaviors.
-    
-    This class provides advanced analysis capabilities for understanding
-    and interpreting emergent patterns.
-    """
+    """Analyzer for emergent patterns and collective behaviors."""
     
     def __init__(self, detector: EmergentPatternDetector):
-        """
-        Initialize emergence analyzer.
-        
-        Args:
-            detector: EmergentPatternDetector instance
-        """
         self.detector = detector
-        
         logger.info("emergence_analyzer_initialized")
     
     def analyze_emergence_trends(self) -> Dict[str, Any]:
-        """
-        Analyze trends in emergence detection.
-        
-        Returns:
-            Dictionary of trend analysis
-        """
         patterns = self.detector._emergent_patterns
         
         if len(patterns) < 5:
             return {"trend": "insufficient_data"}
         
-        # Split into early and recent
         mid = len(patterns) // 2
         early = patterns[:mid]
         recent = patterns[mid:]
@@ -1358,43 +1293,25 @@ class EmergenceAnalyzer:
         }
     
     def identify_key_contributors(self) -> List[Dict[str, Any]]:
-        """
-        Identify agents that frequently contribute to emergence.
-        
-        Returns:
-            List of agent contribution records
-        """
         agent_contributions: Dict[str, int] = defaultdict(int)
         
         for pattern in self.detector._emergent_patterns:
             for agent_id in pattern.participating_agents:
                 agent_contributions[agent_id] += 1
         
-        # Sort by contribution count
         contributors = [
             {"agent_id": aid, "contribution_count": count}
-            for aid, count in sorted(
-                agent_contributions.items(),
-                key=lambda x: x[1],
-                reverse=True,
-            )
+            for aid, count in sorted(agent_contributions.items(), key=lambda x: x[1], reverse=True)
         ]
         
-        return contributors[:10]  # Top 10
+        return contributors[:10]
     
     def analyze_pattern_correlations(self) -> Dict[str, Any]:
-        """
-        Analyze correlations between different pattern classes.
-        
-        Returns:
-            Dictionary of correlation analysis
-        """
         patterns = self.detector._emergent_patterns
         
         if len(patterns) < 10:
             return {"correlations": "insufficient_data"}
         
-        # Count co-occurrences
         class_cooccurrences: Dict[Tuple[str, str], int] = defaultdict(int)
         
         for pattern in patterns:
@@ -1407,25 +1324,13 @@ class EmergenceAnalyzer:
         
         return {
             "cooccurrences": dict(class_cooccurrences),
-            "most_correlated": max(
-                class_cooccurrences.items(),
-                key=lambda x: x[1],
-            )[0] if class_cooccurrences else None,
+            "most_correlated": max(class_cooccurrences.items(), key=lambda x: x[1])[0] if class_cooccurrences else None,
         }
     
     def get_emergence_timeline(self) -> List[Dict[str, Any]]:
-        """
-        Get timeline of emergence events.
-        
-        Returns:
-            List of timeline entries
-        """
         timeline = []
         
-        for pattern in sorted(
-            self.detector._emergent_patterns,
-            key=lambda p: p.timestamp,
-        ):
+        for pattern in sorted(self.detector._emergent_patterns, key=lambda p: p.timestamp):
             timeline.append({
                 "timestamp": pattern.timestamp,
                 "pattern_class": pattern.pattern_class.value,

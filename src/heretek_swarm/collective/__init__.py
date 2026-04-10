@@ -21,6 +21,12 @@ New in Session 46 (Emergent Intelligence Enhancement):
 - Pattern-Based Agent Adaptor (agent_adaptation.py)
 - Emergent Pattern Detector (emergent_detection.py)
 - Collective Intelligence Metrics (metrics.py)
+
+New in Session 47 (Agency/Autonomy Metrics):
+- Agency Metrics Tracker (agency_tracking.py)
+- Prime Directive compliance monitoring
+- Self-determination index calculations
+- Resource autonomy tracking
 """
 
 from .society import (
@@ -83,9 +89,13 @@ from .adaptive_learning import (
     LearningRateConfig,
     LearningRateStrategy,
     AdaptationReason,
+    MutationType,
     AgentLearningState,
     AdaptationEvent,
     ConvergenceMetrics,
+    EvolutionResult,
+    BehaviorFitness,
+    EnvironmentProfile,
 )
 
 from .agent_adaptation import (
@@ -104,11 +114,16 @@ from .emergent_detection import (
     EmergenceAnalyzer,
     EmergentPatternClass,
     EmergenceLevel,
+    EvolutionPhase,
     EmergentPattern,
     CollectiveBehavior,
     AgentBehaviorSnapshot,
     DetectionEvent,
     EmergenceDetectionConfig,
+    EvolutionEngine,
+    EvolutionMetrics,
+    CapabilityRecord,
+    AgentCapabilitySnapshot,
 )
 
 from .metrics import (
@@ -123,6 +138,16 @@ from .metrics import (
     KnowledgeTransferMetrics,
     EmergenceCoefficient,
     MetricsDashboard,
+)
+
+# Session 47: Agency/Autonomy Metrics
+from .agency_tracking import (
+    AgencyMetricsTracker,
+    AgencyMetricsSnapshot,
+    AgencyThresholds,
+    AgencyEvolutionData,
+    AgencyHealthStatus,
+    create_sample_metrics,
 )
 
 __all__ = [
@@ -175,9 +200,13 @@ __all__ = [
     "LearningRateConfig",
     "LearningRateStrategy",
     "AdaptationReason",
+    "MutationType",
     "AgentLearningState",
     "AdaptationEvent",
     "ConvergenceMetrics",
+    "EvolutionResult",
+    "BehaviorFitness",
+    "EnvironmentProfile",
     "PatternBasedAgentAdaptor",
     "AdaptationTarget",
     "AdaptationStrategy",
@@ -190,11 +219,16 @@ __all__ = [
     "EmergenceAnalyzer",
     "EmergentPatternClass",
     "EmergenceLevel",
+    "EvolutionPhase",
     "EmergentPattern",
     "CollectiveBehavior",
     "AgentBehaviorSnapshot",
     "DetectionEvent",
     "EmergenceDetectionConfig",
+    "EvolutionEngine",
+    "EvolutionMetrics",
+    "CapabilityRecord",
+    "AgentCapabilitySnapshot",
     "CollectiveIntelligenceMetrics",
     "MetricsExporter",
     "MetricCategory",
@@ -206,4 +240,11 @@ __all__ = [
     "KnowledgeTransferMetrics",
     "EmergenceCoefficient",
     "MetricsDashboard",
+    # Session 47: Agency/Autonomy Metrics
+    "AgencyMetricsTracker",
+    "AgencyMetricsSnapshot",
+    "AgencyThresholds",
+    "AgencyEvolutionData",
+    "AgencyHealthStatus",
+    "create_sample_metrics",
 ]
