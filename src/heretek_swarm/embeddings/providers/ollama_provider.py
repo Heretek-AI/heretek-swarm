@@ -43,7 +43,7 @@ class OllamaEmbeddingProvider(EmbeddingProviderBase):
         _response = await provider.embed(["Hello, world!"])
     """
 
-    def __init__(self, _base_url: str, _default_model: Optional[str], _extra_config: Optional[Dict[str, _Any]]):
+    def __init__(self, base_url: str, default_model: Optional[str], extra_config: Optional[Dict[str, Any]]):
         """
         Initialize the Ollama embedding provider.
         
@@ -82,7 +82,7 @@ class OllamaEmbeddingProvider(EmbeddingProviderBase):
             )
         return self._client
 
-    async def embed(self, _texts: Union[str, _List[str]], _model: Optional[str], _dimensions: Optional[int]) -> EmbeddingResponse:
+    async def embed(self, texts: Union[str, List[str]], model: Optional[str], _dimensions: Optional[int]) -> EmbeddingResponse:
         """
         Generate embeddings for texts.
         

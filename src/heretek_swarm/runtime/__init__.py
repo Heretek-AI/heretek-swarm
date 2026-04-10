@@ -50,7 +50,7 @@ class Character:
     constraints: List[str] = field(default_factory=list)
     
     @classmethod
-    def from_dict(cls, _data: Dict[str, _Any]) -> "Character":
+    def from_dict(cls, data: Dict[str, Any]) -> "Character":
         """Create a Character from a dictionary."""
         _style_data = data.get("style", {})
         style = CharacterStyle(
@@ -73,7 +73,7 @@ class Character:
         )
     
     @classmethod
-    def from_json(cls, _json_path: Path) -> "Character":
+    def from_json(cls, json_path: Path) -> "Character":
         """Load a character from a JSON file."""
         with open(json_path, "r", encoding="utf-8") as f:
             _data = json.load(f)
@@ -103,20 +103,20 @@ class Character:
 class CharacterRegistry:
     """Registry for loading and managing characters."""
     
-    def __init__(self, _characters_dir: Optional[Path]):
+    def __init__(self, characters_dir: Optional[Path]):
         if characters_dir is None:
             characters_dir = Path(__file__).parent / "characters"
         self.characters_dir = Path(characters_dir)
         self._characters: Dict[str, Character] = {}
     
-    def load_character(self, _name: str) -> Optional[Character]:
+    def load_character(self, name: str) -> Optional[Character]:
         """Load a character by name."""
         _char_file = self.characters_dir / f"{name.lower()}.json"
         if char_file.exists():
             return Character.from_json(char_file)
         return None
     
-    def get_character(self, _name: str) -> Optional[Character]:
+    def get_character(self, name: str) -> Optional[Character]:
         """Get a character, loading if necessary."""
         if name not in self._characters:
             _char = self.load_character(name)

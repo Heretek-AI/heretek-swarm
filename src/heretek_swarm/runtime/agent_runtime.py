@@ -44,7 +44,7 @@ class AgentRuntime:
     Pattern stolen from elizaOS/packages/core/runtime/
     """
     
-    def __init__(self, _agent_id: str, _model_provider: str, _model_name: str, _character: Optional[Dict]):
+    def __init__(self, agent_id: str, model_provider: str, model_name: str, character: Optional[Dict]):
         self.agent_id = agent_id
         self.model_provider = model_provider
         self.model_name = model_name
@@ -54,13 +54,13 @@ class AgentRuntime:
         self._tools: Dict[str, Callable] = {}
         self._initialized = False
     
-    async def initialize(self, _memory_backend) -> None:
+    async def initialize(self, memory_backend) -> None:
         """Initialize runtime with memory backend."""
         self._memory = memory_backend
         self._initialized = True
         logger.info("agent_runtime_initialized", agent_id=self.agent_id)
     
-    def register_tool(self, _name: str, _handler: Callable) -> None:
+    def register_tool(self, name: str, handler: Callable) -> None:
         """Register a tool with the runtime."""
         self._tools[name] = handler
         logger.debug("tool_registered", agent_id=self.agent_id, tool=name)
@@ -69,7 +69,7 @@ class AgentRuntime:
         """Get list of registered tools."""
         return list(self._tools.keys())
     
-    async def think(self, _prompt: str) -> str:
+    async def think(self, prompt: str) -> str:
         """
         Process input and generate response.
         
@@ -125,7 +125,7 @@ class AgentRuntime:
         finally:
             self.context.state = AgentState.IDLE
     
-    async def act(self, _action: str, _params: Dict) -> Any:
+    async def act(self, action: str, params: Dict) -> Any:
         """
         Execute an action using registered tools.
         
@@ -169,7 +169,7 @@ class AgentRuntime:
         finally:
             self.context.state = AgentState.IDLE
     
-    def _build_context(self, _memories: List, _prompt: str) -> str:
+    def _build_context(self, memories: List, prompt: str) -> str:
         """
         Build LLM context with memories and character.
         
@@ -208,7 +208,7 @@ class AgentRuntime:
         
         return "\n\n".join(context_parts)
     
-    async def _call_llm(self, _context: str) -> str:
+    async def _call_llm(self, context: str) -> str:
         """
         Call LLM for response generation.
         

@@ -17,7 +17,7 @@ class InputValidator(ABC):
     """Abstract base class for input validators"""
     
     @abstractmethod
-    async def validate(self, _input_text: str, _agent_id: Optional[str]) -> Tuple[bool, Optional[str]]:
+    async def validate(self, input_text: str, agent_id: Optional[str]) -> Tuple[bool, Optional[str]]:
         """
         Validate input and return (is_valid, reason)
         
@@ -30,11 +30,11 @@ class InputValidator(ABC):
 class LengthValidator(InputValidator):
     """Validates input length constraints"""
     
-    def __init__(self, _min_length: int, _max_length: int):
+    def __init__(self, min_length: int, max_length: int):
         self.min_length = min_length
         self.max_length = max_length
     
-    async def validate(self, _input_text: str, _agent_id: Optional[str]) -> Tuple[bool, Optional[str]]:
+    async def validate(self, input_text: str, agent_id: Optional[str]) -> Tuple[bool, Optional[str]]:
         _text_length = len(input_text)
         
         if text_length < self.min_length:
@@ -60,10 +60,10 @@ class LengthValidator(InputValidator):
 class BlockedPatternValidator(InputValidator):
     """Validates input against blocked regex patterns"""
     
-    def __init__(self, _compiled_patterns: List[re.Pattern]):
+    def __init__(self, compiled_patterns: List[re.Pattern]):
         self.patterns = compiled_patterns
     
-    async def validate(self, _input_text: str, _agent_id: Optional[str]) -> Tuple[bool, Optional[str]]:
+    async def validate(self, input_text: str, agent_id: Optional[str]) -> Tuple[bool, Optional[str]]:
         for pattern in self.patterns:
             _match = pattern.search(input_text)
             if match:
@@ -87,10 +87,10 @@ class PersonalInfoValidator(InputValidator):
     SSN_PATTERN = re.compile(r'\b\d{3}[-]\d{2}[-]\d{4}\b')
     API_KEY_PATTERN = re.compile(r'\b[A-Za-z0-9]{20,}[_-][A-Za-z0-9]{10,}\b')
     
-    def __init__(self, _block_personal_info: bool):
+    def __init__(self, block_personal_info: bool):
         self.block_personal_info = block_personal_info
     
-    async def validate(self, _input_text: str, _agent_id: Optional[str]) -> Tuple[bool, Optional[str]]:
+    async def validate(self, input_text: str, agent_id: Optional[str]) -> Tuple[bool, Optional[str]]:
         if not self.block_personal_info:
             return True, None
         
@@ -124,10 +124,10 @@ class CodeExecutionValidator(InputValidator):
     SHELL_PATTERN = re.compile(r'\b(sh|bash|cmd|powershell|exec)\s+[^\s]', re.IGNORECASE)
     PYTHON_EXEC_PATTERN = re.compile(r'\b(exec|eval|__import__|open\()[\'"]\s*\(', re.IGNORECASE)
     
-    def __init__(self, _block_code_execution: bool):
+    def __init__(self, block_code_execution: bool):
         self.block_code_execution = block_code_execution
     
-    async def validate(self, _input_text: str, _agent_id: Optional[str]) -> Tuple[bool, Optional[str]]:
+    async def validate(self, input_text: str, agent_id: Optional[str]) -> Tuple[bool, Optional[str]]:
         if not self.block_code_execution:
             return True, None
         
@@ -147,11 +147,11 @@ class CodeExecutionValidator(InputValidator):
 class AllowedPatternsValidator(InputValidator):
     """Validates input against allowed patterns"""
     
-    def __init__(self, _allowed_patterns: List[str]):
+    def __init__(self, allowed_patterns: List[str]):
         self.allowed_patterns = allowed_patterns
         self._compiled = [re.compile(p, re.IGNORECASE) for p in allowed_patterns]
     
-    async def validate(self, _input_text: str, _agent_id: Optional[str]) -> Tuple[bool, Optional[str]]:
+    async def validate(self, input_text: str, agent_id: Optional[str]) -> Tuple[bool, Optional[str]]:
         if not self.allowed_patterns:
             return True, None
         
@@ -173,12 +173,12 @@ class ValidatorChain:
     def __init__(self):
         self._validators: List[InputValidator] = []
     
-    def add(self, _validator: InputValidator) -> 'ValidatorChain':
+    def add(self, validator: InputValidator) -> 'ValidatorChain':
         """Add a validator to the chain"""
         self._validators.append(validator)
         return self
     
-    async def validate(self, _input_text: str, _agent_id: Optional[str]) -> Tuple[bool, Optional[str]]:
+    async def validate(self, input_text: str, agent_id: Optional[str]) -> Tuple[bool, Optional[str]]:
         """Run all validators in sequence"""
         for validator in self._validators:
             is_valid, reason = await validator.validate(input_text, agent_id)

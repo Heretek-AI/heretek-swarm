@@ -218,7 +218,7 @@ class TokenBucket:
     average rate limit through token refill.
     """
     
-    def __init__(self, _capacity: int, _refill_rate: float, _# tokens per second):
+    def __init__(self, _capacity: int, _refill_rate: float):  # tokens per second
         self.capacity = capacity
         self.refill_rate = refill_rate
         self._tokens: Dict[str, Tuple[float, float]] = {}  # key -> (tokens, last_refill)

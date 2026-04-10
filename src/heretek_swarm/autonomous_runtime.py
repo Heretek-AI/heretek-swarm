@@ -20,11 +20,11 @@ from dataclasses import dataclass
 
 import structlog
 
-from .autonomous_runtime_config import (
+from .runtime.autonomous_runtime_config import (
     AutonomousRuntimeConfig,
 )
-from .agent_runtime import AgentRuntime
-from ..actors.supervisor import ActorSupervisor
+from .runtime.agent_runtime import AgentRuntime
+from heretek_swarm.actors.supervisor import ActorSupervisor
 
 _logger = structlog.get_logger("AutonomousRuntime")
 

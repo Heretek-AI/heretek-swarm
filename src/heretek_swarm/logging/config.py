@@ -23,7 +23,6 @@ from structlog.processors import (
     JSONRenderer,
     TimeStamper,
     StackInfoRenderer,
-    ExceptionFormatter,
     CallsiteParameter,
     CallsiteParameterAdder,
 )

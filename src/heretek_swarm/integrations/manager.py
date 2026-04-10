@@ -208,7 +208,7 @@ class IntegrationManager:
         configs: Integration configurations
     """
     
-    def __init__(self, _health_check_interval: float, _max_restart_attempts: int, _enable_auto_restart: bool) -> None:
+    def __init__(self, health_check_interval: float, max_restart_attempts: int, enable_auto_restart: bool) -> None:
         """
         Initialize the Integration Manager.
         
@@ -246,12 +246,12 @@ class IntegrationManager:
             _auto_restart = enable_auto_restart,
         )
     
-    def register_event_callback(self, _callback: Callable) -> None:
+    def register_event_callback(self, callback: Callable) -> None:
         """Register a callback for integration events."""
         self._event_callbacks.append(callback)
         logger.debug("event_callback_registered", callback=callback.__name__)
     
-    async def _emit_event(self, _event_type: str, _integration_id: str, _data: Optional[Dict[str, _Any]]) -> None:
+    async def _emit_event(self, event_type: str, integration_id: str, data: Optional[Dict[str, Any]]) -> None:
         """Emit an integration event."""
         event = IntegrationEvent(
             event_id=f"evt_{uuid.uuid4().hex[:12]}",
@@ -276,7 +276,7 @@ class IntegrationManager:
             integration_id=integration_id,
         )
     
-    async def register_integration(self, _integration_id: str, _integration_type: IntegrationType, _name: str, _config: Optional[Dict[str, _Any]], _metadata: Optional[Dict[str, _Any]], _instance: Optional[Any]) -> IntegrationConfig:
+    async def register_integration(self, integration_id: str, integration_type: IntegrationType, name: str, config: Optional[Dict[str, Any]], metadata: Optional[Dict[str, Any]], instance: Optional[Any]) -> IntegrationConfig:
         """
         Register a new integration.
         
@@ -324,7 +324,7 @@ class IntegrationManager:
         
         return integration_config
     
-    async def unregister_integration(self, _integration_id: str) -> bool:
+    async def unregister_integration(self, integration_id: str) -> bool:
         """
         Unregister an integration.
         
@@ -357,7 +357,7 @@ class IntegrationManager:
         
         return True
     
-    async def start_integration(self, _integration_id: str) -> bool:
+    async def start_integration(self, integration_id: str) -> bool:
         """
         Start an integration.
         
@@ -421,7 +421,7 @@ class IntegrationManager:
             
             return False
     
-    async def stop_integration(self, _integration_id: str) -> bool:
+    async def stop_integration(self, integration_id: str) -> bool:
         """
         Stop an integration.
         
@@ -480,7 +480,7 @@ class IntegrationManager:
             
             return False
     
-    async def restart_integration(self, _integration_id: str) -> bool:
+    async def restart_integration(self, integration_id: str) -> bool:
         """
         Restart an integration.
         
@@ -511,7 +511,7 @@ class IntegrationManager:
         # Start
         return await self.start_integration(integration_id)
     
-    async def _create_adapter_instance(self, _config: IntegrationConfig) -> Any:
+    async def _create_adapter_instance(self, config: IntegrationConfig) -> Any:
         """Create an adapter instance based on integration type."""
         integration_type = config.integration_type
         
@@ -562,7 +562,7 @@ class IntegrationManager:
             logger.warning("unknown_integration_type", type=integration_type.value)
             return None
     
-    async def check_health(self, _integration_id: str) -> HealthCheckResult:
+    async def check_health(self, integration_id: str) -> HealthCheckResult:
         """
         Check health of an integration.
         
@@ -695,20 +695,20 @@ class IntegrationManager:
         
         await self._emit_event("manager_stopped", "manager")
     
-    def get_integration(self, _integration_id: str) -> Optional[Any]:
+    def get_integration(self, integration_id: str) -> Optional[Any]:
         """Get integration instance by ID."""
         state = self.states.get(integration_id)
         return state.instance if state else None
     
-    def get_integration_state(self, _integration_id: str) -> Optional[IntegrationState]:
+    def get_integration_state(self, integration_id: str) -> Optional[IntegrationState]:
         """Get integration state by ID."""
         return self.states.get(integration_id)
     
-    def get_integration_config(self, _integration_id: str) -> Optional[IntegrationConfig]:
+    def get_integration_config(self, integration_id: str) -> Optional[IntegrationConfig]:
         """Get integration configuration by ID."""
         return self.configs.get(integration_id)
     
-    def list_integrations(self, _status: Optional[IntegrationStatus], _integration_type: Optional[IntegrationType]) -> List[Dict[str, Any]]:
+    def list_integrations(self, status: Optional[IntegrationStatus], integration_type: Optional[IntegrationType]) -> List[Dict[str, Any]]:
         """List integrations with optional filtering."""
         _result = []
         
@@ -811,7 +811,7 @@ def get_integration_manager() -> IntegrationManager:
     return integration_manager
 
 
-async def initialize_integrations(_configs: List[Dict[str, _Any]], _agent_runtime: Optional[Any]) -> IntegrationManager:
+async def initialize_integrations(configs: List[Dict[str, Any]], agent_runtime: Optional[Any]) -> IntegrationManager:
     """
     Initialize multiple integrations from configuration.
     

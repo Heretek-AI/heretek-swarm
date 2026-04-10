@@ -290,7 +290,7 @@ class NATSEventMesh:
             
             logger.info("Disconnected from NATS")
 
-    async def create_stream(self, _name: str, _subjects: List[str], _storage: str, _retention: str, _max_msgs: int, _max_age: int, _# 24 hours in seconds) -> bool:
+    async def create_stream(self, _name: str, _subjects: List[str], _storage: str, _retention: str, _max_msgs: int, _max_age: int):  # 24 hours in seconds
         """
         Create a JetStream for message persistence.
         
@@ -365,7 +365,7 @@ class NATSEventMesh:
             logger.error(f"Failed to delete stream '{name}': {e}")
             return False
 
-    async def publish_to_stream(self, _stream_name: str, _subject: str, _data: Dict[str, _Any]) -> bool:
+    async def publish_to_stream(self, _stream_name: str, _subject: str, _data: Dict[str, Any]) -> bool:
         """
         Publish message to a JetStream.
         
@@ -392,7 +392,7 @@ class NATSEventMesh:
             logger.error(f"Failed to publish to stream: {e}")
             return False
 
-    async def subscribe_durable(self, _stream_name: str, _durable_name: str, _callback: Callable[[str, _Dict[str, _Any]], _None], _deliver_policy: str, _ack_policy: bool) -> Optional[str]:
+    async def subscribe_durable(self, _stream_name: str, _durable_name: str, _callback: Callable[[str, Dict[str, Any]], None], _deliver_policy: str, _ack_policy: bool) -> Optional[str]:
         """
         Subscribe with durable consumer for at-least-once delivery.
         
@@ -445,7 +445,7 @@ class NATSEventMesh:
             logger.error(f"Failed to create durable consumer: {e}")
             return None
 
-    async def _process_durable_messages(self, _consumer: Any, _stream_name: str, _durable_name: str, _callback: Callable[[str, _Dict[str, _Any]], _None]) -> None:
+    async def _process_durable_messages(self, _consumer: Any, _stream_name: str, _durable_name: str, _callback: Callable[[str, Dict[str, Any]], None]) -> None:
         """
         Process messages from a durable consumer.
         
@@ -472,7 +472,7 @@ class NATSEventMesh:
                 logger.error(f"Durable consumer error: {e}")
                 await asyncio.sleep(1.0)
 
-    async def replay_stream(self, _stream_name: str, _start_sequence: Optional[int], _start_time: Optional[datetime], _callback: Optional[Callable[[str, _Dict[str, _Any]], _None]]) -> List[Dict[str, Any]]:
+    async def replay_stream(self, _stream_name: str, _start_sequence: Optional[int], _start_time: Optional[datetime], _callback: Optional[Callable[[str, Dict[str, Any]], None]]) -> List[Dict[str, Any]]:
         """
         Replay messages from a JetStream.
         
@@ -538,7 +538,7 @@ class NATSEventMesh:
             logger.error(f"Failed to replay stream: {e}")
             return []
 
-    async def reconstruct_state(self, _entity_id: str, _stream_name: str, _event_applier: Callable[[Dict[str, _Any], _Dict[str, _Any]], _Dict[str, _Any]], _initial_state: Optional[Dict[str, _Any]]) -> Dict[str, Any]:
+    async def reconstruct_state(self, _entity_id: str, _stream_name: str, _event_applier: Callable[[Dict[str, Any], Dict[str, Any]], Dict[str, Any]], _initial_state: Optional[Dict[str, Any]]) -> Dict[str, Any]:
         """
         Reconstruct entity state from event stream.
         
@@ -556,7 +556,7 @@ class NATSEventMesh:
         """
         state = initial_state or {}
         
-        def filter_callback(_subject: str, _data: Dict[str, _Any]):
+        def filter_callback(_subject: str, _data: Dict[str, Any]):
             nonlocal state
             if data.get("entity_id") == entity_id:
                 state = event_applier(state, data)
@@ -569,7 +569,7 @@ class NATSEventMesh:
         logger.info(f"Reconstructed state for entity '{entity_id}' from {len(state)} fields")
         return state
 
-    async def publish(self, _subject: str, _data: Dict[str, _Any], _reply: Optional[str]) -> bool:
+    async def publish(self, _subject: str, _data: Dict[str, Any], _reply: Optional[str]) -> bool:
         """
         Publish message to subject.
         
@@ -598,7 +598,7 @@ class NATSEventMesh:
             logger.error("Failed to publish", subject=subject, error=str(e))
             return False
 
-    async def subscribe(self, _subject: str, _callback: Callable[["NATSEventMesh", _str, _Dict[str, _Any]], _None]) -> Optional[str]:
+    async def subscribe(self, _subject: str, _callback: Callable[["NATSEventMesh", str, Dict[str, Any]], None]) -> Optional[str]:
         """
         Subscribe to subject.
         
@@ -671,7 +671,7 @@ class NATSEventMesh:
             logger.error("Failed to unsubscribe", sid=sid, error=str(e))
             return False
 
-    async def request(self, _subject: str, _data: Dict[str, _Any], _timeout: float) -> Optional[Dict[str, Any]]:
+    async def request(self, _subject: str, _data: Dict[str, Any], _timeout: float) -> Optional[Dict[str, Any]]:
         """
         Request-reply pattern.
         
@@ -728,7 +728,7 @@ class _InMemoryFallback:
     def subscription_count(self) -> int:
         """Get number of active subscriptions."""
         return sum(len(subs) for subs in self._subscriptions.values())
-    async def publish(self, _subject: str, _data: Dict[str, _Any]) -> bool:
+    async def publish(self, _subject: str, _data: Dict[str, Any]) -> bool:
         """Publish to in-memory subscribers."""
         for sub in self._subscriptions.get(subject, []):
             try:
@@ -737,7 +737,7 @@ class _InMemoryFallback:
                 pass
         return True
 
-    async def subscribe(self, _subject: str, _callback: Callable[[str, _Dict[str, _Any]], _None]) -> str:
+    async def subscribe(self, _subject: str, _callback: Callable[[str, Dict[str, Any]], None]) -> str:
         """Subscribe in-memory."""
         _sid = f"mem_{self._sub_counter}"
         self._sub_counter += 1
@@ -752,7 +752,7 @@ class _InMemoryFallback:
         """Unsubscribe in-memory."""
         return True
 
-    async def request(self, _subject: str, _data: Dict[str, _Any], _timeout: float) -> Optional[Dict[str, Any]]:
+    async def request(self, _subject: str, _data: Dict[str, Any], _timeout: float) -> Optional[Dict[str, Any]]:
         """Request in-memory (no response by default)."""
         await self.publish(subject, data)
         return None
@@ -772,7 +772,7 @@ class NATSEventMeshMixin:
         ```
     """
     
-    def __init__(self, _*args, _**kwargs) -> None:
+    def __init__(self, *args, **kwargs) -> None:
         """Initialize mixin."""
         self._nats_mesh: Optional[NATSEventMesh] = None
         self._nats_enabled = False
@@ -928,7 +928,7 @@ class NATSEventMeshWithJetStream(NATSEventMesh):
             logger.error(f"Failed to initialize JetStream: {e}")
             return False
     
-    async def publish_event(self, _stream_name: str, _event_type: str, _entity_id: str, _payload: Dict[str, _Any], _correlation_id: Optional[str]) -> bool:
+    async def publish_event(self, _stream_name: str, _event_type: str, _entity_id: str, _payload: Dict[str, Any], _correlation_id: Optional[str]) -> bool:
         """
         Publish a domain event to a stream.
         
@@ -975,7 +975,7 @@ class NATSEventMeshWithJetStream(NATSEventMesh):
             _correlation_id = correlation_id,
         )
     
-    async def subscribe_to_events(self, _stream_name: str, _event_type: Optional[str], _entity_id: Optional[str], _callback: Optional[Callable[[str, _Dict[str, _Any]], _None]], _durable_name: Optional[str]) -> Optional[str]:
+    async def subscribe_to_events(self, _stream_name: str, _event_type: Optional[str], _entity_id: Optional[str], _callback: Optional[Callable[[str, Dict[str, Any]], None]], _durable_name: Optional[str]) -> Optional[str]:
         """
         Subscribe to events from a stream.
         
@@ -1024,7 +1024,7 @@ class NATSEventMeshWithJetStream(NATSEventMesh):
         
         return await self._js_manager.create_consumer(consumer_config, callback)
     
-    async def replay_events(self, _stream_name: str, _start_sequence: Optional[int], _end_sequence: Optional[int], _event_type: Optional[str], _callback: Optional[Callable[[str, _Dict[str, _Any]], _None]]) -> List[Dict[str, Any]]:
+    async def replay_events(self, _stream_name: str, _start_sequence: Optional[int], _end_sequence: Optional[int], _event_type: Optional[str], _callback: Optional[Callable[[str, Dict[str, Any]], None]]) -> List[Dict[str, Any]]:
         """
         Replay events from a stream.
         

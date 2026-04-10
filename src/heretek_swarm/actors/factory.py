@@ -72,7 +72,7 @@ class ActorFactory:
 
         logger.info("[ActorFactory] Factory initialized")
 
-    def register_actor_class(self, _name: str, _cls: Type[AgentActor], _kwargs: Optional[Dict[str, _Any]]) -> None:
+    def register_actor_class(self, _name: str, _cls: Type[AgentActor], _kwargs: Optional[Dict[str, Any]]) -> None:
         """
         Register an actor class with optional default parameters.
 
@@ -95,7 +95,7 @@ class ActorFactory:
             _extra = {"class_name": cls.__name__},
         )
 
-    def create_actor(self, _actor_type: str, _actor_id: Optional[str], _**override_kwargs: Any) -> AgentActor:
+    def create_actor(self, _actor_type: str, _actor_id: Optional[str], **override_kwargs: Any) -> AgentActor:
         """
         Create an actor instance from registered configuration.
 

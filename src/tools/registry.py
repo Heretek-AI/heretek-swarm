@@ -30,7 +30,7 @@ class ToolRegistryConfig(BaseModel):
     # Discovery
     auto_discover: bool = Field(default=True, description="Auto-discover tools on startup")
     discovery_paths: List[str] = Field(
-        _default_factory = lambda: ["src.tools", "heretek_swarm.tools", "heretek_swarm.tools.examples"],
+        default_factory = lambda: ["src.tools", "heretek_swarm.tools", "heretek_swarm.tools.examples"],
         description="Python paths to search for tools"
     )
     
@@ -64,8 +64,8 @@ class ToolRegistryEntry(BaseModel):
     module_path: Optional[str] = Field(None, description="Module where tool is defined")
     class_name: Optional[str] = Field(None, description="Class name")
     
-    # Instance
-    instance: Optional[BaseTool] = Field(None, description="Cached tool instance")
+    # Instance - use Any to avoid pydantic schema issues with BaseTool
+    instance: Optional[Any] = Field(None, description="Cached tool instance")
     
     # Loading
     loaded: bool = Field(default=False, description="Whether tool is loaded")
@@ -81,7 +81,7 @@ class ToolRegistryEntry(BaseModel):
     last_used_at: Optional[datetime] = Field(None)
     
     class Config:
-        _arbitrary_types_allowed = True
+        arbitrary_types_allowed = True
 
 
 class ToolRegistry:

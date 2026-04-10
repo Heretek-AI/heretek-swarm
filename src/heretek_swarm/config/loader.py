@@ -55,7 +55,7 @@ class ConfigLoader:
     - Bulk loading capabilities
     """
     
-    def __init__(self, _service: Optional[ConfigurationService], _cache_ttl_seconds: int):
+    def __init__(self, service: Optional[ConfigurationService], cache_ttl_seconds: int):
         """
         Initialize the configuration loader.
         
@@ -181,7 +181,7 @@ class ConfigLoader:
             except Exception as e:
                 logger.debug(f"Failed to warm cache for {key}: {e}")
     
-    async def _load_config(self, _config_key: str) -> Tuple[Any, str]:
+    async def _load_config(self, config_key: str) -> Tuple[Any, str]:
         """
         Load a configuration value from database or environment.
         
@@ -228,7 +228,7 @@ class ConfigLoader:
         # Not found anywhere
         return None, "not_found"
     
-    def _convert_value(self, _value: Any, _config_type: str) -> Any:
+    def _convert_value(self, value: Any, config_type: str) -> Any:
         """Convert a value to the specified type."""
         if value is None:
             return None
@@ -247,7 +247,7 @@ class ConfigLoader:
         except (ValueError, TypeError):
             return value
     
-    def _convert_env_value(self, _value: str) -> Any:
+    def _convert_env_value(self, value: str) -> Any:
         """
         Convert an environment variable value to appropriate type.
         
@@ -282,7 +282,7 @@ class ConfigLoader:
         # Default to string
         return value
     
-    def _get_cache(self, _config_key: str) -> Optional[CacheEntry]:
+    def _get_cache(self, config_key: str) -> Optional[CacheEntry]:
         """Get a cached value if available and not expired."""
         _entry = self._cache.get(config_key)
         
@@ -297,7 +297,7 @@ class ConfigLoader:
         entry.last_accessed_at = datetime.utcnow()
         return entry
     
-    def get(self, _config_key: str, _default: Any) -> Any:
+    def get(self, config_key: str, default: Any) -> Any:
         """
         Get a configuration value.
         
@@ -320,7 +320,7 @@ class ConfigLoader:
         # (async loading should be done via get_async)
         return default
     
-    async def get_async(self, _config_key: str, _default: Any) -> Any:
+    async def get_async(self, config_key: str, default: Any) -> Any:
         """
         Get a configuration value asynchronously.
         
@@ -346,7 +346,7 @@ class ConfigLoader:
         
         return default
     
-    def get_with_source(self, _config_key: str, _default: Any) -> Tuple[Any, str]:
+    def get_with_source(self, config_key: str, default: Any) -> Tuple[Any, str]:
         """
         Get a configuration value with its source.
         
@@ -363,7 +363,7 @@ class ConfigLoader:
         
         return default, "default"
     
-    async def get_async_with_source(self, _config_key: str, _default: Any) -> Tuple[Any, str]:
+    async def get_async_with_source(self, config_key: str, default: Any) -> Tuple[Any, str]:
         """
         Get a configuration value with its source asynchronously.
         
@@ -385,7 +385,7 @@ class ConfigLoader:
         
         return default, "default"
     
-    async def get_many(self, _config_keys: list[str]) -> Dict[str, Any]:
+    async def get_many(self, config_keys: list[str]) -> Dict[str, Any]:
         """
         Get multiple configuration values at once.
         
@@ -400,7 +400,7 @@ class ConfigLoader:
             results[key] = await self.get_async(key)
         return results
     
-    def invalidate(self, _config_key: str) -> None:
+    def invalidate(self, config_key: str) -> None:
         """
         Invalidate a cached configuration.
         
@@ -478,7 +478,7 @@ async def initialize_config_loader() -> None:
     await loader.initialize()
 
 
-async def get_config(_config_key: str, _default: Any) -> Any:
+async def get_config(config_key: str, default: Any) -> Any:
     """
     Convenience function to get a configuration value.
     
@@ -497,7 +497,7 @@ async def get_config(_config_key: str, _default: Any) -> Any:
     return await loader.get_async(config_key, default)
 
 
-async def get_config_with_source(_config_key: str, _default: Any) -> Tuple[Any, str]:
+async def get_config_with_source(config_key: str, default: Any) -> Tuple[Any, str]:
     """
     Convenience function to get a configuration value with source.
     

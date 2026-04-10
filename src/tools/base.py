@@ -81,7 +81,7 @@ class ToolMetadata(BaseModel):
     avg_execution_time_ms: float = Field(default=0.0, ge=0)
 
 
-class ToolExecutionResult(BaseModel, Generic[TOutput]):
+class ToolExecutionResult(BaseModel, Generic[_TOutput]):
     """Result from tool execution"""
     
     # Execution info
@@ -134,7 +134,7 @@ class ToolContext(BaseModel):
     permissions: List[str] = Field(default_factory=list)
 
 
-class BaseTool(ABC, Generic[TInput, TOutput]):
+class BaseTool(ABC, Generic[_TInput, _TOutput]):
     """
     Abstract base class for all Heretek Swarm tools.
     
@@ -183,7 +183,7 @@ class BaseTool(ABC, Generic[TInput, TOutput]):
         )
     
     @abstractmethod
-    async def execute(self, _input_data: TInput, _context: ToolContext) -> TOutput:
+    async def execute(self, _input_data: _TInput, _context: ToolContext) -> _TOutput:
         """
         Execute the tool with validated input.
         
@@ -340,7 +340,7 @@ class BaseTool(ABC, Generic[TInput, TOutput]):
                 _input_data = input_data
             )
     
-    async def _validate_input(self, _input_data: Dict[str, _Any]) -> TInput:
+    async def _validate_input(self, _input_data: Dict[str, _Any]) -> _TInput:
         """
         Validate input data against expected schema.
         

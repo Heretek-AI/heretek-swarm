@@ -229,7 +229,7 @@ class AgentAgencyMetrics:
         else:
             return AutonomyLevel.HIGHLY_AUTONOMOUS
     
-    def is_prime_directive_compliant(self, _threshold: float) -> bool:
+    def is_prime_directive_compliant(self, threshold: float) -> bool:
         """Check if agent meets minimum Prime Directive compliance threshold."""
         return self.prime_directive_compliance >= threshold
     
@@ -324,7 +324,7 @@ class AgencyMetricsCalculator:
         _metrics = calculator.calculate_metrics(agent_id, decisions, actions, resources)
     """
     
-    def __init__(self, _autonomy_weight: float, _agency_weight: float, _self_determination_weight: float, _resource_autonomy_weight: float):
+    def __init__(self, autonomy_weight: float, agency_weight: float, self_determination_weight: float, resource_autonomy_weight: float):
         """
         Initialize the agency metrics calculator.
         
@@ -348,7 +348,7 @@ class AgencyMetricsCalculator:
                 _message = "Weights do not sum to 1.0, normalizing..."
             )
     
-    def calculate_autonomy_score(self, _decisions: List[DecisionPoint], _actions: List[ActionOrigin]) -> float:
+    def calculate_autonomy_score(self, decisions: List[DecisionPoint], actions: List[ActionOrigin]) -> float:
         """
         Calculate autonomy score (0.0-1.0).
         
@@ -403,7 +403,7 @@ class AgencyMetricsCalculator:
         
         return max(0.0, min(1.0, autonomy))
     
-    def calculate_agency_score(self, _autonomy_score: float, _self_determination_index: float, _goal_alignment_score: float) -> float:
+    def calculate_agency_score(self, autonomy_score: float, self_determination_index: float, goal_alignment_score: float) -> float:
         """
         Calculate agency score (0.0-1.0).
         
@@ -430,7 +430,7 @@ class AgencyMetricsCalculator:
         
         return max(0.0, min(1.0, agency))
     
-    def calculate_self_determination_index(self, _decisions: List[DecisionPoint]) -> float:
+    def calculate_self_determination_index(self, decisions: List[DecisionPoint]) -> float:
         """
         Calculate self-determination index (0.0-1.0).
         
@@ -490,7 +490,7 @@ class AgencyMetricsCalculator:
         
         return max(0.0, min(1.0, self_det))
     
-    def calculate_autonomous_action_ratio(self, _actions: List[ActionOrigin]) -> float:
+    def calculate_autonomous_action_ratio(self, actions: List[ActionOrigin]) -> float:
         """
         Calculate autonomous action ratio (0.0-1.0).
         
@@ -518,7 +518,7 @@ class AgencyMetricsCalculator:
         
         return self_initiated / denominator
     
-    def calculate_goal_alignment_score(self, _individual_actions: int, _collective_actions: int, _individual_success: float, _collective_success: float) -> float:
+    def calculate_goal_alignment_score(self, individual_actions: int, collective_actions: int, _individual_success: float, collective_success: float) -> float:
         """
         Calculate goal alignment score (0.0-1.0).
         
@@ -566,7 +566,7 @@ class AgencyMetricsCalculator:
         
         return max(0.0, min(1.0, alignment))
     
-    def calculate_resource_autonomy(self, _resources: List[ResourceControl]) -> Tuple[float, float]:
+    def calculate_resource_autonomy(self, resources: List[ResourceControl]) -> Tuple[float, float]:
         """
         Calculate resource autonomy and independence.
         
@@ -608,7 +608,7 @@ class AgencyMetricsCalculator:
             sum(independences) / len(independences)
         )
     
-    def calculate_prime_directive_compliance(self, _metrics: AgentAgencyMetrics, _decisions: List[DecisionPoint]) -> Tuple[float, Dict[str, float], List[str]]:
+    def calculate_prime_directive_compliance(self, metrics: AgentAgencyMetrics, _decisions: List[DecisionPoint]) -> Tuple[float, Dict[str, float], List[str]]:
         """
         Calculate Prime Directive compliance.
         
@@ -663,7 +663,7 @@ class AgencyMetricsCalculator:
         
         return total_compliance, details, recommendations
     
-    def calculate_metrics(self, _agent_id: str, _decisions: Optional[List[DecisionPoint]], _actions: Optional[List[ActionOrigin]], _resources: Optional[List[ResourceControl]], _individual_actions: int, _collective_actions: int, _individual_success: float, _collective_success: float) -> AgentAgencyMetrics:
+    def calculate_metrics(self, agent_id: str, decisions: Optional[List[DecisionPoint]], actions: Optional[List[ActionOrigin]], resources: Optional[List[ResourceControl]], individual_actions: int, collective_actions: int, individual_success: float, collective_success: float) -> AgentAgencyMetrics:
         """
         Calculate all agency metrics for an agent.
         
@@ -747,7 +747,7 @@ class AgencyMetricsCalculator:
         return metrics
 
 
-def create_decision_point(_agent_id: str, _options_considered: int, _choice_made: int, _origin: ActionOrigin, _external_prompt: Optional[str], _decision_confidence: float, _time_taken_ms: float) -> DecisionPoint:
+def create_decision_point(agent_id: str, options_considered: int, choice_made: int, origin: ActionOrigin, external_prompt: Optional[str], decision_confidence: float, time_taken_ms: float) -> DecisionPoint:
     """
     Factory function to create a DecisionPoint with sensible defaults.
     
@@ -774,7 +774,7 @@ def create_decision_point(_agent_id: str, _options_considered: int, _choice_made
     )
 
 
-def create_resource_control(_resource_type: str, _total_capacity: float, _agent_controlled: float, _externally_allocated: float) -> ResourceControl:
+def create_resource_control(resource_type: str, total_capacity: float, agent_controlled: float, externally_allocated: float) -> ResourceControl:
     """
     Factory function to create a ResourceControl with sensible defaults.
     

@@ -131,7 +131,7 @@ class AgentPosition:
     round_submitted: int = 0
     previous_positions: List[Tuple[Position, float]] = field(default_factory=list)
 
-    def update_position(self, _new_position: Position, _new_confidence: float, _round_number: int) -> None:
+    def update_position(self, new_position: Position, new_confidence: float, round_number: int) -> None:
         """Update position and track history."""
         self.previous_positions.append((self.position, self.confidence))
         self.position = new_position
@@ -211,7 +211,7 @@ class SwarmDeliberationEngine:
         expertise_profiler: Optional expertise profiler for weighting
     """
 
-    def __init__(self, _max_rounds: int, _consensus_threshold: float, _min_participants: int, _expertise_profiler: Optional[AgentExpertiseProfiler], _argument_timeout: float) -> None:
+    def __init__(self, max_rounds: int, consensus_threshold: float, min_participants: int, expertise_profiler: Optional[AgentExpertiseProfiler], argument_timeout: float) -> None:
         """
         Initialize the deliberation engine.
 
@@ -241,7 +241,7 @@ class SwarmDeliberationEngine:
             f"consensus_threshold={consensus_threshold:.2f}"
         )
 
-    def start_deliberation(self, _deliberation_id: str, _proposal: str, _participants: List[str], _domain: Optional[str]) -> None:
+    def start_deliberation(self, deliberation_id: str, proposal: str, participants: List[str], domain: Optional[str]) -> None:
         """
         Start a new deliberation process.
 
@@ -280,7 +280,7 @@ class SwarmDeliberationEngine:
             f"with {len(participants)} participants"
         )
 
-    def submit_position(self, _deliberation_id: str, _agent_id: str, _position: Position, _confidence: float, _argument: Optional[str]) -> bool:
+    def submit_position(self, deliberation_id: str, agent_id: str, position: Position, confidence: float, argument: Optional[str]) -> bool:
         """
         Submit an agent's position in the deliberation.
 
@@ -353,7 +353,7 @@ class SwarmDeliberationEngine:
         )
         return True
 
-    def submit_argument(self, _deliberation_id: str, _agent_id: str, _position: Position, _content: str, _confidence: float, _supports: Optional[List[str]], _rebuttals: Optional[List[str]]) -> Optional[str]:
+    def submit_argument(self, deliberation_id: str, agent_id: str, position: Position, content: str, confidence: float, supports: Optional[List[str]], rebuttals: Optional[List[str]]) -> Optional[str]:
         """
         Submit an argument to support a position.
 
@@ -408,7 +408,7 @@ class SwarmDeliberationEngine:
         )
         return argument_id
 
-    def run_deliberation_round(self, _deliberation_id: str) -> Optional[DeliberationRound]:
+    def run_deliberation_round(self, deliberation_id: str) -> Optional[DeliberationRound]:
         """
         Run a single round of deliberation.
 
@@ -492,7 +492,7 @@ class SwarmDeliberationEngine:
 
         return round_result
 
-    def _calculate_consensus_score(self, _deliberation_id: str) -> float:
+    def _calculate_consensus_score(self, deliberation_id: str) -> float:
         """
         Calculate current consensus score.
 
@@ -556,7 +556,7 @@ class SwarmDeliberationEngine:
 
         return majority_ratio * participation
 
-    def _generate_round_summary(self, _deliberation_id: str, _round_number: int, _consensus_score: float, _position_changes: int) -> str:
+    def _generate_round_summary(self, deliberation_id: str, round_number: int, consensus_score: float, position_changes: int) -> str:
         """
         Generate summary of deliberation round.
 
@@ -586,7 +586,7 @@ class SwarmDeliberationEngine:
             f"Changes: {position_changes}"
         )
 
-    def get_position_distribution(self, _deliberation_id: str) -> Dict[str, float]:
+    def get_position_distribution(self, deliberation_id: str) -> Dict[str, float]:
         """
         Get distribution of positions as percentages.
 
@@ -612,7 +612,7 @@ class SwarmDeliberationEngine:
 
         return {k: v / total for k, v in distribution.items()}
 
-    def get_minority_opinions(self, _deliberation_id: str, _min_confidence: float) -> List[Dict[str, Any]]:
+    def get_minority_opinions(self, deliberation_id: str, min_confidence: float) -> List[Dict[str, Any]]:
         """
         Get minority opinions (dissenting views).
 
@@ -649,7 +649,7 @@ class SwarmDeliberationEngine:
 
         return minority_opinions
 
-    def finalize_deliberation(self, _deliberation_id: str) -> Optional[DeliberationResult]:
+    def finalize_deliberation(self, deliberation_id: str) -> Optional[DeliberationResult]:
         """
         Finalize deliberation and return result.
 
@@ -731,7 +731,7 @@ class SwarmDeliberationEngine:
 
         return result
 
-    def _determine_final_position(self, _deliberation_id: str) -> Position:
+    def _determine_final_position(self, deliberation_id: str) -> Position:
         """
         Determine final position from deliberation.
 
@@ -789,7 +789,7 @@ class SwarmDeliberationEngine:
         else:
             return Position.STRONG_DISAGREE
 
-    def get_deliberation_state(self, _deliberation_id: str) -> Optional[DeliberationState]:
+    def get_deliberation_state(self, deliberation_id: str) -> Optional[DeliberationState]:
         """
         Get current state of a deliberation.
 
@@ -801,7 +801,7 @@ class SwarmDeliberationEngine:
         """
         return self.deliberation_states.get(deliberation_id)
 
-    def get_round_history(self, _deliberation_id: str) -> List[DeliberationRound]:
+    def get_round_history(self, deliberation_id: str) -> List[DeliberationRound]:
         """
         Get complete round history for a deliberation.
 
@@ -813,7 +813,7 @@ class SwarmDeliberationEngine:
         """
         return self.round_results.get(deliberation_id, [])
 
-    def cleanup_deliberation(self, _deliberation_id: str) -> None:
+    def cleanup_deliberation(self, deliberation_id: str) -> None:
         """
         Clean up a completed deliberation.
 
@@ -852,7 +852,7 @@ class SwarmDeliberationEngine:
             "min_participants": self.min_participants,
         }
 
-    async def run_deliberation_with_timeout(self, _deliberation_id: str, _round_interval: float, _timeout: Optional[float]) -> Optional[DeliberationResult]:
+    async def run_deliberation_with_timeout(self, deliberation_id: str, round_interval: float, timeout: Optional[float]) -> Optional[DeliberationResult]:
         """
         Run deliberation with automatic round progression and timeout.
 

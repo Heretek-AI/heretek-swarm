@@ -41,7 +41,7 @@ class TelegramBot:
     - Handoff updates
     """
     
-    def __init__(self, _token: Optional[str], _agent_runtime = None, _handoff_manager = None):
+    def __init__(self, token: Optional[str], agent_runtime = None, handoff_manager = None):
         self.token = token or os.getenv("TELEGRAM_BOT_TOKEN")
         self.agent_runtime = agent_runtime
         self.handoff_manager = handoff_manager
@@ -112,7 +112,7 @@ class TelegramBot:
         
         logger.info("telegram_bot_stopped")
     
-    async def _handle_start(self, _update: Update, _context: "ContextTypes.DEFAULT_TYPE") -> None:
+    async def _handle_start(self, update: Update, _context: "ContextTypes.DEFAULT_TYPE") -> None:
         """Handle /start command."""
         _welcome_message = """
 🤖 *Welcome to Heretek Swarm!*
@@ -134,7 +134,7 @@ I'm your Telegram assistant for interacting with the AI agent collective.
             _parse_mode = "Markdown",
         )
     
-    async def _handle_help(self, _update: Update, _context: "ContextTypes.DEFAULT_TYPE") -> None:
+    async def _handle_help(self, update: Update, _context: "ContextTypes.DEFAULT_TYPE") -> None:
         """Handle /help command."""
         _help_text = """
 📖 *Heretek Swarm Help*
@@ -167,7 +167,7 @@ Just type your message and I'll route it to the appropriate agent.
             _parse_mode = "Markdown",
         )
     
-    async def _handle_status(self, _update: Update, _context: "ContextTypes.DEFAULT_TYPE") -> None:
+    async def _handle_status(self, update: Update, _context: "ContextTypes.DEFAULT_TYPE") -> None:
         """Handle /status command."""
         # Get swarm status from API
         _status_text = "📊 *Swarm Status*\n\n"
@@ -187,7 +187,7 @@ Just type your message and I'll route it to the appropriate agent.
             _parse_mode = "Markdown",
         )
     
-    async def _handle_agents(self, _update: Update, _context: "ContextTypes.DEFAULT_TYPE") -> None:
+    async def _handle_agents(self, update: Update, _context: "ContextTypes.DEFAULT_TYPE") -> None:
         """Handle /agents command."""
         _agents_text = """
 🤖 *Available Agents*
@@ -216,7 +216,7 @@ Just type your message and I'll route it to the appropriate agent.
             _parse_mode = "Markdown",
         )
     
-    async def _handle_message(self, _update: Update, _context: "ContextTypes.DEFAULT_TYPE") -> None:
+    async def _handle_message(self, update: Update, _context: "ContextTypes.DEFAULT_TYPE") -> None:
         """Handle regular messages."""
         _user_message = update.message.text
         _user_id = str(update.message.from_user.id)
@@ -233,7 +233,7 @@ Just type your message and I'll route it to the appropriate agent.
             _parse_mode = "Markdown",
         )
     
-    async def _route_message(self, _message: str, _user_id: str) -> str:
+    async def _route_message(self, message: str, user_id: str) -> str:
         """
         Route message to appropriate agent.
         
@@ -278,7 +278,7 @@ Just type your message and I'll route it to the appropriate agent.
         
         return f"🤖 Agent {agent_id} is currently unavailable."
     
-    async def send_notification(self, _chat_id: str, _message: str, _parse_mode: str) -> bool:
+    async def send_notification(self, chat_id: str, message: str, parse_mode: str) -> bool:
         """
         Send notification to specific chat.
         
@@ -309,7 +309,7 @@ Just type your message and I'll route it to the appropriate agent.
             )
             return False
     
-    async def notify_handoff(self, _chat_id: str, _handoff_context: Dict) -> None:
+    async def notify_handoff(self, chat_id: str, handoff_context: Dict) -> None:
         """
         Send handoff notification.
         
@@ -338,7 +338,7 @@ def get_telegram_bot() -> Optional[TelegramBot]:
     return telegram_bot
 
 
-async def start_telegram_bot(_agent_runtime = None, _handoff_manager = None) -> None:
+async def start_telegram_bot(agent_runtime = None, handoff_manager = None) -> None:
     """Start Telegram bot."""
     global telegram_bot
     

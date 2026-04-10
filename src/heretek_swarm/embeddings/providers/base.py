@@ -93,7 +93,7 @@ class EmbeddingProviderBase(ABC):
         _response = await provider.embed(texts=["Hello, world!"])
     """
 
-    def __init__(self, _provider_name: str, _base_url: str, _api_key: Optional[str], _default_model: Optional[str], _extra_config: Optional[Dict[str, _Any]]):
+    def __init__(self, provider_name: str, base_url: str, api_key: Optional[str], default_model: Optional[str], extra_config: Optional[Dict[str, Any]]):
         """
         Initialize the embedding provider.
         
@@ -129,7 +129,7 @@ class EmbeddingProviderBase(ABC):
         return self._capabilities
 
     @abstractmethod
-    async def embed(self, _texts: Union[str, _List[str]], _model: Optional[str], _dimensions: Optional[int]) -> EmbeddingResponse:
+    async def embed(self, texts: Union[str, List[str]], model: Optional[str], dimensions: Optional[int]) -> EmbeddingResponse:
         """
         Generate embeddings for texts.
         
@@ -146,7 +146,7 @@ class EmbeddingProviderBase(ABC):
         """
         pass
 
-    async def embed_with_retry(self, _texts: Union[str, _List[str]], _model: Optional[str], _dimensions: Optional[int], _max_retries: int, _retry_delay: float) -> EmbeddingResponse:
+    async def embed_with_retry(self, texts: Union[str, List[str]], model: Optional[str], dimensions: Optional[int], max_retries: int, retry_delay: float) -> EmbeddingResponse:
         """
         Generate embeddings with automatic retries.
         
@@ -188,7 +188,7 @@ class EmbeddingProviderBase(ABC):
             cause=last_error,
         )
 
-    def _get_model(self, _model: Optional[str]) -> str:
+    def _get_model(self, model: Optional[str]) -> str:
         """Get the model to use, falling back to default if needed."""
         if model:
             return model
@@ -196,7 +196,7 @@ class EmbeddingProviderBase(ABC):
             return self.default_model
         raise ValueError("No model specified and no default model configured")
 
-    def _ensure_list(self, _texts: Union[str, _List[str]]) -> List[str]:
+    def _ensure_list(self, texts: Union[str, List[str]]) -> List[str]:
         """Ensure texts is a list."""
         if isinstance(texts, str):
             return [texts]
@@ -214,7 +214,7 @@ class EmbeddingProviderBase(ABC):
 class EmbeddingProviderError(Exception):
     """Exception raised for embedding provider-related errors."""
     
-    def __init__(self, _message: str, _provider: Optional[str], _cause: Optional[Exception]):
+    def __init__(self, message: str, provider: Optional[str], cause: Optional[Exception]):
         self.message = message
         self.provider = provider
         self.cause = cause
@@ -242,7 +242,7 @@ class EmbeddingAuthenticationError(EmbeddingProviderError):
 
 class EmbeddingRateLimitError(EmbeddingProviderError):
     """Exception raised when rate limited."""
-    def __init__(self, _message: str, _provider: Optional[str], _retry_after: Optional[float]):
+    def __init__(self, message: str, provider: Optional[str], retry_after: Optional[float]):
         self.retry_after = retry_after
         super().__init__(message, provider)
 

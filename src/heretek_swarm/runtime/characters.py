@@ -193,7 +193,7 @@ CHARACTERS: Dict[str, Dict] = {
 }
 
 
-def get_character(_agent_id: str) -> Dict:
+def get_character(agent_id: str) -> Dict:
     """Get character definition by agent ID."""
     return CHARACTERS.get(agent_id.lower(), STEWARD)
 
@@ -203,7 +203,7 @@ def get_all_characters() -> Dict[str, Dict]:
     return CHARACTERS.copy()
 
 
-def character_to_system_prompt(_character: Dict) -> str:
+def character_to_system_prompt(character: Dict) -> str:
     """Convert character to system prompt."""
     _parts = []
     

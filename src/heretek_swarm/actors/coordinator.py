@@ -145,7 +145,7 @@ class CoordinatorAgent(AgentActor):
     - get_coordination_report: Generate coordination status report
     """
 
-    def __init__(self, _agent_id: Optional[str], _config: Optional[Dict[str, _Any]], _# Session 44: Integration components
+    def __init__(self, _agent_id: Optional[str], _config: Optional[Dict[str, Any]], # Session 44: Integration components
         pattern_extractor: Optional[PatternExtractor], _deliberation_engine: Optional[SwarmDeliberationEngine], _access_analyzer: Optional[AccessPatternAnalyzer], _zero_trust_validator: Optional[ZeroTrustValidator]):
         super().__init__(
             agent_id=agent_id or f"coordinator_{uuid.uuid4().hex[:8]}",
@@ -847,7 +847,7 @@ class CoordinatorAgent(AgentActor):
                             _task_id = dep_id,
                         )
 
-    def _topological_sort(self, _graph: Dict[str, _Set[str]]) -> List[str]:
+    def _topological_sort(self, _graph: Dict[str, Set[str]]) -> List[str]:
         """Perform topological sort on dependency graph."""
         _in_degree = {node: len(deps) for node, deps in graph.items()}
         _queue = [node for node, degree in in_degree.items() if degree == 0]
@@ -867,7 +867,7 @@ class CoordinatorAgent(AgentActor):
 
         return result
 
-    def _identify_parallel_groups(self, _sorted_tasks: List[str], _graph: Dict[str, _Set[str]]) -> List[List[str]]:
+    def _identify_parallel_groups(self, _sorted_tasks: List[str], _graph: Dict[str, Set[str]]) -> List[List[str]]:
         """Identify groups of tasks that can run in parallel."""
         if not sorted_tasks:
             return []
@@ -893,7 +893,7 @@ class CoordinatorAgent(AgentActor):
 
         return groups
 
-    def _find_critical_path(self, _sorted_tasks: List[str], _graph: Dict[str, _Set[str]]) -> List[str]:
+    def _find_critical_path(self, _sorted_tasks: List[str], _graph: Dict[str, Set[str]]) -> List[str]:
         """Find the critical path (longest dependency chain)."""
         if not sorted_tasks:
             return []
@@ -919,7 +919,7 @@ class CoordinatorAgent(AgentActor):
     # Session 44: Collective Learning Integration Methods
     # =========================================================================
 
-    async def _emit_pattern(self, _item_id: str, _item_type: str, _outcome: str, _content: Dict[str, _Any]) -> None:
+    async def _emit_pattern(self, _item_id: str, _item_type: str, _outcome: str, _content: Dict[str, Any]) -> None:
         """Emit pattern for collective learning."""
         if not self.pattern_extractor:
             return

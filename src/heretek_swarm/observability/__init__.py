@@ -196,7 +196,7 @@ class LokiHandler(logging.Handler):
         except Exception:
             self.handleError(record)
 
-    async def _add_to_buffer(self, _log_entry: Dict[str, _Any]) -> None:
+    async def _add_to_buffer(self, _log_entry: Dict[str, Any]) -> None:
         """Add log entry to buffer."""
         async with self._buffer_lock:
             self._buffer.append(log_entry)
@@ -417,7 +417,7 @@ class ObservabilityManager:
     # Tracing
     # =========================================================================
 
-    def trace_span(self, _name: str, _agent_id: Optional[str], _task_id: Optional[str], _**attributes):
+    def trace_span(self, _name: str, _agent_id: Optional[str], _task_id: Optional[str], **attributes):
         """Create a trace span context manager."""
         _span_attributes = {**attributes}
         if agent_id:
@@ -427,7 +427,7 @@ class ObservabilityManager:
 
         return span_context(name, attributes=span_attributes)
 
-    async def traced(self, _name: str, _agent_id: Optional[str], _task_id: Optional[str], _**attributes):
+    async def traced(self, _name: str, _agent_id: Optional[str], _task_id: Optional[str], **attributes):
         """Async context manager for tracing."""
         from .tracing import span_context
         _span_attributes = {**attributes}
@@ -443,7 +443,7 @@ class ObservabilityManager:
     # Health Checks
     # =========================================================================
 
-    def register_health_check(self, _name: str, _check_fn: Callable[[], _Any]) -> None:
+    def register_health_check(self, _name: str, _check_fn: Callable[[], Any]) -> None:
         """
         Register a health check.
 
@@ -507,7 +507,7 @@ class ObservabilityManager:
     # Structured Logging
     # =========================================================================
 
-    def log(self, _level: LogLevel, _message: str, _agent_id: Optional[str], _task_id: Optional[str], _session_id: Optional[str], _**metadata) -> None:
+    def log(self, _level: LogLevel, _message: str, _agent_id: Optional[str], _task_id: Optional[str], _session_id: Optional[str], **metadata) -> None:
         """
         Log with structured metadata.
         """

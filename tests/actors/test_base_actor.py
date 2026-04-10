@@ -28,13 +28,13 @@ def mock_state_repository():
     _repo = MagicMock(spec=StateRepository)
     
     # Define async functions for the mocks
-    async def mock_save(_*args, _**kwargs):
+    async def mock_save(*args, **kwargs):
         return None
     
-    async def mock_load(_*args, _**kwargs):
+    async def mock_load(*args, **kwargs):
         return None
     
-    async def mock_find(_*args, _**kwargs):
+    async def mock_find(*args, **kwargs):
         return []
     
     repo.save = mock_save
@@ -105,7 +105,7 @@ class TestActorStateEnum:
     
     def test_actor_state_in_list(self):
         """Test ActorState membership testing."""
-        _active_states = [ActorState.ACTIVE, ActorState.SPAWNING]
+        active_states = [ActorState.ACTIVE, ActorState.SPAWNING]
         assert ActorState.ACTIVE in active_states
         assert ActorState.TERMINATED not in active_states
 
@@ -119,11 +119,11 @@ class TestActorMessage:
     
     def test_create_minimal_message(self):
         """Test creating a message with minimal fields."""
-        _msg = ActorMessage(
-            _sender = "sender-1",
-            _message_type = "test",
-            _content = {"key": "value"},
-            _timestamp = "2024-01-01T00:00:00Z",
+        msg = ActorMessage(
+            sender = "sender-1",
+            message_type = "test",
+            content = {"key": "value"},
+            timestamp = "2024-01-01T00:00:00Z",
         )
         assert msg.sender == "sender-1"
         assert msg.message_type == "test"
@@ -134,14 +134,14 @@ class TestActorMessage:
     
     def test_create_full_message(self):
         """Test creating a message with all fields."""
-        _msg = ActorMessage(
-            _sender = "sender-1",
-            _message_type = "request",
-            _content = {"data": "test"},
-            _timestamp = "2024-01-01T00:00:00Z",
-            _correlation_id = "corr-123",
+        msg = ActorMessage(
+            sender = "sender-1",
+            message_type = "request",
+            content = {"data": "test"},
+            timestamp = "2024-01-01T00:00:00Z",
+            correlation_id = "corr-123",
             reply_to="response-topic",
-            _metadata = {"priority": "high"},
+            metadata = {"priority": "high"},
         )
         assert msg.correlation_id == "corr-123"
         assert msg.reply_to == "response-topic"

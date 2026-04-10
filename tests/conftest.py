@@ -28,7 +28,7 @@ COVERAGE_THRESHOLD = 80  # >80% test coverage requirement
 
 # ============== TEST MARKERS ==============
 
-def pytest_configure(_config: pytest.Config) -> None:
+def pytest_configure(config: pytest.Config) -> None:
     """Configure custom pytest markers."""
     config.addinivalue_line(
         "markers", "unit: Unit tests (fast, isolated, no external dependencies)"

@@ -283,54 +283,54 @@ DEFAULT_TIER_CONFIGS = {
     MemoryTier.L1_HOT: TierConfig(
         tier=MemoryTier.L1_HOT,
         name="Hot Storage (Redis)",
-        description = "Fastest tier for frequently accessed memories",
+        _description = "Fastest tier for frequently accessed memories",
         max_capacity_bytes=10 * 1024 * 1024 * 1024,  # 10GB
         max_capacity_count=100000,
-        target_utilization = 0.7,
+        _target_utilization = 0.7,
         cost_per_gb_month=0.50,
-        access_latency_ms = 1.0,
-        retention_days = 30,
-        compression_enabled = False,
-        auto_migrate_enabled = True,
+        _access_latency_ms = 1.0,
+        _retention_days = 30,
+        _compression_enabled = False,
+        _auto_migrate_enabled = True,
     ),
     MemoryTier.L2_WARM: TierConfig(
         tier=MemoryTier.L2_WARM,
         name="Warm Storage (PostgreSQL)",
-        description = "Balanced tier for moderately accessed memories",
+        _description = "Balanced tier for moderately accessed memories",
         max_capacity_bytes=100 * 1024 * 1024 * 1024,  # 100GB
         max_capacity_count=1000000,
-        target_utilization = 0.8,
+        _target_utilization = 0.8,
         cost_per_gb_month=0.10,
-        access_latency_ms = 10.0,
-        retention_days = 365,
-        compression_enabled = False,
-        auto_migrate_enabled = True,
+        _access_latency_ms = 10.0,
+        _retention_days = 365,
+        _compression_enabled = False,
+        _auto_migrate_enabled = True,
     ),
     MemoryTier.L3_COLD: TierConfig(
         tier=MemoryTier.L3_COLD,
         name="Cold Storage (Compressed Archive)",
-        description = "Low-cost tier for rarely accessed memories",
+        _description = "Low-cost tier for rarely accessed memories",
         max_capacity_bytes=1000 * 1024 * 1024 * 1024,  # 1TB
         max_capacity_count=10000000,
-        target_utilization = 0.9,
+        _target_utilization = 0.9,
         cost_per_gb_month=0.02,
-        access_latency_ms = 100.0,
+        _access_latency_ms = 100.0,
         retention_days=730,  # 2 years
-        compression_enabled = True,
-        auto_migrate_enabled = True,
+        _compression_enabled = True,
+        _auto_migrate_enabled = True,
     ),
     MemoryTier.ARCHIVE: TierConfig(
         tier=MemoryTier.ARCHIVE,
         name="Archive Storage",
-        description = "Deep archive for compliance and long-term retention",
-        max_capacity_bytes = 0,  # Unlimited
+        _description = "Deep archive for compliance and long-term retention",
+        _max_capacity_bytes = 0,  # Unlimited
         max_capacity_count=0,
-        target_utilization = 1.0,
+        _target_utilization = 1.0,
         cost_per_gb_month=0.004,
-        access_latency_ms = 1000.0,
-        retention_days = 0,  # Forever
-        compression_enabled = True,
-        auto_migrate_enabled = False,
+        _access_latency_ms = 1000.0,
+        _retention_days = 0,  # Forever
+        _compression_enabled = True,
+        _auto_migrate_enabled = False,
     ),
 }
 

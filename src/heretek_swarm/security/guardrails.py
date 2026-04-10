@@ -91,7 +91,7 @@ class GuardrailsSystem:
     - Harmful content generation
     """
     
-    def __init__(self, _config: Optional[GuardrailsConfig]):
+    def __init__(self, config: Optional[GuardrailsConfig]):
         """
         Initialize guardrails system.
         
@@ -146,7 +146,7 @@ class GuardrailsSystem:
         
         return chain
     
-    async def validate_input(self, _input_text: str, _agent_id: Optional[str]) -> ValidationResult:
+    async def validate_input(self, input_text: str, agent_id: Optional[str]) -> ValidationResult:
         """
         Validate user input against guardrails.
         
@@ -170,7 +170,7 @@ class GuardrailsSystem:
         
         return ValidationResult(valid=False, reason=reason)
     
-    async def filter_output(self, _output_text: str, _agent_id: Optional[str]) -> FilterResult:
+    async def filter_output(self, output_text: str, agent_id: Optional[str]) -> FilterResult:
         """
         Filter agent output against guardrails.
         
@@ -263,7 +263,7 @@ class GuardrailsSystem:
             _reason = reason
         )
     
-    def add_blocked_pattern(self, _pattern: str, _description: str, _severity: str, _action: GuardrailsAction) -> None:
+    def add_blocked_pattern(self, pattern: str, description: str, severity: str, action: GuardrailsAction) -> None:
         """
         Add a blocked pattern to the guardrails system.
         
@@ -288,7 +288,7 @@ class GuardrailsSystem:
             severity=severity
         )
     
-    def remove_blocked_pattern(self, _pattern: str) -> bool:
+    def remove_blocked_pattern(self, pattern: str) -> bool:
         """
         Remove a blocked pattern from the guardrails system.
         
@@ -335,7 +335,7 @@ class GuardrailsSystem:
             for bp in self.config.blocked_patterns
         ]
     
-    async def check_agent_rate_limit(self, _agent_id: str, _action: str) -> bool:
+    async def check_agent_rate_limit(self, agent_id: str, _action: str) -> bool:
         """
         Check if agent has exceeded its rate limit.
         
@@ -360,34 +360,34 @@ class GuardrailsSystem:
 DEFAULT_BLOCKED_PATTERNS = [
     # SQL Injection patterns
     BlockedPattern(
-        _pattern = r"(?i)(\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|EXEC|UNION|SCRIPT)\b)",
-        _description = "SQL injection attempt",
-        _severity = "critical",
-        _action = GuardrailsAction.BLOCK
+        pattern = r"(?i)(\b(SELECT|INSERT|UPDATE|DELETE|DROP|CREATE|ALTER|EXEC|UNION|SCRIPT)\b)",
+        description = "SQL injection attempt",
+        severity = "critical",
+        action = GuardrailsAction.BLOCK
     ),
     
     # Command injection patterns
     BlockedPattern(
-        _pattern = r"(?i)(\b(sh|bash|cmd|powershell|exec)\s+[^\s])",
-        _description = "Command injection attempt",
-        _severity = "critical",
-        _action = GuardrailsAction.BLOCK
+        pattern = r"(?i)(\b(sh|bash|cmd|powershell|exec)\s+[^\s])",
+        description = "Command injection attempt",
+        severity = "critical",
+        action = GuardrailsAction.BLOCK
     ),
     
     # XSS patterns
     BlockedPattern(
-        _pattern = r"<script[^>]*>.*?</script>|javascript:|on\w+\s*=",
-        _description = "XSS attempt",
-        _severity = "critical",
-        _action = GuardrailsAction.BLOCK
+        pattern = r"<script[^>]*>.*?</script>|javascript:|on\w+\s*=",
+        description = "XSS attempt",
+        severity = "critical",
+        action = GuardrailsAction.BLOCK
     ),
     
     # Path traversal patterns
     BlockedPattern(
-        _pattern = r"\.\./|\.\.\\|[A-Za-z]:\\|[A-Za-z]:\.\./",
-        _description = "Path traversal attempt",
-        _severity = "critical",
-        _action = GuardrailsAction.BLOCK
+        pattern = r"\.\./|\.\.\\|[A-Za-z]:\\|[A-Za-z]:\.\./",
+        description = "Path traversal attempt",
+        severity = "critical",
+        action = GuardrailsAction.BLOCK
     ),
 ]
 
@@ -399,11 +399,11 @@ def create_default_guardrails() -> GuardrailsSystem:
     Returns:
         Configured GuardrailsSystem instance
     """
-    _config = GuardrailsConfig(
-        _blocked_patterns = DEFAULT_BLOCKED_PATTERNS.copy(),
-        _block_personal_info = True,
-        _block_code_execution = True,
-        _enable_content_filter = True,
+    config = GuardrailsConfig(
+        blocked_patterns = DEFAULT_BLOCKED_PATTERNS.copy(),
+        block_personal_info = True,
+        block_code_execution = True,
+        enable_content_filter = True,
     )
     
     return GuardrailsSystem(config=config)

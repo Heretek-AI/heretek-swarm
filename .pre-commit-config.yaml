@@ -1,5 +1,31 @@
 # Pre-commit hooks configuration for Heretek Swarm
-# Run: pip install pre-commit && pre-commit install
+#
+# Installation:
+#   pip install pre-commit
+#   pre-commit install
+#
+# Usage:
+#   pre-commit run --all-files    # Run all hooks on all files
+#   pre-commit run                # Run hooks on staged files only
+#   pre-commit run pylint         # Run only pylint
+#   pre-commit run flake8         # Run only flake8
+#   pre-commit run black          # Run only black
+#   pre-commit run isort          # Run only isort
+#   pre-commit run check-ast      # Run only Python syntax validation
+#
+# Hooks included:
+#   - check-ast: Validates Python syntax
+#   - black: Code formatting
+#   - isort: Import sorting
+#   - pylint: Type checking (catches PYL-E0602 and other errors)
+#   - flake8: Additional linting checks
+#   - ruff: Fast linting and formatting
+#   - mypy: Static type checking
+#   - bandit: Security scanning
+#   - And various other quality checks
+#
+# To skip pre-commit hooks (not recommended):
+#   git commit --no-verify -m "message"
 
 repos:
   # General hooks
@@ -38,6 +64,40 @@ repos:
         args: [--fix, --exit-non-zero-on-fix]
         exclude: ^(.roo/|agent_workspace/|\.benchmarks/|\.dist-rig/)
       - id: ruff-format
+        exclude: ^(.roo/|agent_workspace/|\.benchmarks/|\.dist-rig/)
+
+  # Python syntax validation
+  - repo: https://github.com/pre-commit/pre-commit-hooks
+    rev: v4.5.0
+    hooks:
+      - id: check-ast
+        name: Validate Python syntax
+
+  # Import sorting
+  - repo: https://github.com/pycqa/isort
+    rev: 5.13.2
+    hooks:
+      - id: isort
+        name: Sort imports
+        args: [--profile=black, --filter-files]
+        exclude: ^(.roo/|agent_workspace/|\.benchmarks/|\.dist-rig/)
+
+  # Pylint for type checking and code quality
+  - repo: https://github.com/pycqa/pylint
+    rev: v3.1.0
+    hooks:
+      - id: pylint
+        name: Pylint type checking
+        args: [--output-format=colorized]
+        exclude: ^(.roo/|agent_workspace/|\.benchmarks/|\.dist-rig/)
+
+  # Flake8 for additional linting
+  - repo: https://github.com/pycqa/flake8
+    rev: 7.0.0
+    hooks:
+      - id: flake8
+        name: Flake8 linting
+        args: [--max-line-length=100, --extend-ignore=E203]
         exclude: ^(.roo/|agent_workspace/|\.benchmarks/|\.dist-rig/)
 
   - repo: https://github.com/pre-commit/mirrors-mypy

@@ -422,7 +422,7 @@ class CollectiveIntelligenceMetrics:
         emergence_detector: EmergentPatternDetector instance
     """
     
-    def __init__(self, _learning_controller: Optional[AdaptiveLearningRateController], _agent_adaptor: Optional[PatternBasedAgentAdaptor], _emergence_detector: Optional[EmergentPatternDetector], _pattern_library: Optional[PatternLibrary]):
+    def __init__(self, learning_controller: Optional[AdaptiveLearningRateController], agent_adaptor: Optional[PatternBasedAgentAdaptor], emergence_detector: Optional[EmergentPatternDetector], pattern_library: Optional[PatternLibrary]):
         """
         Initialize collective intelligence metrics.
         
@@ -455,7 +455,7 @@ class CollectiveIntelligenceMetrics:
         
         logger.info("collective_intelligence_metrics_initialized")
     
-    def register_metric_callback(self, _callback: Callable) -> None:
+    def register_metric_callback(self, callback: Callable) -> None:
         """
         Register callback for metric calculation events.
         
@@ -465,7 +465,7 @@ class CollectiveIntelligenceMetrics:
         self._on_metric_calculated.append(callback)
         logger.debug("metric_callback_registered", callback=callback.__name__)
     
-    def register_threshold_callback(self, _callback: Callable) -> None:
+    def register_threshold_callback(self, callback: Callable) -> None:
         """
         Register callback for threshold exceeded events.
         
@@ -475,7 +475,7 @@ class CollectiveIntelligenceMetrics:
         self._on_threshold_exceeded.append(callback)
         logger.debug("threshold_callback_registered", callback=callback.__name__)
     
-    def set_threshold(self, _metric_id: str, _min_value: Optional[float], _max_value: Optional[float]) -> None:
+    def set_threshold(self, metric_id: str, min_value: Optional[float], max_value: Optional[float]) -> None:
         """
         Set threshold for a metric.
         
@@ -876,7 +876,7 @@ class CollectiveIntelligenceMetrics:
         
         return dashboard
     
-    def get_metric_time_series(self, _metric_id: str, _start_time: Optional[datetime], _end_time: Optional[datetime]) -> MetricTimeSeries:
+    def get_metric_time_series(self, metric_id: str, start_time: Optional[datetime], end_time: Optional[datetime]) -> MetricTimeSeries:
         """
         Get time series data for a metric.
         
@@ -991,7 +991,7 @@ class CollectiveIntelligenceMetrics:
         
         return sum(recovery_rates) / len(recovery_rates)
     
-    def _calculate_siq_percentile(self, _siq: float) -> float:
+    def _calculate_siq_percentile(self, siq: float) -> float:
         """Calculate SIQ percentile."""
         # Simplified percentile calculation
         # Assumes SIQ follows normal distribution with mean 100, std 15
@@ -1046,7 +1046,7 @@ class CollectiveIntelligenceMetrics:
         for metric in defaults:
             self._metric_definitions[metric.metric_id] = metric
     
-    async def _store_metric_value(self, _metric_id: str, _value: float, _source: str, _confidence: float, _sample_size: int) -> None:
+    async def _store_metric_value(self, metric_id: str, value: float, source: str, confidence: float, sample_size: int) -> None:
         """Store a metric value."""
         _metric_value = MetricValue(
             metric_id=metric_id,
@@ -1071,7 +1071,7 @@ class CollectiveIntelligenceMetrics:
         # Call callbacks
         await self._call_metric_callbacks(metric_value)
     
-    async def _check_thresholds(self, _value: MetricValue) -> None:
+    async def _check_thresholds(self, value: MetricValue) -> None:
         """Check if metric value exceeds thresholds."""
         if value.metric_id not in self._thresholds:
             return
@@ -1092,7 +1092,7 @@ class CollectiveIntelligenceMetrics:
         if exceeded:
             await self._call_threshold_callbacks(value, reason)
     
-    async def _call_metric_callbacks(self, _value: MetricValue) -> None:
+    async def _call_metric_callbacks(self, value: MetricValue) -> None:
         """Call registered metric callbacks."""
         for callback in self._on_metric_calculated:
             try:
@@ -1107,7 +1107,7 @@ class CollectiveIntelligenceMetrics:
                     _error = str(e),
                 )
     
-    async def _call_threshold_callbacks(self, _value: MetricValue, _reason: str) -> None:
+    async def _call_threshold_callbacks(self, value: MetricValue, reason: str) -> None:
         """Call registered threshold callbacks."""
         _event = {
             "metric_id": value.metric_id,
@@ -1194,7 +1194,7 @@ class MetricsExporter:
     in various formats.
     """
     
-    def __init__(self, _metrics: CollectiveIntelligenceMetrics):
+    def __init__(self, metrics: CollectiveIntelligenceMetrics):
         """
         Initialize metrics exporter.
         
@@ -1237,7 +1237,7 @@ class MetricsExporter:
             },
         }
     
-    def export_time_series(self, _metric_ids: Optional[List[str]], _format: str) -> Dict[str, Any]:
+    def export_time_series(self, metric_ids: Optional[List[str]], _format: str) -> Dict[str, Any]:
         """
         Export time series data for metrics.
         

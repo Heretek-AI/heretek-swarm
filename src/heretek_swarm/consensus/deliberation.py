@@ -440,7 +440,7 @@ class DeliberationEngine:
         expertise_profiler: Optional expertise profiler
     """
 
-    def __init__(self, _config: Optional[DeliberationConfig], _expertise_profiler, _# AgentExpertiseProfiler type) -> None:
+    def __init__(self, _config: Optional[DeliberationConfig], _expertise_profiler):  # AgentExpertiseProfiler type
         """
         Initialize deliberation engine.
 

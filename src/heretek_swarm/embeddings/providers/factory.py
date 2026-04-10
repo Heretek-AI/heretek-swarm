@@ -24,7 +24,7 @@ PROVIDER_REGISTRY: Dict[str, Type[EmbeddingProviderBase]] = {
 }
 
 
-def register_provider(_provider_type: str, _provider_class: Type[EmbeddingProviderBase]) -> None:
+def register_provider(provider_type: str, provider_class: Type[EmbeddingProviderBase]) -> None:
     """
     Register a new provider implementation.
     
@@ -36,7 +36,7 @@ def register_provider(_provider_type: str, _provider_class: Type[EmbeddingProvid
     logger.info("Embedding provider registered", provider_type=provider_type)
 
 
-def unregister_provider(_provider_type: str) -> None:
+def unregister_provider(provider_type: str) -> None:
     """
     Unregister a provider implementation.
     
@@ -48,7 +48,7 @@ def unregister_provider(_provider_type: str) -> None:
         logger.info("Embedding provider unregistered", provider_type=provider_type)
 
 
-def get_provider_class(_provider_type: str) -> Type[EmbeddingProviderBase]:
+def get_provider_class(provider_type: str) -> Type[EmbeddingProviderBase]:
     """
     Get the provider class for a given type.
     
@@ -79,7 +79,7 @@ def list_available_providers() -> List[str]:
     return list(PROVIDER_REGISTRY.keys())
 
 
-def create_embedding_provider(_provider_type: str, _config: Dict[str, _Any]) -> EmbeddingProviderBase:
+def create_embedding_provider(provider_type: str, config: Dict[str, Any]) -> EmbeddingProviderBase:
     """
     Create an embedding provider instance from configuration.
     
@@ -174,7 +174,7 @@ def create_embedding_provider(_provider_type: str, _config: Dict[str, _Any]) -> 
         )
 
 
-def create_embedding_provider_from_db_config(_db_config: Any, _api_key_decrypt_func: Optional[callable]) -> EmbeddingProviderBase:
+def create_embedding_provider_from_db_config(db_config: Any, api_key_decrypt_func: Optional[callable]) -> EmbeddingProviderBase:
     """
     Create an embedding provider instance from a database configuration model.
     
@@ -205,7 +205,7 @@ def create_embedding_provider_from_db_config(_db_config: Any, _api_key_decrypt_f
     return create_embedding_provider(db_config.provider_type, config)
 
 
-def get_provider_info(_provider_type: str) -> Dict[str, Any]:
+def get_provider_info(provider_type: str) -> Dict[str, Any]:
     """
     Get information about a provider type.
     

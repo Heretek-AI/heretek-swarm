@@ -129,7 +129,7 @@ class SwarmMetricsCollector:
         self._task_durations: List[float] = []
         self._start_time = datetime.now(timezone.utc)
     
-    def record_agent_activity(self, _agent_id: str, _task_completed: bool, _task_failed: bool, _task_duration_ms: float, _message_sent: bool, _message_received: bool, _error: bool) -> None:
+    def record_agent_activity(self, agent_id: str, task_completed: bool, task_failed: bool, task_duration_ms: float, message_sent: bool, message_received: bool, error: bool) -> None:
         """Record activity for an agent."""
         if agent_id not in self._agent_metrics:
             self._agent_metrics[agent_id] = AgentMetrics(agent_id=agent_id)
@@ -158,7 +158,7 @@ class SwarmMetricsCollector:
         # Update health score
         self._update_health_score(metrics)
     
-    def _update_health_score(self, _metrics: AgentMetrics) -> None:
+    def _update_health_score(self, metrics: AgentMetrics) -> None:
         """Calculate agent health score based on various factors."""
         # Base score
         _score = 100.0
@@ -180,7 +180,7 @@ class SwarmMetricsCollector:
         
         metrics.health_score = max(0, min(100, score))
     
-    def record_message_latency(self, _latency_ms: float) -> None:
+    def record_message_latency(self, latency_ms: float) -> None:
         """Record message latency."""
         self._message_latencies.append(latency_ms)
         # Keep only last 1000 measurements
@@ -221,7 +221,7 @@ class SwarmMetricsCollector:
             health_score=health_score,
         )
     
-    def collect_agent_metrics(self, _agent_id: str) -> AgentMetrics:
+    def collect_agent_metrics(self, agent_id: str) -> AgentMetrics:
         """Get metrics for a specific agent."""
         return self._agent_metrics.get(agent_id, AgentMetrics(agent_id=agent_id))
     
@@ -305,7 +305,7 @@ class RealTimeMetricsStream:
     - Prometheus format export
     """
     
-    def __init__(self, _collector: SwarmMetricsCollector):
+    def __init__(self, collector: SwarmMetricsCollector):
         self._collector = collector
         self._snapshot_interval = 5  # seconds
         self._last_snapshot: Optional[SwarmMetricsData] = None

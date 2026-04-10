@@ -183,7 +183,7 @@ class AgentRegistry:
         "Historian": ["memory_keeping", "knowledge_storage", "historical_analysis"],
     }
     
-    def __init__(self, _characters_dir: Optional[Path]):
+    def __init__(self, characters_dir: Optional[Path]):
         """
         Initialize the agent registry.
         
@@ -238,7 +238,7 @@ class AgentRegistry:
         self._loaded = True
         logger.info(f"Loaded {len(self._agents)} agents into registry")
     
-    def _generate_topics(self, _name: str, _role: AgentRole, _capabilities: List[str]) -> List[str]:
+    def _generate_topics(self, name: str, role: AgentRole, capabilities: List[str]) -> List[str]:
         """Generate message topics this agent should subscribe to."""
         _topics = [f"agent.{name.lower()}", "broadcast.all"]
         
@@ -258,7 +258,7 @@ class AgentRegistry:
         
         return list(set(topics))
     
-    def _get_priority(self, _role: AgentRole) -> int:
+    def _get_priority(self, role: AgentRole) -> int:
         """Get priority level for a role (1-10 scale)."""
         _priorities = {
             AgentRole.ORCHESTRATOR: 10,
@@ -283,7 +283,7 @@ class AgentRegistry:
         }
         return priorities.get(role, 5)
     
-    def get_agent(self, _name: str) -> Optional[AgentInfo]:
+    def get_agent(self, name: str) -> Optional[AgentInfo]:
         """
         Get agent information by name.
         
@@ -308,7 +308,7 @@ class AgentRegistry:
             self.load_all()
         return self._agents.copy()
     
-    def get_agents_by_role(self, _role: AgentRole) -> List[AgentInfo]:
+    def get_agents_by_role(self, role: AgentRole) -> List[AgentInfo]:
         """
         Get all agents with a specific role.
         
@@ -322,7 +322,7 @@ class AgentRegistry:
             self.load_all()
         return [info for info in self._agents.values() if info.role == role]
     
-    def get_agents_by_capability(self, _capability: str) -> List[AgentInfo]:
+    def get_agents_by_capability(self, capability: str) -> List[AgentInfo]:
         """
         Get all agents with a specific capability.
         
@@ -339,7 +339,7 @@ class AgentRegistry:
             if capability in info.capabilities
         ]
     
-    def get_agent_dependencies(self, _name: str) -> List[AgentInfo]:
+    def get_agent_dependencies(self, name: str) -> List[AgentInfo]:
         """
         Get agents that the specified agent depends on.
         
@@ -362,7 +362,7 @@ class AgentRegistry:
             if dep in self._agents
         ]
     
-    def get_agent_dependents(self, _name: str) -> List[AgentInfo]:
+    def get_agent_dependents(self, name: str) -> List[AgentInfo]:
         """
         Get agents that depend on the specified agent.
         
@@ -433,7 +433,7 @@ class AgentRegistry:
 _registry: Optional[AgentRegistry] = None
 
 
-def get_registry(_characters_dir: Optional[Path]) -> AgentRegistry:
+def get_registry(characters_dir: Optional[Path]) -> AgentRegistry:
     """
     Get the global agent registry instance.
     

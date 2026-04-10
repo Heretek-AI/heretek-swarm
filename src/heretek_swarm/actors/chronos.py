@@ -171,7 +171,7 @@ class ChronosAgent(AgentActor):
     - register_reminder: Register a time-based reminder
     """
 
-    def __init__(self, _agent_id: Optional[str], _config: Optional[Dict[str, _Any]], _# Session 44: Integration components
+    def __init__(self, _agent_id: Optional[str], _config: Optional[Dict[str, Any]], # Session 44: Integration components
         pattern_extractor: Optional[PatternExtractor], _deliberation_engine: Optional[SwarmDeliberationEngine], _access_analyzer: Optional[AccessPatternAnalyzer], _zero_trust_validator: Optional[ZeroTrustValidator]):
         super().__init__(
             agent_id=agent_id or f"chronos_{uuid.uuid4().hex[:8]}",
@@ -991,7 +991,7 @@ class ChronosAgent(AgentActor):
     # Session 44: Collective Learning Integration Methods
     # =========================================================================
 
-    async def _emit_pattern(self, _item_id: str, _item_type: str, _outcome: str, _content: Dict[str, _Any]) -> None:
+    async def _emit_pattern(self, _item_id: str, _item_type: str, _outcome: str, _content: Dict[str, Any]) -> None:
         """Emit pattern for collective learning."""
         if not self.pattern_extractor:
             return

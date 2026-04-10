@@ -91,7 +91,7 @@ class AlertManager:
         self._opsgenie_enabled = bool(os.getenv("OPSGENIE_API_KEY"))
         self._integration = os.getenv("ALERT_INTEGRATION", "none")  # pagerduty, opsgenie, both, none
 
-    async def send_alert(self, _alert: Alert) -> bool:
+    async def send_alert(self, alert: Alert) -> bool:
         """Send an alert through configured integration."""
         logger.info(
             "alert_triggered",
@@ -113,7 +113,7 @@ class AlertManager:
 
         return success
 
-    async def _send_pagerduty(self, _alert: Alert) -> bool:
+    async def _send_pagerduty(self, alert: Alert) -> bool:
         """Send alert to PagerDuty Events API v2."""
         try:
             import aiohttp
@@ -151,7 +151,7 @@ class AlertManager:
             logger.error("pagerduty_alert_error", error=str(e))
             return False
 
-    async def _send_opsgenie(self, _alert: Alert) -> bool:
+    async def _send_opsgenie(self, alert: Alert) -> bool:
         """Send alert to OpsGenie Alerts API."""
         try:
             import aiohttp
@@ -193,7 +193,7 @@ class AlertManager:
             logger.error("opsgenie_alert_error", error=str(e))
             return False
 
-    async def resolve_alert(self, _alert_id: str, _resolved_by: str) -> bool:
+    async def resolve_alert(self, alert_id: str, resolved_by: str) -> bool:
         """Resolve an alert."""
         if alert_id not in self._alerts:
             return False
@@ -213,11 +213,11 @@ class AlertManager:
         """Get all active (firing) alerts."""
         return list(self._alerts.values())
 
-    def get_alert_history(self, _limit: int) -> List[Alert]:
+    def get_alert_history(self, limit: int) -> List[Alert]:
         """Get alert history."""
         return self._alert_history[-limit:]
 
-    async def check_and_alert(self, _check_type: str, _value: float, _threshold: float, _severity: AlertSeverity, _title: str, _description: str, _source: str) -> Optional[Alert]:
+    async def check_and_alert(self, check_type: str, value: float, threshold: float, severity: AlertSeverity, title: str, description: str, source: str) -> Optional[Alert]:
         """Check a value against threshold and alert if exceeded."""
         if check_type == "above" and value > threshold:
             pass  # Alert

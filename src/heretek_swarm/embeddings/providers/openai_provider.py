@@ -42,7 +42,7 @@ class OpenAIEmbeddingProvider(EmbeddingProviderBase):
         _response = await provider.embed(["Hello, world!"])
     """
 
-    def __init__(self, _api_key: str, _base_url: str, _default_model: Optional[str], _organization: Optional[str], _extra_config: Optional[Dict[str, _Any]]):
+    def __init__(self, api_key: str, base_url: str, default_model: Optional[str], organization: Optional[str], extra_config: Optional[Dict[str, Any]]):
         """
         Initialize the OpenAI embedding provider.
         
@@ -94,7 +94,7 @@ class OpenAIEmbeddingProvider(EmbeddingProviderBase):
             )
         return self._client
 
-    async def embed(self, _texts: Union[str, _List[str]], _model: Optional[str], _dimensions: Optional[int]) -> EmbeddingResponse:
+    async def embed(self, texts: Union[str, List[str]], model: Optional[str], dimensions: Optional[int]) -> EmbeddingResponse:
         """
         Generate embeddings for texts.
         

@@ -153,7 +153,7 @@ class LLMProviderBase(ABC):
             print(chunk, end="")
     """
 
-    def __init__(self, _provider_name: str, _base_url: str, _api_key: Optional[str], _default_model: Optional[str], _extra_config: Optional[Dict[str, _Any]]):
+    def __init__(self, provider_name: str, base_url: str, api_key: Optional[str], default_model: Optional[str], extra_config: Optional[Dict[str, Any]]):
         """
         Initialize the LLM provider.
         
@@ -190,7 +190,7 @@ class LLMProviderBase(ABC):
         return self._capabilities
 
     @abstractmethod
-    async def complete(self, _request: LLMRequest) -> LLMResponse:
+    async def complete(self, request: LLMRequest) -> LLMResponse:
         """
         Complete a chat request non-streaming.
         
@@ -206,7 +206,7 @@ class LLMProviderBase(ABC):
         pass
 
     @abstractmethod
-    async def stream(self, _request: LLMRequest) -> AsyncIterator[str]:
+    async def stream(self, request: LLMRequest) -> AsyncIterator[str]:
         """
         Stream a chat completion.
         
@@ -221,7 +221,7 @@ class LLMProviderBase(ABC):
         """
         pass
 
-    async def complete_with_retry(self, _request: LLMRequest, _max_retries: int, _retry_delay: float) -> LLMResponse:
+    async def complete_with_retry(self, request: LLMRequest, max_retries: int, retry_delay: float) -> LLMResponse:
         """
         Complete a request with automatic retries.
         
@@ -259,7 +259,7 @@ class LLMProviderBase(ABC):
             cause=last_error,
         )
 
-    async def test_connectivity(self, _model: Optional[str]) -> ConnectivityTestResult:
+    async def test_connectivity(self, model: Optional[str]) -> ConnectivityTestResult:
         """
         Test connectivity to the provider.
         
@@ -311,7 +311,7 @@ class LLMProviderBase(ABC):
         """
         raise NotImplementedError("Model listing not supported for this provider")
 
-    def _get_model(self, _model: Optional[str]) -> str:
+    def _get_model(self, model: Optional[str]) -> str:
         """Get the model to use, falling back to default if needed."""
         if model:
             return model
@@ -342,7 +342,7 @@ class ConnectivityTestResult:
 class ProviderError(Exception):
     """Exception raised for provider-related errors."""
     
-    def __init__(self, _message: str, _provider: Optional[str], _cause: Optional[Exception]):
+    def __init__(self, message: str, provider: Optional[str], cause: Optional[Exception]):
         self.message = message
         self.provider = provider
         self.cause = cause
@@ -370,7 +370,7 @@ class ProviderAuthenticationError(ProviderError):
 
 class ProviderRateLimitError(ProviderError):
     """Exception raised when rate limited."""
-    def __init__(self, _message: str, _provider: Optional[str], _retry_after: Optional[float]):
+    def __init__(self, message: str, provider: Optional[str], retry_after: Optional[float]):
         self.retry_after = retry_after
         super().__init__(message, provider)
 

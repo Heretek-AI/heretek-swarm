@@ -140,7 +140,7 @@ class MCPToolRegistry:
         """Get statistics for all tools."""
         return self._tool_stats.copy()
     
-    async def invoke(self, _name: str, _arguments: Dict[str, _Any], _context: Optional[Dict]) -> Dict[str, Any]:
+    async def invoke(self, _name: str, _arguments: Dict[str, Any], _context: Optional[Dict]) -> Dict[str, Any]:
         """
         Invoke an MCP tool.
         
@@ -197,7 +197,7 @@ class MCPToolRegistry:
             logger.error("tool_invocation_error", name=name, error=str(e))
             return {"success": False, "error": str(e)}
     
-    def _validate_arguments(self, _arguments: Dict[str, _Any], _schema: Dict[str, _Any]) -> bool:
+    def _validate_arguments(self, _arguments: Dict[str, Any], _schema: Dict[str, Any]) -> bool:
         """
         Validate arguments against JSON schema.
         
@@ -263,7 +263,7 @@ class CoreMCPTools:
     and external integration.
     """
     
-    def __init__(self, _memory_system = None, _rag_pipeline = None, _consensus_engine = None, _event_mesh):
+    def __init__(self, _memory_system=None, _rag_pipeline=None, _consensus_engine=None, _event_mesh=None):
         self.memory = memory_system
         self.rag = rag_pipeline
         self.consensus = consensus_engine
@@ -281,7 +281,7 @@ class CoreMCPTools:
         # Register all tools via specialized registrars
         register_all_tools(self.registry, handlers)
     
-    async def _handle_memory_store(self, _arguments: Dict[str, _Any], _context: Optional[Dict]) -> Dict:
+    async def _handle_memory_store(self, _arguments: Dict[str, Any], _context: Optional[Dict]) -> Dict:
         """Handle memory store request."""
         if not self.memory:
             return {"error": "Memory system not initialized"}
@@ -297,7 +297,7 @@ class CoreMCPTools:
         
         return {"memory_id": getattr(result, 'id', 'unknown'), "stored_at": datetime.now(timezone.utc).isoformat()}
     
-    async def _handle_memory_retrieve(self, _arguments: Dict[str, _Any], _context: Optional[Dict]) -> Dict:
+    async def _handle_memory_retrieve(self, _arguments: Dict[str, Any], _context: Optional[Dict]) -> Dict:
         """Handle memory retrieve request."""
         if not self.memory:
             return {"error": "Memory system not initialized"}
@@ -322,7 +322,7 @@ class CoreMCPTools:
             ]
         }
     
-    async def _handle_agent_message(self, _arguments: Dict[str, _Any], _context: Optional[Dict]) -> Dict:
+    async def _handle_agent_message(self, _arguments: Dict[str, Any], _context: Optional[Dict]) -> Dict:
         """Handle agent message request."""
         _target = arguments.get("target_agent")
         _message_type = arguments.get("message_type")
@@ -342,7 +342,7 @@ class CoreMCPTools:
         
         return {"sent": True, "target": target}
     
-    async def _handle_agent_handoff(self, _arguments: Dict[str, _Any], _context: Optional[Dict]) -> Dict:
+    async def _handle_agent_handoff(self, _arguments: Dict[str, Any], _context: Optional[Dict]) -> Dict:
         """Handle agent handoff request."""
         _to_agent = arguments.get("to_agent")
         _handoff_context = arguments.get("context")
@@ -363,7 +363,7 @@ class CoreMCPTools:
         
         return {"handoff_initiated": True, "to_agent": to_agent}
     
-    async def _handle_consensus_propose(self, _arguments: Dict[str, _Any], _context: Optional[Dict]) -> Dict:
+    async def _handle_consensus_propose(self, _arguments: Dict[str, Any], _context: Optional[Dict]) -> Dict:
         """Handle consensus propose request."""
         if not self.consensus:
             return {"error": "Consensus engine not initialized"}
@@ -381,7 +381,7 @@ class CoreMCPTools:
             "urgency": urgency,
         }
     
-    async def _handle_consensus_vote(self, _arguments: Dict[str, _Any], _context: Optional[Dict]) -> Dict:
+    async def _handle_consensus_vote(self, _arguments: Dict[str, Any], _context: Optional[Dict]) -> Dict:
         """Handle consensus vote request."""
         if not self.consensus:
             return {"error": "Consensus engine not initialized"}
@@ -398,7 +398,7 @@ class CoreMCPTools:
             "agent_id": context.get("agent_id") if context else None,
         }
     
-    async def _handle_rag_query(self, _arguments: Dict[str, _Any], _context: Optional[Dict]) -> Dict:
+    async def _handle_rag_query(self, _arguments: Dict[str, Any], _context: Optional[Dict]) -> Dict:
         """Handle RAG query request."""
         if not self.rag:
             return {"error": "RAG pipeline not initialized"}
@@ -423,7 +423,7 @@ class CoreMCPTools:
             ]
         }
     
-    async def _handle_rag_ingest(self, _arguments: Dict[str, _Any], _context: Optional[Dict]) -> Dict:
+    async def _handle_rag_ingest(self, _arguments: Dict[str, Any], _context: Optional[Dict]) -> Dict:
         """Handle RAG ingest request."""
         if not self.rag:
             return {"error": "RAG pipeline not initialized"}
@@ -435,7 +435,7 @@ class CoreMCPTools:
         # Ingest document
         return {"ingested": True, "source": source}
     
-    async def _handle_external_api_call(self, _arguments: Dict[str, _Any], _context: Optional[Dict]) -> Dict:
+    async def _handle_external_api_call(self, _arguments: Dict[str, Any], _context: Optional[Dict]) -> Dict:
         """Handle external API call request."""
         import httpx
         
@@ -454,7 +454,7 @@ class CoreMCPTools:
         except Exception as e:
             return {"error": str(e)}
     
-    async def _handle_notification_send(self, _arguments: Dict[str, _Any], _context: Optional[Dict]) -> Dict:
+    async def _handle_notification_send(self, _arguments: Dict[str, Any], _context: Optional[Dict]) -> Dict:
         """Handle notification send request."""
         _channel = arguments.get("channel")
         _message = arguments.get("message")
@@ -474,7 +474,7 @@ class CoreMCPTools:
         
         return {"sent": True, "channel": channel}
     
-    async def _handle_workflow_start(self, _arguments: Dict[str, _Any], _context: Optional[Dict]) -> Dict:
+    async def _handle_workflow_start(self, _arguments: Dict[str, Any], _context: Optional[Dict]) -> Dict:
         """Handle workflow start request."""
         _workflow_type = arguments.get("workflow_type")
         _params = arguments.get("params", {})
@@ -498,7 +498,7 @@ class CoreMCPTools:
         
         return {"workflow_id": workflow_id, "status": "started"}
     
-    async def _handle_workflow_status(self, _arguments: Dict[str, _Any], _context: Optional[Dict]) -> Dict:
+    async def _handle_workflow_status(self, _arguments: Dict[str, Any], _context: Optional[Dict]) -> Dict:
         """Handle workflow status request."""
         _workflow_id = arguments.get("workflow_id")
         
@@ -509,7 +509,7 @@ class CoreMCPTools:
             "phase": "analysis",
         }
     
-    async def _handle_system_health(self, _arguments: Dict[str, _Any], _context: Optional[Dict]) -> Dict:
+    async def _handle_system_health(self, _arguments: Dict[str, Any], _context: Optional[Dict]) -> Dict:
         """Handle system health request."""
         return {
             "status": "healthy",

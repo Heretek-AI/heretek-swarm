@@ -54,7 +54,7 @@ class MetisAgent(AgentActor):
     5. Recommend optimal strategy with implementation plan
     """
 
-    def __init__(self, _agent_id: str, _name: str, _description: str, _swarms_agent: Optional[Agent], _planning_horizon_days: int, _max_scenarios: int, _pattern_extractor: Optional[PatternExtractor], _deliberation_engine: Optional[SwarmDeliberationEngine], _access_analyzer: Optional[AccessPatternAnalyzer], _zero_trust_validator: Optional[ZeroTrustValidator], _**kwargs) -> None:
+    def __init__(self, _agent_id: str, _name: str, _description: str, _swarms_agent: Optional[Agent], _planning_horizon_days: int, _max_scenarios: int, _pattern_extractor: Optional[PatternExtractor], _deliberation_engine: Optional[SwarmDeliberationEngine], _access_analyzer: Optional[AccessPatternAnalyzer], _zero_trust_validator: Optional[ZeroTrustValidator], **kwargs) -> None:
         """
         Initialize the Metis agent.
 
@@ -575,7 +575,7 @@ Format as JSON with keys: summary, phases, resources, risks, metrics
             {"phase": 4, "name": "Review", "duration_days": 7},
         ]
 
-    async def _optimize_resource_allocation(self, _plan_id: str, _resources: Dict[str, _Any], _priorities: Dict[str, _float]) -> Dict[str, Any]:
+    async def _optimize_resource_allocation(self, _plan_id: str, _resources: Dict[str, Any], _priorities: Dict[str, float]) -> Dict[str, Any]:
         """
         Optimize resource allocation for a plan.
 
@@ -664,7 +664,7 @@ Format each risk as JSON object.
             logger.error(f"[{self.agent_id}] LLM failed for risk assessment: {e}")
             return []
 
-    async def _generate_scenarios(self, _base_scenario: Dict[str, _Any], _variables: List[str], _max_scenarios: int) -> List[Dict[str, Any]]:
+    async def _generate_scenarios(self, _base_scenario: Dict[str, Any], _variables: List[str], _max_scenarios: int) -> List[Dict[str, Any]]:
         """
         Generate multiple scenarios for analysis.
 
@@ -720,7 +720,7 @@ Format each risk as JSON object.
     # Session 44: Collective Learning Integration Methods
     # =========================================================================
 
-    async def _emit_pattern(self, _item_id: str, _item_type: str, _outcome: str, _content: Dict[str, _Any]) -> None:
+    async def _emit_pattern(self, _item_id: str, _item_type: str, _outcome: str, _content: Dict[str, Any]) -> None:
         """Emit pattern for collective learning."""
         if not self.pattern_extractor:
             return

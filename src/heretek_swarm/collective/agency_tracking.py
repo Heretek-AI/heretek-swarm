@@ -179,7 +179,7 @@ class AgencyThresholds:
     min_compliance: float = 0.7   # Minimum 70% compliance
     target_compliance: float = 0.85  # Target 85% compliance
     
-    def check_health_status(self, _metrics: AgentAgencyMetrics) -> AgencyHealthStatus:
+    def check_health_status(self, metrics: AgentAgencyMetrics) -> AgencyHealthStatus:
         """
         Check if agent metrics meet threshold requirements.
         
@@ -223,7 +223,7 @@ class AgencyThresholds:
         else:
             return AgencyHealthStatus.WARNING
     
-    def get_violations(self, _metrics: AgentAgencyMetrics) -> List[str]:
+    def get_violations(self, metrics: AgentAgencyMetrics) -> List[str]:
         """
         Get list of threshold violations for metrics.
         
@@ -287,7 +287,7 @@ class AgencyMetricsTracker:
         _evolution = tracker.get_evolution("autonomy_score")
     """
     
-    def __init__(self, _thresholds: Optional[AgencyThresholds], _calculator: Optional[AgencyMetricsCalculator]):
+    def __init__(self, thresholds: Optional[AgencyThresholds], calculator: Optional[AgencyMetricsCalculator]):
         """
         Initialize the agency metrics tracker.
         
@@ -315,7 +315,7 @@ class AgencyMetricsTracker:
         
         logger.info("agency_metrics_tracker_initialized")
     
-    def record_agent_metrics(self, _metrics: AgentAgencyMetrics) -> None:
+    def record_agent_metrics(self, metrics: AgentAgencyMetrics) -> None:
         """
         Record agency metrics for an agent.
         
@@ -341,7 +341,7 @@ class AgencyMetricsTracker:
             autonomy_score=metrics.autonomy_score,
         )
     
-    def calculate_and_record(self, _agent_id: str, _decisions: Optional[List[DecisionPoint]], _actions: Optional[List[ActionOrigin]], _resources: Optional[List[ResourceControl]], _individual_actions: int, _collective_actions: int, _individual_success: float, _collective_success: float) -> AgentAgencyMetrics:
+    def calculate_and_record(self, agent_id: str, decisions: Optional[List[DecisionPoint]], actions: Optional[List[ActionOrigin]], resources: Optional[List[ResourceControl]], individual_actions: int, collective_actions: int, individual_success: float, collective_success: float) -> AgentAgencyMetrics:
         """
         Calculate and record agency metrics for an agent.
         
@@ -372,7 +372,7 @@ class AgencyMetricsTracker:
         self.record_agent_metrics(metrics)
         return metrics
     
-    def get_agent_metrics(self, _agent_id: str) -> Optional[AgentAgencyMetrics]:
+    def get_agent_metrics(self, agent_id: str) -> Optional[AgentAgencyMetrics]:
         """
         Get current metrics for an agent.
         
@@ -463,7 +463,7 @@ class AgencyMetricsTracker:
         
         return snapshot
     
-    def get_evolution(self, _metric_name: str, _window_seconds: Optional[int]) -> AgencyEvolutionData:
+    def get_evolution(self, metric_name: str, window_seconds: Optional[int]) -> AgencyEvolutionData:
         """
         Get temporal evolution of a metric.
         
@@ -620,7 +620,7 @@ class AgencyMetricsTracker:
             _recommendations = recommendations,
         )
     
-    def get_agent_compliance_report(self, _agent_id: str) -> Optional[PrimeDirectiveComplianceReport]:
+    def get_agent_compliance_report(self, agent_id: str) -> Optional[PrimeDirectiveComplianceReport]:
         """
         Generate Prime Directive compliance report for a specific agent.
         
@@ -698,17 +698,17 @@ class AgencyMetricsTracker:
             },
         }
     
-    def register_snapshot_callback(self, _callback: Callable) -> None:
+    def register_snapshot_callback(self, callback: Callable) -> None:
         """Register callback for new snapshots."""
         self._on_snapshot.append(callback)
     
-    def register_violation_callback(self, _callback: Callable) -> None:
+    def register_violation_callback(self, callback: Callable) -> None:
         """Register callback for threshold violations."""
         self._on_threshold_violation.append(callback)
     
     # Helper methods
     
-    def _calculate_std(self, _values: List[float]) -> float:
+    def _calculate_std(self, values: List[float]) -> float:
         """Calculate standard deviation."""
         if len(values) < 2:
             return 0.0
@@ -717,7 +717,7 @@ class AgencyMetricsTracker:
         _variance = sum((v - mean) ** 2 for v in values) / len(values)
         return math.sqrt(variance)
     
-    def _calculate_median(self, _values: List[float]) -> float:
+    def _calculate_median(self, values: List[float]) -> float:
         """Calculate median."""
         if not values:
             return 0.0
@@ -730,7 +730,7 @@ class AgencyMetricsTracker:
         else:
             return sorted_values[n // 2]
     
-    def _calculate_trend_slope(self, _values: List[float]) -> float:
+    def _calculate_trend_slope(self, values: List[float]) -> float:
         """Calculate trend slope using simple linear regression."""
         if len(values) < 2:
             return 0.0
@@ -765,7 +765,7 @@ class AgencyMetricsTracker:
 
 
 # Convenience function for quick testing
-def create_sample_metrics(_agent_id: str, _high_autonomy: bool, _high_agency: bool) -> AgentAgencyMetrics:
+def create_sample_metrics(agent_id: str, high_autonomy: bool, high_agency: bool) -> AgentAgencyMetrics:
     """
     Create sample agency metrics for testing.
     

@@ -120,7 +120,7 @@ class BaseRetrievalStrategy(ABC):
         }
     
     @abstractmethod
-    async def retrieve(self, _query: str, _top_k: int, _**kwargs) -> List[RetrievalResult]:
+    async def retrieve(self, _query: str, _top_k: int, **kwargs) -> List[RetrievalResult]:
         """
         Retrieve relevant documents for a query.
         
@@ -182,7 +182,7 @@ class DenseRetrievalStrategy(BaseRetrievalStrategy):
     def strategy_type(self) -> RetrievalStrategyType:
         return RetrievalStrategyType.DENSE
     
-    async def retrieve(self, _query: str, _top_k: int, _filters: Optional[Dict[str, _Any]], _**kwargs) -> List[RetrievalResult]:
+    async def retrieve(self, _query: str, _top_k: int, _filters: Optional[Dict[str, Any]], **kwargs) -> List[RetrievalResult]:
         """
         Retrieve using dense vector similarity.
         
@@ -309,7 +309,7 @@ class SparseRetrievalStrategy(BaseRetrievalStrategy):
         
         return idf * (numerator / denominator) if denominator > 0 else 0.0
     
-    async def retrieve(self, _query: str, _top_k: int, _filters: Optional[Dict[str, _Any]], _**kwargs) -> List[RetrievalResult]:
+    async def retrieve(self, _query: str, _top_k: int, _filters: Optional[Dict[str, Any]], **kwargs) -> List[RetrievalResult]:
         """
         Retrieve using BM25 sparse retrieval.
         
@@ -386,8 +386,8 @@ class HybridRetrievalStrategy(BaseRetrievalStrategy):
     - Normalization options
     """
     
-    def __init__(self, _dense_strategy: Optional[DenseRetrievalStrategy], _sparse_strategy: Optional[SparseRetrievalStrategy], _dense_weight: float, _sparse_weight: float, _fusion_method: str, _# "rrf" or "weighted"
-        rrf_k: int, _# RRF constant):
+    def __init__(self, _dense_strategy: Optional[DenseRetrievalStrategy], _sparse_strategy: Optional[SparseRetrievalStrategy], _dense_weight: float, _sparse_weight: float, _fusion_method: str,  # "rrf" or "weighted"
+        rrf_k: int):  # RRF constant
         super().__init__("hybrid_retrieval")
         self.dense_strategy = dense_strategy
         self.sparse_strategy = sparse_strategy
@@ -519,7 +519,7 @@ class HybridRetrievalStrategy(BaseRetrievalStrategy):
         
         return combined_results
     
-    async def retrieve(self, _query: str, _top_k: int, _filters: Optional[Dict[str, _Any]], _**kwargs) -> List[RetrievalResult]:
+    async def retrieve(self, _query: str, _top_k: int, _filters: Optional[Dict[str, Any]], **kwargs) -> List[RetrievalResult]:
         """
         Retrieve using hybrid dense + sparse combination.
         
@@ -630,7 +630,7 @@ class MultiHopRetrievalStrategy(BaseRetrievalStrategy):
         ]
         return templates[hop_number % len(templates)]
     
-    async def retrieve(self, _query: str, _top_k: int, _filters: Optional[Dict[str, _Any]], _**kwargs) -> List[RetrievalResult]:
+    async def retrieve(self, _query: str, _top_k: int, _filters: Optional[Dict[str, Any]], **kwargs) -> List[RetrievalResult]:
         """
         Retrieve using multi-hop chained queries.
         
@@ -741,7 +741,7 @@ class ReRankingStrategy(BaseRetrievalStrategy):
     def strategy_type(self) -> RetrievalStrategyType:
         return RetrievalStrategyType.RE_RANKING
     
-    async def retrieve(self, _query: str, _top_k: int, _initial_results: Optional[List[RetrievalResult]], _**kwargs) -> List[RetrievalResult]:
+    async def retrieve(self, _query: str, _top_k: int, _initial_results: Optional[List[RetrievalResult]], **kwargs) -> List[RetrievalResult]:
         """
         Re-rank initial retrieval results using cross-encoder.
         
@@ -957,7 +957,7 @@ class StrategySelector:
         """Add a retrieval strategy."""
         self.strategies[strategy_type] = strategy
     
-    async def retrieve(self, _query: str, _top_k: int, _strategy: Optional[RetrievalStrategyType], _filters: Optional[Dict[str, _Any]], _**kwargs) -> List[RetrievalResult]:
+    async def retrieve(self, _query: str, _top_k: int, _strategy: Optional[RetrievalStrategyType], _filters: Optional[Dict[str, Any]], **kwargs) -> List[RetrievalResult]:
         """
         Retrieve using the best strategy for the query.
         

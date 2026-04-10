@@ -37,7 +37,7 @@ class DiscordBot:
     - Embed-based rich responses
     """
     
-    def __init__(self, _token: Optional[str], _agent_runtime = None, _handoff_manager = None, _intents: "Optional[Intents]"):
+    def __init__(self, _token: Optional[str], _agent_runtime=None, _handoff_manager=None, _intents: "Optional[Intents]" = None):
         self.token = token or os.getenv("DISCORD_BOT_TOKEN")
         self.agent_runtime = agent_runtime
         self.handoff_manager = handoff_manager
@@ -182,7 +182,7 @@ class DiscordBot:
             await ctx.send(embed=embed)
         
         @self._bot.command(name="chat")
-        async def chat(_ctx, _agent: str, _*, _message: str):
+        async def chat(_ctx, _agent: str, *, _message: str):
             """Chat with specific agent."""
             await ctx.typing()
             

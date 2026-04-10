@@ -143,7 +143,7 @@ class UnifiedKnowledgeAccess:
         )
     """
     
-    def __init__(self, _memory_system = None, _rag_pipeline = None, _hybrid_retriever: Optional["HybridRetriever"], _strategy_selector: Optional["StrategySelector"]):
+    def __init__(self, _memory_system=None, _rag_pipeline=None, _hybrid_retriever: Optional["HybridRetriever"] = None, _strategy_selector: Optional["StrategySelector"] = None):
         self.memory = memory_system
         self.rag = rag_pipeline
         self.hybrid_retriever = hybrid_retriever
@@ -159,7 +159,7 @@ class UnifiedKnowledgeAccess:
             except Exception as e:
                 logger.warning("strategy_selector_init_failed", error=str(e))
     
-    async def query(self, _query: str, _sources: Optional[List[Literal["memory", _"rag", _"all"]]], _limit: int, _rerank: bool, _diversity_lambda: float, _source_weights: Optional[Dict[str, _float]], _filters: Optional[Dict[str, _Any]]) -> KnowledgeQueryResult:
+    async def query(self, _query: str, _sources: Optional[List[Literal["memory", "rag", "all"]]], _limit: int, _rerank: bool, _diversity_lambda: float, _source_weights: Optional[Dict[str, float]], _filters: Optional[Dict[str, Any]]) -> KnowledgeQueryResult:
         """
         Query knowledge from multiple sources with optional reranking.
         
@@ -254,7 +254,7 @@ class UnifiedKnowledgeAccess:
         
         return result
     
-    async def query_with_strategy(self, _query: str, _strategy: Optional[str], _top_k: int, _filters: Optional[Dict[str, _Any]], _use_multihop: bool, _apply_reranking: bool) -> KnowledgeQueryResult:
+    async def query_with_strategy(self, _query: str, _strategy: Optional[str], _top_k: int, _filters: Optional[Dict[str, Any]], _use_multihop: bool, _apply_reranking: bool) -> KnowledgeQueryResult:
         """
         Query using advanced RAG strategies.
         
@@ -344,7 +344,7 @@ class UnifiedKnowledgeAccess:
             logger.error("query_with_strategy_error", error=str(e))
             return await self.query(query, sources=["rag"], limit=top_k)
     
-    async def _query_memory(self, _query: str, _filters: Dict[str, _Any]) -> List[KnowledgeEntry]:
+    async def _query_memory(self, _query: str, _filters: Dict[str, Any]) -> List[KnowledgeEntry]:
         """Query the memory system."""
         if not self.memory:
             return []
@@ -373,7 +373,7 @@ class UnifiedKnowledgeAccess:
         
         return entries
     
-    async def _query_rag(self, _query: str, _filters: Dict[str, _Any]) -> List[KnowledgeEntry]:
+    async def _query_rag(self, _query: str, _filters: Dict[str, Any]) -> List[KnowledgeEntry]:
         """Query the RAG pipeline."""
         if not self.rag:
             return []
@@ -615,7 +615,7 @@ class KnowledgeQueryBuilder:
         self._query = query_text
         return self
     
-    def from_sources(self, _*sources: str) -> "KnowledgeQueryBuilder":
+    def from_sources(self, *sources: str) -> "KnowledgeQueryBuilder":
         """Set sources to query (memory, rag)."""
         self._sources = list(sources)
         return self
@@ -643,7 +643,7 @@ class KnowledgeQueryBuilder:
             self._source_weights["rag"] = rag
         return self
     
-    def filtered_by(self, _**filters) -> "KnowledgeQueryBuilder":
+    def filtered_by(self, **filters) -> "KnowledgeQueryBuilder":
         """Add query filters."""
         self._filters.update(filters)
         return self
@@ -688,7 +688,7 @@ class KnowledgeQueryBuilder:
         return result
 
 
-def create_unified_knowledge_access(_memory_system = None, _rag_pipeline = None, _embedding_provider = None, _vector_store = None, _sparse_index = None, _cross_encoder = None, _config: Optional[Any]) -> UnifiedKnowledgeAccess:
+def create_unified_knowledge_access(_memory_system=None, _rag_pipeline=None, _embedding_provider=None, _vector_store=None, _sparse_index=None, _cross_encoder=None, _config: Optional[Any] = None) -> UnifiedKnowledgeAccess:
     """
     Create UnifiedKnowledgeAccess with advanced RAG strategies.
     

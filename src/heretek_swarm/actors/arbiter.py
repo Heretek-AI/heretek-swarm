@@ -140,7 +140,7 @@ class ArbiterAgent(AgentActor):
     healthy inter-agent relationships across the Collective.
     """
     
-    def __init__(self, _agent_id: Optional[str], _name: str, _description: str, _config: Optional[Dict[str, _Any]], _db_pool: Optional[Any], _redis_client: Optional[Any], _# Session 44: Integration components
+    def __init__(self, _agent_id: Optional[str], _name: str, _description: str, _config: Optional[Dict[str, Any]], _db_pool: Optional[Any], _redis_client: Optional[Any], # Session 44: Integration components
         pattern_extractor: Optional[PatternExtractor], _deliberation_engine: Optional[SwarmDeliberationEngine], _access_analyzer: Optional[AccessPatternAnalyzer], _zero_trust_validator: Optional[ZeroTrustValidator]):
         super().__init__(
             agent_id=agent_id,
@@ -1332,7 +1332,7 @@ class ArbiterAgent(AgentActor):
         
         return mediation_result
     
-    async def _resolve_resource_contention(self, _resource: Optional[str], _competing_agents: List[str], _priority_override: Dict[str, _int]) -> Dict[str, Any]:
+    async def _resolve_resource_contention(self, _resource: Optional[str], _competing_agents: List[str], _priority_override: Dict[str, int]) -> Dict[str, Any]:
         """Resolve contention over a resource."""
         if not competing_agents:
             return {"winner": None, "reasoning": "No competing agents"}
@@ -1355,7 +1355,7 @@ class ArbiterAgent(AgentActor):
             "suggestion": "Implement priority-based allocation for better fairness",
         }
     
-    async def _resolve_task_contention(self, _competing_agents: List[str], _priority_override: Dict[str, _int]) -> Dict[str, Any]:
+    async def _resolve_task_contention(self, _competing_agents: List[str], _priority_override: Dict[str, int]) -> Dict[str, Any]:
         """Resolve contention over task ownership."""
         if not competing_agents:
             return {"assigned_to": None, "reasoning": "No competing agents"}

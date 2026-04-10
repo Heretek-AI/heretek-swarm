@@ -234,21 +234,21 @@ class LegacyWrapperTool(SimpleTool):
     Allows gradual migration while maintaining compatibility.
     """
     
-    def __init__(self, _name: str, _script_path: str, _description: str, _category: str):
+    def __init__(self, _name: str, script_path: str, _description: str, _category: str):
         import subprocess
         
-        async def execute_shell(_**kwargs):
+        async def execute_shell(**kwargs):
             """Execute shell script with arguments"""
             import asyncio
             
-            _cmd = [script_path]
+            cmd = [script_path]
             for key, value in kwargs.items():
                 cmd.extend([f"--{key}", str(value)])
             
-            _process = await asyncio.create_subprocess_exec(
+            process = await asyncio.create_subprocess_exec(
                 *cmd,
-                _stdout = asyncio.subprocess.PIPE,
-                _stderr = asyncio.subprocess.PIPE
+                stdout = asyncio.subprocess.PIPE,
+                stderr = asyncio.subprocess.PIPE
             )
             
             stdout, stderr = await process.communicate()
