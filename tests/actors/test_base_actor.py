@@ -12,11 +12,10 @@ This module tests the foundational actor implementation with:
 import asyncio
 import pytest
 from datetime import datetime, timezone
-from unittest.mock import AsyncMock, MagicMock, patch
-from uuid import uuid4
+from unittest.mock import AsyncMock, MagicMock
 
 from heretek_swarm.actors.base import AgentActor, ActorMessage, ActorState, ActorStatus
-from heretek_swarm.state.repository import StateRepository, AgentStateRecord
+from heretek_swarm.state.repository import StateRepository
 
 
 # =============================================================================
@@ -26,16 +25,16 @@ from heretek_swarm.state.repository import StateRepository, AgentStateRecord
 @pytest.fixture
 def mock_state_repository():
     """Create a mock state repository."""
-    repo = MagicMock(spec=StateRepository)
+    _repo = MagicMock(spec=StateRepository)
     
     # Define async functions for the mocks
-    async def mock_save(*args, **kwargs):
+    async def mock_save(_*args, _**kwargs):
         return None
     
-    async def mock_load(*args, **kwargs):
+    async def mock_load(_*args, _**kwargs):
         return None
     
-    async def mock_find(*args, **kwargs):
+    async def mock_find(_*args, _**kwargs):
         return []
     
     repo.save = mock_save
@@ -53,10 +52,10 @@ def mock_swarms_agent():
 
 
 @pytest.fixture
-def test_actor(mock_state_repository):
+def test_actor(_mock_state_repository):
     """Create a test actor instance."""
     class TestActor(AgentActor):
-        async def process_message(self, message: ActorMessage) -> None:
+        async def process_message(self, _message: ActorMessage) -> None:
             """Process incoming messages."""
             if message.message_type == "test":
                 self.internal_state["last_test"] = message.content
@@ -77,8 +76,8 @@ def test_actor(mock_state_repository):
         capabilities=["test-capability"],
         max_mailbox_size=100,
         heartbeat_interval=1.0,
-        state_repository=mock_state_repository,
-        load_state_on_init=False,
+        _state_repository = mock_state_repository,
+        _load_state_on_init = False,
     )
 
 
@@ -106,7 +105,7 @@ class TestActorStateEnum:
     
     def test_actor_state_in_list(self):
         """Test ActorState membership testing."""
-        active_states = [ActorState.ACTIVE, ActorState.SPAWNING]
+        _active_states = [ActorState.ACTIVE, ActorState.SPAWNING]
         assert ActorState.ACTIVE in active_states
         assert ActorState.TERMINATED not in active_states
 
@@ -120,11 +119,11 @@ class TestActorMessage:
     
     def test_create_minimal_message(self):
         """Test creating a message with minimal fields."""
-        msg = ActorMessage(
-            sender="sender-1",
-            message_type="test",
-            content={"key": "value"},
-            timestamp="2024-01-01T00:00:00Z",
+        _msg = ActorMessage(
+            _sender = "sender-1",
+            _message_type = "test",
+            _content = {"key": "value"},
+            _timestamp = "2024-01-01T00:00:00Z",
         )
         assert msg.sender == "sender-1"
         assert msg.message_type == "test"
@@ -135,14 +134,14 @@ class TestActorMessage:
     
     def test_create_full_message(self):
         """Test creating a message with all fields."""
-        msg = ActorMessage(
-            sender="sender-1",
-            message_type="request",
-            content={"data": "test"},
-            timestamp="2024-01-01T00:00:00Z",
-            correlation_id="corr-123",
+        _msg = ActorMessage(
+            _sender = "sender-1",
+            _message_type = "request",
+            _content = {"data": "test"},
+            _timestamp = "2024-01-01T00:00:00Z",
+            _correlation_id = "corr-123",
             reply_to="response-topic",
-            metadata={"priority": "high"},
+            _metadata = {"priority": "high"},
         )
         assert msg.correlation_id == "corr-123"
         assert msg.reply_to == "response-topic"
@@ -158,14 +157,14 @@ class TestActorStatus:
     
     def test_create_status(self):
         """Test creating an actor status."""
-        status = ActorStatus(
+        _status = ActorStatus(
             agent_id="actor-1",
             state=ActorState.ACTIVE,
             message_count=10,
-            created_at="2024-01-01T00:00:00Z",
+            _created_at = "2024-01-01T00:00:00Z",
             topics=["topic1", "topic2"],
             capabilities=["cap1"],
-            mailbox_size=5,
+            _mailbox_size = 5,
         )
         assert status.agent_id == "actor-1"
         assert status.state == ActorState.ACTIVE
@@ -174,14 +173,14 @@ class TestActorStatus:
     
     def test_status_with_error_count(self):
         """Test creating status with error count."""
-        status = ActorStatus(
+        _status = ActorStatus(
             agent_id="actor-1",
             state=ActorState.ERROR,
             message_count=0,
-            created_at="2024-01-01T00:00:00Z",
+            _created_at = "2024-01-01T00:00:00Z",
             topics=[],
             capabilities=[],
-            mailbox_size=0,
+            _mailbox_size = 0,
             error_count=5,
         )
         assert status.error_count == 5
@@ -196,7 +195,7 @@ class TestAgentActorInit:
     
     def test_init_with_minimal_params(self):
         """Test initialization with minimal parameters."""
-        actor = AgentActor()
+        _actor = AgentActor()
         assert actor.agent_id is not None
         assert actor.agent_id.startswith("actor_")
         assert actor.name == "AgentActor"
@@ -206,7 +205,7 @@ class TestAgentActorInit:
     
     def test_init_with_custom_params(self):
         """Test initialization with custom parameters."""
-        actor = AgentActor(
+        _actor = AgentActor(
             agent_id="custom-id",
             name="Custom Actor",
             description="Custom description",
@@ -244,7 +243,7 @@ class TestAgentActorInit:
         assert AgentActor.get_actor_type() == "AgentActor"
         
         class CustomActor(AgentActor):
-            actor_type = "CustomActor"
+            _actor_type = "CustomActor"
         
         assert CustomActor.get_actor_type() == "CustomActor"
 
@@ -256,14 +255,14 @@ class TestAgentActorInit:
 class TestHandlerRegistration:
     """Test message handler registration."""
     
-    def test_register_handler(self, test_actor):
+    def test_register_handler(self, _test_actor):
         """Test registering a message handler."""
-        handler = AsyncMock()
+        _handler = AsyncMock()
         test_actor.register_handler("custom_type", handler)
         assert "custom_type" in test_actor._message_handlers
         assert test_actor._message_handlers["custom_type"] == handler
     
-    def test_default_handlers_registered(self, test_actor):
+    def test_default_handlers_registered(self, _test_actor):
         """Test that default handlers are registered."""
         assert "health_check" in test_actor._message_handlers
         assert "suspend" in test_actor._message_handlers
@@ -280,7 +279,7 @@ class TestActorLifecycle:
     """Test actor lifecycle methods."""
     
     @pytest.mark.asyncio
-    async def test_spawn(self, test_actor):
+    async def test_spawn(self, _test_actor):
         """Test spawning an actor."""
         assert test_actor.state == ActorState.SPAWNING
         assert not test_actor._running
@@ -292,10 +291,10 @@ class TestActorLifecycle:
         assert test_actor.internal_state.get("initialized") is True
     
     @pytest.mark.asyncio
-    async def test_spawn_idempotent(self, test_actor):
+    async def test_spawn_idempotent(self, _test_actor):
         """Test that spawn is idempotent."""
         await test_actor.spawn()
-        initial_state = test_actor.state
+        _initial_state = test_actor.state
         
         # Second spawn should be ignored
         await test_actor.spawn()
@@ -303,7 +302,7 @@ class TestActorLifecycle:
         assert test_actor.state == initial_state
     
     @pytest.mark.asyncio
-    async def test_terminate(self, test_actor):
+    async def test_terminate(self, _test_actor):
         """Test terminating an actor."""
         await test_actor.spawn()
         assert test_actor.state == ActorState.ACTIVE
@@ -315,7 +314,7 @@ class TestActorLifecycle:
         assert test_actor.internal_state.get("cleaned") is True
     
     @pytest.mark.asyncio
-    async def test_terminate_from_spawning(self, test_actor):
+    async def test_terminate_from_spawning(self, _test_actor):
         """Test terminating an actor that hasn't been spawned."""
         assert test_actor.state == ActorState.SPAWNING
         
@@ -332,46 +331,46 @@ class TestMessageSending:
     """Test message sending functionality."""
     
     @pytest.mark.asyncio
-    async def test_send_creates_message(self, test_actor):
+    async def test_send_creates_message(self, _test_actor):
         """Test that send creates a proper message."""
         await test_actor.spawn()
         
-        message_id = await test_actor.send(
-            topic="test-topic",
-            content={"key": "value"},
-            message_type="test",
+        _message_id = await test_actor.send(
+            _topic = "test-topic",
+            _content = {"key": "value"},
+            _message_type = "test",
         )
         
         assert message_id is not None
         assert len(message_id) > 0
     
     @pytest.mark.asyncio
-    async def test_send_with_metadata(self, test_actor):
+    async def test_send_with_metadata(self, _test_actor):
         """Test sending message with metadata."""
         await test_actor.spawn()
         
-        message_id = await test_actor.send(
-            topic="test-topic",
-            content={"data": "test"},
-            message_type="request",
+        _message_id = await test_actor.send(
+            _topic = "test-topic",
+            _content = {"data": "test"},
+            _message_type = "request",
             reply_to="response-topic",
-            correlation_id="corr-123",
-            metadata={"priority": "high"},
+            _correlation_id = "corr-123",
+            _metadata = {"priority": "high"},
         )
         
         assert message_id is not None
     
     @pytest.mark.asyncio
-    async def test_send_before_spawn(self, test_actor):
+    async def test_send_before_spawn(self, _test_actor):
         """Test sending message before spawn queues it."""
-        message_id = await test_actor.send(
-            topic="test-topic",
-            content={"key": "value"},
+        _message_id = await test_actor.send(
+            _topic = "test-topic",
+            _content = {"key": "value"},
         )
         
         assert message_id is not None
         # Message should be queued for later delivery
-        pending = test_actor.get_state("_pending_messages", [])
+        _pending = test_actor.get_state("_pending_messages", [])
         assert len(pending) >= 0  # May be delivered directly if registry available
 
 
@@ -382,17 +381,17 @@ class TestMessageSending:
 class TestStateManagement:
     """Test actor state management."""
     
-    def test_get_state(self, test_actor):
+    def test_get_state(self, _test_actor):
         """Test getting internal state."""
         test_actor.internal_state["key"] = "value"
         assert test_actor.get_state("key") == "value"
     
-    def test_get_state_default(self, test_actor):
+    def test_get_state_default(self, _test_actor):
         """Test getting non-existent state with default."""
         assert test_actor.get_state("nonexistent", "default") == "default"
         assert test_actor.get_state("nonexistent") is None
     
-    def test_update_state(self, test_actor):
+    def test_update_state(self, _test_actor):
         """Test updating internal state."""
         test_actor.update_state("counter", 0)
         assert test_actor.internal_state["counter"] == 0
@@ -400,7 +399,7 @@ class TestStateManagement:
         test_actor.update_state("counter", 1)
         assert test_actor.internal_state["counter"] == 1
     
-    def test_update_state_nested(self, test_actor):
+    def test_update_state_nested(self, _test_actor):
         """Test updating nested state."""
         test_actor.update_state("nested", {"key": "value"})
         assert test_actor.internal_state["nested"]["key"] == "value"
@@ -413,9 +412,9 @@ class TestStateManagement:
 class TestHealthAndStatus:
     """Test health check and status methods."""
     
-    def test_get_status(self, test_actor):
+    def test_get_status(self, _test_actor):
         """Test getting actor status."""
-        status = test_actor.get_status()
+        _status = test_actor.get_status()
         
         assert status.agent_id == test_actor.agent_id
         assert status.state == test_actor.state
@@ -423,27 +422,27 @@ class TestHealthAndStatus:
         assert status.topics == test_actor.topics
         assert status.capabilities == test_actor.capabilities
     
-    def test_get_status_after_messages(self, test_actor):
+    def test_get_status_after_messages(self, _test_actor):
         """Test status reflects message count."""
         test_actor.message_count = 10
         test_actor.error_count = 2
         
-        status = test_actor.get_status()
+        _status = test_actor.get_status()
         
         assert status.message_count == 10
         assert status.error_count == 2
     
     @pytest.mark.asyncio
-    async def test_health_check(self, test_actor):
+    async def test_health_check(self, _test_actor):
         """Test health check message handling."""
         await test_actor.spawn()
         
         # Send health check message
-        msg = ActorMessage(
-            sender="system",
-            message_type="health_check",
-            content={},
-            timestamp=datetime.now(timezone.utc).isoformat(),
+        _msg = ActorMessage(
+            _sender = "system",
+            _message_type = "health_check",
+            _content = {},
+            _timestamp = datetime.now(timezone.utc).isoformat(),
         )
         
         await test_actor.put_message(msg)
@@ -463,7 +462,7 @@ class TestSuspendResume:
     """Test suspend and resume functionality."""
     
     @pytest.mark.asyncio
-    async def test_suspend(self, test_actor):
+    async def test_suspend(self, _test_actor):
         """Test suspending an actor - tests the handler registration."""
         await test_actor.spawn()
         assert test_actor.state == ActorState.ACTIVE
@@ -476,11 +475,11 @@ class TestSuspendResume:
         # State transition to SUSPENDED happens in base class _handle_suspend
         # which is called during message processing
         # For this test, we just verify the infrastructure is in place
-        msg = ActorMessage(
-            sender="system",
-            message_type="suspend",
-            content={},
-            timestamp=datetime.now(timezone.utc).isoformat(),
+        _msg = ActorMessage(
+            _sender = "system",
+            _message_type = "suspend",
+            _content = {},
+            _timestamp = datetime.now(timezone.utc).isoformat(),
         )
         
         await test_actor.put_message(msg)
@@ -492,7 +491,7 @@ class TestSuspendResume:
         assert test_actor.state in [ActorState.ACTIVE, ActorState.SUSPENDED]
     
     @pytest.mark.asyncio
-    async def test_resume(self, test_actor):
+    async def test_resume(self, _test_actor):
         """Test resuming a suspended actor."""
         await test_actor.spawn()
         
@@ -503,11 +502,11 @@ class TestSuspendResume:
         # Set state directly to simulate suspended state
         test_actor.state = ActorState.SUSPENDED
         
-        resume_msg = ActorMessage(
-            sender="system",
-            message_type="resume",
-            content={},
-            timestamp=datetime.now(timezone.utc).isoformat(),
+        _resume_msg = ActorMessage(
+            _sender = "system",
+            _message_type = "resume",
+            _content = {},
+            _timestamp = datetime.now(timezone.utc).isoformat(),
         )
         await test_actor.put_message(resume_msg)
         await asyncio.sleep(0.1)
@@ -524,36 +523,36 @@ class TestErrorHandling:
     """Test error handling scenarios."""
     
     @pytest.mark.asyncio
-    async def test_mailbox_full(self, mock_state_repository):
+    async def test_mailbox_full(self, _mock_state_repository):
         """Test behavior when mailbox is full."""
         class TestActor(AgentActor):
-            async def process_message(self, message: ActorMessage) -> None:
+            async def process_message(self, _message: ActorMessage) -> None:
                 await asyncio.sleep(0.1)  # Slow processing
         
-        actor = TestActor(
-            agent_id="test-full",
-            max_mailbox_size=2,
-            state_repository=mock_state_repository,
-            load_state_on_init=False,
+        _actor = TestActor(
+            _agent_id = "test-full",
+            _max_mailbox_size = 2,
+            _state_repository = mock_state_repository,
+            _load_state_on_init = False,
         )
         
         await actor.spawn()
         
         # Fill the mailbox
         await actor.put_message(ActorMessage(
-            sender="test", message_type="test", content={}, timestamp="2024-01-01T00:00:00Z"
+            _sender = "test", message_type="test", content={}, timestamp="2024-01-01T00:00:00Z"
         ))
         await actor.put_message(ActorMessage(
-            sender="test", message_type="test", content={}, timestamp="2024-01-01T00:00:00Z"
+            _sender = "test", message_type="test", content={}, timestamp="2024-01-01T00:00:00Z"
         ))
         
         # Mailbox should be full now
         assert actor.mailbox.full()
     
     @pytest.mark.asyncio
-    async def test_error_count_increment(self, test_actor):
+    async def test_error_count_increment(self, _test_actor):
         """Test that error count increments on errors."""
-        initial_count = test_actor.error_count
+        _initial_count = test_actor.error_count
         
         test_actor.error_count += 1
         
@@ -567,39 +566,39 @@ class TestErrorHandling:
 class TestMessageValidation:
     """Test message validation functionality."""
     
-    def test_validate_health_check(self, test_actor):
+    def test_validate_health_check(self, _test_actor):
         """Test health check message validation."""
         # HealthCheckRequest only has reply_to field (defaults to "health")
-        content = {}
+        _content = {}
         
-        result = test_actor._validate_message_content("health_check", content)
+        _result = test_actor._validate_message_content("health_check", content)
         
         # Should return validated model
         assert result is not None
         assert result.reply_to == "health"
     
-    def test_validate_health_check_with_reply_to(self, test_actor):
+    def test_validate_health_check_with_reply_to(self, _test_actor):
         """Test health check message with custom reply_to."""
-        content = {"reply_to": "custom-reply"}
+        _content = {"reply_to": "custom-reply"}
         
-        result = test_actor._validate_message_content("health_check", content)
+        _result = test_actor._validate_message_content("health_check", content)
         
         assert result.reply_to == "custom-reply"
     
-    def test_validate_unknown_type(self, test_actor):
+    def test_validate_unknown_type(self, _test_actor):
         """Test validation of unknown message type."""
-        content = {"key": "value"}
+        _content = {"key": "value"}
         
-        result = test_actor._validate_message_content("unknown_type", content)
+        _result = test_actor._validate_message_content("unknown_type", content)
         
         # Unknown types: validate_message returns the content dict directly
         # (no validator registered for this message type)
         assert result == content
     
-    def test_validate_invalid_content(self, test_actor):
+    def test_validate_invalid_content(self, _test_actor):
         """Test validation with invalid content."""
         # Invalid content for health_check (extra fields not allowed)
-        content = {"invalid_field": "value"}
+        _content = {"invalid_field": "value"}
         
         with pytest.raises(ValueError):
             test_actor._validate_message_content("health_check", content)
@@ -613,13 +612,13 @@ class TestMailboxProcessing:
     """Test mailbox processing functionality."""
     
     @pytest.mark.asyncio
-    async def test_put_message(self, test_actor):
+    async def test_put_message(self, _test_actor):
         """Test putting message in mailbox."""
-        msg = ActorMessage(
-            sender="test",
-            message_type="test",
-            content={"key": "value"},
-            timestamp="2024-01-01T00:00:00Z",
+        _msg = ActorMessage(
+            _sender = "test",
+            _message_type = "test",
+            _content = {"key": "value"},
+            _timestamp = "2024-01-01T00:00:00Z",
         )
         
         await test_actor.put_message(msg)
@@ -627,15 +626,15 @@ class TestMailboxProcessing:
         assert test_actor.mailbox.qsize() == 1
     
     @pytest.mark.asyncio
-    async def test_process_mailbox(self, test_actor):
+    async def test_process_mailbox(self, _test_actor):
         """Test mailbox processing."""
         await test_actor.spawn()
         
-        msg = ActorMessage(
-            sender="test",
-            message_type="test",
-            content={"data": "test"},
-            timestamp="2024-01-01T00:00:00Z",
+        _msg = ActorMessage(
+            _sender = "test",
+            _message_type = "test",
+            _content = {"data": "test"},
+            _timestamp = "2024-01-01T00:00:00Z",
         )
         
         await test_actor.put_message(msg)
@@ -654,7 +653,7 @@ class TestHeartbeat:
     """Test heartbeat functionality."""
     
     @pytest.mark.asyncio
-    async def test_heartbeat_loop_runs(self, test_actor):
+    async def test_heartbeat_loop_runs(self, _test_actor):
         """Test that heartbeat loop runs."""
         test_actor.heartbeat_interval = 0.1
         
@@ -677,7 +676,7 @@ class TestIntegrationScenarios:
     """Test integration scenarios."""
     
     @pytest.mark.asyncio
-    async def test_full_lifecycle(self, test_actor):
+    async def test_full_lifecycle(self, _test_actor):
         """Test full actor lifecycle."""
         # Spawn
         await test_actor.spawn()
@@ -685,13 +684,13 @@ class TestIntegrationScenarios:
         
         # Send message
         await test_actor.send(
-            topic="test-topic",
-            content={"action": "test"},
-            message_type="test",
+            _topic = "test-topic",
+            _content = {"action": "test"},
+            _message_type = "test",
         )
         
         # Check status
-        status = test_actor.get_status()
+        _status = test_actor.get_status()
         assert status.state == ActorState.ACTIVE
         
         # Terminate
@@ -699,16 +698,16 @@ class TestIntegrationScenarios:
         assert test_actor.state == ActorState.TERMINATED
     
     @pytest.mark.asyncio
-    async def test_multiple_messages_sequential(self, test_actor):
+    async def test_multiple_messages_sequential(self, _test_actor):
         """Test processing multiple messages sequentially."""
         await test_actor.spawn()
         
         for i in range(5):
-            msg = ActorMessage(
-                sender="test",
-                message_type="test",
-                content={"index": i},
-                timestamp="2024-01-01T00:00:00Z",
+            _msg = ActorMessage(
+                _sender = "test",
+                _message_type = "test",
+                _content = {"index": i},
+                _timestamp = "2024-01-01T00:00:00Z",
             )
             await test_actor.put_message(msg)
         

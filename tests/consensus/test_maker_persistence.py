@@ -15,7 +15,7 @@ import tempfile
 from datetime import datetime, timezone
 
 from heretek_swarm.consensus.maker_enhanced import EnhancedMAKERConsensus
-from heretek_swarm.consensus.expertise import AgentExpertiseProfiler, DomainExpertise
+from heretek_swarm.consensus.expertise import AgentExpertiseProfiler
 
 
 class TestExpertiseProfilePersistence:
@@ -31,7 +31,7 @@ class TestExpertiseProfilePersistence:
         self.profiler.register_agent("agent-1", domains=["testing"], initial_expertise=0.8)
         self.profiler.record_outcome("agent-1", "testing", was_correct=True, confidence=0.85)
         
-        exported = self.profiler.export_profiles()
+        _exported = self.profiler.export_profiles()
         
         assert "profiles" in exported
         assert "domain_statistics" in exported
@@ -52,10 +52,10 @@ class TestExpertiseProfilePersistence:
         self.profiler.record_outcome("agent-2", "testing", was_correct=True, confidence=0.95)
         
         # Export
-        exported = self.profiler.export_profiles()
+        _exported = self.profiler.export_profiles()
         
         # Create new profiler and import
-        new_profiler = AgentExpertiseProfiler()
+        _new_profiler = AgentExpertiseProfiler()
         new_profiler.import_profiles(exported)
         
         # Verify data was preserved
@@ -64,8 +64,8 @@ class TestExpertiseProfilePersistence:
         assert "agent-2" in new_profiler.profiles
         
         # Verify domain expertise
-        agent1_testing = new_profiler.get_expertise_score("agent-1", "testing")
-        original_agent1_testing = self.profiler.get_expertise_score("agent-1", "testing")
+        _agent1_testing = new_profiler.get_expertise_score("agent-1", "testing")
+        _original_agent1_testing = self.profiler.get_expertise_score("agent-1", "testing")
         assert agent1_testing == original_agent1_testing
         
         # Verify domain statistics
@@ -80,7 +80,7 @@ class TestExpertiseProfilePersistence:
         
         # Create temp file
         with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
-            temp_path = f.name
+            _temp_path = f.name
         
         try:
             # Save
@@ -88,11 +88,11 @@ class TestExpertiseProfilePersistence:
             
             # Verify file exists and is valid JSON
             with open(temp_path, 'r') as f:
-                data = json.load(f)
+                _data = json.load(f)
             assert "profiles" in data
             
             # Load into new profiler
-            new_profiler = AgentExpertiseProfiler()
+            _new_profiler = AgentExpertiseProfiler()
             new_profiler.load_from_file(temp_path)
             
             # Verify data was loaded
@@ -109,7 +109,7 @@ class TestExpertiseProfilePersistence:
         self.profiler.register_agent("agent-1", domains=["testing"], initial_expertise=0.75)
         self.profiler.record_outcome("agent-1", "testing", was_correct=True, confidence=0.8)
         
-        exported = self.profiler.export_profile("agent-1")
+        _exported = self.profiler.export_profile("agent-1")
         
         assert exported["agent_id"] == "agent-1"
         assert "domains" in exported
@@ -119,7 +119,7 @@ class TestExpertiseProfilePersistence:
 
     def test_export_unknown_agent(self):
         """Test export_profile for unknown agent returns empty."""
-        exported = self.profiler.export_profile("unknown-agent")
+        _exported = self.profiler.export_profile("unknown-agent")
         assert exported == {}
 
 
@@ -138,7 +138,7 @@ class TestAccuracyHistoryPersistence:
         self.consensus.record_decision_outcome("test-consensus", "agent-1", was_correct=False)
         self.consensus.record_decision_outcome("test-consensus", "agent-2", was_correct=True)
         
-        exported = self.consensus.export_accuracy_history()
+        _exported = self.consensus.export_accuracy_history()
         
         assert "agent_accuracy_history" in exported
         assert "evidence_cache" in exported
@@ -153,10 +153,10 @@ class TestAccuracyHistoryPersistence:
         self.consensus.record_decision_outcome("test-consensus", "agent-2", was_correct=True)
         
         # Export
-        exported = self.consensus.export_accuracy_history()
+        _exported = self.consensus.export_accuracy_history()
         
         # Create new consensus and import
-        new_consensus = EnhancedMAKERConsensus()
+        _new_consensus = EnhancedMAKERConsensus()
         new_consensus.start_consensus("test-consensus")
         new_consensus.import_accuracy_history(exported)
         
@@ -167,7 +167,7 @@ class TestAccuracyHistoryPersistence:
 
     def test_import_empty_accuracy_history(self):
         """Test importing empty accuracy history."""
-        new_consensus = EnhancedMAKERConsensus()
+        _new_consensus = EnhancedMAKERConsensus()
         new_consensus.import_accuracy_history({})
         
         # Should not crash, just log
@@ -189,12 +189,12 @@ class TestEvidenceCachePersistence:
         self.consensus.evidence_cache["test-key"] = EvidenceQuality(
             source_count=5,
             source_reliability=0.9,
-            completeness=0.8,
-            consistency=0.85,
-            recency_score=0.7,
+            _completeness = 0.8,
+            _consistency = 0.85,
+            _recency_score = 0.7,
         )
         
-        exported = self.consensus.export_accuracy_history()
+        _exported = self.consensus.export_accuracy_history()
         
         assert "evidence_cache" in exported
         assert "test-key" in exported["evidence_cache"]
@@ -205,23 +205,23 @@ class TestEvidenceCachePersistence:
         from heretek_swarm.consensus.maker_enhanced import EvidenceQuality
         
         # Set up evidence cache
-        original_evidence = EvidenceQuality(
+        _original_evidence = EvidenceQuality(
             source_count=5,
             source_reliability=0.9,
-            completeness=0.8,
-            consistency=0.85,
-            recency_score=0.7,
+            _completeness = 0.8,
+            _consistency = 0.85,
+            _recency_score = 0.7,
         )
         self.consensus.evidence_cache["test-key"] = original_evidence
         
         # Export and import
-        exported = self.consensus.export_accuracy_history()
-        new_consensus = EnhancedMAKERConsensus()
+        _exported = self.consensus.export_accuracy_history()
+        _new_consensus = EnhancedMAKERConsensus()
         new_consensus.import_accuracy_history(exported)
         
         # Verify evidence was restored
         assert "test-key" in new_consensus.evidence_cache
-        imported_evidence = new_consensus.evidence_cache["test-key"]
+        _imported_evidence = new_consensus.evidence_cache["test-key"]
         assert imported_evidence.source_count == 5
         assert imported_evidence.source_reliability == 0.9
 
@@ -232,9 +232,9 @@ class TestCompleteStatePersistence:
     def setup_method(self):
         """Set up test fixtures."""
         self.consensus = EnhancedMAKERConsensus(
-            enable_pattern_library=True,
-            enable_rollback=True,
-            enable_cross_validation=True,
+            _enable_pattern_library = True,
+            _enable_rollback = True,
+            _enable_cross_validation = True,
         )
 
     def test_save_state_structure(self):
@@ -246,7 +246,7 @@ class TestCompleteStatePersistence:
         
         # Create temp file
         with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
-            temp_path = f.name
+            _temp_path = f.name
         
         try:
             # Save state
@@ -254,7 +254,7 @@ class TestCompleteStatePersistence:
             
             # Verify file is valid JSON with expected structure
             with open(temp_path, 'r') as f:
-                state = json.load(f)
+                _state = json.load(f)
             
             assert "expertise_profiler" in state
             assert "accuracy_history" in state
@@ -280,11 +280,11 @@ class TestCompleteStatePersistence:
         
         # Add vote with reasoning
         self.consensus.add_vote_with_reasoning(
-            consensus_id="test-consensus",
-            agent_id="agent-1",
-            decision="approve",
-            confidence=0.85,
-            reasoning_chain=[
+            _consensus_id = "test-consensus",
+            _agent_id = "agent-1",
+            _decision = "approve",
+            _confidence = 0.85,
+            _reasoning_chain = [
                 {"type": "observation", "content": "Tests passed", "confidence": 0.9},
                 {"type": "conclusion", "content": "Safe to approve", "confidence": 0.85},
             ],
@@ -295,14 +295,14 @@ class TestCompleteStatePersistence:
         
         # Create temp file
         with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
-            temp_path = f.name
+            _temp_path = f.name
         
         try:
             # Save state
             self.consensus.save_state(temp_path)
             
             # Load into new consensus
-            new_consensus = EnhancedMAKERConsensus()
+            _new_consensus = EnhancedMAKERConsensus()
             new_consensus.load_state(temp_path)
             
             # Verify expertise was restored
@@ -320,7 +320,7 @@ class TestCompleteStatePersistence:
 
     def test_load_nonexistent_file(self):
         """Test load_state handles nonexistent file gracefully."""
-        new_consensus = EnhancedMAKERConsensus()
+        _new_consensus = EnhancedMAKERConsensus()
         
         with pytest.raises(FileNotFoundError):
             new_consensus.load_state("/nonexistent/path/state.json")
@@ -329,10 +329,10 @@ class TestCompleteStatePersistence:
         """Test load_state handles invalid JSON gracefully."""
         with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
             f.write("not valid json {")
-            temp_path = f.name
+            _temp_path = f.name
         
         try:
-            new_consensus = EnhancedMAKERConsensus()
+            _new_consensus = EnhancedMAKERConsensus()
             
             with pytest.raises(json.JSONDecodeError):
                 new_consensus.load_state(temp_path)
@@ -348,8 +348,8 @@ class TestDecisionProvenanceExport:
     def setup_method(self):
         """Set up test fixtures."""
         self.consensus = EnhancedMAKERConsensus(
-            enable_pattern_library=True,
-            enable_rollback=True,
+            _enable_pattern_library = True,
+            _enable_rollback = True,
         )
 
     def test_export_provenance_structure(self):
@@ -358,11 +358,11 @@ class TestDecisionProvenanceExport:
         
         # Add a vote
         self.consensus.add_vote_with_reasoning(
-            consensus_id="test-consensus",
-            agent_id="agent-1",
-            decision="approve",
-            confidence=0.85,
-            reasoning_chain=[
+            _consensus_id = "test-consensus",
+            _agent_id = "agent-1",
+            _decision = "approve",
+            _confidence = 0.85,
+            _reasoning_chain = [
                 {"type": "observation", "content": "All good", "confidence": 0.9},
                 {"type": "conclusion", "content": "Approve", "confidence": 0.85},
             ],
@@ -371,7 +371,7 @@ class TestDecisionProvenanceExport:
         # Compute to finalize
         self.consensus.compute_consensus("test-consensus")
         
-        exported = self.consensus.export_provenance("test-consensus")
+        _exported = self.consensus.export_provenance("test-consensus")
         
         assert exported is not None
         assert exported["decision_id"] == "test-consensus"
@@ -387,20 +387,20 @@ class TestDecisionProvenanceExport:
         
         # Add vote with pattern references
         self.consensus.add_vote_with_reasoning(
-            consensus_id="test-consensus",
-            agent_id="agent-1",
-            decision="approve",
-            confidence=0.85,
-            reasoning_chain=[
+            _consensus_id = "test-consensus",
+            _agent_id = "agent-1",
+            _decision = "approve",
+            _confidence = 0.85,
+            _reasoning_chain = [
                 {"type": "observation", "content": "Pattern matched", "confidence": 0.9},
                 {"type": "conclusion", "content": "Approve", "confidence": 0.85},
             ],
-            pattern_references=["pattern-1", "pattern-2"],
+            _pattern_references = ["pattern-1", "pattern-2"],
         )
         
         self.consensus.compute_consensus("test-consensus")
         
-        exported = self.consensus.export_provenance("test-consensus")
+        _exported = self.consensus.export_provenance("test-consensus")
         
         assert "patterns_used" in exported
         assert "pattern-1" in exported["patterns_used"]
@@ -411,11 +411,11 @@ class TestDecisionProvenanceExport:
         self.consensus.start_consensus("test-consensus", domain="testing")
         
         self.consensus.add_vote_with_reasoning(
-            consensus_id="test-consensus",
-            agent_id="agent-1",
-            decision="approve",
-            confidence=0.85,
-            reasoning_chain=[
+            _consensus_id = "test-consensus",
+            _agent_id = "agent-1",
+            _decision = "approve",
+            _confidence = 0.85,
+            _reasoning_chain = [
                 {"type": "observation", "content": "Validated", "confidence": 0.9},
                 {"type": "conclusion", "content": "Approve", "confidence": 0.85},
             ],
@@ -423,13 +423,13 @@ class TestDecisionProvenanceExport:
         
         self.consensus.compute_consensus("test-consensus")
         
-        exported = self.consensus.export_provenance("test-consensus")
+        _exported = self.consensus.export_provenance("test-consensus")
         
         assert "validation_results" in exported
 
     def test_export_provenance_unknown_consensus(self):
         """Test export_provenance returns None for unknown consensus."""
-        result = self.consensus.export_provenance("unknown-consensus")
+        _result = self.consensus.export_provenance("unknown-consensus")
         assert result is None
 
     def test_get_decision_provenance(self):
@@ -437,7 +437,7 @@ class TestDecisionProvenanceExport:
         self.consensus.start_consensus("test-consensus", domain="testing")
         self.consensus.add_vote("test-consensus", "agent-1", "approve", 0.8)
         
-        provenance = self.consensus.get_decision_provenance("test-consensus")
+        _provenance = self.consensus.get_decision_provenance("test-consensus")
         
         assert provenance is not None
         assert provenance.decision_id == "test-consensus"
@@ -451,11 +451,11 @@ class TestIntegrationPersistenceWithWeighting:
     def test_weighting_uses_persisted_expertise(self):
         """Test vote weighting uses expertise from loaded profiles."""
         # Create and save profiler state
-        profiler = AgentExpertiseProfiler()
+        _profiler = AgentExpertiseProfiler()
         profiler.register_agent("expert", domains=["testing"], initial_expertise=0.95)
         
         with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
-            temp_path = f.name
+            _temp_path = f.name
         
         try:
             profiler.save_to_file(temp_path)
@@ -467,19 +467,19 @@ class TestIntegrationPersistenceWithWeighting:
             
             # Create vote
             from heretek_swarm.consensus.maker_enhanced import EnhancedVote, Vote
-            vote = Vote(
-                agent_id="expert",
-                decision="approve",
-                confidence=0.8,
-                timestamp=datetime.now(timezone.utc).isoformat(),
+            _vote = Vote(
+                _agent_id = "expert",
+                _decision = "approve",
+                _confidence = 0.8,
+                _timestamp = datetime.now(timezone.utc).isoformat(),
             )
-            enhanced_vote = EnhancedVote(vote=vote)
+            _enhanced_vote = EnhancedVote(vote=vote)
             
             # Calculate weight - should use loaded expertise
-            weight = consensus.calculate_vote_weight(
-                consensus_id="test-consensus",
-                enhanced_vote=enhanced_vote,
-                domain="testing",
+            _weight = consensus.calculate_vote_weight(
+                _consensus_id = "test-consensus",
+                _enhanced_vote = enhanced_vote,
+                _domain = "testing",
             )
             
             # Expert should have high weight
@@ -492,33 +492,33 @@ class TestIntegrationPersistenceWithWeighting:
     def test_weighting_uses_persisted_accuracy_history(self):
         """Test vote weighting uses accuracy from loaded history."""
         # Create consensus and record history
-        consensus1 = EnhancedMAKERConsensus()
+        _consensus1 = EnhancedMAKERConsensus()
         consensus1.start_consensus("test-consensus")
         consensus1.record_decision_outcome("test-consensus", "agent-1", was_correct=True)
         consensus1.record_decision_outcome("test-consensus", "agent-1", was_correct=True)
         consensus1.record_decision_outcome("test-consensus", "agent-1", was_correct=True)
         
         # Export and import
-        exported = consensus1.export_accuracy_history()
+        _exported = consensus1.export_accuracy_history()
         
-        consensus2 = EnhancedMAKERConsensus()
+        _consensus2 = EnhancedMAKERConsensus()
         consensus2.start_consensus("test-consensus")
         consensus2.import_accuracy_history(exported)
         
         # Create vote
         from heretek_swarm.consensus.maker_enhanced import EnhancedVote, Vote
-        vote = Vote(
-            agent_id="agent-1",
-            decision="approve",
-            confidence=0.7,
-            timestamp=datetime.now(timezone.utc).isoformat(),
+        _vote = Vote(
+            _agent_id = "agent-1",
+            _decision = "approve",
+            _confidence = 0.7,
+            _timestamp = datetime.now(timezone.utc).isoformat(),
         )
-        enhanced_vote = EnhancedVote(vote=vote)
+        _enhanced_vote = EnhancedVote(vote=vote)
         
         # Calculate weight - should use imported history
-        weight = consensus2.calculate_vote_weight(
-            consensus_id="test-consensus",
-            enhanced_vote=enhanced_vote,
+        _weight = consensus2.calculate_vote_weight(
+            _consensus_id = "test-consensus",
+            _enhanced_vote = enhanced_vote,
         )
         
         # Good history should boost weight

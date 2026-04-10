@@ -14,9 +14,8 @@ This module tests all P1 fixes from the zero-trust audit:
 
 import asyncio
 import pytest
-import sys
 from datetime import datetime, timedelta
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import MagicMock
 
 # Import modules directly to avoid circular imports
 from heretek_swarm.actors.supervisor import ActorSupervisor
@@ -36,22 +35,22 @@ class TestActorSupervisorInitialize:
     @pytest.mark.asyncio
     async def test_initialize_method_exists(self):
         """Test that initialize() method exists and is callable."""
-        supervisor = ActorSupervisor()
+        _supervisor = ActorSupervisor()
         assert hasattr(supervisor, 'initialize')
         assert callable(supervisor.initialize)
     
     @pytest.mark.asyncio
     async def test_initialize_returns_none(self):
         """Test that initialize() completes without error."""
-        supervisor = ActorSupervisor()
-        result = await supervisor.initialize()
+        _supervisor = ActorSupervisor()
+        _result = await supervisor.initialize()
         assert result is None
     
     @pytest.mark.asyncio
     async def test_initialize_called_from_runtime(self):
         """Test that runtime can call initialize() on supervisor."""
         # This simulates the call in autonomous_runtime.py:87
-        supervisor = ActorSupervisor()
+        _supervisor = ActorSupervisor()
         # Should not raise AttributeError
         await supervisor.initialize()
 
@@ -73,7 +72,7 @@ class TestStateValueCase:
     
     def test_state_comparison_with_string(self):
         """Test that state comparison works with lowercase strings."""
-        status = MagicMock()
+        _status = MagicMock()
         status.state = ActorState.SUSPENDED
         
         # This is the pattern used in autonomous_runtime.py:186
@@ -98,16 +97,16 @@ class TestDatetimeHandling:
     
     def test_iso_timestamp_parsing(self):
         """Test that ISO format timestamps can be parsed."""
-        timestamp_str = datetime.utcnow().isoformat()
-        parsed = datetime.fromisoformat(timestamp_str.replace('Z', '+00:00'))
+        _timestamp_str = datetime.utcnow().isoformat()
+        _parsed = datetime.fromisoformat(timestamp_str.replace('Z', '+00:00'))
         assert isinstance(parsed, datetime)
     
     def test_datetime_subtraction(self):
         """Test that datetime subtraction works correctly."""
-        now = datetime.utcnow()
-        past = now - timedelta(minutes=30)
+        _now = datetime.utcnow()
+        _past = now - timedelta(minutes=30)
         
-        idle_time = now - past
+        _idle_time = now - past
         assert idle_time.total_seconds() == 30 * 60
     
     @pytest.mark.asyncio
@@ -117,12 +116,12 @@ class TestDatetimeHandling:
         # This simulates what happens in autonomous_runtime.py:_find_idle_agent
         
         # String timestamp (the bug scenario)
-        timestamp_str = (datetime.utcnow() - timedelta(hours=2)).isoformat()
+        _timestamp_str = (datetime.utcnow() - timedelta(hours=2)).isoformat()
         
         # The fix: parse ISO format timestamp
         try:
-            last_activity_dt = datetime.fromisoformat(timestamp_str.replace('Z', '+00:00'))
-            idle_time = datetime.utcnow() - last_activity_dt
+            _last_activity_dt = datetime.fromisoformat(timestamp_str.replace('Z', '+00:00'))
+            _idle_time = datetime.utcnow() - last_activity_dt
             
             # Should be approximately 2 hours (7200 seconds)
             assert idle_time.total_seconds() > 7000
@@ -144,10 +143,10 @@ class TestExceptionHandling:
             async def initialize(self):
                 raise ValueError("Intentional failure")
             
-            async def process_message(self, message: ActorMessage) -> None:
+            async def process_message(self, _message: ActorMessage) -> None:
                 pass
         
-        actor = FailingActor(agent_id="test-fail")
+        _actor = FailingActor(agent_id="test-fail")
         
         with pytest.raises(ValueError, match="Intentional failure"):
             await actor.spawn()
@@ -159,11 +158,11 @@ class TestExceptionHandling:
     @pytest.mark.asyncio
     async def test_terminate_exception_handling(self):
         """Test that terminate() handles exceptions properly."""
-        actor = AgentActor(agent_id="test-term")
+        _actor = AgentActor(agent_id="test-term")
         await actor.spawn()
         
         # Mock cleanup to raise exception
-        original_cleanup = actor.cleanup
+        _original_cleanup = actor.cleanup
         async def failing_cleanup():
             raise RuntimeError("Cleanup failed")
         actor.cleanup = failing_cleanup
@@ -178,24 +177,24 @@ class TestExceptionHandling:
     @pytest.mark.asyncio
     async def test_run_with_llm_timeout_parameter_exists(self):
         """Test that run_with_llm accepts timeout parameter."""
-        actor = AgentActor(agent_id="test-llm")
+        _actor = AgentActor(agent_id="test-llm")
         
         # Verify the method signature includes timeout parameter
         import inspect
-        sig = inspect.signature(actor.run_with_llm)
+        _sig = inspect.signature(actor.run_with_llm)
         assert 'timeout' in sig.parameters
         assert sig.parameters['timeout'].default == 60  # Default timeout is 60 seconds
         
         # Mock swarms_agent to return immediately
-        def quick_run(*args, **kwargs):
+        def quick_run(_*args, _**kwargs):
             return "result"
         
-        mock_agent = MagicMock()
+        _mock_agent = MagicMock()
         mock_agent.run = quick_run
         actor.swarms_agent = mock_agent
         
         # Should complete successfully with timeout
-        result = await actor.run_with_llm("test prompt", timeout=5)
+        _result = await actor.run_with_llm("test prompt", timeout=5)
         assert result == "result"
 
 
@@ -209,16 +208,16 @@ class TestActorCleanup:
     @pytest.mark.asyncio
     async def test_cleanup_clears_mailbox(self):
         """Test that cleanup() clears the mailbox."""
-        actor = AgentActor(agent_id="test-cleanup")
+        _actor = AgentActor(agent_id="test-cleanup")
         await actor.spawn()
         
         # Add messages to mailbox
         for i in range(5):
-            msg = ActorMessage(
-                sender="test",
-                message_type="test",
-                content={"i": i},
-                timestamp=datetime.utcnow().isoformat()
+            _msg = ActorMessage(
+                _sender = "test",
+                _message_type = "test",
+                _content = {"i": i},
+                _timestamp = datetime.utcnow().isoformat()
             )
             await actor.mailbox.put(msg)
         
@@ -232,7 +231,7 @@ class TestActorCleanup:
     @pytest.mark.asyncio
     async def test_cleanup_clears_internal_state(self):
         """Test that cleanup() clears internal state."""
-        actor = AgentActor(agent_id="test-cleanup")
+        _actor = AgentActor(agent_id="test-cleanup")
         actor.update_state("key1", "value1")
         actor.update_state("key2", "value2")
         
@@ -247,8 +246,8 @@ class TestActorCleanup:
     @pytest.mark.asyncio
     async def test_cleanup_clears_handlers(self):
         """Test that cleanup() clears message handlers."""
-        actor = AgentActor(agent_id="test-cleanup")
-        initial_count = len(actor._message_handlers)
+        _actor = AgentActor(agent_id="test-cleanup")
+        _initial_count = len(actor._message_handlers)
         
         # Add custom handler
         actor.register_handler("custom", lambda m: None)
@@ -270,19 +269,19 @@ class TestToolTimeout:
     @pytest.mark.asyncio
     async def test_tool_registry_default_timeout(self):
         """Test ToolRegistry has default timeout."""
-        registry = ToolRegistry()
+        _registry = ToolRegistry()
         assert registry.default_timeout == 30
     
     @pytest.mark.asyncio
     async def test_tool_registry_custom_timeout(self):
         """Test ToolRegistry accepts custom timeout."""
-        registry = ToolRegistry(default_timeout=60)
+        _registry = ToolRegistry(default_timeout=60)
         assert registry.default_timeout == 60
     
     @pytest.mark.asyncio
     async def test_tool_execute_with_timeout(self):
         """Test tool execution respects timeout."""
-        registry = ToolRegistry(default_timeout=1)
+        _registry = ToolRegistry(default_timeout=1)
         
         async def slow_tool():
             await asyncio.sleep(10)
@@ -296,7 +295,7 @@ class TestToolTimeout:
     @pytest.mark.asyncio
     async def test_tool_execute_timeout_override(self):
         """Test timeout can be overridden per execution."""
-        registry = ToolRegistry(default_timeout=60)
+        _registry = ToolRegistry(default_timeout=60)
         
         async def slow_tool():
             await asyncio.sleep(0.5)
@@ -350,20 +349,20 @@ class TestHandoffValidation:
     @pytest.mark.asyncio
     async def test_handoff_rate_limiting(self):
         """Test handoff rate limiting."""
-        handoff = AgentHandoff(historian=None)
+        _handoff = AgentHandoff(historian=None)
         
         # Make multiple rapid handoffs
         for i in range(HandoffValidator.MAX_HANDOFFS_PER_MINUTE + 1):
-            result = await handoff.execute_handoff(
-                from_agent_id=f"agent{i}",
-                to_agent_id=f"agent{i+10}",
+            _result = await handoff.execute_handoff(
+                _from_agent_id = f"agent{i}",
+                _to_agent_id = f"agent{i+10}",
                 context={"test": i}
             )
         
         # Last one should fail due to rate limiting
-        result = await handoff.execute_handoff(
-            from_agent_id="agent_final",
-            to_agent_id="agent_target",
+        _result = await handoff.execute_handoff(
+            _from_agent_id = "agent_final",
+            _to_agent_id = "agent_target",
             context={"test": "final"}
         )
         
@@ -373,11 +372,11 @@ class TestHandoffValidation:
     @pytest.mark.asyncio
     async def test_handoff_validation_error_result(self):
         """Test that validation errors return proper HandoffResult."""
-        handoff = AgentHandoff(historian=None)
+        _handoff = AgentHandoff(historian=None)
         
-        result = await handoff.execute_handoff(
-            from_agent_id="",  # Invalid
-            to_agent_id="agent2",
+        _result = await handoff.execute_handoff(
+            _from_agent_id = "",  # Invalid
+            _to_agent_id = "agent2",
             context={"key": "value"}
         )
         
@@ -395,7 +394,7 @@ class TestLRUCache:
     
     def test_lru_cache_basic_operations(self):
         """Test basic cache get/set operations."""
-        cache = LRUCache(max_size=3)
+        _cache = LRUCache(max_size=3)
         
         cache.set("key1", "value1")
         cache.set("key2", "value2")
@@ -406,7 +405,7 @@ class TestLRUCache:
     
     def test_lru_cache_eviction(self):
         """Test that LRU cache evicts oldest entries."""
-        cache = LRUCache(max_size=3)
+        _cache = LRUCache(max_size=3)
         
         cache.set("key1", "value1")
         cache.set("key2", "value2")
@@ -423,7 +422,7 @@ class TestLRUCache:
     
     def test_lru_cache_access_updates_order(self):
         """Test that accessing an item updates its LRU order."""
-        cache = LRUCache(max_size=3)
+        _cache = LRUCache(max_size=3)
         
         cache.set("key1", "value1")
         cache.set("key2", "value2")
@@ -442,21 +441,21 @@ class TestLRUCache:
     
     def test_lru_cache_statistics(self):
         """Test cache statistics tracking."""
-        cache = LRUCache(max_size=10)
+        _cache = LRUCache(max_size=10)
         
         cache.set("key1", "value1")
         cache.get("key1")  # Hit
         cache.get("key1")  # Hit
         cache.get("nonexistent")  # Miss
         
-        stats = cache.get_statistics()
+        _stats = cache.get_statistics()
         assert stats["hits"] == 2
         assert stats["misses"] == 1
         assert stats["hit_rate_percent"] > 0
     
     def test_lru_cache_clear(self):
         """Test cache clear operation."""
-        cache = LRUCache(max_size=10)
+        _cache = LRUCache(max_size=10)
         
         cache.set("key1", "value1")
         cache.set("key2", "value2")
@@ -465,7 +464,7 @@ class TestLRUCache:
         cache.clear()
         
         assert len(cache) == 0
-        stats = cache.get_statistics()
+        _stats = cache.get_statistics()
         assert stats["hits"] == 0
         assert stats["misses"] == 0
 
@@ -475,9 +474,9 @@ class TestHistorianCacheLimits:
     
     def test_historian_custom_cache_sizes(self):
         """Test historian accepts custom cache sizes."""
-        historian = HistorianAgent(
-            context_cache_max_size=50,
-            pattern_cache_max_size=25
+        _historian = HistorianAgent(
+            _context_cache_max_size = 50,
+            _pattern_cache_max_size = 25
         )
         
         assert historian.context_cache.max_size == 50
@@ -485,16 +484,16 @@ class TestHistorianCacheLimits:
     
     def test_historian_default_cache_sizes(self):
         """Test historian default cache sizes."""
-        historian = HistorianAgent()
+        _historian = HistorianAgent()
         
         assert historian.context_cache.max_size == 100
         assert historian.pattern_cache.max_size == 50
     
     def test_historian_cache_eviction(self):
         """Test that historian caches evict when full."""
-        historian = HistorianAgent(
-            context_cache_max_size=3,
-            pattern_cache_max_size=2
+        _historian = HistorianAgent(
+            _context_cache_max_size = 3,
+            _pattern_cache_max_size = 2
         )
         
         # Fill context cache
@@ -513,13 +512,13 @@ class TestHistorianCacheLimits:
     
     def test_historian_statistics_includes_cache_stats(self):
         """Test historian statistics include cache statistics."""
-        historian = HistorianAgent()
+        _historian = HistorianAgent()
         
         # Add some data
         historian.context_cache.set("test", "value")
         historian.pattern_cache.set("pattern", "data")
         
-        stats = historian.get_memory_statistics()
+        _stats = historian.get_memory_statistics()
         
         assert "context_cache" in stats
         assert "pattern_cache" in stats
