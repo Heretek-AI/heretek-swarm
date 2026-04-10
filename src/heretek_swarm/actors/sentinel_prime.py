@@ -1146,7 +1146,7 @@ class SentinelPrimeAgent(AgentActor):
             if correlation_score > 0.3:
                 correlated.append(other)
         
-        correlated.sort(key=lambda x: self._calculate_severity_score(x), reverse=True)
+        correlated.sort(key=self._calculate_severity_score, reverse=True)
         return correlated[:max_results]
     
     def _reconstruct_attack_chain(self, incident: SecurityIncident) -> List[Dict[str, Any]]:
