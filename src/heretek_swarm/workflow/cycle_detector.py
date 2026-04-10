@@ -37,7 +37,7 @@ from enum import Enum
 
 import structlog
 
-logger = structlog.get_logger("WorkflowCycleDetector")
+_logger = structlog.get_logger("WorkflowCycleDetector")
 
 
 class CycleBreakingStrategy(str, Enum):
@@ -105,7 +105,7 @@ class ExecutionPath:
     state_hash: Optional[str] = None
     visit_counts: Dict[str, int] = field(default_factory=dict)
     
-    def add_node(self, node_id: str) -> int:
+    def add_node(self, _node_id: str) -> int:
         """
         Add a node to the path and return visit count.
         
@@ -133,19 +133,19 @@ class ExecutionPath:
             return None
         
         # Check for repeated nodes (which indicates a cycle)
-        seen = {}
+        _seen = {}
         for i, node in enumerate(self.nodes):
             if node in seen:
                 # Found a repeated node - cycle detected
                 # The cycle is from first occurrence to current position (exclusive)
-                cycle = self.nodes[seen[node]:i]
+                _cycle = self.nodes[seen[node]:i]
                 if len(cycle) >= 1:
                     return cycle
             seen[node] = i
         
         return None
     
-    def _verify_cycle(self, cycle: List[str]) -> bool:
+    def _verify_cycle(self, _cycle: List[str]) -> bool:
         """
         Verify that a sequence is actually a repeating cycle.
         
@@ -183,10 +183,10 @@ class WorkflowCycleDetector:
     
     Example:
         ```python
-        detector = WorkflowCycleDetector(max_iterations=100, timeout_seconds=300)
+        _detector = WorkflowCycleDetector(max_iterations=100, timeout_seconds=300)
         
         # Track workflow execution
-        workflow_id = "workflow_123"
+        _workflow_id = "workflow_123"
         
         # Check for cycle before executing node
         if detector.detect_cycle(workflow_id, "plan_phase"):
@@ -201,13 +201,7 @@ class WorkflowCycleDetector:
     # 5-Phase workflow definition
     FIVE_PHASES = ["plan", "analyze", "execute", "validate", "report"]
     
-    def __init__(
-        self,
-        max_iterations: int = 100,
-        timeout_seconds: float = 300.0,
-        convergence_threshold: float = 0.001,
-        track_paths: bool = True,
-    ):
+    def __init__(self, _max_iterations: int, _timeout_seconds: float, _convergence_threshold: float, _track_paths: bool):
         """
         Initialize the cycle detector.
         
@@ -242,14 +236,14 @@ class WorkflowCycleDetector:
         
         logger.info(
             "WorkflowCycleDetector initialized",
-            extra={
+            _extra = {
                 "max_iterations": max_iterations,
                 "timeout_seconds": timeout_seconds,
                 "convergence_threshold": convergence_threshold,
             },
         )
     
-    def start_workflow_tracking(self, workflow_id: str) -> None:
+    def start_workflow_tracking(self, _workflow_id: str) -> None:
         """
         Start tracking a workflow execution.
         
@@ -264,7 +258,7 @@ class WorkflowCycleDetector:
         
         logger.debug("workflow_tracking_started", workflow_id=workflow_id)
     
-    def stop_workflow_tracking(self, workflow_id: str) -> None:
+    def stop_workflow_tracking(self, _workflow_id: str) -> None:
         """
         Stop tracking a workflow execution.
         
@@ -284,12 +278,7 @@ class WorkflowCycleDetector:
         
         logger.debug("workflow_tracking_stopped", workflow_id=workflow_id)
     
-    def record_node_execution(
-        self,
-        workflow_id: str,
-        node_id: str,
-        state: Optional[Dict[str, Any]] = None,
-    ) -> int:
+    def record_node_execution(self, _workflow_id: str, _node_id: str, _state: Optional[Dict[str, _Any]]) -> int:
         """
         Record a node execution and return visit count.
         
@@ -309,14 +298,14 @@ class WorkflowCycleDetector:
         self.iteration_counts[workflow_id] = self.iteration_counts.get(workflow_id, 0) + 1
         
         # Track node visit
-        visit_count = 0
+        _visit_count = 0
         if workflow_id in self.visited_nodes:
             self.visited_nodes[workflow_id].append(node_id)
-            visit_count = self.visited_nodes[workflow_id].count(node_id)
+            _visit_count = self.visited_nodes[workflow_id].count(node_id)
         
         # Track execution path
         if self.track_paths and workflow_id in self.execution_paths:
-            visit_count = self.execution_paths[workflow_id].add_node(node_id)
+            _visit_count = self.execution_paths[workflow_id].add_node(node_id)
         
         # Store state for convergence detection
         if state:
@@ -324,15 +313,15 @@ class WorkflowCycleDetector:
         
         logger.debug(
             "node_execution_recorded",
-            workflow_id=workflow_id,
-            node_id=node_id,
-            visit_count=visit_count,
+            _workflow_id = workflow_id,
+            _node_id = node_id,
+            _visit_count = visit_count,
             iteration=self.iteration_counts.get(workflow_id, 0),
         )
         
         return visit_count
     
-    def detect_cycle(self, workflow_id: str, current_node: str) -> bool:
+    def detect_cycle(self, _workflow_id: str, _current_node: str) -> bool:
         """
         Detect if executing the current node would create a cycle.
         
@@ -348,20 +337,20 @@ class WorkflowCycleDetector:
         
         # Check for cycles in execution path
         if self.track_paths and workflow_id in self.execution_paths:
-            path = self.execution_paths[workflow_id]
+            _path = self.execution_paths[workflow_id]
             
             # Create temporary path with current node
-            temp_path = path.nodes + [current_node]
+            _temp_path = path.nodes + [current_node]
             
             # Check for cycle
             for i, node in enumerate(temp_path[:-1]):
                 if node == current_node:
-                    potential_cycle = temp_path[i:]
+                    _potential_cycle = temp_path[i:]
                     if len(potential_cycle) >= 2:
                         logger.warning(
                             "cycle_detected",
-                            workflow_id=workflow_id,
-                            cycle_path=potential_cycle,
+                            _workflow_id = workflow_id,
+                            _cycle_path = potential_cycle,
                         )
                         return True
         
@@ -369,22 +358,22 @@ class WorkflowCycleDetector:
         visited = self.visited_nodes[workflow_id]
         if len(visited) >= 2:
             # Check if last N nodes match pattern
-            window_size = min(10, len(visited))
-            recent = visited[-window_size:]
+            _window_size = min(10, len(visited))
+            _recent = visited[-window_size:]
             
             # Simple pattern detection: same node multiple times
             if recent.count(current_node) >= 3:
                 logger.warning(
                     "repeated_node_detected",
-                    workflow_id=workflow_id,
-                    node=current_node,
+                    _workflow_id = workflow_id,
+                    _node = current_node,
                     count=recent.count(current_node),
                 )
                 return True
         
         return False
     
-    def should_break_cycle(self, workflow_id: str) -> bool:
+    def should_break_cycle(self, _workflow_id: str) -> bool:
         """
         Determine if a cycle should be broken based on configured strategies.
         
@@ -398,15 +387,15 @@ class WorkflowCycleDetector:
             return False
         
         iteration_count = self.iteration_counts[workflow_id]
-        start_time = self.workflow_start_times.get(workflow_id, 0)
-        elapsed_time = time.time() - start_time
+        _start_time = self.workflow_start_times.get(workflow_id, 0)
+        _elapsed_time = time.time() - start_time
         
         # Check max iterations
         if iteration_count >= self.max_iterations:
             logger.warning(
                 "max_iterations_reached",
-                workflow_id=workflow_id,
-                iterations=iteration_count,
+                _workflow_id = workflow_id,
+                _iterations = iteration_count,
                 max=self.max_iterations,
             )
             return True
@@ -415,9 +404,9 @@ class WorkflowCycleDetector:
         if elapsed_time >= self.timeout_seconds:
             logger.warning(
                 "timeout_reached",
-                workflow_id=workflow_id,
-                elapsed_seconds=elapsed_time,
-                timeout=self.timeout_seconds,
+                _workflow_id = workflow_id,
+                _elapsed_seconds = elapsed_time,
+                _timeout = self.timeout_seconds,
             )
             return True
         
@@ -425,14 +414,14 @@ class WorkflowCycleDetector:
         if self._check_state_convergence(workflow_id):
             logger.warning(
                 "state_convergence_detected",
-                workflow_id=workflow_id,
-                threshold=self.convergence_threshold,
+                _workflow_id = workflow_id,
+                _threshold = self.convergence_threshold,
             )
             return True
         
         return False
     
-    def _check_state_convergence(self, workflow_id: str) -> bool:
+    def _check_state_convergence(self, _workflow_id: str) -> bool:
         """
         Check if workflow state has converged (stopped changing).
         
@@ -445,7 +434,7 @@ class WorkflowCycleDetector:
         if workflow_id not in self.previous_states:
             return False
         
-        current_state = self.previous_states.get(workflow_id, {})
+        _current_state = self.previous_states.get(workflow_id, {})
         
         # Compare with recently visited states
         # Simple implementation: check if state values are stable
@@ -453,16 +442,11 @@ class WorkflowCycleDetector:
             return False
         
         # Check if state values are all near zero or unchanged
-        state_magnitude = sum(abs(v) for v in current_state.values() if isinstance(v, (int, float)))
+        _state_magnitude = sum(abs(v) for v in current_state.values() if isinstance(v, (int, float)))
         
         return state_magnitude < self.convergence_threshold
     
-    def break_cycle(
-        self,
-        workflow_id: str,
-        strategy: CycleBreakingStrategy = CycleBreakingStrategy.MAX_ITERATIONS,
-        reason: Optional[str] = None,
-    ) -> CycleDetectionEvent:
+    def break_cycle(self, _workflow_id: str, _strategy: CycleBreakingStrategy, _reason: Optional[str]) -> CycleDetectionEvent:
         """
         Break a detected cycle and record the event.
         
@@ -475,22 +459,22 @@ class WorkflowCycleDetector:
             CycleDetectionEvent for audit logging
         """
         # Get cycle path
-        cycle_path = []
+        _cycle_path = []
         if workflow_id in self.execution_paths:
-            cycle_path = self.execution_paths[workflow_id].get_cycle() or []
+            _cycle_path = self.execution_paths[workflow_id].get_cycle() or []
         elif workflow_id in self.visited_nodes:
             # Use last N visited nodes as cycle path
-            cycle_path = self.visited_nodes[workflow_id][-10:]
+            _cycle_path = self.visited_nodes[workflow_id][-10:]
         
         # Create event
         event = CycleDetectionEvent(
             event_id=f"cycle_{uuid.uuid4()}",
-            workflow_id=workflow_id,
-            correlation_id=f"corr_{uuid.uuid4()}",
-            cycle_path=cycle_path,
-            detection_time=datetime.now(timezone.utc).isoformat(),
-            breaking_strategy=strategy.value,
-            resolution=reason or "cycle_breaking_strategy_applied",
+            _workflow_id = workflow_id,
+            _correlation_id = f"corr_{uuid.uuid4()}",
+            _cycle_path = cycle_path,
+            _detection_time = datetime.now(timezone.utc).isoformat(),
+            _breaking_strategy = strategy.value,
+            _resolution = reason or "cycle_breaking_strategy_applied",
             metadata={
                 "iteration_count": self.iteration_counts.get(workflow_id, 0),
                 "elapsed_time": time.time() - self.workflow_start_times.get(workflow_id, 0),
@@ -504,30 +488,30 @@ class WorkflowCycleDetector:
         # Update metrics
         self.metrics["total_cycles_detected"] += 1
         self.metrics["total_cycles_broken"] += 1
-        strategy_key = strategy.value
+        _strategy_key = strategy.value
         self.metrics["cycles_by_strategy"][strategy_key] = (
             self.metrics["cycles_by_strategy"].get(strategy_key, 0) + 1
         )
         
         # Calculate average iterations
-        total_cycles = self.metrics["total_cycles_detected"]
+        _total_cycles = self.metrics["total_cycles_detected"]
         if total_cycles > 0:
-            total_iterations = sum(
+            _total_iterations = sum(
                 e.metadata.get("iteration_count", 0) for e in self.detected_cycles
             )
             self.metrics["avg_iterations_before_cycle"] = total_iterations / total_cycles
         
         logger.warning(
             "cycle_broken",
-            workflow_id=workflow_id,
-            strategy=strategy.value,
-            cycle_path=cycle_path,
-            event_id=event.event_id,
+            _workflow_id = workflow_id,
+            _strategy = strategy.value,
+            _cycle_path = cycle_path,
+            _event_id = event.event_id,
         )
         
         return event
     
-    def get_execution_path(self, workflow_id: str) -> Optional[ExecutionPath]:
+    def get_execution_path(self, _workflow_id: str) -> Optional[ExecutionPath]:
         """
         Get the execution path for a workflow.
         
@@ -539,7 +523,7 @@ class WorkflowCycleDetector:
         """
         return self.execution_paths.get(workflow_id)
     
-    def get_visited_nodes(self, workflow_id: str) -> List[str]:
+    def get_visited_nodes(self, _workflow_id: str) -> List[str]:
         """
         Get list of visited nodes for a workflow.
         
@@ -551,7 +535,7 @@ class WorkflowCycleDetector:
         """
         return self.visited_nodes.get(workflow_id, [])
     
-    def get_iteration_count(self, workflow_id: str) -> int:
+    def get_iteration_count(self, _workflow_id: str) -> int:
         """
         Get iteration count for a workflow.
         
@@ -588,7 +572,7 @@ class WorkflowCycleDetector:
         Returns:
             Prometheus-formatted metrics string
         """
-        lines = [
+        _lines = [
             "# HELP heretek_workflow_cycles_total Total number of cycles detected",
             "# TYPE heretek_workflow_cycles_total counter",
             f"heretek_workflow_cycles_total {self.metrics['total_cycles_detected']}",
@@ -635,7 +619,7 @@ class FivePhaseWorkflowTracker:
     
     Example:
         ```python
-        tracker = FivePhaseWorkflowTracker()
+        _tracker = FivePhaseWorkflowTracker()
         
         # Track phase transitions
         tracker.record_phase_transition("workflow_123", "plan", "analyze")
@@ -648,7 +632,7 @@ class FivePhaseWorkflowTracker:
         ```
     """
     
-    def __init__(self, max_phase_repeats: int = 3):
+    def __init__(self, _max_phase_repeats: int):
         """
         Initialize the 5-phase workflow tracker.
         
@@ -660,12 +644,7 @@ class FivePhaseWorkflowTracker:
         self.phase_counts: Dict[str, Dict[str, int]] = {}
         self._cycle_detector = WorkflowCycleDetector()
     
-    def record_phase_transition(
-        self,
-        workflow_id: str,
-        from_phase: str,
-        to_phase: str,
-    ) -> None:
+    def record_phase_transition(self, _workflow_id: str, _from_phase: str, _to_phase: str) -> None:
         """
         Record a phase transition.
         
@@ -686,12 +665,12 @@ class FivePhaseWorkflowTracker:
         
         logger.debug(
             "phase_transition_recorded",
-            workflow_id=workflow_id,
-            from_phase=from_phase,
-            to_phase=to_phase,
+            _workflow_id = workflow_id,
+            _from_phase = from_phase,
+            _to_phase = to_phase,
         )
     
-    def detect_phase_cycle(self, workflow_id: str, next_phase: str) -> bool:
+    def detect_phase_cycle(self, _workflow_id: str, _next_phase: str) -> bool:
         """
         Detect if transitioning to next phase would create a cycle.
         
@@ -705,23 +684,23 @@ class FivePhaseWorkflowTracker:
         if workflow_id not in self.phase_history:
             return False
         
-        history = self.phase_history[workflow_id]
+        _history = self.phase_history[workflow_id]
         
         # Check for phase repetition
         recent_phases = history[-5:]  # Last 5 phases
         if recent_phases.count(next_phase) >= self.max_phase_repeats:
             logger.warning(
                 "phase_cycle_detected",
-                workflow_id=workflow_id,
-                next_phase=next_phase,
-                recent_phases=recent_phases,
+                _workflow_id = workflow_id,
+                _next_phase = next_phase,
+                _recent_phases = recent_phases,
             )
             return True
         
         # Use underlying cycle detector for path-based detection
         return self._cycle_detector.detect_cycle(workflow_id, next_phase)
     
-    def get_phase_statistics(self, workflow_id: str) -> Dict[str, Any]:
+    def get_phase_statistics(self, _workflow_id: str) -> Dict[str, Any]:
         """
         Get phase statistics for a workflow.
         
@@ -731,8 +710,8 @@ class FivePhaseWorkflowTracker:
         Returns:
             Dictionary of phase statistics
         """
-        counts = self.phase_counts.get(workflow_id, {})
-        history = self.phase_history.get(workflow_id, [])
+        _counts = self.phase_counts.get(workflow_id, {})
+        _history = self.phase_history.get(workflow_id, [])
         
         return {
             "total_transitions": len(history),

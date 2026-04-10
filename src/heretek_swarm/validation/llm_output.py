@@ -10,7 +10,6 @@ Date: 2026-04-07
 Version: 1.0.0
 """
 
-from __future__ import annotations
 
 import re
 from dataclasses import dataclass, field
@@ -163,8 +162,8 @@ class LLMOutputBase(BaseModel):
     """Base class for all LLM output models."""
     
     class Config:
-        extra = "forbid"  # Reject extra fields by default
-        validate_assignment = True
+        _extra = "forbid"  # Reject extra fields by default
+        _validate_assignment = True
 
 
 class CodeBlock(LLMOutputBase):
@@ -175,7 +174,7 @@ class CodeBlock(LLMOutputBase):
     description: Optional[str] = Field(None, max_length=500, description="Brief description of what the code does")
     
     @pydantic_validator("code")
-    def validate_code_safety(cls, v: str) -> str:
+    def validate_code_safety(cls, _v: str) -> str:
         """Validate that code doesn't contain dangerous patterns."""
         if not v:
             return v
@@ -187,7 +186,7 @@ class CodeBlock(LLMOutputBase):
         return v
     
     class Config:
-        extra = "ignore"  # Allow extra fields for flexibility
+        _extra = "ignore"  # Allow extra fields for flexibility
 
 
 class TextOutput(LLMOutputBase):
@@ -197,7 +196,7 @@ class TextOutput(LLMOutputBase):
     content_type: str = Field(default="text", description="Type of content (text, markdown, json, etc.)")
     
     @pydantic_validator("content")
-    def validate_text_safety(cls, v: str) -> str:
+    def validate_text_safety(cls, _v: str) -> str:
         """Validate that text doesn't contain dangerous patterns."""
         if not v:
             return v
@@ -211,7 +210,7 @@ class TextOutput(LLMOutputBase):
         return v
     
     class Config:
-        extra = "ignore"
+        _extra = "ignore"
 
 
 class StructuredResponse(LLMOutputBase):
@@ -221,12 +220,12 @@ class StructuredResponse(LLMOutputBase):
     schema_version: str = Field(default="1.0", description="Schema version for validation")
     
     @pydantic_validator("data")
-    def validate_data_safety(cls, v: Dict[str, Any]) -> Dict[str, Any]:
+    def validate_data_safety(cls, _v: Dict[str, _Any]) -> Dict[str, Any]:
         """Validate that structured data doesn't contain dangerous patterns."""
         if not v:
             return v
             
-        def check_value(value: Any, path: str = "") -> None:
+        def check_value(_value: Any, _path: str) -> None:
             """Recursively check values for dangerous patterns."""
             if isinstance(value, str):
                 for pattern_name, pattern in DANGEROUS_PATTERNS.items():
@@ -243,7 +242,7 @@ class StructuredResponse(LLMOutputBase):
         return v
     
     class Config:
-        extra = "allow"  # Allow extra fields in structured data
+        _extra = "allow"  # Allow extra fields in structured data
 
 
 class ToolCall(LLMOutputBase):
@@ -254,14 +253,14 @@ class ToolCall(LLMOutputBase):
     call_id: str = Field(default_factory=lambda: f"call_{datetime.now(timezone.utc).timestamp()}", description="Unique call identifier")
     
     @pydantic_validator("tool_name")
-    def validate_tool_name(cls, v: str) -> str:
+    def validate_tool_name(cls, _v: str) -> str:
         """Validate tool name format."""
         if not re.match(r"^[a-zA-Z_][a-zA-Z0-9_]*$", v):
             raise ValueError(f"Invalid tool name format: {v}")
         return v
     
     @pydantic_validator("arguments")
-    def validate_arguments_safety(cls, v: Dict[str, Any]) -> Dict[str, Any]:
+    def validate_arguments_safety(cls, _v: Dict[str, _Any]) -> Dict[str, Any]:
         """Validate that arguments don't contain dangerous patterns."""
         if not v:
             return v
@@ -275,7 +274,7 @@ class ToolCall(LLMOutputBase):
         return v
     
     class Config:
-        extra = "forbid"
+        _extra = "forbid"
 
 
 class LLMOutputValidator:
@@ -287,7 +286,7 @@ class LLMOutputValidator:
     schemas, and provides sanitization when possible.
     """
     
-    def __init__(self, strict_mode: bool = True):
+    def __init__(self, _strict_mode: bool):
         """
         Initialize the validator.
         
@@ -304,12 +303,7 @@ class LLMOutputValidator:
         for name, pattern in DANGEROUS_PATTERNS.items():
             self._compiled_patterns[name] = re.compile(pattern, re.IGNORECASE | re.MULTILINE)
     
-    def validate_code(
-        self,
-        code: str,
-        language: str = "python",
-        allow_dangerous: bool = False,
-    ) -> ValidationResult:
+    def validate_code(self, _code: str, _language: str, _allow_dangerous: bool) -> ValidationResult:
         """
         Validate a code block for safety.
         
@@ -328,8 +322,8 @@ class LLMOutputValidator:
             return ValidationResult(
                 valid=False,
                 content=code,
-                errors=["Code is empty"],
-                severity=ValidationSeverity.ERROR,
+                _errors = ["Code is empty"],
+                _severity = ValidationSeverity.ERROR,
             )
         
         # Check for dangerous patterns
@@ -346,37 +340,33 @@ class LLMOutputValidator:
         
         # Try to create validated model
         try:
-            code_block = CodeBlock(
-                language=CodeLanguage(language.lower()) if language.lower() in [e.value for e in CodeLanguage] else CodeLanguage.UNKNOWN,
+            _code_block = CodeBlock(
+                _language = CodeLanguage(language.lower()) if language.lower() in [e.value for e in CodeLanguage] else CodeLanguage.UNKNOWN,
                 code=code,
             )
-            validated_code = code_block.code
+            _validated_code = code_block.code
         except ValidationError as e:
             errors.append(f"Code validation failed: {e}")
-            validated_code = code
+            _validated_code = code
         
         # Attempt sanitization if in non-strict mode
-        sanitized = None
+        _sanitized = None
         if errors and not self.strict_mode:
-            sanitized = self._sanitize_code(code)
+            _sanitized = self._sanitize_code(code)
             if sanitized != code:
                 warnings.append("Code was sanitized")
                 errors = []  # Clear errors if sanitization succeeded
         
         return ValidationResult(
-            valid=len(errors) == 0,
+            _valid = len(errors) == 0,
             content=code,
-            errors=errors,
-            warnings=warnings,
-            sanitized_content=sanitized,
-            severity=ValidationSeverity.CRITICAL if errors else (ValidationSeverity.WARNING if warnings else ValidationSeverity.INFO),
+            _errors = errors,
+            _warnings = warnings,
+            _sanitized_content = sanitized,
+            _severity = ValidationSeverity.CRITICAL if errors else (ValidationSeverity.WARNING if warnings else ValidationSeverity.INFO),
         )
     
-    def validate_text(
-        self,
-        text: str,
-        content_type: str = "text",
-    ) -> ValidationResult:
+    def validate_text(self, _text: str, _content_type: str) -> ValidationResult:
         """
         Validate text output for safety.
         
@@ -393,9 +383,9 @@ class LLMOutputValidator:
         if not text or not text.strip():
             return ValidationResult(
                 valid=False,
-                content=text,
-                errors=["Text is empty"],
-                severity=ValidationSeverity.ERROR,
+                _content = text,
+                _errors = ["Text is empty"],
+                _severity = ValidationSeverity.ERROR,
             )
         
         # Check for dangerous patterns (skip SQL and command injection for general text)
@@ -414,25 +404,21 @@ class LLMOutputValidator:
         
         # Try to create validated model
         try:
-            text_output = TextOutput(content=text, content_type=content_type)
-            validated_text = text_output.content
+            _text_output = TextOutput(content=text, content_type=content_type)
+            _validated_text = text_output.content
         except ValidationError as e:
             errors.append(f"Text validation failed: {e}")
-            validated_text = text
+            _validated_text = text
         
         return ValidationResult(
-            valid=len(errors) == 0,
-            content=text,
-            errors=errors,
-            warnings=warnings,
-            severity=ValidationSeverity.CRITICAL if errors else (ValidationSeverity.WARNING if warnings else ValidationSeverity.INFO),
+            _valid = len(errors) == 0,
+            _content = text,
+            _errors = errors,
+            _warnings = warnings,
+            _severity = ValidationSeverity.CRITICAL if errors else (ValidationSeverity.WARNING if warnings else ValidationSeverity.INFO),
         )
     
-    def validate_structured(
-        self,
-        data: Dict[str, Any],
-        schema_version: str = "1.0",
-    ) -> ValidationResult:
+    def validate_structured(self, _data: Dict[str, _Any], _schema_version: str) -> ValidationResult:
         """
         Validate structured JSON response.
         
@@ -449,32 +435,28 @@ class LLMOutputValidator:
         if not data:
             return ValidationResult(
                 valid=False,
-                content=data,
-                errors=["Data is empty"],
-                severity=ValidationSeverity.ERROR,
+                _content = data,
+                _errors = ["Data is empty"],
+                _severity = ValidationSeverity.ERROR,
             )
         
         # Try to create validated model
         try:
-            structured = StructuredResponse(data=data, schema_version=schema_version)
-            validated_data = structured.data
+            _structured = StructuredResponse(data=data, schema_version=schema_version)
+            _validated_data = structured.data
         except ValidationError as e:
             errors.append(f"Structured data validation failed: {e}")
-            validated_data = data
+            _validated_data = data
         
         return ValidationResult(
-            valid=len(errors) == 0,
-            content=data,
-            errors=errors,
-            warnings=warnings,
-            severity=ValidationSeverity.CRITICAL if errors else (ValidationSeverity.WARNING if warnings else ValidationSeverity.INFO),
+            _valid = len(errors) == 0,
+            _content = data,
+            _errors = errors,
+            _warnings = warnings,
+            _severity = ValidationSeverity.CRITICAL if errors else (ValidationSeverity.WARNING if warnings else ValidationSeverity.INFO),
         )
     
-    def validate_tool_call(
-        self,
-        tool_name: str,
-        arguments: Dict[str, Any],
-    ) -> ValidationResult:
+    def validate_tool_call(self, _tool_name: str, _arguments: Dict[str, _Any]) -> ValidationResult:
         """
         Validate a tool/function call.
         
@@ -490,21 +472,21 @@ class LLMOutputValidator:
         
         # Try to create validated model
         try:
-            tool_call = ToolCall(tool_name=tool_name, arguments=arguments)
-            validated_args = tool_call.arguments
+            _tool_call = ToolCall(tool_name=tool_name, arguments=arguments)
+            _validated_args = tool_call.arguments
         except ValidationError as e:
             errors.append(f"Tool call validation failed: {e}")
-            validated_args = arguments
+            _validated_args = arguments
         
         return ValidationResult(
-            valid=len(errors) == 0,
-            content={"tool_name": tool_name, "arguments": arguments},
-            errors=errors,
-            warnings=warnings,
-            severity=ValidationSeverity.CRITICAL if errors else (ValidationSeverity.WARNING if warnings else ValidationSeverity.INFO),
+            _valid = len(errors) == 0,
+            _content = {"tool_name": tool_name, "arguments": arguments},
+            _errors = errors,
+            _warnings = warnings,
+            _severity = ValidationSeverity.CRITICAL if errors else (ValidationSeverity.WARNING if warnings else ValidationSeverity.INFO),
         )
     
-    def _sanitize_code(self, code: str) -> str:
+    def _sanitize_code(self, _code: str) -> str:
         """
         Attempt to sanitize code by removing or replacing dangerous patterns.
         
@@ -514,14 +496,14 @@ class LLMOutputValidator:
         Returns:
             Sanitized code with dangerous patterns removed or replaced
         """
-        sanitized = code
+        _sanitized = code
         
         # Apply sanitization patterns
         for pattern_name, (pattern, replacement) in SANITIZE_PATTERNS.items():
-            sanitized = re.sub(pattern, replacement, sanitized)
+            _sanitized = re.sub(pattern, replacement, sanitized)
         
         # Comment out dangerous Python patterns instead of removing them
-        dangerous_python = ["eval(", "exec(", "__import__(", "getattr(", "setattr(", "delattr(", "globals(", "locals(", "vars("]
+        _dangerous_python = ["eval(", "exec(", "__import__(", "getattr(", "setattr(", "delattr(", "globals(", "locals(", "vars("]
         for pattern in dangerous_python:
             if pattern in sanitized:
                 # Replace the dangerous call with a commented version
@@ -529,7 +511,7 @@ class LLMOutputValidator:
         
         return sanitized
     
-    def sanitize_string(self, text: str) -> str:
+    def sanitize_string(self, _text: str) -> str:
         """
         Sanitize a string by removing dangerous patterns.
         
@@ -539,15 +521,15 @@ class LLMOutputValidator:
         Returns:
             Sanitized text
         """
-        sanitized = text
+        _sanitized = text
         
         # Apply sanitization patterns
         for pattern_name, (pattern, replacement) in SANITIZE_PATTERNS.items():
-            sanitized = re.sub(pattern, replacement, sanitized)
+            _sanitized = re.sub(pattern, replacement, sanitized)
         
         return sanitized
     
-    def is_safe_code(self, code: str) -> bool:
+    def is_safe_code(self, _code: str) -> bool:
         """
         Quick check if code is safe (no dangerous patterns).
         
@@ -562,7 +544,7 @@ class LLMOutputValidator:
             for compiled_pattern in self._compiled_patterns.values()
         )
     
-    def is_safe_text(self, text: str) -> bool:
+    def is_safe_text(self, _text: str) -> bool:
         """
         Quick check if text is safe (no dangerous patterns).
         
@@ -581,7 +563,7 @@ class LLMOutputValidator:
 
 
 # Convenience functions for quick validation
-def validate_llm_code(code: str, language: str = "python", strict: bool = True) -> ValidationResult:
+def validate_llm_code(_code: str, _language: str, _strict: bool) -> ValidationResult:
     """
     Validate LLM-generated code.
     
@@ -593,11 +575,11 @@ def validate_llm_code(code: str, language: str = "python", strict: bool = True) 
     Returns:
         ValidationResult
     """
-    validator = LLMOutputValidator(strict_mode=strict)
+    _validator = LLMOutputValidator(strict_mode=strict)
     return validator.validate_code(code, language)
 
 
-def validate_llm_text(text: str, content_type: str = "text") -> ValidationResult:
+def validate_llm_text(_text: str, _content_type: str) -> ValidationResult:
     """
     Validate LLM-generated text.
     
@@ -608,11 +590,11 @@ def validate_llm_text(text: str, content_type: str = "text") -> ValidationResult
     Returns:
         ValidationResult
     """
-    validator = LLMOutputValidator(strict_mode=True)
+    _validator = LLMOutputValidator(strict_mode=True)
     return validator.validate_text(text, content_type)
 
 
-def validate_llm_structured(data: Dict[str, Any]) -> ValidationResult:
+def validate_llm_structured(_data: Dict[str, _Any]) -> ValidationResult:
     """
     Validate LLM-generated structured data.
     
@@ -622,11 +604,11 @@ def validate_llm_structured(data: Dict[str, Any]) -> ValidationResult:
     Returns:
         ValidationResult
     """
-    validator = LLMOutputValidator(strict_mode=True)
+    _validator = LLMOutputValidator(strict_mode=True)
     return validator.validate_structured(data)
 
 
-def is_code_safe(code: str) -> bool:
+def is_code_safe(_code: str) -> bool:
     """
     Quick check if code is safe.
     
@@ -636,11 +618,11 @@ def is_code_safe(code: str) -> bool:
     Returns:
         True if code is safe, False otherwise
     """
-    validator = LLMOutputValidator()
+    _validator = LLMOutputValidator()
     return validator.is_safe_code(code)
 
 
-def is_text_safe(text: str) -> bool:
+def is_text_safe(_text: str) -> bool:
     """
     Quick check if text is safe.
     
@@ -650,5 +632,5 @@ def is_text_safe(text: str) -> bool:
     Returns:
         True if text is safe, False otherwise
     """
-    validator = LLMOutputValidator()
+    _validator = LLMOutputValidator()
     return validator.is_safe_text(text)

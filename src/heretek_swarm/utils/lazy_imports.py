@@ -4,10 +4,9 @@ This module provides utilities for deferred imports that break
 circular dependency cycles at module load time.
 """
 
-from __future__ import annotations
 
 import importlib
-from typing import Any, Callable, Dict, Optional, TypeVar, Union
+from typing import Any, Callable, Dict, Optional, TypeVar
 from functools import wraps
 
 T = TypeVar('T')
@@ -22,13 +21,13 @@ class LazyImport:
     Example:
         # Instead of: from foo import Bar
         # Use:
-        Bar = LazyImport('foo.Bar')
+        _Bar = LazyImport('foo.Bar')
         
         # Later, when you need it:
-        result = Bar.some_method()  # Import happens here
+        _result = Bar.some_method()  # Import happens here
     """
     
-    def __init__(self, import_path: str, attr: Optional[str] = None):
+    def __init__(self, _import_path: str, _attr: Optional[str]):
         """Initialize lazy import.
         
         Args:
@@ -52,14 +51,14 @@ class LazyImport:
         
         return self._module
     
-    def __getattr__(self, name: str) -> Any:
+    def __getattr__(self, _name: str) -> Any:
         """Delegate attribute access to the imported module/attribute."""
-        resolved = self._resolve()
+        _resolved = self._resolve()
         return getattr(resolved, name)
     
-    def __call__(self, *args: Any, **kwargs: Any) -> Any:
+    def __call__(self, _*args: Any, _**kwargs: Any) -> Any:
         """If the imported attribute is callable, call it."""
-        resolved = self._resolve()
+        _resolved = self._resolve()
         if callable(resolved):
             return resolved(*args, **kwargs)
         raise TypeError(f"LazyImport('{self._import_path}') is not callable")
@@ -84,7 +83,7 @@ class LazyModule(Dict[str, Any]):
         # Then use: factory.create_llm_provider(...)
     """
     
-    def __init__(self, attrs: Optional[Dict[str, Union[str, LazyImport, Callable]]] = None):
+    def __init__(self, _attrs: Optional[Dict[str, _Union[str, _LazyImport, _Callable]]]):
         super().__init__()
         if attrs:
             for key, value in attrs.items():
@@ -94,31 +93,31 @@ class LazyModule(Dict[str, Any]):
                     self[key] = value
 
 
-def lazy_import(import_path: str) -> Callable[[Callable[..., T]], Callable[..., T]]:
+def lazy_import(_import_path: str) -> Callable[[Callable[..., T]], Callable[..., T]]:
     """Decorator for lazy importing a function or class.
     
     The actual import is deferred until the decorated function is called.
     
     Example:
         @lazy_import('heretek_swarm.llm.providers.factory')
-        def create_provider(config):
+        def create_provider(_config):
             return create_provider(config)
     """
-    def decorator(func: Callable[..., T]) -> Callable[..., T]:
+    def decorator(_func: Callable[..., _T]) -> Callable[..., T]:
         # Store the import path in a mutable container to allow modification
-        import_ref = {'path': import_path}
+        _import_ref = {'path': import_path}
         
         @wraps(func)
-        def wrapper(*args: Any, **kwargs: Any) -> T:
+        def wrapper(_*args: Any, _**kwargs: Any) -> T:
             module_path, attr_name = import_ref['path'].rsplit('.', 1)
-            module = importlib.import_module(module_path)
-            attr = getattr(module, attr_name)
+            _module = importlib.import_module(module_path)
+            _attr = getattr(module, attr_name)
             return attr(*args, **kwargs)
         return wrapper
     return decorator
 
 
-def lazy_import_module(module_path: str) -> Any:
+def lazy_import_module(_module_path: str) -> Any:
     """Import a module lazily.
     
     Args:
@@ -134,7 +133,7 @@ def lazy_import_module(module_path: str) -> Any:
 _lazy_import_cache: Dict[str, LazyImport] = {}
 
 
-def get_lazy_import(import_path: str, attr: Optional[str] = None) -> LazyImport:
+def get_lazy_import(_import_path: str, _attr: Optional[str]) -> LazyImport:
     """Get or create a cached lazy import.
     
     This is useful for frequently accessed imports that should be cached.
@@ -146,7 +145,7 @@ def get_lazy_import(import_path: str, attr: Optional[str] = None) -> LazyImport:
     Returns:
         Cached or new LazyImport instance
     """
-    cache_key = f"{import_path}:{attr}" if attr else import_path
+    _cache_key = f"{import_path}:{attr}" if attr else import_path
     
     if cache_key not in _lazy_import_cache:
         _lazy_import_cache[cache_key] = LazyImport(import_path, attr)

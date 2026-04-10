@@ -22,7 +22,7 @@ from typing_extensions import TypedDict
 
 import structlog
 
-logger = structlog.get_logger(__name__)
+_logger = structlog.get_logger(__name__)
 
 # Import cycle detection
 try:
@@ -137,7 +137,7 @@ class SafeExpressionEvaluator:
         ast.Pow: operator.pow,
     }
     
-    def __init__(self, allowed_variables: Optional[Dict[str, Any]] = None):
+    def __init__(self, _allowed_variables: Optional[Dict[str, _Any]]):
         """
         Initialize the evaluator with allowed variables.
         
@@ -147,7 +147,7 @@ class SafeExpressionEvaluator:
         """
         self.allowed_variables = allowed_variables or {}
     
-    def validate_and_eval(self, expr: str) -> Any:
+    def validate_and_eval(self, _expr: str) -> Any:
         """
         Safely validate and evaluate an expression.
         
@@ -163,7 +163,7 @@ class SafeExpressionEvaluator:
         """
         # Parse the expression into an AST
         try:
-            tree = ast.parse(expr, mode='eval')
+            _tree = ast.parse(expr, mode='eval')
         except SyntaxError as e:
             raise ValueError(f"Invalid expression syntax: {e}")
         
@@ -173,7 +173,7 @@ class SafeExpressionEvaluator:
         # Safely evaluate the validated AST
         return self._eval_node(tree.body)
     
-    def _validate_ast(self, node: ast.AST) -> None:
+    def _validate_ast(self, _node: ast.AST) -> None:
         """
         Recursively validate that an AST contains only safe node types.
         
@@ -207,7 +207,7 @@ class SafeExpressionEvaluator:
             elif isinstance(value, ast.AST):
                 self._validate_ast(value)
     
-    def _eval_node(self, node: ast.AST) -> Any:
+    def _eval_node(self, _node: ast.AST) -> Any:
         """
         Recursively evaluate a validated AST node.
         
@@ -252,47 +252,47 @@ class SafeExpressionEvaluator:
         
         # Handle comparison operations
         elif isinstance(node, ast.Compare):
-            left = self._eval_node(node.left)
-            result = True
+            _left = self._eval_node(node.left)
+            _result = True
             for op, comparator in zip(node.ops, node.comparators):
-                op_func = SAFE_OPERATORS.get(type(op))
+                _op_func = SAFE_OPERATORS.get(type(op))
                 if op_func is None:
                     raise ValueError(f"Unsupported comparison operator: {type(op).__name__}")
                 right = self._eval_node(comparator)
-                result = result and op_func(left, right)
+                _result = result and op_func(left, right)
                 left = right
             return result
         
         # Handle boolean operations (and, or)
         elif isinstance(node, ast.BoolOp):
-            op_func = SAFE_BOOL_OPS.get(type(node.op))
+            _op_func = SAFE_BOOL_OPS.get(type(node.op))
             if op_func is None:
                 raise ValueError(f"Unsupported boolean operator: {type(node.op).__name__}")
-            result = self._eval_node(node.values[0])
+            _result = self._eval_node(node.values[0])
             for value in node.values[1:]:
-                result = op_func(result, self._eval_node(value))
+                _result = op_func(result, self._eval_node(value))
             return result
         
         # Handle unary operations (not, -, +)
         elif isinstance(node, ast.UnaryOp):
-            op_func = SAFE_UNARY_OPS.get(type(node.op))
+            _op_func = SAFE_UNARY_OPS.get(type(node.op))
             if op_func is None:
                 raise ValueError(f"Unsupported unary operator: {type(node.op).__name__}")
             return op_func(self._eval_node(node.operand))
         
         # Handle binary operations (+, -, *, /, etc.)
         elif isinstance(node, ast.BinOp):
-            op_func = self.SAFE_BIN_OPS.get(type(node.op))
+            _op_func = self.SAFE_BIN_OPS.get(type(node.op))
             if op_func is None:
                 raise ValueError(f"Unsupported binary operator: {type(node.op).__name__}")
-            left = self._eval_node(node.left)
-            right = self._eval_node(node.right)
+            _left = self._eval_node(node.left)
+            _right = self._eval_node(node.right)
             return op_func(left, right)
         
         # Handle subscript (indexing)
         elif isinstance(node, ast.Subscript):
             value = self._eval_node(node.value)
-            slice_val = self._eval_node(node.slice)
+            _slice_val = self._eval_node(node.slice)
             return value[slice_val]
         
         else:
@@ -410,7 +410,7 @@ class Workflow:
     created_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
 
 
-def _merge_state_field(current: Any, update: Any, annotation: str) -> Any:
+def _merge_state_field(_current: Any, _update: Any, _annotation: str) -> Any:
     """
     Merge a state field based on its annotation type.
     
@@ -439,10 +439,7 @@ def _merge_state_field(current: Any, update: Any, annotation: str) -> Any:
         return update
 
 
-def merge_workflow_states(
-    current: WorkflowState,
-    update: WorkflowState,
-) -> WorkflowState:
+def merge_workflow_states(_current: WorkflowState, _update: WorkflowState) -> WorkflowState:
     """
     Merge two workflow states using Annotated type hints.
     
@@ -458,7 +455,7 @@ def merge_workflow_states(
     result: WorkflowState = {}
     
     # Get all keys from both states
-    all_keys = set(current.keys()) | set(update.keys())
+    _all_keys = set(current.keys()) | set(update.keys())
     
     for key in all_keys:
         if key in update and key in current:
@@ -510,12 +507,12 @@ class WorkflowContext:
     variables: Dict[str, Any] = field(default_factory=dict)
     start_time: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
     state: WorkflowState = field(default_factory=lambda: WorkflowState(
-        messages=[],
-        results={},
-        current_phase="initialized",
-        metadata={},
-        checkpoint=None,
-        cycle_count=0
+        _messages = [],
+        _results = {},
+        _current_phase = "initialized",
+        _metadata = {},
+        _checkpoint = None,
+        _cycle_count = 0
     ))
     checkpoints: List[Dict[str, Any]] = field(default_factory=list)
     error: Optional[Exception] = None
@@ -579,12 +576,7 @@ class WorkflowEngine:
     - Real-time progress updates
     """
 
-    def __init__(
-        self,
-        cycle_detector: Optional[WorkflowCycleDetector] = None,
-        max_iterations: int = 100,
-        timeout_seconds: float = 300.0,
-    ):
+    def __init__(self, _cycle_detector: Optional[WorkflowCycleDetector], _max_iterations: int, _timeout_seconds: float):
         """
         Initialize workflow engine.
         
@@ -599,12 +591,12 @@ class WorkflowEngine:
         
         # Cycle detection integration
         self.cycle_detector = cycle_detector or WorkflowCycleDetector(
-            max_iterations=max_iterations,
-            timeout_seconds=timeout_seconds,
+            _max_iterations = max_iterations,
+            _timeout_seconds = timeout_seconds,
         )
         self.phase_tracker = FivePhaseWorkflowTracker()
 
-    async def load_workflow(self, workflow_definition: Dict[str, Any]) -> Workflow:
+    async def load_workflow(self, _workflow_definition: Dict[str, _Any]) -> Workflow:
         """
         Load a workflow from definition.
 
@@ -620,8 +612,8 @@ class WorkflowEngine:
                 type=node["type"],
                 data=node.get("data", {}),
                 inputs=node.get("inputs", []),
-                outputs=node.get("outputs", []),
-                position=node.get("position", {})
+                _outputs = node.get("outputs", []),
+                _position = node.get("position", {})
             )
             for node in workflow_definition.get("nodes", [])
         ]
@@ -641,7 +633,7 @@ class WorkflowEngine:
             name=workflow_definition.get("name", "Untitled Workflow"),
             nodes=nodes,
             edges=edges,
-            metadata=workflow_definition.get("metadata", {})
+            _metadata = workflow_definition.get("metadata", {})
         )
 
         self.workflows[workflow.id] = workflow
@@ -649,11 +641,7 @@ class WorkflowEngine:
 
         return workflow
 
-    async def execute_workflow(
-        self,
-        workflow_id: str,
-        input_data: Optional[Dict[str, Any]] = None
-    ) -> WorkflowResult:
+    async def execute_workflow(self, _workflow_id: str, _input_data: Optional[Dict[str, _Any]]) -> WorkflowResult:
         """
         Execute a workflow with cycle detection.
 
@@ -674,11 +662,11 @@ class WorkflowEngine:
             raise ValueError(f"Workflow not found: {workflow_id}")
 
         workflow = self.workflows[workflow_id]
-        execution_id = f"exec_{workflow_id}_{datetime.now(timezone.utc).timestamp()}"
+        _execution_id = f"exec_{workflow_id}_{datetime.now(timezone.utc).timestamp()}"
 
-        context = WorkflowContext(
+        _context = WorkflowContext(
             workflow_id=workflow_id,
-            execution_id=execution_id,
+            _execution_id = execution_id,
             start_time=datetime.now(timezone.utc),
             state=WorkflowState.RUNNING
         )
@@ -692,10 +680,10 @@ class WorkflowEngine:
 
         try:
             # Build dependency graph
-            graph = self._build_graph(workflow)
+            _graph = self._build_graph(workflow)
 
             # Get execution order (topological sort)
-            execution_order = self._topological_sort(graph)
+            _execution_order = self._topological_sort(graph)
 
             # Execute nodes in order with cycle detection
             from heretek_swarm.workflow.cycle_detector import CycleBreakingStrategy
@@ -708,18 +696,18 @@ class WorkflowEngine:
                         event = self.cycle_detector.break_cycle(
                             execution_id,
                             CycleBreakingStrategy.MAX_ITERATIONS,
-                            reason=f"Cycle detected at node {node_id}"
+                            _reason = f"Cycle detected at node {node_id}"
                         )
                         logger.warning(
                             "cycle_broken_during_execution",
                             workflow_id=workflow_id,
-                            execution_id=execution_id,
-                            node_id=node_id,
-                            event_id=event.event_id,
+                            _execution_id = execution_id,
+                            _node_id = node_id,
+                            _event_id = event.event_id,
                         )
                         # Skip this node to break the cycle
                         context.node_results[node_id] = NodeResult(
-                            node_id=node_id,
+                            _node_id = node_id,
                             status=NodeStatus.SKIPPED,
                             output=None,
                             error=Exception(f"Node skipped due to cycle detection: {node_id}")
@@ -743,11 +731,11 @@ class WorkflowEngine:
 
             return WorkflowResult(
                 workflow_id=workflow_id,
-                execution_id=execution_id,
+                _execution_id = execution_id,
                 status=context.state,
                 node_results=context.node_results,
                 variables=context.variables,
-                start_time=context.start_time,
+                _start_time = context.start_time,
                 end_time=context.end_time,
                 error=None
             )
@@ -762,11 +750,11 @@ class WorkflowEngine:
 
             return WorkflowResult(
                 workflow_id=workflow_id,
-                execution_id=execution_id,
+                _execution_id = execution_id,
                 status=context.state,
                 node_results=context.node_results,
                 variables=context.variables,
-                start_time=context.start_time,
+                _start_time = context.start_time,
                 end_time=context.end_time,
                 error=e
             )
@@ -777,12 +765,7 @@ class WorkflowEngine:
             if execution_id in self.active_executions:
                 del self.active_executions[execution_id]
 
-    async def _execute_node(
-        self,
-        workflow: Workflow,
-        node_id: str,
-        context: WorkflowContext
-    ) -> None:
+    async def _execute_node(self, _workflow: Workflow, _node_id: str, _context: WorkflowContext) -> None:
         """
         Execute a single workflow node.
 
@@ -796,7 +779,7 @@ class WorkflowEngine:
         if not node:
             logger.error("node_not_found", node_id=node_id)
             context.node_results[node_id] = NodeResult(
-                node_id=node_id,
+                _node_id = node_id,
                 status=NodeStatus.FAILED,
                 error=ValueError(f"Node not found: {node_id}")
             )
@@ -805,16 +788,16 @@ class WorkflowEngine:
         # Check if node should be skipped (condition check)
         if not self._should_execute_node(workflow, node, context):
             context.node_results[node_id] = NodeResult(
-                node_id=node_id,
+                _node_id = node_id,
                 status=NodeStatus.SKIPPED
             )
             return
 
         # Get input data for node
-        input_data = self._get_node_input(workflow, node, context)
+        _input_data = self._get_node_input(workflow, node, context)
 
         # Execute node based on type
-        start_time = datetime.now(timezone.utc)
+        _start_time = datetime.now(timezone.utc)
 
         try:
             if node.type == "agent":
@@ -828,13 +811,13 @@ class WorkflowEngine:
             else:
                 raise ValueError(f"Unknown node type: {node.type}")
 
-            execution_time = (datetime.now(timezone.utc) - start_time).total_seconds()
+            _execution_time = (datetime.now(timezone.utc) - start_time).total_seconds()
 
             context.node_results[node_id] = NodeResult(
-                node_id=node_id,
+                _node_id = node_id,
                 status=NodeStatus.COMPLETED,
                 output=output,
-                execution_time=execution_time
+                _execution_time = execution_time
             )
 
             # Store output in context variables
@@ -844,18 +827,13 @@ class WorkflowEngine:
             logger.error("node_execution_failed", node_id=node_id, error=str(e))
 
             context.node_results[node_id] = NodeResult(
-                node_id=node_id,
+                _node_id = node_id,
                 status=NodeStatus.FAILED,
-                error=e,
-                execution_time=(datetime.now(timezone.utc) - start_time).total_seconds()
+                _error = e,
+                _execution_time = (datetime.now(timezone.utc) - start_time).total_seconds()
             )
 
-    def _should_execute_node(
-        self,
-        workflow: Workflow,
-        node: WorkflowNode,
-        context: WorkflowContext
-    ) -> bool:
+    def _should_execute_node(self, _workflow: Workflow, _node: WorkflowNode, _context: WorkflowContext) -> bool:
         """
         Check if a node should be executed based on conditions.
 
@@ -875,7 +853,7 @@ class WorkflowEngine:
 
         return True
 
-    def _evaluate_condition(self, condition: str, context: WorkflowContext) -> bool:
+    def _evaluate_condition(self, _condition: str, _context: WorkflowContext) -> bool:
         """
         Evaluate a condition expression using safe AST-based evaluator.
 
@@ -891,23 +869,18 @@ class WorkflowEngine:
         to attacks via __class__, __mro__, __subclasses__(), etc.
         """
         # Create safe evaluator with context variables
-        evaluator = SafeExpressionEvaluator(allowed_variables=context.variables)
+        _evaluator = SafeExpressionEvaluator(allowed_variables=context.variables)
         
         try:
             # Safely evaluate the condition expression
-            result = evaluator.validate_and_eval(condition)
+            _result = evaluator.validate_and_eval(condition)
             return bool(result)
 
         except Exception as e:
             logger.warning("condition_evaluation_failed", condition=condition, error=str(e))
             return False
 
-    def _get_node_input(
-        self,
-        workflow: Workflow,
-        node: WorkflowNode,
-        context: WorkflowContext
-    ) -> Dict[str, Any]:
+    def _get_node_input(self, _workflow: Workflow, _node: WorkflowNode, _context: WorkflowContext) -> Dict[str, Any]:
         """
         Get input data for a node from context.
 
@@ -919,7 +892,7 @@ class WorkflowEngine:
         Returns:
             Dictionary of input data
         """
-        input_data = {}
+        _input_data = {}
 
         # Get data from input nodes
         for input_id in node.inputs:
@@ -932,12 +905,7 @@ class WorkflowEngine:
 
         return input_data
 
-    async def _execute_agent_node(
-        self,
-        node: WorkflowNode,
-        input_data: Dict[str, Any],
-        context: WorkflowContext
-    ) -> Any:
+    async def _execute_agent_node(self, _node: WorkflowNode, _input_data: Dict[str, _Any], _context: WorkflowContext) -> Any:
         """
         Execute an agent node.
 
@@ -952,29 +920,24 @@ class WorkflowEngine:
         from heretek_swarm.actors.supervisor import get_supervisor
 
         # Get agent ID from node data
-        agent_id = node.data.get("agent_id")
+        _agent_id = node.data.get("agent_id")
         if not agent_id:
             raise ValueError("Agent node requires agent_id")
 
         # Get global supervisor
-        supervisor = get_supervisor()
-        agent_status = await supervisor.get_actor_status(agent_id)
+        _supervisor = get_supervisor()
+        _agent_status = await supervisor.get_actor_status(agent_id)
 
         if not agent_status or agent_status.state != "active":
             raise RuntimeError(f"Agent not active: {agent_id}")
 
         # Send message to agent
-        message = input_data.get("message", "")
-        response = await supervisor.send_message(agent_id, message)
+        _message = input_data.get("message", "")
+        _response = await supervisor.send_message(agent_id, message)
 
         return response
 
-    async def _execute_tool_node(
-        self,
-        node: WorkflowNode,
-        input_data: Dict[str, Any],
-        context: WorkflowContext
-    ) -> Any:
+    async def _execute_tool_node(self, _node: WorkflowNode, _input_data: Dict[str, _Any], _context: WorkflowContext) -> Any:
         """
         Execute a tool node.
 
@@ -989,27 +952,22 @@ class WorkflowEngine:
         from heretek_swarm.runtime.tools import ToolRegistry
 
         # Get tool registry
-        tool_registry = ToolRegistry()
+        _tool_registry = ToolRegistry()
 
         # Get tool name from node data
-        tool_name = node.data.get("tool_name")
+        _tool_name = node.data.get("tool_name")
         if not tool_name:
             raise ValueError("Tool node requires tool_name")
 
         # Get tool parameters
-        tool_params = input_data.get("params", {})
+        _tool_params = input_data.get("params", {})
 
         # Execute tool
-        result = await tool_registry.execute(tool_name, **tool_params)
+        _result = await tool_registry.execute(tool_name, **tool_params)
 
         return result
 
-    async def _execute_chain_node(
-        self,
-        node: WorkflowNode,
-        input_data: Dict[str, Any],
-        context: WorkflowContext
-    ) -> Any:
+    async def _execute_chain_node(self, _node: WorkflowNode, _input_data: Dict[str, _Any], _context: WorkflowContext) -> Any:
         """
         Execute a chain node (sequential processing).
 
@@ -1022,7 +980,7 @@ class WorkflowEngine:
             Chain output
         """
         # Get chain nodes
-        chain_nodes = node.data.get("nodes", [])
+        _chain_nodes = node.data.get("nodes", [])
         if not chain_nodes:
             raise ValueError("Chain node requires nodes")
 
@@ -1031,20 +989,15 @@ class WorkflowEngine:
 
         for chain_node_id in chain_nodes:
             if chain_node_id in context.node_results:
-                node_result = context.node_results[chain_node_id]
+                _node_result = context.node_results[chain_node_id]
                 if node_result.status == NodeStatus.COMPLETED:
-                    output = node_result.output
+                    _output = node_result.output
                 else:
                     raise RuntimeError(f"Chain node not completed: {chain_node_id}")
 
         return output
 
-    async def _execute_memory_node(
-        self,
-        node: WorkflowNode,
-        input_data: Dict[str, Any],
-        context: WorkflowContext
-    ) -> Any:
+    async def _execute_memory_node(self, _node: WorkflowNode, _input_data: Dict[str, _Any], _context: WorkflowContext) -> Any:
         """
         Execute a memory node (store or retrieve).
 
@@ -1059,44 +1012,44 @@ class WorkflowEngine:
         from heretek_swarm.memory.persistent import PersistentMemoryStore
 
         # Get operation type
-        operation = node.data.get("operation", "store")
+        _operation = node.data.get("operation", "store")
         if operation not in ["store", "retrieve", "search"]:
             raise ValueError(f"Invalid memory operation: {operation}")
 
         # Get memory store
-        memory_store = PersistentMemoryStore()
+        _memory_store = PersistentMemoryStore()
         await memory_store.connect()
 
         if operation == "store":
             # Store memory
             content = input_data.get("content", "")
             memory_type = input_data.get("memory_type", "episodic")
-            metadata = input_data.get("metadata", {})
+            _metadata = input_data.get("metadata", {})
 
             # Store memory
             await memory_store.store(
-                agent_id=context.workflow_id,
+                _agent_id = context.workflow_id,
                 content=content,
                 memory_type=memory_type,
-                metadata=metadata
+                _metadata = metadata
             )
 
             return {"stored": True}
 
         elif operation == "retrieve":
             # Retrieve memory
-            query = input_data.get("query", "")
-            limit = input_data.get("limit", 10)
+            _query = input_data.get("query", "")
+            _limit = input_data.get("limit", 10)
 
             # Search memory
             from heretek_swarm.memory.base import MemoryQuery
-            search_query = MemoryQuery(
-                query_text=query,
-                agent_ids=[context.workflow_id],
-                limit=limit
+            _search_query = MemoryQuery(
+                _query_text = query,
+                _agent_ids = [context.workflow_id],
+                _limit = limit
             )
 
-            result = await memory_store.search(search_query)
+            _result = await memory_store.search(search_query)
 
             return {
                 "results": [
@@ -1113,7 +1066,7 @@ class WorkflowEngine:
             # Search memory (alias for retrieve)
             return await self._execute_memory_node(node, input_data, context)
 
-    def _build_graph(self, workflow: Workflow) -> Dict[str, Set[str]]:
+    def _build_graph(self, _workflow: Workflow) -> Dict[str, Set[str]]:
         """
         Build dependency graph from workflow edges.
 
@@ -1132,7 +1085,7 @@ class WorkflowEngine:
 
         return graph
 
-    def _topological_sort(self, graph: Dict[str, Set[str]]) -> List[str]:
+    def _topological_sort(self, _graph: Dict[str, _Set[str]]) -> List[str]:
         """
         Perform topological sort on dependency graph.
 
@@ -1152,11 +1105,11 @@ class WorkflowEngine:
                 in_degree[dep] = in_degree.get(dep, 0) + 1
 
         # Find nodes with no incoming edges
-        queue = [node_id for node_id, degree in in_degree.items() if degree == 0]
+        _queue = [node_id for node_id, degree in in_degree.items() if degree == 0]
 
         # Process nodes
         while queue:
-            node_id = queue.pop(0)
+            _node_id = queue.pop(0)
             result.append(node_id)
 
             # Decrement in-degrees of dependents
@@ -1167,7 +1120,7 @@ class WorkflowEngine:
 
         return result
 
-    async def get_workflow_status(self, execution_id: str) -> Optional[WorkflowContext]:
+    async def get_workflow_status(self, _execution_id: str) -> Optional[WorkflowContext]:
         """
         Get status of a workflow execution.
 
@@ -1179,7 +1132,7 @@ class WorkflowEngine:
         """
         return self.active_executions.get(execution_id)
 
-    async def cancel_workflow(self, execution_id: str) -> bool:
+    async def cancel_workflow(self, _execution_id: str) -> bool:
         """
         Cancel a running workflow execution.
 
@@ -1192,7 +1145,7 @@ class WorkflowEngine:
         if execution_id not in self.active_executions:
             return False
 
-        context = self.active_executions[execution_id]
+        _context = self.active_executions[execution_id]
         context.state = WorkflowState.CANCELLED
         context.end_time = datetime.now(timezone.utc)
 
@@ -1208,7 +1161,7 @@ class WorkflowEngine:
         """
         return list(self.workflows.values())
 
-    def get_workflow(self, workflow_id: str) -> Optional[Workflow]:
+    def get_workflow(self, _workflow_id: str) -> Optional[Workflow]:
         """
         Get a workflow by ID.
 
@@ -1225,11 +1178,7 @@ class WorkflowEngine:
 _global_engine: Optional[WorkflowEngine] = None
 
 
-async def get_workflow_engine(
-    cycle_detector: Optional[WorkflowCycleDetector] = None,
-    max_iterations: int = 100,
-    timeout_seconds: float = 300.0,
-) -> WorkflowEngine:
+async def get_workflow_engine(_cycle_detector: Optional[WorkflowCycleDetector], _max_iterations: int, _timeout_seconds: float) -> WorkflowEngine:
     """
     Get global workflow engine instance with cycle detection.
 
@@ -1246,8 +1195,8 @@ async def get_workflow_engine(
     if _global_engine is None:
         _global_engine = WorkflowEngine(
             cycle_detector=cycle_detector,
-            max_iterations=max_iterations,
-            timeout_seconds=timeout_seconds,
+            _max_iterations = max_iterations,
+            _timeout_seconds = timeout_seconds,
         )
 
     return _global_engine

@@ -12,7 +12,7 @@ from .mcp_tools import MCPToolRegistry, MCPToolDefinition
 class BaseToolRegistrar:
     """Base class for tool registrars."""
     
-    def __init__(self, registry: MCPToolRegistry, handlers: Dict[str, Callable]):
+    def __init__(self, _registry: MCPToolRegistry, _handlers: Dict[str, _Callable]):
         self._registry = registry
         self._handlers = handlers
     
@@ -27,9 +27,9 @@ class MemoryToolsRegistrar(BaseToolRegistrar):
     def register(self) -> None:
         """Register all memory tools."""
         self._registry.register(MCPToolDefinition(
-            name="memory_store",
-            description="Store information in collective memory with optional metadata and importance weighting",
-            input_schema={
+            _name = "memory_store",
+            _description = "Store information in collective memory with optional metadata and importance weighting",
+            _input_schema = {
                 "type": "object",
                 "properties": {
                     "content": {"type": "string", "description": "Content to store"},
@@ -38,14 +38,14 @@ class MemoryToolsRegistrar(BaseToolRegistrar):
                 },
                 "required": ["content"]
             },
-            handler=self._handlers.get("_handle_memory_store"),
-            category="memory"
+            _handler = self._handlers.get("_handle_memory_store"),
+            _category = "memory"
         ))
         
         self._registry.register(MCPToolDefinition(
-            name="memory_retrieve",
-            description="Retrieve relevant memories by semantic query",
-            input_schema={
+            _name = "memory_retrieve",
+            _description = "Retrieve relevant memories by semantic query",
+            _input_schema = {
                 "type": "object",
                 "properties": {
                     "query": {"type": "string", "description": "Search query"},
@@ -54,8 +54,8 @@ class MemoryToolsRegistrar(BaseToolRegistrar):
                 },
                 "required": ["query"]
             },
-            handler=self._handlers.get("_handle_memory_retrieve"),
-            category="memory"
+            _handler = self._handlers.get("_handle_memory_retrieve"),
+            _category = "memory"
         ))
 
 
@@ -65,9 +65,9 @@ class CommunicationToolsRegistrar(BaseToolRegistrar):
     def register(self) -> None:
         """Register all communication tools."""
         self._registry.register(MCPToolDefinition(
-            name="agent_message",
-            description="Send a message to another agent",
-            input_schema={
+            _name = "agent_message",
+            _description = "Send a message to another agent",
+            _input_schema = {
                 "type": "object",
                 "properties": {
                     "target_agent": {"type": "string", "description": "Target agent ID"},
@@ -77,14 +77,14 @@ class CommunicationToolsRegistrar(BaseToolRegistrar):
                 },
                 "required": ["target_agent", "message_type", "content"]
             },
-            handler=self._handlers.get("_handle_agent_message"),
-            category="communication"
+            _handler = self._handlers.get("_handle_agent_message"),
+            _category = "communication"
         ))
         
         self._registry.register(MCPToolDefinition(
-            name="agent_handoff",
-            description="Transfer task context to another agent",
-            input_schema={
+            _name = "agent_handoff",
+            _description = "Transfer task context to another agent",
+            _input_schema = {
                 "type": "object",
                 "properties": {
                     "to_agent": {"type": "string", "description": "Target agent ID"},
@@ -93,8 +93,8 @@ class CommunicationToolsRegistrar(BaseToolRegistrar):
                 },
                 "required": ["to_agent", "context"]
             },
-            handler=self._handlers.get("_handle_agent_handoff"),
-            category="communication"
+            _handler = self._handlers.get("_handle_agent_handoff"),
+            _category = "communication"
         ))
 
 
@@ -104,9 +104,9 @@ class ConsensusToolsRegistrar(BaseToolRegistrar):
     def register(self) -> None:
         """Register all consensus tools."""
         self._registry.register(MCPToolDefinition(
-            name="consensus_propose",
-            description="Submit a proposal for collective decision via MAKER consensus",
-            input_schema={
+            _name = "consensus_propose",
+            _description = "Submit a proposal for collective decision via MAKER consensus",
+            _input_schema = {
                 "type": "object",
                 "properties": {
                     "proposal": {"type": "string", "description": "Proposal text"},
@@ -115,14 +115,14 @@ class ConsensusToolsRegistrar(BaseToolRegistrar):
                 },
                 "required": ["proposal"]
             },
-            handler=self._handlers.get("_handle_consensus_propose"),
-            category="consensus"
+            _handler = self._handlers.get("_handle_consensus_propose"),
+            _category = "consensus"
         ))
         
         self._registry.register(MCPToolDefinition(
-            name="consensus_vote",
-            description="Cast a vote on an active proposal",
-            input_schema={
+            _name = "consensus_vote",
+            _description = "Cast a vote on an active proposal",
+            _input_schema = {
                 "type": "object",
                 "properties": {
                     "proposal_id": {"type": "string", "description": "Proposal ID"},
@@ -132,8 +132,8 @@ class ConsensusToolsRegistrar(BaseToolRegistrar):
                 },
                 "required": ["proposal_id", "vote", "confidence"]
             },
-            handler=self._handlers.get("_handle_consensus_vote"),
-            category="consensus"
+            _handler = self._handlers.get("_handle_consensus_vote"),
+            _category = "consensus"
         ))
 
 
@@ -143,9 +143,9 @@ class RAGToolsRegistrar(BaseToolRegistrar):
     def register(self) -> None:
         """Register all RAG tools."""
         self._registry.register(MCPToolDefinition(
-            name="rag_query",
-            description="Query the RAG knowledge base",
-            input_schema={
+            _name = "rag_query",
+            _description = "Query the RAG knowledge base",
+            _input_schema = {
                 "type": "object",
                 "properties": {
                     "query": {"type": "string", "description": "Search query"},
@@ -154,14 +154,14 @@ class RAGToolsRegistrar(BaseToolRegistrar):
                 },
                 "required": ["query"]
             },
-            handler=self._handlers.get("_handle_rag_query"),
-            category="knowledge"
+            _handler = self._handlers.get("_handle_rag_query"),
+            _category = "knowledge"
         ))
         
         self._registry.register(MCPToolDefinition(
-            name="rag_ingest",
-            description="Ingest a document into the RAG system",
-            input_schema={
+            _name = "rag_ingest",
+            _description = "Ingest a document into the RAG system",
+            _input_schema = {
                 "type": "object",
                 "properties": {
                     "content": {"type": "string", "description": "Document content"},
@@ -170,8 +170,8 @@ class RAGToolsRegistrar(BaseToolRegistrar):
                 },
                 "required": ["content"]
             },
-            handler=self._handlers.get("_handle_rag_ingest"),
-            category="knowledge"
+            _handler = self._handlers.get("_handle_rag_ingest"),
+            _category = "knowledge"
         ))
 
 
@@ -181,9 +181,9 @@ class IntegrationToolsRegistrar(BaseToolRegistrar):
     def register(self) -> None:
         """Register all integration tools."""
         self._registry.register(MCPToolDefinition(
-            name="external_api_call",
-            description="Make an authenticated external API call",
-            input_schema={
+            _name = "external_api_call",
+            _description = "Make an authenticated external API call",
+            _input_schema = {
                 "type": "object",
                 "properties": {
                     "connection_id": {"type": "string", "description": "Connection ID"},
@@ -193,14 +193,14 @@ class IntegrationToolsRegistrar(BaseToolRegistrar):
                 },
                 "required": ["connection_id", "endpoint", "method"]
             },
-            handler=self._handlers.get("_handle_external_api_call"),
-            category="integration"
+            _handler = self._handlers.get("_handle_external_api_call"),
+            _category = "integration"
         ))
         
         self._registry.register(MCPToolDefinition(
-            name="notification_send",
-            description="Send a notification to external channels",
-            input_schema={
+            _name = "notification_send",
+            _description = "Send a notification to external channels",
+            _input_schema = {
                 "type": "object",
                 "properties": {
                     "channel": {"type": "string", "enum": ["discord", "slack", "telegram", "all"], "description": "Notification channel"},
@@ -209,8 +209,8 @@ class IntegrationToolsRegistrar(BaseToolRegistrar):
                 },
                 "required": ["channel", "message"]
             },
-            handler=self._handlers.get("_handle_notification_send"),
-            category="integration"
+            _handler = self._handlers.get("_handle_notification_send"),
+            _category = "integration"
         ))
 
 
@@ -220,9 +220,9 @@ class WorkflowToolsRegistrar(BaseToolRegistrar):
     def register(self) -> None:
         """Register all workflow tools."""
         self._registry.register(MCPToolDefinition(
-            name="workflow_start",
-            description="Start a new workflow execution",
-            input_schema={
+            _name = "workflow_start",
+            _description = "Start a new workflow execution",
+            _input_schema = {
                 "type": "object",
                 "properties": {
                     "workflow_type": {"type": "string", "description": "Workflow type (e.g., 'heavyswarm')"},
@@ -231,22 +231,22 @@ class WorkflowToolsRegistrar(BaseToolRegistrar):
                 },
                 "required": ["workflow_type"]
             },
-            handler=self._handlers.get("_handle_workflow_start"),
-            category="workflow"
+            _handler = self._handlers.get("_handle_workflow_start"),
+            _category = "workflow"
         ))
         
         self._registry.register(MCPToolDefinition(
-            name="workflow_status",
-            description="Get the status of a running workflow",
-            input_schema={
+            _name = "workflow_status",
+            _description = "Get the status of a running workflow",
+            _input_schema = {
                 "type": "object",
                 "properties": {
                     "workflow_id": {"type": "string", "description": "Workflow ID"}
                 },
                 "required": ["workflow_id"]
             },
-            handler=self._handlers.get("_handle_workflow_status"),
-            category="workflow"
+            _handler = self._handlers.get("_handle_workflow_status"),
+            _category = "workflow"
         ))
 
 
@@ -256,15 +256,15 @@ class SystemToolsRegistrar(BaseToolRegistrar):
     def register(self) -> None:
         """Register all system tools."""
         self._registry.register(MCPToolDefinition(
-            name="system_health",
-            description="Get system health status",
-            input_schema={
+            _name = "system_health",
+            _description = "Get system health status",
+            _input_schema = {
                 "type": "object",
                 "properties": {},
                 "required": []
             },
-            handler=self._handlers.get("_handle_system_health"),
-            category="system"
+            _handler = self._handlers.get("_handle_system_health"),
+            _category = "system"
         ))
 
 
@@ -280,7 +280,7 @@ TOOL_REGISTRARS = [
 ]
 
 
-def get_handler_methods(obj: Any) -> Dict[str, Callable]:
+def get_handler_methods(_obj: Any) -> Dict[str, Callable]:
     """Extract all handler methods from an object.
     
     Args:
@@ -296,7 +296,7 @@ def get_handler_methods(obj: Any) -> Dict[str, Callable]:
     }
 
 
-def register_all_tools(registry: MCPToolRegistry, handlers: Dict[str, Callable]) -> None:
+def register_all_tools(_registry: MCPToolRegistry, _handlers: Dict[str, _Callable]) -> None:
     """Register all default tools using specialized registrars.
     
     Args:
@@ -304,5 +304,5 @@ def register_all_tools(registry: MCPToolRegistry, handlers: Dict[str, Callable])
         handlers: Dict of handler method references
     """
     for registrar_class in TOOL_REGISTRARS:
-        registrar = registrar_class(registry, handlers)
+        _registrar = registrar_class(registry, handlers)
         registrar.register()
