@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-10T13:43:32.471825+00:00",
+    "generated_at": "2026-04-10T14:42:37.053946+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 4,
@@ -13319,9 +13319,9 @@
         {
           "qualified_name": "src.heretek_swarm.config.loader.ConfigLoader",
           "start_line": 47,
-          "end_line": 463,
+          "end_line": 469,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.config.loader.ConfigLoader.__init__",
@@ -13333,16 +13333,16 @@
         {
           "qualified_name": "src.heretek_swarm.config.loader.ConfigLoader._build_config_key_mapping",
           "start_line": 77,
-          "end_line": 142,
+          "end_line": 148,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.config.loader.ConfigLoader.initialize",
-          "start_line": 144,
-          "end_line": 164,
+          "start_line": 152,
+          "end_line": 172,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "added"
         },
         {
           "qualified_name": "src.heretek_swarm.config.loader.ConfigLoader._warm_cache",
@@ -30644,7 +30644,7 @@
       ]
     },
     "src/memory/persistent.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.memory.persistent.MemoryEntryModel",
@@ -30663,9 +30663,9 @@
         {
           "qualified_name": "src.memory.persistent.PersistentMemoryStore",
           "start_line": 105,
-          "end_line": 649,
+          "end_line": 662,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.memory.persistent.PersistentMemoryStore.__init__",
@@ -30679,14 +30679,14 @@
           "start_line": 117,
           "end_line": 130,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.memory.persistent.PersistentMemoryStore.connect",
-          "start_line": 132,
-          "end_line": 170,
+          "start_line": 131,
+          "end_line": 183,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.memory.persistent.PersistentMemoryStore.disconnect",
@@ -58199,9 +58199,9 @@
       "file_path": "src/heretek_swarm/config/loader.py",
       "qualified_name": "src.heretek_swarm.config.loader.ConfigLoader",
       "start_line": 47,
-      "end_line": 463,
+      "end_line": 469,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/config/loader.py|src.heretek_swarm.config.loader.ConfigLoader.__init__": {
       "file_path": "src/heretek_swarm/config/loader.py",
@@ -58215,17 +58215,17 @@
       "file_path": "src/heretek_swarm/config/loader.py",
       "qualified_name": "src.heretek_swarm.config.loader.ConfigLoader._build_config_key_mapping",
       "start_line": 77,
-      "end_line": 142,
+      "end_line": 148,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/config/loader.py|src.heretek_swarm.config.loader.ConfigLoader.initialize": {
       "file_path": "src/heretek_swarm/config/loader.py",
       "qualified_name": "src.heretek_swarm.config.loader.ConfigLoader.initialize",
-      "start_line": 144,
-      "end_line": 164,
+      "start_line": 152,
+      "end_line": 172,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "added"
     },
     "src/heretek_swarm/config/loader.py|src.heretek_swarm.config.loader.ConfigLoader._warm_cache": {
       "file_path": "src/heretek_swarm/config/loader.py",
@@ -77495,9 +77495,9 @@
       "file_path": "src/memory/persistent.py",
       "qualified_name": "src.memory.persistent.PersistentMemoryStore",
       "start_line": 105,
-      "end_line": 649,
+      "end_line": 662,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/memory/persistent.py|src.memory.persistent.PersistentMemoryStore.__init__": {
       "file_path": "src/memory/persistent.py",
@@ -77513,15 +77513,15 @@
       "start_line": 117,
       "end_line": 130,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/memory/persistent.py|src.memory.persistent.PersistentMemoryStore.connect": {
       "file_path": "src/memory/persistent.py",
       "qualified_name": "src.memory.persistent.PersistentMemoryStore.connect",
-      "start_line": 132,
-      "end_line": 170,
+      "start_line": 131,
+      "end_line": 183,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/memory/persistent.py|src.memory.persistent.PersistentMemoryStore.disconnect": {
       "file_path": "src/memory/persistent.py",
@@ -96635,7 +96635,7 @@
         },
         {
           "file_path": "src/memory/persistent.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.memory.persistent.MemoryEntryModel",
             "src.memory.persistent.PersistentConfig",
@@ -99363,7 +99363,7 @@
             },
             {
               "file_path": "src/memory/persistent.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.memory.persistent.MemoryEntryModel",
                 "src.memory.persistent.PersistentConfig",
@@ -101178,7 +101178,7 @@
                 },
                 {
                   "file_path": "src/memory/persistent.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.memory.persistent.MemoryEntryModel",
                     "src.memory.persistent.PersistentConfig",
@@ -103085,7 +103085,7 @@
                 },
                 {
                   "file_path": "src/memory/persistent.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.memory.persistent.MemoryEntryModel",
                     "src.memory.persistent.PersistentConfig",
@@ -118298,7 +118298,7 @@
             },
             {
               "file_path": "src/memory/persistent.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.memory.persistent.MemoryEntryModel",
                 "src.memory.persistent.PersistentConfig",
@@ -118555,7 +118555,7 @@
                 },
                 {
                   "file_path": "src/memory/persistent.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.memory.persistent.MemoryEntryModel",
                     "src.memory.persistent.PersistentConfig",
@@ -119833,7 +119833,7 @@
         },
         {
           "file_path": "src/memory/persistent.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.memory.persistent.MemoryEntryModel",
             "src.memory.persistent.PersistentConfig",
@@ -123071,7 +123071,7 @@
             },
             {
               "file_path": "src/memory/persistent.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.memory.persistent.MemoryEntryModel",
                 "src.memory.persistent.PersistentConfig",
@@ -123188,7 +123188,7 @@
                 },
                 {
                   "file_path": "src/memory/persistent.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.memory.persistent.MemoryEntryModel",
                     "src.memory.persistent.PersistentConfig",
@@ -123307,7 +123307,7 @@
                 },
                 {
                   "file_path": "src/memory/persistent.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.memory.persistent.MemoryEntryModel",
                     "src.memory.persistent.PersistentConfig",
@@ -123403,7 +123403,7 @@
                 },
                 {
                   "file_path": "src/memory/persistent.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.memory.persistent.MemoryEntryModel",
                     "src.memory.persistent.PersistentConfig",
@@ -123535,7 +123535,7 @@
                 },
                 {
                   "file_path": "src/memory/persistent.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.memory.persistent.MemoryEntryModel",
                     "src.memory.persistent.PersistentConfig",

@@ -134,13 +134,19 @@ class ConfigLoader:
             "security.rate_limit_enabled": "RATE_LIMIT_ENABLED",
             
             # LLM
-            "llm.model": "LLM_MODEL",
-            "llm.api_key": "OPENAI_API_KEY",
-            
+            "llm.provider": "LLM_PROVIDER",
+            "llm.model": "MINIMAX_MODEL",
+            "llm.api_key": "MINIMAX_API_KEY",
+            "llm.base_url": "MINIMAX_BASE_URL",
+            "llm.group_id": "MINIMAX_GROUP_ID",
+
             # Embeddings
+            "embeddings.provider": "EMBEDDING_PROVIDER",
             "embeddings.model": "EMBEDDER_MODEL",
+            "embeddings.base_url": "EMBEDDING_BASE_URL",
+            "embeddings.api_key": "EMBEDDING_API_KEY",
         }
-    
+
     async def initialize(self) -> None:
         """
         Initialize the configuration loader.

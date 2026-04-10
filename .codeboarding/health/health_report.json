@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-10T13:43:32.793556+00:00",
-  "overall_score": 0.9940057902355572,
+  "timestamp": "2026-04-10T14:42:37.376107+00:00",
+  "overall_score": 0.993849493487699,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -982,10 +982,10 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 2,
-      "findings_count": 2,
-      "warning_count": 1,
-      "score": 0.9,
+      "total_entities_checked": 10,
+      "findings_count": 10,
+      "warning_count": 3,
+      "score": 0.5,
       "finding_groups": [
         {
           "severity": "info",
@@ -993,10 +993,52 @@
           "description": "Variables declared but never used",
           "entities": [
             {
-              "entity_name": "[unused_variable] \"HybridRetriever\" is not accessed",
-              "file_path": "src/heretek_swarm/runtime/main_loop.py",
-              "line_start": 27,
-              "line_end": 27,
+              "entity_name": "[unused_variable] \"Tuple\" is not accessed",
+              "file_path": "src/memory/persistent.py",
+              "line_start": 11,
+              "line_end": 11,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"Boolean\" is not accessed",
+              "file_path": "src/memory/persistent.py",
+              "line_start": 17,
+              "line_end": 17,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"or_\" is not accessed",
+              "file_path": "src/memory/persistent.py",
+              "line_start": 18,
+              "line_end": 18,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"dimensions\" is not accessed",
+              "file_path": "src/memory/persistent.py",
+              "line_start": 264,
+              "line_end": 264,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"query_vector\" is not accessed",
+              "file_path": "src/memory/persistent.py",
+              "line_start": 536,
+              "line_end": 536,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"min_similarity\" is not accessed",
+              "file_path": "src/memory/persistent.py",
+              "line_start": 540,
+              "line_end": 540,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"now\" is not accessed",
+              "file_path": "src/heretek_swarm/config/loader.py",
+              "line_start": 459,
+              "line_end": 459,
               "metric_value": 0.0
             }
           ]
@@ -1007,10 +1049,24 @@
           "description": "Unused import statements that should be removed",
           "entities": [
             {
-              "entity_name": "[unused_import] Import \"HybridRetriever\" is not accessed",
-              "file_path": "src/heretek_swarm/runtime/main_loop.py",
-              "line_start": 27,
-              "line_end": 27,
+              "entity_name": "[unused_import] Import \"Tuple\" is not accessed",
+              "file_path": "src/memory/persistent.py",
+              "line_start": 11,
+              "line_end": 11,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"Boolean\" is not accessed",
+              "file_path": "src/memory/persistent.py",
+              "line_start": 17,
+              "line_end": 17,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"or_\" is not accessed",
+              "file_path": "src/memory/persistent.py",
+              "line_start": 18,
+              "line_end": 18,
               "metric_value": 0.0
             }
           ]
@@ -1339,30 +1395,30 @@
       "language": "TypeScript",
       "check_type": "circular_dependencies",
       "cycles": [
-        "src.api -> src.components.Agents -> src.api",
-        "src.api -> src.components.Agents -> src.components.Settings -> src.api",
-        "src.api -> src.components.Agents -> src.components.UI -> src.components.Settings -> src.api",
-        "src.api -> src.components.UI -> src.components.Agents -> src.api",
-        "src.api -> src.components.UI -> src.components.Agents -> src.components.Settings -> src.api",
-        "src.api -> src.components.UI -> src.components.Settings -> src.api",
-        "src.api -> src.components.UI -> src.components.Settings -> src.components.Agents -> src.api",
-        "src.components.UI -> src.components.Agents -> src.components.Settings -> src.components.UI",
-        "src.components.UI -> src.components.Agents -> src.components.UI",
-        "src.components.UI -> src.components.Settings -> src.components.Agents -> src.components.UI",
-        "src.components.UI -> src.components.Settings -> src.components.UI",
+        "src.components.Settings -> src.api -> src.components.Agents -> src.components.Settings",
+        "src.components.Settings -> src.api -> src.components.Agents -> src.components.UI -> src.components.Settings",
+        "src.components.Settings -> src.api -> src.components.UI -> src.components.Agents -> src.components.Settings",
+        "src.components.Settings -> src.api -> src.components.UI -> src.components.Settings",
+        "src.components.Settings -> src.components.Agents -> src.api -> src.components.UI -> src.components.Settings",
         "src.components.Settings -> src.components.Agents -> src.components.Settings",
-        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents",
-        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents",
-        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents",
-        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents",
-        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents",
-        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents",
-        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents",
-        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents",
-        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents",
-        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents",
-        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI",
-        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI"
+        "src.components.Settings -> src.components.Agents -> src.components.UI -> src.components.Settings",
+        "src.components.Settings -> src.components.UI -> src.components.Agents -> src.components.Settings",
+        "src.components.Settings -> src.components.UI -> src.components.Settings",
+        "src.components.UI -> src.components.Agents -> src.api -> src.components.UI",
+        "src.components.UI -> src.components.Agents -> src.components.UI",
+        "src.api -> src.components.Agents -> src.api",
+        "dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api",
+        "dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api",
+        "dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api",
+        "dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api",
+        "dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api",
+        "dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api",
+        "dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api",
+        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI",
+        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI",
+        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI",
+        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI",
+        "dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings"
       ],
       "packages_checked": 46,
       "packages_in_cycles": 8
@@ -1421,16 +1477,16 @@
       "composite_risk_score": 80.0
     },
     {
+      "file_path": "src/memory/persistent.py",
+      "total_findings": 11,
+      "warning_findings": 5,
+      "composite_risk_score": 75.0
+    },
+    {
       "file_path": "src/heretek_swarm/collective/learning.py",
       "total_findings": 4,
       "warning_findings": 4,
       "composite_risk_score": 60.0
-    },
-    {
-      "file_path": "src/heretek_swarm/runtime/main_loop.py",
-      "total_findings": 4,
-      "warning_findings": 3,
-      "composite_risk_score": 55.0
     },
     {
       "file_path": "src/heretek_swarm/orchestration/heavyswarm.py",

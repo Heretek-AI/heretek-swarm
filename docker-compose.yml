@@ -15,7 +15,13 @@ services:
       - REDIS_URL=redis://redis:6379
       - QDRANT_HOST=qdrant
       - QDRANT_PORT=6333
-      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - MINIMAX_API_KEY=${MINIMAX_API_KEY:-}
+      - MINIMAX_BASE_URL=${MINIMAX_BASE_URL:-https://api.minimax.io/v1}
+      - MINIMAX_MODEL=${MINIMAX_MODEL:-MiniMax-M2.7}
+      - EMBEDDING_PROVIDER=openai_compatible
+      - EMBEDDING_BASE_URL=${EMBEDDING_BASE_URL:-http://192.168.31.18:13305/api/v1}
+      - EMBEDDING_API_KEY=${EMBEDDING_API_KEY:-lemonade}
+      - EMBEDDER_MODEL=${EMBEDDER_MODEL:-nomic-embed-text-v2-moe-GGUF}
       - HERETEK_API_KEY=${HERETEK_API_KEY:-}
       - ENVIRONMENT=${ENVIRONMENT:-development}
     depends_on:
@@ -107,7 +113,13 @@ services:
     ports:
       - "4000:4000"
     environment:
-      - OPENAI_API_KEY=${OPENAI_API_KEY:-}
+      - MINIMAX_API_KEY=${MINIMAX_API_KEY:-}
+      - MINIMAX_BASE_URL=${MINIMAX_BASE_URL:-https://api.minimax.io/v1}
+      - MINIMAX_MODEL=${MINIMAX_MODEL:-MiniMax-M2.7}
+      - EMBEDDING_PROVIDER=openai_compatible
+      - EMBEDDING_BASE_URL=${EMBEDDING_BASE_URL:-http://192.168.31.18:13305/api/v1}
+      - EMBEDDING_API_KEY=${EMBEDDING_API_KEY:-lemonade}
+      - EMBEDDER_MODEL=${EMBEDDER_MODEL:-nomic-embed-text-v2-moe-GGUF}
       - LITELLM_MASTER_KEY=${LITELLM_MASTER_KEY:-sk-1234}
     volumes:
       - ./litellm_config.yaml:/app/config.yaml

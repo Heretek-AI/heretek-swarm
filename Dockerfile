@@ -44,6 +44,11 @@ COPY migrations/ ./migrations/
 # Copy data directory if it exists (optional)
 COPY data/ ./data/
 
+# Create mem0 history database directory and initialize SQLite db
+RUN mkdir -p /data && \
+    touch /data/mem0_history.db && \
+    chown -R appuser:appuser /data
+
 # Set ownership
 RUN chown -R appuser:appuser /app
 

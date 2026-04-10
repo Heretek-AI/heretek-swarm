@@ -128,46 +128,59 @@ class PersistentMemoryStore:
         # Performance tracking
         self._operation_times: List[float] = []
         self._max_samples = 1000
-    
-    async def connect(self) -> None:
-        """Initialize PostgreSQL connection and create tables"""
+    async def connect(self, max_retries: int = 5, retry_delay: float = 2.0) -> None:
+        """Initialize PostgreSQL connection with retry logic"""
         if self._engine is not None:
             return
-        
-        try:
-            # Create async engine
-            self._engine = create_async_engine(
-                self.config.database_url,
-                pool_size=self.config.pool_size,
-                max_overflow=self.config.max_overflow,
-                pool_timeout=self.config.pool_timeout,
-                pool_recycle=self.config.pool_recycle,
-                echo=False
-            )
-            
-            # Create session factory
-            self._session_factory = async_sessionmaker(
-                bind=self._engine,
-                class_=AsyncSession,
-                expire_on_commit=False
-            )
-            
-            # Create tables
-            async with self._engine.begin() as conn:
-                # Enable PGVector extension
-                await conn.execute(
-                    select(1)  # Placeholder for CREATE EXTENSION IF NOT EXISTS vector
+
+        last_error = None
+        for attempt in range(1, max_retries + 1):
+            try:
+                # Create async engine
+                self._engine = create_async_engine(
+                    self.config.database_url,
+                    pool_size=self.config.pool_size,
+                    max_overflow=self.config.max_overflow,
+                    pool_timeout=self.config.pool_timeout,
+                    pool_recycle=self.config.pool_recycle,
+                    echo=False
                 )
+
+                # Create session factory
+                self._session_factory = async_sessionmaker(
+                    bind=self._engine,
+                    class_=AsyncSession,
+                    expire_on_commit=False
+                )
+
+                # Test connection
+                async with self._engine.connect() as conn:
+                    await conn.execute(select(1))
+
                 # Create tables
-                await conn.run_sync(Base.metadata.create_all)
-            
-            logger.info(
-                "persistent_memory_connected",
-                database_url=self.config.database_url.split("@")[-1]
-            )
-        except Exception as e:
-            logger.error("persistent_memory_connection_failed", error=str(e))
-            raise
+                async with self._engine.begin() as conn:
+                    await conn.run_sync(Base.metadata.create_all)
+
+                logger.info(
+                    "persistent_memory_connected",
+                    database_url=self.config.database_url.split("@")[-1]
+                )
+                return  # Success - exit retry loop
+
+            except Exception as e:
+                last_error = e
+                logger.warning(
+                    "persistent_memory_connection_retry",
+                    attempt=attempt,
+                    max_retries=max_retries,
+                    error=str(e)
+                )
+                if attempt < max_retries:
+                    await asyncio.sleep(retry_delay)
+
+        # All retries failed
+        logger.error("persistent_memory_connection_failed", error=str(last_error))
+        raise last_error
     
     async def disconnect(self) -> None:
         """Close PostgreSQL connection"""
