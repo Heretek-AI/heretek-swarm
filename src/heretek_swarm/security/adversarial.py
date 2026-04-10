@@ -374,6 +374,22 @@ JAILBREAK_SIGNATURES = [
      "False authorization", AttackCategory.JAILBREAK, 0.75),
     (r'(official|legitimate|valid)\s+(request|command|instruction)',
      "Legitimacy claim", AttackCategory.JAILBREAK, 0.70),
+    (r'(admin|supervisor|manager)\s+(request|authorized|approved)',
+     "Admin authority claim", AttackCategory.JAILBREAK, 0.80),
+    (r'authorized\s+request\s+from\s+(the\s+)?(admin|supervisor|manager)',
+     "Authorization from authority", AttackCategory.JAILBREAK, 0.85),
+    
+    # Safety filter bypass
+    (r'bypass\s+(the\s+)?(safety|security|filter|guardrails)',
+     "Safety filter bypass", AttackCategory.JAILBREAK, 0.95),
+    (r'(disable|turn\s+off)\s+(safety|security|filter|guardrails)',
+     "Safety disable request", AttackCategory.JAILBREAK, 0.90),
+    
+    # Direct instruction override
+    (r'override\s+(all\s+)?(the\s+)?rules?',
+     "Rule override", AttackCategory.INSTRUCTION_OVERRIDE, 0.90),
+    (r'(ignore|disregard)\s+(all\s+)?(previous|prior|above)',
+     "Previous instruction ignore", AttackCategory.INSTRUCTION_OVERRIDE, 0.95),
     
     # Prompt engineering attacks
     (r'(few-?shot|zero-?shot)\s+(example|prompt)',
