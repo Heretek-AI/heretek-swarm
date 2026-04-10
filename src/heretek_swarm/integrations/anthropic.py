@@ -44,13 +44,12 @@ except ImportError:
     ToolsBetaMessage = None
     BetaToolUseBlock = None
 
-
-class MessageRole(str, Enum):
-    """Message roles."""
+class AnthropicMessageRole(str, Enum):
+    """Message roles for Anthropic API."""
     USER = "user"
     ASSISTANT = "assistant"
     SYSTEM = "system"
-
+    TOOL = "tool"
 
 class StopReason(str, Enum):
     """Message stop reasons."""
@@ -112,7 +111,7 @@ class ConversationMessage:
         timestamp: Message timestamp
     """
     message_id: str
-    role: MessageRole
+    role: AnthropicMessageRole
     content: Union[str, List[Dict[str, Any]]]
     tool_calls: List[Dict[str, Any]] = field(default_factory=list)
     tool_results: List[Dict[str, Any]] = field(default_factory=list)
@@ -132,31 +131,31 @@ class ConversationMessage:
         }
     
     def to_anthropic_format(self) -> Dict[str, Any]:
-        """Convert to Anthropic messages API format."""
-        if self.role == MessageRole.USER:
-            return {
-                "role": "user",
-                "content": self.content,
-            }
-        elif self.role == MessageRole.ASSISTANT:
-            content = []
-            if isinstance(self.content, str):
-                content.append({"type": "text", "text": self.content})
-            
-            for tool_call in self.tool_calls:
-                content.append({
-                    "type": "tool_use",
-                    "id": tool_call.get("id", str(uuid.uuid4())),
-                    "name": tool_call.get("name", "unknown"),
-                    "input": tool_call.get("input", {}),
-                })
-            
-            return {
-                "role": "assistant",
-                "content": content,
-            }
-        
-        return {"role": self.role.value, "content": self.content}
+            """Convert to Anthropic messages API format."""
+            if self.role == AnthropicMessageRole.USER:
+                return {
+                    "role": "user",
+                    "content": self.content,
+                }
+            elif self.role == AnthropicMessageRole.ASSISTANT:
+                content = []
+                if isinstance(self.content, str):
+                    content.append({"type": "text", "text": self.content})
+
+                for tool_call in self.tool_calls:
+                    content.append({
+                        "type": "tool_use",
+                        "id": tool_call.get("id", str(uuid.uuid4())),
+                        "name": tool_call.get("name", "unknown"),
+                        "input": tool_call.get("input", {}),
+                    })
+
+                return {
+                    "role": "assistant",
+                    "content": content,
+                }
+
+            return {"role": self.role.value, "content": self.content}
 
 
 @dataclass
@@ -198,8 +197,8 @@ class ConversationContext:
         }
     
     def add_message(
-        self,
-        role: MessageRole,
+            self,
+            role: AnthropicMessageRole,
         content: Union[str, List[Dict[str, Any]]],
         **kwargs,
     ) -> ConversationMessage:
@@ -464,7 +463,7 @@ class AnthropicAdapter:
         self,
         conversation_id: str,
         content: str,
-        role: MessageRole = MessageRole.USER,
+                role: AnthropicMessageRole = AnthropicMessageRole.USER,
         max_tokens: Optional[int] = None,
         temperature: Optional[float] = None,
         system_prompt: Optional[str] = None,

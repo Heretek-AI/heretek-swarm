@@ -23,7 +23,7 @@ import structlog
 
 from heretek_swarm.actors.base import AgentActor, ActorMessage
 from heretek_swarm.actors.validation import validate_message as validate_message_schema
-from pydantic import ValidationError
+
 from heretek_swarm.validation import (
     LLMOutputValidator,
     is_code_safe,

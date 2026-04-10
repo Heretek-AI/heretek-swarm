@@ -106,7 +106,7 @@ from .anthropic import (
     ConversationMessage,
     ConversationContext,
     ToolUseRequest,
-    MessageRole as AnthropicMessageRole,
+    AnthropicMessageRole,
     StopReason,
     get_anthropic_adapter,
     create_conversation,

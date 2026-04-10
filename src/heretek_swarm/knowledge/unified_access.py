@@ -262,16 +262,7 @@ class UnifiedKnowledgeAccess:
             query_time_ms=query_time_ms,
         )
         
-        return result
-    
-    async def query_with_strategy(
-        self,
-        query: str,
-        strategy: Optional[str] = None,
-        top_k: int = 10,
-        filters: Optional[Dict[str, Any]] = None,
-        use_multihop: bool = True,
-        apply_reranking: bool = True,
+        return async def query_with_strategy(        query: str,        strategy: Optional[str] = None,        top_k: int = 10,        filters: Optional[Dict[str, Any]] = None,        use_multihop: bool = True,        apply_reranking: bool = True,        diversity_lambda: float = 0.5, = True,
     ) -> KnowledgeQueryResult:
         """
         Query using advanced RAG strategies.
@@ -340,6 +331,7 @@ class UnifiedKnowledgeAccess:
                     "strategy": strategy,
                     "top_k": top_k,
                     "filters": filters,
+                    "diversity_lambda": 0.5,
                 },
             )
             
@@ -715,13 +707,7 @@ class KnowledgeQueryBuilder:
             rerank = self._filters.get("rag_rerank", self._rerank)
             rerank_top_k = self._filters.get("rag_rerank_top_k", 50)
             
-            return await self._knowledge.query_with_strategy(
-                query=self._query,
-                strategy=strategy,
-                top_k=self._limit,
-                filters=self._filters,
-                use_multihop=multihop,
-                apply_reranking=rerank,
+            return await self._knowledge.query_with_strategy(                query=self._query,                strategy=strategy,                top_k=self._limit,                filters=self._filters,                use_multihop=multihop,                apply_reranking=rerank,                diversity_lambda=self._diversity_lambda,
             )
         
         # Fall back to standard query

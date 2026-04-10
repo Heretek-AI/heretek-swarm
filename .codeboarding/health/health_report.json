@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-10T04:23:51.175430+00:00",
-  "overall_score": 0.9837197186767387,
+  "timestamp": "2026-04-10T04:50:31.502663+00:00",
+  "overall_score": 0.9834315289215846,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -982,9 +982,9 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 318,
-      "findings_count": 318,
-      "warning_count": 31,
+      "total_entities_checked": 327,
+      "findings_count": 327,
+      "warning_count": 37,
       "score": 0.0,
       "finding_groups": [
         {
@@ -992,34 +992,6 @@
           "threshold": 0,
           "description": "Variables declared but never used",
           "entities": [
-            {
-              "entity_name": "[unused_variable] \"validated\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/arbiter.py",
-              "line_start": 316,
-              "line_end": 316,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"validated\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/arbiter.py",
-              "line_start": 418,
-              "line_end": 418,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"conflict_id\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/arbiter.py",
-              "line_start": 482,
-              "line_end": 482,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"validated\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/arbiter.py",
-              "line_start": 488,
-              "line_end": 488,
-              "metric_value": 0.0
-            },
             {
               "entity_name": "[unused_variable] \"validated\" is not accessed",
               "file_path": "src/heretek_swarm/actors/arbiter.py",
@@ -1070,13 +1042,6 @@
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] \"ValidationError\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/coder.py",
-              "line_start": 26,
-              "line_end": 26,
-              "metric_value": 0.0
-            },
-            {
               "entity_name": "[unused_variable] \"time_range_days\" is not accessed",
               "file_path": "src/heretek_swarm/actors/dreamer.py",
               "line_start": 415,
@@ -1119,13 +1084,6 @@
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] \"ValidationError\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/examiner.py",
-              "line_start": 22,
-              "line_end": 22,
-              "metric_value": 0.0
-            },
-            {
               "entity_name": "[unused_variable] \"target_type\" is not accessed",
               "file_path": "src/heretek_swarm/actors/examiner.py",
               "line_start": 806,
@@ -1163,8 +1121,8 @@
             {
               "entity_name": "[unused_variable] \"now\" is not accessed",
               "file_path": "src/heretek_swarm/actors/explorer.py",
-              "line_start": 760,
-              "line_end": 760,
+              "line_start": 763,
+              "line_end": 763,
               "metric_value": 0.0
             },
             {
@@ -2017,8 +1975,8 @@
             {
               "entity_name": "[unused_variable] \"context\" is not accessed",
               "file_path": "src/heretek_swarm/integrations/anthropic.py",
-              "line_start": 631,
-              "line_end": 631,
+              "line_start": 630,
+              "line_end": 630,
               "metric_value": 0.0
             },
             {
@@ -2220,22 +2178,22 @@
             {
               "entity_name": "[unused_variable] \"mode\" is not accessed",
               "file_path": "src/heretek_swarm/knowledge/unified_access.py",
-              "line_start": 404,
-              "line_end": 404,
+              "line_start": 396,
+              "line_end": 396,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"query\" is not accessed",
               "file_path": "src/heretek_swarm/knowledge/unified_access.py",
-              "line_start": 545,
-              "line_end": 545,
+              "line_start": 537,
+              "line_end": 537,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"rerank_top_k\" is not accessed",
               "file_path": "src/heretek_swarm/knowledge/unified_access.py",
-              "line_start": 716,
-              "line_end": 716,
+              "line_start": 708,
+              "line_end": 708,
               "metric_value": 0.0
             },
             {
@@ -2951,6 +2909,62 @@
               "line_start": 425,
               "line_end": 425,
               "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"DiscordBot\" is not accessed",
+              "file_path": "src/heretek_swarm/integrations/__init__.py",
+              "line_start": 139,
+              "line_end": 139,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"SlackBot\" is not accessed",
+              "file_path": "src/heretek_swarm/integrations/__init__.py",
+              "line_start": 145,
+              "line_end": 145,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"TelegramBot\" is not accessed",
+              "file_path": "src/heretek_swarm/integrations/__init__.py",
+              "line_start": 151,
+              "line_end": 151,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"AgentHandoff\" is not accessed",
+              "file_path": "src/heretek_swarm/integrations/__init__.py",
+              "line_start": 158,
+              "line_end": 158,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"HandoffContext\" is not accessed",
+              "file_path": "src/heretek_swarm/integrations/__init__.py",
+              "line_start": 159,
+              "line_end": 159,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"HandoffStatus\" is not accessed",
+              "file_path": "src/heretek_swarm/integrations/__init__.py",
+              "line_start": 160,
+              "line_end": 160,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"handoff_manager\" is not accessed",
+              "file_path": "src/heretek_swarm/integrations/__init__.py",
+              "line_start": 161,
+              "line_end": 161,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"create_handoff_sync\" is not accessed",
+              "file_path": "src/heretek_swarm/integrations/__init__.py",
+              "line_start": 162,
+              "line_end": 162,
+              "metric_value": 0.0
             }
           ]
         },
@@ -2959,20 +2973,6 @@
           "threshold": 0,
           "description": "Unused import statements that should be removed",
           "entities": [
-            {
-              "entity_name": "[unused_import] Import \"ValidationError\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/coder.py",
-              "line_start": 26,
-              "line_end": 26,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_import] Import \"ValidationError\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/examiner.py",
-              "line_start": 22,
-              "line_end": 22,
-              "metric_value": 0.0
-            },
             {
               "entity_name": "[unused_import] Import \"EmbeddingConfig\" is not accessed",
               "file_path": "src/heretek_swarm/actors/langroid_adapter.py",
@@ -3140,6 +3140,62 @@
               "line_start": 334,
               "line_end": 334,
               "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"DiscordBot\" is not accessed",
+              "file_path": "src/heretek_swarm/integrations/__init__.py",
+              "line_start": 139,
+              "line_end": 139,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"SlackBot\" is not accessed",
+              "file_path": "src/heretek_swarm/integrations/__init__.py",
+              "line_start": 145,
+              "line_end": 145,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"TelegramBot\" is not accessed",
+              "file_path": "src/heretek_swarm/integrations/__init__.py",
+              "line_start": 151,
+              "line_end": 151,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"AgentHandoff\" is not accessed",
+              "file_path": "src/heretek_swarm/integrations/__init__.py",
+              "line_start": 158,
+              "line_end": 158,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"HandoffContext\" is not accessed",
+              "file_path": "src/heretek_swarm/integrations/__init__.py",
+              "line_start": 159,
+              "line_end": 159,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"HandoffStatus\" is not accessed",
+              "file_path": "src/heretek_swarm/integrations/__init__.py",
+              "line_start": 160,
+              "line_end": 160,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"handoff_manager\" is not accessed",
+              "file_path": "src/heretek_swarm/integrations/__init__.py",
+              "line_start": 161,
+              "line_end": 161,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"create_handoff_sync\" is not accessed",
+              "file_path": "src/heretek_swarm/integrations/__init__.py",
+              "line_start": 162,
+              "line_end": 162,
+              "metric_value": 0.0
             }
           ]
         },
@@ -3195,6 +3251,13 @@
               "file_path": "src/heretek_swarm/consciousness/fep_active_inference.py",
               "line_start": 1252,
               "line_end": 1252,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unreachable_code] Code is unreachable",
+              "file_path": "src/heretek_swarm/knowledge/unified_access.py",
+              "line_start": 267,
+              "line_end": 350,
               "metric_value": 0.0
             }
           ]
@@ -3629,6 +3692,12 @@
   ],
   "file_summaries": [
     {
+      "file_path": "src/heretek_swarm/integrations/__init__.py",
+      "total_findings": 16,
+      "warning_findings": 8,
+      "composite_risk_score": 90.0
+    },
+    {
       "file_path": "src/heretek_swarm/actors/base.py",
       "total_findings": 9,
       "warning_findings": 7,
@@ -3654,7 +3723,7 @@
     },
     {
       "file_path": "src/heretek_swarm/knowledge/unified_access.py",
-      "total_findings": 12,
+      "total_findings": 13,
       "warning_findings": 5,
       "composite_risk_score": 75.0
     },
@@ -3690,7 +3759,7 @@
     },
     {
       "file_path": "src/heretek_swarm/actors/arbiter.py",
-      "total_findings": 12,
+      "total_findings": 8,
       "warning_findings": 3,
       "composite_risk_score": 65.0
     },
@@ -3739,12 +3808,6 @@
     {
       "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
       "total_findings": 13,
-      "warning_findings": 2,
-      "composite_risk_score": 60.0
-    },
-    {
-      "file_path": "src/heretek_swarm/consciousness/phi_training.py",
-      "total_findings": 7,
       "warning_findings": 2,
       "composite_risk_score": 60.0
     }

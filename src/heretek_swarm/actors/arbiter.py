@@ -313,7 +313,7 @@ class ArbiterAgent(AgentActor):
             evidence = content.get("evidence", [])
             
             # Validate
-            validated = validate_message({
+            validate_message({
                 "sender_id": message.sender_id,
                 "message_type": "report_conflict",
                 "content": content,
@@ -415,7 +415,7 @@ class ArbiterAgent(AgentActor):
             urgency = content.get("urgency", "normal")
             
             # Validate
-            validated = validate_message({
+            validate_message({
                 "sender_id": message.sender_id,
                 "message_type": "request_arbitration",
                 "content": content,
@@ -479,20 +479,20 @@ class ArbiterAgent(AgentActor):
         """
         try:
             content = message.content
-            conflict_id = content.get("conflict_id")
+            _ = content.get("conflict_id")  # Required for message contract
             dispute_description = content.get("dispute_description", "")
             other_party = content.get("other_party")
             proposed_solution = content.get("proposed_solution")
             
             # Validate
-            validated = validate_message({
+            validate_message({
                 "sender_id": message.sender_id,
                 "message_type": "mediate_dispute",
                 "content": content,
                 "timestamp": message.timestamp,
-            })
-            
-            # Perform mediation
+                })
+
+                # Perform mediation:
             mediation_result = await self._conduct_mediation(
                 sender=message.sender_id,
                 other_party=other_party,

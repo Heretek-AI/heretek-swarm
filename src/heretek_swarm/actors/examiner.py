@@ -19,7 +19,7 @@ from dataclasses import dataclass, field
 from enum import Enum
 
 import structlog
-from pydantic import ValidationError
+
 
 from heretek_swarm.actors.base import AgentActor, ActorMessage
 from heretek_swarm.actors.validation import validate_message as validate_message_schema

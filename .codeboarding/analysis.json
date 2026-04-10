@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-10T04:23:50.841329+00:00",
+    "generated_at": "2026-04-10T04:50:31.174233+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 4,
@@ -579,10 +579,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.actors.arbiter.ArbiterAgent",
-          "start_line": 138,
-          "end_line": 1821,
+          "start_line": 135,
+          "end_line": 1818,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.arbiter.ArbiterAgent.__init__",
@@ -607,24 +607,24 @@
         },
         {
           "qualified_name": "src.heretek_swarm.actors.arbiter.ArbiterAgent._handle_report_conflict",
-          "start_line": 296,
-          "end_line": 398,
+          "start_line": 293,
+          "end_line": 395,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.arbiter.ArbiterAgent._handle_request_arbitration",
-          "start_line": 400,
-          "end_line": 470,
+          "start_line": 397,
+          "end_line": 467,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.arbiter.ArbiterAgent._handle_mediate_dispute",
-          "start_line": 472,
-          "end_line": 520,
+          "start_line": 469,
+          "end_line": 517,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.arbiter.ArbiterAgent._handle_resolve_contention",
@@ -3289,17 +3289,17 @@
         },
         {
           "qualified_name": "src.heretek_swarm.actors.explorer.ExplorerAgent",
-          "start_line": 116,
-          "end_line": 1078,
+          "start_line": 114,
+          "end_line": 1079,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.explorer.ExplorerAgent.__init__",
-          "start_line": 136,
-          "end_line": 230,
+          "start_line": 134,
+          "end_line": 231,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.explorer.ExplorerAgent.on_start",
@@ -18524,11 +18524,18 @@
       "file_status": "modified",
       "methods": [
         {
+          "qualified_name": "src.heretek_swarm.integrations.anthropic.AnthropicMessageRole",
+          "start_line": 47,
+          "end_line": 52,
+          "node_type": "CLASS",
+          "status": "modified"
+        },
+        {
           "qualified_name": "src.heretek_swarm.integrations.anthropic.MessageRole",
           "start_line": 48,
           "end_line": 52,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.integrations.anthropic.StopReason",
@@ -18560,10 +18567,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.integrations.anthropic.ConversationMessage",
-          "start_line": 102,
-          "end_line": 159,
+          "start_line": 101,
+          "end_line": 158,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.integrations.anthropic.ConversationMessage.to_dict",
@@ -18574,17 +18581,17 @@
         },
         {
           "qualified_name": "src.heretek_swarm.integrations.anthropic.ConversationMessage.to_anthropic_format",
-          "start_line": 134,
-          "end_line": 159,
+          "start_line": 133,
+          "end_line": 158,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.integrations.anthropic.ConversationContext",
-          "start_line": 163,
-          "end_line": 230,
+          "start_line": 162,
+          "end_line": 229,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.integrations.anthropic.ConversationContext.to_dict",
@@ -18595,10 +18602,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.integrations.anthropic.ConversationContext.add_message",
-          "start_line": 200,
-          "end_line": 215,
+          "start_line": 199,
+          "end_line": 214,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.integrations.anthropic.ConversationContext._update_token_count",
@@ -18623,10 +18630,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.integrations.anthropic.AnthropicAdapter",
-          "start_line": 262,
-          "end_line": 757,
+          "start_line": 261,
+          "end_line": 756,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.integrations.anthropic.AnthropicAdapter.__init__",
@@ -18679,10 +18686,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.integrations.anthropic.AnthropicAdapter.send_message",
-          "start_line": 463,
-          "end_line": 541,
+          "start_line": 462,
+          "end_line": 540,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.integrations.anthropic.AnthropicAdapter._process_response",
@@ -20762,10 +20769,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess",
-          "start_line": 126,
-          "end_line": 618,
+          "start_line": 124,
+          "end_line": 608,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess.__init__",
@@ -20776,17 +20783,17 @@
         },
         {
           "qualified_name": "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess.query",
-          "start_line": 170,
-          "end_line": 267,
+          "start_line": 168,
+          "end_line": 350,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess.query_with_strategy",
-          "start_line": 269,
-          "end_line": 360,
+          "start_line": 267,
+          "end_line": 359,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess._query_memory",
@@ -20853,10 +20860,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder",
-          "start_line": 621,
-          "end_line": 738,
+          "start_line": 611,
+          "end_line": 722,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.__init__",
@@ -20937,10 +20944,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.execute",
-          "start_line": 707,
-          "end_line": 738,
+          "start_line": 697,
+          "end_line": 722,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.knowledge.unified_access.create_unified_knowledge_access",
@@ -43303,6 +43310,10 @@
     "docs/REMEDIATION_BACKLOG.md": {
       "file_status": "modified",
       "methods": []
+    },
+    "src/heretek_swarm/integrations/__init__.py": {
+      "file_status": "modified",
+      "methods": []
     }
   },
   "methods_index": {
@@ -43901,10 +43912,10 @@
     "src/heretek_swarm/actors/arbiter.py|src.heretek_swarm.actors.arbiter.ArbiterAgent": {
       "file_path": "src/heretek_swarm/actors/arbiter.py",
       "qualified_name": "src.heretek_swarm.actors.arbiter.ArbiterAgent",
-      "start_line": 138,
-      "end_line": 1821,
+      "start_line": 135,
+      "end_line": 1818,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/arbiter.py|src.heretek_swarm.actors.arbiter.ArbiterAgent.__init__": {
       "file_path": "src/heretek_swarm/actors/arbiter.py",
@@ -43933,26 +43944,26 @@
     "src/heretek_swarm/actors/arbiter.py|src.heretek_swarm.actors.arbiter.ArbiterAgent._handle_report_conflict": {
       "file_path": "src/heretek_swarm/actors/arbiter.py",
       "qualified_name": "src.heretek_swarm.actors.arbiter.ArbiterAgent._handle_report_conflict",
-      "start_line": 296,
-      "end_line": 398,
+      "start_line": 293,
+      "end_line": 395,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/arbiter.py|src.heretek_swarm.actors.arbiter.ArbiterAgent._handle_request_arbitration": {
       "file_path": "src/heretek_swarm/actors/arbiter.py",
       "qualified_name": "src.heretek_swarm.actors.arbiter.ArbiterAgent._handle_request_arbitration",
-      "start_line": 400,
-      "end_line": 470,
+      "start_line": 397,
+      "end_line": 467,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/arbiter.py|src.heretek_swarm.actors.arbiter.ArbiterAgent._handle_mediate_dispute": {
       "file_path": "src/heretek_swarm/actors/arbiter.py",
       "qualified_name": "src.heretek_swarm.actors.arbiter.ArbiterAgent._handle_mediate_dispute",
-      "start_line": 472,
-      "end_line": 520,
+      "start_line": 469,
+      "end_line": 517,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/arbiter.py|src.heretek_swarm.actors.arbiter.ArbiterAgent._handle_resolve_contention": {
       "file_path": "src/heretek_swarm/actors/arbiter.py",
@@ -46941,18 +46952,18 @@
     "src/heretek_swarm/actors/explorer.py|src.heretek_swarm.actors.explorer.ExplorerAgent": {
       "file_path": "src/heretek_swarm/actors/explorer.py",
       "qualified_name": "src.heretek_swarm.actors.explorer.ExplorerAgent",
-      "start_line": 116,
-      "end_line": 1078,
+      "start_line": 114,
+      "end_line": 1079,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/explorer.py|src.heretek_swarm.actors.explorer.ExplorerAgent.__init__": {
       "file_path": "src/heretek_swarm/actors/explorer.py",
       "qualified_name": "src.heretek_swarm.actors.explorer.ExplorerAgent.__init__",
-      "start_line": 136,
-      "end_line": 230,
+      "start_line": 134,
+      "end_line": 231,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/explorer.py|src.heretek_swarm.actors.explorer.ExplorerAgent.on_start": {
       "file_path": "src/heretek_swarm/actors/explorer.py",
@@ -63962,13 +63973,21 @@
       "type": "METHOD",
       "status": "unchanged"
     },
+    "src/heretek_swarm/integrations/anthropic.py|src.heretek_swarm.integrations.anthropic.AnthropicMessageRole": {
+      "file_path": "src/heretek_swarm/integrations/anthropic.py",
+      "qualified_name": "src.heretek_swarm.integrations.anthropic.AnthropicMessageRole",
+      "start_line": 47,
+      "end_line": 52,
+      "type": "CLASS",
+      "status": "modified"
+    },
     "src/heretek_swarm/integrations/anthropic.py|src.heretek_swarm.integrations.anthropic.MessageRole": {
       "file_path": "src/heretek_swarm/integrations/anthropic.py",
       "qualified_name": "src.heretek_swarm.integrations.anthropic.MessageRole",
       "start_line": 48,
       "end_line": 52,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/integrations/anthropic.py|src.heretek_swarm.integrations.anthropic.StopReason": {
       "file_path": "src/heretek_swarm/integrations/anthropic.py",
@@ -64005,10 +64024,10 @@
     "src/heretek_swarm/integrations/anthropic.py|src.heretek_swarm.integrations.anthropic.ConversationMessage": {
       "file_path": "src/heretek_swarm/integrations/anthropic.py",
       "qualified_name": "src.heretek_swarm.integrations.anthropic.ConversationMessage",
-      "start_line": 102,
-      "end_line": 159,
+      "start_line": 101,
+      "end_line": 158,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/integrations/anthropic.py|src.heretek_swarm.integrations.anthropic.ConversationMessage.to_dict": {
       "file_path": "src/heretek_swarm/integrations/anthropic.py",
@@ -64021,18 +64040,18 @@
     "src/heretek_swarm/integrations/anthropic.py|src.heretek_swarm.integrations.anthropic.ConversationMessage.to_anthropic_format": {
       "file_path": "src/heretek_swarm/integrations/anthropic.py",
       "qualified_name": "src.heretek_swarm.integrations.anthropic.ConversationMessage.to_anthropic_format",
-      "start_line": 134,
-      "end_line": 159,
+      "start_line": 133,
+      "end_line": 158,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/integrations/anthropic.py|src.heretek_swarm.integrations.anthropic.ConversationContext": {
       "file_path": "src/heretek_swarm/integrations/anthropic.py",
       "qualified_name": "src.heretek_swarm.integrations.anthropic.ConversationContext",
-      "start_line": 163,
-      "end_line": 230,
+      "start_line": 162,
+      "end_line": 229,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/integrations/anthropic.py|src.heretek_swarm.integrations.anthropic.ConversationContext.to_dict": {
       "file_path": "src/heretek_swarm/integrations/anthropic.py",
@@ -64045,10 +64064,10 @@
     "src/heretek_swarm/integrations/anthropic.py|src.heretek_swarm.integrations.anthropic.ConversationContext.add_message": {
       "file_path": "src/heretek_swarm/integrations/anthropic.py",
       "qualified_name": "src.heretek_swarm.integrations.anthropic.ConversationContext.add_message",
-      "start_line": 200,
-      "end_line": 215,
+      "start_line": 199,
+      "end_line": 214,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/integrations/anthropic.py|src.heretek_swarm.integrations.anthropic.ConversationContext._update_token_count": {
       "file_path": "src/heretek_swarm/integrations/anthropic.py",
@@ -64077,10 +64096,10 @@
     "src/heretek_swarm/integrations/anthropic.py|src.heretek_swarm.integrations.anthropic.AnthropicAdapter": {
       "file_path": "src/heretek_swarm/integrations/anthropic.py",
       "qualified_name": "src.heretek_swarm.integrations.anthropic.AnthropicAdapter",
-      "start_line": 262,
-      "end_line": 757,
+      "start_line": 261,
+      "end_line": 756,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/integrations/anthropic.py|src.heretek_swarm.integrations.anthropic.AnthropicAdapter.__init__": {
       "file_path": "src/heretek_swarm/integrations/anthropic.py",
@@ -64141,10 +64160,10 @@
     "src/heretek_swarm/integrations/anthropic.py|src.heretek_swarm.integrations.anthropic.AnthropicAdapter.send_message": {
       "file_path": "src/heretek_swarm/integrations/anthropic.py",
       "qualified_name": "src.heretek_swarm.integrations.anthropic.AnthropicAdapter.send_message",
-      "start_line": 463,
-      "end_line": 541,
+      "start_line": 462,
+      "end_line": 540,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/integrations/anthropic.py|src.heretek_swarm.integrations.anthropic.AnthropicAdapter._process_response": {
       "file_path": "src/heretek_swarm/integrations/anthropic.py",
@@ -66453,10 +66472,10 @@
     "src/heretek_swarm/knowledge/unified_access.py|src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess": {
       "file_path": "src/heretek_swarm/knowledge/unified_access.py",
       "qualified_name": "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess",
-      "start_line": 126,
-      "end_line": 618,
+      "start_line": 124,
+      "end_line": 608,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/knowledge/unified_access.py|src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess.__init__": {
       "file_path": "src/heretek_swarm/knowledge/unified_access.py",
@@ -66469,18 +66488,18 @@
     "src/heretek_swarm/knowledge/unified_access.py|src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess.query": {
       "file_path": "src/heretek_swarm/knowledge/unified_access.py",
       "qualified_name": "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess.query",
-      "start_line": 170,
-      "end_line": 267,
+      "start_line": 168,
+      "end_line": 350,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/knowledge/unified_access.py|src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess.query_with_strategy": {
       "file_path": "src/heretek_swarm/knowledge/unified_access.py",
       "qualified_name": "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess.query_with_strategy",
-      "start_line": 269,
-      "end_line": 360,
+      "start_line": 267,
+      "end_line": 359,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/knowledge/unified_access.py|src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess._query_memory": {
       "file_path": "src/heretek_swarm/knowledge/unified_access.py",
@@ -66557,10 +66576,10 @@
     "src/heretek_swarm/knowledge/unified_access.py|src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder": {
       "file_path": "src/heretek_swarm/knowledge/unified_access.py",
       "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder",
-      "start_line": 621,
-      "end_line": 738,
+      "start_line": 611,
+      "end_line": 722,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/knowledge/unified_access.py|src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.__init__": {
       "file_path": "src/heretek_swarm/knowledge/unified_access.py",
@@ -66653,10 +66672,10 @@
     "src/heretek_swarm/knowledge/unified_access.py|src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.execute": {
       "file_path": "src/heretek_swarm/knowledge/unified_access.py",
       "qualified_name": "src.heretek_swarm.knowledge.unified_access.KnowledgeQueryBuilder.execute",
-      "start_line": 707,
-      "end_line": 738,
+      "start_line": 697,
+      "end_line": 722,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/knowledge/unified_access.py|src.heretek_swarm.knowledge.unified_access.create_unified_knowledge_access": {
       "file_path": "src/heretek_swarm/knowledge/unified_access.py",
@@ -94486,6 +94505,7 @@
           "file_path": "src/heretek_swarm/integrations/anthropic.py",
           "file_status": "modified",
           "methods": [
+            "src.heretek_swarm.integrations.anthropic.AnthropicMessageRole",
             "src.heretek_swarm.integrations.anthropic.MessageRole",
             "src.heretek_swarm.integrations.anthropic.StopReason",
             "src.heretek_swarm.integrations.anthropic.ToolDefinition",
@@ -105306,6 +105326,7 @@
               "file_path": "src/heretek_swarm/integrations/anthropic.py",
               "file_status": "modified",
               "methods": [
+                "src.heretek_swarm.integrations.anthropic.AnthropicMessageRole",
                 "src.heretek_swarm.integrations.anthropic.MessageRole",
                 "src.heretek_swarm.integrations.anthropic.StopReason",
                 "src.heretek_swarm.integrations.anthropic.ToolDefinition",
@@ -110042,6 +110063,7 @@
                   "file_path": "src/heretek_swarm/integrations/anthropic.py",
                   "file_status": "modified",
                   "methods": [
+                    "src.heretek_swarm.integrations.anthropic.AnthropicMessageRole",
                     "src.heretek_swarm.integrations.anthropic.MessageRole",
                     "src.heretek_swarm.integrations.anthropic.StopReason",
                     "src.heretek_swarm.integrations.anthropic.ToolDefinition",
@@ -110594,6 +110616,7 @@
                       "file_path": "src/heretek_swarm/integrations/anthropic.py",
                       "file_status": "modified",
                       "methods": [
+                        "src.heretek_swarm.integrations.anthropic.AnthropicMessageRole",
                         "src.heretek_swarm.integrations.anthropic.MessageRole",
                         "src.heretek_swarm.integrations.anthropic.StopReason",
                         "src.heretek_swarm.integrations.anthropic.ToolDefinition",
