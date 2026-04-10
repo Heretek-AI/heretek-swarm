@@ -551,20 +551,17 @@ Respond in JSON:
             if self.swarms_agent:
                 result = await self.run_with_llm(prompt=prompt, timeout=60)
                 import json
-                try:
-                    start_idx = result.find("{")
-                    end_idx = result.rfind("}") + 1
-                    if start_idx >= 0 and end_idx > start_idx:
-                        parsed = json.loads(result[start_idx:end_idx])
-                        findings = parsed.get("findings", [])
-                        metrics = {
-                            "causal_factors_count": len(parsed.get("causal_factors", [])),
-                        }
-                        confidence = float(parsed.get("confidence", 0.7))
-                    else:
-                        raise ValueError("No JSON found")
-                except Exception:
-                    raise
+                start_idx = result.find("{")
+                end_idx = result.rfind("}") + 1
+                if start_idx >= 0 and end_idx > start_idx:
+                    parsed = json.loads(result[start_idx:end_idx])
+                    findings = parsed.get("findings", [])
+                    metrics = {
+                        "causal_factors_count": len(parsed.get("causal_factors", [])),
+                    }
+                    confidence = float(parsed.get("confidence", 0.7))
+                else:
+                    raise ValueError("No JSON found")
             else:
                 raise RuntimeError("LLM not available")
         except Exception:
@@ -613,20 +610,17 @@ Respond in JSON:
             if self.swarms_agent:
                 result = await self.run_with_llm(prompt=prompt, timeout=60)
                 import json
-                try:
-                    start_idx = result.find("{")
-                    end_idx = result.rfind("}") + 1
-                    if start_idx >= 0 and end_idx > start_idx:
-                        parsed = json.loads(result[start_idx:end_idx])
-                        findings = parsed.get("predictions", [])
-                        metrics = {
-                            "factors_count": len(parsed.get("predictive_factors", [])),
-                        }
-                        confidence = float(parsed.get("confidence", 0.6))
-                    else:
-                        raise ValueError("No JSON found")
-                except Exception:
-                    raise
+                start_idx = result.find("{")
+                end_idx = result.rfind("}") + 1
+                if start_idx >= 0 and end_idx > start_idx:
+                    parsed = json.loads(result[start_idx:end_idx])
+                    findings = parsed.get("predictions", [])
+                    metrics = {
+                        "factors_count": len(parsed.get("predictive_factors", [])),
+                    }
+                    confidence = float(parsed.get("confidence", 0.6))
+                else:
+                    raise ValueError("No JSON found")
             else:
                 raise RuntimeError("LLM not available")
         except Exception:

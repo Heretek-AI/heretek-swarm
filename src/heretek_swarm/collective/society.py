@@ -720,21 +720,18 @@ class AgentSociety:
         # Try using LLM if available
         if hasattr(actor, 'run_with_llm') and actor.swarms_agent is not None:
             prompt = self._build_contribution_prompt(task, protocol)
-            try:
-                response = await asyncio.wait_for(
-                    actor.run_with_llm(prompt),
-                    timeout=timeout
-                )
-                return {
-                    "contribution": {
-                        "analysis": response,
-                        "recommendation": "llm_generated",
-                        "method": "run_with_llm"
-                    },
-                    "confidence": 0.75
-                }
-            except asyncio.TimeoutError:
-                raise
+            response = await asyncio.wait_for(
+                actor.run_with_llm(prompt),
+                timeout=timeout
+            )
+            return {
+                "contribution": {
+                    "analysis": response,
+                    "recommendation": "llm_generated",
+                    "method": "run_with_llm"
+                },
+                "confidence": 0.75
+            }
         
         # Fallback: Generate contribution based on actor type
         actor_type = type(actor).__name__
