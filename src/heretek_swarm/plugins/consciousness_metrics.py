@@ -16,7 +16,6 @@ Usage:
 """
 
 import math
-import time
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
@@ -24,7 +23,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import structlog
 
-from ..consciousness.iit_phi import PhiCalculator, PhiResult, CauseEffectStructure
+from ..consciousness.iit_phi import PhiCalculator
 from ..consciousness.fep_active_inference import FreeEnergyCalculator, FEPResult
 
 logger = structlog.get_logger("ConsciousnessMetrics")

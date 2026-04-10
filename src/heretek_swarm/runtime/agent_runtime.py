@@ -9,7 +9,6 @@ from enum import Enum
 from dataclasses import dataclass, field
 from typing import Any, Callable, Dict, List, Optional
 from datetime import datetime, timezone
-import asyncio
 import structlog
 
 logger = structlog.get_logger(__name__)

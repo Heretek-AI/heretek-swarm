@@ -8,9 +8,8 @@ Pattern inspired by elizaOS plugin system.
 import asyncio
 import importlib
 import inspect
-import logging
 from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional, Type
+from typing import Any, Callable, Dict, List, Optional
 from dataclasses import dataclass, field
 from enum import Enum
 

@@ -37,8 +37,6 @@ Example:
     ```
 """
 
-import logging
-import math
 import statistics
 from dataclasses import dataclass, field
 from datetime import datetime, timezone

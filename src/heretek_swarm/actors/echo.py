@@ -11,14 +11,13 @@ The Echo agent is responsible for:
 This agent ensures clear, contextual communication across all swarm interfaces.
 """
 
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional, Set
 import uuid
 
 from ..actors.base import AgentActor, ActorMessage
-from ..actors.validation import validate_message
 
 # Session 44: Collective Learning Integration
 from heretek_swarm.collective.learning import PatternExtractor, PatternType

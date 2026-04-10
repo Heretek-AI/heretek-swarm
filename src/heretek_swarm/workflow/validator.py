@@ -11,7 +11,7 @@ Provides comprehensive validation for visual workflows including:
 Inspired by LangGraph workflow validation patterns.
 """
 
-from typing import Dict, List, Optional, Set, Any, Literal
+from typing import Dict, List, Optional, Any, Literal
 from dataclasses import dataclass, field
 from enum import Enum
 import structlog

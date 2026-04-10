@@ -23,7 +23,7 @@ import structlog
 from swarms import Agent
 
 from heretek_swarm.actors.base import AgentActor, ActorMessage
-from heretek_swarm.memory.base import DualTierMemory, MemoryEntry, MemoryQuery
+from heretek_swarm.memory.base import DualTierMemory, MemoryEntry
 from heretek_swarm.knowledge.unified_access import UnifiedKnowledgeAccess, KnowledgeQueryResult
 
 # Session 44: Collective Learning Integration

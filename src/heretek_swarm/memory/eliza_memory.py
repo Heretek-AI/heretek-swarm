@@ -16,9 +16,8 @@ Based on: MiniMax Audit lines 244-337
 """
 
 import math
-import time
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from typing import Any, Optional
 
 import structlog

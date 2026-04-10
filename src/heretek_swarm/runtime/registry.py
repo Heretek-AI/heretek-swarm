@@ -5,7 +5,6 @@ This module provides a centralized registry for all collective agents,
 their roles, capabilities, and character definitions.
 """
 
-import json
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
@@ -14,7 +13,7 @@ from typing import Any, Dict, List, Optional
 import structlog
 
 # Import Character and CharacterStyle from the package __init__
-from . import Character, CharacterStyle
+from . import Character
 
 logger = structlog.get_logger("AgentRegistry")
 

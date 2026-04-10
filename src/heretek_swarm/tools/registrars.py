@@ -4,7 +4,7 @@ This module provides specialized registrars for organizing MCP tool
 registrations into maintainable, focused components.
 """
 
-from typing import Any, Dict, Callable, Optional
+from typing import Any, Dict, Callable
 
 from .mcp_tools import MCPToolRegistry, MCPToolDefinition
 

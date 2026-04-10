@@ -17,17 +17,15 @@ Message Types:
 
 import asyncio
 import json
-import logging
 import uuid
-from typing import Dict, Any, Optional, List, Set
+from typing import Dict, Any, Optional, Set
 from enum import Enum
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 
 import structlog
-from starlette.websockets import WebSocket, WebSocketState
+from starlette.websockets import WebSocket
 from starlette.applications import Starlette
-from starlette.routing import Route
 from starlette.requests import Request
 from starlette.responses import JSONResponse
 
@@ -114,7 +112,7 @@ class A2AProtocol:
     
     async def start_server(self) -> None:
         """Start the WebSocket server."""
-        from starlette.routing import Route, WebSocketRoute
+        from starlette.routing import Route
         
         async def websocket_endpoint(ws: WebSocket):
             await self._handle_connection(ws)

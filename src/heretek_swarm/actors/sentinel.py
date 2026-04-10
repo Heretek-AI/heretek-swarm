@@ -13,20 +13,17 @@ Sentinel is the "safety gate" of the Collective, ensuring all inputs and outputs
 meet safety standards before processing or delivery.
 """
 
-import asyncio
-import logging
 import re
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Set, Tuple
-from dataclasses import dataclass, field
+from typing import Any, Dict, List, Optional
+from dataclasses import dataclass
 from enum import Enum
 
-from pydantic import BaseModel, Field, ValidationError
+from pydantic import ValidationError
 import structlog
-from swarms import Agent
 
 from heretek_swarm.actors.base import AgentActor, ActorMessage
-from heretek_swarm.actors.validation import validate_message, MessageContent
+from heretek_swarm.actors.validation import validate_message
 
 logger = structlog.get_logger("SentinelAgent")
 

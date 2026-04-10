@@ -23,11 +23,6 @@ from swarms import Agent
 
 from heretek_swarm.actors.validation import (
     validate_message,
-    MessageContent,
-    HealthCheckRequest,
-    SuspendResumeRequest,
-    TerminateRequest,
-    CollectiveTaskRequest,
 )
 from heretek_swarm.state.repository import (
     StateRepository,

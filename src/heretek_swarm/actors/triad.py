@@ -11,7 +11,6 @@ This module implements the core Triad agents:
 These agents work together using MAKER consensus for deliberation.
 """
 
-import logging
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 

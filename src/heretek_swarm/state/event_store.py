@@ -21,10 +21,10 @@ Event Structure:
 
 import json
 import asyncio
-from datetime import datetime, timezone, timedelta
-from typing import Any, Dict, List, Optional, Callable, TypeVar, Generic
+from datetime import datetime, timezone
+from typing import Any, Dict, List, Optional, Callable
 from dataclasses import dataclass, field
-from uuid import uuid4, UUID
+from uuid import uuid4
 from enum import Enum
 
 import structlog

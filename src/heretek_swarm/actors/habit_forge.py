@@ -12,18 +12,14 @@ Named for the ability to forge and shape behavioral patterns into productive,
 sustainable habits that drive collective excellence.
 """
 
-import asyncio
-import logging
 from datetime import datetime, timezone, timedelta
 from typing import Any, Dict, List, Optional, Tuple
 from enum import Enum
 
-from pydantic import ValidationError, Field
 import structlog
 from swarms import Agent
 
 from heretek_swarm.actors.base import AgentActor, ActorMessage
-from heretek_swarm.actors.validation import validate_message, MessageContent
 
 # Session 44: Collective Learning Integration
 from heretek_swarm.collective.learning import PatternExtractor, PatternType
@@ -44,7 +40,6 @@ from heretek_swarm.consciousness.phi_training import (
     CommunicationTrainingScenario,
     AgentActor,
 )
-from heretek_swarm.consciousness.iit_phi import PhiCalculator
 
 
 logger = structlog.get_logger("HabitForgeAgent")

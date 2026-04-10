@@ -10,19 +10,22 @@ The Empath agent provides:
 
 Named for the ability to understand and share the feelings of others.
 """
-
 import asyncio
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional
+from typing import Any, Dict, List, Optional, Set
 
 import structlog
+from pydantic import ValidationError
 from swarms import Agent
 
 from heretek_swarm.actors.base import AgentActor, ActorMessage
-from heretek_swarm.actors.validation import validate_message, MessageContent
+from heretek_swarm.actors.validation import validate_message as validate_message_schema
 
 # Session 44: Collective Learning Integration
 from heretek_swarm.collective.learning import PatternExtractor, PatternType
+
+# Alias for use in handlers
+validate_message = validate_message_schema
 
 # Session 44: Consensus Integration
 from heretek_swarm.consensus.swarm_deliberation import SwarmDeliberationEngine, Position

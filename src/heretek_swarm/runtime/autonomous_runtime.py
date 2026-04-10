@@ -13,21 +13,18 @@ import asyncio
 import os
 import signal
 import time
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Dict, List, Optional, Any
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 import structlog
 
 from .autonomous_runtime_config import (
     AutonomousRuntimeConfig,
-    AlertConfig,
-    ScalingPolicy,
 )
 from .agent_runtime import AgentRuntime
 from ..actors.supervisor import ActorSupervisor
-from ..plugins.manager import get_plugin_runtime
 
 logger = structlog.get_logger("AutonomousRuntime")
 

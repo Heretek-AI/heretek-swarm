@@ -46,12 +46,11 @@ Example:
 """
 
 import asyncio
-import logging
 import statistics
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import structlog
 

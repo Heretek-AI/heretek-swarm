@@ -13,18 +13,16 @@ the environment for opportunities, threats, and new capabilities.
 """
 
 import asyncio
-import logging
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set
 from dataclasses import dataclass, field
 from enum import Enum
 
-from pydantic import ValidationError
 import structlog
 from swarms import Agent
 
 from heretek_swarm.actors.base import AgentActor, ActorMessage
-from heretek_swarm.actors.validation import validate_message, MessageContent
+from heretek_swarm.actors.validation import validate_message
 
 # Session 44: Collective Learning Integration
 from heretek_swarm.collective.learning import PatternExtractor, PatternType
@@ -202,24 +200,27 @@ class ExplorerAgent(AgentActor):
         self._source_error_counts: Dict[str, int] = {}
         self._max_source_errors: int = 3
 
-        
-        # Session 44: Collective Learning Integration
-        self.pattern_extractor = pattern_extractor or PatternExtractor(min_support=3, min_confidence=0.6)
-        
-        # Session 44: Consensus Integration
-        self.deliberation_engine = deliberation_engine or SwarmDeliberationEngine(
-            max_rounds=5, consensus_threshold=0.75, min_participants=2
-        )
-        
-        # Session 44: Memory Optimization Integration
-        self.access_analyzer = access_analyzer or AccessPatternAnalyzer()
-        
-        # Session 44: Zero-Trust Validation
-        self.zero_trust_validator = zero_trust_validator or ZeroTrustValidator()
-        
-        # Session 44: Integration state
-        self._active_deliberations: Dict[str, str] = {}
-        self._pattern_emitted: Set[str] = set()
+        # Session 44: Integration components
+                self.pattern_extractor = pattern_extractor
+                self.deliberation_engine = deliberation_engine
+                self.access_analyzer = access_analyzer
+                self.zero_trust_validator = zero_trust_validator
+
+                # Initialize with defaults if not provided
+                if not self.pattern_extractor:
+                    self.pattern_extractor = PatternExtractor(min_support=3, min_confidence=0.6)
+                if not self.deliberation_engine:
+                    self.deliberation_engine = SwarmDeliberationEngine(
+                        max_rounds=5, consensus_threshold=0.75, min_participants=2
+                    )
+                if not self.access_analyzer:
+                    self.access_analyzer = AccessPatternAnalyzer()
+                if not self.zero_trust_validator:
+                    self.zero_trust_validator = ZeroTrustValidator()
+
+                # Session 44: Integration state
+                self._active_deliberations: Dict[str, str] = {}
+                self._pattern_emitted: Set[str] = set()
 
 
         logger.info(

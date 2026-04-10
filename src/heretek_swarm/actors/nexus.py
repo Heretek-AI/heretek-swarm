@@ -15,13 +15,12 @@ Version: 1.0.0
 
 from __future__ import annotations
 
-import asyncio
 import hashlib
 import hmac
 import json
 import uuid
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta, timezone
+from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Callable, Dict, List, Optional, Set
 
@@ -29,13 +28,9 @@ import aiohttp
 import structlog
 
 from heretek_swarm.actors.base import AgentActor, ActorMessage
-from heretek_swarm.actors.validation import validate_message, CoordinationRequest
+from heretek_swarm.actors.validation import validate_message
 from heretek_swarm.validation import (
     LLMOutputValidator,
-    validate_llm_structured,
-    is_text_safe,
-    StateUpdate,
-    create_state_update,
 )
 
 # Session 44: Collective Learning Integration

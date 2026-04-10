@@ -6,7 +6,7 @@ Supports loading from database via ConfigurationService with environment fallbac
 """
 
 from dataclasses import dataclass, field
-from typing import Dict, List, Optional, Any
+from typing import Dict, List, Optional
 from pathlib import Path
 import os
 

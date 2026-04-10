@@ -23,11 +23,11 @@ class TestBetaAgentIntegration:
     @pytest_asyncio.fixture
     async def beta_agent(self, mock_nats, mock_llm):
         """Create BetaAgent with mock dependencies."""
-        with patch('src.heretek_swarm.actors.triad.get_nats_event_mesh', return_value=mock_nats):
-            with patch('src.heretek_swarm.actors.base.get_llm_provider', return_value=mock_llm):
+        with patch('src.heretek_swarm.actors.stubs.get_nats_event_mesh', return_value=mock_nats):
+            with patch('src.heretek_swarm.actors.stubs.get_llm_provider', return_value=mock_llm):
                 agent = BetaAgent(agent_id="beta-test-001")
                 yield agent
-                if agent._state != ActorState.TERMINATED:
+                if agent.state != ActorState.TERMINATED:
                     await agent.terminate()
 
     @pytest_asyncio.fixture
@@ -39,17 +39,17 @@ class TestBetaAgentIntegration:
     @pytest.mark.asyncio
     async def test_agent_spawn(self, beta_agent):
         """Test agent spawning lifecycle."""
-        assert beta_agent._state == ActorState.SPAWNING
+        assert beta_agent.state == ActorState.SPAWNING
         await beta_agent.spawn()
-        assert beta_agent._state == ActorState.ACTIVE
+        assert beta_agent.state == ActorState.ACTIVE
         assert beta_agent.is_alive
 
     @pytest.mark.asyncio
     async def test_agent_terminate(self, spawned_beta):
         """Test agent termination lifecycle."""
-        assert spawned_beta._state == ActorState.ACTIVE
+        assert spawned_beta.state == ActorState.ACTIVE
         await spawned_beta.terminate()
-        assert spawned_beta._state == ActorState.TERMINATED
+        assert spawned_beta.state == ActorState.TERMINATED
         assert not spawned_beta.is_alive
 
     @pytest.mark.asyncio

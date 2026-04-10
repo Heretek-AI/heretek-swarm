@@ -22,17 +22,16 @@ Date: 2026-04-07
 Version: 1.0.0
 """
 
-import asyncio
 import time
 import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Tuple, Type
+from typing import Any, Dict, List, Optional
 from enum import Enum
 
 import structlog
 
-from .iit_phi import PhiCalculator, PhiResult, CauseEffectStructure
+from .iit_phi import PhiCalculator
 
 logger = structlog.get_logger("PhiTrainingEnvironment")
 

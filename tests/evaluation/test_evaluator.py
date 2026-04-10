@@ -205,7 +205,7 @@ class TestAgentEvaluator:
 
         # Check length validation
         assert not result.test_results[0].success
-        assert "Output exceeds max length" in result.test_results[0].validation_errors
+        assert any("Output exceeds max length" in err for err in result.test_results[0].validation_errors)
 
     @pytest.mark.asyncio
     async def test_output_validation_required_keys(self, evaluator):

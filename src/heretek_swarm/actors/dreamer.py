@@ -13,20 +13,16 @@ Dreamer is the "creative engine" of the Collective, generating novel
 solutions that other agents might not consider through conventional analysis.
 """
 
-import asyncio
-import logging
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set
 from dataclasses import dataclass, field
 from enum import Enum
 import uuid
 
-from pydantic import BaseModel, Field, ValidationError
 import structlog
-from swarms import Agent
 
 from heretek_swarm.actors.base import AgentActor, ActorMessage
-from heretek_swarm.actors.validation import validate_message, MessageContent
+from heretek_swarm.actors.validation import validate_message
 
 # Session 44: Collective Learning Integration
 from heretek_swarm.collective.learning import PatternExtractor, PatternType

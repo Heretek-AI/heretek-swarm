@@ -15,7 +15,6 @@ Version: 1.0.0
 
 from __future__ import annotations
 
-import asyncio
 import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
@@ -234,7 +233,14 @@ class CoordinatorAgent(AgentActor):
         """
         try:
             content = await self._validate_message(message)
-            request = TaskRequest(**content)
+            # Create TaskRequest from content - inline construction
+            request_data = {
+                "task_id": content.get("task_id"),
+                "name": content.get("name", "unnamed"),
+                "description": content.get("description", ""),
+                "assigned_agents": content.get("assigned_agents", []),
+            }
+            request = CoordinatedTask(**request_data)
 
             # Check task limit
             if len(self._tasks) >= self._max_tasks:

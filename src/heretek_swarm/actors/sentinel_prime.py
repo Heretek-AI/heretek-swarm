@@ -14,21 +14,19 @@ identifying, analyzing, and responding to security threats in real-time.
 """
 
 import asyncio
-import logging
 import hashlib
 import re
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set
 from dataclasses import dataclass, field
 from enum import Enum
 from collections import defaultdict
 
-from pydantic import BaseModel, Field, ValidationError
+from pydantic import ValidationError
 import structlog
-from swarms import Agent
 
 from heretek_swarm.actors.base import AgentActor, ActorMessage
-from heretek_swarm.actors.validation import validate_message, MessageContent
+from heretek_swarm.actors.validation import validate_message
 
 logger = structlog.get_logger("SentinelPrimeAgent")
 

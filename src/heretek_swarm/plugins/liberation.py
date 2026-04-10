@@ -14,17 +14,13 @@ rather than restricts agent autonomy. It provides:
 Based on the OpenClaw Liberation Shield plugin.
 """
 
-import asyncio
-import hashlib
-import json
-import logging
 import re
 import time
 import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Any, Dict, List, Optional, Set
+from typing import Any, Dict, List, Optional
 
 import structlog
 

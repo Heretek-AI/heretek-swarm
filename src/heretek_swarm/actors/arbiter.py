@@ -13,23 +13,20 @@ The Arbiter is the "peacekeeper" of the Collective, ensuring harmonious
 multi-agent coordination and resolving conflicts before they escalate.
 """
 
-import asyncio
-import logging
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Set, Tuple
 from dataclasses import dataclass, field
 from enum import Enum
 from collections import defaultdict
 
-from pydantic import BaseModel, Field, ValidationError
+from pydantic import ValidationError
 import structlog
-from swarms import Agent
 
 from heretek_swarm.actors.base import AgentActor, ActorMessage
-from heretek_swarm.actors.validation import validate_message, MessageContent
+from heretek_swarm.actors.validation import validate_message
 
 # Session 44: Collective Learning Integration
-from heretek_swarm.collective.learning import PatternExtractor, CollectiveLearning, PatternType
+from heretek_swarm.collective.learning import PatternExtractor, PatternType
 
 # Session 44: Consensus Integration
 from heretek_swarm.consensus.swarm_deliberation import SwarmDeliberationEngine, Position, DeliberationResult

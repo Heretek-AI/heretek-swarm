@@ -112,3 +112,4 @@ coverage.cobertura.xml
 jacoco.xml
 coverage.json
 coverage-final.json
+.kilocode/*

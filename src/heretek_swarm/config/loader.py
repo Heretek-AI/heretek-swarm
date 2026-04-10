@@ -25,7 +25,7 @@ from __future__ import annotations
 import os
 from datetime import datetime, timedelta
 from typing import Any, Dict, Optional, Tuple
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 import structlog
 

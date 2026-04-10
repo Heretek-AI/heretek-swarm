@@ -9,7 +9,6 @@ This module implements the MAKER consensus mechanism for decision aggregation:
 """
 
 import asyncio
-import logging
 import statistics
 from dataclasses import dataclass, field
 from datetime import datetime, timezone

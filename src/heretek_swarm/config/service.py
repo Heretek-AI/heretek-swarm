@@ -9,16 +9,14 @@ Features API key encryption using Fernet symmetric encryption.
 from __future__ import annotations
 
 import base64
-import json
 import os
 from datetime import datetime, timedelta
 from typing import Any, Dict, List, Optional, TypeVar
 from uuid import UUID
 
 import structlog
-from sqlalchemy import select, func, delete
+from sqlalchemy import select, delete
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
-from sqlalchemy.orm import sessionmaker
 
 from .models import (
     UserConfiguration,
@@ -40,7 +38,6 @@ from .models import (
     ImportOptions,
     ImportResult,
     ConfigType,
-    HealthStatus,
 )
 
 # Fernet encryption for API keys

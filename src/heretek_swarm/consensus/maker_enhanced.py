@@ -47,16 +47,15 @@ Example:
 
 import hashlib
 import json
-import logging
 import statistics
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Tuple
 
 import structlog
 
-from .expertise import AgentExpertiseProfiler, DomainExpertise
+from .expertise import AgentExpertiseProfiler
 from .maker import MAKERConsensus, ConsensusResult, ConsensusState, Vote
 
 # Evidence quality thresholds

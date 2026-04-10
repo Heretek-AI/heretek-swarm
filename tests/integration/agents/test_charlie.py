@@ -23,8 +23,8 @@ class TestCharlieAgentIntegration:
     @pytest_asyncio.fixture
     async def charlie_agent(self, mock_nats, mock_llm):
         """Create CharlieAgent with mock dependencies."""
-        with patch('src.heretek_swarm.actors.triad.get_nats_event_mesh', return_value=mock_nats):
-            with patch('src.heretek_swarm.actors.base.get_llm_provider', return_value=mock_llm):
+        with patch('src.heretek_swarm.actors.stubs.get_nats_event_mesh', return_value=mock_nats):
+            with patch('src.heretek_swarm.actors.stubs.get_llm_provider', return_value=mock_llm):
                 agent = CharlieAgent(agent_id="charlie-test-001")
                 yield agent
                 if agent._state != ActorState.TERMINATED:

@@ -12,11 +12,10 @@ Based on the Swarms framework HeavySwarm pattern.
 """
 
 import asyncio
-import logging
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any, Callable, Dict, List, Optional
 
 from .phase_handlers import (
     PhaseHandler,

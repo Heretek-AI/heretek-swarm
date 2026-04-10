@@ -17,10 +17,8 @@ Enhanced with Advanced RAG Strategies:
 - Re-ranking (cross-encoder scoring)
 """
 
-from typing import Dict, Any, List, Optional, Literal, Union
+from typing import Dict, Any, List, Optional, Literal
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
-import math
 import structlog
 
 logger = structlog.get_logger(__name__)

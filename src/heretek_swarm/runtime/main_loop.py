@@ -26,8 +26,7 @@ from heretek_swarm.gateway.nats_event_mesh import NATSEventMesh
 from heretek_swarm.memory.unified import DualTierMemory
 from heretek_swarm.rag.rag_pipeline import RAGPipeline
 from heretek_swarm.consensus.maker import MAKERConsensus
-from heretek_swarm.orchestration.heavyswarm import HeavySwarmWorkflow
-from heretek_swarm.tools.mcp_tools import MCPToolRegistry, CoreMCPTools
+from heretek_swarm.tools.mcp_tools import CoreMCPTools
 from heretek_swarm.channels.registry import ChannelRegistry, GroupRegistry
 
 logger = structlog.get_logger(__name__)

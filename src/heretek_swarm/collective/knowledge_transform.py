@@ -25,11 +25,11 @@ import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Any, Callable, Dict, List, Optional, Set
+from typing import Any, Callable, Dict, List, Optional
 
 import structlog
 
-from .learning import ExtractedPattern, PatternType, PatternMetadata
+from .learning import ExtractedPattern, PatternType
 
 logger = structlog.get_logger(__name__)
 

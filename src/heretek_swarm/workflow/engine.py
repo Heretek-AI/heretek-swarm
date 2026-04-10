@@ -13,11 +13,9 @@ Features:
 
 import asyncio
 import ast
-import json
-import logging
 import operator
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Set, TypeVar, Annotated, Generic
+from typing import Any, Dict, List, Optional, Set, TypeVar, Annotated
 from dataclasses import dataclass, field
 from enum import Enum
 from typing_extensions import TypedDict
@@ -700,6 +698,8 @@ class WorkflowEngine:
             execution_order = self._topological_sort(graph)
 
             # Execute nodes in order with cycle detection
+            from heretek_swarm.workflow.cycle_detector import CycleBreakingStrategy
+
             for node_id in execution_order:
                 # Check for cycles before executing node
                 if self.cycle_detector.detect_cycle(execution_id, node_id):

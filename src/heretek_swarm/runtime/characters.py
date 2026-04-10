@@ -5,7 +5,7 @@ Character System - Agent Definitions
 Reference: MiniMax Audit + elizaOS character patterns
 """
 
-from typing import Dict, List
+from typing import Dict
 
 
 # =============================================================================

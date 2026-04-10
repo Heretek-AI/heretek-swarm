@@ -6,9 +6,7 @@ Reference: PraisonAI Discord integration
 """
 
 import os
-import asyncio
-from typing import Optional, Dict, Any, TYPE_CHECKING
-from datetime import datetime
+from typing import Optional, Dict, TYPE_CHECKING
 import structlog
 
 try:
@@ -22,7 +20,7 @@ except ImportError:
 
 # TYPE_CHECKING ensures type hints are not evaluated at runtime when discord is None
 if TYPE_CHECKING:
-    from discord import Intents, Message, Embed, Color, DMChannel
+    from discord import Intents, Message, Embed
 
 logger = structlog.get_logger(__name__)
 

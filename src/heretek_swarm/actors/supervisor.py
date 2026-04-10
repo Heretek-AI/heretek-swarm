@@ -9,15 +9,12 @@ This module provides:
 """
 
 import asyncio
-import logging
-from dataclasses import dataclass, field
-from datetime import datetime
 from typing import Any, Dict, List, Optional, Type
 
 import structlog
 
 from heretek_swarm.actors.base import AgentActor, ActorState, ActorStatus
-from heretek_swarm.actors.factory import ActorConfig, get_factory
+from heretek_swarm.actors.factory import ActorConfig
 
 logger = structlog.get_logger("ActorSupervisor")
 

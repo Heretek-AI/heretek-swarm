@@ -11,9 +11,7 @@ Reference: Raft consensus algorithm (https://github.com/rqlite/rqlite)
 """
 
 import asyncio
-import logging
 import random
-import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum

@@ -4,10 +4,9 @@ Memory Migration Strategies for Tiered Memory System
 Provides strategy classes for different migration phases.
 """
 
-import time
 from abc import ABC, abstractmethod
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any, Dict, Optional, Tuple
 
 import structlog
 

@@ -15,11 +15,10 @@ Reference: EXPANSION_ROADMAP.md Session 47 - Integration Ecosystem
 """
 
 import asyncio
-import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
-from typing import Any, Callable, Dict, List, Optional, Set, Tuple, Union
+from typing import Any, Callable, Dict, List, Optional
 
 import structlog
 

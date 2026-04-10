@@ -16,7 +16,6 @@ import structlog
 from .base import (
     EmbeddingProviderBase,
     EmbeddingProviderCapabilities,
-    EmbeddingRequest,
     EmbeddingResponse,
     EmbeddingAuthenticationError,
     EmbeddingRateLimitError,

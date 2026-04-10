@@ -12,23 +12,23 @@ The Examiner provides:
 Examiner is the "quality gate" of the Collective, ensuring all outputs
 meet established standards before deployment or delivery.
 """
-
 import asyncio
-import logging
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any, Dict, List, Optional, Set
 from dataclasses import dataclass, field
 from enum import Enum
 
-from pydantic import BaseModel, Field, ValidationError
 import structlog
-from swarms import Agent
+from pydantic import ValidationError
 
 from heretek_swarm.actors.base import AgentActor, ActorMessage
-from heretek_swarm.actors.validation import validate_message, MessageContent
+from heretek_swarm.actors.validation import validate_message as validate_message_schema
 
 # Session 44: Collective Learning Integration
 from heretek_swarm.collective.learning import PatternExtractor, PatternType
+
+# Alias for use in handlers
+validate_message = validate_message_schema
 
 # Session 44: Consensus Integration
 from heretek_swarm.consensus.swarm_deliberation import SwarmDeliberationEngine, Position

@@ -31,10 +31,6 @@ import structlog
 from .learning import ExtractedPattern, PatternType, LearningSignal, CollectiveLearning
 from .knowledge_transform import (
     KnowledgeTransformer,
-    TransformedKnowledge,
-    TransformationType,
-    AgentType,
-    TransformationResult,
 )
 
 logger = structlog.get_logger(__name__)

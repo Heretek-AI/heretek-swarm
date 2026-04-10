@@ -11,27 +11,25 @@ Features:
 - Maximum active handoffs limit
 """
 
-import asyncio
 import sys
 import uuid
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional, Set
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 
 import structlog
 from heretek_swarm.actors.base import ActorMessage
 
 # Session 44: Collective Learning Integration
-from heretek_swarm.collective.learning import PatternExtractor, PatternType
+from heretek_swarm.collective.learning import PatternType
 
 # Session 44: Consensus Integration
-from heretek_swarm.consensus.swarm_deliberation import SwarmDeliberationEngine, Position
+from heretek_swarm.consensus.swarm_deliberation import Position
 
 # Session 44: Memory Optimization Integration
-from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer, AccessTier
+from heretek_swarm.memory.access_patterns import AccessTier
 
 # Session 44: Zero-Trust Validation
-from heretek_swarm.security.zero_trust import ZeroTrustValidator
 
 
 logger = structlog.get_logger(__name__)

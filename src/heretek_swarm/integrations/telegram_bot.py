@@ -6,9 +6,7 @@ Reference: PraisonAI Telegram integration
 """
 
 import os
-import asyncio
-from typing import Optional, Dict, Any, TYPE_CHECKING
-from datetime import datetime
+from typing import Optional, Dict, TYPE_CHECKING
 import structlog
 
 try:

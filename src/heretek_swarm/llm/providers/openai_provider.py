@@ -18,7 +18,6 @@ from .base import (
     LLMProviderBase,
     LLMRequest,
     LLMResponse,
-    Message,
     ProviderCapabilities,
     ProviderError,
     ProviderAuthenticationError,

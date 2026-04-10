@@ -13,7 +13,6 @@ Features:
 
 import importlib
 import inspect
-import json
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
@@ -21,8 +20,7 @@ from typing import Any, Dict, List, Optional, Type
 
 import structlog
 
-from heretek_swarm.actors.base import AgentActor, ActorState
-from heretek_swarm.runtime.registry import AgentRegistry, get_registry
+from heretek_swarm.actors.base import AgentActor
 
 logger = structlog.get_logger("registry_enhanced")
 

@@ -5,7 +5,7 @@ This module contains example plugins demonstrating the plugin system.
 """
 
 from typing import Dict, Any, Optional
-from .manager import Plugin, PluginMetadata
+from .manager import Plugin, PluginMetadata, PluginState
 
 
 class LoggingPlugin(Plugin):

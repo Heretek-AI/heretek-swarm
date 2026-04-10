@@ -11,7 +11,6 @@ The Metis agent provides:
 Named after the Greek Titaness of wisdom and strategic thinking.
 """
 
-import asyncio
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
@@ -19,7 +18,6 @@ import structlog
 from swarms import Agent
 
 from heretek_swarm.actors.base import AgentActor, ActorMessage
-from heretek_swarm.actors.validation import validate_message, MessageContent
 
 # Session 44: Collective Learning Integration
 from heretek_swarm.collective.learning import PatternExtractor, PatternType

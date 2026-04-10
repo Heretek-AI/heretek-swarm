@@ -968,7 +968,6 @@ class NATSEventMeshWithJetStream(NATSEventMesh):
             # Import JetStreamManager
             from heretek_swarm.gateway.jetstream_manager import (
                 JetStreamManager,
-                JetStreamConfig,
             )
             
             # Create manager

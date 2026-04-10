@@ -23,11 +23,11 @@ class TestStewardAgentIntegration:
     @pytest_asyncio.fixture
     async def steward_agent(self, mock_nats, mock_llm):
         """Create StewardAgent with mock dependencies."""
-        with patch('src.heretek_swarm.actors.triad.get_nats_event_mesh', return_value=mock_nats):
-            with patch('src.heretek_swarm.actors.base.get_llm_provider', return_value=mock_llm):
+        with patch('src.heretek_swarm.actors.stubs.get_nats_event_mesh', return_value=mock_nats):
+            with patch('src.heretek_swarm.actors.stubs.get_llm_provider', return_value=mock_llm):
                 agent = StewardAgent(agent_id="steward-test-001")
                 yield agent
-                if agent._state != ActorState.TERMINATED:
+                if agent.state != ActorState.TERMINATED:
                     await agent.terminate()
 
     @pytest_asyncio.fixture
@@ -40,26 +40,26 @@ class TestStewardAgentIntegration:
     async def test_agent_spawn(self, steward_agent):
         """Test agent spawning lifecycle."""
         # Verify initial state
-        assert steward_agent._state == ActorState.SPAWNING
+        assert steward_agent.state == ActorState.SPAWNING
 
         # Spawn agent
         await steward_agent.spawn()
 
         # Verify active state
-        assert steward_agent._state == ActorState.ACTIVE
+        assert steward_agent.state == ActorState.ACTIVE
         assert steward_agent.is_alive
 
     @pytest.mark.asyncio
     async def test_agent_terminate(self, spawned_steward):
         """Test agent termination lifecycle."""
         # Verify active state
-        assert spawned_steward._state == ActorState.ACTIVE
+        assert spawned_steward.state == ActorState.ACTIVE
 
         # Terminate agent
         await spawned_steward.terminate()
 
         # Verify terminated state
-        assert spawned_steward._state == ActorState.TERMINATED
+        assert spawned_steward.state == ActorState.TERMINATED
         assert not spawned_steward.is_alive
 
     @pytest.mark.asyncio
@@ -206,7 +206,7 @@ class TestStewardAgentIntegration:
         await spawned_steward.process_message(message)
 
         # Verify error was handled
-        assert spawned_steward._state == ActorState.ACTIVE
+        assert spawned_steward.state == ActorState.ACTIVE
 
     @pytest.mark.asyncio
     async def test_concurrent_deliberations(self, spawned_steward, mock_nats):
@@ -274,10 +274,10 @@ class TestStewardAgentIntegration:
         await steward_agent.spawn()
 
         # Simulate error condition
-        steward_agent._state = ActorState.ERROR
+        steward_agent.state = ActorState.ERROR
 
         # Resume should recover
         await steward_agent.resume()
 
         # Verify recovered
-        assert steward_agent._state == ActorState.ACTIVE
+        assert steward_agent.state == ActorState.ACTIVE

@@ -20,17 +20,16 @@ Zero-Trust Principles:
 """
 
 import asyncio
-import hashlib
 import uuid
 from dataclasses import dataclass, field
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timezone
 from enum import Enum
-from typing import Any, Callable, Dict, List, Optional, Set, Tuple
+from typing import Any, Callable, Dict, List, Optional
 
 import structlog
 
-from .learning import ExtractedPattern, PatternType, PatternMetadata, PatternSource
-from .pattern_library import PatternLibrary, PatternEntry, PatternCategory
+from .learning import ExtractedPattern, PatternType
+from .pattern_library import PatternLibrary
 
 logger = structlog.get_logger(__name__)
 

@@ -11,10 +11,9 @@ Provides PostgreSQL-backed persistence for agent states with:
 
 import asyncio
 import json
-import logging
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Set, Callable
+from typing import Any, Dict, List, Optional, Callable
 from uuid import UUID, uuid4
 
 import structlog

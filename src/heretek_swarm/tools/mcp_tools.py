@@ -8,9 +8,8 @@ Implements the MCP specification for tool registration, discovery, and invocatio
 """
 
 from typing import Dict, Any, List, Optional, Callable
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import datetime, timezone
-import json
 import structlog
 
 logger = structlog.get_logger(__name__)

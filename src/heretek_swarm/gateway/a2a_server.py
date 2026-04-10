@@ -13,12 +13,11 @@ import os
 import json
 import asyncio
 import secrets
-import hashlib
 from datetime import datetime, timedelta, timezone
 from typing import Dict, List, Optional, Any, Tuple
 from dataclasses import dataclass, field
 from enum import Enum
-from fastapi import WebSocket, WebSocketDisconnect, HTTPException
+from fastapi import WebSocket, WebSocketDisconnect
 import structlog
 
 from .event_mesh import EventMesh

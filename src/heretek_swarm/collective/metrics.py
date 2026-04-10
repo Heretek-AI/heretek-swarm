@@ -22,20 +22,18 @@ Zero-Trust Principles:
 """
 
 import asyncio
-import hashlib
 import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timezone, timedelta
 from enum import Enum
-from typing import Any, Callable, Dict, List, Optional, Set, Tuple
+from typing import Any, Callable, Dict, List, Optional, Tuple
 
 import structlog
 
-from .learning import ExtractedPattern, PatternType, CollectiveLearning
-from .pattern_library import PatternLibrary, StorageStats
-from .adaptive_learning import AdaptiveLearningRateController, AgentLearningState
-from .agent_adaptation import PatternBasedAgentAdaptor, AgentAdaptationState
-from .emergent_detection import EmergentPatternDetector, EmergentPattern, EmergenceLevel
+from .pattern_library import PatternLibrary
+from .adaptive_learning import AdaptiveLearningRateController
+from .agent_adaptation import PatternBasedAgentAdaptor
+from .emergent_detection import EmergentPatternDetector, EmergenceLevel
 
 logger = structlog.get_logger(__name__)
 

@@ -16,8 +16,6 @@ Features:
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from typing import Dict, List, Optional, Any
-from collections import defaultdict
-import time
 
 # Import cycle detector and phi training for metrics integration
 try:

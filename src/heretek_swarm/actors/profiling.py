@@ -44,10 +44,9 @@ Usage:
 
 from dataclasses import dataclass, field
 from datetime import datetime, timezone, timedelta
-from typing import Dict, List, Optional, Any, Tuple, Set
+from typing import Dict, List, Optional, Any, Tuple
 from enum import Enum
 from collections import defaultdict, deque
-import math
 import structlog
 import statistics
 
