@@ -15,6 +15,7 @@ services:
       - REDIS_URL=redis://redis:6379
       - QDRANT_HOST=qdrant
       - QDRANT_PORT=6333
+      - NATS_SERVERS=nats://nats:4222
       - MINIMAX_API_KEY=${MINIMAX_API_KEY:-}
       - MINIMAX_BASE_URL=${MINIMAX_BASE_URL:-https://api.minimax.io/v1}
       - MINIMAX_MODEL=${MINIMAX_MODEL:-MiniMax-M2.7}
@@ -28,6 +29,7 @@ services:
       - postgres
       - redis
       - qdrant
+      - nats
     volumes:
       - ./src:/app/src
       - ./data:/data
@@ -106,6 +108,25 @@ services:
       retries: 5
 
   # =============================================================================
+  # NATS Event Mesh (Event Bus for Agent Communication)
+  # =============================================================================
+  nats:
+    image: nats:latest
+    ports:
+      - "4222:4222"   # Client connection
+      - "8222:8222"   # Monitoring/HTTP
+      - "6222:6222"   # Cluster port
+    command: -js -m 8222
+    volumes:
+      - nats_data:/data/nats
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "nc", "-z", "localhost", "4222"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+  # =============================================================================
   # LiteLLM Proxy (Optional)
   # =============================================================================
   litellm:
@@ -131,6 +152,7 @@ volumes:
   postgres_data:
   redis_data:
   qdrant_data:
+  nats_data:
 
 networks:
   default:
