@@ -89,7 +89,13 @@ class CapabilityRecord:
     
     first_observed: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     last_reinforced: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
-    stabilization_time: Optional]:
+    stabilization_time: Optional[str] = None
+    is_stabilized: bool = False
+    is_inherited: bool = False
+    inheritance_count: int = 0
+    metadata: Dict[str, Any] = field(default_factory=dict)
+    
+    def to_dict(self) -> Dict[str, Any]:
         return {
             "capability_id": self.capability_id,
             "capability_type": self.capability_type,
@@ -663,7 +669,12 @@ class CollectiveBehavior:
     behavior_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     behavior_type: str = ""
     participating_agents: List[str] = field(default_factory=list)
-    start_time: str = field(default_factory=lambda: datetime.now(time)
+    start_time: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    end_time: Optional[str] = None
+    duration_seconds: float = 0.0
+    intensity: float = 0.0
+    coherence: float = 0.0
+    metadata: Dict[str, Any] = field(default_factory=dict)
     
     def to_dict(self) -> Dict[str, Any]:
         return {
@@ -700,10 +711,15 @@ class EmergentPattern:
     statistical_significance: float = 0.0
     confidence: float = 0.0
     is_validated: bool = False
-    
     impact_score: float = 0.0
     first_detected: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
-    last_observed: str = field(default_level.value,
+    last_observed: Optional[str] = None
+    pattern_data: Dict[str, Any] = field(default_factory=dict)
+    context: Dict[str, Any] = field(default_factory=dict)
+    metadata: Dict[str, Any] = field(default_factory=dict)
+    
+    def to_dict(self) -> Dict[str, Any]:
+        return {
             "timestamp": self.timestamp,
             "description": self.description,
             "participating_agents": self.participating_agents,
@@ -719,6 +735,7 @@ class EmergentPattern:
             "context": self.context,
             "metadata": self.metadata,
         }
+    
     
     def to_extracted_pattern(self) -> ExtractedPattern:
         pattern_type_map = {
@@ -770,7 +787,14 @@ class DetectionEvent:
     detection_method: str = ""
     raw_score: float = 0.0
     threshold: float = 0.0
-    passed            "timestamp": self.timestamp,
+    passed_validation: bool = False
+    validation_details: str = ""
+    metadata: Dict[str, Any] = field(default_factory=dict)
+    
+    def to_dict(self) -> Dict[str, Any]:
+        return {
+            "event_id": self.event_id,
+            "timestamp": self.timestamp,
             "pattern": self.pattern.to_dict() if self.pattern else None,
             "detection_method": self.detection_method,
             "raw_score": self.raw_score,

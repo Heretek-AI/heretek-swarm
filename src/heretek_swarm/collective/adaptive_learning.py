@@ -193,27 +193,7 @@ class AgentLearningState:
     rate_history: List[Tuple[str, float, AdaptationReason]] = field(default_factory=list)
     
     fitness_score: float = 0.5
-    behavior_pool: Dict[str, BehaviorFitness] = field(default_factory {
-            "agent_id": self.agent_id,
-            "current_rate": self.current_rate,
-            "initial_rate": self.initial_rate,
-            "total_updates": self.total_updates,
-            "successful_updates": self.successful_updates,
-            "failed_updates": self.failed_updates,
-            "success_rate": self.success_rate,
-            "last_adaptation": self.last_adaptation,
-            "adaptation_count": self.adaptation_count,
-            "convergence_score": self.convergence_score,
-            "performance_trend": self.performance_trend,
-            "adopted_patterns": self.adopted_patterns,
-            "avoided_patterns": self.avoided_patterns,
-            "rate_history_count": len(self.rate_history),
-            "fitness_score": self.fitness_score,
-            "behavior_pool_size": len(self.behavior_pool),
-            "active_behaviors": self.active_behaviors,
-            "capability_levels": self.capability_levels,
-            "metadata": self.metadata,
-        }
+    behavior_pool: Dict[str, BehaviorFitness] = field(default_factory=dict)
     
     @property
     def success_rate(self) -> float:
@@ -233,7 +213,13 @@ class AdaptationEvent:
     old_rate: float = 0.0
     new_rate: float = 0.0
     delta: float = 0.0
-    trigger_pattern_id: Optional[str] -> Dict[str, Any]:
+    trigger_pattern_id: Optional[str] = None
+    trigger_signal_id: Optional[str] = None
+    validation_passed: bool = False
+    validation_details: str = ""
+    metadata: Dict[str, Any] = field(default_factory=dict)
+    
+    def to_dict(self) -> Dict[str, Any]:
         return {
             "event_id": self.event_id,
             "agent_id": self.agent_id,
