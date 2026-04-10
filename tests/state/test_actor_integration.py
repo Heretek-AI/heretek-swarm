@@ -11,10 +11,9 @@ Tests state persistence and recovery for actors:
 import asyncio
 import pytest
 from datetime import datetime, timezone
-from uuid import uuid4
 
 from heretek_swarm.actors.base import AgentActor, ActorState, ActorMessage
-from heretek_swarm.state.repository import StateRepository, AgentStateRecord
+from heretek_swarm.state.repository import StateRepository
 
 
 # Test Actor Implementation
@@ -22,13 +21,13 @@ from heretek_swarm.state.repository import StateRepository, AgentStateRecord
 class TestActor(AgentActor):
     """Test actor for integration testing."""
     
-    actor_type = "TestActor"
+    _actor_type = "TestActor"
     
-    def __init__(self, *args, **kwargs):
+    def __init__(self, _*args, _**kwargs):
         super().__init__(*args, **kwargs)
         self.processed_messages = []
     
-    async def process_message(self, message: ActorMessage) -> None:
+    async def process_message(self, _message: ActorMessage) -> None:
         """Process incoming messages."""
         self.processed_messages.append(message)
         # Update state on message processing
@@ -63,13 +62,13 @@ async def state_repository():
 
 
 @pytest.fixture
-async def test_actor(state_repository):
+async def test_actor(_state_repository):
     """Create test actor with state repository."""
-    actor = TestActor(
+    _actor = TestActor(
         agent_id="test-actor-1",
-        name="Test Actor",
-        state_repository=state_repository,
-        load_state_on_init=True,
+        _name = "Test Actor",
+        _state_repository = state_repository,
+        _load_state_on_init = True,
     )
     yield actor
 
@@ -80,7 +79,7 @@ class TestActorStatePersistence:
     """Test actor state persistence."""
     
     @pytest.mark.asyncio
-    async def test_actor_spawn_with_repository(self, test_actor):
+    async def test_actor_spawn_with_repository(self, _test_actor):
         """Test actor spawns correctly with state repository."""
         await test_actor.spawn()
         
@@ -91,7 +90,7 @@ class TestActorStatePersistence:
         await test_actor.terminate()
     
     @pytest.mark.asyncio
-    async def test_actor_state_save(self, test_actor, state_repository):
+    async def test_actor_state_save(self, _test_actor, _state_repository):
         """Test actor saves state to repository."""
         await test_actor.spawn()
         
@@ -103,7 +102,7 @@ class TestActorStatePersistence:
         await test_actor.save_state()
         
         # Verify state was saved
-        record = await state_repository.load_state(test_actor.agent_id)
+        _record = await state_repository.load_state(test_actor.agent_id)
         assert record is not None
         # State is stored with internal_state nested structure
         assert record.state.get("internal_state", {}).get("test_key") == "test_value"
@@ -112,10 +111,10 @@ class TestActorStatePersistence:
         await test_actor.terminate()
     
     @pytest.mark.asyncio
-    async def test_actor_state_load_on_spawn(self, state_repository):
+    async def test_actor_state_load_on_spawn(self, _state_repository):
         """Test actor loads state on spawn."""
         # First, save state directly
-        initial_state = {
+        _initial_state = {
             "internal_state": {"persistent_key": "persistent_value"},
             "message_count": 100,
             "error_count": 5,
@@ -124,15 +123,15 @@ class TestActorStatePersistence:
         await state_repository.save_state(
             agent_id="test-actor-2",
             state=initial_state,
-            agent_type="TestActor",
+            _agent_type = "TestActor",
         )
         
         # Create new actor with same ID
-        actor = TestActor(
+        _actor = TestActor(
             agent_id="test-actor-2",
-            name="Test Actor 2",
-            state_repository=state_repository,
-            load_state_on_init=True,
+            _name = "Test Actor 2",
+            _state_repository = state_repository,
+            _load_state_on_init = True,
         )
         
         # Spawn should load state
@@ -146,7 +145,7 @@ class TestActorStatePersistence:
         await actor.terminate()
     
     @pytest.mark.asyncio
-    async def test_actor_checkpoint_save(self, test_actor):
+    async def test_actor_checkpoint_save(self, _test_actor):
         """Test actor can save checkpoints."""
         await test_actor.spawn()
         
@@ -164,7 +163,7 @@ class TestActorStatePersistence:
         await test_actor.terminate()
     
     @pytest.mark.asyncio
-    async def test_actor_checkpoint_restore(self, test_actor, state_repository):
+    async def test_actor_checkpoint_restore(self, _test_actor, _state_repository):
         """Test actor can restore from checkpoint."""
         await test_actor.spawn()
         
@@ -178,12 +177,12 @@ class TestActorStatePersistence:
         await test_actor.save_state()
         
         # Get checkpoint
-        checkpoints = await test_actor.get_checkpoints(limit=1)
+        _checkpoints = await test_actor.get_checkpoints(limit=1)
         assert len(checkpoints) >= 1
         
         # Restore from checkpoint
         checkpoint = checkpoints[0]
-        restored = await test_actor.restore_from_checkpoint(checkpoint.checkpoint_id)
+        _restored = await test_actor.restore_from_checkpoint(checkpoint.checkpoint_id)
         
         assert restored is True
         
@@ -194,14 +193,14 @@ class TestSimulatedRestart:
     """Test state recovery after simulated restart."""
     
     @pytest.mark.asyncio
-    async def test_restart_recovery(self, state_repository):
+    async def test_restart_recovery(self, _state_repository):
         """Test actor recovers state after restart."""
         # Phase 1: Create and run actor
-        actor1 = TestActor(
+        _actor1 = TestActor(
             agent_id="restart-test-actor",
-            name="Restart Test Actor",
-            state_repository=state_repository,
-            load_state_on_init=True,
+            _name = "Restart Test Actor",
+            _state_repository = state_repository,
+            _load_state_on_init = True,
         )
         
         await actor1.spawn()
@@ -216,11 +215,11 @@ class TestSimulatedRestart:
         await actor1.terminate()
         
         # Phase 2: Create new actor with same ID (simulates restart)
-        actor2 = TestActor(
+        _actor2 = TestActor(
             agent_id="restart-test-actor",
-            name="Restart Test Actor",
-            state_repository=state_repository,
-            load_state_on_init=True,
+            _name = "Restart Test Actor",
+            _state_repository = state_repository,
+            _load_state_on_init = True,
         )
         
         await actor2.spawn()
@@ -230,20 +229,20 @@ class TestSimulatedRestart:
         assert actor2.get_state("counter") == 10
         
         # Verify checkpoints are available
-        checkpoints = await actor2.get_checkpoints()
+        _checkpoints = await actor2.get_checkpoints()
         assert len(checkpoints) >= 1
         
         await actor2.terminate()
     
     @pytest.mark.asyncio
-    async def test_rollback_after_error(self, state_repository):
+    async def test_rollback_after_error(self, _state_repository):
         """Test actor can rollback to checkpoint after error."""
         # Create actor
-        actor = TestActor(
+        _actor = TestActor(
             agent_id="rollback-test",
-            name="Rollback Test Actor",
-            state_repository=state_repository,
-            load_state_on_init=True,
+            _name = "Rollback Test Actor",
+            _state_repository = state_repository,
+            _load_state_on_init = True,
         )
         
         await actor.spawn()
@@ -253,7 +252,7 @@ class TestSimulatedRestart:
         actor.update_state("data", {"value": 100})
         
         # Create checkpoint with explicit state (not current actor state)
-        healthy_state = {
+        _healthy_state = {
             "internal_state": dict(actor.internal_state),  # Copy current internal state
             "message_count": actor.message_count,
             "error_count": actor.error_count,
@@ -267,8 +266,8 @@ class TestSimulatedRestart:
         checkpoint = await state_repository.checkpoint(
             agent_id=actor.agent_id,
             state=healthy_state,
-            version=1,
-            metadata={"status": "healthy"},
+            _version = 1,
+            _metadata = {"status": "healthy"},
         )
         
         # Verify checkpoint was created with correct state
@@ -284,16 +283,16 @@ class TestSimulatedRestart:
         assert actor.get_state("status") == "corrupted"
         
         # Rollback to healthy checkpoint
-        restored = await actor.restore_from_checkpoint(checkpoint.checkpoint_id)
+        _restored = await actor.restore_from_checkpoint(checkpoint.checkpoint_id)
         assert restored is True
         
         # Verify the repository state was restored
-        record = await state_repository.load_state(actor.agent_id)
+        _record = await state_repository.load_state(actor.agent_id)
         assert record is not None
         
         # The restored state should have the checkpoint's state
-        restored_internal = record.state.get("internal_state", {})
-        restored_status = restored_internal.get("status")
+        _restored_internal = record.state.get("internal_state", {})
+        _restored_status = restored_internal.get("status")
         assert restored_status == "healthy", f"Expected 'healthy' but got '{restored_status}'"
         
         await actor.terminate()
@@ -303,17 +302,17 @@ class TestConcurrentActors:
     """Test multiple actors with shared state repository."""
     
     @pytest.mark.asyncio
-    async def test_multiple_actors_concurrent(self, state_repository):
+    async def test_multiple_actors_concurrent(self, _state_repository):
         """Test multiple actors can persist state concurrently."""
-        actors = []
+        _actors = []
         
         # Create multiple actors
         for i in range(5):
-            actor = TestActor(
+            _actor = TestActor(
                 agent_id=f"concurrent-actor-{i}",
-                name=f"Concurrent Actor {i}",
-                state_repository=state_repository,
-                load_state_on_init=True,
+                _name = f"Concurrent Actor {i}",
+                _state_repository = state_repository,
+                _load_state_on_init = True,
             )
             actors.append(actor)
         
@@ -321,16 +320,16 @@ class TestConcurrentActors:
         await asyncio.gather(*[a.spawn() for a in actors])
         
         # Update state concurrently
-        async def update_actor_state(actor, value):
+        async def update_actor_state(_actor, _value):
             actor.update_state("concurrent_value", value)
             await actor.save_state()
         
-        tasks = [update_actor_state(a, i * 10) for i, a in enumerate(actors)]
+        _tasks = [update_actor_state(a, i * 10) for i, a in enumerate(actors)]
         await asyncio.gather(*tasks)
         
         # Verify all states persisted
         for i, actor in enumerate(actors):
-            record = await state_repository.load_state(actor.agent_id)
+            _record = await state_repository.load_state(actor.agent_id)
             assert record is not None
             # State is nested in internal_state
             assert record.state.get("internal_state", {}).get("concurrent_value") == i * 10
@@ -339,14 +338,14 @@ class TestConcurrentActors:
         await asyncio.gather(*[a.terminate() for a in actors])
     
     @pytest.mark.asyncio
-    async def test_list_active_states(self, state_repository):
+    async def test_list_active_states(self, _state_repository):
         """Test listing all active actor states."""
         # Create and save states for multiple actors
         for i in range(3):
-            actor = TestActor(
+            _actor = TestActor(
                 agent_id=f"list-test-actor-{i}",
-                name=f"List Test Actor {i}",
-                state_repository=state_repository,
+                _name = f"List Test Actor {i}",
+                _state_repository = state_repository,
             )
             await actor.spawn()
             actor.update_state("index", i)
@@ -354,10 +353,10 @@ class TestConcurrentActors:
             await actor.terminate()
         
         # List all active states
-        states = await state_repository.list_active_states()
+        _states = await state_repository.list_active_states()
         
         assert len(states) >= 3
-        agent_ids = {s.agent_id for s in states}
+        _agent_ids = {s.agent_id for s in states}
         for i in range(3):
             assert f"list-test-actor-{i}" in agent_ids
 
@@ -366,24 +365,24 @@ class TestActorMessageProcessing:
     """Test state persistence during message processing."""
     
     @pytest.mark.asyncio
-    async def test_state_persisted_on_message(self, state_repository):
+    async def test_state_persisted_on_message(self, _state_repository):
         """Test state is updated when processing messages."""
-        actor = TestActor(
+        _actor = TestActor(
             agent_id="message-test-actor",
-            name="Message Test Actor",
-            state_repository=state_repository,
-            load_state_on_init=True,
+            _name = "Message Test Actor",
+            _state_repository = state_repository,
+            _load_state_on_init = True,
         )
         
         await actor.spawn()
         
         # Send messages
         for i in range(3):
-            message = ActorMessage(
-                sender="test-sender",
-                message_type="test",
-                content={"message_id": i, "data": f"message-{i}"},
-                timestamp=datetime.now(timezone.utc).isoformat(),
+            _message = ActorMessage(
+                _sender = "test-sender",
+                _message_type = "test",
+                _content = {"message_id": i, "data": f"message-{i}"},
+                _timestamp = datetime.now(timezone.utc).isoformat(),
             )
             await actor.put_message(message)
         
@@ -396,7 +395,7 @@ class TestActorMessageProcessing:
         
         # Save and verify persistence
         await actor.save_state()
-        record = await state_repository.load_state(actor.agent_id)
+        _record = await state_repository.load_state(actor.agent_id)
         assert record is not None
         assert record.state.get("message_count") == 3
         

@@ -10,25 +10,24 @@ Tests for:
 
 import pytest
 from unittest.mock import Mock, AsyncMock, patch
-from datetime import datetime
 
 try:
     from heretek_swarm.integrations.discord_bot import DiscordBot, DISCORD_AVAILABLE
 except ImportError:
     DISCORD_AVAILABLE = False
-    DiscordBot = None
+    _DiscordBot = None
 
 try:
     from heretek_swarm.integrations.telegram_bot import TelegramBot, TELEGRAM_AVAILABLE
 except ImportError:
     TELEGRAM_AVAILABLE = False
-    TelegramBot = None
+    _TelegramBot = None
 
 try:
     from heretek_swarm.integrations.slack_bot import SlackBot, SLACK_AVAILABLE
 except ImportError:
     SLACK_AVAILABLE = False
-    SlackBot = None
+    _SlackBot = None
 
 
 # =============================================================================
@@ -56,12 +55,12 @@ class TestDiscordBot:
     @pytest.fixture
     def mock_supervisor(self):
         """Create mock supervisor."""
-        supervisor = AsyncMock()
+        _supervisor = AsyncMock()
         supervisor.send_message.return_value = "Test response"
         return supervisor
 
     @pytest.fixture
-    def discord_bot(self, discord_config, mock_supervisor):
+    def discord_bot(self, _discord_config, _mock_supervisor):
         """Create Discord bot instance."""
         return DiscordBot(
             token=discord_config["token"],
@@ -69,13 +68,13 @@ class TestDiscordBot:
             handoff_manager=discord_config["handoff_manager"],
         )
 
-    def test_initialization(self, discord_bot):
+    def test_initialization(self, _discord_bot):
         """Test Discord bot initialization."""
         assert discord_bot.token == "test_token"
         assert discord_bot.agent_runtime is None
         assert discord_bot.handoff_manager is None
 
-    def test_register_commands(self, discord_bot):
+    def test_register_commands(self, _discord_bot):
         """Test command registration."""
         assert hasattr(discord_bot, '_bot')
         discord_bot._register_commands()
@@ -88,9 +87,9 @@ class TestDiscordBot:
         assert "chat" in discord_bot._bot.all_commands
 
     @pytest.mark.asyncio
-    async def test_route_message_to_agent(self, discord_bot):
+    async def test_route_message_to_agent(self, _discord_bot):
         """Test routing message to agent."""
-        response = await discord_bot._route_message(
+        _response = await discord_bot._route_message(
             "hello",
             "test_user"
         )
@@ -99,29 +98,29 @@ class TestDiscordBot:
         assert isinstance(response, str)
 
     @pytest.mark.asyncio
-    async def test_send_notification(self, discord_bot):
+    async def test_send_notification(self, _discord_bot):
         """Test sending notification."""
-        mock_channel = AsyncMock()
+        _mock_channel = AsyncMock()
         mock_channel.send = AsyncMock()
 
         await discord_bot.send_notification(
-            channel=mock_channel,
-            message="Test notification"
+            _channel = mock_channel,
+            _message = "Test notification"
         )
 
         mock_channel.send.assert_called_once_with("Test notification")
 
     @pytest.mark.asyncio
-    async def test_notify_handoff(self, discord_bot):
+    async def test_notify_handoff(self, _discord_bot):
         """Test handoff notification."""
-        mock_channel = AsyncMock()
+        _mock_channel = AsyncMock()
         mock_channel.send = AsyncMock()
 
         await discord_bot.notify_handoff(
-            channel=mock_channel,
-            from_agent="agent-1",
-            to_agent="agent-2",
-            reason="test reason"
+            _channel = mock_channel,
+            _from_agent = "agent-1",
+            _to_agent = "agent-2",
+            _reason = "test reason"
         )
 
         mock_channel.send.assert_called_once()
@@ -154,39 +153,39 @@ class TestTelegramBot:
     @pytest.fixture
     def mock_supervisor(self):
         """Create mock supervisor."""
-        supervisor = AsyncMock()
+        _supervisor = AsyncMock()
         supervisor.send_message.return_value = "Test response"
         return supervisor
 
     @pytest.fixture
-    def telegram_bot(self, telegram_config, mock_supervisor):
+    def telegram_bot(self, _telegram_config, _mock_supervisor):
         """Create Telegram bot instance."""
         return TelegramBot(
-            token=telegram_config["token"],
-            agent_id=telegram_config["agent_id"],
-            supervisor=mock_supervisor,
+            _token = telegram_config["token"],
+            _agent_id = telegram_config["agent_id"],
+            _supervisor = mock_supervisor,
         )
 
-    def test_initialization(self, telegram_bot):
+    def test_initialization(self, _telegram_bot):
         """Test Telegram bot initialization."""
         assert telegram_bot._token == "test_token"
         assert telegram_bot._agent_id == "test-agent"
 
     @pytest.mark.asyncio
-    async def test_initialize(self, telegram_bot):
+    async def test_initialize(self, _telegram_bot):
         """Test bot initialization."""
         with patch("telegram.ext.Application.builder") as mock_builder:
-            mock_app = AsyncMock()
+            _mock_app = AsyncMock()
             mock_builder.return_value.build.return_value = mock_app
 
-            result = await telegram_bot.initialize()
+            _result = await telegram_bot.initialize()
 
             assert result is True
 
     @pytest.mark.asyncio
-    async def test_handle_start(self, telegram_bot):
+    async def test_handle_start(self, _telegram_bot):
         """Test /start command handler."""
-        mock_update = Mock()
+        _mock_update = Mock()
         mock_update.effective_chat.id = 12345
         mock_update.message.reply_text = AsyncMock()
 
@@ -195,21 +194,21 @@ class TestTelegramBot:
         mock_update.message.reply_text.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_handle_help(self, telegram_bot):
+    async def test_handle_help(self, _telegram_bot):
         """Test /help command handler."""
-        mock_update = Mock()
+        _mock_update = Mock()
         mock_update.message.reply_text = AsyncMock()
 
         await telegram_bot._handle_help(mock_update, None)
 
         mock_update.message.reply_text.assert_called_once()
-        call_args = mock_update.message.reply_text.call_args[0][0]
+        _call_args = mock_update.message.reply_text.call_args[0][0]
         assert "Available commands" in call_args
 
     @pytest.mark.asyncio
-    async def test_route_message(self, telegram_bot):
+    async def test_route_message(self, _telegram_bot):
         """Test routing message to agent."""
-        response = await telegram_bot._route_message(
+        _response = await telegram_bot._route_message(
             "hello",
             "test_user"
         )
@@ -243,30 +242,30 @@ class TestSlackBot:
     @pytest.fixture
     def mock_supervisor(self):
         """Create mock supervisor."""
-        supervisor = AsyncMock()
+        _supervisor = AsyncMock()
         supervisor.send_message.return_value = "Test response"
         return supervisor
 
     @pytest.fixture
-    def slack_bot(self, slack_config, mock_supervisor):
+    def slack_bot(self, _slack_config, _mock_supervisor):
         """Create Slack bot instance."""
         return SlackBot(
-            token=slack_config["token"],
-            signing_secret=slack_config["signing_secret"],
-            agent_id=slack_config["agent_id"],
-            supervisor=mock_supervisor,
+            _token = slack_config["token"],
+            _signing_secret = slack_config["signing_secret"],
+            _agent_id = slack_config["agent_id"],
+            _supervisor = mock_supervisor,
         )
 
-    def test_initialization(self, slack_bot):
+    def test_initialization(self, _slack_bot):
         """Test Slack bot initialization."""
         assert slack_bot._token == "test_token"
         assert slack_bot._signing_secret == "test_secret"
         assert slack_bot._agent_id == "test-agent"
 
     @pytest.mark.asyncio
-    async def test_route_message(self, slack_bot):
+    async def test_route_message(self, _slack_bot):
         """Test routing message to agent."""
-        response = await slack_bot._route_message(
+        _response = await slack_bot._route_message(
             "hello",
             "test_user"
         )
@@ -275,19 +274,19 @@ class TestSlackBot:
         assert isinstance(response, str)
 
     @pytest.mark.asyncio
-    async def test_send_notification(self, slack_bot):
+    async def test_send_notification(self, _slack_bot):
         """Test sending notification."""
-        mock_client = AsyncMock()
+        _mock_client = AsyncMock()
         mock_client.chat_postMessage = AsyncMock()
 
         slack_bot._client = mock_client
 
         await slack_bot.send_notification(
-            channel="C12345",
-            message="Test notification"
+            _channel = "C12345",
+            _message = "Test notification"
         )
 
         mock_client.chat_postMessage.assert_called_once_with(
-            channel="C12345",
-            text="Test notification"
+            _channel = "C12345",
+            _text = "Test notification"
         )

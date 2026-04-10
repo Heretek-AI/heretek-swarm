@@ -9,11 +9,10 @@ Tests cover:
 
 import asyncio
 import pytest
-from unittest.mock import AsyncMock, MagicMock, patch
 
 from heretek_swarm.actors.base import AgentActor, ActorMessage, ActorState
 from heretek_swarm.actors.factory import ActorFactory, ActorConfig, get_factory
-from heretek_swarm.actors.supervisor import ActorSupervisor, get_supervisor
+from heretek_swarm.actors.supervisor import ActorSupervisor
 
 
 class TestActorActor:
@@ -43,13 +42,13 @@ class TestActorActor:
 class MockAgentActor(AgentActor):
     """Mock actor for testing purposes."""
 
-    def __init__(self, agent_id: str, **kwargs):
+    def __init__(self, _agent_id: str, _**kwargs):
         # Extract actor_type if provided
         actor_type = kwargs.pop("actor_type", None)
         super().__init__(agent_id=agent_id, actor_type=actor_type, **kwargs)
         self.processed_messages = []
 
-    async def process_message(self, message: ActorMessage) -> None:
+    async def process_message(self, _message: ActorMessage) -> None:
         """Store processed messages for verification."""
         self.processed_messages.append(message)
 
@@ -70,7 +69,7 @@ class TestActorFactory:
         """Create a fresh factory instance for each test."""
         return ActorFactory()
 
-    def test_register_actor_class(self, factory):
+    def test_register_actor_class(self, _factory):
         """Test registering an actor class."""
         factory.register_actor_class(
             "mock-actor",
@@ -79,13 +78,13 @@ class TestActorFactory:
         )
         assert "mock-actor" in factory.get_registered_types()
 
-    def test_register_duplicate_class_raises_error(self, factory):
+    def test_register_duplicate_class_raises_error(self, _factory):
         """Test that registering duplicate class raises error."""
         factory.register_actor_class("mock-actor", MockAgentActor)
         with pytest.raises(ValueError, match="already registered"):
             factory.register_actor_class("mock-actor", MockAgentActor)
 
-    def test_create_actor(self, factory):
+    def test_create_actor(self, _factory):
         """Test creating an actor from registered configuration."""
         factory.register_actor_class(
             "mock-actor",
@@ -98,7 +97,7 @@ class TestActorFactory:
         assert actor.name == "Test Actor"
         assert actor.topics == ["test"]
 
-    def test_create_actor_with_overrides(self, factory):
+    def test_create_actor_with_overrides(self, _factory):
         """Test creating an actor with override parameters."""
         factory.register_actor_class(
             "mock-actor",
@@ -115,29 +114,29 @@ class TestActorFactory:
         assert actor.name == "Overridden Name"
         assert actor.capabilities == ["special"]
 
-    def test_create_unregistered_actor_raises_error(self, factory):
+    def test_create_unregistered_actor_raises_error(self, _factory):
         """Test that creating unregistered actor raises error."""
         with pytest.raises(ValueError, match="not registered"):
             factory.create_actor("unknown-actor")
 
-    def test_get_actor_info(self, factory):
+    def test_get_actor_info(self, _factory):
         """Test retrieving actor configuration."""
         factory.register_actor_class("mock-actor", MockAgentActor)
         actor = factory.create_actor("mock-actor", agent_id="test-instance")
         
-        config = factory.get_actor_info("test-instance")
+        _config = factory.get_actor_info("test-instance")
         
         assert config is not None
         assert config.actor_type == "mock-actor"
         assert config.class_ref == MockAgentActor
         assert config.actor_id == "test-instance"
 
-    def test_get_actor_info_not_found(self, factory):
+    def test_get_actor_info_not_found(self, _factory):
         """Test retrieving non-existent actor configuration."""
-        config = factory.get_actor_info("non-existent")
+        _config = factory.get_actor_info("non-existent")
         assert config is None
 
-    def test_unregister_actor_class(self, factory):
+    def test_unregister_actor_class(self, _factory):
         """Test unregistering an actor class."""
         factory.register_actor_class("mock-actor", MockAgentActor)
         assert "mock-actor" in factory.get_registered_types()
@@ -145,12 +144,12 @@ class TestActorFactory:
         factory.unregister_actor_class("mock-actor")
         assert "mock-actor" not in factory.get_registered_types()
 
-    def test_unregister_nonexistent_actor_raises_error(self, factory):
+    def test_unregister_nonexistent_actor_raises_error(self, _factory):
         """Test that unregistering non-existent actor raises error."""
         with pytest.raises(ValueError, match="not registered"):
             factory.unregister_actor_class("unknown-actor")
 
-    def test_clear_instances(self, factory):
+    def test_clear_instances(self, _factory):
         """Test clearing all instance configurations."""
         factory.register_actor_class("mock-actor", MockAgentActor)
         factory.create_actor("mock-actor", agent_id="instance-1")
@@ -163,8 +162,8 @@ class TestActorFactory:
 
     def test_global_factory_singleton(self):
         """Test that get_factory returns singleton instance."""
-        factory1 = get_factory()
-        factory2 = get_factory()
+        _factory1 = get_factory()
+        _factory2 = get_factory()
         assert factory1 is factory2
 
 
@@ -173,7 +172,7 @@ class TestActorConfig:
 
     def test_actor_config_creation(self):
         """Test creating ActorConfig instance."""
-        config = ActorConfig(
+        _config = ActorConfig(
             actor_type="mock-actor",
             class_ref=MockAgentActor,
             init_kwargs={"agent_id": "test", "name": "Test"},
@@ -189,7 +188,7 @@ class TestActorConfig:
 
     def test_actor_config_default_capabilities(self):
         """Test that capabilities defaults to empty list."""
-        config = ActorConfig(
+        _config = ActorConfig(
             actor_type="mock-actor",
             class_ref=MockAgentActor,
             init_kwargs={}
@@ -204,51 +203,51 @@ class TestActorSupervisorRestart:
     def supervisor(self):
         """Create a supervisor instance for testing."""
         return ActorSupervisor(
-            name="TestSupervisor",
-            health_check_interval=0.1,
-            auto_restart=True,
+            _name = "TestSupervisor",
+            _health_check_interval = 0.1,
+            _auto_restart = True,
             max_restarts=3
         )
 
     @pytest.mark.asyncio
-    async def test_spawn_actor_stores_config(self, supervisor):
+    async def test_spawn_actor_stores_config(self, _supervisor):
         """Test that spawn_actor stores actor configuration."""
         actor = await supervisor.spawn_actor(
             MockAgentActor,
             "test-actor",
-            name="Test Actor",
-            topics=["test"]
+            _name = "Test Actor",
+            _topics = ["test"]
         )
         
         assert "test-actor" in supervisor.actors
         assert "test-actor" in supervisor.actor_configs
         
-        config = supervisor.actor_configs["test-actor"]
+        _config = supervisor.actor_configs["test-actor"]
         assert config.actor_type == "MockAgentActor"
         assert config.class_ref == MockAgentActor
         assert config.actor_id == "test-actor"
 
     @pytest.mark.asyncio
-    async def test_spawn_actor_with_type(self, supervisor):
+    async def test_spawn_actor_with_type(self, _supervisor):
         """Test spawn_actor with explicit actor_type."""
         actor = await supervisor.spawn_actor(
             MockAgentActor,
             "test-actor",
             actor_type="CustomType",
-            name="Test Actor"
+            _name = "Test Actor"
         )
         
-        config = supervisor.actor_configs["test-actor"]
+        _config = supervisor.actor_configs["test-actor"]
         assert config.actor_type == "CustomType"
 
     @pytest.mark.asyncio
-    async def test_attempt_restart_success(self, supervisor):
+    async def test_attempt_restart_success(self, _supervisor):
         """Test successful actor restart."""
         # Spawn an actor
         await supervisor.spawn_actor(
             MockAgentActor,
             "test-actor",
-            name="Test Actor"
+            _name = "Test Actor"
         )
         
         # Set actor to error state to trigger restart
@@ -256,8 +255,8 @@ class TestActorSupervisorRestart:
         actor.state = ActorState.ERROR
         
         # Get initial config
-        initial_config = supervisor.actor_configs["test-actor"]
-        initial_initialized = actor.initialized
+        _initial_config = supervisor.actor_configs["test-actor"]
+        _initial_initialized = actor.initialized
         
         # Attempt restart
         await supervisor._attempt_restart("test-actor")
@@ -267,11 +266,11 @@ class TestActorSupervisorRestart:
         assert "test-actor" in supervisor.actors
         
         # New actor should be different instance
-        new_actor = supervisor.actors["test-actor"]
+        _new_actor = supervisor.actors["test-actor"]
         assert new_actor is not actor
 
     @pytest.mark.asyncio
-    async def test_attempt_restart_no_config(self, supervisor):
+    async def test_attempt_restart_no_config(self, _supervisor):
         """Test restart when config is missing."""
         # Manually add actor without config
         actor = MockAgentActor(agent_id="test-actor")
@@ -284,7 +283,7 @@ class TestActorSupervisorRestart:
         assert supervisor.restart_counts.get("test-actor", 0) == 0
 
     @pytest.mark.asyncio
-    async def test_attempt_restart_exceeds_max(self, supervisor):
+    async def test_attempt_restart_exceeds_max(self, _supervisor):
         """Test restart exceeds maximum attempts."""
         supervisor.max_restarts = 2
         
@@ -292,7 +291,7 @@ class TestActorSupervisorRestart:
         await supervisor.spawn_actor(
             MockAgentActor,
             "test-actor",
-            name="Test Actor"
+            _name = "Test Actor"
         )
         
         # Set restart count to max
@@ -308,38 +307,38 @@ class TestActorSupervisorRestart:
         assert "test-actor" not in supervisor.actors
 
     @pytest.mark.asyncio
-    async def test_attempt_restart_actor_not_found(self, supervisor):
+    async def test_attempt_restart_actor_not_found(self, _supervisor):
         """Test restart for non-existent actor."""
         # Should not raise, just return
         await supervisor._attempt_restart("non-existent-actor")
 
     @pytest.mark.asyncio
-    async def test_get_statistics_includes_config_count(self, supervisor):
+    async def test_get_statistics_includes_config_count(self, _supervisor):
         """Test that statistics include config count."""
         await supervisor.spawn_actor(
             MockAgentActor,
             "actor-1",
-            name="Actor 1"
+            _name = "Actor 1"
         )
         await supervisor.spawn_actor(
             MockAgentActor,
             "actor-2",
-            name="Actor 2"
+            _name = "Actor 2"
         )
         
-        stats = supervisor.get_statistics()
+        _stats = supervisor.get_statistics()
         
         assert stats["total_actors"] == 2
         assert stats["total_configs"] == 2
         assert stats["total_restarts"] == 0
 
     @pytest.mark.asyncio
-    async def test_terminate_actor_removes_config(self, supervisor):
+    async def test_terminate_actor_removes_config(self, _supervisor):
         """Test that terminating actor removes config."""
         await supervisor.spawn_actor(
             MockAgentActor,
             "test-actor",
-            name="Test Actor"
+            _name = "Test Actor"
         )
         
         assert "test-actor" in supervisor.actor_configs
@@ -352,17 +351,17 @@ class TestActorSupervisorRestart:
         assert "test-actor" not in supervisor.restart_counts
 
     @pytest.mark.asyncio
-    async def test_monitor_loop_triggers_restart(self, supervisor):
+    async def test_monitor_loop_triggers_restart(self, _supervisor):
         """Test that monitor loop triggers restart for error actors."""
         # Spawn actor
         await supervisor.spawn_actor(
             MockAgentActor,
             "test-actor",
-            name="Test Actor"
+            _name = "Test Actor"
         )
         
         # Get reference to original actor
-        original_actor = supervisor.actors["test-actor"]
+        _original_actor = supervisor.actors["test-actor"]
         
         # Set to error state
         original_actor.state = ActorState.ERROR
@@ -385,32 +384,32 @@ class TestBackwardCompatibility:
         return ActorSupervisor()
 
     @pytest.mark.asyncio
-    async def test_spawn_without_actor_type(self, supervisor):
+    async def test_spawn_without_actor_type(self, _supervisor):
         """Test spawning actor without explicit actor_type (backward compat)."""
         actor = await supervisor.spawn_actor(
             MockAgentActor,
             "test-actor",
-            name="Test"
+            _name = "Test"
         )
         
         # Should use class name as default
-        config = supervisor.actor_configs["test-actor"]
+        _config = supervisor.actor_configs["test-actor"]
         assert config.actor_type == "MockAgentActor"
 
     @pytest.mark.asyncio
-    async def test_spawn_with_additional_kwargs(self, supervisor):
+    async def test_spawn_with_additional_kwargs(self, _supervisor):
         """Test spawning with various kwargs."""
         actor = await supervisor.spawn_actor(
             MockAgentActor,
             "test-actor",
-            name="Test",
-            description="Test Description",
-            topics=["topic1", "topic2"],
-            capabilities=["cap1"],
-            max_mailbox_size=500
+            _name = "Test",
+            _description = "Test Description",
+            _topics = ["topic1", "topic2"],
+            _capabilities = ["cap1"],
+            _max_mailbox_size = 500
         )
         
-        config = supervisor.actor_configs["test-actor"]
+        _config = supervisor.actor_configs["test-actor"]
         assert config.init_kwargs["name"] == "Test"
         assert config.init_kwargs["description"] == "Test Description"
         assert config.init_kwargs["topics"] == ["topic1", "topic2"]

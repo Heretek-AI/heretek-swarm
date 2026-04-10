@@ -11,7 +11,7 @@ Reference: src/heretek_swarm/gateway/event_mesh.py
 
 import asyncio
 import pytest
-from unittest.mock import Mock, AsyncMock
+from unittest.mock import Mock
 
 from heretek_swarm.gateway.event_mesh import EventMesh
 
@@ -19,7 +19,7 @@ from heretek_swarm.gateway.event_mesh import EventMesh
 class MockWebSocket:
     """Mock WebSocket for testing"""
     
-    def __init__(self, should_fail=False, disconnecting=False):
+    def __init__(self, _should_fail, _disconnecting):
         self.should_fail = should_fail
         self.client_state = type('obj', (object,), {
             'disconnecting': disconnecting
@@ -27,7 +27,7 @@ class MockWebSocket:
         self.sent_messages = []
         self.closed = False
     
-    async def send_bytes(self, data: bytes):
+    async def send_bytes(self, _data: bytes):
         """Mock send_bytes that can fail"""
         if self.should_fail:
             raise Exception("Connection lost")
@@ -43,17 +43,17 @@ class MockWebSocket:
 @pytest.mark.asyncio
 async def test_event_mesh_null_safety_with_disconnected_clients():
     """Test that EventMesh cleans up disconnected clients before broadcast"""
-    mesh = EventMesh()
+    _mesh = EventMesh()
     
     # Register clients
-    good_client = MockWebSocket(should_fail=False, disconnecting=False)
-    bad_client = MockWebSocket(should_fail=False, disconnecting=True)
+    _good_client = MockWebSocket(should_fail=False, disconnecting=False)
+    _bad_client = MockWebSocket(should_fail=False, disconnecting=True)
     
     await mesh.register("good", good_client)
     await mesh.register("bad", bad_client)
     
     # Broadcast should only send to non-disconnecting clients
-    result = await mesh.broadcast(b"test message")
+    _result = await mesh.broadcast(b"test message")
     
     # Should only send to good client
     assert result["sent"] == 1
@@ -69,17 +69,17 @@ async def test_event_mesh_null_safety_with_disconnected_clients():
 @pytest.mark.asyncio
 async def test_event_mesh_null_safety_with_failed_sends():
     """Test that EventMesh handles failed send operations"""
-    mesh = EventMesh()
+    _mesh = EventMesh()
     
     # Register clients
-    good_client = MockWebSocket(should_fail=False, disconnecting=False)
-    bad_client = MockWebSocket(should_fail=True, disconnecting=False)
+    _good_client = MockWebSocket(should_fail=False, disconnecting=False)
+    _bad_client = MockWebSocket(should_fail=True, disconnecting=False)
     
     await mesh.register("good", good_client)
     await mesh.register("bad", bad_client)
     
     # Broadcast should handle failures
-    result = await mesh.broadcast(b"test message")
+    _result = await mesh.broadcast(b"test message")
     
     # Should send to good client and fail for bad client
     assert result["sent"] == 1
@@ -95,14 +95,14 @@ async def test_event_mesh_null_safety_with_failed_sends():
 @pytest.mark.asyncio
 async def test_event_mesh_null_safety_with_null_clients():
     """Test that EventMesh handles null clients in the registry"""
-    mesh = EventMesh()
+    _mesh = EventMesh()
     
     # Manually add a null client to test robustness
     mesh.clients["null_client"] = None
     mesh.clients["good_client"] = MockWebSocket(should_fail=False, disconnecting=False)
     
     # Broadcast should filter out null clients
-    result = await mesh.broadcast(b"test message")
+    _result = await mesh.broadcast(b"test message")
     
     # Should only send to good client
     assert result["sent"] == 1
@@ -114,10 +114,10 @@ async def test_event_mesh_null_safety_with_null_clients():
 @pytest.mark.asyncio
 async def test_event_mesh_empty_broadcast():
     """Test that EventMesh handles broadcast with no clients"""
-    mesh = EventMesh()
+    _mesh = EventMesh()
     
     # Broadcast with no clients
-    result = await mesh.broadcast(b"test message")
+    _result = await mesh.broadcast(b"test message")
     
     # Should return zeros
     assert result["sent"] == 0
@@ -127,7 +127,7 @@ async def test_event_mesh_empty_broadcast():
 @pytest.mark.asyncio
 async def test_event_mesh_client_count():
     """Test that client_count property works correctly"""
-    mesh = EventMesh()
+    _mesh = EventMesh()
     
     # Initially no clients
     assert mesh.client_count == 0
@@ -147,7 +147,7 @@ async def test_event_mesh_client_count():
 @pytest.mark.asyncio
 async def test_event_mesh_register_unregister():
     """Test client registration and unregistration"""
-    mesh = EventMesh()
+    _mesh = EventMesh()
     client = MockWebSocket()
     
     # Register client
@@ -168,15 +168,15 @@ async def test_event_mesh_register_unregister():
 @pytest.mark.asyncio
 async def test_event_mesh_concurrent_broadcasts():
     """Test that EventMesh handles concurrent broadcasts safely"""
-    mesh = EventMesh()
+    _mesh = EventMesh()
     
     # Register multiple clients
     for i in range(5):
         await mesh.register(f"client{i}", MockWebSocket())
     
     # Send concurrent broadcasts
-    tasks = [mesh.broadcast(f"message{i}".encode()) for i in range(10)]
-    results = await asyncio.gather(*tasks)
+    _tasks = [mesh.broadcast(f"message{i}".encode()) for i in range(10)]
+    _results = await asyncio.gather(*tasks)
     
     # All broadcasts should succeed
     for result in results:
@@ -187,10 +187,10 @@ async def test_event_mesh_concurrent_broadcasts():
 @pytest.mark.asyncio
 async def test_event_mesh_failed_client_cleanup():
     """Test that failed clients are properly cleaned up"""
-    mesh = EventMesh()
+    _mesh = EventMesh()
     
     # Register clients that will fail
-    failing_clients = [f"bad{i}" for i in range(5)]
+    _failing_clients = [f"bad{i}" for i in range(5)]
     for client_id in failing_clients:
         await mesh.register(client_id, MockWebSocket(should_fail=True))
     
@@ -198,7 +198,7 @@ async def test_event_mesh_failed_client_cleanup():
     await mesh.register("good", MockWebSocket(should_fail=False))
     
     # Broadcast should clean up all failing clients
-    result = await mesh.broadcast(b"test message")
+    _result = await mesh.broadcast(b"test message")
     
     assert result["sent"] == 1
     assert result["failed"] == 5

@@ -6,9 +6,9 @@ Test coverage for gateway components.
 
 import pytest
 import asyncio
-from unittest.mock import AsyncMock, MagicMock, patch
+from unittest.mock import AsyncMock, MagicMock
 
-from heretek_swarm.gateway import EventMesh, A2AServer, MessageType
+from heretek_swarm.gateway import EventMesh, A2AServer
 
 
 # =============================================================================
@@ -23,18 +23,18 @@ class TestEventMesh:
         return EventMesh()
 
     @pytest.mark.asyncio
-    async def test_register_client(self, event_mesh):
+    async def test_register_client(self, _event_mesh):
         """Test client registration."""
-        mock_ws = AsyncMock()
+        _mock_ws = AsyncMock()
         await event_mesh.register("test-client", mock_ws)
         
         assert "test-client" in event_mesh.clients
         assert event_mesh.client_count == 1
 
     @pytest.mark.asyncio
-    async def test_unregister_client(self, event_mesh):
+    async def test_unregister_client(self, _event_mesh):
         """Test client unregistration."""
-        mock_ws = AsyncMock()
+        _mock_ws = AsyncMock()
         await event_mesh.register("test-client", mock_ws)
         await event_mesh.unregister("test-client")
         
@@ -42,16 +42,16 @@ class TestEventMesh:
         assert event_mesh.client_count == 0
 
     @pytest.mark.asyncio
-    async def test_broadcast_to_clients(self, event_mesh):
+    async def test_broadcast_to_clients(self, _event_mesh):
         """Test broadcast with null safety."""
         # Add mock clients
-        mock_ws1 = AsyncMock()
-        mock_ws2 = AsyncMock()
+        _mock_ws1 = AsyncMock()
+        _mock_ws2 = AsyncMock()
         await event_mesh.register("client-1", mock_ws1)
         await event_mesh.register("client-2", mock_ws2)
         
         # Broadcast
-        result = await event_mesh.broadcast(b"test message")
+        _result = await event_mesh.broadcast(b"test message")
         
         assert result["sent"] == 2
         assert result["failed"] == 0
@@ -59,16 +59,16 @@ class TestEventMesh:
         mock_ws2.send_bytes.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_broadcast_handles_failures(self, event_mesh):
+    async def test_broadcast_handles_failures(self, _event_mesh):
         """Test broadcast handles failed sends."""
         # Add one working and one failing client
-        mock_ws1 = AsyncMock()
+        _mock_ws1 = AsyncMock()
         mock_ws1.client_state = MagicMock()
         mock_ws1.client_state.disconnecting = False
         
         # For failing client, we need to set up client_state BEFORE the side_effect
         # because broadcast checks _is_disconnecting() before calling send_bytes
-        mock_ws2 = AsyncMock()
+        _mock_ws2 = AsyncMock()
         mock_ws2.client_state = MagicMock()
         mock_ws2.client_state.disconnecting = False
         mock_ws2.send_bytes = AsyncMock(side_effect=Exception("Connection lost"))
@@ -76,33 +76,33 @@ class TestEventMesh:
         await event_mesh.register("client-1", mock_ws1)
         await event_mesh.register("client-2", mock_ws2)
         
-        result = await event_mesh.broadcast(b"test")
+        _result = await event_mesh.broadcast(b"test")
         
         assert result["sent"] == 1
         assert result["failed"] == 1
 
     @pytest.mark.asyncio
-    async def test_send_to_specific_client(self, event_mesh):
+    async def test_send_to_specific_client(self, _event_mesh):
         """Test targeted send."""
-        mock_ws = AsyncMock()
+        _mock_ws = AsyncMock()
         await event_mesh.register("target-client", mock_ws)
         
-        success = await event_mesh.send_to("target-client", b"direct message")
+        _success = await event_mesh.send_to("target-client", b"direct message")
         
         assert success is True
         mock_ws.send_bytes.assert_called_once()
 
     @pytest.mark.asyncio
-    async def test_send_to_nonexistent_client(self, event_mesh):
+    async def test_send_to_nonexistent_client(self, _event_mesh):
         """Test send to unknown client fails gracefully."""
-        success = await event_mesh.send_to("unknown", b"message")
+        _success = await event_mesh.send_to("unknown", b"message")
         assert success is False
 
     @pytest.mark.asyncio
-    async def test_close_all_clients(self, event_mesh):
+    async def test_close_all_clients(self, _event_mesh):
         """Test closing all connections."""
-        mock_ws1 = AsyncMock()
-        mock_ws2 = AsyncMock()
+        _mock_ws1 = AsyncMock()
+        _mock_ws2 = AsyncMock()
         await event_mesh.register("client-1", mock_ws1)
         await event_mesh.register("client-2", mock_ws2)
         
@@ -126,20 +126,20 @@ class TestA2AServer:
         return A2AServer(event_mesh)
 
     @pytest.mark.asyncio
-    async def test_server_initialization(self, a2a_server):
+    async def test_server_initialization(self, _a2a_server):
         """Test server initializes correctly."""
         assert a2a_server.agents == {}
         assert a2a_server.event_mesh is not None
 
     @pytest.mark.asyncio
-    async def test_discovery_returns_agents(self, a2a_server):
+    async def test_discovery_returns_agents(self, _a2a_server):
         """Test agent discovery."""
         # Add mock agents
         a2a_server.agents["agent-1"] = MagicMock(
-            id="agent-1",
-            status="idle",
-            connected_at="2026-04-07T00:00:00Z",
-            last_activity="2026-04-07T00:00:00Z"
+            _id = "agent-1",
+            _status = "idle",
+            _connected_at = "2026-04-07T00:00:00Z",
+            _last_activity = "2026-04-07T00:00:00Z"
         )
         
         # Mock event mesh send
@@ -153,7 +153,7 @@ class TestA2AServer:
         assert len(call_args["agents"]) == 1
 
     @pytest.mark.asyncio
-    async def test_message_broadcast(self, a2a_server):
+    async def test_message_broadcast(self, _a2a_server):
         """Test message broadcast to all agents."""
         a2a_server.event_mesh.broadcast_json = AsyncMock()
         
@@ -163,12 +163,12 @@ class TestA2AServer:
         )
         
         a2a_server.event_mesh.broadcast_json.assert_called_once()
-        call_args = a2a_server.event_mesh.broadcast_json.call_args[0][0]
+        _call_args = a2a_server.event_mesh.broadcast_json.call_args[0][0]
         assert call_args["type"] == "message"
         assert call_args["from"] == "sender-agent"
 
     @pytest.mark.asyncio
-    async def test_proposal_creation(self, a2a_server):
+    async def test_proposal_creation(self, _a2a_server):
         """Test consensus proposal."""
         a2a_server.event_mesh.broadcast_json = AsyncMock()
         
@@ -178,12 +178,12 @@ class TestA2AServer:
         )
         
         a2a_server.event_mesh.broadcast_json.assert_called_once()
-        call_args = a2a_server.event_mesh.broadcast_json.call_args[0][0]
+        _call_args = a2a_server.event_mesh.broadcast_json.call_args[0][0]
         assert call_args["type"] == "proposal"
         assert call_args["from"] == "proposer-agent"
 
     @pytest.mark.asyncio
-    async def test_vote_casting(self, a2a_server):
+    async def test_vote_casting(self, _a2a_server):
         """Test consensus voting."""
         a2a_server.event_mesh.broadcast_json = AsyncMock()
         
@@ -193,13 +193,13 @@ class TestA2AServer:
         )
         
         a2a_server.event_mesh.broadcast_json.assert_called_once()
-        call_args = a2a_server.event_mesh.broadcast_json.call_args[0][0]
+        _call_args = a2a_server.event_mesh.broadcast_json.call_args[0][0]
         assert call_args["type"] == "vote"
         assert call_args["vote"] == "yes"
 
-    def test_get_statistics(self, a2a_server):
+    def test_get_statistics(self, _a2a_server):
         """Test server statistics."""
-        stats = a2a_server.get_statistics()
+        _stats = a2a_server.get_statistics()
         
         assert "connected_agents" in stats
         assert "agent_ids" in stats
@@ -218,8 +218,8 @@ class TestAuthentication:
         """Test API key generation."""
         from heretek_swarm.gateway.auth import generate_api_key
         
-        key1 = generate_api_key()
-        key2 = generate_api_key()
+        _key1 = generate_api_key()
+        _key2 = generate_api_key()
         
         assert key1.startswith("htsk_")
         assert key2.startswith("htsk_")
@@ -233,7 +233,7 @@ class TestAuthentication:
         # Set test key
         os.environ["HERETEK_API_KEY"] = "htsk_test_key"
         
-        key = get_api_key_from_env()
+        _key = get_api_key_from_env()
         assert key == "htsk_test_key"
         
         # Cleanup

@@ -16,7 +16,6 @@ import time
 
 import pytest
 
-from tests.conftest import AgentConfig
 
 
 @pytest.mark.unit
@@ -46,14 +45,14 @@ class TestToolTemplate:
         pass
     
     @pytest.mark.latency
-    def test_tool_execution_latency(self, assert_latency_baseline) -> None:
+    def test_tool_execution_latency(self, _assert_latency_baseline) -> None:
         """Test tool execution meets <100ms baseline."""
-        start = time.perf_counter()
+        _start = time.perf_counter()
         # TODO: Execute tool
-        elapsed_ms = (time.perf_counter() - start) * 1000
+        _elapsed_ms = (time.perf_counter() - start) * 1000
         
         # Placeholder
-        elapsed_ms = 15.0
+        _elapsed_ms = 15.0
         
         assert_latency_baseline(elapsed_ms, "tool_execution")
 
@@ -63,13 +62,13 @@ class TestToolTemplate:
 class TestToolSecurity:
     """Test tool security boundaries."""
     
-    def test_tool_input_sanitization(self, malicious_inputs: list) -> None:
+    def test_tool_input_sanitization(self, _malicious_inputs: list) -> None:
         """Test tool sanitizes malicious inputs."""
         for malicious in malicious_inputs:
             # TODO: Test input sanitization
             pass
     
-    def test_tool_no_secrets_leak(self, secret_patterns: list) -> None:
+    def test_tool_no_secrets_leak(self, _secret_patterns: list) -> None:
         """Test tool doesn't leak secrets."""
         # TODO: Verify no secrets in output/logs
         pass

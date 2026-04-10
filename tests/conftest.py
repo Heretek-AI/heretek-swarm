@@ -28,7 +28,7 @@ COVERAGE_THRESHOLD = 80  # >80% test coverage requirement
 
 # ============== TEST MARKERS ==============
 
-def pytest_configure(config: pytest.Config) -> None:
+def pytest_configure(_config: pytest.Config) -> None:
     """Configure custom pytest markers."""
     config.addinivalue_line(
         "markers", "unit: Unit tests (fast, isolated, no external dependencies)"
@@ -94,7 +94,7 @@ class AgentState(BaseModel):
 @pytest.fixture(scope="session")
 def event_loop() -> Generator[asyncio.AbstractEventLoop, None, None]:
     """Create an event loop for async tests."""
-    loop = asyncio.new_event_loop()
+    _loop = asyncio.new_event_loop()
     yield loop
     loop.close()
 
@@ -108,12 +108,12 @@ def agent_id() -> str:
 
 
 @pytest.fixture
-def agent_config(agent_id: str) -> AgentConfig:
+def agent_config(_agent_id: str) -> AgentConfig:
     """Create a basic agent configuration for testing."""
     return AgentConfig(
         agent_id=agent_id,
-        agent_type="worker",
-        capabilities=["task_execution", "messaging"],
+        _agent_type = "worker",
+        _capabilities = ["task_execution", "messaging"],
     )
 
 
@@ -123,21 +123,21 @@ def triad_agents() -> list[AgentConfig]:
     return [
         AgentConfig(
             agent_id="alpha-primary",
-            agent_type="triad",
-            capabilities=["deliberation", "consensus", "leadership"],
-            reputation=0.95,
+            _agent_type = "triad",
+            _capabilities = ["deliberation", "consensus", "leadership"],
+            _reputation = 0.95,
         ),
         AgentConfig(
             agent_id="beta-primary",
-            agent_type="triad",
-            capabilities=["critique", "analysis", "consensus"],
-            reputation=0.90,
+            _agent_type = "triad",
+            _capabilities = ["critique", "analysis", "consensus"],
+            _reputation = 0.90,
         ),
         AgentConfig(
             agent_id="charlie-primary",
-            agent_type="triad",
-            capabilities=["validation", "arbitration", "consensus"],
-            reputation=0.92,
+            _agent_type = "triad",
+            _capabilities = ["validation", "arbitration", "consensus"],
+            _reputation = 0.92,
         ),
     ]
 
@@ -147,29 +147,29 @@ def steward_config() -> AgentConfig:
     """Create Steward (orchestrator) configuration for testing."""
     return AgentConfig(
         agent_id="steward-primary",
-        agent_type="orchestrator",
-        capabilities=[
+        _agent_type = "orchestrator",
+        _capabilities = [
             "orchestration",
             "final_authorization",
             "task_delegation",
             "workflow_management",
         ],
-        reputation=1.0,
-        max_concurrent_tasks=100,
+        _reputation = 1.0,
+        _max_concurrent_tasks = 100,
     )
 
 
 # ============== MESSAGE FIXTURES ==============
 
 @pytest.fixture
-def sample_message(agent_id: str) -> Message:
+def sample_message(_agent_id: str) -> Message:
     """Create a sample A2A message for testing."""
     return Message(
-        message_id=f"msg-{uuid.uuid4().hex[:8]}",
-        sender_id=agent_id,
-        receiver_id="steward-primary",
-        message_type="task_request",
-        payload={"task": "analyze", "data": {"query": "test query"}},
+        _message_id = f"msg-{uuid.uuid4().hex[:8]}",
+        _sender_id = agent_id,
+        _receiver_id = "steward-primary",
+        _message_type = "task_request",
+        _payload = {"task": "analyze", "data": {"query": "test query"}},
     )
 
 
@@ -177,16 +177,16 @@ def sample_message(agent_id: str) -> Message:
 def consensus_message() -> Message:
     """Create a consensus-related message for triad testing."""
     return Message(
-        message_id=f"consensus-{uuid.uuid4().hex[:8]}",
-        sender_id="alpha-primary",
-        receiver_id="beta-primary",
-        message_type="deliberation_vote",
-        payload={
+        _message_id = f"consensus-{uuid.uuid4().hex[:8]}",
+        _sender_id = "alpha-primary",
+        _receiver_id = "beta-primary",
+        _message_type = "deliberation_vote",
+        _payload = {
             "proposal_id": "prop-123",
             "vote": "approve",
             "reasoning": "Meets all acceptance criteria",
         },
-        correlation_id="deliberation-session-456",
+        _correlation_id = "deliberation-session-456",
     )
 
 
@@ -207,7 +207,7 @@ def mock_agent() -> MagicMock:
 @pytest.fixture
 def mock_message_bus() -> MagicMock:
     """Create a mock message bus for A2A testing."""
-    bus = MagicMock()
+    _bus = MagicMock()
     bus.publish = AsyncMock(return_value=True)
     bus.subscribe = AsyncMock(return_value=True)
     bus.get_message = AsyncMock()
@@ -242,7 +242,7 @@ def latency_tracker() -> dict[str, list[float]]:
 @pytest.fixture
 def assert_latency_baseline():
     """Assert that latency meets the <100ms baseline requirement."""
-    def _assert(latency_ms: float, operation: str = "operation") -> None:
+    def _assert(_latency_ms: float, _operation: str) -> None:
         assert latency_ms < MESSAGE_LATENCY_BASELINE_MS, (
             f"{operation} latency {latency_ms:.2f}ms exceeds "
             f"baseline of {MESSAGE_LATENCY_BASELINE_MS}ms - FLAG FOR REFACTORING"
@@ -255,7 +255,7 @@ def assert_latency_baseline():
 @pytest_asyncio.fixture
 async def async_agent_pool() -> AsyncGenerator[list[MagicMock], None]:
     """Create a pool of async mock agents for load testing."""
-    agents = []
+    _agents = []
     for i in range(10):
         agent = MagicMock()
         agent.agent_id = f"pool-agent-{i}"

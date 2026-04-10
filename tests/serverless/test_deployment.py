@@ -16,8 +16,8 @@ in a staging environment.
 import pytest
 import json
 import os
-from datetime import datetime, timezone
-from unittest.mock import AsyncMock, MagicMock, patch, Mock
+from datetime import datetime
+from unittest.mock import patch, Mock
 
 # Test imports from handler module
 import sys
@@ -31,7 +31,7 @@ sys.path.insert(0, 'serverless')
 @pytest.fixture
 def lambda_context():
     """Create mock Lambda context."""
-    context = Mock()
+    _context = Mock()
     context.aws_request_id = "test-request-id-123"
     context.function_name = "test-function"
     context.memory_limit_in_mb = 128
@@ -121,7 +121,7 @@ def eventbridge_event():
 @pytest.fixture
 def mock_env_vars():
     """Mock environment variables."""
-    env_vars = {
+    _env_vars = {
         "STAGE": "dev",
         "REGION": "us-east-1",
         "SERVICE_NAME": "heretek-swarm",
@@ -160,7 +160,7 @@ class TestServerlessConfiguration:
         import yaml
         
         with open("serverless/serverless.yml", "r") as f:
-            config = yaml.safe_load(f)
+            _config = yaml.safe_load(f)
         
         assert config is not None
         assert "service" in config
@@ -173,7 +173,7 @@ class TestServerlessConfiguration:
         import yaml
         
         with open("serverless/serverless.yml", "r") as f:
-            config = yaml.safe_load(f)
+            _config = yaml.safe_load(f)
         
         assert config["service"] == "heretek-swarm"
     
@@ -182,9 +182,9 @@ class TestServerlessConfiguration:
         import yaml
         
         with open("serverless/serverless.yml", "r") as f:
-            config = yaml.safe_load(f)
+            _config = yaml.safe_load(f)
         
-        provider = config["provider"]
+        _provider = config["provider"]
         assert provider["runtime"] == "python3.11"
         assert provider["memorySize"] >= 256
         assert provider["timeout"] <= 900  # Max 15 minutes
@@ -194,11 +194,11 @@ class TestServerlessConfiguration:
         import yaml
         
         with open("serverless/serverless.yml", "r") as f:
-            config = yaml.safe_load(f)
+            _config = yaml.safe_load(f)
         
-        functions = config["functions"]
+        _functions = config["functions"]
         
-        required_functions = [
+        _required_functions = [
             "api",
             "async_processor",
             "swarm_health_check",
@@ -214,11 +214,11 @@ class TestServerlessConfiguration:
         import yaml
         
         with open("serverless/serverless.yml", "r") as f:
-            config = yaml.safe_load(f)
+            _config = yaml.safe_load(f)
         
-        resources = config["resources"]["Resources"]
+        _resources = config["resources"]["Resources"]
         
-        required_tables = [
+        _required_tables = [
             "AgentStateTable",
             "WorkflowStateTable",
             "KnowledgeTable",
@@ -233,16 +233,16 @@ class TestServerlessConfiguration:
         import yaml
         
         with open("serverless/serverless.yml", "r") as f:
-            config = yaml.safe_load(f)
+            _config = yaml.safe_load(f)
         
-        iam_statements = config["provider"]["iam"]["role"]["statements"]
+        _iam_statements = config["provider"]["iam"]["role"]["statements"]
         
         # Check for required permissions
-        actions_covered = set()
+        _actions_covered = set()
         for statement in iam_statements:
             actions_covered.update(statement.get("Action", []))
         
-        required_actions = [
+        _required_actions = [
             "dynamodb:GetItem",
             "dynamodb:PutItem",
             "logs:CreateLogGroup",
@@ -262,116 +262,116 @@ class TestLambdaHandlers:
     """Tests for Lambda handler functions."""
     
     @pytest.mark.asyncio
-    async def test_health_check(self, lambda_context, mock_env_vars):
+    async def test_health_check(self, _lambda_context, _mock_env_vars):
         """Test health check endpoint."""
         from serverless.handler import health_check
         
-        event = {"path": "/health"}
-        response = health_check(event, lambda_context)
+        _event = {"path": "/health"}
+        _response = health_check(event, lambda_context)
         
         assert response["statusCode"] == 200
-        body = json.loads(response["body"])
+        _body = json.loads(response["body"])
         assert body["status"] == "healthy"
         assert "timestamp" in body
     
     @pytest.mark.asyncio
-    async def test_readiness_check(self, lambda_context, mock_env_vars):
+    async def test_readiness_check(self, _lambda_context, _mock_env_vars):
         """Test readiness check endpoint."""
         from serverless.handler import readiness_check
         
-        event = {"path": "/ready"}
-        response = readiness_check(event, lambda_context)
+        _event = {"path": "/ready"}
+        _response = readiness_check(event, lambda_context)
         
         assert response["statusCode"] in [200, 503]
-        body = json.loads(response["body"])
+        _body = json.loads(response["body"])
         assert "status" in body
         assert "checks" in body
     
     @pytest.mark.asyncio
-    async def test_api_handler_health(self, lambda_context, mock_env_vars):
+    async def test_api_handler_health(self, _lambda_context, _mock_env_vars):
         """Test API handler with health check."""
         from serverless.handler import api_handler
         
-        event = {
+        _event = {
             "httpMethod": "GET",
             "path": "/health",
             "headers": {},
         }
         
-        response = api_handler(event, lambda_context)
+        _response = api_handler(event, lambda_context)
         
         assert response["statusCode"] == 200
-        body = json.loads(response["body"])
+        _body = json.loads(response["body"])
         assert body["status"] == "healthy"
     
     @pytest.mark.asyncio
-    async def test_api_handler_not_found(self, lambda_context, mock_env_vars):
+    async def test_api_handler_not_found(self, _lambda_context, _mock_env_vars):
         """Test API handler with unknown path."""
         from serverless.handler import api_handler
         
-        event = {
+        _event = {
             "httpMethod": "GET",
             "path": "/unknown/path",
             "headers": {},
         }
         
-        response = api_handler(event, lambda_context)
+        _response = api_handler(event, lambda_context)
         
         assert response["statusCode"] == 404
-        body = json.loads(response["body"])
+        _body = json.loads(response["body"])
         assert "error" in body
     
     @pytest.mark.asyncio
-    async def test_async_processor(self, lambda_context, sqs_event, mock_env_vars):
+    async def test_async_processor(self, _lambda_context, _sqs_event, _mock_env_vars):
         """Test async processor handler."""
         from serverless.handler import async_processor
         
-        response = async_processor(sqs_event, lambda_context)
+        _response = async_processor(sqs_event, lambda_context)
         
         assert response["statusCode"] in [200, 207]
-        body = json.loads(response["body"])
+        _body = json.loads(response["body"])
         assert "processed" in body
         assert "failed" in body
     
     @pytest.mark.asyncio
-    async def test_swarm_health_check(self, lambda_context, eventbridge_event, mock_env_vars):
+    async def test_swarm_health_check(self, _lambda_context, _eventbridge_event, _mock_env_vars):
         """Test scheduled swarm health check."""
         from serverless.handler import swarm_health_check
         
-        response = swarm_health_check(eventbridge_event, lambda_context)
+        _response = swarm_health_check(eventbridge_event, lambda_context)
         
         assert response["statusCode"] == 200
-        body = json.loads(response["body"])
+        _body = json.loads(response["body"])
         assert "timestamp" in body
         assert "agents_checked" in body
     
     @pytest.mark.asyncio
-    async def test_agent_state_cleanup(self, lambda_context, eventbridge_event, mock_env_vars):
+    async def test_agent_state_cleanup(self, _lambda_context, _eventbridge_event, _mock_env_vars):
         """Test agent state cleanup handler."""
         from serverless.handler import agent_state_cleanup
         
-        event = eventbridge_event.copy()
+        _event = eventbridge_event.copy()
         event["detail"] = {"action": "cleanup_states"}
         
-        response = agent_state_cleanup(event, lambda_context)
+        _response = agent_state_cleanup(event, lambda_context)
         
         assert response["statusCode"] == 200
-        body = json.loads(response["body"])
+        _body = json.loads(response["body"])
         assert "timestamp" in body
         assert "states_scanned" in body
     
     @pytest.mark.asyncio
-    async def test_behavior_profile_analyzer(self, lambda_context, eventbridge_event, mock_env_vars):
+    async def test_behavior_profile_analyzer(self, _lambda_context, _eventbridge_event, _mock_env_vars):
         """Test behavior profile analyzer handler."""
         from serverless.handler import behavior_profile_analyzer
         
-        event = eventbridge_event.copy()
+        _event = eventbridge_event.copy()
         event["detail"] = {"action": "analyze_profiles"}
         
-        response = behavior_profile_analyzer(event, lambda_context)
+        _response = behavior_profile_analyzer(event, lambda_context)
         
         assert response["statusCode"] == 200
-        body = json.loads(response["body"])
+        _body = json.loads(response["body"])
         assert "timestamp" in body
         assert "profiles_analyzed" in body
 
@@ -383,14 +383,14 @@ class TestLambdaHandlers:
 class TestColdStartOptimization:
     """Tests for cold start optimization."""
     
-    def test_dependency_initialization(self, mock_env_vars):
+    def test_dependency_initialization(self, _mock_env_vars):
         """Test dependency initialization."""
         from serverless.handler import initialize_dependencies
         
         # Should not raise exception
         initialize_dependencies()
     
-    def test_global_variables(self, mock_env_vars):
+    def test_global_variables(self, _mock_env_vars):
         """Test global variable initialization."""
         from serverless.handler import (
             _db_connection,
@@ -412,41 +412,41 @@ class TestColdStartOptimization:
 class TestAuthentication:
     """Tests for authentication."""
     
-    def test_verify_auth_valid(self, mock_env_vars):
+    def test_verify_auth_valid(self, _mock_env_vars):
         """Test verifying valid API key."""
         from serverless.handler import verify_auth
         
-        event = {
+        _event = {
             "headers": {
                 "X-Heretek-Api-Key": "test-api-key",
             },
         }
         
-        result = verify_auth(event)
+        _result = verify_auth(event)
         assert result is True
     
-    def test_verify_auth_missing(self, mock_env_vars):
+    def test_verify_auth_missing(self, _mock_env_vars):
         """Test verifying missing API key."""
         from serverless.handler import verify_auth
         
-        event = {
+        _event = {
             "headers": {},
         }
         
-        result = verify_auth(event)
+        _result = verify_auth(event)
         assert result is False
     
-    def test_verify_auth_invalid(self, mock_env_vars):
+    def test_verify_auth_invalid(self, _mock_env_vars):
         """Test verifying invalid API key."""
         from serverless.handler import verify_auth
         
-        event = {
+        _event = {
             "headers": {
                 "X-Heretek-Api-Key": "wrong-key",
             },
         }
         
-        result = verify_auth(event)
+        _result = verify_auth(event)
         assert result is False
 
 
@@ -461,23 +461,23 @@ class TestRequestParsing:
         """Test parsing JSON body."""
         from serverless.handler import parse_body
         
-        event = {
+        _event = {
             "body": json.dumps({"key": "value"}),
             "isBase64Encoded": False,
         }
         
-        body = parse_body(event)
+        _body = parse_body(event)
         assert body == {"key": "value"}
     
     def test_parse_body_empty(self):
         """Test parsing empty body."""
         from serverless.handler import parse_body
         
-        event = {
+        _event = {
             "body": None,
         }
         
-        body = parse_body(event)
+        _body = parse_body(event)
         assert body == {}
     
     def test_parse_body_base64(self):
@@ -485,27 +485,27 @@ class TestRequestParsing:
         from serverless.handler import parse_body
         import base64
         
-        original_body = json.dumps({"key": "value"})
-        encoded_body = base64.b64encode(original_body.encode()).decode()
+        _original_body = json.dumps({"key": "value"})
+        _encoded_body = base64.b64encode(original_body.encode()).decode()
         
-        event = {
+        _event = {
             "body": encoded_body,
             "isBase64Encoded": True,
         }
         
-        body = parse_body(event)
+        _body = parse_body(event)
         assert body == {"key": "value"}
     
     def test_parse_body_invalid_json(self):
         """Test parsing invalid JSON body."""
         from serverless.handler import parse_body
         
-        event = {
+        _event = {
             "body": "not valid json",
             "isBase64Encoded": False,
         }
         
-        body = parse_body(event)
+        _body = parse_body(event)
         assert body == {}
 
 
@@ -520,12 +520,12 @@ class TestAPIResponse:
         """Test API response with default headers."""
         from serverless.handler import APIResponse
         
-        response = APIResponse(
-            status_code=200,
-            body={"message": "success"},
+        _response = APIResponse(
+            _status_code = 200,
+            _body = {"message": "success"},
         )
         
-        result = response.to_dict()
+        _result = response.to_dict()
         
         assert result["statusCode"] == 200
         assert "Content-Type" in result["headers"]
@@ -535,13 +535,13 @@ class TestAPIResponse:
         """Test API response with custom headers."""
         from serverless.handler import APIResponse
         
-        response = APIResponse(
-            status_code=200,
-            body={"message": "success"},
-            headers={"X-Custom-Header": "custom-value"},
+        _response = APIResponse(
+            _status_code = 200,
+            _body = {"message": "success"},
+            _headers = {"X-Custom-Header": "custom-value"},
         )
         
-        result = response.to_dict()
+        _result = response.to_dict()
         
         assert result["headers"]["X-Custom-Header"] == "custom-value"
     
@@ -550,15 +550,15 @@ class TestAPIResponse:
         from serverless.handler import APIResponse
         from datetime import datetime
         
-        response = APIResponse(
-            status_code=200,
-            body={
+        _response = APIResponse(
+            _status_code = 200,
+            _body = {
                 "message": "success",
                 "timestamp": datetime.now(),
             },
         )
         
-        result = response.to_dict()
+        _result = response.to_dict()
         
         # Should not raise exception
         json.loads(result["body"])
@@ -576,11 +576,11 @@ class TestResourceCreation:
         import yaml
         
         with open("serverless/serverless.yml", "r") as f:
-            config = yaml.safe_load(f)
+            _config = yaml.safe_load(f)
         
-        tables = config["resources"]["Resources"]
+        _tables = config["resources"]["Resources"]
         
-        agent_table = tables["AgentStateTable"]
+        _agent_table = tables["AgentStateTable"]
         assert agent_table["Type"] == "AWS::DynamoDB::Table"
         assert "KeySchema" in agent_table["Properties"]
         assert "AttributeDefinitions" in agent_table["Properties"]
@@ -590,11 +590,11 @@ class TestResourceCreation:
         import yaml
         
         with open("serverless/serverless.yml", "r") as f:
-            config = yaml.safe_load(f)
+            _config = yaml.safe_load(f)
         
-        queues = config["resources"]["Resources"]
+        _queues = config["resources"]["Resources"]
         
-        async_queue = queues["AsyncProcessingQueue"]
+        _async_queue = queues["AsyncProcessingQueue"]
         assert async_queue["Type"] == "AWS::SQS::Queue"
         assert "VisibilityTimeout" in async_queue["Properties"]
     
@@ -603,11 +603,11 @@ class TestResourceCreation:
         import yaml
         
         with open("serverless/serverless.yml", "r") as f:
-            config = yaml.safe_load(f)
+            _config = yaml.safe_load(f)
         
-        buckets = config["resources"]["Resources"]
+        _buckets = config["resources"]["Resources"]
         
-        docs_bucket = buckets["DocumentsBucket"]
+        _docs_bucket = buckets["DocumentsBucket"]
         assert docs_bucket["Type"] == "AWS::S3::Bucket"
         assert "BucketEncryption" in docs_bucket["Properties"]
         assert "VersioningConfiguration" in docs_bucket["Properties"]
@@ -617,11 +617,11 @@ class TestResourceCreation:
         import yaml
         
         with open("serverless/serverless.yml", "r") as f:
-            config = yaml.safe_load(f)
+            _config = yaml.safe_load(f)
         
-        buses = config["resources"]["Resources"]
+        _buses = config["resources"]["Resources"]
         
-        events_bus = buses["SwarmEventsBus"]
+        _events_bus = buses["SwarmEventsBus"]
         assert events_bus["Type"] == "AWS::Events::EventBus"
 
 
@@ -637,11 +637,11 @@ class TestOutputs:
         import yaml
         
         with open("serverless/serverless.yml", "r") as f:
-            config = yaml.safe_load(f)
+            _config = yaml.safe_load(f)
         
-        outputs = config["outputs"]
+        _outputs = config["outputs"]
         
-        required_outputs = [
+        _required_outputs = [
             "ApiGatewayApiUrl",
             "AgentStateTableName",
             "WorkflowStateTableName",
@@ -662,45 +662,45 @@ class TestOutputs:
 class TestIntegration:
     """Integration tests for serverless deployment."""
     
-    def test_full_api_request_flow(self, lambda_context, mock_env_vars):
+    def test_full_api_request_flow(self, _lambda_context, _mock_env_vars):
         """Test full API request flow."""
         from serverless.handler import api_handler, health_check
         
         # Health check request
-        health_event = {
+        _health_event = {
             "httpMethod": "GET",
             "path": "/health",
             "headers": {},
         }
         
-        health_response = api_handler(health_event, lambda_context)
+        _health_response = api_handler(health_event, lambda_context)
         
         assert health_response["statusCode"] == 200
         
         # Ready check request
-        ready_event = {
+        _ready_event = {
             "httpMethod": "GET",
             "path": "/ready",
             "headers": {},
         }
         
-        ready_response = api_handler(ready_event, lambda_context)
+        _ready_response = api_handler(ready_event, lambda_context)
         
         assert ready_response["statusCode"] in [200, 503]
     
-    def test_error_handling(self, lambda_context, mock_env_vars):
+    def test_error_handling(self, _lambda_context, _mock_env_vars):
         """Test error handling in handlers."""
         from serverless.handler import api_handler
         
         # Request that should cause 404
-        error_event = {
+        _error_event = {
             "httpMethod": "GET",
             "path": "/nonexistent",
             "headers": {},
         }
         
-        response = api_handler(error_event, lambda_context)
+        _response = api_handler(error_event, lambda_context)
         
         assert response["statusCode"] == 404
-        body = json.loads(response["body"])
+        _body = json.loads(response["body"])
         assert "error" in body
