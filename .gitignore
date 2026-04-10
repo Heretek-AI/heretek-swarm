@@ -91,6 +91,8 @@ Thumbs.db
 *.tmp
 *.bak
 *.swp
+fix_output.txt
+fix_deepsource_*.py
 
 docs/berk/*
 docs/DEVELOPMENT_PLAN.md
