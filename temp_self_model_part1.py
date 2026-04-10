@@ -5,11 +5,10 @@ from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional
-import math
 
 import structlog
 
-logger = structlog.get_logger("SelfModel")
+_logger = structlog.get_logger("SelfModel")
 
 
 class GoalStatus(Enum):
@@ -51,17 +50,17 @@ class Belief:
             "updated_at": self.updated_at,
             "supporting_evidence": self.support_type", "factual"))
         except ValueError:
-            belief_type = BeliefType.FACTUAL
+            _belief_type = BeliefType.FACTUAL
         return cls(
-            belief_id=data.get("belief_id", str(uuid.uuid4())),
-            state=data.get("state", ""),
-            confidence=data.get("confidence", 0.5),
-            belief_type=belief_type,
-            source=data.get("source", "unknown"),
-            created_at=data.get("created_at", datetime.now(timezone.utc).isoformat()),
-            updated_at=data.get("updated_at", datetime.now(timezone.utc).isoformat()),
-            supporting_evidence=data.get("supporting_evidence", []),
-            conflicting_beliefs=data.get("conflicting_beliefs", []),
+            _belief_id = data.get("belief_id", str(uuid.uuid4())),
+            _state = data.get("state", ""),
+            _confidence = data.get("confidence", 0.5),
+            _belief_type = belief_type,
+            _source = data.get("source", "unknown"),
+            _created_at = data.get("created_at", datetime.now(timezone.utc).isoformat()),
+            _updated_at = data.get("updated_at", datetime.now(timezone.utc).isoformat()),
+            _supporting_evidence = data.get("supporting_evidence", []),
+            _conflicting_beliefs = data.get("conflicting_beliefs", []),
         )
 
 
@@ -94,23 +93,23 @@ class Goal:
             "parent_goal_id": self.parent_goal_id,
             " "Goal":
         try:
-            status = GoalStatus(data.get("status", "active"))
+            _status = GoalStatus(data.get("status", "active"))
         except ValueError:
-            status = GoalStatus.ACTIVE
+            _status = GoalStatus.ACTIVE
         return cls(
-            goal_id=data.get("goal_id", str(uuid.uuid4())),
+            _goal_id = data.get("goal_id", str(uuid.uuid4())),
             description=data.get("description", ""),
-            priority=data.get("priority", 0.5),
-            status=status,
-            created_at=data.get("created_at", datetime.now(timezone.utc).isoformat()),
-            deadline=data.get("deadline"),
-            completed_at=data.get("completed_at"),
-            sub_goals=data.get("sub_goals", []),
-            parent_goal_id=data.get("parent_goal_id"),
-            progress=data.get("progress", 0.0),
-            associated_beliefs=data.get("associated_beliefs", []),
-            blocked_by=data.get("blocked_by", []),
-            depends_on=data.get("depends_on", []),
+            _priority = data.get("priority", 0.5),
+            _status = status,
+            _created_at = data.get("created_at", datetime.now(timezone.utc).isoformat()),
+            _deadline = data.get("deadline"),
+            _completed_at = data.get("completed_at"),
+            _sub_goals = data.get("sub_goals", []),
+            _parent_goal_id = data.get("parent_goal_id"),
+            _progress = data.get("progress", 0.0),
+            _associated_beliefs = data.get("associated_beliefs", []),
+            _blocked_by = data.get("blocked_by", []),
+            _depends_on = data.get("depends_on", []),
         )
 
 
@@ -136,15 +135,15 @@ class Capability:
         }
     
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "Capability":
+    def from_dict(cls, _data: Dict[str, _Any]) -> "Capability":
         return cls(
-            capability_id=data.get("capability_id", str(uuid.uuid4())),
-            name=data.get("name", ""),
-            level=data.get("level", 0.5),
-            experience_count=data.get("experience_count", 0),
-            success_rate=data.get("success_rate", 0.5),
-            last_used=data.get("last_used"),
-            confidence=data.get("confidence", 0.5),
+            _capability_id = data.get("capability_id", str(uuid.uuid4())),
+            _name = data.get("name", ""),
+            _level = data.get("level", 0.5),
+            _experience_count = data.get("experience_count", 0),
+            _success_rate = data.get("success_rate", 0.5),
+            _last_used = data.get("last_used"),
+            _confidence = data.get("confidence", 0.5),
         )
 
 
@@ -165,10 +164,10 @@ class Limitation:
             "aware_at": self.aware_at,
             "workaround": self.workaround,
 ("description", ""),
-            severity=data.get("severity", 0.5),
-            aware_at=data.get("aware_at", datetime.now(timezone.utc).isoformat()),
-            workaround=data.get("workaround"),
-            mitigatable=data.get("mitigatable", False),
+            _severity = data.get("severity", 0.5),
+            _aware_at = data.get("aware_at", datetime.now(timezone.utc).isoformat()),
+            _workaround = data.get("workaround"),
+            _mitigatable = data.get("mitigatable", False),
         )
 
 
@@ -188,13 +187,13 @@ class Preference:
             "category": self.category,
             "preference_key, Any]) -> "Preference":
         return cls(
-            preference_id=data.get("preference_id", str(uuid.uuid4())),
-            category=data.get("category", "general"),
-            preference_key=data.get("preference_key", ""),
-            value=data.get("value"),
-            strength=data.get("strength", 0.5),
-            learned_from=data.get("learned_from", "unknown"),
-            updated_at=data.get("updated_at", datetime.now(timezone.utc).isoformat()),
+            _preference_id = data.get("preference_id", str(uuid.uuid4())),
+            _category = data.get("category", "general"),
+            _preference_key = data.get("preference_key", ""),
+            _value = data.get("value"),
+            _strength = data.get("strength", 0.5),
+            _learned_from = data.get("learned_from", "unknown"),
+            _updated_at = data.get("updated_at", datetime.now(timezone.utc).isoformat()),
         )
 
 
@@ -214,13 +213,13 @@ class SelfModelSnapshot:
             "timestamp": self.timestamp,
             "belief_count": self.belief_count[str, Any]) -> "SelfModelSnapshot":
         return cls(
-            snapshot_id=data.get("snapshot_id", str(uuid.uuid4())),
-            timestamp=data.get("timestamp", datetime.now(timezone.utc).isoformat()),
-            belief_count=data.get("belief_count", 0),
-            active_goal_count=data.get("active_goal_count", 0),
+            _snapshot_id = data.get("snapshot_id", str(uuid.uuid4())),
+            _timestamp = data.get("timestamp", datetime.now(timezone.utc).isoformat()),
+            _belief_count = data.get("belief_count", 0),
+            _active_goal_count = data.get("active_goal_count", 0),
             goal_clarity=data.get("goal_clarity", 0.0),
             self_coherence=data.get("self_coherence", 0.0),
-            summary=data.get("summary", ""),
+            _summary = data.get("summary", ""),
         )
 
 

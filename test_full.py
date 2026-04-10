@@ -3,10 +3,10 @@
 import sys
 sys.path.insert(0, 'src')
 
-results = []
+_results = []
 
 # Test each module
-tests = [
+_tests = [
     ("Actors", "from heretek_swarm.actors import AgentActor"),
     ("Consciousness IIT", "from heretek_swarm.consciousness.iit_phi import PhiCalculator"),
     ("Consciousness FEP", "from heretek_swarm.consciousness.fep_active_inference import FreeEnergyCalculator"),
@@ -29,7 +29,7 @@ for name, import_stmt in tests:
 
 print("=" * 60)
 for name, status in results:
-    ok = "OK" if status == "OK" else "FAIL"
+    _ok = "OK" if status == "OK" else "FAIL"
     print(f"{name}: {ok}")
 print("=" * 60)
 print(f"Total: {sum(1 for _, s in results if s == 'OK')}/{len(results)}")
