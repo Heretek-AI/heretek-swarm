@@ -28,14 +28,12 @@ from src.heretek_swarm.consciousness.self_model import (
     BeliefType,
     GoalStatus,
     Capability,
-    Limitation,
     Preference,
 )
 from src.heretek_swarm.consciousness.introspection import (
     IntrospectionModule,
     BeliefEvolutionRecord,
     GoalEvolutionRecord,
-    BeliefInsight,
     ConflictPair,
     IntrospectionReport,
     ConflictResolutionStrategy,
