@@ -1,0 +1,100 @@
+# OpenTelemetry Collector Configuration for Heretek Swarm
+# Receives traces via OTLP and exports to Jaeger
+#
+# Usage:
+#   Mount this file as /etc/otelcol-contrib/config.yaml in the collector container
+
+receivers:
+  otlp:
+    protocols:
+      grpc:
+        endpoint: 0.0.0.0:4317
+      http:
+        endpoint: 0.0.0.0:4318
+
+processors:
+  batch:
+    timeout: 5s
+    send_batch_size: 1024
+  
+  # Memory limiter to prevent OOM
+  memory_limiter:
+    check_interval: 1s
+    limit_mib: 512
+    spike_limit_mib: 128
+
+  # Transform processor to standardize attributes
+  transform:
+    trace_configs:
+      - error_mode: ignore
+        statements:
+          # Add service name as resource attribute if not present
+          - replace_pattern(attributes["service.name"], "^(.*)$", "heretek-swarm")
+          # Normalize agent_id attribute
+          - replace_key(attributes, "agent_id", "heretek.agent.id")
+          # Normalize task_id attribute
+          - replace_key(attributes, "task_id", "heretek.task.id")
+          # Normalize consensus_id attribute
+          - replace_key(attributes, "consensus_id", "heretek.consensus.id")
+          # Normalize phi_score attribute
+          - replace_key(attributes, "phi_score", "heretek.consciousness.phi_score")
+
+exporters:
+  # Export traces to Jaeger
+  jaeger:
+    endpoint: jaeger:14250
+    tls:
+      insecure: true
+    sending_queue:
+      queue_size: 10000
+    retry_on_failure:
+      enabled: true
+      initial_interval: 5s
+      max_interval: 30s
+      max_elapsed_time: 5m
+
+  # Export traces to console for debugging (disable in production)
+  logging:
+    verbosity: detailed
+    sampling_initial: 5
+    sampling_thereafter: 200
+
+  # Export to Prometheus (for trace metrics)
+  prometheus:
+    endpoint: "0.0.0.0:8889"
+    namespace: heretek_swarm
+    const_labels:
+      service: heretek-swarm
+
+extensions:
+  # Health check extension
+  health_check:
+    endpoint: 0.0.0.0:13133
+    path: /
+  
+  # ZPages extension for debugging
+  zpages:
+    endpoint: 0.0.0.0:55679
+
+service:
+  extensions: [health_check, zpages]
+  
+  pipelines:
+    # Primary trace pipeline: OTLP -> Process -> Jaeger
+    traces:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [jaeger]
+    
+    # Debug trace pipeline: OTLP -> Process -> Console (disabled by default)
+    # Uncomment to enable console logging for traces
+    # traces/debug:
+    #   receivers: [otlp]
+    #   processors: [memory_limiter, batch]
+    #   exporters: [logging]
+    
+    # Metrics pipeline for trace-related metrics
+    metrics:
+      receivers: [otlp]
+      processors: [memory_limiter, batch]
+      exporters: [prometheus]
