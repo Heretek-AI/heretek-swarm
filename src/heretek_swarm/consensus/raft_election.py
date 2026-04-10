@@ -19,7 +19,7 @@ from typing import Any, Dict, List, Optional, Set
 
 import structlog
 
-logger = structlog.get_logger("RaftElection")
+_logger = structlog.get_logger("RaftElection")
 
 
 class RaftState(Enum):
@@ -149,7 +149,7 @@ class RaftElection:
     Example:
         ```python
         # Initialize as leader node
-        raft = RaftElection(
+        _raft = RaftElection(
             node_id="node-1",
             peers=["node-2", "node-3"],
             election_timeout_min=1.5,
@@ -162,22 +162,14 @@ class RaftElection:
             print(f"I am leader: {raft.leader_id}")
         
         # Request vote from other nodes
-        response = await raft.request_vote(
+        _response = await raft.request_vote(
             "node-2",
             RequestVoteRequest(term=1, candidate_id="node-1")
         )
         ```
     """
     
-    def __init__(
-        self,
-        node_id: str,
-        peers: Optional[List[str]] = None,
-        election_timeout_min: float = 1.5,
-        election_timeout_max: float = 3.0,
-        heartbeat_interval: float = 0.5,
-        max_log_entries: int = 1000,
-    ) -> None:
+    def __init__(self, _node_id: str, _peers: Optional[List[str]], _election_timeout_min: float, _election_timeout_max: float, _heartbeat_interval: float, _max_log_entries: int) -> None:
         """
         Initialize RaftElection.
         
@@ -229,7 +221,7 @@ class RaftElection:
         
         logger.info(
             f"RaftElection initialized for {node_id}",
-            extra={
+            _extra = {
                 "node_id": node_id,
                 "peers": peers,
                 "state": self._state.value,
@@ -315,7 +307,7 @@ class RaftElection:
         
         logger.info(
             f"Starting election",
-            extra={
+            _extra = {
                 "node_id": self.node_id,
                 "term": self._current_term,
             },
@@ -325,14 +317,14 @@ class RaftElection:
         vote_count = 1  # My vote
         for peer_id in self.peers:
             try:
-                response = await self._request_vote_from_peer(peer_id)
+                _response = await self._request_vote_from_peer(peer_id)
                 if response and response.vote_granted:
                     vote_count += 1
             except Exception as e:
                 logger.error(f"Failed to get vote from {peer_id}: {e}")
         
         # Check if won election
-        majority = (len(self.peers) + 1) // 2 + 1
+        _majority = (len(self.peers) + 1) // 2 + 1
         if vote_count >= majority:
             await self._become_leader()
         else:
@@ -342,7 +334,7 @@ class RaftElection:
             
             logger.info(
                 f"Election lost",
-                extra={"vote_count": vote_count, "majority": majority},
+                _extra = {"vote_count": vote_count, "majority": majority},
             )
 
     async def _become_leader(self) -> None:
@@ -355,7 +347,7 @@ class RaftElection:
         
         logger.info(
             f"Became leader",
-            extra={
+            _extra = {
                 "node_id": self.node_id,
                 "term": self._current_term,
             },
@@ -390,10 +382,7 @@ class RaftElection:
             except Exception as e:
                 logger.error(f"Heartbeat loop error: {e}")
 
-    async def _request_vote_from_peer(
-        self,
-        peer_id: str,
-    ) -> Optional[RequestVoteResponse]:
+    async def _request_vote_from_peer(self, _peer_id: str) -> Optional[RequestVoteResponse]:
         """Request vote from a peer node."""
         peer = self._peer_connections.get(peer_id)
         if peer is None:
@@ -417,15 +406,15 @@ class RaftElection:
             )
         )
 
-    async def _send_heartbeat(self, peer_id: str) -> None:
+    async def _send_heartbeat(self, _peer_id: str) -> None:
         """Send heartbeat to peer."""
-        request = AppendEntriesRequest(
+        _request = AppendEntriesRequest(
             term=self._current_term,
             leader_id=self.node_id,
             prev_log_index=self._log_index,
             prev_log_term=self._get_last_log_term(),
             entries=[],
-            leader_commit=self._leader_state.commit_index,
+            _leader_commit = self._leader_state.commit_index,
         )
         
         peer = self._peer_connections.get(peer_id)
@@ -441,10 +430,7 @@ class RaftElection:
             return self._log[-1].term
         return 0
 
-    async def request_vote(
-        self,
-        request: RequestVoteRequest,
-    ) -> RequestVoteResponse:
+    async def request_vote(self, _request: RequestVoteRequest) -> RequestVoteResponse:
         """
         Handle RequestVote RPC.
         
@@ -462,18 +448,18 @@ class RaftElection:
         # 1. Term >= current term
         # 2. Haven't voted for another candidate (or this is same candidate)
         # 3. Candidate's log is at least as up-to-date
-        vote_granted = False
+        _vote_granted = False
         
         if request.term >= self._current_term:
             if self._voted_for is None or self._voted_for == request.candidate_id:
                 if self._is_log_up_to_date(request.last_log_index, request.last_log_term):
                     self._voted_for = request.candidate_id
-                    vote_granted = True
+                    _vote_granted = True
                     self._reset_election_timeout()
         
         logger.debug(
             f"RequestVote response",
-            extra={
+            _extra = {
                 "request_candidate": request.candidate_id,
                 "vote_granted": vote_granted,
                 "current_term": self._current_term,
@@ -482,13 +468,10 @@ class RaftElection:
         
         return RequestVoteResponse(
             term=self._current_term,
-            vote_granted=vote_granted,
+            _vote_granted = vote_granted,
         )
 
-    async def append_entries(
-        self,
-        request: AppendEntriesRequest,
-    ) -> AppendEntriesResponse:
+    async def append_entries(self, _request: AppendEntriesRequest) -> AppendEntriesResponse:
         """
         Handle AppendEntries RPC (heartbeat or log replication).
         
@@ -506,7 +489,7 @@ class RaftElection:
         if request.term < self._current_term:
             return AppendEntriesResponse(
                 term=self._current_term,
-                success=False,
+                _success = False,
             )
         
         # Update leader state
@@ -519,28 +502,28 @@ class RaftElection:
         self._reset_election_timeout()
         
         # Handle heartbeat or log entries
-        success = True
-        match_index = request.prev_log_index
+        _success = True
+        _match_index = request.prev_log_index
         
         if request.entries:
             # Log replication
             if request.prev_log_index < len(self._log):
                 # Check if existing entry matches
-                existing = self._log[request.prev_log_index]
+                _existing = self._log[request.prev_log_index]
                 if existing.term != request.prev_log_term:
-                    success = False
+                    _success = False
                 else:
                     # Append new entries
                     self._log = self._log[:request.prev_log_index + 1]
                     self._log.extend(request.entries)
-                    match_index = len(self._log) - 1
+                    _match_index = len(self._log) - 1
                     
                     # Apply committed entries
                     if request.leader_commit > self._leader_state.commit_index:
                         self._leader_state.commit_index = request.leader_commit
             
             else:
-                success = False
+                _success = False
         
         # Commit entries if leader committed
         if request.leader_commit > self._leader_state.commit_index:
@@ -548,7 +531,7 @@ class RaftElection:
         
         logger.debug(
             f"AppendEntries response",
-            extra={
+            _extra = {
                 "leader": request.leader_id,
                 "success": success,
                 "match_index": match_index,
@@ -557,11 +540,11 @@ class RaftElection:
         
         return AppendEntriesResponse(
             term=self._current_term,
-            success=success,
-            match_index=match_index,
+            _success = success,
+            _match_index = match_index,
         )
 
-    async def _step_down(self, new_term: int) -> None:
+    async def _step_down(self, _new_term: int) -> None:
         """Step down to follower state."""
         self._current_term = new_term
         self._state = RaftState.FOLLOWER
@@ -571,12 +554,12 @@ class RaftElection:
         
         logger.debug(f"Stepped down to term {new_term}")
 
-    def _is_log_up_to_date(self, last_index: int, last_term: int) -> bool:
+    def _is_log_up_to_date(self, _last_index: int, _last_term: int) -> bool:
         """Check if candidate's log is up-to-date."""
         if not self._log:
             return True
         
-        my_last_term = self._log[-1].term
+        _my_last_term = self._log[-1].term
         
         # More recent entry wins
         if last_term != my_last_term:
@@ -585,7 +568,7 @@ class RaftElection:
         # Longer log wins
         return last_index >= len(self._log) - 1
 
-    async def append_log(self, data: Dict[str, Any]) -> int:
+    async def append_log(self, _data: Dict[str, _Any]) -> int:
         """
         Append entry to log (leader only).
         
@@ -599,10 +582,10 @@ class RaftElection:
             raise RuntimeError("Only leader can append log entries")
         
         self._log_index += 1
-        entry = LogEntry(
+        _entry = LogEntry(
             index=self._log_index,
             term=self._current_term,
-            data=data,
+            _data = data,
         )
         
         self._log.append(entry)
@@ -617,22 +600,22 @@ class RaftElection:
         logger.debug(f"Appended log entry {self._log_index}")
         return self._log_index
 
-    async def _replicate_to_peer(self, peer_id: str, entry: LogEntry) -> None:
+    async def _replicate_to_peer(self, _peer_id: str, _entry: LogEntry) -> None:
         """Replicate log entry to peer."""
-        request = AppendEntriesRequest(
+        _request = AppendEntriesRequest(
             term=self._current_term,
             leader_id=self.node_id,
-            prev_log_index=entry.index - 1,
-            prev_log_term=entry.term,
-            entries=[entry],
-            leader_commit=self._leader_state.commit_index,
+            _prev_log_index = entry.index - 1,
+            _prev_log_term = entry.term,
+            _entries = [entry],
+            _leader_commit = self._leader_state.commit_index,
         )
         
         peer = self._peer_connections.get(peer_id)
         if peer:
             await peer.append_entries(request)
 
-    def get_log_entry(self, index: int) -> Optional[LogEntry]:
+    def get_log_entry(self, _index: int) -> Optional[LogEntry]:
         """Get log entry by index."""
         if 0 <= index < len(self._log):
             return self._log[index]
@@ -646,22 +629,22 @@ class RaftElection:
         """Get current leader state."""
         return self._leader_state
 
-    def register_peer(self, peer_id: str, peer: "RaftElection") -> None:
+    def register_peer(self, _peer_id: str, _peer: "RaftElection") -> None:
         """Register peer connection."""
         self._peer_connections[peer_id] = peer
         logger.debug(f"Registered peer {peer_id}")
 
-    def unregister_peer(self, peer_id: str) -> None:
+    def unregister_peer(self, _peer_id: str) -> None:
         """Unregister peer connection."""
         if peer_id in self._peer_connections:
             del self._peer_connections[peer_id]
             logger.debug(f"Unregistered peer {peer_id}")
 
-    def set_leader_change_callback(self, callback: callable) -> None:
+    def set_leader_change_callback(self, _callback: callable) -> None:
         """Set callback for leader changes."""
         self._on_leader_change = callback
 
-    def set_log_append_callback(self, callback: callable) -> None:
+    def set_log_append_callback(self, _callback: callable) -> None:
         """Set callback for log appends."""
         self._on_log_append = callback
 
@@ -687,23 +670,17 @@ class MAKERConsensusWithRaft:
         consensus = MAKERConsensusWithRaft(
             node_id="node-1",
             peers=["node-2", "node-3"],
-            maker_config={"ahead_by_k": 2, "min_votes": 3}
+            _maker_config = {"ahead_by_k": 2, "min_votes": 3}
         )
         await consensus.start()
         
         # Use Raft for leadership
         if consensus.is_leader:
-            result = await consensus.run_consensus(...)
+            _result = await consensus.run_consensus(...)
         ```
     """
     
-    def __init__(
-        self,
-        node_id: str,
-        peers: Optional[List[str]] = None,
-        maker_config: Optional[Dict[str, Any]] = None,
-        raft_config: Optional[Dict[str, Any]] = None,
-    ) -> None:
+    def __init__(self, _node_id: str, _peers: Optional[List[str]], _maker_config: Optional[Dict[str, _Any]], _raft_config: Optional[Dict[str, _Any]]) -> None:
         """
         Initialize MAKERConsensusWithRaft.
         
@@ -724,7 +701,7 @@ class MAKERConsensusWithRaft:
         )
         
         # Raft election
-        raft_cfg = raft_config or {}
+        _raft_cfg = raft_config or {}
         raft_cfg["node_id"] = node_id
         raft_cfg["peers"] = peers
         self._raft = RaftElection(**raft_cfg)
@@ -734,7 +711,7 @@ class MAKERConsensusWithRaft:
         
         logger.info(
             f"MAKERConsensusWithRaft initialized",
-            extra={"node_id": node_id, "peers": peers},
+            _extra = {"node_id": node_id, "peers": peers},
         )
 
     @property
@@ -757,13 +734,7 @@ class MAKERConsensusWithRaft:
         await self._raft.stop()
         logger.info(f"MAKERConsensusWithRaft stopped")
 
-    async def run_consensus(
-        self,
-        consensus_id: str,
-        agents: List[str],
-        decision_func: callable,
-        timeout: float = 30.0,
-    ) -> Any:
+    async def run_consensus(self, _consensus_id: str, _agents: List[str], _decision_func: callable, _timeout: float) -> Any:
         """
         Run MAKER consensus (only on leader).
         
@@ -781,13 +752,13 @@ class MAKERConsensusWithRaft:
             return None
         
         return await self._maker.run_consensus(
-            consensus_id=consensus_id,
-            agents=agents,
-            decision_func=decision_func,
-            timeout=timeout,
+            _consensus_id = consensus_id,
+            _agents = agents,
+            _decision_func = decision_func,
+            _timeout = timeout,
         )
 
-    async def _on_leader_change(self, new_leader_id: str) -> None:
+    async def _on_leader_change(self, _new_leader_id: str) -> None:
         """Handle leader change."""
         logger.info(f"Leader changed to {new_leader_id}")
         

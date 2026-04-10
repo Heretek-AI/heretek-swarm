@@ -21,7 +21,7 @@ from enum import Enum
 
 import structlog
 
-logger = structlog.get_logger(__name__)
+_logger = structlog.get_logger(__name__)
 
 # Import swarm intelligence patterns for integration
 try:
@@ -48,7 +48,7 @@ class ContributionCache:
     Prevents duplicate requests and improves performance.
     """
     
-    def __init__(self, ttl_seconds: int = 300):
+    def __init__(self, _ttl_seconds: int):
         """
         Initialize contribution cache.
         
@@ -58,11 +58,11 @@ class ContributionCache:
         self._cache: Dict[str, Dict[str, Any]] = {}
         self._ttl_seconds = ttl_seconds
     
-    def _generate_key(self, agent_id: str, task_id: str) -> str:
+    def _generate_key(self, _agent_id: str, _task_id: str) -> str:
         """Generate cache key from agent and task IDs."""
         return f"{agent_id}:{task_id}"
     
-    def get(self, agent_id: str, task_id: str) -> Optional["AgentContribution"]:
+    def get(self, _agent_id: str, _task_id: str) -> Optional["AgentContribution"]:
         """
         Get cached contribution if not expired.
         
@@ -75,7 +75,7 @@ class ContributionCache:
         """
         key = self._generate_key(agent_id, task_id)
         if key in self._cache:
-            entry = self._cache[key]
+            _entry = self._cache[key]
             if datetime.fromisoformat(entry["expires_at"]) > datetime.now(timezone.utc):
                 return entry["contribution"]
             else:
@@ -83,7 +83,7 @@ class ContributionCache:
                 del self._cache[key]
         return None
     
-    def set(self, agent_id: str, task_id: str, contribution: "AgentContribution") -> None:
+    def set(self, _agent_id: str, _task_id: str, _contribution: "AgentContribution") -> None:
         """
         Cache a contribution.
         
@@ -101,7 +101,7 @@ class ContributionCache:
         }
         logger.debug("contribution_cacheded", agent_id=agent_id, task_id=task_id)
     
-    def invalidate(self, agent_id: str, task_id: str) -> None:
+    def invalidate(self, _agent_id: str, _task_id: str) -> None:
         """Invalidate a cached contribution."""
         key = self._generate_key(agent_id, task_id)
         if key in self._cache:
@@ -203,13 +203,7 @@ class CollectiveMemory:
         self._patterns: List[Dict[str, Any]] = []
         self._learnings: List[Dict[str, Any]] = []
     
-    async def store(
-        self,
-        key: str,
-        value: Any,
-        source: str = "collective",
-        importance: float = 0.5
-    ) -> None:
+    async def store(self, _key: str, _value: Any, _source: str, _importance: float) -> None:
         """Store knowledge in collective memory."""
         self._memory[key] = {
             "value": value,
@@ -220,7 +214,7 @@ class CollectiveMemory:
         }
         logger.debug("collective_memory_stored", key=key, source=source)
     
-    async def retrieve(self, key: str) -> Optional[Dict[str, Any]]:
+    async def retrieve(self, _key: str) -> Optional[Dict[str, Any]]:
         """Retrieve knowledge from collective memory."""
         if key in self._memory:
             self._memory[key]["access_count"] += 1
@@ -228,14 +222,9 @@ class CollectiveMemory:
             return self._memory[key]
         return None
     
-    async def add_pattern(
-        self,
-        pattern_type: str,
-        pattern_data: Dict[str, Any],
-        confidence: float = 0.5
-    ) -> None:
+    async def add_pattern(self, _pattern_type: str, _pattern_data: Dict[str, _Any], _confidence: float) -> None:
         """Add discovered pattern to collective memory."""
-        pattern = {
+        _pattern = {
             "id": str(uuid.uuid4()),
             "type": pattern_type,
             "data": pattern_data,
@@ -245,14 +234,9 @@ class CollectiveMemory:
         self._patterns.append(pattern)
         logger.info("pattern_discovered", type=pattern_type, confidence=confidence)
     
-    async def add_learning(
-        self,
-        learning_type: str,
-        learning_data: Dict[str, Any],
-        participants: List[str]
-    ) -> None:
+    async def add_learning(self, _learning_type: str, _learning_data: Dict[str, _Any], _participants: List[str]) -> None:
         """Add collective learning to memory."""
-        learning = {
+        _learning = {
             "id": str(uuid.uuid4()),
             "type": learning_type,
             "data": learning_data,
@@ -262,27 +246,19 @@ class CollectiveMemory:
         self._learnings.append(learning)
         logger.info("collective_learning", type=learning_type, participants=len(participants))
     
-    async def get_patterns(
-        self,
-        pattern_type: Optional[str] = None,
-        min_confidence: float = 0.0
-    ) -> List[Dict[str, Any]]:
+    async def get_patterns(self, _pattern_type: Optional[str], _min_confidence: float) -> List[Dict[str, Any]]:
         """Get patterns from collective memory."""
-        patterns = self._patterns
+        _patterns = self._patterns
         if pattern_type:
-            patterns = [p for p in patterns if p["type"] == pattern_type]
-        patterns = [p for p in patterns if p["confidence"] >= min_confidence]
+            _patterns = [p for p in patterns if p["type"] == pattern_type]
+        _patterns = [p for p in patterns if p["confidence"] >= min_confidence]
         return patterns
     
-    async def get_learnings(
-        self,
-        learning_type: Optional[str] = None,
-        limit: int = 100
-    ) -> List[Dict[str, Any]]:
+    async def get_learnings(self, _learning_type: Optional[str], _limit: int) -> List[Dict[str, Any]]:
         """Get learnings from collective memory."""
-        learnings = self._learnings
+        _learnings = self._learnings
         if learning_type:
-            learnings = [l for l in learnings if l["type"] == learning_type]
+            _learnings = [l for l in learnings if l["type"] == learning_type]
         return learnings[-limit:]
 
 
@@ -294,12 +270,7 @@ class AgentSociety:
     and emergent behavior detection.
     """
     
-    def __init__(
-        self,
-        supervisor=None,
-        contribution_cache_ttl: int = 300,
-        enable_swarm_intelligence: bool = True,
-    ):
+    def __init__(self, _supervisor, _contribution_cache_ttl: int, _enable_swarm_intelligence: bool):
         """
         Initialize agent society.
         
@@ -361,10 +332,7 @@ class AgentSociety:
             "timeout_seconds": 300,
         }
     
-    async def coordinate_task(
-        self,
-        task: CollectiveTask
-    ) -> CollectiveResult:
+    async def coordinate_task(self, _task: CollectiveTask) -> CollectiveResult:
         """
         Coordinate agents for collective task.
         
@@ -374,15 +342,15 @@ class AgentSociety:
         Returns:
             CollectiveResult with outcome
         """
-        task_id = task.id
+        _task_id = task.id
         logger.info(
             "coordinating_task",
-            task_id=task_id,
+            _task_id = task_id,
             type=task.type,
             description=task.description
         )
         
-        start_time = datetime.now(timezone.utc)
+        _start_time = datetime.now(timezone.utc)
         
         try:
             # Select participants based on task type
@@ -390,7 +358,7 @@ class AgentSociety:
             task.participants = participants
             
             # Establish communication protocol
-            protocol = self._establish_protocol(participants, task)
+            _protocol = self._establish_protocol(participants, task)
             
             # Execute coordinated action
             result = await self._execute_coordination(
@@ -401,28 +369,28 @@ class AgentSociety:
             
             # Store in collective memory
             await self.collective_memory.add_learning(
-                learning_type=task.type,
-                learning_data=result,
+                _learning_type = task.type,
+                _learning_data = result,
                 participants=participants
             )
             
             # Detect emergent behavior
-            emergent = await self._detect_emergent_behavior(
+            _emergent = await self._detect_emergent_behavior(
                 participants,
                 task,
                 result
             )
             
-            execution_time = (datetime.now(timezone.utc) - start_time).total_seconds()
+            _execution_time = (datetime.now(timezone.utc) - start_time).total_seconds()
             
-            collective_result = CollectiveResult(
-                task_id=task_id,
-                success=True,
-                result=result,
-                participants=participants,
-                execution_time=execution_time,
-                consensus_score=result.get("consensus_score", 0.0),
-                emergent_behavior=emergent
+            _collective_result = CollectiveResult(
+                _task_id = task_id,
+                _success = True,
+                _result = result,
+                _participants = participants,
+                _execution_time = execution_time,
+                _consensus_score = result.get("consensus_score", 0.0),
+                _emergent_behavior = emergent
             )
             
             task.status = "completed"
@@ -431,9 +399,9 @@ class AgentSociety:
             
             logger.info(
                 "task_completed",
-                task_id=task_id,
+                _task_id = task_id,
                 participants=len(participants),
-                execution_time=execution_time
+                _execution_time = execution_time
             )
             
             return collective_result
@@ -441,12 +409,12 @@ class AgentSociety:
         except Exception as e:
             logger.error("task_failed", task_id=task_id, error=str(e))
             return CollectiveResult(
-                task_id=task_id,
-                success=False,
-                error=str(e)
+                _task_id = task_id,
+                _success = False,
+                _error = str(e)
             )
     
-    def _select_participants(self, task: CollectiveTask) -> List[str]:
+    def _select_participants(self, _task: CollectiveTask) -> List[str]:
         """
         Select participants based on task type and hierarchy.
         
@@ -457,7 +425,7 @@ class AgentSociety:
             List of agent IDs
         """
         # Map task types to roles
-        task_role_map = {
+        _task_role_map = {
             CollectiveTaskType.DELIBERATION: [
                 SocietyRole.LEADERSHIP,
                 SocietyRole.ANALYSIS,
@@ -485,38 +453,34 @@ class AgentSociety:
             ],
         }
         
-        roles = task_role_map.get(task.type, [SocietyRole.LEADERSHIP])
+        _roles = task_role_map.get(task.type, [SocietyRole.LEADERSHIP])
         participants = []
         
         # Get agents for each role
         for role in roles:
-            agent_types = self.hierarchy.get(role, [])
+            _agent_types = self.hierarchy.get(role, [])
             for agent_type in agent_types:
                 if self.supervisor and agent_type in self.supervisor.actors:
                     participants.append(agent_type)
         
         # Limit participants
-        max_participants = self.interaction_rules.get("max_participants", 10)
+        _max_participants = self.interaction_rules.get("max_participants", 10)
         if len(participants) > max_participants:
             participants = participants[:max_participants]
         
         # Ensure minimum participants
-        min_participants = self.interaction_rules.get("min_participants", 2)
+        _min_participants = self.interaction_rules.get("min_participants", 2)
         if len(participants) < min_participants:
             logger.warning(
                 "insufficient_participants",
-                task_type=task.type,
-                available=len(participants),
-                required=min_participants
+                _task_type = task.type,
+                _available = len(participants),
+                _required = min_participants
             )
         
         return participants
     
-    def _establish_protocol(
-        self,
-        participants: List[str],
-        task: CollectiveTask
-    ) -> Dict[str, Any]:
+    def _establish_protocol(self, _participants: List[str], _task: CollectiveTask) -> Dict[str, Any]:
         """
         Establish communication protocol for coordination.
         
@@ -536,12 +500,7 @@ class AgentSociety:
             "rounds": 3,  # Number of deliberation rounds
         }
     
-    async def _execute_coordination(
-        self,
-        participants: List[str],
-        protocol: Dict[str, Any],
-        task: CollectiveTask
-    ) -> Dict[str, Any]:
+    async def _execute_coordination(self, _participants: List[str], _protocol: Dict[str, _Any], _task: CollectiveTask) -> Dict[str, Any]:
         """
         Execute coordinated action among participants.
         
@@ -553,12 +512,12 @@ class AgentSociety:
         Returns:
             Coordination result
         """
-        contributions = []
+        _contributions = []
         
         # Collect contributions from all participants
         for participant in participants:
             if self.supervisor and participant in self.supervisor.actors:
-                actor = self.supervisor.actors[participant]
+                _actor = self.supervisor.actors[participant]
                 try:
                     # Simulate agent contribution
                     contribution = await self._get_agent_contribution(
@@ -571,11 +530,11 @@ class AgentSociety:
                     logger.error(
                         "contribution_failed",
                         participant=participant,
-                        error=str(e)
+                        _error = str(e)
                     )
         
         # Aggregate contributions
-        result = await self._aggregate_contributions(
+        _result = await self._aggregate_contributions(
             contributions,
             task,
             protocol
@@ -583,13 +542,7 @@ class AgentSociety:
         
         return result
     
-    async def _get_agent_contribution(
-        self,
-        actor,
-        task: CollectiveTask,
-        protocol: Dict[str, Any],
-        timeout: float = 30.0
-    ) -> AgentContribution:
+    async def _get_agent_contribution(self, _actor, _task: CollectiveTask, _protocol: Dict[str, _Any], _timeout: float) -> AgentContribution:
         """
         Get contribution from an agent by invoking its process method.
         
@@ -617,21 +570,21 @@ class AgentSociety:
         agent_id = actor.agent_id if hasattr(actor, 'agent_id') else str(type(actor).__name__)
         
         # Check cache first
-        cached = self._contribution_cache.get(agent_id, task.id)
+        _cached = self._contribution_cache.get(agent_id, task.id)
         if cached is not None:
             logger.debug("contribution_cache_hit", agent_id=agent_id, task_id=task.id)
             return cached
         
         try:
             # Try to get contribution via direct method call
-            contribution_data = await self._request_contribution_from_actor(
+            _contribution_data = await self._request_contribution_from_actor(
                 actor, task, protocol, timeout
             )
             
             # Create AgentContribution
             contribution = AgentContribution(
                 agent_id=agent_id,
-                task_id=task.id,
+                _task_id = task.id,
                 contribution=contribution_data.get("contribution", {}),
                 confidence=contribution_data.get("confidence", 0.8)
             )
@@ -642,7 +595,7 @@ class AgentSociety:
             logger.info(
                 "contribution_received",
                 agent_id=agent_id,
-                task_id=task.id,
+                _task_id = task.id,
                 confidence=contribution.get("confidence", 0.8)
             )
             
@@ -652,21 +605,21 @@ class AgentSociety:
             logger.error(
                 "contribution_timeout",
                 agent_id=agent_id,
-                task_id=task.id,
-                timeout=timeout
+                _task_id = task.id,
+                _timeout = timeout
             )
             raise
         except Exception as e:
             logger.error(
                 "contribution_error",
                 agent_id=agent_id,
-                task_id=task.id,
-                error=str(e)
+                _task_id = task.id,
+                _error = str(e)
             )
             # Return fallback contribution on error
             return AgentContribution(
                 agent_id=agent_id,
-                task_id=task.id,
+                _task_id = task.id,
                 contribution={
                     "analysis": f"Error retrieving contribution from {agent_id}: {str(e)}",
                     "recommendation": "error_fallback",
@@ -675,13 +628,7 @@ class AgentSociety:
                 confidence=0.1  # Low confidence for error fallback
             )
     
-    async def _request_contribution_from_actor(
-        self,
-        actor,
-        task: CollectiveTask,
-        protocol: Dict[str, Any],
-        timeout: float = 30.0
-    ) -> Dict[str, Any]:
+    async def _request_contribution_from_actor(self, _actor, _task: CollectiveTask, _protocol: Dict[str, _Any], _timeout: float) -> Dict[str, Any]:
         """
         Request contribution from an actor using available methods.
         
@@ -700,7 +647,7 @@ class AgentSociety:
             Dict with contribution data and confidence
         """
         # Prepare task context for the actor
-        task_context = {
+        _task_context = {
             "task_id": task.id,
             "task_type": task.type.value if hasattr(task.type, 'value') else str(task.type),
             "description": task.description,
@@ -711,18 +658,18 @@ class AgentSociety:
         
         # Try direct method call if actor has process_contribution
         if hasattr(actor, 'process_contribution') and callable(actor.process_contribution):
-            result = await asyncio.wait_for(
+            _result = await asyncio.wait_for(
                 actor.process_contribution(task, protocol),
-                timeout=timeout
+                _timeout = timeout
             )
             return result
         
         # Try using LLM if available
         if hasattr(actor, 'run_with_llm') and actor.swarms_agent is not None:
-            prompt = self._build_contribution_prompt(task, protocol)
-            response = await asyncio.wait_for(
+            _prompt = self._build_contribution_prompt(task, protocol)
+            _response = await asyncio.wait_for(
                 actor.run_with_llm(prompt),
-                timeout=timeout
+                _timeout = timeout
             )
             return {
                 "contribution": {
@@ -734,7 +681,7 @@ class AgentSociety:
             }
         
         # Fallback: Generate contribution based on actor type
-        actor_type = type(actor).__name__
+        _actor_type = type(actor).__name__
         return {
             "contribution": {
                 "analysis": f"Analysis from {actor_type} for task: {task.description}",
@@ -744,11 +691,7 @@ class AgentSociety:
             "confidence": 0.6
         }
     
-    def _build_contribution_prompt(
-        self,
-        task: CollectiveTask,
-        protocol: Dict[str, Any]
-    ) -> str:
+    def _build_contribution_prompt(self, _task: CollectiveTask, _protocol: Dict[str, _Any]) -> str:
         """
         Build a prompt for LLM-based contribution.
         
@@ -779,12 +722,7 @@ Format your response as:
 2. Recommendation: Your suggested approach or solution
 """
     
-    async def _aggregate_contributions(
-        self,
-        contributions: List[AgentContribution],
-        task: CollectiveTask,
-        protocol: Dict[str, Any]
-    ) -> Dict[str, Any]:
+    async def _aggregate_contributions(self, _contributions: List[AgentContribution], _task: CollectiveTask, _protocol: Dict[str, _Any]) -> Dict[str, Any]:
         """
         Aggregate contributions from multiple agents.
         
@@ -803,12 +741,12 @@ Format your response as:
             }
         
         # Calculate consensus score
-        consensus_threshold = protocol.get("consensus_threshold", 0.7)
-        avg_confidence = sum(c.confidence for c in contributions) / len(contributions)
-        consensus_score = min(avg_confidence / consensus_threshold, 1.0)
+        _consensus_threshold = protocol.get("consensus_threshold", 0.7)
+        _avg_confidence = sum(c.confidence for c in contributions) / len(contributions)
+        _consensus_score = min(avg_confidence / consensus_threshold, 1.0)
         
         # Aggregate recommendations
-        recommendations = [
+        _recommendations = [
             c.contribution.get("recommendation")
             for c in contributions
             if c.contribution.get("recommendation")
@@ -817,10 +755,10 @@ Format your response as:
         # Simple majority voting
         if recommendations:
             from collections import Counter
-            vote_counts = Counter(recommendations)
-            top_recommendation = vote_counts.most_common(1)[0][0]
+            _vote_counts = Counter(recommendations)
+            _top_recommendation = vote_counts.most_common(1)[0][0]
         else:
-            top_recommendation = "no_consensus"
+            _top_recommendation = "no_consensus"
         
         return {
             "status": "completed",
@@ -837,12 +775,7 @@ Format your response as:
             ]
         }
     
-    async def _detect_emergent_behavior(
-        self,
-        participants: List[str],
-        task: CollectiveTask,
-        result: Dict[str, Any]
-    ) -> Optional[str]:
+    async def _detect_emergent_behavior(self, _participants: List[str], _task: CollectiveTask, _result: Dict[str, _Any]) -> Optional[str]:
         """
         Detect emergent behavior in agent society.
         
@@ -855,20 +788,20 @@ Format your response as:
             Description of emergent behavior or None
         """
         # Check for high consensus
-        consensus_score = result.get("consensus_score", 0.0)
+        _consensus_score = result.get("consensus_score", 0.0)
         if consensus_score > 0.9:
-            behavior = EmergentBehavior(
+            _behavior = EmergentBehavior(
                 id=str(uuid.uuid4()),
-                behavior_type="high_consensus",
+                _behavior_type = "high_consensus",
                 description=f"Agents achieved {consensus_score:.2f} consensus",
-                participants=participants,
+                _participants = participants,
                 confidence=consensus_score,
-                impact="positive"
+                _impact = "positive"
             )
             self._emergent_behaviors.append(behavior)
             await self.collective_memory.add_pattern(
-                pattern_type="consensus",
-                pattern_data={
+                _pattern_type = "consensus",
+                _pattern_data = {
                     "task_type": task.type,
                     "participants": participants,
                     "score": consensus_score
@@ -878,29 +811,23 @@ Format your response as:
             return behavior.description
         
         # Check for diverse opinions
-        participant_count = len(participants)
-        unique_contributions = len(result.get("contributions", []))
+        _participant_count = len(participants)
+        _unique_contributions = len(result.get("contributions", []))
         if unique_contributions == participant_count and participant_count > 3:
-            behavior = EmergentBehavior(
+            _behavior = EmergentBehavior(
                 id=str(uuid.uuid4()),
-                behavior_type="diverse_perspective",
+                _behavior_type = "diverse_perspective",
                 description=f"All {participant_count} agents provided unique contributions",
-                participants=participants,
+                _participants = participants,
                 confidence=0.8,
-                impact="positive"
+                _impact = "positive"
             )
             self._emergent_behaviors.append(behavior)
             return behavior.description
         
         return None
 
-    async def apply_swarm_pattern(
-        self,
-        pattern: str,
-        participants: List[str],
-        decision_space: Dict[str, float],
-        **kwargs: Any,
-    ) -> Optional[Dict[str, Any]]:
+    async def apply_swarm_pattern(self, _pattern: str, _participants: List[str], _decision_space: Dict[str, _float], _**kwargs: Any) -> Optional[Dict[str, Any]]:
         """
         Apply a swarm intelligence pattern to a decision problem.
 
@@ -924,7 +851,7 @@ Format your response as:
             logger.warning("swarm_pattern_requested_but_engine_unavailable")
             return None
 
-        pattern_map = {
+        _pattern_map = {
             "pso": self.swarm_engine.run_pso,
             "ant_colony": self.swarm_engine.run_ant_colony,
             "bee_algorithm": self.swarm_engine.run_bee_algorithm,
@@ -940,21 +867,21 @@ Format your response as:
 
         logger.info(
             "applying_swarm_pattern",
-            pattern=pattern,
+            _pattern = pattern,
             participants=len(participants),
         )
 
         # Execute the swarm pattern
         swarm_decision: SwarmDecision = await pattern_map[pattern.lower()](
             participants=participants,
-            decision_space=decision_space,
+            _decision_space = decision_space,
             **kwargs,
         )
 
         # Store result in collective memory
         await self.collective_memory.add_pattern(
-            pattern_type=f"swarm_{pattern}",
-            pattern_data={
+            _pattern_type = f"swarm_{pattern}",
+            _pattern_data = {
                 "decision": swarm_decision.decision,
                 "confidence": swarm_decision.confidence,
                 "participants": participants,
@@ -967,13 +894,13 @@ Format your response as:
 
         # Check for emergent behavior
         if swarm_decision.emergence_detected:
-            emergent = EmergentBehavior(
+            _emergent = EmergentBehavior(
                 id=str(uuid.uuid4()),
-                behavior_type=f"swarm_{pattern}_emergence",
-                description=f"Emergent behavior detected in {pattern} pattern",
-                participants=participants,
+                _behavior_type = f"swarm_{pattern}_emergence",
+                _description = f"Emergent behavior detected in {pattern} pattern",
+                _participants = participants,
                 confidence=swarm_decision.confidence,
-                impact="positive" if swarm_decision.quality_metrics.get("convergence_rate", 0) > 0.7 else "neutral",
+                _impact = "positive" if swarm_decision.quality_metrics.get("convergence_rate", 0) > 0.7 else "neutral",
             )
             self._emergent_behaviors.append(emergent)
 
@@ -986,12 +913,7 @@ Format your response as:
             "pattern_type": pattern,
         }
 
-    async def run_collective_optimization(
-        self,
-        task: CollectiveTask,
-        optimization_type: str = "pso",
-        max_iterations: int = 50,
-    ) -> CollectiveResult:
+    async def run_collective_optimization(self, _task: CollectiveTask, _optimization_type: str, _max_iterations: int) -> CollectiveResult:
         """
         Run collective optimization using swarm intelligence.
 
@@ -1006,65 +928,65 @@ Format your response as:
         Returns:
             CollectiveResult with optimization outcome
         """
-        start_time = datetime.now(timezone.utc)
+        _start_time = datetime.now(timezone.utc)
 
         if not self.swarm_engine:
             return CollectiveResult(
-                task_id=task.id,
-                success=False,
-                error="Swarm intelligence engine not available",
+                _task_id = task.id,
+                _success = False,
+                _error = "Swarm intelligence engine not available",
             )
 
         logger.info(
             "running_collective_optimization",
-            task_id=task.id,
-            type=optimization_type,
+            _task_id = task.id,
+            _type = optimization_type,
         )
 
         # Convert task to decision space
-        decision_space = {
+        _decision_space = {
             str(k): v if isinstance(v, float) else float(v)
             for k, v in task.input_data.items()
         }
 
         # Select participants based on task requirements
-        participants = task.participants or self._select_participants(task)
+        _participants = task.participants or self._select_participants(task)
 
         try:
             # Apply swarm pattern
-            result = await self.apply_swarm_pattern(
-                pattern=optimization_type,
-                participants=participants,
-                decision_space=decision_space,
-                max_iterations=max_iterations,
+            _result = await self.apply_swarm_pattern(
+                _pattern = optimization_type,
+                _participants = participants,
+                _decision_space = decision_space,
+                _max_iterations = max_iterations,
             )
 
             if result is None:
                 return CollectiveResult(
-                    task_id=task.id,
-                    success=False,
-                    error="Swarm pattern execution failed",
+                    _task_id = task.id,
+                    _success = False,
+                    _error = "Swarm pattern execution failed",
                 )
 
-            execution_time = (datetime.now(timezone.utc) - start_time).total_seconds()
+            _execution_time = (datetime.now(timezone.utc) - start_time).total_seconds()
 
             return CollectiveResult(
-                task_id=task.id,
-                success=True,
-                result=result,
-                participants=participants,
-                execution_time=execution_time,
-                consensus_score=result.get("confidence", 0.0),
-                emergent_behavior=result.get("emergence_detected", False),
+                _task_id = task.id,
+                _success = True,
+                _result = result,
+                _participants = participants,
+                _execution_time = execution_time,
+                _consensus_score = result.get("confidence", 0.0),
+                _emergent_behavior = result.get("emergence_detected", False),
             )
 
         except Exception as e:
             logger.exception("collective_optimization_failed", task_id=task.id, error=str(e))
             return CollectiveResult(
-                task_id=task.id,
-                success=False,
-                error=str(e),
-                participants=participants,
+                _task_id = task.id,
+                _success = False,
+                _error = str(e),
+                _participants = participants,
             )
 
     def get_swarm_status(self) -> Dict[str, Any]:
@@ -1088,10 +1010,7 @@ Format your response as:
             "stigmergic_traces": len(self.swarm_engine.stigmergic_traces),
         }
 
-    async def optimize_swarm(
-        self,
-        metrics: Dict[str, Any]
-    ) -> Dict[str, Any]:
+    async def optimize_swarm(self, _metrics: Dict[str, _Any]) -> Dict[str, Any]:
         """
         Optimize swarm based on performance metrics.
         
@@ -1103,7 +1022,7 @@ Format your response as:
         """
         logger.info("optimizing_swarm", metrics=metrics)
         
-        recommendations = []
+        _recommendations = []
         
         # Analyze agent performance
         if "agent_performance" in metrics:
@@ -1118,7 +1037,7 @@ Format your response as:
         
         # Analyze communication patterns
         if "communication_metrics" in metrics:
-            comm_metrics = metrics["communication_metrics"]
+            _comm_metrics = metrics["communication_metrics"]
             if comm_metrics.get("latency", 0) > 1000:  # 1 second
                 recommendations.append({
                     "type": "communication_optimization",
@@ -1128,7 +1047,7 @@ Format your response as:
         
         # Analyze resource usage
         if "resource_metrics" in metrics:
-            res_metrics = metrics["resource_metrics"]
+            _res_metrics = metrics["resource_metrics"]
             if res_metrics.get("memory_usage", 0) > 0.8:
                 recommendations.append({
                     "type": "resource_management",
@@ -1142,10 +1061,7 @@ Format your response as:
             "timestamp": datetime.now(timezone.utc).isoformat()
         }
     
-    def _calculate_optimization_score(
-        self,
-        metrics: Dict[str, Any]
-    ) -> float:
+    def _calculate_optimization_score(self, _metrics: Dict[str, _Any]) -> float:
         """
         Calculate overall optimization score.
         
@@ -1155,11 +1071,11 @@ Format your response as:
         Returns:
             Optimization score (0-1)
         """
-        scores = []
+        _scores = []
         
         # Agent performance score
         if "agent_performance" in metrics:
-            avg_success_rate = sum(
+            _avg_success_rate = sum(
                 p.get("success_rate", 0.5)
                 for p in metrics["agent_performance"].values()
             ) / len(metrics["agent_performance"])
@@ -1167,14 +1083,14 @@ Format your response as:
         
         # Communication score
         if "communication_metrics" in metrics:
-            latency = metrics["communication_metrics"].get("latency", 1000)
-            comm_score = max(1.0 - (latency / 5000), 0.0)
+            _latency = metrics["communication_metrics"].get("latency", 1000)
+            _comm_score = max(1.0 - (latency / 5000), 0.0)
             scores.append(comm_score)
         
         # Resource score
         if "resource_metrics" in metrics:
-            memory_usage = metrics["resource_metrics"].get("memory_usage", 0.5)
-            resource_score = 1.0 - memory_usage
+            _memory_usage = metrics["resource_metrics"].get("memory_usage", 0.5)
+            _resource_score = 1.0 - memory_usage
             scores.append(resource_score)
         
         return sum(scores) / len(scores) if scores else 0.5
@@ -1186,7 +1102,7 @@ Format your response as:
         Returns:
             Society status information including swarm intelligence status
         """
-        status = {
+        _status = {
             "hierarchy": self.hierarchy,
             "active_tasks": len(self._active_tasks),
             "emergent_behaviors": len(self._emergent_behaviors),

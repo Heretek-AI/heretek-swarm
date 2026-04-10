@@ -33,7 +33,7 @@ from .knowledge_transform import (
     KnowledgeTransformer,
 )
 
-logger = structlog.get_logger(__name__)
+_logger = structlog.get_logger(__name__)
 
 
 class SyncOperation(str, Enum):
@@ -84,18 +84,18 @@ class SyncMessage:
         })
     
     @classmethod
-    def from_json(cls, json_str: str) -> "SyncMessage":
+    def from_json(cls, _json_str: str) -> "SyncMessage":
         """Deserialize from JSON string."""
-        data = json.loads(json_str)
+        _data = json.loads(json_str)
         return cls(
             message_id=data.get("message_id", str(uuid.uuid4())),
-            operation=SyncOperation(data.get("operation", "publish")),
+            _operation = SyncOperation(data.get("operation", "publish")),
             source_agent=data.get("source_agent", ""),
-            timestamp=data.get("timestamp", datetime.now(timezone.utc).isoformat()),
+            _timestamp = data.get("timestamp", datetime.now(timezone.utc).isoformat()),
             payload=data.get("payload", {}),
             metadata=data.get("metadata", {}),
-            correlation_id=data.get("correlation_id"),
-            reply_to=data.get("reply_to"),
+            _correlation_id = data.get("correlation_id"),
+            _reply_to = data.get("reply_to"),
         )
 
 
@@ -142,11 +142,7 @@ class DistributedLearningEngine:
         transformer: KnowledgeTransformer instance
     """
     
-    def __init__(
-        self,
-        config: Optional[DistributedLearningConfig] = None,
-        agent_id: Optional[str] = None,
-    ):
+    def __init__(self, _config: Optional[DistributedLearningConfig], _agent_id: Optional[str]):
         """
         Initialize distributed learning engine.
         
@@ -166,7 +162,7 @@ class DistributedLearningEngine:
         
         # Message queues
         self._pending_messages: asyncio.Queue = asyncio.Queue(
-            maxsize=self.config.max_pending_messages
+            _maxsize = self.config.max_pending_messages
         )
         self._processed_ids: Set[str] = set()
         
@@ -183,10 +179,10 @@ class DistributedLearningEngine:
         logger.info(
             "distributed_learning_engine_initialized",
             agent_id=self.agent_id,
-            pubsub_channel=self.config.pubsub_channel,
+            _pubsub_channel = self.config.pubsub_channel,
         )
     
-    def register_pattern_callback(self, callback: Callable) -> None:
+    def register_pattern_callback(self, _callback: Callable) -> None:
         """
         Register callback for pattern received events.
         
@@ -196,7 +192,7 @@ class DistributedLearningEngine:
         self._on_pattern_received.append(callback)
         logger.debug("pattern_callback_registered", callback=callback.__name__)
     
-    def register_signal_callback(self, callback: Callable) -> None:
+    def register_signal_callback(self, _callback: Callable) -> None:
         """
         Register callback for learning signal received events.
         
@@ -206,7 +202,7 @@ class DistributedLearningEngine:
         self._on_signal_received.append(callback)
         logger.debug("signal_callback_registered", callback=callback.__name__)
     
-    def register_merge_callback(self, callback: Callable) -> None:
+    def register_merge_callback(self, _callback: Callable) -> None:
         """
         Register callback for merge complete events.
         
@@ -245,7 +241,7 @@ class DistributedLearningEngine:
             logger.error(
                 "engine_start_failed",
                 agent_id=self.agent_id,
-                error=str(e),
+                _error = str(e),
             )
             raise
     
@@ -287,7 +283,7 @@ class DistributedLearningEngine:
             agent_id=self.agent_id,
         )
     
-    async def publish_pattern(self, pattern: ExtractedPattern) -> bool:
+    async def publish_pattern(self, _pattern: ExtractedPattern) -> bool:
         """
         Publish a pattern to the distributed swarm.
         
@@ -303,7 +299,7 @@ class DistributedLearningEngine:
         
         try:
             message = SyncMessage(
-                operation=SyncOperation.PUBLISH,
+                _operation = SyncOperation.PUBLISH,
                 source_agent=self.agent_id,
                 payload={
                     "pattern": pattern.to_dict(),
@@ -324,7 +320,7 @@ class DistributedLearningEngine:
             logger.debug(
                 "pattern_published",
                 pattern_id=pattern.metadata.pattern_id,
-                channel=self.config.pattern_channel,
+                _channel = self.config.pattern_channel,
             )
             
             return True
@@ -333,11 +329,11 @@ class DistributedLearningEngine:
             logger.error(
                 "pattern_publish_failed",
                 pattern_id=pattern.metadata.pattern_id,
-                error=str(e),
+                _error = str(e),
             )
             return False
     
-    async def publish_learning_signal(self, signal: LearningSignal) -> bool:
+    async def publish_learning_signal(self, _signal: LearningSignal) -> bool:
         """
         Publish a learning signal to the distributed swarm.
         
@@ -353,7 +349,7 @@ class DistributedLearningEngine:
         
         try:
             message = SyncMessage(
-                operation=SyncOperation.BROADCAST,
+                _operation = SyncOperation.BROADCAST,
                 source_agent=self.agent_id,
                 payload=signal.to_dict(),
                 metadata={
@@ -369,8 +365,8 @@ class DistributedLearningEngine:
             
             logger.debug(
                 "signal_published",
-                signal_id=signal.signal_id,
-                channel=self.config.signal_channel,
+                _signal_id = signal.signal_id,
+                _channel = self.config.signal_channel,
             )
             
             return True
@@ -378,12 +374,12 @@ class DistributedLearningEngine:
         except Exception as e:
             logger.error(
                 "signal_publish_failed",
-                signal_id=signal.signal_id,
-                error=str(e),
+                _signal_id = signal.signal_id,
+                _error = str(e),
             )
             return False
     
-    async def receive_pattern(self, pattern_dict: Dict[str, Any], source_agent: str) -> MergeResult:
+    async def receive_pattern(self, _pattern_dict: Dict[str, _Any], _source_agent: str) -> MergeResult:
         """
         Receive and process a pattern from another agent.
         
@@ -400,25 +396,25 @@ class DistributedLearningEngine:
             
             # Validate incoming pattern
             if self.config.validation_required:
-                is_valid = await self.local_learning.extractor._validate_pattern(pattern)
+                _is_valid = await self.local_learning.extractor._validate_pattern(pattern)
                 if not is_valid:
                     return MergeResult(
-                        success=False,
-                        rejected_count=1,
-                        errors=["Pattern failed validation"],
+                        _success = False,
+                        _rejected_count = 1,
+                        _errors = ["Pattern failed validation"],
                     )
             
             # Check for conflicts with local patterns
-            conflicts = self._check_conflicts(pattern)
+            _conflicts = self._check_conflicts(pattern)
             
             if conflicts:
                 # Resolve conflicts based on strategy
-                resolved = await self._resolve_conflicts(pattern, conflicts)
+                _resolved = await self._resolve_conflicts(pattern, conflicts)
                 if not resolved:
                     return MergeResult(
-                        success=False,
-                        conflict_count=len(conflicts),
-                        conflict_details=conflicts,
+                        _success = False,
+                        _conflict_count = len(conflicts),
+                        _conflict_details = conflicts,
                     )
             
             # Merge pattern into local storage
@@ -434,29 +430,29 @@ class DistributedLearningEngine:
                 except Exception as e:
                     logger.error(
                         "pattern_callback_error",
-                        callback=callback.__name__,
-                        error=str(e),
+                        _callback = callback.__name__,
+                        _error = str(e),
                     )
             
             return MergeResult(
-                success=True,
-                merged_count=1,
-                merged_pattern_ids=[pattern.metadata.pattern_id],
+                _success = True,
+                _merged_count = 1,
+                _merged_pattern_ids = [pattern.metadata.pattern_id],
             )
             
         except Exception as e:
             logger.error(
                 "pattern_receive_failed",
                 source_agent=source_agent,
-                error=str(e),
+                _error = str(e),
             )
             return MergeResult(
-                success=False,
-                rejected_count=1,
-                errors=[str(e)],
+                _success = False,
+                _rejected_count = 1,
+                _errors = [str(e)],
             )
     
-    async def receive_learning_signal(self, signal_dict: Dict[str, Any], source_agent: str) -> bool:
+    async def receive_learning_signal(self, _signal_dict: Dict[str, _Any], _source_agent: str) -> bool:
         """
         Receive and process a learning signal from another agent.
         
@@ -470,13 +466,13 @@ class DistributedLearningEngine:
         try:
             # Reconstruct signal
             signal = LearningSignal(
-                signal_id=signal_dict.get("signal_id", str(uuid.uuid4())),
-                signal_type=signal_dict.get("signal_type", "unknown"),
-                magnitude=signal_dict.get("magnitude", 0.0),
-                timestamp=signal_dict.get("timestamp", datetime.now(timezone.utc).isoformat()),
+                _signal_id = signal_dict.get("signal_id", str(uuid.uuid4())),
+                _signal_type = signal_dict.get("signal_type", "unknown"),
+                _magnitude = signal_dict.get("magnitude", 0.0),
+                _timestamp = signal_dict.get("timestamp", datetime.now(timezone.utc).isoformat()),
                 source_agent=signal_dict.get("source_agent"),
-                target_agents=signal_dict.get("target_agents", []),
-                context=signal_dict.get("context", {}),
+                _target_agents = signal_dict.get("target_agents", []),
+                _context = signal_dict.get("context", {}),
                 metadata=signal_dict.get("metadata", {}),
             )
             
@@ -493,8 +489,8 @@ class DistributedLearningEngine:
                 except Exception as e:
                     logger.error(
                         "signal_callback_error",
-                        callback=callback.__name__,
-                        error=str(e),
+                        _callback = callback.__name__,
+                        _error = str(e),
                     )
             
             return True
@@ -503,15 +499,11 @@ class DistributedLearningEngine:
             logger.error(
                 "signal_receive_failed",
                 source_agent=source_agent,
-                error=str(e),
+                _error = str(e),
             )
             return False
     
-    async def merge_knowledge(
-        self,
-        remote_patterns: Dict[str, ExtractedPattern],
-        strategy: Optional[MergeStrategy] = None,
-    ) -> MergeResult:
+    async def merge_knowledge(self, _remote_patterns: Dict[str, _ExtractedPattern], _strategy: Optional[MergeStrategy]) -> MergeResult:
         """
         Merge remote knowledge with local state.
         
@@ -522,15 +514,15 @@ class DistributedLearningEngine:
         Returns:
             MergeResult with merge statistics
         """
-        strategy = strategy or self.config.merge_strategy
-        merged = []
-        conflicts = []
-        rejected = []
-        errors = []
+        _strategy = strategy or self.config.merge_strategy
+        _merged = []
+        _conflicts = []
+        _rejected = []
+        _errors = []
         
         for pattern_id, remote_pattern in remote_patterns.items():
             # Check if pattern exists locally
-            local_pattern = self.local_learning._patterns.get(pattern_id)
+            _local_pattern = self.local_learning._patterns.get(pattern_id)
             
             if local_pattern is None:
                 # New pattern - merge directly
@@ -541,7 +533,7 @@ class DistributedLearningEngine:
                     rejected.append(pattern_id)
             else:
                 # Existing pattern - resolve based on strategy
-                should_merge = self._should_merge(local_pattern, remote_pattern, strategy)
+                _should_merge = self._should_merge(local_pattern, remote_pattern, strategy)
                 
                 if should_merge:
                     # Update local pattern
@@ -559,14 +551,14 @@ class DistributedLearningEngine:
                         "resolution": "kept_local",
                     })
         
-        result = MergeResult(
-            success=len(errors) == 0,
-            merged_count=len(merged),
-            conflict_count=len(conflicts),
-            rejected_count=len(rejected),
-            errors=errors,
-            merged_pattern_ids=merged,
-            conflict_details=conflicts,
+        _result = MergeResult(
+            _success = len(errors) == 0,
+            _merged_count = len(merged),
+            _conflict_count = len(conflicts),
+            _rejected_count = len(rejected),
+            _errors = errors,
+            _merged_pattern_ids = merged,
+            _conflict_details = conflicts,
         )
         
         # Call merge callbacks
@@ -579,25 +571,20 @@ class DistributedLearningEngine:
             except Exception as e:
                 logger.error(
                     "merge_callback_error",
-                    callback=callback.__name__,
-                    error=str(e),
+                    _callback = callback.__name__,
+                    _error = str(e),
                 )
         
         logger.info(
             "knowledge_merge_complete",
-            merged=len(merged),
-            conflicts=len(conflicts),
-            rejected=len(rejected),
+            _merged = len(merged),
+            _conflicts = len(conflicts),
+            _rejected = len(rejected),
         )
         
         return result
     
-    def _should_merge(
-        self,
-        local: ExtractedPattern,
-        remote: ExtractedPattern,
-        strategy: MergeStrategy,
-    ) -> bool:
+    def _should_merge(self, _local: ExtractedPattern, _remote: ExtractedPattern, _strategy: MergeStrategy) -> bool:
         """Determine if remote pattern should replace local."""
         if strategy == MergeStrategy.NEWEST:
             return remote.metadata.last_observed > local.metadata.last_observed
@@ -617,12 +604,7 @@ class DistributedLearningEngine:
         
         return False
     
-    def _merge_patterns(
-        self,
-        local: ExtractedPattern,
-        remote: ExtractedPattern,
-        strategy: MergeStrategy,
-    ) -> ExtractedPattern:
+    def _merge_patterns(self, _local: ExtractedPattern, _remote: ExtractedPattern, _strategy: MergeStrategy) -> ExtractedPattern:
         """Merge two patterns based on strategy."""
         # Create merged pattern with combined data
         merged = remote  # Start with remote as base
@@ -663,18 +645,15 @@ class DistributedLearningEngine:
         
         return merged
     
-    def _check_conflicts(
-        self,
-        pattern: ExtractedPattern,
-    ) -> List[Dict[str, Any]]:
+    def _check_conflicts(self, _pattern: ExtractedPattern) -> List[Dict[str, Any]]:
         """Check for conflicts between pattern and local knowledge."""
-        conflicts = []
+        _conflicts = []
         
-        local_pattern = self.local_learning._patterns.get(pattern.metadata.pattern_id)
+        _local_pattern = self.local_learning._patterns.get(pattern.metadata.pattern_id)
         
         if local_pattern:
             # Check for significant confidence difference
-            confidence_diff = abs(
+            _confidence_diff = abs(
                 local_pattern.metadata.confidence - pattern.metadata.confidence
             )
             
@@ -697,11 +676,7 @@ class DistributedLearningEngine:
         
         return conflicts
     
-    async def _resolve_conflicts(
-        self,
-        pattern: ExtractedPattern,
-        conflicts: List[Dict[str, Any]],
-    ) -> bool:
+    async def _resolve_conflicts(self, _pattern: ExtractedPattern, _conflicts: List[Dict[str, _Any]]) -> bool:
         """
         Resolve conflicts between local and remote patterns.
         
@@ -724,31 +699,31 @@ class DistributedLearningEngine:
         
         return True
     
-    def _reconstruct_pattern(self, pattern_dict: Dict[str, Any]) -> ExtractedPattern:
+    def _reconstruct_pattern(self, _pattern_dict: Dict[str, _Any]) -> ExtractedPattern:
         """Reconstruct ExtractedPattern from dictionary."""
-        metadata_dict = pattern_dict.get("metadata", {})
+        _metadata_dict = pattern_dict.get("metadata", {})
         
         metadata = PatternMetadata(
             pattern_id=metadata_dict.get("pattern_id", str(uuid.uuid4())),
-            pattern_type=PatternType(metadata_dict.get("pattern_type", "success")),
+            _pattern_type = PatternType(metadata_dict.get("pattern_type", "success")),
             source=metadata_dict.get("source", "message_history"),
-            confidence=metadata_dict.get("confidence", 0.0),
-            support_count=metadata_dict.get("support_count", 0),
-            first_observed=metadata_dict.get("first_observed"),
-            last_observed=metadata_dict.get("last_observed"),
-            agents_involved=metadata_dict.get("agents_involved", []),
-            topics=metadata_dict.get("topics", []),
-            tags=metadata_dict.get("tags", []),
+            _confidence = metadata_dict.get("confidence", 0.0),
+            _support_count = metadata_dict.get("support_count", 0),
+            _first_observed = metadata_dict.get("first_observed"),
+            _last_observed = metadata_dict.get("last_observed"),
+            _agents_involved = metadata_dict.get("agents_involved", []),
+            _topics = metadata_dict.get("topics", []),
+            _tags = metadata_dict.get("tags", []),
         )
         
         return ExtractedPattern(
             metadata=metadata,
-            pattern_data=pattern_dict.get("pattern_data", {}),
-            context=pattern_dict.get("context", {}),
-            outcomes=pattern_dict.get("outcomes", []),
-            preconditions=pattern_dict.get("preconditions", []),
-            postconditions=pattern_dict.get("postconditions", []),
-            applicability_conditions=pattern_dict.get("applicability_conditions", []),
+            _pattern_data = pattern_dict.get("pattern_data", {}),
+            _context = pattern_dict.get("context", {}),
+            _outcomes = pattern_dict.get("outcomes", []),
+            _preconditions = pattern_dict.get("preconditions", []),
+            _postconditions = pattern_dict.get("postconditions", []),
+            _applicability_conditions = pattern_dict.get("applicability_conditions", []),
         )
     
     async def _init_redis(self) -> None:
@@ -758,7 +733,7 @@ class DistributedLearningEngine:
             
             self._redis = redis.from_url(
                 self.config.redis_url,
-                decode_responses=True,
+                _decode_responses = True,
             )
             
             self._pubsub = self._redis.pubsub()
@@ -784,7 +759,7 @@ class DistributedLearningEngine:
             logger.error(
                 "redis_connection_failed",
                 agent_id=self.agent_id,
-                error=str(e),
+                _error = str(e),
             )
             raise
     
@@ -796,7 +771,7 @@ class DistributedLearningEngine:
         logger.info(
             "subscribe_loop_started",
             agent_id=self.agent_id,
-            channels=[self.config.pattern_channel, self.config.signal_channel],
+            _channels = [self.config.pattern_channel, self.config.signal_channel],
         )
         
         try:
@@ -812,8 +787,8 @@ class DistributedLearningEngine:
                 except Exception as e:
                     logger.error(
                         "pubsub_message_error",
-                        error=str(e),
-                        channel=message.get("channel"),
+                        _error = str(e),
+                        _channel = message.get("channel"),
                     )
                     
         except asyncio.CancelledError:
@@ -822,24 +797,24 @@ class DistributedLearningEngine:
             logger.error(
                 "subscribe_loop_error",
                 agent_id=self.agent_id,
-                error=str(e),
+                _error = str(e),
             )
     
-    async def _process_pubsub_message(self, message: Dict[str, Any]) -> None:
+    async def _process_pubsub_message(self, _message: Dict[str, _Any]) -> None:
         """
         Process a pub/sub message.
         
         Args:
             message: Redis pub/sub message
         """
-        channel = message.get("channel", "")
-        data = message.get("data", "")
+        _channel = message.get("channel", "")
+        _data = message.get("data", "")
         
         if not data or isinstance(data, bytes):
             return
         
         try:
-            sync_message = SyncMessage.from_json(data)
+            _sync_message = SyncMessage.from_json(data)
             
             # Skip messages from self
             if sync_message.source_agent == self.agent_id:
@@ -858,27 +833,27 @@ class DistributedLearningEngine:
             # Process based on channel
             if channel == self.config.pattern_channel:
                 await self.receive_pattern(
-                    pattern_dict=sync_message.payload.get("pattern", {}),
-                    source_agent=sync_message.source_agent,
+                    _pattern_dict = sync_message.payload.get("pattern", {}),
+                    _source_agent = sync_message.source_agent,
                 )
             
             elif channel == self.config.signal_channel:
                 await self.receive_learning_signal(
-                    signal_dict=sync_message.payload,
-                    source_agent=sync_message.source_agent,
+                    _signal_dict = sync_message.payload,
+                    _source_agent = sync_message.source_agent,
                 )
                 
         except json.JSONDecodeError as e:
             logger.warning(
                 "invalid_message_format",
-                channel=channel,
-                error=str(e),
+                _channel = channel,
+                _error = str(e),
             )
         except Exception as e:
             logger.error(
                 "pubsub_processing_error",
-                channel=channel,
-                error=str(e),
+                _channel = channel,
+                _error = str(e),
             )
     
     async def _sync_loop(self) -> None:
@@ -886,7 +861,7 @@ class DistributedLearningEngine:
         logger.info(
             "sync_loop_started",
             agent_id=self.agent_id,
-            interval_seconds=self.config.sync_interval_seconds,
+            _interval_seconds = self.config.sync_interval_seconds,
         )
         
         try:
@@ -902,7 +877,7 @@ class DistributedLearningEngine:
             logger.error(
                 "sync_loop_error",
                 agent_id=self.agent_id,
-                error=str(e),
+                _error = str(e),
             )
     
     async def _periodic_sync(self) -> None:
@@ -947,7 +922,7 @@ class DistributedLearningCoordinator:
     merges, and swarm-wide learning synchronization.
     """
     
-    def __init__(self, engine: DistributedLearningEngine):
+    def __init__(self, _engine: DistributedLearningEngine):
         """
         Initialize distributed learning coordinator.
         
@@ -958,15 +933,10 @@ class DistributedLearningCoordinator:
         
         logger.info(
             "distributed_learning_coordinator_initialized",
-            agent_id=engine.agent_id,
+            _agent_id = engine.agent_id,
         )
     
-    async def broadcast_pattern(
-        self,
-        pattern: ExtractedPattern,
-        wait_for_ack: bool = False,
-        timeout: float = 5.0,
-    ) -> Dict[str, Any]:
+    async def broadcast_pattern(self, _pattern: ExtractedPattern, _wait_for_ack: bool, _timeout: float) -> Dict[str, Any]:
         """
         Broadcast a pattern to the swarm.
         
@@ -978,7 +948,7 @@ class DistributedLearningCoordinator:
         Returns:
             Broadcast result summary
         """
-        success = await self.engine.publish_pattern(pattern)
+        _success = await self.engine.publish_pattern(pattern)
         
         return {
             "pattern_id": pattern.metadata.pattern_id,
@@ -986,11 +956,7 @@ class DistributedLearningCoordinator:
             "timestamp": datetime.now(timezone.utc).isoformat(),
         }
     
-    async def sync_with_swarm(
-        self,
-        pattern_types: Optional[List[PatternType]] = None,
-        min_confidence: float = 0.0,
-    ) -> MergeResult:
+    async def sync_with_swarm(self, _pattern_types: Optional[List[PatternType]], _min_confidence: float) -> MergeResult:
         """
         Synchronize local knowledge with the swarm.
         
@@ -1002,9 +968,9 @@ class DistributedLearningCoordinator:
             MergeResult with sync statistics
         """
         # Get local patterns
-        local_patterns = self.engine.local_learning.get_patterns(
-            pattern_type=pattern_types[0] if pattern_types else None,
-            min_confidence=min_confidence,
+        _local_patterns = self.engine.local_learning.get_patterns(
+            _pattern_type = pattern_types[0] if pattern_types else None,
+            _min_confidence = min_confidence,
         )
         
         # Publish local patterns
@@ -1013,14 +979,11 @@ class DistributedLearningCoordinator:
         
         # Return current status
         return MergeResult(
-            success=True,
-            merged_count=len(local_patterns),
+            _success = True,
+            _merged_count = len(local_patterns),
         )
     
-    async def collect_swarm_knowledge(
-        self,
-        timeout: float = 10.0,
-    ) -> Dict[str, ExtractedPattern]:
+    async def collect_swarm_knowledge(self, _timeout: float) -> Dict[str, ExtractedPattern]:
         """
         Collect knowledge from across the swarm.
         
@@ -1042,7 +1005,7 @@ class DistributedLearningCoordinator:
         Returns:
             Status dictionary
         """
-        engine_status = self.engine.get_status()
+        _engine_status = self.engine.get_status()
         
         return {
             "local_status": engine_status,

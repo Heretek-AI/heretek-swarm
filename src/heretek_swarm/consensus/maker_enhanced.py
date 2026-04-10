@@ -15,9 +15,9 @@ Example:
     from heretek_swarm.consensus.maker_enhanced import EnhancedMAKERConsensus
 
     # Initialize enhanced consensus
-    consensus = EnhancedMAKERConsensus(
-        ahead_by_k=2,
-        min_votes=3,
+    _consensus = EnhancedMAKERConsensus(
+        _ahead_by_k = 2,
+        _min_votes = 3,
         enable_pattern_library=True,
         enable_rollback=True
     )
@@ -27,7 +27,7 @@ Example:
 
     # Add votes with reasoning chains
     consensus.add_vote_with_reasoning(
-        consensus_id="deploy-decision",
+        _consensus_id = "deploy-decision",
         agent_id="agent-1",
         decision="deploy",
         confidence=0.9,
@@ -38,10 +38,10 @@ Example:
     )
 
     # Compute consensus with cross-validation
-    result = consensus.compute_consensus_with_validation("deploy-decision")
+    _result = consensus.compute_consensus_with_validation("deploy-decision")
 
     # Access decision provenance
-    provenance = consensus.get_decision_provenance("deploy-decision")
+    _provenance = consensus.get_decision_provenance("deploy-decision")
     ```
 """
 
@@ -64,7 +64,7 @@ EXPERTISE_WEIGHT = 0.30  # Weight for agent expertise
 CONFIDENCE_WEIGHT = 0.20  # Weight for confidence level
 HISTORICAL_WEIGHT = 0.15  # Weight for historical accuracy
 
-logger = structlog.get_logger("EnhancedMAKERConsensus")
+_logger = structlog.get_logger("EnhancedMAKERConsensus")
 
 
 class ReasoningChainStatus(Enum):
@@ -122,13 +122,7 @@ class ReasoningChain:
     created_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     pattern_references: List[str] = field(default_factory=list)
 
-    def add_step(
-        self,
-        step_type: str,
-        content: str,
-        confidence: float,
-        sources: Optional[List[str]] = None,
-    ) -> ReasoningStep:
+    def add_step(self, _step_type: str, _content: str, _confidence: float, _sources: Optional[List[str]]) -> ReasoningStep:
         """Add a step to the reasoning chain."""
         step = ReasoningStep(
             step_number=len(self.steps) + 1,
@@ -147,7 +141,7 @@ class ReasoningChain:
         Returns:
             True if chain is valid
         """
-        errors = []
+        _errors = []
 
         if not self.steps:
             errors.append("Empty reasoning chain")
@@ -155,22 +149,22 @@ class ReasoningChain:
             return False
 
         # Check for required conclusion step
-        has_conclusion = any(s.step_type == "conclusion" for s in self.steps)
+        _has_conclusion = any(s.step_type == "conclusion" for s in self.steps)
         if not has_conclusion:
             errors.append("Missing conclusion step")
 
         # Check chain flow: observation -> inference -> conclusion
-        step_types = [s.step_type for s in self.steps]
+        _step_types = [s.step_type for s in self.steps]
         if "observation" not in step_types:
             errors.append("Missing observation step")
 
         # Check for circular reasoning (simplified check)
-        conclusion_steps = [s for s in self.steps if s.step_type == "conclusion"]
+        _conclusion_steps = [s for s in self.steps if s.step_type == "conclusion"]
         for step in self.steps:
             if step.step_type == "observation":
                 # Observations should not reference conclusions
                 for validates_id in step.validates:
-                    validating_step = next(
+                    _validating_step = next(
                         (s for s in self.steps if id(s) == id(step)), None
                     )
                     if validating_step and validating_step.step_type == "conclusion":
@@ -179,10 +173,10 @@ class ReasoningChain:
                         break
 
         # Check confidence consistency
-        confidences = [s.confidence for s in self.steps]
+        _confidences = [s.confidence for s in self.steps]
         if confidences:
-            avg_confidence = statistics.mean(confidences)
-            low_confidence_steps = [s for s in self.steps if s.confidence < 0.5]
+            _avg_confidence = statistics.mean(confidences)
+            _low_confidence_steps = [s for s in self.steps if s.confidence < 0.5]
             if len(low_confidence_steps) > len(self.steps) / 2:
                 errors.append("Majority of steps have low confidence")
 
@@ -225,14 +219,14 @@ class EvidenceQuality:
             return 0.5  # Default for no evidence
 
         # Weight factors for quality calculation
-        weights = {
+        _weights = {
             "reliability": 0.35,
             "completeness": 0.25,
             "consistency": 0.25,
             "recency": 0.15,
         }
 
-        score = (
+        _score = (
             self.source_reliability * weights["reliability"]
             + self.completeness * weights["completeness"]
             + self.consistency * weights["consistency"]
@@ -240,7 +234,7 @@ class EvidenceQuality:
         )
 
         # Bonus for multiple sources (diminishing returns)
-        source_bonus = min(0.1, self.source_count * 0.02)
+        _source_bonus = min(0.1, self.source_count * 0.02)
 
         return max(0.0, min(1.0, score + source_bonus))
 
@@ -351,18 +345,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
         expertise_profiler: Optional expertise profiler
     """
 
-    def __init__(
-        self,
-        ahead_by_k: int = 2,
-        min_votes: int = 3,
-        confidence_threshold: float = 0.6,
-        reputation_weights: Optional[Dict[str, float]] = None,
-        enable_pattern_library: bool = True,
-        enable_rollback: bool = True,
-        enable_cross_validation: bool = True,
-        expertise_profiler: Optional[AgentExpertiseProfiler] = None,
-        max_reasoning_depth: int = 10,
-    ) -> None:
+    def __init__(self, _ahead_by_k: int, _min_votes: int, _confidence_threshold: float, _reputation_weights: Optional[Dict[str, _float]], _enable_pattern_library: bool, _enable_rollback: bool, _enable_cross_validation: bool, _expertise_profiler: Optional[AgentExpertiseProfiler], _max_reasoning_depth: int) -> None:
         """
         Initialize the enhanced consensus engine.
 
@@ -378,10 +361,10 @@ class EnhancedMAKERConsensus(MAKERConsensus):
             max_reasoning_depth: Maximum reasoning chain depth
         """
         super().__init__(
-            ahead_by_k=ahead_by_k,
-            min_votes=min_votes,
-            confidence_threshold=confidence_threshold,
-            reputation_weights=reputation_weights,
+            _ahead_by_k = ahead_by_k,
+            _min_votes = min_votes,
+            _confidence_threshold = confidence_threshold,
+            _reputation_weights = reputation_weights,
         )
 
         self.enable_pattern_library = enable_pattern_library
@@ -420,12 +403,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
             f"cross_validation={enable_cross_validation}"
         )
 
-    def start_consensus(
-        self,
-        consensus_id: str,
-        proposal: Optional[str] = None,
-        domain: Optional[str] = None,
-    ) -> None:
+    def start_consensus(self, _consensus_id: str, _proposal: Optional[str], _domain: Optional[str]) -> None:
         """
         Start a new enhanced consensus process.
 
@@ -470,14 +448,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
             f"(proposal: {proposal or 'none'}, domain: {domain or 'general'})"
         )
 
-    def add_vote(
-        self,
-        consensus_id: str,
-        agent_id: str,
-        decision: str,
-        confidence: float,
-        metadata: Optional[Dict[str, Any]] = None,
-    ) -> None:
+    def add_vote(self, _consensus_id: str, _agent_id: str, _decision: str, _confidence: float, _metadata: Optional[Dict[str, _Any]]) -> None:
         """
         Add a vote to a consensus process (base implementation).
 
@@ -501,16 +472,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
             )
             self.decision_provenance[consensus_id].votes_cast += 1
 
-    def add_vote_with_reasoning(
-        self,
-        consensus_id: str,
-        agent_id: str,
-        decision: str,
-        confidence: float,
-        reasoning_chain: List[Dict[str, Any]],
-        pattern_references: Optional[List[str]] = None,
-        metadata: Optional[Dict[str, Any]] = None,
-    ) -> Optional[str]:
+    def add_vote_with_reasoning(self, _consensus_id: str, _agent_id: str, _decision: str, _confidence: float, _reasoning_chain: List[Dict[str, _Any]], _pattern_references: Optional[List[str]], _metadata: Optional[Dict[str, _Any]]) -> Optional[str]:
         """
         Add a vote with full reasoning chain.
 
@@ -531,8 +493,8 @@ class EnhancedMAKERConsensus(MAKERConsensus):
             agent_id=agent_id,
             decision=decision,
             confidence=confidence,
-            timestamp=datetime.now(timezone.utc).isoformat(),
-            metadata=metadata or {},
+            _timestamp = datetime.now(timezone.utc).isoformat(),
+            _metadata = metadata or {},
         )
 
         # Build reasoning chain
@@ -586,12 +548,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
 
         return None
 
-    def calculate_vote_weight(
-        self,
-        consensus_id: str,
-        enhanced_vote: EnhancedVote,
-        domain: Optional[str] = None,
-    ) -> float:
+    def calculate_vote_weight(self, _consensus_id: str, _enhanced_vote: EnhancedVote, _domain: Optional[str]) -> float:
         """
         Calculate vote weight based on evidence quality, expertise, confidence, and historical accuracy.
 
@@ -608,21 +565,21 @@ class EnhancedMAKERConsensus(MAKERConsensus):
         agent_id = enhanced_vote.agent_id
 
         # 1. Evidence Quality Score (35% weight)
-        evidence_score = self._calculate_evidence_quality_score(enhanced_vote)
+        _evidence_score = self._calculate_evidence_quality_score(enhanced_vote)
 
         # 2. Agent Expertise Score (30% weight)
-        expertise_score = self._calculate_expertise_score(agent_id, domain)
+        _expertise_score = self._calculate_expertise_score(agent_id, domain)
 
         # 3. Confidence Score (20% weight)
-        confidence_score = enhanced_vote.confidence
+        _confidence_score = enhanced_vote.confidence
 
         # 4. Historical Accuracy Score (15% weight)
-        historical_score = self._calculate_historical_accuracy_score(
+        _historical_score = self._calculate_historical_accuracy_score(
             consensus_id, agent_id
         )
 
         # Calculate weighted combination
-        weighted_score = (
+        _weighted_score = (
             evidence_score * EVIDENCE_QUALITY_WEIGHT
             + expertise_score * EXPERTISE_WEIGHT
             + confidence_score * CONFIDENCE_WEIGHT
@@ -631,13 +588,13 @@ class EnhancedMAKERConsensus(MAKERConsensus):
 
         # Apply expertise multiplier from profiler
         if domain and self.expertise_profiler:
-            domain_expertise = self.expertise_profiler.get_expertise_for_domain(
+            _domain_expertise = self.expertise_profiler.get_expertise_for_domain(
                 agent_id, domain
             )
             if domain_expertise:
-                expertise_multiplier = domain_expertise.get_expertise_multiplier()
+                _expertise_multiplier = domain_expertise.get_expertise_multiplier()
                 # Scale multiplier to have moderate effect (0.8 to 1.2 range)
-                scaled_multiplier = 0.8 + (expertise_multiplier - 0.5) * 0.4
+                _scaled_multiplier = 0.8 + (expertise_multiplier - 0.5) * 0.4
                 weighted_score *= scaled_multiplier
 
         # Normalize to 0.0-2.0 range (1.0 is baseline)
@@ -655,11 +612,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
 
         return vote_weight
 
-    def _apply_enhanced_vote_weights(
-        self,
-        votes: List[Vote],
-        consensus_id: str,
-    ) -> List[Tuple[str, float]]:
+    def _apply_enhanced_vote_weights(self, _votes: List[Vote], _consensus_id: str) -> List[Tuple[str, float]]:
         """
         Apply enhanced vote weights using evidence quality, expertise, confidence, and historical accuracy.
 
@@ -672,18 +625,18 @@ class EnhancedMAKERConsensus(MAKERConsensus):
         Returns:
             List of (decision, weight) tuples
         """
-        weighted = []
+        _weighted = []
         
         # Get domain for expertise weighting
-        domain = None
+        _domain = None
         if consensus_id in self.decision_provenance:
-            domain_agents = [
+            _domain_agents = [
                 a
                 for a in self.decision_provenance[consensus_id].participating_agents
                 if a.startswith("_domain:")
             ]
             if domain_agents:
-                domain = domain_agents[0].replace("_domain:", "")
+                _domain = domain_agents[0].replace("_domain:", "")
         
         # Find matching enhanced votes and apply weights
         for vote in votes:
@@ -697,19 +650,17 @@ class EnhancedMAKERConsensus(MAKERConsensus):
             
             if enhanced_vote:
                 # Use pre-calculated vote weight
-                weight = enhanced_vote.vote_weight
+                _weight = enhanced_vote.vote_weight
             else:
                 # Create temporary enhanced vote for weighting
-                temp_enhanced = EnhancedVote(vote=vote)
-                weight = self.calculate_vote_weight(consensus_id, temp_enhanced, domain)
+                _temp_enhanced = EnhancedVote(vote=vote)
+                _weight = self.calculate_vote_weight(consensus_id, temp_enhanced, domain)
             
             weighted.append((vote.decision, weight))
         
         return weighted
 
-    def _calculate_evidence_quality_score(
-        self, enhanced_vote: EnhancedVote
-    ) -> float:
+    def _calculate_evidence_quality_score(self, _enhanced_vote: EnhancedVote) -> float:
         """
         Calculate evidence quality score from reasoning chain.
 
@@ -728,10 +679,10 @@ class EnhancedMAKERConsensus(MAKERConsensus):
             return 0.5  # Default for no evidence
 
         # Count sources from reasoning steps
-        total_sources = sum(len(step.sources) for step in reasoning_chain.steps)
+        _total_sources = sum(len(step.sources) for step in reasoning_chain.steps)
 
         # Calculate source reliability based on validation status
-        reliability_map = {
+        _reliability_map = {
             ReasoningChainStatus.VALID: 0.9,
             ReasoningChainStatus.INCOMPLETE: 0.5,
             ReasoningChainStatus.INVALID: 0.2,
@@ -741,22 +692,22 @@ class EnhancedMAKERConsensus(MAKERConsensus):
         source_reliability = reliability_map.get(reasoning_chain.status, 0.5)
 
         # Calculate completeness based on step types present
-        step_types = {step.step_type for step in reasoning_chain.steps}
-        required_types = {"observation", "inference", "conclusion"}
+        _step_types = {step.step_type for step in reasoning_chain.steps}
+        _required_types = {"observation", "inference", "conclusion"}
         completeness = len(step_types & required_types) / len(required_types)
 
         # Calculate consistency based on confidence variance
-        confidences = [step.confidence for step in reasoning_chain.steps]
+        _confidences = [step.confidence for step in reasoning_chain.steps]
         if len(confidences) > 1:
-            confidence_variance = statistics.variance(confidences)
+            _confidence_variance = statistics.variance(confidences)
             consistency = max(0.0, 1.0 - confidence_variance)
         else:
             consistency = 0.7  # Default for single step
 
         # Recency based on chain creation time
         try:
-            created_at = datetime.fromisoformat(reasoning_chain.created_at.replace("Z", "+00:00"))
-            age_hours = (datetime.now(timezone.utc) - created_at).total_seconds() / 3600
+            _created_at = datetime.fromisoformat(reasoning_chain.created_at.replace("Z", "+00:00"))
+            _age_hours = (datetime.now(timezone.utc) - created_at).total_seconds() / 3600
             # Decay over 24 hours
             recency_score = max(0.0, 1.0 - (age_hours / 24.0))
         except (ValueError, TypeError):
@@ -774,9 +725,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
 
         return evidence_quality.calculate_quality_score()
 
-    def _calculate_expertise_score(
-        self, agent_id: str, domain: Optional[str] = None
-    ) -> float:
+    def _calculate_expertise_score(self, _agent_id: str, _domain: Optional[str]) -> float:
         """
         Calculate agent expertise score.
 
@@ -795,9 +744,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
         else:
             return self.expertise_profiler.get_expertise_score(agent_id)
 
-    def _calculate_historical_accuracy_score(
-        self, consensus_id: str, agent_id: str
-    ) -> float:
+    def _calculate_historical_accuracy_score(self, _consensus_id: str, _agent_id: str) -> float:
         """
         Calculate historical accuracy score for an agent.
 
@@ -813,25 +760,20 @@ class EnhancedMAKERConsensus(MAKERConsensus):
             consensus_id in self.agent_accuracy_history
             and agent_id in self.agent_accuracy_history[consensus_id]
         ):
-            outcomes = self.agent_accuracy_history[consensus_id][agent_id]
+            _outcomes = self.agent_accuracy_history[consensus_id][agent_id]
             if outcomes:
                 return sum(outcomes) / len(outcomes)
 
         # Fall back to expertise profiler's historical data
         if self.expertise_profiler:
-            profile = self.expertise_profiler.get_profile(agent_id)
+            _profile = self.expertise_profiler.get_profile(agent_id)
             if profile:
                 # Use overall reputation as proxy for historical accuracy
                 return profile.overall_reputation
 
         return 0.5  # Default for unknown agents
 
-    def record_decision_outcome(
-        self,
-        consensus_id: str,
-        agent_id: str,
-        was_correct: bool,
-    ) -> None:
+    def record_decision_outcome(self, _consensus_id: str, _agent_id: str, _was_correct: bool) -> None:
         """
         Record the outcome of a decision for historical accuracy tracking.
 
@@ -849,21 +791,21 @@ class EnhancedMAKERConsensus(MAKERConsensus):
         self.agent_accuracy_history[consensus_id][agent_id].append(was_correct)
 
         # Also record in expertise profiler
-        domain = None
+        _domain = None
         if consensus_id in self.decision_provenance:
-            domain_agents = [
+            _domain_agents = [
                 a
                 for a in self.decision_provenance[consensus_id].participating_agents
                 if a.startswith("_domain:")
             ]
             if domain_agents:
-                domain = domain_agents[0].replace("_domain:", "")
+                _domain = domain_agents[0].replace("_domain:", "")
 
         if domain and self.expertise_profiler:
             self.expertise_profiler.record_outcome(
                 agent_id=agent_id,
-                domain=domain,
-                was_correct=was_correct,
+                _domain = domain,
+                _was_correct = was_correct,
                 confidence=0.5,  # Placeholder
             )
 
@@ -871,10 +813,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
             f"Recorded decision outcome for {agent_id}: correct={was_correct}"
         )
 
-    def compute_consensus(
-        self,
-        consensus_id: str,
-    ) -> Optional[ConsensusResult]:
+    def compute_consensus(self, _consensus_id: str) -> Optional[ConsensusResult]:
         """
         Compute consensus with enhanced validation.
 
@@ -889,7 +828,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
             self._cross_validate_reasoning(consensus_id)
 
         # Call base implementation
-        result = super().compute_consensus(consensus_id)
+        _result = super().compute_consensus(consensus_id)
 
         if result:
             # Update provenance
@@ -918,11 +857,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
 
         return result
 
-    def compute_consensus_with_validation(
-        self,
-        consensus_id: str,
-        min_validation_score: float = 0.6,
-    ) -> Optional[ConsensusResult]:
+    def compute_consensus_with_validation(self, _consensus_id: str, _min_validation_score: float) -> Optional[ConsensusResult]:
         """
         Compute consensus with validation score threshold.
 
@@ -937,7 +872,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
         validation_results = self._cross_validate_reasoning(consensus_id)
 
         # Check if validation passes threshold
-        avg_validation_score = statistics.mean(
+        _avg_validation_score = statistics.mean(
             v.validation_score for v in self.enhanced_votes.get(consensus_id, [])
             if v.cross_validated
         ) if self.enhanced_votes.get(consensus_id) else 0.0
@@ -953,10 +888,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
         # Compute consensus
         return self.compute_consensus(consensus_id)
 
-    def _cross_validate_reasoning(
-        self,
-        consensus_id: str,
-    ) -> Dict[str, Any]:
+    def _cross_validate_reasoning(self, _consensus_id: str) -> Dict[str, Any]:
         """
         Cross-validate reasoning chains across all votes.
 
@@ -969,8 +901,8 @@ class EnhancedMAKERConsensus(MAKERConsensus):
         if not self.enable_cross_validation:
             return {"status": "disabled"}
 
-        enhanced_votes = self.enhanced_votes.get(consensus_id, [])
-        chains = self.reasoning_chains.get(consensus_id, [])
+        _enhanced_votes = self.enhanced_votes.get(consensus_id, [])
+        _chains = self.reasoning_chains.get(consensus_id, [])
 
         validation_results = {
             "total_chains": len(chains),
@@ -998,13 +930,13 @@ class EnhancedMAKERConsensus(MAKERConsensus):
                 if chain1.status == ReasoningChainStatus.VALID and chain2.status == ReasoningChainStatus.VALID:
                     # Check if chains reference contradictory patterns
                     if self.enable_pattern_library:
-                        common_patterns = set(chain1.pattern_references) & set(
+                        _common_patterns = set(chain1.pattern_references) & set(
                             chain2.pattern_references
                         )
                         if common_patterns:
                             # Chains share pattern references - check consistency
-                            decision1 = decisions_by_chain.get(chain1.chain_id)
-                            decision2 = decisions_by_chain.get(chain2.chain_id)
+                            _decision1 = decisions_by_chain.get(chain1.chain_id)
+                            _decision2 = decisions_by_chain.get(chain2.chain_id)
                             if decision1 != decision2:
                                 validation_results["cross_validations"].append({
                                     "chain1": chain1.chain_id,
@@ -1014,15 +946,15 @@ class EnhancedMAKERConsensus(MAKERConsensus):
                                 })
 
         # Calculate validation scores and vote weights for each enhanced vote
-        domain = None
+        _domain = None
         if consensus_id in self.decision_provenance:
-            domain_agents = [
+            _domain_agents = [
                 a
                 for a in self.decision_provenance[consensus_id].participating_agents
                 if a.startswith("_domain:")
             ]
             if domain_agents:
-                domain = domain_agents[0].replace("_domain:", "")
+                _domain = domain_agents[0].replace("_domain:", "")
 
         for ev in enhanced_votes:
             if ev.reasoning_chain:
@@ -1059,10 +991,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
 
         return validation_results
 
-    def _get_validation_results(
-        self,
-        consensus_id: str,
-    ) -> Dict[str, Any]:
+    def _get_validation_results(self, _consensus_id: str) -> Dict[str, Any]:
         """
         Get validation results for a consensus.
 
@@ -1076,10 +1005,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
             return self.decision_provenance[consensus_id].validation_results
         return {}
 
-    def get_decision_provenance(
-        self,
-        consensus_id: str,
-    ) -> Optional[DecisionProvenance]:
+    def get_decision_provenance(self, _consensus_id: str) -> Optional[DecisionProvenance]:
         """
         Get complete provenance for a decision.
 
@@ -1091,10 +1017,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
         """
         return self.decision_provenance.get(consensus_id)
 
-    def get_reasoning_chains(
-        self,
-        consensus_id: str,
-    ) -> List[ReasoningChain]:
+    def get_reasoning_chains(self, _consensus_id: str) -> List[ReasoningChain]:
         """
         Get all reasoning chains for a consensus.
 
@@ -1106,11 +1029,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
         """
         return self.reasoning_chains.get(consensus_id, [])
 
-    def rollback_decision(
-        self,
-        consensus_id: str,
-        reason: Optional[str] = None,
-    ) -> RollbackResult:
+    def rollback_decision(self, _consensus_id: str, _reason: Optional[str]) -> RollbackResult:
         """
         Rollback a decision to its pre-consensus state.
 
@@ -1123,22 +1042,22 @@ class EnhancedMAKERConsensus(MAKERConsensus):
         """
         if not self.enable_rollback:
             return RollbackResult(
-                success=False,
-                message="Rollback is not enabled",
+                _success = False,
+                _message = "Rollback is not enabled",
             )
 
         if consensus_id not in self.rollback_checkpoints:
             return RollbackResult(
-                success=False,
-                message=f"No rollback checkpoint found for {consensus_id}",
+                _success = False,
+                _message = f"No rollback checkpoint found for {consensus_id}",
             )
 
-        checkpoint = self.rollback_checkpoints[consensus_id]
+        _checkpoint = self.rollback_checkpoints[consensus_id]
 
         if checkpoint.get("state") != "completed":
             return RollbackResult(
-                success=False,
-                message=f"Decision not in completed state: {checkpoint.get('state')}",
+                _success = False,
+                _message = f"Decision not in completed state: {checkpoint.get('state')}",
             )
 
         # Perform rollback
@@ -1161,22 +1080,19 @@ class EnhancedMAKERConsensus(MAKERConsensus):
             )
 
             return RollbackResult(
-                success=True,
-                message=f"Decision rolled back: {reason or 'no reason provided'}",
-                previous_state=checkpoint,
+                _success = True,
+                _message = f"Decision rolled back: {reason or 'no reason provided'}",
+                _previous_state = checkpoint,
             )
 
         except Exception as e:
             logger.error(f"Rollback failed: {e}")
             return RollbackResult(
-                success=False,
-                message=f"Rollback failed: {str(e)}",
+                _success = False,
+                _message = f"Rollback failed: {str(e)}",
             )
 
-    def export_provenance(
-        self,
-        consensus_id: str,
-    ) -> Optional[Dict[str, Any]]:
+    def export_provenance(self, _consensus_id: str) -> Optional[Dict[str, Any]]:
         """
         Export decision provenance for external audit.
 
@@ -1186,7 +1102,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
         Returns:
             Serializable provenance dictionary or None
         """
-        provenance = self.decision_provenance.get(consensus_id)
+        _provenance = self.decision_provenance.get(consensus_id)
         if not provenance:
             return None
 
@@ -1227,12 +1143,12 @@ class EnhancedMAKERConsensus(MAKERConsensus):
         Returns:
             Statistics dictionary
         """
-        base_stats = self.get_statistics()
+        _base_stats = self.get_statistics()
 
-        total_chains = sum(
+        _total_chains = sum(
             len(chains) for chains in self.reasoning_chains.values()
         )
-        valid_chains = sum(
+        _valid_chains = sum(
             sum(1 for c in chains if c.status == ReasoningChainStatus.VALID)
             for chains in self.reasoning_chains.values()
         )
@@ -1251,11 +1167,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
             ),
         }
 
-    def register_pattern(
-        self,
-        pattern_id: str,
-        pattern_data: Dict[str, Any],
-    ) -> None:
+    def register_pattern(self, _pattern_id: str, _pattern_data: Dict[str, _Any]) -> None:
         """
         Register a pattern in the pattern library.
 
@@ -1266,10 +1178,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
         self.pattern_library[pattern_id] = pattern_data
         logger.debug(f"Registered pattern: {pattern_id}")
 
-    def get_pattern(
-        self,
-        pattern_id: str,
-    ) -> Optional[Dict[str, Any]]:
+    def get_pattern(self, _pattern_id: str) -> Optional[Dict[str, Any]]:
         """
         Get pattern from the pattern library.
 
@@ -1281,10 +1190,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
         """
         return self.pattern_library.get(pattern_id)
 
-    def generate_decision_hash(
-        self,
-        consensus_id: str,
-    ) -> Optional[str]:
+    def generate_decision_hash(self, _consensus_id: str) -> Optional[str]:
         """
         Generate cryptographic hash of decision for integrity verification.
 
@@ -1294,12 +1200,12 @@ class EnhancedMAKERConsensus(MAKERConsensus):
         Returns:
             SHA-256 hash or None
         """
-        provenance = self.decision_provenance.get(consensus_id)
+        _provenance = self.decision_provenance.get(consensus_id)
         if not provenance or not provenance.end_time:
             return None
 
         # Create hashable data
-        data = {
+        _data = {
             "decision_id": provenance.decision_id,
             "proposal": provenance.proposal,
             "start_time": provenance.start_time,
@@ -1309,7 +1215,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
         }
 
         # Generate hash
-        data_json = json.dumps(data, sort_keys=True)
+        _data_json = json.dumps(data, sort_keys=True)
         return hashlib.sha256(data_json.encode()).hexdigest()
 
     def export_accuracy_history(self) -> Dict[str, Any]:
@@ -1333,7 +1239,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
             },
         }
 
-    def import_accuracy_history(self, data: Dict[str, Any]) -> None:
+    def import_accuracy_history(self, _data: Dict[str, _Any]) -> None:
         """
         Import accuracy history from persisted data.
 
@@ -1346,23 +1252,23 @@ class EnhancedMAKERConsensus(MAKERConsensus):
         if "evidence_cache" in data:
             for key, eq_data in data["evidence_cache"].items():
                 self.evidence_cache[key] = EvidenceQuality(
-                    source_count=eq_data.get("source_count", 0),
-                    source_reliability=eq_data.get("source_reliability", 0.5),
-                    completeness=eq_data.get("completeness", 0.5),
-                    consistency=eq_data.get("consistency", 0.5),
-                    recency_score=eq_data.get("recency_score", 0.5),
+                    _source_count = eq_data.get("source_count", 0),
+                    _source_reliability = eq_data.get("source_reliability", 0.5),
+                    _completeness = eq_data.get("completeness", 0.5),
+                    _consistency = eq_data.get("consistency", 0.5),
+                    _recency_score = eq_data.get("recency_score", 0.5),
                 )
 
         logger.info("Imported accuracy history")
 
-    def save_state(self, filepath: str) -> None:
+    def save_state(self, _filepath: str) -> None:
         """
         Save complete consensus state to a JSON file.
 
         Args:
             filepath: Path to save file
         """
-        state = {
+        _state = {
             "expertise_profiler": self.expertise_profiler.export_profiles(),
             "accuracy_history": self.export_accuracy_history(),
             "decision_provenance": {
@@ -1374,7 +1280,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
             json.dump(state, f, indent=2)
         logger.info(f"Saved consensus state to {filepath}")
 
-    def load_state(self, filepath: str) -> None:
+    def load_state(self, _filepath: str) -> None:
         """
         Load complete consensus state from a JSON file.
 
@@ -1382,7 +1288,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
             filepath: Path to load file
         """
         with open(filepath, 'r') as f:
-            state = json.load(f)
+            _state = json.load(f)
 
         if "expertise_profiler" in state:
             self.expertise_profiler.import_profiles(state["expertise_profiler"])

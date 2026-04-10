@@ -17,10 +17,9 @@ Usage:
     loader = ConfigLoader()
     await loader.initialize()
     value = loader.get("memory.max_size", default=1000)
-    value_with_source = loader.get_with_source("memory.max_size")
+    _value_with_source = loader.get_with_source("memory.max_size")
 """
 
-from __future__ import annotations
 
 import os
 from datetime import datetime, timedelta
@@ -31,7 +30,7 @@ import structlog
 
 from .service import ConfigurationService, get_config_service
 
-logger = structlog.get_logger("config.loader")
+_logger = structlog.get_logger("config.loader")
 
 
 @dataclass
@@ -56,11 +55,7 @@ class ConfigLoader:
     - Bulk loading capabilities
     """
     
-    def __init__(
-        self,
-        service: Optional[ConfigurationService] = None,
-        cache_ttl_seconds: int = 300,
-    ):
+    def __init__(self, _service: Optional[ConfigurationService], _cache_ttl_seconds: int):
         """
         Initialize the configuration loader.
         
@@ -171,7 +166,7 @@ class ConfigLoader:
     
     async def _warm_cache(self) -> None:
         """Warm up the cache with frequently accessed configurations."""
-        common_keys = [
+        _common_keys = [
             "rate_limit.enabled",
             "memory.max_size",
             "consciousness.enabled",
@@ -186,7 +181,7 @@ class ConfigLoader:
             except Exception as e:
                 logger.debug(f"Failed to warm cache for {key}: {e}")
     
-    async def _load_config(self, config_key: str) -> Tuple[Any, str]:
+    async def _load_config(self, _config_key: str) -> Tuple[Any, str]:
         """
         Load a configuration value from database or environment.
         
@@ -216,12 +211,12 @@ class ConfigLoader:
             logger.debug(f"Database config lookup failed for {config_key}: {e}")
         
         # Fallback to environment variable
-        env_var = self._config_keys.get(config_key)
+        _env_var = self._config_keys.get(config_key)
         if env_var:
-            env_value = os.environ.get(env_var)
+            _env_value = os.environ.get(env_var)
             if env_value is not None:
                 # Convert to appropriate type
-                converted_value = self._convert_env_value(env_value)
+                _converted_value = self._convert_env_value(env_value)
                 self._cache[config_key] = CacheEntry(
                     value=converted_value,
                     source="environment",
@@ -233,12 +228,12 @@ class ConfigLoader:
         # Not found anywhere
         return None, "not_found"
     
-    def _convert_value(self, value: Any, config_type: str) -> Any:
+    def _convert_value(self, _value: Any, _config_type: str) -> Any:
         """Convert a value to the specified type."""
         if value is None:
             return None
             
-        type_map = {
+        _type_map = {
             "string": str,
             "integer": int,
             "float": float,
@@ -246,13 +241,13 @@ class ConfigLoader:
             "json": lambda x: x,  # Already parsed from JSON
         }
         
-        converter = type_map.get(config_type, str)
+        _converter = type_map.get(config_type, str)
         try:
             return converter(value)
         except (ValueError, TypeError):
             return value
     
-    def _convert_env_value(self, value: str) -> Any:
+    def _convert_env_value(self, _value: str) -> Any:
         """
         Convert an environment variable value to appropriate type.
         
@@ -287,9 +282,9 @@ class ConfigLoader:
         # Default to string
         return value
     
-    def _get_cache(self, config_key: str) -> Optional[CacheEntry]:
+    def _get_cache(self, _config_key: str) -> Optional[CacheEntry]:
         """Get a cached value if available and not expired."""
-        entry = self._cache.get(config_key)
+        _entry = self._cache.get(config_key)
         
         if entry is None:
             return None
@@ -302,7 +297,7 @@ class ConfigLoader:
         entry.last_accessed_at = datetime.utcnow()
         return entry
     
-    def get(self, config_key: str, default: Any = None) -> Any:
+    def get(self, _config_key: str, _default: Any) -> Any:
         """
         Get a configuration value.
         
@@ -317,7 +312,7 @@ class ConfigLoader:
             Configuration value or default
         """
         # Check cache first
-        entry = self._get_cache(config_key)
+        _entry = self._get_cache(config_key)
         if entry is not None:
             return entry.value
         
@@ -325,7 +320,7 @@ class ConfigLoader:
         # (async loading should be done via get_async)
         return default
     
-    async def get_async(self, config_key: str, default: Any = None) -> Any:
+    async def get_async(self, _config_key: str, _default: Any) -> Any:
         """
         Get a configuration value asynchronously.
         
@@ -339,7 +334,7 @@ class ConfigLoader:
             Configuration value or default
         """
         # Check cache first
-        entry = self._get_cache(config_key)
+        _entry = self._get_cache(config_key)
         if entry is not None:
             return entry.value
         
@@ -351,7 +346,7 @@ class ConfigLoader:
         
         return default
     
-    def get_with_source(self, config_key: str, default: Any = None) -> Tuple[Any, str]:
+    def get_with_source(self, _config_key: str, _default: Any) -> Tuple[Any, str]:
         """
         Get a configuration value with its source.
         
@@ -362,17 +357,13 @@ class ConfigLoader:
         Returns:
             Tuple of (value, source) where source is "database", "environment", or "default"
         """
-        entry = self._get_cache(config_key)
+        _entry = self._get_cache(config_key)
         if entry is not None:
             return entry.value, entry.source
         
         return default, "default"
     
-    async def get_async_with_source(
-        self,
-        config_key: str,
-        default: Any = None,
-    ) -> Tuple[Any, str]:
+    async def get_async_with_source(self, _config_key: str, _default: Any) -> Tuple[Any, str]:
         """
         Get a configuration value with its source asynchronously.
         
@@ -383,7 +374,7 @@ class ConfigLoader:
         Returns:
             Tuple of (value, source)
         """
-        entry = self._get_cache(config_key)
+        _entry = self._get_cache(config_key)
         if entry is not None:
             return entry.value, entry.source
         
@@ -394,7 +385,7 @@ class ConfigLoader:
         
         return default, "default"
     
-    async def get_many(self, config_keys: list[str]) -> Dict[str, Any]:
+    async def get_many(self, _config_keys: list[str]) -> Dict[str, Any]:
         """
         Get multiple configuration values at once.
         
@@ -404,12 +395,12 @@ class ConfigLoader:
         Returns:
             Dictionary mapping keys to values
         """
-        results = {}
+        _results = {}
         for key in config_keys:
             results[key] = await self.get_async(key)
         return results
     
-    def invalidate(self, config_key: str) -> None:
+    def invalidate(self, _config_key: str) -> None:
         """
         Invalidate a cached configuration.
         
@@ -456,9 +447,9 @@ class ConfigLoader:
                 "newest_entry": None,
             }
         
-        now = datetime.utcnow()
-        total_accesses = sum(e.access_count for e in self._cache.values())
-        expires_at_list = [e.expires_at for e in self._cache.values()]
+        _now = datetime.utcnow()
+        _total_accesses = sum(e.access_count for e in self._cache.values())
+        _expires_at_list = [e.expires_at for e in self._cache.values()]
         
         return {
             "total_entries": len(self._cache),
@@ -483,11 +474,11 @@ def get_config_loader() -> ConfigLoader:
 
 async def initialize_config_loader() -> None:
     """Initialize the global ConfigLoader."""
-    loader = get_config_loader()
+    _loader = get_config_loader()
     await loader.initialize()
 
 
-async def get_config(config_key: str, default: Any = None) -> Any:
+async def get_config(_config_key: str, _default: Any) -> Any:
     """
     Convenience function to get a configuration value.
     
@@ -500,16 +491,13 @@ async def get_config(config_key: str, default: Any = None) -> Any:
     Returns:
         Configuration value or default
     """
-    loader = get_config_loader()
+    _loader = get_config_loader()
     if not loader._initialized:
         await loader.initialize()
     return await loader.get_async(config_key, default)
 
 
-async def get_config_with_source(
-    config_key: str,
-    default: Any = None,
-) -> Tuple[Any, str]:
+async def get_config_with_source(_config_key: str, _default: Any) -> Tuple[Any, str]:
     """
     Convenience function to get a configuration value with source.
     
@@ -520,7 +508,7 @@ async def get_config_with_source(
     Returns:
         Tuple of (value, source)
     """
-    loader = get_config_loader()
+    _loader = get_config_loader()
     if not loader._initialized:
         await loader.initialize()
     return await loader.get_async_with_source(config_key, default)
@@ -533,7 +521,7 @@ async def reload_config() -> Dict[str, Any]:
     Returns:
         Reload summary
     """
-    loader = get_config_loader()
+    _loader = get_config_loader()
     if not loader._initialized:
         await loader.initialize()
     return await loader.reload()

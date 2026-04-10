@@ -14,7 +14,7 @@ from datetime import datetime, timezone
 from enum import Enum
 import structlog
 
-logger = structlog.get_logger(__name__)
+_logger = structlog.get_logger(__name__)
 
 
 class ChannelType(str, Enum):
@@ -94,41 +94,26 @@ class ChannelMessage:
     session_id: Optional[str] = None       # User/session context
     
     @classmethod
-    def create(
-        cls,
-        subject: str,
-        message_type: str,
-        content: Dict[str, Any],
-        sender_agent: str,
-        target_agents: Optional[List[str]] = None,
-        reply_to: Optional[str] = None,
-        metadata: Optional[Dict[str, Any]] = None,
-        priority: str = "normal",
-        requires_ack: bool = False,
-        workflow_id: Optional[str] = None,
-        task_id: Optional[str] = None,
-        session_id: Optional[str] = None,
-        ttl_seconds: Optional[int] = None,
-    ) -> "ChannelMessage":
+    def create(cls, _subject: str, _message_type: str, _content: Dict[str, _Any], _sender_agent: str, _target_agents: Optional[List[str]], _reply_to: Optional[str], _metadata: Optional[Dict[str, _Any]], _priority: str, _requires_ack: bool, _workflow_id: Optional[str], _task_id: Optional[str], _session_id: Optional[str], _ttl_seconds: Optional[int]) -> "ChannelMessage":
         """Factory method for creating messages with defaults."""
         import uuid
         
         return cls(
-            subject=subject,
-            correlation_id=str(uuid.uuid4()),
-            reply_to=reply_to,
-            sender_agent=sender_agent,
-            target_agents=target_agents or ["*"],
-            message_type=message_type,
-            content=content,
-            metadata=metadata or {},
-            timestamp=datetime.now(timezone.utc).isoformat(),
-            ttl_seconds=ttl_seconds,
+            _subject = subject,
+            _correlation_id = str(uuid.uuid4()),
+            _reply_to = reply_to,
+            _sender_agent = sender_agent,
+            _target_agents = target_agents or ["*"],
+            _message_type = message_type,
+            _content = content,
+            _metadata = metadata or {},
+            _timestamp = datetime.now(timezone.utc).isoformat(),
+            _ttl_seconds = ttl_seconds,
             priority=priority,
-            requires_ack=requires_ack,
-            workflow_id=workflow_id,
-            task_id=task_id,
-            session_id=session_id,
+            _requires_ack = requires_ack,
+            _workflow_id = workflow_id,
+            _task_id = task_id,
+            _session_id = session_id,
         )
 
 
@@ -155,7 +140,7 @@ class ChannelRegistry:
         for channel in get_all_default_channels():
             self.register(channel)
     
-    def register(self, channel: ChannelDefinition) -> None:
+    def register(self, _channel: ChannelDefinition) -> None:
         """
         Register a channel.
         
@@ -182,7 +167,7 @@ class ChannelRegistry:
         
         logger.info("channel_registered", name=channel.name, type=channel.channel_type.value)
     
-    def unregister(self, name: str) -> bool:
+    def unregister(self, _name: str) -> bool:
         """Unregister a channel by name."""
         if name not in self._channels:
             return False
@@ -197,15 +182,11 @@ class ChannelRegistry:
         logger.info("channel_unregistered", name=name)
         return True
     
-    def get_channel(self, name: str) -> Optional[ChannelDefinition]:
+    def get_channel(self, _name: str) -> Optional[ChannelDefinition]:
         """Get a channel by name."""
         return self._channels.get(name)
     
-    def list_channels(
-        self, 
-        channel_type: Optional[ChannelType] = None,
-        subscriber: Optional[str] = None,
-    ) -> List[Dict[str, Any]]:
+    def list_channels(self, _channel_type: Optional[ChannelType], _subscriber: Optional[str]) -> List[Dict[str, Any]]:
         """
         List channels with optional filtering.
         
@@ -216,13 +197,13 @@ class ChannelRegistry:
         Returns:
             List of channel definitions
         """
-        channels = self._channels.values()
+        _channels = self._channels.values()
         
         if channel_type:
-            channels = [c for c in channels if c.channel_type == channel_type]
+            _channels = [c for c in channels if c.channel_type == channel_type]
         
         if subscriber:
-            channels = [c for c in channels if subscriber in c.subscribers or "*" in c.subscribers]
+            _channels = [c for c in channels if subscriber in c.subscribers or "*" in c.subscribers]
         
         return [
             {
@@ -239,9 +220,9 @@ class ChannelRegistry:
             for c in channels if c.enabled
         ]
     
-    def get_subscriptions(self, agent_id: str) -> List[str]:
+    def get_subscriptions(self, _agent_id: str) -> List[str]:
         """Get all channels an agent is subscribed to."""
-        subscriptions = self._agent_subscriptions.get(agent_id, set()).copy()
+        _subscriptions = self._agent_subscriptions.get(agent_id, set()).copy()
         
         # Add wildcard subscriptions
         for channel in self._channels.values():
@@ -250,9 +231,9 @@ class ChannelRegistry:
         
         return list(subscriptions)
     
-    def get_subscribers(self, channel_name: str) -> List[str]:
+    def get_subscribers(self, _channel_name: str) -> List[str]:
         """Get all agents subscribed to a channel."""
-        channel = self._channels.get(channel_name)
+        _channel = self._channels.get(channel_name)
         if not channel:
             return []
         
@@ -265,23 +246,23 @@ class ChannelRegistry:
         
         return list(set(subscribers))
     
-    def get_stats(self, channel_name: str) -> Optional[Dict[str, Any]]:
+    def get_stats(self, _channel_name: str) -> Optional[Dict[str, Any]]:
         """Get statistics for a channel."""
         return self._stats.get(channel_name)
     
-    def record_message(self, channel_name: str, delivered: bool = True) -> None:
+    def record_message(self, _channel_name: str, _delivered: bool) -> None:
         """Record a message published to a channel."""
         if channel_name in self._stats:
             self._stats[channel_name]["messages_published"] += 1
             if delivered:
                 self._stats[channel_name]["messages_delivered"] += 1
     
-    def record_error(self, channel_name: str) -> None:
+    def record_error(self, _channel_name: str) -> None:
         """Record an error on a channel."""
         if channel_name in self._stats:
             self._stats[channel_name]["errors"] += 1
     
-    def subscribe_agent(self, agent_id: str, channel_name: str) -> bool:
+    def subscribe_agent(self, _agent_id: str, _channel_name: str) -> bool:
         """Subscribe an agent to a channel."""
         if channel_name not in self._channels:
             return False
@@ -298,7 +279,7 @@ class ChannelRegistry:
         logger.debug("agent_subscribed", agent_id=agent_id, channel=channel_name)
         return True
     
-    def unsubscribe_agent(self, agent_id: str, channel_name: str) -> bool:
+    def unsubscribe_agent(self, _agent_id: str, _channel_name: str) -> bool:
         """Unsubscribe an agent from a channel."""
         if agent_id not in self._agent_subscriptions:
             return False
@@ -313,7 +294,7 @@ class ChannelRegistry:
         logger.debug("agent_unsubscribed", agent_id=agent_id, channel=channel_name)
         return True
     
-    def get_nats_subject(self, channel_name: str) -> str:
+    def get_nats_subject(self, _channel_name: str) -> str:
         """Convert channel name to NATS subject format."""
         return channel_name.replace(".", ".")
     
@@ -380,16 +361,7 @@ class CommunicationGroup:
     for common collaboration patterns.
     """
     
-    def __init__(
-        self,
-        name: str,
-        members: List[str],
-        primary_channel: str,
-        topics: List[str],
-        description: str = "",
-        consensus_enabled: bool = False,
-        rag_enabled: bool = False,
-    ):
+    def __init__(self, _name: str, _members: List[str], _primary_channel: str, _topics: List[str], _description: str, _consensus_enabled: bool, _rag_enabled: bool):
         self.name = name
         self.members = members
         self.primary_channel = primary_channel
@@ -414,7 +386,7 @@ class CommunicationGroup:
 class GroupRegistry:
     """Registry for communication groups."""
     
-    def __init__(self, channel_registry: ChannelRegistry):
+    def __init__(self, _channel_registry: ChannelRegistry):
         self._groups: Dict[str, CommunicationGroup] = {}
         self._channel_registry = channel_registry
         self._setup_default_groups()
@@ -427,9 +399,9 @@ class GroupRegistry:
             name="governance",
             members=["steward", "alpha", "beta", "charlie", "historian"],
             primary_channel="swarm.internal.triad",
-            topics=["decisions", "deliberations", "governance"],
-            description="Core governance and decision making",
-            consensus_enabled=True,
+            _topics = ["decisions", "deliberations", "governance"],
+            _description = "Core governance and decision making",
+            _consensus_enabled = True,
         ))
         
         # Execution Group
@@ -437,8 +409,8 @@ class GroupRegistry:
             name="execution",
             members=["coordinator", "coder", "explorer", "examiner"],
             primary_channel="swarm.internal.coordination",
-            topics=["tasks", "execution", "results"],
-            description="Task planning and execution",
+            _topics = ["tasks", "execution", "results"],
+            _description = "Task planning and execution",
         ))
         
         # Safety Group
@@ -446,9 +418,9 @@ class GroupRegistry:
             name="safety",
             members=["sentinel", "sentinel-prime", "arbiter", "beta"],
             primary_channel="swarm.internal.safety",
-            topics=["security", "validation", "alerts"],
-            description="Security and validation",
-            consensus_enabled=True,
+            _topics = ["security", "validation", "alerts"],
+            _description = "Security and validation",
+            _consensus_enabled = True,
         ))
         
         # Memory Group
@@ -456,9 +428,9 @@ class GroupRegistry:
             name="memory",
             members=["historian", "metis", "perceiver", "perceiver-plus"],
             primary_channel="swarm.internal.memory",
-            topics=["memory", "context", "retrieval"],
-            description="Knowledge management and RAG",
-            rag_enabled=True,
+            _topics = ["memory", "context", "retrieval"],
+            _description = "Knowledge management and RAG",
+            _rag_enabled = True,
         ))
         
         # External Integration Group
@@ -466,11 +438,11 @@ class GroupRegistry:
             name="external",
             members=["nexus", "echo", "catalyst"],
             primary_channel="swarm.external.api",
-            topics=["external", "webhooks", "events"],
-            description="External system integration",
+            _topics = ["external", "webhooks", "events"],
+            _description = "External system integration",
         ))
     
-    def register(self, group: CommunicationGroup) -> None:
+    def register(self, _group: CommunicationGroup) -> None:
         """Register a communication group."""
         if group.name in self._groups:
             raise ValueError(f"Group {group.name} already registered")
@@ -483,7 +455,7 @@ class GroupRegistry:
         
         logger.info("group_registered", name=group.name, members=group.members)
     
-    def get_group(self, name: str) -> Optional[CommunicationGroup]:
+    def get_group(self, _name: str) -> Optional[CommunicationGroup]:
         """Get a group by name."""
         return self._groups.get(name)
     
@@ -491,9 +463,9 @@ class GroupRegistry:
         """List all registered groups."""
         return [g.to_dict() for g in self._groups.values()]
     
-    def get_group_members(self, name: str) -> List[str]:
+    def get_group_members(self, _name: str) -> List[str]:
         """Get members of a group."""
-        group = self._groups.get(name)
+        _group = self._groups.get(name)
         return group.members if group else []
 
 

@@ -5,7 +5,6 @@ Pydantic models for configuration management in Heretek Swarm.
 Provides validation, serialization, and type safety for configuration data.
 """
 
-from __future__ import annotations
 
 from datetime import datetime
 from enum import Enum
@@ -73,8 +72,8 @@ class UserConfiguration(BaseModel):
     updated_by: Optional[str] = None
 
     class Config:
-        use_enum_values = True
-        json_encoders = {
+        _use_enum_values = True
+        _json_encoders = {
             UUID: str,
             datetime: lambda v: v.isoformat(),
         }
@@ -132,8 +131,8 @@ class LLMProvider(BaseModel):
     updated_at: datetime = Field(default_factory=datetime.utcnow)
 
     class Config:
-        use_enum_values = True
-        json_encoders = {
+        _use_enum_values = True
+        _json_encoders = {
             UUID: str,
             datetime: lambda v: v.isoformat(),
         }
@@ -228,8 +227,8 @@ class EmbeddingProvider(BaseModel):
     updated_at: datetime = Field(default_factory=datetime.utcnow)
 
     class Config:
-        use_enum_values = True
-        json_encoders = {
+        _use_enum_values = True
+        _json_encoders = {
             UUID: str,
             datetime: lambda v: v.isoformat(),
         }
@@ -310,8 +309,8 @@ class AgentConfig(BaseModel):
     updated_by: Optional[str] = None
 
     class Config:
-        use_enum_values = True
-        json_encoders = {
+        _use_enum_values = True
+        _json_encoders = {
             UUID: str,
             datetime: lambda v: v.isoformat(),
         }
@@ -362,7 +361,7 @@ class ConfigAuditLog(BaseModel):
     changed_at: datetime = Field(default_factory=datetime.utcnow)
 
     class Config:
-        json_encoders = {
+        _json_encoders = {
             UUID: str,
             datetime: lambda v: v.isoformat(),
         }

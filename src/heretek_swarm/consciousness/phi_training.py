@@ -33,7 +33,7 @@ import structlog
 
 from .iit_phi import PhiCalculator
 
-logger = structlog.get_logger("PhiTrainingEnvironment")
+_logger = structlog.get_logger("PhiTrainingEnvironment")
 
 
 class TrainingMode(str, Enum):
@@ -173,13 +173,13 @@ class AgentActor:
     Represents an agent that can participate in Phi training scenarios.
     """
     
-    def __init__(self, agent_id: str, agent_type: str):
+    def __init__(self, _agent_id: str, _agent_type: str):
         self.agent_id = agent_id
         self.agent_type = agent_type
         self.state: Dict[str, Any] = {}
         self.message_history: List[Dict[str, Any]] = []
     
-    async def act(self, observation: Dict[str, Any]) -> Dict[str, Any]:
+    async def act(self, _observation: Dict[str, _Any]) -> Dict[str, Any]:
         """
         Take an action based on observation.
         
@@ -212,32 +212,28 @@ class PhiTrainingEnvironment:
     Example:
         ```python
         # Create training environment
-        env = PhiTrainingEnvironment()
+        _env = PhiTrainingEnvironment()
         
         # Define agents
-        agents = [AgentActor(f"agent_{i}", "default") for i in range(5)]
+        _agents = [AgentActor(f"agent_{i}", "default") for i in range(5)]
         
         # Create scenario
         scenario = TrainingScenario(
             scenario_id="comm_train_001",
-            scenario_type=ScenarioType.COMMUNICATION,
-            description="Communication efficiency training",
-            agent_count=5,
+            _scenario_type = ScenarioType.COMMUNICATION,
+            _description = "Communication efficiency training",
+            _agent_count = 5,
             initial_state={},
-            objectives=["maximize_phi", "minimize_messages"],
+            _objectives = ["maximize_phi", "minimize_messages"],
         )
         
         # Run training episode
-        result = await env.run_episode(agents, scenario)
+        _result = await env.run_episode(agents, scenario)
         print(f"Phi delta: {result.episode.phi_delta}")
         ```
     """
     
-    def __init__(
-        self,
-        phi_calculator: Optional[PhiCalculator] = None,
-        training_mode: TrainingMode = TrainingMode.SIMULATION,
-    ):
+    def __init__(self, _phi_calculator: Optional[PhiCalculator], _training_mode: TrainingMode):
         """
         Initialize the training environment.
         
@@ -270,16 +266,12 @@ class PhiTrainingEnvironment:
         
         logger.info(
             "PhiTrainingEnvironment initialized",
-            extra={
+            _extra = {
                 "training_mode": training_mode.value,
             },
         )
     
-    async def run_episode(
-        self,
-        agents: List[AgentActor],
-        scenario: TrainingScenario,
-    ) -> TrainingResult:
+    async def run_episode(self, _agents: List[AgentActor], _scenario: TrainingScenario) -> TrainingResult:
         """
         Run a single training episode.
         
@@ -293,19 +285,19 @@ class PhiTrainingEnvironment:
         # Rate limiting check
         self._check_rate_limit()
         
-        episode_id = f"ep_{uuid.uuid4()}"
-        start_time = time.time()
+        _episode_id = f"ep_{uuid.uuid4()}"
+        _start_time = time.time()
         
         # Calculate initial Phi
-        initial_state = self._build_system_state(agents, scenario.initial_state)
-        initial_phi_result = self.phi_calculator.calculate_phi(initial_state)
-        start_phi = initial_phi_result.phi
+        _initial_state = self._build_system_state(agents, scenario.initial_state)
+        _initial_phi_result = self.phi_calculator.calculate_phi(initial_state)
+        _start_phi = initial_phi_result.phi
         
         logger.info(
             "episode_started",
-            episode_id=episode_id,
+            _episode_id = episode_id,
             scenario=scenario.scenario_type.value,
-            start_phi=start_phi,
+            _start_phi = start_phi,
         )
         
         # Track Phi values during episode
@@ -316,50 +308,50 @@ class PhiTrainingEnvironment:
         # Run episode steps
         for step in range(scenario.max_steps):
             # Execute scenario-specific step
-            step_result = await self._execute_step(agents, scenario, step)
+            _step_result = await self._execute_step(agents, scenario, step)
             
             # Calculate Phi after step
-            current_state = self._build_system_state(agents, step_result.get("state", {}))
-            phi_result = self.phi_calculator.calculate_phi(current_state)
-            current_phi = phi_result.phi
+            _current_state = self._build_system_state(agents, step_result.get("state", {}))
+            _phi_result = self.phi_calculator.calculate_phi(current_state)
+            _current_phi = phi_result.phi
             phi_values.append(current_phi)
             
             # Calculate reward
-            reward = self.calculate_phi_reward(phi_values[-2], current_phi)
+            _reward = self.calculate_phi_reward(phi_values[-2], current_phi)
             rewards.append(reward)
             
             # Check for convergence
             if convergence_step is None and len(phi_values) >= 5:
-                recent_variance = self._calculate_variance(phi_values[-5:])
+                _recent_variance = self._calculate_variance(phi_values[-5:])
                 if recent_variance < 0.001:
-                    convergence_step = step
+                    _convergence_step = step
             
             # Check for early termination
             if scenario.phi_target and current_phi >= scenario.phi_target:
                 logger.info(
                     "phi_target_reached",
-                    episode_id=episode_id,
+                    _episode_id = episode_id,
                     phi=current_phi,
-                    target=scenario.phi_target,
+                    _target = scenario.phi_target,
                 )
                 break
         
         # Calculate final Phi
-        final_state = self._build_system_state(agents, {})
-        final_phi_result = self.phi_calculator.calculate_phi(final_state)
-        end_phi = final_phi_result.phi
+        _final_state = self._build_system_state(agents, {})
+        _final_phi_result = self.phi_calculator.calculate_phi(final_state)
+        _end_phi = final_phi_result.phi
         
         # Create episode record
         duration = time.time() - start_time
         episode = TrainingEpisode(
-            episode_id=episode_id,
+            _episode_id = episode_id,
             scenario_type=scenario.scenario_type,
-            start_phi=start_phi,
-            end_phi=end_phi,
+            _start_phi = start_phi,
+            _end_phi = end_phi,
             phi_delta=end_phi - start_phi,
-            steps=len(phi_values),
+            _steps = len(phi_values),
             duration_seconds=duration,
-            metadata={
+            _metadata = {
                 "scenario_id": scenario.scenario_id,
                 "agent_count": len(agents),
                 "convergence_step": convergence_step,
@@ -367,17 +359,17 @@ class PhiTrainingEnvironment:
         )
         
         # Calculate result metrics
-        total_reward = sum(rewards)
-        avg_phi = sum(phi_values) / len(phi_values)
+        _total_reward = sum(rewards)
+        _avg_phi = sum(phi_values) / len(phi_values)
         max_phi = max(phi_values)
         success = end_phi > start_phi
         
-        result = TrainingResult(
+        _result = TrainingResult(
             episode=episode,
-            total_reward=total_reward,
-            avg_phi=avg_phi,
+            _total_reward = total_reward,
+            _avg_phi = avg_phi,
             max_phi=max_phi,
-            convergence_step=convergence_step,
+            _convergence_step = convergence_step,
             success=success,
             metrics={
                 "phi_values": phi_values,
@@ -392,14 +384,14 @@ class PhiTrainingEnvironment:
         
         logger.info(
             "episode_completed",
-            episode_id=episode_id,
+            _episode_id = episode_id,
             phi_delta=episode.phi_delta,
             success=success,
         )
         
         return result
     
-    def calculate_phi_reward(self, before: float, after: float) -> float:
+    def calculate_phi_reward(self, _before: float, _after: float) -> float:
         """
         Calculate reward based on Phi change.
         
@@ -413,10 +405,10 @@ class PhiTrainingEnvironment:
         Returns:
             Reward value
         """
-        delta = after - before
+        _delta = after - before
         
         # Base reward is the Phi delta
-        reward = delta
+        _reward = delta
         
         # Bonus for positive changes
         if delta > 0:
@@ -444,7 +436,7 @@ class PhiTrainingEnvironment:
         Returns:
             Prometheus-formatted metrics string
         """
-        lines = [
+        _lines = [
             "# HELP heretek_phi_training_episodes_total Total training episodes",
             "# TYPE heretek_phi_training_episodes_total counter",
             f"heretek_phi_training_episodes_total {self.metrics['total_episodes']}",
@@ -469,7 +461,7 @@ class PhiTrainingEnvironment:
         
         return "\n".join(lines)
     
-    def get_episode_history(self, limit: int = 100) -> List[TrainingEpisode]:
+    def get_episode_history(self, _limit: int) -> List[TrainingEpisode]:
         """
         Get recent episode history.
         
@@ -491,7 +483,7 @@ class PhiTrainingEnvironment:
         if not self.episode_history:
             return {"episodes": 0}
         
-        phi_deltas = [ep.phi_delta for ep in self.episode_history]
+        _phi_deltas = [ep.phi_delta for ep in self.episode_history]
         
         return {
             "total_episodes": len(self.episode_history),
@@ -507,11 +499,7 @@ class PhiTrainingEnvironment:
             "avg_duration_seconds": self.metrics["avg_episode_duration"],
         }
     
-    def _build_system_state(
-        self,
-        agents: List[AgentActor],
-        additional_state: Dict[str, Any],
-    ) -> Dict[str, Any]:
+    def _build_system_state(self, _agents: List[AgentActor], _additional_state: Dict[str, _Any]) -> Dict[str, Any]:
         """
         Build system state for Phi calculation.
         
@@ -522,7 +510,7 @@ class PhiTrainingEnvironment:
         Returns:
             System state dictionary
         """
-        elements = [agent.agent_id for agent in agents]
+        _elements = [agent.agent_id for agent in agents]
         
         # Build connectivity based on agent communication
         connectivity: Dict[str, Dict[str, float]] = {}
@@ -531,13 +519,13 @@ class PhiTrainingEnvironment:
             for other in agents:
                 if other.agent_id != agent.agent_id:
                     # Connection strength based on message history
-                    connection_strength = self._calculate_connection_strength(agent, other)
+                    _connection_strength = self._calculate_connection_strength(agent, other)
                     connectivity[agent.agent_id][other.agent_id] = connection_strength
         
         # Build current state from agent states
-        current_state = {}
+        _current_state = {}
         for agent in agents:
-            agent_state = agent.get_state()
+            _agent_state = agent.get_state()
             current_state[agent.agent_id] = agent_state.get("activation", 0.5)
         
         # Add additional state
@@ -550,11 +538,7 @@ class PhiTrainingEnvironment:
             "current_state": current_state,
         }
     
-    def _calculate_connection_strength(
-        self,
-        agent1: AgentActor,
-        agent2: AgentActor,
-    ) -> float:
+    def _calculate_connection_strength(self, _agent1: AgentActor, _agent2: AgentActor) -> float:
         """
         Calculate connection strength between two agents.
         
@@ -566,23 +550,18 @@ class PhiTrainingEnvironment:
             Connection strength (0.0-1.0)
         """
         # Base strength on message exchange frequency
-        messages_between = sum(
+        _messages_between = sum(
             1 for msg in agent1.message_history
             if msg.get("recipient") == agent2.agent_id
         )
         
         # Normalize to 0.0-1.0
-        strength = min(1.0, messages_between / 10.0)
+        _strength = min(1.0, messages_between / 10.0)
         
         # Ensure minimum connectivity for training
         return max(0.1, strength)
     
-    async def _execute_step(
-        self,
-        agents: List[AgentActor],
-        scenario: TrainingScenario,
-        step: int,
-    ) -> Dict[str, Any]:
+    async def _execute_step(self, _agents: List[AgentActor], _scenario: TrainingScenario, _step: int) -> Dict[str, Any]:
         """
         Execute a single training step.
         
@@ -606,17 +585,12 @@ class PhiTrainingEnvironment:
         else:
             return await self._execute_generic_step(agents, scenario, step)
     
-    async def _execute_communication_step(
-        self,
-        agents: List[AgentActor],
-        scenario: TrainingScenario,
-        step: int,
-    ) -> Dict[str, Any]:
+    async def _execute_communication_step(self, _agents: List[AgentActor], _scenario: TrainingScenario, _step: int) -> Dict[str, Any]:
         """Execute communication efficiency training step."""
         # Simulate message passing between agents
         for agent in agents:
-            observation = {"step": step, "agents": len(agents)}
-            action = await agent.act(observation)
+            _observation = {"step": step, "agents": len(agents)}
+            _action = await agent.act(observation)
             
             # Record message in history
             if "message" in action:
@@ -631,87 +605,67 @@ class PhiTrainingEnvironment:
         
         return {"state": {}}
     
-    async def _execute_decision_coherence_step(
-        self,
-        agents: List[AgentActor],
-        scenario: TrainingScenario,
-        step: int,
-    ) -> Dict[str, Any]:
+    async def _execute_decision_coherence_step(self, _agents: List[AgentActor], _scenario: TrainingScenario, _step: int) -> Dict[str, Any]:
         """Execute decision coherence training step."""
-        decisions = []
+        _decisions = []
         for agent in agents:
-            observation = {"step": step, "scenario": scenario.scenario_type.value}
-            action = await agent.act(observation)
+            _observation = {"step": step, "scenario": scenario.scenario_type.value}
+            _action = await agent.act(observation)
             if "decision" in action:
                 decisions.append(action["decision"])
         
         # Calculate coherence
-        coherence = len(set(decisions)) / len(decisions) if decisions else 0
+        _coherence = len(set(decisions)) / len(decisions) if decisions else 0
         
         return {"state": {"coherence": coherence}}
     
-    async def _execute_task_collaboration_step(
-        self,
-        agents: List[AgentActor],
-        scenario: TrainingScenario,
-        step: int,
-    ) -> Dict[str, Any]:
+    async def _execute_task_collaboration_step(self, _agents: List[AgentActor], _scenario: TrainingScenario, _step: int) -> Dict[str, Any]:
         """Execute task collaboration training step."""
-        task_progress = 0.0
+        _task_progress = 0.0
         for agent in agents:
-            observation = {"step": step, "task_progress": task_progress}
-            action = await agent.act(observation)
+            _observation = {"step": step, "task_progress": task_progress}
+            _action = await agent.act(observation)
             task_progress += action.get("contribution", 0.1)
         
         return {"state": {"task_progress": min(1.0, task_progress)}}
     
-    async def _execute_consensus_formation_step(
-        self,
-        agents: List[AgentActor],
-        scenario: TrainingScenario,
-        step: int,
-    ) -> Dict[str, Any]:
+    async def _execute_consensus_formation_step(self, _agents: List[AgentActor], _scenario: TrainingScenario, _step: int) -> Dict[str, Any]:
         """Execute consensus formation training step."""
-        positions = []
+        _positions = []
         for agent in agents:
-            observation = {"step": step}
-            action = await agent.act(observation)
+            _observation = {"step": step}
+            _action = await agent.act(observation)
             positions.append(action.get("position", 0.5))
         
         # Calculate consensus (inverse of variance)
-        avg_position = sum(positions) / len(positions)
-        variance = sum((p - avg_position) ** 2 for p in positions) / len(positions)
-        consensus = 1.0 - min(1.0, variance * 4)
+        _avg_position = sum(positions) / len(positions)
+        _variance = sum((p - avg_position) ** 2 for p in positions) / len(positions)
+        _consensus = 1.0 - min(1.0, variance * 4)
         
         return {"state": {"consensus": consensus}}
     
-    async def _execute_generic_step(
-        self,
-        agents: List[AgentActor],
-        scenario: TrainingScenario,
-        step: int,
-    ) -> Dict[str, Any]:
+    async def _execute_generic_step(self, _agents: List[AgentActor], _scenario: TrainingScenario, _step: int) -> Dict[str, Any]:
         """Execute generic training step."""
         for agent in agents:
-            observation = {"step": step}
+            _observation = {"step": step}
             await agent.act(observation)
         
         return {"state": {}}
     
-    def _calculate_variance(self, values: List[float]) -> float:
+    def _calculate_variance(self, _values: List[float]) -> float:
         """Calculate variance of a list of values."""
         if len(values) < 2:
             return 0.0
         
-        mean = sum(values) / len(values)
+        _mean = sum(values) / len(values)
         return sum((v - mean) ** 2 for v in values) / len(values)
     
     def _check_rate_limit(self) -> None:
         """Check rate limiting for episode execution."""
-        current_time = time.time()
+        _current_time = time.time()
         
         # Clean old episodes from window
-        window_start = current_time - 60.0
+        _window_start = current_time - 60.0
         self._episodes_in_window = [
             t for t in self._episodes_in_window if t > window_start
         ]
@@ -726,7 +680,7 @@ class PhiTrainingEnvironment:
         self._episodes_in_window.append(current_time)
         self._last_episode_time = current_time
     
-    def _update_metrics(self, result: TrainingResult) -> None:
+    def _update_metrics(self, _result: TrainingResult) -> None:
         """Update training metrics after episode."""
         self.metrics["total_episodes"] += 1
         
@@ -742,7 +696,7 @@ class PhiTrainingEnvironment:
             self.metrics["best_phi_achieved"] = result.max_phi
         
         # Update average duration
-        total_duration = self.metrics["avg_episode_duration"] * (self.metrics["total_episodes"] - 1)
+        _total_duration = self.metrics["avg_episode_duration"] * (self.metrics["total_episodes"] - 1)
         total_duration += result.episode.duration_seconds
         self.metrics["avg_episode_duration"] = total_duration / self.metrics["total_episodes"]
 
@@ -750,58 +704,58 @@ class PhiTrainingEnvironment:
 class CommunicationTrainingScenario(TrainingScenario):
     """Specialized scenario for communication efficiency training."""
     
-    def __init__(self, agent_count: int = 5):
+    def __init__(self, _agent_count: int):
         super().__init__(
-            scenario_id=f"comm_{uuid.uuid4()}",
-            scenario_type=ScenarioType.COMMUNICATION,
-            description="Communication efficiency training for Phi optimization",
-            agent_count=agent_count,
-            initial_state={"message_budget": agent_count * 3},
-            objectives=[
+            _scenario_id = f"comm_{uuid.uuid4()}",
+            _scenario_type = ScenarioType.COMMUNICATION,
+            _description = "Communication efficiency training for Phi optimization",
+            _agent_count = agent_count,
+            _initial_state = {"message_budget": agent_count * 3},
+            _objectives = [
                 "maximize_phi",
                 "minimize_messages",
                 "maintain_connectivity",
             ],
-            max_steps=50,
-            phi_target=0.7,
+            _max_steps = 50,
+            _phi_target = 0.7,
         )
 
 
 class DecisionCoherenceTrainingScenario(TrainingScenario):
     """Specialized scenario for decision coherence training."""
     
-    def __init__(self, agent_count: int = 5):
+    def __init__(self, _agent_count: int):
         super().__init__(
-            scenario_id=f"decision_{uuid.uuid4()}",
-            scenario_type=ScenarioType.DECISION_COHERENCE,
-            description="Decision coherence training for aligned Phi",
-            agent_count=agent_count,
-            initial_state={"decision_rounds": 0},
-            objectives=[
+            _scenario_id = f"decision_{uuid.uuid4()}",
+            _scenario_type = ScenarioType.DECISION_COHERENCE,
+            _description = "Decision coherence training for aligned Phi",
+            _agent_count = agent_count,
+            _initial_state = {"decision_rounds": 0},
+            _objectives = [
                 "maximize_phi",
                 "achieve_consensus",
                 "minimize_disagreement",
             ],
-            max_steps=30,
-            phi_target=0.8,
+            _max_steps = 30,
+            _phi_target = 0.8,
         )
 
 
 class ConsensusTrainingScenario(TrainingScenario):
     """Specialized scenario for consensus formation training."""
     
-    def __init__(self, agent_count: int = 5):
+    def __init__(self, _agent_count: int):
         super().__init__(
-            scenario_id=f"consensus_{uuid.uuid4()}",
-            scenario_type=ScenarioType.CONSENSUS_FORMATION,
-            description="Consensus formation training for collective Phi",
-            agent_count=agent_count,
-            initial_state={"proposal": "", "positions": {}},
-            objectives=[
+            _scenario_id = f"consensus_{uuid.uuid4()}",
+            _scenario_type = ScenarioType.CONSENSUS_FORMATION,
+            _description = "Consensus formation training for collective Phi",
+            _agent_count = agent_count,
+            _initial_state = {"proposal": "", "positions": {}},
+            _objectives = [
                 "maximize_phi",
                 "reach_consensus",
                 "maintain_diversity",
             ],
-            max_steps=40,
-            phi_target=0.75,
+            _max_steps = 40,
+            _phi_target = 0.75,
         )

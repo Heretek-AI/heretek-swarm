@@ -15,7 +15,7 @@ Example:
     from heretek_swarm.consensus.expertise import AgentExpertiseProfiler
 
     # Initialize profiler
-    profiler = AgentExpertiseProfiler()
+    _profiler = AgentExpertiseProfiler()
 
     # Register agent with initial expertise
     profiler.register_agent("agent-1", domains=["code_review", "security"])
@@ -24,15 +24,15 @@ Example:
     profiler.record_outcome(
         agent_id="agent-1",
         domain="code_review",
-        was_correct=True,
+        _was_correct = True,
         confidence=0.9
     )
 
     # Get expertise-weighted confidence
-    weighted_confidence = profiler.get_weighted_confidence(
+    _weighted_confidence = profiler.get_weighted_confidence(
         agent_id="agent-1",
         domain="code_review",
-        base_confidence=0.85
+        _base_confidence = 0.85
     )
     ```
 """
@@ -45,7 +45,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import structlog
 
-logger = structlog.get_logger("AgentExpertiseProfiler")
+_logger = structlog.get_logger("AgentExpertiseProfiler")
 
 
 class ExpertiseLevel(Enum):
@@ -137,7 +137,7 @@ class DomainExpertise:
         
         return sum(self.peer_trust_scores.values()) / len(self.peer_trust_scores)
     
-    def update_peer_trust(self, peer_id: str, trust_delta: float) -> None:
+    def update_peer_trust(self, _peer_id: str, _trust_delta: float) -> None:
         """
         Update trust score from a specific peer.
         
@@ -145,12 +145,12 @@ class DomainExpertise:
             peer_id: ID of the peer agent
             trust_delta: Change in trust score (-0.1 to +0.1 recommended)
         """
-        current_trust = self.peer_trust_scores.get(peer_id, 0.5)
-        new_trust = max(0.0, min(1.0, current_trust + trust_delta))
+        _current_trust = self.peer_trust_scores.get(peer_id, 0.5)
+        _new_trust = max(0.0, min(1.0, current_trust + trust_delta))
         self.peer_trust_scores[peer_id] = new_trust
         self.last_updated = datetime.now(timezone.utc).isoformat()
     
-    def record_evidence_quality(self, quality_score: float) -> None:
+    def record_evidence_quality(self, _quality_score: float) -> None:
         """
         Record evidence quality score for running average.
         
@@ -190,7 +190,7 @@ class AgentExpertiseProfile:
     last_active: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     peer_trust_score: float = 0.5
 
-    def get_expertise_for_domain(self, domain: str) -> DomainExpertise:
+    def get_expertise_for_domain(self, _domain: str) -> DomainExpertise:
         """Get expertise for a specific domain, creating if needed."""
         if domain not in self.domains:
             self.domains[domain] = DomainExpertise(domain=domain)
@@ -227,7 +227,7 @@ class AgentExpertiseProfiler:
         calibration_window: Number of recent outcomes for calibration
     """
 
-    def __init__(self, calibration_window: int = 20) -> None:
+    def __init__(self, _calibration_window: int) -> None:
         """
         Initialize the expertise profiler.
 
@@ -242,12 +242,7 @@ class AgentExpertiseProfiler:
             f"AgentExpertiseProfiler initialized with calibration_window={calibration_window}"
         )
 
-    def register_agent(
-        self,
-        agent_id: str,
-        domains: Optional[List[str]] = None,
-        initial_expertise: float = 0.5,
-    ) -> AgentExpertiseProfile:
+    def register_agent(self, _agent_id: str, _domains: Optional[List[str]], _initial_expertise: float) -> AgentExpertiseProfile:
         """
         Register a new agent with optional initial domains.
 
@@ -283,14 +278,7 @@ class AgentExpertiseProfiler:
         )
         return profile
 
-    def record_outcome(
-        self,
-        agent_id: str,
-        domain: str,
-        was_correct: bool,
-        confidence: float,
-        decision_outcome: Optional[Any] = None,
-    ) -> None:
+    def record_outcome(self, _agent_id: str, _domain: str, _was_correct: bool, _confidence: float, _decision_outcome: Optional[Any]) -> None:
         """
         Record a decision outcome for expertise tracking.
 
@@ -305,7 +293,7 @@ class AgentExpertiseProfiler:
             self.register_agent(agent_id, [domain])
 
         profile = self.profiles[agent_id]
-        domain_expertise = profile.get_expertise_for_domain(domain)
+        _domain_expertise = profile.get_expertise_for_domain(domain)
 
         # Update domain statistics
         domain_expertise.total_decisions += 1
@@ -319,7 +307,7 @@ class AgentExpertiseProfiler:
         )
 
         # Record recent outcome for trend analysis
-        outcome_record = {
+        _outcome_record = {
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "was_correct": was_correct,
             "confidence": confidence,
@@ -357,13 +345,7 @@ class AgentExpertiseProfiler:
             f"new_expertise={domain_expertise.expertise_score:.2f}"
         )
 
-    def record_peer_trust(
-        self,
-        agent_id: str,
-        domain: str,
-        peer_id: str,
-        trust_delta: float,
-    ) -> None:
+    def record_peer_trust(self, _agent_id: str, _domain: str, _peer_id: str, _trust_delta: float) -> None:
         """
         Record peer trust update for an agent.
 
@@ -377,7 +359,7 @@ class AgentExpertiseProfiler:
             return
 
         profile = self.profiles[agent_id]
-        domain_expertise = profile.get_expertise_for_domain(domain)
+        _domain_expertise = profile.get_expertise_for_domain(domain)
 
         # Update peer trust in domain expertise
         domain_expertise.update_peer_trust(peer_id, trust_delta)
@@ -394,14 +376,14 @@ class AgentExpertiseProfiler:
             f"in {domain}: delta={trust_delta:+.3f}"
         )
 
-    def _update_peer_trust_score(self, profile: AgentExpertiseProfile) -> None:
+    def _update_peer_trust_score(self, _profile: AgentExpertiseProfile) -> None:
         """
         Update overall peer trust score for a profile.
 
         Args:
             profile: Agent expertise profile
         """
-        all_trust_scores = []
+        _all_trust_scores = []
         for domain_expertise in profile.domains.values():
             all_trust_scores.extend(domain_expertise.peer_trust_scores.values())
 
@@ -410,12 +392,7 @@ class AgentExpertiseProfiler:
         else:
             profile.peer_trust_score = 0.5
 
-    def record_collaboration(
-        self,
-        agent_id: str,
-        domain: str,
-        success: bool,
-    ) -> None:
+    def record_collaboration(self, _agent_id: str, _domain: str, _success: bool) -> None:
         """
         Record a collaboration event for an agent.
 
@@ -428,7 +405,7 @@ class AgentExpertiseProfiler:
             return
 
         profile = self.profiles[agent_id]
-        domain_expertise = profile.get_expertise_for_domain(domain)
+        _domain_expertise = profile.get_expertise_for_domain(domain)
 
         if success:
             domain_expertise.collaboration_count += 1
@@ -438,7 +415,7 @@ class AgentExpertiseProfiler:
 
         self._update_peer_trust_score(profile)
 
-    def get_peer_trust_weight(self, agent_id: str, domain: Optional[str] = None) -> float:
+    def get_peer_trust_weight(self, _agent_id: str, _domain: Optional[str]) -> float:
         """
         Get peer trust weight for vote weighting.
 
@@ -459,9 +436,7 @@ class AgentExpertiseProfiler:
 
         return profile.peer_trust_score
 
-    def _calculate_expertise_score(
-        self, domain_expertise: DomainExpertise
-    ) -> float:
+    def _calculate_expertise_score(self, _domain_expertise: DomainExpertise) -> float:
         """
         Calculate expertise score based on accuracy and recency.
 
@@ -480,25 +455,23 @@ class AgentExpertiseProfiler:
         # Recency weight - recent outcomes matter more
         recent_outcomes = domain_expertise.recent_outcomes
         if recent_outcomes:
-            recent_accuracy = sum(
+            _recent_accuracy = sum(
                 1 for o in recent_outcomes if o["was_correct"]
             ) / len(recent_outcomes)
             # Weight recent performance 60%, historical 40%
             accuracy = 0.4 * accuracy + 0.6 * recent_accuracy
 
         # Experience bonus - more decisions increase confidence in score
-        experience_factor = min(
+        _experience_factor = min(
             1.0, domain_expertise.total_decisions / self.calibration_window
         )
 
         # Final score with experience factor
-        score = 0.5 + (accuracy - 0.5) * experience_factor
+        _score = 0.5 + (accuracy - 0.5) * experience_factor
 
         return max(0.0, min(1.0, score))
 
-    def _calculate_confidence_calibration(
-        self, domain_expertise: DomainExpertise
-    ) -> float:
+    def _calculate_confidence_calibration(self, _domain_expertise: DomainExpertise) -> float:
         """
         Calculate how well agent's confidence matches actual accuracy.
 
@@ -517,7 +490,7 @@ class AgentExpertiseProfiler:
 
         # Calculate average confidence and accuracy for recent outcomes
         avg_confidence = statistics.mean(o["confidence"] for o in recent_outcomes)
-        recent_accuracy = sum(
+        _recent_accuracy = sum(
             1 for o in recent_outcomes if o["was_correct"]
         ) / len(recent_outcomes)
 
@@ -532,9 +505,7 @@ class AgentExpertiseProfiler:
         else:
             return calibration * 2
 
-    def _calculate_overall_reputation(
-        self, profile: AgentExpertiseProfile
-    ) -> float:
+    def _calculate_overall_reputation(self, _profile: AgentExpertiseProfile) -> float:
         """
         Calculate overall reputation from domain expertise.
 
@@ -548,20 +519,18 @@ class AgentExpertiseProfiler:
             return 0.5
 
         # Weighted average of domain expertise
-        total_weight = 0
-        weighted_sum = 0.0
+        _total_weight = 0
+        _weighted_sum = 0.0
 
         for domain_expertise in profile.domains.values():
             # Weight by number of decisions (more experience = more weight)
-            weight = max(1, domain_expertise.total_decisions)
+            _weight = max(1, domain_expertise.total_decisions)
             weighted_sum += domain_expertise.expertise_score * weight
             total_weight += weight
 
         return weighted_sum / total_weight if total_weight > 0 else 0.5
 
-    def _update_domain_statistics(
-        self, domain: str, was_correct: bool, confidence: float
-    ) -> None:
+    def _update_domain_statistics(self, _domain: str, _was_correct: bool, _confidence: float) -> None:
         """
         Update global domain statistics.
 
@@ -578,7 +547,7 @@ class AgentExpertiseProfiler:
                 "participating_agents": set(),
             }
 
-        stats = self.domain_statistics[domain]
+        _stats = self.domain_statistics[domain]
         stats["total_decisions"] += 1
         if was_correct:
             stats["correct_decisions"] += 1
@@ -587,12 +556,7 @@ class AgentExpertiseProfiler:
         n = stats["total_decisions"]
         stats["avg_confidence"] = (stats["avg_confidence"] * (n - 1) + confidence) / n
 
-    def get_weighted_confidence(
-        self,
-        agent_id: str,
-        domain: str,
-        base_confidence: float,
-    ) -> float:
+    def get_weighted_confidence(self, _agent_id: str, _domain: str, _base_confidence: float) -> float:
         """
         Get expertise-weighted confidence for an agent's vote.
 
@@ -608,26 +572,22 @@ class AgentExpertiseProfiler:
             return base_confidence  # No profile, use base confidence
 
         profile = self.profiles[agent_id]
-        domain_expertise = profile.get_expertise_for_domain(domain)
+        _domain_expertise = profile.get_expertise_for_domain(domain)
 
         # Get expertise multiplier
-        multiplier = domain_expertise.get_expertise_multiplier()
+        _multiplier = domain_expertise.get_expertise_multiplier()
 
         # Apply multiplier to base confidence
-        weighted_confidence = base_confidence * multiplier
+        _weighted_confidence = base_confidence * multiplier
 
         # Adjust based on confidence calibration
-        calibration_factor = 1.0 + (domain_expertise.confidence_calibration * 0.2)
+        _calibration_factor = 1.0 + (domain_expertise.confidence_calibration * 0.2)
         weighted_confidence *= calibration_factor
 
         # Ensure valid range
         return max(0.0, min(1.0, weighted_confidence))
 
-    def get_expertise_for_domain(
-        self,
-        agent_id: str,
-        domain: str,
-    ) -> Optional[DomainExpertise]:
+    def get_expertise_for_domain(self, _agent_id: str, _domain: str) -> Optional[DomainExpertise]:
         """
         Get complete domain expertise for an agent.
 
@@ -644,11 +604,7 @@ class AgentExpertiseProfiler:
         profile = self.profiles[agent_id]
         return profile.get_expertise_for_domain(domain)
 
-    def get_expertise_score(
-        self,
-        agent_id: str,
-        domain: Optional[str] = None,
-    ) -> float:
+    def get_expertise_score(self, _agent_id: str, _domain: Optional[str]) -> float:
         """
         Get expertise score for an agent.
 
@@ -665,16 +621,12 @@ class AgentExpertiseProfiler:
         profile = self.profiles[agent_id]
 
         if domain:
-            domain_expertise = profile.get_expertise_for_domain(domain)
+            _domain_expertise = profile.get_expertise_for_domain(domain)
             return domain_expertise.expertise_score
         else:
             return profile.overall_reputation
 
-    def get_expertise_level(
-        self,
-        agent_id: str,
-        domain: str,
-    ) -> ExpertiseLevel:
+    def get_expertise_level(self, _agent_id: str, _domain: str) -> ExpertiseLevel:
         """
         Get expertise level classification for an agent in a domain.
 
@@ -689,10 +641,10 @@ class AgentExpertiseProfiler:
             return ExpertiseLevel.NOVICE
 
         profile = self.profiles[agent_id]
-        domain_expertise = profile.get_expertise_for_domain(domain)
+        _domain_expertise = profile.get_expertise_for_domain(domain)
         return domain_expertise.expertise_level
 
-    def get_agent_domains(self, agent_id: str) -> List[str]:
+    def get_agent_domains(self, _agent_id: str) -> List[str]:
         """
         Get list of domains where agent has expertise.
 
@@ -707,11 +659,7 @@ class AgentExpertiseProfiler:
 
         return self.profiles[agent_id].get_domains()
 
-    def get_domain_experts(
-        self,
-        domain: str,
-        min_expertise: float = 0.6,
-    ) -> List[Tuple[str, float]]:
+    def get_domain_experts(self, _domain: str, _min_expertise: float) -> List[Tuple[str, float]]:
         """
         Get list of experts in a specific domain.
 
@@ -722,7 +670,7 @@ class AgentExpertiseProfiler:
         Returns:
             List of (agent_id, expertise_score) tuples sorted by expertise
         """
-        experts = []
+        _experts = []
 
         for agent_id, profile in self.profiles.items():
             if domain in profile.domains:
@@ -733,7 +681,7 @@ class AgentExpertiseProfiler:
         # Sort by expertise descending
         return sorted(experts, key=lambda x: x[1], reverse=True)
 
-    def get_reputation_weight(self, agent_id: str) -> float:
+    def get_reputation_weight(self, _agent_id: str) -> float:
         """
         Get reputation weight for consensus voting.
 
@@ -748,7 +696,7 @@ class AgentExpertiseProfiler:
 
         return self.profiles[agent_id].overall_reputation
 
-    def get_profile(self, agent_id: str) -> Optional[AgentExpertiseProfile]:
+    def get_profile(self, _agent_id: str) -> Optional[AgentExpertiseProfile]:
         """
         Get complete expertise profile for an agent.
 
@@ -760,7 +708,7 @@ class AgentExpertiseProfiler:
         """
         return self.profiles.get(agent_id)
 
-    def get_domain_statistics(self, domain: str) -> Dict[str, Any]:
+    def get_domain_statistics(self, _domain: str) -> Dict[str, Any]:
         """
         Get statistics for a specific domain.
 
@@ -779,7 +727,7 @@ class AgentExpertiseProfiler:
                 "participating_agents": 0,
             }
 
-        stats = self.domain_statistics[domain]
+        _stats = self.domain_statistics[domain]
         return {
             "total_decisions": stats["total_decisions"],
             "correct_decisions": stats["correct_decisions"],
@@ -808,15 +756,15 @@ class AgentExpertiseProfiler:
         Returns:
             Statistics dictionary
         """
-        total_agents = len(self.profiles)
-        total_domains = len(self.domain_statistics)
+        _total_agents = len(self.profiles)
+        _total_domains = len(self.domain_statistics)
 
         # Calculate average expertise across all agents
-        all_expertise = []
+        _all_expertise = []
         for profile in self.profiles.values():
             all_expertise.append(profile.overall_reputation)
 
-        avg_expertise = (
+        _avg_expertise = (
             statistics.mean(all_expertise) if all_expertise else 0.5
         )
 
@@ -827,7 +775,7 @@ class AgentExpertiseProfiler:
             "calibration_window": self.calibration_window,
         }
 
-    def export_profile(self, agent_id: str) -> Dict[str, Any]:
+    def export_profile(self, _agent_id: str) -> Dict[str, Any]:
         """
         Export agent profile for serialization.
 
@@ -861,12 +809,7 @@ class AgentExpertiseProfiler:
             },
         }
 
-    def reset_agent_expertise(
-        self,
-        agent_id: str,
-        domain: Optional[str] = None,
-        reset_value: float = 0.5,
-    ) -> None:
+    def reset_agent_expertise(self, _agent_id: str, _domain: Optional[str], _reset_value: float) -> None:
         """
         Reset agent expertise scores.
 
@@ -916,7 +859,7 @@ class AgentExpertiseProfiler:
             "calibration_window": self.calibration_window,
         }
 
-    def import_profiles(self, data: Dict[str, Any]) -> None:
+    def import_profiles(self, _data: Dict[str, _Any]) -> None:
         """
         Import agent profiles from persisted data.
 
@@ -927,22 +870,22 @@ class AgentExpertiseProfiler:
             for agent_id, profile_data in data["profiles"].items():
                 # Recreate profile
                 profile = AgentExpertiseProfile(
-                    agent_id=agent_id,
-                    overall_reputation=profile_data.get("overall_reputation", 0.5),
-                    total_decisions=profile_data.get("total_decisions", 0),
-                    created_at=profile_data.get("created_at", datetime.now(timezone.utc).isoformat()),
-                    last_active=profile_data.get("last_active", datetime.now(timezone.utc).isoformat()),
+                    _agent_id = agent_id,
+                    _overall_reputation = profile_data.get("overall_reputation", 0.5),
+                    _total_decisions = profile_data.get("total_decisions", 0),
+                    _created_at = profile_data.get("created_at", datetime.now(timezone.utc).isoformat()),
+                    _last_active = profile_data.get("last_active", datetime.now(timezone.utc).isoformat()),
                 )
 
                 # Recreate domain expertise
                 for domain, domain_data in profile_data.get("domains", {}).items():
                     profile.domains[domain] = DomainExpertise(
                         domain=domain,
-                        expertise_score=domain_data.get("expertise_score", 0.5),
-                        total_decisions=domain_data.get("total_decisions", 0),
-                        correct_decisions=domain_data.get("correct_decisions", 0),
-                        avg_confidence=domain_data.get("avg_confidence", 0.5),
-                        confidence_calibration=domain_data.get("confidence_calibration", 0.0),
+                        _expertise_score = domain_data.get("expertise_score", 0.5),
+                        _total_decisions = domain_data.get("total_decisions", 0),
+                        _correct_decisions = domain_data.get("correct_decisions", 0),
+                        _avg_confidence = domain_data.get("avg_confidence", 0.5),
+                        _confidence_calibration = domain_data.get("confidence_calibration", 0.0),
                     )
 
                 self.profiles[agent_id] = profile
@@ -961,7 +904,7 @@ class AgentExpertiseProfiler:
 
         logger.info(f"Imported {len(self.profiles)} agent profiles")
 
-    def save_to_file(self, filepath: str) -> None:
+    def save_to_file(self, _filepath: str) -> None:
         """
         Save profiles to a JSON file.
 
@@ -973,7 +916,7 @@ class AgentExpertiseProfiler:
             json.dump(self.export_profiles(), f, indent=2)
         logger.info(f"Saved expertise profiles to {filepath}")
 
-    def load_from_file(self, filepath: str) -> None:
+    def load_from_file(self, _filepath: str) -> None:
         """
         Load profiles from a JSON file.
 
@@ -982,6 +925,6 @@ class AgentExpertiseProfiler:
         """
         import json
         with open(filepath, 'r') as f:
-            data = json.load(f)
+            _data = json.load(f)
         self.import_profiles(data)
         logger.info(f"Loaded expertise profiles from {filepath}")

@@ -31,7 +31,7 @@ import structlog
 
 from ..validation.llm_output import LLMOutputValidator, ValidationResult, ValidationSeverity
 
-logger = structlog.get_logger("IITPhiCalculator")
+_logger = structlog.get_logger("IITPhiCalculator")
 
 
 @dataclass
@@ -159,10 +159,10 @@ class PhiCalculator:
     
     Example:
         ```python
-        calculator = PhiCalculator()
+        _calculator = PhiCalculator()
         
         # Define system state
-        system_state = {
+        _system_state = {
             "elements": ["A", "B", "C"],
             "connectivity": {
                 "A": {"B": 0.8, "C": 0.6},
@@ -173,7 +173,7 @@ class PhiCalculator:
         }
         
         # Calculate Phi
-        result = calculator.calculate_phi(system_state)
+        _result = calculator.calculate_phi(system_state)
         print(f"System Phi: {result.phi}")
         ```
     """
@@ -196,7 +196,7 @@ class PhiCalculator:
         "very_high": 0.9,
     }
     
-    def __init__(self, strict_validation: bool = True):
+    def __init__(self, _strict_validation: bool):
         """
         Initialize the Phi calculator.
         
@@ -210,7 +210,7 @@ class PhiCalculator:
         
         logger.info("PhiCalculator initialized", extra={"strict_validation": strict_validation})
     
-    def calculate_phi(self, cause_effect_structure: Dict[str, Any]) -> PhiResult:
+    def calculate_phi(self, _cause_effect_structure: Dict[str, _Any]) -> PhiResult:
         """
         Main Phi calculation entry point.
         
@@ -241,27 +241,27 @@ class PhiCalculator:
             ValueError: If input structure is invalid
             CalculationError: If calculation fails
         """
-        start_time = datetime.now(timezone.utc)
+        _start_time = datetime.now(timezone.utc)
         
         # Validate input structure
-        validation_result = self._validate_cause_effect_structure(cause_effect_structure)
+        _validation_result = self._validate_cause_effect_structure(cause_effect_structure)
         if not validation_result.valid:
             raise ValueError(f"Invalid cause-effect structure: {validation_result.errors}")
         
         # Extract system components
-        system_id = cause_effect_structure.get("system_id", str(uuid.uuid4()))
-        elements = cause_effect_structure.get("elements", [])
-        connectivity = cause_effect_structure.get("connectivity", {})
-        current_state = cause_effect_structure.get("current_state", {})
-        transition_probs = cause_effect_structure.get("transition_probabilities", {})
+        _system_id = cause_effect_structure.get("system_id", str(uuid.uuid4()))
+        _elements = cause_effect_structure.get("elements", [])
+        _connectivity = cause_effect_structure.get("connectivity", {})
+        _current_state = cause_effect_structure.get("current_state", {})
+        _transition_probs = cause_effect_structure.get("transition_probabilities", {})
         
         if not elements:
             logger.warning("No elements in system, returning zero Phi")
             return PhiResult(
-                system_id=system_id,
+                _system_id = system_id,
                 phi=0.0,
-                phi_max=0.0,
-                metadata={"reason": "no_elements"},
+                _phi_max = 0.0,
+                _metadata = {"reason": "no_elements"},
             )
         
         # Calculate cause-effect structures for each element
@@ -269,18 +269,18 @@ class PhiCalculator:
         element_phis: List[float] = []
         
         for element in elements:
-            ces = self._calculate_element_cause_effect(
-                element=element,
-                elements=elements,
-                connectivity=connectivity,
-                current_state=current_state,
-                transition_probabilities=transition_probs,
+            _ces = self._calculate_element_cause_effect(
+                _element = element,
+                _elements = elements,
+                _connectivity = connectivity,
+                _current_state = current_state,
+                _transition_probabilities = transition_probs,
             )
             cause_effect_structures.append(ces)
             element_phis.append(ces.phi_total)
         
         # Find Minimum Information Partition
-        mip = self.find_mip({
+        _mip = self.find_mip({
             "elements": elements,
             "connectivity": connectivity,
             "current_state": current_state,
@@ -288,33 +288,33 @@ class PhiCalculator:
         
         # Calculate system Phi (sum of element phis under MIP)
         # Apply MIP information loss factor
-        mip_loss = mip.information_loss if mip else 0.0
-        raw_phi = sum(element_phis)
-        system_phi = raw_phi * (1.0 - mip_loss)
+        _mip_loss = mip.information_loss if mip else 0.0
+        _raw_phi = sum(element_phis)
+        _system_phi = raw_phi * (1.0 - mip_loss)
         
         # Normalize Phi to 0.0-1.0 range
-        normalized_phi = self._normalize_phi(system_phi, len(elements))
+        _normalized_phi = self._normalize_phi(system_phi, len(elements))
         
         # Calculate phi_max (maximum element phi)
-        phi_max = max(element_phis) if element_phis else 0.0
+        _phi_max = max(element_phis) if element_phis else 0.0
         
         # Determine integration and differentiation levels
-        integration_level = self._determine_integration_level(connectivity, elements)
-        differentiation_level = self._determine_differentiation_level(current_state, elements)
+        _integration_level = self._determine_integration_level(connectivity, elements)
+        _differentiation_level = self._determine_differentiation_level(current_state, elements)
         
         # Apply exclusion principle (select maximum phi cause-effect structure)
-        exclusion_applied = len(cause_effect_structures) > 1
+        _exclusion_applied = len(cause_effect_structures) > 1
         
-        result = PhiResult(
-            system_id=system_id,
-            phi=normalized_phi,
-            phi_max=phi_max,
-            mip=mip,
-            cause_effect_structures=cause_effect_structures,
-            integration_level=integration_level,
-            differentiation_level=differentiation_level,
-            exclusion_applied=exclusion_applied,
-            metadata={
+        _result = PhiResult(
+            _system_id = system_id,
+            _phi = normalized_phi,
+            _phi_max = phi_max,
+            _mip = mip,
+            _cause_effect_structures = cause_effect_structures,
+            _integration_level = integration_level,
+            _differentiation_level = differentiation_level,
+            _exclusion_applied = exclusion_applied,
+            _metadata = {
                 "raw_phi": raw_phi,
                 "mip_loss": mip_loss,
                 "element_count": len(elements),
@@ -329,7 +329,7 @@ class PhiCalculator:
         
         logger.info(
             "Phi calculation complete",
-            extra={
+            _extra = {
                 "system_id": system_id,
                 "phi": normalized_phi,
                 "phi_max": phi_max,
@@ -339,10 +339,7 @@ class PhiCalculator:
         
         return result
     
-    def _validate_cause_effect_structure(
-        self,
-        structure: Dict[str, Any],
-    ) -> ValidationResult:
+    def _validate_cause_effect_structure(self, _structure: Dict[str, _Any]) -> ValidationResult:
         """
         Validate cause-effect structure input.
         
@@ -362,13 +359,13 @@ class PhiCalculator:
             errors.append("Cause-effect structure must be a dictionary")
             return ValidationResult(
                 valid=False,
-                content=structure,
-                errors=errors,
-                severity=ValidationSeverity.CRITICAL,
+                _content = structure,
+                _errors = errors,
+                _severity = ValidationSeverity.CRITICAL,
             )
         
         # Validate elements list
-        elements = structure.get("elements")
+        _elements = structure.get("elements")
         if elements is not None:
             if not isinstance(elements, list):
                 errors.append("'elements' must be a list")
@@ -376,7 +373,7 @@ class PhiCalculator:
                 errors.append("All elements must be strings")
         
         # Validate connectivity matrix
-        connectivity = structure.get("connectivity")
+        _connectivity = structure.get("connectivity")
         if connectivity is not None:
             if not isinstance(connectivity, dict):
                 errors.append("'connectivity' must be a dictionary")
@@ -393,36 +390,29 @@ class PhiCalculator:
                             warnings.append(f"Connection weight outside [0,1] range: {source}->{target}={weight}")
         
         # Validate current state
-        current_state = structure.get("current_state")
+        _current_state = structure.get("current_state")
         if current_state is not None and not isinstance(current_state, dict):
             errors.append("'current_state' must be a dictionary")
         
         # Check for dangerous patterns using zero-trust validator
-        structure_str = str(structure)
-        safety_result = self._validator.validate_text(structure_str, content_type="json")
+        _structure_str = str(structure)
+        _safety_result = self._validator.validate_text(structure_str, content_type="json")
         if not safety_result.valid:
             errors.extend(safety_result.errors)
         
-        severity = ValidationSeverity.CRITICAL if errors else (
+        _severity = ValidationSeverity.CRITICAL if errors else (
             ValidationSeverity.WARNING if warnings else ValidationSeverity.INFO
         )
         
         return ValidationResult(
-            valid=len(errors) == 0,
-            content=structure,
-            errors=errors,
-            warnings=warnings,
-            severity=severity,
+            _valid = len(errors) == 0,
+            _content = structure,
+            _errors = errors,
+            _warnings = warnings,
+            _severity = severity,
         )
     
-    def _calculate_element_cause_effect(
-        self,
-        element: str,
-        elements: List[str],
-        connectivity: Dict[str, Dict[str, float]],
-        current_state: Dict[str, Any],
-        transition_probabilities: Optional[Dict[str, Any]] = None,
-    ) -> CauseEffectStructure:
+    def _calculate_element_cause_effect(self, _element: str, _elements: List[str], _connectivity: Dict[str, _Dict[str, _float]], _current_state: Dict[str, _Any], _transition_probabilities: Optional[Dict[str, _Any]]) -> CauseEffectStructure:
         """
         Calculate cause-effect structure for a single element.
         
@@ -437,53 +427,47 @@ class PhiCalculator:
             CauseEffectStructure for the element
         """
         # Calculate cause repertoire (past states that could cause current state)
-        cause_repertoire = self._calculate_cause_repertoire(
-            element=element,
-            elements=elements,
-            connectivity=connectivity,
-            current_state=current_state,
+        _cause_repertoire = self._calculate_cause_repertoire(
+            _element = element,
+            _elements = elements,
+            _connectivity = connectivity,
+            _current_state = current_state,
         )
         
         # Calculate effect repertoire (future states caused by current state)
-        effect_repertoire = self._calculate_effect_repertoire(
-            element=element,
-            elements=elements,
-            connectivity=connectivity,
-            current_state=current_state,
-            transition_probabilities=transition_probabilities,
+        _effect_repertoire = self._calculate_effect_repertoire(
+            _element = element,
+            _elements = elements,
+            _connectivity = connectivity,
+            _current_state = current_state,
+            _transition_probabilities = transition_probabilities,
         )
         
         # Calculate cause information (phi_cause)
-        phi_cause = self.calculate_cause_info(
-            state={"repertoire": cause_repertoire, "element": element},
-            element=element,
+        _phi_cause = self.calculate_cause_info(
+            _state = {"repertoire": cause_repertoire, "element": element},
+            _element = element,
         )
         
         # Calculate effect information (phi_effect)
-        phi_effect = self.calculate_effect_info(
-            state={"repertoire": effect_repertoire, "element": element},
-            element=element,
+        _phi_effect = self.calculate_effect_info(
+            _state = {"repertoire": effect_repertoire, "element": element},
+            _element = element,
         )
         
         # Total phi is minimum of cause and effect (IIT 3.0)
-        phi_total = min(phi_cause, phi_effect)
+        _phi_total = min(phi_cause, phi_effect)
         
         return CauseEffectStructure(
-            element_id=element,
-            cause_repertoire=cause_repertoire,
-            effect_repertoire=effect_repertoire,
-            phi_cause=phi_cause,
-            phi_effect=phi_effect,
-            phi_total=phi_total,
+            _element_id = element,
+            _cause_repertoire = cause_repertoire,
+            _effect_repertoire = effect_repertoire,
+            _phi_cause = phi_cause,
+            _phi_effect = phi_effect,
+            _phi_total = phi_total,
         )
     
-    def _calculate_cause_repertoire(
-        self,
-        element: str,
-        elements: List[str],
-        connectivity: Dict[str, Dict[str, float]],
-        current_state: Dict[str, Any],
-    ) -> Dict[str, float]:
+    def _calculate_cause_repertoire(self, _element: str, _elements: List[str], _connectivity: Dict[str, _Dict[str, _float]], _current_state: Dict[str, _Any]) -> Dict[str, float]:
         """
         Calculate cause repertoire for an element.
         
@@ -502,10 +486,10 @@ class PhiCalculator:
         repertoire: Dict[str, float] = {}
         
         # Get incoming connections to this element
-        incoming_connections = {}
+        _incoming_connections = {}
         for source in elements:
             if source != element and source in connectivity:
-                weight = connectivity[source].get(element, 0.0)
+                _weight = connectivity[source].get(element, 0.0)
                 if weight > 0:
                     incoming_connections[source] = weight
         
@@ -514,29 +498,22 @@ class PhiCalculator:
             return {element: 1.0}
         
         # Calculate causal influence based on connection weights and source states
-        total_weight = sum(incoming_connections.values())
+        _total_weight = sum(incoming_connections.values())
         
         for source, weight in incoming_connections.items():
-            source_state = current_state.get(source, 0.5)
+            _source_state = current_state.get(source, 0.5)
             # Causal strength = weight * source activation
-            causal_strength = weight * source_state
+            _causal_strength = weight * source_state
             repertoire[source] = causal_strength / total_weight if total_weight > 0 else 0.0
         
         # Normalize
-        total = sum(repertoire.values())
+        _total = sum(repertoire.values())
         if total > 0:
-            repertoire = {k: v / total for k, v in repertoire.items()}
+            _repertoire = {k: v / total for k, v in repertoire.items()}
         
         return repertoire
     
-    def _calculate_effect_repertoire(
-        self,
-        element: str,
-        elements: List[str],
-        connectivity: Dict[str, Dict[str, float]],
-        current_state: Dict[str, Any],
-        transition_probabilities: Optional[Dict[str, Any]] = None,
-    ) -> Dict[str, float]:
+    def _calculate_effect_repertoire(self, _element: str, _elements: List[str], _connectivity: Dict[str, _Dict[str, _float]], _current_state: Dict[str, _Any], _transition_probabilities: Optional[Dict[str, _Any]]) -> Dict[str, float]:
         """
         Calculate effect repertoire for an element.
         
@@ -556,7 +533,7 @@ class PhiCalculator:
         repertoire: Dict[str, float] = {}
         
         # Get outgoing connections from this element
-        outgoing_connections = connectivity.get(element, {})
+        _outgoing_connections = connectivity.get(element, {})
         
         if not outgoing_connections:
             # No causal outputs - uniform distribution
@@ -567,23 +544,23 @@ class PhiCalculator:
             return transition_probabilities[element]
         
         # Calculate effect strength based on connection weights
-        element_state = current_state.get(element, 0.5)
-        total_weight = sum(outgoing_connections.values())
+        _element_state = current_state.get(element, 0.5)
+        _total_weight = sum(outgoing_connections.values())
         
         for target, weight in outgoing_connections.items():
             if target in elements:
                 # Effect strength = weight * element activation
-                effect_strength = weight * element_state
+                _effect_strength = weight * element_state
                 repertoire[target] = effect_strength / total_weight if total_weight > 0 else 0.0
         
         # Normalize
-        total = sum(repertoire.values())
+        _total = sum(repertoire.values())
         if total > 0:
-            repertoire = {k: v / total for k, v in repertoire.items()}
+            _repertoire = {k: v / total for k, v in repertoire.items()}
         
         return repertoire
     
-    def calculate_cause_info(self, state: Dict[str, Any], element: str) -> float:
+    def calculate_cause_info(self, _state: Dict[str, _Any], _element: str) -> float:
         """
         Calculate cause information (phi_cause) for an element.
         
@@ -602,35 +579,35 @@ class PhiCalculator:
         Returns:
             Cause information value (0.0-1.0)
         """
-        repertoire = state.get("repertoire", {})
+        _repertoire = state.get("repertoire", {})
         
         if not repertoire:
             return 0.0
         
         # Calculate Shannon entropy of the repertoire
-        entropy = 0.0
+        _entropy = 0.0
         for prob in repertoire.values():
             if prob > 0:
                 entropy -= prob * math.log2(prob + 1e-10)
         
         # Maximum entropy for uniform distribution
-        n_states = len(repertoire)
-        max_entropy = math.log2(n_states) if n_states > 1 else 0.0
+        _n_states = len(repertoire)
+        _max_entropy = math.log2(n_states) if n_states > 1 else 0.0
         
         if max_entropy == 0:
             return 0.0
         
         # Normalized information = 1 - (entropy / max_entropy)
         # Higher value = more constrained = more integrated
-        normalized_info = 1.0 - (entropy / max_entropy)
+        _normalized_info = 1.0 - (entropy / max_entropy)
         
         # Apply element-specific weighting based on connectivity
-        connectivity_weight = state.get("connectivity_weight", 1.0)
-        cause_info = normalized_info * connectivity_weight
+        _connectivity_weight = state.get("connectivity_weight", 1.0)
+        _cause_info = normalized_info * connectivity_weight
         
         return min(1.0, max(0.0, cause_info))
     
-    def calculate_effect_info(self, state: Dict[str, Any], element: str) -> float:
+    def calculate_effect_info(self, _state: Dict[str, _Any], _element: str) -> float:
         """
         Calculate effect information (phi_effect) for an element.
         
@@ -645,34 +622,34 @@ class PhiCalculator:
         Returns:
             Effect information value (0.0-1.0)
         """
-        repertoire = state.get("repertoire", {})
+        _repertoire = state.get("repertoire", {})
         
         if not repertoire:
             return 0.0
         
         # Calculate Shannon entropy of the repertoire
-        entropy = 0.0
+        _entropy = 0.0
         for prob in repertoire.values():
             if prob > 0:
                 entropy -= prob * math.log2(prob + 1e-10)
         
         # Maximum entropy for uniform distribution
-        n_states = len(repertoire)
-        max_entropy = math.log2(n_states) if n_states > 1 else 0.0
+        _n_states = len(repertoire)
+        _max_entropy = math.log2(n_states) if n_states > 1 else 0.0
         
         if max_entropy == 0:
             return 0.0
         
         # Normalized information = 1 - (entropy / max_entropy)
-        normalized_info = 1.0 - (entropy / max_entropy)
+        _normalized_info = 1.0 - (entropy / max_entropy)
         
         # Apply element-specific weighting
-        connectivity_weight = state.get("connectivity_weight", 1.0)
-        effect_info = normalized_info * connectivity_weight
+        _connectivity_weight = state.get("connectivity_weight", 1.0)
+        _effect_info = normalized_info * connectivity_weight
         
         return min(1.0, max(0.0, effect_info))
     
-    def find_mip(self, system_state: Dict[str, Any]) -> SystemPartition:
+    def find_mip(self, _system_state: Dict[str, _Any]) -> SystemPartition:
         """
         Find the Minimum Information Partition (MIP) of the system.
         
@@ -691,34 +668,34 @@ class PhiCalculator:
         Returns:
             SystemPartition representing the MIP
         """
-        elements = system_state.get("elements", [])
-        connectivity = system_state.get("connectivity", {})
+        _elements = system_state.get("elements", [])
+        _connectivity = system_state.get("connectivity", {})
         
         if len(elements) < 2:
             # Single element - no partition possible
             return SystemPartition(
-                partition_id="single_element",
-                parts=[set(elements)],
-                information_loss=0.0,
-                is_mip=True,
+                _partition_id = "single_element",
+                _parts = [set(elements)],
+                _information_loss = 0.0,
+                _is_mip = True,
             )
         
         # Generate all bipartitions
-        bipartitions = self._generate_bipartitions(elements)
+        _bipartitions = self._generate_bipartitions(elements)
         
         # Calculate information loss for each partition
-        min_loss = float("inf")
+        _min_loss = float("inf")
         mip: Optional[SystemPartition] = None
         
         for part1, part2 in bipartitions:
-            loss = self._calculate_partition_loss(part1, part2, connectivity)
+            _loss = self._calculate_partition_loss(part1, part2, connectivity)
             
             if loss < min_loss:
-                min_loss = loss
-                mip = SystemPartition(
-                    partition_id=f"bipartition_{len(part1)}_{len(part2)}",
-                    parts=[part1, part2],
-                    information_loss=loss,
+                _min_loss = loss
+                _mip = SystemPartition(
+                    _partition_id = f"bipartition_{len(part1)}_{len(part2)}",
+                    _parts = [part1, part2],
+                    _information_loss = loss,
                     is_mip=False,
                 )
         
@@ -727,20 +704,20 @@ class PhiCalculator:
         
         logger.debug(
             "MIP found",
-            extra={
+            _extra = {
                 "partition": mip.to_dict() if mip else None,
                 "information_loss": min_loss,
             },
         )
         
         return mip or SystemPartition(
-            partition_id="default",
-            parts=[set(elements)],
-            information_loss=0.0,
-            is_mip=True,
+            _partition_id = "default",
+            _parts = [set(elements)],
+            _information_loss = 0.0,
+            _is_mip = True,
         )
     
-    def _generate_bipartitions(self, elements: List[str]) -> List[Tuple[Set[str], Set[str]]]:
+    def _generate_bipartitions(self, _elements: List[str]) -> List[Tuple[Set[str], Set[str]]]:
         """
         Generate all possible bipartitions of elements.
         
@@ -757,7 +734,7 @@ class PhiCalculator:
             return []
         
         bipartitions: List[Tuple[Set[str], Set[str]]] = []
-        n = len(elements)
+        _n = len(elements)
         
         # Generate all non-empty proper subsets
         for i in range(1, 2 ** (n - 1)):
@@ -778,12 +755,7 @@ class PhiCalculator:
         
         return bipartitions
     
-    def _calculate_partition_loss(
-        self,
-        part1: Set[str],
-        part2: Set[str],
-        connectivity: Dict[str, Dict[str, float]],
-    ) -> float:
+    def _calculate_partition_loss(self, _part1: Set[str], _part2: Set[str], _connectivity: Dict[str, _Dict[str, _float]]) -> float:
         """
         Calculate information loss for a partition.
         
@@ -799,8 +771,8 @@ class PhiCalculator:
         Returns:
             Information loss value (0.0-1.0)
         """
-        loss = 0.0
-        total_weight = 0.0
+        _loss = 0.0
+        _total_weight = 0.0
         
         # Sum all connection weights
         for source, targets in connectivity.items():
@@ -822,13 +794,13 @@ class PhiCalculator:
         
         # Normalize loss to 0.0-1.0
         if total_weight > 0:
-            normalized_loss = loss / total_weight
+            _normalized_loss = loss / total_weight
         else:
-            normalized_loss = 0.0
+            _normalized_loss = 0.0
         
         return min(1.0, max(0.0, normalized_loss))
     
-    def _normalize_phi(self, phi: float, element_count: int) -> float:
+    def _normalize_phi(self, _phi: float, _element_count: int) -> float:
         """
         Normalize Phi value to 0.0-1.0 range.
         
@@ -848,19 +820,15 @@ class PhiCalculator:
         
         # Logarithmic scaling for system size
         # Phi grows with integration, but is normalized by complexity
-        size_factor = math.log2(element_count + 1)
-        normalized = phi / size_factor if size_factor > 0 else phi
+        _size_factor = math.log2(element_count + 1)
+        _normalized = phi / size_factor if size_factor > 0 else phi
         
         # Sigmoid normalization for smooth 0-1 mapping
-        normalized = 1.0 / (1.0 + math.exp(-normalized * 5 + 2.5))
+        _normalized = 1.0 / (1.0 + math.exp(-normalized * 5 + 2.5))
         
         return min(1.0, max(0.0, normalized))
     
-    def _determine_integration_level(
-        self,
-        connectivity: Dict[str, Dict[str, float]],
-        elements: List[str],
-    ) -> str:
+    def _determine_integration_level(self, _connectivity: Dict[str, _Dict[str, _float]], _elements: List[str]) -> str:
         """
         Determine qualitative integration level.
         
@@ -877,9 +845,9 @@ class PhiCalculator:
             return "minimal"
         
         # Calculate connectivity density
-        total_connections = 0
-        total_weight = 0.0
-        max_possible = len(elements) * (len(elements) - 1)
+        _total_connections = 0
+        _total_weight = 0.0
+        _max_possible = len(elements) * (len(elements) - 1)
         
         for source, targets in connectivity.items():
             for target, weight in targets.items():
@@ -887,11 +855,11 @@ class PhiCalculator:
                     total_connections += 1
                     total_weight += weight
         
-        density = total_connections / max_possible if max_possible > 0 else 0.0
-        avg_weight = total_weight / total_connections if total_connections > 0 else 0.0
+        _density = total_connections / max_possible if max_possible > 0 else 0.0
+        _avg_weight = total_weight / total_connections if total_connections > 0 else 0.0
         
         # Combined integration score
-        integration_score = (density * 0.5) + (avg_weight * 0.5)
+        _integration_score = (density * 0.5) + (avg_weight * 0.5)
         
         # Map to level
         if integration_score >= self.INTEGRATION_THRESHOLDS["very_high"]:
@@ -905,11 +873,7 @@ class PhiCalculator:
         else:
             return "minimal"
     
-    def _determine_differentiation_level(
-        self,
-        current_state: Dict[str, Any],
-        elements: List[str],
-    ) -> str:
+    def _determine_differentiation_level(self, _current_state: Dict[str, _Any], _elements: List[str]) -> str:
         """
         Determine qualitative differentiation level.
         
@@ -926,23 +890,23 @@ class PhiCalculator:
             return "minimal"
         
         # Get unique states
-        states = [current_state.get(e, 0) for e in elements]
-        unique_states = len(set(states))
+        _states = [current_state.get(e, 0) for e in elements]
+        _unique_states = len(set(states))
         
         # Calculate entropy
         state_counts: Dict[Any, int] = {}
         for s in states:
             state_counts[s] = state_counts.get(s, 0) + 1
         
-        entropy = 0.0
-        n = len(states)
+        _entropy = 0.0
+        _n = len(states)
         for count in state_counts.values():
-            p = count / n
+            _p = count / n
             if p > 0:
                 entropy -= p * math.log2(p)
         
-        max_entropy = math.log2(len(set(states))) if len(set(states)) > 1 else 0.0
-        normalized_entropy = entropy / max_entropy if max_entropy > 0 else 0.0
+        _max_entropy = math.log2(len(set(states))) if len(set(states)) > 1 else 0.0
+        _normalized_entropy = entropy / max_entropy if max_entropy > 0 else 0.0
         
         # Map to level
         if normalized_entropy >= self.DIFFERENTIATION_THRESHOLDS["very_high"]:
@@ -956,7 +920,7 @@ class PhiCalculator:
         else:
             return "minimal"
     
-    def calculate_mip(self, system_state: Dict[str, Any]) -> SystemPartition:
+    def calculate_mip(self, _system_state: Dict[str, _Any]) -> SystemPartition:
         """
         Public method to calculate Minimum Information Partition.
         
@@ -970,7 +934,7 @@ class PhiCalculator:
         """
         return self.find_mip(system_state)
     
-    def get_cached_result(self, system_id: str) -> Optional[PhiResult]:
+    def get_cached_result(self, _system_id: str) -> Optional[PhiResult]:
         """
         Get cached Phi calculation result.
         

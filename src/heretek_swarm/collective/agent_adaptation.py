@@ -31,7 +31,7 @@ import structlog
 from .learning import ExtractedPattern, PatternType
 from .pattern_library import PatternLibrary
 
-logger = structlog.get_logger(__name__)
+_logger = structlog.get_logger(__name__)
 
 
 class AdaptationTarget(str, Enum):
@@ -233,12 +233,7 @@ class PatternBasedAgentAdaptor:
         adaptation_events: List of adaptation events for audit
     """
     
-    def __init__(
-        self,
-        pattern_library: Optional[PatternLibrary] = None,
-        default_strategy: AdaptationStrategy = AdaptationStrategy.GRADUAL,
-        validation_required: bool = True,
-    ):
+    def __init__(self, _pattern_library: Optional[PatternLibrary], _default_strategy: AdaptationStrategy, _validation_required: bool):
         """
         Initialize pattern-based agent adaptor.
         
@@ -269,7 +264,7 @@ class PatternBasedAgentAdaptor:
             validation_required=validation_required,
         )
     
-    def register_adaptation_callback(self, callback: Callable) -> None:
+    def register_adaptation_callback(self, _callback: Callable) -> None:
         """
         Register callback for adaptation events.
         
@@ -279,7 +274,7 @@ class PatternBasedAgentAdaptor:
         self._on_adaptation.append(callback)
         logger.debug("adaptation_callback_registered", callback=callback.__name__)
     
-    def register_pattern_callback(self, callback: Callable) -> None:
+    def register_pattern_callback(self, _callback: Callable) -> None:
         """
         Register callback for pattern adoption/rejection.
         
@@ -289,7 +284,7 @@ class PatternBasedAgentAdaptor:
         self._on_pattern_adopted.append(callback)
         logger.debug("pattern_adopted_callback_registered", callback=callback.__name__)
     
-    def register_validation_hook(self, callback: Callable) -> None:
+    def register_validation_hook(self, _callback: Callable) -> None:
         """
         Register validation hook for adaptations.
         
@@ -299,7 +294,7 @@ class PatternBasedAgentAdaptor:
         self._validation_hooks.append(callback)
         logger.debug("validation_hook_registered", callback=callback.__name__)
     
-    def get_or_create_state(self, agent_id: str) -> AgentAdaptationState:
+    def get_or_create_state(self, _agent_id: str) -> AgentAdaptationState:
         """
         Get or create adaptation state for an agent.
         
@@ -315,13 +310,7 @@ class PatternBasedAgentAdaptor:
         
         return self._agent_states[agent_id]
     
-    async def apply_pattern(
-        self,
-        agent_id: str,
-        pattern: ExtractedPattern,
-        target: Optional[AdaptationTarget] = None,
-        strategy: Optional[AdaptationStrategy] = None,
-    ) -> bool:
+    async def apply_pattern(self, _agent_id: str, _pattern: ExtractedPattern, _target: Optional[AdaptationTarget], _strategy: Optional[AdaptationStrategy]) -> bool:
         """
         Apply a pattern to modify agent behavior.
         
@@ -334,7 +323,7 @@ class PatternBasedAgentAdaptor:
         Returns:
             True if pattern was applied successfully
         """
-        state = self.get_or_create_state(agent_id)
+        _state = self.get_or_create_state(agent_id)
         strategy = strategy or self.default_strategy
         
         # Auto-detect target based on pattern type
@@ -343,14 +332,14 @@ class PatternBasedAgentAdaptor:
         
         # Zero-trust validation
         if self.validation_required:
-            is_valid = await self._validate_adaptation(agent_id, pattern, target)
+            _is_valid = await self._validate_adaptation(agent_id, pattern, target)
             if not is_valid:
                 state.rejected_patterns.append(pattern.metadata.pattern_id)
                 logger.warning(
                     "pattern_application_rejected",
                     agent_id=agent_id,
                     pattern_id=pattern.metadata.pattern_id,
-                    reason="validation_failed",
+                    _reason = "validation_failed",
                 )
                 await self._call_pattern_callbacks(pattern, adopted=False)
                 return False
@@ -367,7 +356,7 @@ class PatternBasedAgentAdaptor:
         event.old_values = self._capture_old_values(state, target)
         
         # Apply changes based on target
-        changes_applied = await self._apply_pattern_changes(
+        _changes_applied = await self._apply_pattern_changes(
             state,
             pattern,
             target,
@@ -398,7 +387,7 @@ class PatternBasedAgentAdaptor:
         self._adaptation_events.append(event)
         
         # Create audit record
-        audit = await self._create_audit_record(event, pattern)
+        _audit = await self._create_audit_record(event, pattern)
         self._audit_log.append(audit)
         
         # Call callbacks
@@ -415,13 +404,7 @@ class PatternBasedAgentAdaptor:
         
         return True
     
-    async def adjust_behavioral_weight(
-        self,
-        agent_id: str,
-        aspect: str,
-        adjustment: float,
-        source_pattern_id: Optional[str] = None,
-    ) -> bool:
+    async def adjust_behavioral_weight(self, _agent_id: str, _aspect: str, _adjustment: float, _source_pattern_id: Optional[str]) -> bool:
         """
         Adjust a behavioral weight for an agent.
         
@@ -434,18 +417,18 @@ class PatternBasedAgentAdaptor:
         Returns:
             True if adjustment was applied
         """
-        state = self.get_or_create_state(agent_id)
+        _state = self.get_or_create_state(agent_id)
         
         # Get or create weight
         if aspect not in state.behavioral_weights:
             state.behavioral_weights[aspect] = BehavioralWeight(aspect=aspect)
         
-        weight = state.behavioral_weights[aspect]
+        _weight = state.behavioral_weights[aspect]
         old_value = weight.current_value
         
         # Calculate new value with clamping
-        new_value = old_value + adjustment
-        new_value = max(weight.min_value, min(new_value, weight.max_value))
+        _new_value = old_value + adjustment
+        _new_value = max(weight.min_value, min(new_value, weight.max_value))
         
         # Skip if no meaningful change
         if abs(new_value - old_value) < 0.001:
@@ -462,20 +445,14 @@ class PatternBasedAgentAdaptor:
         logger.debug(
             "behavioral_weight_adjusted",
             agent_id=agent_id,
-            aspect=aspect,
+            _aspect = aspect,
             old_value=old_value,
-            new_value=new_value,
+            _new_value = new_value,
         )
         
         return True
     
-    async def update_strategy_priority(
-        self,
-        agent_id: str,
-        strategy_id: str,
-        new_priority: float,
-        success_rate: Optional[float] = None,
-    ) -> bool:
+    async def update_strategy_priority(self, _agent_id: str, _strategy_id: str, _new_priority: float, _success_rate: Optional[float]) -> bool:
         """
         Update priority of a strategy for an agent.
         
@@ -488,17 +465,17 @@ class PatternBasedAgentAdaptor:
         Returns:
             True if update was applied
         """
-        state = self.get_or_create_state(agent_id)
+        _state = self.get_or_create_state(agent_id)
         
         if strategy_id not in state.strategy_profiles:
             logger.warning(
                 "strategy_not_found",
                 agent_id=agent_id,
-                strategy_id=strategy_id,
+                _strategy_id = strategy_id,
             )
             return False
         
-        profile = state.strategy_profiles[strategy_id]
+        _profile = state.strategy_profiles[strategy_id]
         profile.priority = new_priority
         
         if success_rate is not None:
@@ -509,17 +486,13 @@ class PatternBasedAgentAdaptor:
         logger.debug(
             "strategy_priority_updated",
             agent_id=agent_id,
-            strategy_id=strategy_id,
-            new_priority=new_priority,
+            _strategy_id = strategy_id,
+            _new_priority = new_priority,
         )
         
         return True
     
-    async def select_optimal_strategy(
-        self,
-        agent_id: str,
-        context: Dict[str, Any],
-    ) -> Optional[StrategyProfile]:
+    async def select_optimal_strategy(self, _agent_id: str, _context: Dict[str, _Any]) -> Optional[StrategyProfile]:
         """
         Select the optimal strategy for a given context.
         
@@ -530,41 +503,34 @@ class PatternBasedAgentAdaptor:
         Returns:
             Selected StrategyProfile or None
         """
-        state = self.get_or_create_state(agent_id)
+        _state = self.get_or_create_state(agent_id)
         
         if not state.strategy_profiles:
             return None
         
         # Score each strategy based on context
-        scored_strategies = []
+        _scored_strategies = []
         for strategy_id, profile in state.strategy_profiles.items():
-            score = self._score_strategy(profile, context)
+            _score = self._score_strategy(profile, context)
             scored_strategies.append((score, profile))
         
         # Select highest scoring strategy
         if scored_strategies:
             scored_strategies.sort(key=lambda x: x[0], reverse=True)
-            selected = scored_strategies[0][1]
+            _selected = scored_strategies[0][1]
             
             logger.debug(
                 "strategy_selected",
                 agent_id=agent_id,
-                strategy_id=selected.strategy_id,
-                strategy_name=selected.name,
+                _strategy_id = selected.strategy_id,
+                _strategy_name = selected.name,
             )
             
             return selected
         
         return None
     
-    async def register_strategy(
-        self,
-        agent_id: str,
-        name: str,
-        description: str = "",
-        initial_priority: float = 0.5,
-        metadata: Optional[Dict[str, Any]] = None,
-    ) -> str:
+    async def register_strategy(self, _agent_id: str, _name: str, _description: str, _initial_priority: float, _metadata: Optional[Dict[str, _Any]]) -> str:
         """
         Register a new strategy for an agent.
         
@@ -578,13 +544,13 @@ class PatternBasedAgentAdaptor:
         Returns:
             Strategy ID
         """
-        state = self.get_or_create_state(agent_id)
+        _state = self.get_or_create_state(agent_id)
         
-        strategy_id = str(uuid.uuid4())
-        profile = StrategyProfile(
-            strategy_id=strategy_id,
+        _strategy_id = str(uuid.uuid4())
+        _profile = StrategyProfile(
+            _strategy_id = strategy_id,
             name=name,
-            description=description,
+            _description = description,
             priority=initial_priority,
             metadata=metadata or {},
         )
@@ -595,13 +561,13 @@ class PatternBasedAgentAdaptor:
         logger.info(
             "strategy_registered",
             agent_id=agent_id,
-            strategy_id=strategy_id,
-            strategy_name=name,
+            _strategy_id = strategy_id,
+            _strategy_name = name,
         )
         
         return strategy_id
     
-    def get_adaptation_state(self, agent_id: str) -> AgentAdaptationState:
+    def get_adaptation_state(self, _agent_id: str) -> AgentAdaptationState:
         """
         Get adaptation state for an agent.
         
@@ -613,11 +579,7 @@ class PatternBasedAgentAdaptor:
         """
         return self.get_or_create_state(agent_id)
     
-    def get_adaptation_history(
-        self,
-        agent_id: Optional[str] = None,
-        limit: int = 100,
-    ) -> List[AdaptationEvent]:
+    def get_adaptation_history(self, _agent_id: Optional[str], _limit: int) -> List[AdaptationEvent]:
         """
         Get adaptation event history.
         
@@ -628,18 +590,14 @@ class PatternBasedAgentAdaptor:
         Returns:
             List of adaptation events
         """
-        events = self._adaptation_events
+        _events = self._adaptation_events
         
         if agent_id:
-            events = [e for e in events if e.agent_id == agent_id]
+            _events = [e for e in events if e.agent_id == agent_id]
         
         return events[-limit:]
     
-    def get_audit_log(
-        self,
-        agent_id: Optional[str] = None,
-        limit: int = 100,
-    ) -> List[AdaptationAudit]:
+    def get_audit_log(self, _agent_id: Optional[str], _limit: int) -> List[AdaptationAudit]:
         """
         Get adaptation audit log.
         
@@ -650,18 +608,14 @@ class PatternBasedAgentAdaptor:
         Returns:
             List of audit records
         """
-        audits = self._audit_log
+        _audits = self._audit_log
         
         if agent_id:
-            audits = [a for a in audits if a.agent_id == agent_id]
+            _audits = [a for a in audits if a.agent_id == agent_id]
         
         return audits[-limit:]
     
-    async def rollback_adaptation(
-        self,
-        agent_id: str,
-        event_id: str,
-    ) -> bool:
+    async def rollback_adaptation(self, _agent_id: str, _event_id: str) -> bool:
         """
         Rollback a specific adaptation event.
         
@@ -688,10 +642,10 @@ class PatternBasedAgentAdaptor:
             return False
         
         # Find audit record with rollback data
-        audit = None
+        _audit = None
         for a in self._audit_log:
             if a.event_id == event_id and a.agent_id == agent_id:
-                audit = a
+                _audit = a
                 break
         
         if not audit or not audit.rollback_data:
@@ -703,7 +657,7 @@ class PatternBasedAgentAdaptor:
             return False
         
         # Apply rollback
-        state = self.get_or_create_state(agent_id)
+        _state = self.get_or_create_state(agent_id)
         
         if event.target == AdaptationTarget.BEHAVIORAL_WEIGHTS:
             for aspect, value in audit.rollback_data.get("weights", {}).items():
@@ -743,10 +697,10 @@ class PatternBasedAgentAdaptor:
                 "total_patterns_rejected": 0,
             }
         
-        states = list(self._agent_states.values())
-        total_adaptations = sum(s.adaptation_count for s in states)
-        total_adopted = sum(len(s.adopted_patterns) for s in states)
-        total_rejected = sum(len(s.rejected_patterns) for s in states)
+        _states = list(self._agent_states.values())
+        _total_adaptations = sum(s.adaptation_count for s in states)
+        _total_adopted = sum(len(s.adopted_patterns) for s in states)
+        _total_rejected = sum(len(s.rejected_patterns) for s in states)
         
         return {
             "total_agents": len(states),
@@ -757,9 +711,9 @@ class PatternBasedAgentAdaptor:
             "adoption_rate": total_adopted / max(total_adopted + total_rejected, 1),
         }
     
-    def _auto_detect_target(self, pattern: ExtractedPattern) -> AdaptationTarget:
+    def _auto_detect_target(self, _pattern: ExtractedPattern) -> AdaptationTarget:
         """Auto-detect adaptation target based on pattern type."""
-        type_target_map = {
+        _type_target_map = {
             PatternType.SUCCESS: AdaptationTarget.STRATEGY_SELECTION,
             PatternType.FAILURE: AdaptationTarget.DECISION_THRESHOLDS,
             PatternType.OPTIMIZATION: AdaptationTarget.BEHAVIORAL_WEIGHTS,
@@ -777,12 +731,7 @@ class PatternBasedAgentAdaptor:
             AdaptationTarget.BEHAVIORAL_WEIGHTS,
         )
     
-    async def _validate_adaptation(
-        self,
-        agent_id: str,
-        pattern: ExtractedPattern,
-        target: AdaptationTarget,
-    ) -> bool:
+    async def _validate_adaptation(self, _agent_id: str, _pattern: ExtractedPattern, _target: AdaptationTarget) -> bool:
         """
         Validate adaptation with zero-trust principles.
         
@@ -799,7 +748,7 @@ class PatternBasedAgentAdaptor:
             return False
         
         # Check for conflicting patterns
-        state = self.get_or_create_state(agent_id)
+        _state = self.get_or_create_state(agent_id)
         for rejected_id in state.rejected_patterns:
             # Check if same pattern was rejected
             if rejected_id == pattern.metadata.pattern_id:
@@ -808,28 +757,22 @@ class PatternBasedAgentAdaptor:
         # Call validation hooks
         for hook in self._validation_hooks:
             try:
-                result = hook(agent_id, pattern, target)
+                _result = hook(agent_id, pattern, target)
                 if asyncio.iscoroutine(result):
-                    result = await result
+                    _result = await result
                 if not result:
                     return False
             except Exception as e:
                 logger.error(
                     "validation_hook_error",
                     agent_id=agent_id,
-                    hook=hook.__name__,
-                    error=str(e),
+                    _hook = hook.__name__,
+                    _error = str(e),
                 )
         
         return True
     
-    async def _apply_pattern_changes(
-        self,
-        state: AgentAdaptationState,
-        pattern: ExtractedPattern,
-        target: AdaptationTarget,
-        strategy: AdaptationStrategy,
-    ) -> bool:
+    async def _apply_pattern_changes(self, _state: AgentAdaptationState, _pattern: ExtractedPattern, _target: AdaptationTarget, _strategy: AdaptationStrategy) -> bool:
         """
         Apply pattern-based changes to agent state.
         
@@ -865,30 +808,25 @@ class PatternBasedAgentAdaptor:
         
         return False
     
-    async def _apply_behavioral_weight_changes(
-        self,
-        state: AgentAdaptationState,
-        pattern: ExtractedPattern,
-        strategy: AdaptationStrategy,
-    ) -> bool:
+    async def _apply_behavioral_weight_changes(self, _state: AgentAdaptationState, _pattern: ExtractedPattern, _strategy: AdaptationStrategy) -> bool:
         """Apply behavioral weight changes from pattern."""
-        pattern_data = pattern.pattern_data
+        _pattern_data = pattern.pattern_data
         
         if "behavioral_weights" not in pattern_data:
             return False
         
-        weights = pattern_data["behavioral_weights"]
+        _weights = pattern_data["behavioral_weights"]
         confidence = pattern.metadata.confidence
         
         for aspect, target_value in weights.items():
             if aspect not in state.behavioral_weights:
                 state.behavioral_weights[aspect] = BehavioralWeight(aspect=aspect)
             
-            weight = state.behavioral_weights[aspect]
+            _weight = state.behavioral_weights[aspect]
             
             if strategy == AdaptationStrategy.GRADUAL:
                 # Gradual adjustment
-                adjustment = (target_value - weight.current_value) * 0.1 * confidence
+                _adjustment = (target_value - weight.current_value) * 0.1 * confidence
                 weight.current_value += adjustment
             elif strategy == AdaptationStrategy.IMMEDIATE:
                 weight.current_value = target_value
@@ -903,40 +841,35 @@ class PatternBasedAgentAdaptor:
         
         return True
     
-    async def _apply_strategy_changes(
-        self,
-        state: AgentAdaptationState,
-        pattern: ExtractedPattern,
-        strategy: AdaptationStrategy,
-    ) -> bool:
+    async def _apply_strategy_changes(self, _state: AgentAdaptationState, _pattern: ExtractedPattern, _strategy: AdaptationStrategy) -> bool:
         """Apply strategy selection changes from pattern."""
-        pattern_data = pattern.pattern_data
+        _pattern_data = pattern.pattern_data
         
         if "strategy" not in pattern_data:
             return False
         
-        strategy_info = pattern_data["strategy"]
-        strategy_name = strategy_info.get("name", "unknown")
-        strategy_priority = strategy_info.get("priority", 0.5)
+        _strategy_info = pattern_data["strategy"]
+        _strategy_name = strategy_info.get("name", "unknown")
+        _strategy_priority = strategy_info.get("priority", 0.5)
         
         # Find or create strategy profile
-        profile = None
+        _profile = None
         for p in state.strategy_profiles.values():
             if p.name == strategy_name:
-                profile = p
+                _profile = p
                 break
         
         if not profile:
-            strategy_id = await self.register_strategy(
+            _strategy_id = await self.register_strategy(
                 state.agent_id,
                 strategy_name,
                 strategy_info.get("description", ""),
                 strategy_priority,
             )
-            profile = state.strategy_profiles[strategy_id]
+            _profile = state.strategy_profiles[strategy_id]
         
         # Update priority based on pattern confidence
-        confidence_boost = pattern.metadata.confidence * 0.2
+        _confidence_boost = pattern.metadata.confidence * 0.2
         profile.priority = min(1.0, profile.priority + confidence_boost)
         
         if strategy_name not in state.active_strategies:
@@ -944,75 +877,46 @@ class PatternBasedAgentAdaptor:
         
         return True
     
-    async def _apply_threshold_changes(
-        self,
-        state: AgentAdaptationState,
-        pattern: ExtractedPattern,
-        strategy: AdaptationStrategy,
-    ) -> bool:
+    async def _apply_threshold_changes(self, _state: AgentAdaptationState, _pattern: ExtractedPattern, _strategy: AdaptationStrategy) -> bool:
         """Apply decision threshold changes from pattern."""
-        pattern_data = pattern.pattern_data
+        _pattern_data = pattern.pattern_data
         
         if "decision_thresholds" not in pattern_data:
             return False
         
-        thresholds = pattern_data["decision_thresholds"]
+        _thresholds = pattern_data["decision_thresholds"]
         
         for key, value in thresholds.items():
             if strategy == AdaptationStrategy.GRADUAL:
                 old_value = state.decision_thresholds.get(key, 0.5)
-                new_value = old_value + (value - old_value) * 0.1
+                _new_value = old_value + (value - old_value) * 0.1
                 state.decision_thresholds[key] = new_value
             else:
                 state.decision_thresholds[key] = value
         
         return True
     
-    async def _apply_communication_changes(
-        self,
-        state: AgentAdaptationState,
-        pattern: ExtractedPattern,
-        strategy: AdaptationStrategy,
-    ) -> bool:
+    async def _apply_communication_changes(self, _state: AgentAdaptationState, _pattern: ExtractedPattern, _strategy: AdaptationStrategy) -> bool:
         """Apply communication style changes from pattern."""
         # Implementation for communication style adaptation
         return True
     
-    async def _apply_collaboration_changes(
-        self,
-        state: AgentAdaptationState,
-        pattern: ExtractedPattern,
-        strategy: AdaptationStrategy,
-    ) -> bool:
+    async def _apply_collaboration_changes(self, _state: AgentAdaptationState, _pattern: ExtractedPattern, _strategy: AdaptationStrategy) -> bool:
         """Apply collaboration preference changes from pattern."""
         # Implementation for collaboration preference adaptation
         return True
     
-    async def _apply_resource_changes(
-        self,
-        state: AgentAdaptationState,
-        pattern: ExtractedPattern,
-        strategy: AdaptationStrategy,
-    ) -> bool:
+    async def _apply_resource_changes(self, _state: AgentAdaptationState, _pattern: ExtractedPattern, _strategy: AdaptationStrategy) -> bool:
         """Apply resource allocation changes from pattern."""
         # Implementation for resource allocation adaptation
         return True
     
-    async def _apply_risk_changes(
-        self,
-        state: AgentAdaptationState,
-        pattern: ExtractedPattern,
-        strategy: AdaptationStrategy,
-    ) -> bool:
+    async def _apply_risk_changes(self, _state: AgentAdaptationState, _pattern: ExtractedPattern, _strategy: AdaptationStrategy) -> bool:
         """Apply risk tolerance changes from pattern."""
         # Implementation for risk tolerance adaptation
         return True
     
-    def _capture_old_values(
-        self,
-        state: AgentAdaptationState,
-        target: AdaptationTarget,
-    ) -> Dict[str, Any]:
+    def _capture_old_values(self, _state: AgentAdaptationState, _target: AdaptationTarget) -> Dict[str, Any]:
         """Capture old values for rollback."""
         if target == AdaptationTarget.BEHAVIORAL_WEIGHTS:
             return {
@@ -1033,38 +937,26 @@ class PatternBasedAgentAdaptor:
         
         return {}
     
-    def _capture_new_values(
-        self,
-        state: AgentAdaptationState,
-        target: AdaptationTarget,
-    ) -> Dict[str, Any]:
+    def _capture_new_values(self, _state: AgentAdaptationState, _target: AdaptationTarget) -> Dict[str, Any]:
         """Capture new values after adaptation."""
         return self._capture_old_values(state, target)
     
-    def _compute_changes(
-        self,
-        old_values: Dict[str, Any],
-        new_values: Dict[str, Any],
-    ) -> Dict[str, Any]:
+    def _compute_changes(self, _old_values: Dict[str, _Any], _new_values: Dict[str, _Any]) -> Dict[str, Any]:
         """Compute the changes between old and new values."""
         changes = {}
         
         for key in set(old_values.keys()) | set(new_values.keys()):
             old_val = old_values.get(key)
-            new_val = new_values.get(key)
+            _new_val = new_values.get(key)
             if old_val != new_val:
                 changes[key] = {"old": old_val, "new": new_val}
         
         return changes
     
-    async def _create_audit_record(
-        self,
-        event: AdaptationEvent,
-        pattern: ExtractedPattern,
-    ) -> AdaptationAudit:
+    async def _create_audit_record(self, _event: AdaptationEvent, _pattern: ExtractedPattern) -> AdaptationAudit:
         """Create audit record for an adaptation event."""
         # Calculate risk assessment
-        risk = 0.0
+        _risk = 0.0
         
         # Higher confidence = lower risk
         risk += (1.0 - pattern.metadata.confidence) * 0.5
@@ -1073,7 +965,7 @@ class PatternBasedAgentAdaptor:
         risk += min(len(event.changes) * 0.1, 0.3)
         
         # Certain targets are higher risk
-        high_risk_targets = [
+        _high_risk_targets = [
             AdaptationTarget.DECISION_THRESHOLDS,
             AdaptationTarget.RISK_TOLERANCE,
         ]
@@ -1081,24 +973,20 @@ class PatternBasedAgentAdaptor:
             risk += 0.2
         
         return AdaptationAudit(
-            event_id=event.event_id,
-            agent_id=event.agent_id,
-            action=f"apply_pattern_{event.target.value}",
-            actor="pattern_based_adaptor",
-            justification=f"Pattern {pattern.metadata.pattern_id} applied with confidence {pattern.metadata.confidence}",
-            risk_assessment=min(risk, 1.0),
-            rollback_available=True,
-            rollback_data=event.old_values,
+            _event_id = event.event_id,
+            _agent_id = event.agent_id,
+            _action = f"apply_pattern_{event.target.value}",
+            _actor = "pattern_based_adaptor",
+            _justification = f"Pattern {pattern.metadata.pattern_id} applied with confidence {pattern.metadata.confidence}",
+            _risk_assessment = min(risk, 1.0),
+            _rollback_available = True,
+            _rollback_data = event.old_values,
         )
     
-    def _score_strategy(
-        self,
-        profile: StrategyProfile,
-        context: Dict[str, Any],
-    ) -> float:
+    def _score_strategy(self, _profile: StrategyProfile, _context: Dict[str, _Any]) -> float:
         """Score a strategy based on context."""
         # Base score from priority
-        score = profile.priority
+        _score = profile.priority
         
         # Boost by success rate
         score += profile.success_rate * 0.3
@@ -1109,7 +997,7 @@ class PatternBasedAgentAdaptor:
         
         return min(score, 1.0)
     
-    async def _call_adaptation_callbacks(self, event: AdaptationEvent) -> None:
+    async def _call_adaptation_callbacks(self, _event: AdaptationEvent) -> None:
         """Call registered adaptation callbacks."""
         for callback in self._on_adaptation:
             try:
@@ -1120,17 +1008,13 @@ class PatternBasedAgentAdaptor:
             except Exception as e:
                 logger.error(
                     "adaptation_callback_error",
-                    callback=callback.__name__,
-                    error=str(e),
+                    _callback = callback.__name__,
+                    _error = str(e),
                 )
     
-    async def _call_pattern_callbacks(
-        self,
-        pattern: ExtractedPattern,
-        adopted: bool,
-    ) -> None:
+    async def _call_pattern_callbacks(self, _pattern: ExtractedPattern, _adopted: bool) -> None:
         """Call registered pattern callbacks."""
-        callbacks = self._on_pattern_adopted if adopted else self._on_pattern_rejected
+        _callbacks = self._on_pattern_adopted if adopted else self._on_pattern_rejected
         
         for callback in callbacks:
             try:
@@ -1141,8 +1025,8 @@ class PatternBasedAgentAdaptor:
             except Exception as e:
                 logger.error(
                     "pattern_callback_error",
-                    callback=callback.__name__,
-                    error=str(e),
+                    _callback = callback.__name__,
+                    _error = str(e),
                 )
     
     def get_status(self) -> Dict[str, Any]:

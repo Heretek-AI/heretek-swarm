@@ -22,7 +22,7 @@ import math
 
 import structlog
 
-logger = structlog.get_logger("SelfModel")
+_logger = structlog.get_logger("SelfModel")
 
 
 class GoalStatus(Enum):
@@ -67,8 +67,8 @@ class Belief:
         }
     
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "Belief":
-        belief_type_str = data.get("belief_type", "factual")
+    def from_dict(cls, _data: Dict[str, _Any]) -> "Belief":
+        _belief_type_str = data.get("belief_type", "factual")
         try:
             belief_type = BeliefType(belief_type_str)
         except ValueError:
@@ -78,8 +78,8 @@ class Belief:
             state=data.get("state", ""),
             confidence=data.get("confidence", 0.5),
             belief_type=belief_type,
-            source=data.get("source", "unknown"),
-            created_at=data.get("created_at", datetime.now(timezone.utc).isoformat()),
+            _source = data.get("source", "unknown"),
+            _created_at = data.get("created_at", datetime.now(timezone.utc).isoformat()),
             updated_at=data.get("updated_at", datetime.now(timezone.utc).isoformat()),
             supporting_evidence=data.get("supporting_evidence", []),
             conflicting_beliefs=data.get("conflicting_beliefs", []),
@@ -120,8 +120,8 @@ class Goal:
         }
     
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "Goal":
-        status_str = data.get("status", "active")
+    def from_dict(cls, _data: Dict[str, _Any]) -> "Goal":
+        _status_str = data.get("status", "active")
         try:
             status = GoalStatus(status_str)
         except ValueError:
@@ -131,15 +131,15 @@ class Goal:
             description=data.get("description", ""),
             priority=data.get("priority", 0.5),
             status=status,
-            created_at=data.get("created_at", datetime.now(timezone.utc).isoformat()),
+            _created_at = data.get("created_at", datetime.now(timezone.utc).isoformat()),
             deadline=data.get("deadline"),
             completed_at=data.get("completed_at"),
             sub_goals=data.get("sub_goals", []),
             parent_goal_id=data.get("parent_goal_id"),
             progress=data.get("progress", 0.0),
-            associated_beliefs=data.get("associated_beliefs", []),
+            _associated_beliefs = data.get("associated_beliefs", []),
             blocked_by=data.get("blocked_by", []),
-            depends_on=data.get("depends_on", []),
+            _depends_on = data.get("depends_on", []),
         )
 
 
@@ -165,7 +165,7 @@ class Capability:
         }
     
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "Capability":
+    def from_dict(cls, _data: Dict[str, _Any]) -> "Capability":
         return cls(
             capability_id=data.get("capability_id", str(uuid.uuid4())),
             name=data.get("name", ""),
@@ -197,14 +197,14 @@ class Limitation:
         }
     
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "Limitation":
+    def from_dict(cls, _data: Dict[str, _Any]) -> "Limitation":
         return cls(
             limitation_id=data.get("limitation_id", str(uuid.uuid4())),
             description=data.get("description", ""),
             severity=data.get("severity", 0.5),
-            aware_at=data.get("aware_at", datetime.now(timezone.utc).isoformat()),
-            workaround=data.get("workaround"),
-            mitigatable=data.get("mitigatable", False),
+            _aware_at = data.get("aware_at", datetime.now(timezone.utc).isoformat()),
+            _workaround = data.get("workaround"),
+            _mitigatable = data.get("mitigatable", False),
         )
 
 
@@ -230,10 +230,10 @@ class Preference:
         }
     
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "Preference":
+    def from_dict(cls, _data: Dict[str, _Any]) -> "Preference":
         return cls(
             preference_id=data.get("preference_id", str(uuid.uuid4())),
-            category=data.get("category", "general"),
+            _category = data.get("category", "general"),
             preference_key=data.get("preference_key", ""),
             value=data.get("value"),
             strength=data.get("strength", 0.5),
@@ -264,15 +264,15 @@ class SelfModelSnapshot:
         }
     
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "SelfModelSnapshot":
+    def from_dict(cls, _data: Dict[str, _Any]) -> "SelfModelSnapshot":
         return cls(
-            snapshot_id=data.get("snapshot_id", str(uuid.uuid4())),
-            timestamp=data.get("timestamp", datetime.now(timezone.utc).isoformat()),
-            belief_count=data.get("belief_count", 0),
-            active_goal_count=data.get("active_goal_count", 0),
+            _snapshot_id = data.get("snapshot_id", str(uuid.uuid4())),
+            _timestamp = data.get("timestamp", datetime.now(timezone.utc).isoformat()),
+            _belief_count = data.get("belief_count", 0),
+            _active_goal_count = data.get("active_goal_count", 0),
             goal_clarity=data.get("goal_clarity", 0.0),
             self_coherence=data.get("self_coherence", 0.0),
-            summary=data.get("summary", ""),
+            _summary = data.get("summary", ""),
         )
 
 
@@ -303,15 +303,7 @@ class SelfModel:
     COHERENCE_THRESHOLD = 0.7
     CLARITY_THRESHOLD = 0.5
     
-    def __init__(
-        self,
-        agent_id: str,
-        initial_beliefs: Optional[List[Dict[str, Any]]] = None,
-        initial_goals: Optional[List[Dict[str, Any]]] = None,
-        initial_capabilities: Optional[List[Dict[str, Any]]] = None,
-        initial_limitations: Optional[List[Dict[str, Any]]] = None,
-        initial_preferences: Optional[List[Dict[str, Any]]] = None,
-    ):
+    def __init__(self, _agent_id: str, _initial_beliefs: Optional[List[Dict[str, _Any]]], _initial_goals: Optional[List[Dict[str, _Any]]], _initial_capabilities: Optional[List[Dict[str, _Any]]], _initial_limitations: Optional[List[Dict[str, _Any]]], _initial_preferences: Optional[List[Dict[str, _Any]]]):
         self.agent_id = agent_id
         self.beliefs: Dict[str, Belief] = {}
         self.goals: Dict[str, Goal] = {}
@@ -351,28 +343,20 @@ class SelfModel:
         
         logger.info(
             "SelfModel initialized",
-            extra={
+            _extra = {
                 "agent_id": agent_id,
                 "beliefs": len(self.beliefs),
                 "goals": len(self.goals),
             }
         )
     
-    def update_belief(
-        self,
-        state: str,
-        confidence: float,
-        belief_type: BeliefType = BeliefType.FACTUAL,
-        source: str = "unknown",
-        belief_id: Optional[str] = None,
-        evidence: Optional[List[str]] = None,
-    ) -> Belief:
+    def update_belief(self, _state: str, _confidence: float, _belief_type: BeliefType, _source: str, _belief_id: Optional[str], _evidence: Optional[List[str]]) -> Belief:
         confidence = max(0.0, min(1.0, confidence))
         
         if belief_id and belief_id in self.beliefs:
             belief = self.beliefs[belief_id]
-            old_state = belief.state
-            old_confidence = belief.confidence
+            _old_state = belief.state
+            _old_confidence = belief.confidence
             belief.state = state
             belief.confidence = confidence
             belief.updated_at = datetime.now(timezone.utc).isoformat()
@@ -385,8 +369,8 @@ class SelfModel:
                 state=state,
                 confidence=confidence,
                 belief_type=belief_type,
-                source=source,
-                supporting_evidence=evidence or [],
+                _source = source,
+                _supporting_evidence = evidence or [],
             )
             self.beliefs[belief.belief_id] = belief
         
@@ -394,24 +378,16 @@ class SelfModel:
         self._maybe_take_snapshot()
         return belief
     
-    def add_goal(
-        self,
-        goal: str,
-        priority: float,
-        deadline: Optional[str] = None,
-        goal_id: Optional[str] = None,
-        parent_goal_id: Optional[str] = None,
-        depends_on: Optional[List[str]] = None,
-    ) -> Goal:
+    def add_goal(self, _goal: str, _priority: float, _deadline: Optional[str], _goal_id: Optional[str], _parent_goal_id: Optional[str], _depends_on: Optional[List[str]]) -> Goal:
         priority = max(0.0, min(1.0, priority))
         
-        new_goal = Goal(
+        _new_goal = Goal(
             goal_id=goal_id or str(uuid.uuid4()),
             description=goal,
             priority=priority,
             deadline=deadline,
             parent_goal_id=parent_goal_id,
-            depends_on=depends_on or [],
+            _depends_on = depends_on or [],
             status=GoalStatus.ACTIVE,
         )
         
@@ -419,7 +395,7 @@ class SelfModel:
             self.goals[parent_goal_id].sub_goals.append(new_goal.goal_id)
         
         if depends_on:
-            incomplete_deps = [d for d in depends_on if d not in self.goals or 
+            _incomplete_deps = [d for d in depends_on if d not in self.goals or 
                               self.goals[d].status != GoalStatus.COMPLETED]
             if incomplete_deps:
                 new_goal.status = GoalStatus.BLOCKED
@@ -430,11 +406,7 @@ class SelfModel:
         self._maybe_take_snapshot()
         return new_goal
     
-    def remove_goal(
-        self,
-        goal_id: str,
-        status: GoalStatus = GoalStatus.COMPLETED,
-    ) -> bool:
+    def remove_goal(self, _goal_id: str, _status: GoalStatus) -> bool:
         if goal_id not in self.goals:
             return False
         
@@ -452,7 +424,7 @@ class SelfModel:
         self._maybe_take_snapshot()
         return True
     
-    def update_goal_progress(self, goal_id: str, progress: float) -> bool:
+    def update_goal_progress(self, _goal_id: str, _progress: float) -> bool:
         if goal_id not in self.goals:
             return False
         
@@ -465,9 +437,9 @@ class SelfModel:
         return True
     
     def reconcile_beliefs(self) -> Dict[str, Any]:
-        conflicts_found = []
-        resolutions_applied = []
-        belief_list = list(self.beliefs.values())
+        _conflicts_found = []
+        _resolutions_applied = []
+        _belief_list = list(self.beliefs.values())
         
         for i, belief in enumerate(belief_list):
             for other_belief in belief_list[i + 1:]:
@@ -487,7 +459,7 @@ class SelfModel:
                         other_belief.conflicting_beliefs.append(belief.belief_id)
                     
                     if belief.confidence > other_belief.confidence:
-                        reduction = min(0.2, belief.confidence - other_belief.confidence) / 2
+                        _reduction = min(0.2, belief.confidence - other_belief.confidence) / 2
                         other_belief.confidence = max(0.1, other_belief.confidence - reduction)
                         resolutions_applied.append({
                             "type": "confidence_reduction",
@@ -495,7 +467,7 @@ class SelfModel:
                             "reduction": reduction,
                         })
                     elif other_belief.confidence > belief.confidence:
-                        reduction = min(0.2, other_belief.confidence - belief.confidence) / 2
+                        _reduction = min(0.2, other_belief.confidence - belief.confidence) / 2
                         belief.confidence = max(0.1, belief.confidence - reduction)
                         resolutions_applied.append({
                             "type": "confidence_reduction",
@@ -503,7 +475,7 @@ class SelfModel:
                             "reduction": reduction,
                         })
         
-        coherence = self._calculate_self_coherence()
+        _coherence = self._calculate_self_coherence()
         
         return {
             "conflicts_found": len(conflicts_found),
@@ -516,17 +488,17 @@ class SelfModel:
     def generate_self_description(self) -> str:
         beliefs_by_type: Dict[str, int] = {}
         for belief in self.beliefs.values():
-            type_name = belief.belief_type.value
+            _type_name = belief.belief_type.value
             beliefs_by_type[type_name] = beliefs_by_type.get(type_name, 0) + 1
         
         goals_by_status: Dict[str, int] = {}
         for goal in self.goals.values():
-            status_name = goal.status.value
+            _status_name = goal.status.value
             goals_by_status[status_name] = goals_by_status.get(status_name, 0) + 1
         
-        metrics = self.get_metrics()
+        _metrics = self.get_metrics()
         
-        lines = [
+        _lines = [
             f"Self-Model Report for Agent {self.agent_id}",
             "=" * 50,
             "",
@@ -567,10 +539,10 @@ class SelfModel:
         
         if self.capabilities:
             lines.append("  Top Capabilities:")
-            sorted_caps = sorted(
+            _sorted_caps = sorted(
                 self.capabilities.values(),
-                key=lambda c: c.level * c.experience_count,
-                reverse=True
+                _key = lambda c: c.level * c.experience_count,
+                _reverse = True
             )[:3]
             for cap in sorted_caps:
                 lines.append(f"    - {cap.name}: {cap.level:.2f} (exp: {cap.experience_count})")
@@ -582,7 +554,7 @@ class SelfModel:
         ])
         
         if self.limitations:
-            critical_limits = [l for l in self.limitations.values() if l.severity > 0.7]
+            _critical_limits = [l for l in self.limitations.values() if l.severity > 0.7]
             if critical_limits:
                 lines.append("  Critical Limitations:")
                 for lim in critical_limits[:3]:
@@ -601,35 +573,30 @@ class SelfModel:
     def get_metrics(self) -> SelfModelMetrics:
         self_coherence = self._calculate_self_coherence()
         goal_clarity = self._calculate_goal_clarity()
-        self_accuracy = self._calculate_self_accuracy()
+        _self_accuracy = self._calculate_self_accuracy()
         
         if self.beliefs:
-            belief_confidence_avg = sum(b.confidence for b in self.beliefs.values()) / len(self.beliefs)
+            _belief_confidence_avg = sum(b.confidence for b in self.beliefs.values()) / len(self.beliefs)
         else:
-            belief_confidence_avg = 0.0
+            _belief_confidence_avg = 0.0
         
-        goal_progress_rate = self._calculate_goal_progress_rate()
-        capability_reliability = self._calculate_capability_reliability()
+        _goal_progress_rate = self._calculate_goal_progress_rate()
+        _capability_reliability = self._calculate_capability_reliability()
         
         return SelfModelMetrics(
             self_coherence=self_coherence,
             goal_clarity=goal_clarity,
-            self_accuracy=self_accuracy,
-            belief_confidence_avg=belief_confidence_avg,
-            goal_progress_rate=goal_progress_rate,
-            capability_reliability=capability_reliability,
+            _self_accuracy = self_accuracy,
+            _belief_confidence_avg = belief_confidence_avg,
+            _goal_progress_rate = goal_progress_rate,
+            _capability_reliability = capability_reliability,
         )
     
-    def update_capability(
-        self,
-        name: str,
-        level: Optional[float] = None,
-        success: Optional[bool] = None,
-    ) -> Capability:
-        existing = None
+    def update_capability(self, _name: str, _level: Optional[float], _success: Optional[bool]) -> Capability:
+        _existing = None
         for cap in self.capabilities.values():
             if cap.name == name:
-                existing = cap
+                _existing = cap
                 break
         
         if existing:
@@ -637,7 +604,7 @@ class SelfModel:
             cap.experience_count += 1
             cap.last_used = datetime.now(timezone.utc).isoformat()
             if success is not None:
-                alpha = 0.3
+                _alpha = 0.3
                 cap.success_rate = alpha * (1.0 if success else 0.0) + (1 - alpha) * cap.success_rate
             if level is not None:
                 cap.level = max(0.0, min(1.0, level))
@@ -646,45 +613,32 @@ class SelfModel:
         else:
             success_rate = 1.0 if success else 0.0 if success is not None else 0.5
             cap = Capability(
-                name=name,
-                level=level or 0.5,
+                _name = name,
+                _level = level or 0.5,
                 experience_count=1,
                 success_rate=success_rate,
-                last_used=datetime.now(timezone.utc).isoformat(),
+                _last_used = datetime.now(timezone.utc).isoformat(),
                 confidence=0.5,
             )
             self.capabilities[cap.capability_id] = cap
         
         return cap
     
-    def add_limitation(
-        self,
-        description: str,
-        severity: float = 0.5,
-        workaround: Optional[str] = None,
-        mitigatable: bool = False,
-    ) -> Limitation:
+    def add_limitation(self, _description: str, _severity: float, _workaround: Optional[str], _mitigatable: bool) -> Limitation:
         limitation = Limitation(
-            description=description,
-            severity=max(0.0, min(1.0, severity)),
-            workaround=workaround,
-            mitigatable=mitigatable,
+            _description = description,
+            _severity = max(0.0, min(1.0, severity)),
+            _workaround = workaround,
+            _mitigatable = mitigatable,
         )
         self.limitations[limitation.limitation_id] = limitation
         return limitation
     
-    def update_preference(
-        self,
-        category: str,
-        preference_key: str,
-        value: Any,
-        strength: float = 0.5,
-        learned_from: str = "experience",
-    ) -> Preference:
-        existing = None
+    def update_preference(self, _category: str, _preference_key: str, _value: Any, _strength: float, _learned_from: str) -> Preference:
+        _existing = None
         for pref in self.preferences.values():
             if pref.preference_key == preference_key:
-                existing = pref
+                _existing = pref
                 break
         
         if existing:
@@ -695,11 +649,11 @@ class SelfModel:
             pref.updated_at = datetime.now(timezone.utc).isoformat()
         else:
             pref = Preference(
-                category=category,
-                preference_key=preference_key,
+                _category = category,
+                _preference_key = preference_key,
                 value=value,
-                strength=max(0.0, min(1.0, strength)),
-                learned_from=learned_from,
+                _strength = max(0.0, min(1.0, strength)),
+                _learned_from = learned_from,
             )
             self.preferences[pref.preference_id] = pref
         
@@ -731,22 +685,22 @@ class SelfModel:
         }
     
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "SelfModel":
-        agent_id = data.get("agent_id", str(uuid.uuid4()))
+    def from_dict(cls, _data: Dict[str, _Any]) -> "SelfModel":
+        _agent_id = data.get("agent_id", str(uuid.uuid4()))
         beliefs = {k: Belief.from_dict(v) for k, v in data.get("beliefs", {}).items()}
         goals = {k: Goal.from_dict(v) for k, v in data.get("goals", {}).items()}
         capabilities = {k: Capability.from_dict(v) for k, v in data.get("capabilities", {}).items()}
-        limitations = {k: Limitation.from_dict(v) for k, v in data.get("limitations", {}).items()}
-        preferences = {k: Preference.from_dict(v) for k, v in data.get("preferences", {}).items()}
+        _limitations = {k: Limitation.from_dict(v) for k, v in data.get("limitations", {}).items()}
+        _preferences = {k: Preference.from_dict(v) for k, v in data.get("preferences", {}).items()}
         history = [SelfModelSnapshot.from_dict(s) for s in data.get("history", [])]
         
-        instance = cls(
-            agent_id=agent_id,
-            initial_beliefs=list(beliefs.values()),
-            initial_goals=list(goals.values()),
-            initial_capabilities=list(capabilities.values()),
-            initial_limitations=list(limitations.values()),
-            initial_preferences=list(preferences.values()),
+        _instance = cls(
+            _agent_id = agent_id,
+            _initial_beliefs = list(beliefs.values()),
+            _initial_goals = list(goals.values()),
+            _initial_capabilities = list(capabilities.values()),
+            _initial_limitations = list(limitations.values()),
+            _initial_preferences = list(preferences.values()),
         )
         instance.history = history
         instance._update_count = data.get("update_count", 0)
@@ -761,27 +715,27 @@ class SelfModel:
     def get_active_goals(self) -> List[Dict[str, Any]]:
         return [goal.to_dict() for goal in self.goals.values() if goal.status == GoalStatus.ACTIVE]
     
-    def _detect_belief_conflict(self, belief: Belief, old_confidence: float) -> None:
+    def _detect_belief_conflict(self, _belief: Belief, _old_confidence: float) -> None:
         logger.debug(
             "Significant belief change detected",
-            extra={
+            _extra = {
                 "belief_id": belief.belief_id,
                 "old_confidence": old_confidence,
                 "new_confidence": belief.confidence,
             }
         )
     
-    def _are_beliefs_conflicting(self, b1: Belief, b2: Belief) -> bool:
+    def _are_beliefs_conflicting(self, _b1: Belief, _b2: Belief) -> bool:
         if b1.belief_type != b2.belief_type:
             return False
-        state1_lower = b1.state.lower()
-        state2_lower = b2.state.lower()
-        negation_words = ["not", "no", "never", "don't", "doesn't", "isn't", "aren't", "wasn't", "weren't"]
+        _state1_lower = b1.state.lower()
+        _state2_lower = b2.state.lower()
+        _negation_words = ["not", "no", "never", "don't", "doesn't", "isn't", "aren't", "wasn't", "weren't"]
         for neg in negation_words:
             if neg in state1_lower or neg in state2_lower:
                 # Remove negation and normalize whitespace
-                state1_without_neg = " ".join(state1_lower.replace(neg, "").split())
-                state2_without_neg = " ".join(state2_lower.replace(neg, "").split())
+                _state1_without_neg = " ".join(state1_lower.replace(neg, "").split())
+                _state2_without_neg = " ".join(state2_lower.replace(neg, "").split())
                 if state1_without_neg in state2_lower or state2_without_neg in state1_lower:
                     return True
                 if state2_without_neg in state1_lower or state1_without_neg in state2_lower:
@@ -791,38 +745,38 @@ class SelfModel:
     def _calculate_self_coherence(self) -> float:
         if not self.beliefs:
             return 0.0
-        coherence = 1.0
-        total_conflicts = sum(len(b.conflicting_beliefs) for b in self.beliefs.values())
-        conflict_penalty = min(0.4, total_conflicts * 0.05)
+        _coherence = 1.0
+        _total_conflicts = sum(len(b.conflicting_beliefs) for b in self.beliefs.values())
+        _conflict_penalty = min(0.4, total_conflicts * 0.05)
         coherence -= conflict_penalty
         if len(self.beliefs) > 1:
-            confidences = [b.confidence for b in self.beliefs.values()]
-            avg_conf = sum(confidences) / len(confidences)
-            variance = sum((c - avg_conf) ** 2 for c in confidences) / len(confidences)
-            variance_penalty = min(0.2, variance * 0.5)
+            _confidences = [b.confidence for b in self.beliefs.values()]
+            _avg_conf = sum(confidences) / len(confidences)
+            _variance = sum((c - avg_conf) ** 2 for c in confidences) / len(confidences)
+            _variance_penalty = min(0.2, variance * 0.5)
             coherence -= variance_penalty
-        avg_confidence = sum(b.confidence for b in self.beliefs.values()) / len(self.beliefs)
-        confidence_bonus = avg_confidence * 0.1
+        _avg_confidence = sum(b.confidence for b in self.beliefs.values()) / len(self.beliefs)
+        _confidence_bonus = avg_confidence * 0.1
         coherence += confidence_bonus
         return max(0.0, min(1.0, coherence))
     
     def _calculate_goal_clarity(self) -> float:
-        active_goals = [g for g in self.goals.values() if g.status == GoalStatus.ACTIVE]
+        _active_goals = [g for g in self.goals.values() if g.status == GoalStatus.ACTIVE]
         if not active_goals:
             return 0.0
-        clarity = 0.5
+        _clarity = 0.5
         if len(active_goals) < 1:
             clarity -= 0.2
         elif len(active_goals) > 10:
             clarity -= min(0.3, (len(active_goals) - 10) * 0.05)
-        priorities = [g.priority for g in active_goals]
-        avg_p = sum(priorities) / len(priorities)
-        priority_variance = sum((p - avg_p) ** 2 for p in priorities) / len(priorities)
+        _priorities = [g.priority for g in active_goals]
+        _avg_p = sum(priorities) / len(priorities)
+        _priority_variance = sum((p - avg_p) ** 2 for p in priorities) / len(priorities)
         if priority_variance > 0.1:
             clarity += 0.1
-        goals_with_deadlines = sum(1 for g in active_goals if g.deadline)
+        _goals_with_deadlines = sum(1 for g in active_goals if g.deadline)
         clarity += min(0.2, goals_with_deadlines * 0.1)
-        goals_with_progress = sum(1 for g in active_goals if g.progress > 0)
+        _goals_with_progress = sum(1 for g in active_goals if g.progress > 0)
         clarity += min(0.2, goals_with_progress * 0.1)
         return max(0.0, min(1.0, clarity))
     
@@ -832,53 +786,53 @@ class SelfModel:
     def _calculate_goal_progress_rate(self) -> float:
         if not self.goals:
             return 0.0
-        completed = sum(1 for g in self.goals.values() if g.status == GoalStatus.COMPLETED)
+        _completed = sum(1 for g in self.goals.values() if g.status == GoalStatus.COMPLETED)
         return completed / len(self.goals)
     
     def _calculate_capability_reliability(self) -> float:
         if not self.capabilities:
             return 0.5
-        total_weighted = 0.0
-        total_weight = 0.0
+        _total_weighted = 0.0
+        _total_weight = 0.0
         for cap in self.capabilities.values():
-            weight = cap.confidence * math.log(1 + cap.experience_count)
-            reliability = cap.success_rate if cap.experience_count > 0 else 0.5
+            _weight = cap.confidence * math.log(1 + cap.experience_count)
+            _reliability = cap.success_rate if cap.experience_count > 0 else 0.5
             total_weighted += reliability * weight
             total_weight += weight
         return total_weighted / total_weight if total_weight > 0 else 0.5
     
-    def _update_parent_progress(self, parent_goal_id: str) -> None:
+    def _update_parent_progress(self, _parent_goal_id: str) -> None:
         if parent_goal_id not in self.goals:
             return
-        parent = self.goals[parent_goal_id]
-        sub_goals = [self.goals[sgid] for sgid in parent.sub_goals if sgid in self.goals]
+        _parent = self.goals[parent_goal_id]
+        _sub_goals = [self.goals[sgid] for sgid in parent.sub_goals if sgid in self.goals]
         if sub_goals:
             parent.progress = sum(sg.progress for sg in sub_goals) / len(sub_goals)
     
-    def _unblock_dependent_goals(self, completed_goal_id: str) -> None:
+    def _unblock_dependent_goals(self, _completed_goal_id: str) -> None:
         for goal in self.goals.values():
             if goal.status == GoalStatus.BLOCKED and completed_goal_id in goal.blocked_by:
                 goal.blocked_by.remove(completed_goal_id)
-                still_blocked = [b for b in goal.blocked_by if 
+                _still_blocked = [b for b in goal.blocked_by if 
                                 b in self.goals and self.goals[b].status != GoalStatus.COMPLETED]
                 if not still_blocked:
                     goal.status = GoalStatus.ACTIVE
                     goal.blocked_by = []
     
     def _maybe_take_snapshot(self) -> None:
-        now = datetime.now(timezone.utc)
+        _now = datetime.now(timezone.utc)
         if self._last_snapshot_time:
-            elapsed = (now - self._last_snapshot_time).total_seconds()
+            _elapsed = (now - self._last_snapshot_time).total_seconds()
             if elapsed < self._snapshot_interval_seconds:
                 return
-        metrics = self.get_metrics()
-        active_goals = sum(1 for g in self.goals.values() if g.status == GoalStatus.ACTIVE)
-        snapshot = SelfModelSnapshot(
-            belief_count=len(self.beliefs),
-            active_goal_count=active_goals,
-            goal_clarity=metrics.goal_clarity,
-            self_coherence=metrics.self_coherence,
-            summary=f"Beliefs: {len(self.beliefs)}, Active Goals: {active_goals}",
+        _metrics = self.get_metrics()
+        _active_goals = sum(1 for g in self.goals.values() if g.status == GoalStatus.ACTIVE)
+        _snapshot = SelfModelSnapshot(
+            _belief_count = len(self.beliefs),
+            _active_goal_count = active_goals,
+            _goal_clarity = metrics.goal_clarity,
+            _self_coherence = metrics.self_coherence,
+            _summary = f"Beliefs: {len(self.beliefs)}, Active Goals: {active_goals}",
         )
         self.history.append(snapshot)
         self._last_snapshot_time = now

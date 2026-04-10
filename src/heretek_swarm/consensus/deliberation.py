@@ -23,25 +23,25 @@ Example:
 
     # Initialize engine
     config = DeliberationConfig(max_rounds=5, consensus_threshold=0.75)
-    engine = DeliberationEngine(config)
+    _engine = DeliberationEngine(config)
 
     # Start deliberation
     engine.start_deliberation(
-        topic="Deploy to production",
-        participants=["agent-1", "agent-2", "agent-3"]
+        _topic = "Deploy to production",
+        _participants = ["agent-1", "agent-2", "agent-3"]
     )
 
     # Submit argument with evidence
     engine.submit_argument(
         agent_id="agent-1",
         position="for",
-        reasoning="All tests passed",
+        _reasoning = "All tests passed",
         evidence_refs=["test-report-001"],
         confidence=0.9
     )
 
     # Run deliberation
-    result = await engine.run_deliberation()
+    _result = await engine.run_deliberation()
     ```
 """
 
@@ -54,7 +54,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import structlog
 
-logger = structlog.get_logger("DeliberationEngine")
+_logger = structlog.get_logger("DeliberationEngine")
 
 
 class Position(Enum):
@@ -121,10 +121,10 @@ class Evidence:
             Quality score (0.0-1.0)
         """
         # Base quality from reliability
-        base_quality = self.reliability_score
+        _base_quality = self.reliability_score
 
         # Type-based modifiers
-        type_modifiers = {
+        _type_modifiers = {
             EvidenceType.DATA: 1.0,
             EvidenceType.TEST_RESULT: 0.95,
             EvidenceType.EXPERT_OPINION: 0.8,
@@ -133,10 +133,10 @@ class Evidence:
             EvidenceType.SIMULATION: 0.75,
         }
 
-        type_modifier = type_modifiers.get(self.evidence_type, 0.8)
+        _type_modifier = type_modifiers.get(self.evidence_type, 0.8)
 
         # Source verification bonus
-        source_bonus = 0.1 if self.source else 0.0
+        _source_bonus = 0.1 if self.source else 0.0
 
         return min(1.0, base_quality * type_modifier + source_bonus)
 
@@ -170,7 +170,7 @@ class Argument:
     timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     expertise_weight: float = 1.0
 
-    def calculate_strength(self, evidence_dict: Dict[str, Evidence]) -> float:
+    def calculate_strength(self, _evidence_dict: Dict[str, _Evidence]) -> float:
         """
         Calculate argument strength based on evidence and confidence.
 
@@ -181,18 +181,18 @@ class Argument:
             Strength score (0.0-1.0)
         """
         # Base strength from confidence
-        base_strength = self.confidence
+        _base_strength = self.confidence
 
         # Evidence quality contribution
-        evidence_scores = []
+        _evidence_scores = []
         for ref in self.evidence_refs:
             if ref in evidence_dict:
                 evidence_scores.append(evidence_dict[ref].calculate_quality())
 
-        evidence_contribution = sum(evidence_scores) / len(evidence_scores) if evidence_scores else 0.0
+        _evidence_contribution = sum(evidence_scores) / len(evidence_scores) if evidence_scores else 0.0
 
         # Weight evidence at 40%, confidence at 60%
-        strength = 0.6 * base_strength + 0.4 * evidence_contribution
+        _strength = 0.6 * base_strength + 0.4 * evidence_contribution
 
         # Apply expertise weight
         strength *= self.expertise_weight
@@ -223,7 +223,7 @@ class CounterArgument:
     timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     expertise_weight: float = 1.0
 
-    def calculate_effectiveness(self, evidence_dict: Dict[str, Evidence]) -> float:
+    def calculate_effectiveness(self, _evidence_dict: Dict[str, _Evidence]) -> float:
         """
         Calculate counter-argument effectiveness.
 
@@ -234,18 +234,18 @@ class CounterArgument:
             Effectiveness score (0.0-1.0)
         """
         # Base effectiveness from confidence
-        base_effectiveness = self.confidence
+        _base_effectiveness = self.confidence
 
         # Evidence contribution
-        evidence_scores = []
+        _evidence_scores = []
         for ref in self.evidence_refs:
             if ref in evidence_dict:
                 evidence_scores.append(evidence_dict[ref].calculate_quality())
 
-        evidence_contribution = sum(evidence_scores) / len(evidence_scores) if evidence_scores else 0.0
+        _evidence_contribution = sum(evidence_scores) / len(evidence_scores) if evidence_scores else 0.0
 
         # Weight evidence at 40%, confidence at 60%
-        effectiveness = 0.6 * base_effectiveness + 0.4 * evidence_contribution
+        _effectiveness = 0.6 * base_effectiveness + 0.4 * evidence_contribution
 
         # Apply expertise weight
         effectiveness *= self.expertise_weight
@@ -327,8 +327,7 @@ class ConsensusConfidence:
     dissent_severity: float = 0.0
     stability_score: float = 0.0
 
-    def calculate(self, for_weight: float, against_weight: float, total_weight: float,
-                  evidence_scores: List[float], dissent_records: List[DissentRecord]) -> None:
+    def calculate(self, _for_weight: float, _against_weight: float, _total_weight: float, _evidence_scores: List[float], _dissent_records: List[DissentRecord]) -> None:
         """
         Calculate consensus confidence.
 
@@ -341,7 +340,7 @@ class ConsensusConfidence:
         """
         # Agreement level (0.5-1.0)
         if total_weight > 0:
-            majority_weight = max(for_weight, against_weight)
+            _majority_weight = max(for_weight, against_weight)
             self.agreement_level = majority_weight / total_weight
         else:
             self.agreement_level = 0.5
@@ -441,11 +440,7 @@ class DeliberationEngine:
         expertise_profiler: Optional expertise profiler
     """
 
-    def __init__(
-        self,
-        config: Optional[DeliberationConfig] = None,
-        expertise_profiler=None,  # AgentExpertiseProfiler type
-    ) -> None:
+    def __init__(self, _config: Optional[DeliberationConfig], _expertise_profiler, _# AgentExpertiseProfiler type) -> None:
         """
         Initialize deliberation engine.
 
@@ -475,13 +470,7 @@ class DeliberationEngine:
             f"consensus_threshold={self.config.consensus_threshold:.2f}"
         )
 
-    def start_deliberation(
-        self,
-        topic: str,
-        participants: List[str],
-        deliberation_id: Optional[str] = None,
-        domain: Optional[str] = None,
-    ) -> str:
+    def start_deliberation(self, _topic: str, _participants: List[str], _deliberation_id: Optional[str], _domain: Optional[str]) -> str:
         """
         Start a new deliberation process.
 
@@ -495,7 +484,7 @@ class DeliberationEngine:
             Deliberation ID
         """
         if deliberation_id is None:
-            deliberation_id = str(uuid.uuid4())
+            _deliberation_id = str(uuid.uuid4())
 
         if len(participants) < self.config.min_participants:
             logger.warning(
@@ -526,18 +515,7 @@ class DeliberationEngine:
 
         return deliberation_id
 
-    def submit_argument(
-        self,
-        deliberation_id: str,
-        agent_id: str,
-        position: Position,
-        reasoning: str,
-        evidence_refs: Optional[List[str]] = None,
-        confidence: float = 0.5,
-        argument_type: ArgumentType = ArgumentType.PRIMARY,
-        supports: Optional[List[str]] = None,
-        rebuttals: Optional[List[str]] = None,
-    ) -> Optional[str]:
+    def submit_argument(self, _deliberation_id: str, _agent_id: str, _position: Position, _reasoning: str, _evidence_refs: Optional[List[str]], _confidence: float, _argument_type: ArgumentType, _supports: Optional[List[str]], _rebuttals: Optional[List[str]]) -> Optional[str]:
         """
         Submit an argument to the deliberation.
 
@@ -564,22 +542,22 @@ class DeliberationEngine:
             return None
 
         # Calculate expertise weight
-        expertise_weight = 1.0
-        domain = self.active_deliberations[deliberation_id].get("domain")
+        _expertise_weight = 1.0
+        _domain = self.active_deliberations[deliberation_id].get("domain")
         if self.expertise_profiler and domain:
-            expertise_weight = self.expertise_profiler.get_expertise_score(agent_id, domain)
+            _expertise_weight = self.expertise_profiler.get_expertise_score(agent_id, domain)
 
         argument = Argument(
             argument_id=f"arg-{deliberation_id}-{len(self.active_deliberations[deliberation_id]['arguments']) + 1}",
             agent_id=agent_id,
             position=position,
-            reasoning=reasoning,
-            evidence_refs=evidence_refs or [],
-            confidence=confidence,
-            argument_type=argument_type,
-            supports=supports or [],
-            rebuttals=rebuttals or [],
-            expertise_weight=expertise_weight,
+            _reasoning = reasoning,
+            _evidence_refs = evidence_refs or [],
+            _confidence = confidence,
+            _argument_type = argument_type,
+            _supports = supports or [],
+            _rebuttals = rebuttals or [],
+            _expertise_weight = expertise_weight,
         )
 
         self.active_deliberations[deliberation_id]["arguments"].append(argument)
@@ -598,15 +576,7 @@ class DeliberationEngine:
 
         return argument.argument_id
 
-    def submit_counter_argument(
-        self,
-        deliberation_id: str,
-        agent_id: str,
-        original_argument_id: str,
-        counter_reasoning: str,
-        evidence_refs: Optional[List[str]] = None,
-        confidence: float = 0.5,
-    ) -> Optional[str]:
+    def submit_counter_argument(self, _deliberation_id: str, _agent_id: str, _original_argument_id: str, _counter_reasoning: str, _evidence_refs: Optional[List[str]], _confidence: float) -> Optional[str]:
         """
         Submit a counter-argument.
 
@@ -625,19 +595,19 @@ class DeliberationEngine:
             return None
 
         # Calculate expertise weight
-        expertise_weight = 1.0
-        domain = self.active_deliberations[deliberation_id].get("domain")
+        _expertise_weight = 1.0
+        _domain = self.active_deliberations[deliberation_id].get("domain")
         if self.expertise_profiler and domain:
-            expertise_weight = self.expertise_profiler.get_expertise_score(agent_id, domain)
+            _expertise_weight = self.expertise_profiler.get_expertise_score(agent_id, domain)
 
         counter = CounterArgument(
             counter_id=f"counter-{deliberation_id}-{len(self.active_deliberations[deliberation_id]['counter_arguments']) + 1}",
-            original_argument_id=original_argument_id,
+            _original_argument_id = original_argument_id,
             agent_id=agent_id,
-            counter_reasoning=counter_reasoning,
-            evidence_refs=evidence_refs or [],
-            confidence=confidence,
-            expertise_weight=expertise_weight,
+            _counter_reasoning = counter_reasoning,
+            _evidence_refs = evidence_refs or [],
+            _confidence = confidence,
+            _expertise_weight = expertise_weight,
         )
 
         self.active_deliberations[deliberation_id]["counter_arguments"].append(counter)
@@ -649,15 +619,7 @@ class DeliberationEngine:
 
         return counter.counter_id
 
-    def submit_evidence(
-        self,
-        deliberation_id: str,
-        evidence_type: EvidenceType,
-        content: str,
-        source: Optional[str] = None,
-        reliability_score: float = 0.5,
-        submitted_by: str = "",
-    ) -> Optional[str]:
+    def submit_evidence(self, _deliberation_id: str, _evidence_type: EvidenceType, _content: str, _source: Optional[str], _reliability_score: float, _submitted_by: str) -> Optional[str]:
         """
         Submit evidence to support arguments.
 
@@ -676,11 +638,11 @@ class DeliberationEngine:
             return None
 
         evidence = Evidence(
-            evidence_type=evidence_type,
-            content=content,
-            source=source,
-            reliability_score=reliability_score,
-            submitted_by=submitted_by,
+            _evidence_type = evidence_type,
+            _content = content,
+            _source = source,
+            _reliability_score = reliability_score,
+            _submitted_by = submitted_by,
         )
 
         self.active_deliberations[deliberation_id]["evidence"][evidence.evidence_id] = evidence
@@ -693,7 +655,7 @@ class DeliberationEngine:
 
         return evidence.evidence_id
 
-    def run_deliberation_round(self, deliberation_id: str) -> Optional[DeliberationRound]:
+    def run_deliberation_round(self, _deliberation_id: str) -> Optional[DeliberationRound]:
         """
         Run a single round of deliberation.
 
@@ -706,42 +668,42 @@ class DeliberationEngine:
         if deliberation_id not in self.active_deliberations:
             return None
 
-        start_time = datetime.now(timezone.utc)
+        _start_time = datetime.now(timezone.utc)
         self.current_rounds[deliberation_id] += 1
         current_round = self.current_rounds[deliberation_id]
 
         # Get current state
-        data = self.active_deliberations[deliberation_id]
+        _data = self.active_deliberations[deliberation_id]
         arguments = data["arguments"].copy()
-        counter_arguments = data["counter_arguments"].copy()
+        _counter_arguments = data["counter_arguments"].copy()
         evidence = list(data["evidence"].values())
 
         # Calculate consensus score
-        consensus_score = self._calculate_consensus_score(deliberation_id)
+        _consensus_score = self._calculate_consensus_score(deliberation_id)
 
         # Count position changes
-        position_changes = self._count_position_changes(deliberation_id)
+        _position_changes = self._count_position_changes(deliberation_id)
 
         # Determine round outcome
         if consensus_score >= self.config.consensus_threshold:
-            outcome = DeliberationOutcome.CONSENSUS
+            _outcome = DeliberationOutcome.CONSENSUS
         elif current_round >= self.config.max_rounds:
-            outcome = DeliberationOutcome.MAJORITY if consensus_score > 0.5 else DeliberationOutcome.DEADLOCK
+            _outcome = DeliberationOutcome.MAJORITY if consensus_score > 0.5 else DeliberationOutcome.DEADLOCK
         else:
-            outcome = DeliberationOutcome.DEADLOCK
+            _outcome = DeliberationOutcome.DEADLOCK
 
-        end_time = datetime.now(timezone.utc)
+        _end_time = datetime.now(timezone.utc)
         round_result = DeliberationRound(
-            topic=data["topic"],
+            _topic = data["topic"],
             arguments=arguments,
-            counter_arguments=counter_arguments,
-            evidence_submitted=evidence,
-            participant_agents=list(data["participants"]),
-            round_duration=end_time - start_time,
-            outcome=outcome,
-            consensus_score=consensus_score,
-            position_changes=position_changes,
-            end_time=end_time.isoformat(),
+            _counter_arguments = counter_arguments,
+            _evidence_submitted = evidence,
+            _participant_agents = list(data["participants"]),
+            _round_duration = end_time - start_time,
+            _outcome = outcome,
+            _consensus_score = consensus_score,
+            _position_changes = position_changes,
+            _end_time = end_time.isoformat(),
         )
 
         self.round_results[deliberation_id].append(round_result)
@@ -759,7 +721,7 @@ class DeliberationEngine:
 
         return round_result
 
-    def _calculate_consensus_score(self, deliberation_id: str) -> float:
+    def _calculate_consensus_score(self, _deliberation_id: str) -> float:
         """
         Calculate current consensus score.
 
@@ -769,28 +731,28 @@ class DeliberationEngine:
         Returns:
             Consensus score (0.0-1.0)
         """
-        data = self.active_deliberations[deliberation_id]
-        positions = data.get("positions", {})
-        arguments = data.get("arguments", [])
+        _data = self.active_deliberations[deliberation_id]
+        _positions = data.get("positions", {})
+        _arguments = data.get("arguments", [])
         evidence = data.get("evidence", {})
 
         if not positions:
             return 0.0
 
         # Calculate weighted positions
-        for_weight = 0.0
-        against_weight = 0.0
-        neutral_weight = 0.0
+        _for_weight = 0.0
+        _against_weight = 0.0
+        _neutral_weight = 0.0
 
         for agent_id, pos_data in positions.items():
-            weight = 1.0
+            _weight = 1.0
             if self.expertise_profiler and data.get("domain"):
-                weight = self.expertise_profiler.get_expertise_score(agent_id, data["domain"])
+                _weight = self.expertise_profiler.get_expertise_score(agent_id, data["domain"])
 
             # Apply argument strength
-            agent_args = [a for a in arguments if a.agent_id == agent_id]
+            _agent_args = [a for a in arguments if a.agent_id == agent_id]
             if agent_args:
-                arg_strength = max(a.calculate_strength(evidence) for a in agent_args)
+                _arg_strength = max(a.calculate_strength(evidence) for a in agent_args)
                 weight *= arg_strength
 
             if pos_data["position"] == Position.FOR:
@@ -800,25 +762,25 @@ class DeliberationEngine:
             else:
                 neutral_weight += weight * pos_data["confidence"]
 
-        total_weight = for_weight + against_weight + neutral_weight
+        _total_weight = for_weight + against_weight + neutral_weight
 
         if total_weight == 0:
             return 0.0
 
         # Consensus is higher when one side dominates
-        majority_weight = max(for_weight, against_weight)
+        _majority_weight = max(for_weight, against_weight)
         consensus = majority_weight / total_weight
 
         return consensus
 
-    def _count_position_changes(self, deliberation_id: str) -> int:
+    def _count_position_changes(self, _deliberation_id: str) -> int:
         """Count position changes across rounds."""
-        rounds = self.round_results.get(deliberation_id, [])
+        _rounds = self.round_results.get(deliberation_id, [])
         if len(rounds) < 2:
             return 0
 
-        changes = 0
-        prev_positions = {}
+        _changes = 0
+        _prev_positions = {}
 
         for round_result in rounds:
             for arg in round_result.arguments:
@@ -830,12 +792,7 @@ class DeliberationEngine:
 
         return changes
 
-    def track_dissent(
-        self,
-        deliberation_id: str,
-        agent_id: str,
-        reasoning: str = "",
-    ) -> None:
+    def track_dissent(self, _deliberation_id: str, _agent_id: str, _reasoning: str) -> None:
         """
         Track dissenting opinion for minority report.
 
@@ -847,32 +804,29 @@ class DeliberationEngine:
         if deliberation_id not in self.active_deliberations:
             return
 
-        positions = self.active_deliberations[deliberation_id].get("positions", {})
+        _positions = self.active_deliberations[deliberation_id].get("positions", {})
         if agent_id not in positions:
             return
 
-        pos_data = positions[agent_id]
+        _pos_data = positions[agent_id]
 
         # Get agent's key arguments
-        arguments = self.active_deliberations[deliberation_id].get("arguments", [])
-        agent_args = [a.argument_id for a in arguments if a.agent_id == agent_id]
+        _arguments = self.active_deliberations[deliberation_id].get("arguments", [])
+        _agent_args = [a.argument_id for a in arguments if a.agent_id == agent_id]
 
         dissent = DissentRecord(
             agent_id=agent_id,
-            position=pos_data["position"],
-            confidence=pos_data["confidence"],
-            reasoning=reasoning,
-            key_arguments=agent_args,
+            _position = pos_data["position"],
+            _confidence = pos_data["confidence"],
+            _reasoning = reasoning,
+            _key_arguments = agent_args,
         )
 
         self.dissent_records[deliberation_id].append(dissent)
 
         logger.info(f"Dissent tracked for agent {agent_id} in {deliberation_id}")
 
-    def calculate_consensus_confidence(
-        self,
-        deliberation_id: str,
-    ) -> ConsensusConfidence:
+    def calculate_consensus_confidence(self, _deliberation_id: str) -> ConsensusConfidence:
         """
         Calculate consensus confidence for a deliberation.
 
@@ -882,48 +836,45 @@ class DeliberationEngine:
         Returns:
             Consensus confidence
         """
-        data = self.active_deliberations[deliberation_id]
+        _data = self.active_deliberations[deliberation_id]
         evidence = data.get("evidence", {})
 
         # Calculate weights
         for_weight, against_weight, total_weight = self._calculate_position_weights(deliberation_id)
 
         # Get evidence scores
-        evidence_scores = [e.calculate_quality() for e in evidence.values()]
+        _evidence_scores = [e.calculate_quality() for e in evidence.values()]
 
         # Get dissent records
         dissent_records = self.dissent_records.get(deliberation_id, [])
 
-        confidence = ConsensusConfidence()
+        _confidence = ConsensusConfidence()
         confidence.calculate(for_weight, against_weight, total_weight, evidence_scores, dissent_records)
 
         return confidence
 
-    def _calculate_position_weights(
-        self,
-        deliberation_id: str,
-    ) -> Tuple[float, float, float]:
+    def _calculate_position_weights(self, _deliberation_id: str) -> Tuple[float, float, float]:
         """Calculate position weights for consensus scoring."""
-        data = self.active_deliberations[deliberation_id]
-        positions = data.get("positions", {})
-        arguments = data.get("arguments", [])
+        _data = self.active_deliberations[deliberation_id]
+        _positions = data.get("positions", {})
+        _arguments = data.get("arguments", [])
         evidence = data.get("evidence", {})
 
-        for_weight = 0.0
-        against_weight = 0.0
-        total_weight = 0.0
+        _for_weight = 0.0
+        _against_weight = 0.0
+        _total_weight = 0.0
 
         for agent_id, pos_data in positions.items():
-            weight = 1.0
+            _weight = 1.0
             if self.expertise_profiler and data.get("domain"):
-                weight = self.expertise_profiler.get_expertise_score(agent_id, data["domain"])
+                _weight = self.expertise_profiler.get_expertise_score(agent_id, data["domain"])
 
-            agent_args = [a for a in arguments if a.agent_id == agent_id]
+            _agent_args = [a for a in arguments if a.agent_id == agent_id]
             if agent_args:
-                arg_strength = max(a.calculate_strength(evidence) for a in agent_args)
+                _arg_strength = max(a.calculate_strength(evidence) for a in agent_args)
                 weight *= arg_strength
 
-            weighted_confidence = weight * pos_data["confidence"]
+            _weighted_confidence = weight * pos_data["confidence"]
             total_weight += weighted_confidence
 
             if pos_data["position"] == Position.FOR:
@@ -933,10 +884,7 @@ class DeliberationEngine:
 
         return for_weight, against_weight, total_weight
 
-    def finalize_deliberation(
-        self,
-        deliberation_id: str,
-    ) -> Optional[DeliberationResult]:
+    def finalize_deliberation(self, _deliberation_id: str) -> Optional[DeliberationResult]:
         """
         Finalize deliberation and return result.
 
@@ -951,62 +899,62 @@ class DeliberationEngine:
 
         self.deliberation_states[deliberation_id] = "completed"
 
-        data = self.active_deliberations[deliberation_id]
-        arguments = data.get("arguments", [])
+        _data = self.active_deliberations[deliberation_id]
+        _arguments = data.get("arguments", [])
         evidence = data.get("evidence", {})
 
         # Calculate final consensus
-        consensus_score = self._calculate_consensus_score(deliberation_id)
+        _consensus_score = self._calculate_consensus_score(deliberation_id)
 
         # Determine final position
         for_weight, against_weight, _ = self._calculate_position_weights(deliberation_id)
         if for_weight > against_weight:
-            final_position = Position.FOR
+            _final_position = Position.FOR
         elif against_weight > for_weight:
-            final_position = Position.AGAINST
+            _final_position = Position.AGAINST
         else:
-            final_position = Position.NEUTRAL
+            _final_position = Position.NEUTRAL
 
         # Determine outcome
         if consensus_score >= self.config.consensus_threshold:
-            outcome = DeliberationOutcome.CONSENSUS
+            _outcome = DeliberationOutcome.CONSENSUS
         elif consensus_score > 0.5:
-            outcome = DeliberationOutcome.MAJORITY
+            _outcome = DeliberationOutcome.MAJORITY
         else:
-            outcome = DeliberationOutcome.DEADLOCK
+            _outcome = DeliberationOutcome.DEADLOCK
 
         # Calculate confidence
-        confidence = self.calculate_consensus_confidence(deliberation_id)
+        _confidence = self.calculate_consensus_confidence(deliberation_id)
 
         # Get dissenting agents
-        dissenting_agents = [d.agent_id for d in self.dissent_records.get(deliberation_id, [])]
-        minority_report = self.dissent_records.get(deliberation_id, [])
+        _dissenting_agents = [d.agent_id for d in self.dissent_records.get(deliberation_id, [])]
+        _minority_report = self.dissent_records.get(deliberation_id, [])
 
         # Generate decision hash
-        decision_data = {
+        _decision_data = {
             "deliberation_id": deliberation_id,
             "topic": data["topic"],
             "final_position": final_position.value,
             "consensus_score": consensus_score,
             "timestamp": datetime.now(timezone.utc).isoformat(),
         }
-        decision_hash = hashlib.sha256(
+        _decision_hash = hashlib.sha256(
             str(sorted(decision_data.items())).encode()
         ).hexdigest()
 
-        result = DeliberationResult(
-            deliberation_id=deliberation_id,
-            topic=data["topic"],
-            outcome=outcome,
-            final_position=final_position,
-            consensus_score=consensus_score,
-            confidence=confidence,
-            dissenting_agents=dissenting_agents,
-            minority_report=minority_report,
-            rounds_completed=self.current_rounds[deliberation_id],
-            total_arguments=len(arguments),
-            total_evidence=len(evidence),
-            decision_hash=decision_hash,
+        _result = DeliberationResult(
+            _deliberation_id = deliberation_id,
+            _topic = data["topic"],
+            _outcome = outcome,
+            _final_position = final_position,
+            _consensus_score = consensus_score,
+            _confidence = confidence,
+            _dissenting_agents = dissenting_agents,
+            _minority_report = minority_report,
+            _rounds_completed = self.current_rounds[deliberation_id],
+            _total_arguments = len(arguments),
+            _total_evidence = len(evidence),
+            _decision_hash = decision_hash,
         )
 
         logger.info(
@@ -1016,39 +964,36 @@ class DeliberationEngine:
 
         return result
 
-    def get_deliberation_state(self, deliberation_id: str) -> Optional[str]:
+    def get_deliberation_state(self, _deliberation_id: str) -> Optional[str]:
         """Get current state of a deliberation."""
         return self.deliberation_states.get(deliberation_id)
 
-    def get_position_distribution(
-        self,
-        deliberation_id: str,
-    ) -> Dict[str, float]:
+    def get_position_distribution(self, _deliberation_id: str) -> Dict[str, float]:
         """Get distribution of positions as percentages."""
         if deliberation_id not in self.active_deliberations:
             return {}
 
-        positions = self.active_deliberations[deliberation_id].get("positions", {})
-        total = len(positions)
+        _positions = self.active_deliberations[deliberation_id].get("positions", {})
+        _total = len(positions)
 
         if total == 0:
             return {}
 
         distribution: Dict[str, int] = {}
         for pos_data in positions.values():
-            key = pos_data["position"].value
+            _key = pos_data["position"].value
             distribution[key] = distribution.get(key, 0) + 1
 
         return {k: v / total for k, v in distribution.items()}
 
-    def get_round_history(self, deliberation_id: str) -> List[DeliberationRound]:
+    def get_round_history(self, _deliberation_id: str) -> List[DeliberationRound]:
         """Get complete round history for a deliberation."""
         return self.round_results.get(deliberation_id, [])
 
     def get_statistics(self) -> Dict[str, Any]:
         """Get deliberation engine statistics."""
-        active_count = len(self.active_deliberations)
-        completed_count = sum(1 for s in self.deliberation_states.values() if s == "completed")
+        _active_count = len(self.active_deliberations)
+        _completed_count = sum(1 for s in self.deliberation_states.values() if s == "completed")
 
         return {
             "active_deliberations": active_count,
@@ -1059,7 +1004,7 @@ class DeliberationEngine:
             "dissent_tracking_enabled": self.config.dissent_tracking,
         }
 
-    def cleanup_deliberation(self, deliberation_id: str) -> None:
+    def cleanup_deliberation(self, _deliberation_id: str) -> None:
         """Clean up a completed deliberation."""
         for store in [self.active_deliberations, self.deliberation_states,
                       self.current_rounds, self.round_results,

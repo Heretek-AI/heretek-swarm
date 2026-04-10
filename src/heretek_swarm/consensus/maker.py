@@ -17,7 +17,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import structlog
 
-logger = structlog.get_logger("MAKERConsensus")
+_logger = structlog.get_logger("MAKERConsensus")
 
 
 class ConsensusState(Enum):
@@ -87,7 +87,7 @@ class MAKERConsensus:
 
     Example:
         ```python
-        consensus = MAKERConsensus(ahead_by_k=2, min_votes=3)
+        _consensus = MAKERConsensus(ahead_by_k=2, min_votes=3)
 
         # Start consensus process
         consensus.start_consensus("decision-1")
@@ -98,18 +98,12 @@ class MAKERConsensus:
         consensus.add_vote("decision-1", "agent-3", "B", 0.7)
 
         # Compute result
-        result = consensus.compute_consensus("decision-1")
+        _result = consensus.compute_consensus("decision-1")
         print(f"Decision: {result.decision}, Confidence: {result.confidence}")
         ```
     """
 
-    def __init__(
-        self,
-        ahead_by_k: int = 2,
-        min_votes: int = 3,
-        confidence_threshold: float = 0.6,
-        reputation_weights: Optional[Dict[str, float]] = None,
-    ) -> None:
+    def __init__(self, _ahead_by_k: int, _min_votes: int, _confidence_threshold: float, _reputation_weights: Optional[Dict[str, _float]]) -> None:
         """
         Initialize the consensus engine.
 
@@ -137,7 +131,7 @@ class MAKERConsensus:
             f"min_votes={min_votes}",
         )
 
-    def start_consensus(self, consensus_id: str) -> None:
+    def start_consensus(self, _consensus_id: str) -> None:
         """
         Start a new consensus process.
 
@@ -148,14 +142,7 @@ class MAKERConsensus:
         self.process_states[consensus_id] = ConsensusState.GATHERING
         logger.info(f"Started consensus process {consensus_id}")
 
-    def add_vote(
-        self,
-        consensus_id: str,
-        agent_id: str,
-        decision: str,
-        confidence: float,
-        metadata: Optional[Dict[str, Any]] = None,
-    ) -> None:
+    def add_vote(self, _consensus_id: str, _agent_id: str, _decision: str, _confidence: float, _metadata: Optional[Dict[str, _Any]]) -> None:
         """
         Add a vote to a consensus process.
 
@@ -170,12 +157,12 @@ class MAKERConsensus:
             logger.warning(f"Unknown consensus ID: {consensus_id}")
             return
 
-        vote = Vote(
+        _vote = Vote(
             agent_id=agent_id,
             decision=decision,
             confidence=confidence,
-            timestamp=datetime.now(timezone.utc).isoformat(),
-            metadata=metadata or {},
+            _timestamp = datetime.now(timezone.utc).isoformat(),
+            _metadata = metadata or {},
         )
 
         self.active_processes[consensus_id].append(vote)
@@ -189,10 +176,7 @@ class MAKERConsensus:
             f"Vote added from {agent_id}: {decision} (confidence: {confidence})",
         )
 
-    def compute_consensus(
-        self,
-        consensus_id: str,
-    ) -> Optional[ConsensusResult]:
+    def compute_consensus(self, _consensus_id: str) -> Optional[ConsensusResult]:
         """
         Compute consensus from collected votes.
 
@@ -206,7 +190,7 @@ class MAKERConsensus:
             logger.warning(f"Unknown consensus ID: {consensus_id}")
             return None
 
-        votes = self.active_processes[consensus_id]
+        _votes = self.active_processes[consensus_id]
 
         if len(votes) < self.min_votes:
             logger.info(f"Not enough votes: {len(votes)}/{self.min_votes}")
@@ -215,13 +199,13 @@ class MAKERConsensus:
         self.process_states[consensus_id] = ConsensusState.AGGREGATING
 
         # Check for red flags
-        red_flags = self._check_red_flags(votes)
+        _red_flags = self._check_red_flags(votes)
 
         # Compute weighted votes - use enhanced weighting if available
-        weighted_votes = self._apply_enhanced_vote_weights(votes, consensus_id)
+        _weighted_votes = self._apply_enhanced_vote_weights(votes, consensus_id)
 
         # First-to-ahead-by-k voting
-        result = self._first_to_ahead_by_k(
+        _result = self._first_to_ahead_by_k(
             consensus_id,
             weighted_votes,
             red_flags,
@@ -239,12 +223,7 @@ class MAKERConsensus:
 
         return result
 
-    def _first_to_ahead_by_k(
-        self,
-        consensus_id: str,
-        votes: List[Tuple[str, float]],
-        red_flags: List[str],
-    ) -> Optional[ConsensusResult]:
+    def _first_to_ahead_by_k(self, _consensus_id: str, _votes: List[Tuple[str, _float]], _red_flags: List[str]) -> Optional[ConsensusResult]:
         """
         First-to-ahead-by-k voting mechanism.
 
@@ -268,10 +247,10 @@ class MAKERConsensus:
             vote_details[decision].append((decision, weight))
 
         # Sort decisions by vote count
-        sorted_decisions = sorted(
+        _sorted_decisions = sorted(
             vote_counts.items(),
-            key=lambda x: x[1],
-            reverse=True,
+            _key = lambda x: x[1],
+            _reverse = True,
         )
 
         if len(sorted_decisions) < 2:
@@ -279,17 +258,17 @@ class MAKERConsensus:
 
         # Check if first is ahead by k
         first_decision, first_count = sorted_decisions[0]
-        second_count = sorted_decisions[1][1]
+        _second_count = sorted_decisions[1][1]
 
         if first_count - second_count >= self.ahead_by_k:
             # Calculate confidence
-            total_votes = sum(vote_counts.values())
+            _total_votes = sum(vote_counts.values())
             confidence = (
                 first_count / total_votes if total_votes > 0 else 0.0
             )
 
             # Find original votes for this decision
-            original_votes = [
+            _original_votes = [
                 v
                 for v in self.active_processes.get(consensus_id, [])
                 if v.decision == first_decision
@@ -297,16 +276,16 @@ class MAKERConsensus:
 
             return ConsensusResult(
                 decision=first_decision,
-                confidence=confidence,
-                votes=original_votes,
-                state=ConsensusState.COMPLETED,
-                timestamp=datetime.now(timezone.utc).isoformat(),
-                red_flags=red_flags,
+                _confidence = confidence,
+                _votes = original_votes,
+                _state = ConsensusState.COMPLETED,
+                _timestamp = datetime.now(timezone.utc).isoformat(),
+                _red_flags = red_flags,
             )
 
         return None
 
-    def _check_red_flags(self, votes: List[Vote]) -> List[str]:
+    def _check_red_flags(self, _votes: List[Vote]) -> List[str]:
         """
         Check for red flags in votes.
 
@@ -316,19 +295,19 @@ class MAKERConsensus:
         Returns:
             List of red flag messages
         """
-        red_flags = []
+        _red_flags = []
 
         # Check for outlier confidence values
-        confidences = [v.confidence for v in votes]
+        _confidences = [v.confidence for v in votes]
         if confidences:
-            mean_confidence = statistics.mean(confidences)
-            std_confidence = (
+            _mean_confidence = statistics.mean(confidences)
+            _std_confidence = (
                 statistics.stdev(confidences) if len(confidences) > 1 else 0
             )
 
             for vote in votes:
                 if std_confidence > 0:
-                    z_score = abs(vote.confidence - mean_confidence) / std_confidence
+                    _z_score = abs(vote.confidence - mean_confidence) / std_confidence
                     if z_score > 2.0:  # More than 2 standard deviations
                         red_flags.append(
                             f"Outlier confidence from {vote.agent_id}: "
@@ -346,8 +325,8 @@ class MAKERConsensus:
 
         # Check for unanimous disagreement
         if len(votes) >= 3:
-            decisions = [v.decision for v in votes]
-            unique_decisions = set(decisions)
+            _decisions = [v.decision for v in votes]
+            _unique_decisions = set(decisions)
             if len(unique_decisions) == len(votes):
                 red_flags.append(
                     "Complete disagreement among agents - no consensus possible"
@@ -358,10 +337,7 @@ class MAKERConsensus:
 
         return red_flags
 
-    def _apply_reputation_weights(
-        self,
-        votes: List[Vote],
-    ) -> List[Tuple[str, float]]:
+    def _apply_reputation_weights(self, _votes: List[Vote]) -> List[Tuple[str, float]]:
         """
         Apply reputation weights to votes.
 
@@ -371,26 +347,22 @@ class MAKERConsensus:
         Returns:
             List of (decision, weight) tuples
         """
-        weighted = []
+        _weighted = []
 
         for vote in votes:
             # Get reputation weight
-            reputation = self.reputation_weights.get(
+            _reputation = self.reputation_weights.get(
                 vote.agent_id,
                 self.agent_reputation.get(vote.agent_id, 0.5),
             )
 
             # Calculate weighted vote
-            weight = vote.confidence * reputation
+            _weight = vote.confidence * reputation
             weighted.append((vote.decision, weight))
 
         return weighted
 
-    def _apply_enhanced_vote_weights(
-        self,
-        votes: List[Vote],
-        consensus_id: str,
-    ) -> List[Tuple[str, float]]:
+    def _apply_enhanced_vote_weights(self, _votes: List[Vote], _consensus_id: str) -> List[Tuple[str, float]]:
         """
         Apply enhanced vote weights using evidence quality, expertise, confidence, and historical accuracy.
 
@@ -408,13 +380,7 @@ class MAKERConsensus:
         # EnhancedMAKERConsensus overrides this method
         return self._apply_reputation_weights(votes)
 
-    def update_reputation(
-        self,
-        agent_id: str,
-        delta: float,
-        min_reputation: float = 0.0,
-        max_reputation: float = 1.0,
-    ) -> None:
+    def update_reputation(self, _agent_id: str, _delta: float, _min_reputation: float, _max_reputation: float) -> None:
         """
         Update an agent's reputation.
 
@@ -424,8 +390,8 @@ class MAKERConsensus:
             min_reputation: Minimum reputation value
             max_reputation: Maximum reputation value
         """
-        current = self.agent_reputation.get(agent_id, 0.5)
-        new_reputation = max(
+        _current = self.agent_reputation.get(agent_id, 0.5)
+        _new_reputation = max(
             min_reputation, min(max_reputation, current + delta)
         )
         self.agent_reputation[agent_id] = new_reputation
@@ -435,7 +401,7 @@ class MAKERConsensus:
             f"{current:.2f} -> {new_reputation:.2f}"
         )
 
-    def get_agent_reputation(self, agent_id: str) -> float:
+    def get_agent_reputation(self, _agent_id: str) -> float:
         """
         Get an agent's reputation.
 
@@ -447,7 +413,7 @@ class MAKERConsensus:
         """
         return self.agent_reputation.get(agent_id, 0.5)
 
-    def get_process_state(self, consensus_id: str) -> Optional[ConsensusState]:
+    def get_process_state(self, _consensus_id: str) -> Optional[ConsensusState]:
         """
         Get the state of a consensus process.
 
@@ -459,7 +425,7 @@ class MAKERConsensus:
         """
         return self.process_states.get(consensus_id)
 
-    def cleanup_process(self, consensus_id: str) -> None:
+    def cleanup_process(self, _consensus_id: str) -> None:
         """
         Clean up a completed consensus process.
 
@@ -472,13 +438,7 @@ class MAKERConsensus:
             del self.process_states[consensus_id]
         logger.debug(f"Cleaned up process {consensus_id}")
 
-    async def run_consensus(
-        self,
-        consensus_id: str,
-        agents: List[str],
-        decision_func: callable,
-        timeout: float = 30.0,
-    ) -> Optional[ConsensusResult]:
+    async def run_consensus(self, _consensus_id: str, _agents: List[str], _decision_func: callable, _timeout: float) -> Optional[ConsensusResult]:
         """
         Run a complete consensus process with timeout.
 
@@ -495,9 +455,9 @@ class MAKERConsensus:
 
         try:
             # Collect votes from all agents
-            tasks = []
+            _tasks = []
             for agent_id in agents:
-                task = asyncio.create_task(
+                _task = asyncio.create_task(
                     self._collect_agent_vote(
                         consensus_id,
                         agent_id,
@@ -509,11 +469,11 @@ class MAKERConsensus:
             # Wait for all votes or timeout
             await asyncio.wait_for(
                 asyncio.gather(*tasks, return_exceptions=True),
-                timeout=timeout,
+                _timeout = timeout,
             )
 
             # Compute consensus
-            result = self.compute_consensus(consensus_id)
+            _result = self.compute_consensus(consensus_id)
 
             return result
 
@@ -525,12 +485,7 @@ class MAKERConsensus:
             # Cleanup
             self.cleanup_process(consensus_id)
 
-    async def _collect_agent_vote(
-        self,
-        consensus_id: str,
-        agent_id: str,
-        decision_func: callable,
-    ) -> None:
+    async def _collect_agent_vote(self, _consensus_id: str, _agent_id: str, _decision_func: callable) -> None:
         """
         Collect a vote from a single agent.
 
@@ -542,10 +497,10 @@ class MAKERConsensus:
         try:
             decision, confidence = await decision_func(agent_id)
             self.add_vote(
-                consensus_id=consensus_id,
-                agent_id=agent_id,
-                decision=decision,
-                confidence=confidence,
+                _consensus_id = consensus_id,
+                _agent_id = agent_id,
+                _decision = decision,
+                _confidence = confidence,
             )
         except Exception as e:
             logger.error(f"Error collecting vote from {agent_id}: {e}")
@@ -557,7 +512,7 @@ class MAKERConsensus:
         Returns:
             Statistics dictionary
         """
-        total_votes = sum(
+        _total_votes = sum(
             len(votes) for votes in self.active_processes.values()
         )
 

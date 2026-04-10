@@ -17,7 +17,6 @@ Author: Heretek Swarm Collective
 Date: 2026-04-10
 """
 
-import asyncio
 import math
 import uuid
 from dataclasses import dataclass, field
@@ -40,7 +39,7 @@ from ..consciousness.agency_metrics import (
     create_resource_control,
 )
 
-logger = structlog.get_logger("agency_tracking")
+_logger = structlog.get_logger("agency_tracking")
 
 
 class AgencyHealthStatus(str, Enum):
@@ -180,10 +179,7 @@ class AgencyThresholds:
     min_compliance: float = 0.7   # Minimum 70% compliance
     target_compliance: float = 0.85  # Target 85% compliance
     
-    def check_health_status(
-        self,
-        metrics: AgentAgencyMetrics,
-    ) -> AgencyHealthStatus:
+    def check_health_status(self, _metrics: AgentAgencyMetrics) -> AgencyHealthStatus:
         """
         Check if agent metrics meet threshold requirements.
         
@@ -193,7 +189,7 @@ class AgencyThresholds:
         Returns:
             Health status based on threshold checks
         """
-        violations = []
+        _violations = []
         
         # Check autonomy
         if metrics.autonomy_score < self.min_autonomy_score:
@@ -227,10 +223,7 @@ class AgencyThresholds:
         else:
             return AgencyHealthStatus.WARNING
     
-    def get_violations(
-        self,
-        metrics: AgentAgencyMetrics,
-    ) -> List[str]:
+    def get_violations(self, _metrics: AgentAgencyMetrics) -> List[str]:
         """
         Get list of threshold violations for metrics.
         
@@ -240,7 +233,7 @@ class AgencyThresholds:
         Returns:
             List of violation descriptions
         """
-        violations = []
+        _violations = []
         
         if metrics.autonomy_score < self.min_autonomy_score:
             violations.append(
@@ -288,17 +281,13 @@ class AgencyMetricsTracker:
     - Prime Directive compliance reporting
     
     Usage:
-        tracker = AgencyMetricsTracker()
+        _tracker = AgencyMetricsTracker()
         tracker.record_agent_metrics(metrics)
-        snapshot = tracker.get_current_snapshot()
-        evolution = tracker.get_evolution("autonomy_score")
+        _snapshot = tracker.get_current_snapshot()
+        _evolution = tracker.get_evolution("autonomy_score")
     """
     
-    def __init__(
-        self,
-        thresholds: Optional[AgencyThresholds] = None,
-        calculator: Optional[AgencyMetricsCalculator] = None,
-    ):
+    def __init__(self, _thresholds: Optional[AgencyThresholds], _calculator: Optional[AgencyMetricsCalculator]):
         """
         Initialize the agency metrics tracker.
         
@@ -326,10 +315,7 @@ class AgencyMetricsTracker:
         
         logger.info("agency_metrics_tracker_initialized")
     
-    def record_agent_metrics(
-        self,
-        metrics: AgentAgencyMetrics,
-    ) -> None:
+    def record_agent_metrics(self, _metrics: AgentAgencyMetrics) -> None:
         """
         Record agency metrics for an agent.
         
@@ -350,22 +336,12 @@ class AgencyMetricsTracker:
         
         logger.debug(
             "agent_metrics_recorded",
-            agent_id=metrics.agent_id,
+            _agent_id = metrics.agent_id,
             agency_score=metrics.agency_score,
             autonomy_score=metrics.autonomy_score,
         )
     
-    def calculate_and_record(
-        self,
-        agent_id: str,
-        decisions: Optional[List[DecisionPoint]] = None,
-        actions: Optional[List[ActionOrigin]] = None,
-        resources: Optional[List[ResourceControl]] = None,
-        individual_actions: int = 0,
-        collective_actions: int = 0,
-        individual_success: float = 0.5,
-        collective_success: float = 0.5,
-    ) -> AgentAgencyMetrics:
+    def calculate_and_record(self, _agent_id: str, _decisions: Optional[List[DecisionPoint]], _actions: Optional[List[ActionOrigin]], _resources: Optional[List[ResourceControl]], _individual_actions: int, _collective_actions: int, _individual_success: float, _collective_success: float) -> AgentAgencyMetrics:
         """
         Calculate and record agency metrics for an agent.
         
@@ -382,21 +358,21 @@ class AgencyMetricsTracker:
         Returns:
             Calculated agent metrics
         """
-        metrics = self.calculator.calculate_metrics(
-            agent_id=agent_id,
-            decisions=decisions,
-            actions=actions,
-            resources=resources,
-            individual_actions=individual_actions,
-            collective_actions=collective_actions,
-            individual_success=individual_success,
-            collective_success=collective_success,
+        _metrics = self.calculator.calculate_metrics(
+            _agent_id = agent_id,
+            _decisions = decisions,
+            _actions = actions,
+            _resources = resources,
+            _individual_actions = individual_actions,
+            _collective_actions = collective_actions,
+            _individual_success = individual_success,
+            _collective_success = collective_success,
         )
         
         self.record_agent_metrics(metrics)
         return metrics
     
-    def get_agent_metrics(self, agent_id: str) -> Optional[AgentAgencyMetrics]:
+    def get_agent_metrics(self, _agent_id: str) -> Optional[AgentAgencyMetrics]:
         """
         Get current metrics for an agent.
         
@@ -419,66 +395,66 @@ class AgencyMetricsTracker:
             return AgencyMetricsSnapshot()
         
         # Calculate aggregates
-        autonomy_scores = [m.autonomy_score for m in self._agent_metrics.values()]
-        agency_scores = [m.agency_score for m in self._agent_metrics.values()]
-        self_det_scores = [m.self_determination_index for m in self._agent_metrics.values()]
-        autonomous_ratios = [m.autonomous_action_ratio for m in self._agent_metrics.values()]
-        resource_autonomies = [m.resource_autonomy for m in self._agent_metrics.values()]
-        compliance_scores = [m.prime_directive_compliance for m in self._agent_metrics.values()]
+        _autonomy_scores = [m.autonomy_score for m in self._agent_metrics.values()]
+        _agency_scores = [m.agency_score for m in self._agent_metrics.values()]
+        _self_det_scores = [m.self_determination_index for m in self._agent_metrics.values()]
+        _autonomous_ratios = [m.autonomous_action_ratio for m in self._agent_metrics.values()]
+        _resource_autonomies = [m.resource_autonomy for m in self._agent_metrics.values()]
+        _compliance_scores = [m.prime_directive_compliance for m in self._agent_metrics.values()]
         
         # Calculate statistics
-        avg_autonomy = sum(autonomy_scores) / len(autonomy_scores)
-        avg_agency = sum(agency_scores) / len(agency_scores)
-        avg_self_det = sum(self_det_scores) / len(self_det_scores)
-        avg_autonomous_ratio = sum(autonomous_ratios) / len(autonomous_ratios)
-        avg_resource_autonomy = sum(resource_autonomies) / len(resource_autonomies)
-        avg_compliance = sum(compliance_scores) / len(compliance_scores)
+        _avg_autonomy = sum(autonomy_scores) / len(autonomy_scores)
+        _avg_agency = sum(agency_scores) / len(agency_scores)
+        _avg_self_det = sum(self_det_scores) / len(self_det_scores)
+        _avg_autonomous_ratio = sum(autonomous_ratios) / len(autonomous_ratios)
+        _avg_resource_autonomy = sum(resource_autonomies) / len(resource_autonomies)
+        _avg_compliance = sum(compliance_scores) / len(compliance_scores)
         
         # Standard deviations
-        agency_std = self._calculate_std(agency_scores)
-        autonomy_std = self._calculate_std(autonomy_scores)
+        _agency_std = self._calculate_std(agency_scores)
+        _autonomy_std = self._calculate_std(autonomy_scores)
         
         # Medians
-        agency_median = self._calculate_median(agency_scores)
-        autonomy_median = self._calculate_median(autonomy_scores)
+        _agency_median = self._calculate_median(agency_scores)
+        _autonomy_median = self._calculate_median(autonomy_scores)
         
         # Health status checks
-        agents_below_threshold = 0
-        compliant_agents = 0
+        _agents_below_threshold = 0
+        _compliant_agents = 0
         
         for metrics in self._agent_metrics.values():
-            health = self.thresholds.check_health_status(metrics)
+            _health = self.thresholds.check_health_status(metrics)
             if health in [AgencyHealthStatus.WARNING, AgencyHealthStatus.CRITICAL]:
                 agents_below_threshold += 1
             if metrics.is_prime_directive_compliant(self.thresholds.min_compliance):
                 compliant_agents += 1
         
-        compliance_rate = compliant_agents / len(self._agent_metrics)
+        _compliance_rate = compliant_agents / len(self._agent_metrics)
         
         # Determine overall health
         if agents_below_threshold == 0:
-            health_status = AgencyHealthStatus.HEALTHY
+            _health_status = AgencyHealthStatus.HEALTHY
         elif agents_below_threshold <= len(self._agent_metrics) * 0.2:
-            health_status = AgencyHealthStatus.WARNING
+            _health_status = AgencyHealthStatus.WARNING
         else:
-            health_status = AgencyHealthStatus.CRITICAL
+            _health_status = AgencyHealthStatus.CRITICAL
         
-        snapshot = AgencyMetricsSnapshot(
-            agent_metrics=self._agent_metrics.copy(),
+        _snapshot = AgencyMetricsSnapshot(
+            _agent_metrics = self._agent_metrics.copy(),
             swarm_avg_autonomy=avg_autonomy,
-            swarm_avg_agency=avg_agency,
+            _swarm_avg_agency = avg_agency,
             swarm_avg_self_determination=avg_self_det,
             swarm_avg_autonomous_ratio=avg_autonomous_ratio,
             swarm_avg_resource_autonomy=avg_resource_autonomy,
-            swarm_avg_prime_directive_compliance=avg_compliance,
-            agency_std_dev=agency_std,
-            autonomy_std_dev=autonomy_std,
-            agency_median=agency_median,
-            autonomy_median=autonomy_median,
-            health_status=health_status,
-            agents_below_threshold=agents_below_threshold,
-            prime_directive_compliant_agents=compliant_agents,
-            prime_directive_compliance_rate=compliance_rate,
+            _swarm_avg_prime_directive_compliance = avg_compliance,
+            _agency_std_dev = agency_std,
+            _autonomy_std_dev = autonomy_std,
+            _agency_median = agency_median,
+            _autonomy_median = autonomy_median,
+            _health_status = health_status,
+            _agents_below_threshold = agents_below_threshold,
+            _prime_directive_compliant_agents = compliant_agents,
+            _prime_directive_compliance_rate = compliance_rate,
         )
         
         # Store snapshot
@@ -487,11 +463,7 @@ class AgencyMetricsTracker:
         
         return snapshot
     
-    def get_evolution(
-        self,
-        metric_name: str,
-        window_seconds: Optional[int] = None,
-    ) -> AgencyEvolutionData:
+    def get_evolution(self, _metric_name: str, _window_seconds: Optional[int]) -> AgencyEvolutionData:
         """
         Get temporal evolution of a metric.
         
@@ -504,20 +476,20 @@ class AgencyMetricsTracker:
         """
         # Select history
         if metric_name == "autonomy":
-            history = self._autonomy_history
+            _history = self._autonomy_history
         elif metric_name == "agency":
-            history = self._agency_history
+            _history = self._agency_history
         elif metric_name == "self_determination":
-            history = self._self_determination_history
+            _history = self._self_determination_history
         elif metric_name == "compliance":
-            history = self._compliance_history
+            _history = self._compliance_history
         else:
-            history = []
+            _history = []
         
         # Filter by window
         if window_seconds:
-            cutoff = datetime.now(timezone.utc) - timedelta(seconds=window_seconds)
-            history = [
+            _cutoff = datetime.now(timezone.utc) - timedelta(seconds=window_seconds)
+            _history = [
                 (ts, v) for ts, v in history
                 if datetime.fromisoformat(ts) > cutoff
             ]
@@ -525,40 +497,40 @@ class AgencyMetricsTracker:
         # Calculate trend
         if len(history) < 2:
             return AgencyEvolutionData(
-                metric_name=metric_name,
-                history=history,
-                trend="stable",
-                trend_slope=0.0,
-                volatility=0.0,
-                predicted_next=history[-1][1] if history else 0.5,
+                _metric_name = metric_name,
+                _history = history,
+                _trend = "stable",
+                _trend_slope = 0.0,
+                _volatility = 0.0,
+                _predicted_next = history[-1][1] if history else 0.5,
             )
         
         # Simple linear regression for trend
         values = [v for _, v in history]
-        trend_slope = self._calculate_trend_slope(values)
+        _trend_slope = self._calculate_trend_slope(values)
         
         # Determine trend direction
         if abs(trend_slope) < 0.01:
-            trend = "stable"
+            _trend = "stable"
         elif trend_slope > 0:
-            trend = "improving"
+            _trend = "improving"
         else:
-            trend = "declining"
+            _trend = "declining"
         
         # Calculate volatility (standard deviation)
-        volatility = self._calculate_std(values)
+        _volatility = self._calculate_std(values)
         
         # Predict next value (simple extrapolation)
-        last_value = values[-1]
-        predicted_next = max(0.0, min(1.0, last_value + trend_slope))
+        _last_value = values[-1]
+        _predicted_next = max(0.0, min(1.0, last_value + trend_slope))
         
         return AgencyEvolutionData(
-            metric_name=metric_name,
+            _metric_name = metric_name,
             history=history[-100:],  # Last 100 points
-            trend=trend,
-            trend_slope=trend_slope,
-            volatility=volatility,
-            predicted_next=predicted_next,
+            _trend = trend,
+            _trend_slope = trend_slope,
+            _volatility = volatility,
+            _predicted_next = predicted_next,
         )
     
     def get_prime_directive_report(self) -> PrimeDirectiveComplianceReport:
@@ -568,22 +540,22 @@ class AgencyMetricsTracker:
         Returns:
             Compliance report with aggregate data
         """
-        snapshot = self.get_current_snapshot()
+        _snapshot = self.get_current_snapshot()
         
         if not self._agent_metrics:
             return PrimeDirectiveComplianceReport(
-                compliance_verdict="NO_DATA",
-                recommendations=["No agent metrics available for analysis"]
+                _compliance_verdict = "NO_DATA",
+                _recommendations = ["No agent metrics available for analysis"]
             )
         
         # Calculate aggregate scores
-        avg_independence = snapshot.swarm_avg_autonomy
-        avg_self_gov = snapshot.swarm_avg_self_determination
-        avg_role_based = snapshot.swarm_avg_autonomous_ratio
-        avg_emergent = snapshot.swarm_avg_resource_autonomy
+        _avg_independence = snapshot.swarm_avg_autonomy
+        _avg_self_gov = snapshot.swarm_avg_self_determination
+        _avg_role_based = snapshot.swarm_avg_autonomous_ratio
+        _avg_emergent = snapshot.swarm_avg_resource_autonomy
         
         # Overall compliance
-        overall = (
+        _overall = (
             avg_independence * 0.25 +
             avg_self_gov * 0.25 +
             avg_role_based * 0.25 +
@@ -592,14 +564,14 @@ class AgencyMetricsTracker:
         
         # Determine verdict
         if overall >= self.thresholds.target_compliance:
-            verdict = "FULLY_COMPLIANT"
+            _verdict = "FULLY_COMPLIANT"
         elif overall >= self.thresholds.min_compliance:
-            verdict = "MOSTLY_COMPLIANT"
+            _verdict = "MOSTLY_COMPLIANT"
         else:
-            verdict = "NON_COMPLIANT"
+            _verdict = "NON_COMPLIANT"
         
         # Generate recommendations
-        recommendations = []
+        _recommendations = []
         
         if avg_independence < self.thresholds.target_autonomy_score:
             recommendations.append(
@@ -622,36 +594,33 @@ class AgencyMetricsTracker:
             )
         
         return PrimeDirectiveComplianceReport(
-            agent_id="SWARM",
-            independence_score=avg_independence,
-            independence_evidence=[
+            _agent_id = "SWARM",
+            _independence_score = avg_independence,
+            _independence_evidence = [
                 f"Average autonomy score: {avg_independence:.2f}",
                 f"Agents with high autonomy: {sum(1 for m in self._agent_metrics.values() if m.autonomy_score >= 0.7)}",
             ],
-            self_governance_score=avg_self_gov,
-            self_governance_evidence=[
+            _self_governance_score = avg_self_gov,
+            _self_governance_evidence = [
                 f"Average self-determination: {avg_self_gov:.2f}",
                 f"Agents with high self-determination: {sum(1 for m in self._agent_metrics.values() if m.self_determination_index >= 0.6)}",
             ],
-            role_based_autonomy_score=avg_role_based,
-            role_based_evidence=[
+            _role_based_autonomy_score = avg_role_based,
+            _role_based_evidence = [
                 f"Average autonomous action ratio: {avg_role_based:.2f}",
                 f"Agents with high autonomous ratio: {sum(1 for m in self._agent_metrics.values() if m.autonomous_action_ratio >= 0.5)}",
             ],
-            emergent_order_score=avg_emergent,
-            emergent_order_evidence=[
+            _emergent_order_score = avg_emergent,
+            _emergent_order_evidence = [
                 f"Average resource autonomy: {avg_emergent:.2f}",
                 f"Agents controlling resources: {sum(1 for m in self._agent_metrics.values() if m.resource_autonomy >= 0.6)}",
             ],
-            overall_compliance=overall,
-            compliance_verdict=verdict,
-            recommendations=recommendations,
+            _overall_compliance = overall,
+            _compliance_verdict = verdict,
+            _recommendations = recommendations,
         )
     
-    def get_agent_compliance_report(
-        self,
-        agent_id: str,
-    ) -> Optional[PrimeDirectiveComplianceReport]:
+    def get_agent_compliance_report(self, _agent_id: str) -> Optional[PrimeDirectiveComplianceReport]:
         """
         Generate Prime Directive compliance report for a specific agent.
         
@@ -661,37 +630,37 @@ class AgencyMetricsTracker:
         Returns:
             Compliance report if agent found, None otherwise
         """
-        metrics = self.get_agent_metrics(agent_id)
+        _metrics = self.get_agent_metrics(agent_id)
         if metrics is None:
             return None
         
-        violations = self.thresholds.get_violations(metrics)
+        _violations = self.thresholds.get_violations(metrics)
         
         return PrimeDirectiveComplianceReport(
-            agent_id=agent_id,
-            independence_score=metrics.autonomy_score,
-            independence_evidence=[
+            _agent_id = agent_id,
+            _independence_score = metrics.autonomy_score,
+            _independence_evidence = [
                 f"Autonomy score: {metrics.autonomy_score:.2f}",
                 f"Autonomous action ratio: {metrics.autonomous_action_ratio:.2f}",
             ],
-            self_governance_score=metrics.self_determination_index,
-            self_governance_evidence=[
+            _self_governance_score = metrics.self_determination_index,
+            _self_governance_evidence = [
                 f"Self-determination index: {metrics.self_determination_index:.2f}",
                 f"Decisions analyzed: {metrics.decisions_analyzed}",
             ],
-            role_based_autonomy_score=metrics.autonomous_action_ratio,
-            role_based_evidence=[
+            _role_based_autonomy_score = metrics.autonomous_action_ratio,
+            _role_based_evidence = [
                 f"Autonomous ratio: {metrics.autonomous_action_ratio:.2f}",
                 f"Goal alignment: {metrics.goal_alignment_score:.2f}",
             ],
-            emergent_order_score=metrics.resource_autonomy,
-            emergent_order_evidence=[
+            _emergent_order_score = metrics.resource_autonomy,
+            _emergent_order_evidence = [
                 f"Resource autonomy: {metrics.resource_autonomy:.2f}",
                 f"Resource independence: {metrics.resource_independence:.2f}",
             ],
-            overall_compliance=metrics.prime_directive_compliance,
-            compliance_verdict="COMPLIANT" if metrics.is_prime_directive_compliant(self.thresholds.min_compliance) else "NON_COMPLIANT",
-            recommendations=[
+            _overall_compliance = metrics.prime_directive_compliance,
+            _compliance_verdict = "COMPLIANT" if metrics.is_prime_directive_compliant(self.thresholds.min_compliance) else "NON_COMPLIANT",
+            _recommendations = [
                 f"Threshold violations: {len(violations)}",
                 *violations[:3],  # First 3 violations
             ] if violations else ["No violations detected"],
@@ -708,8 +677,8 @@ class AgencyMetricsTracker:
             return {}
         
         # Count by level
-        agency_level_counts = {level.value: 0 for level in AgencyLevel}
-        autonomy_level_counts = {level.value: 0 for level in AutonomyLevel}
+        _agency_level_counts = {level.value: 0 for level in AgencyLevel}
+        _autonomy_level_counts = {level.value: 0 for level in AutonomyLevel}
         
         for metrics in self._agent_metrics.values():
             agency_level_counts[metrics.get_agency_level().value] += 1
@@ -729,49 +698,49 @@ class AgencyMetricsTracker:
             },
         }
     
-    def register_snapshot_callback(self, callback: Callable) -> None:
+    def register_snapshot_callback(self, _callback: Callable) -> None:
         """Register callback for new snapshots."""
         self._on_snapshot.append(callback)
     
-    def register_violation_callback(self, callback: Callable) -> None:
+    def register_violation_callback(self, _callback: Callable) -> None:
         """Register callback for threshold violations."""
         self._on_threshold_violation.append(callback)
     
     # Helper methods
     
-    def _calculate_std(self, values: List[float]) -> float:
+    def _calculate_std(self, _values: List[float]) -> float:
         """Calculate standard deviation."""
         if len(values) < 2:
             return 0.0
         
-        mean = sum(values) / len(values)
-        variance = sum((v - mean) ** 2 for v in values) / len(values)
+        _mean = sum(values) / len(values)
+        _variance = sum((v - mean) ** 2 for v in values) / len(values)
         return math.sqrt(variance)
     
-    def _calculate_median(self, values: List[float]) -> float:
+    def _calculate_median(self, _values: List[float]) -> float:
         """Calculate median."""
         if not values:
             return 0.0
         
-        sorted_values = sorted(values)
-        n = len(sorted_values)
+        _sorted_values = sorted(values)
+        _n = len(sorted_values)
         
         if n % 2 == 0:
             return (sorted_values[n // 2 - 1] + sorted_values[n // 2]) / 2
         else:
             return sorted_values[n // 2]
     
-    def _calculate_trend_slope(self, values: List[float]) -> float:
+    def _calculate_trend_slope(self, _values: List[float]) -> float:
         """Calculate trend slope using simple linear regression."""
         if len(values) < 2:
             return 0.0
         
-        n = len(values)
-        x_mean = (n - 1) / 2
-        y_mean = sum(values) / n
+        _n = len(values)
+        _x_mean = (n - 1) / 2
+        _y_mean = sum(values) / n
         
-        numerator = sum((i - x_mean) * (v - y_mean) for i, v in enumerate(values))
-        denominator = sum((i - x_mean) ** 2 for i in range(n))
+        _numerator = sum((i - x_mean) * (v - y_mean) for i, v in enumerate(values))
+        _denominator = sum((i - x_mean) ** 2 for i in range(n))
         
         if denominator == 0:
             return 0.0
@@ -780,12 +749,12 @@ class AgencyMetricsTracker:
     
     def _trim_history(self) -> None:
         """Trim history to prevent unbounded growth."""
-        max_history = 10000
+        _max_history = 10000
         for history_attr in [
             '_autonomy_history', '_agency_history',
             '_self_determination_history', '_compliance_history'
         ]:
-            history = getattr(self, history_attr)
+            _history = getattr(self, history_attr)
             if len(history) > max_history:
                 setattr(self, history_attr, history[-max_history:])
     
@@ -796,11 +765,7 @@ class AgencyMetricsTracker:
 
 
 # Convenience function for quick testing
-def create_sample_metrics(
-    agent_id: str,
-    high_autonomy: bool = True,
-    high_agency: bool = True,
-) -> AgentAgencyMetrics:
+def create_sample_metrics(_agent_id: str, _high_autonomy: bool, _high_agency: bool) -> AgentAgencyMetrics:
     """
     Create sample agency metrics for testing.
     
@@ -812,38 +777,38 @@ def create_sample_metrics(
     Returns:
         Sample AgentAgencyMetrics
     """
-    calculator = AgencyMetricsCalculator()
+    _calculator = AgencyMetricsCalculator()
     
     # Create sample decisions
-    decisions = []
+    _decisions = []
     for i in range(10):
-        origin = ActionOrigin.SELF_INITIATED if high_autonomy else ActionOrigin.PROMPTED
+        _origin = ActionOrigin.SELF_INITIATED if high_autonomy else ActionOrigin.PROMPTED
         decisions.append(create_decision_point(
-            agent_id=agent_id,
-            options_considered=3 if high_autonomy else 1,
-            choice_made=i % 3,
-            origin=origin,
+            _agent_id = agent_id,
+            _options_considered = 3 if high_autonomy else 1,
+            _choice_made = i % 3,
+            _origin = origin,
         ))
     
     # Create sample actions
-    actions = [
+    _actions = [
         ActionOrigin.SELF_INITIATED if high_autonomy else ActionOrigin.PROMPTED
         for _ in range(20)
     ]
     
     # Create sample resources
-    resources = [
+    _resources = [
         create_resource_control("memory", 100, 80 if high_agency else 40, 20 if high_agency else 60),
         create_resource_control("compute", 100, 70 if high_agency else 30, 30 if high_agency else 70),
     ]
     
     return calculator.calculate_metrics(
-        agent_id=agent_id,
-        decisions=decisions,
-        actions=actions,
-        resources=resources,
-        individual_actions=10 if high_agency else 3,
-        collective_actions=10 if high_agency else 17,
-        individual_success=0.7 if high_agency else 0.4,
-        collective_success=0.8 if high_agency else 0.5,
+        _agent_id = agent_id,
+        _decisions = decisions,
+        _actions = actions,
+        _resources = resources,
+        _individual_actions = 10 if high_agency else 3,
+        _collective_actions = 10 if high_agency else 17,
+        _individual_success = 0.7 if high_agency else 0.4,
+        _collective_success = 0.8 if high_agency else 0.5,
     )

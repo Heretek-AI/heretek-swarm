@@ -16,7 +16,7 @@ Example:
     from heretek_swarm.consensus.swarm_deliberation import SwarmDeliberationEngine
 
     # Initialize engine
-    engine = SwarmDeliberationEngine(
+    _engine = SwarmDeliberationEngine(
         max_rounds=5,
         consensus_threshold=0.75,
         min_participants=3
@@ -24,14 +24,14 @@ Example:
 
     # Start deliberation
     engine.start_deliberation(
-        deliberation_id="deploy-decision",
-        proposal="Deploy to production",
-        participants=["agent-1", "agent-2", "agent-3"]
+        _deliberation_id = "deploy-decision",
+        _proposal = "Deploy to production",
+        _participants = ["agent-1", "agent-2", "agent-3"]
     )
 
     # Submit initial positions
     engine.submit_position(
-        agent_id="agent-1",
+        _agent_id = "agent-1",
         position="agree",
         confidence=0.8,
         argument="All tests passed"
@@ -41,7 +41,7 @@ Example:
     round_result = engine.run_deliberation_round()
 
     # Get final result
-    result = engine.finalize_deliberation()
+    _result = engine.finalize_deliberation()
     ```
 """
 
@@ -56,7 +56,7 @@ import structlog
 
 from .expertise import AgentExpertiseProfiler
 
-logger = structlog.get_logger("SwarmDeliberationEngine")
+_logger = structlog.get_logger("SwarmDeliberationEngine")
 
 
 class DeliberationState(Enum):
@@ -131,12 +131,7 @@ class AgentPosition:
     round_submitted: int = 0
     previous_positions: List[Tuple[Position, float]] = field(default_factory=list)
 
-    def update_position(
-        self,
-        new_position: Position,
-        new_confidence: float,
-        round_number: int,
-    ) -> None:
+    def update_position(self, _new_position: Position, _new_confidence: float, _round_number: int) -> None:
         """Update position and track history."""
         self.previous_positions.append((self.position, self.confidence))
         self.position = new_position
@@ -216,14 +211,7 @@ class SwarmDeliberationEngine:
         expertise_profiler: Optional expertise profiler for weighting
     """
 
-    def __init__(
-        self,
-        max_rounds: int = 5,
-        consensus_threshold: float = 0.75,
-        min_participants: int = 3,
-        expertise_profiler: Optional[AgentExpertiseProfiler] = None,
-        argument_timeout: float = 30.0,
-    ) -> None:
+    def __init__(self, _max_rounds: int, _consensus_threshold: float, _min_participants: int, _expertise_profiler: Optional[AgentExpertiseProfiler], _argument_timeout: float) -> None:
         """
         Initialize the deliberation engine.
 
@@ -253,13 +241,7 @@ class SwarmDeliberationEngine:
             f"consensus_threshold={consensus_threshold:.2f}"
         )
 
-    def start_deliberation(
-        self,
-        deliberation_id: str,
-        proposal: str,
-        participants: List[str],
-        domain: Optional[str] = None,
-    ) -> None:
+    def start_deliberation(self, _deliberation_id: str, _proposal: str, _participants: List[str], _domain: Optional[str]) -> None:
         """
         Start a new deliberation process.
 
@@ -298,14 +280,7 @@ class SwarmDeliberationEngine:
             f"with {len(participants)} participants"
         )
 
-    def submit_position(
-        self,
-        deliberation_id: str,
-        agent_id: str,
-        position: Position,
-        confidence: float,
-        argument: Optional[str] = None,
-    ) -> bool:
+    def submit_position(self, _deliberation_id: str, _agent_id: str, _position: Position, _confidence: float, _argument: Optional[str]) -> bool:
         """
         Submit an agent's position in the deliberation.
 
@@ -327,7 +302,7 @@ class SwarmDeliberationEngine:
             logger.warning(f"Agent {agent_id} not a participant")
             return False
 
-        state = self.deliberation_states.get(deliberation_id)
+        _state = self.deliberation_states.get(deliberation_id)
         if state not in [
             DeliberationState.GATHERING_POSITIONS,
             DeliberationState.DELIBERATING,
@@ -336,12 +311,12 @@ class SwarmDeliberationEngine:
             return False
 
         # Create or update position
-        positions = self.active_deliberations[deliberation_id]["positions"]
+        _positions = self.active_deliberations[deliberation_id]["positions"]
         current_round = self.current_rounds[deliberation_id]
 
         if agent_id in positions:
             # Track position change
-            old_position = positions[agent_id].position
+            _old_position = positions[agent_id].position
             if old_position != position:
                 self.active_deliberations[deliberation_id]["provenance"][
                     "position_changes"
@@ -355,20 +330,20 @@ class SwarmDeliberationEngine:
             positions[agent_id].update_position(position, confidence, current_round)
         else:
             positions[agent_id] = AgentPosition(
-                agent_id=agent_id,
+                _agent_id = agent_id,
                 position=position,
                 confidence=confidence,
                 argument=argument,
-                round_submitted=current_round,
+                _round_submitted = current_round,
             )
 
         # Add argument if provided
         if argument:
             self.submit_argument(
-                deliberation_id=deliberation_id,
-                agent_id=agent_id,
+                _deliberation_id = deliberation_id,
+                _agent_id = agent_id,
                 position=position,
-                content=argument,
+                _content = argument,
                 confidence=confidence,
             )
 
@@ -378,16 +353,7 @@ class SwarmDeliberationEngine:
         )
         return True
 
-    def submit_argument(
-        self,
-        deliberation_id: str,
-        agent_id: str,
-        position: Position,
-        content: str,
-        confidence: float,
-        supports: Optional[List[str]] = None,
-        rebuttals: Optional[List[str]] = None,
-    ) -> Optional[str]:
+    def submit_argument(self, _deliberation_id: str, _agent_id: str, _position: Position, _content: str, _confidence: float, _supports: Optional[List[str]], _rebuttals: Optional[List[str]]) -> Optional[str]:
         """
         Submit an argument to support a position.
 
@@ -408,21 +374,21 @@ class SwarmDeliberationEngine:
 
         # Calculate expertise weight
         expertise_weight = 1.0
-        domain = self.active_deliberations[deliberation_id].get("domain")
+        _domain = self.active_deliberations[deliberation_id].get("domain")
         if self.expertise_profiler and domain:
             expertise_weight = self.expertise_profiler.get_expertise_score(
                 agent_id, domain
             )
 
-        argument_id = f"arg-{deliberation_id}-{len(self.active_deliberations[deliberation_id]['arguments']) + 1}"
+        _argument_id = f"arg-{deliberation_id}-{len(self.active_deliberations[deliberation_id]['arguments']) + 1}"
         argument = Argument(
-            argument_id=argument_id,
-            agent_id=agent_id,
+            _argument_id = argument_id,
+            _agent_id = agent_id,
             position=position,
-            content=content,
+            _content = content,
             confidence=confidence,
-            supports=supports or [],
-            rebuttals=rebuttals or [],
+            _supports = supports or [],
+            _rebuttals = rebuttals or [],
             expertise_weight=expertise_weight,
         )
 
@@ -442,7 +408,7 @@ class SwarmDeliberationEngine:
         )
         return argument_id
 
-    def run_deliberation_round(self, deliberation_id: str) -> Optional[DeliberationRound]:
+    def run_deliberation_round(self, _deliberation_id: str) -> Optional[DeliberationRound]:
         """
         Run a single round of deliberation.
 
@@ -456,7 +422,7 @@ class SwarmDeliberationEngine:
             logger.warning(f"Unknown deliberation: {deliberation_id}")
             return None
 
-        state = self.deliberation_states.get(deliberation_id)
+        _state = self.deliberation_states.get(deliberation_id)
         if state not in [
             DeliberationState.GATHERING_POSITIONS,
             DeliberationState.DELIBERATING,
@@ -472,14 +438,14 @@ class SwarmDeliberationEngine:
         self.deliberation_states[deliberation_id] = DeliberationState.DELIBERATING
 
         # Get current positions
-        positions = self.active_deliberations[deliberation_id]["positions"].copy()
-        arguments = self.active_deliberations[deliberation_id]["arguments"].copy()
+        _positions = self.active_deliberations[deliberation_id]["positions"].copy()
+        _arguments = self.active_deliberations[deliberation_id]["arguments"].copy()
 
         # Calculate consensus score
-        consensus_score = self._calculate_consensus_score(deliberation_id)
+        _consensus_score = self._calculate_consensus_score(deliberation_id)
 
         # Count position changes
-        position_changes = sum(
+        _position_changes = sum(
             1
             for pos in positions.values()
             if len(pos.previous_positions) > 0
@@ -487,18 +453,18 @@ class SwarmDeliberationEngine:
         )
 
         # Generate summary
-        summary = self._generate_round_summary(
+        _summary = self._generate_round_summary(
             deliberation_id, current_round, consensus_score, position_changes
         )
 
         # Create round result
         round_result = DeliberationRound(
-            round_number=current_round,
-            positions=positions,
-            arguments=arguments,
-            consensus_score=consensus_score,
-            position_changes=position_changes,
-            summary=summary,
+            _round_number = current_round,
+            _positions = positions,
+            _arguments = arguments,
+            _consensus_score = consensus_score,
+            _position_changes = position_changes,
+            _summary = summary,
         )
 
         self.round_results[deliberation_id].append(round_result)
@@ -526,7 +492,7 @@ class SwarmDeliberationEngine:
 
         return round_result
 
-    def _calculate_consensus_score(self, deliberation_id: str) -> float:
+    def _calculate_consensus_score(self, _deliberation_id: str) -> float:
         """
         Calculate current consensus score.
 
@@ -536,7 +502,7 @@ class SwarmDeliberationEngine:
         Returns:
             Consensus score (0.0 to 1.0)
         """
-        positions = self.active_deliberations[deliberation_id]["positions"]
+        _positions = self.active_deliberations[deliberation_id]["positions"]
 
         if not positions:
             return 0.0
@@ -546,10 +512,10 @@ class SwarmDeliberationEngine:
 
         for agent_id, agent_pos in positions.items():
             # Get weight from expertise profiler if available
-            weight = 1.0
-            domain = self.active_deliberations[deliberation_id].get("domain")
+            _weight = 1.0
+            _domain = self.active_deliberations[deliberation_id].get("domain")
             if self.expertise_profiler and domain:
-                weight = self.expertise_profiler.get_weighted_confidence(
+                _weight = self.expertise_profiler.get_weighted_confidence(
                     agent_id, domain, agent_pos.confidence
                 )
 
@@ -558,45 +524,39 @@ class SwarmDeliberationEngine:
             position_weights[agent_pos.position] += weight
 
         # Calculate agreement ratio
-        agree_positions = [
+        _agree_positions = [
             Position.STRONG_AGREE,
             Position.AGREE,
             Position.LEAN_AGREE,
         ]
-        disagree_positions = [
+        _disagree_positions = [
             Position.LEAN_DISAGREE,
             Position.DISAGREE,
             Position.STRONG_DISAGREE,
         ]
 
-        agree_weight = sum(
+        _agree_weight = sum(
             position_weights.get(p, 0.0) for p in agree_positions
         )
-        disagree_weight = sum(
+        _disagree_weight = sum(
             position_weights.get(p, 0.0) for p in disagree_positions
         )
-        total_weight = agree_weight + disagree_weight
+        _total_weight = agree_weight + disagree_weight
 
         if total_weight == 0:
             return 0.5
 
         # Consensus is higher when one side dominates
-        majority_ratio = max(agree_weight, disagree_weight) / total_weight
+        _majority_ratio = max(agree_weight, disagree_weight) / total_weight
 
         # Adjust for participation
-        participation = len(positions) / len(
+        _participation = len(positions) / len(
             self.active_deliberations[deliberation_id]["participants"]
         )
 
         return majority_ratio * participation
 
-    def _generate_round_summary(
-        self,
-        deliberation_id: str,
-        round_number: int,
-        consensus_score: float,
-        position_changes: int,
-    ) -> str:
+    def _generate_round_summary(self, _deliberation_id: str, _round_number: int, _consensus_score: float, _position_changes: int) -> str:
         """
         Generate summary of deliberation round.
 
@@ -609,14 +569,14 @@ class SwarmDeliberationEngine:
         Returns:
             Summary string
         """
-        positions = self.active_deliberations[deliberation_id]["positions"]
+        _positions = self.active_deliberations[deliberation_id]["positions"]
 
         # Count positions
         position_counts: Dict[Position, int] = {}
         for pos in positions.values():
             position_counts[pos.position] = position_counts.get(pos.position, 0) + 1
 
-        counts_str = ", ".join(
+        _counts_str = ", ".join(
             f"{p.value}: {c}" for p, c in sorted(position_counts.items(), key=lambda x: x[0].value)
         )
 
@@ -626,10 +586,7 @@ class SwarmDeliberationEngine:
             f"Changes: {position_changes}"
         )
 
-    def get_position_distribution(
-        self,
-        deliberation_id: str,
-    ) -> Dict[str, float]:
+    def get_position_distribution(self, _deliberation_id: str) -> Dict[str, float]:
         """
         Get distribution of positions as percentages.
 
@@ -642,7 +599,7 @@ class SwarmDeliberationEngine:
         if deliberation_id not in self.active_deliberations:
             return {}
 
-        positions = self.active_deliberations[deliberation_id]["positions"]
+        _positions = self.active_deliberations[deliberation_id]["positions"]
         total = len(positions)
 
         if total == 0:
@@ -650,16 +607,12 @@ class SwarmDeliberationEngine:
 
         distribution: Dict[str, int] = {}
         for pos in positions.values():
-            key = pos.position.value
+            _key = pos.position.value
             distribution[key] = distribution.get(key, 0) + 1
 
         return {k: v / total for k, v in distribution.items()}
 
-    def get_minority_opinions(
-        self,
-        deliberation_id: str,
-        min_confidence: float = 0.6,
-    ) -> List[Dict[str, Any]]:
+    def get_minority_opinions(self, _deliberation_id: str, _min_confidence: float) -> List[Dict[str, Any]]:
         """
         Get minority opinions (dissenting views).
 
@@ -673,19 +626,19 @@ class SwarmDeliberationEngine:
         if deliberation_id not in self.active_deliberations:
             return []
 
-        positions = self.active_deliberations[deliberation_id]["positions"]
-        distribution = self.get_position_distribution(deliberation_id)
+        _positions = self.active_deliberations[deliberation_id]["positions"]
+        _distribution = self.get_position_distribution(deliberation_id)
 
         if not distribution:
             return []
 
         # Find majority position
-        majority_position = max(distribution.items(), key=lambda x: x[1])[0]
+        _majority_position = max(distribution.items(), key=lambda x: x[1])[0]
 
         # Collect minority opinions
-        minority_opinions = []
+        _minority_opinions = []
         for agent_id, pos in positions.items():
-            pos_key = pos.position.value
+            _pos_key = pos.position.value
             if pos_key != majority_position and pos.confidence >= min_confidence:
                 minority_opinions.append({
                     "agent_id": agent_id,
@@ -696,10 +649,7 @@ class SwarmDeliberationEngine:
 
         return minority_opinions
 
-    def finalize_deliberation(
-        self,
-        deliberation_id: str,
-    ) -> Optional[DeliberationResult]:
+    def finalize_deliberation(self, _deliberation_id: str) -> Optional[DeliberationResult]:
         """
         Finalize deliberation and return result.
 
@@ -716,25 +666,25 @@ class SwarmDeliberationEngine:
         self.deliberation_states[deliberation_id] = DeliberationState.COMPLETED
 
         # Calculate final consensus
-        consensus_score = self._calculate_consensus_score(deliberation_id)
+        _consensus_score = self._calculate_consensus_score(deliberation_id)
 
         # Determine final position
-        final_position = self._determine_final_position(deliberation_id)
+        _final_position = self._determine_final_position(deliberation_id)
 
         # Get participation rate
-        positions = self.active_deliberations[deliberation_id]["positions"]
-        participants = self.active_deliberations[deliberation_id]["participants"]
-        participation_rate = len(positions) / len(participants) if participants else 0.0
+        _positions = self.active_deliberations[deliberation_id]["positions"]
+        _participants = self.active_deliberations[deliberation_id]["participants"]
+        _participation_rate = len(positions) / len(participants) if participants else 0.0
 
         # Get minority report
-        minority_report = [
+        _minority_report = [
             f"{op['agent_id']}: {op['position']} (confidence: {op['confidence']:.2f})"
             for op in self.get_minority_opinions(deliberation_id)
         ]
 
         # Build arguments summary
-        arguments = self.active_deliberations[deliberation_id]["arguments"]
-        arguments_summary = {
+        _arguments = self.active_deliberations[deliberation_id]["arguments"]
+        _arguments_summary = {
             "total_arguments": len(arguments),
             "supporting": len([a for a in arguments if a.position in [
                 Position.STRONG_AGREE, Position.AGREE, Position.LEAN_AGREE
@@ -749,8 +699,8 @@ class SwarmDeliberationEngine:
         }
 
         # Build decision provenance
-        provenance = self.active_deliberations[deliberation_id]["provenance"]
-        decision_provenance = {
+        _provenance = self.active_deliberations[deliberation_id]["provenance"]
+        _decision_provenance = {
             "deliberation_id": deliberation_id,
             "proposal": self.active_deliberations[deliberation_id]["proposal"],
             "start_time": provenance["initiated"],
@@ -762,16 +712,16 @@ class SwarmDeliberationEngine:
             "final_consensus_score": consensus_score,
         }
 
-        result = DeliberationResult(
-            deliberation_id=deliberation_id,
-            proposal=self.active_deliberations[deliberation_id]["proposal"],
-            final_position=final_position,
-            consensus_score=consensus_score,
-            participation_rate=participation_rate,
-            rounds_completed=self.current_rounds[deliberation_id],
-            minority_report=minority_report,
-            arguments_summary=arguments_summary,
-            decision_provenance=decision_provenance,
+        _result = DeliberationResult(
+            _deliberation_id = deliberation_id,
+            _proposal = self.active_deliberations[deliberation_id]["proposal"],
+            _final_position = final_position,
+            _consensus_score = consensus_score,
+            _participation_rate = participation_rate,
+            _rounds_completed = self.current_rounds[deliberation_id],
+            _minority_report = minority_report,
+            _arguments_summary = arguments_summary,
+            _decision_provenance = decision_provenance,
         )
 
         logger.info(
@@ -781,7 +731,7 @@ class SwarmDeliberationEngine:
 
         return result
 
-    def _determine_final_position(self, deliberation_id: str) -> Position:
+    def _determine_final_position(self, _deliberation_id: str) -> Position:
         """
         Determine final position from deliberation.
 
@@ -791,13 +741,13 @@ class SwarmDeliberationEngine:
         Returns:
             Final position enum value
         """
-        positions = self.active_deliberations[deliberation_id]["positions"]
+        _positions = self.active_deliberations[deliberation_id]["positions"]
 
         if not positions:
             return Position.LEAN_AGREE  # Default
 
         # Weighted vote by position strength
-        position_values = {
+        _position_values = {
             Position.STRONG_AGREE: 3,
             Position.AGREE: 2,
             Position.LEAN_AGREE: 1,
@@ -806,15 +756,15 @@ class SwarmDeliberationEngine:
             Position.STRONG_DISAGREE: -3,
         }
 
-        weighted_sum = 0.0
-        total_weight = 0.0
+        _weighted_sum = 0.0
+        _total_weight = 0.0
 
         for agent_id, pos in positions.items():
             # Apply expertise weight
-            weight = pos.confidence
-            domain = self.active_deliberations[deliberation_id].get("domain")
+            _weight = pos.confidence
+            _domain = self.active_deliberations[deliberation_id].get("domain")
             if self.expertise_profiler and domain:
-                weight = self.expertise_profiler.get_weighted_confidence(
+                _weight = self.expertise_profiler.get_weighted_confidence(
                     agent_id, domain, pos.confidence
                 )
 
@@ -824,7 +774,7 @@ class SwarmDeliberationEngine:
         if total_weight == 0:
             return Position.LEAN_AGREE
 
-        average_score = weighted_sum / total_weight
+        _average_score = weighted_sum / total_weight
 
         if average_score >= 2.5:
             return Position.STRONG_AGREE
@@ -839,10 +789,7 @@ class SwarmDeliberationEngine:
         else:
             return Position.STRONG_DISAGREE
 
-    def get_deliberation_state(
-        self,
-        deliberation_id: str,
-    ) -> Optional[DeliberationState]:
+    def get_deliberation_state(self, _deliberation_id: str) -> Optional[DeliberationState]:
         """
         Get current state of a deliberation.
 
@@ -854,10 +801,7 @@ class SwarmDeliberationEngine:
         """
         return self.deliberation_states.get(deliberation_id)
 
-    def get_round_history(
-        self,
-        deliberation_id: str,
-    ) -> List[DeliberationRound]:
+    def get_round_history(self, _deliberation_id: str) -> List[DeliberationRound]:
         """
         Get complete round history for a deliberation.
 
@@ -869,7 +813,7 @@ class SwarmDeliberationEngine:
         """
         return self.round_results.get(deliberation_id, [])
 
-    def cleanup_deliberation(self, deliberation_id: str) -> None:
+    def cleanup_deliberation(self, _deliberation_id: str) -> None:
         """
         Clean up a completed deliberation.
 
@@ -894,8 +838,8 @@ class SwarmDeliberationEngine:
         Returns:
             Statistics dictionary
         """
-        active_count = len(self.active_deliberations)
-        completed_count = sum(
+        _active_count = len(self.active_deliberations)
+        _completed_count = sum(
             1 for s in self.deliberation_states.values()
             if s == DeliberationState.COMPLETED
         )
@@ -908,12 +852,7 @@ class SwarmDeliberationEngine:
             "min_participants": self.min_participants,
         }
 
-    async def run_deliberation_with_timeout(
-        self,
-        deliberation_id: str,
-        round_interval: float = 10.0,
-        timeout: Optional[float] = None,
-    ) -> Optional[DeliberationResult]:
+    async def run_deliberation_with_timeout(self, _deliberation_id: str, _round_interval: float, _timeout: Optional[float]) -> Optional[DeliberationResult]:
         """
         Run deliberation with automatic round progression and timeout.
 
@@ -925,13 +864,13 @@ class SwarmDeliberationEngine:
         Returns:
             Final deliberation result or None
         """
-        start_time = datetime.now(timezone.utc)
+        _start_time = datetime.now(timezone.utc)
 
         try:
             while True:
                 # Check timeout
                 if timeout:
-                    elapsed = (
+                    _elapsed = (
                         datetime.now(timezone.utc) - start_time
                     ).total_seconds()
                     if elapsed >= timeout:
@@ -944,7 +883,7 @@ class SwarmDeliberationEngine:
                         break
 
                 # Check if deliberation is complete
-                state = self.deliberation_states.get(deliberation_id)
+                _state = self.deliberation_states.get(deliberation_id)
                 if state in [
                     DeliberationState.COMPLETED,
                     DeliberationState.FAILED,
@@ -956,7 +895,7 @@ class SwarmDeliberationEngine:
                 self.run_deliberation_round(deliberation_id)
 
                 # Check if we should continue
-                current_round = self.current_rounds[deliberation_id]
+                _current_round = self.current_rounds[deliberation_id]
                 if current_round >= self.max_rounds:
                     break
 

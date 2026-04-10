@@ -31,7 +31,7 @@ import structlog
 
 from .learning import ExtractedPattern, PatternType
 
-logger = structlog.get_logger(__name__)
+_logger = structlog.get_logger(__name__)
 
 
 class AgentType(str, Enum):
@@ -178,11 +178,7 @@ class KnowledgeTransformer:
             ],
         }
     
-    def register_agent_profile(
-        self,
-        agent_id: str,
-        profile: AgentCapabilityProfile,
-    ) -> None:
+    def register_agent_profile(self, _agent_id: str, _profile: AgentCapabilityProfile) -> None:
         """
         Register a capability profile for an agent.
         
@@ -193,11 +189,11 @@ class KnowledgeTransformer:
         self._agent_profiles[agent_id] = profile
         logger.debug(
             "agent_profile_registered",
-            agent_id=agent_id,
-            agent_type=profile.agent_type.value,
+            _agent_id = agent_id,
+            _agent_type = profile.agent_type.value,
         )
     
-    def get_agent_profile(self, agent_id: str) -> Optional[AgentCapabilityProfile]:
+    def get_agent_profile(self, _agent_id: str) -> Optional[AgentCapabilityProfile]:
         """
         Get capability profile for an agent.
         
@@ -209,13 +205,7 @@ class KnowledgeTransformer:
         """
         return self._agent_profiles.get(agent_id)
     
-    async def transform_knowledge(
-        self,
-        pattern: ExtractedPattern,
-        target_agent_type: AgentType,
-        transformation_type: TransformationType = TransformationType.ABSTRACT,
-        agent_id: Optional[str] = None,
-    ) -> TransformationResult:
+    async def transform_knowledge(self, _pattern: ExtractedPattern, _target_agent_type: AgentType, _transformation_type: TransformationType, _agent_id: Optional[str]) -> TransformationResult:
         """
         Transform a pattern into agent-specific knowledge.
         
@@ -228,16 +218,16 @@ class KnowledgeTransformer:
         Returns:
             TransformationResult with transformed knowledge
         """
-        start_time = datetime.now(timezone.utc)
-        warnings = []
+        _start_time = datetime.now(timezone.utc)
+        _warnings = []
         
         try:
             # Get transformation rule
-            transform_func = self._transformation_rules.get(transformation_type)
+            _transform_func = self._transformation_rules.get(transformation_type)
             if not transform_func:
                 return TransformationResult(
                     success=False,
-                    error_message=f"Unknown transformation type: {transformation_type}",
+                    _error_message = f"Unknown transformation type: {transformation_type}",
                 )
             
             # Apply transformation
@@ -252,7 +242,7 @@ class KnowledgeTransformer:
             
             # Get agent-specific customization
             if agent_id and agent_id in self._agent_profiles:
-                profile = self._agent_profiles[agent_id]
+                _profile = self._agent_profiles[agent_id]
                 knowledge_content = self._customize_for_agent(
                     knowledge_content,
                     profile,
@@ -260,8 +250,8 @@ class KnowledgeTransformer:
                 )
             
             # Create transformed knowledge
-            transformed = TransformedKnowledge(
-                source_pattern_id=pattern.metadata.pattern_id,
+            _transformed = TransformedKnowledge(
+                _source_pattern_id = pattern.metadata.pattern_id,
                 target_agent_type=target_agent_type,
                 transformation_type=transformation_type,
                 knowledge_content=knowledge_content,
@@ -271,8 +261,8 @@ class KnowledgeTransformer:
                     "agents_involved": pattern.metadata.agents_involved,
                     "topics": pattern.metadata.topics,
                 },
-                priority=self._calculate_priority(pattern, target_agent_type),
-                applicability_score=applicability,
+                _priority = self._calculate_priority(pattern, target_agent_type),
+                _applicability_score = applicability,
             )
             
             # Validate transformed knowledge
@@ -284,7 +274,7 @@ class KnowledgeTransformer:
             transformed.validation_errors = errors
             
             # Calculate transformation time
-            transformation_time = (
+            _transformation_time = (
                 datetime.now(timezone.utc) - start_time
             ).total_seconds() * 1000
             
@@ -293,14 +283,14 @@ class KnowledgeTransformer:
             
             return TransformationResult(
                 success=True,
-                transformed_knowledge=transformed,
-                transformation_time_ms=transformation_time,
-                validation_passed=validation_passed,
-                warnings=warnings,
+                _transformed_knowledge = transformed,
+                _transformation_time_ms = transformation_time,
+                _validation_passed = validation_passed,
+                _warnings = warnings,
             )
             
         except Exception as e:
-            transformation_time = (
+            _transformation_time = (
                 datetime.now(timezone.utc) - start_time
             ).total_seconds() * 1000
             
@@ -313,16 +303,11 @@ class KnowledgeTransformer:
             
             return TransformationResult(
                 success=False,
-                error_message=str(e),
-                transformation_time_ms=transformation_time,
+                _error_message = str(e),
+                _transformation_time_ms = transformation_time,
             )
     
-    async def transform_for_multiple_agents(
-        self,
-        pattern: ExtractedPattern,
-        agent_types: List[AgentType],
-        transformation_type: TransformationType = TransformationType.ABSTRACT,
-    ) -> List[TransformationResult]:
+    async def transform_for_multiple_agents(self, _pattern: ExtractedPattern, _agent_types: List[AgentType], _transformation_type: TransformationType) -> List[TransformationResult]:
         """
         Transform a pattern for multiple agent types.
         
@@ -334,7 +319,7 @@ class KnowledgeTransformer:
         Returns:
             List of TransformationResult for each agent type
         """
-        tasks = [
+        _tasks = [
             self.transform_knowledge(
                 pattern=pattern,
                 target_agent_type=agent_type,
@@ -343,25 +328,21 @@ class KnowledgeTransformer:
             for agent_type in agent_types
         ]
         
-        results = await asyncio.gather(*tasks, return_exceptions=True)
+        _results = await asyncio.gather(*tasks, return_exceptions=True)
         
-        transformed_results = []
+        _transformed_results = []
         for i, result in enumerate(results):
             if isinstance(result, Exception):
                 transformed_results.append(TransformationResult(
                     success=False,
-                    error_message=str(result),
+                    _error_message = str(result),
                 ))
             else:
                 transformed_results.append(result)
         
         return transformed_results
     
-    def _transform_abstract(
-        self,
-        pattern: ExtractedPattern,
-        target_agent_type: AgentType,
-    ) -> Dict[str, Any]:
+    def _transform_abstract(self, _pattern: ExtractedPattern, _target_agent_type: AgentType) -> Dict[str, Any]:
         """Transform pattern into abstract/high-level summary."""
         return {
             "summary": f"Pattern: {pattern.metadata.pattern_type.value} interaction",
@@ -371,11 +352,7 @@ class KnowledgeTransformer:
             "pattern_id": pattern.metadata.pattern_id,
         }
     
-    def _transform_detailed(
-        self,
-        pattern: ExtractedPattern,
-        target_agent_type: AgentType,
-    ) -> Dict[str, Any]:
+    def _transform_detailed(self, _pattern: ExtractedPattern, _target_agent_type: AgentType) -> Dict[str, Any]:
         """Transform pattern into detailed format with full information."""
         return {
             "pattern_metadata": pattern.to_dict(),
@@ -390,13 +367,9 @@ class KnowledgeTransformer:
             ),
         }
     
-    def _transform_actionable(
-        self,
-        pattern: ExtractedPattern,
-        target_agent_type: AgentType,
-    ) -> Dict[str, Any]:
+    def _transform_actionable(self, _pattern: ExtractedPattern, _target_agent_type: AgentType) -> Dict[str, Any]:
         """Transform pattern into action-oriented format."""
-        actions = []
+        _actions = []
         
         # Extract actionable items from pattern
         if pattern.metadata.pattern_type == PatternType.SUCCESS:
@@ -417,11 +390,7 @@ class KnowledgeTransformer:
             "pattern_id": pattern.metadata.pattern_id,
         }
     
-    def _transform_contextual(
-        self,
-        pattern: ExtractedPattern,
-        target_agent_type: AgentType,
-    ) -> Dict[str, Any]:
+    def _transform_contextual(self, _pattern: ExtractedPattern, _target_agent_type: AgentType) -> Dict[str, Any]:
         """Transform pattern with enriched context."""
         return {
             "pattern_summary": pattern.to_dict(),
@@ -441,11 +410,7 @@ class KnowledgeTransformer:
             "relevance_to_agent": self._get_agent_relevance(pattern, target_agent_type),
         }
     
-    def _transform_condensed(
-        self,
-        pattern: ExtractedPattern,
-        target_agent_type: AgentType,
-    ) -> Dict[str, Any]:
+    def _transform_condensed(self, _pattern: ExtractedPattern, _target_agent_type: AgentType) -> Dict[str, Any]:
         """Transform pattern into condensed/compressed format."""
         return {
             "id": pattern.metadata.pattern_id,
@@ -456,11 +421,7 @@ class KnowledgeTransformer:
             "topics": len(pattern.metadata.topics),
         }
     
-    def _transform_expanded(
-        self,
-        pattern: ExtractedPattern,
-        target_agent_type: AgentType,
-    ) -> Dict[str, Any]:
+    def _transform_expanded(self, _pattern: ExtractedPattern, _target_agent_type: AgentType) -> Dict[str, Any]:
         """Transform pattern with expanded examples and elaborations."""
         return {
             "pattern_details": pattern.to_dict(),
@@ -475,12 +436,7 @@ class KnowledgeTransformer:
             "related_patterns": [],  # Would be populated from pattern library
         }
     
-    def _customize_for_agent(
-        self,
-        knowledge: Dict[str, Any],
-        profile: AgentCapabilityProfile,
-        warnings: List[str],
-    ) -> Dict[str, Any]:
+    def _customize_for_agent(self, _knowledge: Dict[str, _Any], _profile: AgentCapabilityProfile, _warnings: List[str]) -> Dict[str, Any]:
         """
         Customize knowledge for a specific agent's profile.
         
@@ -492,7 +448,7 @@ class KnowledgeTransformer:
         Returns:
             Customized knowledge content
         """
-        customized = knowledge.copy()
+        _customized = knowledge.copy()
         
         # Filter excluded topics
         if profile.excluded_topics:
@@ -501,13 +457,13 @@ class KnowledgeTransformer:
                     warnings.append(f"Content contains excluded topic: {topic}")
         
         # Check size limits
-        content_size = len(str(customized))
+        _content_size = len(str(customized))
         if content_size > profile.max_knowledge_size:
             warnings.append(
                 f"Knowledge size ({content_size}) exceeds limit ({profile.max_knowledge_size})"
             )
             # Truncate large content
-            customized = self._truncate_content(customized, profile.max_knowledge_size)
+            _customized = self._truncate_content(customized, profile.max_knowledge_size)
         
         # Apply format preferences
         if profile.preferred_formats:
@@ -515,18 +471,18 @@ class KnowledgeTransformer:
         
         return customized
     
-    def _truncate_content(self, content: Dict[str, Any], max_size: int) -> Dict[str, Any]:
+    def _truncate_content(self, _content: Dict[str, _Any], _max_size: int) -> Dict[str, Any]:
         """Truncate content to fit size limits."""
-        content_str = str(content)
+        _content_str = str(content)
         if len(content_str) <= max_size:
             return content
         
         # Simple truncation - keep main keys
-        truncated = {}
-        current_size = 0
+        _truncated = {}
+        _current_size = 0
         
         for key, value in content.items():
-            item_str = str(value)
+            _item_str = str(value)
             if current_size + len(item_str) <= max_size:
                 truncated[key] = value
                 current_size += len(item_str)
@@ -536,12 +492,7 @@ class KnowledgeTransformer:
         
         return truncated
     
-    def _calculate_applicability(
-        self,
-        pattern: ExtractedPattern,
-        target_agent_type: AgentType,
-        agent_id: Optional[str],
-    ) -> float:
+    def _calculate_applicability(self, _pattern: ExtractedPattern, _target_agent_type: AgentType, _agent_id: Optional[str]) -> float:
         """
         Calculate how applicable a pattern is to an agent type.
         
@@ -556,12 +507,12 @@ class KnowledgeTransformer:
         score = 0.5  # Base score
         
         # Boost if pattern involves same agent type
-        pattern_agents = pattern.metadata.agents_involved
+        _pattern_agents = pattern.metadata.agents_involved
         if self._agent_type_in_list(target_agent_type, pattern_agents):
             score += 0.2
         
         # Boost if topics match agent type interests
-        topic_match = self._topics_match_agent_type(
+        _topic_match = self._topics_match_agent_type(
             pattern.metadata.topics,
             target_agent_type,
         )
@@ -573,23 +524,19 @@ class KnowledgeTransformer:
         
         return min(1.0, score)
     
-    def _calculate_priority(
-        self,
-        pattern: ExtractedPattern,
-        target_agent_type: AgentType,
-    ) -> float:
+    def _calculate_priority(self, _pattern: ExtractedPattern, _target_agent_type: AgentType) -> float:
         """Calculate priority for knowledge distribution."""
         # Higher priority for:
         # - High confidence patterns
         # - Recent patterns
         # - Patterns involving same agent type
         
-        priority = pattern.metadata.confidence * 0.5
+        _priority = pattern.metadata.confidence * 0.5
         
         # Recency bonus
         try:
-            last_observed = datetime.fromisoformat(pattern.metadata.last_observed)
-            age_hours = (datetime.now(timezone.utc) - last_observed).total_seconds() / 3600
+            _last_observed = datetime.fromisoformat(pattern.metadata.last_observed)
+            _age_hours = (datetime.now(timezone.utc) - last_observed).total_seconds() / 3600
             recency_bonus = max(0, 0.3 - (age_hours / 100))  # Decay over 30 hours
             priority += recency_bonus
         except (ValueError, TypeError):
@@ -601,13 +548,9 @@ class KnowledgeTransformer:
         
         return min(1.0, priority)
     
-    def _agent_type_in_list(
-        self,
-        agent_type: AgentType,
-        agent_ids: List[str],
-    ) -> bool:
+    def _agent_type_in_list(self, _agent_type: AgentType, _agent_ids: List[str]) -> bool:
         """Check if agent type is represented in agent ID list."""
-        type_keywords = {
+        _type_keywords = {
             AgentType.LEADERSHIP: ["steward", "alpha", "arbiter"],
             AgentType.ANALYSIS: ["alpha", "beta", "charlie", "examiner"],
             AgentType.SUPPORT: ["historian", "metis", "empath", "nexus"],
@@ -617,19 +560,15 @@ class KnowledgeTransformer:
             AgentType.COORDINATION: ["coordinator", "chronos"],
         }
         
-        keywords = type_keywords.get(agent_type, [])
+        _keywords = type_keywords.get(agent_type, [])
         return any(
             any(keyword in agent_id.lower() for keyword in keywords)
             for agent_id in agent_ids
         )
     
-    def _topics_match_agent_type(
-        self,
-        topics: List[str],
-        agent_type: AgentType,
-    ) -> bool:
+    def _topics_match_agent_type(self, _topics: List[str], _agent_type: AgentType) -> bool:
         """Check if topics match agent type interests."""
-        topic_interests = {
+        _topic_interests = {
             AgentType.LEADERSHIP: ["coordination", "strategy", "decision"],
             AgentType.ANALYSIS: ["analysis", "evaluation", "pattern"],
             AgentType.SUPPORT: ["memory", "knowledge", "assistance"],
@@ -639,17 +578,13 @@ class KnowledgeTransformer:
             AgentType.COORDINATION: ["handoff", "communication", "synchronization"],
         }
         
-        interests = topic_interests.get(agent_type, [])
+        _interests = topic_interests.get(agent_type, [])
         return any(
             any(interest in (topic or "").lower() for topic in topics)
             for interest in interests
         )
     
-    def _get_agent_relevance(
-        self,
-        pattern: ExtractedPattern,
-        agent_type: AgentType,
-    ) -> Dict[str, Any]:
+    def _get_agent_relevance(self, _pattern: ExtractedPattern, _agent_type: AgentType) -> Dict[str, Any]:
         """Get relevance information for an agent type."""
         return {
             "agent_type": agent_type.value,
@@ -667,10 +602,10 @@ class KnowledgeTransformer:
             ],
         }
     
-    def _infer_agent_types(self, agent_ids: List[str]) -> List[str]:
+    def _infer_agent_types(self, _agent_ids: List[str]) -> List[str]:
         """Infer agent types from agent IDs."""
-        types = []
-        type_keywords = {
+        _types = []
+        _type_keywords = {
             AgentType.LEADERSHIP.value: ["steward", "alpha", "arbiter"],
             AgentType.ANALYSIS.value: ["alpha", "beta", "charlie", "examiner"],
             AgentType.SUPPORT.value: ["historian", "metis", "empath", "nexus"],
@@ -688,9 +623,9 @@ class KnowledgeTransformer:
         
         return types
     
-    def _extract_key_insight(self, pattern: ExtractedPattern) -> str:
+    def _extract_key_insight(self, _pattern: ExtractedPattern) -> str:
         """Extract key insight from a pattern."""
-        insights = {
+        _insights = {
             PatternType.SUCCESS: "This interaction pattern leads to successful outcomes",
             PatternType.FAILURE: "This pattern identifies conditions that lead to failures",
             PatternType.OPTIMIZATION: "This pattern shows how to optimize agent interactions",
@@ -703,24 +638,20 @@ class KnowledgeTransformer:
             PatternType.RESOURCE_USAGE: "This pattern shows efficient resource usage",
         }
         
-        base_insight = insights.get(
+        _base_insight = insights.get(
             pattern.metadata.pattern_type,
             "This pattern provides useful interaction insights",
         )
         
         # Add specificity from pattern data
         if pattern.pattern_data:
-            key = next(iter(pattern.pattern_data), None)
+            _key = next(iter(pattern.pattern_data), None)
             if key:
                 base_insight += f" (focus: {key})"
         
         return base_insight
     
-    def _predict_outcome(
-        self,
-        pattern: ExtractedPattern,
-        agent_type: AgentType,
-    ) -> str:
+    def _predict_outcome(self, _pattern: ExtractedPattern, _agent_type: AgentType) -> str:
         """Predict outcome if pattern is applied."""
         if pattern.metadata.pattern_type == PatternType.SUCCESS:
             return "High probability of successful outcome if pattern is followed"
@@ -733,16 +664,12 @@ class KnowledgeTransformer:
         else:
             return "Improved agent coordination and decision quality"
     
-    def _generate_examples(
-        self,
-        pattern: ExtractedPattern,
-        agent_type: AgentType,
-    ) -> List[Dict[str, Any]]:
+    def _generate_examples(self, _pattern: ExtractedPattern, _agent_type: AgentType) -> List[Dict[str, Any]]:
         """Generate examples for pattern application."""
-        examples = []
+        _examples = []
         
         # Create example based on pattern type
-        example_base = {
+        _example_base = {
             "scenario": f"Example for {agent_type.value} agent",
             "pattern_application": "Apply the pattern by...",
             "expected_result": "Expected outcome...",
@@ -757,12 +684,9 @@ class KnowledgeTransformer:
         
         return examples
     
-    def _generate_counter_examples(
-        self,
-        pattern: ExtractedPattern,
-    ) -> List[Dict[str, Any]]:
+    def _generate_counter_examples(self, _pattern: ExtractedPattern) -> List[Dict[str, Any]]:
         """Generate counter-examples showing what to avoid."""
-        counter_examples = []
+        _counter_examples = []
         
         if pattern.metadata.pattern_type == PatternType.FAILURE:
             counter_examples.append({
@@ -772,11 +696,7 @@ class KnowledgeTransformer:
         
         return counter_examples
     
-    async def _validate_transformation(
-        self,
-        transformed: TransformedKnowledge,
-        agent_type: AgentType,
-    ) -> tuple[bool, List[str]]:
+    async def _validate_transformation(self, _transformed: TransformedKnowledge, _agent_type: AgentType) -> tuple[bool, List[str]]:
         """
         Validate transformed knowledge for an agent type.
         
@@ -787,15 +707,15 @@ class KnowledgeTransformer:
         Returns:
             Tuple of (validation_passed, error_list)
         """
-        errors = []
+        _errors = []
         
         # Get validation rules for agent type
-        validators = self._validation_rules.get(agent_type, [])
+        _validators = self._validation_rules.get(agent_type, [])
         
         # Run all validators
         for validator in validators:
             try:
-                result = await validator(transformed)
+                _result = await validator(transformed)
                 if not result.valid:
                     errors.extend(result.errors)
             except Exception as e:
@@ -811,12 +731,9 @@ class KnowledgeTransformer:
         return len(errors) == 0, errors
     
     # Validation methods for each agent type
-    async def _validate_leadership_knowledge(
-        self,
-        transformed: TransformedKnowledge,
-    ) -> "ValidationResult":
+    async def _validate_leadership_knowledge(self, _transformed: TransformedKnowledge) -> "ValidationResult":
         """Validate knowledge for leadership agents."""
-        errors = []
+        _errors = []
         
         # Leadership needs strategic relevance
         if "strategy" not in str(transformed.knowledge_content).lower():
@@ -825,26 +742,20 @@ class KnowledgeTransformer:
         
         return ValidationResult(valid=len(errors) == 0, errors=errors)
     
-    async def _validate_analysis_knowledge(
-        self,
-        transformed: TransformedKnowledge,
-    ) -> "ValidationResult":
+    async def _validate_analysis_knowledge(self, _transformed: TransformedKnowledge) -> "ValidationResult":
         """Validate knowledge for analysis agents."""
-        errors = []
+        _errors = []
         
         # Analysis needs data/analytical content
-        content_str = str(transformed.knowledge_content)
+        _content_str = str(transformed.knowledge_content)
         if not any(term in content_str.lower() for term in ["data", "analysis", "pattern"]):
             errors.append("Analysis knowledge should contain analytical content")
         
         return ValidationResult(valid=len(errors) == 0, errors=errors)
     
-    async def _validate_support_knowledge(
-        self,
-        transformed: TransformedKnowledge,
-    ) -> "ValidationResult":
+    async def _validate_support_knowledge(self, _transformed: TransformedKnowledge) -> "ValidationResult":
         """Validate knowledge for support agents."""
-        errors = []
+        _errors = []
         
         # Support knowledge should be actionable
         if transformed.transformation_type == TransformationType.ACTIONABLE:
@@ -853,12 +764,9 @@ class KnowledgeTransformer:
         
         return ValidationResult(valid=len(errors) == 0, errors=errors)
     
-    async def _validate_exploration_knowledge(
-        self,
-        transformed: TransformedKnowledge,
-    ) -> "ValidationResult":
+    async def _validate_exploration_knowledge(self, _transformed: TransformedKnowledge) -> "ValidationResult":
         """Validate knowledge for exploration agents."""
-        errors = []
+        _errors = []
         
         # Exploration needs discovery-oriented content
         if "discovery" not in str(transformed.knowledge_content).lower():
@@ -867,45 +775,36 @@ class KnowledgeTransformer:
         
         return ValidationResult(valid=len(errors) == 0, errors=errors)
     
-    async def _validate_development_knowledge(
-        self,
-        transformed: TransformedKnowledge,
-    ) -> "ValidationResult":
+    async def _validate_development_knowledge(self, _transformed: TransformedKnowledge) -> "ValidationResult":
         """Validate knowledge for development agents."""
-        errors = []
+        _errors = []
         
         # Development needs implementation details
         if transformed.transformation_type in [
             TransformationType.DETAILED,
             TransformationType.ACTIONABLE,
         ]:
-            content_str = str(transformed.knowledge_content)
+            _content_str = str(transformed.knowledge_content)
             if not any(term in content_str for term in ["implement", "code", "build"]):
                 errors.append("Development knowledge should have implementation focus")
         
         return ValidationResult(valid=len(errors) == 0, errors=errors)
     
-    async def _validate_safety_knowledge(
-        self,
-        transformed: TransformedKnowledge,
-    ) -> "ValidationResult":
+    async def _validate_safety_knowledge(self, _transformed: TransformedKnowledge) -> "ValidationResult":
         """Validate knowledge for safety agents."""
-        errors = []
+        _errors = []
         
         # Safety knowledge must include risk/validation info
         if transformed.target_agent_type == AgentType.SAFETY:
-            content_str = str(transformed.knowledge_content)
+            _content_str = str(transformed.knowledge_content)
             if not any(term in content_str.lower() for term in ["risk", "validate", "security", "check"]):
                 errors.append("Safety knowledge should address risk or validation")
         
         return ValidationResult(valid=len(errors) == 0, errors=errors)
     
-    async def _validate_coordination_knowledge(
-        self,
-        transformed: TransformedKnowledge,
-    ) -> "ValidationResult":
+    async def _validate_coordination_knowledge(self, _transformed: TransformedKnowledge) -> "ValidationResult":
         """Validate knowledge for coordination agents."""
-        errors = []
+        _errors = []
         
         # Coordination needs interaction patterns
         if "interaction" not in str(transformed.knowledge_content).lower():
@@ -917,10 +816,7 @@ class KnowledgeTransformer:
         
         return ValidationResult(valid=len(errors) == 0, errors=errors)
     
-    def get_transformed_knowledge(
-        self,
-        transformation_id: str,
-    ) -> Optional[TransformedKnowledge]:
+    def get_transformed_knowledge(self, _transformation_id: str) -> Optional[TransformedKnowledge]:
         """
         Get transformed knowledge by ID.
         
@@ -962,11 +858,7 @@ class KnowledgeTransformationService:
         
         logger.info("knowledge_transformation_service_initialized")
     
-    async def transform_and_distribute(
-        self,
-        pattern: ExtractedPattern,
-        target_agent_types: Optional[List[AgentType]] = None,
-    ) -> Dict[str, Any]:
+    async def transform_and_distribute(self, _pattern: ExtractedPattern, _target_agent_types: Optional[List[AgentType]]) -> Dict[str, Any]:
         """
         Transform a pattern and prepare for distribution.
         
@@ -978,20 +870,20 @@ class KnowledgeTransformationService:
             Distribution summary
         """
         if target_agent_types is None:
-            target_agent_types = list(AgentType)
+            _target_agent_types = list(AgentType)
         
-        results = await self.transformer.transform_for_multiple_agents(
+        _results = await self.transformer.transform_for_multiple_agents(
             pattern=pattern,
-            agent_types=target_agent_types,
-            transformation_type=TransformationType.ABSTRACT,
+            _agent_types = target_agent_types,
+            _transformation_type = TransformationType.ABSTRACT,
         )
         
         # Store history
         self._transformation_history.extend(results)
         
         # Generate summary
-        successful = sum(1 for r in results if r.success)
-        failed = len(results) - successful
+        _successful = sum(1 for r in results if r.success)
+        _failed = len(results) - successful
         
         return {
             "pattern_id": pattern.metadata.pattern_id,

@@ -34,7 +34,7 @@ import structlog
 from ..security.zero_trust import ZeroTrustValidator
 from ..validation.llm_output import LLMOutputValidator, ValidationResult, ValidationSeverity
 
-logger = structlog.get_logger("FEPActiveInference")
+_logger = structlog.get_logger("FEPActiveInference")
 
 
 @dataclass
@@ -69,10 +69,10 @@ class BeliefState:
         }
     
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "BeliefState":
+    def from_dict(cls, _data: Dict[str, _Any]) -> "BeliefState":
         """Create from dictionary."""
         return cls(
-            belief_id=data.get("belief_id", str(uuid.uuid4())),
+            _belief_id = data.get("belief_id", str(uuid.uuid4())),
             beliefs=data.get("beliefs", {}),
             precision=data.get("precision", 1.0),
             timestamp=data.get("timestamp", datetime.now(timezone.utc).isoformat()),
@@ -142,7 +142,7 @@ class Policy:
         }
     
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "Policy":
+    def from_dict(cls, _data: Dict[str, _Any]) -> "Policy":
         """Create from dictionary."""
         actions = []
         for action_data in data.get("actions", []):
@@ -218,21 +218,21 @@ class FreeEnergyCalculator:
     
     Example:
         ```python
-        calculator = FreeEnergyCalculator()
+        _calculator = FreeEnergyCalculator()
         
         # Define observations and generative model
-        observations = {"state": "high_reward", "context": "safe"}
-        generative_model = {
+        _observations = {"state": "high_reward", "context": "safe"}
+        _generative_model = {
             "likelihood": {"state": {"high_reward": 0.8, "low_reward": 0.2}},
             "prior": {"state": {"high_reward": 0.5, "low_reward": 0.5}},
         }
         
         # Calculate free energy
-        free_energy = calculator.calculate_free_energy(observations, generative_model)
+        _free_energy = calculator.calculate_free_energy(observations, generative_model)
         
         # Calculate surprise
-        predictions = {"state": {"high_reward": 0.6, "low_reward": 0.4}}
-        surprise = calculator.calculate_surprise(observations, predictions)
+        _predictions = {"state": {"high_reward": 0.6, "low_reward": 0.4}}
+        _surprise = calculator.calculate_surprise(observations, predictions)
         ```
     """
     
@@ -254,7 +254,7 @@ class FreeEnergyCalculator:
         "extreme": 0.9,
     }
     
-    def __init__(self, strict_validation: bool = True):
+    def __init__(self, _strict_validation: bool):
         """
         Initialize the Free Energy calculator.
         
@@ -269,11 +269,7 @@ class FreeEnergyCalculator:
         
         logger.info("FreeEnergyCalculator initialized", extra={"strict_validation": strict_validation})
     
-    def calculate_free_energy(
-        self,
-        observations: Dict[str, Any],
-        generative_model: Dict[str, Any],
-    ) -> float:
+    def calculate_free_energy(self, _observations: Dict[str, _Any], _generative_model: Dict[str, _Any]) -> float:
         """
         Calculate variational free energy from observations and generative model.
         
@@ -298,32 +294,32 @@ class FreeEnergyCalculator:
         Raises:
             ValueError: If inputs are invalid
         """
-        start_time = datetime.now(timezone.utc)
+        _start_time = datetime.now(timezone.utc)
         
         # Zero-trust validation
-        validation_result = self._validate_inputs(observations, generative_model)
+        _validation_result = self._validate_inputs(observations, generative_model)
         if not validation_result.valid:
             raise ValueError(f"Invalid inputs: {validation_result.errors}")
         
         # Extract model components
-        likelihood = generative_model.get("likelihood", {})
+        _likelihood = generative_model.get("likelihood", {})
         prior = generative_model.get("prior", {})
         posterior = generative_model.get("posterior", prior)  # Use prior if posterior not provided
         
         # Calculate expected energy (negative log likelihood)
-        expected_energy = self._calculate_expected_energy(observations, likelihood)
+        _expected_energy = self._calculate_expected_energy(observations, likelihood)
         
         # Calculate entropy of posterior
-        entropy = self._calculate_entropy(posterior)
+        _entropy = self._calculate_entropy(posterior)
         
         # Calculate KL divergence from prior to posterior
-        kl_divergence = self.calculate_kl_divergence(posterior, prior)
+        _kl_divergence = self.calculate_kl_divergence(posterior, prior)
         
         # Free energy = expected energy - entropy + KL divergence
-        free_energy = expected_energy - entropy + kl_divergence
+        _free_energy = expected_energy - entropy + kl_divergence
         
         # Normalize to 0-1 range for consistency
-        normalized_free_energy = self._normalize_free_energy(free_energy)
+        _normalized_free_energy = self._normalize_free_energy(free_energy)
         
         # Cache result
         self._calculation_count += 1
@@ -331,7 +327,7 @@ class FreeEnergyCalculator:
         
         logger.debug(
             "Free energy calculated",
-            extra={
+            _extra = {
                 "free_energy": normalized_free_energy,
                 "expected_energy": expected_energy,
                 "entropy": entropy,
@@ -341,11 +337,7 @@ class FreeEnergyCalculator:
         
         return normalized_free_energy
     
-    def calculate_surprise(
-        self,
-        observations: Dict[str, Any],
-        predictions: Dict[str, Any],
-    ) -> float:
+    def calculate_surprise(self, _observations: Dict[str, _Any], _predictions: Dict[str, _Any]) -> float:
         """
         Calculate Bayesian surprise from observations and predictions.
         
@@ -353,7 +345,7 @@ class FreeEnergyCalculator:
         based on new observations. It is defined as the KL divergence between
         posterior and prior beliefs:
         
-        Surprise = D_KL[p(s|o) || p(s)]
+        _Surprise = D_KL[p(s|o) || p(s)]
         
         High surprise indicates significant belief update is needed.
         
@@ -370,38 +362,34 @@ class FreeEnergyCalculator:
             return 0.0
         
         # Calculate negative log probability of observations under predictions
-        surprise = 0.0
+        _surprise = 0.0
         
         for key, obs_value in observations.items():
             if key in predictions:
-                pred_dist = predictions[key]
+                _pred_dist = predictions[key]
                 if isinstance(pred_dist, dict):
                     # Get probability of observed value
-                    prob = pred_dist.get(str(obs_value), pred_dist.get(obs_value, 0.0))
+                    _prob = pred_dist.get(str(obs_value), pred_dist.get(obs_value, 0.0))
                     if prob > 0:
                         surprise -= math.log(prob + 1e-10)
                     else:
                         surprise += 10.0  # High surprise for zero probability
                 elif isinstance(pred_dist, (int, float)):
                     # Single probability value
-                    prob = pred_dist
+                    _prob = pred_dist
                     if prob > 0:
                         surprise -= math.log(prob + 1e-10)
                     else:
                         surprise += 10.0
         
         # Normalize surprise to 0-1 range
-        normalized_surprise = self._normalize_surprise(surprise)
+        _normalized_surprise = self._normalize_surprise(surprise)
         
         logger.debug("Surprise calculated", extra={"surprise": normalized_surprise})
         
         return normalized_surprise
     
-    def calculate_kl_divergence(
-        self,
-        q_distribution: Dict[str, Any],
-        p_distribution: Dict[str, Any],
-    ) -> float:
+    def calculate_kl_divergence(self, _q_distribution: Dict[str, _Any], _p_distribution: Dict[str, _Any]) -> float:
         """
         Calculate Kullback-Leibler divergence between two distributions.
         
@@ -424,16 +412,16 @@ class FreeEnergyCalculator:
         if not q_distribution or not p_distribution:
             return 0.0
         
-        kl_div = 0.0
+        _kl_div = 0.0
         
         # Flatten distributions if nested
-        q_flat = self._flatten_distribution(q_distribution)
-        p_flat = self._flatten_distribution(p_distribution)
+        _q_flat = self._flatten_distribution(q_distribution)
+        _p_flat = self._flatten_distribution(p_distribution)
         
         # Calculate KL divergence
         for key, q_prob in q_flat.items():
             if q_prob > 0:
-                p_prob = p_flat.get(key, 0.0)
+                _p_prob = p_flat.get(key, 0.0)
                 if p_prob > 0:
                     kl_div += q_prob * math.log(q_prob / (p_prob + 1e-10))
                 else:
@@ -441,11 +429,7 @@ class FreeEnergyCalculator:
         
         return max(0.0, kl_div)
     
-    def perform_active_inference(
-        self,
-        agent_state: Dict[str, Any],
-        observations: Dict[str, Any],
-    ) -> Dict[str, Any]:
+    def perform_active_inference(self, _agent_state: Dict[str, _Any], _observations: Dict[str, _Any]) -> Dict[str, Any]:
         """
         Perform active inference for action selection.
         
@@ -470,39 +454,39 @@ class FreeEnergyCalculator:
             Dictionary with selected action, updated beliefs, and policy info
         """
         # Extract agent components
-        beliefs_data = agent_state.get("beliefs", {})
-        policies_data = agent_state.get("policies", [])
-        preferences = agent_state.get("preferences", {})
+        _beliefs_data = agent_state.get("beliefs", {})
+        _policies_data = agent_state.get("policies", [])
+        _preferences = agent_state.get("preferences", {})
         
         # Create belief state
-        current_beliefs = BeliefState.from_dict(beliefs_data) if beliefs_data else BeliefState()
+        _current_beliefs = BeliefState.from_dict(beliefs_data) if beliefs_data else BeliefState()
         
         # Update beliefs based on observations
-        updated_beliefs = self._update_beliefs_from_observations(current_beliefs, observations)
+        _updated_beliefs = self._update_beliefs_from_observations(current_beliefs, observations)
         
         # Generate candidate policies if not provided
         if not policies_data:
-            policies = self._generate_default_policies(observations, preferences)
+            _policies = self._generate_default_policies(observations, preferences)
         else:
-            policies = [Policy.from_dict(p) if isinstance(p, dict) else p for p in policies_data]
+            _policies = [Policy.from_dict(p) if isinstance(p, dict) else p for p in policies_data]
         
         # Evaluate expected free energy for each policy
         policy_evaluations: List[Tuple[Policy, float]] = []
         for policy in policies:
-            efe = self._calculate_expected_free_energy(policy, updated_beliefs, preferences)
+            _efe = self._calculate_expected_free_energy(policy, updated_beliefs, preferences)
             policy.expected_free_energy = efe
             policy_evaluations.append((policy, efe))
         
         # Select policy with minimum expected free energy
         if policy_evaluations:
             selected_policy, min_efe = min(policy_evaluations, key=lambda x: x[1])
-            selected_action = selected_policy.actions[0] if selected_policy.actions else Action()
+            _selected_action = selected_policy.actions[0] if selected_policy.actions else Action()
         else:
-            selected_policy = Policy()
-            selected_action = Action()
-            min_efe = 0.0
+            _selected_policy = Policy()
+            _selected_action = Action()
+            _min_efe = 0.0
         
-        result = {
+        _result = {
             "selected_action": selected_action.to_dict(),
             "selected_policy": selected_policy.to_dict(),
             "updated_beliefs": updated_beliefs.to_dict(),
@@ -512,7 +496,7 @@ class FreeEnergyCalculator:
         
         logger.info(
             "Active inference performed",
-            extra={
+            _extra = {
                 "selected_action": selected_action.action_type,
                 "expected_free_energy": min_efe,
             },
@@ -520,11 +504,7 @@ class FreeEnergyCalculator:
         
         return result
     
-    def _validate_inputs(
-        self,
-        observations: Dict[str, Any],
-        generative_model: Dict[str, Any],
-    ) -> ValidationResult:
+    def _validate_inputs(self, _observations: Dict[str, _Any], _generative_model: Dict[str, _Any]) -> ValidationResult:
         """
         Validate inputs using zero-trust validation.
         
@@ -553,34 +533,30 @@ class FreeEnergyCalculator:
                 warnings.append("Generative model missing 'prior' component")
         
         # Check for dangerous patterns
-        obs_str = str(observations)
-        model_str = str(generative_model)
+        _obs_str = str(observations)
+        _model_str = str(generative_model)
         
-        safety_result = self._validator.validate_text(obs_str, content_type="json")
+        _safety_result = self._validator.validate_text(obs_str, content_type="json")
         if not safety_result.valid:
             errors.extend(safety_result.errors)
         
-        safety_result = self._validator.validate_text(model_str, content_type="json")
+        _safety_result = self._validator.validate_text(model_str, content_type="json")
         if not safety_result.valid:
             errors.extend(safety_result.errors)
         
-        severity = ValidationSeverity.CRITICAL if errors else (
+        _severity = ValidationSeverity.CRITICAL if errors else (
             ValidationSeverity.WARNING if warnings else ValidationSeverity.INFO
         )
         
         return ValidationResult(
             valid=len(errors) == 0,
-            content={"observations": observations, "generative_model": generative_model},
+            _content = {"observations": observations, "generative_model": generative_model},
             errors=errors,
-            warnings=warnings,
-            severity=severity,
+            _warnings = warnings,
+            _severity = severity,
         )
     
-    def _calculate_expected_energy(
-        self,
-        observations: Dict[str, Any],
-        likelihood: Dict[str, Any],
-    ) -> float:
+    def _calculate_expected_energy(self, _observations: Dict[str, _Any], _likelihood: Dict[str, _Any]) -> float:
         """
         Calculate expected energy (negative log likelihood).
         
@@ -591,18 +567,18 @@ class FreeEnergyCalculator:
         Returns:
             Expected energy value
         """
-        energy = 0.0
+        _energy = 0.0
         
         for key, obs_value in observations.items():
             if key in likelihood:
-                like_dist = likelihood[key]
+                _like_dist = likelihood[key]
                 if isinstance(like_dist, dict):
                     # Handle case where obs_value might be a dict (nested structure)
                     if isinstance(obs_value, dict):
                         # For nested observations, use a default probability
-                        prob = 0.5
+                        _prob = 0.5
                     else:
-                        prob = like_dist.get(str(obs_value), like_dist.get(obs_value, 0.0))
+                        _prob = like_dist.get(str(obs_value), like_dist.get(obs_value, 0.0))
                     
                     if prob > 0:
                         energy -= math.log(prob + 1e-10)
@@ -616,7 +592,7 @@ class FreeEnergyCalculator:
         
         return energy
     
-    def _calculate_entropy(self, distribution: Dict[str, Any]) -> float:
+    def _calculate_entropy(self, _distribution: Dict[str, _Any]) -> float:
         """
         Calculate Shannon entropy of a probability distribution.
         
@@ -631,8 +607,8 @@ class FreeEnergyCalculator:
         if not distribution:
             return 0.0
         
-        entropy = 0.0
-        flat_dist = self._flatten_distribution(distribution)
+        _entropy = 0.0
+        _flat_dist = self._flatten_distribution(distribution)
         
         for prob in flat_dist.values():
             if prob > 0:
@@ -640,7 +616,7 @@ class FreeEnergyCalculator:
         
         return entropy
     
-    def _flatten_distribution(self, distribution: Dict[str, Any]) -> Dict[str, float]:
+    def _flatten_distribution(self, _distribution: Dict[str, _Any]) -> Dict[str, float]:
         """
         Flatten nested distribution to single-level dictionary.
         
@@ -652,9 +628,9 @@ class FreeEnergyCalculator:
         """
         flat: Dict[str, float] = {}
         
-        def flatten(d: Dict[str, Any], prefix: str = ""):
+        def flatten(_d: Dict[str, _Any], _prefix: str):
             for key, value in d.items():
-                new_key = f"{prefix}.{key}" if prefix else key
+                _new_key = f"{prefix}.{key}" if prefix else key
                 if isinstance(value, dict):
                     flatten(value, new_key)
                 elif isinstance(value, (int, float)):
@@ -663,7 +639,7 @@ class FreeEnergyCalculator:
         flatten(distribution)
         return flat
     
-    def _normalize_free_energy(self, free_energy: float) -> float:
+    def _normalize_free_energy(self, _free_energy: float) -> float:
         """
         Normalize free energy to 0.0-1.0 range using sigmoid.
         
@@ -674,10 +650,10 @@ class FreeEnergyCalculator:
             Normalized free energy
         """
         # Sigmoid normalization
-        normalized = 1.0 / (1.0 + math.exp(-free_energy + 2.5))
+        _normalized = 1.0 / (1.0 + math.exp(-free_energy + 2.5))
         return min(1.0, max(0.0, normalized))
     
-    def _normalize_surprise(self, surprise: float) -> float:
+    def _normalize_surprise(self, _surprise: float) -> float:
         """
         Normalize surprise to 0.0-1.0 range.
         
@@ -688,14 +664,10 @@ class FreeEnergyCalculator:
             Normalized surprise
         """
         # Log-based normalization
-        normalized = math.tanh(surprise / 5.0)
+        _normalized = math.tanh(surprise / 5.0)
         return min(1.0, max(0.0, normalized))
     
-    def _update_beliefs_from_observations(
-        self,
-        current_beliefs: BeliefState,
-        observations: Dict[str, Any],
-    ) -> BeliefState:
+    def _update_beliefs_from_observations(self, _current_beliefs: BeliefState, _observations: Dict[str, _Any]) -> BeliefState:
         """
         Update beliefs based on new observations (Bayesian update).
         
@@ -706,8 +678,8 @@ class FreeEnergyCalculator:
         Returns:
             Updated belief state
         """
-        updated = BeliefState(
-            belief_id=str(uuid.uuid4()),
+        _updated = BeliefState(
+            _belief_id = str(uuid.uuid4()),
             beliefs=current_beliefs.beliefs.copy(),
             precision=current_beliefs.precision,
             prior=current_beliefs.posterior or current_beliefs.beliefs,
@@ -716,10 +688,10 @@ class FreeEnergyCalculator:
         # Simple Bayesian update: weighted average of prior and observation
         for key, obs_value in observations.items():
             if key in updated.beliefs:
-                prior_dist = updated.beliefs[key]
+                _prior_dist = updated.beliefs[key]
                 # Update based on observation (simplified)
                 if isinstance(prior_dist, dict):
-                    obs_key = str(obs_value)
+                    _obs_key = str(obs_value)
                     if obs_key in prior_dist:
                         # Increase probability of observed state
                         for k in prior_dist:
@@ -729,18 +701,14 @@ class FreeEnergyCalculator:
                                 prior_dist[k] = max(0.0, prior_dist[k] * 0.8)
                         
                         # Normalize
-                        total = sum(prior_dist.values())
+                        _total = sum(prior_dist.values())
                         if total > 0:
                             updated.beliefs[key] = {k: v / total for k, v in prior_dist.items()}
                     updated.posterior = updated.beliefs[key]
         
         return updated
     
-    def _generate_default_policies(
-        self,
-        observations: Dict[str, Any],
-        preferences: Dict[str, Any],
-    ) -> List[Policy]:
+    def _generate_default_policies(self, _observations: Dict[str, _Any], _preferences: Dict[str, _Any]) -> List[Policy]:
         """
         Generate default policies based on observations and preferences.
         
@@ -754,36 +722,36 @@ class FreeEnergyCalculator:
         policies: List[Policy] = []
         
         # Generate explore policy
-        explore_action = Action(
+        _explore_action = Action(
             action_type="explore",
             parameters={"target": "unknown"},
             cost=0.2,
         )
-        explore_policy = Policy(
+        _explore_policy = Policy(
             actions=[explore_action],
             prior_probability=0.3,
         )
         policies.append(explore_policy)
         
         # Generate exploit policy
-        exploit_action = Action(
+        _exploit_action = Action(
             action_type="exploit",
             parameters={"target": "known_reward"},
             cost=0.1,
         )
-        exploit_policy = Policy(
+        _exploit_policy = Policy(
             actions=[exploit_action],
             prior_probability=0.5,
         )
         policies.append(exploit_policy)
         
         # Generate minimize surprise policy
-        surprise_action = Action(
+        _surprise_action = Action(
             action_type="minimize_surprise",
             parameters={"target": "predicted_state"},
             cost=0.15,
         )
-        surprise_policy = Policy(
+        _surprise_policy = Policy(
             actions=[surprise_action],
             prior_probability=0.4,
         )
@@ -791,12 +759,7 @@ class FreeEnergyCalculator:
         
         return policies
     
-    def _calculate_expected_free_energy(
-        self,
-        policy: Policy,
-        beliefs: BeliefState,
-        preferences: Dict[str, Any],
-    ) -> float:
+    def _calculate_expected_free_energy(self, _policy: Policy, _beliefs: BeliefState, _preferences: Dict[str, _Any]) -> float:
         """
         Calculate expected free energy for a policy.
         
@@ -815,33 +778,33 @@ class FreeEnergyCalculator:
             Expected free energy value
         """
         # Calculate risk (divergence from preferences)
-        risk = 0.0
+        _risk = 0.0
         for action in policy.actions:
-            outcome = action.expected_outcome
+            _outcome = action.expected_outcome
             for key, pref_value in preferences.items():
                 if key in outcome:
                     risk += abs(outcome[key] - pref_value)
         
         # Calculate ambiguity (uncertainty)
-        ambiguity = 0.0
+        _ambiguity = 0.0
         for action in policy.actions:
-            outcome = action.expected_outcome
-            outcome_dist = {k: v for k, v in outcome.items() if isinstance(v, (int, float))}
+            _outcome = action.expected_outcome
+            _outcome_dist = {k: v for k, v in outcome.items() if isinstance(v, (int, float))}
             if outcome_dist:
-                total = sum(outcome_dist.values())
+                _total = sum(outcome_dist.values())
                 if total > 0:
-                    normalized = {k: v / total for k, v in outcome_dist.items()}
+                    _normalized = {k: v / total for k, v in outcome_dist.items()}
                     ambiguity += self._calculate_entropy(normalized)
         
         # Combine with policy cost
-        total_cost = sum(a.cost for a in policy.actions)
+        _total_cost = sum(a.cost for a in policy.actions)
         
         # Expected free energy
-        efe = risk + ambiguity + total_cost * 0.1
+        _efe = risk + ambiguity + total_cost * 0.1
         
         return efe
     
-    def get_cached_result(self, calculation_id: str) -> Optional[FEPResult]:
+    def get_cached_result(self, _calculation_id: str) -> Optional[FEPResult]:
         """
         Get cached FEP calculation result.
         
@@ -907,17 +870,12 @@ class ActiveInferenceAgent:
         agent.set_preferences({"reward": 0.9, "safety": 0.8})
         
         # Perceive and act
-        observations = {"state": "good", "reward": 0.7}
+        _observations = {"state": "good", "reward": 0.7}
         action = agent.perceive_and_act(observations)
         ```
     """
     
-    def __init__(
-        self,
-        agent_id: str,
-        calculator: Optional[FreeEnergyCalculator] = None,
-        strict_validation: bool = True,
-    ):
+    def __init__(self, _agent_id: str, _calculator: Optional[FreeEnergyCalculator], _strict_validation: bool):
         """
         Initialize the active inference agent.
         
@@ -952,7 +910,7 @@ class ActiveInferenceAgent:
         
         logger.info("ActiveInferenceAgent initialized", extra={"agent_id": agent_id})
     
-    def update_beliefs(self, observations: Dict[str, Any]) -> Dict[str, Any]:
+    def update_beliefs(self, _observations: Dict[str, _Any]) -> Dict[str, Any]:
         """
         Update beliefs based on new observations using variational inference.
         
@@ -969,7 +927,7 @@ class ActiveInferenceAgent:
             Updated belief state as dictionary
         """
         # Validate observations
-        validation = self._validator.validate_text(str(observations), content_type="json")
+        _validation = self._validator.validate_text(str(observations), content_type="json")
         if not validation.valid:
             logger.warning("Invalid observations", extra={"errors": validation.errors})
             return self._beliefs.to_dict()
@@ -983,7 +941,7 @@ class ActiveInferenceAgent:
         )
         
         # Calculate KL divergence (measure of belief update)
-        kl_div = self._calculator.calculate_kl_divergence(
+        _kl_div = self._calculator.calculate_kl_divergence(
             self._beliefs.posterior,
             self._beliefs.prior,
         )
@@ -996,7 +954,7 @@ class ActiveInferenceAgent:
         
         logger.debug(
             "Beliefs updated",
-            extra={
+            _extra = {
                 "agent_id": self.agent_id,
                 "kl_divergence": kl_div,
                 "precision": self._beliefs.precision,
@@ -1008,11 +966,7 @@ class ActiveInferenceAgent:
             "kl_divergence": kl_div,
         }
     
-    def select_action(
-        self,
-        beliefs: Optional[Dict[str, Any]] = None,
-        preferences: Optional[Dict[str, Any]] = None,
-    ) -> Dict[str, Any]:
+    def select_action(self, _beliefs: Optional[Dict[str, _Any]], _preferences: Optional[Dict[str, _Any]]) -> Dict[str, Any]:
         """
         Select action that minimizes expected free energy.
         
@@ -1029,23 +983,23 @@ class ActiveInferenceAgent:
             Selected action as dictionary with metadata
         """
         # Use current beliefs/preferences if not provided
-        belief_state = BeliefState.from_dict(beliefs) if beliefs else self._beliefs
-        agent_prefs = preferences or self._preferences
+        _belief_state = BeliefState.from_dict(beliefs) if beliefs else self._beliefs
+        _agent_prefs = preferences or self._preferences
         
         # Build agent state for active inference
-        agent_state = {
+        _agent_state = {
             "beliefs": belief_state.to_dict(),
             "policies": [p.to_dict() for p in self._policies],
             "preferences": agent_prefs,
         }
         
         # Perform active inference
-        observations = self._observation_history[-1] if self._observation_history else {}
-        result = self._calculator.perform_active_inference(agent_state, observations)
+        _observations = self._observation_history[-1] if self._observation_history else {}
+        _result = self._calculator.perform_active_inference(agent_state, observations)
         
         # Extract selected action
-        selected_action_data = result.get("selected_action", {})
-        selected_action = Action(**selected_action_data) if selected_action_data else Action()
+        _selected_action_data = result.get("selected_action", {})
+        _selected_action = Action(**selected_action_data) if selected_action_data else Action()
         
         # Update statistics
         self._stats["actions"] += 1
@@ -1053,7 +1007,7 @@ class ActiveInferenceAgent:
         
         logger.info(
             "Action selected",
-            extra={
+            _extra = {
                 "agent_id": self.agent_id,
                 "action_type": selected_action.action_type,
                 "expected_free_energy": result.get("expected_free_energy", 0.0),
@@ -1066,7 +1020,7 @@ class ActiveInferenceAgent:
             "expected_free_energy": result.get("expected_free_energy", 0.0),
         }
     
-    def predict_outcomes(self, actions: List[Dict[str, Any]]) -> Dict[str, Any]:
+    def predict_outcomes(self, _actions: List[Dict[str, _Any]]) -> Dict[str, Any]:
         """
         Predict outcomes from actions using the generative model.
         
@@ -1086,11 +1040,11 @@ class ActiveInferenceAgent:
             
             # Use generative model to predict outcome
             if self._generative_model:
-                likelihood = self._generative_model.get("likelihood", {})
-                predicted_outcome = self._predict_from_model(action, likelihood)
+                _likelihood = self._generative_model.get("likelihood", {})
+                _predicted_outcome = self._predict_from_model(action, likelihood)
             else:
                 # Default prediction based on action type
-                predicted_outcome = self._default_prediction(action)
+                _predicted_outcome = self._default_prediction(action)
             
             # Store prediction
             action.expected_outcome = predicted_outcome
@@ -1102,7 +1056,7 @@ class ActiveInferenceAgent:
         
         logger.debug(
             "Outcomes predicted",
-            extra={
+            _extra = {
                 "agent_id": self.agent_id,
                 "prediction_count": len(predictions),
             },
@@ -1110,7 +1064,7 @@ class ActiveInferenceAgent:
         
         return predictions
     
-    def minimize_surprise(self, policy: Dict[str, Any]) -> Dict[str, Any]:
+    def minimize_surprise(self, _policy: Dict[str, _Any]) -> Dict[str, Any]:
         """
         Optimize policy to minimize surprise.
         
@@ -1126,26 +1080,26 @@ class ActiveInferenceAgent:
             Optimization result with updated policy and surprise metrics
         """
         # Convert policy dict to Policy object
-        policy_obj = Policy.from_dict(policy) if isinstance(policy, dict) else policy
+        _policy_obj = Policy.from_dict(policy) if isinstance(policy, dict) else policy
         
         # Calculate current surprise
-        current_surprise = self._calculate_policy_surprise(policy_obj)
+        _current_surprise = self._calculate_policy_surprise(policy_obj)
         
         # Optimize policy (adjust action parameters to reduce surprise)
-        optimized_policy = self._optimize_policy(policy_obj, current_surprise)
+        _optimized_policy = self._optimize_policy(policy_obj, current_surprise)
         
         # Calculate new surprise
-        optimized_surprise = self._calculate_policy_surprise(optimized_policy)
+        _optimized_surprise = self._calculate_policy_surprise(optimized_policy)
         
         # Calculate improvement
-        surprise_reduction = current_surprise - optimized_surprise
+        _surprise_reduction = current_surprise - optimized_surprise
         
         # Update statistics
         self._stats["surprise_minimizations"] += 1
         
         logger.info(
             "Surprise minimized",
-            extra={
+            _extra = {
                 "agent_id": self.agent_id,
                 "current_surprise": current_surprise,
                 "optimized_surprise": optimized_surprise,
@@ -1161,7 +1115,7 @@ class ActiveInferenceAgent:
             "surprise_reduction": surprise_reduction,
         }
     
-    def perceive_and_act(self, observations: Dict[str, Any]) -> Dict[str, Any]:
+    def perceive_and_act(self, _observations: Dict[str, _Any]) -> Dict[str, Any]:
         """
         Combined perception and action cycle.
         
@@ -1178,17 +1132,17 @@ class ActiveInferenceAgent:
             Dictionary with action, updated beliefs, and metrics
         """
         # Update beliefs
-        updated_beliefs = self.update_beliefs(observations)
+        _updated_beliefs = self.update_beliefs(observations)
         
         # Calculate surprise
-        predictions = self._prediction_history[-1] if self._prediction_history else {}
-        surprise = self._calculator.calculate_surprise(observations, predictions)
+        _predictions = self._prediction_history[-1] if self._prediction_history else {}
+        _surprise = self._calculator.calculate_surprise(observations, predictions)
         
         # Select action
-        action_result = self.select_action()
+        _action_result = self.select_action()
         
         # Calculate free energy
-        free_energy = self._calculator.calculate_free_energy(
+        _free_energy = self._calculator.calculate_free_energy(
             observations,
             self._generative_model,
         )
@@ -1204,7 +1158,7 @@ class ActiveInferenceAgent:
             "expected_free_energy": action_result["expected_free_energy"],
         }
     
-    def set_generative_model(self, model: Dict[str, Any]) -> None:
+    def set_generative_model(self, _model: Dict[str, _Any]) -> None:
         """
         Set the agent's generative model.
         
@@ -1212,7 +1166,7 @@ class ActiveInferenceAgent:
             model: Generative model with likelihood and prior
         """
         # Validate model
-        validation = self._validator.validate_text(str(model), content_type="json")
+        _validation = self._validator.validate_text(str(model), content_type="json")
         if not validation.valid:
             logger.warning("Invalid generative model", extra={"errors": validation.errors})
             return
@@ -1220,7 +1174,7 @@ class ActiveInferenceAgent:
         self._generative_model = model
         logger.debug("Generative model set", extra={"agent_id": self.agent_id})
     
-    def set_preferences(self, preferences: Dict[str, float]) -> None:
+    def set_preferences(self, _preferences: Dict[str, _float]) -> None:
         """
         Set agent preferences (desired outcomes).
         
@@ -1236,10 +1190,10 @@ class ActiveInferenceAgent:
         
         logger.debug(
             "Preferences set",
-            extra={"agent_id": self.agent_id, "preference_count": len(self._preferences)},
+            _extra = {"agent_id": self.agent_id, "preference_count": len(self._preferences)},
         )
     
-    def add_policy(self, policy: Dict[str, Any]) -> None:
+    def add_policy(self, _policy: Dict[str, _Any]) -> None:
         """
         Add a policy to the agent's policy repertoire.
         
@@ -1247,14 +1201,14 @@ class ActiveInferenceAgent:
             policy: Policy dictionary or Policy object
         """
         if isinstance(policy, dict):
-            policy_obj = Policy.from_dict(policy)
+            _policy_obj = Policy.from_dict(policy)
         else:
-            policy_obj = policy
+            _policy_obj = policy
         
         self._policies.append(policy_obj)
         logger.debug(
             "Policy added",
-            extra={"agent_id": self.agent_id, "policy_id": policy_obj.policy_id},
+            _extra = {"agent_id": self.agent_id, "policy_id": policy_obj.policy_id},
         )
     
     def get_statistics(self) -> Dict[str, Any]:
@@ -1275,11 +1229,7 @@ class ActiveInferenceAgent:
     
     # Internal methods
     
-    def _predict_from_model(
-        self,
-        action: Action,
-        likelihood: Dict[str, Any],
-    ) -> Dict[str, float]:
+    def _predict_from_model(self, _action: Action, _likelihood: Dict[str, _Any]) -> Dict[str, float]:
         """
         Predict outcome from generative model.
         
@@ -1295,7 +1245,7 @@ class ActiveInferenceAgent:
         # Use action type to select relevant likelihood
         action_type = action.action_type
         if action_type in likelihood:
-            predicted = likelihood[action_type]
+            _predicted = likelihood[action_type]
         else:
             # Default prediction based on action parameters
             for key, param in action.parameters.items():
@@ -1306,7 +1256,7 @@ class ActiveInferenceAgent:
         
         return predicted
     
-    def _default_prediction(self, action: Action) -> Dict[str, float]:
+    def _default_prediction(self, _action: Action) -> Dict[str, float]:
         """
         Generate default prediction when no model is available.
         
@@ -1322,7 +1272,7 @@ class ActiveInferenceAgent:
             "cost": action.cost,
         }
     
-    def _calculate_policy_surprise(self, policy: Policy) -> float:
+    def _calculate_policy_surprise(self, _policy: Policy) -> float:
         """
         Calculate surprise for a policy.
         
@@ -1332,23 +1282,19 @@ class ActiveInferenceAgent:
         Returns:
             Surprise value
         """
-        total_surprise = 0.0
+        _total_surprise = 0.0
         
         for action in policy.actions:
             # Compare predicted vs actual outcomes
-            predicted = action.expected_outcome
-            actual = self._observation_history[-1] if self._observation_history else {}
+            _predicted = action.expected_outcome
+            _actual = self._observation_history[-1] if self._observation_history else {}
             
-            surprise = self._calculator.calculate_surprise(actual, predicted)
+            _surprise = self._calculator.calculate_surprise(actual, predicted)
             total_surprise += surprise
         
         return total_surprise / max(1, len(policy.actions))
     
-    def _optimize_policy(
-        self,
-        policy: Policy,
-        current_surprise: float,
-    ) -> Policy:
+    def _optimize_policy(self, _policy: Policy, _current_surprise: float) -> Policy:
         """
         Optimize policy to reduce surprise.
         
@@ -1360,30 +1306,30 @@ class ActiveInferenceAgent:
             Optimized policy
         """
         # Create optimized copy
-        optimized = Policy(
+        _optimized = Policy(
             policy_id=str(uuid.uuid4()),
             actions=[],
-            prior_probability=policy.prior_probability,
+            _prior_probability = policy.prior_probability,
         )
         
         # Adjust action parameters based on surprise
-        surprise_factor = 1.0 - current_surprise
+        _surprise_factor = 1.0 - current_surprise
         
         for action in policy.actions:
-            optimized_action = Action(
-                action_id=str(uuid.uuid4()),
-                action_type=action.action_type,
+            _optimized_action = Action(
+                _action_id = str(uuid.uuid4()),
+                _action_type = action.action_type,
                 parameters=action.parameters.copy(),
                 expected_outcome=action.expected_outcome.copy(),
-                cost=action.cost * (1.0 - surprise_factor * 0.1),  # Slight cost reduction
-                policy_id=optimized.policy_id,
+                _cost = action.cost * (1.0 - surprise_factor * 0.1),  # Slight cost reduction
+                _policy_id = optimized.policy_id,
             )
             
             # Adjust parameters toward expected outcomes
             for key in optimized_action.parameters:
                 if key in optimized_action.expected_outcome:
-                    expected = optimized_action.expected_outcome[key]
-                    current = optimized_action.parameters[key]
+                    _expected = optimized_action.expected_outcome[key]
+                    _current = optimized_action.parameters[key]
                     # Move toward expected value
                     optimized_action.parameters[key] = current + surprise_factor * (expected - current)
             
