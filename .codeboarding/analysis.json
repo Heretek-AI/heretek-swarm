@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-10T06:55:14.758679+00:00",
+    "generated_at": "2026-04-10T07:57:40.198049+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 4,
@@ -33218,7 +33218,7 @@
       ]
     },
     "src/tools/base.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.tools.base.ToolStatus",
@@ -33232,7 +33232,7 @@
           "start_line": 37,
           "end_line": 80,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.tools.base.ToolExecutionResult",
@@ -33536,7 +33536,7 @@
       ]
     },
     "src/tools/registry.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.tools.registry.ToolRegistryConfig",
@@ -43331,6 +43331,14 @@
     },
     "src/heretek_swarm/consciousness/__init__.py": {
       "file_status": "added",
+      "methods": []
+    },
+    "src/heretek_swarm/state/__init__.py": {
+      "file_status": "modified",
+      "methods": []
+    },
+    "verify_imports.py": {
+      "file_status": "deleted",
       "methods": []
     }
   },
@@ -80333,7 +80341,7 @@
       "start_line": 37,
       "end_line": 80,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/tools/base.py|src.tools.base.ToolExecutionResult": {
       "file_path": "src/tools/base.py",
@@ -127924,7 +127932,7 @@
         },
         {
           "file_path": "src/tools/base.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.tools.base.ToolStatus",
             "src.tools.base.ToolMetadata",
@@ -127980,7 +127988,7 @@
         },
         {
           "file_path": "src/tools/registry.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.tools.registry.ToolRegistryConfig",
             "src.tools.registry.ToolRegistryEntry",
@@ -128041,7 +128049,7 @@
           "file_methods": [
             {
               "file_path": "src/tools/base.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.tools.base.ToolStatus",
                 "src.tools.base.ToolMetadata",
@@ -128067,7 +128075,7 @@
             },
             {
               "file_path": "src/tools/registry.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.tools.registry.ToolRegistryConfig",
                 "src.tools.registry.ToolRegistryEntry",
@@ -128132,7 +128140,7 @@
               "file_methods": [
                 {
                   "file_path": "src/tools/base.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.tools.base.ToolStatus",
                     "src.tools.base.ToolMetadata",
@@ -128158,7 +128166,7 @@
                 },
                 {
                   "file_path": "src/tools/registry.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.tools.registry.ToolRegistryConfig",
                     "src.tools.registry.ToolRegistryEntry",
@@ -128218,7 +128226,7 @@
               "file_methods": [
                 {
                   "file_path": "src/tools/base.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.tools.base.ToolStatus",
                     "src.tools.base.ToolMetadata",
@@ -128244,7 +128252,7 @@
                 },
                 {
                   "file_path": "src/tools/registry.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.tools.registry.ToolRegistryConfig",
                     "src.tools.registry.ToolRegistryEntry",
@@ -128301,7 +128309,7 @@
               "file_methods": [
                 {
                   "file_path": "src/tools/base.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.tools.base.ToolStatus",
                     "src.tools.base.ToolMetadata",
@@ -128327,7 +128335,7 @@
                 },
                 {
                   "file_path": "src/tools/registry.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.tools.registry.ToolRegistryConfig",
                     "src.tools.registry.ToolRegistryEntry",
@@ -128382,7 +128390,7 @@
               "file_methods": [
                 {
                   "file_path": "src/tools/base.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.tools.base.ToolStatus",
                     "src.tools.base.ToolMetadata",
@@ -128408,7 +128416,7 @@
                 },
                 {
                   "file_path": "src/tools/registry.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.tools.registry.ToolRegistryConfig",
                     "src.tools.registry.ToolRegistryEntry",
@@ -129049,7 +129057,7 @@
           "file_methods": [
             {
               "file_path": "src/tools/base.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.tools.base.ToolStatus",
                 "src.tools.base.ToolMetadata",
@@ -129143,7 +129151,7 @@
               "file_methods": [
                 {
                   "file_path": "src/tools/base.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.tools.base.ToolStatus",
                     "src.tools.base.ToolMetadata",
@@ -129222,7 +129230,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/tools/base.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.tools.base.ToolStatus",
                         "src.tools.base.ToolMetadata",
@@ -129303,7 +129311,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/tools/base.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.tools.base.ToolStatus",
                         "src.tools.base.ToolMetadata",
@@ -129391,7 +129399,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/tools/base.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.tools.base.ToolStatus",
                         "src.tools.base.ToolMetadata",
@@ -129522,7 +129530,7 @@
               "file_methods": [
                 {
                   "file_path": "src/tools/base.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.tools.base.ToolStatus",
                     "src.tools.base.ToolMetadata",
@@ -129595,7 +129603,7 @@
               "file_methods": [
                 {
                   "file_path": "src/tools/base.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.tools.base.ToolStatus",
                     "src.tools.base.ToolMetadata",
@@ -129672,7 +129680,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/tools/base.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.tools.base.ToolStatus",
                         "src.tools.base.ToolMetadata",
@@ -129741,7 +129749,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/tools/base.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.tools.base.ToolStatus",
                         "src.tools.base.ToolMetadata",
@@ -129784,7 +129792,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/tools/base.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.tools.base.ToolStatus",
                         "src.tools.base.ToolMetadata",
@@ -129860,7 +129868,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/tools/base.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.tools.base.ToolStatus",
                         "src.tools.base.ToolMetadata",
@@ -129932,7 +129940,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/tools/base.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.tools.base.ToolStatus",
                         "src.tools.base.ToolMetadata",
@@ -130007,7 +130015,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/tools/base.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.tools.base.ToolStatus",
                         "src.tools.base.ToolMetadata",
@@ -130219,7 +130227,7 @@
               "file_methods": [
                 {
                   "file_path": "src/tools/base.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.tools.base.ToolStatus",
                     "src.tools.base.ToolMetadata",
@@ -130295,7 +130303,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/tools/base.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.tools.base.ToolStatus",
                         "src.tools.base.ToolMetadata",
@@ -130374,7 +130382,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/tools/base.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.tools.base.ToolStatus",
                         "src.tools.base.ToolMetadata",
@@ -130488,7 +130496,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/tools/base.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.tools.base.ToolStatus",
                         "src.tools.base.ToolMetadata",
@@ -130630,7 +130638,7 @@
               "file_methods": [
                 {
                   "file_path": "src/tools/base.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.tools.base.ToolStatus",
                     "src.tools.base.ToolMetadata",
@@ -130704,7 +130712,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/tools/base.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.tools.base.ToolStatus",
                         "src.tools.base.ToolMetadata",
@@ -130779,7 +130787,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/tools/base.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.tools.base.ToolStatus",
                         "src.tools.base.ToolMetadata",
@@ -130859,7 +130867,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/tools/base.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.tools.base.ToolStatus",
                         "src.tools.base.ToolMetadata",
@@ -130934,7 +130942,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/tools/base.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.tools.base.ToolStatus",
                         "src.tools.base.ToolMetadata",
@@ -131005,7 +131013,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/tools/base.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.tools.base.ToolStatus",
                         "src.tools.base.ToolMetadata",

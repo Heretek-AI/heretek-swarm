@@ -15,7 +15,7 @@ import pkgutil
 from datetime import datetime, timedelta, timezone
 from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional, Set, Type
-from uuid import UUID
+from uuid import UUID, uuid4
 
 import structlog
 from pydantic import BaseModel, Field

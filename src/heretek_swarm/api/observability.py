@@ -20,7 +20,7 @@ import uuid
 
 from heretek_swarm.gateway.auth import verify_auth
 from heretek_swarm.security.zero_trust import ZeroTrustValidator, ZeroTrustResult, LayerResult
-from src.heretek_swarm.observability.metrics import (
+from heretek_swarm.observability.metrics import (
     SwarmMetricsCollector,
     RealTimeMetricsStream,
 )

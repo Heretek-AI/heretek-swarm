@@ -61,7 +61,7 @@ class ToolMetadata(BaseModel):
     external_dependencies: List[str] = Field(default_factory=list)
     
     # Performance
-    timeout_seconds: float = Field(default=30.0, ge=1.0)
+    timeout_seconds: float = Field(default=30.0, ge=0.1)
     max_concurrent: int = Field(default=10, ge=1)
     
     # Status
