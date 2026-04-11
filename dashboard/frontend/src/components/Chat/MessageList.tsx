@@ -113,12 +113,11 @@ export function MessageList({
 
   // Filter messages
   const filteredMessages = useMemo(() => {
-    return messages.filter(msg => {
-      if (filterRole !== 'all' && msg.role !== filterRole) return false;
-      if (filterAgent !== 'all' && msg.agentType !== filterAgent) return false;
-      if (filterType !== 'all' && msg.type !== filterType && msg.type !== undefined) return false;
-      return true;
-    });
+    return messages.filter(msg =>
+      (filterRole === 'all' || msg.role === filterRole) &&
+      (filterAgent === 'all' || msg.agentType === filterAgent) &&
+      (filterType === 'all' || msg.type === filterType || msg.type === undefined)
+    );
   }, [messages, filterRole, filterAgent, filterType]);
 
   // Group messages by date
