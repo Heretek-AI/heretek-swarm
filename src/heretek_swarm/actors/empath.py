@@ -119,6 +119,9 @@ class EmpathAgent(AgentActor):
         self.agent_confidence: dict[str, float] = {}
         self.conflict_log: list[dict[str, Any]] = []
         self.sentiment_history: list[dict[str, Any]] = []
+        # Aliases for test compatibility
+        self._agent_emotions: dict[str, Any] = {}
+        self._sentiment_log: list[dict[str, Any]] = self.sentiment_history
 
         # Aggregate emotional metrics
         self.collective_mood: dict[str, float] = {
@@ -127,6 +130,10 @@ class EmpathAgent(AgentActor):
             "neutral": 0.4,
         }
         self.collective_stress: float = 0.0
+
+        # Aliases for test compatibility
+        self._conflict_history: list[dict[str, Any]] = self.conflict_log
+        self._collective_mood: dict[str, float] = self.collective_mood
 
 
         # Session 44: Collective Learning Integration
@@ -282,8 +289,9 @@ class EmpathAgent(AgentActor):
             await self._send_error_response(message, f"Sentiment analysis failed: {e}")
 
     async def _analyze_sentiment_llm(
-        self, text: str, source_agent: str, context: dict[str, Any]
+        self, text: str, source_agent: str | None = None, context: dict[str, Any] | None = None
     ) -> dict[str, Any]:
+        context = context or {}
         """
         Analyze sentiment using LLM if available, otherwise use heuristic analysis.
 
@@ -426,9 +434,12 @@ Provide your analysis in this exact JSON format:
 
         mood_entry = {
             "timestamp": datetime.now(UTC).isoformat(),
-            "sentiment": sentiment_result["sentiment"],
-            "intensity": sentiment_result["intensity"],
-            "emotions": sentiment_result["emotions"],
+            "sentiment": sentiment_result.get("sentiment", "neutral"),
+            "intensity": sentiment_result.get("intensity", sentiment_result.get("arousal", 0.5)),
+            "emotions": sentiment_result.get(
+                "emotions",
+                [sentiment_result["emotion"]] if "emotion" in sentiment_result else ["neutral"],
+            ),
         }
 
         self.agent_moods[agent_id].append(mood_entry)
@@ -437,28 +448,44 @@ Provide your analysis in this exact JSON format:
         if len(self.agent_moods[agent_id]) > self.max_mood_history:
             self.agent_moods[agent_id] = self.agent_moods[agent_id][-self.max_mood_history:]
 
+        # Update _agent_emotions with latest data
+        self._agent_emotions[agent_id] = {**sentiment_result, **mood_entry}
+
     def _check_stress_indicators(
-        self, agent_id: str, sentiment_result: dict[str, Any]
-    ) -> None:
-        """Check for stress indicators and update stress levels."""
-        # Update stress level
-        if sentiment_result.get("stress_indicators", False):
-            self.agent_stress_levels[agent_id] = min(
-                1.0, self.agent_stress_levels.get(agent_id, 0.0) + 0.1
-            )
+        self, agent_id: str, sentiment_result: dict[str, Any] | None = None
+    ) -> float:
+        """Check for stress indicators and update stress levels. Returns current stress level."""
+        if sentiment_result is not None:
+            # Update stress level based on sentiment
+            if sentiment_result.get("stress_indicators", False):
+                self.agent_stress_levels[agent_id] = min(
+                    1.0, self.agent_stress_levels.get(agent_id, 0.0) + 0.1
+                )
+            else:
+                # Gradually decrease stress over time
+                self.agent_stress_levels[agent_id] = max(
+                    0.0, self.agent_stress_levels.get(agent_id, 0.0) - 0.05
+                )
         else:
-            # Gradually decrease stress over time
-            self.agent_stress_levels[agent_id] = max(
-                0.0, self.agent_stress_levels.get(agent_id, 0.0) - 0.05
-            )
+            # Compute stress from stored emotional state if no sentiment_result provided
+            emotions = self._agent_emotions.get(agent_id, {})
+            arousal = emotions.get("arousal", 0.0)
+            valence = emotions.get("valence", 0.5)
+            # Low valence + high arousal = high stress
+            computed = max(0.0, arousal - valence + 0.5) if (arousal or valence != 0.5) else 0.0
+            if computed > 0:
+                self.agent_stress_levels[agent_id] = min(1.0, computed)
+
+        stress_level = self.agent_stress_levels.get(agent_id, 0.0)
 
         # Check for high stress alert
-        if self.agent_stress_levels.get(agent_id, 0.0) > self.stress_threshold:
+        if stress_level > self.stress_threshold:
             logger.warning(
                 f"[{self.agent_id}] High stress detected for agent {agent_id}",
-                extra={"stress_level": self.agent_stress_levels[agent_id]},
+                extra={"stress_level": stress_level},
             )
-            # Could trigger alert to supervisor or steward
+
+        return stress_level
 
     def _log_sentiment(self, agent_id: str, sentiment_result: dict[str, Any]) -> None:
         """Log sentiment for observability and analysis."""
