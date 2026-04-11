@@ -90,7 +90,7 @@ class AutonomousRuntime:
         # Initialize agent runtime
         self.agent_runtime = AgentRuntime(
             supervisor=self.supervisor,
-            _character_configs = self.config.agent_configs,
+            character_configs=self.config.agent_configs,
         )
         await self.agent_runtime.initialize()
 
@@ -111,7 +111,7 @@ class AutonomousRuntime:
         await self._start_initial_agents()
 
         # Start background tasks
-        _tasks = [
+        tasks = [
             self._monitoring_loop(),
             self._scaling_loop(),
             self._state_persistence_loop(),
@@ -183,9 +183,9 @@ class AutonomousRuntime:
 
         # Check agent health
         if self.supervisor:
-            _failed_agents = []
+            failed_agents = []
             for agent_id, actor in self.supervisor.actors.items():
-                _status = actor.get_status()
+                status = actor.getstatus()
                 # Fix: Use ActorState enum values for comparison (uppercase)
                 from heretek_swarm.actors.base import ActorState
                 if status and status.state in [ActorState.SUSPENDED, ActorState.TERMINATED, ActorState.ERROR]:
@@ -391,7 +391,7 @@ class AutonomousRuntime:
             return None
 
         for agent_id, actor in self.supervisor.actors.items():
-            _status = actor.get_status()
+            status = actor.getstatus()
             if status:
                 # Check if agent has been idle for a while
                 if status.last_activity:
@@ -492,7 +492,7 @@ class AutonomousRuntime:
         # Collect agent metrics
         _agent_metrics = []
         for agent_id, actor in self.supervisor.actors.items():
-            _status = actor.get_status()
+            status = actor.getstatus()
             if status:
                 agent_metrics.append({
                     "agent_id": agent_id,

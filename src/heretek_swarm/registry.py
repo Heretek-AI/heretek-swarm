@@ -100,21 +100,21 @@ class ChannelMessage:
         import uuid
 
         return cls(
-            _subject = subject,
-            _correlation_id = str(uuid.uuid4()),
-            _reply_to = reply_to,
-            _sender_agent = sender_agent,
-            _target_agents = target_agents or ["*"],
-            _message_type = message_type,
-            _content = content,
-            _metadata = metadata or {},
-            _timestamp = datetime.now(timezone.utc).isoformat(),
-            _ttl_seconds = ttl_seconds,
+            subject=subject,
+            correlation_id=str(uuid.uuid4()),
+            reply_to=reply_to,
+            sender_agent=sender_agent,
+            target_agents=target_agents or ["*"],
+            message_type=message_type,
+            content=content,
+            metadata=metadata or {},
+            timestamp=datetime.now(timezone.utc).isoformat(),
+            ttl_seconds=ttl_seconds,
             priority=priority,
-            _requires_ack = requires_ack,
-            _workflow_id = workflow_id,
-            _task_id = task_id,
-            _session_id = session_id,
+            requires_ack=requires_ack,
+            workflow_id=workflow_id,
+            task_id=task_id,
+            session_id=session_id,
         )
 
 
@@ -198,13 +198,13 @@ class ChannelRegistry:
         Returns:
             List of channel definitions
         """
-        _channels = self._channels.values()
+        channels = self._channels.values()
 
         if channel_type:
-            _channels = [c for c in channels if c.channel_type == channel_type]
+            channels = [c for c in channels if c.channel_type == channel_type]
 
         if subscriber:
-            _channels = [c for c in channels if subscriber in c.subscribers or "*" in c.subscribers]
+            channels = [c for c in channels if subscriber in c.subscribers or "*" in c.subscribers]
 
         return [
             {
@@ -223,7 +223,7 @@ class ChannelRegistry:
 
     def get_subscriptions(self, agent_id: str) -> List[str]:
         """Get all channels an agent is subscribed to."""
-        _subscriptions = self._agent_subscriptions.get(agent_id, set()).copy()
+        subscriptions = self._agent_subscriptions.get(agent_id, set()).copy()
 
         # Add wildcard subscriptions
         for channel in self._channels.values():
@@ -234,7 +234,7 @@ class ChannelRegistry:
 
     def get_subscribers(self, channel_name: str) -> List[str]:
         """Get all agents subscribed to a channel."""
-        _channel = self._channels.get(channel_name)
+        channel = self._channels.get(channel_name)
         if not channel:
             return []
 

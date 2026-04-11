@@ -163,7 +163,7 @@ class SafeExpressionEvaluator:
         """
         # Parse the expression into an AST
         try:
-            _tree = ast.parse(expr, mode='eval')
+            tree = ast.parse(expr, mode='eval')
         except SyntaxError as e:
             raise ValueError(f"Invalid expression syntax: {e}")
 
@@ -252,47 +252,47 @@ class SafeExpressionEvaluator:
 
         # Handle comparison operations
         elif isinstance(node, ast.Compare):
-            _left = self._eval_node(node.left)
-            _result = True
+            left = self._eval_node(node.left)
+            result = True
             for op, comparator in zip(node.ops, node.comparators):
-                _op_func = SAFE_OPERATORS.get(type(op))
+                op_func = SAFE_OPERATORS.get(type(op))
                 if op_func is None:
                     raise ValueError(f"Unsupported comparison operator: {type(op).__name__}")
                 right = self._eval_node(comparator)
-                _result = result and op_func(left, right)
+                result = result and op_func(left, right)
                 left = right
             return result
 
         # Handle boolean operations (and, or)
         elif isinstance(node, ast.BoolOp):
-            _op_func = SAFE_BOOL_OPS.get(type(node.op))
+            op_func = SAFE_BOOL_OPS.get(type(node.op))
             if op_func is None:
                 raise ValueError(f"Unsupported boolean operator: {type(node.op).__name__}")
-            _result = self._eval_node(node.values[0])
+            result = self._eval_node(node.values[0])
             for value in node.values[1:]:
-                _result = op_func(result, self._eval_node(value))
+                result = op_func(result, self._eval_node(value))
             return result
 
         # Handle unary operations (not, -, +)
         elif isinstance(node, ast.UnaryOp):
-            _op_func = SAFE_UNARY_OPS.get(type(node.op))
+            op_func = SAFE_UNARY_OPS.get(type(node.op))
             if op_func is None:
                 raise ValueError(f"Unsupported unary operator: {type(node.op).__name__}")
             return op_func(self._eval_node(node.operand))
 
         # Handle binary operations (+, -, *, /, etc.)
         elif isinstance(node, ast.BinOp):
-            _op_func = self.SAFE_BIN_OPS.get(type(node.op))
+            op_func = self.SAFE_BIN_OPS.get(type(node.op))
             if op_func is None:
                 raise ValueError(f"Unsupported binary operator: {type(node.op).__name__}")
-            _left = self._eval_node(node.left)
-            _right = self._eval_node(node.right)
+            left = self._eval_node(node.left)
+            right = self._eval_node(node.right)
             return op_func(left, right)
 
         # Handle subscript (indexing)
         elif isinstance(node, ast.Subscript):
             value = self._eval_node(node.value)
-            _slice_val = self._eval_node(node.slice)
+            slice_val = self._eval_node(node.slice)
             return value[slice_val]
 
         else:
@@ -873,7 +873,7 @@ class WorkflowEngine:
 
         try:
             # Safely evaluate the condition expression
-            _result = evaluator.validate_and_eval(condition)
+            result = evaluator.validate_and_eval(condition)
             return bool(result)
 
         except Exception as e:
@@ -963,7 +963,7 @@ class WorkflowEngine:
         _tool_params = input_data.get("params", {})
 
         # Execute tool
-        _result = await tool_registry.execute(tool_name, **tool_params)
+        result = await tool_registry.execute(tool_name, **tool_params)
 
         return result
 
@@ -1049,7 +1049,7 @@ class WorkflowEngine:
                 _limit = limit
             )
 
-            _result = await memory_store.search(search_query)
+            result = await memory_store.search(search_query)
 
             return {
                 "results": [

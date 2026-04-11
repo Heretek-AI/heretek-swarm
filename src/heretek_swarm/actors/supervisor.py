@@ -64,7 +64,7 @@ class ActorSupervisor:
         ```
     """
 
-    def __init__(self, _name: Optional[str], _health_check_interval: float, _auto_restart: bool, _max_restarts: int, _db_pool: Optional[Any]) -> None:
+    def __init__(self, name: Optional[str] = None, health_check_interval: float = 30.0, auto_restart: bool = True, max_restarts: int = 3, db_pool: Optional[Any] = None) -> None:
         """
         Initialize the supervisor.
 
@@ -81,7 +81,7 @@ class ActorSupervisor:
         if max_restarts < 0:
             raise ValueError("max_restarts must be non-negative")
 
-        self.name = name or "ActorSupervisor"
+        self.name = name if name else "ActorSupervisor"
         self.health_check_interval = health_check_interval
         self.auto_restart = auto_restart
         self.max_restarts = max_restarts
@@ -114,7 +114,7 @@ class ActorSupervisor:
         # Initialization is handled in __init__, this method is for API compatibility
         pass
 
-    async def spawn_actor(self, _actor_class: Type[AgentActor], _actor_id: str, _actor_type: Optional[str], **kwargs: Any) -> AgentActor:
+    async def spawn_actor(self, actor_class: Type[AgentActor], actor_id: str, actor_type: Optional[str] = None, **kwargs: Any) -> AgentActor:
         """
         Spawn a new actor.
 
@@ -152,12 +152,12 @@ class ActorSupervisor:
             self.restart_counts[actor_id] = 0
 
             # Store configuration for restart capability
-            _config = ActorConfig(
-                _actor_type = actor_type or actor_class.__name__,
+            config = ActorConfig(
+                actor_type=actor_type or actor_class.__name__,
                 class_ref=actor_class,
                 init_kwargs={"agent_id": actor_id, **kwargs},
                 capabilities=actor.capabilities.copy(),
-                _actor_id = actor_id,
+                actor_id=actor_id,
             )
             self.actor_configs[actor_id] = config
 
@@ -182,7 +182,7 @@ class ActorSupervisor:
             self.actor_configs.pop(actor_id, None)
             raise
 
-    async def terminate_actor(self, _actor_id: str) -> None:
+    async def terminate_actor(self, actor_id: str) -> None:
         """
         Terminate an actor.
 
@@ -219,7 +219,7 @@ class ActorSupervisor:
         logger.info(f"[{self.name}] Terminating all actors...")
 
         _actor_ids = list(self.actors.keys())
-        _tasks = [self.terminate_actor(actor_id) for actor_id in actor_ids]
+        tasks = [self.terminate_actor(actor_id) for actor_id in actor_ids]
 
         await asyncio.gather(*tasks, return_exceptions=True)
 
@@ -347,7 +347,7 @@ class ActorSupervisor:
 
         try:
             # Get stored configuration
-            _config = self.actor_configs.get(actor_id)
+            config = self.actor_configs.get(actor_id)
             if config is None:
                 logger.error(
                     f"[{self.name}] No configuration found for actor {actor_id}",
@@ -398,7 +398,7 @@ class ActorSupervisor:
             logger.warning(f"[{self.name}] Cannot respawn actor {actor_id}: not found")
             return False
 
-        _config = self.actor_configs.get(actor_id)
+        config = self.actor_configs.get(actor_id)
         if config is None:
             logger.error(f"[{self.name}] No configuration found for actor {actor_id}")
             return False
@@ -434,7 +434,7 @@ class ActorSupervisor:
         """Save states of all actors."""
         logger.info(f"[{self.name}] Saving all actor states...")
 
-        _tasks = [actor.save_state() for actor in self.actors.values()]
+        tasks = [actor.save_state() for actor in self.actors.values()]
         await asyncio.gather(*tasks, return_exceptions=True)
 
         logger.info(f"[{self.name}] All states saved")
@@ -443,7 +443,7 @@ class ActorSupervisor:
         """Load states for all actors."""
         logger.info(f"[{self.name}] Loading all actor states...")
 
-        _tasks = [actor.load_state() for actor in self.actors.values()]
+        tasks = [actor.load_state() for actor in self.actors.values()]
         await asyncio.gather(*tasks, return_exceptions=True)
 
         logger.info(f"[{self.name}] All states loaded")

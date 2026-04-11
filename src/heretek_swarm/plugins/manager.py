@@ -148,7 +148,7 @@ class PluginRuntime:
         Returns:
             List of discovered plugins
         """
-        _discovered = []
+        discovered = []
 
         if not self.plugins_dir.exists():
             logger.warning("plugins_dir_not_found", dir=str(self.plugins_dir))
@@ -159,25 +159,25 @@ class PluginRuntime:
                 continue
 
             # Look for plugin.py file
-            _plugin_file = plugin_path / "plugin.py"
+            plugin_file = plugin_path / "plugin.py"
             if not plugin_file.exists():
                 continue
 
             try:
                 # Import plugin module
                 spec = importlib.util.spec_from_file_location(plugin_path.name, str(plugin_file))
-                _module = importlib.util.module_from_spec(spec)
+                module = importlib.util.module_from_spec(spec)
 
                 # Find plugin class
                 for name, obj in inspect.getmembers(module):
                     if inspect.isclass(obj) and issubclass(obj, Plugin) and obj is not Plugin:
-                        _plugin = obj()
+                        plugin = obj()
                         plugin.metadata = self._extract_metadata(plugin_path)
                         discovered.append(plugin)
                         logger.info(
                             "plugin_discovered",
                             plugin=plugin.metadata.name,
-                            _version = plugin.metadata.version
+                            version = plugin.metadata.version
                         )
                         break
 
@@ -196,12 +196,12 @@ class PluginRuntime:
         Returns:
             PluginMetadata
         """
-        _metadata_file = plugin_path / "metadata.json"
+        metadata_file = plugin_path / "metadata.json"
 
         if metadata_file.exists():
             import json
             with open(metadata_file) as f:
-                _data = json.load(f)
+                data = json.load(f)
             return PluginMetadata(**data)
 
         # Default metadata
@@ -292,7 +292,7 @@ class PluginRuntime:
             Dictionary of plugin names to load status
         """
         _results = {}
-        _discovered = await self.discover_plugins()
+        discovered = await self.discover_plugins()
 
         for plugin in discovered:
             results[plugin.metadata.name] = await self.load_plugin(plugin)
@@ -430,11 +430,11 @@ async def load_plugin_from_file(_plugin_path: Path) -> Optional[Plugin]:
 
     try:
         _spec = importlib.util.spec_from_file_location("plugin", str(plugin_path))
-        _module = importlib.util.module_from_spec(spec)
+        module = importlib.util.module_from_spec(spec)
 
         for name, obj in inspect.getmembers(module):
             if inspect.isclass(obj) and issubclass(obj, Plugin) and obj is not Plugin:
-                _plugin = obj()
+                plugin = obj()
                 plugin.metadata = PluginMetadata(
                     _name = name,
                     _version = "0.1.0",

@@ -17,6 +17,7 @@ Based on architecture from:
 """
 
 import asyncio
+import os
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
 
@@ -27,6 +28,7 @@ from heretek_swarm.channels.registry import ChannelRegistry, GroupRegistry
 from heretek_swarm.consensus.maker import MAKERConsensus
 from heretek_swarm.gateway.nats_event_mesh import NATSEventMesh
 from heretek_swarm.memory.base import DualTierMemory
+from heretek_swarm.memory.rag import RAGPipeline
 from heretek_swarm.tools.mcp_tools import CoreMCPTools
 
 _logger = structlog.get_logger(__name__)
@@ -86,8 +88,8 @@ class AutonomousSwarm:
             "scaling_interval": 60,
             "ephemeral": {"ttl_seconds": 3600},
             "persistent": {
-                            "connection_string": os.getenv("DATABASE_URL", "postgresql://heretek:password@localhost/heretek_swarm"),
-                        },
+                "connection_string": os.getenv("DATABASE_URL", "postgresql://heretek:password@localhost/heretek_swarm"),
+            },
             "rag": {
                 "embedding_provider": "openai",
                 "collection_name": "heretek_documents",
@@ -101,72 +103,72 @@ class AutonomousSwarm:
 
     async def initialize(self) -> None:
         """Initialize all swarm components."""
-        logger.info("initializing_autonomous_swarm")
+        _logger.info("initializing_autonomous_swarm")
 
         # 1. Initialize channel registry
         self.channel_registry = ChannelRegistry()
         self.group_registry = GroupRegistry(self.channel_registry)
-        logger.info("channel_registry_initialized")
+        _logger.info("channel_registry_initialized")
 
         # 2. Initialize memory system
         self.memory = DualTierMemory(
-            _ephemeral_config = self.config.get("ephemeral", {}),
-            _persistent_config = self.config.get("persistent", {}),
+            _ephemeral_config=self.config.get("ephemeral", {}),
+            _persistent_config=self.config.get("persistent", {}),
         )
         await self.memory.initialize()
-        logger.info("memory_system_initialized")
+        _logger.info("memory_system_initialized")
 
         # 3. Initialize RAG pipeline
         self.rag = RAGPipeline(
             config=self.config.get("rag", {}),
-            _memory_backend = self.memory,
+            _memory_backend=self.memory,
         )
         await self.rag.initialize()
-        logger.info("rag_pipeline_initialized")
+        _logger.info("rag_pipeline_initialized")
 
         # 4. Initialize consensus engine
         _consensus_config = self.config.get("consensus", {})
         self.consensus = MAKERConsensus(
-            _ahead_by_k = consensus_config.get("ahead_by_k", 2),
-            _min_votes = consensus_config.get("min_votes", 3),
-            _red_flag_threshold = consensus_config.get("red_flag_threshold", 0.3),
+            _ahead_by_k=_consensus_config.get("ahead_by_k", 2),
+            _min_votes=_consensus_config.get("min_votes", 3),
+            _red_flag_threshold=_consensus_config.get("red_flag_threshold", 0.3),
         )
-        logger.info("maker_consensus_initialized")
+        _logger.info("maker_consensus_initialized")
 
         # 5. Initialize event mesh (NATS)
         self.event_mesh = NATSEventMesh(
-            _servers = self.config.get("nats_servers", ["nats://localhost:4222"]),
-            _fallback = True,
+            _servers=self.config.get("nats_servers", ["nats://localhost:4222"]),
+            _fallback=True,
         )
         await self.event_mesh.connect()
-        logger.info("event_mesh_connected")
+        _logger.info("event_mesh_connected")
 
         # 6. Initialize MCP tools
         self.mcp_tools = CoreMCPTools(
-            _memory_system = self.memory,
-            _rag_pipeline = self.rag,
-            _consensus_engine = self.consensus,
+            _memory_system=self.memory,
+            _rag_pipeline=self.rag,
+            _consensus_engine=self.consensus,
             event_mesh=self.event_mesh,
         )
-        logger.info("mcp_tools_initialized", tool_count=len(self.mcp_tools.get_registry().list_tools()))
+        _logger.info("mcp_tools_initialized", tool_count=len(self.mcp_tools.get_registry().list_tools()))
 
         # 7. Initialize supervisor
         self.supervisor = ActorSupervisor(
-            _health_check_interval = self._health_check_interval,
-            _auto_restart = True,
-            _max_restarts = 5,
+            _health_check_interval=self._health_check_interval,
+            _auto_restart=True,
+            _max_restarts=5,
         )
-        logger.info("actor_supervisor_initialized")
+        _logger.info("actor_supervisor_initialized")
 
         # 8. Spawn all 23 agents
         await self._spawn_all_actors()
-        logger.info("all_actors_spawned", count=23)
+        _logger.info("all_actors_spawned", count=23)
 
         # 9. Set up channel subscriptions
         await self._setup_channel_subscriptions()
-        logger.info("channel_subscriptions_configured")
+        _logger.info("channel_subscriptions_configured")
 
-        logger.info("autonomous_swarm_fully_initialized")
+        _logger.info("autonomous_swarm_fully_initialized")
 
     async def _spawn_all_actors(self) -> None:
         """Spawn all 23 agents across 6 tiers."""
@@ -243,15 +245,15 @@ class AutonomousSwarm:
         for agent_class, agent_id, topics in actors:
             try:
                 _agent = agent_class(
-                    _agent_id = agent_id,
-                    _name = agent_id.capitalize().replace("-", " "),
-                    _topics = topics,
+                    _agent_id=agent_id,
+                    _name=agent_id.capitalize().replace("-", " "),
+                    _topics=topics,
                     memory=self.memory,
                 )
-                await self.supervisor.spawn_actor_instance(agent, agent_id)
-                logger.info("actor_spawned", agent_id=agent_id, tier=self._get_tier(agent_id))
+                await self.supervisor.spawn_actor_instance(_agent, agent_id)
+                _logger.info("actor_spawned", agent_id=agent_id, tier=self._get_tier(agent_id))
             except Exception as e:
-                logger.error("actor_spawn_failed", agent_id=agent_id, error=str(e))
+                _logger.error("actor_spawn_failed", agent_id=agent_id, error=str(e))
                 raise
 
     def _get_tier(self, agent_id: str) -> str:
@@ -281,7 +283,7 @@ class AutonomousSwarm:
             "habit-forge": "Tier 6 (Enhancement)",
             "perceiver-plus": "Tier 6 (Enhancement)",
         }
-        return tier_mapping.get(agent_id, "Unknown")
+        return _tier_mapping.get(agent_id, "Unknown")
 
     async def _setup_channel_subscriptions(self) -> None:
         """Set up channel subscriptions for all agents based on the channel registry."""
@@ -291,11 +293,11 @@ class AutonomousSwarm:
         # Get all agent IDs
         _agent_ids = list(self.supervisor.actors.keys())
 
-        for agent_id in agent_ids:
+        for agent_id in _agent_ids:
             # Get channels for this agent
             _channels = self.channel_registry.get_subscriptions(agent_id)
 
-            for channel_name in channels:
+            for channel_name in _channels:
                 # Subscribe to NATS subject
                 _nats_subject = self.channel_registry.get_nats_subject(channel_name)
 
@@ -306,14 +308,15 @@ class AutonomousSwarm:
                     return handler
 
                 await self.event_mesh.subscribe(
-                    _subject = nats_subject,
-                    _handler = await create_handler(agent_id, channel_name),
+                    _subject=_nats_subject,
+                    _handler=await create_handler(agent_id, channel_name),
                 )
 
-            logger.debug(
+
+            _logger.debug(
                 "agent_channel_subscriptions",
-                _agent_id = agent_id,
-                _channels = channels,
+                agent_id=agent_id,
+                channels=_channels,
             )
 
     async def _handle_channel_message(self, agent_id: str, channel_name: str, message: Dict[str, Any]) -> None:
@@ -322,7 +325,7 @@ class AutonomousSwarm:
             # Get the actor
             actor = self.supervisor.actors.get(agent_id)
             if not actor:
-                logger.warning("message_for_missing_actor", agent_id=agent_id)
+                _logger.warning("message_for_missing_actor", agent_id=agent_id)
                 return
 
             # Route message to actor mailbox
@@ -332,17 +335,17 @@ class AutonomousSwarm:
             self.channel_registry.record_message(channel_name, delivered=True)
 
         except Exception as e:
-            logger.error(
+            _logger.error(
                 "channel_message_handling_error",
-                _agent_id = agent_id,
-                _channel = channel_name,
+                agent_id=agent_id,
+                channel=channel_name,
                 error=str(e),
             )
             self.channel_registry.record_error(channel_name)
 
     async def run(self) -> None:
         """Main autonomous loop - runs 24/7."""
-        logger.info("starting_autonomous_loop")
+        _logger.info("starting_autonomous_loop")
         self._running = True
 
         # Start background tasks
@@ -354,7 +357,7 @@ class AutonomousSwarm:
             asyncio.create_task(self._scaling_loop()),
         ]
 
-        logger.info("autonomous_loop_started", background_tasks=len(self._tasks))
+        _logger.info("autonomous_loop_started", background_tasks=len(self._tasks))
 
         # Main loop
         try:
@@ -365,7 +368,8 @@ class AutonomousSwarm:
                 except asyncio.CancelledError:
                     break
                 except Exception as e:
-                    logger.error("autonomous_loop_error", error=str(e))
+                    _logger.error("autonomous_loop_error", error=str(e))
+
                     await asyncio.sleep(5)  # Backoff on error
         finally:
             await self.shutdown()
@@ -406,8 +410,8 @@ class AutonomousSwarm:
         """Run health checks on all actors."""
         for agent_id, actor in self.supervisor.actors.items():
             _status = actor.get_status()
-            if status.state.value == "error":
-                logger.warning("actor_error", agent_id=agent_id)
+            if _status.state.value == "error":
+                _logger.warning("actor_error", agent_id=agent_id)
                 await self.supervisor.restart_actor(agent_id)
 
     async def _health_monitor_loop(self) -> None:
@@ -427,16 +431,17 @@ class AutonomousSwarm:
 
                 await self.event_mesh.publish(
                     "swarm.system.health",
-                    health_data,
+                    _health_data,
                 )
 
-                logger.debug("health_metrics_published", active_actors=health_data["active_actors"])
+
+                _logger.debug("health_metrics_published", active_actors=_health_data["active_actors"])
 
                 await asyncio.sleep(self._health_check_interval)
             except asyncio.CancelledError:
                 break
             except Exception as e:
-                logger.error("health_monitor_error", error=str(e))
+                _logger.error("health_monitor_error", error=str(e))
 
     async def _consciousness_loop(self) -> None:
         """Consciousness metrics update loop."""
@@ -455,14 +460,15 @@ class AutonomousSwarm:
 
                 await self.event_mesh.publish(
                     "swarm.system.consciousness",
-                    consciousness_data,
+                    _consciousness_data,
                 )
+
 
                 await asyncio.sleep(self._consciousness_interval)
             except asyncio.CancelledError:
                 break
             except Exception as e:
-                logger.error("consciousness_loop_error", error=str(e))
+                _logger.error("consciousness_loop_error", error=str(e))
 
     async def _task_processing_loop(self) -> None:
         """Task processing loop - polls for new tasks."""
@@ -479,7 +485,7 @@ class AutonomousSwarm:
             except asyncio.CancelledError:
                 break
             except Exception as e:
-                logger.error("task_processing_error", error=str(e))
+                _logger.error("task_processing_error", error=str(e))
 
     async def _memory_maintenance_loop(self) -> None:
         """Memory tier optimization and cleanup loop."""
@@ -489,13 +495,13 @@ class AutonomousSwarm:
                 if self.memory:
                     await self.memory.run_maintenance()
 
-                logger.debug("memory_maintenance_completed")
+                _logger.debug("memory_maintenance_completed")
 
                 await asyncio.sleep(self._memory_maintenance_interval)
             except asyncio.CancelledError:
                 break
             except Exception as e:
-                logger.error("memory_maintenance_error", error=str(e))
+                _logger.error("memory_maintenance_error", error=str(e))
 
     async def _scaling_loop(self) -> None:
         """Auto-scaling check loop."""
@@ -509,11 +515,11 @@ class AutonomousSwarm:
             except asyncio.CancelledError:
                 break
             except Exception as e:
-                logger.error("scaling_check_error", error=str(e))
+                _logger.error("scaling_check_error", error=str(e))
 
     async def shutdown(self) -> None:
         """Graceful shutdown of the autonomous swarm."""
-        logger.info("shutting_down_autonomous_swarm")
+        _logger.info("shutting_down_autonomous_swarm")
 
         self._running = False
 
@@ -528,19 +534,19 @@ class AutonomousSwarm:
         # Terminate all actors
         if self.supervisor:
             await self.supervisor.terminate_all()
-            logger.info("all_actors_terminated")
+            _logger.info("all_actors_terminated")
 
         # Disconnect event mesh
         if self.event_mesh:
             await self.event_mesh.disconnect()
-            logger.info("event_mesh_disconnected")
+            _logger.info("event_mesh_disconnected")
 
         # Shutdown RAG
         if self.rag:
             await self.rag.shutdown()
-            logger.info("rag_shutdown_complete")
+            _logger.info("rag_shutdown_complete")
 
-        logger.info("autonomous_swarm_shutdown_complete")
+        _logger.info("autonomous_swarm_shutdown_complete")
 
 
 # ============================================================================
@@ -558,7 +564,7 @@ async def main():
         "scaling_interval": 60,
         "ephemeral": {"ttl_seconds": 3600},
         "persistent": {
-            "connection_string": "postgresql://heretek:password@localhost/heretek_swarm",
+            "connection_string": os.getenv("DATABASE_URL", "postgresql://heretek:password@localhost/heretek_swarm"),
         },
         "rag": {
             "embedding_provider": "openai",
@@ -571,10 +577,6 @@ async def main():
         },
     }
 
-    _swarm = AutonomousSwarm(config)
-    await swarm.initialize()
-    await swarm.run()
-
-
-if __name__ == "__main__":
-    asyncio.run(main())
+    _swarm = AutonomousSwarm(_config)
+    await _swarm.initialize()
+    await _swarm.run()

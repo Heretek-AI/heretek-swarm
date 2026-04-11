@@ -166,7 +166,7 @@ class ConfigLoader:
 
     async def _warm_cache(self) -> None:
         """Warm up the cache with frequently accessed configurations."""
-        _common_keys = [
+        common_keys = [
             "rate_limit.enabled",
             "memory.max_size",
             "consciousness.enabled",
