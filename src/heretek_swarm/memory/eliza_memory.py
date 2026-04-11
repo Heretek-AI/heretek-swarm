@@ -17,8 +17,8 @@ Based on: MiniMax Audit lines 244-337
 
 import math
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from typing import Any, Optional
+from datetime import UTC, datetime
+from typing import Any
 
 import structlog
 
@@ -56,8 +56,8 @@ class ElizaMemoryEntry:
     agent_id: str
     importance: float = 0.5
     decay_rate: float = DEFAULT_DECAY_RATE
-    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
-    last_accessed: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    created_at: datetime = field(default_factory=lambda: datetime.now(UTC))
+    last_accessed: datetime = field(default_factory=lambda: datetime.now(UTC))
     access_count: int = 0
     memory_type: str = "short_term"  # working, short_term, long_term
     tags: list[str] = field(default_factory=list)
@@ -71,14 +71,14 @@ class ElizaMemoryEntry:
             Importance adjusted for time elapsed since creation
         """
         # Hours since creation
-        hours_elapsed = (datetime.now(timezone.utc) - self.created_at).total_seconds() / 3600
+        hours_elapsed = (datetime.now(UTC) - self.created_at).total_seconds() / 3600
 
         # Decay formula: importance * e^(-decay_rate * hours)
         decayed = self.importance * math.exp(-self.decay_rate * hours_elapsed)
 
         # Boost for recent access
         if self.access_count > 0:
-            hours_since_access = (datetime.now(timezone.utc) - self.last_accessed).total_seconds() / 3600
+            hours_since_access = (datetime.now(UTC) - self.last_accessed).total_seconds() / 3600
             access_boost = min(0.1, self.access_count * 0.02 * math.exp(-hours_since_access))
             decayed += access_boost
 
@@ -86,7 +86,7 @@ class ElizaMemoryEntry:
 
     def touch(self) -> None:
         """Update access time and increment count."""
-        self.last_accessed = datetime.now(timezone.utc)
+        self.last_accessed = datetime.now(UTC)
         self.access_count += 1
 
 
@@ -130,7 +130,7 @@ class MemoryManager:
 
     def __init__(
         self,
-        config: Optional[MemoryManagerConfig] = None,
+        config: MemoryManagerConfig | None = None,
         agent_id: str = "default",
     ) -> None:
         """
@@ -196,12 +196,12 @@ class MemoryManager:
     async def remember(
         self,
         content: str,
-        agent_id: Optional[str] = None,
+        agent_id: str | None = None,
         importance: float = 0.5,
-        decay_rate: Optional[float] = None,
-        memory_type: Optional[str] = None,
-        tags: Optional[list[str]] = None,
-        metadata: Optional[dict[str, Any]] = None,
+        decay_rate: float | None = None,
+        memory_type: str | None = None,
+        tags: list[str] | None = None,
+        metadata: dict[str, Any] | None = None,
     ) -> ElizaMemoryEntry:
         """
         Store a memory with automatic tier selection.
@@ -288,9 +288,9 @@ class MemoryManager:
 
     async def recall(
         self,
-        query: Optional[str] = None,
-        agent_id: Optional[str] = None,
-        limit: Optional[int] = None,
+        query: str | None = None,
+        agent_id: str | None = None,
+        limit: int | None = None,
         min_importance: float = MIN_IMPORTANCE,
     ) -> list[ElizaMemoryEntry]:
         """
@@ -310,7 +310,7 @@ class MemoryManager:
 
         agent_id = agent_id or self.agent_id
         limit = limit or self.config.recall_limit
-        now = datetime.now(timezone.utc)
+        datetime.now(UTC)
 
         results: list[tuple[float, ElizaMemoryEntry]] = []
 
@@ -354,7 +354,7 @@ class MemoryManager:
 
     async def get_working_context(
         self,
-        agent_id: Optional[str] = None,
+        agent_id: str | None = None,
         limit: int = 5,
     ) -> list[ElizaMemoryEntry]:
         """
@@ -438,7 +438,7 @@ class MemoryManager:
         Returns:
             Number of memories cleaned up
         """
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         cleaned = 0
         expired_ids = []
 

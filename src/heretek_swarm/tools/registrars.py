@@ -4,18 +4,19 @@ This module provides specialized registrars for organizing MCP tool
 registrations into maintainable, focused components.
 """
 
-from typing import Any, Dict, Callable
+from collections.abc import Callable
+from typing import Any
 
-from .mcp_tools import MCPToolRegistry, MCPToolDefinition
+from .mcp_tools import MCPToolDefinition, MCPToolRegistry
 
 
 class BaseToolRegistrar:
     """Base class for tool registrars."""
-    
-    def __init__(self, registry: MCPToolRegistry, handlers: Dict[str, Callable]):
+
+    def __init__(self, registry: MCPToolRegistry, handlers: dict[str, Callable]):
         self._registry = registry
         self._handlers = handlers
-    
+
     def register(self) -> None:
         """Register all tools in this category. Override in subclasses."""
         raise NotImplementedError
@@ -23,7 +24,7 @@ class BaseToolRegistrar:
 
 class MemoryToolsRegistrar(BaseToolRegistrar):
     """Register memory-related MCP tools."""
-    
+
     def register(self) -> None:
         """Register all memory tools."""
         self._registry.register(MCPToolDefinition(
@@ -41,7 +42,7 @@ class MemoryToolsRegistrar(BaseToolRegistrar):
             handler=self._handlers.get("_handle_memory_store"),
             category="memory"
         ))
-        
+
         self._registry.register(MCPToolDefinition(
             name="memory_retrieve",
             description="Retrieve relevant memories by semantic query",
@@ -61,7 +62,7 @@ class MemoryToolsRegistrar(BaseToolRegistrar):
 
 class CommunicationToolsRegistrar(BaseToolRegistrar):
     """Register communication-related MCP tools."""
-    
+
     def register(self) -> None:
         """Register all communication tools."""
         self._registry.register(MCPToolDefinition(
@@ -80,7 +81,7 @@ class CommunicationToolsRegistrar(BaseToolRegistrar):
             handler=self._handlers.get("_handle_agent_message"),
             category="communication"
         ))
-        
+
         self._registry.register(MCPToolDefinition(
             name="agent_handoff",
             description="Transfer task context to another agent",
@@ -100,7 +101,7 @@ class CommunicationToolsRegistrar(BaseToolRegistrar):
 
 class ConsensusToolsRegistrar(BaseToolRegistrar):
     """Register consensus-related MCP tools."""
-    
+
     def register(self) -> None:
         """Register all consensus tools."""
         self._registry.register(MCPToolDefinition(
@@ -118,7 +119,7 @@ class ConsensusToolsRegistrar(BaseToolRegistrar):
             handler=self._handlers.get("_handle_consensus_propose"),
             category="consensus"
         ))
-        
+
         self._registry.register(MCPToolDefinition(
             name="consensus_vote",
             description="Cast a vote on an active proposal",
@@ -139,7 +140,7 @@ class ConsensusToolsRegistrar(BaseToolRegistrar):
 
 class RAGToolsRegistrar(BaseToolRegistrar):
     """Register RAG-related MCP tools."""
-    
+
     def register(self) -> None:
         """Register all RAG tools."""
         self._registry.register(MCPToolDefinition(
@@ -157,7 +158,7 @@ class RAGToolsRegistrar(BaseToolRegistrar):
             handler=self._handlers.get("_handle_rag_query"),
             category="knowledge"
         ))
-        
+
         self._registry.register(MCPToolDefinition(
             name="rag_ingest",
             description="Ingest a document into the RAG system",
@@ -177,7 +178,7 @@ class RAGToolsRegistrar(BaseToolRegistrar):
 
 class IntegrationToolsRegistrar(BaseToolRegistrar):
     """Register integration-related MCP tools."""
-    
+
     def register(self) -> None:
         """Register all integration tools."""
         self._registry.register(MCPToolDefinition(
@@ -196,7 +197,7 @@ class IntegrationToolsRegistrar(BaseToolRegistrar):
             handler=self._handlers.get("_handle_external_api_call"),
             category="integration"
         ))
-        
+
         self._registry.register(MCPToolDefinition(
             name="notification_send",
             description="Send a notification to external channels",
@@ -216,7 +217,7 @@ class IntegrationToolsRegistrar(BaseToolRegistrar):
 
 class WorkflowToolsRegistrar(BaseToolRegistrar):
     """Register workflow-related MCP tools."""
-    
+
     def register(self) -> None:
         """Register all workflow tools."""
         self._registry.register(MCPToolDefinition(
@@ -234,7 +235,7 @@ class WorkflowToolsRegistrar(BaseToolRegistrar):
             handler=self._handlers.get("_handle_workflow_start"),
             category="workflow"
         ))
-        
+
         self._registry.register(MCPToolDefinition(
             name="workflow_status",
             description="Get the status of a running workflow",
@@ -252,7 +253,7 @@ class WorkflowToolsRegistrar(BaseToolRegistrar):
 
 class SystemToolsRegistrar(BaseToolRegistrar):
     """Register system-related MCP tools."""
-    
+
     def register(self) -> None:
         """Register all system tools."""
         self._registry.register(MCPToolDefinition(
@@ -280,12 +281,12 @@ TOOL_REGISTRARS = [
 ]
 
 
-def get_handler_methods(obj: Any) -> Dict[str, Callable]:
+def get_handler_methods(obj: Any) -> dict[str, Callable]:
     """Extract all handler methods from an object.
-    
+
     Args:
         obj: The object containing handler methods
-        
+
     Returns:
         Dict mapping method names to method references
     """
@@ -296,9 +297,9 @@ def get_handler_methods(obj: Any) -> Dict[str, Callable]:
     }
 
 
-def register_all_tools(registry: MCPToolRegistry, handlers: Dict[str, Callable]) -> None:
+def register_all_tools(registry: MCPToolRegistry, handlers: dict[str, Callable]) -> None:
     """Register all default tools using specialized registrars.
-    
+
     Args:
         registry: The MCP tool registry to register with
         handlers: Dict of handler method references

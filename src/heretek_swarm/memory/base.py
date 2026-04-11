@@ -8,11 +8,12 @@ This module provides:
 - State snapshot/rollback capabilities
 """
 
+import contextlib
 import uuid
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta, timezone
-from typing import Any, Dict, List, Optional, Tuple
+from datetime import UTC, datetime, timedelta
+from typing import Any
 
 import structlog
 
@@ -35,12 +36,12 @@ class MemoryEntry:
     """
 
     id: str
-    content: Dict[str, Any]
-    metadata: Dict[str, Any]
+    content: dict[str, Any]
+    metadata: dict[str, Any]
     created_at: str
-    expires_at: Optional[str] = None
-    lineage: List[str] = field(default_factory=list)
-    embedding: Optional[List[float]] = None
+    expires_at: str | None = None
+    lineage: list[str] = field(default_factory=list)
+    embedding: list[float] | None = None
 
 
 @dataclass
@@ -56,8 +57,8 @@ class MemoryQuery:
         include_expired: Include expired entries
     """
 
-    query_text: Optional[str] = None
-    filters: Optional[Dict[str, Any]] = None
+    query_text: str | None = None
+    filters: dict[str, Any] | None = None
     limit: int = 10
     similarity_threshold: float = 0.7
     include_expired: bool = False
@@ -72,7 +73,7 @@ class MemorySystem(ABC):
     - Persistent layer: Long-term vector-based storage with semantic search
     """
 
-    def __init__(self, name: Optional[str] = None) -> None:
+    def __init__(self, name: str | None = None) -> None:
         """
         Initialize the memory system.
 
@@ -85,15 +86,14 @@ class MemorySystem(ABC):
     @abstractmethod
     async def initialize(self) -> None:
         """Initialize the memory system."""
-        pass
 
     @abstractmethod
     async def store(
         self,
-        content: Dict[str, Any],
-        metadata: Optional[Dict[str, Any]] = None,
-        ttl: Optional[int] = None,
-        lineage: Optional[List[str]] = None,
+        content: dict[str, Any],
+        metadata: dict[str, Any] | None = None,
+        ttl: int | None = None,
+        lineage: list[str] | None = None,
     ) -> MemoryEntry:
         """
         Store a memory entry.
@@ -107,10 +107,9 @@ class MemorySystem(ABC):
         Returns:
             Stored memory entry
         """
-        pass
 
     @abstractmethod
-    async def retrieve(self, memory_id: str) -> Optional[MemoryEntry]:
+    async def retrieve(self, memory_id: str) -> MemoryEntry | None:
         """
         Retrieve a memory entry by ID.
 
@@ -120,10 +119,9 @@ class MemorySystem(ABC):
         Returns:
             Memory entry or None
         """
-        pass
 
     @abstractmethod
-    async def query(self, query: MemoryQuery) -> List[MemoryEntry]:
+    async def query(self, query: MemoryQuery) -> list[MemoryEntry]:
         """
         Query memory entries.
 
@@ -133,7 +131,6 @@ class MemorySystem(ABC):
         Returns:
             List of matching memory entries
         """
-        pass
 
     @abstractmethod
     async def delete(self, memory_id: str) -> bool:
@@ -146,12 +143,10 @@ class MemorySystem(ABC):
         Returns:
             True if deleted, False if not found
         """
-        pass
 
     @abstractmethod
     async def close(self) -> None:
         """Close the memory system and release resources."""
-        pass
 
 
 class EphemeralMemory(MemorySystem):
@@ -178,8 +173,8 @@ class EphemeralMemory(MemorySystem):
         super().__init__(name)
         self.max_size = max_size
         self.default_ttl = default_ttl
-        self._storage: Dict[str, MemoryEntry] = {}
-        self._index: Dict[str, List[str]] = {}  # field -> [memory_ids]
+        self._storage: dict[str, MemoryEntry] = {}
+        self._index: dict[str, list[str]] = {}  # field -> [memory_ids]
 
     async def initialize(self) -> None:
         """Initialize the ephemeral memory system."""
@@ -188,10 +183,10 @@ class EphemeralMemory(MemorySystem):
 
     async def store(
         self,
-        content: Dict[str, Any],
-        metadata: Optional[Dict[str, Any]] = None,
-        ttl: Optional[int] = None,
-        lineage: Optional[List[str]] = None,
+        content: dict[str, Any],
+        metadata: dict[str, Any] | None = None,
+        ttl: int | None = None,
+        lineage: list[str] | None = None,
     ) -> MemoryEntry:
         """
         Store a memory entry with TTL.
@@ -209,7 +204,7 @@ class EphemeralMemory(MemorySystem):
             await self.initialize()
 
         memory_id = str(uuid.uuid4())
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
 
         # Calculate expiration
         ttl = ttl or self.default_ttl
@@ -238,7 +233,7 @@ class EphemeralMemory(MemorySystem):
 
         return entry
 
-    async def retrieve(self, memory_id: str) -> Optional[MemoryEntry]:
+    async def retrieve(self, memory_id: str) -> MemoryEntry | None:
         """Retrieve a memory entry by ID."""
         entry = self._storage.get(memory_id)
 
@@ -250,7 +245,7 @@ class EphemeralMemory(MemorySystem):
 
         return entry
 
-    async def query(self, query: MemoryQuery) -> List[MemoryEntry]:
+    async def query(self, query: MemoryQuery) -> list[MemoryEntry]:
         """
         Query memory entries with filters.
 
@@ -268,14 +263,12 @@ class EphemeralMemory(MemorySystem):
                 continue
 
             # Apply filters
-            if query.filters:
-                if not self._matches_filters(entry, query.filters):
-                    continue
+            if query.filters and not self._matches_filters(entry, query.filters):
+                continue
 
             # Apply text search
-            if query.query_text:
-                if not self._matches_text(entry, query.query_text):
-                    continue
+            if query.query_text and not self._matches_text(entry, query.query_text):
+                continue
 
             results.append(entry)
 
@@ -324,12 +317,12 @@ class EphemeralMemory(MemorySystem):
             return False
 
         expires_at = datetime.fromisoformat(entry.expires_at)
-        return datetime.now(timezone.utc) > expires_at
+        return datetime.now(UTC) > expires_at
 
     def _matches_filters(
         self,
         entry: MemoryEntry,
-        filters: Dict[str, Any],
+        filters: dict[str, Any],
     ) -> bool:
         """Check if entry matches filters."""
         for key, value in filters.items():
@@ -363,23 +356,19 @@ class EphemeralMemory(MemorySystem):
         """Remove entry from indexes."""
         memory_type = entry.metadata.get("type", "default")
         if memory_type in self._index:
-            try:
+            with contextlib.suppress(ValueError):
                 self._index[memory_type].remove(entry.id)
-            except ValueError:
-                pass
 
         agent_id = entry.metadata.get("agent_id")
         if agent_id:
             key = "agent:" + agent_id
             if key in self._index:
-                try:
+                with contextlib.suppress(ValueError):
                     self._index[key].remove(entry.id)
-                except ValueError:
-                    pass
 
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """Get memory statistics."""
-        now = datetime.now(timezone.utc)
+        datetime.now(UTC)
         expired_count = sum(
             1
             for entry in self._storage.values()
@@ -408,7 +397,7 @@ class PersistentMemory(MemorySystem):
     def __init__(
         self,
         name: str = "PersistentMemory",
-        connection_string: Optional[str] = None,
+        connection_string: str | None = None,
     ) -> None:
         """
         Initialize persistent memory.
@@ -419,7 +408,7 @@ class PersistentMemory(MemorySystem):
         """
         super().__init__(name)
         self.connection_string = connection_string
-        self._storage: Dict[str, MemoryEntry] = {}
+        self._storage: dict[str, MemoryEntry] = {}
 
     async def initialize(self) -> None:
         """Initialize the persistent memory system."""
@@ -429,17 +418,17 @@ class PersistentMemory(MemorySystem):
 
     async def store(
         self,
-        content: Dict[str, Any],
-        metadata: Optional[Dict[str, Any]] = None,
-        ttl: Optional[int] = None,
-        lineage: Optional[List[str]] = None,
+        content: dict[str, Any],
+        metadata: dict[str, Any] | None = None,
+        ttl: int | None = None,
+        lineage: list[str] | None = None,
     ) -> MemoryEntry:
         """Store a memory entry (no TTL for persistent memory)."""
         if not self._initialized:
             await self.initialize()
 
         memory_id = str(uuid.uuid4())
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
 
         entry = MemoryEntry(
             id=memory_id,
@@ -457,11 +446,11 @@ class PersistentMemory(MemorySystem):
 
         return entry
 
-    async def retrieve(self, memory_id: str) -> Optional[MemoryEntry]:
+    async def retrieve(self, memory_id: str) -> MemoryEntry | None:
         """Retrieve a memory entry by ID."""
         return self._storage.get(memory_id)
 
-    async def query(self, query: MemoryQuery) -> List[MemoryEntry]:
+    async def query(self, query: MemoryQuery) -> list[MemoryEntry]:
         """
         Query memory entries with optional vector similarity.
 
@@ -472,9 +461,8 @@ class PersistentMemory(MemorySystem):
 
         for entry in self._storage.values():
             # Apply filters
-            if query.filters:
-                if not self._matches_filters(entry, query.filters):
-                    continue
+            if query.filters and not self._matches_filters(entry, query.filters):
+                continue
 
             results.append(entry)
 
@@ -503,7 +491,7 @@ class PersistentMemory(MemorySystem):
     def _matches_filters(
         self,
         entry: MemoryEntry,
-        filters: Dict[str, Any],
+        filters: dict[str, Any],
     ) -> bool:
         """Check if entry matches filters."""
         for key, value in filters.items():
@@ -515,7 +503,7 @@ class PersistentMemory(MemorySystem):
     async def store_embedding(
         self,
         memory_id: str,
-        embedding: List[float],
+        embedding: list[float],
     ) -> bool:
         """
         Store/update embedding for a memory entry.
@@ -535,10 +523,10 @@ class PersistentMemory(MemorySystem):
 
     async def semantic_search(
         self,
-        query_embedding: List[float],
+        query_embedding: list[float],
         limit: int = 10,
         threshold: float = 0.7,
-    ) -> List[Tuple[MemoryEntry, float]]:
+    ) -> list[tuple[MemoryEntry, float]]:
         """
         Perform semantic search using vector similarity.
 
@@ -570,14 +558,14 @@ class PersistentMemory(MemorySystem):
 
     def _cosine_similarity(
         self,
-        vec1: List[float],
-        vec2: List[float],
+        vec1: list[float],
+        vec2: list[float],
     ) -> float:
         """Calculate cosine similarity between two vectors."""
         if len(vec1) != len(vec2):
             return 0.0
 
-        dot_product = sum(a * b for a, b in zip(vec1, vec2))
+        dot_product = sum(a * b for a, b in zip(vec1, vec2, strict=False))
         norm1 = sum(a * a for a in vec1) ** 0.5
         norm2 = sum(b * b for b in vec2) ** 0.5
 
@@ -597,8 +585,8 @@ class DualTierMemory:
 
     def __init__(
         self,
-        ephemeral: Optional[EphemeralMemory] = None,
-        persistent: Optional[PersistentMemory] = None,
+        ephemeral: EphemeralMemory | None = None,
+        persistent: PersistentMemory | None = None,
     ) -> None:
         """
         Initialize dual-tier memory.
@@ -620,10 +608,10 @@ class DualTierMemory:
 
     async def store(
         self,
-        content: Dict[str, Any],
-        metadata: Optional[Dict[str, Any]] = None,
-        ttl: Optional[int] = None,
-        lineage: Optional[List[str]] = None,
+        content: dict[str, Any],
+        metadata: dict[str, Any] | None = None,
+        ttl: int | None = None,
+        lineage: list[str] | None = None,
         persistent: bool = False,
     ) -> MemoryEntry:
         """
@@ -646,12 +634,11 @@ class DualTierMemory:
             return await self.persistent.store(
                 content, metadata, ttl, lineage
             )
-        else:
-            return await self.ephemeral.store(
-                content, metadata, ttl, lineage
-            )
+        return await self.ephemeral.store(
+            content, metadata, ttl, lineage
+        )
 
-    async def retrieve(self, memory_id: str) -> Optional[MemoryEntry]:
+    async def retrieve(self, memory_id: str) -> MemoryEntry | None:
         """
         Retrieve a memory entry from either tier.
 
@@ -671,11 +658,11 @@ class DualTierMemory:
 
     async def query(
         self,
-        query_text: Optional[str] = None,
-        filters: Optional[Dict[str, Any]] = None,
+        query_text: str | None = None,
+        filters: dict[str, Any] | None = None,
         limit: int = 10,
         include_persistent: bool = True,
-    ) -> List[MemoryEntry]:
+    ) -> list[MemoryEntry]:
         """
         Query both memory tiers.
 
@@ -711,7 +698,7 @@ class DualTierMemory:
         self._initialized = False
         logger.info("Dual-tier memory closed")
 
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """Get combined statistics for both tiers."""
         ephemeral_stats = self.ephemeral.get_statistics()
         persistent_stats = {

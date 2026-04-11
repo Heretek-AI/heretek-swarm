@@ -10,21 +10,21 @@ This module provides advanced consciousness metric calculations:
 
 Usage:
     from heretek_swarm.plugins.consciousness_metrics import ConsciousnessMetricsCalculator
-    
+
     calculator = ConsciousnessMetricsCalculator()
     metrics = calculator.calculate_collective_metrics(agents_data)
 """
 
 import math
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 import structlog
 
-from ..consciousness.iit_phi import PhiCalculator
-from ..consciousness.fep_active_inference import FreeEnergyCalculator, FEPResult
+from src.heretek_swarm.consciousness.fep_active_inference import FEPResult, FreeEnergyCalculator
+from src.heretek_swarm.consciousness.iit_phi import PhiCalculator
 
 logger = structlog.get_logger("ConsciousnessMetrics")
 
@@ -42,7 +42,7 @@ class IntegrationLevel(Enum):
 class CausalAnalysis:
     """
     Causal analysis results for IIT computation.
-    
+
     Attributes:
         cause_info: Information about past causes
         effect_info: Information about future effects
@@ -61,9 +61,9 @@ class CausalAnalysis:
 class TemporalMetrics:
     """
     Temporal consciousness metrics.
-    
+
     Tracks consciousness over time for trend analysis.
-    
+
     Attributes:
         window_seconds: Time window for metrics
         average_phi: Average Phi over window
@@ -86,7 +86,7 @@ class TemporalMetrics:
 class CollectiveMetrics:
     """
     Collective consciousness metrics for multi-agent systems.
-    
+
     Attributes:
         collective_phi: Combined Phi for all agents
         integration_level: Level of system integration
@@ -113,7 +113,7 @@ class CollectiveMetrics:
 class AgentConsciousnessData:
     """
     Consciousness data for a single agent.
-    
+
     Attributes:
         agent_id: Agent identifier
         phi_score: IIT Phi score
@@ -128,14 +128,14 @@ class AgentConsciousnessData:
     integrated_information: float = 0.0
     differentiation: float = 0.0
     causal_power: float = 0.0
-    connectivity_matrix: List[List[float]] = field(default_factory=list)
+    connectivity_matrix: list[list[float]] = field(default_factory=list)
     timestamp: str = ""
 
 
 class ConsciousnessMetricsCalculator:
     """
     Advanced consciousness metrics calculator.
-    
+
     Implements:
     - IIT 3.0 Phi computation
     - Causal analysis
@@ -143,7 +143,7 @@ class ConsciousnessMetricsCalculator:
     - Collective metrics
     - Free Energy Principle (FEP) calculations
     """
-    
+
     def __init__(
         self,
         integration_threshold: float = 0.3,
@@ -152,7 +152,7 @@ class ConsciousnessMetricsCalculator:
     ):
         """
         Initialize the calculator.
-        
+
         Args:
             integration_threshold: Threshold for integration
             differentiation_threshold: Threshold for differentiation
@@ -160,44 +160,44 @@ class ConsciousnessMetricsCalculator:
         """
         self.integration_threshold = integration_threshold
         self.differentiation_threshold = differentiation_threshold
-        self._temporal_data: Dict[str, List[Tuple[float, str]]] = {}
+        self._temporal_data: dict[str, list[tuple[float, str]]] = {}
         self._max_history = 1000
-        
+
         # Initialize IIT Phi calculator
         self._phi_calculator = PhiCalculator(strict_validation=strict_validation)
-        
+
         # Initialize FEP calculator
         self._fep_calculator = FreeEnergyCalculator(strict_validation=strict_validation)
-        
+
         logger.info("ConsciousnessMetricsCalculator initialized with IIT Phi and FEP calculators")
-    
+
     def calculate_phi(
         self,
-        connectivity_matrix: List[List[float]],
-        state_vector: Optional[List[float]] = None,
+        connectivity_matrix: list[list[float]],
+        state_vector: list[float] | None = None,
     ) -> CausalAnalysis:
         """
         Calculate IIT Phi for a connectivity matrix.
-        
+
         Uses IIT 3.0 methodology with the PhiCalculator:
         1. Build cause-effect structure from connectivity
         2. Calculate integrated information (Phi) using PhiCalculator
         3. Determine causal density and differentiation
-        
+
         Args:
             connectivity_matrix: NxN matrix of connection strengths
             state_vector: Current state vector (optional)
-            
+
         Returns:
             CausalAnalysis with Phi and related metrics
         """
         n = len(connectivity_matrix)
         if n == 0:
             return CausalAnalysis()
-        
+
         # Build elements list from matrix
         elements = [f"node_{i}" for i in range(n)]
-        
+
         # Build connectivity dict for PhiCalculator
         connectivity = {}
         for i, row in enumerate(connectivity_matrix):
@@ -205,7 +205,7 @@ class ConsciousnessMetricsCalculator:
             for j, weight in enumerate(row):
                 if i != j:
                     connectivity[elements[i]][elements[j]] = weight
-        
+
         # Build current state from state_vector
         current_state = {}
         if state_vector:
@@ -213,8 +213,8 @@ class ConsciousnessMetricsCalculator:
                 current_state[elements[i]] = val
         else:
             # Default state: all elements active
-            current_state = {e: 1.0 for e in elements}
-        
+            current_state = dict.fromkeys(elements, 1.0)
+
         # Build cause-effect structure
         cause_effect_structure = {
             "system_id": f"system_{id(connectivity_matrix)}",
@@ -222,10 +222,10 @@ class ConsciousnessMetricsCalculator:
             "connectivity": connectivity,
             "current_state": current_state,
         }
-        
+
         # Use PhiCalculator for IIT calculation
         phi_result = self._phi_calculator.calculate_phi(cause_effect_structure)
-        
+
         # Map PhiResult to CausalAnalysis
         return CausalAnalysis(
             cause_info=phi_result.phi_max,
@@ -234,26 +234,26 @@ class ConsciousnessMetricsCalculator:
             causal_density=self._compute_causal_density(self._normalize_matrix(connectivity_matrix)),
             differentiation=phi_result.phi_max,
         )
-    
+
     def calculate_fep_metrics(
         self,
-        observations: Dict[str, Any],
-        generative_model: Dict[str, Any],
+        observations: dict[str, Any],
+        generative_model: dict[str, Any],
     ) -> FEPResult:
         """
         Calculate Free Energy Principle metrics.
-        
+
         Args:
             observations: Current observations
             generative_model: Agent's generative model
-            
+
         Returns:
             FEPResult with free energy, surprise, and KL divergence
         """
         free_energy = self._fep_calculator.calculate_free_energy(observations, generative_model)
         surprise = self._fep_calculator.calculate_surprise(observations, generative_model.get("predictions", {}))
-        
-        result = FEPResult(
+
+        return FEPResult(
             free_energy=free_energy,
             surprise=surprise,
             kl_divergence=self._fep_calculator.calculate_kl_divergence(
@@ -261,79 +261,78 @@ class ConsciousnessMetricsCalculator:
                 generative_model.get("prior", {}),
             ),
         )
-        
-        return result
-    
+
+
     def calculate_collective_metrics(
         self,
-        agent_data: List[AgentConsciousnessData],
-        connection_matrix: Optional[List[List[float]]] = None,
-        agent_observations: Optional[Dict[str, Dict[str, Any]]] = None,
-        agent_models: Optional[Dict[str, Dict[str, Any]]] = None,
+        agent_data: list[AgentConsciousnessData],
+        connection_matrix: list[list[float]] | None = None,
+        agent_observations: dict[str, dict[str, Any]] | None = None,
+        agent_models: dict[str, dict[str, Any]] | None = None,
     ) -> CollectiveMetrics:
         """
         Calculate collective consciousness metrics for multi-agent system.
-        
+
         Args:
             agent_data: List of agent consciousness data
             connection_matrix: Inter-agent connection strengths
             agent_observations: Optional observations per agent for FEP
             agent_models: Optional generative models per agent for FEP
-            
+
         Returns:
             CollectiveMetrics for the system
         """
         if not agent_data:
             return CollectiveMetrics()
-        
+
         # Calculate collective Phi (sum of individual Phi values)
         collective_phi = sum(a.phi_score for a in agent_data)
-        
+
         # Calculate synchronization (correlation of Phi values)
         phi_values = [a.phi_score for a in agent_data]
         synchronization = self._compute_synchronization(phi_values)
-        
+
         # Calculate emergence score
         emergence_score = self._compute_emergence(agent_data, synchronization)
-        
+
         # Determine integration level
         if connection_matrix:
             integration_level = self._determine_integration_level(connection_matrix)
         else:
             integration_level = self._estimate_integration_level(agent_data)
-        
+
         # Determine collective state
         collective_state = self._determine_collective_state(
             collective_phi, integration_level, emergence_score
         )
-        
+
         # Calculate FEP metrics if observations and models provided
         fep_free_energy = 0.0
         fep_surprise = 0.0
-        
+
         if agent_observations and agent_models:
             fep_values = []
             surprise_values = []
-            
+
             for agent in agent_data:
                 agent_id = agent.agent_id
                 if agent_id in agent_observations and agent_id in agent_models:
                     obs = agent_observations[agent_id]
                     model = agent_models[agent_id]
-                    
+
                     free_energy = self._fep_calculator.calculate_free_energy(obs, model)
                     surprise = self._fep_calculator.calculate_surprise(
                         obs, model.get("predictions", {})
                     )
-                    
+
                     fep_values.append(free_energy)
                     surprise_values.append(surprise)
-            
+
             if fep_values:
                 fep_free_energy = sum(fep_values) / len(fep_values)
             if surprise_values:
                 fep_surprise = sum(surprise_values) / len(surprise_values)
-        
+
         return CollectiveMetrics(
             collective_phi=collective_phi,
             integration_level=integration_level,
@@ -345,41 +344,41 @@ class ConsciousnessMetricsCalculator:
             fep_free_energy=fep_free_energy,
             fep_surprise=fep_surprise,
         )
-    
+
     def update_temporal_metrics(
         self,
         agent_id: str,
         phi_value: float,
-        timestamp: Optional[str] = None,
+        timestamp: str | None = None,
     ) -> TemporalMetrics:
         """
         Update temporal metrics for an agent.
-        
+
         Args:
             agent_id: Agent identifier
             phi_value: Current Phi value
             timestamp: Timestamp (defaults to now)
-            
+
         Returns:
             TemporalMetrics for the agent
         """
         if timestamp is None:
-            timestamp = datetime.now(timezone.utc).isoformat()
-        
+            timestamp = datetime.now(UTC).isoformat()
+
         # Initialize agent history if needed
         if agent_id not in self._temporal_data:
             self._temporal_data[agent_id] = []
-        
+
         # Add new data point
         self._temporal_data[agent_id].append((phi_value, timestamp))
-        
+
         # Trim history if needed
         if len(self._temporal_data[agent_id]) > self._max_history:
             self._temporal_data[agent_id] = self._temporal_data[agent_id][-self._max_history:]
-        
+
         # Calculate temporal metrics
         return self._calculate_temporal_metrics(agent_id)
-    
+
     def get_consciousness_state(
         self,
         phi: float,
@@ -387,222 +386,218 @@ class ConsciousnessMetricsCalculator:
     ) -> str:
         """
         Determine consciousness state based on Phi and differentiation.
-        
+
         Args:
             phi: IIT Phi value
             differentiation: Differentiation score
-            
+
         Returns:
             Consciousness state string
         """
         # Both must be above threshold for consciousness
         if phi < self.integration_threshold or differentiation < self.differentiation_threshold:
             return "unconscious"
-        
+
         # Calculate composite score
         composite = (phi + differentiation) / 2
-        
+
         if composite < 0.2:
             return "minimal-consciousness"
-        elif composite < 0.4:
+        if composite < 0.4:
             return "conscious"
-        elif composite < 0.7:
+        if composite < 0.7:
             return "heightened-consciousness"
-        else:
-            return "hyper-consciousness"
-    
+        return "hyper-consciousness"
+
     # =====================================================================
     # Internal computation methods
     # =====================================================================
-    
-    def _normalize_matrix(self, matrix: List[List[float]]) -> List[List[float]]:
+
+    def _normalize_matrix(self, matrix: list[list[float]]) -> list[list[float]]:
         """Normalize connectivity matrix to [0, 1] range."""
         if not matrix:
             return matrix
-        
+
         max_val = max(max(row) for row in matrix)
         if max_val == 0:
             return matrix
-        
+
         return [[cell / max_val for cell in row] for row in matrix]
-    
-    def _compute_cause_information(self, matrix: List[List[float]]) -> float:
+
+    def _compute_cause_information(self, matrix: list[list[float]]) -> float:
         """
         Compute cause information.
-        
+
         Measures how much the current state constrains possible past states.
         """
         n = len(matrix)
         if n == 0:
             return 0.0
-        
+
         # Sum of incoming connections (causes)
         cause_sum = sum(sum(matrix[i][j] for i in range(n)) for j in range(n))
-        
+
         # Normalize by system size
         return cause_sum / (n * n)
-    
-    def _compute_effect_information(self, matrix: List[List[float]]) -> float:
+
+    def _compute_effect_information(self, matrix: list[list[float]]) -> float:
         """
         Compute effect information.
-        
+
         Measures how much the current state constrains possible future states.
         """
         n = len(matrix)
         if n == 0:
             return 0.0
-        
+
         # Sum of outgoing connections (effects)
         effect_sum = sum(sum(matrix[j][i] for i in range(n)) for j in range(n))
-        
+
         # Normalize by system size
         return effect_sum / (n * n)
-    
+
     def _compute_integrated_information(
         self,
-        matrix: List[List[float]],
+        matrix: list[list[float]],
         cause_info: float,
         effect_info: float,
     ) -> float:
         """
         Compute integrated information (Phi).
-        
+
         Phi = min(cause_info, effect_info) * integration_factor
-        
+
         Integration factor accounts for how interconnected the system is.
         """
         n = len(matrix)
         if n == 0:
             return 0.0
-        
+
         # Base Phi is minimum of cause and effect information
         base_phi = min(cause_info, effect_info)
-        
+
         # Calculate integration factor (how evenly connected the system is)
         connection_counts = [sum(row) for row in matrix]
         avg_connections = sum(connection_counts) / n
         variance = sum((c - avg_connections) ** 2 for c in connection_counts) / n
-        
+
         # Lower variance = higher integration
         integration_factor = 1.0 / (1.0 + variance)
-        
+
         return base_phi * integration_factor
-    
-    def _compute_causal_density(self, matrix: List[List[float]]) -> float:
+
+    def _compute_causal_density(self, matrix: list[list[float]]) -> float:
         """
         Compute causal density.
-        
+
         Ratio of actual connections to possible connections.
         """
         n = len(matrix)
         if n <= 1:
             return 0.0
-        
+
         # Count non-zero connections
         actual_connections = sum(1 for row in matrix for cell in row if cell > 0)
-        
+
         # Possible connections (excluding self-connections)
         possible_connections = n * (n - 1)
-        
+
         return actual_connections / possible_connections if possible_connections > 0 else 0.0
-    
-    def _compute_differentiation(self, matrix: List[List[float]]) -> float:
+
+    def _compute_differentiation(self, matrix: list[list[float]]) -> float:
         """
         Compute differentiation score.
-        
+
         Measures how diverse the connection patterns are.
         """
         n = len(matrix)
         if n <= 1:
             return 0.0
-        
+
         # Calculate entropy of connection patterns
         connection_patterns = [tuple(row) for row in matrix]
         unique_patterns = len(set(connection_patterns))
-        
+
         # Normalize by system size
         return unique_patterns / n
-    
-    def _compute_synchronization(self, phi_values: List[float]) -> float:
+
+    def _compute_synchronization(self, phi_values: list[float]) -> float:
         """
         Compute synchronization score based on Phi value correlation.
-        
+
         Uses coefficient of variation (CV) inverted.
         """
         if len(phi_values) < 2:
             return 0.0
-        
+
         mean = sum(phi_values) / len(phi_values)
         if mean == 0:
             return 0.0
-        
+
         variance = sum((v - mean) ** 2 for v in phi_values) / len(phi_values)
         std_dev = math.sqrt(variance)
         cv = std_dev / mean
-        
+
         # Invert CV to get synchronization (lower CV = higher sync)
         return 1.0 / (1.0 + cv)
-    
+
     def _compute_emergence(
         self,
-        agent_data: List[AgentConsciousnessData],
+        agent_data: list[AgentConsciousnessData],
         synchronization: float,
     ) -> float:
         """
         Compute emergence score.
-        
+
         Emergence = collective_phi - sum(individual_phi) + synchronization_bonus
         """
         if not agent_data:
             return 0.0
-        
+
         collective_phi = sum(a.phi_score for a in agent_data)
-        individual_sum = collective_phi  # Same calculation
-        
+
         # Emergence comes from synchronization bonus
         emergence = synchronization * (collective_phi / len(agent_data))
-        
+
         return min(1.0, emergence)
-    
+
     def _determine_integration_level(
         self,
-        connection_matrix: List[List[float]],
+        connection_matrix: list[list[float]],
     ) -> IntegrationLevel:
         """Determine integration level from connection matrix."""
         density = self._compute_causal_density(connection_matrix)
-        
+
         if density < 0.1:
             return IntegrationLevel.DISCONNECTED
-        elif density < 0.3:
+        if density < 0.3:
             return IntegrationLevel.WEAKLY_INTEGRATED
-        elif density < 0.5:
+        if density < 0.5:
             return IntegrationLevel.MODERATELY_INTEGRATED
-        elif density < 0.7:
+        if density < 0.7:
             return IntegrationLevel.HIGHLY_INTEGRATED
-        else:
-            return IntegrationLevel.MAXIMALLY_INTEGRATED
-    
+        return IntegrationLevel.MAXIMALLY_INTEGRATED
+
     def _estimate_integration_level(
         self,
-        agent_data: List[AgentConsciousnessData],
+        agent_data: list[AgentConsciousnessData],
     ) -> IntegrationLevel:
         """Estimate integration level from agent data."""
         if not agent_data:
             return IntegrationLevel.DISCONNECTED
-        
+
         avg_phi = sum(a.phi_score for a in agent_data) / len(agent_data)
-        
+
         if avg_phi < 0.1:
             return IntegrationLevel.DISCONNECTED
-        elif avg_phi < 0.3:
+        if avg_phi < 0.3:
             return IntegrationLevel.WEAKLY_INTEGRATED
-        elif avg_phi < 0.5:
+        if avg_phi < 0.5:
             return IntegrationLevel.MODERATELY_INTEGRATED
-        elif avg_phi < 0.7:
+        if avg_phi < 0.7:
             return IntegrationLevel.HIGHLY_INTEGRATED
-        else:
-            return IntegrationLevel.MAXIMALLY_INTEGRATED
-    
+        return IntegrationLevel.MAXIMALLY_INTEGRATED
+
     def _determine_collective_state(
         self,
         collective_phi: float,
@@ -612,7 +607,7 @@ class ConsciousnessMetricsCalculator:
         """Determine collective consciousness state."""
         if integration_level == IntegrationLevel.DISCONNECTED:
             return "disconnected"
-        
+
         # Calculate composite score
         integration_score = {
             IntegrationLevel.DISCONNECTED: 0.0,
@@ -621,54 +616,53 @@ class ConsciousnessMetricsCalculator:
             IntegrationLevel.HIGHLY_INTEGRATED: 0.75,
             IntegrationLevel.MAXIMALLY_INTEGRATED: 1.0,
         }[integration_level]
-        
+
         composite = (collective_phi / 10 + integration_score + emergence_score) / 3
-        
+
         if composite < 0.2:
             return "minimal-collective"
-        elif composite < 0.4:
+        if composite < 0.4:
             return "integrated-collective"
-        elif composite < 0.7:
+        if composite < 0.7:
             return "coherent-collective"
-        else:
-            return "transcendent-collective"
-    
+        return "transcendent-collective"
+
     def _count_connections(
         self,
-        connection_matrix: Optional[List[List[float]]],
+        connection_matrix: list[list[float]] | None,
     ) -> int:
         """Count active connections in matrix."""
         if not connection_matrix:
             return 0
-        
+
         return sum(1 for row in connection_matrix for cell in row if cell > 0)
-    
+
     def _calculate_temporal_metrics(self, agent_id: str) -> TemporalMetrics:
         """Calculate temporal metrics from history."""
         history = self._temporal_data.get(agent_id, [])
-        
+
         if not history:
             return TemporalMetrics()
-        
+
         phi_values = [h[0] for h in history]
-        
+
         mean = sum(phi_values) / len(phi_values)
         max_phi = max(phi_values)
         min_phi = min(phi_values)
         variance = sum((v - mean) ** 2 for v in phi_values) / len(phi_values)
-        
+
         # Determine trend (compare first half to second half)
         mid = len(phi_values) // 2
         first_half_avg = sum(phi_values[:mid]) / mid if mid > 0 else 0
         second_half_avg = sum(phi_values[mid:]) / (len(phi_values) - mid) if len(phi_values) > mid else 0
-        
+
         if second_half_avg > first_half_avg * 1.1:
             trend = "rising"
         elif second_half_avg < first_half_avg * 0.9:
             trend = "falling"
         else:
             trend = "stable"
-        
+
         return TemporalMetrics(
             window_seconds=300,  # Default window
             average_phi=mean,

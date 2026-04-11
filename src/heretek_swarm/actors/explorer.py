@@ -13,22 +13,23 @@ the environment for opportunities, threats, and new capabilities.
 """
 
 import asyncio
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Set
+import contextlib
 from dataclasses import dataclass, field
-from enum import Enum
+from datetime import UTC, datetime
+from enum import StrEnum
+from typing import Any
 
 import structlog
 from swarms import Agent
 
-from heretek_swarm.actors.base import AgentActor, ActorMessage
+from heretek_swarm.actors.base import ActorMessage, AgentActor
 from heretek_swarm.actors.validation import validate_message
 
 # Session 44: Collective Learning Integration
 from heretek_swarm.collective.learning import PatternExtractor, PatternType
 
 # Session 44: Consensus Integration
-from heretek_swarm.consensus.swarm_deliberation import SwarmDeliberationEngine, Position
+from heretek_swarm.consensus.swarm_deliberation import Position, SwarmDeliberationEngine
 
 # Session 44: Memory Optimization Integration
 from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer, AccessTier
@@ -36,11 +37,10 @@ from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer, AccessTi
 # Session 44: Zero-Trust Validation
 from heretek_swarm.security.zero_trust import ZeroTrustValidator
 
-
 logger = structlog.get_logger("ExplorerAgent")
 
 
-class OpportunityType(str, Enum):
+class OpportunityType(StrEnum):
     """Types of opportunities Explorer can identify."""
     API_INTEGRATION = "api_integration"
     FRAMEWORK = "framework"
@@ -50,7 +50,7 @@ class OpportunityType(str, Enum):
     CAPABILITY_ADDITION = "capability_addition"
 
 
-class ThreatLevel(str, Enum):
+class ThreatLevel(StrEnum):
     """Threat severity levels."""
     LOW = "low"
     MEDIUM = "medium"
@@ -58,7 +58,7 @@ class ThreatLevel(str, Enum):
     CRITICAL = "critical"
 
 
-class AnomalyType(str, Enum):
+class AnomalyType(StrEnum):
     """Types of anomalies Explorer can detect."""
     PERFORMANCE = "performance"
     SECURITY = "security"
@@ -80,7 +80,7 @@ class Opportunity:
     effort_estimate: str  # low/medium/high
     discovered_at: datetime
     status: str = "new"  # new/under_review/approved/rejected
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -92,10 +92,10 @@ class Anomaly:
     source: str
     severity: ThreatLevel
     detected_at: datetime
-    affected_components: List[str]
-    evidence: Dict[str, Any]
+    affected_components: list[str]
+    evidence: dict[str, Any]
     status: str = "new"  # new/investigating/escalated/resolved
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -103,11 +103,11 @@ class IntelligenceReport:
     """Consolidated intelligence report."""
     id: str
     generated_at: datetime
-    opportunities: List[Opportunity]
-    anomalies: List[Anomaly]
+    opportunities: list[Opportunity]
+    anomalies: list[Anomaly]
     summary: str
-    recommendations: List[str]
-    sources_monitored: List[str]
+    recommendations: list[str]
+    sources_monitored: list[str]
     time_range_hours: int
 
 
@@ -136,7 +136,7 @@ class ExplorerAgent(AgentActor):
         agent_id: str = "explorer",
         name: str = "Explorer",
         description: str = "Intelligence gathering and opportunity discovery specialist",
-        swarms_agent: Optional[Agent] = None,
+        swarms_agent: Agent | None = None,
         monitoring_interval_seconds: int = 300,
         max_opportunities: int = 50,
         max_anomalies: int = 100,
@@ -186,18 +186,18 @@ class ExplorerAgent(AgentActor):
         self.confidence_threshold = confidence_threshold
 
         # Explorer state
-        self._opportunities: Dict[str, Opportunity] = {}
-        self._anomalies: Dict[str, Anomaly] = {}
-        self._monitored_sources: Set[str] = set()
+        self._opportunities: dict[str, Opportunity] = {}
+        self._anomalies: dict[str, Anomaly] = {}
+        self._monitored_sources: set[str] = set()
         self._monitoring_active: bool = False
-        self._monitor_task: Optional[asyncio.Task] = None
-        self._intelligence_history: List[IntelligenceReport] = []
+        self._monitor_task: asyncio.Task | None = None
+        self._intelligence_history: list[IntelligenceReport] = []
         self._max_intelligence_history: int = 20
 
         # Source-specific state
-        self._source_configs: Dict[str, Dict[str, Any]] = {}
-        self._last_source_check: Dict[str, datetime] = {}
-        self._source_error_counts: Dict[str, int] = {}
+        self._source_configs: dict[str, dict[str, Any]] = {}
+        self._last_source_check: dict[str, datetime] = {}
+        self._source_error_counts: dict[str, int] = {}
         self._max_source_errors: int = 3
 
         # Session 44: Integration components
@@ -219,8 +219,8 @@ class ExplorerAgent(AgentActor):
             self.zero_trust_validator = ZeroTrustValidator()
 
         # Session 44: Integration state
-        self._active_deliberations: Dict[str, str] = {}
-        self._pattern_emitted: Set[str] = set()
+        self._active_deliberations: dict[str, str] = {}
+        self._pattern_emitted: set[str] = set()
 
 
         logger.info(
@@ -242,10 +242,8 @@ class ExplorerAgent(AgentActor):
         self._monitoring_active = False
         if self._monitor_task:
             self._monitor_task.cancel()
-            try:
+            with contextlib.suppress(asyncio.CancelledError):
                 await self._monitor_task
-            except asyncio.CancelledError:
-                pass
             self._monitor_task = None
         await super().on_stop()
         logger.info("Explorer agent stopped")
@@ -273,7 +271,7 @@ class ExplorerAgent(AgentActor):
         for source_id, config in self._source_configs.items():
             try:
                 await self._check_source(source_id, config)
-                self._last_source_check[source_id] = datetime.now(timezone.utc)
+                self._last_source_check[source_id] = datetime.now(UTC)
                 self._source_error_counts[source_id] = 0
             except Exception as e:
                 self._source_error_counts[source_id] = self._source_error_counts.get(source_id, 0) + 1
@@ -284,7 +282,7 @@ class ExplorerAgent(AgentActor):
                     error_count=self._source_error_counts[source_id],
                 )
 
-    async def _check_source(self, source_id: str, config: Dict[str, Any]) -> None:
+    async def _check_source(self, source_id: str, config: dict[str, Any]) -> None:
         """
         Check a single monitoring source.
 
@@ -303,7 +301,6 @@ class ExplorerAgent(AgentActor):
         """Analyze collected findings for patterns and correlations."""
         # Placeholder for pattern analysis
         # Would look for correlations between opportunities and anomalies
-        pass
 
     def _add_opportunity(self, opportunity: Opportunity) -> None:
         """
@@ -396,7 +393,7 @@ class ExplorerAgent(AgentActor):
             config["type"] = source_type
             self._source_configs[source_id] = config
             self._monitored_sources.add(source_id)
-            self._last_source_check[source_id] = datetime.now(timezone.utc)
+            self._last_source_check[source_id] = datetime.now(UTC)
 
             logger.info(
                 "Started monitoring source",
@@ -601,7 +598,7 @@ class ExplorerAgent(AgentActor):
             include_opportunities = content.get("include_opportunities", True)
             include_anomalies = content.get("include_anomalies", True)
 
-            cutoff = datetime.now(timezone.utc)
+            cutoff = datetime.now(UTC)
 
             # Filter by time range
             opportunities = [
@@ -618,8 +615,8 @@ class ExplorerAgent(AgentActor):
             recommendations = await self._generate_recommendations(opportunities, anomalies)
 
             report = IntelligenceReport(
-                id=f"intel-{datetime.now(timezone.utc).strftime('%Y%m%d-%H%M%S')}",
-                generated_at=datetime.now(timezone.utc),
+                id=f"intel-{datetime.now(UTC).strftime('%Y%m%d-%H%M%S')}",
+                generated_at=datetime.now(UTC),
                 opportunities=opportunities,
                 anomalies=anomalies,
                 summary=summary,
@@ -682,7 +679,7 @@ class ExplorerAgent(AgentActor):
                 confidence=float(content.get("confidence", 0.5)),
                 impact_score=float(content.get("impact_score", 0.5)),
                 effort_estimate=content.get("effort_estimate", "medium"),
-                discovered_at=datetime.now(timezone.utc),
+                discovered_at=datetime.now(UTC),
                 metadata=content.get("metadata", {}),
             )
 
@@ -725,7 +722,7 @@ class ExplorerAgent(AgentActor):
                 description=content.get("description", ""),
                 source=content.get("source", "internal"),
                 severity=ThreatLevel(content.get("severity", ThreatLevel.LOW.value)),
-                detected_at=datetime.now(timezone.utc),
+                detected_at=datetime.now(UTC),
                 affected_components=content.get("affected_components", []),
                 evidence=content.get("evidence", {}),
                 metadata=content.get("metadata", {}),
@@ -760,7 +757,7 @@ class ExplorerAgent(AgentActor):
         Content schema: {}
         """
         try:
-            now = datetime.now(timezone.utc)
+            datetime.now(UTC)
 
             sources_status = []
             for source_id in self._monitored_sources:
@@ -796,8 +793,8 @@ class ExplorerAgent(AgentActor):
 
     async def _generate_summary(
         self,
-        opportunities: List[Opportunity],
-        anomalies: List[Anomaly],
+        opportunities: list[Opportunity],
+        anomalies: list[Anomaly],
         time_range_hours: int,
     ) -> str:
         """Generate intelligence summary using LLM."""
@@ -811,9 +808,9 @@ class ExplorerAgent(AgentActor):
 
     async def _generate_recommendations(
         self,
-        opportunities: List[Opportunity],
-        anomalies: List[Anomaly],
-    ) -> List[str]:
+        opportunities: list[Opportunity],
+        anomalies: list[Anomaly],
+    ) -> list[str]:
         """Generate recommendations based on findings."""
         recommendations = []
 
@@ -842,8 +839,8 @@ class ExplorerAgent(AgentActor):
 
     def _build_summary_prompt(
         self,
-        opportunities: List[Opportunity],
-        anomalies: List[Anomaly],
+        opportunities: list[Opportunity],
+        anomalies: list[Anomaly],
         time_range_hours: int,
     ) -> str:
         """Build LLM prompt for summary generation."""
@@ -875,14 +872,14 @@ Provide a 2-3 sentence executive summary highlighting the most significant findi
     # Session 44: Collective Learning Integration Methods
     # =========================================================================
 
-    async def _emit_pattern(self, item_id: str, item_type: str, outcome: str, content: Dict[str, Any]) -> None:
+    async def _emit_pattern(self, item_id: str, item_type: str, outcome: str, content: dict[str, Any]) -> None:
         """Emit pattern for collective learning."""
         if not self.pattern_extractor:
             return
-        
+
         if item_id in self._pattern_emitted:
             return
-        
+
         try:
             await self.pattern_extractor.analyze_message(
                 message_id=f"{item_type}_{item_id}",
@@ -890,19 +887,19 @@ Provide a 2-3 sentence executive summary highlighting the most significant findi
                 recipient="broadcast",
                 message_type=f"{item_type}_completion",
                 content=content,
-                timestamp=datetime.now(timezone.utc).isoformat(),
+                timestamp=datetime.now(UTC).isoformat(),
             )
-            
+
             self._pattern_emitted.add(item_id)
             logger.info(f"{item_type}_pattern_emitted", item_id=item_id, outcome=outcome)
         except Exception as e:
             logger.warning("failed_to_emit_pattern", item_id=item_id, error=str(e))
 
-    async def _consume_patterns(self, pattern_types: Optional[List[PatternType]] = None) -> List[Dict[str, Any]]:
+    async def _consume_patterns(self, pattern_types: list[PatternType] | None = None) -> list[dict[str, Any]]:
         """Consume patterns from collective learning."""
         if not self.pattern_extractor:
             return []
-        
+
         try:
             patterns = await self.pattern_extractor.extract_patterns(
                 time_window_hours=24,
@@ -921,13 +918,13 @@ Provide a 2-3 sentence executive summary highlighting the most significant findi
         self,
         item_id: str,
         proposal: str,
-        participating_agents: List[str],
+        participating_agents: list[str],
         domain: str = "general",
-    ) -> Optional[str]:
+    ) -> str | None:
         """Initiate swarm deliberation."""
         if not self.deliberation_engine:
             return None
-        
+
         try:
             deliberation_id = f"delib_{item_id}"
             self.deliberation_engine.start_deliberation(
@@ -937,7 +934,7 @@ Provide a 2-3 sentence executive summary highlighting the most significant findi
                 domain=domain,
             )
             self._active_deliberations[item_id] = deliberation_id
-            
+
             logger.info("deliberation_initiated", deliberation_id=deliberation_id, item_id=item_id)
             return deliberation_id
         except Exception as e:
@@ -955,11 +952,11 @@ Provide a 2-3 sentence executive summary highlighting the most significant findi
         """Submit agent position in deliberation."""
         if not self.deliberation_engine:
             return False
-        
+
         deliberation_id = self._active_deliberations.get(item_id)
         if not deliberation_id:
             return False
-        
+
         try:
             success = self.deliberation_engine.submit_position(
                 deliberation_id=deliberation_id,
@@ -968,36 +965,36 @@ Provide a 2-3 sentence executive summary highlighting the most significant findi
                 confidence=confidence,
                 argument=argument,
             )
-            
+
             if success and self.access_analyzer:
                 self.access_analyzer.record_access(
                     memory_id=f"delib_{deliberation_id}_{agent_id}",
                     access_type="write",
                     agent_id=agent_id,
                 )
-            
+
             return success
         except Exception as e:
             logger.error("failed_to_submit_deliberation_position", error=str(e))
             return False
 
-    async def _finalize_deliberation(self, item_id: str) -> Optional[Any]:
+    async def _finalize_deliberation(self, item_id: str) -> Any | None:
         """Finalize deliberation and apply result."""
         if not self.deliberation_engine:
             return None
-        
+
         deliberation_id = self._active_deliberations.get(item_id)
         if not deliberation_id:
             return None
-        
+
         try:
             result = self.deliberation_engine.finalize_deliberation(deliberation_id)
-            
+
             if result:
                 self.deliberation_engine.cleanup_deliberation(deliberation_id)
                 del self._active_deliberations[item_id]
                 logger.info("deliberation_finalized", deliberation_id=deliberation_id)
-            
+
             return result
         except Exception as e:
             logger.error("failed_to_finalize_deliberation", error=str(e))
@@ -1011,7 +1008,7 @@ Provide a 2-3 sentence executive summary highlighting the most significant findi
         """Track memory access patterns."""
         if not self.access_analyzer:
             return
-        
+
         memory_id = f"{item_type}_{item_id}"
         self.access_analyzer.record_access(
             memory_id=memory_id,
@@ -1023,16 +1020,16 @@ Provide a 2-3 sentence executive summary highlighting the most significant findi
         """Get memory tier classification."""
         if not self.access_analyzer:
             return AccessTier.COLD
-        
+
         memory_id = f"{item_type}_{item_id}"
         profile = self.access_analyzer.get_profile(memory_id)
         return profile.tier if profile else AccessTier.COLD
 
-    async def _prefetch_relevant(self, agent_id: str, item_type: str) -> List[str]:
+    async def _prefetch_relevant(self, agent_id: str, item_type: str) -> list[str]:
         """Prefetch items an agent is likely to need."""
         if not self.access_analyzer:
             return []
-        
+
         try:
             predicted_memories = self.access_analyzer.predict_agent_access(agent_id)
             return [
@@ -1044,7 +1041,7 @@ Provide a 2-3 sentence executive summary highlighting the most significant findi
             logger.warning("failed_to_prefetch", agent_id=agent_id, error=str(e))
             return []
 
-    def get_learning_status(self) -> Dict[str, Any]:
+    def get_learning_status(self) -> dict[str, Any]:
         """Get collective learning and memory optimization status."""
         return {
             "agent_id": self.agent_id,
@@ -1066,7 +1063,7 @@ Provide a 2-3 sentence executive summary highlighting the most significant findi
         """Send error response."""
         await self._send_response(recipient, {"error": error})
 
-    async def _send_response(self, recipient: str, data: Dict[str, Any]) -> None:
+    async def _send_response(self, recipient: str, data: dict[str, Any]) -> None:
         """Send response message."""
         if recipient == "broadcast":
             # Broadcast to subscribed agents

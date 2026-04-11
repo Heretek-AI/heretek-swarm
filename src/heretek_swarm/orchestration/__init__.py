@@ -17,8 +17,8 @@ from heretek_swarm.orchestration.heavyswarm import (
 
 __all__ = [
     "HeavySwarmWorkflow",
+    "PhaseResult",
     "WorkflowPhase",
     "WorkflowPhaseError",
-    "PhaseResult",
     "WorkflowResult",
 ]

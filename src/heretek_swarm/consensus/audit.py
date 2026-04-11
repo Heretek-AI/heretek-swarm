@@ -52,9 +52,9 @@ Example:
 import hashlib
 import json
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 import structlog
 
@@ -105,10 +105,10 @@ class AuditEvent:
     event_type: AuditEventType
     timestamp: str
     consensus_id: str
-    agent_id: Optional[str] = None
-    data: Dict[str, Any] = field(default_factory=dict)
-    hash: Optional[str] = None
-    previous_hash: Optional[str] = None
+    agent_id: str | None = None
+    data: dict[str, Any] = field(default_factory=dict)
+    hash: str | None = None
+    previous_hash: str | None = None
 
     def __post_init__(self) -> None:
         """Generate hash after initialization."""
@@ -151,9 +151,9 @@ class VoteRecord:
     agent_id: str
     decision: str
     confidence: float
-    reasoning: Optional[str] = None
-    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    reasoning: str | None = None
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
+    metadata: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -177,9 +177,9 @@ class ArgumentRecord:
     agent_id: str
     position: str
     content: str
-    supports: List[str] = field(default_factory=list)
-    rebuttals: List[str] = field(default_factory=list)
-    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    supports: list[str] = field(default_factory=list)
+    rebuttals: list[str] = field(default_factory=list)
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
 
 @dataclass
@@ -209,13 +209,13 @@ class DecisionRecord:
     decision: str
     confidence: float
     outcome: DecisionOutcome = DecisionOutcome.PENDING
-    participants: List[str] = field(default_factory=list)
-    votes: List[VoteRecord] = field(default_factory=list)
-    arguments: List[ArgumentRecord] = field(default_factory=list)
-    reasoning_summary: Optional[str] = None
-    start_time: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
-    end_time: Optional[str] = None
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    participants: list[str] = field(default_factory=list)
+    votes: list[VoteRecord] = field(default_factory=list)
+    arguments: list[ArgumentRecord] = field(default_factory=list)
+    reasoning_summary: str | None = None
+    start_time: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
+    end_time: str | None = None
+    metadata: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -231,11 +231,11 @@ class QueryResult:
         timestamp: Query timestamp
     """
 
-    query: Dict[str, Any]
+    query: dict[str, Any]
     total_results: int
-    results: List[Dict[str, Any]]
+    results: list[dict[str, Any]]
     execution_time_ms: float
-    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
 
 @dataclass
@@ -256,10 +256,10 @@ class DeliberationRoundRecord:
     round_id: str
     round_number: int
     consensus_id: str
-    arguments_submitted: List[str] = field(default_factory=list)
-    positions: Dict[str, str] = field(default_factory=dict)  # agent_id -> position
+    arguments_submitted: list[str] = field(default_factory=list)
+    positions: dict[str, str] = field(default_factory=dict)  # agent_id -> position
     consensus_score: float = 0.0
-    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
 
 @dataclass
@@ -298,24 +298,24 @@ class DecisionAudit:
         metadata: Additional metadata
     """
 
-    audit_id: str = field(default_factory=lambda: f"audit-{datetime.now(timezone.utc).isoformat()}")
+    audit_id: str = field(default_factory=lambda: f"audit-{datetime.now(UTC).isoformat()}")
     decision_id: str = ""
     consensus_id: str = ""
-    deliberation_rounds: List[DeliberationRoundRecord] = field(default_factory=list)
-    votes_with_reasoning: List[VoteRecord] = field(default_factory=list)
+    deliberation_rounds: list[DeliberationRoundRecord] = field(default_factory=list)
+    votes_with_reasoning: list[VoteRecord] = field(default_factory=list)
     final_decision: str = ""
     consensus_method: str = "unknown"
     confidence_score: float = 0.5
-    confidence_breakdown: Dict[str, float] = field(default_factory=dict)
-    dissenting_agents: List[str] = field(default_factory=list)
-    minority_report: Optional[str] = None
+    confidence_breakdown: dict[str, float] = field(default_factory=dict)
+    dissenting_agents: list[str] = field(default_factory=list)
+    minority_report: str | None = None
     outcome: DecisionOutcome = DecisionOutcome.PENDING
-    outcome_recorded_at: Optional[str] = None
-    outcome_verified_at: Optional[str] = None
-    provenance_hash: Optional[str] = None
-    created_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
-    updated_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    outcome_recorded_at: str | None = None
+    outcome_verified_at: str | None = None
+    provenance_hash: str | None = None
+    created_at: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
+    updated_at: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
+    metadata: dict[str, Any] = field(default_factory=dict)
 
     def __post_init__(self) -> None:
         """Generate provenance hash after initialization."""
@@ -367,7 +367,7 @@ class DecisionAudit:
             verified: Whether outcome has been verified
         """
         self.outcome = outcome
-        self.outcome_recorded_at = datetime.now(timezone.utc).isoformat()
+        self.outcome_recorded_at = datetime.now(UTC).isoformat()
         if verified:
             self.outcome_verified_at = self.outcome_recorded_at
         self.updated_at = self.outcome_recorded_at
@@ -381,7 +381,7 @@ class DecisionAudit:
             round_record: Deliberation round to add
         """
         self.deliberation_rounds.append(round_record)
-        self.updated_at = datetime.now(timezone.utc).isoformat()
+        self.updated_at = datetime.now(UTC).isoformat()
         self.provenance_hash = self._generate_provenance_hash()
 
     def verify_integrity(self) -> bool:
@@ -394,7 +394,7 @@ class DecisionAudit:
         current_hash = self._generate_provenance_hash()
         return current_hash == self.provenance_hash
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert audit record to dictionary for export."""
         return {
             "audit_id": self.audit_id,
@@ -476,16 +476,16 @@ class ConsensusAuditTrail:
         self.enable_hash_chain = enable_hash_chain
 
         # In-memory storage (would be replaced by actual backend)
-        self.events: List[AuditEvent] = []
-        self.decisions: Dict[str, DecisionRecord] = {}
-        self.votes: Dict[str, List[VoteRecord]] = {}
-        self.arguments: Dict[str, List[ArgumentRecord]] = {}
-        self.outcomes: Dict[str, DecisionOutcome] = {}
-        self.deliberation_rounds: Dict[str, List[DeliberationRoundRecord]] = {}
-        self.decision_audits: Dict[str, DecisionAudit] = {}
+        self.events: list[AuditEvent] = []
+        self.decisions: dict[str, DecisionRecord] = {}
+        self.votes: dict[str, list[VoteRecord]] = {}
+        self.arguments: dict[str, list[ArgumentRecord]] = {}
+        self.outcomes: dict[str, DecisionOutcome] = {}
+        self.deliberation_rounds: dict[str, list[DeliberationRoundRecord]] = {}
+        self.decision_audits: dict[str, DecisionAudit] = {}
 
         # Event chain tracking
-        self.last_event_hash: Optional[str] = None
+        self.last_event_hash: str | None = None
 
         # Query statistics
         self.query_count = 0
@@ -500,8 +500,8 @@ class ConsensusAuditTrail:
         self,
         event_type: AuditEventType,
         consensus_id: str,
-        agent_id: Optional[str] = None,
-        data: Optional[Dict[str, Any]] = None,
+        agent_id: str | None = None,
+        data: dict[str, Any] | None = None,
     ) -> AuditEvent:
         """
         Record an audit event.
@@ -524,7 +524,7 @@ class ConsensusAuditTrail:
         event = AuditEvent(
             event_id=event_id,
             event_type=event_type,
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
             consensus_id=consensus_id,
             agent_id=agent_id,
             data=data or {},
@@ -548,9 +548,9 @@ class ConsensusAuditTrail:
         proposal: str,
         decision: str,
         confidence: float,
-        participants: Optional[List[str]] = None,
-        reasoning: Optional[str] = None,
-        metadata: Optional[Dict[str, Any]] = None,
+        participants: list[str] | None = None,
+        reasoning: str | None = None,
+        metadata: dict[str, Any] | None = None,
     ) -> DecisionRecord:
         """
         Record a consensus decision.
@@ -618,8 +618,8 @@ class ConsensusAuditTrail:
         agent_id: str,
         decision: str,
         confidence: float,
-        reasoning: Optional[str] = None,
-        metadata: Optional[Dict[str, Any]] = None,
+        reasoning: str | None = None,
+        metadata: dict[str, Any] | None = None,
     ) -> VoteRecord:
         """
         Record a single vote.
@@ -684,8 +684,8 @@ class ConsensusAuditTrail:
         agent_id: str,
         position: str,
         content: str,
-        supports: Optional[List[str]] = None,
-        rebuttals: Optional[List[str]] = None,
+        supports: list[str] | None = None,
+        rebuttals: list[str] | None = None,
     ) -> ArgumentRecord:
         """
         Record an argument submitted during deliberation.
@@ -745,7 +745,7 @@ class ConsensusAuditTrail:
         self,
         decision_id: str,
         outcome: DecisionOutcome,
-        outcome_data: Optional[Dict[str, Any]] = None,
+        outcome_data: dict[str, Any] | None = None,
     ) -> None:
         """
         Record the outcome of a decision.
@@ -802,7 +802,7 @@ class ConsensusAuditTrail:
         # Update decision metadata
         self.decisions[decision_id].metadata["rollback_reason"] = reason
         self.decisions[decision_id].metadata["rollback_time"] = datetime.now(
-            timezone.utc
+            UTC
         ).isoformat()
 
         # Record rollback event
@@ -824,10 +824,10 @@ class ConsensusAuditTrail:
         final_decision: str,
         consensus_method: str = "MAKER",
         confidence_score: float = 0.5,
-        confidence_breakdown: Optional[Dict[str, float]] = None,
-        dissenting_agents: Optional[List[str]] = None,
-        minority_report: Optional[str] = None,
-        metadata: Optional[Dict[str, Any]] = None,
+        confidence_breakdown: dict[str, float] | None = None,
+        dissenting_agents: list[str] | None = None,
+        minority_report: str | None = None,
+        metadata: dict[str, Any] | None = None,
     ) -> DecisionAudit:
         """
         Create a comprehensive decision audit record.
@@ -888,8 +888,8 @@ class ConsensusAuditTrail:
         self,
         consensus_id: str,
         round_number: int,
-        arguments_submitted: Optional[List[str]] = None,
-        positions: Optional[Dict[str, str]] = None,
+        arguments_submitted: list[str] | None = None,
+        positions: dict[str, str] | None = None,
         consensus_score: float = 0.0,
     ) -> DeliberationRoundRecord:
         """
@@ -930,7 +930,7 @@ class ConsensusAuditTrail:
 
         return round_record
 
-    def get_decision_audit(self, decision_id: str) -> Optional[DecisionAudit]:
+    def get_decision_audit(self, decision_id: str) -> DecisionAudit | None:
         """
         Get comprehensive decision audit record.
 
@@ -942,7 +942,7 @@ class ConsensusAuditTrail:
         """
         return self.decision_audits.get(decision_id)
 
-    def get_deliberation_history(self, consensus_id: str) -> List[DeliberationRoundRecord]:
+    def get_deliberation_history(self, consensus_id: str) -> list[DeliberationRoundRecord]:
         """
         Get complete deliberation history for a consensus process.
 
@@ -975,8 +975,7 @@ class ConsensusAuditTrail:
 
         if format == "json":
             return json.dumps(audit.to_dict(), indent=2, sort_keys=True)
-        else:
-            raise ValueError(f"Unsupported export format: {format}")
+        raise ValueError(f"Unsupported export format: {format}")
 
     def export_all_audits(self, format: str = "json") -> str:
         """
@@ -990,15 +989,14 @@ class ConsensusAuditTrail:
         """
         if format == "json":
             data = {
-                "export_timestamp": datetime.now(timezone.utc).isoformat(),
+                "export_timestamp": datetime.now(UTC).isoformat(),
                 "total_audits": len(self.decision_audits),
                 "audits": [audit.to_dict() for audit in self.decision_audits.values()],
             }
             return json.dumps(data, indent=2, sort_keys=True)
-        else:
-            raise ValueError(f"Unsupported export format: {format}")
+        raise ValueError(f"Unsupported export format: {format}")
 
-    def verify_audit_integrity(self, decision_id: str) -> Dict[str, Any]:
+    def verify_audit_integrity(self, decision_id: str) -> dict[str, Any]:
         """
         Verify the integrity of a decision audit record.
 
@@ -1017,10 +1015,10 @@ class ConsensusAuditTrail:
             "valid": is_valid,
             "decision_id": decision_id,
             "provenance_hash": audit.provenance_hash,
-            "verified_at": datetime.now(timezone.utc).isoformat(),
+            "verified_at": datetime.now(UTC).isoformat(),
         }
 
-    def get_audits_by_outcome(self, outcome: DecisionOutcome) -> List[DecisionAudit]:
+    def get_audits_by_outcome(self, outcome: DecisionOutcome) -> list[DecisionAudit]:
         """
         Get all decision audits with a specific outcome.
 
@@ -1035,15 +1033,15 @@ class ConsensusAuditTrail:
             if audit.outcome == outcome
         ]
 
-    def get_failed_audits(self) -> List[DecisionAudit]:
+    def get_failed_audits(self) -> list[DecisionAudit]:
         """Get all audits with failure outcomes."""
         return self.get_audits_by_outcome(DecisionOutcome.FAILURE)
 
-    def get_successful_audits(self) -> List[DecisionAudit]:
+    def get_successful_audits(self) -> list[DecisionAudit]:
         """Get all audits with success outcomes."""
         return self.get_audits_by_outcome(DecisionOutcome.SUCCESS)
 
-    def get_audit_statistics(self) -> Dict[str, Any]:
+    def get_audit_statistics(self) -> dict[str, Any]:
         """
         Get statistics about decision audits.
 
@@ -1077,7 +1075,7 @@ class ConsensusAuditTrail:
     def get_decision(
         self,
         decision_id: str,
-    ) -> Optional[DecisionRecord]:
+    ) -> DecisionRecord | None:
         """
         Get complete decision record.
 
@@ -1092,7 +1090,7 @@ class ConsensusAuditTrail:
     def get_votes_for_consensus(
         self,
         consensus_id: str,
-    ) -> List[VoteRecord]:
+    ) -> list[VoteRecord]:
         """
         Get all votes for a consensus process.
 
@@ -1107,7 +1105,7 @@ class ConsensusAuditTrail:
     def get_arguments_for_consensus(
         self,
         consensus_id: str,
-    ) -> List[ArgumentRecord]:
+    ) -> list[ArgumentRecord]:
         """
         Get all arguments for a consensus process.
 
@@ -1122,7 +1120,7 @@ class ConsensusAuditTrail:
     def get_vote_breakdown(
         self,
         consensus_id: str,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Get vote breakdown for a consensus process.
 
@@ -1138,8 +1136,8 @@ class ConsensusAuditTrail:
             return {"total_votes": 0, "by_decision": {}, "by_agent": {}}
 
         # Group by decision
-        by_decision: Dict[str, List[VoteRecord]] = {}
-        by_agent: Dict[str, VoteRecord] = {}
+        by_decision: dict[str, list[VoteRecord]] = {}
+        by_agent: dict[str, VoteRecord] = {}
 
         for vote in votes:
             if vote.decision not in by_decision:
@@ -1175,12 +1173,12 @@ class ConsensusAuditTrail:
 
     def query_decisions(
         self,
-        start_date: Optional[str] = None,
-        end_date: Optional[str] = None,
-        consensus_type: Optional[str] = None,
-        min_confidence: Optional[float] = None,
-        outcome: Optional[DecisionOutcome] = None,
-        participants: Optional[List[str]] = None,
+        start_date: str | None = None,
+        end_date: str | None = None,
+        consensus_type: str | None = None,
+        min_confidence: float | None = None,
+        outcome: DecisionOutcome | None = None,
+        participants: list[str] | None = None,
     ) -> QueryResult:
         """
         Query decisions with filters.
@@ -1196,7 +1194,7 @@ class ConsensusAuditTrail:
         Returns:
             Query result
         """
-        start_time = datetime.now(timezone.utc)
+        start_time = datetime.now(UTC)
 
         # Record query event
         self.record_event(
@@ -1248,7 +1246,7 @@ class ConsensusAuditTrail:
             })
 
         # Calculate execution time
-        end_time = datetime.now(timezone.utc)
+        end_time = datetime.now(UTC)
         execution_time_ms = (end_time - start_time).total_seconds() * 1000
 
         # Update query statistics
@@ -1278,7 +1276,7 @@ class ConsensusAuditTrail:
     def get_decision_timeline(
         self,
         consensus_id: str,
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """
         Get complete timeline of events for a consensus process.
 
@@ -1312,11 +1310,11 @@ class ConsensusAuditTrail:
     def export_audit_data(
         self,
         format: str = "json",
-        consensus_id: Optional[str] = None,
+        consensus_id: str | None = None,
         include_events: bool = True,
         include_votes: bool = True,
         include_arguments: bool = True,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Export audit data for external analysis.
 
@@ -1330,8 +1328,8 @@ class ConsensusAuditTrail:
         Returns:
             Exported data dictionary
         """
-        export_data: Dict[str, Any] = {
-            "export_timestamp": datetime.now(timezone.utc).isoformat(),
+        export_data: dict[str, Any] = {
+            "export_timestamp": datetime.now(UTC).isoformat(),
             "format": format,
             "audit_trail_version": "1.0",
         }
@@ -1339,7 +1337,7 @@ class ConsensusAuditTrail:
         if consensus_id:
             # Export specific consensus - search by consensus_id not decision_id
             decision = None
-            for dec_id, dec_record in self.decisions.items():
+            for dec_record in self.decisions.values():
                 if dec_record.consensus_id == consensus_id:
                     decision = dec_record
                     break
@@ -1443,7 +1441,7 @@ class ConsensusAuditTrail:
 
         return export_data
 
-    def verify_integrity(self) -> Dict[str, Any]:
+    def verify_integrity(self) -> dict[str, Any]:
         """
         Verify cryptographic integrity of audit trail.
 
@@ -1490,7 +1488,7 @@ class ConsensusAuditTrail:
 
         return results
 
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """
         Get audit trail statistics.
 
@@ -1498,7 +1496,7 @@ class ConsensusAuditTrail:
             Statistics dictionary
         """
         # Calculate outcome distribution
-        outcome_counts: Dict[str, int] = {}
+        outcome_counts: dict[str, int] = {}
         for outcome in self.outcomes.values():
             outcome_key = outcome.value
             outcome_counts[outcome_key] = outcome_counts.get(outcome_key, 0) + 1
@@ -1522,7 +1520,7 @@ class ConsensusAuditTrail:
 
     def cleanup_old_data(
         self,
-        current_date: Optional[datetime] = None,
+        current_date: datetime | None = None,
     ) -> int:
         """
         Clean up data older than retention period.
@@ -1534,13 +1532,13 @@ class ConsensusAuditTrail:
             Number of records cleaned up
         """
         if current_date is None:
-            current_date = datetime.now(timezone.utc)
+            current_date = datetime.now(UTC)
 
-        cutoff_date = datetime(
+        datetime(
             current_date.year,
             current_date.month,
             current_date.day,
-            tzinfo=timezone.utc,
+            tzinfo=UTC,
         )
 
         # Simple implementation - would be more sophisticated with actual storage backend

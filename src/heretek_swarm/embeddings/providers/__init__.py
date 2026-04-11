@@ -9,13 +9,13 @@ Multi-provider embedding abstraction layer supporting:
 - HuggingFace
 """
 
-from .base import EmbeddingProviderBase, EmbeddingResponse, EmbeddingRequest
+from .base import EmbeddingProviderBase, EmbeddingRequest, EmbeddingResponse
 from .factory import create_embedding_provider, get_provider_class, list_available_providers
 
 __all__ = [
     "EmbeddingProviderBase",
-    "EmbeddingResponse",
     "EmbeddingRequest",
+    "EmbeddingResponse",
     "create_embedding_provider",
     "get_provider_class",
     "list_available_providers",

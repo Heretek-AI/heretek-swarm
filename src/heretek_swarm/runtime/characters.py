@@ -5,8 +5,6 @@ Character System - Agent Definitions
 Reference: MiniMax Audit + elizaOS character patterns
 """
 
-from typing import Dict
-
 
 # =============================================================================
 # STEWARD - Orchestrator Agent
@@ -183,7 +181,7 @@ HISTORIAN = {
 # Character Registry
 # =============================================================================
 
-CHARACTERS: Dict[str, Dict] = {
+CHARACTERS: dict[str, dict] = {
     "steward": STEWARD,
     "alpha": ALPHA,
     "beta": BETA,
@@ -193,31 +191,31 @@ CHARACTERS: Dict[str, Dict] = {
 }
 
 
-def get_character(agent_id: str) -> Dict:
+def get_character(agent_id: str) -> dict:
     """Get character definition by agent ID."""
     return CHARACTERS.get(agent_id.lower(), STEWARD)
 
 
-def get_all_characters() -> Dict[str, Dict]:
+def get_all_characters() -> dict[str, dict]:
     """Get all character definitions."""
     return CHARACTERS.copy()
 
 
-def character_to_system_prompt(character: Dict) -> str:
+def character_to_system_prompt(character: dict) -> str:
     """Convert character to system prompt."""
     parts = []
-    
+
     parts.append(f"You are {character['name']}, {character['role']}.")
-    parts.append(character['bio'])
-    
-    if character.get('lore'):
+    parts.append(character["bio"])
+
+    if character.get("lore"):
         parts.append(f"Background: {character['lore']}")
-    
-    if character.get('knowledge'):
+
+    if character.get("knowledge"):
         parts.append(f"Expertise: {', '.join(character['knowledge'])}")
-    
-    if character.get('style', {}).get('all'):
-        styles = character['style']['all']
+
+    if character.get("style", {}).get("all"):
+        styles = character["style"]["all"]
         parts.append(f"Communication style: {', '.join(styles)}")
-    
+
     return "\n\n".join(parts)

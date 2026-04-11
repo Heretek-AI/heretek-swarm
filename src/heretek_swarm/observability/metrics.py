@@ -14,13 +14,16 @@ Features:
 """
 
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from typing import Dict, List, Optional, Any
+from datetime import UTC, datetime
+from typing import Any
 
 # Import cycle detector and phi training for metrics integration
 try:
-    from ..workflow.engine import get_cycle_detector_metrics, export_cycle_detector_prometheus
-    from ..consciousness.phi_training import PhiTrainingEnvironment
+    from src.heretek_swarm.consciousness.phi_training import PhiTrainingEnvironment
+    from src.heretek_swarm.workflow.engine import (
+        export_cycle_detector_prometheus,
+        get_cycle_detector_metrics,
+    )
     CYCLE_DETECTOR_AVAILABLE = True
 except ImportError:
     CYCLE_DETECTOR_AVAILABLE = False
@@ -38,9 +41,9 @@ class AgentMetrics:
     messages_received: int = 0
     error_count: int = 0
     health_score: float = 100.0
-    last_activity: Optional[datetime] = None
-    
-    def to_dict(self) -> Dict[str, Any]:
+    last_activity: datetime | None = None
+
+    def to_dict(self) -> dict[str, Any]:
         return {
             "agent_id": self.agent_id,
             "tasks_completed": self.tasks_completed,
@@ -66,9 +69,9 @@ class SwarmMetricsData:
     total_messages: int = 0
     avg_message_latency_ms: float = 0.0
     health_score: float = 100.0
-    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
-    
-    def to_dict(self) -> Dict[str, Any]:
+    timestamp: datetime = field(default_factory=lambda: datetime.now(UTC))
+
+    def to_dict(self) -> dict[str, Any]:
         return {
             "total_agents": self.total_agents,
             "active_agents": self.active_agents,
@@ -93,11 +96,11 @@ class ConsciousnessMetricsData:
     differentiation_level: float = 0.0
     free_energy_avg: float = 0.0
     free_energy_variance: float = 0.0
-    agent_phi_scores: Dict[str, float] = field(default_factory=dict)
-    agent_fep_scores: Dict[str, float] = field(default_factory=dict)
-    timestamp: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
-    
-    def to_dict(self) -> Dict[str, Any]:
+    agent_phi_scores: dict[str, float] = field(default_factory=dict)
+    agent_fep_scores: dict[str, float] = field(default_factory=dict)
+    timestamp: datetime = field(default_factory=lambda: datetime.now(UTC))
+
+    def to_dict(self) -> dict[str, Any]:
         return {
             "phi_avg": self.phi_avg,
             "phi_max": self.phi_max,
@@ -115,20 +118,20 @@ class ConsciousnessMetricsData:
 class SwarmMetricsCollector:
     """
     Collects and aggregates metrics from all agents in the swarm.
-    
+
     Features:
     - Per-agent performance metrics
     - Aggregate swarm health metrics
     - Consciousness metrics (Phi, FEP)
     - Real-time metrics collection
     """
-    
+
     def __init__(self):
-        self._agent_metrics: Dict[str, AgentMetrics] = {}
-        self._message_latencies: List[float] = []
-        self._task_durations: List[float] = []
-        self._start_time = datetime.now(timezone.utc)
-    
+        self._agent_metrics: dict[str, AgentMetrics] = {}
+        self._message_latencies: list[float] = []
+        self._task_durations: list[float] = []
+        self._start_time = datetime.now(UTC)
+
     def record_agent_activity(
         self,
         agent_id: str,
@@ -142,82 +145,82 @@ class SwarmMetricsCollector:
         """Record activity for an agent."""
         if agent_id not in self._agent_metrics:
             self._agent_metrics[agent_id] = AgentMetrics(agent_id=agent_id)
-        
+
         metrics = self._agent_metrics[agent_id]
-        metrics.last_activity = datetime.now(timezone.utc)
-        
+        metrics.last_activity = datetime.now(UTC)
+
         if task_completed:
             metrics.tasks_completed += 1
             if task_duration_ms > 0:
                 self._task_durations.append(task_duration_ms)
                 metrics.avg_task_duration_ms = sum(self._task_durations) / len(self._task_durations)
-        
+
         if task_failed:
             metrics.tasks_failed += 1
-        
+
         if message_sent:
             metrics.messages_sent += 1
-        
+
         if message_received:
             metrics.messages_received += 1
-        
+
         if error:
             metrics.error_count += 1
-        
+
         # Update health score
         self._update_health_score(metrics)
-    
+
     def _update_health_score(self, metrics: AgentMetrics) -> None:
         """Calculate agent health score based on various factors."""
         # Base score
         score = 100.0
-        
+
         # Penalize errors
         score -= min(metrics.error_count * 5, 30)
-        
+
         # Penalize failures
         total_tasks = metrics.tasks_completed + metrics.tasks_failed
         if total_tasks > 0:
             failure_rate = metrics.tasks_failed / total_tasks
             score -= failure_rate * 20
-        
+
         # Penalize inactivity (if no activity in last 5 minutes)
         if metrics.last_activity:
-            inactive_seconds = (datetime.now(timezone.utc) - metrics.last_activity).total_seconds()
+            inactive_seconds = (datetime.now(UTC) - metrics.last_activity).total_seconds()
             if inactive_seconds > 300:
                 score -= min((inactive_seconds - 300) / 60, 20)
-        
+
         metrics.health_score = max(0, min(100, score))
-    
+
     def record_message_latency(self, latency_ms: float) -> None:
         """Record message latency."""
         self._message_latencies.append(latency_ms)
         # Keep only last 1000 measurements
         if len(self._message_latencies) > 1000:
             self._message_latencies = self._message_latencies[-1000:]
-    
+
     def collect_swarm_metrics(self) -> SwarmMetricsData:
         """Collect aggregate swarm metrics."""
         total_agents = len(self._agent_metrics)
         active_agents = sum(
             1 for m in self._agent_metrics.values()
-            if m.last_activity and (datetime.now(timezone.utc) - m.last_activity).total_seconds() < 60
+            if m.last_activity and (datetime.now(UTC) - m.last_activity).total_seconds() < 60
         )
         idle_agents = total_agents - active_agents
-        
+
         total_tasks = sum(m.tasks_completed + m.tasks_failed for m in self._agent_metrics.values())
         completed_tasks = sum(m.tasks_completed for m in self._agent_metrics.values())
         failed_tasks = sum(m.tasks_failed for m in self._agent_metrics.values())
         total_messages = sum(m.messages_sent + m.messages_received for m in self._agent_metrics.values())
-        
+
         avg_latency = sum(self._message_latencies) / len(self._message_latencies) if self._message_latencies else 0
-        
+
         # Calculate overall health score
         if self._agent_metrics:
             health_score = sum(m.health_score for m in self._agent_metrics.values()) / len(self._agent_metrics)
         else:
             health_score = 100.0
-        
+
         return SwarmMetricsData(
             total_agents=total_agents,
             active_agents=active_agents,
@@ -229,19 +232,19 @@ class SwarmMetricsCollector:
             avg_message_latency_ms=avg_latency,
             health_score=health_score,
         )
-    
+
     def collect_agent_metrics(self, agent_id: str) -> AgentMetrics:
         """Get metrics for a specific agent."""
         return self._agent_metrics.get(agent_id, AgentMetrics(agent_id=agent_id))
-    
-    def get_all_agent_metrics(self) -> Dict[str, AgentMetrics]:
+
+    def get_all_agent_metrics(self) -> dict[str, AgentMetrics]:
         """Get metrics for all agents."""
         return self._agent_metrics.copy()
-    
-    def get_agent_states(self) -> Dict[str, str]:
+
+    def get_agent_states(self) -> dict[str, str]:
         """Get current states of all agents."""
         states = {}
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         for agent_id, metrics in self._agent_metrics.items():
             if metrics.last_activity:
                 inactive_seconds = (now - metrics.last_activity).total_seconds()
@@ -254,43 +257,43 @@ class SwarmMetricsCollector:
             else:
                 states[agent_id] = "unknown"
         return states
-    
+
     def calculate_health_score(self) -> float:
         """Calculate overall swarm health score."""
         if not self._agent_metrics:
             return 100.0
-        
+
         avg_health = sum(m.health_score for m in self._agent_metrics.values()) / len(self._agent_metrics)
-        
+
         # Factor in error rates
         total_tasks = sum(m.tasks_completed + m.tasks_failed for m in self._agent_metrics.values())
         total_failures = sum(m.tasks_failed for m in self._agent_metrics.values())
         failure_penalty = (total_failures / total_tasks * 10) if total_tasks > 0 else 0
-        
+
         return max(0, min(100, avg_health - failure_penalty))
-    
+
     def collect_consciousness_metrics(self) -> ConsciousnessMetricsData:
         """
         Collect consciousness metrics.
-        
+
         Note: This is a placeholder implementation. In production,
         this would integrate with the IIT Phi and FEP calculators.
         """
         agent_phi_scores = {}
         agent_fep_scores = {}
-        
+
         for agent_id, metrics in self._agent_metrics.items():
             # Simplified phi calculation based on activity
             activity_score = min(1.0, (metrics.messages_sent + metrics.messages_received) / 100)
             health_factor = metrics.health_score / 100
             agent_phi_scores[agent_id] = activity_score * health_factor
-            
+
             # Simplified FEP calculation
             error_factor = 1 / (1 + metrics.error_count)
             agent_fep_scores[agent_id] = error_factor * health_factor
-        
+
         phi_values = list(agent_phi_scores.values()) if agent_phi_scores else [0]
-        
+
         return ConsciousnessMetricsData(
             phi_avg=sum(phi_values) / len(phi_values) if phi_values else 0,
             phi_max=max(phi_values) if phi_values else 0,
@@ -307,27 +310,27 @@ class SwarmMetricsCollector:
 class RealTimeMetricsStream:
     """
     Real-time metrics streaming for observability.
-    
+
     Provides:
     - Periodic metrics snapshots
     - WebSocket streaming support
     - Prometheus format export
     """
-    
+
     def __init__(self, collector: SwarmMetricsCollector):
         self._collector = collector
         self._snapshot_interval = 5  # seconds
-        self._last_snapshot: Optional[SwarmMetricsData] = None
-    
+        self._last_snapshot: SwarmMetricsData | None = None
+
     def get_metrics_snapshot(self) -> SwarmMetricsData:
         """Get current metrics snapshot."""
         self._last_snapshot = self._collector.collect_swarm_metrics()
         return self._last_snapshot
-    
+
     def export_prometheus_format(self) -> str:
         """
         Export metrics in Prometheus text format.
-        
+
         Includes:
         - Standard swarm metrics
         - Consciousness metrics (Phi, FEP)
@@ -336,7 +339,7 @@ class RealTimeMetricsStream:
         """
         metrics = self._collector.collect_swarm_metrics()
         consciousness = self._collector.collect_consciousness_metrics()
-        
+
         lines = [
             "# HELP heretek_swarm_total_agents Total number of agents",
             "# TYPE heretek_swarm_total_agents gauge",
@@ -367,7 +370,7 @@ class RealTimeMetricsStream:
             f"heretek_swarm_consciousness_fep_avg {consciousness.free_energy_avg}",
             "",
         ]
-        
+
         # Add cycle detection metrics if available
         if CYCLE_DETECTOR_AVAILABLE:
             try:
@@ -387,7 +390,7 @@ class RealTimeMetricsStream:
                         f"heretek_workflow_avg_iterations_before_cycle {cycle_metrics.get('avg_iterations_before_cycle', 0)}",
                         "",
                     ])
-                    
+
                     # Add per-strategy metrics
                     for strategy, count in cycle_metrics.get("cycles_by_strategy", {}).items():
                         lines.extend([
@@ -399,7 +402,7 @@ class RealTimeMetricsStream:
             except Exception as e:
                 lines.append(f"# Cycle detection metrics unavailable: {e}")
                 lines.append("")
-        
+
         # Add Phi training metrics if available
         if CYCLE_DETECTOR_AVAILABLE and PhiTrainingEnvironment:
             try:
@@ -426,7 +429,7 @@ class RealTimeMetricsStream:
             except Exception as e:
                 lines.append(f"# Phi training metrics unavailable: {e}")
                 lines.append("")
-        
+
         # Add per-agent phi scores
         for agent_id, phi_score in consciousness.agent_phi_scores.items():
             lines.extend([
@@ -435,5 +438,5 @@ class RealTimeMetricsStream:
                 f'heretek_agent_phi{{agent_id="{agent_id}"}} {phi_score}',
                 "",
             ])
-        
+
         return "\n".join(lines)

@@ -48,9 +48,9 @@ Example:
 import hashlib
 import uuid
 from dataclasses import dataclass, field
-from datetime import datetime, timezone, timedelta
+from datetime import UTC, datetime, timedelta
 from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 import structlog
 
@@ -108,9 +108,9 @@ class Evidence:
     evidence_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     evidence_type: EvidenceType = EvidenceType.DATA
     content: str = ""
-    source: Optional[str] = None
+    source: str | None = None
     reliability_score: float = 0.5
-    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
     submitted_by: str = ""
 
     def calculate_quality(self) -> float:
@@ -162,15 +162,15 @@ class Argument:
     agent_id: str = ""
     position: Position = Position.NEUTRAL
     reasoning: str = ""
-    evidence_refs: List[str] = field(default_factory=list)
+    evidence_refs: list[str] = field(default_factory=list)
     confidence: float = 0.5
     argument_type: ArgumentType = ArgumentType.PRIMARY
-    supports: List[str] = field(default_factory=list)
-    rebuttals: List[str] = field(default_factory=list)
-    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    supports: list[str] = field(default_factory=list)
+    rebuttals: list[str] = field(default_factory=list)
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
     expertise_weight: float = 1.0
 
-    def calculate_strength(self, evidence_dict: Dict[str, Evidence]) -> float:
+    def calculate_strength(self, evidence_dict: dict[str, Evidence]) -> float:
         """
         Calculate argument strength based on evidence and confidence.
 
@@ -218,12 +218,12 @@ class CounterArgument:
     original_argument_id: str = ""
     agent_id: str = ""
     counter_reasoning: str = ""
-    evidence_refs: List[str] = field(default_factory=list)
+    evidence_refs: list[str] = field(default_factory=list)
     confidence: float = 0.5
-    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
     expertise_weight: float = 1.0
 
-    def calculate_effectiveness(self, evidence_dict: Dict[str, Evidence]) -> float:
+    def calculate_effectiveness(self, evidence_dict: dict[str, Evidence]) -> float:
         """
         Calculate counter-argument effectiveness.
 
@@ -272,16 +272,16 @@ class DeliberationRound:
     """
     round_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     topic: str = ""
-    arguments: List[Argument] = field(default_factory=list)
-    counter_arguments: List[CounterArgument] = field(default_factory=list)
-    evidence_submitted: List[Evidence] = field(default_factory=list)
-    participant_agents: List[str] = field(default_factory=list)
+    arguments: list[Argument] = field(default_factory=list)
+    counter_arguments: list[CounterArgument] = field(default_factory=list)
+    evidence_submitted: list[Evidence] = field(default_factory=list)
+    participant_agents: list[str] = field(default_factory=list)
     round_duration: timedelta = timedelta(0)
     outcome: DeliberationOutcome = DeliberationOutcome.DEADLOCK
     consensus_score: float = 0.0
     position_changes: int = 0
-    start_time: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
-    end_time: Optional[str] = None
+    start_time: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
+    end_time: str | None = None
 
 
 @dataclass
@@ -302,9 +302,9 @@ class DissentRecord:
     position: Position = Position.NEUTRAL
     confidence: float = 0.0
     reasoning: str = ""
-    key_arguments: List[str] = field(default_factory=list)
+    key_arguments: list[str] = field(default_factory=list)
     resolved: bool = False
-    resolution_notes: Optional[str] = None
+    resolution_notes: str | None = None
 
 
 @dataclass
@@ -328,7 +328,7 @@ class ConsensusConfidence:
     stability_score: float = 0.0
 
     def calculate(self, for_weight: float, against_weight: float, total_weight: float,
-                  evidence_scores: List[float], dissent_records: List[DissentRecord]) -> None:
+                  evidence_scores: list[float], dissent_records: list[DissentRecord]) -> None:
         """
         Calculate consensus confidence.
 
@@ -394,13 +394,13 @@ class DeliberationResult:
     final_position: Position = Position.NEUTRAL
     consensus_score: float = 0.0
     confidence: ConsensusConfidence = field(default_factory=ConsensusConfidence)
-    dissenting_agents: List[str] = field(default_factory=list)
-    minority_report: List[DissentRecord] = field(default_factory=list)
+    dissenting_agents: list[str] = field(default_factory=list)
+    minority_report: list[DissentRecord] = field(default_factory=list)
     rounds_completed: int = 0
     total_arguments: int = 0
     total_evidence: int = 0
-    decision_hash: Optional[str] = None
-    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    decision_hash: str | None = None
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
 
 @dataclass
@@ -443,7 +443,7 @@ class DeliberationEngine:
 
     def __init__(
         self,
-        config: Optional[DeliberationConfig] = None,
+        config: DeliberationConfig | None = None,
         expertise_profiler=None,  # AgentExpertiseProfiler type
     ) -> None:
         """
@@ -457,18 +457,18 @@ class DeliberationEngine:
         self.expertise_profiler = expertise_profiler
 
         # Active deliberations
-        self.active_deliberations: Dict[str, Dict[str, Any]] = {}
-        self.deliberation_states: Dict[str, str] = {}
+        self.active_deliberations: dict[str, dict[str, Any]] = {}
+        self.deliberation_states: dict[str, str] = {}
 
         # Evidence storage
-        self.evidence_store: Dict[str, Dict[str, Evidence]] = {}
+        self.evidence_store: dict[str, dict[str, Evidence]] = {}
 
         # Round tracking
-        self.current_rounds: Dict[str, int] = {}
-        self.round_results: Dict[str, List[DeliberationRound]] = {}
+        self.current_rounds: dict[str, int] = {}
+        self.round_results: dict[str, list[DeliberationRound]] = {}
 
         # Dissent tracking
-        self.dissent_records: Dict[str, List[DissentRecord]] = {}
+        self.dissent_records: dict[str, list[DissentRecord]] = {}
 
         logger.info(
             f"DeliberationEngine initialized with max_rounds={self.config.max_rounds}, "
@@ -478,9 +478,9 @@ class DeliberationEngine:
     def start_deliberation(
         self,
         topic: str,
-        participants: List[str],
-        deliberation_id: Optional[str] = None,
-        domain: Optional[str] = None,
+        participants: list[str],
+        deliberation_id: str | None = None,
+        domain: str | None = None,
     ) -> str:
         """
         Start a new deliberation process.
@@ -510,7 +510,7 @@ class DeliberationEngine:
             "counter_arguments": [],
             "evidence": {},
             "positions": {},
-            "start_time": datetime.now(timezone.utc).isoformat(),
+            "start_time": datetime.now(UTC).isoformat(),
         }
 
         self.deliberation_states[deliberation_id] = "gathering_positions"
@@ -532,12 +532,12 @@ class DeliberationEngine:
         agent_id: str,
         position: Position,
         reasoning: str,
-        evidence_refs: Optional[List[str]] = None,
+        evidence_refs: list[str] | None = None,
         confidence: float = 0.5,
         argument_type: ArgumentType = ArgumentType.PRIMARY,
-        supports: Optional[List[str]] = None,
-        rebuttals: Optional[List[str]] = None,
-    ) -> Optional[str]:
+        supports: list[str] | None = None,
+        rebuttals: list[str] | None = None,
+    ) -> str | None:
         """
         Submit an argument to the deliberation.
 
@@ -604,9 +604,9 @@ class DeliberationEngine:
         agent_id: str,
         original_argument_id: str,
         counter_reasoning: str,
-        evidence_refs: Optional[List[str]] = None,
+        evidence_refs: list[str] | None = None,
         confidence: float = 0.5,
-    ) -> Optional[str]:
+    ) -> str | None:
         """
         Submit a counter-argument.
 
@@ -654,10 +654,10 @@ class DeliberationEngine:
         deliberation_id: str,
         evidence_type: EvidenceType,
         content: str,
-        source: Optional[str] = None,
+        source: str | None = None,
         reliability_score: float = 0.5,
         submitted_by: str = "",
-    ) -> Optional[str]:
+    ) -> str | None:
         """
         Submit evidence to support arguments.
 
@@ -693,7 +693,7 @@ class DeliberationEngine:
 
         return evidence.evidence_id
 
-    def run_deliberation_round(self, deliberation_id: str) -> Optional[DeliberationRound]:
+    def run_deliberation_round(self, deliberation_id: str) -> DeliberationRound | None:
         """
         Run a single round of deliberation.
 
@@ -706,7 +706,7 @@ class DeliberationEngine:
         if deliberation_id not in self.active_deliberations:
             return None
 
-        start_time = datetime.now(timezone.utc)
+        start_time = datetime.now(UTC)
         self.current_rounds[deliberation_id] += 1
         current_round = self.current_rounds[deliberation_id]
 
@@ -730,7 +730,7 @@ class DeliberationEngine:
         else:
             outcome = DeliberationOutcome.DEADLOCK
 
-        end_time = datetime.now(timezone.utc)
+        end_time = datetime.now(UTC)
         round_result = DeliberationRound(
             topic=data["topic"],
             arguments=arguments,
@@ -747,9 +747,7 @@ class DeliberationEngine:
         self.round_results[deliberation_id].append(round_result)
 
         # Update state
-        if outcome == DeliberationOutcome.CONSENSUS:
-            self.deliberation_states[deliberation_id] = "completed"
-        elif current_round >= self.config.max_rounds:
+        if outcome == DeliberationOutcome.CONSENSUS or current_round >= self.config.max_rounds:
             self.deliberation_states[deliberation_id] = "completed"
 
         logger.info(
@@ -807,9 +805,8 @@ class DeliberationEngine:
 
         # Consensus is higher when one side dominates
         majority_weight = max(for_weight, against_weight)
-        consensus = majority_weight / total_weight
+        return majority_weight / total_weight
 
-        return consensus
 
     def _count_position_changes(self, deliberation_id: str) -> int:
         """Count position changes across rounds."""
@@ -902,7 +899,7 @@ class DeliberationEngine:
     def _calculate_position_weights(
         self,
         deliberation_id: str,
-    ) -> Tuple[float, float, float]:
+    ) -> tuple[float, float, float]:
         """Calculate position weights for consensus scoring."""
         data = self.active_deliberations[deliberation_id]
         positions = data.get("positions", {})
@@ -936,7 +933,7 @@ class DeliberationEngine:
     def finalize_deliberation(
         self,
         deliberation_id: str,
-    ) -> Optional[DeliberationResult]:
+    ) -> DeliberationResult | None:
         """
         Finalize deliberation and return result.
 
@@ -988,7 +985,7 @@ class DeliberationEngine:
             "topic": data["topic"],
             "final_position": final_position.value,
             "consensus_score": consensus_score,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
         decision_hash = hashlib.sha256(
             str(sorted(decision_data.items())).encode()
@@ -1016,14 +1013,14 @@ class DeliberationEngine:
 
         return result
 
-    def get_deliberation_state(self, deliberation_id: str) -> Optional[str]:
+    def get_deliberation_state(self, deliberation_id: str) -> str | None:
         """Get current state of a deliberation."""
         return self.deliberation_states.get(deliberation_id)
 
     def get_position_distribution(
         self,
         deliberation_id: str,
-    ) -> Dict[str, float]:
+    ) -> dict[str, float]:
         """Get distribution of positions as percentages."""
         if deliberation_id not in self.active_deliberations:
             return {}
@@ -1034,18 +1031,18 @@ class DeliberationEngine:
         if total == 0:
             return {}
 
-        distribution: Dict[str, int] = {}
+        distribution: dict[str, int] = {}
         for pos_data in positions.values():
             key = pos_data["position"].value
             distribution[key] = distribution.get(key, 0) + 1
 
         return {k: v / total for k, v in distribution.items()}
 
-    def get_round_history(self, deliberation_id: str) -> List[DeliberationRound]:
+    def get_round_history(self, deliberation_id: str) -> list[DeliberationRound]:
         """Get complete round history for a deliberation."""
         return self.round_results.get(deliberation_id, [])
 
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """Get deliberation engine statistics."""
         active_count = len(self.active_deliberations)
         completed_count = sum(1 for s in self.deliberation_states.values() if s == "completed")

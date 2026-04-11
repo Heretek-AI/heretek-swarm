@@ -26,14 +26,14 @@ Example Usage:
         IntegrationManager,
         IntegrationType,
     )
-    
+
     # Get adapters
     langgraph = get_langgraph_adapter()
     autogen = get_autogen_adapter()
     crewai = get_crewai_adapter()
     openai = get_openai_assistants_adapter(api_key="your-key")
     anthropic = get_anthropic_adapter(api_key="your-key")
-    
+
     # Use integration manager
     manager = get_integration_manager()
     await manager.register_integration(
@@ -47,91 +47,86 @@ Example Usage:
 Reference: EXPANSION_ROADMAP.md Session 47 - Integration Ecosystem
 """
 
-from .langgraph import (
-    LangGraphAdapter,
-    GraphNode,
-    GraphEdge,
-    GraphCheckpoint,
-    GraphExecutionResult,
-    GraphState,
-    NodeStatus,
-    get_langgraph_adapter,
-    create_workflow_graph,
-    LANGGRAPH_AVAILABLE,
+from .anthropic import (
+    ANTHROPIC_AVAILABLE,
+    AnthropicAdapter,
+    AnthropicMessageRole,
+    ConversationContext,
+    ConversationMessage,
+    StopReason,
+    ToolDefinition,
+    ToolUseRequest,
+    create_conversation,
+    get_anthropic_adapter,
 )
-
 from .autogen import (
+    AUTOGEN_AVAILABLE,
     AutoGenAdapter,
-    AutoGenMessage,
     AutoGenAgentConfig,
+    AutoGenMessage,
     GroupChatConfig,
     ToolRegistration,
-    AgentRole as AutoGenAgentRole,
-    MessageRole as AutoGenMessageRole,
-    get_autogen_adapter,
     create_assistant_agent,
-    AUTOGEN_AVAILABLE,
+    get_autogen_adapter,
 )
-
-from .crewai import (
-    CrewAIAdapter,
-    CrewAgentConfig,
-    CrewTaskConfig,
-    TaskExecutionResult,
-    CrewExecutionResult,
-    CrewProcess,
-    TaskStatus,
-    AgentRole as CrewAIAgentRole,
-    get_crewai_adapter,
-    create_sequential_crew,
-    CREWAI_AVAILABLE,
+from .autogen import (
+    AgentRole as AutoGenAgentRole,
 )
-
-from .openai_assistants import (
-    OpenAIAssistantsAdapter,
-    AssistantConfig,
-    ThreadContext,
-    RunContext,
-    FunctionCallRequest,
-    RunStatus,
-    MessageRole as OpenAIMessageRole,
-    get_openai_assistants_adapter,
-    create_assistant,
-    OPENAI_AVAILABLE,
-)
-
-from .anthropic import (
-    AnthropicAdapter,
-    ToolDefinition,
-    ConversationMessage,
-    ConversationContext,
-    ToolUseRequest,
-    AnthropicMessageRole,
-    StopReason,
-    get_anthropic_adapter,
-    create_conversation,
-    ANTHROPIC_AVAILABLE,
-)
-
-from .openai_assistants import (
-    MessageRole as OpenAIMessageRole,
-)
-
 from .autogen import (
     MessageRole as AutoGenMessageRole,
 )
-
+from .crewai import (
+    CREWAI_AVAILABLE,
+    CrewAgentConfig,
+    CrewAIAdapter,
+    CrewExecutionResult,
+    CrewProcess,
+    CrewTaskConfig,
+    TaskExecutionResult,
+    TaskStatus,
+    create_sequential_crew,
+    get_crewai_adapter,
+)
+from .crewai import (
+    AgentRole as CrewAIAgentRole,
+)
+from .langgraph import (
+    LANGGRAPH_AVAILABLE,
+    GraphCheckpoint,
+    GraphEdge,
+    GraphExecutionResult,
+    GraphNode,
+    GraphState,
+    LangGraphAdapter,
+    NodeStatus,
+    create_workflow_graph,
+    get_langgraph_adapter,
+)
 from .manager import (
-    IntegrationManager,
-    IntegrationConfig,
-    IntegrationState,
-    IntegrationEvent,
     HealthCheckResult,
-    IntegrationType,
-    IntegrationStatus,
     HealthStatus,
+    IntegrationConfig,
+    IntegrationEvent,
+    IntegrationManager,
+    IntegrationState,
+    IntegrationStatus,
+    IntegrationType,
     get_integration_manager,
     initialize_integrations,
+)
+from .openai_assistants import (
+    OPENAI_AVAILABLE,
+    AssistantConfig,
+    FunctionCallRequest,
+    OpenAIAssistantsAdapter,
+    RunContext,
+    RunStatus,
+    ThreadContext,
+    create_assistant,
+    get_openai_assistants_adapter,
+)
+from .openai_assistants import (
+    MessageRole as OpenAIMessageRole,
 )
 
 # Re-export existing integrations if available
@@ -158,8 +153,8 @@ try:
         AgentHandoff,
         HandoffContext,
         HandoffStatus,
-        handoff_manager,
         create_handoff_sync,
+        handoff_manager,
     )
     PRAISON_AVAILABLE = True
 except ImportError:
@@ -167,84 +162,78 @@ except ImportError:
 
 
 __all__ = [
-    # LangGraph
-    "LangGraphAdapter",
-    "GraphNode",
-    "GraphEdge",
-    "GraphCheckpoint",
-    "GraphExecutionResult",
-    "GraphState",
-    "NodeStatus",
-    "get_langgraph_adapter",
-    "create_workflow_graph",
-    "LANGGRAPH_AVAILABLE",
-    
-    # AutoGen
-    "AutoGenAdapter",
-    "AutoGenMessage",
-    "AutoGenAgentConfig",
-    "GroupChatConfig",
-    "ToolRegistration",
-    "AutoGenAgentRole",
-    "AutoGenMessageRole",
-    "get_autogen_adapter",
-    "create_assistant_agent",
-    "AUTOGEN_AVAILABLE",
-    
-    # CrewAI
-    "CrewAIAdapter",
-    "CrewAgentConfig",
-    "CrewTaskConfig",
-    "TaskExecutionResult",
-    "CrewExecutionResult",
-    "CrewProcess",
-    "TaskStatus",
-    "CrewAIAgentRole",
-    "get_crewai_adapter",
-    "create_sequential_crew",
-    "CREWAI_AVAILABLE",
-    
-    # OpenAI Assistants
-    "OpenAIAssistantsAdapter",
-    "AssistantConfig",
-    "ThreadContext",
-    "RunContext",
-    "FunctionCallRequest",
-    "RunStatus",
-    "OpenAIMessageRole",
-    "get_openai_assistants_adapter",
-    "create_assistant",
-    "OPENAI_AVAILABLE",
-    
-    # Anthropic
-    "AnthropicAdapter",
-    "ToolDefinition",
-    "ConversationMessage",
-    "ConversationContext",
-    "ToolUseRequest",
-    "AnthropicMessageRole",
-    "StopReason",
-    "get_anthropic_adapter",
-    "create_conversation",
     "ANTHROPIC_AVAILABLE",
-    
-    # Integration Manager
-    "IntegrationManager",
-    "IntegrationConfig",
-    "IntegrationState",
-    "IntegrationEvent",
-    "HealthCheckResult",
-    "IntegrationType",
-    "IntegrationStatus",
-    "HealthStatus",
-    "get_integration_manager",
-    "initialize_integrations",
-    
+    "AUTOGEN_AVAILABLE",
+    "CREWAI_AVAILABLE",
     # Legacy integrations
     "DISCORD_AVAILABLE",
+    "LANGGRAPH_AVAILABLE",
+    "OPENAI_AVAILABLE",
+    "PRAISON_AVAILABLE",
     "SLACK_AVAILABLE",
     "TELEGRAM_AVAILABLE",
-    "PRAISON_AVAILABLE",
+    # Anthropic
+    "AnthropicAdapter",
+    "AnthropicMessageRole",
+    "AssistantConfig",
+    # AutoGen
+    "AutoGenAdapter",
+    "AutoGenAgentConfig",
+    "AutoGenAgentRole",
+    "AutoGenMessage",
+    "AutoGenMessageRole",
+    "ConversationContext",
+    "ConversationMessage",
+    # CrewAI
+    "CrewAIAdapter",
+    "CrewAIAgentRole",
+    "CrewAgentConfig",
+    "CrewExecutionResult",
+    "CrewProcess",
+    "CrewTaskConfig",
+    "FunctionCallRequest",
+    "GraphCheckpoint",
+    "GraphEdge",
+    "GraphExecutionResult",
+    "GraphNode",
+    "GraphState",
+    "GroupChatConfig",
+    "HealthCheckResult",
+    "HealthStatus",
+    "IntegrationConfig",
+    "IntegrationEvent",
+    # Integration Manager
+    "IntegrationManager",
+    "IntegrationState",
+    "IntegrationStatus",
+    "IntegrationType",
+    # LangGraph
+    "LangGraphAdapter",
+    "NodeStatus",
+    # OpenAI Assistants
+    "OpenAIAssistantsAdapter",
+    "OpenAIMessageRole",
+    "RunContext",
+    "RunStatus",
+    "StopReason",
+    "TaskExecutionResult",
+    "TaskStatus",
+    "ThreadContext",
+    "ToolDefinition",
+    "ToolRegistration",
+    "ToolUseRequest",
+    "create_assistant",
+    "create_assistant_agent",
+    "create_conversation",
+    "create_sequential_crew",
+    "create_workflow_graph",
+    "get_anthropic_adapter",
+    "get_autogen_adapter",
+    "get_crewai_adapter",
+    "get_integration_manager",
+    "get_langgraph_adapter",
+    "get_openai_assistants_adapter",
+    "initialize_integrations",
 ]
 
 # Package version

@@ -8,7 +8,7 @@ This module provides:
 """
 
 from dataclasses import dataclass, field
-from typing import Any, Dict, Optional, Type
+from typing import Any
 
 import structlog
 
@@ -31,10 +31,10 @@ class ActorConfig:
     """
 
     actor_type: str
-    class_ref: Type[AgentActor]
-    init_kwargs: Dict[str, Any]
+    class_ref: type[AgentActor]
+    init_kwargs: dict[str, Any]
     capabilities: list[str] = field(default_factory=list)
-    actor_id: Optional[str] = None
+    actor_id: str | None = None
 
 
 class ActorFactory:
@@ -66,17 +66,17 @@ class ActorFactory:
 
     def __init__(self) -> None:
         """Initialize the actor factory."""
-        self._registry: Dict[str, Type[AgentActor]] = {}
-        self._default_kwargs: Dict[str, Dict[str, Any]] = {}
-        self._instances: Dict[str, ActorConfig] = {}
+        self._registry: dict[str, type[AgentActor]] = {}
+        self._default_kwargs: dict[str, dict[str, Any]] = {}
+        self._instances: dict[str, ActorConfig] = {}
 
         logger.info("[ActorFactory] Factory initialized")
 
     def register_actor_class(
         self,
         name: str,
-        cls: Type[AgentActor],
-        kwargs: Optional[Dict[str, Any]] = None,
+        cls: type[AgentActor],
+        kwargs: dict[str, Any] | None = None,
     ) -> None:
         """
         Register an actor class with optional default parameters.
@@ -103,7 +103,7 @@ class ActorFactory:
     def create_actor(
         self,
         actor_type: str,
-        actor_id: Optional[str] = None,
+        actor_id: str | None = None,
         **override_kwargs: Any,
     ) -> AgentActor:
         """
@@ -149,7 +149,7 @@ class ActorFactory:
 
         return actor
 
-    def get_actor_info(self, actor_id: str) -> Optional[ActorConfig]:
+    def get_actor_info(self, actor_id: str) -> ActorConfig | None:
         """
         Retrieve stored configuration for an actor instance.
 
@@ -170,7 +170,7 @@ class ActorFactory:
         """
         return list(self._registry.keys())
 
-    def get_instance_configs(self) -> Dict[str, ActorConfig]:
+    def get_instance_configs(self) -> dict[str, ActorConfig]:
         """
         Get all stored actor instance configurations.
 
@@ -205,7 +205,7 @@ class ActorFactory:
 
 
 # Global factory instance
-_global_factory: Optional[ActorFactory] = None
+_global_factory: ActorFactory | None = None
 
 
 def get_factory() -> ActorFactory:

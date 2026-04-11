@@ -9,7 +9,7 @@ Reference: mem0ai library for unified memory management
 
 import os
 from dataclasses import dataclass, field
-from typing import Any, Optional
+from typing import Any
 
 import structlog
 
@@ -31,7 +31,7 @@ class Mem0Config:
     # LLM provider
     llm_provider: str = "openai"
     llm_model: str = field(default_factory=lambda: os.getenv("LLM_MODEL", "gpt-4o-mini"))
-    openai_api_key: Optional[str] = field(default_factory=lambda: os.getenv("OPENAI_API_KEY"))
+    openai_api_key: str | None = field(default_factory=lambda: os.getenv("OPENAI_API_KEY"))
 
     # Embedder configuration
     embedder_provider: str = "openai"
@@ -86,7 +86,7 @@ class PersistentMemory:
 
     def __init__(
         self,
-        config: Optional[Mem0Config] = None,
+        config: Mem0Config | None = None,
         user_id: str = "default",
     ) -> None:
         """
@@ -128,9 +128,9 @@ class PersistentMemory:
     async def store(
         self,
         content: str,
-        user_id: Optional[str] = None,
-        agent_id: Optional[str] = None,
-        metadata: Optional[dict[str, Any]] = None,
+        user_id: str | None = None,
+        agent_id: str | None = None,
+        metadata: dict[str, Any] | None = None,
     ) -> str:
         """
         Store a memory entry with semantic embedding.
@@ -174,7 +174,7 @@ class PersistentMemory:
     async def store_batch(
         self,
         memories: list[dict[str, Any]],
-        user_id: Optional[str] = None,
+        user_id: str | None = None,
     ) -> list[str]:
         """
         Store multiple memories efficiently.
@@ -217,8 +217,8 @@ class PersistentMemory:
     async def search(
         self,
         query: str,
-        user_id: Optional[str] = None,
-        agent_id: Optional[str] = None,
+        user_id: str | None = None,
+        agent_id: str | None = None,
         limit: int = 10,
     ) -> list[dict[str, Any]]:
         """
@@ -267,7 +267,7 @@ class PersistentMemory:
 
     async def get_all(
         self,
-        user_id: Optional[str] = None,
+        user_id: str | None = None,
         limit: int = 100,
     ) -> list[dict[str, Any]]:
         """
@@ -294,7 +294,7 @@ class PersistentMemory:
             logger.error("memory_get_all_failed", error=str(e))
             return []
 
-    async def get(self, memory_id: str) -> Optional[dict[str, Any]]:
+    async def get(self, memory_id: str) -> dict[str, Any] | None:
         """
         Get a specific memory by ID.
 
@@ -340,8 +340,8 @@ class PersistentMemory:
     async def update(
         self,
         memory_id: str,
-        content: Optional[str] = None,
-        metadata: Optional[dict[str, Any]] = None,
+        content: str | None = None,
+        metadata: dict[str, Any] | None = None,
     ) -> bool:
         """
         Update a memory entry.

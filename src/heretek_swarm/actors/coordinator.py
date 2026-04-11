@@ -17,20 +17,20 @@ from __future__ import annotations
 
 import uuid
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional, Set
+from typing import Any
 
 import structlog
 
-from heretek_swarm.actors.base import AgentActor, ActorMessage
+from heretek_swarm.actors.base import ActorMessage, AgentActor
 from heretek_swarm.actors.validation import validate_message
 
 # Session 44: Collective Learning Integration
 from heretek_swarm.collective.learning import PatternExtractor, PatternType
 
 # Session 44: Consensus Integration
-from heretek_swarm.consensus.swarm_deliberation import SwarmDeliberationEngine, Position
+from heretek_swarm.consensus.swarm_deliberation import Position, SwarmDeliberationEngine
 
 # Session 44: Memory Optimization Integration
 from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer, AccessTier
@@ -66,19 +66,19 @@ class CoordinatedTask:
     task_id: str
     name: str
     description: str
-    assigned_agents: List[str]
-    dependencies: List[str] = field(default_factory=list)
+    assigned_agents: list[str]
+    dependencies: list[str] = field(default_factory=list)
     dependency_type: DependencyType = DependencyType.SEQUENTIAL
     status: TaskStatus = TaskStatus.PENDING
     priority: int = 5  # 1-10 scale
-    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
-    started_at: Optional[datetime] = None
-    completed_at: Optional[datetime] = None
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    created_at: datetime = field(default_factory=lambda: datetime.now(UTC))
+    started_at: datetime | None = None
+    completed_at: datetime | None = None
+    metadata: dict[str, Any] = field(default_factory=dict)
     progress: float = 0.0  # 0.0 to 1.0
-    error_message: Optional[str] = None
+    error_message: str | None = None
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for serialization."""
         return {
             "task_id": self.task_id,
@@ -103,13 +103,13 @@ class AgentState:
     """Current state of an agent in the coordination system."""
     agent_id: str
     status: str = "idle"  # idle, busy, offline
-    current_task: Optional[str] = None
-    completed_tasks: List[str] = field(default_factory=list)
-    failed_tasks: List[str] = field(default_factory=list)
+    current_task: str | None = None
+    completed_tasks: list[str] = field(default_factory=list)
+    failed_tasks: list[str] = field(default_factory=list)
     load: float = 0.0  # 0.0 to 1.0
-    last_heartbeat: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    last_heartbeat: datetime = field(default_factory=lambda: datetime.now(UTC))
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for serialization."""
         return {
             "agent_id": self.agent_id,
@@ -148,14 +148,14 @@ class CoordinatorAgent(AgentActor):
 
     def __init__(
         self,
-        agent_id: Optional[str] = None,
-        config: Optional[Dict[str, Any]] = None,
-    
+        agent_id: str | None = None,
+        config: dict[str, Any] | None = None,
+
         # Session 44: Integration components
-        pattern_extractor: Optional[PatternExtractor] = None,
-        deliberation_engine: Optional[SwarmDeliberationEngine] = None,
-        access_analyzer: Optional[AccessPatternAnalyzer] = None,
-        zero_trust_validator: Optional[ZeroTrustValidator] = None,
+        pattern_extractor: PatternExtractor | None = None,
+        deliberation_engine: SwarmDeliberationEngine | None = None,
+        access_analyzer: AccessPatternAnalyzer | None = None,
+        zero_trust_validator: ZeroTrustValidator | None = None,
 ):
         super().__init__(
             agent_id=agent_id or f"coordinator_{uuid.uuid4().hex[:8]}",
@@ -163,40 +163,40 @@ class CoordinatorAgent(AgentActor):
         )
 
         # Task tracking
-        self._tasks: Dict[str, CoordinatedTask] = {}
-        self._task_queues: Dict[str, List[str]] = {}  # workflow_id -> task_ids
+        self._tasks: dict[str, CoordinatedTask] = {}
+        self._task_queues: dict[str, list[str]] = {}  # workflow_id -> task_ids
         self._max_tasks: int = self._config.get("max_tasks", 1000)
 
         # Agent tracking
-        self._agents: Dict[str, AgentState] = {}
+        self._agents: dict[str, AgentState] = {}
         self._max_agents: int = self._config.get("max_agents", 100)
 
         # Dependency resolution
-        self._dependency_graph: Dict[str, Set[str]] = {}  # task_id -> dependent task_ids
-        self._reverse_deps: Dict[str, Set[str]] = {}  # task_id -> dependency task_ids
+        self._dependency_graph: dict[str, set[str]] = {}  # task_id -> dependent task_ids
+        self._reverse_deps: dict[str, set[str]] = {}  # task_id -> dependency task_ids
 
         # Resource pools
-        self._resources: Dict[str, int] = {}  # resource_name -> available count
-        self._resource_locks: Dict[str, Set[str]] = {}  # resource_name -> locked by task_ids
+        self._resources: dict[str, int] = {}  # resource_name -> available count
+        self._resource_locks: dict[str, set[str]] = {}  # resource_name -> locked by task_ids
 
-        
+
         # Session 44: Collective Learning Integration
         self.pattern_extractor = pattern_extractor or PatternExtractor(min_support=3, min_confidence=0.6)
-        
+
         # Session 44: Consensus Integration
         self.deliberation_engine = deliberation_engine or SwarmDeliberationEngine(
             max_rounds=5, consensus_threshold=0.75, min_participants=2
         )
-        
+
         # Session 44: Memory Optimization Integration
         self.access_analyzer = access_analyzer or AccessPatternAnalyzer()
-        
+
         # Session 44: Zero-Trust Validation
         self.zero_trust_validator = zero_trust_validator or ZeroTrustValidator()
-        
+
         # Session 44: Integration state
-        self._active_deliberations: Dict[str, str] = {}
-        self._pattern_emitted: Set[str] = set()
+        self._active_deliberations: dict[str, str] = {}
+        self._pattern_emitted: set[str] = set()
 
 
         logger.info(
@@ -206,11 +206,11 @@ class CoordinatorAgent(AgentActor):
             max_agents=self._max_agents,
         )
 
-    async def _validate_message(self, message: ActorMessage) -> Dict[str, Any]:
+    async def _validate_message(self, message: ActorMessage) -> dict[str, Any]:
         """Validate incoming message content."""
         try:
             validated = validate_message(message.message_type, message.content)
-            if hasattr(validated, 'dict'):
+            if hasattr(validated, "dict"):
                 return validated.dict()
             return validated
         except Exception:
@@ -321,7 +321,7 @@ class CoordinatorAgent(AgentActor):
             logger.error("create_task_failed", error=str(e))
             await self._send_error(
                 message.sender_id,
-                f"Failed to create task: {str(e)}",
+                f"Failed to create task: {e!s}",
                 message.message_type,
             )
 
@@ -359,9 +359,9 @@ class CoordinatorAgent(AgentActor):
 
                 # Track timestamps
                 if task.status == TaskStatus.IN_PROGRESS and not task.started_at:
-                    task.started_at = datetime.now(timezone.utc)
+                    task.started_at = datetime.now(UTC)
                 elif task.status in (TaskStatus.COMPLETED, TaskStatus.FAILED, TaskStatus.CANCELLED):
-                    task.completed_at = datetime.now(timezone.utc)
+                    task.completed_at = datetime.now(UTC)
 
                     # Unblock dependent tasks
                     if task.status == TaskStatus.COMPLETED:
@@ -403,7 +403,7 @@ class CoordinatorAgent(AgentActor):
             logger.error("update_task_failed", error=str(e))
             await self._send_error(
                 message.sender_id,
-                f"Failed to update task: {str(e)}",
+                f"Failed to update task: {e!s}",
                 message.message_type,
             )
 
@@ -446,7 +446,7 @@ class CoordinatorAgent(AgentActor):
             logger.error("get_task_status_failed", error=str(e))
             await self._send_error(
                 message.sender_id,
-                f"Failed to get task status: {str(e)}",
+                f"Failed to get task status: {e!s}",
                 message.message_type,
             )
 
@@ -496,7 +496,7 @@ class CoordinatorAgent(AgentActor):
             logger.error("get_workflow_status_failed", error=str(e))
             await self._send_error(
                 message.sender_id,
-                f"Failed to get workflow status: {str(e)}",
+                f"Failed to get workflow status: {e!s}",
                 message.message_type,
             )
 
@@ -560,7 +560,7 @@ class CoordinatorAgent(AgentActor):
             logger.error("assign_agent_failed", error=str(e))
             await self._send_error(
                 message.sender_id,
-                f"Failed to assign agent: {str(e)}",
+                f"Failed to assign agent: {e!s}",
                 message.message_type,
             )
 
@@ -587,7 +587,7 @@ class CoordinatorAgent(AgentActor):
                 return
 
             agent = self._agents[agent_id]
-            agent.last_heartbeat = datetime.now(timezone.utc)
+            agent.last_heartbeat = datetime.now(UTC)
 
             if "status" in content:
                 agent.status = content["status"]
@@ -609,7 +609,7 @@ class CoordinatorAgent(AgentActor):
             logger.error("update_agent_state_failed", error=str(e))
             await self._send_error(
                 message.sender_id,
-                f"Failed to update agent state: {str(e)}",
+                f"Failed to update agent state: {e!s}",
                 message.message_type,
             )
 
@@ -650,7 +650,7 @@ class CoordinatorAgent(AgentActor):
             logger.error("resolve_dependencies_failed", error=str(e))
             await self._send_error(
                 message.sender_id,
-                f"Failed to resolve dependencies: {str(e)}",
+                f"Failed to resolve dependencies: {e!s}",
                 message.message_type,
             )
 
@@ -711,7 +711,7 @@ class CoordinatorAgent(AgentActor):
             logger.error("start_workflow_failed", error=str(e))
             await self._send_error(
                 message.sender_id,
-                f"Failed to start workflow: {str(e)}",
+                f"Failed to start workflow: {e!s}",
                 message.message_type,
             )
 
@@ -742,7 +742,7 @@ class CoordinatorAgent(AgentActor):
                     task = self._tasks[task_id]
                     if task.status not in (TaskStatus.COMPLETED, TaskStatus.FAILED, TaskStatus.CANCELLED):
                         task.status = TaskStatus.CANCELLED
-                        task.completed_at = datetime.now(timezone.utc)
+                        task.completed_at = datetime.now(UTC)
                         cancelled.append(task_id)
 
             # Remove workflow
@@ -770,7 +770,7 @@ class CoordinatorAgent(AgentActor):
             logger.error("cancel_workflow_failed", error=str(e))
             await self._send_error(
                 message.sender_id,
-                f"Failed to cancel workflow: {str(e)}",
+                f"Failed to cancel workflow: {e!s}",
                 message.message_type,
             )
 
@@ -812,7 +812,7 @@ class CoordinatorAgent(AgentActor):
             }
 
             report = {
-                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
                 "task_statistics": task_stats,
                 "agent_statistics": agent_stats,
                 "workflow_statistics": workflow_stats,
@@ -832,7 +832,7 @@ class CoordinatorAgent(AgentActor):
             logger.error("get_coordination_report_failed", error=str(e))
             await self._send_error(
                 message.sender_id,
-                f"Failed to generate report: {str(e)}",
+                f"Failed to generate report: {e!s}",
                 message.message_type,
             )
 
@@ -857,7 +857,7 @@ class CoordinatorAgent(AgentActor):
                             task_id=dep_id,
                         )
 
-    def _topological_sort(self, graph: Dict[str, Set[str]]) -> List[str]:
+    def _topological_sort(self, graph: dict[str, set[str]]) -> list[str]:
         """Perform topological sort on dependency graph."""
         in_degree = {node: len(deps) for node, deps in graph.items()}
         queue = [node for node, degree in in_degree.items() if degree == 0]
@@ -877,7 +877,7 @@ class CoordinatorAgent(AgentActor):
 
         return result
 
-    def _identify_parallel_groups(self, sorted_tasks: List[str], graph: Dict[str, Set[str]]) -> List[List[str]]:
+    def _identify_parallel_groups(self, sorted_tasks: list[str], graph: dict[str, set[str]]) -> list[list[str]]:
         """Identify groups of tasks that can run in parallel."""
         if not sorted_tasks:
             return []
@@ -903,13 +903,13 @@ class CoordinatorAgent(AgentActor):
 
         return groups
 
-    def _find_critical_path(self, sorted_tasks: List[str], graph: Dict[str, Set[str]]) -> List[str]:
+    def _find_critical_path(self, sorted_tasks: list[str], graph: dict[str, set[str]]) -> list[str]:
         """Find the critical path (longest dependency chain)."""
         if not sorted_tasks:
             return []
 
         # Calculate longest path to each node
-        longest_path: Dict[str, List[str]] = {task: [task] for task in sorted_tasks}
+        longest_path: dict[str, list[str]] = {task: [task] for task in sorted_tasks}
 
         for task_id in sorted_tasks:
             deps = graph.get(task_id, set())
@@ -929,14 +929,14 @@ class CoordinatorAgent(AgentActor):
     # Session 44: Collective Learning Integration Methods
     # =========================================================================
 
-    async def _emit_pattern(self, item_id: str, item_type: str, outcome: str, content: Dict[str, Any]) -> None:
+    async def _emit_pattern(self, item_id: str, item_type: str, outcome: str, content: dict[str, Any]) -> None:
         """Emit pattern for collective learning."""
         if not self.pattern_extractor:
             return
-        
+
         if item_id in self._pattern_emitted:
             return
-        
+
         try:
             await self.pattern_extractor.analyze_message(
                 message_id=f"{item_type}_{item_id}",
@@ -944,19 +944,19 @@ class CoordinatorAgent(AgentActor):
                 recipient="broadcast",
                 message_type=f"{item_type}_completion",
                 content=content,
-                timestamp=datetime.now(timezone.utc).isoformat(),
+                timestamp=datetime.now(UTC).isoformat(),
             )
-            
+
             self._pattern_emitted.add(item_id)
             logger.info(f"{item_type}_pattern_emitted", item_id=item_id, outcome=outcome)
         except Exception as e:
             logger.warning("failed_to_emit_pattern", item_id=item_id, error=str(e))
 
-    async def _consume_patterns(self, pattern_types: Optional[List[PatternType]] = None) -> List[Dict[str, Any]]:
+    async def _consume_patterns(self, pattern_types: list[PatternType] | None = None) -> list[dict[str, Any]]:
         """Consume patterns from collective learning."""
         if not self.pattern_extractor:
             return []
-        
+
         try:
             patterns = await self.pattern_extractor.extract_patterns(
                 time_window_hours=24,
@@ -975,13 +975,13 @@ class CoordinatorAgent(AgentActor):
         self,
         item_id: str,
         proposal: str,
-        participating_agents: List[str],
+        participating_agents: list[str],
         domain: str = "general",
-    ) -> Optional[str]:
+    ) -> str | None:
         """Initiate swarm deliberation."""
         if not self.deliberation_engine:
             return None
-        
+
         try:
             deliberation_id = f"delib_{item_id}"
             self.deliberation_engine.start_deliberation(
@@ -991,7 +991,7 @@ class CoordinatorAgent(AgentActor):
                 domain=domain,
             )
             self._active_deliberations[item_id] = deliberation_id
-            
+
             logger.info("deliberation_initiated", deliberation_id=deliberation_id, item_id=item_id)
             return deliberation_id
         except Exception as e:
@@ -1009,11 +1009,11 @@ class CoordinatorAgent(AgentActor):
         """Submit agent position in deliberation."""
         if not self.deliberation_engine:
             return False
-        
+
         deliberation_id = self._active_deliberations.get(item_id)
         if not deliberation_id:
             return False
-        
+
         try:
             success = self.deliberation_engine.submit_position(
                 deliberation_id=deliberation_id,
@@ -1022,36 +1022,36 @@ class CoordinatorAgent(AgentActor):
                 confidence=confidence,
                 argument=argument,
             )
-            
+
             if success and self.access_analyzer:
                 self.access_analyzer.record_access(
                     memory_id=f"delib_{deliberation_id}_{agent_id}",
                     access_type="write",
                     agent_id=agent_id,
                 )
-            
+
             return success
         except Exception as e:
             logger.error("failed_to_submit_deliberation_position", error=str(e))
             return False
 
-    async def _finalize_deliberation(self, item_id: str) -> Optional[Any]:
+    async def _finalize_deliberation(self, item_id: str) -> Any | None:
         """Finalize deliberation and apply result."""
         if not self.deliberation_engine:
             return None
-        
+
         deliberation_id = self._active_deliberations.get(item_id)
         if not deliberation_id:
             return None
-        
+
         try:
             result = self.deliberation_engine.finalize_deliberation(deliberation_id)
-            
+
             if result:
                 self.deliberation_engine.cleanup_deliberation(deliberation_id)
                 del self._active_deliberations[item_id]
                 logger.info("deliberation_finalized", deliberation_id=deliberation_id)
-            
+
             return result
         except Exception as e:
             logger.error("failed_to_finalize_deliberation", error=str(e))
@@ -1065,7 +1065,7 @@ class CoordinatorAgent(AgentActor):
         """Track memory access patterns."""
         if not self.access_analyzer:
             return
-        
+
         memory_id = f"{item_type}_{item_id}"
         self.access_analyzer.record_access(
             memory_id=memory_id,
@@ -1077,16 +1077,16 @@ class CoordinatorAgent(AgentActor):
         """Get memory tier classification."""
         if not self.access_analyzer:
             return AccessTier.COLD
-        
+
         memory_id = f"{item_type}_{item_id}"
         profile = self.access_analyzer.get_profile(memory_id)
         return profile.tier if profile else AccessTier.COLD
 
-    async def _prefetch_relevant(self, agent_id: str, item_type: str) -> List[str]:
+    async def _prefetch_relevant(self, agent_id: str, item_type: str) -> list[str]:
         """Prefetch items an agent is likely to need."""
         if not self.access_analyzer:
             return []
-        
+
         try:
             predicted_memories = self.access_analyzer.predict_agent_access(agent_id)
             return [
@@ -1098,7 +1098,7 @@ class CoordinatorAgent(AgentActor):
             logger.warning("failed_to_prefetch", agent_id=agent_id, error=str(e))
             return []
 
-    def get_learning_status(self) -> Dict[str, Any]:
+    def get_learning_status(self) -> dict[str, Any]:
         """Get collective learning and memory optimization status."""
         return {
             "agent_id": self.agent_id,
@@ -1132,7 +1132,7 @@ class CoordinatorAgent(AgentActor):
             ),
         )
 
-    def get_capabilities(self) -> List[str]:
+    def get_capabilities(self) -> list[str]:
         """Return list of capabilities this agent provides."""
         return [
             "task_coordination",

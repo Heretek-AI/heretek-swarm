@@ -10,20 +10,16 @@ API endpoints for organic evolution mechanisms including:
 GET /api/collective/evolution-status
 """
 
-from typing import Any, Dict, List, Optional
-from fastapi import APIRouter, HTTPException, Depends
-import structlog
+from typing import Any
 
-from heretek_swarm.collective.emergent_detection import (
-    EvolutionEngine,
-    EvolutionMetrics,
-    CapabilityRecord,
-    EmergentPatternDetector,
-)
+import structlog
+from fastapi import APIRouter, HTTPException
+
 from heretek_swarm.collective.adaptive_learning import (
     AdaptiveLearningRateController,
-    EvolutionResult,
-    EnvironmentProfile,
+)
+from heretek_swarm.collective.emergent_detection import (
+    EvolutionEngine,
 )
 
 logger = structlog.get_logger("api.collective_evolution")
@@ -32,8 +28,8 @@ router = APIRouter(prefix="/api/collective", tags=["collective"])
 
 
 # Global instances (will be initialized by lifespan or manually)
-_evolution_engine: Optional[EvolutionEngine] = None
-_adaptive_learning: Optional[AdaptiveLearningRateController] = None
+_evolution_engine: EvolutionEngine | None = None
+_adaptive_learning: AdaptiveLearningRateController | None = None
 
 
 def set_evolution_engine(engine: EvolutionEngine) -> None:
@@ -69,10 +65,10 @@ def get_adaptive_learning() -> AdaptiveLearningRateController:
 # =============================================================================
 
 @router.get("/evolution-status")
-async def get_evolution_status() -> Dict[str, Any]:
+async def get_evolution_status() -> dict[str, Any]:
     """
     Get the current evolution status of the swarm.
-    
+
     Returns comprehensive evolution metrics including:
     - evolution_rate: Speed of capability development (capabilities/hour)
     - fitness_landscape: Current environment-agent fit (0-1)
@@ -80,32 +76,32 @@ async def get_evolution_status() -> Dict[str, Any]:
     - current_phase: Current evolution phase
     - capability_diversity: Diversity of capabilities
     - fitness_trend: Direction of fitness change
-    
+
     Returns:
         Evolution status with all metrics
     """
     try:
         engine = get_evolution_engine()
         adaptive = get_adaptive_learning()
-        
+
         # Get evolution metrics from engine
         metrics = engine.get_evolution_metrics()
-        
+
         # Get environment profile
         env_profile = adaptive.get_environment_profile()
-        
+
         # Get swarm statistics
         swarm_stats = adaptive.get_swarm_statistics()
-        
+
         # Get capability records
         capabilities = engine.get_capability_records()
-        
+
         # Get recent evolution events
         recent_capabilities = capabilities[-10:] if capabilities else []
-        
+
         return {
             "status": "healthy",
-            "timestamp": metrics.timestamp.isoformat() if hasattr(metrics, 'timestamp') else None,
+            "timestamp": metrics.timestamp.isoformat() if hasattr(metrics, "timestamp") else None,
             "metrics": {
                 "evolution_rate": metrics.evolution_rate,
                 "fitness_landscape": metrics.fitness_landscape,
@@ -152,43 +148,43 @@ async def get_evolution_status() -> Dict[str, Any]:
             ],
             "generations": metrics.generations,
         }
-    
+
     except Exception as e:
         logger.error("evolution_status_error", error=str(e))
-        raise HTTPException(500, f"Failed to get evolution status: {str(e)}")
+        raise HTTPException(500, f"Failed to get evolution status: {e!s}")
 
 
 @router.get("/capabilities")
 async def get_capabilities(
-    capability_type: Optional[str] = None,
-    min_fitness: Optional[float] = None,
+    capability_type: str | None = None,
+    min_fitness: float | None = None,
     stabilized_only: bool = False,
     limit: int = 100,
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Get capability records with optional filtering.
-    
+
     Args:
         capability_type: Filter by capability type
         min_fitness: Minimum fitness contribution
         stabilized_only: Only return stabilized capabilities
         limit: Maximum records to return
-        
+
     Returns:
         List of matching capabilities
     """
     try:
         engine = get_evolution_engine()
-        
+
         capabilities = engine.get_capability_records(
             capability_type=capability_type,
             min_fitness=min_fitness,
             stabilized_only=stabilized_only,
         )
-        
+
         # Apply limit
         capabilities = capabilities[-limit:]
-        
+
         return {
             "total": len(capabilities),
             "capabilities": [
@@ -211,26 +207,26 @@ async def get_capabilities(
                 for cap in capabilities
             ],
         }
-    
+
     except Exception as e:
         logger.error("get_capabilities_error", error=str(e))
-        raise HTTPException(500, f"Failed to get capabilities: {str(e)}")
+        raise HTTPException(500, f"Failed to get capabilities: {e!s}")
 
 
 @router.get("/capabilities/{capability_id}")
-async def get_capability(capability_id: str) -> Dict[str, Any]:
+async def get_capability(capability_id: str) -> dict[str, Any]:
     """
     Get a specific capability by ID.
-    
+
     Args:
         capability_id: The capability ID to retrieve
-        
+
     Returns:
         Capability details
     """
     try:
         engine = get_evolution_engine()
-        
+
         # Search for the capability
         for cap in engine.get_capability_records():
             if cap.capability_id == capability_id:
@@ -254,40 +250,40 @@ async def get_capability(capability_id: str) -> Dict[str, Any]:
                         "inheritance_count": cap.inheritance_count,
                     }
                 }
-        
+
         raise HTTPException(404, f"Capability not found: {capability_id}")
-    
+
     except HTTPException:
         raise
     except Exception as e:
         logger.error("get_capability_error", error=str(e))
-        raise HTTPException(500, f"Failed to get capability: {str(e)}")
+        raise HTTPException(500, f"Failed to get capability: {e!s}")
 
 
 @router.get("/agent/{agent_id}/evolution")
-async def get_agent_evolution(agent_id: str) -> Dict[str, Any]:
+async def get_agent_evolution(agent_id: str) -> dict[str, Any]:
     """
     Get evolution data for a specific agent.
-    
+
     Args:
         agent_id: The agent ID to query
-        
+
     Returns:
         Agent evolution history and current state
     """
     try:
         engine = get_evolution_engine()
         adaptive = get_adaptive_learning()
-        
+
         # Get agent capability history
         history = engine.get_agent_capability_history(agent_id)
-        
+
         # Get agent learning state
         state = adaptive.get_agent_state(agent_id)
-        
+
         # Get convergence metrics
         convergence = adaptive.get_convergence_metrics(agent_id)
-        
+
         return {
             "agent_id": agent_id,
             "capability_history": [
@@ -322,36 +318,36 @@ async def get_agent_evolution(agent_id: str) -> Dict[str, Any]:
                 "performance_stability": convergence.performance_stability,
             },
         }
-    
+
     except Exception as e:
         logger.error("agent_evolution_error", error=str(e))
-        raise HTTPException(500, f"Failed to get agent evolution: {str(e)}")
+        raise HTTPException(500, f"Failed to get agent evolution: {e!s}")
 
 
 @router.get("/fitness-landscape")
-async def get_fitness_landscape() -> Dict[str, Any]:
+async def get_fitness_landscape() -> dict[str, Any]:
     """
     Get the current fitness landscape analysis.
-    
+
     Returns:
         Fitness landscape visualization data
     """
     try:
         engine = get_evolution_engine()
         adaptive = get_adaptive_learning()
-        
+
         # Get all agent states
         states = adaptive.get_all_agent_states()
-        
+
         # Build fitness distribution
         fitness_values = [s.fitness_score for s in states.values()]
-        
+
         # Get environment profile
         env_profile = adaptive.get_environment_profile()
-        
+
         # Get evolution metrics
         metrics = engine.get_evolution_metrics()
-        
+
         # Calculate fitness percentiles
         if fitness_values:
             sorted_fitness = sorted(fitness_values)
@@ -360,7 +356,7 @@ async def get_fitness_landscape() -> Dict[str, Any]:
             p75 = sorted_fitness[3 * len(sorted_fitness) // 4] if sorted_fitness else 0
         else:
             p25 = p50 = p75 = 0
-        
+
         return {
             "fitness_landscape": metrics.fitness_landscape,
             "fitness_variance": metrics.fitness_variance,
@@ -384,10 +380,10 @@ async def get_fitness_landscape() -> Dict[str, Any]:
                 "description": _get_phase_description(metrics.current_phase),
             },
         }
-    
+
     except Exception as e:
         logger.error("fitness_landscape_error", error=str(e))
-        raise HTTPException(500, f"Failed to get fitness landscape: {str(e)}")
+        raise HTTPException(500, f"Failed to get fitness landscape: {e!s}")
 
 
 def _get_phase_description(phase) -> str:
@@ -405,28 +401,28 @@ def _get_phase_description(phase) -> str:
 
 
 @router.get("/adaptability")
-async def get_adaptability_metrics() -> Dict[str, Any]:
+async def get_adaptability_metrics() -> dict[str, Any]:
     """
     Get adaptability metrics for the swarm.
-    
+
     Returns:
         Adaptability analysis
     """
     try:
         engine = get_evolution_engine()
         adaptive = get_adaptive_learning()
-        
+
         # Get evolution metrics
         metrics = engine.get_evolution_metrics()
-        
+
         # Get environment profile
         env_profile = adaptive.get_environment_profile()
-        
+
         # Calculate adaptability components
         rate_component = min(metrics.evolution_rate / 10.0, 1.0) if metrics.evolution_rate else 0
         diversity_component = metrics.capability_diversity
         environment_component = env_profile.get("stability", 0.5)
-        
+
         return {
             "adaptability_index": metrics.adaptability_index,
             "adaptation_latency": metrics.adaptation_latency,
@@ -447,32 +443,32 @@ async def get_adaptability_metrics() -> Dict[str, Any]:
                 "evolution_rate": metrics.evolution_rate,
             },
         }
-    
+
     except Exception as e:
         logger.error("adaptability_metrics_error", error=str(e))
-        raise HTTPException(500, f"Failed to get adaptability metrics: {str(e)}")
+        raise HTTPException(500, f"Failed to get adaptability metrics: {e!s}")
 
 
 @router.post("/agent/{agent_id}/evolve")
 async def evolve_agent_behaviors(
     agent_id: str,
-    environment_demands: Optional[Dict[str, float]] = None,
-) -> Dict[str, Any]:
+    environment_demands: dict[str, float] | None = None,
+) -> dict[str, Any]:
     """
     Trigger evolution cycle for an agent.
-    
+
     Args:
         agent_id: Agent to evolve
         environment_demands: Optional environment capability demands
-        
+
     Returns:
         Evolution result
     """
     try:
         adaptive = get_adaptive_learning()
-        
+
         result = await adaptive.evolve_behaviors(agent_id, environment_demands)
-        
+
         return {
             "agent_id": agent_id,
             "evolution_result": {
@@ -484,10 +480,10 @@ async def evolve_agent_behaviors(
                 "fitness_improvement": result.fitness_improvement,
             },
         }
-    
+
     except Exception as e:
         logger.error("evolve_agent_error", error=str(e))
-        raise HTTPException(500, f"Failed to evolve agent: {str(e)}")
+        raise HTTPException(500, f"Failed to evolve agent: {e!s}")
 
 
 @router.post("/record-capability")
@@ -497,11 +493,11 @@ async def record_capability(
     capability_name: str,
     fitness_contribution: float = 0.0,
     description: str = "",
-    contributing_agents: Optional[List[str]] = None,
-) -> Dict[str, Any]:
+    contributing_agents: list[str] | None = None,
+) -> dict[str, Any]:
     """
     Record a new capability gained by an agent.
-    
+
     Args:
         agent_id: ID of agent that gained the capability
         capability_type: Type of capability
@@ -509,13 +505,13 @@ async def record_capability(
         fitness_contribution: How much this improves fitness
         description: Description of the capability
         contributing_agents: Other agents that contributed
-        
+
     Returns:
         Created capability record
     """
     try:
         engine = get_evolution_engine()
-        
+
         record = engine.record_capability_gain(
             agent_id=agent_id,
             capability_type=capability_type,
@@ -524,7 +520,7 @@ async def record_capability(
             description=description,
             contributing_agents=contributing_agents,
         )
-        
+
         return {
             "status": "recorded",
             "capability": {
@@ -536,30 +532,30 @@ async def record_capability(
                 "first_observed": record.first_observed,
             },
         }
-    
+
     except Exception as e:
         logger.error("record_capability_error", error=str(e))
-        raise HTTPException(500, f"Failed to record capability: {str(e)}")
+        raise HTTPException(500, f"Failed to record capability: {e!s}")
 
 
 @router.post("/detect-evolution")
 async def detect_evolution(
-    agent_states: Dict[str, Dict[str, Any]],
-) -> Dict[str, Any]:
+    agent_states: dict[str, dict[str, Any]],
+) -> dict[str, Any]:
     """
     Detect capability emergence across agents.
-    
+
     Args:
         agent_states: Dictionary mapping agent_id to state
-        
+
     Returns:
         Detected capabilities
     """
     try:
         engine = get_evolution_engine()
-        
+
         new_capabilities = engine.detect_evolution(agent_states)
-        
+
         return {
             "detected_count": len(new_capabilities),
             "capabilities": [
@@ -572,7 +568,7 @@ async def detect_evolution(
                 for cap in new_capabilities
             ],
         }
-    
+
     except Exception as e:
         logger.error("detect_evolution_error", error=str(e))
-        raise HTTPException(500, f"Failed to detect evolution: {str(e)}")
+        raise HTTPException(500, f"Failed to detect evolution: {e!s}")

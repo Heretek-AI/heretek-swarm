@@ -13,58 +13,56 @@ New in Session 47:
 - Resource autonomy tracking
 - Prime Directive compliance reporting
 """
+# Agency/Autonomy Metrics (Session 47)
+from heretek_swarm.consciousness.agency_metrics import (
+    ActionOrigin,
+    AgencyLevel,
+    AgencyMetricsCalculator,
+    AgentAgencyMetrics,
+    AutonomyLevel,
+    DecisionPoint,
+    PrimeDirectiveComplianceReport,
+    ResourceControl,
+    create_decision_point,
+    create_resource_control,
+)
+from heretek_swarm.consciousness.fep_active_inference import (
+    FEPResult,
+    FreeEnergyCalculator,
+)
 from heretek_swarm.consciousness.iit_phi import (
     PhiCalculator,
     PhiResult,
 )
-from heretek_swarm.consciousness.fep_active_inference import (
-    FreeEnergyCalculator,
-    FEPResult,
-)
 from heretek_swarm.consciousness.phi_training import (
     PhiTrainingEnvironment,
-    TrainingScenario,
-    TrainingResult,
-    TrainingEpisode,
     ScenarioType,
+    TrainingEpisode,
     TrainingMode,
-)
-
-# Agency/Autonomy Metrics (Session 47)
-from heretek_swarm.consciousness.agency_metrics import (
-    AgencyMetricsCalculator,
-    AgentAgencyMetrics,
-    DecisionPoint,
-    ResourceControl,
-    ActionOrigin,
-    AgencyLevel,
-    AutonomyLevel,
-    PrimeDirectiveComplianceReport,
-    create_decision_point,
-    create_resource_control,
+    TrainingResult,
+    TrainingScenario,
 )
 
 __all__ = [
-    # IIT Phi
-    "PhiCalculator",
-    "PhiResult",
-    # FEP
-    "FreeEnergyCalculator",
-    "FEPResult",
+    "ActionOrigin",
+    "AgencyLevel",
     # Phi Training
     # Note: PhiTrainer, ConsciousnessOptimizer, TrainingConfig not implemented
-        # Actual classes: PhiTrainingEnvironment, TrainingScenario, TrainingResult,
-        # TrainingEpisode, ScenarioType, TrainingMode
-    
+    # Actual classes: PhiTrainingEnvironment, TrainingScenario, TrainingResult,
+    # TrainingEpisode, ScenarioType, TrainingMode
     # Agency/Autonomy Metrics (Session 47)
     "AgencyMetricsCalculator",
     "AgentAgencyMetrics",
-    "DecisionPoint",
-    "ResourceControl",
-    "ActionOrigin",
-    "AgencyLevel",
     "AutonomyLevel",
+    "DecisionPoint",
+    "FEPResult",
+    # FEP
+    "FreeEnergyCalculator",
+    # IIT Phi
+    "PhiCalculator",
+    "PhiResult",
     "PrimeDirectiveComplianceReport",
+    "ResourceControl",
     "create_decision_point",
     "create_resource_control",
 ]

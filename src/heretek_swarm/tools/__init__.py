@@ -14,6 +14,11 @@ from tools.base import (
     ToolMetadata,
     ToolStatus,
 )
+from tools.examples import (
+    ConsensusVoteTool,
+    HealthCheckTool,
+    MemorySearchTool,
+)
 from tools.registry import (
     ToolRegistry,
     ToolRegistryConfig,
@@ -21,31 +26,26 @@ from tools.registry import (
     get_registry,
     initialize_registry,
 )
-from tools.examples import (
-    MemorySearchTool,
-    HealthCheckTool,
-    ConsensusVoteTool,
-)
 
 __all__ = [
     # Base classes
     "BaseTool",
+    "ConsensusVoteTool",
+    "HealthCheckTool",
+    # Example tools
+    "MemorySearchTool",
     "SimpleTool",
     "ToolContext",
     "ToolExecutionError",
     "ToolExecutionResult",
     "ToolMetadata",
-    "ToolStatus",
     # Registry
     "ToolRegistry",
     "ToolRegistryConfig",
     "ToolRegistryEntry",
+    "ToolStatus",
     "get_registry",
     "initialize_registry",
-    # Example tools
-    "MemorySearchTool",
-    "HealthCheckTool",
-    "ConsensusVoteTool",
 ]
 
 __version__ = "0.1.0"

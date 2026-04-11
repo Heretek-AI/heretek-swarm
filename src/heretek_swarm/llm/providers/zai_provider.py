@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import json
 import time
-from typing import Any, AsyncIterator, Dict, List, Optional
+from typing import TYPE_CHECKING, Any
 
 import httpx
 import structlog
@@ -20,12 +20,15 @@ from .base import (
     LLMProviderBase,
     LLMRequest,
     LLMResponse,
+    ProviderAuthenticationError,
     ProviderCapabilities,
     ProviderError,
-    ProviderAuthenticationError,
     ProviderUnavailableError,
     ToolCall,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import AsyncIterator
 
 logger = structlog.get_logger("llm.providers.zai")
 
@@ -33,14 +36,14 @@ logger = structlog.get_logger("llm.providers.zai")
 class ZAIProvider(LLMProviderBase):
     """
     Z.AI (Zhipu AI) LLM Provider implementation.
-    
+
     Supports:
     - GLM-4, GLM-4-Flash, GLM-4-Air
     - GLM-3-Turbo
     - Streaming completions
     - Function calling
     - Chinese and English languages
-    
+
     Example:
         provider = ZAIProvider(
             api_key="your_api_key",
@@ -52,12 +55,12 @@ class ZAIProvider(LLMProviderBase):
         self,
         api_key: str,
         base_url: str = "https://open.bigmodel.cn/api/paas/v4",
-        default_model: Optional[str] = None,
-        extra_config: Optional[Dict[str, Any]] = None,
+        default_model: str | None = None,
+        extra_config: dict[str, Any] | None = None,
     ):
         """
         Initialize the Z.AI provider.
-        
+
         Args:
             api_key: Zhipu AI API key
             base_url: Base URL (default: https://open.bigmodel.cn/api/paas/v4)
@@ -66,7 +69,7 @@ class ZAIProvider(LLMProviderBase):
         """
         if not api_key:
             raise ProviderAuthenticationError("Z.AI API key is required")
-        
+
         super().__init__(
             provider_name="zai",
             base_url=base_url,
@@ -74,8 +77,8 @@ class ZAIProvider(LLMProviderBase):
             default_model=default_model or "glm-4",
             extra_config=extra_config,
         )
-        
-        self._client: Optional[httpx.AsyncClient] = None
+
+        self._client: httpx.AsyncClient | None = None
 
     def _init_capabilities(self) -> ProviderCapabilities:
         """Initialize provider capabilities."""
@@ -97,7 +100,7 @@ class ZAIProvider(LLMProviderBase):
                 "Authorization": f"Bearer {self.api_key}",
                 "Content-Type": "application/json",
             }
-            
+
             self._client = httpx.AsyncClient(
                 base_url=self.base_url,
                 headers=headers,
@@ -108,65 +111,65 @@ class ZAIProvider(LLMProviderBase):
     async def complete(self, request: LLMRequest) -> LLMResponse:
         """
         Complete a chat request non-streaming.
-        
+
         Args:
             request: The LLM request parameters
-            
+
         Returns:
             The LLM response
         """
         client = await self._get_client()
         start_time = time.time()
-        
+
         payload = request.to_dict()
         model = self._get_model(request.model)
         payload["model"] = model
-        
+
         # Z.AI specific adjustments
         # Ensure temperature is within valid range (0-1)
         if payload.get("temperature", 0.7) > 1.0:
             payload["temperature"] = payload["temperature"] / 2.0
-        
+
         logger.debug(
             "Sending Z.AI completion request",
             model=model,
             stream=False,
         )
-        
+
         try:
             response = await client.post(
                 "/chat/completions",
                 json=payload,
             )
-            
+
             if response.status_code == 401:
                 raise ProviderAuthenticationError(
                     "Invalid Z.AI API key",
                     provider="zai",
                 )
-            elif response.status_code == 429:
+            if response.status_code == 429:
                 raise ProviderError(
                     "Rate limited by Z.AI",
                     provider="zai",
                 )
-            elif response.status_code >= 500:
+            if response.status_code >= 500:
                 raise ProviderUnavailableError(
                     "Z.AI service unavailable",
                     provider="zai",
                 )
-            elif response.status_code != 200:
+            if response.status_code != 200:
                 error_data = response.json() if response.headers.get("content-type", "").startswith("application/json") else {"text": response.text}
                 raise ProviderError(
                     f"Z.AI API error: {response.status_code} - {error_data}",
                     provider="zai",
                 )
-            
+
             data = response.json()
             latency_ms = (time.time() - start_time) * 1000
-            
+
             choice = data["choices"][0]
             message_data = choice.get("message", {})
-            
+
             # Parse tool calls if present
             tool_calls = []
             if "tool_calls" in message_data:
@@ -178,7 +181,7 @@ class ZAIProvider(LLMProviderBase):
                             arguments=json.loads(tc["function"]["arguments"]),
                         )
                     )
-            
+
             return LLMResponse(
                 content=message_data.get("content", ""),
                 model=data.get("model", model),
@@ -188,7 +191,7 @@ class ZAIProvider(LLMProviderBase):
                 raw_response=data,
                 latency_ms=latency_ms,
             )
-            
+
         except httpx.RequestError as e:
             raise ProviderUnavailableError(
                 f"Request failed: {e}",
@@ -199,29 +202,29 @@ class ZAIProvider(LLMProviderBase):
     async def stream(self, request: LLMRequest) -> AsyncIterator[str]:
         """
         Stream a chat completion.
-        
+
         Args:
             request: The LLM request parameters with stream=True
-            
+
         Yields:
             Chunks of the completion text
         """
         client = await self._get_client()
-        
+
         payload = request.to_dict()
         payload["stream"] = True
         model = self._get_model(request.model)
         payload["model"] = model
-        
+
         # Ensure temperature is within valid range
         if payload.get("temperature", 0.7) > 1.0:
             payload["temperature"] = payload["temperature"] / 2.0
-        
+
         logger.debug(
             "Sending Z.AI streaming request",
             model=model,
         )
-        
+
         try:
             async with client.stream(
                 "POST",
@@ -238,14 +241,14 @@ class ZAIProvider(LLMProviderBase):
                         f"Z.AI API error: {response.status_code}",
                         provider="zai",
                     )
-                
+
                 async for line in response.aiter_lines():
                     if line.startswith("data: "):
                         data = line[6:]  # Remove "data: " prefix
-                        
+
                         if data.strip() == "[DONE]":
                             break
-                        
+
                         try:
                             chunk = json.loads(data)
                             choices = chunk.get("choices", [])
@@ -256,7 +259,7 @@ class ZAIProvider(LLMProviderBase):
                                     yield content
                         except json.JSONDecodeError:
                             continue
-                            
+
         except httpx.RequestError as e:
             raise ProviderUnavailableError(
                 f"Stream request failed: {e}",
@@ -264,7 +267,7 @@ class ZAIProvider(LLMProviderBase):
                 cause=e,
             )
 
-    async def list_models(self) -> List[str]:
+    async def list_models(self) -> list[str]:
         """List available Z.AI models."""
         # Common Z.AI models
         return [

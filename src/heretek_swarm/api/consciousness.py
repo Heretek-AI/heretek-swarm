@@ -203,6 +203,7 @@ async def get_swarm_prime_directive_compliance(
 
 @router.get("/agency/evolution")
 async def get_agency_evolution(
+    authenticated: Annotated[str, Depends(verify_auth)],
     metric: str = Query(
         "autonomy",
         description="Metric to track: autonomy, agency, self_determination, compliance"
@@ -211,7 +212,6 @@ async def get_agency_evolution(
         None,
         description="Time window in seconds (default: all history)"
     ),
-    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> Dict[str, Any]:
     """
     Get temporal evolution of agency metrics across the swarm.

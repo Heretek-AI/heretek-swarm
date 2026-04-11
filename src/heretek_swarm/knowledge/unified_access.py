@@ -17,26 +17,27 @@ Enhanced with Advanced RAG Strategies:
 - Re-ranking (cross-encoder scoring)
 """
 
-from typing import Dict, Any, List, Optional, Literal
 from dataclasses import dataclass, field
+from typing import Any, Literal, Optional
+
 import structlog
 
 logger = structlog.get_logger(__name__)
 
 # Import advanced RAG strategies
 try:
-    from ..rag.strategies import (
-        RetrievalStrategyType,
-        RetrievalResult,
-        StrategySelector,
-        QueryType,
-        RAGStrategyConfig,
-        create_strategy_selector,
-    )
-    from ..rag.hybrid_retriever import (
+    from src.heretek_swarm.rag.hybrid_retriever import (
+        FusionMethod,
         HybridRetriever,
         HybridRetrieverConfig,
-        FusionMethod,
+    )
+    from src.heretek_swarm.rag.strategies import (
+        QueryType,
+        RAGStrategyConfig,
+        RetrievalResult,
+        RetrievalStrategyType,
+        StrategySelector,
+        create_strategy_selector,
     )
     RAG_STRATEGIES_AVAILABLE = True
 except ImportError:
@@ -56,7 +57,7 @@ except ImportError:
 class KnowledgeEntry:
     """
     Unified knowledge entry from any source.
-    
+
     Attributes:
         content: The actual content (text, dict, etc.)
         source: Source type (memory, rag, merged)
@@ -69,13 +70,13 @@ class KnowledgeEntry:
     content: Any
     source: str
     source_id: str
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=dict)
     score: float = 0.0
     diversity_score: float = 0.0
     combined_score: float = 0.0
-    created_at: Optional[str] = None
-    
-    def to_dict(self) -> Dict[str, Any]:
+    created_at: str | None = None
+
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary representation."""
         return {
             "content": self.content,
@@ -93,7 +94,7 @@ class KnowledgeEntry:
 class KnowledgeQueryResult:
     """
     Result of a unified knowledge query.
-    
+
     Attributes:
         entries: List of knowledge entries
         total_results: Total number of results before limiting
@@ -102,14 +103,14 @@ class KnowledgeQueryResult:
         reranking_applied: Whether reranking was applied
         parameters: Query parameters used
     """
-    entries: List[KnowledgeEntry]
+    entries: list[KnowledgeEntry]
     total_results: int = 0
     query_time_ms: float = 0.0
-    sources_queried: List[str] = field(default_factory=list)
+    sources_queried: list[str] = field(default_factory=list)
     reranking_applied: bool = False
-    parameters: Dict[str, Any] = field(default_factory=dict)
-    
-    def to_dict(self) -> Dict[str, Any]:
+    parameters: dict[str, Any] = field(default_factory=dict)
+
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary representation."""
         return {
             "entries": [e.to_dict() for e in self.entries],
@@ -124,14 +125,14 @@ class KnowledgeQueryResult:
 class UnifiedKnowledgeAccess:
     """
     Unified interface for memory and RAG queries.
-    
+
     Features:
     - Combined querying of memory and RAG systems
     - Intelligent result merging with MMR reranking
     - Configurable source weighting
     - Diversity-aware result selection
     - Performance metrics tracking
-    
+
     Usage:
         knowledge = UnifiedKnowledgeAccess(memory_system, rag_pipeline)
         result = await knowledge.query(
@@ -142,7 +143,7 @@ class UnifiedKnowledgeAccess:
             diversity_lambda=0.5,
         )
     """
-    
+
     def __init__(
         self,
         memory_system=None,
@@ -154,8 +155,8 @@ class UnifiedKnowledgeAccess:
         self.rag = rag_pipeline
         self.hybrid_retriever = hybrid_retriever
         self.strategy_selector = strategy_selector
-        self._query_stats: Dict[str, Dict] = {}
-        
+        self._query_stats: dict[str, dict] = {}
+
         # Initialize strategy selector if not provided but RAG strategies available
         if RAG_STRATEGIES_AVAILABLE and strategy_selector is None and hybrid_retriever is None:
             # Create default strategy selector
@@ -164,20 +165,20 @@ class UnifiedKnowledgeAccess:
                 self.strategy_selector = create_strategy_selector(config=config)
             except Exception as e:
                 logger.warning("strategy_selector_init_failed", error=str(e))
-    
+
     async def query(
         self,
         query: str,
-        sources: Optional[List[Literal["memory", "rag", "all"]]] = None,
+        sources: list[Literal["memory", "rag", "all"]] | None = None,
         limit: int = 10,
         rerank: bool = True,
         diversity_lambda: float = 0.5,
-        source_weights: Optional[Dict[str, float]] = None,
-        filters: Optional[Dict[str, Any]] = None,
+        source_weights: dict[str, float] | None = None,
+        filters: dict[str, Any] | None = None,
     ) -> KnowledgeQueryResult:
         """
         Query knowledge from multiple sources with optional reranking.
-        
+
         Args:
             query: Search query string
             sources: List of sources to query (memory, rag, all)
@@ -186,24 +187,24 @@ class UnifiedKnowledgeAccess:
             diversity_lambda: MMR diversity parameter (0=similarity, 1=diversity)
             source_weights: Weight multipliers for each source
             filters: Additional filters (agent_id, workflow_id, date range, etc.)
-            
+
         Returns:
             KnowledgeQueryResult with merged and optionally reranked entries
         """
         import time
         start_time = time.time()
-        
+
         sources = sources or ["all"]
         if "all" in sources:
             sources = ["memory", "rag"]
-        
+
         source_weights = source_weights or {"memory": 1.0, "rag": 1.0}
         filters = filters or {}
-        
+
         # Query each source
-        all_entries: List[KnowledgeEntry] = []
+        all_entries: list[KnowledgeEntry] = []
         sources_queried = []
-        
+
         if "memory" in sources and self.memory:
             try:
                 memory_entries = await self._query_memory(query, filters)
@@ -213,7 +214,7 @@ class UnifiedKnowledgeAccess:
                 sources_queried.append("memory")
             except Exception as e:
                 logger.error("memory_query_error", error=str(e))
-        
+
         if "rag" in sources and self.rag:
             try:
                 rag_entries = await self._query_rag(query, filters)
@@ -223,7 +224,7 @@ class UnifiedKnowledgeAccess:
                 sources_queried.append("rag")
             except Exception as e:
                 logger.error("rag_query_error", error=str(e))
-        
+
         total_results = len(all_entries)
 
         # Apply reranking if requested
@@ -258,7 +259,7 @@ class UnifiedKnowledgeAccess:
 
         # Track stats
         self._track_query_stats(query, result)
-        
+
         logger.debug(
             "knowledge_query_completed",
             query=query[:50] if len(query) > 50 else query,
@@ -266,21 +267,21 @@ class UnifiedKnowledgeAccess:
             returned_results=len(all_entries),
             query_time_ms=query_time_ms,
         )
-        
+
         return result
-    
+
     async def query_with_strategy(
         self,
         query: str,
-        strategy: Optional[str] = None,
+        strategy: str | None = None,
         top_k: int = 10,
-        filters: Optional[Dict[str, Any]] = None,
+        filters: dict[str, Any] | None = None,
         use_multihop: bool = True,
         apply_reranking: bool = True,
     ) -> KnowledgeQueryResult:
         """
         Query using advanced RAG strategies.
-        
+
         Args:
             query: Search query string
             strategy: Optional strategy override (dense, sparse, hybrid, multi_hop, re_ranking)
@@ -288,17 +289,17 @@ class UnifiedKnowledgeAccess:
             filters: Additional filters
             use_multihop: Enable multi-hop retrieval for complex queries
             apply_reranking: Apply cross-encoder re-ranking
-            
+
         Returns:
             KnowledgeQueryResult with retrieved entries
         """
         import time
         start_time = time.time()
-        
+
         if not RAG_STRATEGIES_AVAILABLE:
             logger.warning("rag_strategies_not_available")
             return await self.query(query, sources=["rag"], limit=top_k)
-        
+
         try:
             # Use hybrid retriever if available
             if self.hybrid_retriever:
@@ -319,7 +320,7 @@ class UnifiedKnowledgeAccess:
             else:
                 logger.warning("no_strategy_available")
                 return await self.query(query, sources=["rag"], limit=top_k)
-            
+
             # Convert RetrievalResult to KnowledgeEntry
             entries = []
             for result in results:
@@ -331,9 +332,9 @@ class UnifiedKnowledgeAccess:
                     score=result.score,
                     created_at=None,
                 ))
-            
+
             query_time_ms = (time.time() - start_time) * 1000
-            
+
             # Build complete parameters including diversity
             params = {
                 "query": query,
@@ -352,7 +353,7 @@ class UnifiedKnowledgeAccess:
                 reranking_applied=apply_reranking,
                 parameters=params,
             )
-            
+
             logger.debug(
                 "knowledge_query_with_strategy_completed",
                 query=query[:50] if len(query) > 50 else query,
@@ -360,145 +361,145 @@ class UnifiedKnowledgeAccess:
                 results_count=len(entries),
                 query_time_ms=query_time_ms,
             )
-            
+
             return result
-            
+
         except Exception as e:
             logger.error("query_with_strategy_error", error=str(e))
             return await self.query(query, sources=["rag"], limit=top_k)
-    
+
     async def _query_memory(
-        self, 
-        query: str, 
-        filters: Dict[str, Any]
-    ) -> List[KnowledgeEntry]:
+        self,
+        query: str,
+        filters: dict[str, Any]
+    ) -> list[KnowledgeEntry]:
         """Query the memory system."""
         if not self.memory:
             return []
-        
+
         # Build query parameters
         limit = filters.get("memory_limit", 50)
-        
+
         # Query memory
         results = await self.memory.query(
             query_text=query,
             limit=limit,
         )
-        
+
         entries = []
-        memory_entries = results.entries if hasattr(results, 'entries') else results
-        
+        memory_entries = results.entries if hasattr(results, "entries") else results
+
         for entry in memory_entries:
             entries.append(KnowledgeEntry(
-                content=entry.content if hasattr(entry, 'content') else entry,
+                content=entry.content if hasattr(entry, "content") else entry,
                 source="memory",
-                source_id=getattr(entry, 'id', getattr(entry, 'memory_id', 'unknown')),
-                metadata=getattr(entry, 'metadata', {}),
-                score=getattr(entry, 'similarity', getattr(entry, 'score', 0.5)),
-                created_at=getattr(entry, 'created_at', None),
+                source_id=getattr(entry, "id", getattr(entry, "memory_id", "unknown")),
+                metadata=getattr(entry, "metadata", {}),
+                score=getattr(entry, "similarity", getattr(entry, "score", 0.5)),
+                created_at=getattr(entry, "created_at", None),
             ))
-        
+
         return entries
-    
+
     async def _query_rag(
-        self, 
-        query: str, 
-        filters: Dict[str, Any]
-    ) -> List[KnowledgeEntry]:
+        self,
+        query: str,
+        filters: dict[str, Any]
+    ) -> list[KnowledgeEntry]:
         """Query the RAG pipeline."""
         if not self.rag:
             return []
-        
+
         # Build query parameters
         top_k = filters.get("rag_top_k", 50)
-        mode = filters.get("rag_mode", "hybrid")
-        
+        filters.get("rag_mode", "hybrid")
+
         # Query RAG
         result = await self.rag.query(
             query=query,
             top_k=top_k,
         )
-        
+
         entries = []
-        documents = result.documents if hasattr(result, 'documents') else result
-        
+        documents = result.documents if hasattr(result, "documents") else result
+
         for doc in documents:
             entries.append(KnowledgeEntry(
-                content=doc.content if hasattr(doc, 'content') else doc,
+                content=doc.content if hasattr(doc, "content") else doc,
                 source="rag",
-                source_id=getattr(doc, 'id', getattr(doc, 'doc_id', 'unknown')),
-                metadata=getattr(doc, 'metadata', {}),
-                score=getattr(doc, 'score', getattr(doc, 'similarity', 0.5)),
+                source_id=getattr(doc, "id", getattr(doc, "doc_id", "unknown")),
+                metadata=getattr(doc, "metadata", {}),
+                score=getattr(doc, "score", getattr(doc, "similarity", 0.5)),
                 created_at=None,
             ))
-        
+
         return entries
-    
+
     def _mmr_rerank(
         self,
-        entries: List[KnowledgeEntry],
+        entries: list[KnowledgeEntry],
         diversity_lambda: float,
         limit: int,
-    ) -> List[KnowledgeEntry]:
+    ) -> list[KnowledgeEntry]:
         """
         Apply MMR (Maximal Marginal Relevance) reranking.
-        
+
         MMR balances relevance and diversity by selecting items that:
         1. Are highly relevant to the query (high score)
         2. Are diverse from already-selected items (low similarity to selected)
-        
+
         Formula:
             MMR = argmax [ λ * relevance(item) - (1-λ) * max_similarity(item, selected) ]
-        
+
         Args:
             entries: List of knowledge entries to rerank
             diversity_lambda: Balance parameter (0=relevance, 1=diversity)
             limit: Number of results to return
-            
+
         Returns:
             Reranked list of entries
         """
         if not entries or diversity_lambda < 0 or diversity_lambda > 1:
             return entries
-        
+
         # Compute embeddings for similarity calculation if available
         # For now, use content-based similarity approximation
-        
-        selected: List[KnowledgeEntry] = []
+
+        selected: list[KnowledgeEntry] = []
         remaining = entries.copy()
-        
+
         # Sort by initial score
         remaining.sort(key=lambda x: x.score, reverse=True)
-        
+
         # Select first item (highest relevance)
         if remaining:
             first = remaining.pop(0)
             first.combined_score = first.score
             first.diversity_score = 1.0
             selected.append(first)
-        
+
         # Iteratively select remaining items
         while len(selected) < limit and remaining:
-            best_score = float('-inf')
+            best_score = float("-inf")
             best_idx = 0
-            
+
             for i, entry in enumerate(remaining):
                 # Calculate max similarity to already selected items
                 max_similarity = 0.0
                 for sel in selected:
                     sim = self._compute_similarity(entry, sel)
                     max_similarity = max(max_similarity, sim)
-                
+
                 # MMR score
                 mmr_score = (
-                    diversity_lambda * entry.score - 
+                    diversity_lambda * entry.score -
                     (1 - diversity_lambda) * max_similarity
                 )
-                
+
                 if mmr_score > best_score:
                     best_score = mmr_score
                     best_idx = i
-            
+
             # Select best item
             best_entry = remaining.pop(best_idx)
             best_entry.combined_score = best_score
@@ -506,70 +507,69 @@ class UnifiedKnowledgeAccess:
                 self._compute_similarity(best_entry, s) for s in selected
             ) if selected else 1.0
             selected.append(best_entry)
-        
+
         return selected
-    
+
     def _compute_similarity(
-        self, 
-        entry1: KnowledgeEntry, 
+        self,
+        entry1: KnowledgeEntry,
         entry2: KnowledgeEntry
     ) -> float:
         """
         Compute similarity between two knowledge entries.
-        
+
         Uses content-based similarity approximation.
         For production, use embedding-based cosine similarity.
         """
         # Get content as strings
         content1 = self._get_content_string(entry1.content)
         content2 = self._get_content_string(entry2.content)
-        
+
         if not content1 or not content2:
             return 0.0
-        
+
         # Simple Jaccard similarity on words
         words1 = set(content1.lower().split())
         words2 = set(content2.lower().split())
-        
+
         if not words1 or not words2:
             return 0.0
-        
+
         intersection = len(words1 & words2)
         union = len(words1 | words2)
-        
+
         return intersection / union if union > 0 else 0.0
-    
+
     def _get_content_string(self, content: Any) -> str:
         """Extract string content from various content types."""
         if isinstance(content, str):
             return content
-        elif isinstance(content, dict):
+        if isinstance(content, dict):
             # Try common text fields
-            for key in ['text', 'content', 'body', 'message']:
+            for key in ["text", "content", "body", "message"]:
                 if key in content and isinstance(content[key], str):
                     return content[key]
             return str(content)
-        else:
-            return str(content)
-    
+        return str(content)
+
     def _track_query_stats(self, query: str, result: KnowledgeQueryResult) -> None:
         """Track query statistics for monitoring."""
         # Simple stats tracking
         key = f"{result.sources_queried}"
-        
+
         if key not in self._query_stats:
             self._query_stats[key] = {
                 "count": 0,
                 "total_time_ms": 0.0,
                 "total_results": 0,
             }
-        
+
         stats = self._query_stats[key]
         stats["count"] += 1
         stats["total_time_ms"] += result.query_time_ms
         stats["total_results"] += result.total_results
-    
-    def get_stats(self) -> Dict[str, Dict[str, Any]]:
+
+    def get_stats(self) -> dict[str, dict[str, Any]]:
         """Get query statistics."""
         stats = {}
         for key, data in self._query_stats.items():
@@ -580,36 +580,36 @@ class UnifiedKnowledgeAccess:
                 "avg_results": data["total_results"] / count if count > 0 else 0,
             }
         return stats
-    
-    def get_rag_strategy_stats(self) -> Dict[str, Any]:
+
+    def get_rag_strategy_stats(self) -> dict[str, Any]:
         """Get RAG strategy statistics."""
         if not RAG_STRATEGIES_AVAILABLE:
             return {"available": False}
-        
+
         stats = {
             "available": True,
             "hybrid_retriever": None,
             "strategy_selector": None,
         }
-        
+
         if self.hybrid_retriever:
             stats["hybrid_retriever"] = self.hybrid_retriever.get_stats()
-        
+
         if self.strategy_selector:
             stats["strategy_selector"] = self.strategy_selector.get_stats()
-        
+
         return stats
-    
+
     def export_prometheus_metrics(self) -> str:
         """Export RAG metrics in Prometheus format."""
         if not RAG_STRATEGIES_AVAILABLE:
             return "# RAG strategies not available\n"
-        
+
         lines = ["# Heretek Swarm RAG Metrics", ""]
-        
+
         if self.hybrid_retriever:
             lines.append(self.hybrid_retriever.export_prometheus_metrics())
-        
+
         # Add unified knowledge access metrics
         for source_key, source_stats in self._query_stats.items():
             lines.extend([
@@ -622,14 +622,14 @@ class UnifiedKnowledgeAccess:
                 f'heretek_knowledge_query_time_ms_total{{sources="{source_key}"}} {source_stats["total_time_ms"]}',
                 "",
             ])
-        
+
         return "\n".join(lines)
 
 
 class KnowledgeQueryBuilder:
     """
     Fluent builder for constructing knowledge queries.
-    
+
     Usage:
         result = (KnowledgeQueryBuilder(knowledge_access)
             .query("What was decided about X?")
@@ -639,46 +639,46 @@ class KnowledgeQueryBuilder:
             .filtered_by(agent_id="alpha")
             .execute())
     """
-    
+
     def __init__(self, knowledge_access: UnifiedKnowledgeAccess):
         self._knowledge = knowledge_access
-        self._query: Optional[str] = None
-        self._sources: List[str] = ["all"]
+        self._query: str | None = None
+        self._sources: list[str] = ["all"]
         self._limit: int = 10
         self._rerank: bool = True
         self._diversity_lambda: float = 0.5
-        self._source_weights: Dict[str, float] = {}
-        self._filters: Dict[str, Any] = {}
-    
+        self._source_weights: dict[str, float] = {}
+        self._filters: dict[str, Any] = {}
+
     def query(self, query_text: str) -> "KnowledgeQueryBuilder":
         """Set the query text."""
         self._query = query_text
         return self
-    
+
     def from_sources(self, *sources: str) -> "KnowledgeQueryBuilder":
         """Set sources to query (memory, rag)."""
         self._sources = list(sources)
         return self
-    
+
     def with_limit(self, limit: int) -> "KnowledgeQueryBuilder":
         """Set result limit."""
         self._limit = limit
         return self
-    
+
     def with_diversity(self, diversity_lambda: float) -> "KnowledgeQueryBuilder":
         """Set MMR diversity parameter (0-1)."""
         self._diversity_lambda = max(0, min(1, diversity_lambda))
         return self
-    
+
     def with_reranking(self, enabled: bool = True) -> "KnowledgeQueryBuilder":
         """Enable or disable reranking."""
         self._rerank = enabled
         return self
-    
+
     def with_source_weights(
-        self, 
-        memory: Optional[float] = None,
-        rag: Optional[float] = None,
+        self,
+        memory: float | None = None,
+        rag: float | None = None,
     ) -> "KnowledgeQueryBuilder":
         """Set source weight multipliers."""
         if memory is not None:
@@ -686,22 +686,22 @@ class KnowledgeQueryBuilder:
         if rag is not None:
             self._source_weights["rag"] = rag
         return self
-    
+
     def filtered_by(self, **filters) -> "KnowledgeQueryBuilder":
         """Add query filters."""
         self._filters.update(filters)
         return self
-    
+
     def with_strategy(self, strategy: str) -> "KnowledgeQueryBuilder":
         """Set RAG strategy (requires advanced strategies enabled)."""
         self._filters["rag_strategy"] = strategy
         return self
-    
+
     def with_multihop(self, enabled: bool = True) -> "KnowledgeQueryBuilder":
         """Enable multi-hop retrieval."""
         self._filters["rag_multihop"] = enabled
         return self
-    
+
     def with_reranking_options(
         self,
         enabled: bool = True,
@@ -711,7 +711,7 @@ class KnowledgeQueryBuilder:
         self._filters["rag_rerank"] = enabled
         self._filters["rag_rerank_top_k"] = top_k
         return self
-    
+
     async def execute(self) -> KnowledgeQueryResult:
         """Execute the query."""
         if not self._query:
@@ -743,11 +743,11 @@ def create_unified_knowledge_access(
     vector_store=None,
     sparse_index=None,
     cross_encoder=None,
-    config: Optional[Any] = None,
+    config: Any | None = None,
 ) -> UnifiedKnowledgeAccess:
     """
     Create UnifiedKnowledgeAccess with advanced RAG strategies.
-    
+
     Args:
         memory_system: Memory system instance
         rag_pipeline: Legacy RAG pipeline instance
@@ -756,18 +756,18 @@ def create_unified_knowledge_access(
         sparse_index: Sparse index for BM25 retrieval
         cross_encoder: Cross-encoder for re-ranking
         config: Optional HybridRetrieverConfig
-        
+
     Returns:
         Configured UnifiedKnowledgeAccess instance
     """
     if not RAG_STRATEGIES_AVAILABLE:
         logger.warning("rag_strategies_not_available_using_legacy")
         return UnifiedKnowledgeAccess(memory_system=memory_system, rag_pipeline=rag_pipeline)
-    
+
     try:
         # Create hybrid retriever config
         retriever_config = config or HybridRetrieverConfig()
-        
+
         # Create hybrid retriever
         hybrid_retriever = HybridRetriever(
             config=retriever_config,
@@ -776,17 +776,17 @@ def create_unified_knowledge_access(
             sparse_index=sparse_index,
             cross_encoder=cross_encoder,
         )
-        
+
         # Create unified access with hybrid retriever
         knowledge_access = UnifiedKnowledgeAccess(
             memory_system=memory_system,
             rag_pipeline=rag_pipeline,
             hybrid_retriever=hybrid_retriever,
         )
-        
+
         logger.info("unified_knowledge_access_created_with_strategies")
         return knowledge_access
-        
+
     except Exception as e:
         logger.error("unified_knowledge_access_creation_failed", error=str(e))
         # Fall back to legacy

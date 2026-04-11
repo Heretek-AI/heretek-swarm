@@ -18,22 +18,26 @@ Reference: Tracing at observability/tracing.py
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import json
 import logging
 import os
 import time
-from dataclasses import asdict, dataclass, field
-from datetime import datetime, timezone
-from enum import Enum
-from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional
 import uuid
+from dataclasses import asdict, dataclass, field
+from datetime import UTC, datetime, timezone
+from enum import Enum, StrEnum
+from pathlib import Path
+from typing import TYPE_CHECKING, Any, Dict, List, Optional
 
 import structlog
-from prometheus_client import CollectorRegistry, generate_latest, CONTENT_TYPE_LATEST
+from prometheus_client import CONTENT_TYPE_LATEST, CollectorRegistry, generate_latest
 
 from .prometheus_metrics import PrometheusMetrics
-from .tracing import initialize_tracing, get_tracer, span_context
+from .tracing import get_tracer, initialize_tracing, span_context
+
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 # ============================================================================
 # Configuration
@@ -44,7 +48,7 @@ HERETEK_LOGS_DIR = HERETEK_DATA_DIR / "logs"
 HERETEK_LOGS_DIR.mkdir(parents=True, exist_ok=True)
 
 
-class LogLevel(str, Enum):
+class LogLevel(StrEnum):
     """Log levels."""
     DEBUG = "DEBUG"
     INFO = "INFO"
@@ -53,7 +57,7 @@ class LogLevel(str, Enum):
     CRITICAL = "CRITICAL"
 
 
-class ServiceStatus(str, Enum):
+class ServiceStatus(StrEnum):
     """Service health status."""
     HEALTHY = "healthy"
     UNHEALTHY = "unhealthy"
@@ -74,13 +78,13 @@ class LogEntry:
     level: str
     logger: str
     message: str
-    module: Optional[str] = None
-    function: Optional[str] = None
-    line: Optional[int] = None
-    trace_id: Optional[str] = None
-    span_id: Optional[str] = None
+    module: str | None = None
+    function: str | None = None
+    line: int | None = None
+    trace_id: str | None = None
+    span_id: str | None = None
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for JSON serialization."""
         return asdict(self)
 
@@ -92,7 +96,7 @@ class LogEntry:
 class LokiHandler(logging.Handler):
     """
     Custom logging handler that sends logs to Loki.
-    
+
     Also writes to local JSON files for ELK filebeat pickup.
     """
 
@@ -121,11 +125,11 @@ class LokiHandler(logging.Handler):
         self.batch_size = batch_size
         self.flush_interval = flush_interval
 
-        self._buffer: List[Dict[str, Any]] = []
+        self._buffer: list[dict[str, Any]] = []
         self._buffer_lock = asyncio.Lock()
         self._last_flush = time.time()
-        self._flush_task: Optional[asyncio.Task] = None
-        self._http_client: Optional[Any] = None
+        self._flush_task: asyncio.Task | None = None
+        self._http_client: Any | None = None
 
         # Create log directory
         self.log_dir.mkdir(parents=True, exist_ok=True)
@@ -155,8 +159,8 @@ class LokiHandler(logging.Handler):
             with open(self._current_file, "a") as f:
                 for log_entry in logs_to_send:
                     f.write(json.dumps(log_entry) + "\n")
-        except Exception as e:
-            print(f"Failed to write to local log: {e}")
+        except Exception:
+            pass
 
         # Send to Loki
         if self.loki_url:
@@ -184,8 +188,8 @@ class LokiHandler(logging.Handler):
                 }
 
                 await client.post(self.loki_url, json=payload)
-            except Exception as e:
-                print(f"Failed to send logs to Loki: {e}")
+            except Exception:
+                pass
 
     async def _periodic_flush(self) -> None:
         """Periodically flush the buffer."""
@@ -205,7 +209,7 @@ class LokiHandler(logging.Handler):
         except Exception:
             self.handleError(record)
 
-    async def _add_to_buffer(self, log_entry: Dict[str, Any]) -> None:
+    async def _add_to_buffer(self, log_entry: dict[str, Any]) -> None:
         """Add log entry to buffer."""
         async with self._buffer_lock:
             self._buffer.append(log_entry)
@@ -214,10 +218,10 @@ class LokiHandler(logging.Handler):
             if len(self._buffer) >= self.batch_size:
                 await self._flush_buffer()
 
-    def _format_record(self, record: logging.LogRecord) -> Dict[str, Any]:
+    def _format_record(self, record: logging.LogRecord) -> dict[str, Any]:
         """Format a log record."""
         log_entry = {
-            "timestamp": datetime.fromtimestamp(record.created, tz=timezone.utc).isoformat(),
+            "timestamp": datetime.fromtimestamp(record.created, tz=UTC).isoformat(),
             "level": record.levelname,
             "logger": record.name,
             "message": record.getMessage(),
@@ -251,10 +255,8 @@ class LokiHandler(logging.Handler):
         """Stop the handler and flush remaining logs."""
         if self._flush_task:
             self._flush_task.cancel()
-            try:
+            with contextlib.suppress(asyncio.CancelledError):
                 await self._flush_task
-            except asyncio.CancelledError:
-                pass
         await self._flush_buffer()
         if self._http_client:
             await self._http_client.aclose()
@@ -294,8 +296,8 @@ class ObservabilityManager:
         self,
         service_name: str = "heretek-swarm",
         service_version: str = "1.0.0",
-        loki_url: Optional[str] = None,
-        otlp_endpoint: Optional[str] = None,
+        loki_url: str | None = None,
+        otlp_endpoint: str | None = None,
         prometheus_port: int = 9090,
     ):
         """
@@ -315,12 +317,12 @@ class ObservabilityManager:
         self.prometheus_port = prometheus_port
 
         self.metrics = PrometheusMetrics()
-        self._loki_handler: Optional[LokiHandler] = None
+        self._loki_handler: LokiHandler | None = None
         self._initialized = False
         self._start_time = time.time()
 
         # Health checks
-        self._health_checks: Dict[str, Callable[[], Any]] = {}
+        self._health_checks: dict[str, Callable[[], Any]] = {}
 
         # Service status
         self._status = ServiceStatus.STARTING
@@ -442,8 +444,8 @@ class ObservabilityManager:
     def trace_span(
         self,
         name: str,
-        agent_id: Optional[str] = None,
-        task_id: Optional[str] = None,
+        agent_id: str | None = None,
+        task_id: str | None = None,
         **attributes,
     ):
         """Create a trace span context manager."""
@@ -458,8 +460,8 @@ class ObservabilityManager:
     async def traced(
         self,
         name: str,
-        agent_id: Optional[str] = None,
-        task_id: Optional[str] = None,
+        agent_id: str | None = None,
+        task_id: str | None = None,
         **attributes,
     ):
         """Async context manager for tracing."""
@@ -487,7 +489,7 @@ class ObservabilityManager:
         """
         self._health_checks[name] = check_fn
 
-    async def check_health(self) -> Dict[str, Any]:
+    async def check_health(self) -> dict[str, Any]:
         """
         Check overall system health.
 
@@ -545,9 +547,9 @@ class ObservabilityManager:
         self,
         level: LogLevel,
         message: str,
-        agent_id: Optional[str] = None,
-        task_id: Optional[str] = None,
-        session_id: Optional[str] = None,
+        agent_id: str | None = None,
+        task_id: str | None = None,
+        session_id: str | None = None,
         **metadata,
     ) -> None:
         """
@@ -568,7 +570,7 @@ class ObservabilityManager:
 # Global Instance
 # ============================================================================
 
-_observability: Optional[ObservabilityManager] = None
+_observability: ObservabilityManager | None = None
 
 
 def get_observability() -> ObservabilityManager:
@@ -612,12 +614,10 @@ async def main():
         await asyncio.sleep(0.1)  # Simulate work
 
     # Check health
-    health = await obs.check_health()
-    print(f"Health: {health}")
+    await obs.check_health()
 
     # Get metrics
-    metrics = obs.get_metrics()
-    print(f"Metrics: {metrics[:200]}...")
+    obs.get_metrics()
 
     # Shutdown
     await obs.shutdown()

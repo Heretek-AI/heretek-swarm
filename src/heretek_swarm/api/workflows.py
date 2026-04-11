@@ -10,33 +10,28 @@ Provides REST API for:
 - Validating workflows
 """
 
-from typing import Dict, Any
-from fastapi import APIRouter, HTTPException, Depends
-import structlog
+from typing import Any
 
-from ..workflow.engine import (
-    Workflow,
-    get_workflow_engine,
-    WorkflowState,
-)
-from ..workflow.validator import (
-    WorkflowValidator,
-)
-from ..gateway.auth import verify_auth
+import structlog
+from fastapi import APIRouter, Depends, HTTPException
+
+from src.heretek_swarm.gateway.auth import verify_auth
+from src.heretek_swarm.workflow.engine import Workflow, WorkflowState, get_workflow_engine
+from src.heretek_swarm.workflow.validator import WorkflowValidator
 
 logger = structlog.get_logger(__name__)
 
 router = APIRouter(prefix="/api/workflows", tags=["workflows"])
 
 # In-memory storage for workflows (in production, use database)
-_workflows: Dict[str, Workflow] = {}
+_workflows: dict[str, Workflow] = {}
 
 
 @router.post("", status_code=201)
 async def create_workflow(
-    workflow_definition: Dict[str, Any],
+    workflow_definition: dict[str, Any],
     authenticated: str = Depends(verify_auth)
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Create a new workflow from Canvas UI definition.
 
@@ -68,7 +63,7 @@ async def create_workflow(
 @router.get("", status_code=200)
 async def list_workflows(
     authenticated: str = Depends(verify_auth)
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     List all workflows.
 
@@ -97,7 +92,7 @@ async def list_workflows(
 async def get_workflow(
     workflow_id: str,
     authenticated: str = Depends(verify_auth)
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Get a specific workflow by ID.
 
@@ -129,9 +124,9 @@ async def get_workflow(
 @router.post("/{workflow_id}/execute", status_code=201)
 async def execute_workflow(
     workflow_id: str,
-    input_data: Dict[str, Any],
+    input_data: dict[str, Any],
     authenticated: str = Depends(verify_auth)
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Execute a workflow.
 
@@ -192,14 +187,14 @@ async def delete_workflow(
 
     logger.info("workflow_deleted", workflow_id=workflow_id)
 
-    return None
+    return
 
 
 @router.get("/{workflow_id}/status", status_code=200)
 async def get_workflow_status(
     workflow_id: str,
     authenticated: str = Depends(verify_auth)
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Get status of a workflow execution.
 
@@ -239,7 +234,7 @@ async def get_workflow_status(
 async def cancel_workflow(
     workflow_id: str,
     authenticated: str = Depends(verify_auth)
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Cancel a running workflow execution.
 
@@ -260,41 +255,40 @@ async def cancel_workflow(
         return {
             "message": f"Workflow execution {execution_id} cancelled"
         }
-    else:
-        return {
-            "message": f"Failed to cancel workflow execution {execution_id}"
-        }
+    return {
+        "message": f"Failed to cancel workflow execution {execution_id}"
+    }
 
 
 @router.post("/{workflow_id}/validate", status_code=200)
 async def validate_workflow_endpoint(
     workflow_id: str,
     authenticated: str = Depends(verify_auth)
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Validate a workflow graph before execution.
-    
+
     Checks for:
     - Disconnected nodes (no input/output connections)
     - Circular dependencies (beyond allowed loops)
     - Missing required connections
     - Invalid agent types
     - Resource conflicts
-    
+
     Args:
         workflow_id: Workflow ID to validate
         authenticated: Authentication token
-    
+
     Returns:
         Validation result with errors, warnings, and info messages
     """
     engine = get_workflow_engine()
-    
+
     if workflow_id not in engine.workflows:
         raise HTTPException(status_code=404, detail="Workflow not found")
-    
+
     workflow = engine.workflows[workflow_id]
-    
+
     # Convert workflow to validation format
     workflow_definition = {
         "id": workflow.id,
@@ -318,11 +312,11 @@ async def validate_workflow_endpoint(
             for edge in workflow.edges
         ],
     }
-    
+
     # Validate
     validator = WorkflowValidator()
     result = validator.validate(workflow_definition)
-    
+
     logger.info(
         "workflow_validated",
         workflow_id=workflow_id,
@@ -330,35 +324,35 @@ async def validate_workflow_endpoint(
         error_count=len(result.errors),
         warning_count=len(result.warnings),
     )
-    
+
     return result.to_dict()
 
 
 @router.post("/validate", status_code=200)
 async def validate_workflow_draft(
-    workflow_definition: Dict[str, Any],
+    workflow_definition: dict[str, Any],
     authenticated: str = Depends(verify_auth)
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Validate a workflow definition (draft mode).
-    
+
     Useful for validating workflows before saving them.
-    
+
     Args:
         workflow_definition: Workflow definition to validate
         authenticated: Authentication token
-    
+
     Returns:
         Validation result with errors, warnings, and info messages
     """
     validator = WorkflowValidator()
     result = validator.validate(workflow_definition)
-    
+
     logger.info(
         "workflow_draft_validated",
         valid=result.valid,
         error_count=len(result.errors),
         warning_count=len(result.warnings),
     )
-    
+
     return result.to_dict()

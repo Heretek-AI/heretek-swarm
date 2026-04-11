@@ -17,20 +17,20 @@ from __future__ import annotations
 
 import uuid
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional, Set
+from typing import Any
 
 import structlog
 
-from heretek_swarm.actors.base import AgentActor, ActorMessage
+from heretek_swarm.actors.base import ActorMessage, AgentActor
 from heretek_swarm.actors.validation import validate_message
 
 # Session 44: Collective Learning Integration
 from heretek_swarm.collective.learning import PatternExtractor, PatternType
 
 # Session 44: Consensus Integration
-from heretek_swarm.consensus.swarm_deliberation import SwarmDeliberationEngine, Position
+from heretek_swarm.consensus.swarm_deliberation import Position, SwarmDeliberationEngine
 
 # Session 44: Memory Optimization Integration
 from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer, AccessTier
@@ -83,17 +83,17 @@ class ChangeRequest:
     status: ChangeStatus = ChangeStatus.PROPOSED
     impact_level: ImpactLevel = ImpactLevel.MEDIUM
     requested_by: str = ""
-    affected_components: List[str] = field(default_factory=list)
-    dependencies: List[str] = field(default_factory=list)
+    affected_components: list[str] = field(default_factory=list)
+    dependencies: list[str] = field(default_factory=list)
     rollback_plan: str = ""
-    scheduled_at: Optional[datetime] = None
-    started_at: Optional[datetime] = None
-    completed_at: Optional[datetime] = None
-    metadata: Dict[str, Any] = field(default_factory=dict)
-    approval_status: Dict[str, bool] = field(default_factory=dict)
+    scheduled_at: datetime | None = None
+    started_at: datetime | None = None
+    completed_at: datetime | None = None
+    metadata: dict[str, Any] = field(default_factory=dict)
+    approval_status: dict[str, bool] = field(default_factory=dict)
     required_approvals: int = 1
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for serialization."""
         return {
             "change_id": self.change_id,
@@ -121,12 +121,12 @@ class ChangeNotification:
     """A change notification to stakeholders."""
     notification_id: str
     change_id: str
-    recipients: List[str]
+    recipients: list[str]
     message: str
-    sent_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
-    acknowledged_by: Set[str] = field(default_factory=set)
+    sent_at: datetime = field(default_factory=lambda: datetime.now(UTC))
+    acknowledged_by: set[str] = field(default_factory=set)
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for serialization."""
         return {
             "notification_id": self.notification_id,
@@ -165,13 +165,13 @@ class CatalystAgent(AgentActor):
 
     def __init__(
         self,
-        agent_id: Optional[str] = None,
-        config: Optional[Dict[str, Any]] = None,
+        agent_id: str | None = None,
+        config: dict[str, Any] | None = None,
         # Session 44: Integration components
-        pattern_extractor: Optional[PatternExtractor] = None,
-        deliberation_engine: Optional[SwarmDeliberationEngine] = None,
-        access_analyzer: Optional[AccessPatternAnalyzer] = None,
-        zero_trust_validator: Optional[ZeroTrustValidator] = None,
+        pattern_extractor: PatternExtractor | None = None,
+        deliberation_engine: SwarmDeliberationEngine | None = None,
+        access_analyzer: AccessPatternAnalyzer | None = None,
+        zero_trust_validator: ZeroTrustValidator | None = None,
     ):
         super().__init__(
             agent_id=agent_id or f"catalyst_{uuid.uuid4().hex[:8]}",
@@ -179,37 +179,37 @@ class CatalystAgent(AgentActor):
         )
 
         # Change management
-        self._changes: Dict[str, ChangeRequest] = {}
+        self._changes: dict[str, ChangeRequest] = {}
         self._max_changes: int = self._config.get("max_changes", 500)
 
         # Notifications
-        self._notifications: Dict[str, ChangeNotification] = {}
+        self._notifications: dict[str, ChangeNotification] = {}
         self._max_notifications: int = self._config.get("max_notifications", 1000)
 
         # Stakeholders
-        self._stakeholders: Set[str] = set()
+        self._stakeholders: set[str] = set()
 
         # Change history
-        self._history: List[Dict[str, Any]] = []
+        self._history: list[dict[str, Any]] = []
         self._max_history: int = self._config.get("max_history", 1000)
 
         # Session 44: Collective Learning Integration
         self.pattern_extractor = pattern_extractor or PatternExtractor(min_support=3, min_confidence=0.6)
-        
+
         # Session 44: Consensus Integration
         self.deliberation_engine = deliberation_engine or SwarmDeliberationEngine(
             max_rounds=5, consensus_threshold=0.75, min_participants=2
         )
-        
+
         # Session 44: Memory Optimization Integration
         self.access_analyzer = access_analyzer or AccessPatternAnalyzer()
-        
+
         # Session 44: Zero-Trust Validation
         self.zero_trust_validator = zero_trust_validator or ZeroTrustValidator()
-        
+
         # Session 44: Integration state
-        self._active_deliberations: Dict[str, str] = {}  # change_id -> deliberation_id
-        self._pattern_emitted_changes: Set[str] = set()
+        self._active_deliberations: dict[str, str] = {}  # change_id -> deliberation_id
+        self._pattern_emitted_changes: set[str] = set()
 
         logger.info(
             "catalyst_initialized",
@@ -220,11 +220,11 @@ class CatalystAgent(AgentActor):
             memory_optimization_enabled=self.access_analyzer is not None,
         )
 
-    async def _validate_message(self, message: ActorMessage) -> Dict[str, Any]:
+    async def _validate_message(self, message: ActorMessage) -> dict[str, Any]:
         """Validate incoming message content."""
         try:
             validated = validate_message(message.message_type, message.content)
-            if hasattr(validated, 'dict'):
+            if hasattr(validated, "dict"):
                 return validated.dict()
             return validated
         except Exception:
@@ -308,7 +308,7 @@ class CatalystAgent(AgentActor):
             logger.error("propose_change_failed", error=str(e))
             await self._send_error(
                 message.sender_id,
-                f"Failed to propose change: {str(e)}",
+                f"Failed to propose change: {e!s}",
                 message.message_type,
             )
 
@@ -365,7 +365,7 @@ class CatalystAgent(AgentActor):
             logger.error("analyze_change_failed", error=str(e))
             await self._send_error(
                 message.sender_id,
-                f"Failed to analyze change: {str(e)}",
+                f"Failed to analyze change: {e!s}",
                 message.message_type,
             )
 
@@ -441,7 +441,7 @@ class CatalystAgent(AgentActor):
             logger.error("approve_change_failed", error=str(e))
             await self._send_error(
                 message.sender_id,
-                f"Failed to record approval: {str(e)}",
+                f"Failed to record approval: {e!s}",
                 message.message_type,
             )
 
@@ -476,7 +476,7 @@ class CatalystAgent(AgentActor):
                 )
                 return
 
-            change.scheduled_at = datetime.fromisoformat(scheduled_at) if scheduled_at else datetime.now(timezone.utc)
+            change.scheduled_at = datetime.fromisoformat(scheduled_at) if scheduled_at else datetime.now(UTC)
             change.status = ChangeStatus.SCHEDULED
 
             logger.info(
@@ -500,7 +500,7 @@ class CatalystAgent(AgentActor):
             logger.error("schedule_change_failed", error=str(e))
             await self._send_error(
                 message.sender_id,
-                f"Failed to schedule change: {str(e)}",
+                f"Failed to schedule change: {e!s}",
                 message.message_type,
             )
 
@@ -525,7 +525,7 @@ class CatalystAgent(AgentActor):
 
             change = self._changes[change_id]
             change.status = ChangeStatus.IN_PROGRESS
-            change.started_at = datetime.now(timezone.utc)
+            change.started_at = datetime.now(UTC)
 
             logger.info(
                 "change_started",
@@ -549,7 +549,7 @@ class CatalystAgent(AgentActor):
             logger.error("execute_change_failed", error=str(e))
             await self._send_error(
                 message.sender_id,
-                f"Failed to execute change: {str(e)}",
+                f"Failed to execute change: {e!s}",
                 message.message_type,
             )
 
@@ -620,7 +620,7 @@ class CatalystAgent(AgentActor):
             logger.error("request_rollback_failed", error=str(e))
             await self._send_error(
                 message.sender_id,
-                f"Failed to request rollback: {str(e)}",
+                f"Failed to request rollback: {e!s}",
                 message.message_type,
             )
 
@@ -645,7 +645,7 @@ class CatalystAgent(AgentActor):
 
             change = self._changes[change_id]
             change.status = ChangeStatus.ROLLED_BACK
-            change.completed_at = datetime.now(timezone.utc)
+            change.completed_at = datetime.now(UTC)
 
             # Record in history
             self._record_change_event(change_id, "rolled_back")
@@ -670,7 +670,7 @@ class CatalystAgent(AgentActor):
             logger.error("execute_rollback_failed", error=str(e))
             await self._send_error(
                 message.sender_id,
-                f"Failed to execute rollback: {str(e)}",
+                f"Failed to execute rollback: {e!s}",
                 message.message_type,
             )
 
@@ -708,7 +708,7 @@ class CatalystAgent(AgentActor):
             logger.error("get_change_status_failed", error=str(e))
             await self._send_error(
                 message.sender_id,
-                f"Failed to get change status: {str(e)}",
+                f"Failed to get change status: {e!s}",
                 message.message_type,
             )
 
@@ -753,7 +753,7 @@ class CatalystAgent(AgentActor):
             logger.error("get_change_history_failed", error=str(e))
             await self._send_error(
                 message.sender_id,
-                f"Failed to get change history: {str(e)}",
+                f"Failed to get change history: {e!s}",
                 message.message_type,
             )
 
@@ -815,7 +815,7 @@ class CatalystAgent(AgentActor):
             logger.error("notify_stakeholders_failed", error=str(e))
             await self._send_error(
                 message.sender_id,
-                f"Failed to notify stakeholders: {str(e)}",
+                f"Failed to notify stakeholders: {e!s}",
                 message.message_type,
             )
 
@@ -861,7 +861,7 @@ class CatalystAgent(AgentActor):
 
         return min(score, 1.0)
 
-    def _generate_recommendations(self, change: ChangeRequest) -> List[str]:
+    def _generate_recommendations(self, change: ChangeRequest) -> list[str]:
         """Generate recommendations for a change."""
         recommendations = []
 
@@ -891,7 +891,7 @@ class CatalystAgent(AgentActor):
             return
 
         event = {
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "change_id": change_id,
             "change_type": change.change_type.value,
             "event_type": event_type,
@@ -912,17 +912,17 @@ class CatalystAgent(AgentActor):
     async def _emit_change_pattern(self, change: ChangeRequest, outcome: str) -> None:
         """
         Emit pattern for collective learning when change is completed.
-        
+
         Args:
             change: The completed change
             outcome: Completion outcome (success, failure, rolled_back)
         """
         if not self.pattern_extractor:
             return
-        
+
         if change.change_id in self._pattern_emitted_changes:
             return
-        
+
         try:
             await self.pattern_extractor.analyze_message(
                 message_id=f"change_{change.change_id}",
@@ -936,19 +936,19 @@ class CatalystAgent(AgentActor):
                     "affected_components": change.affected_components,
                     "approval_count": sum(1 for v in change.approval_status.values() if v),
                 },
-                timestamp=change.completed_at.isoformat() if change.completed_at else datetime.now(timezone.utc).isoformat(),
+                timestamp=change.completed_at.isoformat() if change.completed_at else datetime.now(UTC).isoformat(),
             )
-            
+
             self._pattern_emitted_changes.add(change.change_id)
             logger.info("change_pattern_emitted", change_id=change.change_id, outcome=outcome)
         except Exception as e:
             logger.warning("failed_to_emit_change_pattern", change_id=change.change_id, error=str(e))
 
-    async def _consume_change_patterns(self) -> List[Dict[str, Any]]:
+    async def _consume_change_patterns(self) -> list[dict[str, Any]]:
         """Consume patterns from collective learning for change guidance."""
         if not self.pattern_extractor:
             return []
-        
+
         try:
             patterns = await self.pattern_extractor.extract_patterns(
                 time_window_hours=24,
@@ -966,12 +966,12 @@ class CatalystAgent(AgentActor):
     async def _initiate_deliberation_for_change(
         self,
         change: ChangeRequest,
-        participating_agents: List[str],
-    ) -> Optional[str]:
+        participating_agents: list[str],
+    ) -> str | None:
         """Initiate swarm deliberation for high-impact change approval."""
         if not self.deliberation_engine:
             return None
-        
+
         try:
             deliberation_id = f"delib_{change.change_id}"
             self.deliberation_engine.start_deliberation(
@@ -981,7 +981,7 @@ class CatalystAgent(AgentActor):
                 domain="change_management",
             )
             self._active_deliberations[change.change_id] = deliberation_id
-            
+
             logger.info("deliberation_initiated", deliberation_id=deliberation_id, change_id=change.change_id)
             return deliberation_id
         except Exception as e:
@@ -999,11 +999,11 @@ class CatalystAgent(AgentActor):
         """Submit agent position in change deliberation."""
         if not self.deliberation_engine:
             return False
-        
+
         deliberation_id = self._active_deliberations.get(change.change_id)
         if not deliberation_id:
             return False
-        
+
         try:
             success = self.deliberation_engine.submit_position(
                 deliberation_id=deliberation_id,
@@ -1012,31 +1012,31 @@ class CatalystAgent(AgentActor):
                 confidence=confidence,
                 argument=argument,
             )
-            
+
             if success and self.access_analyzer:
                 self.access_analyzer.record_access(
                     memory_id=f"delib_{deliberation_id}_{agent_id}",
                     access_type="write",
                     agent_id=agent_id,
                 )
-            
+
             return success
         except Exception as e:
             logger.error("failed_to_submit_deliberation_position", deliberation_id=deliberation_id, error=str(e))
             return False
 
-    async def _finalize_deliberation(self, change: ChangeRequest) -> Optional[Any]:
+    async def _finalize_deliberation(self, change: ChangeRequest) -> Any | None:
         """Finalize deliberation and apply result to change approval."""
         if not self.deliberation_engine:
             return None
-        
+
         deliberation_id = self._active_deliberations.get(change.change_id)
         if not deliberation_id:
             return None
-        
+
         try:
             result = self.deliberation_engine.finalize_deliberation(deliberation_id)
-            
+
             if result:
                 change.approval_status[f"deliberation_{deliberation_id}"] = (
                     result.consensus_score >= 0.75
@@ -1046,12 +1046,12 @@ class CatalystAgent(AgentActor):
                     "final_position": result.final_position.value,
                     "consensus_score": result.consensus_score,
                 }
-                
+
                 self.deliberation_engine.cleanup_deliberation(deliberation_id)
                 del self._active_deliberations[change.change_id]
-                
+
                 logger.info("deliberation_finalized", deliberation_id=deliberation_id)
-            
+
             return result
         except Exception as e:
             logger.error("failed_to_finalize_deliberation", deliberation_id=deliberation_id, error=str(e))
@@ -1065,7 +1065,7 @@ class CatalystAgent(AgentActor):
         """Track memory access patterns for change data."""
         if not self.access_analyzer:
             return
-        
+
         memory_id = f"change_{change_id}"
         self.access_analyzer.record_access(
             memory_id=memory_id,
@@ -1077,16 +1077,16 @@ class CatalystAgent(AgentActor):
         """Get memory tier classification for a change."""
         if not self.access_analyzer:
             return AccessTier.COLD
-        
+
         memory_id = f"change_{change_id}"
         profile = self.access_analyzer.get_profile(memory_id)
         return profile.tier if profile else AccessTier.COLD
 
-    async def _prefetch_relevant_changes(self, agent_id: str) -> List[str]:
+    async def _prefetch_relevant_changes(self, agent_id: str) -> list[str]:
         """Prefetch changes an agent is likely to need."""
         if not self.access_analyzer:
             return []
-        
+
         try:
             predicted_memories = self.access_analyzer.predict_agent_access(agent_id)
             return [
@@ -1098,7 +1098,7 @@ class CatalystAgent(AgentActor):
             logger.warning("failed_to_prefetch_changes", agent_id=agent_id, error=str(e))
             return []
 
-    def get_learning_status(self) -> Dict[str, Any]:
+    def get_learning_status(self) -> dict[str, Any]:
         """Get collective learning and memory optimization status."""
         return {
             "agent_id": self.agent_id,
@@ -1131,7 +1131,7 @@ class CatalystAgent(AgentActor):
             ),
         )
 
-    def get_capabilities(self) -> List[str]:
+    def get_capabilities(self) -> list[str]:
         """Return list of capabilities this agent provides."""
         return [
             "change_management",

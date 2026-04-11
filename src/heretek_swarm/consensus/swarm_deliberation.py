@@ -48,9 +48,9 @@ Example:
 import asyncio
 import statistics
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 import structlog
 
@@ -104,9 +104,9 @@ class Argument:
     position: Position
     content: str
     confidence: float
-    supports: List[str] = field(default_factory=list)
-    rebuttals: List[str] = field(default_factory=list)
-    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    supports: list[str] = field(default_factory=list)
+    rebuttals: list[str] = field(default_factory=list)
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
     expertise_weight: float = 1.0
 
 
@@ -127,9 +127,9 @@ class AgentPosition:
     agent_id: str
     position: Position
     confidence: float
-    argument: Optional[str] = None
+    argument: str | None = None
     round_submitted: int = 0
-    previous_positions: List[Tuple[Position, float]] = field(default_factory=list)
+    previous_positions: list[tuple[Position, float]] = field(default_factory=list)
 
     def update_position(
         self,
@@ -159,12 +159,12 @@ class DeliberationRound:
     """
 
     round_number: int
-    positions: Dict[str, AgentPosition]
-    arguments: List[Argument]
+    positions: dict[str, AgentPosition]
+    arguments: list[Argument]
     consensus_score: float
     position_changes: int
     summary: str
-    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
 
 @dataclass
@@ -190,10 +190,10 @@ class DeliberationResult:
     consensus_score: float
     participation_rate: float
     rounds_completed: int
-    minority_report: List[str]
-    arguments_summary: Dict[str, Any]
-    decision_provenance: Dict[str, Any]
-    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    minority_report: list[str]
+    arguments_summary: dict[str, Any]
+    decision_provenance: dict[str, Any]
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
 
 class SwarmDeliberationEngine:
@@ -221,7 +221,7 @@ class SwarmDeliberationEngine:
         max_rounds: int = 5,
         consensus_threshold: float = 0.75,
         min_participants: int = 3,
-        expertise_profiler: Optional[AgentExpertiseProfiler] = None,
+        expertise_profiler: AgentExpertiseProfiler | None = None,
         argument_timeout: float = 30.0,
     ) -> None:
         """
@@ -241,12 +241,12 @@ class SwarmDeliberationEngine:
         self.argument_timeout = argument_timeout
 
         # Active deliberations
-        self.active_deliberations: Dict[str, Dict[str, Any]] = {}
-        self.deliberation_states: Dict[str, DeliberationState] = {}
+        self.active_deliberations: dict[str, dict[str, Any]] = {}
+        self.deliberation_states: dict[str, DeliberationState] = {}
 
         # Round tracking
-        self.current_rounds: Dict[str, int] = {}
-        self.round_results: Dict[str, List[DeliberationRound]] = {}
+        self.current_rounds: dict[str, int] = {}
+        self.round_results: dict[str, list[DeliberationRound]] = {}
 
         logger.info(
             f"SwarmDeliberationEngine initialized with max_rounds={max_rounds}, "
@@ -257,8 +257,8 @@ class SwarmDeliberationEngine:
         self,
         deliberation_id: str,
         proposal: str,
-        participants: List[str],
-        domain: Optional[str] = None,
+        participants: list[str],
+        domain: str | None = None,
     ) -> None:
         """
         Start a new deliberation process.
@@ -280,9 +280,9 @@ class SwarmDeliberationEngine:
             "domain": domain,
             "positions": {},
             "arguments": [],
-            "start_time": datetime.now(timezone.utc).isoformat(),
+            "start_time": datetime.now(UTC).isoformat(),
             "provenance": {
-                "initiated": datetime.now(timezone.utc).isoformat(),
+                "initiated": datetime.now(UTC).isoformat(),
                 "position_changes": [],
                 "arguments_submitted": [],
                 "rounds": [],
@@ -304,7 +304,7 @@ class SwarmDeliberationEngine:
         agent_id: str,
         position: Position,
         confidence: float,
-        argument: Optional[str] = None,
+        argument: str | None = None,
     ) -> bool:
         """
         Submit an agent's position in the deliberation.
@@ -350,7 +350,7 @@ class SwarmDeliberationEngine:
                     "from": old_position.value,
                     "to": position.value,
                     "round": current_round,
-                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "timestamp": datetime.now(UTC).isoformat(),
                 })
             positions[agent_id].update_position(position, confidence, current_round)
         else:
@@ -385,9 +385,9 @@ class SwarmDeliberationEngine:
         position: Position,
         content: str,
         confidence: float,
-        supports: Optional[List[str]] = None,
-        rebuttals: Optional[List[str]] = None,
-    ) -> Optional[str]:
+        supports: list[str] | None = None,
+        rebuttals: list[str] | None = None,
+    ) -> str | None:
         """
         Submit an argument to support a position.
 
@@ -433,7 +433,7 @@ class SwarmDeliberationEngine:
             "argument_id": argument_id,
             "agent_id": agent_id,
             "position": position.value,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         })
 
         logger.debug(
@@ -442,7 +442,7 @@ class SwarmDeliberationEngine:
         )
         return argument_id
 
-    def run_deliberation_round(self, deliberation_id: str) -> Optional[DeliberationRound]:
+    def run_deliberation_round(self, deliberation_id: str) -> DeliberationRound | None:
         """
         Run a single round of deliberation.
 
@@ -506,7 +506,7 @@ class SwarmDeliberationEngine:
             "round": current_round,
             "consensus_score": consensus_score,
             "position_changes": position_changes,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         })
 
         logger.info(
@@ -542,7 +542,7 @@ class SwarmDeliberationEngine:
             return 0.0
 
         # Count weighted positions
-        position_weights: Dict[Position, float] = {}
+        position_weights: dict[Position, float] = {}
 
         for agent_id, agent_pos in positions.items():
             # Get weight from expertise profiler if available
@@ -612,7 +612,7 @@ class SwarmDeliberationEngine:
         positions = self.active_deliberations[deliberation_id]["positions"]
 
         # Count positions
-        position_counts: Dict[Position, int] = {}
+        position_counts: dict[Position, int] = {}
         for pos in positions.values():
             position_counts[pos.position] = position_counts.get(pos.position, 0) + 1
 
@@ -629,7 +629,7 @@ class SwarmDeliberationEngine:
     def get_position_distribution(
         self,
         deliberation_id: str,
-    ) -> Dict[str, float]:
+    ) -> dict[str, float]:
         """
         Get distribution of positions as percentages.
 
@@ -648,7 +648,7 @@ class SwarmDeliberationEngine:
         if total == 0:
             return {}
 
-        distribution: Dict[str, int] = {}
+        distribution: dict[str, int] = {}
         for pos in positions.values():
             key = pos.position.value
             distribution[key] = distribution.get(key, 0) + 1
@@ -659,7 +659,7 @@ class SwarmDeliberationEngine:
         self,
         deliberation_id: str,
         min_confidence: float = 0.6,
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """
         Get minority opinions (dissenting views).
 
@@ -699,7 +699,7 @@ class SwarmDeliberationEngine:
     def finalize_deliberation(
         self,
         deliberation_id: str,
-    ) -> Optional[DeliberationResult]:
+    ) -> DeliberationResult | None:
         """
         Finalize deliberation and return result.
 
@@ -754,7 +754,7 @@ class SwarmDeliberationEngine:
             "deliberation_id": deliberation_id,
             "proposal": self.active_deliberations[deliberation_id]["proposal"],
             "start_time": provenance["initiated"],
-            "end_time": datetime.now(timezone.utc).isoformat(),
+            "end_time": datetime.now(UTC).isoformat(),
             "rounds_completed": self.current_rounds[deliberation_id],
             "position_changes": len(provenance["position_changes"]),
             "total_arguments": len(provenance["arguments_submitted"]),
@@ -828,21 +828,20 @@ class SwarmDeliberationEngine:
 
         if average_score >= 2.5:
             return Position.STRONG_AGREE
-        elif average_score >= 1.5:
+        if average_score >= 1.5:
             return Position.AGREE
-        elif average_score >= 0.5:
+        if average_score >= 0.5:
             return Position.LEAN_AGREE
-        elif average_score >= -0.5:
+        if average_score >= -0.5:
             return Position.LEAN_DISAGREE
-        elif average_score >= -1.5:
+        if average_score >= -1.5:
             return Position.DISAGREE
-        else:
-            return Position.STRONG_DISAGREE
+        return Position.STRONG_DISAGREE
 
     def get_deliberation_state(
         self,
         deliberation_id: str,
-    ) -> Optional[DeliberationState]:
+    ) -> DeliberationState | None:
         """
         Get current state of a deliberation.
 
@@ -857,7 +856,7 @@ class SwarmDeliberationEngine:
     def get_round_history(
         self,
         deliberation_id: str,
-    ) -> List[DeliberationRound]:
+    ) -> list[DeliberationRound]:
         """
         Get complete round history for a deliberation.
 
@@ -887,7 +886,7 @@ class SwarmDeliberationEngine:
 
         logger.debug(f"Cleaned up deliberation {deliberation_id}")
 
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """
         Get deliberation engine statistics.
 
@@ -912,8 +911,8 @@ class SwarmDeliberationEngine:
         self,
         deliberation_id: str,
         round_interval: float = 10.0,
-        timeout: Optional[float] = None,
-    ) -> Optional[DeliberationResult]:
+        timeout: float | None = None,
+    ) -> DeliberationResult | None:
         """
         Run deliberation with automatic round progression and timeout.
 
@@ -925,14 +924,14 @@ class SwarmDeliberationEngine:
         Returns:
             Final deliberation result or None
         """
-        start_time = datetime.now(timezone.utc)
+        start_time = datetime.now(UTC)
 
         try:
             while True:
                 # Check timeout
                 if timeout:
                     elapsed = (
-                        datetime.now(timezone.utc) - start_time
+                        datetime.now(UTC) - start_time
                     ).total_seconds()
                     if elapsed >= timeout:
                         self.deliberation_states[deliberation_id] = (

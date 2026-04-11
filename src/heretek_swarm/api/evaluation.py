@@ -8,16 +8,17 @@ Provides REST API for:
 - Agent summaries
 """
 
-from typing import Any, Dict, List, Optional
-from fastapi import APIRouter, HTTPException, Depends
+from typing import Any
+
 import structlog
+from fastapi import APIRouter, Depends, HTTPException
 
 from evaluation.evaluator import (
-    get_evaluator,
-    TestCase,
     EvaluationMetric,
+    TestCase,
+    get_evaluator,
 )
-from ..gateway.auth import verify_auth
+from src.heretek_swarm.gateway.auth import verify_auth
 
 logger = structlog.get_logger(__name__)
 
@@ -26,21 +27,21 @@ router = APIRouter(prefix="/api/evaluation", tags=["evaluation"])
 
 @router.post("/test-cases", status_code=201)
 async def create_test_case(
-    test_case: Dict[str, Any],
+    test_case: dict[str, Any],
     authenticated: str = Depends(verify_auth)
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Create a new test case.
-    
+
     Args:
         test_case: Test case definition
         authenticated: Authentication token
-    
+
     Returns:
         Created test case
     """
     evaluator = get_evaluator()
-    
+
     # Create test case object
     case = TestCase(
         id=test_case.get("id", f"test_{len(evaluator.test_cases)}"),
@@ -53,12 +54,12 @@ async def create_test_case(
         ],
         metadata=test_case.get("metadata", {})
     )
-    
+
     # Load into evaluator
     evaluator.load_test_cases([case])
-    
+
     logger.info("test_case_created", test_case_id=case.id)
-    
+
     return {
         "id": case.id,
         "name": case.name,
@@ -68,21 +69,21 @@ async def create_test_case(
 
 @router.post("/test-cases/batch", status_code=201)
 async def create_test_cases_batch(
-    test_cases: List[Dict[str, Any]],
+    test_cases: list[dict[str, Any]],
     authenticated: str = Depends(verify_auth)
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Create multiple test cases at once.
-    
+
     Args:
         test_cases: List of test case definitions
         authenticated: Authentication token
-    
+
     Returns:
         Number of test cases created
     """
     evaluator = get_evaluator()
-    
+
     # Create test case objects
     cases = [
         TestCase(
@@ -98,12 +99,12 @@ async def create_test_cases_batch(
         )
         for i, tc in enumerate(test_cases)
     ]
-    
+
     # Load into evaluator
     evaluator.load_test_cases(cases)
-    
+
     logger.info("test_cases_created_batch", count=len(cases))
-    
+
     return {
         "count": len(cases),
         "test_case_ids": [case.id for case in cases]
@@ -113,18 +114,18 @@ async def create_test_cases_batch(
 @router.get("/test-cases", status_code=200)
 async def list_test_cases(
     authenticated: str = Depends(verify_auth)
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     List all available test cases.
-    
+
     Args:
         authenticated: Authentication token
-    
+
     Returns:
         List of test cases
     """
     evaluator = get_evaluator()
-    
+
     return {
         "test_cases": [
             {
@@ -141,27 +142,27 @@ async def list_test_cases(
 @router.post("/agents/{agent_id}/evaluate", status_code=201)
 async def evaluate_agent(
     agent_id: str,
-    test_case_ids: Optional[List[str]] = None,
+    test_case_ids: list[str] | None = None,
     authenticated: str = Depends(verify_auth)
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Evaluate an agent against test cases.
-    
+
     Args:
         agent_id: Agent ID to evaluate
         test_case_ids: Optional list of test case IDs (uses all if not provided)
         authenticated: Authentication token
-    
+
     Returns:
         Evaluation results
     """
     evaluator = get_evaluator()
-    
+
     # Run evaluation
     executions = await evaluator.evaluate_agent(agent_id, test_case_ids)
-    
+
     logger.info("agent_evaluated", agent_id=agent_id, tests_run=len(executions))
-    
+
     return {
         "agent_id": agent_id,
         "executions": [
@@ -191,41 +192,40 @@ async def evaluate_agent(
 async def get_agent_evaluation_summary(
     agent_id: str,
     authenticated: str = Depends(verify_auth)
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Get evaluation summary for an agent.
-    
+
     Args:
         agent_id: Agent ID
         authenticated: Authentication token
-    
+
     Returns:
         Agent evaluation summary
     """
     evaluator = get_evaluator()
-    
-    summary = evaluator.get_agent_summary(agent_id)
-    
-    return summary
+
+    return evaluator.get_agent_summary(agent_id)
+
 
 
 @router.get("/summaries", status_code=200)
 async def get_all_evaluation_summaries(
     authenticated: str = Depends(verify_auth)
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Get evaluation summaries for all agents.
-    
+
     Args:
         authenticated: Authentication token
-    
+
     Returns:
         List of agent summaries
     """
     evaluator = get_evaluator()
-    
+
     summaries = evaluator.get_all_summaries()
-    
+
     return {
         "summaries": summaries
     }
@@ -238,21 +238,21 @@ async def delete_test_case(
 ):
     """
     Delete a test case.
-    
+
     Args:
         test_case_id: Test case ID
         authenticated: Authentication token
-    
+
     Returns:
         204 No Content on success
     """
     evaluator = get_evaluator()
-    
+
     if test_case_id not in evaluator.test_cases:
         raise HTTPException(status_code=404, detail="Test case not found")
-    
+
     del evaluator.test_cases[test_case_id]
-    
+
     logger.info("test_case_deleted", test_case_id=test_case_id)
-    
-    return None
+
+    return

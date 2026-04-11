@@ -11,7 +11,7 @@ from __future__ import annotations
 
 import json
 import time
-from typing import Any, AsyncIterator, Dict, List, Optional
+from typing import TYPE_CHECKING, Any
 
 import httpx
 import structlog
@@ -20,11 +20,14 @@ from .base import (
     LLMProviderBase,
     LLMRequest,
     LLMResponse,
+    ProviderAuthenticationError,
     ProviderCapabilities,
     ProviderError,
-    ProviderAuthenticationError,
     ProviderUnavailableError,
 )
+
+if TYPE_CHECKING:
+    from collections.abc import AsyncIterator
 
 logger = structlog.get_logger("llm.providers.minimax")
 
@@ -32,13 +35,13 @@ logger = structlog.get_logger("llm.providers.minimax")
 class MiniMaxProvider(LLMProviderBase):
     """
     MiniMax LLM Provider implementation.
-    
+
     Supports:
     - abab6.5, abab6.5s, abab5.5
     - Streaming completions
     - Function calling
     - Chinese and English languages
-    
+
     Example:
         provider = MiniMaxProvider(
             api_key="your_api_key",
@@ -52,12 +55,12 @@ class MiniMaxProvider(LLMProviderBase):
         api_key: str,
         group_id: str,
         base_url: str = "https://api.minimax.chat/v1",
-        default_model: Optional[str] = None,
-        extra_config: Optional[Dict[str, Any]] = None,
+        default_model: str | None = None,
+        extra_config: dict[str, Any] | None = None,
     ):
         """
         Initialize the MiniMax provider.
-        
+
         Args:
             api_key: MiniMax API key
             group_id: MiniMax group ID (required for authentication)
@@ -69,7 +72,7 @@ class MiniMaxProvider(LLMProviderBase):
             raise ProviderAuthenticationError("MiniMax API key is required")
         if not group_id:
             raise ProviderAuthenticationError("MiniMax group_id is required")
-        
+
         super().__init__(
             provider_name="minimax",
             base_url=base_url,
@@ -77,9 +80,9 @@ class MiniMaxProvider(LLMProviderBase):
             default_model=default_model or "abab6.5",
             extra_config=extra_config,
         )
-        
+
         self.group_id = group_id
-        self._client: Optional[httpx.AsyncClient] = None
+        self._client: httpx.AsyncClient | None = None
 
     def _init_capabilities(self) -> ProviderCapabilities:
         """Initialize provider capabilities."""
@@ -100,7 +103,7 @@ class MiniMaxProvider(LLMProviderBase):
             headers = {
                 "Content-Type": "application/json",
             }
-            
+
             self._client = httpx.AsyncClient(
                 base_url=self.base_url,
                 headers=headers,
@@ -115,18 +118,18 @@ class MiniMaxProvider(LLMProviderBase):
     async def complete(self, request: LLMRequest) -> LLMResponse:
         """
         Complete a chat request non-streaming.
-        
+
         Args:
             request: The LLM request parameters
-            
+
         Returns:
             The LLM response
         """
         client = await self._get_client()
         start_time = time.time()
-        
+
         model = self._get_model(request.model)
-        
+
         # Convert messages to MiniMax format
         messages = []
         for msg in request.messages:
@@ -134,7 +137,7 @@ class MiniMaxProvider(LLMProviderBase):
                 "sender_type": msg.role,
                 "text": msg.content,
             })
-        
+
         # Build MiniMax-specific payload
         payload = {
             "model": model,
@@ -143,49 +146,49 @@ class MiniMaxProvider(LLMProviderBase):
             "top_p": request.top_p,
             "stream": False,
         }
-        
+
         if request.max_tokens:
             payload["tokens_to_generate"] = request.max_tokens
-        
+
         if request.stop:
             payload["stop"] = request.stop
-        
+
         # Add any extra parameters
         if request.extra_body:
             payload.update(request.extra_body)
-        
+
         logger.debug(
             "Sending MiniMax completion request",
             model=model,
             message_count=len(messages),
         )
-        
+
         try:
             response = await client.post(
                 "/chat/completions",
                 json=payload,
             )
-            
+
             if response.status_code == 401:
                 raise ProviderAuthenticationError(
                     "Invalid MiniMax API key or group_id",
                     provider="minimax",
                 )
-            elif response.status_code >= 500:
+            if response.status_code >= 500:
                 raise ProviderUnavailableError(
                     "MiniMax service unavailable",
                     provider="minimax",
                 )
-            elif response.status_code != 200:
+            if response.status_code != 200:
                 error_data = response.json() if response.headers.get("content-type", "").startswith("application/json") else {"text": response.text}
                 raise ProviderError(
                     f"MiniMax API error: {response.status_code} - {error_data}",
                     provider="minimax",
                 )
-            
+
             data = response.json()
             latency_ms = (time.time() - start_time) * 1000
-            
+
             # MiniMax response format
             choices = data.get("choices", [])
             if not choices:
@@ -193,10 +196,10 @@ class MiniMaxProvider(LLMProviderBase):
                     "No choices in MiniMax response",
                     provider="minimax",
                 )
-            
+
             choice = choices[0]
             message_data = choice.get("message", {})
-            
+
             return LLMResponse(
                 content=message_data.get("text", ""),
                 model=data.get("model", model),
@@ -205,7 +208,7 @@ class MiniMaxProvider(LLMProviderBase):
                 raw_response=data,
                 latency_ms=latency_ms,
             )
-            
+
         except httpx.RequestError as e:
             raise ProviderUnavailableError(
                 f"Request failed: {e}",
@@ -216,17 +219,17 @@ class MiniMaxProvider(LLMProviderBase):
     async def stream(self, request: LLMRequest) -> AsyncIterator[str]:
         """
         Stream a chat completion.
-        
+
         Args:
             request: The LLM request parameters with stream=True
-            
+
         Yields:
             Chunks of the completion text
         """
         client = await self._get_client()
-        
+
         model = self._get_model(request.model)
-        
+
         # Convert messages to MiniMax format
         messages = []
         for msg in request.messages:
@@ -234,7 +237,7 @@ class MiniMaxProvider(LLMProviderBase):
                 "sender_type": msg.role,
                 "text": msg.content,
             })
-        
+
         payload = {
             "model": model,
             "messages": messages,
@@ -242,15 +245,15 @@ class MiniMaxProvider(LLMProviderBase):
             "top_p": request.top_p,
             "stream": True,
         }
-        
+
         if request.max_tokens:
             payload["tokens_to_generate"] = request.max_tokens
-        
+
         logger.debug(
             "Sending MiniMax streaming request",
             model=model,
         )
-        
+
         try:
             async with client.stream(
                 "POST",
@@ -267,14 +270,14 @@ class MiniMaxProvider(LLMProviderBase):
                         f"MiniMax API error: {response.status_code}",
                         provider="minimax",
                     )
-                
+
                 async for line in response.aiter_lines():
                     if line.startswith("data: "):
                         data = line[6:]  # Remove "data: " prefix
-                        
+
                         if data.strip() == "[DONE]":
                             break
-                        
+
                         try:
                             chunk = json.loads(data)
                             choices = chunk.get("choices", [])
@@ -285,7 +288,7 @@ class MiniMaxProvider(LLMProviderBase):
                                     yield content
                         except json.JSONDecodeError:
                             continue
-                            
+
         except httpx.RequestError as e:
             raise ProviderUnavailableError(
                 f"Stream request failed: {e}",
@@ -293,7 +296,7 @@ class MiniMaxProvider(LLMProviderBase):
                 cause=e,
             )
 
-    async def list_models(self) -> List[str]:
+    async def list_models(self) -> list[str]:
         """List available MiniMax models."""
         return [
             "abab6.5",

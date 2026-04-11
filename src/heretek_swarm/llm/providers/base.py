@@ -9,8 +9,9 @@ from __future__ import annotations
 
 import time
 from abc import ABC, abstractmethod
+from collections.abc import AsyncIterator, Callable
 from dataclasses import dataclass, field
-from typing import Any, AsyncIterator, Callable, Dict, List, Optional, Union
+from typing import Any
 
 import structlog
 
@@ -25,11 +26,11 @@ class Message:
     """A chat message for LLM interaction."""
     role: str  # "system", "user", "assistant", "tool"
     content: str
-    name: Optional[str] = None
-    tool_calls: Optional[List[Dict[str, Any]]] = None
-    tool_call_id: Optional[str] = None
+    name: str | None = None
+    tool_calls: list[dict[str, Any]] | None = None
+    tool_call_id: str | None = None
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert message to dictionary."""
         result = {"role": self.role, "content": self.content}
         if self.name:
@@ -44,23 +45,23 @@ class Message:
 @dataclass
 class LLMRequest:
     """Request parameters for LLM completion."""
-    messages: List[Message]
-    model: Optional[str] = None
+    messages: list[Message]
+    model: str | None = None
     temperature: float = 0.7
-    max_tokens: Optional[int] = None
+    max_tokens: int | None = None
     top_p: float = 1.0
     frequency_penalty: float = 0.0
     presence_penalty: float = 0.0
-    stop: Optional[List[str]] = None
+    stop: list[str] | None = None
     stream: bool = False
     n: int = 1
-    tools: Optional[List[Dict[str, Any]]] = None
-    tool_choice: Optional[Union[str, Dict[str, Any]]] = None
-    response_format: Optional[Dict[str, Any]] = None
-    seed: Optional[int] = None
-    extra_body: Optional[Dict[str, Any]] = None
+    tools: list[dict[str, Any]] | None = None
+    tool_choice: str | dict[str, Any] | None = None
+    response_format: dict[str, Any] | None = None
+    seed: int | None = None
+    extra_body: dict[str, Any] | None = None
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert request to dictionary for API calls."""
         result = {
             "messages": [m.to_dict() for m in self.messages],
@@ -72,7 +73,7 @@ class LLMRequest:
             "stream": self.stream,
             "n": self.n,
         }
-        
+
         if self.model:
             result["model"] = self.model
         if self.stop:
@@ -87,7 +88,7 @@ class LLMRequest:
             result["seed"] = self.seed
         if self.extra_body:
             result.update(self.extra_body)
-        
+
         return result
 
 
@@ -96,7 +97,7 @@ class ToolCall:
     """A tool call from the LLM."""
     id: str
     name: str
-    arguments: Dict[str, Any]
+    arguments: dict[str, Any]
 
 
 @dataclass
@@ -104,22 +105,22 @@ class LLMResponse:
     """Response from an LLM completion."""
     content: str
     model: str
-    usage: Dict[str, int] = field(default_factory=dict)
-    finish_reason: Optional[str] = None
-    tool_calls: List[ToolCall] = field(default_factory=list)
-    raw_response: Optional[Dict[str, Any]] = None
+    usage: dict[str, int] = field(default_factory=dict)
+    finish_reason: str | None = None
+    tool_calls: list[ToolCall] = field(default_factory=list)
+    raw_response: dict[str, Any] | None = None
     latency_ms: float = 0.0
-    
+
     @property
     def prompt_tokens(self) -> int:
         """Get the number of prompt tokens used."""
         return self.usage.get("prompt_tokens", 0)
-    
+
     @property
     def completion_tokens(self) -> int:
         """Get the number of completion tokens used."""
         return self.usage.get("completion_tokens", 0)
-    
+
     @property
     def total_tokens(self) -> int:
         """Get the total tokens used."""
@@ -133,8 +134,8 @@ class ProviderCapabilities:
     supports_function_calling: bool = False
     supports_vision: bool = False
     supports_json_mode: bool = False
-    max_context_length: Optional[int] = None
-    max_output_tokens: Optional[int] = None
+    max_context_length: int | None = None
+    max_output_tokens: int | None = None
     default_temperature: float = 0.7
     temperature_range: tuple = (0.0, 2.0)
 
@@ -142,14 +143,14 @@ class ProviderCapabilities:
 class LLMProviderBase(ABC):
     """
     Abstract base class for all LLM providers.
-    
+
     All provider implementations must inherit from this class and implement
     the required abstract methods.
-    
+
     Example usage:
         provider = OpenAIProvider(api_key="sk-...", base_url="...")
         response = await provider.complete(messages=[...])
-        
+
         async for chunk in provider.stream(messages=[...]):
             print(chunk, end="")
     """
@@ -158,13 +159,13 @@ class LLMProviderBase(ABC):
         self,
         provider_name: str,
         base_url: str,
-        api_key: Optional[str] = None,
-        default_model: Optional[str] = None,
-        extra_config: Optional[Dict[str, Any]] = None,
+        api_key: str | None = None,
+        default_model: str | None = None,
+        extra_config: dict[str, Any] | None = None,
     ):
         """
         Initialize the LLM provider.
-        
+
         Args:
             provider_name: Name identifier for this provider
             base_url: Base URL for the API
@@ -177,9 +178,9 @@ class LLMProviderBase(ABC):
         self.api_key = api_key
         self.default_model = default_model
         self.extra_config = extra_config or {}
-        
+
         self._capabilities = self._init_capabilities()
-        
+
         logger.debug(
             "LLM provider initialized",
             provider_name=provider_name,
@@ -190,7 +191,6 @@ class LLMProviderBase(ABC):
     @abstractmethod
     def _init_capabilities(self) -> ProviderCapabilities:
         """Initialize provider capabilities. Must be implemented by subclasses."""
-        pass
 
     @property
     def capabilities(self) -> ProviderCapabilities:
@@ -201,17 +201,16 @@ class LLMProviderBase(ABC):
     async def complete(self, request: LLMRequest) -> LLMResponse:
         """
         Complete a chat request non-streaming.
-        
+
         Args:
             request: The LLM request parameters
-            
+
         Returns:
             The LLM response
-            
+
         Raises:
             ProviderError: If the request fails
         """
-        pass
 
     @abstractmethod
     async def stream(
@@ -220,17 +219,16 @@ class LLMProviderBase(ABC):
     ) -> AsyncIterator[str]:
         """
         Stream a chat completion.
-        
+
         Args:
             request: The LLM request parameters with stream=True
-            
+
         Yields:
             Chunks of the completion text
-            
+
         Raises:
             ProviderError: If the request fails
         """
-        pass
 
     async def complete_with_retry(
         self,
@@ -240,20 +238,20 @@ class LLMProviderBase(ABC):
     ) -> LLMResponse:
         """
         Complete a request with automatic retries.
-        
+
         Args:
             request: The LLM request parameters
             max_retries: Maximum number of retry attempts
             retry_delay: Delay between retries in seconds
-            
+
         Returns:
             The LLM response
-            
+
         Raises:
             ProviderError: If all retries fail
         """
         last_error = None
-        
+
         for attempt in range(max_retries):
             try:
                 return await self.complete(request)
@@ -268,35 +266,35 @@ class LLMProviderBase(ABC):
                         error=str(e),
                     )
                     await asyncio.sleep(retry_delay * (attempt + 1))
-        
+
         raise ProviderError(
             f"Failed after {max_retries} attempts",
             provider=self.provider_name,
             cause=last_error,
         )
 
-    async def test_connectivity(self, model: Optional[str] = None) -> ConnectivityTestResult:
+    async def test_connectivity(self, model: str | None = None) -> ConnectivityTestResult:
         """
         Test connectivity to the provider.
-        
+
         Args:
             model: Optional model to test with
-            
+
         Returns:
             Connectivity test result
         """
         start_time = time.time()
-        
+
         try:
             test_request = LLMRequest(
                 messages=[Message(role="user", content="Hello, this is a connectivity test.")],
                 model=model or self.default_model,
                 max_tokens=10,
             )
-            
+
             response = await self.complete(test_request)
             latency_ms = (time.time() - start_time) * 1000
-            
+
             return ConnectivityTestResult(
                 success=True,
                 provider_name=self.provider_name,
@@ -304,7 +302,7 @@ class LLMProviderBase(ABC):
                 response_text=response.content,
                 latency_ms=latency_ms,
             )
-            
+
         except Exception as e:
             latency_ms = (time.time() - start_time) * 1000
             return ConnectivityTestResult(
@@ -315,19 +313,19 @@ class LLMProviderBase(ABC):
                 error=str(e),
             )
 
-    async def list_models(self) -> List[str]:
+    async def list_models(self) -> list[str]:
         """
         List available models for this provider.
-        
+
         Returns:
             List of model names
-            
+
         Raises:
             NotImplementedError: If the provider doesn't support listing models
         """
         raise NotImplementedError("Model listing not supported for this provider")
 
-    def _get_model(self, model: Optional[str]) -> str:
+    def _get_model(self, model: str | None) -> str:
         """Get the model to use, falling back to default if needed."""
         if model:
             return model
@@ -341,7 +339,6 @@ class LLMProviderBase(ABC):
 
     async def __aexit__(self, exc_type, exc_val, exc_tb):
         """Async context manager exit."""
-        pass
 
 
 @dataclass
@@ -349,26 +346,26 @@ class ConnectivityTestResult:
     """Result of a connectivity test."""
     success: bool
     provider_name: str
-    model_used: Optional[str]
+    model_used: str | None
     latency_ms: float
-    response_text: Optional[str] = None
-    error: Optional[str] = None
+    response_text: str | None = None
+    error: str | None = None
 
 
 class ProviderError(Exception):
     """Exception raised for provider-related errors."""
-    
+
     def __init__(
         self,
         message: str,
-        provider: Optional[str] = None,
-        cause: Optional[Exception] = None,
+        provider: str | None = None,
+        cause: Exception | None = None,
     ):
         self.message = message
         self.provider = provider
         self.cause = cause
         super().__init__(self.format_message())
-    
+
     def format_message(self) -> str:
         """Format the error message."""
         msg = self.message
@@ -381,12 +378,10 @@ class ProviderError(Exception):
 
 class ProviderConfigurationError(ProviderError):
     """Exception raised for configuration errors."""
-    pass
 
 
 class ProviderAuthenticationError(ProviderError):
     """Exception raised for authentication errors."""
-    pass
 
 
 class ProviderRateLimitError(ProviderError):
@@ -394,8 +389,8 @@ class ProviderRateLimitError(ProviderError):
     def __init__(
         self,
         message: str,
-        provider: Optional[str] = None,
-        retry_after: Optional[float] = None,
+        provider: str | None = None,
+        retry_after: float | None = None,
     ):
         self.retry_after = retry_after
         super().__init__(message, provider)
@@ -403,7 +398,6 @@ class ProviderRateLimitError(ProviderError):
 
 class ProviderUnavailableError(ProviderError):
     """Exception raised when provider is unavailable."""
-    pass
 
 
 # Import asyncio for retry logic

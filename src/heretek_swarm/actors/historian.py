@@ -13,31 +13,28 @@ Features:
 - Cache eviction when limits are reached
 """
 
-import asyncio
 from collections import OrderedDict
-from datetime import datetime, timezone
-
-from typing import Any, Dict, List, Optional
+from datetime import UTC, datetime
+from typing import Any
 
 import structlog
 from swarms import Agent
 
-from heretek_swarm.actors.base import AgentActor, ActorMessage
-from heretek_swarm.memory.base import DualTierMemory, MemoryEntry
-from heretek_swarm.knowledge.unified_access import UnifiedKnowledgeAccess, KnowledgeQueryResult
+from heretek_swarm.actors.base import ActorMessage, AgentActor
 
 # Session 44: Collective Learning Integration
 from heretek_swarm.collective.learning import PatternExtractor, PatternType
 
 # Session 44: Consensus Integration
-from heretek_swarm.consensus.swarm_deliberation import SwarmDeliberationEngine, Position
+from heretek_swarm.consensus.swarm_deliberation import Position, SwarmDeliberationEngine
+from heretek_swarm.knowledge.unified_access import KnowledgeQueryResult, UnifiedKnowledgeAccess
 
 # Session 44: Memory Optimization Integration
 from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer, AccessTier
+from heretek_swarm.memory.base import DualTierMemory, MemoryEntry
 
 # Session 44: Zero-Trust Validation
 from heretek_swarm.security.zero_trust import ZeroTrustValidator
-
 
 logger = structlog.get_logger("HistorianAgent")
 
@@ -45,14 +42,14 @@ logger = structlog.get_logger("HistorianAgent")
 class LRUCache:
     """
     LRU Cache implementation with configurable max size.
-    
+
     Provides automatic eviction of least-recently-used items when capacity is exceeded.
     """
-    
+
     def __init__(self, max_size: int = 100):
         """
         Initialize LRU cache.
-        
+
         Args:
             max_size: Maximum number of items to cache (default: 100)
         """
@@ -60,31 +57,31 @@ class LRUCache:
         self.max_size = max_size
         self.hits = 0
         self.misses = 0
-    
+
     def get(self, key: str, default: Any = None) -> Any:
         """
         Get item from cache.
-        
+
         Args:
             key: Cache key
             default: Default value if not found
-            
+
         Returns:
             Cached value or default
         """
         if key not in self._cache:
             self.misses += 1
             return default
-        
+
         # Move to end (most recently used)
         self._cache.move_to_end(key)
         self.hits += 1
         return self._cache[key]
-    
+
     def set(self, key: str, value: Any) -> None:
         """
         Set item in cache.
-        
+
         Args:
             key: Cache key
             value: Value to cache
@@ -97,20 +94,20 @@ class LRUCache:
                 # Evict least recently used
                 self._cache.popitem(last=False)
             self._cache[key] = value
-    
+
     def clear(self) -> None:
         """Clear all cached items."""
         self._cache.clear()
         self.hits = 0
         self.misses = 0
-    
+
     def invalidate(self, key: str) -> bool:
         """
         Invalidate a specific cache entry.
-        
+
         Args:
             key: Cache key to invalidate
-            
+
         Returns:
             True if key was found and removed, False otherwise
         """
@@ -118,35 +115,35 @@ class LRUCache:
             del self._cache[key]
             return True
         return False
-    
+
     def invalidate_pattern(self, pattern: str) -> int:
         """
         Invalidate all cache entries matching a pattern.
-        
+
         Args:
             pattern: Glob-style pattern (* matches any string)
-            
+
         Returns:
             Number of entries invalidated
         """
         import fnmatch
         keys_to_remove = [
-            key for key in self._cache.keys()
+            key for key in self._cache
             if fnmatch.fnmatch(key, pattern)
         ]
         for key in keys_to_remove:
             del self._cache[key]
         return len(keys_to_remove)
-    
+
     def __contains__(self, key: str) -> bool:
         """Check if key is in cache."""
         return key in self._cache
-    
+
     def __len__(self) -> int:
         """Return number of cached items."""
         return len(self._cache)
-    
-    def get_statistics(self) -> Dict[str, Any]:
+
+    def get_statistics(self) -> dict[str, Any]:
         """Get cache statistics."""
         total = self.hits + self.misses
         hit_rate = (self.hits / total * 100) if total > 0 else 0.0
@@ -156,7 +153,7 @@ class LRUCache:
             "hits": self.hits,
             "misses": self.misses,
             "hit_rate_percent": round(hit_rate, 2),
-            "invalidations": getattr(self, '_invalidation_count', 0),
+            "invalidations": getattr(self, "_invalidation_count", 0),
         }
 
 
@@ -177,15 +174,15 @@ class HistorianAgent(AgentActor):
         agent_id: str = "historian",
         name: str = "Historian",
         description: str = "Memory and context provider for the Triad",
-        swarms_agent: Optional[Agent] = None,
-        memory_system: Optional[DualTierMemory] = None,
+        swarms_agent: Agent | None = None,
+        memory_system: DualTierMemory | None = None,
         context_window: int = 10,
         context_cache_max_size: int = 100,
         pattern_cache_max_size: int = 50,
-        pattern_extractor: Optional[PatternExtractor] = None,
-        deliberation_engine: Optional[SwarmDeliberationEngine] = None,
-        access_analyzer: Optional[AccessPatternAnalyzer] = None,
-        zero_trust_validator: Optional[ZeroTrustValidator] = None,
+        pattern_extractor: PatternExtractor | None = None,
+        deliberation_engine: SwarmDeliberationEngine | None = None,
+        access_analyzer: AccessPatternAnalyzer | None = None,
+        zero_trust_validator: ZeroTrustValidator | None = None,
         **kwargs,
     ) -> None:
         """
@@ -219,34 +216,34 @@ class HistorianAgent(AgentActor):
         )
 
         self.memory_system = memory_system or DualTierMemory()
-        self.rag_pipeline = kwargs.get('rag_pipeline')
+        self.rag_pipeline = kwargs.get("rag_pipeline")
         self.context_window = context_window
 
         # Historian-specific state with LRU caches
-        self.decision_lineage: Dict[str, List[str]] = {}
+        self.decision_lineage: dict[str, list[str]] = {}
         self.pattern_cache = LRUCache(max_size=pattern_cache_max_size)
         self.context_cache = LRUCache(max_size=context_cache_max_size)
-        
-        # Unified knowledge access layer
-        self.knowledge_access: Optional[UnifiedKnowledgeAccess] = None
 
-        
+        # Unified knowledge access layer
+        self.knowledge_access: UnifiedKnowledgeAccess | None = None
+
+
         # Session 44: Collective Learning Integration
         self.pattern_extractor = pattern_extractor or PatternExtractor(min_support=3, min_confidence=0.6)
-        
+
         # Session 44: Consensus Integration
         self.deliberation_engine = deliberation_engine or SwarmDeliberationEngine(
             max_rounds=5, consensus_threshold=0.75, min_participants=2
         )
-        
+
         # Session 44: Memory Optimization Integration
         self.access_analyzer = access_analyzer or AccessPatternAnalyzer()
-        
+
         # Session 44: Zero-Trust Validation
         self.zero_trust_validator = zero_trust_validator or ZeroTrustValidator()
-        
+
         # Session 44: Integration state
-        self._active_deliberations: Dict[str, str] = {}
+        self._active_deliberations: dict[str, str] = {}
         self._pattern_emitted: Set[str] = set()
 
 
@@ -357,9 +354,9 @@ class HistorianAgent(AgentActor):
             validated = self._validate_message_content("retrieve_context", message.content)
             if validated:
                 # Extract topic from filters or use default
-                topic = validated.filters.get("topic") if hasattr(validated, 'filters') else message.content.get("topic")
-                filters = validated.filters if hasattr(validated, 'filters') else message.content.get("filters", {})
-                window_size = validated.limit if hasattr(validated, 'limit') else message.content.get("window_size", self.context_window)
+                topic = validated.filters.get("topic") if hasattr(validated, "filters") else message.content.get("topic")
+                filters = validated.filters if hasattr(validated, "filters") else message.content.get("filters", {})
+                window_size = validated.limit if hasattr(validated, "limit") else message.content.get("window_size", self.context_window)
             else:
                 # Fallback to unvalidated access
                 topic = message.content.get("topic")
@@ -467,7 +464,7 @@ class HistorianAgent(AgentActor):
         try:
             validated = self._validate_message_content("pattern_match", message.content)
             if validated:
-                current_situation = validated.query_text if hasattr(validated, 'query_text') else message.content.get("situation")
+                current_situation = validated.query_text if hasattr(validated, "query_text") else message.content.get("situation")
             else:
                 # Fallback to unvalidated access
                 current_situation = message.content.get("situation")
@@ -500,13 +497,13 @@ class HistorianAgent(AgentActor):
             rerank = message.content.get("rerank", True)
             diversity_lambda = message.content.get("diversity_lambda", 0.5)
             filters = message.content.get("filters", {})
-            
+
             if not query_text:
                 logger.error(f"[{self.agent_id}] Unified query requires query text")
                 return
-            
+
             logger.debug(f"[{self.agent_id}] Executing unified query: {query_text[:50]}")
-            
+
             # Execute unified query
             result = await self.knowledge_access.query(
                 query=query_text,
@@ -516,7 +513,7 @@ class HistorianAgent(AgentActor):
                 diversity_lambda=diversity_lambda,
                 filters=filters,
             )
-            
+
             # Send response
             reply_topic = message.content.get("reply_to", "knowledge")
             await self.send(
@@ -532,7 +529,7 @@ class HistorianAgent(AgentActor):
                 },
                 correlation_id=message.correlation_id,
             )
-            
+
         except Exception as e:
             logger.error(f"[{self.agent_id}] Unified query error: {e}", exc_info=True)
             if message.content.get("reply_to"):
@@ -548,15 +545,15 @@ class HistorianAgent(AgentActor):
     async def unified_query(
         self,
         query: str,
-        sources: Optional[List[str]] = None,
+        sources: list[str] | None = None,
         limit: int = 10,
         rerank: bool = True,
         diversity_lambda: float = 0.5,
-        filters: Optional[Dict[str, Any]] = None,
+        filters: dict[str, Any] | None = None,
     ) -> KnowledgeQueryResult:
         """
         Execute a unified knowledge query.
-        
+
         Args:
             query: Search query string
             sources: List of sources (memory, rag)
@@ -564,14 +561,14 @@ class HistorianAgent(AgentActor):
             rerank: Apply MMR reranking
             diversity_lambda: MMR diversity parameter
             filters: Additional filters
-            
+
         Returns:
             KnowledgeQueryResult with merged and reranked entries
         """
         if not self.knowledge_access:
             logger.warning(f"[{self.agent_id}] Knowledge access not initialized")
             return KnowledgeQueryResult(entries=[], total_results=0)
-        
+
         return await self.knowledge_access.query(
             query=query,
             sources=sources or ["memory", "rag"],
@@ -583,11 +580,11 @@ class HistorianAgent(AgentActor):
 
     async def store_memory(
         self,
-        content: Dict[str, Any],
-        metadata: Optional[Dict[str, Any]] = None,
-        ttl: Optional[int] = None,
+        content: dict[str, Any],
+        metadata: dict[str, Any] | None = None,
+        ttl: int | None = None,
         persistent: bool = False,
-        lineage: Optional[List[str]] = None,
+        lineage: list[str] | None = None,
     ) -> MemoryEntry:
         """
         Store a memory.
@@ -607,7 +604,7 @@ class HistorianAgent(AgentActor):
         full_metadata = {
             **(metadata or {}),
             "agent_id": self.agent_id,
-            "stored_at": datetime.now(timezone.utc).isoformat(),
+            "stored_at": datetime.now(UTC).isoformat(),
         }
 
         entry = await self.memory_system.store(
@@ -625,9 +622,9 @@ class HistorianAgent(AgentActor):
     async def retrieve_context(
         self,
         topic: str,
-        filters: Optional[Dict[str, Any]] = None,
+        filters: dict[str, Any] | None = None,
         window_size: int = 10,
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """
         Retrieve context for a topic.
 
@@ -676,10 +673,10 @@ class HistorianAgent(AgentActor):
 
     async def query_history(
         self,
-        query_text: Optional[str] = None,
-        filters: Optional[Dict[str, Any]] = None,
+        query_text: str | None = None,
+        filters: dict[str, Any] | None = None,
         limit: int = 10,
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """
         Query historical memories.
 
@@ -711,7 +708,7 @@ class HistorianAgent(AgentActor):
     async def track_decision_lineage(
         self,
         decision_id: str,
-        parent_ids: List[str],
+        parent_ids: list[str],
     ) -> None:
         """
         Track lineage for a decision.
@@ -740,7 +737,7 @@ class HistorianAgent(AgentActor):
             f"[{self.agent_id}] Tracked lineage for {decision_id}: {parent_ids}"
         )
 
-    async def get_lineage(self, decision_id: str) -> List[str]:
+    async def get_lineage(self, decision_id: str) -> list[str]:
         """
         Get lineage for a decision.
 
@@ -756,7 +753,7 @@ class HistorianAgent(AgentActor):
         self,
         situation: str,
         threshold: float = 0.7,
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """
         Match current situation against historical patterns.
 
@@ -771,7 +768,7 @@ class HistorianAgent(AgentActor):
         cached = self.pattern_cache.get(situation)
         if cached is not None:
             return cached
-        
+
         matched = []
 
         # Query for similar situations
@@ -803,16 +800,16 @@ class HistorianAgent(AgentActor):
     def _compute_similarity(self, text1: str, text2: str) -> float:
         """
         Compute similarity between two texts using cosine similarity on character n-grams.
-        
+
         Args:
             text1: First text
             text2: Second text
-            
+
         Returns:
             Similarity score between 0.0 and 1.0
         """
         # Simple cosine similarity using character 2-grams
-        def get_ngrams(text: str, n: int = 2) -> Dict[str, int]:
+        def get_ngrams(text: str, n: int = 2) -> dict[str, int]:
             """Get character n-grams with frequencies."""
             text = text.lower().strip()
             ngrams = {}
@@ -820,40 +817,40 @@ class HistorianAgent(AgentActor):
                 ngram = text[i:i+n]
                 ngrams[ngram] = ngrams.get(ngram, 0) + 1
             return ngrams
-        
-        def cosine_similarity(vec1: Dict[str, int], vec2: Dict[str, int]) -> float:
+
+        def cosine_similarity(vec1: dict[str, int], vec2: dict[str, int]) -> float:
             """Compute cosine similarity between two frequency vectors."""
             # Get all unique keys
             all_keys = set(vec1.keys()) | set(vec2.keys())
-            
+
             # Compute dot product and magnitudes
             dot_product = 0.0
             mag1 = 0.0
             mag2 = 0.0
-            
+
             for key in all_keys:
                 v1 = vec1.get(key, 0)
                 v2 = vec2.get(key, 0)
                 dot_product += v1 * v2
                 mag1 += v1 * v1
                 mag2 += v2 * v2
-            
+
             if mag1 == 0 or mag2 == 0:
                 return 0.0
-            
+
             return dot_product / (mag1 ** 0.5 * mag2 ** 0.5)
-        
+
         # Get n-grams for both texts
         ngrams1 = get_ngrams(text1)
         ngrams2 = get_ngrams(text2)
-        
+
         return cosine_similarity(ngrams1, ngrams2)
 
     async def provide_deliberation_context(
         self,
         deliberation_id: str,
         topic: str,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Provide comprehensive context for a deliberation.
 
@@ -887,7 +884,7 @@ class HistorianAgent(AgentActor):
             "relevant_memories": context_entries,
             "matched_patterns": patterns,
             "lineage": lineage,
-            "provided_at": datetime.now(timezone.utc).isoformat(),
+            "provided_at": datetime.now(UTC).isoformat(),
         }
 
         # Store context provision in memory
@@ -911,7 +908,7 @@ class HistorianAgent(AgentActor):
         topic: str,
         limit: int = 20,
         timeout: int = 60,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Synthesize knowledge from historical executions.
 
@@ -952,9 +949,9 @@ class HistorianAgent(AgentActor):
                     "summary": synthesis,
                     "source_count": len(results),
                     "confidence": 0.8,
-                    "synthesized_at": datetime.now(timezone.utc).isoformat(),
+                    "synthesized_at": datetime.now(UTC).isoformat(),
                 }
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 # P2-1 fix: Use timezone-aware datetime
                 logger.error(f"[{self.agent_id}] Synthesis timed out after {timeout}s")
                 return {
@@ -963,7 +960,7 @@ class HistorianAgent(AgentActor):
                     "source_count": len(results),
                     "confidence": 0.0,
                     "error": "timeout",
-                    "synthesized_at": datetime.now(timezone.utc).isoformat(),
+                    "synthesized_at": datetime.now(UTC).isoformat(),
                 }
             except Exception as e:
                 logger.error(f"[{self.agent_id}] Synthesis error: {e}")
@@ -975,10 +972,10 @@ class HistorianAgent(AgentActor):
             "summary": f"Found {len(results)} relevant memories",
             "source_count": len(results),
             "confidence": 0.5,
-            "synthesized_at": datetime.now(timezone.utc).isoformat(),
+            "synthesized_at": datetime.now(UTC).isoformat(),
         }
 
-    def get_memory_statistics(self) -> Dict[str, Any]:
+    def get_memory_statistics(self) -> dict[str, Any]:
         """Get memory system statistics."""
         memory_stats = self.memory_system.get_statistics()
 
@@ -995,14 +992,14 @@ class HistorianAgent(AgentActor):
     # Session 44: Collective Learning Integration Methods
     # =========================================================================
 
-    async def _emit_pattern(self, item_id: str, item_type: str, outcome: str, content: Dict[str, Any]) -> None:
+    async def _emit_pattern(self, item_id: str, item_type: str, outcome: str, content: dict[str, Any]) -> None:
         """Emit pattern for collective learning."""
         if not self.pattern_extractor:
             return
-        
+
         if item_id in self._pattern_emitted:
             return
-        
+
         try:
             await self.pattern_extractor.analyze_message(
                 message_id=f"{item_type}_{item_id}",
@@ -1010,19 +1007,19 @@ class HistorianAgent(AgentActor):
                 recipient="broadcast",
                 message_type=f"{item_type}_completion",
                 content=content,
-                timestamp=datetime.now(timezone.utc).isoformat(),
+                timestamp=datetime.now(UTC).isoformat(),
             )
-            
+
             self._pattern_emitted.add(item_id)
             logger.info(f"{item_type}_pattern_emitted", item_id=item_id, outcome=outcome)
         except Exception as e:
             logger.warning("failed_to_emit_pattern", item_id=item_id, error=str(e))
 
-    async def _consume_patterns(self, pattern_types: Optional[List[PatternType]] = None) -> List[Dict[str, Any]]:
+    async def _consume_patterns(self, pattern_types: list[PatternType] | None = None) -> list[dict[str, Any]]:
         """Consume patterns from collective learning."""
         if not self.pattern_extractor:
             return []
-        
+
         try:
             patterns = await self.pattern_extractor.extract_patterns(
                 time_window_hours=24,
@@ -1041,13 +1038,13 @@ class HistorianAgent(AgentActor):
         self,
         item_id: str,
         proposal: str,
-        participating_agents: List[str],
+        participating_agents: list[str],
         domain: str = "general",
-    ) -> Optional[str]:
+    ) -> str | None:
         """Initiate swarm deliberation."""
         if not self.deliberation_engine:
             return None
-        
+
         try:
             deliberation_id = f"delib_{item_id}"
             self.deliberation_engine.start_deliberation(
@@ -1057,7 +1054,7 @@ class HistorianAgent(AgentActor):
                 domain=domain,
             )
             self._active_deliberations[item_id] = deliberation_id
-            
+
             logger.info("deliberation_initiated", deliberation_id=deliberation_id, item_id=item_id)
             return deliberation_id
         except Exception as e:
@@ -1075,11 +1072,11 @@ class HistorianAgent(AgentActor):
         """Submit agent position in deliberation."""
         if not self.deliberation_engine:
             return False
-        
+
         deliberation_id = self._active_deliberations.get(item_id)
         if not deliberation_id:
             return False
-        
+
         try:
             success = self.deliberation_engine.submit_position(
                 deliberation_id=deliberation_id,
@@ -1088,36 +1085,36 @@ class HistorianAgent(AgentActor):
                 confidence=confidence,
                 argument=argument,
             )
-            
+
             if success and self.access_analyzer:
                 self.access_analyzer.record_access(
                     memory_id=f"delib_{deliberation_id}_{agent_id}",
                     access_type="write",
                     agent_id=agent_id,
                 )
-            
+
             return success
         except Exception as e:
             logger.error("failed_to_submit_deliberation_position", error=str(e))
             return False
 
-    async def _finalize_deliberation(self, item_id: str) -> Optional[Any]:
+    async def _finalize_deliberation(self, item_id: str) -> Any | None:
         """Finalize deliberation and apply result."""
         if not self.deliberation_engine:
             return None
-        
+
         deliberation_id = self._active_deliberations.get(item_id)
         if not deliberation_id:
             return None
-        
+
         try:
             result = self.deliberation_engine.finalize_deliberation(deliberation_id)
-            
+
             if result:
                 self.deliberation_engine.cleanup_deliberation(deliberation_id)
                 del self._active_deliberations[item_id]
                 logger.info("deliberation_finalized", deliberation_id=deliberation_id)
-            
+
             return result
         except Exception as e:
             logger.error("failed_to_finalize_deliberation", error=str(e))
@@ -1131,7 +1128,7 @@ class HistorianAgent(AgentActor):
         """Track memory access patterns."""
         if not self.access_analyzer:
             return
-        
+
         memory_id = f"{item_type}_{item_id}"
         self.access_analyzer.record_access(
             memory_id=memory_id,
@@ -1143,16 +1140,16 @@ class HistorianAgent(AgentActor):
         """Get memory tier classification."""
         if not self.access_analyzer:
             return AccessTier.COLD
-        
+
         memory_id = f"{item_type}_{item_id}"
         profile = self.access_analyzer.get_profile(memory_id)
         return profile.tier if profile else AccessTier.COLD
 
-    async def _prefetch_relevant(self, agent_id: str, item_type: str) -> List[str]:
+    async def _prefetch_relevant(self, agent_id: str, item_type: str) -> list[str]:
         """Prefetch items an agent is likely to need."""
         if not self.access_analyzer:
             return []
-        
+
         try:
             predicted_memories = self.access_analyzer.predict_agent_access(agent_id)
             return [
@@ -1164,7 +1161,7 @@ class HistorianAgent(AgentActor):
             logger.warning("failed_to_prefetch", agent_id=agent_id, error=str(e))
             return []
 
-    def get_learning_status(self) -> Dict[str, Any]:
+    def get_learning_status(self) -> dict[str, Any]:
         """Get collective learning and memory optimization status."""
         return {
             "agent_id": self.agent_id,

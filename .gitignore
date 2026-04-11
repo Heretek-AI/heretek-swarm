@@ -116,3 +116,4 @@ coverage-final.json
 .github/agents/*
 .github/copilot-instructions.md
 plans/OVERNIGHT_LOOP.md
+.roo/*

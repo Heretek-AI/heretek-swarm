@@ -8,31 +8,27 @@ Configured for Loki + Promtail log aggregation.
 import logging
 import sys
 import uuid
-from typing import Optional
 from contextvars import ContextVar
 
 import structlog
-from structlog.types import Processor
-from structlog.stdlib import (
-    add_log_level,
-    add_logger_name,
-    filter_by_level,
-    ProcessorFormatter,
-)
+from structlog.output import LineWriter
 from structlog.processors import (
-    JSONRenderer,
-    TimeStamper,
-    StackInfoRenderer,
-    ExceptionFormatter,
     CallsiteParameter,
     CallsiteParameterAdder,
+    ExceptionFormatter,
+    JSONRenderer,
+    StackInfoRenderer,
+    TimeStamper,
 )
-from structlog.output import LineWriter
+from structlog.stdlib import (
+    ProcessorFormatter,
+)
+from structlog.types import Processor
 
 # Context variables for request tracing
-request_id_var: ContextVar[Optional[str]] = ContextVar("request_id", default=None)
-agent_id_var: ContextVar[Optional[str]] = ContextVar("agent_id", default=None)
-trace_id_var: ContextVar[Optional[str]] = ContextVar("trace_id", default=None)
+request_id_var: ContextVar[str | None] = ContextVar("request_id", default=None)
+agent_id_var: ContextVar[str | None] = ContextVar("agent_id", default=None)
+trace_id_var: ContextVar[str | None] = ContextVar("trace_id", default=None)
 
 # Log levels
 LOG_LEVEL_DEBUG = "DEBUG"
@@ -42,22 +38,22 @@ LOG_LEVEL_ERROR = "ERROR"
 LOG_LEVEL_CRITICAL = "CRITICAL"
 
 
-def get_request_id() -> Optional[str]:
+def get_request_id() -> str | None:
     """Get the current request ID from context."""
     return request_id_var.get()
 
 
-def get_agent_id() -> Optional[str]:
+def get_agent_id() -> str | None:
     """Get the current agent ID from context."""
     return agent_id_var.get()
 
 
-def get_trace_id() -> Optional[str]:
+def get_trace_id() -> str | None:
     """Get the current trace ID from context."""
     return trace_id_var.get()
 
 
-def set_request_id(request_id: Optional[str] = None) -> str:
+def set_request_id(request_id: str | None = None) -> str:
     """Set the request ID in context. Generates one if not provided."""
     rid = request_id or str(uuid.uuid4())
     request_id_var.set(rid)
@@ -69,7 +65,7 @@ def set_agent_id(agent_id: str) -> None:
     agent_id_var.set(agent_id)
 
 
-def set_trace_id(trace_id: Optional[str] = None) -> str:
+def set_trace_id(trace_id: str | None = None) -> str:
     """Set the trace ID in context. Generates one if not provided."""
     tid = trace_id or str(uuid.uuid4())
     trace_id_var.set(tid)
@@ -117,7 +113,7 @@ def setup_logging(
 ) -> None:
     """
     Configure structlog for structured JSON logging.
-    
+
     Args:
         log_level: Log level (DEBUG, INFO, WARNING, ERROR, CRITICAL)
         json_output: Output logs as JSON (required for Loki/Promtail)
@@ -161,7 +157,7 @@ def setup_logging(
         renderer = LineWriter(flush=True)
 
     # Chain processors with renderer
-    processors = shared_processors + [renderer]
+    processors = [*shared_processors, renderer]
 
     # Configure structlog
     structlog.configure(
@@ -201,10 +197,10 @@ def setup_logging(
 def get_logger(name: str) -> structlog.stdlib.BoundLogger:
     """
     Get a configured logger instance.
-    
+
     Args:
         name: Logger name (typically module path)
-        
+
     Returns:
         Configured structlog logger
     """
@@ -220,14 +216,14 @@ def log_api_request(
     path: str,
     status_code: int,
     duration_ms: float,
-    request_id: Optional[str] = None,
-    agent_id: Optional[str] = None,
-    user_agent: Optional[str] = None,
-    client_ip: Optional[str] = None,
+    request_id: str | None = None,
+    agent_id: str | None = None,
+    user_agent: str | None = None,
+    client_ip: str | None = None,
 ) -> None:
     """
     Log an API request with standard fields for aggregation.
-    
+
     Args:
         method: HTTP method
         path: Request path
@@ -267,7 +263,7 @@ def log_agent_event(
 ) -> None:
     """
     Log an agent event with standard fields.
-    
+
     Args:
         agent_id: Agent identifier
         event_type: Type of event (e.g., 'start', 'stop', 'error', 'message')

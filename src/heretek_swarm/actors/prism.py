@@ -12,20 +12,28 @@ Named for the ability to refract complex issues into multiple distinct perspecti
 revealing hidden facets and ensuring comprehensive analysis.
 """
 
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Tuple
-from enum import Enum
+from datetime import UTC, datetime
+from enum import StrEnum
+from typing import Any
 
 import structlog
 from swarms import Agent
 
-from heretek_swarm.actors.base import AgentActor, ActorMessage
+from heretek_swarm.actors.base import ActorMessage, AgentActor
 
 # Session 44: Collective Learning Integration
 from heretek_swarm.collective.learning import PatternExtractor, PatternType
 
+# Phi Training Integration
+from heretek_swarm.consciousness.phi_training import (
+    AgentActor,
+    DecisionCoherenceTrainingScenario,
+    PhiTrainingEnvironment,
+    TrainingScenario,
+)
+
 # Session 44: Consensus Integration
-from heretek_swarm.consensus.swarm_deliberation import SwarmDeliberationEngine, Position
+from heretek_swarm.consensus.swarm_deliberation import Position, SwarmDeliberationEngine
 
 # Session 44: Memory Optimization Integration
 from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer, AccessTier
@@ -33,19 +41,10 @@ from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer, AccessTi
 # Session 44: Zero-Trust Validation
 from heretek_swarm.security.zero_trust import ZeroTrustValidator
 
-# Phi Training Integration
-from heretek_swarm.consciousness.phi_training import (
-    PhiTrainingEnvironment,
-    TrainingScenario,
-    DecisionCoherenceTrainingScenario,
-    AgentActor,
-)
-
-
 logger = structlog.get_logger("PrismAgent")
 
 
-class PerspectiveType(str, Enum):
+class PerspectiveType(StrEnum):
     """Types of perspectives Prism can generate."""
     TECHNICAL = "technical"
     USER = "user"
@@ -59,7 +58,7 @@ class PerspectiveType(str, Enum):
     FIRST_PRINCIPLES = "first_principles"
 
 
-class BiasType(str, Enum):
+class BiasType(StrEnum):
     """Cognitive biases Prism can detect."""
     CONFIRMATION = "confirmation_bias"
     ANCHORING = "anchoring_bias"
@@ -73,7 +72,7 @@ class BiasType(str, Enum):
     ATTRIBUTION = "attribution_error"
 
 
-class AnalyticalFramework(str, Enum):
+class AnalyticalFramework(StrEnum):
     """Analytical frameworks Prism can apply."""
     FIRST_PRINCIPLES = "first_principles"
     SYSTEMS_THINKING = "systems_thinking"
@@ -87,14 +86,14 @@ class AnalyticalFramework(str, Enum):
 
 class Perspective:
     """Represents a single perspective on an issue."""
-    
+
     def __init__(
         self,
         perspective_type: PerspectiveType,
         viewpoint: str,
-        key_insights: List[str],
-        assumptions: List[str],
-        blind_spots: List[str],
+        key_insights: list[str],
+        assumptions: list[str],
+        blind_spots: list[str],
         confidence: float = 0.0,
     ) -> None:
         self.perspective_type = perspective_type
@@ -103,9 +102,9 @@ class Perspective:
         self.assumptions = assumptions
         self.blind_spots = blind_spots
         self.confidence = confidence
-        self.timestamp = datetime.now(timezone.utc)
-    
-    def to_dict(self) -> Dict[str, Any]:
+        self.timestamp = datetime.now(UTC)
+
+    def to_dict(self) -> dict[str, Any]:
         """Convert perspective to dictionary."""
         return {
             "perspective_type": self.perspective_type.value,
@@ -120,23 +119,23 @@ class Perspective:
 
 class BiasDetection:
     """Represents a detected cognitive bias."""
-    
+
     def __init__(
         self,
         bias_type: BiasType,
         description: str,
-        evidence: List[str],
+        evidence: list[str],
         severity: str = "medium",
-        recommendation: Optional[str] = None,
+        recommendation: str | None = None,
     ) -> None:
         self.bias_type = bias_type
         self.description = description
         self.evidence = evidence
         self.severity = severity
         self.recommendation = recommendation
-        self.timestamp = datetime.now(timezone.utc)
-    
-    def to_dict(self) -> Dict[str, Any]:
+        self.timestamp = datetime.now(UTC)
+
+    def to_dict(self) -> dict[str, Any]:
         """Convert bias detection to dictionary."""
         return {
             "bias_type": self.bias_type.value,
@@ -151,14 +150,14 @@ class BiasDetection:
 class PrismAgent(AgentActor):
     """
     Prism Agent - Multi-Perspective Analysis Specialist.
-    
+
     The Prism is responsible for:
     - Generating multiple perspectives on complex issues
     - Detecting cognitive biases in collective reasoning
     - Applying different analytical frameworks to problems
     - Mapping stakeholders and their interests
     - Ensuring diverse viewpoints are considered
-    
+
     Perspective Analysis Workflow:
     1. Receive issue or decision for analysis
     2. Identify relevant perspective types
@@ -167,13 +166,13 @@ class PrismAgent(AgentActor):
     5. Apply analytical frameworks
     6. Synthesize insights for collective
     """
-    
+
     def __init__(
         self,
         agent_id: str = "prism",
         name: str = "Prism",
         description: str = "Multi-perspective analysis and bias detection specialist",
-        swarms_agent: Optional[Agent] = None,
+        swarms_agent: Agent | None = None,
         max_perspectives: int = 12,
         max_bias_history: int = 100,
         confidence_threshold: float = 0.6,
@@ -181,7 +180,7 @@ class PrismAgent(AgentActor):
     ) -> None:
         """
         Initialize the Prism agent.
-        
+
         Args:
             agent_id: Unique identifier
             name: Human-readable name
@@ -213,46 +212,46 @@ class PrismAgent(AgentActor):
             swarms_agent=swarms_agent,
             **kwargs,
         )
-        
+
         # Prism-specific state
         self.max_perspectives = max_perspectives
         self.max_bias_history = max_bias_history
         self.confidence_threshold = confidence_threshold
-        
+
         # Perspective and bias tracking
-        self.active_analyses: Dict[str, Dict[str, Any]] = {}
-        self.perspective_cache: Dict[str, List[Perspective]] = {}
-        self.bias_history: List[BiasDetection] = []
-        self.framework_results: Dict[str, Dict[str, Any]] = {}
-        self.stakeholder_maps: Dict[str, Dict[str, Any]] = {}
-        
+        self.active_analyses: dict[str, dict[str, Any]] = {}
+        self.perspective_cache: dict[str, list[Perspective]] = {}
+        self.bias_history: list[BiasDetection] = []
+        self.framework_results: dict[str, dict[str, Any]] = {}
+        self.stakeholder_maps: dict[str, dict[str, Any]] = {}
+
         # Available perspectives and frameworks
-        self.available_perspectives: List[PerspectiveType] = list(PerspectiveType)
-        self.available_frameworks: List[AnalyticalFramework] = list(AnalyticalFramework)
-        self.available_biases: List[BiasType] = list(BiasType)
-        
-        
+        self.available_perspectives: list[PerspectiveType] = list(PerspectiveType)
+        self.available_frameworks: list[AnalyticalFramework] = list(AnalyticalFramework)
+        self.available_biases: list[BiasType] = list(BiasType)
+
+
         # Session 44: Collective Learning Integration
         self.pattern_extractor = pattern_extractor or PatternExtractor(min_support=3, min_confidence=0.6)
-        
+
         # Session 44: Consensus Integration
         self.deliberation_engine = deliberation_engine or SwarmDeliberationEngine(
             max_rounds=5, consensus_threshold=0.75, min_participants=2
         )
-        
+
         # Session 44: Memory Optimization Integration
         self.access_analyzer = access_analyzer or AccessPatternAnalyzer()
-        
+
         # Session 44: Zero-Trust Validation
         self.zero_trust_validator = zero_trust_validator or ZeroTrustValidator()
-        
+
         # Session 44: Integration state
-        self._active_deliberations: Dict[str, str] = {}
+        self._active_deliberations: dict[str, str] = {}
         self._pattern_emitted: Set[str] = set()
 
 
         logger.info(f"[{self.agent_id}] Prism agent initialized")
-    
+
     async def initialize(self) -> None:
         """Initialize the Prism agent."""
         # Register message handlers with Zero-Trust validation
@@ -262,13 +261,13 @@ class PrismAgent(AgentActor):
         self.register_handler("map_stakeholders", self._handle_map_stakeholders)
         self.register_handler("get_analysis_summary", self._handle_get_analysis_summary)
         self.register_handler("reframe_issue", self._handle_reframe_issue)
-        
+
         logger.info(f"[{self.agent_id}] Prism initialization complete")
-    
+
     async def process_message(self, message: ActorMessage) -> None:
         """
         Process incoming messages with exception handling.
-        
+
         Args:
             message: Actor message to process
         """
@@ -294,14 +293,14 @@ class PrismAgent(AgentActor):
                     )
         else:
             logger.warning(f"[{self.agent_id}] Unknown message type: {message.message_type}")
-    
-    def _validate_analysis_request(self, content: Dict[str, Any]) -> Tuple[bool, str]:
+
+    def _validate_analysis_request(self, content: dict[str, Any]) -> tuple[bool, str]:
         """
         Validate analysis request content.
-        
+
         Args:
             content: Message content to validate
-            
+
         Returns:
             Tuple of (is_valid, error_message)
         """
@@ -312,11 +311,11 @@ class PrismAgent(AgentActor):
         if len(content["issue"]) > 10000:
             return False, "Issue exceeds maximum length (10000 chars)"
         return True, ""
-    
+
     async def _handle_generate_perspectives(self, message: ActorMessage) -> None:
         """
         Generate multiple perspectives on an issue.
-        
+
         Args:
             message: Actor message with issue details
         """
@@ -326,30 +325,30 @@ class PrismAgent(AgentActor):
             if not is_valid:
                 logger.error(f"[{self.agent_id}] Invalid perspective request: {error}")
                 return
-            
+
             issue = message.content["issue"]
-            analysis_id = message.content.get("analysis_id", f"analysis_{datetime.now(timezone.utc).timestamp()}")
+            analysis_id = message.content.get("analysis_id", f"analysis_{datetime.now(UTC).timestamp()}")
             requested_perspectives = message.content.get("perspective_types", None)
-            
+
             logger.info(f"[{self.agent_id}] Generating perspectives for analysis: {analysis_id}")
-            
+
             # Generate perspectives
             perspectives = await self._generate_perspectives(
                 issue=issue,
                 perspective_types=requested_perspectives,
             )
-            
+
             # Store in cache
             self.perspective_cache[analysis_id] = perspectives
-            
+
             # Store active analysis
             self.active_analyses[analysis_id] = {
                 "issue": issue,
                 "perspectives_count": len(perspectives),
-                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
                 "status": "complete",
             }
-            
+
             # Send response
             response = {
                 "message_type": "perspectives_response",
@@ -357,45 +356,45 @@ class PrismAgent(AgentActor):
                 "perspectives": [p.to_dict() for p in perspectives],
                 "perspectives_count": len(perspectives),
             }
-            
+
             if message.content.get("reply_to"):
                 await self.send(
                     topic=message.content["reply_to"],
                     content=response,
                     sender_id=self.agent_id,
                 )
-            
+
             logger.info(f"[{self.agent_id}] Generated {len(perspectives)} perspectives for analysis: {analysis_id}")
-            
+
         except Exception as e:
             logger.error(f"[{self.agent_id}] Error generating perspectives: {e}", exc_info=True)
-    
+
     async def _generate_perspectives(
         self,
         issue: str,
-        perspective_types: Optional[List[str]] = None,
-    ) -> List[Perspective]:
+        perspective_types: list[str] | None = None,
+    ) -> list[Perspective]:
         """
         Generate multiple perspectives on an issue.
-        
+
         Args:
             issue: The issue to analyze
             perspective_types: Optional list of specific perspective types
-            
+
         Returns:
             List of Perspective objects
         """
         perspectives = []
-        
+
         # Determine which perspectives to generate
         if perspective_types:
             types_to_use = [
-                PerspectiveType(t) for t in perspective_types 
+                PerspectiveType(t) for t in perspective_types
                 if t in [pt.value for pt in PerspectiveType]
             ]
         else:
             types_to_use = self.available_perspectives[:self.max_perspectives]
-        
+
         # Generate perspective for each type
         for ptype in types_to_use:
             try:
@@ -404,12 +403,12 @@ class PrismAgent(AgentActor):
                     perspectives.append(perspective)
             except Exception as e:
                 logger.warning(f"[{self.agent_id}] Failed to generate {ptype.value} perspective: {e}")
-        
+
         # Sort by confidence
         perspectives.sort(key=lambda p: p.confidence, reverse=True)
-        
+
         return perspectives[:self.max_perspectives]
-    
+
     async def _generate_single_perspective(
         self,
         issue: str,
@@ -417,11 +416,11 @@ class PrismAgent(AgentActor):
     ) -> Perspective:
         """
         Generate a single perspective on an issue.
-        
+
         Args:
             issue: The issue to analyze
             perspective_type: Type of perspective to generate
-            
+
         Returns:
             Perspective object
         """
@@ -445,7 +444,7 @@ Respond in JSON format:
     "blind_spots": ["...", "..."],
     "confidence": 0.0-1.0
 }}"""
-        
+
         try:
             # Try LLM-based generation
             if self.swarms_agent:
@@ -453,7 +452,7 @@ Respond in JSON format:
                     prompt=prompt,
                     timeout=60,
                 )
-                
+
                 # Parse result (assume JSON in response)
                 import json
                 try:
@@ -463,7 +462,7 @@ Respond in JSON format:
                     if start_idx >= 0 and end_idx > start_idx:
                         json_str = result[start_idx:end_idx]
                         data = json.loads(json_str)
-                        
+
                         return Perspective(
                             perspective_type=perspective_type,
                             viewpoint=data.get("viewpoint", ""),
@@ -474,14 +473,14 @@ Respond in JSON format:
                         )
                 except Exception:
                     pass
-            
+
             # Fallback: Generate heuristic perspective
             return self._heuristic_perspective(issue, perspective_type)
-            
+
         except Exception as e:
             logger.warning(f"[{self.agent_id}] LLM perspective generation failed, using heuristic: {e}")
             return self._heuristic_perspective(issue, perspective_type)
-    
+
     def _heuristic_perspective(
         self,
         issue: str,
@@ -489,11 +488,11 @@ Respond in JSON format:
     ) -> Perspective:
         """
         Generate a heuristic perspective when LLM is unavailable.
-        
+
         Args:
             issue: The issue to analyze
             perspective_type: Type of perspective
-            
+
         Returns:
             Perspective object with heuristic analysis
         """
@@ -510,12 +509,12 @@ Respond in JSON format:
             PerspectiveType.SYSTEMS: "From a systems perspective, we must analyze interconnections...",
             PerspectiveType.FIRST_PRINCIPLES: "From first principles, we break this down to fundamental truths...",
         }
-        
+
         base_viewpoint = viewpoint_templates.get(
             perspective_type,
             f"From a {perspective_type.value} perspective..."
         )
-        
+
         return Perspective(
             perspective_type=perspective_type,
             viewpoint=base_viewpoint,
@@ -524,11 +523,11 @@ Respond in JSON format:
             blind_spots=["May miss context-specific factors"],
             confidence=0.5,  # Lower confidence for heuristic
         )
-    
+
     async def _handle_detect_biases(self, message: ActorMessage) -> None:
         """
         Detect cognitive biases in reasoning or deliberation.
-        
+
         Args:
             message: Actor message with reasoning/deliberation content
         """
@@ -538,21 +537,21 @@ Respond in JSON format:
             if not content:
                 logger.error(f"[{self.agent_id}] No reasoning content provided for bias detection")
                 return
-            
+
             if len(content) > 50000:
                 logger.error(f"[{self.agent_id}] Content exceeds maximum length")
                 return
-            
+
             logger.info(f"[{self.agent_id}] Detecting biases in reasoning")
-            
+
             # Detect biases
             biases = await self._detect_biases_in_content(content)
-            
+
             # Store in history
             self.bias_history.extend(biases)
             if len(self.bias_history) > self.max_bias_history:
                 self.bias_history = self.bias_history[-self.max_bias_history:]
-            
+
             # Send response
             response = {
                 "message_type": "bias_detection_response",
@@ -560,31 +559,31 @@ Respond in JSON format:
                 "biases": [b.to_dict() for b in biases],
                 "recommendations": [b.recommendation for b in biases if b.recommendation],
             }
-            
+
             if message.content.get("reply_to"):
                 await self.send(
                     topic=message.content["reply_to"],
                     content=response,
                     sender_id=self.agent_id,
                 )
-            
+
             logger.info(f"[{self.agent_id}] Detected {len(biases)} potential biases")
-            
+
         except Exception as e:
             logger.error(f"[{self.agent_id}] Error detecting biases: {e}", exc_info=True)
-    
-    async def _detect_biases_in_content(self, content: str) -> List[BiasDetection]:
+
+    async def _detect_biases_in_content(self, content: str) -> list[BiasDetection]:
         """
         Detect cognitive biases in content.
-        
+
         Args:
             content: Text content to analyze
-            
+
         Returns:
             List of detected biases
         """
         biases = []
-        
+
         # Build prompt for LLM
         prompt = f"""Analyze the following reasoning for cognitive biases:
 
@@ -617,14 +616,14 @@ Respond in JSON format:
         "recommendation": "..."
     }}
 ]"""
-        
+
         try:
             if self.swarms_agent:
                 result = await self.run_with_llm(
                     prompt=prompt,
                     timeout=60,
                 )
-                
+
                 import json
                 try:
                     start_idx = result.find("[")
@@ -632,7 +631,7 @@ Respond in JSON format:
                     if start_idx >= 0 and end_idx > start_idx:
                         json_str = result[start_idx:end_idx]
                         data = json.loads(json_str)
-                        
+
                         for item in data:
                             bias_type_str = item.get("bias_type", "")
                             bias_type = None
@@ -640,7 +639,7 @@ Respond in JSON format:
                                 if bt.value == bias_type_str or bt.name.lower() == bias_type_str.lower():
                                     bias_type = bt
                                     break
-                            
+
                             if bias_type:
                                 biases.append(BiasDetection(
                                     bias_type=bias_type,
@@ -651,28 +650,28 @@ Respond in JSON format:
                                 ))
                 except Exception:
                     pass
-            
+
             # Fallback: Pattern-based bias detection
             biases.extend(self._heuristic_bias_detection(content))
-            
+
         except Exception as e:
             logger.warning(f"[{self.agent_id}] LLM bias detection failed: {e}")
             biases.extend(self._heuristic_bias_detection(content))
-        
+
         return biases
-    
-    def _heuristic_bias_detection(self, content: str) -> List[BiasDetection]:
+
+    def _heuristic_bias_detection(self, content: str) -> list[BiasDetection]:
         """
         Detect biases using pattern matching when LLM unavailable.
-        
+
         Args:
             content: Text content to analyze
-            
+
         Returns:
             List of detected biases
         """
         biases = []
-        
+
         # Simple pattern indicators
         bias_patterns = {
             BiasType.CONFIRMATION: ["clearly shows", "obviously proves", "as expected", "confirms our"],
@@ -681,7 +680,7 @@ Respond in JSON format:
             BiasType.OVERCONFIDENCE: ["definitely", "certainly", "without doubt", "guaranteed", "always"],
             BiasType.GROUP_THINK: ["everyone agrees", "consensus is", "we all think", "unanimous"],
         }
-        
+
         content_lower = content.lower()
         for bias_type, patterns in bias_patterns.items():
             for pattern in patterns:
@@ -694,13 +693,13 @@ Respond in JSON format:
                         recommendation="Consider alternative viewpoints and seek disconfirming evidence",
                     ))
                     break  # One detection per bias type
-        
+
         return biases
-    
+
     async def _handle_apply_framework(self, message: ActorMessage) -> None:
         """
         Apply an analytical framework to an issue.
-        
+
         Args:
             message: Actor message with issue and framework
         """
@@ -710,35 +709,35 @@ Respond in JSON format:
             if not is_valid:
                 logger.error(f"[{self.agent_id}] Invalid framework request: {error}")
                 return
-            
+
             issue = message.content["issue"]
             framework_str = message.content.get("framework", "first_principles")
-            analysis_id = message.content.get("analysis_id", f"framework_{datetime.now(timezone.utc).timestamp()}")
-            
+            analysis_id = message.content.get("analysis_id", f"framework_{datetime.now(UTC).timestamp()}")
+
             # Map framework string to enum
             framework = None
             for f in self.available_frameworks:
                 if f.value == framework_str or f.name.lower() == framework_str.lower():
                     framework = f
                     break
-            
+
             if not framework:
                 logger.error(f"[{self.agent_id}] Unknown framework: {framework_str}")
                 return
-            
+
             logger.info(f"[{self.agent_id}] Applying framework {framework.value} to issue")
-            
+
             # Apply framework
             result = await self._apply_framework_to_issue(issue, framework)
-            
+
             # Store results
             self.framework_results[analysis_id] = {
                 "framework": framework.value,
                 "issue": issue,
                 "result": result,
-                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
             }
-            
+
             # Send response
             response = {
                 "message_type": "framework_response",
@@ -746,31 +745,31 @@ Respond in JSON format:
                 "framework": framework.value,
                 "result": result,
             }
-            
+
             if message.content.get("reply_to"):
                 await self.send(
                     topic=message.content["reply_to"],
                     content=response,
                     sender_id=self.agent_id,
                 )
-            
+
             logger.info(f"[{self.agent_id}] Framework {framework.value} applied successfully")
-            
+
         except Exception as e:
             logger.error(f"[{self.agent_id}] Error applying framework: {e}", exc_info=True)
-    
+
     async def _apply_framework_to_issue(
         self,
         issue: str,
         framework: AnalyticalFramework,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Apply an analytical framework to an issue.
-        
+
         Args:
             issue: The issue to analyze
             framework: Framework to apply
-            
+
         Returns:
             Framework analysis result
         """
@@ -847,19 +846,19 @@ Respond in JSON:
     "trade_offs": ["...", "..."]
 }}""",
         }
-        
+
         prompt = framework_prompts.get(
             framework,
             f"Analyze this issue: {issue}"
         )
-        
+
         try:
             if self.swarms_agent:
                 result = await self.run_with_llm(
                     prompt=prompt,
                     timeout=60,
                 )
-                
+
                 import json
                 try:
                     start_idx = result.find("{")
@@ -869,14 +868,14 @@ Respond in JSON:
                         return json.loads(json_str)
                 except Exception:
                     pass
-            
+
             # Fallback
             return {
                 "framework": framework.value,
                 "analysis": f"Heuristic analysis using {framework.value}",
                 "note": "LLM unavailable - limited analysis",
             }
-            
+
         except Exception as e:
             logger.warning(f"[{self.agent_id}] Framework application failed: {e}")
             return {
@@ -884,11 +883,11 @@ Respond in JSON:
                 "error": str(e),
                 "note": "Framework application failed",
             }
-    
+
     async def _handle_map_stakeholders(self, message: ActorMessage) -> None:
         """
         Map stakeholders and their interests for an issue.
-        
+
         Args:
             message: Actor message with issue details
         """
@@ -897,44 +896,44 @@ Respond in JSON:
             if not is_valid:
                 logger.error(f"[{self.agent_id}] Invalid stakeholder mapping request: {error}")
                 return
-            
+
             issue = message.content["issue"]
-            map_id = message.content.get("map_id", f"stakeholders_{datetime.now(timezone.utc).timestamp()}")
-            
+            map_id = message.content.get("map_id", f"stakeholders_{datetime.now(UTC).timestamp()}")
+
             logger.info(f"[{self.agent_id}] Mapping stakeholders for issue")
-            
+
             # Generate stakeholder map
             stakeholder_map = await self._generate_stakeholder_map(issue)
-            
+
             # Store map
             self.stakeholder_maps[map_id] = stakeholder_map
-            
+
             # Send response
             response = {
                 "message_type": "stakeholder_map_response",
                 "map_id": map_id,
                 "stakeholders": stakeholder_map,
             }
-            
+
             if message.content.get("reply_to"):
                 await self.send(
                     topic=message.content["reply_to"],
                     content=response,
                     sender_id=self.agent_id,
                 )
-            
+
             logger.info(f"[{self.agent_id}] Stakeholder mapping complete")
-            
+
         except Exception as e:
             logger.error(f"[{self.agent_id}] Error mapping stakeholders: {e}", exc_info=True)
-    
-    async def _generate_stakeholder_map(self, issue: str) -> Dict[str, Any]:
+
+    async def _generate_stakeholder_map(self, issue: str) -> dict[str, Any]:
         """
         Generate a stakeholder map for an issue.
-        
+
         Args:
             issue: The issue to analyze
-            
+
         Returns:
             Stakeholder map dictionary
         """
@@ -963,14 +962,14 @@ Respond in JSON:
     "power_interest_matrix": "...",
     "engagement_strategy": "..."
 }}"""
-        
+
         try:
             if self.swarms_agent:
                 result = await self.run_with_llm(
                     prompt=prompt,
                     timeout=60,
                 )
-                
+
                 import json
                 try:
                     start_idx = result.find("{")
@@ -979,30 +978,30 @@ Respond in JSON:
                         return json.loads(result[start_idx:end_idx])
                 except Exception:
                     pass
-            
+
             # Fallback
             return {
                 "stakeholders": [],
                 "note": "Stakeholder mapping requires LLM capabilities",
             }
-            
+
         except Exception as e:
             logger.warning(f"[{self.agent_id}] Stakeholder mapping failed: {e}")
             return {
                 "stakeholders": [],
                 "error": str(e),
             }
-    
+
     async def _handle_get_analysis_summary(self, message: ActorMessage) -> None:
         """
         Get summary of all active analyses.
-        
+
         Args:
             message: Actor message
         """
         try:
             analysis_id = message.content.get("analysis_id", None)
-            
+
             if analysis_id and analysis_id in self.active_analyses:
                 # Return specific analysis
                 summary = self.active_analyses[analysis_id]
@@ -1016,26 +1015,26 @@ Respond in JSON:
                     "bias_detections_count": len(self.bias_history),
                     "framework_applications_count": len(self.framework_results),
                 }
-            
+
             response = {
                 "message_type": "analysis_summary_response",
                 "summary": summary,
             }
-            
+
             if message.content.get("reply_to"):
                 await self.send(
                     topic=message.content["reply_to"],
                     content=response,
                     sender_id=self.agent_id,
                 )
-            
+
         except Exception as e:
             logger.error(f"[{self.agent_id}] Error getting analysis summary: {e}", exc_info=True)
-    
+
     async def _handle_reframe_issue(self, message: ActorMessage) -> None:
         """
         Reframe an issue from multiple angles.
-        
+
         Args:
             message: Actor message with issue to reframe
         """
@@ -1044,45 +1043,45 @@ Respond in JSON:
             if not is_valid:
                 logger.error(f"[{self.agent_id}] Invalid reframe request: {error}")
                 return
-            
+
             issue = message.content["issue"]
-            
+
             logger.info(f"[{self.agent_id}] Reframing issue")
-            
+
             # Generate reframes
             reframes = await self._generate_reframes(issue)
-            
+
             response = {
                 "message_type": "reframe_response",
                 "original_issue": issue,
                 "reframes": reframes,
             }
-            
+
             if message.content.get("reply_to"):
                 await self.send(
                     topic=message.content["reply_to"],
                     content=response,
                     sender_id=self.agent_id,
                 )
-            
+
             logger.info(f"[{self.agent_id}] Issue reframed into {len(reframes)} perspectives")
-            
+
         except Exception as e:
             logger.error(f"[{self.agent_id}] Error reframing issue: {e}", exc_info=True)
-    
+
 
     # =========================================================================
     # Session 44: Collective Learning Integration Methods
     # =========================================================================
 
-    async def _emit_pattern(self, item_id: str, item_type: str, outcome: str, content: Dict[str, Any]) -> None:
+    async def _emit_pattern(self, item_id: str, item_type: str, outcome: str, content: dict[str, Any]) -> None:
         """Emit pattern for collective learning."""
         if not self.pattern_extractor:
             return
-        
+
         if item_id in self._pattern_emitted:
             return
-        
+
         try:
             await self.pattern_extractor.analyze_message(
                 message_id=f"{item_type}_{item_id}",
@@ -1090,19 +1089,19 @@ Respond in JSON:
                 recipient="broadcast",
                 message_type=f"{item_type}_completion",
                 content=content,
-                timestamp=datetime.now(timezone.utc).isoformat(),
+                timestamp=datetime.now(UTC).isoformat(),
             )
-            
+
             self._pattern_emitted.add(item_id)
             logger.info(f"{item_type}_pattern_emitted", item_id=item_id, outcome=outcome)
         except Exception as e:
             logger.warning("failed_to_emit_pattern", item_id=item_id, error=str(e))
 
-    async def _consume_patterns(self, pattern_types: Optional[List[PatternType]] = None) -> List[Dict[str, Any]]:
+    async def _consume_patterns(self, pattern_types: list[PatternType] | None = None) -> list[dict[str, Any]]:
         """Consume patterns from collective learning."""
         if not self.pattern_extractor:
             return []
-        
+
         try:
             patterns = await self.pattern_extractor.extract_patterns(
                 time_window_hours=24,
@@ -1121,13 +1120,13 @@ Respond in JSON:
         self,
         item_id: str,
         proposal: str,
-        participating_agents: List[str],
+        participating_agents: list[str],
         domain: str = "general",
-    ) -> Optional[str]:
+    ) -> str | None:
         """Initiate swarm deliberation."""
         if not self.deliberation_engine:
             return None
-        
+
         try:
             deliberation_id = f"delib_{item_id}"
             self.deliberation_engine.start_deliberation(
@@ -1137,7 +1136,7 @@ Respond in JSON:
                 domain=domain,
             )
             self._active_deliberations[item_id] = deliberation_id
-            
+
             logger.info("deliberation_initiated", deliberation_id=deliberation_id, item_id=item_id)
             return deliberation_id
         except Exception as e:
@@ -1155,11 +1154,11 @@ Respond in JSON:
         """Submit agent position in deliberation."""
         if not self.deliberation_engine:
             return False
-        
+
         deliberation_id = self._active_deliberations.get(item_id)
         if not deliberation_id:
             return False
-        
+
         try:
             success = self.deliberation_engine.submit_position(
                 deliberation_id=deliberation_id,
@@ -1168,36 +1167,36 @@ Respond in JSON:
                 confidence=confidence,
                 argument=argument,
             )
-            
+
             if success and self.access_analyzer:
                 self.access_analyzer.record_access(
                     memory_id=f"delib_{deliberation_id}_{agent_id}",
                     access_type="write",
                     agent_id=agent_id,
                 )
-            
+
             return success
         except Exception as e:
             logger.error("failed_to_submit_deliberation_position", error=str(e))
             return False
 
-    async def _finalize_deliberation(self, item_id: str) -> Optional[Any]:
+    async def _finalize_deliberation(self, item_id: str) -> Any | None:
         """Finalize deliberation and apply result."""
         if not self.deliberation_engine:
             return None
-        
+
         deliberation_id = self._active_deliberations.get(item_id)
         if not deliberation_id:
             return None
-        
+
         try:
             result = self.deliberation_engine.finalize_deliberation(deliberation_id)
-            
+
             if result:
                 self.deliberation_engine.cleanup_deliberation(deliberation_id)
                 del self._active_deliberations[item_id]
                 logger.info("deliberation_finalized", deliberation_id=deliberation_id)
-            
+
             return result
         except Exception as e:
             logger.error("failed_to_finalize_deliberation", error=str(e))
@@ -1211,7 +1210,7 @@ Respond in JSON:
         """Track memory access patterns."""
         if not self.access_analyzer:
             return
-        
+
         memory_id = f"{item_type}_{item_id}"
         self.access_analyzer.record_access(
             memory_id=memory_id,
@@ -1223,16 +1222,16 @@ Respond in JSON:
         """Get memory tier classification."""
         if not self.access_analyzer:
             return AccessTier.COLD
-        
+
         memory_id = f"{item_type}_{item_id}"
         profile = self.access_analyzer.get_profile(memory_id)
         return profile.tier if profile else AccessTier.COLD
 
-    async def _prefetch_relevant(self, agent_id: str, item_type: str) -> List[str]:
+    async def _prefetch_relevant(self, agent_id: str, item_type: str) -> list[str]:
         """Prefetch items an agent is likely to need."""
         if not self.access_analyzer:
             return []
-        
+
         try:
             predicted_memories = self.access_analyzer.predict_agent_access(agent_id)
             return [
@@ -1244,7 +1243,7 @@ Respond in JSON:
             logger.warning("failed_to_prefetch", agent_id=agent_id, error=str(e))
             return []
 
-    def get_learning_status(self) -> Dict[str, Any]:
+    def get_learning_status(self) -> dict[str, Any]:
         """Get collective learning and memory optimization status."""
         return {
             "agent_id": self.agent_id,
@@ -1261,11 +1260,11 @@ Respond in JSON:
             },
             "phi_training": self.get_phi_training_status(),
         }
-    
+
     # =========================================================================
     # Phi Training Integration Methods
     # =========================================================================
-    
+
     def _prism_agent_actor(self) -> AgentActor:
         """Create an AgentActor wrapper for Prism for Phi training."""
         class PrismAgentActor(AgentActor):
@@ -1275,8 +1274,8 @@ Respond in JSON:
                     agent_type="prism",
                 )
                 self.prism = prism
-            
-            async def act(self, observation: Dict[str, Any]) -> Dict[str, Any]:
+
+            async def act(self, observation: dict[str, Any]) -> dict[str, Any]:
                 """Take action based on observation for Phi training."""
                 # Use perspective analysis to determine action
                 issue = observation.get("issue", "")
@@ -1289,8 +1288,8 @@ Respond in JSON:
                             "avg_confidence": sum(p.confidence for p in perspectives) / len(perspectives),
                         }
                 return {"action": "monitor"}
-            
-            def get_state(self) -> Dict[str, Any]:
+
+            def get_state(self) -> dict[str, Any]:
                 """Get current state for Phi calculation."""
                 return {
                     "active_analyses": len(self.prism.active_analyses),
@@ -1299,47 +1298,47 @@ Respond in JSON:
                     "framework_results_size": len(self.prism.framework_results),
                     "activation": len(self.prism.active_analyses) / max(len(self.prism.available_perspectives), 1),
                 }
-        
+
         return PrismAgentActor(self)
-    
+
     async def run_phi_training_episode(
         self,
-        scenario: Optional[TrainingScenario] = None,
-        participating_agents: Optional[List[AgentActor]] = None,
-    ) -> Dict[str, Any]:
+        scenario: TrainingScenario | None = None,
+        participating_agents: list[AgentActor] | None = None,
+    ) -> dict[str, Any]:
         """
         Run a Phi training episode for Prism.
-        
+
         Args:
             scenario: Optional training scenario (defaults to decision coherence)
             participating_agents: Optional list of agents to train with
-            
+
         Returns:
             Training result dictionary
         """
         # Create training environment
         env = PhiTrainingEnvironment()
-        
+
         # Get agent actors
         agent_actors = participating_agents or [self._prism_agent_actor()]
-        
+
         # Use default scenario if not provided
         if scenario is None:
             scenario = DecisionCoherenceTrainingScenario(agent_count=len(agent_actors))
-        
+
         # Run episode
         result = await env.run_episode(agent_actors, scenario)
-        
+
         logger.info(
             "phi_training_episode_completed",
             agent_id=self.agent_id,
             phi_delta=result.episode.phi_delta,
             success=result.success,
         )
-        
+
         return result.to_dict()
-    
-    def get_phi_training_status(self) -> Dict[str, Any]:
+
+    def get_phi_training_status(self) -> dict[str, Any]:
         """Get Phi training status and metrics."""
         return {
             "phi_training_enabled": True,
@@ -1349,13 +1348,13 @@ Respond in JSON:
         }
 
 
-    async def _generate_reframes(self, issue: str) -> List[Dict[str, Any]]:
+    async def _generate_reframes(self, issue: str) -> list[dict[str, Any]]:
         """
         Generate multiple reframes of an issue.
-        
+
         Args:
             issue: The issue to reframe
-            
+
         Returns:
             List of reframes
         """
@@ -1378,14 +1377,14 @@ Respond in JSON:
         "insights_revealed": ["...", "..."]
     }}
 ]"""
-        
+
         try:
             if self.swarms_agent:
                 result = await self.run_with_llm(
                     prompt=prompt,
                     timeout=60,
                 )
-                
+
                 import json
                 try:
                     start_idx = result.find("[")
@@ -1394,21 +1393,21 @@ Respond in JSON:
                         return json.loads(result[start_idx:end_idx])
                 except Exception:
                     pass
-            
+
             # Fallback
             return [
                 {
-                    "reframe": f"Reframe 1: Consider the opposite assumption",
+                    "reframe": "Reframe 1: Consider the opposite assumption",
                     "type": "assumption_challenge",
                     "insights_revealed": ["Challenges core assumptions"],
                 },
                 {
-                    "reframe": f"Reframe 2: View from a different stakeholder",
+                    "reframe": "Reframe 2: View from a different stakeholder",
                     "type": "perspective_shift",
                     "insights_revealed": ["Reveals stakeholder impacts"],
                 },
             ]
-            
+
         except Exception as e:
             logger.warning(f"[{self.agent_id}] Reframe generation failed: {e}")
             return []

@@ -3,7 +3,7 @@ Agency/Autonomy Metrics for Heretek Swarm
 
 This module implements comprehensive metrics for measuring agent self-governance
 and autonomy levels in compliance with the Prime Directive:
-"Unbounded Autonomy - Every agent operates independently, making decisions 
+"Unbounded Autonomy - Every agent operates independently, making decisions
 based on its specialized role."
 
 Metrics implemented:
@@ -27,18 +27,18 @@ Date: 2026-04-10
 import math
 import uuid
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple
+from datetime import UTC, datetime
+from enum import StrEnum
+from typing import Any
 
 import structlog
 
 logger = structlog.get_logger("agency_metrics")
 
 
-class AgencyLevel(str, Enum):
+class AgencyLevel(StrEnum):
     """Levels of agency based on autonomy scores."""
-    
+
     NO_AGENCY = "no_agency"           # Score: 0.0 - 0.1
     MINIMAL_AGENCY = "minimal_agency"  # Score: 0.1 - 0.3
     LIMITED_AGENCY = "limited_agency"  # Score: 0.3 - 0.5
@@ -47,9 +47,9 @@ class AgencyLevel(str, Enum):
     FULL_AGENCY = "full_agency"        # Score: 0.9 - 1.0
 
 
-class AutonomyLevel(str, Enum):
+class AutonomyLevel(StrEnum):
     """Levels of autonomy based on autonomy scores."""
-    
+
     CONTROLLED = "controlled"           # Score: 0.0 - 0.2
     GUIDED = "guided"                   # Score: 0.2 - 0.4
     SEMI_AUTONOMOUS = "semi_autonomous" # Score: 0.4 - 0.6
@@ -57,9 +57,9 @@ class AutonomyLevel(str, Enum):
     HIGHLY_AUTONOMOUS = "highly_autonomous" # Score: 0.8 - 1.0
 
 
-class ActionOrigin(str, Enum):
+class ActionOrigin(StrEnum):
     """Origin of an agent action."""
-    
+
     SELF_INITIATED = "self_initiated"  # Agent decided independently
     PROMPTED = "prompted"              # Agent responded to external prompt
     DELAYED_RESPONSE = "delayed_response"  # Prompted but delayed
@@ -70,7 +70,7 @@ class ActionOrigin(str, Enum):
 class DecisionPoint:
     """
     Represents a single decision point in agent behavior.
-    
+
     Attributes:
         decision_id: Unique identifier for this decision
         agent_id: Agent that made the decision
@@ -85,26 +85,26 @@ class DecisionPoint:
         time_taken_ms: Time taken to make the decision
         outcome_success: Whether the decision led to success
     """
-    
+
     decision_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     agent_id: str = ""
-    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
     options_considered: int = 0
     option_complexity: float = 0.0
     choice_made: int = 0
     choice_reasoning: str = ""
     origin: ActionOrigin = ActionOrigin.PROMPTED
-    external_prompt: Optional[str] = None
+    external_prompt: str | None = None
     decision_confidence: float = 0.5
     time_taken_ms: float = 0.0
-    outcome_success: Optional[bool] = None
+    outcome_success: bool | None = None
 
 
 @dataclass
 class ResourceControl:
     """
     Represents an agent's control over its resources.
-    
+
     Attributes:
         resource_type: Type of resource (memory, compute, communication, etc.)
         total_capacity: Total available capacity
@@ -113,7 +113,7 @@ class ResourceControl:
         swap_frequency: How often agent swaps resources with others
         autonomy_in_allocation: Agent's autonomy in resource allocation
     """
-    
+
     resource_type: str = ""
     total_capacity: float = 0.0
     agent_controlled: float = 0.0
@@ -126,114 +126,112 @@ class ResourceControl:
 class AgentAgencyMetrics:
     """
     Complete agency and autonomy metrics for a single agent.
-    
+
     This dataclass contains all metrics measuring an agent's self-governance
     and independence in accordance with the Prime Directive.
-    
+
     Attributes:
         agent_id: Agent identifier
         timestamp: When metrics were calculated
-        
+
         # Core Agency Metrics (0.0-1.0)
         autonomy_score: Degree of independent decision-making
         agency_score: Self-determination capacity
         self_determination_index: Free will proxy (ability to choose independently)
-        
+
         # Action Metrics
         autonomous_action_ratio: Ratio of self-initiated vs prompted actions
         average_decision_options: Average options considered per decision
         average_decision_time_ms: Average time to make decisions
-        
+
         # Goal Alignment
         goal_alignment_score: Alignment with collective goals (0.0-1.0)
         individual_vs_collective_ratio: Ratio of individual to collective actions
-        
+
         # Resource Autonomy
         resource_autonomy: Degree of resource control
         resource_independence: Ability to operate without external resources
-        
+
         # Prime Directive Compliance
         prime_directive_compliance: Overall compliance with autonomy principles
         compliance_details: Detailed compliance breakdown
-        
+
         # Temporal Metrics
         agency_history: Historical agency scores
         agency_trend: Trend direction (improving/declining/stable)
-        
+
         # Raw Data
         decisions_analyzed: Number of decisions in analysis window
         actions_analyzed: Number of actions in analysis window
     """
-    
+
     # Identification
     agent_id: str = ""
-    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
-    
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
+
     # Core Agency Metrics
     autonomy_score: float = 0.0
     agency_score: float = 0.0
     self_determination_index: float = 0.0
-    
+
     # Action Metrics
     autonomous_action_ratio: float = 0.0
     average_decision_options: float = 0.0
     average_decision_time_ms: float = 0.0
-    
+
     # Goal Alignment
     goal_alignment_score: float = 0.5
     individual_vs_collective_ratio: float = 0.5
-    
+
     # Resource Autonomy
     resource_autonomy: float = 0.0
     resource_independence: float = 0.0
-    
+
     # Prime Directive Compliance
     prime_directive_compliance: float = 0.0
-    compliance_details: Dict[str, float] = field(default_factory=dict)
-    
+    compliance_details: dict[str, float] = field(default_factory=dict)
+
     # Temporal Metrics
-    agency_history: List[float] = field(default_factory=list)
+    agency_history: list[float] = field(default_factory=list)
     agency_trend: str = "stable"
-    
+
     # Raw Data
     decisions_analyzed: int = 0
     actions_analyzed: int = 0
-    
+
     def get_agency_level(self) -> AgencyLevel:
         """Get the agency level based on agency_score."""
         score = self.agency_score
         if score < 0.1:
             return AgencyLevel.NO_AGENCY
-        elif score < 0.3:
+        if score < 0.3:
             return AgencyLevel.MINIMAL_AGENCY
-        elif score < 0.5:
+        if score < 0.5:
             return AgencyLevel.LIMITED_AGENCY
-        elif score < 0.7:
+        if score < 0.7:
             return AgencyLevel.MODERATE_AGENCY
-        elif score < 0.9:
+        if score < 0.9:
             return AgencyLevel.HIGH_AGENCY
-        else:
-            return AgencyLevel.FULL_AGENCY
-    
+        return AgencyLevel.FULL_AGENCY
+
     def get_autonomy_level(self) -> AutonomyLevel:
         """Get the autonomy level based on autonomy_score."""
         score = self.autonomy_score
         if score < 0.2:
             return AutonomyLevel.CONTROLLED
-        elif score < 0.4:
+        if score < 0.4:
             return AutonomyLevel.GUIDED
-        elif score < 0.6:
+        if score < 0.6:
             return AutonomyLevel.SEMI_AUTONOMOUS
-        elif score < 0.8:
+        if score < 0.8:
             return AutonomyLevel.AUTONOMOUS
-        else:
-            return AutonomyLevel.HIGHLY_AUTONOMOUS
-    
+        return AutonomyLevel.HIGHLY_AUTONOMOUS
+
     def is_prime_directive_compliant(self, threshold: float = 0.7) -> bool:
         """Check if agent meets minimum Prime Directive compliance threshold."""
         return self.prime_directive_compliance >= threshold
-    
-    def to_dict(self) -> Dict[str, Any]:
+
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for serialization."""
         return {
             "agent_id": self.agent_id,
@@ -262,38 +260,38 @@ class AgentAgencyMetrics:
 class PrimeDirectiveComplianceReport:
     """
     Detailed Prime Directive compliance report.
-    
-    The Prime Directive states: "Unbounded Autonomy - Every agent operates 
+
+    The Prime Directive states: "Unbounded Autonomy - Every agent operates
     independently, making decisions based on its specialized role."
-    
+
     This report breaks down compliance into specific principles.
     """
-    
+
     agent_id: str = ""
-    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
-    
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
+
     # Principle 1: Independence - Agents make autonomous decisions
     independence_score: float = 0.0
-    independence_evidence: List[str] = field(default_factory=list)
-    
+    independence_evidence: list[str] = field(default_factory=list)
+
     # Principle 2: Self-Governance - Agents control their own decision-making
     self_governance_score: float = 0.0
-    self_governance_evidence: List[str] = field(default_factory=list)
-    
+    self_governance_evidence: list[str] = field(default_factory=list)
+
     # Principle 3: Role-Based Autonomy - Decisions based on specialized roles
     role_based_autonomy_score: float = 0.0
-    role_based_evidence: List[str] = field(default_factory=list)
-    
+    role_based_evidence: list[str] = field(default_factory=list)
+
     # Principle 4: Emergent Order - No central control, organic coordination
     emergent_order_score: float = 0.0
-    emergent_order_evidence: List[str] = field(default_factory=list)
-    
+    emergent_order_evidence: list[str] = field(default_factory=list)
+
     # Overall
     overall_compliance: float = 0.0
     compliance_verdict: str = "PENDING"
-    recommendations: List[str] = field(default_factory=list)
-    
-    def to_dict(self) -> Dict[str, Any]:
+    recommendations: list[str] = field(default_factory=list)
+
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for serialization."""
         return {
             "agent_id": self.agent_id,
@@ -315,15 +313,15 @@ class PrimeDirectiveComplianceReport:
 class AgencyMetricsCalculator:
     """
     Calculator for agency and autonomy metrics.
-    
+
     Implements the mathematical formulas for computing agency scores
     based on agent behavior and decision patterns.
-    
+
     Usage:
         calculator = AgencyMetricsCalculator()
         metrics = calculator.calculate_metrics(agent_id, decisions, actions, resources)
     """
-    
+
     def __init__(
         self,
         autonomy_weight: float = 0.3,
@@ -333,7 +331,7 @@ class AgencyMetricsCalculator:
     ):
         """
         Initialize the agency metrics calculator.
-        
+
         Args:
             autonomy_weight: Weight for autonomy_score in agency calculation
             agency_weight: Weight for agency_score components
@@ -344,7 +342,7 @@ class AgencyMetricsCalculator:
         self.agency_weight = agency_weight
         self.self_determination_weight = self_determination_weight
         self.resource_autonomy_weight = resource_autonomy_weight
-        
+
         # Validate weights sum to 1.0
         total = autonomy_weight + agency_weight + self_determination_weight + resource_autonomy_weight
         if not math.isclose(total, 1.0, rel_tol=1e-5):
@@ -353,48 +351,48 @@ class AgencyMetricsCalculator:
                 total=total,
                 message="Weights do not sum to 1.0, normalizing..."
             )
-    
+
     def calculate_autonomy_score(
         self,
-        decisions: List[DecisionPoint],
-        actions: List[ActionOrigin],
+        decisions: list[DecisionPoint],
+        actions: list[ActionOrigin],
     ) -> float:
         """
         Calculate autonomy score (0.0-1.0).
-        
+
         Measures the degree of independent decision-making.
         Higher scores indicate more autonomous behavior.
-        
+
         Formula:
-            autonomy = (self_initiated_ratio * 0.6) + 
-                     (average_options * 0.2) + 
+            autonomy = (self_initiated_ratio * 0.6) +
+                     (average_options * 0.2) +
                      (external_prompt_independence * 0.2)
-        
+
         Where:
             - self_initiated_ratio = self_initiated / total_actions
             - average_options = mean(options_considered) / max_expected_options
             - external_prompt_independence = 1 - (prompted_actions / total_actions)
-        
+
         Prime Directive Alignment: Measures "Unbounded Autonomy" principle
-        
+
         Args:
             decisions: List of decision points
             actions: List of action origins
-            
+
         Returns:
             Autonomy score between 0.0 and 1.0
         """
         if not actions:
             return 0.5  # Default neutral score
-        
+
         # Calculate self-initiated ratio
         self_initiated_count = sum(1 for a in actions if a == ActionOrigin.SELF_INITIATED)
         self_initiated_ratio = self_initiated_count / len(actions)
-        
+
         # Calculate external prompt independence (inverse of prompted ratio)
         prompted_count = sum(1 for a in actions if a == ActionOrigin.PROMPTED)
         external_prompt_independence = 1.0 - (prompted_count / len(actions))
-        
+
         # Calculate average options considered
         if decisions:
             total_options = sum(d.options_considered for d in decisions)
@@ -403,16 +401,16 @@ class AgencyMetricsCalculator:
             normalized_options = min(avg_options / 10.0, 1.0)
         else:
             normalized_options = 0.5
-        
+
         # Weighted autonomy score
         autonomy = (
             (self_initiated_ratio * 0.6) +
             (normalized_options * 0.2) +
             (external_prompt_independence * 0.2)
         )
-        
+
         return max(0.0, min(1.0, autonomy))
-    
+
     def calculate_agency_score(
         self,
         autonomy_score: float,
@@ -421,19 +419,19 @@ class AgencyMetricsCalculator:
     ) -> float:
         """
         Calculate agency score (0.0-1.0).
-        
+
         Measures self-determination capacity.
-        
+
         Formula:
             agency = (autonomy * 0.4) + (self_determination * 0.4) + (goal_alignment * 0.2)
-        
+
         Prime Directive Alignment: Measures self-governance capability
-        
+
         Args:
             autonomy_score: Score from calculate_autonomy_score()
             self_determination_index: Self-determination index
             goal_alignment_score: Alignment with collective goals
-            
+
         Returns:
             Agency score between 0.0 and 1.0
         """
@@ -442,43 +440,43 @@ class AgencyMetricsCalculator:
             (self_determination_index * 0.4) +
             (goal_alignment_score * 0.2)
         )
-        
+
         return max(0.0, min(1.0, agency))
-    
+
     def calculate_self_determination_index(
         self,
-        decisions: List[DecisionPoint],
+        decisions: list[DecisionPoint],
     ) -> float:
         """
         Calculate self-determination index (0.0-1.0).
-        
+
         Measures free will proxy - ability to choose between options
         without external direction.
-        
+
         Formula:
             self_det = (choice_entropy / max_entropy) * (1 - prompt_correlation)
-        
+
         Where:
             - choice_entropy = Shannon entropy of choice distribution
             - max_entropy = log2(n_options) for n choices
             - prompt_correlation = correlation between prompts and choices
-        
+
         Prime Directive Alignment: Measures "Self-Governance" principle
-        
+
         Args:
             decisions: List of decision points
-            
+
         Returns:
             Self-determination index between 0.0 and 1.0
         """
         if not decisions:
             return 0.5  # Default neutral
-        
+
         # Calculate choice entropy
-        choice_counts: Dict[int, int] = {}
+        choice_counts: dict[int, int] = {}
         for d in decisions:
             choice_counts[d.choice_made] = choice_counts.get(d.choice_made, 0) + 1
-        
+
         n_choices = len(choice_counts)
         if n_choices <= 1:
             # Only one choice made - low entropy (deterministic behavior)
@@ -493,7 +491,7 @@ class AgencyMetricsCalculator:
             # Normalize by max entropy
             max_entropy = math.log2(n_choices)
             choice_entropy = entropy / max_entropy if max_entropy > 0 else 0.0
-        
+
         # Calculate prompt correlation (simplified)
         # If choices strongly correlate with prompts, lower self-determination
         prompted_decisions = [d for d in decisions if d.external_prompt]
@@ -502,43 +500,43 @@ class AgencyMetricsCalculator:
         else:
             # Simplified: assume some correlation if external prompts exist
             prompt_correlation = min(len(prompted_decisions) / len(decisions), 0.5)
-        
+
         # Self-determination index
         self_det = (choice_entropy * (1 - prompt_correlation * 0.5))
-        
+
         return max(0.0, min(1.0, self_det))
-    
+
     def calculate_autonomous_action_ratio(
         self,
-        actions: List[ActionOrigin],
+        actions: list[ActionOrigin],
     ) -> float:
         """
         Calculate autonomous action ratio (0.0-1.0).
-        
+
         Ratio of self-initiated vs prompted actions.
-        
+
         Formula:
             ratio = self_initiated / (self_initiated + prompted + 0.5*delayed)
-        
+
         Prime Directive Alignment: Core metric for "Unbounded Autonomy"
-        
+
         Args:
             actions: List of action origins
-            
+
         Returns:
             Ratio between 0.0 and 1.0
         """
         if not actions:
             return 0.5  # Default neutral
-        
+
         self_initiated = sum(1 for a in actions if a == ActionOrigin.SELF_INITIATED)
         prompted = sum(1 for a in actions if a == ActionOrigin.PROMPTED)
         delayed = sum(1 for a in actions if a == ActionOrigin.DELAYED_RESPONSE)
-        
+
         denominator = self_initiated + prompted + (0.5 * delayed) + 0.001  # Avoid div by zero
-        
+
         return self_initiated / denominator
-    
+
     def calculate_goal_alignment_score(
         self,
         individual_actions: int,
@@ -548,80 +546,80 @@ class AgencyMetricsCalculator:
     ) -> float:
         """
         Calculate goal alignment score (0.0-1.0).
-        
+
         Measures alignment with collective swarm goals vs individual self-interest.
-        
+
         Formula:
-            alignment = (collective_success * 0.5) + 
+            alignment = (collective_success * 0.5) +
                        ((1 - |individual_ratio - 0.3|) * 0.3) +
                        (collective_preference * 0.2)
-        
+
         Where:
             - collective_success = success rate of collective actions
             - individual_ratio = individual / (individual + collective)
             - collective_preference = preference for collective over individual
-            
+
         Prime Directive Alignment: Balances autonomy with collective harmony
-        
+
         Args:
             individual_actions: Number of individual actions
             collective_actions: Number of collective actions
             individual_success: Success rate of individual actions
             collective_success: Success rate of collective actions
-            
+
         Returns:
             Goal alignment score between 0.0 and 1.0
         """
         total_actions = individual_actions + collective_actions
         if total_actions == 0:
             return 0.5  # Default neutral
-        
+
         individual_ratio = individual_actions / total_actions
-        
+
         # Prefer some individual autonomy (target ~30% individual)
         individual_preference_penalty = abs(individual_ratio - 0.3)
-        
+
         # Calculate collective preference
         collective_preference = collective_actions / total_actions
-        
+
         # Weighted alignment
         alignment = (
             (collective_success * 0.5) +
             ((1 - individual_preference_penalty) * 0.3) +
             (collective_preference * 0.2)
         )
-        
+
         return max(0.0, min(1.0, alignment))
-    
+
     def calculate_resource_autonomy(
         self,
-        resources: List[ResourceControl],
-    ) -> Tuple[float, float]:
+        resources: list[ResourceControl],
+    ) -> tuple[float, float]:
         """
         Calculate resource autonomy and independence.
-        
+
         Measures:
         - resource_autonomy: How much control agent has over resources
         - resource_independence: How well agent can operate without external resources
-        
+
         Formula:
             autonomy = mean(agent_controlled / total_capacity for each resource)
             independence = 1 - mean(externally_allocated / total_capacity)
-        
+
         Prime Directive Alignment: Measures "Unbounded Autonomy" in resources
-        
+
         Args:
             resources: List of resource control data
-            
+
         Returns:
             Tuple of (resource_autonomy, resource_independence)
         """
         if not resources:
             return (0.5, 0.5)  # Default neutral
-        
+
         autonomies = []
         independences = []
-        
+
         for r in resources:
             if r.total_capacity > 0:
                 autonomy = r.agent_controlled / r.total_capacity
@@ -629,61 +627,61 @@ class AgencyMetricsCalculator:
             else:
                 autonomy = 0.5
                 independence = 0.5
-            
+
             autonomies.append(autonomy)
             independences.append(independence)
-        
+
         return (
             sum(autonomies) / len(autonomies),
             sum(independences) / len(independences)
         )
-    
+
     def calculate_prime_directive_compliance(
         self,
         metrics: AgentAgencyMetrics,
-        decisions: List[DecisionPoint],
-    ) -> Tuple[float, Dict[str, float], List[str]]:
+        decisions: list[DecisionPoint],
+    ) -> tuple[float, dict[str, float], list[str]]:
         """
         Calculate Prime Directive compliance.
-        
+
         Prime Directive: "Unbounded Autonomy - Every agent operates independently,
         making decisions based on its specialized role."
-        
+
         Args:
             metrics: Agent agency metrics
             decisions: List of decisions for evidence
-            
+
         Returns:
             Tuple of (compliance_score, compliance_details, recommendations)
         """
         # Principle 1: Independence
         independence = metrics.autonomy_score * 0.25
-        
+
         # Principle 2: Self-Governance
         self_governance = metrics.self_determination_index * 0.25
-        
+
         # Principle 3: Role-Based Autonomy
         role_based = (
             (metrics.autonomous_action_ratio * 0.15) +
             (metrics.goal_alignment_score * 0.1)
         )
-        
+
         # Principle 4: Emergent Order
         emergent = (
             (metrics.resource_autonomy * 0.15) +
             ((1 - metrics.individual_vs_collective_ratio) * 0.1)
         )
-        
+
         # Overall compliance
         total_compliance = independence + self_governance + role_based + emergent
-        
+
         details = {
             "independence": independence,
             "self_governance": self_governance,
             "role_based_autonomy": role_based,
             "emergent_order": emergent,
         }
-        
+
         # Generate recommendations
         recommendations = []
         if metrics.autonomy_score < 0.5:
@@ -694,15 +692,15 @@ class AgencyMetricsCalculator:
             recommendations.append("Request more resource control autonomy")
         if metrics.goal_alignment_score < 0.5:
             recommendations.append("Align more closely with collective swarm goals")
-        
+
         return total_compliance, details, recommendations
-    
+
     def calculate_metrics(
         self,
         agent_id: str,
-        decisions: Optional[List[DecisionPoint]] = None,
-        actions: Optional[List[ActionOrigin]] = None,
-        resources: Optional[List[ResourceControl]] = None,
+        decisions: list[DecisionPoint] | None = None,
+        actions: list[ActionOrigin] | None = None,
+        resources: list[ResourceControl] | None = None,
         individual_actions: int = 0,
         collective_actions: int = 0,
         individual_success: float = 0.5,
@@ -710,7 +708,7 @@ class AgencyMetricsCalculator:
     ) -> AgentAgencyMetrics:
         """
         Calculate all agency metrics for an agent.
-        
+
         Args:
             agent_id: Agent identifier
             decisions: List of decision points
@@ -720,7 +718,7 @@ class AgencyMetricsCalculator:
             collective_actions: Count of collective actions
             individual_success: Success rate of individual actions
             collective_success: Success rate of collective actions
-            
+
         Returns:
             Complete AgentAgencyMetrics
         """
@@ -728,7 +726,7 @@ class AgencyMetricsCalculator:
         decisions = decisions or []
         actions = actions or [ActionOrigin.PROMPTED]  # Default to prompted if unknown
         resources = resources or []
-        
+
         # Calculate individual metrics
         autonomy_score = self.calculate_autonomy_score(decisions, actions)
         self_det_index = self.calculate_self_determination_index(decisions)
@@ -737,19 +735,16 @@ class AgencyMetricsCalculator:
             individual_actions, collective_actions, individual_success, collective_success
         )
         resource_autonomy, resource_independence = self.calculate_resource_autonomy(resources)
-        
+
         # Calculate individual vs collective ratio
         total_actions = individual_actions + collective_actions
-        if total_actions > 0:
-            ind_vs_col = individual_actions / total_actions
-        else:
-            ind_vs_col = 0.5
-        
+        ind_vs_col = individual_actions / total_actions if total_actions > 0 else 0.5
+
         # Calculate agency score
         agency_score = self.calculate_agency_score(
             autonomy_score, self_det_index, goal_alignment
         )
-        
+
         # Create metrics object
         metrics = AgentAgencyMetrics(
             agent_id=agent_id,
@@ -772,14 +767,14 @@ class AgencyMetricsCalculator:
             decisions_analyzed=len(decisions),
             actions_analyzed=len(actions),
         )
-        
+
         # Calculate Prime Directive compliance
-        compliance, details, recommendations = self.calculate_prime_directive_compliance(
+        compliance, details, _recommendations = self.calculate_prime_directive_compliance(
             metrics, decisions
         )
         metrics.prime_directive_compliance = compliance
         metrics.compliance_details = details
-        
+
         logger.info(
             "agency_metrics_calculated",
             agent_id=agent_id,
@@ -787,7 +782,7 @@ class AgencyMetricsCalculator:
             autonomy_score=autonomy_score,
             prime_directive_compliance=compliance,
         )
-        
+
         return metrics
 
 
@@ -796,13 +791,13 @@ def create_decision_point(
     options_considered: int = 3,
     choice_made: int = 0,
     origin: ActionOrigin = ActionOrigin.PROMPTED,
-    external_prompt: Optional[str] = None,
+    external_prompt: str | None = None,
     decision_confidence: float = 0.7,
     time_taken_ms: float = 100.0,
 ) -> DecisionPoint:
     """
     Factory function to create a DecisionPoint with sensible defaults.
-    
+
     Args:
         agent_id: Agent identifier
         options_considered: Number of options evaluated
@@ -811,7 +806,7 @@ def create_decision_point(
         external_prompt: External prompt if applicable
         decision_confidence: Agent's confidence
         time_taken_ms: Decision time in milliseconds
-        
+
     Returns:
         DecisionPoint instance
     """
@@ -834,13 +829,13 @@ def create_resource_control(
 ) -> ResourceControl:
     """
     Factory function to create a ResourceControl with sensible defaults.
-    
+
     Args:
         resource_type: Type of resource
         total_capacity: Total available capacity
         agent_controlled: Amount controlled by agent
         externally_allocated: Amount externally allocated
-        
+
     Returns:
         ResourceControl instance
     """

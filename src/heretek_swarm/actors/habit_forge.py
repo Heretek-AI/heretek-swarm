@@ -12,20 +12,28 @@ Named for the ability to forge and shape behavioral patterns into productive,
 sustainable habits that drive collective excellence.
 """
 
-from datetime import datetime, timezone, timedelta
-from typing import Any, Dict, List, Optional, Tuple
-from enum import Enum
+from datetime import UTC, datetime, timedelta
+from enum import StrEnum
+from typing import Any
 
 import structlog
 from swarms import Agent
 
-from heretek_swarm.actors.base import AgentActor, ActorMessage
+from heretek_swarm.actors.base import ActorMessage, AgentActor
 
 # Session 44: Collective Learning Integration
 from heretek_swarm.collective.learning import PatternExtractor, PatternType
 
+# Phi Training Integration
+from heretek_swarm.consciousness.phi_training import (
+    AgentActor,
+    CommunicationTrainingScenario,
+    PhiTrainingEnvironment,
+    TrainingScenario,
+)
+
 # Session 44: Consensus Integration
-from heretek_swarm.consensus.swarm_deliberation import SwarmDeliberationEngine, Position
+from heretek_swarm.consensus.swarm_deliberation import Position, SwarmDeliberationEngine
 
 # Session 44: Memory Optimization Integration
 from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer, AccessTier
@@ -33,19 +41,10 @@ from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer, AccessTi
 # Session 44: Zero-Trust Validation
 from heretek_swarm.security.zero_trust import ZeroTrustValidator
 
-# Phi Training Integration
-from heretek_swarm.consciousness.phi_training import (
-    PhiTrainingEnvironment,
-    TrainingScenario,
-    CommunicationTrainingScenario,
-    AgentActor,
-)
-
-
 logger = structlog.get_logger("HabitForgeAgent")
 
 
-class HabitStage(str, Enum):
+class HabitStage(StrEnum):
     """Stages of habit formation."""
     AWARENESS = "awareness"
     INITIATION = "initiation"
@@ -55,7 +54,7 @@ class HabitStage(str, Enum):
     MAINTENANCE = "maintenance"
 
 
-class PatternType(str, Enum):
+class PatternType(StrEnum):
     """Types of behavioral patterns."""
     PRODUCTIVE = "productive"
     COUNTERPRODUCTIVE = "counterproductive"
@@ -64,7 +63,7 @@ class PatternType(str, Enum):
     TRIGGERED = "triggered"
 
 
-class ReinforcementType(str, Enum):
+class ReinforcementType(StrEnum):
     """Types of reinforcement strategies."""
     POSITIVE = "positive"
     NEGATIVE = "negative"
@@ -75,7 +74,7 @@ class ReinforcementType(str, Enum):
 
 class Habit:
     """Represents a tracked habit."""
-    
+
     def __init__(
         self,
         habit_id: str,
@@ -95,60 +94,60 @@ class Habit:
         self.reward = reward
         self.target_frequency = target_frequency
         self.stage = stage
-        self.created_at = datetime.now(timezone.utc)
-        
+        self.created_at = datetime.now(UTC)
+
         # Tracking metrics
-        self.completions: List[Dict[str, Any]] = []
+        self.completions: list[dict[str, Any]] = []
         self.adherence_rate: float = 0.0
         self.streak_current: int = 0
         self.streak_longest: int = 0
-        self.last_completion: Optional[datetime] = None
-    
-    def record_completion(self, context: Optional[str] = None) -> None:
+        self.last_completion: datetime | None = None
+
+    def record_completion(self, context: str | None = None) -> None:
         """Record a habit completion."""
-        completion_time = datetime.now(timezone.utc)
+        completion_time = datetime.now(UTC)
         self.completions.append({
             "timestamp": completion_time.isoformat(),
             "context": context,
         })
         self.last_completion = completion_time
-        
+
         # Update streak
         if self.streak_current == 0 or (
-            self.last_completion and 
+            self.last_completion and
             completion_time - self.last_completion < timedelta(days=2)
         ):
             self.streak_current += 1
         else:
             self.streak_current = 1
-        
+
         if self.streak_current > self.streak_longest:
             self.streak_longest = self.streak_current
-        
+
         # Calculate adherence rate
         self._calculate_adherence()
-    
+
     def _calculate_adherence(self) -> None:
         """Calculate adherence rate based on completions."""
         if not self.completions:
             self.adherence_rate = 0.0
             return
-        
+
         # Calculate expected completions based on frequency
-        days_active = (datetime.now(timezone.utc) - self.created_at).days
+        days_active = (datetime.now(UTC) - self.created_at).days
         if days_active == 0:
             days_active = 1
-        
+
         if self.target_frequency == "daily":
             expected = days_active
         elif self.target_frequency == "weekly":
             expected = days_active / 7
         else:
             expected = days_active
-        
+
         self.adherence_rate = min(len(self.completions) / expected, 1.0)
-    
-    def to_dict(self) -> Dict[str, Any]:
+
+    def to_dict(self) -> dict[str, Any]:
         """Convert habit to dictionary."""
         return {
             "habit_id": self.habit_id,
@@ -170,15 +169,15 @@ class Habit:
 
 class BehavioralPattern:
     """Represents a detected behavioral pattern."""
-    
+
     def __init__(
         self,
         pattern_id: str,
         pattern_type: PatternType,
         description: str,
-        triggers: List[str],
-        behaviors: List[str],
-        outcomes: List[str],
+        triggers: list[str],
+        behaviors: list[str],
+        outcomes: list[str],
         frequency: str = "unknown",
         impact_score: float = 0.0,
     ) -> None:
@@ -190,9 +189,9 @@ class BehavioralPattern:
         self.outcomes = outcomes
         self.frequency = frequency
         self.impact_score = impact_score
-        self.detected_at = datetime.now(timezone.utc)
-    
-    def to_dict(self) -> Dict[str, Any]:
+        self.detected_at = datetime.now(UTC)
+
+    def to_dict(self) -> dict[str, Any]:
         """Convert pattern to dictionary."""
         return {
             "pattern_id": self.pattern_id,
@@ -210,14 +209,14 @@ class BehavioralPattern:
 class HabitForgeAgent(AgentActor):
     """
     Habit-Forge Agent - Behavior Architecture Specialist.
-    
+
     The Habit-Forge is responsible for:
     - Analyzing collective behavioral patterns for improvement opportunities
     - Designing effective habit formation protocols
     - Tracking and measuring habit establishment progress
     - Identifying and modifying counterproductive patterns
     - Providing reinforcement strategies for sustainable change
-    
+
     Behavior Optimization Workflow:
     1. Observe behavioral patterns and routines
     2. Identify productive and counterproductive patterns
@@ -226,13 +225,13 @@ class HabitForgeAgent(AgentActor):
     5. Adjust protocols based on data
     6. Reinforce successful habits
     """
-    
+
     def __init__(
         self,
         agent_id: str = "habit-forge",
         name: str = "Habit-Forge",
         description: str = "Behavior architecture and habit optimization specialist",
-        swarms_agent: Optional[Agent] = None,
+        swarms_agent: Agent | None = None,
         max_habits: int = 50,
         max_patterns: int = 100,
         min_adherence_threshold: float = 0.7,
@@ -240,7 +239,7 @@ class HabitForgeAgent(AgentActor):
     ) -> None:
         """
         Initialize the Habit-Forge agent.
-        
+
         Args:
             agent_id: Unique identifier
             name: Human-readable name
@@ -272,44 +271,44 @@ class HabitForgeAgent(AgentActor):
             swarms_agent=swarms_agent,
             **kwargs,
         )
-        
+
         # Habit-Forge specific state
         self.max_habits = max_habits
         self.max_patterns = max_patterns
         self.min_adherence_threshold = min_adherence_threshold
-        
+
         # Habit and pattern tracking
-        self.active_habits: Dict[str, Habit] = {}
-        self.completed_habits: Dict[str, Habit] = {}
-        self.detected_patterns: Dict[str, BehavioralPattern] = {}
-        self.reinforcement_strategies: Dict[str, List[Dict[str, Any]]] = {}
-        
+        self.active_habits: dict[str, Habit] = {}
+        self.completed_habits: dict[str, Habit] = {}
+        self.detected_patterns: dict[str, BehavioralPattern] = {}
+        self.reinforcement_strategies: dict[str, list[dict[str, Any]]] = {}
+
         # Collective behavior metrics
         self.collective_behavior_score: float = 0.5
-        self.pattern_evolution: List[Dict[str, Any]] = []
-        
-        
+        self.pattern_evolution: list[dict[str, Any]] = []
+
+
         # Session 44: Collective Learning Integration
         self.pattern_extractor = pattern_extractor or PatternExtractor(min_support=3, min_confidence=0.6)
-        
+
         # Session 44: Consensus Integration
         self.deliberation_engine = deliberation_engine or SwarmDeliberationEngine(
             max_rounds=5, consensus_threshold=0.75, min_participants=2
         )
-        
+
         # Session 44: Memory Optimization Integration
         self.access_analyzer = access_analyzer or AccessPatternAnalyzer()
-        
+
         # Session 44: Zero-Trust Validation
         self.zero_trust_validator = zero_trust_validator or ZeroTrustValidator()
-        
+
         # Session 44: Integration state
-        self._active_deliberations: Dict[str, str] = {}
+        self._active_deliberations: dict[str, str] = {}
         self._pattern_emitted: Set[str] = set()
 
 
         logger.info(f"[{self.agent_id}] Habit-Forge agent initialized")
-    
+
     async def initialize(self) -> None:
         """Initialize the Habit-Forge agent."""
         # Register message handlers with Zero-Trust validation
@@ -320,13 +319,13 @@ class HabitForgeAgent(AgentActor):
         self.register_handler("modify_pattern", self._handle_modify_pattern)
         self.register_handler("get_behavior_report", self._handle_get_behavior_report)
         self.register_handler("design_reinforcement", self._handle_design_reinforcement)
-        
+
         logger.info(f"[{self.agent_id}] Habit-Forge initialization complete")
-    
+
     async def process_message(self, message: ActorMessage) -> None:
         """
         Process incoming messages with exception handling.
-        
+
         Args:
             message: Actor message to process
         """
@@ -352,14 +351,14 @@ class HabitForgeAgent(AgentActor):
                     )
         else:
             logger.warning(f"[{self.agent_id}] Unknown message type: {message.message_type}")
-    
-    def _validate_habit_request(self, content: Dict[str, Any]) -> Tuple[bool, str]:
+
+    def _validate_habit_request(self, content: dict[str, Any]) -> tuple[bool, str]:
         """
         Validate habit creation/modification request.
-        
+
         Args:
             content: Message content to validate
-            
+
         Returns:
             Tuple of (is_valid, error_message)
         """
@@ -372,11 +371,11 @@ class HabitForgeAgent(AgentActor):
             if len(content[field]) > 5000:
                 return False, f"Field '{field}' exceeds maximum length"
         return True, ""
-    
+
     async def _handle_create_habit(self, message: ActorMessage) -> None:
         """
         Create a new habit formation protocol.
-        
+
         Args:
             message: Actor message with habit details
         """
@@ -386,17 +385,17 @@ class HabitForgeAgent(AgentActor):
             if not is_valid:
                 logger.error(f"[{self.agent_id}] Invalid habit creation request: {error}")
                 return
-            
+
             # Check habit limit
             if len(self.active_habits) >= self.max_habits:
                 logger.error(f"[{self.agent_id}] Maximum habit limit reached ({self.max_habits})")
                 return
-            
+
             habit_id = message.content.get(
-                "habit_id", 
-                f"habit_{datetime.now(timezone.utc).timestamp()}"
+                "habit_id",
+                f"habit_{datetime.now(UTC).timestamp()}"
             )
-            
+
             # Create habit
             habit = Habit(
                 habit_id=habit_id,
@@ -408,12 +407,12 @@ class HabitForgeAgent(AgentActor):
                 target_frequency=message.content.get("target_frequency", "daily"),
                 stage=HabitStage(message.content.get("stage", "initiation")),
             )
-            
+
             # Store habit
             self.active_habits[habit_id] = habit
-            
+
             logger.info(f"[{self.agent_id}] Created habit: {habit.name} ({habit_id})")
-            
+
             # Send response
             response = {
                 "message_type": "habit_created",
@@ -421,21 +420,21 @@ class HabitForgeAgent(AgentActor):
                 "habit": habit.to_dict(),
                 "message": f"Habit '{habit.name}' created successfully",
             }
-            
+
             if message.content.get("reply_to"):
                 await self.send(
                     topic=message.content["reply_to"],
                     content=response,
                     sender_id=self.agent_id,
                 )
-            
+
         except Exception as e:
             logger.error(f"[{self.agent_id}] Error creating habit: {e}", exc_info=True)
-    
+
     async def _handle_track_habit(self, message: ActorMessage) -> None:
         """
         Track a habit completion or progress.
-        
+
         Args:
             message: Actor message with habit tracking data
         """
@@ -444,26 +443,26 @@ class HabitForgeAgent(AgentActor):
             if not habit_id:
                 logger.error(f"[{self.agent_id}] No habit_id provided for tracking")
                 return
-            
+
             if habit_id not in self.active_habits:
                 logger.error(f"[{self.agent_id}] Habit not found: {habit_id}")
                 return
-            
+
             habit = self.active_habits[habit_id]
             action = message.content.get("action", "complete")
-            
+
             if action == "complete":
                 context = message.content.get("context", "")
                 habit.record_completion(context)
-                
+
                 logger.info(
                     f"[{self.agent_id}] Recorded completion for habit: {habit.name} "
                     f"(streak: {habit.streak_current}, adherence: {habit.adherence_rate:.1%})"
                 )
-                
+
                 # Check for stage progression
                 await self._check_stage_progression(habit)
-            
+
             response = {
                 "message_type": "habit_tracked",
                 "habit_id": habit_id,
@@ -475,26 +474,26 @@ class HabitForgeAgent(AgentActor):
                 "stage": habit.stage.value,
                 "total_completions": len(habit.completions),
             }
-            
+
             if message.content.get("reply_to"):
                 await self.send(
                     topic=message.content["reply_to"],
                     content=response,
                     sender_id=self.agent_id,
                 )
-            
+
         except Exception as e:
             logger.error(f"[{self.agent_id}] Error tracking habit: {e}", exc_info=True)
-    
+
     async def _check_stage_progression(self, habit: Habit) -> None:
         """
         Check and update habit stage based on adherence.
-        
+
         Args:
             habit: Habit to check for progression
         """
         old_stage = habit.stage
-        
+
         # Stage progression logic based on adherence rate
         if habit.adherence_rate >= 0.9 and habit.streak_current >= 60:
             habit.stage = HabitStage.MAINTENANCE
@@ -508,48 +507,48 @@ class HabitForgeAgent(AgentActor):
             habit.stage = HabitStage.INITIATION
         else:
             habit.stage = HabitStage.AWARENESS
-        
+
         # Log stage change
         if habit.stage != old_stage:
             logger.info(
                 f"[{self.agent_id}] Habit '{habit.name}' progressed from "
                 f"{old_stage.value} to {habit.stage.value}"
             )
-            
+
             # Check for graduation to completed habits
             if habit.stage == HabitStage.MAINTENANCE:
                 self.completed_habits[habit.habit_id] = habit
                 del self.active_habits[habit.habit_id]
                 logger.info(f"[{self.agent_id}] Habit '{habit.name}' graduated to completed habits")
-    
+
     async def _handle_analyze_patterns(self, message: ActorMessage) -> None:
         """
         Analyze behavioral patterns for optimization opportunities.
-        
+
         Args:
             message: Actor message with behavior data
         """
         try:
             behavior_data = message.content.get("behavior_data", [])
             context = message.content.get("context", "")
-            
+
             if not behavior_data:
                 logger.warning(f"[{self.agent_id}] No behavior data provided for analysis")
                 return
-            
+
             logger.info(f"[{self.agent_id}] Analyzing behavioral patterns")
-            
+
             # Analyze patterns
             patterns = await self._analyze_behavior_patterns(behavior_data, context)
-            
+
             # Store patterns
             for pattern in patterns:
                 if len(self.detected_patterns) >= self.max_patterns:
                     # Remove oldest pattern
-                    oldest_id = list(self.detected_patterns.keys())[0]
+                    oldest_id = next(iter(self.detected_patterns.keys()))
                     del self.detected_patterns[oldest_id]
                 self.detected_patterns[pattern.pattern_id] = pattern
-            
+
             # Send response
             response = {
                 "message_type": "pattern_analysis_response",
@@ -557,36 +556,36 @@ class HabitForgeAgent(AgentActor):
                 "patterns": [p.to_dict() for p in patterns],
                 "recommendations": await self._generate_pattern_recommendations(patterns),
             }
-            
+
             if message.content.get("reply_to"):
                 await self.send(
                     topic=message.content["reply_to"],
                     content=response,
                     sender_id=self.agent_id,
                 )
-            
+
             logger.info(f"[{self.agent_id}] Detected {len(patterns)} behavioral patterns")
-            
+
         except Exception as e:
             logger.error(f"[{self.agent_id}] Error analyzing patterns: {e}", exc_info=True)
-    
+
     async def _analyze_behavior_patterns(
         self,
-        behavior_data: List[Dict[str, Any]],
+        behavior_data: list[dict[str, Any]],
         context: str,
-    ) -> List[BehavioralPattern]:
+    ) -> list[BehavioralPattern]:
         """
         Analyze behavior data to detect patterns.
-        
+
         Args:
             behavior_data: List of behavior observations
             context: Context for the behavior
-            
+
         Returns:
             List of detected behavioral patterns
         """
         patterns = []
-        
+
         # Build prompt for LLM analysis
         prompt = f"""Analyze the following behavioral data for patterns:
 
@@ -622,24 +621,24 @@ Respond in JSON format:
         "impact_score": 0.0
     }}
 ]"""
-        
+
         try:
             if self.swarms_agent:
                 result = await self.run_with_llm(
                     prompt=prompt,
                     timeout=60,
                 )
-                
+
                 import json
                 try:
                     start_idx = result.find("[")
                     end_idx = result.rfind("]") + 1
                     if start_idx >= 0 and end_idx > start_idx:
                         data = json.loads(result[start_idx:end_idx])
-                        
+
                         for i, item in enumerate(data):
                             pattern = BehavioralPattern(
-                                pattern_id=f"pattern_{datetime.now(timezone.utc).timestamp()}_{i}",
+                                pattern_id=f"pattern_{datetime.now(UTC).timestamp()}_{i}",
                                 pattern_type=PatternType(item.get("pattern_type", "neutral")),
                                 description=item.get("description", ""),
                                 triggers=item.get("triggers", []),
@@ -651,44 +650,44 @@ Respond in JSON format:
                             patterns.append(pattern)
                 except Exception:
                     pass
-            
+
             # Fallback: Heuristic pattern detection
             if not patterns:
                 patterns.extend(self._heuristic_pattern_detection(behavior_data))
-            
+
         except Exception as e:
             logger.warning(f"[{self.agent_id}] LLM pattern analysis failed: {e}")
             patterns.extend(self._heuristic_pattern_detection(behavior_data))
-        
+
         return patterns
-    
+
     def _heuristic_pattern_detection(
         self,
-        behavior_data: List[Dict[str, Any]],
-    ) -> List[BehavioralPattern]:
+        behavior_data: list[dict[str, Any]],
+    ) -> list[BehavioralPattern]:
         """
         Detect patterns using heuristics when LLM unavailable.
-        
+
         Args:
             behavior_data: List of behavior observations
-            
+
         Returns:
             List of detected patterns
         """
         patterns = []
-        
+
         # Simple frequency-based pattern detection
-        behavior_counts: Dict[str, int] = {}
+        behavior_counts: dict[str, int] = {}
         for behavior in behavior_data:
             action = behavior.get("action", "unknown")
             behavior_counts[action] = behavior_counts.get(action, 0) + 1
-        
+
         # Create patterns for frequent behaviors
         for action, count in behavior_counts.items():
             if count >= 3:  # Minimum occurrences for pattern
                 pattern_type = PatternType.PRODUCTIVE if "complete" in action.lower() else PatternType.NEUTRAL
                 patterns.append(BehavioralPattern(
-                    pattern_id=f"pattern_{action}_{datetime.now(timezone.utc).timestamp()}",
+                    pattern_id=f"pattern_{action}_{datetime.now(UTC).timestamp()}",
                     pattern_type=pattern_type,
                     description=f"Repeated behavior: {action}",
                     triggers=["Context-dependent"],
@@ -697,27 +696,27 @@ Respond in JSON format:
                     frequency="recurring",
                     impact_score=min(count / 10, 1.0),
                 ))
-        
+
         return patterns
-    
+
     async def _generate_pattern_recommendations(
         self,
-        patterns: List[BehavioralPattern],
-    ) -> List[str]:
+        patterns: list[BehavioralPattern],
+    ) -> list[str]:
         """
         Generate recommendations based on detected patterns.
-        
+
         Args:
             patterns: List of detected patterns
-            
+
         Returns:
             List of recommendations
         """
         counterproductive = [p for p in patterns if p.pattern_type == PatternType.COUNTERPRODUCTIVE]
         productive = [p for p in patterns if p.pattern_type == PatternType.PRODUCTIVE]
-        
+
         recommendations = []
-        
+
         # Recommendations for counterproductive patterns
         for pattern in counterproductive:
             recommendations.append(
@@ -725,31 +724,31 @@ Respond in JSON format:
                 f"Consider modifying trigger '{pattern.triggers[0] if pattern.triggers else 'unknown'}' "
                 f"or replacing behavior with alternative."
             )
-        
+
         # Reinforcement for productive patterns
         for pattern in productive:
             recommendations.append(
                 f"Reinforce productive pattern '{pattern.description}': "
                 f"Ensure consistent rewards and consider adding social accountability."
             )
-        
+
         if not recommendations:
             recommendations.append(
                 "Continue monitoring behavioral patterns. No immediate interventions required."
             )
-        
+
         return recommendations
-    
+
     async def _handle_get_habit_progress(self, message: ActorMessage) -> None:
         """
         Get progress report for specific habit or all habits.
-        
+
         Args:
             message: Actor message with habit query
         """
         try:
             habit_id = message.content.get("habit_id", None)
-            
+
             if habit_id:
                 # Get specific habit
                 if habit_id in self.active_habits:
@@ -759,7 +758,7 @@ Respond in JSON format:
                 else:
                     logger.error(f"[{self.agent_id}] Habit not found: {habit_id}")
                     return
-                
+
                 response = {
                     "message_type": "habit_progress_response",
                     "habit_id": habit_id,
@@ -777,7 +776,7 @@ Respond in JSON format:
                     }
                     for h in self.active_habits.values()
                 }
-                
+
                 response = {
                     "message_type": "habit_progress_response",
                     "active_habits_count": len(self.active_habits),
@@ -785,29 +784,29 @@ Respond in JSON format:
                     "active_habits": active_summary,
                     "collective_adherence": self._calculate_collective_adherence(),
                 }
-            
+
             if message.content.get("reply_to"):
                 await self.send(
                     topic=message.content["reply_to"],
                     content=response,
                     sender_id=self.agent_id,
                 )
-            
+
         except Exception as e:
             logger.error(f"[{self.agent_id}] Error getting habit progress: {e}", exc_info=True)
-    
+
     def _calculate_collective_adherence(self) -> float:
         """Calculate collective adherence rate across all active habits."""
         if not self.active_habits:
             return 0.0
-        
+
         total_adherence = sum(h.adherence_rate for h in self.active_habits.values())
         return total_adherence / len(self.active_habits)
-    
+
     async def _handle_modify_pattern(self, message: ActorMessage) -> None:
         """
         Modify a detected behavioral pattern.
-        
+
         Args:
             message: Actor message with pattern modification details
         """
@@ -816,21 +815,21 @@ Respond in JSON format:
             if not pattern_id:
                 logger.error(f"[{self.agent_id}] No pattern_id provided")
                 return
-            
+
             if pattern_id not in self.detected_patterns:
                 logger.error(f"[{self.agent_id}] Pattern not found: {pattern_id}")
                 return
-            
+
             pattern = self.detected_patterns[pattern_id]
             modification_type = message.content.get("modification_type", "replace")
-            
+
             logger.info(f"[{self.agent_id}] Modifying pattern: {pattern.pattern_id}")
-            
+
             # Generate modification plan
             modification_plan = await self._generate_modification_plan(
                 pattern, modification_type, message.content
             )
-            
+
             response = {
                 "message_type": "pattern_modification_response",
                 "pattern_id": pattern_id,
@@ -838,31 +837,31 @@ Respond in JSON format:
                 "modification_type": modification_type,
                 "modification_plan": modification_plan,
             }
-            
+
             if message.content.get("reply_to"):
                 await self.send(
                     topic=message.content["reply_to"],
                     content=response,
                     sender_id=self.agent_id,
                 )
-            
+
         except Exception as e:
             logger.error(f"[{self.agent_id}] Error modifying pattern: {e}", exc_info=True)
-    
+
     async def _generate_modification_plan(
         self,
         pattern: BehavioralPattern,
         modification_type: str,
-        request_content: Dict[str, Any],
-    ) -> Dict[str, Any]:
+        request_content: dict[str, Any],
+    ) -> dict[str, Any]:
         """
         Generate a plan for modifying a behavioral pattern.
-        
+
         Args:
             pattern: Pattern to modify
             modification_type: Type of modification
             request_content: Original request content
-            
+
         Returns:
             Modification plan dictionary
         """
@@ -892,14 +891,14 @@ Respond in JSON:
     "timeline_days": 0,
     "success_metrics": ["...", "..."]
 }}"""
-        
+
         try:
             if self.swarms_agent:
                 result = await self.run_with_llm(
                     prompt=prompt,
                     timeout=60,
                 )
-                
+
                 import json
                 try:
                     start_idx = result.find("{")
@@ -908,7 +907,7 @@ Respond in JSON:
                         return json.loads(result[start_idx:end_idx])
                 except Exception:
                     pass
-            
+
             # Fallback
             return {
                 "trigger_interventions": ["Identify and awareness of trigger"],
@@ -918,28 +917,28 @@ Respond in JSON:
                 "success_metrics": ["Consistent execution of replacement behavior"],
                 "note": "LLM unavailable - basic plan provided",
             }
-            
+
         except Exception as e:
             logger.warning(f"[{self.agent_id}] Modification plan generation failed: {e}")
             return {
                 "error": str(e),
                 "note": "Plan generation failed",
             }
-    
+
     async def _handle_get_behavior_report(self, message: ActorMessage) -> None:
         """
         Get comprehensive behavior report.
-        
+
         Args:
             message: Actor message
         """
         try:
             report_type = message.content.get("report_type", "summary")
-            
+
             if report_type == "summary":
                 report = {
                     "report_type": "summary",
-                    "generated_at": datetime.now(timezone.utc).isoformat(),
+                    "generated_at": datetime.now(UTC).isoformat(),
                     "active_habits_count": len(self.active_habits),
                     "completed_habits_count": len(self.completed_habits),
                     "detected_patterns_count": len(self.detected_patterns),
@@ -949,84 +948,84 @@ Respond in JSON:
             elif report_type == "detailed":
                 report = {
                     "report_type": "detailed",
-                    "generated_at": datetime.now(timezone.utc).isoformat(),
+                    "generated_at": datetime.now(UTC).isoformat(),
                     "active_habits": [h.to_dict() for h in self.active_habits.values()],
                     "completed_habits": [h.to_dict() for h in self.completed_habits.values()],
                     "detected_patterns": [p.to_dict() for p in self.detected_patterns.values()],
                 }
             else:
                 report = {"error": f"Unknown report type: {report_type}"}
-            
+
             response = {
                 "message_type": "behavior_report_response",
                 "report": report,
             }
-            
+
             if message.content.get("reply_to"):
                 await self.send(
                     topic=message.content["reply_to"],
                     content=response,
                     sender_id=self.agent_id,
                 )
-            
+
         except Exception as e:
             logger.error(f"[{self.agent_id}] Error generating behavior report: {e}", exc_info=True)
-    
+
     async def _handle_design_reinforcement(self, message: ActorMessage) -> None:
         """
         Design reinforcement strategy for a habit or behavior.
-        
+
         Args:
             message: Actor message with reinforcement request
         """
         try:
             habit_id = message.content.get("habit_id")
             behavior = message.content.get("behavior", "")
-            
+
             if not habit_id and not behavior:
                 logger.error(f"[{self.agent_id}] No habit_id or behavior provided")
                 return
-            
+
             logger.info(f"[{self.agent_id}] Designing reinforcement strategy")
-            
+
             # Design reinforcement
             reinforcement = await self._design_reinforcement_strategy(
                 habit_id, behavior
             )
-            
+
             # Store strategy
-            strategy_id = habit_id or f"behavior_{datetime.now(timezone.utc).timestamp()}"
+            strategy_id = habit_id or f"behavior_{datetime.now(UTC).timestamp()}"
             self.reinforcement_strategies[strategy_id] = reinforcement
-            
+
             response = {
                 "message_type": "reinforcement_design_response",
                 "strategy_id": strategy_id,
                 "reinforcement_strategies": reinforcement,
             }
-            
+
             if message.content.get("reply_to"):
                 await self.send(
                     topic=message.content["reply_to"],
                     content=response,
                     sender_id=self.agent_id,
                 )
-            
+
         except Exception as e:
             logger.error(f"[{self.agent_id}] Error designing reinforcement: {e}", exc_info=True)
-    
+
 
     # =========================================================================
     # Session 44: Collective Learning Integration Methods
     # =========================================================================
 
-    async def _emit_pattern(self, item_id: str, item_type: str, outcome: str, content: Dict[str, Any]) -> None:
+    async def _emit_pattern(self, item_id: str, item_type: str, outcome: str, content: dict[str, Any]) -> None:
         """Emit pattern for collective learning."""
         if not self.pattern_extractor:
             return
-        
+
         if item_id in self._pattern_emitted:
             return
-        
+
         try:
             await self.pattern_extractor.analyze_message(
                 message_id=f"{item_type}_{item_id}",
@@ -1034,19 +1033,19 @@ Respond in JSON:
                 recipient="broadcast",
                 message_type=f"{item_type}_completion",
                 content=content,
-                timestamp=datetime.now(timezone.utc).isoformat(),
+                timestamp=datetime.now(UTC).isoformat(),
             )
-            
+
             self._pattern_emitted.add(item_id)
             logger.info(f"{item_type}_pattern_emitted", item_id=item_id, outcome=outcome)
         except Exception as e:
             logger.warning("failed_to_emit_pattern", item_id=item_id, error=str(e))
 
-    async def _consume_patterns(self, pattern_types: Optional[List[PatternType]] = None) -> List[Dict[str, Any]]:
+    async def _consume_patterns(self, pattern_types: list[PatternType] | None = None) -> list[dict[str, Any]]:
         """Consume patterns from collective learning."""
         if not self.pattern_extractor:
             return []
-        
+
         try:
             patterns = await self.pattern_extractor.extract_patterns(
                 time_window_hours=24,
@@ -1065,13 +1064,13 @@ Respond in JSON:
         self,
         item_id: str,
         proposal: str,
-        participating_agents: List[str],
+        participating_agents: list[str],
         domain: str = "general",
-    ) -> Optional[str]:
+    ) -> str | None:
         """Initiate swarm deliberation."""
         if not self.deliberation_engine:
             return None
-        
+
         try:
             deliberation_id = f"delib_{item_id}"
             self.deliberation_engine.start_deliberation(
@@ -1081,7 +1080,7 @@ Respond in JSON:
                 domain=domain,
             )
             self._active_deliberations[item_id] = deliberation_id
-            
+
             logger.info("deliberation_initiated", deliberation_id=deliberation_id, item_id=item_id)
             return deliberation_id
         except Exception as e:
@@ -1099,11 +1098,11 @@ Respond in JSON:
         """Submit agent position in deliberation."""
         if not self.deliberation_engine:
             return False
-        
+
         deliberation_id = self._active_deliberations.get(item_id)
         if not deliberation_id:
             return False
-        
+
         try:
             success = self.deliberation_engine.submit_position(
                 deliberation_id=deliberation_id,
@@ -1112,36 +1111,36 @@ Respond in JSON:
                 confidence=confidence,
                 argument=argument,
             )
-            
+
             if success and self.access_analyzer:
                 self.access_analyzer.record_access(
                     memory_id=f"delib_{deliberation_id}_{agent_id}",
                     access_type="write",
                     agent_id=agent_id,
                 )
-            
+
             return success
         except Exception as e:
             logger.error("failed_to_submit_deliberation_position", error=str(e))
             return False
 
-    async def _finalize_deliberation(self, item_id: str) -> Optional[Any]:
+    async def _finalize_deliberation(self, item_id: str) -> Any | None:
         """Finalize deliberation and apply result."""
         if not self.deliberation_engine:
             return None
-        
+
         deliberation_id = self._active_deliberations.get(item_id)
         if not deliberation_id:
             return None
-        
+
         try:
             result = self.deliberation_engine.finalize_deliberation(deliberation_id)
-            
+
             if result:
                 self.deliberation_engine.cleanup_deliberation(deliberation_id)
                 del self._active_deliberations[item_id]
                 logger.info("deliberation_finalized", deliberation_id=deliberation_id)
-            
+
             return result
         except Exception as e:
             logger.error("failed_to_finalize_deliberation", error=str(e))
@@ -1155,7 +1154,7 @@ Respond in JSON:
         """Track memory access patterns."""
         if not self.access_analyzer:
             return
-        
+
         memory_id = f"{item_type}_{item_id}"
         self.access_analyzer.record_access(
             memory_id=memory_id,
@@ -1167,16 +1166,16 @@ Respond in JSON:
         """Get memory tier classification."""
         if not self.access_analyzer:
             return AccessTier.COLD
-        
+
         memory_id = f"{item_type}_{item_id}"
         profile = self.access_analyzer.get_profile(memory_id)
         return profile.tier if profile else AccessTier.COLD
 
-    async def _prefetch_relevant(self, agent_id: str, item_type: str) -> List[str]:
+    async def _prefetch_relevant(self, agent_id: str, item_type: str) -> list[str]:
         """Prefetch items an agent is likely to need."""
         if not self.access_analyzer:
             return []
-        
+
         try:
             predicted_memories = self.access_analyzer.predict_agent_access(agent_id)
             return [
@@ -1188,7 +1187,7 @@ Respond in JSON:
             logger.warning("failed_to_prefetch", agent_id=agent_id, error=str(e))
             return []
 
-    def get_learning_status(self) -> Dict[str, Any]:
+    def get_learning_status(self) -> dict[str, Any]:
         """Get collective learning and memory optimization status."""
         return {
             "agent_id": self.agent_id,
@@ -1205,11 +1204,11 @@ Respond in JSON:
             },
             "phi_training": self.get_phi_training_status(),
         }
-    
+
     # =========================================================================
     # Phi Training Integration Methods
     # =========================================================================
-    
+
     def _habit_forge_agent_actor(self) -> AgentActor:
         """Create an AgentActor wrapper for Habit-Forge for Phi training."""
         class HabitForgeAgentActor(AgentActor):
@@ -1219,8 +1218,8 @@ Respond in JSON:
                     agent_type="habit-forge",
                 )
                 self.habit_forge = habit_forge
-            
-            async def act(self, observation: Dict[str, Any]) -> Dict[str, Any]:
+
+            async def act(self, observation: dict[str, Any]) -> dict[str, Any]:
                 """Take action based on observation for Phi training."""
                 # Use habit formation logic to determine action
                 habits = self.habit_forge.active_habits
@@ -1236,8 +1235,8 @@ Respond in JSON:
                         "target_adherence": min_adherence_habit.adherence_rate + 0.1,
                     }
                 return {"action": "monitor"}
-            
-            def get_state(self) -> Dict[str, Any]:
+
+            def get_state(self) -> dict[str, Any]:
                 """Get current state for Phi calculation."""
                 return {
                     "active_habits": len(self.habit_forge.active_habits),
@@ -1245,47 +1244,47 @@ Respond in JSON:
                     "collective_adherence": self.habit_forge._calculate_collective_adherence(),
                     "activation": self.habit_forge._calculate_collective_adherence(),
                 }
-        
+
         return HabitForgeAgentActor(self)
-    
+
     async def run_phi_training_episode(
         self,
-        scenario: Optional[TrainingScenario] = None,
-        participating_agents: Optional[List[AgentActor]] = None,
-    ) -> Dict[str, Any]:
+        scenario: TrainingScenario | None = None,
+        participating_agents: list[AgentActor] | None = None,
+    ) -> dict[str, Any]:
         """
         Run a Phi training episode for Habit-Forge.
-        
+
         Args:
             scenario: Optional training scenario (defaults to communication)
             participating_agents: Optional list of agents to train with
-            
+
         Returns:
             Training result dictionary
         """
         # Create training environment
         env = PhiTrainingEnvironment()
-        
+
         # Get agent actors
         agent_actors = participating_agents or [self._habit_forge_agent_actor()]
-        
+
         # Use default scenario if not provided
         if scenario is None:
             scenario = CommunicationTrainingScenario(agent_count=len(agent_actors))
-        
+
         # Run episode
         result = await env.run_episode(agent_actors, scenario)
-        
+
         logger.info(
             "phi_training_episode_completed",
             agent_id=self.agent_id,
             phi_delta=result.episode.phi_delta,
             success=result.success,
         )
-        
+
         return result.to_dict()
-    
-    def get_phi_training_status(self) -> Dict[str, Any]:
+
+    def get_phi_training_status(self) -> dict[str, Any]:
         """Get Phi training status and metrics."""
         return {
             "phi_training_enabled": True,
@@ -1297,21 +1296,21 @@ Respond in JSON:
 
     async def _design_reinforcement_strategy(
         self,
-        habit_id: Optional[str],
+        habit_id: str | None,
         behavior: str,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Design reinforcement strategy for habit or behavior.
-        
+
         Args:
             habit_id: Optional habit identifier
             behavior: Behavior description
-            
+
         Returns:
             Reinforcement strategy dictionary
         """
         habit = self.active_habits.get(habit_id) if habit_id else None
-        
+
         prompt = f"""Design a reinforcement strategy for behavior change:
 
 HABIT: {habit.name if habit else 'N/A'}
@@ -1337,14 +1336,14 @@ Respond in JSON:
     "intrinsic_motivation": ["...", "..."],
     "schedule": "..."
 }}"""
-        
+
         try:
             if self.swarms_agent:
                 result = await self.run_with_llm(
                     prompt=prompt,
                     timeout=60,
                 )
-                
+
                 import json
                 try:
                     start_idx = result.find("{")
@@ -1353,7 +1352,7 @@ Respond in JSON:
                         return json.loads(result[start_idx:end_idx])
                 except Exception:
                     pass
-            
+
             # Fallback
             return {
                 "positive_reinforcement": ["Celebrate small wins", "Track progress visibly"],
@@ -1363,7 +1362,7 @@ Respond in JSON:
                 "schedule": "Daily reinforcement for first 21 days",
                 "note": "LLM unavailable - basic strategy provided",
             }
-            
+
         except Exception as e:
             logger.warning(f"[{self.agent_id}] Reinforcement design failed: {e}")
             return {

@@ -19,9 +19,9 @@ import math
 import time
 from collections import defaultdict
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
-from typing import Any, Dict, List, Optional, Tuple
+from typing import Any
 
 import numpy as np
 import structlog
@@ -81,7 +81,7 @@ class IITConnectivity:
         timestamp: Analysis timestamp
     """
 
-    connectivity_matrix: List[List[float]] = field(default_factory=list)
+    connectivity_matrix: list[list[float]] = field(default_factory=list)
     integration: float = 0.0
     information: float = 0.0
     phi: float = 0.0
@@ -132,8 +132,8 @@ class IITCalculator:
             max_agents: Maximum number of agents to track
         """
         self.max_agents = max_agents
-        self.connectivity_history: List[IITConnectivity] = []
-        self.interaction_matrix: Dict[Tuple[str, str], float] = defaultdict(float)
+        self.connectivity_history: list[IITConnectivity] = []
+        self.interaction_matrix: dict[tuple[str, str], float] = defaultdict(float)
 
     def record_interaction(
         self,
@@ -153,7 +153,7 @@ class IITCalculator:
 
     def calculate_phi(
         self,
-        agent_ids: List[str],
+        agent_ids: list[str],
     ) -> IITConnectivity:
         """
         Calculate IIT Phi for a set of agents.
@@ -170,7 +170,7 @@ class IITCalculator:
                 phi=0.0,
                 integration=0.0,
                 information=0.0,
-                timestamp=datetime.now(timezone.utc).isoformat(),
+                timestamp=datetime.now(UTC).isoformat(),
             )
 
         # Build connectivity matrix
@@ -194,7 +194,7 @@ class IITCalculator:
             information=information,
             phi=phi,
             causal_power=causal_power,
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         self.connectivity_history.append(connectivity)
@@ -205,7 +205,7 @@ class IITCalculator:
 
     def _build_connectivity_matrix(
         self,
-        agent_ids: List[str],
+        agent_ids: list[str],
     ) -> np.ndarray:
         """
         Build connectivity matrix from interaction history.
@@ -368,14 +368,14 @@ class FEPTracker:
             learning_rate: Model update rate
         """
         self.learning_rate = learning_rate
-        self.agent_metrics: Dict[str, FEPMetrics] = {}
-        self.prediction_history: Dict[str, List[Dict[str, Any]]] = defaultdict(list)
-        self.surprise_history: Dict[str, List[float]] = defaultdict(list)
+        self.agent_metrics: dict[str, FEPMetrics] = {}
+        self.prediction_history: dict[str, list[dict[str, Any]]] = defaultdict(list)
+        self.surprise_history: dict[str, list[float]] = defaultdict(list)
 
     def record_prediction(
         self,
         agent_id: str,
-        prediction: Dict[str, Any],
+        prediction: dict[str, Any],
         confidence: float = 0.5,
     ) -> None:
         """
@@ -398,7 +398,7 @@ class FEPTracker:
     def record_outcome(
         self,
         agent_id: str,
-        outcome: Dict[str, Any],
+        outcome: dict[str, Any],
     ) -> float:
         """
         Record actual outcome and calculate surprise.
@@ -430,7 +430,7 @@ class FEPTracker:
         metrics = self.agent_metrics.get(agent_id, FEPMetrics())
         metrics.surprise = surprise
         metrics.precision = confidence
-        metrics.timestamp = datetime.now(timezone.utc).isoformat()
+        metrics.timestamp = datetime.now(UTC).isoformat()
 
         # Calculate free energy
         free_energy = self._calculate_free_energy(agent_id, surprise, confidence)
@@ -448,8 +448,8 @@ class FEPTracker:
 
     def _calculate_surprise(
         self,
-        prediction: Dict[str, Any],
-        outcome: Dict[str, Any],
+        prediction: dict[str, Any],
+        outcome: dict[str, Any],
     ) -> float:
         """
         Calculate surprise (prediction error).
@@ -521,7 +521,7 @@ class FEPTracker:
 
         return max(0.0, free_energy)
 
-    def get_metrics(self, agent_id: str) -> Optional[FEPMetrics]:
+    def get_metrics(self, agent_id: str) -> FEPMetrics | None:
         """
         Get FEP metrics for an agent.
 
@@ -589,8 +589,8 @@ class EnhancedConsciousnessPlugin:
         self.fep_tracker = FEPTracker()
 
         # Metrics tracking
-        self.agent_metrics: Dict[str, ConsciousnessMetrics] = {}
-        self.metrics_history: List[Dict[str, Any]] = []
+        self.agent_metrics: dict[str, ConsciousnessMetrics] = {}
+        self.metrics_history: list[dict[str, Any]] = []
 
         # State
         self.initialized = False
@@ -656,7 +656,7 @@ class EnhancedConsciousnessPlugin:
 
     def calculate_iit_phi(
         self,
-        agent_ids: List[str],
+        agent_ids: list[str],
     ) -> IITConnectivity:
         """
         Calculate IIT Phi for a set of agents.
@@ -676,7 +676,7 @@ class EnhancedConsciousnessPlugin:
     def record_prediction(
         self,
         agent_id: str,
-        prediction: Dict[str, Any],
+        prediction: dict[str, Any],
         confidence: float = 0.5,
     ) -> None:
         """
@@ -692,7 +692,7 @@ class EnhancedConsciousnessPlugin:
     def record_outcome(
         self,
         agent_id: str,
-        outcome: Dict[str, Any],
+        outcome: dict[str, Any],
     ) -> float:
         """
         Record outcome and calculate surprise.
@@ -761,7 +761,7 @@ class EnhancedConsciousnessPlugin:
             fep_free_energy=fep_score,
             composite_score=composite,
             state=state,
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         self.agent_metrics[agent_id] = metrics
@@ -795,23 +795,22 @@ class EnhancedConsciousnessPlugin:
 
         if avg_score >= 0.95:
             return ConsciousnessState.TRANSCENDENT
-        elif avg_score >= 0.9:
+        if avg_score >= 0.9:
             return ConsciousnessState.HYPER_CONSCIOUS
-        elif (
+        if (
             gwt_score >= self.gwt_threshold
             and iit_phi >= self.iit_phi_threshold
             and ast_competence >= self.ast_threshold
             and fep_score >= (1.0 - self.fep_threshold)
         ):
             return ConsciousnessState.CONSCIOUS
-        elif avg_score >= 0.3:
+        if avg_score >= 0.3:
             return ConsciousnessState.MINIMAL_CONSCIOUSNESS
-        elif avg_score >= 0.15:
+        if avg_score >= 0.15:
             return ConsciousnessState.SUBTHRESHOLD
-        else:
-            return ConsciousnessState.UNCONSCIOUS
+        return ConsciousnessState.UNCONSCIOUS
 
-    def get_agent_metrics(self, agent_id: str) -> Optional[Dict[str, Any]]:
+    def get_agent_metrics(self, agent_id: str) -> dict[str, Any] | None:
         """
         Get metrics for an agent.
 
@@ -837,7 +836,7 @@ class EnhancedConsciousnessPlugin:
 
         return None
 
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """Get plugin statistics."""
         return {
             "total_agents": len(self.agent_metrics),

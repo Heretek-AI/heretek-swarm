@@ -5,10 +5,9 @@ Configuration for 24/7 autonomous operation of Heretek Swarm.
 Supports loading from database via ConfigurationService with environment fallback.
 """
 
-from dataclasses import dataclass, field
-from typing import Dict, List, Optional
-from pathlib import Path
 import os
+from dataclasses import dataclass, field
+from pathlib import Path
 
 
 @dataclass
@@ -25,7 +24,7 @@ class AutonomousRuntimeConfig:
     """
 
     # Agent Configuration
-    agent_configs: Dict[str, Path] = field(default_factory=lambda: {
+    agent_configs: dict[str, Path] = field(default_factory=lambda: {
         "alpha": Path(__file__).parent / "characters" / "alpha.json",
         "beta": Path(__file__).parent / "characters" / "beta.json",
         "coordinator": Path(__file__).parent / "characters" / "coordinator.json",
@@ -33,7 +32,7 @@ class AutonomousRuntimeConfig:
     })
 
     # Workflow Configuration
-    default_workflows: List[str] = field(default_factory=list)
+    default_workflows: list[str] = field(default_factory=list)
     workflow_directory: Path = field(
         default_factory=lambda: Path(__file__).parent.parent.parent.parent / "workflows"
     )
@@ -79,7 +78,7 @@ class AutonomousRuntimeConfig:
     api_workers: int = 4
 
     # Database Configuration
-    database_url: Optional[str] = None
+    database_url: str | None = None
     redis_url: str = "redis://localhost:6379"
     qdrant_url: str = "http://localhost:6333"
 
@@ -113,9 +112,9 @@ class AlertConfig:
 
     enabled: bool = True
     email_enabled: bool = False
-    email_recipients: List[str] = field(default_factory=list)
-    slack_channel: Optional[str] = None
-    discord_channel: Optional[str] = None
+    email_recipients: list[str] = field(default_factory=list)
+    slack_channel: str | None = None
+    discord_channel: str | None = None
 
     # Alert Thresholds
     agent_failure_threshold: int = 3  # failures within window
@@ -151,7 +150,7 @@ class ScalingPolicy:
 async def load_config_from_env() -> AutonomousRuntimeConfig:
     """
     Load runtime configuration from environment variables or database.
-    
+
     Uses environment variables as the primary source for runtime configuration.
     For database-backed configuration, use the ConfigLoader class instead.
 
@@ -162,7 +161,7 @@ async def load_config_from_env() -> AutonomousRuntimeConfig:
     try:
         from heretek_swarm.config.loader import get_config_loader
         loader = get_config_loader()
-        
+
         if loader._initialized:
             # Load from database with environment fallback
             monitoring_enabled = await loader.get_async("runtime.monitoring_enabled", default=os.getenv("MONITORING_ENABLED", "true"))
@@ -178,7 +177,7 @@ async def load_config_from_env() -> AutonomousRuntimeConfig:
             redis_url = await loader.get_async("redis.url", default=os.getenv("REDIS_URL", "redis://localhost:6379"))
             qdrant_url = await loader.get_async("qdrant.url", default=os.getenv("QDRANT_URL", "http://localhost:6333"))
             log_level = await loader.get_async("logging.level", default=os.getenv("LOG_LEVEL", "INFO"))
-            
+
             # Convert string values to bool if needed
             if isinstance(monitoring_enabled, str):
                 monitoring_enabled = monitoring_enabled.lower() == "true"
@@ -194,7 +193,7 @@ async def load_config_from_env() -> AutonomousRuntimeConfig:
                 telegram_enabled = telegram_enabled.lower() == "true"
             if isinstance(slack_enabled, str):
                 slack_enabled = slack_enabled.lower() == "true"
-            
+
             return AutonomousRuntimeConfig(
                 monitoring_enabled=monitoring_enabled,
                 auto_restart_enabled=auto_restart_enabled,
@@ -214,7 +213,7 @@ async def load_config_from_env() -> AutonomousRuntimeConfig:
         import structlog
         logger = structlog.get_logger("config.runtime")
         logger.warning("Failed to load config from database, using environment fallback", error=str(e))
-    
+
     # Fallback to direct environment variable loading
     return AutonomousRuntimeConfig(
         monitoring_enabled=os.getenv("MONITORING_ENABLED", "true").lower() == "true",
@@ -236,12 +235,12 @@ async def load_config_from_env() -> AutonomousRuntimeConfig:
 def load_config_from_env_sync() -> AutonomousRuntimeConfig:
     """
     Synchronous version of load_config_from_env for non-async contexts.
-    
+
     Returns:
         AutonomousRuntimeConfig instance
     """
     import asyncio
-    
+
     try:
         loop = asyncio.get_event_loop()
         if loop.is_running():
@@ -257,7 +256,7 @@ def load_config_from_env_sync() -> AutonomousRuntimeConfig:
 def _load_config_from_env_sync_fallback() -> AutonomousRuntimeConfig:
     """
     Synchronous fallback that only reads from environment variables.
-    
+
     Returns:
         AutonomousRuntimeConfig instance
     """

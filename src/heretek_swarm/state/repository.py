@@ -11,9 +11,10 @@ Provides PostgreSQL-backed persistence for agent states with:
 
 import asyncio
 import json
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Callable
+from datetime import UTC, datetime
+from typing import Any
 from uuid import UUID, uuid4
 
 import structlog
@@ -33,7 +34,7 @@ except ImportError:
 class AgentStateRecord:
     """
     Represents a persisted agent state record.
-    
+
     Attributes:
         id: Unique record identifier (UUID)
         agent_id: Agent identifier
@@ -46,14 +47,14 @@ class AgentStateRecord:
     """
     agent_id: str
     agent_type: str
-    state: Dict[str, Any]
+    state: dict[str, Any]
     version: int = 1
     id: UUID = field(default_factory=uuid4)
-    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
-    updated_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    created_at: datetime = field(default_factory=lambda: datetime.now(UTC))
+    updated_at: datetime = field(default_factory=lambda: datetime.now(UTC))
     is_active: bool = True
-    
-    def to_dict(self) -> Dict[str, Any]:
+
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for JSON serialization."""
         return {
             "id": str(self.id),
@@ -65,9 +66,9 @@ class AgentStateRecord:
             "updated_at": self.updated_at.isoformat(),
             "is_active": self.is_active,
         }
-    
+
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "AgentStateRecord":
+    def from_dict(cls, data: dict[str, Any]) -> "AgentStateRecord":
         """Create from dictionary."""
         return cls(
             id=UUID(data["id"]) if isinstance(data["id"], str) else data["id"],
@@ -76,13 +77,13 @@ class AgentStateRecord:
             state=data["state"],
             version=data.get("version", 1),
             created_at=(
-                datetime.fromisoformat(data["created_at"]) 
-                if isinstance(data["created_at"], str) 
+                datetime.fromisoformat(data["created_at"])
+                if isinstance(data["created_at"], str)
                 else data["created_at"]
             ),
             updated_at=(
-                datetime.fromisoformat(data["updated_at"]) 
-                if isinstance(data["updated_at"], str) 
+                datetime.fromisoformat(data["updated_at"])
+                if isinstance(data["updated_at"], str)
                 else data["updated_at"]
             ),
             is_active=data.get("is_active", True),
@@ -93,9 +94,9 @@ class AgentStateRecord:
 class StateCheckpoint:
     """
     Represents a versioned state checkpoint.
-    
+
     Used for state versioning and rollback capabilities.
-    
+
     Attributes:
         checkpoint_id: Unique checkpoint identifier
         agent_id: Agent identifier
@@ -106,12 +107,12 @@ class StateCheckpoint:
     """
     checkpoint_id: UUID
     agent_id: str
-    state: Dict[str, Any]
+    state: dict[str, Any]
     version: int
     created_at: datetime
-    metadata: Optional[Dict[str, Any]] = None
-    
-    def to_dict(self) -> Dict[str, Any]:
+    metadata: dict[str, Any] | None = None
+
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary."""
         return {
             "checkpoint_id": str(self.checkpoint_id),
@@ -126,13 +127,13 @@ class StateCheckpoint:
 class StateRepository:
     """
     PostgreSQL-backed state persistence repository.
-    
+
     Provides CRUD operations for agent states with:
     - Optimistic locking via version numbers
     - Checkpoint management for rollback
     - Automatic retry on concurrency conflicts
     - Graceful fallback to in-memory storage
-    
+
     Database Schema (agent_states table):
         CREATE TABLE agent_states (
             id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
@@ -144,30 +145,30 @@ class StateRepository:
             updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
             is_active BOOLEAN DEFAULT true
         );
-        
+
         CREATE INDEX idx_agent_states_agent_id ON agent_states(agent_id);
         CREATE INDEX idx_agent_states_active ON agent_states(is_active) WHERE is_active = true;
-    
+
     Example:
         ```python
         # Initialize repository
         repo = StateRepository(db_pool)
         await repo.initialize()
-        
+
         # Save state
         await repo.save_state("agent-1", {"key": "value"})
-        
+
         # Load state
         state = await repo.load_state("agent-1")
-        
+
         # Create checkpoint
         await repo.checkpoint("agent-1", {"key": "value"}, version=2)
-        
+
         # Restore from checkpoint
         await repo.restore_from_checkpoint("agent-1", checkpoint_id)
         ```
     """
-    
+
     # SQL queries
     SAVE_STATE_QUERY = """
         INSERT INTO agent_states (id, agent_id, agent_type, state, version, created_at, updated_at, is_active)
@@ -177,37 +178,37 @@ class StateRepository:
         WHERE agent_states.version = $5 - 1
         RETURNING *
     """
-    
+
     LOAD_STATE_QUERY = """
         SELECT id, agent_id, agent_type, state, version, created_at, updated_at, is_active
         FROM agent_states
         WHERE agent_id = $1 AND is_active = true
     """
-    
+
     DELETE_STATE_QUERY = """
         UPDATE agent_states
         SET is_active = false, updated_at = NOW()
         WHERE agent_id = $1
     """
-    
+
     LIST_ACTIVE_STATES_QUERY = """
         SELECT id, agent_id, agent_type, state, version, created_at, updated_at, is_active
         FROM agent_states
         WHERE is_active = true
         ORDER BY updated_at DESC
     """
-    
+
     CHECKPOINT_QUERY = """
         INSERT INTO agent_state_checkpoints (checkpoint_id, agent_id, state, version, created_at, metadata)
         VALUES ($1, $2, $3, $4, $5, $6)
     """
-    
+
     GET_CHECKPOINT_QUERY = """
         SELECT checkpoint_id, agent_id, state, version, created_at, metadata
         FROM agent_state_checkpoints
         WHERE checkpoint_id = $1
     """
-    
+
     GET_CHECKPOINTS_QUERY = """
         SELECT checkpoint_id, agent_id, state, version, created_at, metadata
         FROM agent_state_checkpoints
@@ -215,16 +216,16 @@ class StateRepository:
         ORDER BY version DESC
         LIMIT $2
     """
-    
+
     def __init__(
         self,
-        db_pool: Optional[Any] = None,
+        db_pool: Any | None = None,
         max_retries: int = 3,
         retry_delay: float = 0.1,
     ):
         """
         Initialize state repository.
-        
+
         Args:
             db_pool: asyncpg connection pool
             max_retries: Maximum retries for concurrent updates
@@ -233,11 +234,11 @@ class StateRepository:
         self._db_pool = db_pool
         self._max_retries = max_retries
         self._retry_delay = retry_delay
-        
+
         # In-memory fallback storage
-        self._memory_store: Dict[str, AgentStateRecord] = {}
-        self._checkpoints: Dict[str, List[StateCheckpoint]] = {}
-        
+        self._memory_store: dict[str, AgentStateRecord] = {}
+        self._checkpoints: dict[str, list[StateCheckpoint]] = {}
+
         # Statistics
         self._stats = {
             "db_saves": 0,
@@ -248,19 +249,19 @@ class StateRepository:
             "checkpoints_created": 0,
             "checkpoints_restored": 0,
         }
-        
+
         self._initialized = False
-    
-    async def initialize(self, db_pool: Optional[Any] = None) -> None:
+
+    async def initialize(self, db_pool: Any | None = None) -> None:
         """
         Initialize the repository.
-        
+
         Args:
             db_pool: Optional asyncpg connection pool
         """
         if db_pool:
             self._db_pool = db_pool
-        
+
         # Create checkpoint table if using database
         if self._db_pool:
             try:
@@ -274,12 +275,12 @@ class StateRepository:
         else:
             self._initialized = True
             logger.info("State repository initialized with in-memory storage")
-    
+
     async def _create_checkpoint_table(self) -> None:
         """Create the agent_state_checkpoints table if it doesn't exist."""
         if not self._db_pool:
             return
-        
+
         async with self._db_pool.acquire() as conn:
             await conn.execute("""
                 CREATE TABLE IF NOT EXISTS agent_state_checkpoints (
@@ -294,29 +295,29 @@ class StateRepository:
                 CREATE INDEX IF NOT EXISTS idx_checkpoints_agent_id ON agent_state_checkpoints(agent_id);
                 CREATE INDEX IF NOT EXISTS idx_checkpoints_version ON agent_state_checkpoints(agent_id, version DESC);
             """)
-    
+
     async def save_state(
         self,
         agent_id: str,
-        state: Dict[str, Any],
+        state: dict[str, Any],
         agent_type: str = "AgentActor",
-        version: Optional[int] = None,
+        version: int | None = None,
     ) -> AgentStateRecord:
         """
         Save agent state to database.
-        
+
         Uses optimistic locking with version numbers to handle
         concurrent updates. Retries on version conflicts.
-        
+
         Args:
             agent_id: Unique agent identifier
             state: State data to persist
             agent_type: Type/class of agent
             version: Expected current version (for optimistic locking)
-            
+
         Returns:
             Saved state record
-            
+
         Raises:
             ConcurrencyError: If max retries exceeded due to concurrent updates
         """
@@ -326,23 +327,22 @@ class StateRepository:
             state=state,
             version=version or 1,
         )
-        
+
         if self._db_pool:
             return await self._save_to_db(record)
-        else:
-            return self._save_to_memory(record)
-    
+        return self._save_to_memory(record)
+
     async def _save_to_db(self, record: AgentStateRecord) -> AgentStateRecord:
         """Save record to database with retry logic."""
         attempt = 0
         last_error = None
-        
+
         while attempt < self._max_retries:
             try:
                 async with self._db_pool.acquire() as conn:
-                    now = datetime.now(timezone.utc)
+                    now = datetime.now(UTC)
                     record.updated_at = now
-                    
+
                     row = await conn.fetchrow(
                         self.SAVE_STATE_QUERY,
                         record.id,
@@ -354,7 +354,7 @@ class StateRepository:
                         now,
                         record.is_active,
                     )
-                    
+
                     if row:
                         self._stats["db_saves"] += 1
                         logger.debug(
@@ -362,22 +362,21 @@ class StateRepository:
                             extra={"version": record.version},
                         )
                         return record
+                    # Version conflict - retry with incremented version
+                    attempt += 1
+                    self._stats["concurrency_retries"] += 1
+
+                    if attempt < self._max_retries:
+                        # Fetch current version and retry
+                        current = await self._load_from_db(record.agent_id)
+                        if current:
+                            record.version = current.version + 1
+                        await asyncio.sleep(self._retry_delay * (2 ** (attempt - 1)))
                     else:
-                        # Version conflict - retry with incremented version
-                        attempt += 1
-                        self._stats["concurrency_retries"] += 1
-                        
-                        if attempt < self._max_retries:
-                            # Fetch current version and retry
-                            current = await self._load_from_db(record.agent_id)
-                            if current:
-                                record.version = current.version + 1
-                            await asyncio.sleep(self._retry_delay * (2 ** (attempt - 1)))
-                        else:
-                            raise ConcurrencyError(
-                                f"Max retries ({self._max_retries}) exceeded for agent {record.agent_id}"
-                            )
-                            
+                        raise ConcurrencyError(
+                            f"Max retries ({self._max_retries}) exceeded for agent {record.agent_id}"
+                        )
+
             except Exception as e:
                 last_error = e
                 attempt += 1
@@ -385,27 +384,27 @@ class StateRepository:
                     await asyncio.sleep(self._retry_delay * (2 ** (attempt - 1)))
                 else:
                     break
-        
+
         # All retries failed, fall back to memory
         logger.warning(
             f"Database save failed after {attempt} attempts, using memory: {last_error}"
         )
         return self._save_to_memory(record)
-    
+
     def _save_to_memory(self, record: AgentStateRecord) -> AgentStateRecord:
         """Save record to in-memory storage."""
         self._memory_store[record.agent_id] = record
         self._stats["memory_saves"] += 1
         logger.debug(f"State saved to memory for {record.agent_id}")
         return record
-    
-    async def load_state(self, agent_id: str) -> Optional[AgentStateRecord]:
+
+    async def load_state(self, agent_id: str) -> AgentStateRecord | None:
         """
         Load agent state from database.
-        
+
         Args:
             agent_id: Agent identifier
-            
+
         Returns:
             State record or None if not found
         """
@@ -413,13 +412,13 @@ class StateRepository:
             record = await self._load_from_db(agent_id)
         else:
             record = self._load_from_memory(agent_id)
-        
+
         if record:
             logger.debug(f"State loaded for {agent_id}")
-        
+
         return record
-    
-    async def _load_from_db(self, agent_id: str) -> Optional[AgentStateRecord]:
+
+    async def _load_from_db(self, agent_id: str) -> AgentStateRecord | None:
         """Load record from database."""
         try:
             async with self._db_pool.acquire() as conn:
@@ -427,7 +426,7 @@ class StateRepository:
                     self.LOAD_STATE_QUERY,
                     agent_id,
                 )
-                
+
                 if row:
                     self._stats["db_loads"] += 1
                     return AgentStateRecord(
@@ -442,23 +441,23 @@ class StateRepository:
                     )
         except Exception as e:
             logger.error(f"Database load failed: {e}")
-        
+
         return None
-    
-    def _load_from_memory(self, agent_id: str) -> Optional[AgentStateRecord]:
+
+    def _load_from_memory(self, agent_id: str) -> AgentStateRecord | None:
         """Load record from memory."""
         record = self._memory_store.get(agent_id)
         if record:
             self._stats["memory_loads"] += 1
         return record
-    
+
     async def delete_state(self, agent_id: str) -> bool:
         """
         Delete (deactivate) agent state.
-        
+
         Args:
             agent_id: Agent identifier
-            
+
         Returns:
             True if deleted, False if not found
         """
@@ -475,19 +474,19 @@ class StateRepository:
                     return deleted
             except Exception as e:
                 logger.error(f"Database delete failed: {e}")
-        
+
         # Memory fallback
         if agent_id in self._memory_store:
             del self._memory_store[agent_id]
             logger.debug(f"Memory state deleted for {agent_id}")
             return True
-        
+
         return False
-    
-    async def list_active_states(self) -> List[AgentStateRecord]:
+
+    async def list_active_states(self) -> list[AgentStateRecord]:
         """
         List all active agent states.
-        
+
         Returns:
             List of active state records
         """
@@ -511,32 +510,32 @@ class StateRepository:
                     ]
             except Exception as e:
                 logger.error(f"Database list failed: {e}")
-        
+
         # Memory fallback
         self._stats["memory_loads"] += len(self._memory_store)
         return list(self._memory_store.values())
-    
+
     async def checkpoint(
         self,
         agent_id: str,
-        state: Dict[str, Any],
+        state: dict[str, Any],
         version: int,
-        metadata: Optional[Dict[str, Any]] = None,
+        metadata: dict[str, Any] | None = None,
     ) -> StateCheckpoint:
         """
         Create a versioned state checkpoint.
-        
+
         Checkpoints are immutable snapshots that can be used for:
         - Rollback after errors
         - State restoration after restart
         - Audit trail
-        
+
         Args:
             agent_id: Agent identifier
             state: State data to checkpoint
             version: Checkpoint version number
             metadata: Optional metadata (reason, trigger, etc.)
-            
+
         Returns:
             Created checkpoint
         """
@@ -545,10 +544,10 @@ class StateRepository:
             agent_id=agent_id,
             state=state,
             version=version,
-            created_at=datetime.now(timezone.utc),
+            created_at=datetime.now(UTC),
             metadata=metadata,
         )
-        
+
         if self._db_pool:
             try:
                 async with self._db_pool.acquire() as conn:
@@ -569,24 +568,24 @@ class StateRepository:
                     return checkpoint
             except Exception as e:
                 logger.error(f"Database checkpoint failed: {e}")
-        
+
         # Memory fallback
         if agent_id not in self._checkpoints:
             self._checkpoints[agent_id] = []
         self._checkpoints[agent_id].append(checkpoint)
         self._stats["checkpoints_created"] += 1
         return checkpoint
-    
+
     async def get_checkpoint(
         self,
         checkpoint_id: UUID,
-    ) -> Optional[StateCheckpoint]:
+    ) -> StateCheckpoint | None:
         """
         Get a specific checkpoint by ID.
-        
+
         Args:
             checkpoint_id: Checkpoint identifier
-            
+
         Returns:
             Checkpoint or None if not found
         """
@@ -608,27 +607,27 @@ class StateRepository:
                         )
             except Exception as e:
                 logger.error(f"Database checkpoint get failed: {e}")
-        
+
         # Memory fallback
         for checkpoints in self._checkpoints.values():
             for cp in checkpoints:
                 if cp.checkpoint_id == checkpoint_id:
                     return cp
-        
+
         return None
-    
+
     async def get_checkpoints(
         self,
         agent_id: str,
         limit: int = 10,
-    ) -> List[StateCheckpoint]:
+    ) -> list[StateCheckpoint]:
         """
         Get checkpoints for an agent.
-        
+
         Args:
             agent_id: Agent identifier
             limit: Maximum number of checkpoints to return
-            
+
         Returns:
             List of checkpoints (newest first)
         """
@@ -653,11 +652,11 @@ class StateRepository:
                     ]
             except Exception as e:
                 logger.error(f"Database checkpoints list failed: {e}")
-        
+
         # Memory fallback
         checkpoints = self._checkpoints.get(agent_id, [])
         return sorted(checkpoints, key=lambda c: c.version, reverse=True)[:limit]
-    
+
     async def restore_from_checkpoint(
         self,
         agent_id: str,
@@ -665,11 +664,11 @@ class StateRepository:
     ) -> bool:
         """
         Restore agent state from a checkpoint.
-        
+
         Args:
             agent_id: Agent identifier
             checkpoint_id: Checkpoint to restore from
-            
+
         Returns:
             True if restored, False if checkpoint not found
         """
@@ -677,22 +676,22 @@ class StateRepository:
         if not checkpoint:
             logger.warning(f"Checkpoint not found: {checkpoint_id}")
             return False
-        
+
         # Save the checkpoint state as current state
         await self.save_state(
             agent_id=agent_id,
             state=checkpoint.state,
             version=checkpoint.version + 1,
         )
-        
+
         self._stats["checkpoints_restored"] += 1
         logger.info(
             f"State restored from checkpoint for {agent_id}",
             extra={"checkpoint_id": str(checkpoint_id)},
         )
         return True
-    
-    async def get_stats(self) -> Dict[str, Any]:
+
+    async def get_stats(self) -> dict[str, Any]:
         """Get repository statistics."""
         return {
             **self._stats,
@@ -705,7 +704,6 @@ class StateRepository:
 
 class ConcurrencyError(Exception):
     """Raised when concurrent update conflicts exceed max retries."""
-    pass
 
 
 # =============================================================================
@@ -715,18 +713,18 @@ class ConcurrencyError(Exception):
 class EventSourcedRepository(StateRepository):
     """
     Event-sourced state repository extending StateRepository.
-    
+
     Combines traditional state persistence with event sourcing:
     - All state changes are stored as immutable events
     - Current state is stored for performance (CQRS pattern)
     - State can be reconstructed from events at any time
     - Supports snapshotting for large event streams
-    
+
     Example:
         ```python
         repo = EventSourcedRepository(db_pool)
         await repo.initialize()
-        
+
         # Save state with event
         await repo.save_state_with_event(
             agent_id="agent-1",
@@ -734,22 +732,22 @@ class EventSourcedRepository(StateRepository):
             event_type="agent.state.changed",
             event_payload={"old_state": "stopped", "new_state": "running"},
         )
-        
+
         # Reconstruct state from events
         state = await repo.reconstruct_state("agent-1")
         ```
     """
-    
+
     def __init__(
         self,
-        db_pool: Optional[Any] = None,
+        db_pool: Any | None = None,
         max_retries: int = 3,
         retry_delay: float = 0.1,
         snapshot_interval: int = 100,
     ):
         """
         Initialize event-sourced repository.
-        
+
         Args:
             db_pool: asyncpg connection pool
             max_retries: Maximum retries for concurrent updates
@@ -757,48 +755,48 @@ class EventSourcedRepository(StateRepository):
             snapshot_interval: Create snapshot every N events
         """
         super().__init__(db_pool, max_retries, retry_delay)
-        
+
         # Event store reference
         self._event_store = None
         self._snapshot_interval = snapshot_interval
-        
+
         # Event appliers
-        self._event_appliers: Dict[str, Callable[[Dict[str, Any], DomainEvent], Dict[str, Any]]] = {
+        self._event_appliers: dict[str, Callable[[dict[str, Any], DomainEvent], dict[str, Any]]] = {
             "agent.state.changed": self._apply_agent_state_changed,
             "agent.config.updated": self._apply_agent_config_updated,
             "agent.created": self._apply_agent_created,
         }
-        
+
         logger.info(
             "EventSourcedRepository initialized",
             snapshot_interval=snapshot_interval,
         )
-    
-    async def initialize(self, db_pool: Optional[Any] = None) -> None:
+
+    async def initialize(self, db_pool: Any | None = None) -> None:
         """Initialize repository and event store."""
         await super().initialize(db_pool)
-        
+
         # Initialize event store
         from heretek_swarm.state.event_store import get_event_store
-        
+
         self._event_store = get_event_store()
         await self._event_store.initialize(db_pool)
-        
+
         logger.info("EventSourcedRepository fully initialized")
-    
+
     async def save_state_with_event(
         self,
         agent_id: str,
-        state: Dict[str, Any],
+        state: dict[str, Any],
         event_type: str,
-        event_payload: Dict[str, Any],
+        event_payload: dict[str, Any],
         agent_type: str = "AgentActor",
-        version: Optional[int] = None,
-        event_metadata: Optional[Dict[str, Any]] = None,
+        version: int | None = None,
+        event_metadata: dict[str, Any] | None = None,
     ) -> AgentStateRecord:
         """
         Save state and append corresponding event.
-        
+
         Args:
             agent_id: Agent identifier
             state: State data to persist
@@ -807,14 +805,14 @@ class EventSourcedRepository(StateRepository):
             agent_type: Type of agent
             version: Expected current version
             event_metadata: Event metadata (correlation_id, causation_id, user_id)
-            
+
         Returns:
             Saved state record
         """
         # Get current version
         current_version = await self._event_store.get_last_version(agent_id) if self._event_store else 0
         new_version = current_version + 1
-        
+
         # Create event
         event = DomainEvent.create(
             event_type=event_type,
@@ -824,11 +822,11 @@ class EventSourcedRepository(StateRepository):
             version=new_version,
             metadata=event_metadata,
         )
-        
+
         # Append event first (event sourcing)
         if self._event_store:
             await self._event_store.append(event)
-        
+
         # Save current state (for performance)
         record = await self.save_state(
             agent_id=agent_id,
@@ -836,64 +834,63 @@ class EventSourcedRepository(StateRepository):
             agent_type=agent_type,
             version=new_version,
         )
-        
+
         logger.info(
             "State saved with event",
             agent_id=agent_id,
             event_type=event_type,
             version=new_version,
         )
-        
+
         return record
-    
-    async def reconstruct_state(self, agent_id: str) -> Optional[Dict[str, Any]]:
+
+    async def reconstruct_state(self, agent_id: str) -> dict[str, Any] | None:
         """
         Reconstruct state from events.
-        
+
         Args:
             agent_id: Agent identifier
-            
+
         Returns:
             Reconstructed state or None if no events found
         """
         if not self._event_store:
             logger.warning("Event store not available")
             return None
-        
+
         # Get current state as base
         current_record = await self.load_state(agent_id)
         initial_state = current_record.state if current_record else {}
-        
+
         # Reconstruct from events
         state = await self._event_store.reconstruct_state(
             aggregate_id=agent_id,
             applier=self._apply_event,
             initial_state=initial_state,
         )
-        
+
         logger.info(f"State reconstructed for {agent_id}")
         return state
-    
+
     def _apply_event(
         self,
-        state: Dict[str, Any],
+        state: dict[str, Any],
         event: DomainEvent,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Apply event to state."""
         applier = self._event_appliers.get(event.event_type)
-        
+
         if applier:
             return applier(state, event)
-        else:
-            # Default: merge payload into state
-            state.update(event.payload)
-            return state
-    
+        # Default: merge payload into state
+        state.update(event.payload)
+        return state
+
     def _apply_agent_state_changed(
         self,
-        state: Dict[str, Any],
+        state: dict[str, Any],
         event: DomainEvent,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Apply agent.state.changed event."""
         if "new_state" in event.payload:
             state["state"] = event.payload["new_state"]
@@ -901,70 +898,70 @@ class EventSourcedRepository(StateRepository):
             state["status"] = event.payload["status"]
         state["last_state_change"] = event.timestamp.isoformat()
         return state
-    
+
     def _apply_agent_config_updated(
         self,
-        state: Dict[str, Any],
+        state: dict[str, Any],
         event: DomainEvent,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Apply agent.config.updated event."""
         if "config" in event.payload:
             state["config"] = event.payload["config"]
         state["last_config_update"] = event.timestamp.isoformat()
         return state
-    
+
     def _apply_agent_created(
         self,
-        state: Dict[str, Any],
+        state: dict[str, Any],
         event: DomainEvent,
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """Apply agent.created event."""
         state.update(event.payload)
         state["created_at"] = event.timestamp.isoformat()
         return state
-    
+
     async def get_event_history(
         self,
         agent_id: str,
         from_version: int = 0,
-    ) -> List[DomainEvent]:
+    ) -> list[DomainEvent]:
         """
         Get event history for an agent.
-        
+
         Args:
             agent_id: Agent identifier
             from_version: Start version (exclusive)
-            
+
         Returns:
             List of events
         """
         if not self._event_store:
             return []
-        
+
         return await self._event_store.get_events(agent_id, from_version=from_version)
-    
+
     async def create_state_snapshot(self, agent_id: str, agent_type: str) -> bool:
         """
         Create a state snapshot.
-        
+
         Args:
             agent_id: Agent identifier
             agent_type: Agent type
-            
+
         Returns:
             True if snapshot created
         """
         if not self._event_store:
             return False
-        
+
         # Get current state
         record = await self.load_state(agent_id)
         if not record:
             return False
-        
+
         # Get current version
         version = await self._event_store.get_last_version(agent_id)
-        
+
         # Create snapshot
         return await self._event_store.create_snapshot(
             aggregate_id=agent_id,
@@ -972,15 +969,15 @@ class EventSourcedRepository(StateRepository):
             state=record.state,
             version=version,
         )
-    
+
     def register_event_applier(
         self,
         event_type: str,
-        applier: Callable[[Dict[str, Any], DomainEvent], Dict[str, Any]],
+        applier: Callable[[dict[str, Any], DomainEvent], dict[str, Any]],
     ) -> None:
         """
         Register a custom event applier.
-        
+
         Args:
             event_type: Type of event
             applier: Function to apply event to state

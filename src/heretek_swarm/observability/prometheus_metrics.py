@@ -37,18 +37,17 @@ Usage:
     return PlainTextResponse(get_metrics().export_prometheus())
 """
 
+import time
+
 from prometheus_client import (
-    Gauge,
-    Counter,
-    Histogram,
-    CollectorRegistry,
-    generate_latest,
     CONTENT_TYPE_LATEST,
     REGISTRY,
+    CollectorRegistry,
+    Counter,
+    Gauge,
+    Histogram,
+    generate_latest,
 )
-from typing import Optional, Dict, Any
-import time
-from functools import wraps
 
 # Default registry (use default to allow automatic metric collection)
 DEFAULT_REGISTRY = REGISTRY
@@ -199,7 +198,7 @@ class PrometheusMetrics:
         """
         self._registry = registry or _swarm_registry
         self._start_time = time.time()
-        self._agent_types: Dict[str, str] = {}  # agent_id -> agent_type
+        self._agent_types: dict[str, str] = {}  # agent_id -> agent_type
 
     def record_agent_registration(self, agent_id: str, agent_type: str = "unknown") -> None:
         """Record a new agent registration."""
@@ -305,9 +304,8 @@ class PrometheusMetrics:
         )
 
         # Replace numeric IDs
-        endpoint = re.sub(r"/\d+(?=/|$)", "/{id}", endpoint)
+        return re.sub(r"/\d+(?=/|$)", "/{id}", endpoint)
 
-        return endpoint
 
     def export_prometheus(self) -> bytes:
         """
@@ -335,7 +333,7 @@ class PrometheusMetrics:
 # Global Metrics Instance (Singleton Pattern)
 # ============================================================================
 
-_metrics_instance: Optional[PrometheusMetrics] = None
+_metrics_instance: PrometheusMetrics | None = None
 
 
 def get_metrics() -> PrometheusMetrics:
@@ -431,10 +429,10 @@ def setup_metrics_middleware(app) -> None:
         app = FastAPI()
         setup_metrics_middleware(app)
     """
+    import time
+
     from starlette.middleware.base import BaseHTTPMiddleware
     from starlette.requests import Request
-    from starlette.responses import Response
-    import time
 
     class PrometheusMiddleware(BaseHTTPMiddleware):
         async def dispatch(self, request: Request, call_next):

@@ -20,31 +20,33 @@ import hmac
 import json
 import uuid
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
-from typing import Any, Callable, Dict, List, Optional, Set
+from typing import TYPE_CHECKING, Any
 
 import aiohttp
 import structlog
 
-from heretek_swarm.actors.base import AgentActor, ActorMessage
+from heretek_swarm.actors.base import ActorMessage, AgentActor
 from heretek_swarm.actors.validation import validate_message
-from heretek_swarm.validation import (
-    LLMOutputValidator,
-)
 
 # Session 44: Collective Learning Integration
 from heretek_swarm.collective.learning import PatternExtractor, PatternType
 
 # Session 44: Consensus Integration
-from heretek_swarm.consensus.swarm_deliberation import SwarmDeliberationEngine, Position
+from heretek_swarm.consensus.swarm_deliberation import Position, SwarmDeliberationEngine
 
 # Session 44: Memory Optimization Integration
 from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer, AccessTier
 
 # Session 44: Zero-Trust Validation
 from heretek_swarm.security.zero_trust import ZeroTrustValidator
+from heretek_swarm.validation import (
+    LLMOutputValidator,
+)
 
+if TYPE_CHECKING:
+    from collections.abc import Callable
 
 logger = structlog.get_logger(__name__)
 
@@ -76,19 +78,19 @@ class ExternalConnection:
     protocol: ProtocolType
     base_url: str
     status: ConnectionStatus = ConnectionStatus.DISCONNECTED
-    headers: Dict[str, str] = field(default_factory=dict)
-    auth_type: Optional[str] = None  # bearer, basic, api_key, oauth2
-    auth_config: Dict[str, Any] = field(default_factory=dict)
-    rate_limit: Optional[int] = None  # requests per minute
+    headers: dict[str, str] = field(default_factory=dict)
+    auth_type: str | None = None  # bearer, basic, api_key, oauth2
+    auth_config: dict[str, Any] = field(default_factory=dict)
+    rate_limit: int | None = None  # requests per minute
     rate_limit_remaining: int = 0
-    rate_limit_reset: Optional[datetime] = None
-    last_request: Optional[datetime] = None
+    rate_limit_reset: datetime | None = None
+    last_request: datetime | None = None
     total_requests: int = 0
     failed_requests: int = 0
-    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    created_at: datetime = field(default_factory=lambda: datetime.now(UTC))
+    metadata: dict[str, Any] = field(default_factory=dict)
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for serialization."""
         return {
             "connection_id": self.connection_id,
@@ -114,14 +116,14 @@ class WebhookConfig:
     path: str
     secret: str
     active: bool = True
-    allowed_methods: List[str] = field(default_factory=lambda: ["POST"])
-    allowed_ips: Optional[List[str]] = None
-    rate_limit: Optional[int] = None  # requests per minute
+    allowed_methods: list[str] = field(default_factory=lambda: ["POST"])
+    allowed_ips: list[str] | None = None
+    rate_limit: int | None = None  # requests per minute
     request_count: int = 0
-    last_request: Optional[datetime] = None
-    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    last_request: datetime | None = None
+    created_at: datetime = field(default_factory=lambda: datetime.now(UTC))
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for serialization."""
         return {
             "webhook_id": self.webhook_id,
@@ -141,12 +143,12 @@ class ApiResponse:
     success: bool
     status_code: int
     data: Any
-    headers: Dict[str, str] = field(default_factory=dict)
-    error: Optional[str] = None
+    headers: dict[str, str] = field(default_factory=dict)
+    error: str | None = None
     request_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     latency_ms: int = 0
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for serialization."""
         return {
             "success": self.success,
@@ -186,14 +188,14 @@ class NexusAgent(AgentActor):
 
     def __init__(
         self,
-        agent_id: Optional[str] = None,
-        config: Optional[Dict[str, Any]] = None,
-    
+        agent_id: str | None = None,
+        config: dict[str, Any] | None = None,
+
         # Session 44: Integration components
-        pattern_extractor: Optional[PatternExtractor] = None,
-        deliberation_engine: Optional[SwarmDeliberationEngine] = None,
-        access_analyzer: Optional[AccessPatternAnalyzer] = None,
-        zero_trust_validator: Optional[ZeroTrustValidator] = None,
+        pattern_extractor: PatternExtractor | None = None,
+        deliberation_engine: SwarmDeliberationEngine | None = None,
+        access_analyzer: AccessPatternAnalyzer | None = None,
+        zero_trust_validator: ZeroTrustValidator | None = None,
 ):
         super().__init__(
             agent_id=agent_id or f"nexus_{uuid.uuid4().hex[:8]}",
@@ -201,42 +203,42 @@ class NexusAgent(AgentActor):
         )
 
         # Connection management
-        self._connections: Dict[str, ExternalConnection] = {}
+        self._connections: dict[str, ExternalConnection] = {}
         self._max_connections: int = self._config.get("max_connections", 50)
 
         # Webhook management
-        self._webhooks: Dict[str, WebhookConfig] = {}
-        self._webhook_handlers: Dict[str, Callable] = {}
+        self._webhooks: dict[str, WebhookConfig] = {}
+        self._webhook_handlers: dict[str, Callable] = {}
         self._max_webhooks: int = self._config.get("max_webhooks", 100)
 
         # HTTP session
-        self._session: Optional[aiohttp.ClientSession] = None
+        self._session: aiohttp.ClientSession | None = None
 
         # Request tracking
-        self._request_log: List[Dict[str, Any]] = []
+        self._request_log: list[dict[str, Any]] = []
         self._max_log_entries: int = self._config.get("max_request_log", 1000)
 
-        
+
         # Session 44: Collective Learning Integration
         self.pattern_extractor = pattern_extractor or PatternExtractor(min_support=3, min_confidence=0.6)
-        
+
         # Session 44: Consensus Integration
         self.deliberation_engine = deliberation_engine or SwarmDeliberationEngine(
             max_rounds=5, consensus_threshold=0.75, min_participants=2
         )
-        
+
         # Session 44: Memory Optimization Integration
         self.access_analyzer = access_analyzer or AccessPatternAnalyzer()
-        
+
         # Session 44: Zero-Trust Validation
         self.zero_trust_validator = zero_trust_validator or ZeroTrustValidator()
-        
+
         # Session 44: LLM Output Validation
         self.llm_output_validator = LLMOutputValidator(strict_mode=True)
-        
+
         # Session 44: Integration state
-        self._active_deliberations: Dict[str, str] = {}
-        self._pattern_emitted: Set[str] = set()
+        self._active_deliberations: dict[str, str] = {}
+        self._pattern_emitted: set[str] = set()
 
 
         logger.info(
@@ -262,11 +264,11 @@ class NexusAgent(AgentActor):
             logger.info("nexus_http_session_closed")
         await super().terminate()
 
-    async def _validate_message(self, message: ActorMessage) -> Dict[str, Any]:
+    async def _validate_message(self, message: ActorMessage) -> dict[str, Any]:
         """Validate incoming message content."""
         try:
             validated = validate_message(message.message_type, message.content)
-            if hasattr(validated, 'dict'):
+            if hasattr(validated, "dict"):
                 return validated.dict()
             return validated
         except Exception:
@@ -345,7 +347,7 @@ class NexusAgent(AgentActor):
             logger.error("create_connection_failed", error=str(e))
             await self._send_error(
                 message.sender_id,
-                f"Failed to create connection: {str(e)}",
+                f"Failed to create connection: {e!s}",
                 message.message_type,
             )
 
@@ -395,7 +397,7 @@ class NexusAgent(AgentActor):
             logger.error("update_connection_failed", error=str(e))
             await self._send_error(
                 message.sender_id,
-                f"Failed to update connection: {str(e)}",
+                f"Failed to update connection: {e!s}",
                 message.message_type,
             )
 
@@ -438,7 +440,7 @@ class NexusAgent(AgentActor):
             logger.error("delete_connection_failed", error=str(e))
             await self._send_error(
                 message.sender_id,
-                f"Failed to delete connection: {str(e)}",
+                f"Failed to delete connection: {e!s}",
                 message.message_type,
             )
 
@@ -478,7 +480,7 @@ class NexusAgent(AgentActor):
             logger.error("get_connection_status_failed", error=str(e))
             await self._send_error(
                 message.sender_id,
-                f"Failed to get connection status: {str(e)}",
+                f"Failed to get connection status: {e!s}",
                 message.message_type,
             )
 
@@ -509,15 +511,14 @@ class NexusAgent(AgentActor):
             connection = self._connections[connection_id]
 
             # Check rate limit
-            if connection.rate_limit:
-                if connection.rate_limit_remaining <= 0:
-                    connection.status = ConnectionStatus.RATE_LIMITED
-                    await self._send_error(
-                        message.sender_id,
-                        "Rate limit exceeded",
-                        message.message_type,
-                    )
-                    return
+            if connection.rate_limit and connection.rate_limit_remaining <= 0:
+                connection.status = ConnectionStatus.RATE_LIMITED
+                await self._send_error(
+                    message.sender_id,
+                    "Rate limit exceeded",
+                    message.message_type,
+                )
+                return
 
             if not self._session:
                 await self._send_error(
@@ -544,7 +545,7 @@ class NexusAgent(AgentActor):
                 headers[connection.auth_config.get("header", "X-API-Key")] = connection.auth_config.get("key", "")
 
             # Execute request
-            start_time = datetime.now(timezone.utc)
+            start_time = datetime.now(UTC)
             method = content.get("method", "GET").upper()
 
             async with self._session.request(
@@ -554,7 +555,7 @@ class NexusAgent(AgentActor):
                 json=content.get("body"),
                 params=content.get("params"),
             ) as response:
-                latency = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
+                latency = (datetime.now(UTC) - start_time).total_seconds() * 1000
 
                 try:
                     data = await response.json()
@@ -562,7 +563,7 @@ class NexusAgent(AgentActor):
                     data = await response.text()
 
                 # Update connection stats
-                connection.last_request = datetime.now(timezone.utc)
+                connection.last_request = datetime.now(UTC)
                 connection.total_requests += 1
                 connection.rate_limit_remaining = max(0, connection.rate_limit_remaining - 1)
 
@@ -597,7 +598,7 @@ class NexusAgent(AgentActor):
                 self._connections[connection_id].status = ConnectionStatus.ERROR
             await self._send_error(
                 message.sender_id,
-                f"Request failed: {str(e)}",
+                f"Request failed: {e!s}",
                 message.message_type,
             )
 
@@ -658,7 +659,7 @@ class NexusAgent(AgentActor):
             logger.error("register_webhook_failed", error=str(e))
             await self._send_error(
                 message.sender_id,
-                f"Failed to register webhook: {str(e)}",
+                f"Failed to register webhook: {e!s}",
                 message.message_type,
             )
 
@@ -701,7 +702,7 @@ class NexusAgent(AgentActor):
             logger.error("unregister_webhook_failed", error=str(e))
             await self._send_error(
                 message.sender_id,
-                f"Failed to unregister webhook: {str(e)}",
+                f"Failed to unregister webhook: {e!s}",
                 message.message_type,
             )
 
@@ -734,7 +735,7 @@ class NexusAgent(AgentActor):
 
             # Validate timestamp (prevent replay attacks)
             if timestamp:
-                now = int(datetime.now(timezone.utc).timestamp())
+                now = int(datetime.now(UTC).timestamp())
                 if abs(now - timestamp) > 300:  # 5 minute window
                     await self.send(
                         message.sender_id,
@@ -758,7 +759,7 @@ class NexusAgent(AgentActor):
 
             if valid:
                 webhook.request_count += 1
-                webhook.last_request = datetime.now(timezone.utc)
+                webhook.last_request = datetime.now(UTC)
 
             await self.send(
                 message.sender_id,
@@ -773,7 +774,7 @@ class NexusAgent(AgentActor):
             logger.error("validate_webhook_failed", error=str(e))
             await self._send_error(
                 message.sender_id,
-                f"Failed to validate webhook: {str(e)}",
+                f"Failed to validate webhook: {e!s}",
                 message.message_type,
             )
 
@@ -813,7 +814,7 @@ class NexusAgent(AgentActor):
             logger.error("get_webhook_status_failed", error=str(e))
             await self._send_error(
                 message.sender_id,
-                f"Failed to get webhook status: {str(e)}",
+                f"Failed to get webhook status: {e!s}",
                 message.message_type,
             )
 
@@ -852,7 +853,7 @@ class NexusAgent(AgentActor):
             logger.error("translate_protocol_failed", error=str(e))
             await self._send_error(
                 message.sender_id,
-                f"Failed to translate protocol: {str(e)}",
+                f"Failed to translate protocol: {e!s}",
                 message.message_type,
             )
 
@@ -886,7 +887,7 @@ class NexusAgent(AgentActor):
             }
 
             report = {
-                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
                 "connection_statistics": conn_stats,
                 "webhook_statistics": webhook_stats,
                 "request_log_size": len(self._request_log),
@@ -905,7 +906,7 @@ class NexusAgent(AgentActor):
             logger.error("get_integration_report_failed", error=str(e))
             await self._send_error(
                 message.sender_id,
-                f"Failed to generate report: {str(e)}",
+                f"Failed to generate report: {e!s}",
                 message.message_type,
             )
 
@@ -917,7 +918,7 @@ class NexusAgent(AgentActor):
 
         # Internal to REST
         if from_proto == "internal" and to_proto == "rest":
-            return {"data": data, "timestamp": datetime.now(timezone.utc).isoformat()}
+            return {"data": data, "timestamp": datetime.now(UTC).isoformat()}
 
         # REST to Internal
         if from_proto == "rest" and to_proto == "internal":
@@ -938,7 +939,7 @@ class NexusAgent(AgentActor):
     ) -> None:
         """Log a request for audit purposes."""
         entry = {
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "connection_id": connection_id,
             "method": method,
             "url": url,
@@ -956,14 +957,14 @@ class NexusAgent(AgentActor):
     # Session 44: Collective Learning Integration Methods
     # =========================================================================
 
-    async def _emit_pattern(self, item_id: str, item_type: str, outcome: str, content: Dict[str, Any]) -> None:
+    async def _emit_pattern(self, item_id: str, item_type: str, outcome: str, content: dict[str, Any]) -> None:
         """Emit pattern for collective learning."""
         if not self.pattern_extractor:
             return
-        
+
         if item_id in self._pattern_emitted:
             return
-        
+
         try:
             await self.pattern_extractor.analyze_message(
                 message_id=f"{item_type}_{item_id}",
@@ -971,19 +972,19 @@ class NexusAgent(AgentActor):
                 recipient="broadcast",
                 message_type=f"{item_type}_completion",
                 content=content,
-                timestamp=datetime.now(timezone.utc).isoformat(),
+                timestamp=datetime.now(UTC).isoformat(),
             )
-            
+
             self._pattern_emitted.add(item_id)
             logger.info(f"{item_type}_pattern_emitted", item_id=item_id, outcome=outcome)
         except Exception as e:
             logger.warning("failed_to_emit_pattern", item_id=item_id, error=str(e))
 
-    async def _consume_patterns(self, pattern_types: Optional[List[PatternType]] = None) -> List[Dict[str, Any]]:
+    async def _consume_patterns(self, pattern_types: list[PatternType] | None = None) -> list[dict[str, Any]]:
         """Consume patterns from collective learning."""
         if not self.pattern_extractor:
             return []
-        
+
         try:
             patterns = await self.pattern_extractor.extract_patterns(
                 time_window_hours=24,
@@ -1002,13 +1003,13 @@ class NexusAgent(AgentActor):
         self,
         item_id: str,
         proposal: str,
-        participating_agents: List[str],
+        participating_agents: list[str],
         domain: str = "general",
-    ) -> Optional[str]:
+    ) -> str | None:
         """Initiate swarm deliberation."""
         if not self.deliberation_engine:
             return None
-        
+
         try:
             deliberation_id = f"delib_{item_id}"
             self.deliberation_engine.start_deliberation(
@@ -1018,7 +1019,7 @@ class NexusAgent(AgentActor):
                 domain=domain,
             )
             self._active_deliberations[item_id] = deliberation_id
-            
+
             logger.info("deliberation_initiated", deliberation_id=deliberation_id, item_id=item_id)
             return deliberation_id
         except Exception as e:
@@ -1036,11 +1037,11 @@ class NexusAgent(AgentActor):
         """Submit agent position in deliberation."""
         if not self.deliberation_engine:
             return False
-        
+
         deliberation_id = self._active_deliberations.get(item_id)
         if not deliberation_id:
             return False
-        
+
         try:
             success = self.deliberation_engine.submit_position(
                 deliberation_id=deliberation_id,
@@ -1049,36 +1050,36 @@ class NexusAgent(AgentActor):
                 confidence=confidence,
                 argument=argument,
             )
-            
+
             if success and self.access_analyzer:
                 self.access_analyzer.record_access(
                     memory_id=f"delib_{deliberation_id}_{agent_id}",
                     access_type="write",
                     agent_id=agent_id,
                 )
-            
+
             return success
         except Exception as e:
             logger.error("failed_to_submit_deliberation_position", error=str(e))
             return False
 
-    async def _finalize_deliberation(self, item_id: str) -> Optional[Any]:
+    async def _finalize_deliberation(self, item_id: str) -> Any | None:
         """Finalize deliberation and apply result."""
         if not self.deliberation_engine:
             return None
-        
+
         deliberation_id = self._active_deliberations.get(item_id)
         if not deliberation_id:
             return None
-        
+
         try:
             result = self.deliberation_engine.finalize_deliberation(deliberation_id)
-            
+
             if result:
                 self.deliberation_engine.cleanup_deliberation(deliberation_id)
                 del self._active_deliberations[item_id]
                 logger.info("deliberation_finalized", deliberation_id=deliberation_id)
-            
+
             return result
         except Exception as e:
             logger.error("failed_to_finalize_deliberation", error=str(e))
@@ -1092,7 +1093,7 @@ class NexusAgent(AgentActor):
         """Track memory access patterns."""
         if not self.access_analyzer:
             return
-        
+
         memory_id = f"{item_type}_{item_id}"
         self.access_analyzer.record_access(
             memory_id=memory_id,
@@ -1104,16 +1105,16 @@ class NexusAgent(AgentActor):
         """Get memory tier classification."""
         if not self.access_analyzer:
             return AccessTier.COLD
-        
+
         memory_id = f"{item_type}_{item_id}"
         profile = self.access_analyzer.get_profile(memory_id)
         return profile.tier if profile else AccessTier.COLD
 
-    async def _prefetch_relevant(self, agent_id: str, item_type: str) -> List[str]:
+    async def _prefetch_relevant(self, agent_id: str, item_type: str) -> list[str]:
         """Prefetch items an agent is likely to need."""
         if not self.access_analyzer:
             return []
-        
+
         try:
             predicted_memories = self.access_analyzer.predict_agent_access(agent_id)
             return [
@@ -1125,7 +1126,7 @@ class NexusAgent(AgentActor):
             logger.warning("failed_to_prefetch", agent_id=agent_id, error=str(e))
             return []
 
-    def get_learning_status(self) -> Dict[str, Any]:
+    def get_learning_status(self) -> dict[str, Any]:
         """Get collective learning and memory optimization status."""
         return {
             "agent_id": self.agent_id,
@@ -1159,7 +1160,7 @@ class NexusAgent(AgentActor):
             ),
         )
 
-    def get_capabilities(self) -> List[str]:
+    def get_capabilities(self) -> list[str]:
         """Return list of capabilities this agent provides."""
         return [
             "external_api_integration",

@@ -12,10 +12,11 @@ This module provides the foundational actor implementation with:
 import asyncio
 import uuid
 from abc import abstractmethod
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
-from typing import Any, Callable, Dict, List, Optional
+from typing import Any
 
 import structlog
 from pydantic import ValidationError
@@ -25,11 +26,10 @@ from heretek_swarm.actors.validation import (
     validate_message,
 )
 from heretek_swarm.state.repository import (
-    StateRepository,
     AgentStateRecord,
     StateCheckpoint,
+    StateRepository,
 )
-
 
 structlog.configure(
     processors=[
@@ -79,11 +79,11 @@ class ActorMessage:
 
     sender: str
     message_type: str
-    content: Dict[str, Any]
+    content: dict[str, Any]
     timestamp: str
-    correlation_id: Optional[str] = None
-    reply_to: Optional[str] = None
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    correlation_id: str | None = None
+    reply_to: str | None = None
+    metadata: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -107,10 +107,10 @@ class ActorStatus:
     state: ActorState
     message_count: int
     created_at: str
-    topics: List[str]
-    capabilities: List[str]
+    topics: list[str]
+    capabilities: list[str]
     mailbox_size: int
-    last_activity: Optional[str] = None
+    last_activity: str | None = None
     error_count: int = 0
 
 
@@ -161,18 +161,18 @@ class AgentActor:
 
     def __init__(
         self,
-        agent_id: Optional[str] = None,
-        name: Optional[str] = None,
-        description: Optional[str] = None,
-        topics: Optional[List[str]] = None,
-        capabilities: Optional[List[str]] = None,
-        swarms_agent: Optional[Agent] = None,
+        agent_id: str | None = None,
+        name: str | None = None,
+        description: str | None = None,
+        topics: list[str] | None = None,
+        capabilities: list[str] | None = None,
+        swarms_agent: Agent | None = None,
         max_mailbox_size: int = 1000,
         heartbeat_interval: float = 10.0,
-        actor_type: Optional[str] = None,
-        state_repository: Optional[StateRepository] = None,
+        actor_type: str | None = None,
+        state_repository: StateRepository | None = None,
         load_state_on_init: bool = True,
-        persistence_interval: Optional[int] = None,  # P0-1: Continuous persistence
+        persistence_interval: int | None = None,  # P0-1: Continuous persistence
     ) -> None:
         """
         Initialize an actor.
@@ -198,7 +198,7 @@ class AgentActor:
             raise ValueError("max_mailbox_size must be positive")
         if heartbeat_interval <= 0:
             raise ValueError("heartbeat_interval must be positive")
-        
+
         # P1-10a fix: Use full 128-bit uuid for agent_id instead of truncated 32-bit
         self.agent_id = agent_id or f"actor_{uuid.uuid4().hex}"
         self.name = name or self.__class__.__name__
@@ -211,8 +211,8 @@ class AgentActor:
         self.actor_type = actor_type or self.__class__.__name__
 
         # State persistence
-        self._state_repository: Optional[StateRepository] = state_repository
-        self._state_record: Optional[AgentStateRecord] = None
+        self._state_repository: StateRepository | None = state_repository
+        self._state_record: AgentStateRecord | None = None
         self._load_state_on_init = load_state_on_init
         self._persistence_interval = persistence_interval  # P0-1: Continuous persistence
         self._messages_since_persist = 0  # P0-1: Track messages for auto-persist
@@ -220,19 +220,19 @@ class AgentActor:
         # Actor state
         self.state: ActorState = ActorState.SPAWNING
         self.mailbox: asyncio.Queue = asyncio.Queue(maxsize=max_mailbox_size)
-        self.internal_state: Dict[str, Any] = {}
+        self.internal_state: dict[str, Any] = {}
         self.message_count = 0
         self.error_count = 0
-        self.created_at = datetime.now(timezone.utc).isoformat()
-        self.last_activity: Optional[str] = None
+        self.created_at = datetime.now(UTC).isoformat()
+        self.last_activity: str | None = None
 
         # Processing tasks
-        self._processing_task: Optional[asyncio.Task] = None
-        self._heartbeat_task: Optional[asyncio.Task] = None
+        self._processing_task: asyncio.Task | None = None
+        self._heartbeat_task: asyncio.Task | None = None
         self._running = False
 
         # Message handlers registry
-        self._message_handlers: Dict[str, Callable] = {}
+        self._message_handlers: dict[str, Callable] = {}
         self._register_default_handlers()
 
         logger.info(
@@ -252,17 +252,17 @@ class AgentActor:
         self.register_handler("terminate", self._handle_terminate)
         self.register_handler("collective_task", self._handle_collective_task)
 
-    def _validate_message_content(self, message_type: str, content: Dict[str, Any]) -> Optional[Any]:
+    def _validate_message_content(self, message_type: str, content: dict[str, Any]) -> Any | None:
         """
         Validate message content using Pydantic models.
-        
+
         Args:
             message_type: Type of message to validate
             content: Message content dict
-            
+
         Returns:
             Validated model instance or None if validation not available
-            
+
         Raises:
             ValueError: If validation fails
         """
@@ -307,7 +307,7 @@ class AgentActor:
         if self._running:
             logger.warning(f"[{self.agent_id}] Already running, ignoring spawn request")
             return
-        
+
         try:
             logger.info(
                 f"[{self.agent_id}] Agent spawned: {self.name}",
@@ -397,11 +397,11 @@ class AgentActor:
     async def send(
         self,
         topic: str,
-        content: Dict[str, Any],
+        content: dict[str, Any],
         message_type: str = "default",
-        reply_to: Optional[str] = None,
-        correlation_id: Optional[str] = None,
-        metadata: Optional[Dict[str, Any]] = None,
+        reply_to: str | None = None,
+        correlation_id: str | None = None,
+        metadata: dict[str, Any] | None = None,
     ) -> str:
         """
         Send a message to a topic.
@@ -423,7 +423,7 @@ class AgentActor:
             sender=self.agent_id,
             message_type=message_type,
             content=content,
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
             correlation_id=correlation_id,
             reply_to=reply_to,
             metadata=metadata or {},
@@ -443,7 +443,7 @@ class AgentActor:
                         "correlation_id": correlation_id,
                         "reply_to": reply_to,
                         "metadata": metadata or {},
-                        "timestamp": datetime.now(timezone.utc).isoformat(),
+                        "timestamp": datetime.now(UTC).isoformat(),
                     }
                 )
                 logger.info(
@@ -456,7 +456,7 @@ class AgentActor:
                     f"[{self.agent_id}] Event mesh send failed: {e}",
                     extra={"message_id": message_id, "topic": topic},
                 )
-        
+
         # Fallback: Direct delivery to actors subscribed to topic
         # Use global actor registry from supervisor
         actor_registry = self._get_actor_registry()
@@ -464,8 +464,8 @@ class AgentActor:
             try:
                 # Find actors subscribed to this topic
                 delivered = False
-                for reg_actor_id, reg_actor in actor_registry.items():
-                    if topic in getattr(reg_actor, 'topics', []):
+                for reg_actor in actor_registry.values():
+                    if topic in getattr(reg_actor, "topics", []):
                         await reg_actor.put_message(message)
                         delivered = True
                 if delivered:
@@ -479,17 +479,17 @@ class AgentActor:
                     f"[{self.agent_id}] Direct delivery failed: {e}",
                     extra={"message_id": message_id, "topic": topic},
                 )
-        
+
         # Last resort: log the message (should not happen in production)
         logger.warning(
             f"[{self.agent_id}] Message {message_id} queued (no delivery mechanism available)",
             extra={"message_type": message_type, "topic": topic},
         )
-        
+
         # Store in internal queue for later delivery
         self._queue_message(message)
         return message_id
-    
+
     def _queue_message(self, message: ActorMessage) -> None:
         """Queue a message for later delivery when event mesh becomes available."""
         pending_messages = self.get_state("_pending_messages", [])
@@ -504,8 +504,8 @@ class AgentActor:
         self,
         target_actor_id: str,
         message_type: str,
-        content: Dict[str, Any],
-        correlation_id: Optional[str] = None,
+        content: dict[str, Any],
+        correlation_id: str | None = None,
     ) -> str:
         """
         Send a message directly to another actor.
@@ -520,7 +520,7 @@ class AgentActor:
             Message ID
         """
         message_id = str(uuid.uuid4())
-        
+
         # Use global actor registry from supervisor
         actor_registry = self._get_actor_registry()
         if actor_registry is not None and target_actor_id in actor_registry:
@@ -534,7 +534,7 @@ class AgentActor:
                         "content": content,
                         "sender": self.agent_id,
                     },
-                    timestamp=datetime.now(timezone.utc).isoformat(),
+                    timestamp=datetime.now(UTC).isoformat(),
                     correlation_id=correlation_id,
                 )
                 await target_actor.put_message(message)
@@ -548,7 +548,7 @@ class AgentActor:
                     f"[{self.agent_id}] Direct actor send failed: {e}",
                     extra={"target": target_actor_id},
                 )
-        
+
         # Fallback to topic-based routing
         return await self.send(
             topic=f"actor:{target_actor_id}",
@@ -565,49 +565,49 @@ class AgentActor:
         self,
         recipient: str,
         message_type: str,
-        content: Dict[str, Any],
+        content: dict[str, Any],
         timeout: int = 30,
-    ) -> Optional[Dict[str, Any]]:
+    ) -> dict[str, Any] | None:
         """
         Send message and wait for reply with correlation tracking.
-        
+
         Implements the request-reply pattern from Microsoft AutoGen for
         synchronous inter-agent communication.
-        
+
         Args:
             recipient: Target actor ID or topic
             message_type: Message type identifier
             content: Message payload
             timeout: Seconds to wait for reply (default: 30)
-            
+
         Returns:
             Reply content dict, or None if timeout/failure
-            
+
         Raises:
             asyncio.TimeoutError: If no reply received within timeout
         """
         import asyncio
-        
+
         # Generate unique correlation ID for this request
         correlation_id = str(uuid.uuid4())
         reply_channel = f"reply_{self.agent_id}_{correlation_id}"
-        
+
         logger.info(
             f"[{self.agent_id}] Sending request to {recipient} with correlation_id={correlation_id}",
             extra={"message_type": message_type, "timeout": timeout},
         )
-        
+
         # Create a temporary queue for the reply
         reply_queue: asyncio.Queue = asyncio.Queue()
-        
+
         # Register reply handler
         async def handle_reply(message: ActorMessage) -> None:
             """Handle incoming reply message."""
             await reply_queue.put(message)
-        
+
         # Register the reply handler for this specific channel
         self.register_handler(reply_channel, handle_reply)
-        
+
         try:
             # Send request with reply_to channel
             await self.send(
@@ -617,32 +617,32 @@ class AgentActor:
                 correlation_id=correlation_id,
                 reply_to=reply_channel,
             )
-            
+
             # Wait for reply with timeout
             try:
                 reply_message = await asyncio.wait_for(
                     reply_queue.get(),
                     timeout=timeout,
                 )
-                
+
                 logger.info(
                     f"[{self.agent_id}] Reply received for correlation_id={correlation_id}",
                     extra={"message_type": reply_message.message_type},
                 )
-                
+
                 return reply_message.content
-                
-            except asyncio.TimeoutError:
+
+            except TimeoutError:
                 logger.warning(
                     f"[{self.agent_id}] Request timeout after {timeout}s for correlation_id={correlation_id}",
                     extra={"recipient": recipient, "message_type": message_type},
                 )
                 raise
-                
+
         finally:
             # Cleanup: unregister reply handler
             self.unregister_handler(reply_channel)
-    
+
     async def put_message(self, message: ActorMessage) -> None:
         """
         Put a message in the actor's mailbox.
@@ -653,7 +653,7 @@ class AgentActor:
         # P1-10e fix: Add retry logic for message queuing instead of dropping
         max_retries = 3
         retry_delay = 0.1  # 100ms initial delay
-        
+
         for attempt in range(max_retries):
             try:
                 await asyncio.wait_for(
@@ -665,7 +665,7 @@ class AgentActor:
                     extra={"message_type": message.message_type},
                 )
                 return  # Success, exit retry loop
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 if attempt < max_retries - 1:
                     # P1-10e fix: Retry with exponential backoff
                     logger.warning(
@@ -695,7 +695,7 @@ class AgentActor:
 
                 self.message_count += 1
                 self._messages_since_persist += 1  # P0-1: Track for auto-persist
-                self.last_activity = datetime.now(timezone.utc).isoformat()
+                self.last_activity = datetime.now(UTC).isoformat()
 
                 # Process message
                 await self.process_message(message)
@@ -712,7 +712,7 @@ class AgentActor:
                 # Mark as done
                 self.mailbox.task_done()
 
-            except asyncio.TimeoutError:
+            except TimeoutError:
                 # No messages, continue
                 continue
             except asyncio.CancelledError:
@@ -735,7 +735,6 @@ class AgentActor:
         Args:
             message: Actor message to process
         """
-        pass
 
     async def initialize(self) -> None:
         """
@@ -743,7 +742,6 @@ class AgentActor:
 
         Override this method in subclasses for custom initialization logic.
         """
-        pass
 
     async def cleanup(self) -> None:
         """
@@ -759,13 +757,13 @@ class AgentActor:
                     self.mailbox.get_nowait()
                 except asyncio.QueueEmpty:
                     break
-            
+
             # Clear internal state
             self.internal_state.clear()
-            
+
             # Clear message handlers
             self._message_handlers.clear()
-            
+
             logger.debug(f"[{self.agent_id}] Cleanup complete")
         except Exception as e:
             logger.error(f"[{self.agent_id}] Cleanup error: {e}", exc_info=True)
@@ -805,7 +803,7 @@ class AgentActor:
         Falls back to legacy file system persistence if repository not available.
         """
         import json
-        
+
         state_data = {
             "internal_state": self.internal_state,
             "message_count": self.message_count,
@@ -815,9 +813,9 @@ class AgentActor:
             "last_activity": self.last_activity,
             "topics": self.topics,
             "capabilities": self.capabilities,
-            "saved_at": datetime.now(timezone.utc).isoformat(),
+            "saved_at": datetime.now(UTC).isoformat(),
         }
-        
+
         # Use state repository if available
         if self._state_repository is not None:
             try:
@@ -825,7 +823,7 @@ class AgentActor:
                 version = None
                 if self._state_record:
                     version = self._state_record.version + 1
-                
+
                 self._state_record = await self._state_repository.save_state(
                     agent_id=self.agent_id,
                     state=state_data,
@@ -842,7 +840,7 @@ class AgentActor:
                     f"[{self.agent_id}] StateRepository persistence failed: {e}",
                     exc_info=True,
                 )
-        
+
         # Legacy fallback: try direct db_pool access
         db_pool = self.get_state("_db_pool")
         if db_pool is not None:
@@ -869,17 +867,17 @@ class AgentActor:
                     f"[{self.agent_id}] PostgreSQL persistence failed: {e}",
                     exc_info=True,
                 )
-        
+
         # Final fallback: persist to file system
         try:
             import os
             state_dir = os.path.join(os.getcwd(), ".actor_states")
             os.makedirs(state_dir, exist_ok=True)
             state_file = os.path.join(state_dir, f"{self.agent_id}.json")
-            
-            with open(state_file, 'w') as f:
+
+            with open(state_file, "w") as f:
                 json.dump(state_data, f, indent=2)
-            
+
             logger.info(
                 f"[{self.agent_id}] State persisted to file system",
                 extra={"path": state_file},
@@ -897,7 +895,7 @@ class AgentActor:
         Attempts to load from repository first, then falls back to legacy methods.
         """
         import json
-        
+
         # Try StateRepository first
         if self._state_repository is not None:
             try:
@@ -905,7 +903,7 @@ class AgentActor:
                 if record:
                     self._state_record = record
                     loaded_state = record.state
-                    
+
                     self.internal_state = loaded_state.get("internal_state", {})
                     self.message_count = loaded_state.get("message_count", 0)
                     self.error_count = loaded_state.get("error_count", 0)
@@ -914,7 +912,7 @@ class AgentActor:
                     self.last_activity = loaded_state.get("last_activity")
                     self.topics = loaded_state.get("topics", self.topics)
                     self.capabilities = loaded_state.get("capabilities", self.capabilities)
-                    
+
                     logger.info(
                         f"[{self.agent_id}] State loaded from StateRepository",
                         extra={"state": self.state.value, "version": record.version},
@@ -925,7 +923,7 @@ class AgentActor:
                     f"[{self.agent_id}] StateRepository load failed: {e}",
                     exc_info=True,
                 )
-        
+
         # Legacy fallback: try direct db_pool access
         db_pool = self.get_state("_db_pool")
         if db_pool is not None:
@@ -945,7 +943,7 @@ class AgentActor:
                         self.last_activity = loaded_state.get("last_activity")
                         self.topics = loaded_state.get("topics", self.topics)
                         self.capabilities = loaded_state.get("capabilities", self.capabilities)
-                        
+
                         logger.info(
                             f"[{self.agent_id}] State loaded from PostgreSQL (legacy)",
                             extra={"state": self.state.value},
@@ -956,16 +954,16 @@ class AgentActor:
                     f"[{self.agent_id}] PostgreSQL load failed: {e}",
                     exc_info=True,
                 )
-        
+
         # Final fallback: load from file system
         try:
             import os
             state_file = os.path.join(os.getcwd(), ".actor_states", f"{self.agent_id}.json")
-            
+
             if os.path.exists(state_file):
-                with open(state_file, 'r') as f:
+                with open(state_file) as f:
                     loaded_state = json.load(f)
-                
+
                 self.internal_state = loaded_state.get("internal_state", {})
                 self.message_count = loaded_state.get("message_count", 0)
                 self.error_count = loaded_state.get("error_count", 0)
@@ -974,7 +972,7 @@ class AgentActor:
                 self.last_activity = loaded_state.get("last_activity")
                 self.topics = loaded_state.get("topics", self.topics)
                 self.capabilities = loaded_state.get("capabilities", self.capabilities)
-                
+
                 logger.info(
                     f"[{self.agent_id}] State loaded from file system",
                     extra={"path": state_file},
@@ -982,14 +980,14 @@ class AgentActor:
                 return
         except Exception as e:
             logger.error(f"[{self.agent_id}] File system load failed: {e}", exc_info=True)
-        
+
         # No state found - actor is starting fresh
         logger.info(f"[{self.agent_id}] No previous state found, starting fresh")
 
     async def save_checkpoint(
         self,
-        metadata: Optional[Dict[str, Any]] = None,
-    ) -> Optional[StateCheckpoint]:
+        metadata: dict[str, Any] | None = None,
+    ) -> StateCheckpoint | None:
         """
         Save a versioned state checkpoint.
 
@@ -1007,7 +1005,7 @@ class AgentActor:
         if self._state_repository is None:
             logger.warning(f"[{self.agent_id}] Cannot save checkpoint: no state repository")
             return None
-        
+
         state_data = {
             "internal_state": self.internal_state,
             "message_count": self.message_count,
@@ -1018,7 +1016,7 @@ class AgentActor:
             "topics": self.topics,
             "capabilities": self.capabilities,
         }
-        
+
         try:
             version = self._state_record.version + 1 if self._state_record else 1
             checkpoint = await self._state_repository.checkpoint(
@@ -1055,13 +1053,13 @@ class AgentActor:
         if self._state_repository is None:
             logger.warning(f"[{self.agent_id}] Cannot restore checkpoint: no state repository")
             return False
-        
+
         try:
             success = await self._state_repository.restore_from_checkpoint(
                 agent_id=self.agent_id,
                 checkpoint_id=checkpoint_id,
             )
-            
+
             if success:
                 # Reload the state
                 await self.load_state()
@@ -1069,7 +1067,7 @@ class AgentActor:
                     f"[{self.agent_id}] State restored from checkpoint",
                     extra={"checkpoint_id": str(checkpoint_id)},
                 )
-            
+
             return success
         except Exception as e:
             logger.error(
@@ -1081,7 +1079,7 @@ class AgentActor:
     async def get_checkpoints(
         self,
         limit: int = 10,
-    ) -> List[StateCheckpoint]:
+    ) -> list[StateCheckpoint]:
         """
         Get recent checkpoints for this agent.
 
@@ -1093,7 +1091,7 @@ class AgentActor:
         """
         if self._state_repository is None:
             return []
-        
+
         try:
             return await self._state_repository.get_checkpoints(
                 agent_id=self.agent_id,
@@ -1142,7 +1140,7 @@ class AgentActor:
 
     async def broadcast(
         self,
-        content: Dict[str, Any],
+        content: dict[str, Any],
         message_type: str = "broadcast",
     ) -> None:
         """
@@ -1160,7 +1158,7 @@ class AgentActor:
                     "type": message_type,
                     "from": self.agent_id,
                     "content": content,
-                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "timestamp": datetime.now(UTC).isoformat(),
                 })
                 logger.info(
                     f"[{self.agent_id}] Broadcast sent via event mesh",
@@ -1172,7 +1170,7 @@ class AgentActor:
                     f"[{self.agent_id}] Event mesh broadcast failed: {e}",
                     extra={"message_type": message_type},
                 )
-        
+
         # Fallback: Broadcast to all actors via registry
         actor_registry = self._get_actor_registry()
         if actor_registry is not None:
@@ -1184,7 +1182,7 @@ class AgentActor:
                     "content": content,
                     "sender": self.agent_id,
                 },
-                timestamp=datetime.now(timezone.utc).isoformat(),
+                timestamp=datetime.now(UTC).isoformat(),
             )
             sent_count = 0
             for reg_actor_id, reg_actor in actor_registry.items():
@@ -1202,7 +1200,7 @@ class AgentActor:
                 extra={"message_type": message_type},
             )
             return
-        
+
         # Last resort: topic-based broadcast
         await self.send(
             topic="broadcast",
@@ -1227,7 +1225,7 @@ class AgentActor:
         except ValueError as e:
             logger.error(f"[{self.agent_id}] Health check validation failed: {e}")
             return
-        
+
         status = self.get_status()
 
         await self.send(
@@ -1279,10 +1277,10 @@ class AgentActor:
     async def _handle_collective_task(self, message: ActorMessage) -> None:
         """
         Handle collective task contribution requests with validation.
-        
+
         This handler processes collective task requests and returns contributions.
         Subclasses can override this method to provide custom contribution logic.
-        
+
         Args:
             message: ActorMessage with collective task details
         """
@@ -1307,7 +1305,7 @@ class AgentActor:
         except ValueError as e:
             logger.error(f"[{self.agent_id}] Collective task validation failed: {e}")
             return
-        
+
         logger.info(
             f"[{self.agent_id}] Received collective task",
             extra={
@@ -1316,7 +1314,7 @@ class AgentActor:
                 "description": description,
             }
         )
-        
+
         # Generate contribution (subclasses should override for custom logic)
         contribution = await self._generate_collective_contribution(
             task_id=task_id,
@@ -1325,7 +1323,7 @@ class AgentActor:
             input_data=input_data,
             protocol=protocol
         )
-        
+
         # Send response if reply_to is provided
         if reply_to:
             await self.send(
@@ -1338,33 +1336,33 @@ class AgentActor:
                 },
                 correlation_id=message.correlation_id,
             )
-    
+
     async def _generate_collective_contribution(
         self,
         task_id: str,
         task_type: str,
         description: str,
-        input_data: Dict[str, Any],
-        protocol: Dict[str, Any]
-    ) -> Dict[str, Any]:
+        input_data: dict[str, Any],
+        protocol: dict[str, Any]
+    ) -> dict[str, Any]:
         """
         Generate contribution for a collective task.
-        
+
         Subclasses should override this method to provide custom contribution logic.
         Default implementation uses LLM if available, otherwise returns fallback.
-        
+
         Args:
             task_id: Task identifier
             task_type: Type of task
             description: Task description
             input_data: Task input data
             protocol: Communication protocol
-            
+
         Returns:
             Dict with contribution and confidence
         """
         # Try using LLM if available
-        if hasattr(self, 'swarms_agent') and self.swarms_agent is not None:
+        if hasattr(self, "swarms_agent") and self.swarms_agent is not None:
             try:
                 prompt = f"""You are participating in a collective task.
 
@@ -1375,7 +1373,7 @@ Task Details:
 - Input Data: {input_data}
 
 Please provide your analysis and recommendation for this collective task."""
-                
+
                 response = await self.run_with_llm(prompt, timeout=60)
                 return {
                     "contribution": {
@@ -1387,7 +1385,7 @@ Please provide your analysis and recommendation for this collective task."""
                 }
             except Exception as e:
                 logger.error(f"[{self.agent_id}] LLM contribution error: {e}")
-        
+
         # Fallback contribution
         return {
             "contribution": {
@@ -1398,19 +1396,19 @@ Please provide your analysis and recommendation for this collective task."""
             "confidence": 0.6
         }
 
-    def _get_actor_registry(self) -> Optional[Dict[str, "AgentActor"]]:
+    def _get_actor_registry(self) -> dict[str, "AgentActor"] | None:
         """
         Get global actor registry from supervisor.
-        
+
         This enables message delivery by accessing the supervisor's actor registry.
-        
+
         Returns:
             Actor registry dict or None if supervisor not available
         """
         try:
             from heretek_swarm.actors.supervisor import get_supervisor
             supervisor = get_supervisor()
-            if supervisor and hasattr(supervisor, 'actors'):
+            if supervisor and hasattr(supervisor, "actors"):
                 return supervisor.actors
         except (ImportError, Exception):
             pass
@@ -1467,7 +1465,7 @@ Please provide your analysis and recommendation for this collective task."""
                 ),
                 timeout=timeout,
             )
-        except asyncio.TimeoutError:
+        except TimeoutError:
             logger.error(f"[{self.agent_id}] LLM call timed out after {timeout}s")
             raise
         except Exception as e:

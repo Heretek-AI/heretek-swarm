@@ -8,14 +8,14 @@ Provides validation, serialization, and type safety for configuration data.
 from __future__ import annotations
 
 from datetime import datetime
-from enum import Enum
-from typing import Any, Dict, List, Optional
+from enum import StrEnum
+from typing import Any
 from uuid import UUID, uuid4
 
 from pydantic import BaseModel, Field
 
 
-class ConfigType(str, Enum):
+class ConfigType(StrEnum):
     """Configuration value types."""
     STRING = "string"
     INTEGER = "integer"
@@ -25,7 +25,7 @@ class ConfigType(str, Enum):
     ARRAY = "array"
 
 
-class HealthStatus(str, Enum):
+class HealthStatus(StrEnum):
     """Health status for providers."""
     HEALTHY = "healthy"
     UNHEALTHY = "unhealthy"
@@ -33,7 +33,7 @@ class HealthStatus(str, Enum):
     DEGRADED = "degraded"
 
 
-class LLMProviderType(str, Enum):
+class LLMProviderType(StrEnum):
     """Supported LLM provider types."""
     OPENAI = "openai"
     OPENAI_COMPATIBLE = "openai_compatible"
@@ -44,7 +44,7 @@ class LLMProviderType(str, Enum):
     LEMONADE = "lemonade"
 
 
-class EmbeddingProviderType(str, Enum):
+class EmbeddingProviderType(StrEnum):
     """Supported embedding provider types."""
     OPENAI = "openai"
     OPENAI_COMPATIBLE = "openai_compatible"
@@ -63,14 +63,14 @@ class UserConfiguration(BaseModel):
     config_key: str = Field(..., min_length=1, max_length=255)
     config_value: Any
     config_type: ConfigType = Field(default=ConfigType.STRING)
-    description: Optional[str] = None
+    description: str | None = None
     category: str = Field(default="general", max_length=100)
     is_sensitive: bool = Field(default=False)
     is_editable: bool = Field(default=True)
-    validation_schema: Optional[Dict[str, Any]] = None
+    validation_schema: dict[str, Any] | None = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_by: Optional[str] = None
+    updated_by: str | None = None
 
     class Config:
         use_enum_values = True
@@ -85,19 +85,19 @@ class UserConfigurationCreate(BaseModel):
     config_key: str = Field(..., min_length=1, max_length=255)
     config_value: Any
     config_type: ConfigType = Field(default=ConfigType.STRING)
-    description: Optional[str] = None
+    description: str | None = None
     category: str = Field(default="general", max_length=100)
     is_sensitive: bool = Field(default=False)
     is_editable: bool = Field(default=True)
-    validation_schema: Optional[Dict[str, Any]] = None
+    validation_schema: dict[str, Any] | None = None
 
 
 class UserConfigurationUpdate(BaseModel):
     """Model for updating a configuration."""
-    config_value: Optional[Any] = None
-    description: Optional[str] = None
-    is_editable: Optional[bool] = None
-    updated_by: Optional[str] = None
+    config_value: Any | None = None
+    description: str | None = None
+    is_editable: bool | None = None
+    updated_by: str | None = None
 
 
 # =============================================================================
@@ -110,24 +110,24 @@ class LLMProvider(BaseModel):
     provider_name: str = Field(..., min_length=1, max_length=100)
     provider_type: LLMProviderType
     base_url: str = Field(..., min_length=1, max_length=500)
-    api_key_hint: Optional[str] = None
-    default_model: Optional[str] = None
-    available_models: List[str] = Field(default_factory=list)
-    model_aliases: Dict[str, str] = Field(default_factory=dict)
+    api_key_hint: str | None = None
+    default_model: str | None = None
+    available_models: list[str] = Field(default_factory=list)
+    model_aliases: dict[str, str] = Field(default_factory=dict)
     supports_streaming: bool = Field(default=True)
     supports_function_calling: bool = Field(default=False)
     supports_vision: bool = Field(default=False)
-    max_tokens: Optional[int] = None
-    max_context_length: Optional[int] = None
-    rate_limit_requests_per_minute: Optional[int] = None
-    rate_limit_tokens_per_minute: Optional[int] = None
+    max_tokens: int | None = None
+    max_context_length: int | None = None
+    rate_limit_requests_per_minute: int | None = None
+    rate_limit_tokens_per_minute: int | None = None
     is_enabled: bool = Field(default=True)
     is_default: bool = Field(default=False)
     health_status: HealthStatus = Field(default=HealthStatus.UNKNOWN)
-    last_health_check: Optional[datetime] = None
-    health_check_error: Optional[str] = None
+    last_health_check: datetime | None = None
+    health_check_error: str | None = None
     priority: int = Field(default=100)
-    extra_config: Dict[str, Any] = Field(default_factory=dict)
+    extra_config: dict[str, Any] = Field(default_factory=dict)
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
 
@@ -144,49 +144,49 @@ class LLMProviderCreate(BaseModel):
     provider_name: str = Field(..., min_length=1, max_length=100)
     provider_type: LLMProviderType
     base_url: str = Field(..., min_length=1, max_length=500)
-    api_key: Optional[str] = Field(None, alias="api_key")
-    api_key_hint: Optional[str] = None
-    default_model: Optional[str] = None
-    available_models: Optional[List[str]] = None
-    model_aliases: Optional[Dict[str, str]] = None
+    api_key: str | None = Field(None, alias="api_key")
+    api_key_hint: str | None = None
+    default_model: str | None = None
+    available_models: list[str] | None = None
+    model_aliases: dict[str, str] | None = None
     supports_streaming: bool = Field(default=True)
     supports_function_calling: bool = Field(default=False)
     supports_vision: bool = Field(default=False)
-    max_tokens: Optional[int] = None
-    max_context_length: Optional[int] = None
-    rate_limit_requests_per_minute: Optional[int] = None
-    rate_limit_tokens_per_minute: Optional[int] = None
+    max_tokens: int | None = None
+    max_context_length: int | None = None
+    rate_limit_requests_per_minute: int | None = None
+    rate_limit_tokens_per_minute: int | None = None
     is_enabled: bool = Field(default=True)
     is_default: bool = Field(default=False)
     priority: int = Field(default=100)
-    extra_config: Optional[Dict[str, Any]] = None
+    extra_config: dict[str, Any] | None = None
 
 
 class LLMProviderUpdate(BaseModel):
     """Model for updating an LLM provider."""
-    base_url: Optional[str] = None
-    api_key: Optional[str] = None
-    api_key_hint: Optional[str] = None
-    default_model: Optional[str] = None
-    available_models: Optional[List[str]] = None
-    model_aliases: Optional[Dict[str, str]] = None
-    supports_streaming: Optional[bool] = None
-    supports_function_calling: Optional[bool] = None
-    supports_vision: Optional[bool] = None
-    max_tokens: Optional[int] = None
-    max_context_length: Optional[int] = None
-    rate_limit_requests_per_minute: Optional[int] = None
-    rate_limit_tokens_per_minute: Optional[int] = None
-    is_enabled: Optional[bool] = None
-    is_default: Optional[bool] = None
-    priority: Optional[int] = None
-    extra_config: Optional[Dict[str, Any]] = None
+    base_url: str | None = None
+    api_key: str | None = None
+    api_key_hint: str | None = None
+    default_model: str | None = None
+    available_models: list[str] | None = None
+    model_aliases: dict[str, str] | None = None
+    supports_streaming: bool | None = None
+    supports_function_calling: bool | None = None
+    supports_vision: bool | None = None
+    max_tokens: int | None = None
+    max_context_length: int | None = None
+    rate_limit_requests_per_minute: int | None = None
+    rate_limit_tokens_per_minute: int | None = None
+    is_enabled: bool | None = None
+    is_default: bool | None = None
+    priority: int | None = None
+    extra_config: dict[str, Any] | None = None
 
 
 class LLMProviderTestRequest(BaseModel):
     """Request model for testing LLM provider connectivity."""
     prompt: str = Field(default="Hello, this is a connectivity test.", max_length=500)
-    model: Optional[str] = None
+    model: str | None = None
     max_tokens: int = Field(default=10, ge=1, le=100)
 
 
@@ -195,9 +195,9 @@ class LLMProviderTestResponse(BaseModel):
     success: bool
     provider_name: str
     model_used: str
-    response_text: Optional[str] = None
+    response_text: str | None = None
     latency_ms: float
-    error: Optional[str] = None
+    error: str | None = None
 
 
 # =============================================================================
@@ -210,20 +210,20 @@ class EmbeddingProvider(BaseModel):
     provider_name: str = Field(..., min_length=1, max_length=100)
     provider_type: EmbeddingProviderType
     base_url: str = Field(..., min_length=1, max_length=500)
-    api_key_hint: Optional[str] = None
-    default_model: Optional[str] = None
-    available_models: List[str] = Field(default_factory=list)
-    embedding_dimensions: Optional[int] = None
-    supported_input_formats: List[str] = Field(default=["text"])
+    api_key_hint: str | None = None
+    default_model: str | None = None
+    available_models: list[str] = Field(default_factory=list)
+    embedding_dimensions: int | None = None
+    supported_input_formats: list[str] = Field(default=["text"])
     max_batch_size: int = Field(default=32)
     max_tokens_per_batch: int = Field(default=8192)
     is_enabled: bool = Field(default=True)
     is_default: bool = Field(default=False)
     health_status: HealthStatus = Field(default=HealthStatus.UNKNOWN)
-    last_health_check: Optional[datetime] = None
-    health_check_error: Optional[str] = None
+    last_health_check: datetime | None = None
+    health_check_error: str | None = None
     priority: int = Field(default=100)
-    extra_config: Dict[str, Any] = Field(default_factory=dict)
+    extra_config: dict[str, Any] = Field(default_factory=dict)
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
 
@@ -240,41 +240,41 @@ class EmbeddingProviderCreate(BaseModel):
     provider_name: str = Field(..., min_length=1, max_length=100)
     provider_type: EmbeddingProviderType
     base_url: str = Field(..., min_length=1, max_length=500)
-    api_key: Optional[str] = Field(None, alias="api_key")
-    api_key_hint: Optional[str] = None
-    default_model: Optional[str] = None
-    available_models: Optional[List[str]] = None
-    embedding_dimensions: Optional[int] = None
-    supported_input_formats: Optional[List[str]] = None
+    api_key: str | None = Field(None, alias="api_key")
+    api_key_hint: str | None = None
+    default_model: str | None = None
+    available_models: list[str] | None = None
+    embedding_dimensions: int | None = None
+    supported_input_formats: list[str] | None = None
     max_batch_size: int = Field(default=32)
     max_tokens_per_batch: int = Field(default=8192)
     is_enabled: bool = Field(default=True)
     is_default: bool = Field(default=False)
     priority: int = Field(default=100)
-    extra_config: Optional[Dict[str, Any]] = None
+    extra_config: dict[str, Any] | None = None
 
 
 class EmbeddingProviderUpdate(BaseModel):
     """Model for updating an embedding provider."""
-    base_url: Optional[str] = None
-    api_key: Optional[str] = None
-    api_key_hint: Optional[str] = None
-    default_model: Optional[str] = None
-    available_models: Optional[List[str]] = None
-    embedding_dimensions: Optional[int] = None
-    supported_input_formats: Optional[List[str]] = None
-    max_batch_size: Optional[int] = None
-    max_tokens_per_batch: Optional[int] = None
-    is_enabled: Optional[bool] = None
-    is_default: Optional[bool] = None
-    priority: Optional[int] = None
-    extra_config: Optional[Dict[str, Any]] = None
+    base_url: str | None = None
+    api_key: str | None = None
+    api_key_hint: str | None = None
+    default_model: str | None = None
+    available_models: list[str] | None = None
+    embedding_dimensions: int | None = None
+    supported_input_formats: list[str] | None = None
+    max_batch_size: int | None = None
+    max_tokens_per_batch: int | None = None
+    is_enabled: bool | None = None
+    is_default: bool | None = None
+    priority: int | None = None
+    extra_config: dict[str, Any] | None = None
 
 
 class EmbeddingProviderTestRequest(BaseModel):
     """Request model for testing embedding provider connectivity."""
     text: str = Field(default="This is a test sentence for embedding.", max_length=1000)
-    model: Optional[str] = None
+    model: str | None = None
 
 
 class EmbeddingProviderTestResponse(BaseModel):
@@ -282,9 +282,9 @@ class EmbeddingProviderTestResponse(BaseModel):
     success: bool
     provider_name: str
     model_used: str
-    dimensions: Optional[int] = None
+    dimensions: int | None = None
     latency_ms: float
-    error: Optional[str] = None
+    error: str | None = None
 
 
 # =============================================================================
@@ -295,19 +295,19 @@ class AgentConfig(BaseModel):
     """Per-agent configuration."""
     id: UUID = Field(default_factory=uuid4)
     agent_type: str = Field(..., min_length=1, max_length=100)
-    agent_id: Optional[str] = None
+    agent_id: str | None = None
     config_name: str = Field(..., min_length=1, max_length=255)
-    config_data: Dict[str, Any] = Field(default_factory=dict)
-    llm_provider_id: Optional[UUID] = None
-    embedding_provider_id: Optional[UUID] = None
+    config_data: dict[str, Any] = Field(default_factory=dict)
+    llm_provider_id: UUID | None = None
+    embedding_provider_id: UUID | None = None
     is_active: bool = Field(default=True)
     is_default_for_type: bool = Field(default=False)
-    description: Optional[str] = None
-    tags: List[str] = Field(default_factory=list)
+    description: str | None = None
+    tags: list[str] = Field(default_factory=list)
     created_at: datetime = Field(default_factory=datetime.utcnow)
     updated_at: datetime = Field(default_factory=datetime.utcnow)
-    created_by: Optional[str] = None
-    updated_by: Optional[str] = None
+    created_by: str | None = None
+    updated_by: str | None = None
 
     class Config:
         use_enum_values = True
@@ -320,27 +320,27 @@ class AgentConfig(BaseModel):
 class AgentConfigCreate(BaseModel):
     """Model for creating a new agent configuration."""
     agent_type: str = Field(..., min_length=1, max_length=100)
-    agent_id: Optional[str] = None
+    agent_id: str | None = None
     config_name: str = Field(..., min_length=1, max_length=255)
-    config_data: Dict[str, Any] = Field(default_factory=dict)
-    llm_provider_id: Optional[UUID] = None
-    embedding_provider_id: Optional[UUID] = None
+    config_data: dict[str, Any] = Field(default_factory=dict)
+    llm_provider_id: UUID | None = None
+    embedding_provider_id: UUID | None = None
     is_active: bool = Field(default=True)
     is_default_for_type: bool = Field(default=False)
-    description: Optional[str] = None
-    tags: Optional[List[str]] = None
+    description: str | None = None
+    tags: list[str] | None = None
 
 
 class AgentConfigUpdate(BaseModel):
     """Model for updating an agent configuration."""
-    config_name: Optional[str] = None
-    config_data: Optional[Dict[str, Any]] = None
-    llm_provider_id: Optional[UUID] = None
-    embedding_provider_id: Optional[UUID] = None
-    is_active: Optional[bool] = None
-    is_default_for_type: Optional[bool] = None
-    description: Optional[str] = None
-    tags: Optional[List[str]] = None
+    config_name: str | None = None
+    config_data: dict[str, Any] | None = None
+    llm_provider_id: UUID | None = None
+    embedding_provider_id: UUID | None = None
+    is_active: bool | None = None
+    is_default_for_type: bool | None = None
+    description: str | None = None
+    tags: list[str] | None = None
 
 
 # =============================================================================
@@ -353,12 +353,12 @@ class ConfigAuditLog(BaseModel):
     entity_type: str
     entity_id: UUID
     action: str
-    old_value: Optional[Dict[str, Any]] = None
-    new_value: Optional[Dict[str, Any]] = None
-    changed_fields: Optional[List[str]] = None
-    changed_by: Optional[str] = None
-    change_reason: Optional[str] = None
-    ip_address: Optional[str] = None
+    old_value: dict[str, Any] | None = None
+    new_value: dict[str, Any] | None = None
+    changed_fields: list[str] | None = None
+    changed_by: str | None = None
+    change_reason: str | None = None
+    ip_address: str | None = None
     changed_at: datetime = Field(default_factory=datetime.utcnow)
 
     class Config:
@@ -375,8 +375,8 @@ class ConfigAuditLog(BaseModel):
 class ConfigCacheEntry(BaseModel):
     """Configuration cache entry."""
     cache_key: str
-    cache_value: Dict[str, Any]
-    expires_at: Optional[datetime] = None
+    cache_value: dict[str, Any]
+    expires_at: datetime | None = None
     created_at: datetime = Field(default_factory=datetime.utcnow)
     access_count: int = Field(default=0)
     last_accessed_at: datetime = Field(default_factory=datetime.utcnow)
@@ -390,20 +390,20 @@ class ConfigurationExport(BaseModel):
     """Exported configuration bundle."""
     version: str = "1.0"
     exported_at: datetime = Field(default_factory=datetime.utcnow)
-    exported_by: Optional[str] = None
-    user_configurations: List[UserConfiguration] = Field(default_factory=list)
-    llm_providers: List[LLMProvider] = Field(default_factory=list)
-    embedding_providers: List[EmbeddingProvider] = Field(default_factory=list)
-    agent_configs: List[AgentConfig] = Field(default_factory=list)
+    exported_by: str | None = None
+    user_configurations: list[UserConfiguration] = Field(default_factory=list)
+    llm_providers: list[LLMProvider] = Field(default_factory=list)
+    embedding_providers: list[EmbeddingProvider] = Field(default_factory=list)
+    agent_configs: list[AgentConfig] = Field(default_factory=list)
 
 
 class ConfigurationImport(BaseModel):
     """Imported configuration bundle."""
     version: str
-    user_configurations: Optional[List[Dict[str, Any]]] = None
-    llm_providers: Optional[List[Dict[str, Any]]] = None
-    embedding_providers: Optional[List[Dict[str, Any]]] = None
-    agent_configs: Optional[List[Dict[str, Any]]] = None
+    user_configurations: list[dict[str, Any]] | None = None
+    llm_providers: list[dict[str, Any]] | None = None
+    embedding_providers: list[dict[str, Any]] | None = None
+    agent_configs: list[dict[str, Any]] | None = None
 
 
 class ImportOptions(BaseModel):
@@ -419,8 +419,8 @@ class ImportOptions(BaseModel):
 class ImportResult(BaseModel):
     """Result of configuration import."""
     success: bool
-    imported_count: Dict[str, int] = Field(default_factory=dict)
-    skipped_count: Dict[str, int] = Field(default_factory=dict)
-    error_count: Dict[str, int] = Field(default_factory=dict)
-    errors: List[str] = Field(default_factory=list)
-    warnings: List[str] = Field(default_factory=list)
+    imported_count: dict[str, int] = Field(default_factory=dict)
+    skipped_count: dict[str, int] = Field(default_factory=dict)
+    error_count: dict[str, int] = Field(default_factory=dict)
+    errors: list[str] = Field(default_factory=list)
+    warnings: list[str] = Field(default_factory=list)

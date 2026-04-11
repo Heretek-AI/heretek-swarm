@@ -8,10 +8,11 @@ Pattern inspired by elizaOS plugin system.
 import asyncio
 import importlib
 import inspect
-from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from enum import Enum
+from pathlib import Path
+from typing import Any, Optional
 
 import structlog
 
@@ -46,7 +47,7 @@ class PluginMetadata:
     version: str
     description: str
     author: str
-    dependencies: List[str] = field(default_factory=list)
+    dependencies: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -84,7 +85,7 @@ class Plugin:
         self.runtime = None
         logger.info("plugin_unloaded", plugin=self.metadata.name)
 
-    async def on_message(self, message: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    async def on_message(self, message: dict[str, Any]) -> dict[str, Any] | None:
         """
         Handle a message from the runtime.
 
@@ -103,7 +104,6 @@ class Plugin:
         Args:
             agent_id: Agent identifier
         """
-        pass
 
     async def on_agent_terminate(self, agent_id: str) -> None:
         """
@@ -112,7 +112,6 @@ class Plugin:
         Args:
             agent_id: Agent identifier
         """
-        pass
 
 
 @dataclass
@@ -124,11 +123,11 @@ class PluginRuntime:
     """
 
     plugins_dir: Path
-    plugins: Dict[str, Plugin] = field(default_factory=dict)
-    message_handlers: Dict[str, List[Callable]] = field(default_factory=dict)
+    plugins: dict[str, Plugin] = field(default_factory=dict)
+    message_handlers: dict[str, list[Callable]] = field(default_factory=dict)
     _running: bool = False
 
-    def __init__(self, plugins_dir: Optional[Path] = None):
+    def __init__(self, plugins_dir: Path | None = None):
         """
         Initialize plugin runtime.
 
@@ -141,7 +140,7 @@ class PluginRuntime:
         self.plugins_dir = Path(plugins_dir)
         logger.info("plugin_runtime_initialized", plugins_dir=str(self.plugins_dir))
 
-    async def discover_plugins(self) -> List[Plugin]:
+    async def discover_plugins(self) -> list[Plugin]:
         """
         Discover plugins in the plugins directory.
 
@@ -167,9 +166,9 @@ class PluginRuntime:
                 # Import plugin module
                 spec = importlib.util.spec_from_file_location(plugin_path.name, str(plugin_file))
                 module = importlib.util.module_from_spec(spec)
-                
+
                 # Find plugin class
-                for name, obj in inspect.getmembers(module):
+                for _name, obj in inspect.getmembers(module):
                     if inspect.isclass(obj) and issubclass(obj, Plugin) and obj is not Plugin:
                         plugin = obj()
                         plugin.metadata = self._extract_metadata(plugin_path)
@@ -284,7 +283,7 @@ class PluginRuntime:
             logger.error("plugin_unload_failed", plugin=plugin_name, error=str(e))
             return False
 
-    async def load_all(self) -> Dict[str, bool]:
+    async def load_all(self) -> dict[str, bool]:
         """
         Load all discovered plugins.
 
@@ -338,7 +337,7 @@ class PluginRuntime:
 
         return await method_func(**kwargs)
 
-    async def broadcast_message(self, message: Dict[str, Any]) -> List[Dict[str, Any]]:
+    async def broadcast_message(self, message: dict[str, Any]) -> list[dict[str, Any]]:
         """
         Broadcast a message to all loaded plugins.
 
@@ -367,7 +366,7 @@ class PluginRuntime:
 
         return responses
 
-    def get_plugin(self, plugin_name: str) -> Optional[Plugin]:
+    def get_plugin(self, plugin_name: str) -> Plugin | None:
         """
         Get a loaded plugin by name.
 
@@ -379,7 +378,7 @@ class PluginRuntime:
         """
         return self.plugins.get(plugin_name)
 
-    def list_plugins(self) -> List[PluginMetadata]:
+    def list_plugins(self) -> list[PluginMetadata]:
         """
         List all loaded plugins.
 
@@ -397,7 +396,7 @@ class PluginRuntime:
 
 
 # Global plugin runtime instance
-_global_runtime: Optional[PluginRuntime] = None
+_global_runtime: PluginRuntime | None = None
 
 
 def get_plugin_runtime() -> PluginRuntime:
@@ -421,7 +420,7 @@ def get_plugin_runtime() -> PluginRuntime:
 plugin_manager = PluginRuntime()
 
 
-async def load_plugin_from_file(plugin_path: Path) -> Optional[Plugin]:
+async def load_plugin_from_file(plugin_path: Path) -> Plugin | None:
     """
     Load a plugin from a file path.
 
@@ -431,7 +430,7 @@ async def load_plugin_from_file(plugin_path: Path) -> Optional[Plugin]:
     Returns:
         Plugin instance or None
     """
-    runtime = await get_plugin_runtime()
+    await get_plugin_runtime()
 
     try:
         spec = importlib.util.spec_from_file_location("plugin", str(plugin_path))

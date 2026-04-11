@@ -14,27 +14,26 @@ Provides HTTP endpoints for:
 All endpoints require authentication and follow zero-trust principles.
 """
 
-from typing import Optional
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
-from fastapi import APIRouter, HTTPException, Depends, Query
 import structlog
+from fastapi import APIRouter, Depends, HTTPException, Query
 
-from heretek_swarm.gateway.auth import verify_auth
 from heretek_swarm.collective import (
     CollectiveIntelligenceMetrics,
-    MetricsExporter,
-    EmergentPatternClass,
     EmergenceLevel,
+    EmergentPatternClass,
+    MetricsExporter,
 )
+from heretek_swarm.gateway.auth import verify_auth
 
 logger = structlog.get_logger(__name__)
 
 router = APIRouter(prefix="/api/v1/emergent-intelligence", tags=["emergent-intelligence"])
 
 # Global instances (initialized on first use)
-_metrics_instance: Optional[CollectiveIntelligenceMetrics] = None
-_exporter_instance: Optional[MetricsExporter] = None
+_metrics_instance: CollectiveIntelligenceMetrics | None = None
+_exporter_instance: MetricsExporter | None = None
 
 
 def get_metrics_instance() -> CollectiveIntelligenceMetrics:
@@ -57,7 +56,7 @@ def get_exporter_instance() -> MetricsExporter:
 async def get_dashboard_data(auth: dict = Depends(verify_auth)):
     """
     Get real-time metrics dashboard data.
-    
+
     Returns comprehensive swarm metrics including:
     - Swarm health score
     - Swarm Intelligence Quotient (SIQ)
@@ -68,21 +67,21 @@ async def get_dashboard_data(auth: dict = Depends(verify_auth)):
     - Learning metrics
     - Historical trends
     - Active alerts
-    
+
     **Health Score Impact:** Positive - Provides observability
     """
     try:
         metrics = get_metrics_instance()
         dashboard = metrics.get_dashboard_data()
-        
+
         return {
             "success": True,
             "data": dashboard.to_dict(),
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
     except Exception as e:
         logger.error("dashboard_data_error", error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to get dashboard data: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to get dashboard data: {e!s}")
 
 
 @router.get("/siq")
@@ -93,35 +92,35 @@ async def get_siq(
 ):
     """
     Get Swarm Intelligence Quotient (SIQ) calculation.
-    
+
     Returns:
     - Overall SIQ score (50-150 scale, 100 = average)
     - SIQ percentile
     - Component scores (coordination, adaptation, knowledge sharing, etc.)
     - Component weights and contributions
     - Historical trend (optional)
-    
+
     **Health Score Impact:** Positive - Enables SIQ monitoring
     """
     try:
         metrics = get_metrics_instance()
         siq = await metrics.calculate_siq()
         result = siq.to_dict()
-        
+
         if include_history:
             limit = int(history_limit)
             result["history"] = [
                 s.to_dict() for s in metrics._siq_history[-limit:]
             ]
-        
+
         return {
             "success": True,
             "data": result,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
     except Exception as e:
         logger.error("siq_calculation_error", error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to calculate SIQ: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to calculate SIQ: {e!s}")
 
 
 @router.get("/efficiency")
@@ -132,7 +131,7 @@ async def get_collective_efficiency(
 ):
     """
     Get collective problem-solving efficiency metrics.
-    
+
     Returns:
     - Task completion rate
     - Efficiency ratio
@@ -140,28 +139,28 @@ async def get_collective_efficiency(
     - Parallel efficiency
     - Solution quality metrics
     - Collective efficiency factor
-    
+
     **Health Score Impact:** Positive - Enables efficiency monitoring
     """
     try:
         metrics = get_metrics_instance()
         efficiency = await metrics.calculate_collective_efficiency()
         result = efficiency.to_dict()
-        
+
         if include_history:
             limit = int(history_limit)
             result["history"] = [
                 e.to_dict() for e in metrics._efficiency_history[-limit:]
             ]
-        
+
         return {
             "success": True,
             "data": result,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
     except Exception as e:
         logger.error("efficiency_calculation_error", error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to calculate efficiency: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to calculate efficiency: {e!s}")
 
 
 @router.get("/knowledge-transfer")
@@ -172,7 +171,7 @@ async def get_knowledge_transfer_metrics(
 ):
     """
     Get knowledge transfer rate metrics.
-    
+
     Returns:
     - Patterns shared and adopted
     - Adoption rate
@@ -180,28 +179,28 @@ async def get_knowledge_transfer_metrics(
     - Knowledge flow (inflow/outflow/balance)
     - Network metrics (density, path length)
     - Knowledge retention rate
-    
+
     **Health Score Impact:** Positive - Enables knowledge flow monitoring
     """
     try:
         metrics = get_metrics_instance()
         transfer = await metrics.calculate_knowledge_transfer()
         result = transfer.to_dict()
-        
+
         if include_history:
             limit = int(history_limit)
             result["history"] = [
                 t.to_dict() for t in metrics._transfer_history[-limit:]
             ]
-        
+
         return {
             "success": True,
             "data": result,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
     except Exception as e:
         logger.error("knowledge_transfer_error", error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to calculate knowledge transfer: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to calculate knowledge transfer: {e!s}")
 
 
 @router.get("/emergence-coefficient")
@@ -212,65 +211,65 @@ async def get_emergence_coefficient(
 ):
     """
     Get emergence coefficient calculation.
-    
+
     Returns:
     - Overall emergence coefficient (0.0-1.0)
     - Component coefficients (behavioral, structural, functional, cognitive)
     - Emergence indicators
     - Emergence type and strength classification
-    
+
     **Health Score Impact:** Positive - Enables emergence monitoring
     """
     try:
         metrics = get_metrics_instance()
         coefficient = await metrics.calculate_emergence_coefficient()
         result = coefficient.to_dict()
-        
+
         if include_history:
             limit = int(history_limit)
             result["history"] = [
                 e.to_dict() for e in metrics._emergence_history[-limit:]
             ]
-        
+
         return {
             "success": True,
             "data": result,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
     except Exception as e:
         logger.error("emergence_coefficient_error", error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to calculate emergence coefficient: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to calculate emergence coefficient: {e!s}")
 
 
 @router.get("/emergent-patterns")
 async def get_emergent_patterns(
     auth: dict = Depends(verify_auth),
-    pattern_class: Optional[EmergentPatternClass] = Query(None, description="Filter by pattern class"),
-    min_level: Optional[EmergenceLevel] = Query(None, description="Minimum emergence level"),
+    pattern_class: EmergentPatternClass | None = Query(None, description="Filter by pattern class"),
+    min_level: EmergenceLevel | None = Query(None, description="Minimum emergence level"),
     limit: int = Query(100, ge=1, le=500, description="Maximum patterns to return"),
 ):
     """
     Get detected emergent patterns.
-    
+
     Returns patterns detected by the EmergentPatternDetector including:
     - Pattern classification
     - Emergence level
     - Participating agents
     - Emergence metrics
     - Validation status
-    
+
     **Health Score Impact:** Positive - Enables pattern analysis
     """
     try:
         metrics = get_metrics_instance()
         detector = metrics.emergence_detector
-        
+
         patterns = detector.get_emergent_patterns(
             pattern_class=pattern_class,
             min_emergence_level=min_level,
             limit=limit,
         )
-        
+
         return {
             "success": True,
             "data": {
@@ -278,33 +277,33 @@ async def get_emergent_patterns(
                 "total_count": len(patterns),
                 "statistics": detector.get_emergence_statistics(),
             },
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
     except Exception as e:
         logger.error("emergent_patterns_error", error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to get emergent patterns: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to get emergent patterns: {e!s}")
 
 
 @router.get("/learning-rates")
 async def get_learning_rates(
     auth: dict = Depends(verify_auth),
-    agent_id: Optional[str] = Query(None, description="Filter by specific agent ID"),
+    agent_id: str | None = Query(None, description="Filter by specific agent ID"),
 ):
     """
     Get adaptive learning rates for agents.
-    
+
     Returns:
     - Current learning rates per agent
     - Learning state (success rate, convergence)
     - Adaptation history
     - Convergence metrics
-    
+
     **Health Score Impact:** Positive - Enables learning monitoring
     """
     try:
         metrics = get_metrics_instance()
         controller = metrics.learning_controller
-        
+
         if agent_id:
             state = controller.get_agent_state(agent_id)
             convergence = controller.get_convergence_metrics(agent_id)
@@ -319,38 +318,38 @@ async def get_learning_rates(
                 "agents": {aid: s.to_dict() for aid, s in states.items()},
                 "swarm_statistics": controller.get_swarm_statistics(),
             }
-        
+
         return {
             "success": True,
             "data": data,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
     except Exception as e:
         logger.error("learning_rates_error", error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to get learning rates: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to get learning rates: {e!s}")
 
 
 @router.get("/agent-adaptation")
 async def get_agent_adaptation(
     auth: dict = Depends(verify_auth),
-    agent_id: Optional[str] = Query(None, description="Filter by specific agent ID"),
+    agent_id: str | None = Query(None, description="Filter by specific agent ID"),
 ):
     """
     Get agent adaptation status.
-    
+
     Returns:
     - Behavioral weights
     - Strategy profiles
     - Adaptation history
     - Adopted/rejected patterns
     - Audit log
-    
+
     **Health Score Impact:** Positive - Enables adaptation monitoring
     """
     try:
         metrics = get_metrics_instance()
         adaptor = metrics.agent_adaptor
-        
+
         if agent_id:
             state = adaptor.get_adaptation_state(agent_id)
             history = adaptor.get_adaptation_history(agent_id, limit=20)
@@ -366,124 +365,124 @@ async def get_agent_adaptation(
                 "swarm_statistics": adaptor.get_swarm_adaptation_stats(),
                 "total_agents": len(adaptor._agent_states),
             }
-        
+
         return {
             "success": True,
             "data": data,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
     except Exception as e:
         logger.error("agent_adaptation_error", error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to get agent adaptation: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to get agent adaptation: {e!s}")
 
 
 @router.get("/metrics-definitions")
 async def get_metric_definitions(auth: dict = Depends(verify_auth)):
     """
     Get all registered metric definitions.
-    
+
     Returns definitions of all available metrics including:
     - Metric name and description
     - Category
     - Unit of measurement
     - Aggregation method
     - Min/max/target values
-    
+
     **Health Score Impact:** Positive - Provides metric documentation
     """
     try:
         metrics = get_metrics_instance()
         definitions = metrics.get_all_metric_definitions()
-        
+
         return {
             "success": True,
             "data": {
                 "definitions": [d.to_dict() for d in definitions],
                 "total_count": len(definitions),
             },
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
     except Exception as e:
         logger.error("metric_definitions_error", error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to get metric definitions: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to get metric definitions: {e!s}")
 
 
 @router.get("/metrics/{metric_id}/timeseries")
 async def get_metric_timeseries(
     metric_id: str,
     auth: dict = Depends(verify_auth),
-    start_time: Optional[str] = Query(None, description="Start time (ISO 8601)"),
-    end_time: Optional[str] = Query(None, description="End time (ISO 8601)"),
+    start_time: str | None = Query(None, description="Start time (ISO 8601)"),
+    end_time: str | None = Query(None, description="End time (ISO 8601)"),
 ):
     """
     Get time series data for a specific metric.
-    
+
     Returns historical values for the specified metric with optional time filtering.
-    
+
     **Health Score Impact:** Positive - Enables historical analysis
     """
     try:
         metrics = get_metrics_instance()
-        
+
         from datetime import datetime as dt
-        
+
         start = dt.fromisoformat(start_time) if start_time else None
         end = dt.fromisoformat(end_time) if end_time else None
-        
+
         series = metrics.get_metric_time_series(metric_id, start_time=start, end_time=end)
-        
+
         return {
             "success": True,
             "data": series.to_dict(),
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
     except ValueError as e:
-        raise HTTPException(status_code=400, detail=f"Invalid time format: {str(e)}")
+        raise HTTPException(status_code=400, detail=f"Invalid time format: {e!s}")
     except Exception as e:
         logger.error("metric_timeseries_error", error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to get metric time series: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to get metric time series: {e!s}")
 
 
 @router.get("/export/summary")
 async def export_summary(auth: dict = Depends(verify_auth)):
     """
     Export metrics summary.
-    
+
     Returns a comprehensive summary of all current metrics suitable for
     reporting or dashboard display.
-    
+
     **Health Score Impact:** Positive - Enables reporting
     """
     try:
         exporter = get_exporter_instance()
         summary = exporter.export_summary()
-        
+
         return {
             "success": True,
             "data": summary,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
     except Exception as e:
         logger.error("export_summary_error", error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to export summary: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to export summary: {e!s}")
 
 
 @router.get("/status")
 async def get_emergent_intelligence_status(auth: dict = Depends(verify_auth)):
     """
     Get emergent intelligence system status.
-    
+
     Returns overall status of all Session 46 components:
     - Adaptive learning controller
     - Agent adaptor
     - Emergence detector
     - Metrics calculator
-    
+
     **Health Score Impact:** Positive - Provides system health
     """
     try:
         metrics = get_metrics_instance()
-        
+
         status = {
             "metrics": metrics.get_status(),
             "learning_controller": metrics.learning_controller.get_status(),
@@ -495,12 +494,12 @@ async def get_emergent_intelligence_status(auth: dict = Depends(verify_auth)):
                 else None
             ),
         }
-        
+
         return {
             "success": True,
             "data": status,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
     except Exception as e:
         logger.error("status_error", error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to get status: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to get status: {e!s}")

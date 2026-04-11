@@ -11,22 +11,22 @@ Features:
 - Conditional edges for dynamic workflow routing
 """
 
-import asyncio
 import ast
+import asyncio
 import operator
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Set, TypeVar, Annotated
 from dataclasses import dataclass, field
+from datetime import UTC, datetime
 from enum import Enum
-from typing_extensions import TypedDict
+from typing import Annotated, Any, TypeVar
 
 import structlog
+from typing_extensions import TypedDict
 
 logger = structlog.get_logger(__name__)
 
 # Import cycle detection
 try:
-    from .cycle_detector import WorkflowCycleDetector, FivePhaseWorkflowTracker
+    from .cycle_detector import FivePhaseWorkflowTracker, WorkflowCycleDetector
 except ImportError:
     WorkflowCycleDetector = None  # type: ignore
     FivePhaseWorkflowTracker = None  # type: ignore
@@ -60,24 +60,24 @@ SAFE_UNARY_OPS = {
 class SafeExpressionEvaluator:
     """
     Safe expression evaluator using AST validation.
-    
+
     This class provides a secure alternative to eval() by:
     1. Parsing expressions into an AST
     2. Validating that only safe node types are present
     3. Rejecting dangerous operations (function calls, attribute access, imports)
     4. Safely evaluating the validated AST
-    
+
     Supported operations:
     - Literal values (numbers, strings, booleans, None, lists, dicts, tuples)
     - Comparison operators (==, !=, <, <=, >, >=, is, in)
     - Boolean operators (and, or, not)
     - Unary operators (+, -, not)
     - Variable substitution (via context)
-    
+
     Security: Prevents code injection through object introspection attacks
     by never allowing execution of arbitrary Python code.
     """
-    
+
     # AST node types that are safe to evaluate
     SAFE_NODE_TYPES = (
         ast.Expression,
@@ -125,7 +125,7 @@ class SafeExpressionEvaluator:
         ast.USub,
         ast.UAdd,
     )
-    
+
     # Safe binary operators
     SAFE_BIN_OPS = {
         ast.Add: operator.add,
@@ -136,50 +136,50 @@ class SafeExpressionEvaluator:
         ast.Mod: operator.mod,
         ast.Pow: operator.pow,
     }
-    
-    def __init__(self, allowed_variables: Optional[Dict[str, Any]] = None):
+
+    def __init__(self, allowed_variables: dict[str, Any] | None = None):
         """
         Initialize the evaluator with allowed variables.
-        
+
         Args:
             allowed_variables: Dict of variable names to values that can be
                                referenced in expressions
         """
         self.allowed_variables = allowed_variables or {}
-    
+
     def validate_and_eval(self, expr: str) -> Any:
         """
         Safely validate and evaluate an expression.
-        
+
         Args:
             expr: Expression string to evaluate
-            
+
         Returns:
             Result of the evaluation
-            
+
         Raises:
             ValueError: If expression contains unsafe operations
             SyntaxError: If expression is not valid Python syntax
         """
         # Parse the expression into an AST
         try:
-            tree = ast.parse(expr, mode='eval')
+            tree = ast.parse(expr, mode="eval")
         except SyntaxError as e:
             raise ValueError(f"Invalid expression syntax: {e}")
-        
+
         # Validate the AST contains only safe nodes
         self._validate_ast(tree)
-        
+
         # Safely evaluate the validated AST
         return self._eval_node(tree.body)
-    
+
     def _validate_ast(self, node: ast.AST) -> None:
         """
         Recursively validate that an AST contains only safe node types.
-        
+
         Args:
             node: AST node to validate
-            
+
         Raises:
             ValueError: If node contains unsafe operations
         """
@@ -189,72 +189,71 @@ class SafeExpressionEvaluator:
                 f"Unsafe node type '{type(node).__name__}' in expression. "
                 f"Only literals, comparisons, and boolean logic are allowed."
             )
-        
+
         # Special validation for Name nodes (variable access)
-        if isinstance(node, ast.Name):
-            if node.id not in self.allowed_variables:
-                raise ValueError(
-                    f"Variable '{node.id}' is not in the allowed variables list. "
-                    f"Allowed: {list(self.allowed_variables.keys())}"
-                )
-        
+        if isinstance(node, ast.Name) and node.id not in self.allowed_variables:
+            raise ValueError(
+                f"Variable '{node.id}' is not in the allowed variables list. "
+                f"Allowed: {list(self.allowed_variables.keys())}"
+            )
+
         # Recursively validate all child nodes
-        for field, value in ast.iter_fields(node):
+        for _field, value in ast.iter_fields(node):
             if isinstance(value, list):
                 for item in value:
                     if isinstance(item, ast.AST):
                         self._validate_ast(item)
             elif isinstance(value, ast.AST):
                 self._validate_ast(value)
-    
+
     def _eval_node(self, node: ast.AST) -> Any:
         """
         Recursively evaluate a validated AST node.
-        
+
         Args:
             node: AST node to evaluate
-            
+
         Returns:
             Result of evaluating the node
-            
+
         Raises:
             ValueError: If node type is not supported
         """
         # Handle literal values
         if isinstance(node, ast.Constant):  # Python 3.8+
             return node.value
-        elif isinstance(node, ast.Num):  # Deprecated, for compatibility
+        if isinstance(node, ast.Num):  # Deprecated, for compatibility
             return node.n
-        elif isinstance(node, ast.Str):  # Deprecated, for compatibility
+        if isinstance(node, ast.Str):  # Deprecated, for compatibility
             return node.s
-        elif isinstance(node, ast.NameConstant):  # Deprecated, for compatibility
+        if isinstance(node, ast.NameConstant):  # Deprecated, for compatibility
             return node.value
-        
+
         # Handle variable references
-        elif isinstance(node, ast.Name):
+        if isinstance(node, ast.Name):
             return self.allowed_variables[node.id]
-        
+
         # Handle lists
-        elif isinstance(node, ast.List):
+        if isinstance(node, ast.List):
             return [self._eval_node(elt) for elt in node.elts]
-        
+
         # Handle tuples
-        elif isinstance(node, ast.Tuple):
+        if isinstance(node, ast.Tuple):
             return tuple(self._eval_node(elt) for elt in node.elts)
-        
+
         # Handle dicts
-        elif isinstance(node, ast.Dict):
+        if isinstance(node, ast.Dict):
             return {
                 self._eval_node(k): self._eval_node(v)
-                for k, v in zip(node.keys, node.values)
+                for k, v in zip(node.keys, node.values, strict=False)
                 if k is not None
             }
-        
+
         # Handle comparison operations
-        elif isinstance(node, ast.Compare):
+        if isinstance(node, ast.Compare):
             left = self._eval_node(node.left)
             result = True
-            for op, comparator in zip(node.ops, node.comparators):
+            for op, comparator in zip(node.ops, node.comparators, strict=False):
                 op_func = SAFE_OPERATORS.get(type(op))
                 if op_func is None:
                     raise ValueError(f"Unsupported comparison operator: {type(op).__name__}")
@@ -262,9 +261,9 @@ class SafeExpressionEvaluator:
                 result = result and op_func(left, right)
                 left = right
             return result
-        
+
         # Handle boolean operations (and, or)
-        elif isinstance(node, ast.BoolOp):
+        if isinstance(node, ast.BoolOp):
             op_func = SAFE_BOOL_OPS.get(type(node.op))
             if op_func is None:
                 raise ValueError(f"Unsupported boolean operator: {type(node.op).__name__}")
@@ -272,40 +271,39 @@ class SafeExpressionEvaluator:
             for value in node.values[1:]:
                 result = op_func(result, self._eval_node(value))
             return result
-        
+
         # Handle unary operations (not, -, +)
-        elif isinstance(node, ast.UnaryOp):
+        if isinstance(node, ast.UnaryOp):
             op_func = SAFE_UNARY_OPS.get(type(node.op))
             if op_func is None:
                 raise ValueError(f"Unsupported unary operator: {type(node.op).__name__}")
             return op_func(self._eval_node(node.operand))
-        
+
         # Handle binary operations (+, -, *, /, etc.)
-        elif isinstance(node, ast.BinOp):
+        if isinstance(node, ast.BinOp):
             op_func = self.SAFE_BIN_OPS.get(type(node.op))
             if op_func is None:
                 raise ValueError(f"Unsupported binary operator: {type(node.op).__name__}")
             left = self._eval_node(node.left)
             right = self._eval_node(node.right)
             return op_func(left, right)
-        
+
         # Handle subscript (indexing)
-        elif isinstance(node, ast.Subscript):
+        if isinstance(node, ast.Subscript):
             value = self._eval_node(node.value)
             slice_val = self._eval_node(node.slice)
             return value[slice_val]
-        
-        else:
-            raise ValueError(f"Unsupported node type: {type(node).__name__}")
+
+        raise ValueError(f"Unsupported node type: {type(node).__name__}")
 
 
 class WorkflowState(TypedDict, total=False):
     """
     Typed workflow state with annotations for state transitions.
-    
+
     LangGraph pattern: Uses Annotated types to specify how state fields
     should be updated during workflow execution.
-    
+
     Attributes:
         messages: List of messages (append-only accumulation)
         results: Dict of node results (merge updates)
@@ -314,17 +312,17 @@ class WorkflowState(TypedDict, total=False):
         checkpoint: Optional checkpoint for resumption
         cycle_count: Counter for cycle detection
     """
-    
-    messages: Annotated[List[Dict[str, Any]], "append"]
-    results: Annotated[Dict[str, Any], "merge"]
+
+    messages: Annotated[list[dict[str, Any]], "append"]
+    results: Annotated[dict[str, Any], "merge"]
     current_phase: str
-    metadata: Dict[str, Any]
-    checkpoint: Optional[Dict[str, Any]]
+    metadata: dict[str, Any]
+    checkpoint: dict[str, Any] | None
     cycle_count: int
 
 
 # Type variable for generic workflow state
-T = TypeVar('T', bound=WorkflowState)
+T = TypeVar("T", bound=WorkflowState)
 
 
 class WorkflowState(Enum):
@@ -364,10 +362,10 @@ class WorkflowNode:
 
     id: str
     type: str
-    data: Dict[str, Any]
-    inputs: List[str] = field(default_factory=list)
-    outputs: List[str] = field(default_factory=list)
-    position: Dict[str, float] = field(default_factory=dict)
+    data: dict[str, Any]
+    inputs: list[str] = field(default_factory=list)
+    outputs: list[str] = field(default_factory=list)
+    position: dict[str, float] = field(default_factory=dict)
 
 
 @dataclass
@@ -385,7 +383,7 @@ class WorkflowEdge:
     id: str
     source: str
     target: str
-    condition: Optional[str] = None
+    condition: str | None = None
 
 
 @dataclass
@@ -404,23 +402,23 @@ class Workflow:
 
     id: str
     name: str
-    nodes: List[WorkflowNode]
-    edges: List[WorkflowEdge]
-    metadata: Dict[str, Any] = field(default_factory=dict)
-    created_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    nodes: list[WorkflowNode]
+    edges: list[WorkflowEdge]
+    metadata: dict[str, Any] = field(default_factory=dict)
+    created_at: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
 
 def _merge_state_field(current: Any, update: Any, annotation: str) -> Any:
     """
     Merge a state field based on its annotation type.
-    
+
     LangGraph pattern: Uses annotations to specify how fields should be updated.
-    
+
     Args:
         current: Current field value
         update: New value to merge
         annotation: Annotation type ("append", "merge", "replace")
-        
+
     Returns:
         Merged field value
     """
@@ -429,14 +427,13 @@ def _merge_state_field(current: Any, update: Any, annotation: str) -> Any:
         if isinstance(current, list) and isinstance(update, list):
             return current + update
         return update
-    elif annotation == "merge":
+    if annotation == "merge":
         # Dict merge (for results dicts)
         if isinstance(current, dict) and isinstance(update, dict):
             return {**current, **update}
         return update
-    else:
-        # Default: replace
-        return update
+    # Default: replace
+    return update
 
 
 def merge_workflow_states(
@@ -445,21 +442,21 @@ def merge_workflow_states(
 ) -> WorkflowState:
     """
     Merge two workflow states using Annotated type hints.
-    
+
     LangGraph pattern: Applies state transition rules based on field annotations.
-    
+
     Args:
         current: Current workflow state
         update: State updates to apply
-        
+
     Returns:
         New merged workflow state
     """
     result: WorkflowState = {}
-    
+
     # Get all keys from both states
     all_keys = set(current.keys()) | set(update.keys())
-    
+
     for key in all_keys:
         if key in update and key in current:
             # Both have this key - apply merge logic
@@ -482,7 +479,7 @@ def merge_workflow_states(
             result[key] = update[key]
         else:
             result[key] = current[key]
-    
+
     return result
 
 
@@ -490,7 +487,7 @@ def merge_workflow_states(
 class WorkflowContext:
     """
     Execution context for a workflow.
-    
+
     Supports LangGraph-style typed state with checkpointing for resumption.
 
     Attributes:
@@ -506,9 +503,9 @@ class WorkflowContext:
 
     workflow_id: str
     execution_id: str
-    node_results: Dict[str, Any] = field(default_factory=dict)
-    variables: Dict[str, Any] = field(default_factory=dict)
-    start_time: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    node_results: dict[str, Any] = field(default_factory=dict)
+    variables: dict[str, Any] = field(default_factory=dict)
+    start_time: datetime = field(default_factory=lambda: datetime.now(UTC))
     state: WorkflowState = field(default_factory=lambda: WorkflowState(
         messages=[],
         results={},
@@ -517,8 +514,8 @@ class WorkflowContext:
         checkpoint=None,
         cycle_count=0
     ))
-    checkpoints: List[Dict[str, Any]] = field(default_factory=list)
-    error: Optional[Exception] = None
+    checkpoints: list[dict[str, Any]] = field(default_factory=list)
+    error: Exception | None = None
 
 
 @dataclass
@@ -537,7 +534,7 @@ class NodeResult:
     node_id: str
     status: NodeStatus
     output: Any = None
-    error: Optional[Exception] = None
+    error: Exception | None = None
     execution_time: float = 0.0
 
 
@@ -560,11 +557,11 @@ class WorkflowResult:
     workflow_id: str
     execution_id: str
     status: WorkflowState
-    node_results: Dict[str, NodeResult]
-    variables: Dict[str, Any]
+    node_results: dict[str, NodeResult]
+    variables: dict[str, Any]
     start_time: datetime
-    end_time: Optional[datetime] = None
-    error: Optional[Exception] = None
+    end_time: datetime | None = None
+    error: Exception | None = None
 
 
 class WorkflowEngine:
@@ -581,22 +578,22 @@ class WorkflowEngine:
 
     def __init__(
         self,
-        cycle_detector: Optional[WorkflowCycleDetector] = None,
+        cycle_detector: WorkflowCycleDetector | None = None,
         max_iterations: int = 100,
         timeout_seconds: float = 300.0,
     ):
         """
         Initialize workflow engine.
-        
+
         Args:
             cycle_detector: Optional pre-configured cycle detector
             max_iterations: Maximum iterations before cycle break (if no detector provided)
             timeout_seconds: Timeout in seconds before cycle break (if no detector provided)
         """
-        self.workflows: Dict[str, Workflow] = {}
-        self.active_executions: Dict[str, WorkflowContext] = {}
+        self.workflows: dict[str, Workflow] = {}
+        self.active_executions: dict[str, WorkflowContext] = {}
         self._execution_lock = asyncio.Lock()
-        
+
         # Cycle detection integration
         self.cycle_detector = cycle_detector or WorkflowCycleDetector(
             max_iterations=max_iterations,
@@ -604,7 +601,7 @@ class WorkflowEngine:
         )
         self.phase_tracker = FivePhaseWorkflowTracker()
 
-    async def load_workflow(self, workflow_definition: Dict[str, Any]) -> Workflow:
+    async def load_workflow(self, workflow_definition: dict[str, Any]) -> Workflow:
         """
         Load a workflow from definition.
 
@@ -652,7 +649,7 @@ class WorkflowEngine:
     async def execute_workflow(
         self,
         workflow_id: str,
-        input_data: Optional[Dict[str, Any]] = None
+        input_data: dict[str, Any] | None = None
     ) -> WorkflowResult:
         """
         Execute a workflow with cycle detection.
@@ -663,7 +660,7 @@ class WorkflowEngine:
 
         Returns:
             WorkflowResult
-            
+
         Cycle Detection:
             - Tracks execution path through workflow nodes
             - Detects cycles using path-based and node-visit analysis
@@ -674,12 +671,12 @@ class WorkflowEngine:
             raise ValueError(f"Workflow not found: {workflow_id}")
 
         workflow = self.workflows[workflow_id]
-        execution_id = f"exec_{workflow_id}_{datetime.now(timezone.utc).timestamp()}"
+        execution_id = f"exec_{workflow_id}_{datetime.now(UTC).timestamp()}"
 
         context = WorkflowContext(
             workflow_id=workflow_id,
             execution_id=execution_id,
-            start_time=datetime.now(timezone.utc),
+            start_time=datetime.now(UTC),
             state=WorkflowState.RUNNING
         )
 
@@ -725,7 +722,7 @@ class WorkflowEngine:
                             error=Exception(f"Node skipped due to cycle detection: {node_id}")
                         )
                         continue
-                
+
                 # Record node execution for tracking
                 self.cycle_detector.record_node_execution(
                     execution_id,
@@ -737,7 +734,7 @@ class WorkflowEngine:
 
             # Mark workflow as completed
             context.state = WorkflowState.COMPLETED
-            context.end_time = datetime.now(timezone.utc)
+            context.end_time = datetime.now(UTC)
 
             logger.info("workflow_completed", workflow_id=workflow_id, execution_id=execution_id)
 
@@ -756,7 +753,7 @@ class WorkflowEngine:
             # Handle workflow failure
             context.state = WorkflowState.FAILED
             context.error = e
-            context.end_time = datetime.now(timezone.utc)
+            context.end_time = datetime.now(UTC)
 
             logger.error("workflow_failed", workflow_id=workflow_id, error=str(e))
 
@@ -814,7 +811,7 @@ class WorkflowEngine:
         input_data = self._get_node_input(workflow, node, context)
 
         # Execute node based on type
-        start_time = datetime.now(timezone.utc)
+        start_time = datetime.now(UTC)
 
         try:
             if node.type == "agent":
@@ -828,7 +825,7 @@ class WorkflowEngine:
             else:
                 raise ValueError(f"Unknown node type: {node.type}")
 
-            execution_time = (datetime.now(timezone.utc) - start_time).total_seconds()
+            execution_time = (datetime.now(UTC) - start_time).total_seconds()
 
             context.node_results[node_id] = NodeResult(
                 node_id=node_id,
@@ -847,7 +844,7 @@ class WorkflowEngine:
                 node_id=node_id,
                 status=NodeStatus.FAILED,
                 error=e,
-                execution_time=(datetime.now(timezone.utc) - start_time).total_seconds()
+                execution_time=(datetime.now(UTC) - start_time).total_seconds()
             )
 
     def _should_execute_node(
@@ -885,14 +882,14 @@ class WorkflowEngine:
 
         Returns:
             True if condition evaluates to true
-            
+
         Security: Uses SafeExpressionEvaluator to prevent code injection attacks
         through object introspection. The old eval() implementation was vulnerable
         to attacks via __class__, __mro__, __subclasses__(), etc.
         """
         # Create safe evaluator with context variables
         evaluator = SafeExpressionEvaluator(allowed_variables=context.variables)
-        
+
         try:
             # Safely evaluate the condition expression
             result = evaluator.validate_and_eval(condition)
@@ -907,7 +904,7 @@ class WorkflowEngine:
         workflow: Workflow,
         node: WorkflowNode,
         context: WorkflowContext
-    ) -> Dict[str, Any]:
+    ) -> dict[str, Any]:
         """
         Get input data for a node from context.
 
@@ -935,7 +932,7 @@ class WorkflowEngine:
     async def _execute_agent_node(
         self,
         node: WorkflowNode,
-        input_data: Dict[str, Any],
+        input_data: dict[str, Any],
         context: WorkflowContext
     ) -> Any:
         """
@@ -965,14 +962,13 @@ class WorkflowEngine:
 
         # Send message to agent
         message = input_data.get("message", "")
-        response = await supervisor.send_message(agent_id, message)
+        return await supervisor.send_message(agent_id, message)
 
-        return response
 
     async def _execute_tool_node(
         self,
         node: WorkflowNode,
-        input_data: Dict[str, Any],
+        input_data: dict[str, Any],
         context: WorkflowContext
     ) -> Any:
         """
@@ -1000,14 +996,13 @@ class WorkflowEngine:
         tool_params = input_data.get("params", {})
 
         # Execute tool
-        result = await tool_registry.execute(tool_name, **tool_params)
+        return await tool_registry.execute(tool_name, **tool_params)
 
-        return result
 
     async def _execute_chain_node(
         self,
         node: WorkflowNode,
-        input_data: Dict[str, Any],
+        input_data: dict[str, Any],
         context: WorkflowContext
     ) -> Any:
         """
@@ -1042,7 +1037,7 @@ class WorkflowEngine:
     async def _execute_memory_node(
         self,
         node: WorkflowNode,
-        input_data: Dict[str, Any],
+        input_data: dict[str, Any],
         context: WorkflowContext
     ) -> Any:
         """
@@ -1083,7 +1078,7 @@ class WorkflowEngine:
 
             return {"stored": True}
 
-        elif operation == "retrieve":
+        if operation == "retrieve":
             # Retrieve memory
             query = input_data.get("query", "")
             limit = input_data.get("limit", 10)
@@ -1109,11 +1104,12 @@ class WorkflowEngine:
                 ]
             }
 
-        elif operation == "search":
+        if operation == "search":
             # Search memory (alias for retrieve)
             return await self._execute_memory_node(node, input_data, context)
+        return None
 
-    def _build_graph(self, workflow: Workflow) -> Dict[str, Set[str]]:
+    def _build_graph(self, workflow: Workflow) -> dict[str, set[str]]:
         """
         Build dependency graph from workflow edges.
 
@@ -1123,7 +1119,7 @@ class WorkflowEngine:
         Returns:
             Dictionary of node IDs to their dependencies
         """
-        graph: Dict[str, Set[str]] = {node.id: set() for node in workflow.nodes}
+        graph: dict[str, set[str]] = {node.id: set() for node in workflow.nodes}
 
         for edge in workflow.edges:
             if edge.target not in graph:
@@ -1132,7 +1128,7 @@ class WorkflowEngine:
 
         return graph
 
-    def _topological_sort(self, graph: Dict[str, Set[str]]) -> List[str]:
+    def _topological_sort(self, graph: dict[str, set[str]]) -> list[str]:
         """
         Perform topological sort on dependency graph.
 
@@ -1143,8 +1139,8 @@ class WorkflowEngine:
             List of node IDs in execution order
         """
         # Kahn's algorithm
-        in_degree: Dict[str, int] = {node_id: 0 for node_id in graph}
-        result: List[str] = []
+        in_degree: dict[str, int] = dict.fromkeys(graph, 0)
+        result: list[str] = []
 
         # Calculate in-degrees
         for node_id, dependencies in graph.items():
@@ -1167,7 +1163,7 @@ class WorkflowEngine:
 
         return result
 
-    async def get_workflow_status(self, execution_id: str) -> Optional[WorkflowContext]:
+    async def get_workflow_status(self, execution_id: str) -> WorkflowContext | None:
         """
         Get status of a workflow execution.
 
@@ -1194,12 +1190,12 @@ class WorkflowEngine:
 
         context = self.active_executions[execution_id]
         context.state = WorkflowState.CANCELLED
-        context.end_time = datetime.now(timezone.utc)
+        context.end_time = datetime.now(UTC)
 
         logger.info("workflow_cancelled", execution_id=execution_id)
         return True
 
-    def list_workflows(self) -> List[Workflow]:
+    def list_workflows(self) -> list[Workflow]:
         """
         List all loaded workflows.
 
@@ -1208,7 +1204,7 @@ class WorkflowEngine:
         """
         return list(self.workflows.values())
 
-    def get_workflow(self, workflow_id: str) -> Optional[Workflow]:
+    def get_workflow(self, workflow_id: str) -> Workflow | None:
         """
         Get a workflow by ID.
 
@@ -1222,11 +1218,11 @@ class WorkflowEngine:
 
 
 # Global workflow engine instance
-_global_engine: Optional[WorkflowEngine] = None
+_global_engine: WorkflowEngine | None = None
 
 
 async def get_workflow_engine(
-    cycle_detector: Optional[WorkflowCycleDetector] = None,
+    cycle_detector: WorkflowCycleDetector | None = None,
     max_iterations: int = 100,
     timeout_seconds: float = 300.0,
 ) -> WorkflowEngine:
@@ -1253,14 +1249,14 @@ async def get_workflow_engine(
     return _global_engine
 
 
-def get_cycle_detector_metrics() -> Dict[str, Any]:
+def get_cycle_detector_metrics() -> dict[str, Any]:
     """
     Get cycle detection metrics from global engine.
 
     Returns:
         Dictionary of cycle detection metrics
     """
-    if _global_engine and hasattr(_global_engine, 'cycle_detector'):
+    if _global_engine and hasattr(_global_engine, "cycle_detector"):
         return _global_engine.cycle_detector.get_metrics()
     return {}
 
@@ -1272,6 +1268,6 @@ def export_cycle_detector_prometheus() -> str:
     Returns:
         Prometheus-formatted metrics string
     """
-    if _global_engine and hasattr(_global_engine, 'cycle_detector'):
+    if _global_engine and hasattr(_global_engine, "cycle_detector"):
         return _global_engine.cycle_detector.export_prometheus_metrics()
     return "# No cycle detector available\n"

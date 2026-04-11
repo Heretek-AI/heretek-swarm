@@ -12,8 +12,7 @@ This adapter integrates mem0 with the existing Heretek Swarm memory interface.
 """
 
 import os
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional
+from datetime import UTC, datetime
 from uuid import UUID, uuid4
 
 import structlog
@@ -36,7 +35,7 @@ class Mem0Config(BaseModel):
     # LLM configuration
     llm_provider: str = Field(default="openai")
     llm_model: str = Field(default="gpt-4o-mini")
-    openai_api_key: Optional[str] = Field(default=None)
+    openai_api_key: str | None = Field(default=None)
 
     # Embedder configuration
     embedder_provider: str = Field(default="openai")
@@ -93,14 +92,14 @@ class Mem0Backend:
 
     def __init__(
         self,
-        config: Optional[Mem0Config] = None,
+        config: Mem0Config | None = None,
     ):
         self.config = config or Mem0Config()
         self._memory = None
         self._initialized = False
 
         # Performance tracking
-        self._operation_times: List[float] = []
+        self._operation_times: list[float] = []
         self._max_samples = 1000
 
     def _track_latency(self, elapsed_ms: float) -> None:
@@ -158,7 +157,7 @@ class Mem0Backend:
         if not self._initialized:
             await self.initialize()
 
-        start_time = datetime.now(timezone.utc)
+        start_time = datetime.now(UTC)
 
         try:
             # Store in mem0 with agent_id as user_id
@@ -177,7 +176,7 @@ class Mem0Backend:
                 }
             )
 
-            elapsed_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
+            elapsed_ms = (datetime.now(UTC) - start_time).total_seconds() * 1000
             self._track_latency(elapsed_ms)
 
             # Extract memory ID from result
@@ -202,8 +201,8 @@ class Mem0Backend:
 
     async def store_batch(
         self,
-        entries: List[MemoryEntry],
-    ) -> List[str]:
+        entries: list[MemoryEntry],
+    ) -> list[str]:
         """Store multiple entries efficiently"""
         if not entries:
             return []
@@ -231,7 +230,7 @@ class Mem0Backend:
         if not self._initialized:
             await self.initialize()
 
-        start_time = datetime.now(timezone.utc)
+        start_time = datetime.now(UTC)
 
         try:
             # Build mem0 search parameters
@@ -257,7 +256,7 @@ class Mem0Backend:
             total_count = len(results)
             paginated = results[query.offset:query.offset + query.limit]
 
-            elapsed_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
+            elapsed_ms = (datetime.now(UTC) - start_time).total_seconds() * 1000
             self._track_latency(elapsed_ms)
 
             logger.debug(
@@ -286,7 +285,7 @@ class Mem0Backend:
     async def get_all(
         self,
         agent_id: str,
-    ) -> List[MemoryEntry]:
+    ) -> list[MemoryEntry]:
         """
         Get all memories for an agent.
 
@@ -299,7 +298,7 @@ class Mem0Backend:
         if not self._initialized:
             await self.initialize()
 
-        start_time = datetime.now(timezone.utc)
+        start_time = datetime.now(UTC)
 
         try:
             results = self._memory.get_all(user_id=agent_id)
@@ -309,7 +308,7 @@ class Mem0Backend:
                 entry = self._mem0_result_to_entry(result, agent_id)
                 entries.append(entry)
 
-            elapsed_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
+            elapsed_ms = (datetime.now(UTC) - start_time).total_seconds() * 1000
             self._track_latency(elapsed_ms)
 
             logger.debug(
@@ -345,12 +344,12 @@ class Mem0Backend:
         if not self._initialized:
             await self.initialize()
 
-        start_time = datetime.now(timezone.utc)
+        start_time = datetime.now(UTC)
 
         try:
             self._memory.delete(memory_id)
 
-            elapsed_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
+            elapsed_ms = (datetime.now(UTC) - start_time).total_seconds() * 1000
             self._track_latency(elapsed_ms)
 
             logger.debug(
@@ -391,12 +390,12 @@ class Mem0Backend:
             tags=metadata.get("tags", []),
             parent_id=UUID(metadata["parent_id"]) if metadata.get("parent_id") else None,
             source_agent=metadata.get("source_agent"),
-            created_at=datetime.fromisoformat(result["created_at"]) if result.get("created_at") else datetime.now(timezone.utc),
-            updated_at=datetime.fromisoformat(result["updated_at"]) if result.get("updated_at") else datetime.now(timezone.utc),
+            created_at=datetime.fromisoformat(result["created_at"]) if result.get("created_at") else datetime.now(UTC),
+            updated_at=datetime.fromisoformat(result["updated_at"]) if result.get("updated_at") else datetime.now(UTC),
             importance_score=metadata.get("importance_score", 0.5),
         )
 
-    def get_latency_stats(self) -> Dict[str, float]:
+    def get_latency_stats(self) -> dict[str, float]:
         """Get latency statistics"""
         if not self._operation_times:
             return {"p50": 0, "p95": 0, "p99": 0, "avg": 0}

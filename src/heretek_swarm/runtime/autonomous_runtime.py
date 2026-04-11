@@ -13,18 +13,19 @@ import asyncio
 import os
 import signal
 import time
-from datetime import datetime, timezone
-from pathlib import Path
-from typing import Dict, List, Optional, Any
 from dataclasses import dataclass
+from datetime import UTC, datetime
+from pathlib import Path
+from typing import Any
 
 import structlog
 
+from src.heretek_swarm.actors.supervisor import ActorSupervisor
+
+from .agent_runtime import AgentRuntime
 from .autonomous_runtime_config import (
     AutonomousRuntimeConfig,
 )
-from .agent_runtime import AgentRuntime
-from ..actors.supervisor import ActorSupervisor
 
 logger = structlog.get_logger("AutonomousRuntime")
 
@@ -37,8 +38,8 @@ class RuntimeState:
     uptime_seconds: float = 0.0
     total_agent_restarts: int = 0
     total_failures: int = 0
-    last_health_check: Optional[datetime] = None
-    last_scale_event: Optional[datetime] = None
+    last_health_check: datetime | None = None
+    last_scale_event: datetime | None = None
     current_agents: int = 0
 
 
@@ -63,21 +64,21 @@ class AutonomousRuntime:
         """
         # P2-1 fix: Use timezone-aware datetime
         self.config = config
-        self.supervisor: Optional[ActorSupervisor] = None
-        self.agent_runtime: Optional[AgentRuntime] = None
-        self.state = RuntimeState(start_time=datetime.now(timezone.utc))
+        self.supervisor: ActorSupervisor | None = None
+        self.agent_runtime: AgentRuntime | None = None
+        self.state = RuntimeState(start_time=datetime.now(UTC))
         self._running = False
         self._shutdown_event = asyncio.Event()
 
         # Alert cooldown tracking
-        self._last_alert_time: Dict[str, datetime] = {}
+        self._last_alert_time: dict[str, datetime] = {}
 
         # Scaling cooldown tracking
-        self._last_scale_up_time: Optional[datetime] = None
-        self._last_scale_down_time: Optional[datetime] = None
+        self._last_scale_up_time: datetime | None = None
+        self._last_scale_down_time: datetime | None = None
 
         # P1-8 fix: Track restart attempts separately instead of using __dict__
-        self._restart_attempts: Dict[str, int] = {}
+        self._restart_attempts: dict[str, int] = {}
 
     async def initialize(self) -> None:
         """Initialize runtime components."""
@@ -105,7 +106,7 @@ class AutonomousRuntime:
         # P2-1 fix: Use timezone-aware datetime
         logger.info("Starting autonomous runtime...")
         self._running = True
-        self.state.start_time = datetime.now(timezone.utc)
+        self.state.start_time = datetime.now(UTC)
 
         # Start initial agents
         await self._start_initial_agents()
@@ -179,7 +180,7 @@ class AutonomousRuntime:
     async def _health_checks(self) -> None:
         """Perform health checks on all components."""
         # P2-1 fix: Use timezone-aware datetime
-        self.state.last_health_check = datetime.now(timezone.utc)
+        self.state.last_health_check = datetime.now(UTC)
 
         # Check agent health
         if self.supervisor:
@@ -201,7 +202,7 @@ class AutonomousRuntime:
         # Check API health
         await self._check_api_health()
 
-    async def _restart_agents(self, agent_ids: List[str]) -> None:
+    async def _restart_agents(self, agent_ids: list[str]) -> None:
         """Restart failed agents."""
         for agent_id in agent_ids:
             try:
@@ -262,7 +263,7 @@ class AutonomousRuntime:
 
             start_time = time.time()
             async with httpx.AsyncClient() as client:
-                response = await client.get(
+                await client.get(
                     f"http://{self.config.api_host}:{self.config.api_port}/api/health/live",  # Local health check
                     timeout=5.0,
                 )
@@ -334,7 +335,7 @@ class AutonomousRuntime:
         # P2-1 fix: Use timezone-aware datetime
         # Check cooldown
         if self._last_scale_up_time:
-            time_since = datetime.now(timezone.utc) - self._last_scale_up_time
+            time_since = datetime.now(UTC) - self._last_scale_up_time
             if time_since.total_seconds() < self.config.scale_up_cooldown_minutes * 60:
                 return
 
@@ -344,7 +345,7 @@ class AutonomousRuntime:
 
         # Add new agent
         available_agents = [
-            name for name in self.config.agent_configs.keys()
+            name for name in self.config.agent_configs
             if name not in (self.supervisor.actors if self.supervisor else {})
         ]
 
@@ -355,8 +356,8 @@ class AutonomousRuntime:
             try:
                 # P2-1 fix: Use timezone-aware datetime
                 await self.agent_runtime.spawn_agent(agent_name, str(config_path))
-                self.state.last_scale_event = datetime.now(timezone.utc)
-                self._last_scale_up_time = datetime.now(timezone.utc)
+                self.state.last_scale_event = datetime.now(UTC)
+                self._last_scale_up_time = datetime.now(UTC)
                 logger.info(f"Scaled up: Started agent {agent_name}")
             except Exception as e:
                 logger.error(f"Failed to scale up: {e}")
@@ -365,7 +366,7 @@ class AutonomousRuntime:
         """Scale down by removing idle agents."""
         # Check cooldown and minimum uptime
         if self._last_scale_down_time:
-            time_since = datetime.now(timezone.utc) - self._last_scale_down_time
+            time_since = datetime.now(UTC) - self._last_scale_down_time
             if time_since.total_seconds() < self.config.scale_down_cooldown_minutes * 60:
                 return
 
@@ -379,13 +380,13 @@ class AutonomousRuntime:
             try:
                 # P2-1 fix: Use timezone-aware datetime
                 await self.supervisor.terminate_actor(idle_agent)
-                self.state.last_scale_event = datetime.now(timezone.utc)
-                self._last_scale_down_time = datetime.now(timezone.utc)
+                self.state.last_scale_event = datetime.now(UTC)
+                self._last_scale_down_time = datetime.now(UTC)
                 logger.info(f"Scaled down: Terminated agent {idle_agent}")
             except Exception as e:
                 logger.error(f"Failed to scale down: {e}")
 
-    async def _find_idle_agent(self) -> Optional[str]:
+    async def _find_idle_agent(self) -> str | None:
         """Find an idle agent to scale down."""
         if not self.supervisor:
             return None
@@ -401,12 +402,12 @@ class AutonomousRuntime:
                         # Handle both string and datetime types
                         if isinstance(last_activity_str, str):
                             # Parse ISO format timestamp
-                            last_activity_dt = datetime.fromisoformat(last_activity_str.replace('Z', '+00:00'))
+                            last_activity_dt = datetime.fromisoformat(last_activity_str.replace("Z", "+00:00"))
                         else:
                             last_activity_dt = last_activity_str
-                        
+
                         # P2-1 fix: Use timezone-aware datetime
-                        idle_time = datetime.now(timezone.utc) - last_activity_dt
+                        idle_time = datetime.now(UTC) - last_activity_dt
                         if idle_time.total_seconds() > self.config.min_uptime_before_scale_down * 60:
                             return agent_id
                     except (ValueError, TypeError) as e:
@@ -436,7 +437,7 @@ class AutonomousRuntime:
         state_file = Path(self.config.log_directory) / "runtime_state.json"
 
         state_data = {
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "uptime_seconds": self.state.uptime_seconds,
             "total_agent_restarts": self.state.total_agent_restarts,
             "total_failures": self.state.total_failures,
@@ -459,7 +460,7 @@ class AutonomousRuntime:
             return
 
         try:
-            with open(state_file, "r") as f:
+            with open(state_file) as f:
                 import json
                 state_data = json.load(f)
 
@@ -504,7 +505,7 @@ class AutonomousRuntime:
         # Store metrics
         # P2-1 fix: Use timezone-aware datetime
         self.state.uptime_seconds = (
-            datetime.now(timezone.utc) - self.state.start_time
+            datetime.now(UTC) - self.state.start_time
         ).total_seconds()
 
         logger.info(f"Collected metrics for {len(agent_metrics)} agents")
@@ -527,14 +528,14 @@ class AutonomousRuntime:
         """Collect consciousness metrics from plugin."""
         # Import here to avoid circular dependency (P1-9 fix: specific ImportError handling)
         try:
-            from ..plugins.consciousness_enhanced import ConsciousnessEnhancedPlugin
+            from src.heretek_swarm.plugins.consciousness_enhanced import ConsciousnessEnhancedPlugin
         except ImportError as e:
             logger.warning(f"ConsciousnessEnhancedPlugin not available: {e}")
             return
         except Exception as e:
             logger.error(f"Unexpected error importing consciousness plugin: {e}")
             return
-        
+
         try:
             plugin = ConsciousnessEnhancedPlugin()
         except Exception as e:
@@ -562,18 +563,18 @@ class AutonomousRuntime:
         except Exception as e:
             logger.error(f"Consciousness metrics collection error: {e}")
 
-    async def _send_alert(self, alert_type: str, data: Dict[str, Any]) -> None:
+    async def _send_alert(self, alert_type: str, data: dict[str, Any]) -> None:
         """Send alert notification."""
         # P2-1 fix: Use timezone-aware datetime
         # Check cooldown
         last_time = self._last_alert_time.get(alert_type)
         if last_time:
-            time_since = datetime.now(timezone.utc) - last_time
+            time_since = datetime.now(UTC) - last_time
             if time_since.total_seconds() < 300:  # 5 minute cooldown
                 return
 
         # P2-1 fix: Use timezone-aware datetime
-        self._last_alert_time[alert_type] = datetime.now(timezone.utc)
+        self._last_alert_time[alert_type] = datetime.now(UTC)
 
         logger.warning(f"Alert: {alert_type}", data=data)
 
@@ -587,15 +588,15 @@ class AutonomousRuntime:
         if self.config.alert_config.email_enabled:
             await self._send_email_alert(alert_type, data)
 
-    async def _send_slack_alert(self, alert_type: str, data: Dict[str, Any]) -> None:
+    async def _send_slack_alert(self, alert_type: str, data: dict[str, Any]) -> None:
         """Send alert to Slack."""
         # P1-9 fix: Specific ImportError handling
         try:
-            from ..integrations.slack_bot import SlackBot
+            from src.heretek_swarm.integrations.slack_bot import SlackBot
         except ImportError as e:
             logger.warning(f"SlackBot not available: {e}")
             return
-        
+
         try:
             bot = SlackBot(
                 token=os.getenv("SLACK_BOT_TOKEN"),
@@ -615,17 +616,17 @@ class AutonomousRuntime:
         except Exception as e:
             logger.error(f"Failed to send Slack alert: {e}")
 
-    async def _send_discord_alert(self, alert_type: str, data: Dict[str, Any]) -> None:
+    async def _send_discord_alert(self, alert_type: str, data: dict[str, Any]) -> None:
         """Send alert to Discord."""
         # P1-9 fix: Specific ImportError handling
         try:
-            from ..integrations.discord_bot import DiscordBot
+            from src.heretek_swarm.integrations.discord_bot import DiscordBot
         except ImportError as e:
             logger.warning(f"DiscordBot not available: {e}")
             return
-        
+
         try:
-            bot = DiscordBot(
+            DiscordBot(
                 token=os.getenv("DISCORD_BOT_TOKEN"),
                 agent_id="runtime_monitor",
                 prefix="!",
@@ -641,12 +642,12 @@ class AutonomousRuntime:
         except Exception as e:
             logger.error(f"Failed to send Discord alert: {e}")
 
-    async def _send_email_alert(self, alert_type: str, data: Dict[str, Any]) -> None:
+    async def _send_email_alert(self, alert_type: str, data: dict[str, Any]) -> None:
         """Send alert via email."""
         try:
             import smtplib
-            from email.mime.text import MIMEText
             from email.mime.multipart import MIMEMultipart
+            from email.mime.text import MIMEText
 
             msg = MIMEMultipart()
             msg["From"] = os.getenv("SMTP_FROM", "noreply@heretek.swarm")
@@ -656,7 +657,7 @@ class AutonomousRuntime:
             # P2-1 fix: Use timezone-aware datetime
             body = f"Alert Type: {alert_type}\n\n"
             body += f"Data:\n{data}\n\n"
-            body += f"Timestamp: {datetime.now(timezone.utc).isoformat()}"
+            body += f"Timestamp: {datetime.now(UTC).isoformat()}"
 
             msg.attach(MIMEText(body, "plain"))
 
@@ -676,7 +677,7 @@ class AutonomousRuntime:
         except Exception as e:
             logger.error(f"Failed to send email alert: {e}")
 
-    def get_status(self) -> Dict[str, Any]:
+    def get_status(self) -> dict[str, Any]:
         """Get current runtime status."""
         return {
             "running": self._running,

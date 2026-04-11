@@ -13,12 +13,11 @@ import asyncio
 import json
 import os
 import secrets
-from typing import Any, Dict, Optional, Tuple
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
+from typing import Any
 
-from fastapi import APIRouter, WebSocket, WebSocketDisconnect, Query
 import structlog
-
+from fastapi import APIRouter, Query, WebSocket, WebSocketDisconnect
 
 logger = structlog.get_logger("api.websockets")
 
@@ -28,82 +27,82 @@ logger = structlog.get_logger("api.websockets")
 
 class WebSocketAuthManager:
     """Manages authentication for WebSocket connections."""
-    
-    def __init__(self, secret_key: Optional[str] = None):
+
+    def __init__(self, secret_key: str | None = None):
         self.secret_key = secret_key or os.environ.get("WEBSOCKET_SECRET_KEY", secrets.token_hex(32))
-        self._valid_tokens: Dict[str, Dict[str, Any]] = {}
+        self._valid_tokens: dict[str, dict[str, Any]] = {}
         self._token_expiry = timedelta(hours=24)
-        self._rate_limits: Dict[str, list] = {}  # Track requests per user
+        self._rate_limits: dict[str, list] = {}  # Track requests per user
         self._rate_limit_window = 60  # seconds
         self._rate_limit_max = 100  # max requests per window
-    
-    def generate_token(self, user_id: str, metadata: Optional[Dict] = None) -> str:
+
+    def generate_token(self, user_id: str, metadata: dict | None = None) -> str:
         """Generate an authentication token for a user."""
         token = secrets.token_urlsafe(32)
         self._valid_tokens[token] = {
             "user_id": user_id,
-            "created_at": datetime.now(timezone.utc),
-            "expires_at": datetime.now(timezone.utc) + self._token_expiry,
+            "created_at": datetime.now(UTC),
+            "expires_at": datetime.now(UTC) + self._token_expiry,
             "metadata": metadata or {},
         }
         return token
-    
-    def validate_token(self, token: str) -> Tuple[bool, Optional[str], Optional[str]]:
+
+    def validate_token(self, token: str) -> tuple[bool, str | None, str | None]:
         """
         Validate an authentication token.
-        
+
         Returns:
             Tuple of (is_valid, user_id, error_message)
         """
         if not token:
             return False, None, "Token required"
-        
+
         if token not in self._valid_tokens:
             return False, None, "Invalid token"
-        
+
         token_data = self._valid_tokens[token]
-        if datetime.now(timezone.utc) > token_data["expires_at"]:
+        if datetime.now(UTC) > token_data["expires_at"]:
             del self._valid_tokens[token]
             return False, None, "Token expired"
-        
+
         return True, token_data["user_id"], None
-    
+
     def revoke_token(self, token: str) -> bool:
         """Revoke a token."""
         if token in self._valid_tokens:
             del self._valid_tokens[token]
             return True
         return False
-    
+
     def check_rate_limit(self, user_id: str) -> bool:
         """
         Check if user has exceeded rate limit.
-        
+
         Returns:
             True if request is allowed, False if rate limited
         """
-        now = datetime.now(timezone.utc).timestamp()
-        
+        now = datetime.now(UTC).timestamp()
+
         if user_id not in self._rate_limits:
             self._rate_limits[user_id] = []
-        
+
         # Remove old entries outside window
         self._rate_limits[user_id] = [
             ts for ts in self._rate_limits[user_id]
             if now - ts < self._rate_limit_window
         ]
-        
+
         # Check limit
         if len(self._rate_limits[user_id]) >= self._rate_limit_max:
             return False
-        
+
         # Record this request
         self._rate_limits[user_id].append(now)
         return True
-    
+
     def cleanup_expired(self) -> int:
         """Remove expired tokens. Returns count of removed tokens."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         expired = [t for t, data in self._valid_tokens.items() if now > data["expires_at"]]
         for token in expired:
             del self._valid_tokens[token]
@@ -114,21 +113,21 @@ class WebSocketAuthManager:
 ws_auth_manager = WebSocketAuthManager()
 
 
-async def authenticate_websocket(websocket: WebSocket, token: Optional[str]) -> Tuple[bool, Optional[str], Optional[str]]:
+async def authenticate_websocket(websocket: WebSocket, token: str | None) -> tuple[bool, str | None, str | None]:
     """
     Authenticate a WebSocket connection.
-    
+
     Returns:
         Tuple of (is_authenticated, user_id, error_message)
     """
     is_valid, user_id, error = ws_auth_manager.validate_token(token or "")
     if not is_valid:
         return False, None, error
-    
+
     # Check rate limit
     if not ws_auth_manager.check_rate_limit(user_id):
         return False, None, "Rate limit exceeded"
-    
+
     return True, user_id, None
 
 # Create WebSocket router
@@ -140,17 +139,17 @@ router = APIRouter()
 
 class ConnectionManager:
     """Manages WebSocket connections for broadcasting."""
-    
+
     def __init__(self):
-        self.active_connections: Dict[str, set[WebSocket]] = {}
-        self.execution_watchers: Dict[str, set[WebSocket]] = {}
+        self.active_connections: dict[str, set[WebSocket]] = {}
+        self.execution_watchers: dict[str, set[WebSocket]] = {}
         self.a2a_listeners: set[WebSocket] = set()
         self.dashboard_listeners: set[WebSocket] = set()
         self.observability_listeners: set[WebSocket] = set()
-        self.agent_status_listeners: Dict[str, WebSocket] = {}  # agent_id -> websocket
-        self.workflow_progress_listeners: Dict[str, set[WebSocket]] = {}  # workflow_id -> websockets
-        self.metrics_listeners: Dict[str, set[WebSocket]] = {}  # agent_id -> websockets
-    
+        self.agent_status_listeners: dict[str, WebSocket] = {}  # agent_id -> websocket
+        self.workflow_progress_listeners: dict[str, set[WebSocket]] = {}  # workflow_id -> websockets
+        self.metrics_listeners: dict[str, set[WebSocket]] = {}  # agent_id -> websockets
+
     async def connect_execution(self, websocket: WebSocket, execution_id: str):
         """Connect to execution updates channel."""
         await websocket.accept()
@@ -158,45 +157,45 @@ class ConnectionManager:
             self.execution_watchers[execution_id] = set()
         self.execution_watchers[execution_id].add(websocket)
         logger.info("WebSocket connected to execution", execution_id=execution_id)
-    
+
     def disconnect_execution(self, websocket: WebSocket, execution_id: str):
         """Disconnect from execution updates."""
         if execution_id in self.execution_watchers:
             self.execution_watchers[execution_id].discard(websocket)
             if not self.execution_watchers[execution_id]:
                 del self.execution_watchers[execution_id]
-    
+
     async def connect_a2a(self, websocket: WebSocket):
         """Connect to A2A message stream."""
         await websocket.accept()
         self.a2a_listeners.add(websocket)
         logger.info("WebSocket connected to A2A stream")
-    
+
     def disconnect_a2a(self, websocket: WebSocket):
         """Disconnect from A2A message stream."""
         self.a2a_listeners.discard(websocket)
-    
+
     async def connect_dashboard(self, websocket: WebSocket):
         """Connect to dashboard updates channel."""
         await websocket.accept()
         self.dashboard_listeners.add(websocket)
         logger.info("WebSocket connected to dashboard")
-    
+
     def disconnect_dashboard(self, websocket: WebSocket):
         """Disconnect from dashboard updates."""
         self.dashboard_listeners.discard(websocket)
-    
+
     async def connect_observability(self, websocket: WebSocket):
         """Connect to observability updates channel."""
         await websocket.accept()
         self.observability_listeners.add(websocket)
         logger.info("WebSocket connected to observability")
-    
+
     def disconnect_observability(self, websocket: WebSocket):
         """Disconnect from observability updates."""
         self.observability_listeners.discard(websocket)
-    
-    async def broadcast_execution(self, execution_id: str, data: Dict[str, Any]):
+
+    async def broadcast_execution(self, execution_id: str, data: dict[str, Any]):
         """Broadcast execution update to all watchers."""
         if execution_id in self.execution_watchers:
             disconnected = set()
@@ -208,8 +207,8 @@ class ConnectionManager:
             # Clean up disconnected
             for ws in disconnected:
                 self.execution_watchers[execution_id].discard(ws)
-    
-    async def broadcast_a2a(self, data: Dict[str, Any]):
+
+    async def broadcast_a2a(self, data: dict[str, Any]):
         """Broadcast A2A message to all listeners."""
         disconnected = set()
         for websocket in self.a2a_listeners:
@@ -219,8 +218,8 @@ class ConnectionManager:
                 disconnected.add(websocket)
         for ws in disconnected:
             self.a2a_listeners.discard(ws)
-    
-    async def broadcast_dashboard(self, data: Dict[str, Any]):
+
+    async def broadcast_dashboard(self, data: dict[str, Any]):
         """Broadcast dashboard update to all listeners."""
         disconnected = set()
         for websocket in self.dashboard_listeners:
@@ -230,8 +229,8 @@ class ConnectionManager:
                 disconnected.add(websocket)
         for ws in disconnected:
             self.dashboard_listeners.discard(ws)
-    
-    async def broadcast_observability(self, data: Dict[str, Any]):
+
+    async def broadcast_observability(self, data: dict[str, Any]):
         """Broadcast observability update to all listeners."""
         disconnected = set()
         for websocket in self.observability_listeners:
@@ -241,8 +240,8 @@ class ConnectionManager:
                 disconnected.add(websocket)
         for ws in disconnected:
             self.observability_listeners.discard(ws)
-    
-    async def broadcast_agent_status(self, agent_id: str, data: Dict[str, Any]):
+
+    async def broadcast_agent_status(self, agent_id: str, data: dict[str, Any]):
         """Broadcast agent status update to specific listener."""
         if agent_id in self.agent_status_listeners:
             websocket = self.agent_status_listeners[agent_id]
@@ -254,8 +253,8 @@ class ConnectionManager:
                 })
             except Exception:
                 del self.agent_status_listeners[agent_id]
-    
-    async def broadcast_workflow_progress(self, workflow_id: str, data: Dict[str, Any]):
+
+    async def broadcast_workflow_progress(self, workflow_id: str, data: dict[str, Any]):
         """Broadcast workflow progress update to all listeners."""
         if workflow_id in self.workflow_progress_listeners:
             disconnected = set()
@@ -270,8 +269,8 @@ class ConnectionManager:
                     disconnected.add(websocket)
             for ws in disconnected:
                 self.workflow_progress_listeners[workflow_id].discard(ws)
-    
-    async def broadcast_metrics(self, agent_id: str, data: Dict[str, Any]):
+
+    async def broadcast_metrics(self, agent_id: str, data: dict[str, Any]):
         """Broadcast metrics update to all listeners for an agent."""
         if agent_id in self.metrics_listeners:
             disconnected = set()
@@ -286,35 +285,35 @@ class ConnectionManager:
                     disconnected.add(websocket)
             for ws in disconnected:
                 self.metrics_listeners[agent_id].discard(ws)
-    
+
     def subscribe_agent_status(self, agent_id: str, websocket: WebSocket):
         """Subscribe to agent status updates."""
         self.agent_status_listeners[agent_id] = websocket
-    
+
     def unsubscribe_agent_status(self, agent_id: str):
         """Unsubscribe from agent status updates."""
         if agent_id in self.agent_status_listeners:
             del self.agent_status_listeners[agent_id]
-    
+
     def subscribe_workflow_progress(self, workflow_id: str, websocket: WebSocket):
         """Subscribe to workflow progress updates."""
         if workflow_id not in self.workflow_progress_listeners:
             self.workflow_progress_listeners[workflow_id] = set()
         self.workflow_progress_listeners[workflow_id].add(websocket)
-    
+
     def unsubscribe_workflow_progress(self, workflow_id: str, websocket: WebSocket):
         """Unsubscribe from workflow progress updates."""
         if workflow_id in self.workflow_progress_listeners:
             self.workflow_progress_listeners[workflow_id].discard(websocket)
             if not self.workflow_progress_listeners[workflow_id]:
                 del self.workflow_progress_listeners[workflow_id]
-    
+
     def subscribe_metrics(self, agent_id: str, websocket: WebSocket):
         """Subscribe to agent metrics updates."""
         if agent_id not in self.metrics_listeners:
             self.metrics_listeners[agent_id] = set()
         self.metrics_listeners[agent_id].add(websocket)
-    
+
     def unsubscribe_metrics(self, agent_id: str, websocket: WebSocket):
         """Unsubscribe from agent metrics updates."""
         if agent_id in self.metrics_listeners:
@@ -327,7 +326,7 @@ class ConnectionManager:
 manager = ConnectionManager()
 
 # In-memory store for agent states
-_agent_states: Dict[str, Dict[str, Any]] = {}
+_agent_states: dict[str, dict[str, Any]] = {}
 
 
 # =============================================================================
@@ -338,13 +337,13 @@ _agent_states: Dict[str, Dict[str, Any]] = {}
 async def execution_websocket(
     websocket: WebSocket,
     execution_id: str,
-    token: Optional[str] = Query(None, description="Authentication token")
+    token: str | None = Query(None, description="Authentication token")
 ):
     """
     WebSocket endpoint for real-time execution updates.
-    
+
     SECURITY: Requires valid authentication token.
-    
+
     Clients connect to receive live updates about agent execution progress.
     Messages are sent as JSON with the following structure:
     {
@@ -354,11 +353,11 @@ async def execution_websocket(
         "message": "Processing step 3 of 4",
         "timestamp": "2024-01-01T12:00:00Z"
     }
-    
+
     Args:
         execution_id: Unique execution identifier
         token: Authentication token (required)
-        
+
     Example:
         ```javascript
         const ws = new WebSocket("ws://localhost:8000/ws/executions/exec-123?token=YOUR_TOKEN");
@@ -369,7 +368,7 @@ async def execution_websocket(
         ```
     """
     # SECURITY: Authenticate connection
-    is_authenticated, user_id, error = await authenticate_websocket(websocket, token)
+    is_authenticated, _user_id, error = await authenticate_websocket(websocket, token)
     if not is_authenticated:
         try:
             await websocket.accept()
@@ -382,29 +381,29 @@ async def execution_websocket(
             pass
         logger.warning("websocket_execution_auth_failed", execution_id=execution_id, error=error)
         return
-    
+
     await manager.connect_execution(websocket, execution_id)
-    
+
     try:
         # Send initial connection confirmation
         await websocket.send_json({
             "type": "connected",
             "execution_id": execution_id,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         })
-        
+
         # Track execution state in memory (simplified - in production use Redis)
         execution_state = {
             "execution_id": execution_id,
             "status": "running",
             "progress": 0.0,
             "message": "Initializing",
-            "started_at": datetime.now(timezone.utc).isoformat(),
+            "started_at": datetime.now(UTC).isoformat(),
         }
-        
+
         # Store in memory for retrieval
         _execution_store[execution_id] = execution_state
-        
+
         # Keep connection alive and send periodic updates
         # In production, this would listen to actual execution events
         while True:
@@ -412,21 +411,21 @@ async def execution_websocket(
                 # Wait for messages from client (e.g., pause, cancel)
                 data = await asyncio.wait_for(websocket.receive_text(), timeout=30.0)
                 _message = json.loads(data)
-                
+
                 # Handle client commands
                 if message.get("command") == "cancel":
                     execution_state["status"] = "cancelled"
                     execution_state["message"] = "Cancelled by client"
                     await manager.broadcast_execution(execution_id, execution_state)
                     break
-                    
-            except asyncio.TimeoutError:
+
+            except TimeoutError:
                 # Send heartbeat/update
                 await websocket.send_json({
                     "type": "heartbeat",
-                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "timestamp": datetime.now(UTC).isoformat(),
                 })
-                
+
     except WebSocketDisconnect:
         logger.info("WebSocket disconnected", execution_id=execution_id)
     except Exception as e:
@@ -436,16 +435,16 @@ async def execution_websocket(
 
 
 # In-memory execution store (use Redis in production)
-_execution_store: Dict[str, Dict[str, Any]] = {}
+_execution_store: dict[str, dict[str, Any]] = {}
 
 
-async def get_execution_update(execution_id: str) -> Dict[str, Any]:
+async def get_execution_update(execution_id: str) -> dict[str, Any]:
     """
     Get current execution state.
-    
+
     Args:
         execution_id: Unique execution identifier
-        
+
     Returns:
         Current execution state or default
     """
@@ -463,16 +462,16 @@ async def get_execution_update(execution_id: str) -> Dict[str, Any]:
 @router.websocket("/ws/a2a")
 async def a2a_websocket(
     websocket: WebSocket,
-    token: Optional[str] = Query(None, description="Authentication token")
+    token: str | None = Query(None, description="Authentication token")
 ):
     """
     WebSocket endpoint for A2A protocol message stream.
-    
+
     SECURITY: Requires valid authentication token.
-    
+
     This endpoint provides real-time monitoring of agent-to-agent messages.
     All A2A messages are broadcast to connected clients.
-    
+
     Message format:
     {
         "type": "message|request|response|error",
@@ -481,7 +480,7 @@ async def a2a_websocket(
         "payload": {...},
         "timestamp": "2024-01-01T12:00:00Z"
     }
-    
+
     Example:
         ```javascript
         const ws = new WebSocket("ws://localhost:8000/ws/a2a?token=YOUR_TOKEN");
@@ -492,7 +491,7 @@ async def a2a_websocket(
         ```
     """
     # SECURITY: Authenticate connection
-    is_authenticated, user_id, error = await authenticate_websocket(websocket, token)
+    is_authenticated, _user_id, error = await authenticate_websocket(websocket, token)
     if not is_authenticated:
         try:
             await websocket.accept()
@@ -505,46 +504,46 @@ async def a2a_websocket(
             pass
         logger.warning("websocket_a2a_auth_failed", error=error)
         return
-    
+
     await manager.connect_a2a(websocket)
-    
+
     # Try to use Redis pub/sub if available, fallback to simulation
     try:
         import redis.asyncio as redis
-        
+
         redis_url = os.environ.get("REDIS_URL", "redis://localhost:6379")
         r = redis.from_url(redis_url)
-        
+
         # Create pub/sub for A2A messages
         pubsub = r.pubsub()
         await pubsub.subscribe("a2a:messages")
-        
+
         try:
             # Listen for messages
             async for message in pubsub.listen():
                 if message["type"] == "message":
                     data = json.loads(message["data"])
                     await websocket.send_json(data)
-                    
+
         except WebSocketDisconnect:
             pass
         finally:
             await pubsub.unsubscribe("a2a:messages")
             await r.close()
-            
+
     except Exception as e:
         logger.warning("Redis not available for A2A, using fallback", error=str(e))
-        
+
         # Fallback: simulate A2A messages (for development)
         try:
             while True:
                 # Send periodic heartbeat to keep connection alive
                 await websocket.send_json({
                     "type": "heartbeat",
-                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "timestamp": datetime.now(UTC).isoformat(),
                 })
                 await asyncio.sleep(30)
-                
+
         except WebSocketDisconnect:
             pass
     finally:
@@ -559,23 +558,23 @@ async def a2a_websocket(
 async def agent_events_websocket(
     websocket: WebSocket,
     agent_id: str,
-    token: Optional[str] = Query(None, description="Authentication token")
+    token: str | None = Query(None, description="Authentication token")
 ):
     """
     WebSocket endpoint for agent-specific event stream.
-    
+
     SECURITY: Requires valid authentication token.
-    
+
     Provides real-time events for a specific agent including:
     - State changes
     - Message receipts
     - Tool executions
     - Errors
-    
+
     Args:
         agent_id: Unique agent identifier
         token: Authentication token (required)
-        
+
     Message format:
     {
         "event": "state_changed|message_received|tool_executed|error",
@@ -585,7 +584,7 @@ async def agent_events_websocket(
     }
     """
     # SECURITY: Authenticate connection
-    is_authenticated, user_id, error = await authenticate_websocket(websocket, token)
+    is_authenticated, _user_id, error = await authenticate_websocket(websocket, token)
     if not is_authenticated:
         try:
             await websocket.accept()
@@ -598,11 +597,11 @@ async def agent_events_websocket(
             pass
         logger.warning("websocket_agent_events_auth_failed", agent_id=agent_id, error=error)
         return
-    
+
     await websocket.accept()
-    
+
     logger.info("Agent events WebSocket connected", agent_id=agent_id)
-    
+
     try:
         # Keep connection alive and stream events
         while True:
@@ -610,19 +609,19 @@ async def agent_events_websocket(
                 # Wait for client messages
                 data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
                 _message = json.loads(data)
-                
+
                 # Handle subscription/unsubscription to event types
                 if message.get("action") == "subscribe":
                     event_type = message.get("event_type")
                     logger.info("Subscribed to event", agent_id=agent_id, event_type=event_type)
-                    
-            except asyncio.TimeoutError:
+
+            except TimeoutError:
                 # Send heartbeat
                 await websocket.send_json({
                     "type": "heartbeat",
-                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "timestamp": datetime.now(UTC).isoformat(),
                 })
-                
+
     except WebSocketDisconnect:
         logger.info("Agent events WebSocket disconnected", agent_id=agent_id)
     except Exception as e:
@@ -636,19 +635,19 @@ async def agent_events_websocket(
 @router.websocket("/ws/agents/status")
 async def agent_status_websocket(
     websocket: WebSocket,
-    agent_id: Optional[str] = Query(None, description="Specific agent ID to monitor"),
-    token: Optional[str] = Query(None, description="Authentication token")
+    agent_id: str | None = Query(None, description="Specific agent ID to monitor"),
+    token: str | None = Query(None, description="Authentication token")
 ):
     """
     WebSocket endpoint for real-time agent status updates.
-    
+
     SECURITY: Requires valid authentication token.
-    
+
     Provides real-time status updates for agents including:
     - Status changes (active, idle, processing, error)
     - Current task
     - Last heartbeat
-    
+
     Message format:
     {
         "type": "agent_status",
@@ -657,13 +656,13 @@ async def agent_status_websocket(
         "currentTask": "task description",
         "lastHeartbeat": "2024-01-01T12:00:00Z"
     }
-    
+
     Args:
         agent_id: Optional specific agent ID to monitor (if not provided, subscribes to all)
         token: Authentication token (required)
     """
     # SECURITY: Authenticate connection
-    is_authenticated, user_id, error = await authenticate_websocket(websocket, token)
+    is_authenticated, _user_id, error = await authenticate_websocket(websocket, token)
     if not is_authenticated:
         try:
             await websocket.accept()
@@ -676,18 +675,18 @@ async def agent_status_websocket(
             pass
         logger.warning("websocket_agent_status_auth_failed", error=error)
         return
-    
+
     await websocket.accept()
     logger.info("Agent status WebSocket connected", agent_id=agent_id)
-    
+
     subscribed_agents = set()
-    
+
     try:
         while True:
             try:
                 data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
                 _message = json.loads(data)
-                
+
                 # Handle subscription/unsubscription
                 action = message.get("action")
                 if action == "subscribe":
@@ -696,7 +695,7 @@ async def agent_status_websocket(
                         manager.subscribe_agent_status(sub_agent_id, websocket)
                         subscribed_agents.add(sub_agent_id)
                         logger.info("Subscribed to agent status", agent_id=sub_agent_id)
-                        
+
                         # Send current state if available
                         if sub_agent_id in _agent_states:
                             await websocket.send_json({
@@ -704,21 +703,21 @@ async def agent_status_websocket(
                                 "agentId": sub_agent_id,
                                 **_agent_states[sub_agent_id],
                             })
-                
+
                 elif action == "unsubscribe":
                     sub_agent_id = message.get("agentId") or agent_id
                     if sub_agent_id in subscribed_agents:
                         manager.unsubscribe_agent_status(sub_agent_id)
                         subscribed_agents.discard(sub_agent_id)
                         logger.info("Unsubscribed from agent status", agent_id=sub_agent_id)
-                
-            except asyncio.TimeoutError:
+
+            except TimeoutError:
                 # Send heartbeat
                 await websocket.send_json({
                     "type": "heartbeat",
-                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "timestamp": datetime.now(UTC).isoformat(),
                 })
-                
+
     except WebSocketDisconnect:
         logger.info("Agent status WebSocket disconnected")
     except Exception as e:
@@ -736,19 +735,19 @@ async def agent_status_websocket(
 @router.websocket("/ws/workflows/progress")
 async def workflow_progress_websocket(
     websocket: WebSocket,
-    workflow_id: Optional[str] = Query(None, description="Specific workflow ID to monitor"),
-    token: Optional[str] = Query(None, description="Authentication token")
+    workflow_id: str | None = Query(None, description="Specific workflow ID to monitor"),
+    token: str | None = Query(None, description="Authentication token")
 ):
     """
     WebSocket endpoint for real-time workflow progress updates.
-    
+
     SECURITY: Requires valid authentication token.
-    
+
     Provides real-time progress updates for workflows including:
     - Current node being executed
     - Phase (plan, analyze, execute, validate, report)
     - Progress percentage (0-100)
-    
+
     Message format:
     {
         "type": "workflow_progress",
@@ -757,13 +756,13 @@ async def workflow_progress_websocket(
         "phase": "plan|analyze|execute|validate|report",
         "progress": 75
     }
-    
+
     Args:
         workflow_id: Optional specific workflow ID to monitor
         token: Authentication token (required)
     """
     # SECURITY: Authenticate connection
-    is_authenticated, user_id, error = await authenticate_websocket(websocket, token)
+    is_authenticated, _user_id, error = await authenticate_websocket(websocket, token)
     if not is_authenticated:
         try:
             await websocket.accept()
@@ -776,18 +775,18 @@ async def workflow_progress_websocket(
             pass
         logger.warning("websocket_workflow_progress_auth_failed", error=error)
         return
-    
+
     await websocket.accept()
     logger.info("Workflow progress WebSocket connected", workflow_id=workflow_id)
-    
+
     subscribed_workflows = set()
-    
+
     try:
         while True:
             try:
                 data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
                 _message = json.loads(data)
-                
+
                 # Handle subscription/unsubscription
                 action = message.get("action")
                 if action == "subscribe":
@@ -796,21 +795,21 @@ async def workflow_progress_websocket(
                         manager.subscribe_workflow_progress(sub_workflow_id, websocket)
                         subscribed_workflows.add(sub_workflow_id)
                         logger.info("Subscribed to workflow progress", workflow_id=sub_workflow_id)
-                
+
                 elif action == "unsubscribe":
                     sub_workflow_id = message.get("workflowId") or workflow_id
                     if sub_workflow_id in subscribed_workflows:
                         manager.unsubscribe_workflow_progress(sub_workflow_id, websocket)
                         subscribed_workflows.discard(sub_workflow_id)
                         logger.info("Unsubscribed from workflow progress", workflow_id=sub_workflow_id)
-                
-            except asyncio.TimeoutError:
+
+            except TimeoutError:
                 # Send heartbeat
                 await websocket.send_json({
                     "type": "heartbeat",
-                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "timestamp": datetime.now(UTC).isoformat(),
                 })
-                
+
     except WebSocketDisconnect:
         logger.info("Workflow progress WebSocket disconnected")
     except Exception as e:
@@ -828,20 +827,20 @@ async def workflow_progress_websocket(
 @router.websocket("/ws/agents/metrics")
 async def agent_metrics_websocket(
     websocket: WebSocket,
-    agent_id: Optional[str] = Query(None, description="Specific agent ID to monitor"),
-    token: Optional[str] = Query(None, description="Authentication token")
+    agent_id: str | None = Query(None, description="Specific agent ID to monitor"),
+    token: str | None = Query(None, description="Authentication token")
 ):
     """
     WebSocket endpoint for real-time agent metrics updates.
-    
+
     SECURITY: Requires valid authentication token.
-    
+
     Provides real-time metrics for agents including:
     - Phi (consciousness metric)
     - Coherence
     - Load
     - Queue size
-    
+
     Message format:
     {
         "type": "metrics",
@@ -853,13 +852,13 @@ async def agent_metrics_websocket(
             "queueSize": 3
         }
     }
-    
+
     Args:
         agent_id: Optional specific agent ID to monitor
         token: Authentication token (required)
     """
     # SECURITY: Authenticate connection
-    is_authenticated, user_id, error = await authenticate_websocket(websocket, token)
+    is_authenticated, _user_id, error = await authenticate_websocket(websocket, token)
     if not is_authenticated:
         try:
             await websocket.accept()
@@ -872,18 +871,18 @@ async def agent_metrics_websocket(
             pass
         logger.warning("websocket_agent_metrics_auth_failed", error=error)
         return
-    
+
     await websocket.accept()
     logger.info("Agent metrics WebSocket connected", agent_id=agent_id)
-    
+
     subscribed_agents = set()
-    
+
     try:
         while True:
             try:
                 data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
                 _message = json.loads(data)
-                
+
                 # Handle subscription/unsubscription
                 action = message.get("action")
                 if action == "subscribe":
@@ -892,21 +891,21 @@ async def agent_metrics_websocket(
                         manager.subscribe_metrics(sub_agent_id, websocket)
                         subscribed_agents.add(sub_agent_id)
                         logger.info("Subscribed to agent metrics", agent_id=sub_agent_id)
-                
+
                 elif action == "unsubscribe":
                     sub_agent_id = message.get("agentId") or agent_id
                     if sub_agent_id in subscribed_agents:
                         manager.unsubscribe_metrics(sub_agent_id, websocket)
                         subscribed_agents.discard(sub_agent_id)
                         logger.info("Unsubscribed from agent metrics", agent_id=sub_agent_id)
-                
-            except asyncio.TimeoutError:
+
+            except TimeoutError:
                 # Send heartbeat
                 await websocket.send_json({
                     "type": "heartbeat",
-                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "timestamp": datetime.now(UTC).isoformat(),
                 })
-                
+
     except WebSocketDisconnect:
         logger.info("Agent metrics WebSocket disconnected")
     except Exception as e:
@@ -924,20 +923,20 @@ async def agent_metrics_websocket(
 @router.websocket("/ws/dashboard")
 async def dashboard_websocket(
     websocket: WebSocket,
-    token: Optional[str] = Query(None, description="Authentication token")
+    token: str | None = Query(None, description="Authentication token")
 ):
     """
     WebSocket endpoint for real-time dashboard updates.
-    
+
     SECURITY: Requires valid authentication token.
-    
+
     Broadcasts:
     - Agent status changes
     - Memory statistics
     - A2A messages
     - Consensus state
     - System health
-    
+
     Message format:
     {
         "type": "agent_update|agent_spawned|agent_terminated|a2a_message|memory_update|consensus_update|health_update",
@@ -946,7 +945,7 @@ async def dashboard_websocket(
     }
     """
     # SECURITY: Authenticate connection
-    is_authenticated, user_id, error = await authenticate_websocket(websocket, token)
+    is_authenticated, _user_id, error = await authenticate_websocket(websocket, token)
     if not is_authenticated:
         try:
             await websocket.accept()
@@ -959,18 +958,18 @@ async def dashboard_websocket(
             pass
         logger.warning("websocket_dashboard_auth_failed", error=error)
         return
-    
+
     await manager.connect_dashboard(websocket)
-    
+
     logger.info("Dashboard WebSocket connected")
-    
+
     # Track subscriptions
     subscriptions = {
         "agent_status": False,
         "workflow_progress": False,
         "metrics": False,
     }
-    
+
     try:
         # Keep connection alive and stream updates
         while True:
@@ -978,35 +977,35 @@ async def dashboard_websocket(
                 # Wait for client messages (heartbeat, subscriptions)
                 data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
                 _message = json.loads(data)
-                
+
                 # Handle client requests
                 if message.get("action") == "ping":
                     await websocket.send_json({
                         "type": "pong",
-                        "timestamp": datetime.now(timezone.utc).isoformat(),
+                        "timestamp": datetime.now(UTC).isoformat(),
                     })
-                
+
                 # Handle channel subscriptions
                 elif message.get("action") == "subscribe":
                     channel = message.get("channel")
                     if channel in subscriptions:
                         subscriptions[channel] = True
                         logger.info("Dashboard subscribed to channel", channel=channel)
-                
+
                 elif message.get("action") == "unsubscribe":
                     channel = message.get("channel")
                     if channel in subscriptions:
                         subscriptions[channel] = False
                         logger.info("Dashboard unsubscribed from channel", channel=channel)
-                    
-            except asyncio.TimeoutError:
+
+            except TimeoutError:
                 # Send heartbeat
                 await websocket.send_json({
                     "type": "heartbeat",
-                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "timestamp": datetime.now(UTC).isoformat(),
                 })
                 await asyncio.sleep(30)
-                
+
     except WebSocketDisconnect:
         logger.info("Dashboard WebSocket disconnected")
     except Exception as e:
@@ -1022,19 +1021,19 @@ async def dashboard_websocket(
 @router.websocket("/ws/observability")
 async def observability_websocket(
     websocket: WebSocket,
-    token: Optional[str] = Query(None, description="Authentication token")
+    token: str | None = Query(None, description="Authentication token")
 ):
     """
     WebSocket endpoint for real-time observability updates.
-    
+
     SECURITY: Requires valid authentication token.
-    
+
     Broadcasts:
     - LLM traces
     - Agent executions
     - Performance metrics
     - Error logs
-    
+
     Message format:
     {
         "type": "new_trace|execution_update|new_execution|metric_update|new_error",
@@ -1043,7 +1042,7 @@ async def observability_websocket(
     }
     """
     # SECURITY: Authenticate connection
-    is_authenticated, user_id, error = await authenticate_websocket(websocket, token)
+    is_authenticated, _user_id, error = await authenticate_websocket(websocket, token)
     if not is_authenticated:
         try:
             await websocket.accept()
@@ -1056,11 +1055,11 @@ async def observability_websocket(
             pass
         logger.warning("websocket_observability_auth_failed", error=error)
         return
-    
+
     await manager.connect_observability(websocket)
-    
+
     logger.info("Observability WebSocket connected")
-    
+
     try:
         # Keep connection alive and stream updates
         while True:
@@ -1068,22 +1067,22 @@ async def observability_websocket(
                 # Wait for client messages (heartbeat, subscriptions)
                 data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
                 _message = json.loads(data)
-                
+
                 # Handle client requests
                 if message.get("action") == "ping":
                     await websocket.send_json({
                         "type": "pong",
-                        "timestamp": datetime.now(timezone.utc).isoformat(),
+                        "timestamp": datetime.now(UTC).isoformat(),
                     })
-                    
-            except asyncio.TimeoutError:
+
+            except TimeoutError:
                 # Send heartbeat
                 await websocket.send_json({
                     "type": "heartbeat",
-                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "timestamp": datetime.now(UTC).isoformat(),
                 })
                 await asyncio.sleep(30)
-                
+
     except WebSocketDisconnect:
         logger.info("Observability WebSocket disconnected")
     except Exception as e:
@@ -1099,16 +1098,16 @@ async def observability_websocket(
 @router.websocket("/ws/agents")
 async def all_agents_websocket(
     websocket: WebSocket,
-    token: Optional[str] = Query(None, description="Authentication token")
+    token: str | None = Query(None, description="Authentication token")
 ):
     """
     WebSocket endpoint for all agent state updates.
-    
+
     SECURITY: Requires valid authentication token.
-    
+
     Broadcasts state changes for all agents to connected clients.
     Useful for dashboards and monitoring.
-    
+
     Message format:
     {
         "event": "agent_spawned|agent_terminated|agent_state_changed",
@@ -1118,7 +1117,7 @@ async def all_agents_websocket(
     }
     """
     # SECURITY: Authenticate connection
-    is_authenticated, user_id, error = await authenticate_websocket(websocket, token)
+    is_authenticated, _user_id, error = await authenticate_websocket(websocket, token)
     if not is_authenticated:
         try:
             await websocket.accept()
@@ -1131,26 +1130,26 @@ async def all_agents_websocket(
             pass
         logger.warning("websocket_all_agents_auth_failed", error=error)
         return
-    
+
     await websocket.accept()
-    
+
     logger.info("All agents WebSocket connected")
-    
+
     # Track this connection for broadcasting
-    _all_agent_listeners = set([websocket])
-    
+    _all_agent_listeners = {websocket}
+
     try:
         while True:
             try:
                 data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
                 _message = json.loads(data)
-                
-            except asyncio.TimeoutError:
+
+            except TimeoutError:
                 await websocket.send_json({
                     "type": "heartbeat",
-                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "timestamp": datetime.now(UTC).isoformat(),
                 })
-                
+
     except WebSocketDisconnect:
         logger.info("All agents WebSocket disconnected")
     except Exception as e:
@@ -1161,10 +1160,10 @@ async def all_agents_websocket(
 # Helper Functions for Broadcasting Updates
 # =============================================================================
 
-async def send_agent_status_update(agent_id: str, status: str, current_task: Optional[str] = None):
+async def send_agent_status_update(agent_id: str, status: str, current_task: str | None = None):
     """
     Send an agent status update to all subscribers.
-    
+
     Args:
         agent_id: Agent identifier
         status: Agent status (active, idle, processing, error)
@@ -1173,7 +1172,7 @@ async def send_agent_status_update(agent_id: str, status: str, current_task: Opt
     update = {
         "status": status,
         "currentTask": current_task,
-        "lastHeartbeat": datetime.now(timezone.utc).isoformat(),
+        "lastHeartbeat": datetime.now(UTC).isoformat(),
     }
     _agent_states[agent_id] = update
     await manager.broadcast_agent_status(agent_id, update)
@@ -1187,7 +1186,7 @@ async def send_workflow_progress_update(
 ):
     """
     Send a workflow progress update to all subscribers.
-    
+
     Args:
         workflow_id: Workflow identifier
         current_node: Current node being executed
@@ -1204,14 +1203,14 @@ async def send_workflow_progress_update(
 
 async def send_agent_metrics_update(
     agent_id: str,
-    phi: Optional[float] = None,
-    coherence: Optional[float] = None,
-    load: Optional[float] = None,
-    queue_size: Optional[int] = None
+    phi: float | None = None,
+    coherence: float | None = None,
+    load: float | None = None,
+    queue_size: int | None = None
 ):
     """
     Send agent metrics update to all subscribers.
-    
+
     Args:
         agent_id: Agent identifier
         phi: Consciousness metric (optional)
@@ -1228,9 +1227,9 @@ async def send_agent_metrics_update(
         metrics["load"] = load
     if queue_size is not None:
         metrics["queueSize"] = queue_size
-    
+
     await manager.broadcast_metrics(agent_id, metrics)
 
 
 # Export router
-__all__ = ["router", "manager", "send_agent_status_update", "send_workflow_progress_update", "send_agent_metrics_update"]
+__all__ = ["manager", "router", "send_agent_metrics_update", "send_agent_status_update", "send_workflow_progress_update"]

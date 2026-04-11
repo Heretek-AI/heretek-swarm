@@ -40,13 +40,15 @@ Example:
 
 import math
 import random
+
 # NOTE: random used for PSO/swarm simulations - not security-critical
 import uuid
 from collections import defaultdict
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from enum import Enum
-from typing import Any, Callable, Dict, List, Optional, Tuple
+from typing import Any
 
 import structlog
 
@@ -83,10 +85,10 @@ class Particle:
         agent_id: Associated agent ID
     """
     particle_id: str = field(default_factory=lambda: str(uuid.uuid4()))
-    position: Dict[str, float] = field(default_factory=dict)
-    velocity: Dict[str, float] = field(default_factory=dict)
-    best_position: Dict[str, float] = field(default_factory=dict)
-    best_value: float = float('-inf')
+    position: dict[str, float] = field(default_factory=dict)
+    velocity: dict[str, float] = field(default_factory=dict)
+    best_position: dict[str, float] = field(default_factory=dict)
+    best_value: float = float("-inf")
     agent_id: str = ""
 
 
@@ -109,7 +111,7 @@ class PheromoneTrail:
     pheromone_level: float = 1.0
     evaporation_rate: float = 0.1
     quality: float = 1.0
-    last_updated: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    last_updated: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
 
 @dataclass
@@ -127,7 +129,7 @@ class BeeAgent:
     """
     bee_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     role: str = "unemployed"  # scout, forager, unemployed
-    current_task: Optional[str] = None
+    current_task: str | None = None
     task_quality: float = 0.0
     dance_strength: float = 0.0
     agent_id: str = ""
@@ -146,10 +148,10 @@ class FlockingAgent:
         neighbors: Nearby flocking agents
     """
     agent_id: str = ""
-    position: Tuple[float, float, float] = (0.0, 0.0, 0.0)
-    velocity: Tuple[float, float, float] = (0.0, 0.0, 0.0)
-    heading: Tuple[float, float, float] = (0.0, 0.0, 1.0)
-    neighbors: List[str] = field(default_factory=list)
+    position: tuple[float, float, float] = (0.0, 0.0, 0.0)
+    velocity: tuple[float, float, float] = (0.0, 0.0, 0.0)
+    heading: tuple[float, float, float] = (0.0, 0.0, 1.0)
+    neighbors: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -169,10 +171,10 @@ class StigmergicTrace:
     trace_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     agent_id: str = ""
     trace_type: str = "marker"
-    content: Dict[str, Any] = field(default_factory=dict)
+    content: dict[str, Any] = field(default_factory=dict)
     strength: float = 1.0
     decay_rate: float = 0.05
-    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
 
 @dataclass
@@ -190,13 +192,13 @@ class SwarmDecision:
         quality_metrics: Quality metrics for the decision
     """
     pattern: SwarmPattern = SwarmPattern.PSO
-    participants: List[str] = field(default_factory=list)
+    participants: list[str] = field(default_factory=list)
     convergence_iterations: int = 0
-    final_position: Dict[str, Any] = field(default_factory=dict)
+    final_position: dict[str, Any] = field(default_factory=dict)
     confidence: float = 0.0
-    emergence_indicators: List[str] = field(default_factory=list)
-    quality_metrics: Dict[str, float] = field(default_factory=dict)
-    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    emergence_indicators: list[str] = field(default_factory=list)
+    quality_metrics: dict[str, float] = field(default_factory=dict)
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
 
 @dataclass
@@ -263,7 +265,7 @@ class SwarmIntelligenceEngine:
         config: Swarm configuration
     """
 
-    def __init__(self, config: Optional[SwarmConfig] = None) -> None:
+    def __init__(self, config: SwarmConfig | None = None) -> None:
         """
         Initialize swarm intelligence engine.
 
@@ -273,25 +275,25 @@ class SwarmIntelligenceEngine:
         self.config = config or SwarmConfig()
 
         # PSO state
-        self.particles: Dict[str, Particle] = {}
-        self.global_best_position: Dict[str, float] = {}
-        self.global_best_value: float = float('-inf')
+        self.particles: dict[str, Particle] = {}
+        self.global_best_position: dict[str, float] = {}
+        self.global_best_value: float = float("-inf")
 
         # Ant Colony state
-        self.pheromone_trails: Dict[str, Dict[str, PheromoneTrail]] = {}
+        self.pheromone_trails: dict[str, dict[str, PheromoneTrail]] = {}
 
         # Bee Algorithm state
-        self.bee_colony: List[BeeAgent] = []
-        self.task_pool: Dict[str, Dict[str, Any]] = {}
+        self.bee_colony: list[BeeAgent] = []
+        self.task_pool: dict[str, dict[str, Any]] = {}
 
         # Flocking state
-        self.flocking_agents: Dict[str, FlockingAgent] = {}
+        self.flocking_agents: dict[str, FlockingAgent] = {}
 
         # Stigmergy state
-        self.traces: Dict[str, List[StigmergicTrace]] = {}
+        self.traces: dict[str, list[StigmergicTrace]] = {}
 
         # Decision history
-        self.decision_history: List[SwarmDecision] = []
+        self.decision_history: list[SwarmDecision] = []
 
         logger.info(
             f"SwarmIntelligenceEngine initialized with "
@@ -304,10 +306,10 @@ class SwarmIntelligenceEngine:
 
     async def run_pso(
         self,
-        participants: List[str],
-        decision_space: Dict[str, float],
-        fitness_function: Optional[Callable[[Dict[str, float]], float]] = None,
-        iterations: Optional[int] = None,
+        participants: list[str],
+        decision_space: dict[str, float],
+        fitness_function: Callable[[dict[str, float]], float] | None = None,
+        iterations: int | None = None,
     ) -> SwarmDecision:
         """
         Run Particle Swarm Optimization for decision convergence.
@@ -327,7 +329,6 @@ class SwarmIntelligenceEngine:
         self._initialize_pso_particles(participants, decision_space)
 
         # Run PSO iterations
-        converged = False
         for iteration in range(iterations):
             # Update particle velocities and positions
             for particle in self.particles.values():
@@ -349,7 +350,6 @@ class SwarmIntelligenceEngine:
 
             # Check convergence
             if self._check_convergence(iteration):
-                converged = True
                 logger.info(f"PSO converged at iteration {iteration}")
                 break
 
@@ -379,13 +379,13 @@ class SwarmIntelligenceEngine:
 
     def _initialize_pso_particles(
         self,
-        participants: List[str],
-        decision_space: Dict[str, float],
+        participants: list[str],
+        decision_space: dict[str, float],
     ) -> None:
         """Initialize PSO particles from participants."""
         self.particles.clear()
         self.global_best_position = {}
-        self.global_best_value = float('-inf')
+        self.global_best_value = float("-inf")
 
         for i, agent_id in enumerate(participants):
             # Initialize position based on decision space
@@ -400,7 +400,7 @@ class SwarmIntelligenceEngine:
                 position = {k: v / total for k, v in position.items()}
 
             # Initialize velocity
-            velocity = {k: random.uniform(-0.01, 0.01) for k in position.keys()}
+            velocity = {k: random.uniform(-0.01, 0.01) for k in position}
 
             particle = Particle(
                 particle_id=f"particle-{i}",
@@ -414,7 +414,7 @@ class SwarmIntelligenceEngine:
 
     def _update_particle_velocity(self, particle: Particle) -> None:
         """Update particle velocity using PSO equations."""
-        for key in particle.position.keys():
+        for key in particle.position:
             # Cognitive component (attraction to personal best)
             cognitive = (
                 self.config.pso_cognitive *
@@ -440,7 +440,7 @@ class SwarmIntelligenceEngine:
 
     def _update_particle_position(self, particle: Particle) -> None:
         """Update particle position based on velocity."""
-        for key in particle.position.keys():
+        for key in particle.position:
             particle.position[key] += particle.velocity.get(key, 0)
 
         # Normalize to ensure valid probability distribution
@@ -450,8 +450,8 @@ class SwarmIntelligenceEngine:
 
     def _evaluate_fitness(
         self,
-        position: Dict[str, float],
-        fitness_function: Optional[Callable[[Dict[str, float]], float]] = None,
+        position: dict[str, float],
+        fitness_function: Callable[[dict[str, float]], float] | None = None,
     ) -> float:
         """Evaluate fitness of a position."""
         if fitness_function:
@@ -471,12 +471,9 @@ class SwarmIntelligenceEngine:
             return False
 
         # Simple convergence check
-        if self.global_best_value >= self.config.convergence_threshold:
-            return True
+        return self.global_best_value >= self.config.convergence_threshold
 
-        return False
-
-    def _detect_emergence_pso(self) -> List[str]:
+    def _detect_emergence_pso(self) -> list[str]:
         """Detect emergence indicators in PSO."""
         indicators = []
 
@@ -522,12 +519,12 @@ class SwarmIntelligenceEngine:
 
     async def run_ant_colony(
         self,
-        nodes: List[str],
-        edges: List[Tuple[str, str]],
+        nodes: list[str],
+        edges: list[tuple[str, str]],
         start_node: str,
         end_node: str,
         num_ants: int = 10,
-        iterations: Optional[int] = None,
+        iterations: int | None = None,
     ) -> SwarmDecision:
         """
         Run Ant Colony Optimization for pathfinding.
@@ -597,7 +594,7 @@ class SwarmIntelligenceEngine:
 
         return decision
 
-    def _initialize_pheromone_trails(self, edges: List[Tuple[str, str]]) -> None:
+    def _initialize_pheromone_trails(self, edges: list[tuple[str, str]]) -> None:
         """Initialize pheromone trails for edges."""
         self.pheromone_trails.clear()
 
@@ -616,11 +613,11 @@ class SwarmIntelligenceEngine:
 
     def _construct_ant_path(
         self,
-        nodes: List[str],
-        edges: List[Tuple[str, str]],
+        nodes: list[str],
+        edges: list[tuple[str, str]],
         start_node: str,
         end_node: str,
-    ) -> List[str]:
+    ) -> list[str]:
         """Construct a path for an ant using pheromone probabilities."""
         path = [start_node]
         current = start_node
@@ -640,8 +637,7 @@ class SwarmIntelligenceEngine:
                     path.pop()
                     current = path[-1]
                     continue
-                else:
-                    return []  # No valid path
+                return []  # No valid path
 
             # Calculate probabilities based on pheromone and heuristic
             probabilities = []
@@ -668,7 +664,7 @@ class SwarmIntelligenceEngine:
 
         return path
 
-    def _evaluate_path_quality(self, path: List[str], edges: List[Tuple[str, str]]) -> float:
+    def _evaluate_path_quality(self, path: list[str], edges: list[tuple[str, str]]) -> float:
         """Evaluate quality of a path."""
         if not path:
             return 0.0
@@ -687,7 +683,7 @@ class SwarmIntelligenceEngine:
 
         return 0.7 * length_factor + 0.3 * validity_factor
 
-    def _update_pheromones(self, path: List[str], quality: float) -> None:
+    def _update_pheromones(self, path: list[str], quality: float) -> None:
         """Update pheromones along a path."""
         for i in range(len(path) - 1):
             from_node, to_node = path[i], path[i + 1]
@@ -695,7 +691,7 @@ class SwarmIntelligenceEngine:
                 trail = self.pheromone_trails[from_node][to_node]
                 trail.pheromone_level += quality * 0.1
                 trail.quality = quality
-                trail.last_updated = datetime.now(timezone.utc).isoformat()
+                trail.last_updated = datetime.now(UTC).isoformat()
 
     def _evaporate_pheromones(self) -> None:
         """Evaporate pheromones on all trails."""
@@ -704,7 +700,7 @@ class SwarmIntelligenceEngine:
                 trail.pheromone_level *= (1 - trail.evaporation_rate)
                 trail.pheromone_level = max(0.1, trail.pheromone_level)  # Minimum pheromone
 
-    def _get_path_pheromone_strength(self, path: List[str]) -> float:
+    def _get_path_pheromone_strength(self, path: list[str]) -> float:
         """Get total pheromone strength along a path."""
         total = 0.0
         for i in range(len(path) - 1):
@@ -713,7 +709,7 @@ class SwarmIntelligenceEngine:
                 total += self.pheromone_trails[from_node][to_node].pheromone_level
         return total
 
-    def _detect_emergence_aco(self, best_path: List[str]) -> List[str]:
+    def _detect_emergence_aco(self, best_path: list[str]) -> list[str]:
         """Detect emergence indicators in ACO."""
         indicators = []
 
@@ -738,10 +734,10 @@ class SwarmIntelligenceEngine:
 
     async def run_bee_algorithm(
         self,
-        tasks: List[str],
-        foragers: List[str],
-        task_qualities: Optional[Dict[str, float]] = None,
-        iterations: Optional[int] = None,
+        tasks: list[str],
+        foragers: list[str],
+        task_qualities: dict[str, float] | None = None,
+        iterations: int | None = None,
     ) -> SwarmDecision:
         """
         Run Bee Algorithm for task allocation.
@@ -814,9 +810,9 @@ class SwarmIntelligenceEngine:
 
     def _initialize_bee_colony(
         self,
-        tasks: List[str],
-        foragers: List[str],
-        task_qualities: Dict[str, float],
+        tasks: list[str],
+        foragers: list[str],
+        task_qualities: dict[str, float],
     ) -> None:
         """Initialize bee colony with scouts and foragers."""
         self.bee_colony.clear()
@@ -827,21 +823,21 @@ class SwarmIntelligenceEngine:
             self.task_pool[task_id] = {
                 "quality": task_qualities.get(task_id, 0.5),
                 "assigned_foragers": [],
-                "last_updated": datetime.now(timezone.utc).isoformat(),
+                "last_updated": datetime.now(UTC).isoformat(),
             }
 
         # Create bees
         num_scouts = max(1, int(len(foragers) * self.config.bee_scout_ratio))
-        num_foragers = len(foragers) - num_scouts
+        len(foragers) - num_scouts
 
-        for i, agent_id in enumerate(foragers[:num_scouts]):
+        for _i, agent_id in enumerate(foragers[:num_scouts]):
             bee = BeeAgent(
                 role="scout",
                 agent_id=agent_id,
             )
             self.bee_colony.append(bee)
 
-        for i, agent_id in enumerate(foragers[num_scouts:]):
+        for _i, agent_id in enumerate(foragers[num_scouts:]):
             bee = BeeAgent(
                 role="forager",
                 agent_id=agent_id,
@@ -852,7 +848,7 @@ class SwarmIntelligenceEngine:
         """Scout bees search for new tasks."""
         scouts = [b for b in self.bee_colony if b.role == "scout"]
 
-        for scout in scouts:
+        for _scout in scouts:
             # Randomly discover tasks
             available_tasks = [
                 t for t, data in self.task_pool.items()
@@ -877,7 +873,7 @@ class SwarmIntelligenceEngine:
             else:
                 # Select new task based on dance strength
                 task_dances = []
-                for task_id, data in self.task_pool.items():
+                for task_id in self.task_pool:
                     dance_strength = sum(
                         b.dance_strength for b in self.bee_colony
                         if b.current_task == task_id
@@ -912,14 +908,14 @@ class SwarmIntelligenceEngine:
                     bee.dance_strength = 0.0
                     bee.role = "scout"
 
-    def _get_current_allocation(self) -> Dict[str, List[str]]:
+    def _get_current_allocation(self) -> dict[str, list[str]]:
         """Get current task allocation."""
         allocation = {}
         for task_id, data in self.task_pool.items():
             allocation[task_id] = data["assigned_foragers"].copy()
         return allocation
 
-    def _evaluate_allocation(self, allocation: Dict[str, List[str]]) -> float:
+    def _evaluate_allocation(self, allocation: dict[str, list[str]]) -> float:
         """Evaluate quality of task allocation."""
         if not allocation:
             return 0.0
@@ -939,7 +935,7 @@ class SwarmIntelligenceEngine:
 
         return 0.6 * coverage_score + 0.4 * balance_score
 
-    def _detect_emergence_bee(self, allocation: Dict[str, List[str]]) -> List[str]:
+    def _detect_emergence_bee(self, allocation: dict[str, list[str]]) -> list[str]:
         """Detect emergence indicators in bee algorithm."""
         indicators = []
 
@@ -965,8 +961,8 @@ class SwarmIntelligenceEngine:
 
     async def run_flocking(
         self,
-        agents: List[str],
-        initial_positions: Optional[Dict[str, Tuple[float, float, float]]] = None,
+        agents: list[str],
+        initial_positions: dict[str, tuple[float, float, float]] | None = None,
         iterations: int = 50,
     ) -> SwarmDecision:
         """
@@ -986,7 +982,7 @@ class SwarmIntelligenceEngine:
         flock_center = (0.0, 0.0, 0.0)
         avg_heading = (0.0, 0.0, 1.0)
 
-        for iteration in range(iterations):
+        for _iteration in range(iterations):
             # Update neighbors for each agent
             self._update_neighbors()
 
@@ -1028,8 +1024,8 @@ class SwarmIntelligenceEngine:
 
     def _initialize_flocking_agents(
         self,
-        agents: List[str],
-        initial_positions: Dict[str, Tuple[float, float, float]],
+        agents: list[str],
+        initial_positions: dict[str, tuple[float, float, float]],
     ) -> None:
         """Initialize flocking agents."""
         self.flocking_agents.clear()
@@ -1099,7 +1095,7 @@ class SwarmIntelligenceEngine:
         # Update heading
         agent.heading = agent.velocity
 
-    def _calculate_separation(self, agent: FlockingAgent) -> Tuple[float, float, float]:
+    def _calculate_separation(self, agent: FlockingAgent) -> tuple[float, float, float]:
         """Calculate separation steering force."""
         separation = [0.0, 0.0, 0.0]
         count = 0
@@ -1109,9 +1105,9 @@ class SwarmIntelligenceEngine:
             distance = self._calculate_distance(agent.position, neighbor.position)
 
             if distance > 0 and distance < 5.0:  # Separation threshold
-                diff = tuple(a - b for a, b in zip(agent.position, neighbor.position))
+                diff = tuple(a - b for a, b in zip(agent.position, neighbor.position, strict=False))
                 diff = tuple(d / distance for d in diff)  # Normalize
-                separation = tuple(s + d for s, d in zip(separation, diff))
+                separation = tuple(s + d for s, d in zip(separation, diff, strict=False))
                 count += 1
 
         if count > 0:
@@ -1119,7 +1115,7 @@ class SwarmIntelligenceEngine:
 
         return separation
 
-    def _calculate_alignment(self, agent: FlockingAgent) -> Tuple[float, float, float]:
+    def _calculate_alignment(self, agent: FlockingAgent) -> tuple[float, float, float]:
         """Calculate alignment steering force."""
         if not agent.neighbors:
             return (0.0, 0.0, 0.0)
@@ -1127,14 +1123,14 @@ class SwarmIntelligenceEngine:
         avg_velocity = [0.0, 0.0, 0.0]
         for neighbor_id in agent.neighbors:
             neighbor = self.flocking_agents[neighbor_id]
-            avg_velocity = tuple(a + b for a, b in zip(avg_velocity, neighbor.velocity))
+            avg_velocity = tuple(a + b for a, b in zip(avg_velocity, neighbor.velocity, strict=False))
 
         avg_velocity = tuple(v / len(agent.neighbors) for v in avg_velocity)
 
         # Steering force is difference from current velocity
-        return tuple(a - c for a, c in zip(avg_velocity, agent.velocity))
+        return tuple(a - c for a, c in zip(avg_velocity, agent.velocity, strict=False))
 
-    def _calculate_cohesion(self, agent: FlockingAgent) -> Tuple[float, float, float]:
+    def _calculate_cohesion(self, agent: FlockingAgent) -> tuple[float, float, float]:
         """Calculate cohesion steering force."""
         if not agent.neighbors:
             return (0.0, 0.0, 0.0)
@@ -1142,44 +1138,44 @@ class SwarmIntelligenceEngine:
         center = [0.0, 0.0, 0.0]
         for neighbor_id in agent.neighbors:
             neighbor = self.flocking_agents[neighbor_id]
-            center = tuple(c + n for c, n in zip(center, neighbor.position))
+            center = tuple(c + n for c, n in zip(center, neighbor.position, strict=False))
 
         center = tuple(c / len(agent.neighbors) for c in center)
 
         # Steering force toward center
-        return tuple(c - p for c, p in zip(center, agent.position))
+        return tuple(c - p for c, p in zip(center, agent.position, strict=False))
 
     def _update_flocking_position(self, agent: FlockingAgent) -> None:
         """Update agent position based on velocity."""
-        agent.position = tuple(p + v for p, v in zip(agent.position, agent.velocity))
+        agent.position = tuple(p + v for p, v in zip(agent.position, agent.velocity, strict=False))
 
     def _calculate_distance(
         self,
-        pos1: Tuple[float, float, float],
-        pos2: Tuple[float, float, float],
+        pos1: tuple[float, float, float],
+        pos2: tuple[float, float, float],
     ) -> float:
         """Calculate Euclidean distance between two positions."""
-        return math.sqrt(sum((a - b) ** 2 for a, b in zip(pos1, pos2)))
+        return math.sqrt(sum((a - b) ** 2 for a, b in zip(pos1, pos2, strict=False)))
 
-    def _calculate_flock_center(self) -> Tuple[float, float, float]:
+    def _calculate_flock_center(self) -> tuple[float, float, float]:
         """Calculate center of the flock."""
         if not self.flocking_agents:
             return (0.0, 0.0, 0.0)
 
         center = [0.0, 0.0, 0.0]
         for agent in self.flocking_agents.values():
-            center = tuple(c + a for c, a in zip(center, agent.position))
+            center = tuple(c + a for c, a in zip(center, agent.position, strict=False))
 
         return tuple(c / len(self.flocking_agents) for c in center)
 
-    def _calculate_average_heading(self) -> Tuple[float, float, float]:
+    def _calculate_average_heading(self) -> tuple[float, float, float]:
         """Calculate average heading of the flock."""
         if not self.flocking_agents:
             return (0.0, 0.0, 1.0)
 
         avg = [0.0, 0.0, 0.0]
         for agent in self.flocking_agents.values():
-            avg = tuple(a + h for a, h in zip(avg, agent.heading))
+            avg = tuple(a + h for a, h in zip(avg, agent.heading, strict=False))
 
         result = tuple(a / len(self.flocking_agents) for a in avg)
 
@@ -1215,7 +1211,7 @@ class SwarmIntelligenceEngine:
 
         alignment_sum = 0.0
         for agent in self.flocking_agents.values():
-            dot_product = sum(a * h for a, h in zip(agent.heading, avg_heading))
+            dot_product = sum(a * h for a, h in zip(agent.heading, avg_heading, strict=False))
             alignment_sum += dot_product
 
         return alignment_sum / len(self.flocking_agents)
@@ -1227,12 +1223,12 @@ class SwarmIntelligenceEngine:
 
         min_distances = []
         for agent_id, agent in self.flocking_agents.items():
-            min_dist = float('inf')
+            min_dist = float("inf")
             for other_id, other in self.flocking_agents.items():
                 if other_id != agent_id:
                     dist = self._calculate_distance(agent.position, other.position)
                     min_dist = min(min_dist, dist)
-            if min_dist < float('inf'):
+            if min_dist < float("inf"):
                 min_distances.append(min_dist)
 
         if not min_distances:
@@ -1243,7 +1239,7 @@ class SwarmIntelligenceEngine:
         # Higher separation is better (up to a point)
         return min(1.0, avg_min_dist / 5.0)
 
-    def _detect_emergence_flocking(self) -> List[str]:
+    def _detect_emergence_flocking(self) -> list[str]:
         """Detect emergence indicators in flocking."""
         indicators = []
 
@@ -1267,8 +1263,8 @@ class SwarmIntelligenceEngine:
 
     async def run_stigmergy(
         self,
-        agents: List[str],
-        environment_size: Tuple[int, int] = (100, 100),
+        agents: list[str],
+        environment_size: tuple[int, int] = (100, 100),
         iterations: int = 100,
     ) -> SwarmDecision:
         """
@@ -1296,7 +1292,7 @@ class SwarmIntelligenceEngine:
         trace_density = 0.0
         coordination_score = 0.0
 
-        for iteration in range(iterations):
+        for _iteration in range(iterations):
             # Each agent leaves a trace and responds to traces
             for agent_id in agents:
                 x, y = agent_positions[agent_id]
@@ -1350,9 +1346,9 @@ class SwarmIntelligenceEngine:
     def _stigmergic_movement(
         self,
         agent_id: str,
-        current_pos: Tuple[int, int],
-        environment_size: Tuple[int, int],
-    ) -> Tuple[int, int]:
+        current_pos: tuple[int, int],
+        environment_size: tuple[int, int],
+    ) -> tuple[int, int]:
         """Move agent based on stigmergic traces."""
         x, y = current_pos
 
@@ -1396,7 +1392,7 @@ class SwarmIntelligenceEngine:
         for x in self.traces:
             self.traces[x] = [t for t in self.traces[x] if t.strength > 0.1]
 
-    def _calculate_trace_density(self, environment_size: Tuple[int, int]) -> float:
+    def _calculate_trace_density(self, environment_size: tuple[int, int]) -> float:
         """Calculate trace density in environment."""
         total_traces = sum(len(traces) for traces in self.traces.values())
         total_cells = environment_size[0] * environment_size[1]
@@ -1405,7 +1401,7 @@ class SwarmIntelligenceEngine:
 
     def _calculate_stigmergy_coordination(
         self,
-        agent_positions: Dict[str, Tuple[int, int]],
+        agent_positions: dict[str, tuple[int, int]],
     ) -> float:
         """Calculate coordination score from agent positions."""
         if len(agent_positions) < 2:
@@ -1429,7 +1425,7 @@ class SwarmIntelligenceEngine:
 
         return 1.0 - (avg_distance / max_distance) if max_distance > 0 else 1.0
 
-    def _detect_emergence_stigmergy(self, trace_density: float) -> List[str]:
+    def _detect_emergence_stigmergy(self, trace_density: float) -> list[str]:
         """Detect emergence indicators in stigmergy."""
         indicators = []
 
@@ -1445,15 +1441,15 @@ class SwarmIntelligenceEngine:
     # General Methods
     # =========================================================================
 
-    def get_decision_history(self, limit: int = 100) -> List[SwarmDecision]:
+    def get_decision_history(self, limit: int = 100) -> list[SwarmDecision]:
         """Get decision history."""
         return self.decision_history[-limit:]
 
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """Get swarm intelligence statistics."""
         return {
             "total_decisions": len(self.decision_history),
-            "patterns_used": list(set(d.pattern.value for d in self.decision_history)),
+            "patterns_used": list({d.pattern.value for d in self.decision_history}),
             "avg_confidence": (
                 sum(d.confidence for d in self.decision_history) / len(self.decision_history)
                 if self.decision_history else 0.0

@@ -8,20 +8,21 @@ Provides REST API for:
 - Document management
 """
 
-from typing import Dict, List, Optional, Any
-from fastapi import APIRouter, HTTPException, Depends, UploadFile
-import structlog
+from typing import Any
 
-from rag.rag_pipeline import RAGPipeline
+import structlog
+from fastapi import APIRouter, Depends, HTTPException, UploadFile
+
 from rag.document_processor import ProcessingConfig
-from ..gateway.auth import verify_auth
+from rag.rag_pipeline import RAGPipeline
+from src.heretek_swarm.gateway.auth import verify_auth
 
 logger = structlog.get_logger(__name__)
 
 router = APIRouter(prefix="/api/rag", tags=["rag"])
 
 # Global RAG pipeline instance
-_rag_pipeline: Optional[RAGPipeline] = None
+_rag_pipeline: RAGPipeline | None = None
 
 # =============================================================================
 # Lifecycle Management
@@ -31,7 +32,7 @@ async def get_rag_pipeline() -> RAGPipeline:
     """Get or initialize RAG pipeline instance."""
     global _rag_pipeline
     if _rag_pipeline is None:
-        from ..rag.rag_pipeline import RAGPipeline
+        from src.heretek_swarm.rag.rag_pipeline import RAGPipeline
         _rag_pipeline = RAGPipeline()
         await _rag_pipeline.initialize()
     return _rag_pipeline
@@ -43,49 +44,49 @@ async def get_rag_pipeline() -> RAGPipeline:
 @router.post("/ingest", status_code=201)
 async def ingest_document(
     file: UploadFile,
-    metadata: Optional[Dict[str, Any]] = None,
+    metadata: dict[str, Any] | None = None,
     chunk_strategy: str = "recursive",
     authenticated: str = Depends(verify_auth)
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Ingest a document into the RAG system.
-    
+
     Args:
         file: Uploaded document file
         metadata: Optional metadata to attach
         chunk_strategy: Chunking strategy (recursive, fixed_size, semantic, sentence)
         authenticated: Authentication token
-    
+
     Returns:
         Processing result with chunk count and vector storage status
     """
     pipeline = await get_rag_pipeline()
-    
+
     try:
         # Read file content
         content = await file.read()
-        
+
         # Build processing config
         _config = ProcessingConfig(
             chunk_strategy=chunk_strategy,
             extract_metadata=True,
             normalize_whitespace=True,
         )
-        
+
         # Process document
         result = await pipeline.ingest_file(
             file_path=file.filename,
-            content=content.decode('utf-8'),
+            content=content.decode("utf-8"),
             metadata=metadata,
         )
-        
+
         logger.info(
             "document_ingested",
             filename=file.filename,
             chunks_processed=result.chunks_processed,
             vectors_stored=result.vectors_stored,
         )
-        
+
         return {
             "filename": file.filename,
             "chunks_processed": result.chunks_processed,
@@ -93,68 +94,68 @@ async def ingest_document(
             "processing_time_ms": result.processing_time_ms,
             "document_id": result.id,
         }
-        
+
     except Exception as e:
         logger.error("ingest_failed", error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to ingest document: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to ingest document: {e!s}")
 
 
 @router.post("/ingest/batch", status_code=201)
 async def ingest_batch(
-    files: List[UploadFile],
-    metadata: Optional[Dict[str, Any]] = None,
+    files: list[UploadFile],
+    metadata: dict[str, Any] | None = None,
     authenticated: str = Depends(verify_auth)
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Ingest multiple documents in batch.
-    
+
     Args:
         files: List of uploaded files
         metadata: Optional metadata to attach
         authenticated: Authentication token
-    
+
     Returns:
         Batch processing results
     """
     pipeline = await get_rag_pipeline()
-    
+
     results = []
     total_chunks = 0
     total_vectors = 0
-    
+
     for file in files:
         try:
             content = await file.read()
             result = await pipeline.ingest_file(
                 file_path=file.filename,
-                content=content.decode('utf-8'),
+                content=content.decode("utf-8"),
                 metadata=metadata,
             )
-            
+
             results.append({
                 "filename": file.filename,
                 "chunks_processed": result.chunks_processed,
                 "vectors_stored": result.vectors_stored,
                 "document_id": result.id,
             })
-            
+
             total_chunks += result.chunks_processed
             total_vectors += result.vectors_stored
-            
+
         except Exception as e:
             logger.error("batch_ingest_failed", filename=file.filename, error=str(e))
             results.append({
                 "filename": file.filename,
                 "error": str(e),
             })
-    
+
     logger.info(
         "batch_ingest_completed",
         total_files=len(files),
         total_chunks=total_chunks,
         total_vectors=total_vectors,
     )
-    
+
     return {
         "results": results,
         "total_files": len(files),
@@ -173,35 +174,35 @@ async def query_rag(
     top_k: int = 5,
     search_mode: str = "hybrid",
     authenticated: str = Depends(verify_auth)
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Query the RAG system for relevant documents.
-    
+
     Args:
         query: Search query text
         top_k: Number of results to return
         search_mode: Search mode (vector_only, keyword_only, hybrid)
         authenticated: Authentication token
-    
+
     Returns:
         Search results with documents and context
     """
     pipeline = await get_rag_pipeline()
-    
+
     try:
         result = await pipeline.query(
             query_text=query,
             top_k=top_k,
             search_mode=search_mode,
         )
-        
+
         logger.info(
             "rag_query_executed",
             query=query,
             documents_found=len(result.documents),
             retrieval_time_ms=result.retrieval_time_ms,
         )
-        
+
         return {
             "query": query,
             "documents": [d.to_dict() for d in result.documents],
@@ -211,10 +212,10 @@ async def query_rag(
             "embedding_time_ms": result.embedding_time_ms,
             "total_time_ms": result.total_time_ms,
         }
-        
+
     except Exception as e:
         logger.error("rag_query_failed", query=query, error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to execute RAG query: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to execute RAG query: {e!s}")
 
 
 @router.get("/documents", status_code=200)
@@ -222,66 +223,66 @@ async def list_documents(
     limit: int = 100,
     offset: int = 0,
     authenticated: str = Depends(verify_auth)
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     List all ingested documents.
-    
+
     Args:
         limit: Maximum number of documents to return
         offset: Offset for pagination
         authenticated: Authentication token
-    
+
     Returns:
         List of documents with metadata
     """
     pipeline = await get_rag_pipeline()
-    
+
     try:
         # Get all documents from vector store
         documents = await pipeline.list_documents(
             limit=limit,
             offset=offset,
         )
-        
+
         logger.info("documents_listed", count=len(documents))
-        
+
         return {
             "documents": documents,
             "count": len(documents),
             "limit": limit,
             "offset": offset,
         }
-        
+
     except Exception as e:
         logger.error("list_documents_failed", error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to list documents: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to list documents: {e!s}")
 
 
 @router.get("/documents/{document_id}", status_code=200)
 async def get_document(
     document_id: str,
     authenticated: str = Depends(verify_auth)
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Get a specific document by ID.
-    
+
     Args:
         document_id: Document ID
         authenticated: Authentication token
-    
+
     Returns:
         Document details with chunks
     """
     pipeline = await get_rag_pipeline()
-    
+
     try:
         document = await pipeline.get_document(document_id)
-        
+
         if not document:
             raise HTTPException(status_code=404, detail="Document not found")
-        
+
         logger.info("document_retrieved", document_id=document_id)
-        
+
         return {
             "id": document.id,
             "source_path": document.source_path,
@@ -295,10 +296,10 @@ async def get_document(
             "processing_time_ms": document.processing_time_ms,
             "chunk_strategy": document.chunk_strategy.value,
         }
-        
+
     except Exception as e:
         logger.error("get_document_failed", document_id=document_id, error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to get document: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to get document: {e!s}")
 
 
 @router.delete("/documents/{document_id}", status_code=204)
@@ -308,31 +309,31 @@ async def delete_document(
 ):
     """
     Delete a document and its associated vectors.
-    
+
     Args:
         document_id: Document ID
         authenticated: Authentication token
-    
+
     Returns:
         Success message
     """
     pipeline = await get_rag_pipeline()
-    
+
     try:
         success = await pipeline.delete_document(document_id)
-        
+
         if not success:
             raise HTTPException(status_code=404, detail="Document not found")
-        
+
         logger.info("document_deleted", document_id=document_id)
-        
+
         return {
             "message": f"Document {document_id} deleted successfully"
         }
-        
+
     except Exception as e:
         logger.error("delete_document_failed", document_id=document_id, error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to delete document: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to delete document: {e!s}")
 
 
 # =============================================================================
@@ -342,18 +343,18 @@ async def delete_document(
 @router.get("/config", status_code=200)
 async def get_rag_config(
     authenticated: str = Depends(verify_auth)
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Get current RAG configuration.
-    
+
     Args:
         authenticated: Authentication token
-    
+
     Returns:
         RAG pipeline configuration
     """
     pipeline = await get_rag_pipeline()
-    
+
     return {
         "chunking": {
             "strategy": pipeline.config.processing.chunk_strategy.value,
@@ -380,21 +381,21 @@ async def get_rag_config(
 
 @router.post("/config", status_code=200)
 async def update_rag_config(
-    config: Dict[str, Any],
+    config: dict[str, Any],
     authenticated: str = Depends(verify_auth)
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Update RAG configuration.
-    
+
     Args:
         config: Configuration updates
         authenticated: Authentication token
-    
+
     Returns:
         Updated configuration
     """
     pipeline = await get_rag_pipeline()
-    
+
     try:
         # Update chunking config
         if "chunking" in config:
@@ -405,7 +406,7 @@ async def update_rag_config(
                 pipeline.config.processing.chunk_size = chunking["chunk_size"]
             if "chunk_overlap" in chunking:
                 pipeline.config.processing.chunk_overlap = chunking["chunk_overlap"]
-        
+
         # Update embedding config
         if "embedding" in config:
             embedding = config["embedding"]
@@ -413,7 +414,7 @@ async def update_rag_config(
                 pipeline.config.embedding.provider = embedding["provider"]
             if "model" in embedding:
                 pipeline.config.embedding.model = embedding["model"]
-        
+
         # Update retrieval config
         if "retrieval" in config:
             retrieval = config["retrieval"]
@@ -423,7 +424,7 @@ async def update_rag_config(
                 pipeline.config.retrieval.top_k = retrieval["top_k"]
             if "similarity_threshold" in retrieval:
                 pipeline.config.retrieval.similarity_threshold = retrieval["similarity_threshold"]
-        
+
         # Update storage config
         if "storage" in config:
             storage = config["storage"]
@@ -431,9 +432,9 @@ async def update_rag_config(
                 pipeline.config.collection_name = storage["collection_name"]
             if "persist_processed" in storage:
                 pipeline.config.persist_processed = storage["persist_processed"]
-        
+
         logger.info("rag_config_updated", config=config)
-        
+
         return {
             "message": "RAG configuration updated successfully",
             "config": {
@@ -458,7 +459,7 @@ async def update_rag_config(
                 },
             },
         }
-        
+
     except Exception as e:
         logger.error("update_rag_config_failed", error=str(e))
-        raise HTTPException(status_code=500, detail=f"Failed to update RAG config: {str(e)}")
+        raise HTTPException(status_code=500, detail=f"Failed to update RAG config: {e!s}")

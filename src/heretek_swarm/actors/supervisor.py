@@ -9,11 +9,11 @@ This module provides:
 """
 
 import asyncio
-from typing import Any, Dict, List, Optional, Type
+from typing import Any, Optional
 
 import structlog
 
-from heretek_swarm.actors.base import AgentActor, ActorState, ActorStatus
+from heretek_swarm.actors.base import ActorState, ActorStatus, AgentActor
 from heretek_swarm.actors.factory import ActorConfig
 
 logger = structlog.get_logger("ActorSupervisor")
@@ -66,11 +66,11 @@ class ActorSupervisor:
 
     def __init__(
         self,
-        name: Optional[str] = None,
+        name: str | None = None,
         health_check_interval: float = 5.0,
         auto_restart: bool = True,
         max_restarts: int = 3,
-        db_pool: Optional[Any] = None,
+        db_pool: Any | None = None,
     ) -> None:
         """
         Initialize the supervisor.
@@ -87,18 +87,18 @@ class ActorSupervisor:
             raise ValueError("health_check_interval must be positive")
         if max_restarts < 0:
             raise ValueError("max_restarts must be non-negative")
-        
+
         self.name = name or "ActorSupervisor"
         self.health_check_interval = health_check_interval
         self.auto_restart = auto_restart
         self.max_restarts = max_restarts
         self.db_pool = db_pool
 
-        self.actors: Dict[str, AgentActor] = {}
-        self.actor_configs: Dict[str, ActorConfig] = {}
-        self.restart_counts: Dict[str, int] = {}
+        self.actors: dict[str, AgentActor] = {}
+        self.actor_configs: dict[str, ActorConfig] = {}
+        self.restart_counts: dict[str, int] = {}
         self._running = False
-        self._monitor_task: Optional[asyncio.Task] = None
+        self._monitor_task: asyncio.Task | None = None
         # P2-5 fix: Removed unused _factory - dead code removal
 
         logger.info(
@@ -113,19 +113,18 @@ class ActorSupervisor:
     async def initialize(self) -> None:
         """
         Initialize the supervisor.
-        
+
         This method is called to initialize the supervisor after construction.
         It can be overridden by subclasses for custom initialization logic.
         """
         logger.info(f"[{self.name}] Supervisor initialize called")
         # Initialization is handled in __init__, this method is for API compatibility
-        pass
 
     async def spawn_actor(
         self,
-        actor_class: Type[AgentActor],
+        actor_class: type[AgentActor],
         actor_id: str,
-        actor_type: Optional[str] = None,
+        actor_type: str | None = None,
         **kwargs: Any,
     ) -> AgentActor:
         """
@@ -238,7 +237,7 @@ class ActorSupervisor:
 
         logger.info(f"[{self.name}] All actors terminated")
 
-    async def get_actor_status(self, actor_id: str) -> Optional[ActorStatus]:
+    async def get_actor_status(self, actor_id: str) -> ActorStatus | None:
         """
         Get status of an actor.
 
@@ -253,7 +252,7 @@ class ActorSupervisor:
 
         return self.actors[actor_id].get_status()
 
-    async def get_all_status(self) -> Dict[str, ActorStatus]:
+    async def get_all_status(self) -> dict[str, ActorStatus]:
         """
         Get status of all actors.
 
@@ -461,7 +460,7 @@ class ActorSupervisor:
 
         logger.info(f"[{self.name}] All states loaded")
 
-    def get_statistics(self) -> Dict[str, Any]:
+    def get_statistics(self) -> dict[str, Any]:
         """
         Get supervisor statistics.
 
@@ -493,7 +492,7 @@ class ActorSupervisor:
 
     async def broadcast_to_all(
         self,
-        content: Dict[str, Any],
+        content: dict[str, Any],
         message_type: str = "broadcast",
     ) -> None:
         """
@@ -513,7 +512,7 @@ class ActorSupervisor:
         ]
         await asyncio.gather(*tasks, return_exceptions=True)
 
-    def find_actors_by_capability(self, capability: str) -> List[str]:
+    def find_actors_by_capability(self, capability: str) -> list[str]:
         """
         Find actors with a specific capability.
 
@@ -529,7 +528,7 @@ class ActorSupervisor:
             if capability in actor.capabilities
         ]
 
-    def find_actors_by_topic(self, topic: str) -> List[str]:
+    def find_actors_by_topic(self, topic: str) -> list[str]:
         """
         Find actors subscribed to a specific topic.
 

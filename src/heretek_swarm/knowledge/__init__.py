@@ -6,15 +6,15 @@ with intelligent result merging and MMR reranking.
 """
 
 from heretek_swarm.knowledge.unified_access import (
-    UnifiedKnowledgeAccess,
     KnowledgeEntry,
-    KnowledgeQueryResult,
     KnowledgeQueryBuilder,
+    KnowledgeQueryResult,
+    UnifiedKnowledgeAccess,
 )
 
 __all__ = [
-    "UnifiedKnowledgeAccess",
     "KnowledgeEntry",
-    "KnowledgeQueryResult",
     "KnowledgeQueryBuilder",
+    "KnowledgeQueryResult",
+    "UnifiedKnowledgeAccess",
 ]

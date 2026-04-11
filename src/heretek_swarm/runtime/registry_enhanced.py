@@ -16,7 +16,7 @@ import inspect
 from dataclasses import dataclass, field
 from enum import Enum
 from pathlib import Path
-from typing import Any, Dict, List, Optional, Type
+from typing import Any
 
 import structlog
 
@@ -39,7 +39,7 @@ class AgentLifecycleState(Enum):
 class AgentTypeMetadata:
     """
     Metadata about an agent type.
-    
+
     Attributes:
         type_name: Agent type/class name
         module_path: Python module path
@@ -52,9 +52,9 @@ class AgentTypeMetadata:
     type_name: str
     module_path: str
     description: str = ""
-    capabilities: List[str] = field(default_factory=list)
-    topics: List[str] = field(default_factory=list)
-    config_schema: Dict[str, Any] = field(default_factory=dict)
+    capabilities: list[str] = field(default_factory=list)
+    topics: list[str] = field(default_factory=list)
+    config_schema: dict[str, Any] = field(default_factory=dict)
     actor_type: str = ""
 
 
@@ -62,7 +62,7 @@ class AgentTypeMetadata:
 class AgentInstance:
     """
     Runtime instance of an agent.
-    
+
     Attributes:
         instance_id: Unique instance identifier
         agent_type: Type of agent
@@ -73,43 +73,43 @@ class AgentInstance:
     """
     instance_id: str
     agent_type: str
-    config: Dict[str, Any]
+    config: dict[str, Any]
     state: AgentLifecycleState
-    actor: Optional[AgentActor] = None
-    metadata: Optional[AgentTypeMetadata] = None
+    actor: AgentActor | None = None
+    metadata: AgentTypeMetadata | None = None
 
 
 class EnhancedAgentRegistry:
     """
     Enhanced agent registry with lifecycle management.
-    
+
     Provides:
     - Dynamic discovery of agent types from actors directory
     - Metadata extraction for each agent type
     - Lifecycle management (deploy, start, stop, suspend, resume)
     - Configuration management
     """
-    
-    def __init__(self, actors_dir: Optional[Path] = None):
+
+    def __init__(self, actors_dir: Path | None = None):
         """
         Initialize the enhanced registry.
-        
+
         Args:
             actors_dir: Directory containing agent actor files.
                        Defaults to src/heretek_swarm/actors/
         """
         if actors_dir is None:
             actors_dir = Path(__file__).parent.parent / "actors"
-        
+
         self.actors_dir = Path(actors_dir)
-        self._agent_types: Dict[str, AgentTypeMetadata] = {}
-        self._instances: Dict[str, AgentInstance] = {}
+        self._agent_types: dict[str, AgentTypeMetadata] = {}
+        self._instances: dict[str, AgentInstance] = {}
         self._loaded = False
         self._supervisor = None
-        
+
         logger.info(f"EnhancedAgentRegistry initialized with actors_dir: {self.actors_dir}")
-    
-    def _get_supervisor(self) -> Optional[Any]:
+
+    def _get_supervisor(self) -> Any | None:
         """Get the supervisor instance for actor management."""
         if self._supervisor is None:
             try:
@@ -118,25 +118,25 @@ class EnhancedAgentRegistry:
             except (ImportError, Exception) as e:
                 logger.warning(f"Could not get supervisor: {e}")
         return self._supervisor
-    
-    def discover_agents(self) -> Dict[str, AgentTypeMetadata]:
+
+    def discover_agents(self) -> dict[str, AgentTypeMetadata]:
         """
         Discover all available agent types from the actors directory.
-        
+
         Returns:
             Dictionary mapping agent type names to their metadata
         """
         if not self.actors_dir.exists():
             logger.warning(f"Actors directory does not exist: {self.actors_dir}")
             return {}
-        
+
         discovered = {}
-        
+
         # Scan for Python files in actors directory
         for actor_file in self.actors_dir.glob("*.py"):
             if actor_file.name.startswith("_"):
                 continue  # Skip __init__.py and private files
-            
+
             try:
                 module_name = f"heretek_swarm.actors.{actor_file.stem}"
                 metadata = self._extract_agent_metadata(module_name, actor_file.stem)
@@ -145,62 +145,62 @@ class EnhancedAgentRegistry:
                     logger.debug(f"Discovered agent type: {metadata.type_name}")
             except Exception as e:
                 logger.warning(f"Failed to discover agent from {actor_file.name}: {e}")
-        
+
         self._agent_types = discovered
         self._loaded = True
         logger.info(f"Discovered {len(discovered)} agent types")
         return discovered
-    
-    def _extract_agent_metadata(self, module_name: str, actor_name: str) -> Optional[AgentTypeMetadata]:
+
+    def _extract_agent_metadata(self, module_name: str, actor_name: str) -> AgentTypeMetadata | None:
         """
         Extract metadata from an agent module.
-        
+
         Args:
             module_name: Python module path
             actor_name: Name of the actor/class
-            
+
         Returns:
             AgentTypeMetadata if found, None otherwise
         """
         try:
             # Import the module
             module = importlib.import_module(module_name)
-            
+
             # Look for agent class in module
             agent_class = None
             class_name = "".join(part.capitalize() for part in actor_name.split("_"))
-            
+
             if hasattr(module, class_name):
                 agent_class = getattr(module, class_name)
             else:
                 # Try to find any class that inherits from AgentActor
-                for name, obj in inspect.getmembers(module, inspect.isclass):
+                for _name, obj in inspect.getmembers(module, inspect.isclass):
                     if issubclass(obj, AgentActor) and obj != AgentActor:
                         agent_class = obj
                         break
-            
+
             if not agent_class:
                 return None
-            
+
             # Extract metadata
-            actor_type = getattr(agent_class, 'actor_type', class_name)
-            
+            actor_type = getattr(agent_class, "actor_type", class_name)
+
             # Get docstring as description
             description = (agent_class.__doc__ or "").strip().split("\n")[0] or ""
-            
+
             # Default topics and capabilities
             topics = []
             capabilities = []
-            
+
             # Try to get from class attributes
-            if hasattr(agent_class, 'default_topics'):
-                topics = getattr(agent_class, 'default_topics', [])
-            if hasattr(agent_class, 'capabilities'):
-                capabilities = getattr(agent_class, 'capabilities', [])
-            
+            if hasattr(agent_class, "default_topics"):
+                topics = getattr(agent_class, "default_topics", [])
+            if hasattr(agent_class, "capabilities"):
+                capabilities = getattr(agent_class, "capabilities", [])
+
             # Generate config schema
             config_schema = self._generate_config_schema(agent_class)
-            
+
             return AgentTypeMetadata(
                 type_name=class_name,
                 module_path=module_name,
@@ -210,22 +210,22 @@ class EnhancedAgentRegistry:
                 config_schema=config_schema,
                 actor_type=actor_type,
             )
-            
+
         except Exception as e:
             logger.warning(f"Failed to extract metadata from {module_name}: {e}")
             return None
-    
-    def _generate_config_schema(self, agent_class: Type[AgentActor]) -> Dict[str, Any]:
+
+    def _generate_config_schema(self, agent_class: type[AgentActor]) -> dict[str, Any]:
         """
         Generate a JSON schema for agent configuration.
-        
+
         Args:
             agent_class: Agent class to generate schema for
-            
+
         Returns:
             JSON schema dictionary
         """
-        schema = {
+        return {
             "type": "object",
             "properties": {
                 "name": {
@@ -264,64 +264,63 @@ class EnhancedAgentRegistry:
             },
             "additionalProperties": True,
         }
-        return schema
-    
-    def get_available_agents(self) -> List[AgentTypeMetadata]:
+
+    def get_available_agents(self) -> list[AgentTypeMetadata]:
         """
         Get all available agent types.
-        
+
         Returns:
             List of available agent type metadata
         """
         if not self._loaded:
             self.discover_agents()
         return list(self._agent_types.values())
-    
-    def get_agent_metadata(self, agent_type: str) -> Optional[AgentTypeMetadata]:
+
+    def get_agent_metadata(self, agent_type: str) -> AgentTypeMetadata | None:
         """
         Get metadata for a specific agent type.
-        
+
         Args:
             agent_type: Agent type name
-            
+
         Returns:
             AgentTypeMetadata if found, None otherwise
         """
         if not self._loaded:
             self.discover_agents()
         return self._agent_types.get(agent_type)
-    
+
     async def deploy_agent(
         self,
         agent_type: str,
-        config: Optional[Dict[str, Any]] = None,
-        instance_id: Optional[str] = None,
-    ) -> Optional[AgentInstance]:
+        config: dict[str, Any] | None = None,
+        instance_id: str | None = None,
+    ) -> AgentInstance | None:
         """
         Deploy a new agent instance.
-        
+
         Args:
             agent_type: Type of agent to deploy
             config: Optional configuration dictionary
             instance_id: Optional custom instance ID
-            
+
         Returns:
             AgentInstance if deployed successfully, None otherwise
         """
         import uuid
-        
+
         if not self._loaded:
             self.discover_agents()
-        
+
         metadata = self._agent_types.get(agent_type)
         if not metadata:
             logger.error(f"Unknown agent type: {agent_type}")
             return None
-        
+
         # Generate instance ID
         if instance_id is None:
             instance_id = f"{agent_type.lower()}_{uuid.uuid4().hex[:8]}"
-        
+
         # Merge with default config
         default_config = {
             "agent_id": instance_id,
@@ -333,7 +332,7 @@ class EnhancedAgentRegistry:
             "heartbeat_interval": config.get("heartbeat_interval", 10.0) if config else 10.0,
             "persistence_interval": config.get("persistence_interval") if config else None,
         }
-        
+
         # Create instance record
         instance = AgentInstance(
             instance_id=instance_id,
@@ -342,19 +341,19 @@ class EnhancedAgentRegistry:
             state=AgentLifecycleState.DEPLOYED,
             metadata=metadata,
         )
-        
+
         self._instances[instance_id] = instance
         logger.info(f"Deployed agent instance: {instance_id} of type {agent_type}")
-        
+
         return instance
-    
+
     async def start_agent(self, instance_id: str) -> bool:
         """
         Start a deployed agent instance.
-        
+
         Args:
             instance_id: Instance ID to start
-            
+
         Returns:
             True if started successfully, False otherwise
         """
@@ -362,52 +361,52 @@ class EnhancedAgentRegistry:
         if not instance:
             logger.error(f"Instance not found: {instance_id}")
             return False
-        
+
         if instance.state not in [AgentLifecycleState.DEPLOYED, AgentLifecycleState.STOPPED, AgentLifecycleState.SUSPENDED]:
             logger.warning(f"Cannot start agent in state: {instance.state.value}")
             return False
-        
+
         try:
             # Get supervisor
             supervisor = self._get_supervisor()
             if not supervisor:
                 logger.error("Supervisor not available")
                 return False
-            
+
             # Import and instantiate the agent class
             metadata = instance.metadata
             if not metadata:
                 logger.error(f"No metadata for instance: {instance_id}")
                 return False
-            
+
             module = importlib.import_module(metadata.module_path)
             class_name = metadata.type_name
             agent_class = getattr(module, class_name)
-            
+
             # Create agent instance
             agent = agent_class(**instance.config)
-            
+
             # Spawn via supervisor
             await supervisor.spawn_actor(agent)
-            
+
             instance.actor = agent
             instance.state = AgentLifecycleState.RUNNING
-            
+
             logger.info(f"Started agent instance: {instance_id}")
             return True
-            
+
         except Exception as e:
             logger.error(f"Failed to start agent {instance_id}: {e}", exc_info=True)
             instance.state = AgentLifecycleState.ERROR
             return False
-    
+
     async def stop_agent(self, instance_id: str) -> bool:
         """
         Stop a running agent instance.
-        
+
         Args:
             instance_id: Instance ID to stop
-            
+
         Returns:
             True if stopped successfully, False otherwise
         """
@@ -415,32 +414,32 @@ class EnhancedAgentRegistry:
         if not instance:
             logger.error(f"Instance not found: {instance_id}")
             return False
-        
+
         if instance.state != AgentLifecycleState.RUNNING:
             logger.warning(f"Cannot stop agent in state: {instance.state.value}")
             return False
-        
+
         try:
             if instance.actor:
                 await instance.actor.terminate()
-            
+
             instance.actor = None
             instance.state = AgentLifecycleState.STOPPED
-            
+
             logger.info(f"Stopped agent instance: {instance_id}")
             return True
-            
+
         except Exception as e:
             logger.error(f"Failed to stop agent {instance_id}: {e}", exc_info=True)
             return False
-    
+
     async def suspend_agent(self, instance_id: str) -> bool:
         """
         Suspend a running agent instance.
-        
+
         Args:
             instance_id: Instance ID to suspend
-            
+
         Returns:
             True if suspended successfully, False otherwise
         """
@@ -448,31 +447,31 @@ class EnhancedAgentRegistry:
         if not instance:
             logger.error(f"Instance not found: {instance_id}")
             return False
-        
+
         if instance.state != AgentLifecycleState.RUNNING:
             logger.warning(f"Cannot suspend agent in state: {instance.state.value}")
             return False
-        
+
         try:
             if instance.actor:
                 await instance.actor.suspend()
-            
+
             instance.state = AgentLifecycleState.SUSPENDED
-            
+
             logger.info(f"Suspended agent instance: {instance_id}")
             return True
-            
+
         except Exception as e:
             logger.error(f"Failed to suspend agent {instance_id}: {e}", exc_info=True)
             return False
-    
+
     async def resume_agent(self, instance_id: str) -> bool:
         """
         Resume a suspended agent instance.
-        
+
         Args:
             instance_id: Instance ID to resume
-            
+
         Returns:
             True if resumed successfully, False otherwise
         """
@@ -480,31 +479,31 @@ class EnhancedAgentRegistry:
         if not instance:
             logger.error(f"Instance not found: {instance_id}")
             return False
-        
+
         if instance.state != AgentLifecycleState.SUSPENDED:
             logger.warning(f"Cannot resume agent in state: {instance.state.value}")
             return False
-        
+
         try:
             if instance.actor:
                 await instance.actor.resume()
-            
+
             instance.state = AgentLifecycleState.RUNNING
-            
+
             logger.info(f"Resumed agent instance: {instance_id}")
             return True
-            
+
         except Exception as e:
             logger.error(f"Failed to resume agent {instance_id}: {e}", exc_info=True)
             return False
-    
+
     async def remove_agent(self, instance_id: str) -> bool:
         """
         Remove an agent instance.
-        
+
         Args:
             instance_id: Instance ID to remove
-            
+
         Returns:
             True if removed successfully, False otherwise
         """
@@ -512,45 +511,45 @@ class EnhancedAgentRegistry:
         if not instance:
             logger.error(f"Instance not found: {instance_id}")
             return False
-        
+
         # Stop if running
         if instance.state == AgentLifecycleState.RUNNING:
             await self.stop_agent(instance_id)
-        
+
         # Remove from instances
         del self._instances[instance_id]
-        
+
         logger.info(f"Removed agent instance: {instance_id}")
         return True
-    
-    def get_instance(self, instance_id: str) -> Optional[AgentInstance]:
+
+    def get_instance(self, instance_id: str) -> AgentInstance | None:
         """
         Get an agent instance by ID.
-        
+
         Args:
             instance_id: Instance ID
-            
+
         Returns:
             AgentInstance if found, None otherwise
         """
         return self._instances.get(instance_id)
-    
-    def get_all_instances(self) -> Dict[str, AgentInstance]:
+
+    def get_all_instances(self) -> dict[str, AgentInstance]:
         """
         Get all agent instances.
-        
+
         Returns:
             Dictionary mapping instance IDs to instances
         """
         return self._instances.copy()
-    
-    def get_instances_by_type(self, agent_type: str) -> List[AgentInstance]:
+
+    def get_instances_by_type(self, agent_type: str) -> list[AgentInstance]:
         """
         Get all instances of a specific agent type.
-        
+
         Args:
             agent_type: Agent type name
-            
+
         Returns:
             List of matching instances
         """
@@ -558,15 +557,15 @@ class EnhancedAgentRegistry:
             inst for inst in self._instances.values()
             if inst.agent_type == agent_type
         ]
-    
-    def update_agent_config(self, instance_id: str, config: Dict[str, Any]) -> bool:
+
+    def update_agent_config(self, instance_id: str, config: dict[str, Any]) -> bool:
         """
         Update an agent's configuration.
-        
+
         Args:
             instance_id: Instance ID
             config: New configuration dictionary
-            
+
         Returns:
             True if updated successfully, False otherwise
         """
@@ -574,28 +573,28 @@ class EnhancedAgentRegistry:
         if not instance:
             logger.error(f"Instance not found: {instance_id}")
             return False
-        
+
         # Merge config
         instance.config.update(config)
-        
+
         logger.info(f"Updated config for agent instance: {instance_id}")
         return True
-    
-    def get_registry_stats(self) -> Dict[str, Any]:
+
+    def get_registry_stats(self) -> dict[str, Any]:
         """
         Get statistics about the registry.
-        
+
         Returns:
             Dictionary with registry statistics
         """
         if not self._loaded:
             self.discover_agents()
-        
+
         instances_by_state = {}
         for inst in self._instances.values():
             state = inst.state.value
             instances_by_state[state] = instances_by_state.get(state, 0) + 1
-        
+
         return {
             "total_agent_types": len(self._agent_types),
             "total_instances": len(self._instances),
@@ -605,16 +604,16 @@ class EnhancedAgentRegistry:
 
 
 # Singleton instance
-_enhanced_registry: Optional[EnhancedAgentRegistry] = None
+_enhanced_registry: EnhancedAgentRegistry | None = None
 
 
-def get_enhanced_registry(actors_dir: Optional[Path] = None) -> EnhancedAgentRegistry:
+def get_enhanced_registry(actors_dir: Path | None = None) -> EnhancedAgentRegistry:
     """
     Get the global enhanced registry instance.
-    
+
     Args:
         actors_dir: Optional actors directory (only used on first call)
-        
+
     Returns:
         The global EnhancedAgentRegistry instance
     """

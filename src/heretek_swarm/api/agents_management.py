@@ -26,37 +26,37 @@ Enhanced with Behavior Profiling:
 """
 
 from dataclasses import field
-from typing import Any, Dict, List, Optional
-from datetime import datetime, timezone
-from enum import Enum
+from datetime import UTC, datetime
+from enum import StrEnum
+from typing import Any
+
+import structlog
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
-from fastapi import APIRouter, HTTPException, Depends
-import structlog
-
-from heretek_swarm.gateway.auth import verify_auth
-from heretek_swarm.runtime.registry_enhanced import (
-    get_enhanced_registry,
-    EnhancedAgentRegistry,
-    AgentLifecycleState,
-)
 from heretek_swarm.channels.registry import ChannelRegistry, get_channel_registry
+from heretek_swarm.gateway.auth import verify_auth
 from heretek_swarm.gateway.content_router import (
-    ContentRouter,
-    get_content_router,
-    RoutingRule,
     ContentFilter,
+    ContentRouter,
     FilterOperator,
+    RoutingRule,
+    get_content_router,
+)
+from heretek_swarm.runtime.registry_enhanced import (
+    AgentLifecycleState,
+    EnhancedAgentRegistry,
+    get_enhanced_registry,
 )
 
 # Import behavior profiling
 try:
     from heretek_swarm.actors.profiling import (
+        ActionType,
+        AlertSeverity,
         BehaviorProfiler,
         ProfilingConfig,
         get_profiler,
-        ActionType,
-        AlertSeverity,
     )
     PROFILING_AVAILABLE = True
 except ImportError:
@@ -89,7 +89,7 @@ async def list_available_agents(
 ):
     """
     List all available agent types that can be deployed.
-    
+
     Returns metadata about each agent type including:
     - Type name and description
     - Capabilities
@@ -98,7 +98,7 @@ async def list_available_agents(
     """
     try:
         agent_types = registry.get_available_agents()
-        
+
         return {
             "available_agents": [
                 {
@@ -116,7 +116,7 @@ async def list_available_agents(
         }
     except Exception as e:
         logger.error(f"Failed to list available agents: {e}", exc_info=True)
-        raise HTTPException(500, f"Failed to list available agents: {str(e)}")
+        raise HTTPException(500, f"Failed to list available agents: {e!s}")
 
 
 @router.get("/types/{agent_type}")
@@ -127,15 +127,15 @@ async def get_agent_type_metadata(
 ):
     """
     Get metadata for a specific agent type.
-    
+
     Args:
         agent_type: Agent type name
     """
     metadata = registry.get_agent_metadata(agent_type)
-    
+
     if not metadata:
         raise HTTPException(404, f"Agent type '{agent_type}' not found")
-    
+
     return {
         "type_name": metadata.type_name,
         "module_path": metadata.module_path,
@@ -155,19 +155,19 @@ async def get_agent_type_metadata(
 @router.post("/deploy")
 async def deploy_agent(
     agent_type: str,
-    config: Optional[Dict[str, Any]] = None,
-    instance_id: Optional[str] = None,
+    config: dict[str, Any] | None = None,
+    instance_id: str | None = None,
     registry: EnhancedAgentRegistry = Depends(get_registry),
     authenticated: str = Depends(verify_auth),
 ):
     """
     Deploy a new agent instance.
-    
+
     Args:
         agent_type: Type of agent to deploy
         config: Optional configuration dictionary
         instance_id: Optional custom instance ID
-        
+
     Returns:
         Deployed agent instance information
     """
@@ -175,7 +175,7 @@ async def deploy_agent(
     metadata = registry.get_agent_metadata(agent_type)
     if not metadata:
         raise HTTPException(400, f"Unknown agent type: {agent_type}")
-    
+
     try:
         # Deploy the agent
         instance = await registry.deploy_agent(
@@ -183,10 +183,10 @@ async def deploy_agent(
             config=config,
             instance_id=instance_id,
         )
-        
+
         if not instance:
             raise HTTPException(500, "Failed to deploy agent")
-        
+
         return {
             "instance_id": instance.instance_id,
             "agent_type": instance.agent_type,
@@ -198,7 +198,7 @@ async def deploy_agent(
         raise
     except Exception as e:
         logger.error(f"Failed to deploy agent: {e}", exc_info=True)
-        raise HTTPException(500, f"Failed to deploy agent: {str(e)}")
+        raise HTTPException(500, f"Failed to deploy agent: {e!s}")
 
 
 @router.delete("/{instance_id}")
@@ -209,20 +209,20 @@ async def remove_agent(
 ):
     """
     Remove an agent instance.
-    
+
     Args:
         instance_id: Instance ID to remove
     """
     instance = registry.get_instance(instance_id)
     if not instance:
         raise HTTPException(404, f"Agent instance '{instance_id}' not found")
-    
+
     try:
         success = await registry.remove_agent(instance_id)
-        
+
         if not success:
             raise HTTPException(500, "Failed to remove agent")
-        
+
         return {
             "instance_id": instance_id,
             "status": "removed",
@@ -231,7 +231,7 @@ async def remove_agent(
         raise
     except Exception as e:
         logger.error(f"Failed to remove agent: {e}", exc_info=True)
-        raise HTTPException(500, f"Failed to remove agent: {str(e)}")
+        raise HTTPException(500, f"Failed to remove agent: {e!s}")
 
 
 # =============================================================================
@@ -247,20 +247,20 @@ async def start_agent(
 ):
     """
     Start a deployed agent instance.
-    
+
     Args:
         instance_id: Instance ID to start
     """
     instance = registry.get_instance(instance_id)
     if not instance:
         raise HTTPException(404, f"Agent instance '{instance_id}' not found")
-    
+
     try:
         success = await registry.start_agent(instance_id)
-        
+
         if not success:
             raise HTTPException(500, "Failed to start agent")
-        
+
         return {
             "instance_id": instance_id,
             "status": "running",
@@ -270,7 +270,7 @@ async def start_agent(
         raise
     except Exception as e:
         logger.error(f"Failed to start agent: {e}", exc_info=True)
-        raise HTTPException(500, f"Failed to start agent: {str(e)}")
+        raise HTTPException(500, f"Failed to start agent: {e!s}")
 
 
 @router.post("/{instance_id}/stop")
@@ -281,20 +281,20 @@ async def stop_agent(
 ):
     """
     Stop a running agent instance.
-    
+
     Args:
         instance_id: Instance ID to stop
     """
     instance = registry.get_instance(instance_id)
     if not instance:
         raise HTTPException(404, f"Agent instance '{instance_id}' not found")
-    
+
     try:
         success = await registry.stop_agent(instance_id)
-        
+
         if not success:
             raise HTTPException(500, "Failed to stop agent")
-        
+
         return {
             "instance_id": instance_id,
             "status": "stopped",
@@ -304,7 +304,7 @@ async def stop_agent(
         raise
     except Exception as e:
         logger.error(f"Failed to stop agent: {e}", exc_info=True)
-        raise HTTPException(500, f"Failed to stop agent: {str(e)}")
+        raise HTTPException(500, f"Failed to stop agent: {e!s}")
 
 
 @router.post("/{instance_id}/suspend")
@@ -315,20 +315,20 @@ async def suspend_agent(
 ):
     """
     Suspend a running agent instance.
-    
+
     Args:
         instance_id: Instance ID to suspend
     """
     instance = registry.get_instance(instance_id)
     if not instance:
         raise HTTPException(404, f"Agent instance '{instance_id}' not found")
-    
+
     try:
         success = await registry.suspend_agent(instance_id)
-        
+
         if not success:
             raise HTTPException(500, "Failed to suspend agent")
-        
+
         return {
             "instance_id": instance_id,
             "status": "suspended",
@@ -338,7 +338,7 @@ async def suspend_agent(
         raise
     except Exception as e:
         logger.error(f"Failed to suspend agent: {e}", exc_info=True)
-        raise HTTPException(500, f"Failed to suspend agent: {str(e)}")
+        raise HTTPException(500, f"Failed to suspend agent: {e!s}")
 
 
 @router.post("/{instance_id}/resume")
@@ -349,20 +349,20 @@ async def resume_agent(
 ):
     """
     Resume a suspended agent instance.
-    
+
     Args:
         instance_id: Instance ID to resume
     """
     instance = registry.get_instance(instance_id)
     if not instance:
         raise HTTPException(404, f"Agent instance '{instance_id}' not found")
-    
+
     try:
         success = await registry.resume_agent(instance_id)
-        
+
         if not success:
             raise HTTPException(500, "Failed to resume agent")
-        
+
         return {
             "instance_id": instance_id,
             "status": "running",
@@ -372,7 +372,7 @@ async def resume_agent(
         raise
     except Exception as e:
         logger.error(f"Failed to resume agent: {e}", exc_info=True)
-        raise HTTPException(500, f"Failed to resume agent: {str(e)}")
+        raise HTTPException(500, f"Failed to resume agent: {e!s}")
 
 
 # =============================================================================
@@ -383,13 +383,13 @@ async def resume_agent(
 @router.put("/{instance_id}/config")
 async def update_agent_config(
     instance_id: str,
-    config: Dict[str, Any],
+    config: dict[str, Any],
     registry: EnhancedAgentRegistry = Depends(get_registry),
     authenticated: str = Depends(verify_auth),
 ):
     """
     Update agent configuration.
-    
+
     Args:
         instance_id: Instance ID
         config: New configuration dictionary
@@ -397,13 +397,13 @@ async def update_agent_config(
     instance = registry.get_instance(instance_id)
     if not instance:
         raise HTTPException(404, f"Agent instance '{instance_id}' not found")
-    
+
     try:
         success = registry.update_agent_config(instance_id, config)
-        
+
         if not success:
             raise HTTPException(500, "Failed to update configuration")
-        
+
         return {
             "instance_id": instance_id,
             "config": instance.config,
@@ -413,7 +413,7 @@ async def update_agent_config(
         raise
     except Exception as e:
         logger.error(f"Failed to update config: {e}", exc_info=True)
-        raise HTTPException(500, f"Failed to update configuration: {str(e)}")
+        raise HTTPException(500, f"Failed to update configuration: {e!s}")
 
 
 # =============================================================================
@@ -423,13 +423,13 @@ async def update_agent_config(
 
 @router.get("/instances")
 async def list_agent_instances(
-    agent_type: Optional[str] = None,
+    agent_type: str | None = None,
     registry: EnhancedAgentRegistry = Depends(get_registry),
     authenticated: str = Depends(verify_auth),
 ):
     """
     List all deployed agent instances.
-    
+
     Args:
         agent_type: Optional filter by agent type
     """
@@ -438,7 +438,7 @@ async def list_agent_instances(
             instances = registry.get_instances_by_type(agent_type)
         else:
             instances = registry.get_all_instances()
-        
+
         return {
             "instances": [
                 {
@@ -454,7 +454,7 @@ async def list_agent_instances(
         }
     except Exception as e:
         logger.error(f"Failed to list instances: {e}", exc_info=True)
-        raise HTTPException(500, f"Failed to list instances: {str(e)}")
+        raise HTTPException(500, f"Failed to list instances: {e!s}")
 
 
 @router.get("/{instance_id}")
@@ -465,14 +465,14 @@ async def get_agent_instance(
 ):
     """
     Get details of a specific agent instance.
-    
+
     Args:
         instance_id: Instance ID
     """
     instance = registry.get_instance(instance_id)
     if not instance:
         raise HTTPException(404, f"Agent instance '{instance_id}' not found")
-    
+
     # Get actor status if running
     actor_status = None
     if instance.actor:
@@ -488,7 +488,7 @@ async def get_agent_instance(
             }
         except Exception as e:
             logger.warning(f"Failed to get actor status: {e}")
-    
+
     return {
         "instance_id": instance.instance_id,
         "agent_type": instance.agent_type,
@@ -512,10 +512,10 @@ async def get_agent_logs(
 ):
     """
     Get agent-specific logs.
-    
+
     Note: This is a placeholder implementation. In production, this would
     integrate with a logging system like ELK stack or similar.
-    
+
     Args:
         instance_id: Instance ID
         limit: Maximum log entries to return
@@ -523,11 +523,11 @@ async def get_agent_logs(
     instance = registry.get_instance(instance_id)
     if not instance:
         raise HTTPException(404, f"Agent instance '{instance_id}' not found")
-    
+
     # Placeholder: Return agent state information as "logs"
     # In production, this would query a logging system
     logs = []
-    
+
     # Add lifecycle events
     logs.append({
         "timestamp": instance.config.get("created_at", "unknown"),
@@ -535,7 +535,7 @@ async def get_agent_logs(
         "message": f"Agent instance {instance_id} deployed",
         "agent_type": instance.agent_type,
     })
-    
+
     if instance.actor:
         try:
             status = instance.actor.get_status()
@@ -548,10 +548,10 @@ async def get_agent_logs(
             })
         except Exception:
             pass
-    
+
     # Sort by timestamp (newest first) and limit
     logs = sorted(logs, key=lambda x: x.get("timestamp", ""), reverse=True)[:limit]
-    
+
     return {
         "instance_id": instance_id,
         "logs": logs,
@@ -571,22 +571,21 @@ async def get_registry_stats(
 ):
     """
     Get registry statistics.
-    
+
     Returns statistics about agent types and instances.
     """
     try:
-        stats = registry.get_registry_stats()
-        return stats
+        return registry.get_registry_stats()
     except Exception as e:
         logger.error(f"Failed to get registry stats: {e}", exc_info=True)
-        raise HTTPException(500, f"Failed to get registry stats: {str(e)}")
+        raise HTTPException(500, f"Failed to get registry stats: {e!s}")
 
 
 # =============================================================================
 # Channel Subscription Models
 # =============================================================================
 
-class ChannelType(str, Enum):
+class ChannelType(StrEnum):
     """Channel type enumeration."""
     EVENT = "event"
     COMMAND = "command"
@@ -594,7 +593,7 @@ class ChannelType(str, Enum):
     METRIC = "metric"
 
 
-class ChannelDirection(str, Enum):
+class ChannelDirection(StrEnum):
     """Channel direction enumeration."""
     INPUT = "input"
     OUTPUT = "output"
@@ -606,8 +605,8 @@ class ChannelSubscriptionCreate(BaseModel):
     channelName: str = Field(..., description="Channel name")
     channelType: ChannelType = Field(..., description="Channel type")
     direction: ChannelDirection = Field(..., description="Channel direction")
-    dataType: Optional[str] = Field(None, description="Data type handled by channel")
-    description: Optional[str] = Field(None, description="Channel description")
+    dataType: str | None = Field(None, description="Data type handled by channel")
+    description: str | None = Field(None, description="Channel description")
 
 
 class ChannelSubscriptionResponse(BaseModel):
@@ -615,15 +614,15 @@ class ChannelSubscriptionResponse(BaseModel):
     channelName: str
     channelType: ChannelType
     direction: ChannelDirection
-    dataType: Optional[str] = None
-    description: Optional[str] = None
+    dataType: str | None = None
+    description: str | None = None
     subscribedAt: str
 
 
 class ChannelSubscriptionsListResponse(BaseModel):
     """Response model for listing channel subscriptions."""
     agentId: str
-    subscriptions: List[ChannelSubscriptionResponse]
+    subscriptions: list[ChannelSubscriptionResponse]
     total: int
 
 
@@ -645,10 +644,10 @@ async def get_agent_channels(
 ) -> ChannelSubscriptionsListResponse:
     """
     Get all channel subscriptions for an agent.
-    
+
     Args:
         instance_id: Agent instance ID
-        
+
     Returns:
         List of channel subscriptions for the agent
     """
@@ -656,11 +655,11 @@ async def get_agent_channels(
     instance = registry.get_instance(instance_id)
     if not instance:
         raise HTTPException(404, f"Agent instance '{instance_id}' not found")
-    
+
     try:
         # Get subscriptions from channel registry
         subscriptions = channel_registry.get_subscriptions(instance_id)
-        
+
         # Format response
         subscription_list = []
         for sub in subscriptions:
@@ -674,7 +673,7 @@ async def get_agent_channels(
                     description=channel.description,
                     subscribedAt=channel_registry.get_stats(channel.name).get("created_at", "") if channel_registry.get_stats(channel.name) else "",
                 ))
-        
+
         return ChannelSubscriptionsListResponse(
             agentId=instance_id,
             subscriptions=subscription_list,
@@ -682,7 +681,7 @@ async def get_agent_channels(
         )
     except Exception as e:
         logger.error(f"Failed to get agent channels: {e}", exc_info=True)
-        raise HTTPException(500, f"Failed to get agent channels: {str(e)}")
+        raise HTTPException(500, f"Failed to get agent channels: {e!s}")
 
 
 @router.post("/{instance_id}/channels")
@@ -695,11 +694,11 @@ async def add_agent_channel_subscription(
 ) -> ChannelSubscriptionResponse:
     """
     Add a channel subscription for an agent.
-    
+
     Args:
         instance_id: Agent instance ID
         subscription: Channel subscription details
-        
+
     Returns:
         Created subscription details
     """
@@ -707,34 +706,34 @@ async def add_agent_channel_subscription(
     instance = registry.get_instance(instance_id)
     if not instance:
         raise HTTPException(404, f"Agent instance '{instance_id}' not found")
-    
+
     try:
         # Subscribe agent to channel
         success = channel_registry.subscribe_agent(instance_id, subscription.channelName)
-        
+
         if not success:
             raise HTTPException(400, f"Failed to subscribe to channel '{subscription.channelName}'")
-        
+
         logger.info(
             "agent_channel_subscribed",
             agent_id=instance_id,
             channel=subscription.channelName,
             type=subscription.channelType.value,
         )
-        
+
         return ChannelSubscriptionResponse(
             channelName=subscription.channelName,
             channelType=subscription.channelType,
             direction=subscription.direction,
             dataType=subscription.dataType,
             description=subscription.description,
-            subscribedAt=datetime.now(timezone.utc).isoformat(),
+            subscribedAt=datetime.now(UTC).isoformat(),
         )
     except HTTPException:
         raise
     except Exception as e:
         logger.error(f"Failed to add channel subscription: {e}", exc_info=True)
-        raise HTTPException(500, f"Failed to add channel subscription: {str(e)}")
+        raise HTTPException(500, f"Failed to add channel subscription: {e!s}")
 
 
 @router.delete("/{instance_id}/channels/{channel_name}")
@@ -744,14 +743,14 @@ async def remove_agent_channel_subscription(
     registry: EnhancedAgentRegistry = Depends(get_registry),
     channel_registry: ChannelRegistry = Depends(get_channel_registry_instance),
     authenticated: str = Depends(verify_auth),
-) -> Dict[str, str]:
+) -> dict[str, str]:
     """
     Remove a channel subscription from an agent.
-    
+
     Args:
         instance_id: Agent instance ID
         channel_name: Channel name to unsubscribe from
-        
+
     Returns:
         Success status
     """
@@ -759,26 +758,26 @@ async def remove_agent_channel_subscription(
     instance = registry.get_instance(instance_id)
     if not instance:
         raise HTTPException(404, f"Agent instance '{instance_id}' not found")
-    
+
     try:
         # Unsubscribe agent from channel
         success = channel_registry.unsubscribe_agent(instance_id, channel_name)
-        
+
         if not success:
             raise HTTPException(400, f"Agent not subscribed to channel '{channel_name}'")
-        
+
         logger.info(
             "agent_channel_unsubscribed",
             agent_id=instance_id,
             channel=channel_name,
         )
-        
+
         return {"status": "success", "message": f"Unsubscribed from channel '{channel_name}'"}
     except HTTPException:
         raise
     except Exception as e:
         logger.error(f"Failed to remove channel subscription: {e}", exc_info=True)
-        raise HTTPException(500, f"Failed to remove channel subscription: {str(e)}")
+        raise HTTPException(500, f"Failed to remove channel subscription: {e!s}")
 
 
 # =============================================================================
@@ -791,11 +790,11 @@ class RoutingRuleCreate(BaseModel):
     name: str = Field(..., description="Human-readable rule name")
     priority: int = Field(..., description="Rule priority (higher evaluated first)")
     subject_pattern: str = Field(..., description="Wildcard pattern for subject")
-    content_filters: List[Dict[str, Any]] = Field(default_factory=list, description="Content filters")
+    content_filters: list[dict[str, Any]] = Field(default_factory=list, description="Content filters")
     target_channel: str = Field(..., description="Target channel for routed messages")
-    target_agents: List[str] = Field(default_factory=list, description="Target agent IDs")
+    target_agents: list[str] = Field(default_factory=list, description="Target agent IDs")
     enabled: bool = Field(default=True, description="Whether rule is active")
-    description: Optional[str] = Field(None, description="Optional rule description")
+    description: str | None = Field(None, description="Optional rule description")
 
 
 class RoutingRuleResponse(BaseModel):
@@ -804,16 +803,16 @@ class RoutingRuleResponse(BaseModel):
     name: str
     priority: int
     subject_pattern: str
-    content_filters: List[Dict[str, Any]]
+    content_filters: list[dict[str, Any]]
     target_channel: str
-    target_agents: List[str]
+    target_agents: list[str]
     enabled: bool
-    description: Optional[str]
+    description: str | None
 
 
 class RoutingRulesListResponse(BaseModel):
     """Response model for listing routing rules."""
-    rules: List[RoutingRuleResponse]
+    rules: list[RoutingRuleResponse]
     total: int
     active: int
 
@@ -842,17 +841,17 @@ async def list_routing_rules(
 ) -> RoutingRulesListResponse:
     """
     List all routing rules.
-    
+
     Args:
         enabled_only: If True, only return enabled rules
-        
+
     Returns:
         List of routing rules
     """
     try:
         rules_data = router.list_rules(enabled_only=enabled_only)
         active_count = len([r for r in rules_data if r.get("enabled", False)])
-        
+
         return RoutingRulesListResponse(
             rules=[RoutingRuleResponse(**r) for r in rules_data],
             total=len(rules_data),
@@ -860,7 +859,7 @@ async def list_routing_rules(
         )
     except Exception as e:
         logger.error(f"Failed to list routing rules: {e}", exc_info=True)
-        raise HTTPException(500, f"Failed to list routing rules: {str(e)}")
+        raise HTTPException(500, f"Failed to list routing rules: {e!s}")
 
 
 @router.get("/routing/rules/{rule_id}")
@@ -871,18 +870,18 @@ async def get_routing_rule(
 ) -> RoutingRuleResponse:
     """
     Get a specific routing rule by ID.
-    
+
     Args:
         rule_id: Rule identifier
-        
+
     Returns:
         Routing rule details
     """
     rule = router.get_rule(rule_id)
-    
+
     if not rule:
         raise HTTPException(404, f"Routing rule '{rule_id}' not found")
-    
+
     return RoutingRuleResponse(
         id=rule.id,
         name=rule.name,
@@ -907,10 +906,10 @@ async def create_routing_rule(
 ) -> RoutingRuleResponse:
     """
     Create a new routing rule.
-    
+
     Args:
         rule_data: Rule configuration
-        
+
     Returns:
         Created rule details
     """
@@ -923,7 +922,7 @@ async def create_routing_rule(
                 operator=FilterOperator(cf["operator"]),
                 value=cf["value"],
             ))
-        
+
         # Create rule
         rule = RoutingRule(
             id=rule_data.id,
@@ -936,18 +935,18 @@ async def create_routing_rule(
             enabled=rule_data.enabled,
             description=rule_data.description,
         )
-        
+
         # Add to router
         if not router.add_rule(rule):
             raise HTTPException(409, f"Routing rule '{rule_data.id}' already exists")
-        
+
         logger.info(
             "routing_rule_created",
             rule_id=rule.id,
             name=rule.name,
             priority=rule.priority,
         )
-        
+
         return RoutingRuleResponse(
             id=rule.id,
             name=rule.name,
@@ -966,7 +965,7 @@ async def create_routing_rule(
         raise HTTPException(400, str(e))
     except Exception as e:
         logger.error(f"Failed to create routing rule: {e}", exc_info=True)
-        raise HTTPException(500, f"Failed to create routing rule: {str(e)}")
+        raise HTTPException(500, f"Failed to create routing rule: {e!s}")
 
 
 @router.put("/routing/rules/{rule_id}")
@@ -978,17 +977,17 @@ async def update_routing_rule(
 ) -> RoutingRuleResponse:
     """
     Update an existing routing rule.
-    
+
     Args:
         rule_id: Rule identifier
         rule_data: Updated rule configuration
-        
+
     Returns:
         Updated rule details
     """
     # Remove existing rule
     router.remove_rule(rule_id)
-    
+
     # Convert content filters
     content_filters = []
     for cf in rule_data.content_filters:
@@ -997,7 +996,7 @@ async def update_routing_rule(
             operator=FilterOperator(cf["operator"]),
             value=cf["value"],
         ))
-    
+
     # Create updated rule
     rule = RoutingRule(
         id=rule_data.id,
@@ -1010,13 +1009,13 @@ async def update_routing_rule(
         enabled=rule_data.enabled,
         description=rule_data.description,
     )
-    
+
     # Add to router
     if not router.add_rule(rule):
         raise HTTPException(500, "Failed to add updated rule")
-    
+
     logger.info("routing_rule_updated", rule_id=rule_id)
-    
+
     return RoutingRuleResponse(
         id=rule.id,
         name=rule.name,
@@ -1038,21 +1037,21 @@ async def delete_routing_rule(
     rule_id: str,
     router: ContentRouter = Depends(get_router_instance),
     authenticated: str = Depends(verify_auth),
-) -> Dict[str, str]:
+) -> dict[str, str]:
     """
     Delete a routing rule.
-    
+
     Args:
         rule_id: Rule identifier
-        
+
     Returns:
         Success status
     """
     if not router.remove_rule(rule_id):
         raise HTTPException(404, f"Routing rule '{rule_id}' not found")
-    
+
     logger.info("routing_rule_deleted", rule_id=rule_id)
-    
+
     return {"status": "success", "message": f"Deleted rule '{rule_id}'"}
 
 
@@ -1061,11 +1060,11 @@ async def enable_routing_rule(
     rule_id: str,
     router: ContentRouter = Depends(get_router_instance),
     authenticated: str = Depends(verify_auth),
-) -> Dict[str, str]:
+) -> dict[str, str]:
     """Enable a routing rule."""
     if not router.enable_rule(rule_id):
         raise HTTPException(404, f"Routing rule '{rule_id}' not found")
-    
+
     return {"status": "success", "message": f"Enabled rule '{rule_id}'"}
 
 
@@ -1074,11 +1073,11 @@ async def disable_routing_rule(
     rule_id: str,
     router: ContentRouter = Depends(get_router_instance),
     authenticated: str = Depends(verify_auth),
-) -> Dict[str, str]:
+) -> dict[str, str]:
     """Disable a routing rule."""
     if not router.disable_rule(rule_id):
         raise HTTPException(404, f"Routing rule '{rule_id}' not found")
-    
+
     return {"status": "success", "message": f"Disabled rule '{rule_id}'"}
 
 
@@ -1089,7 +1088,7 @@ async def get_routing_stats(
 ) -> RoutingStatsResponse:
     """
     Get routing statistics.
-    
+
     Returns statistics about message routing and rule evaluation.
     """
     try:
@@ -1097,25 +1096,25 @@ async def get_routing_stats(
         return RoutingStatsResponse(**stats)
     except Exception as e:
         logger.error(f"Failed to get routing stats: {e}", exc_info=True)
-        raise HTTPException(500, f"Failed to get routing stats: {str(e)}")
+        raise HTTPException(500, f"Failed to get routing stats: {e!s}")
 
 
 @router.post("/routing/evaluate")
 async def evaluate_routing(
     subject: str,
-    payload: Dict[str, Any],
-    correlation_id: Optional[str] = None,
+    payload: dict[str, Any],
+    correlation_id: str | None = None,
     router: ContentRouter = Depends(get_router_instance),
     authenticated: str = Depends(verify_auth),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Evaluate routing for a message (test endpoint).
-    
+
     Args:
         subject: Message subject
         payload: Message payload
         correlation_id: Optional correlation ID
-        
+
     Returns:
         Routing decision details
     """
@@ -1125,7 +1124,7 @@ async def evaluate_routing(
             payload=payload,
             correlation_id=correlation_id,
         )
-        
+
         return {
             "decision": decision.decision.value,
             "matched_rule": {
@@ -1141,14 +1140,14 @@ async def evaluate_routing(
         }
     except Exception as e:
         logger.error(f"Failed to evaluate routing: {e}", exc_info=True)
-        raise HTTPException(500, f"Failed to evaluate routing: {str(e)}")
+        raise HTTPException(500, f"Failed to evaluate routing: {e!s}")
 
 
 # =============================================================================
 # Behavior Profiling Endpoints
 # =============================================================================
 
-def get_profiler_instance() -> Optional[BehaviorProfiler]:
+def get_profiler_instance() -> BehaviorProfiler | None:
     """Dependency to get the behavior profiler."""
     if PROFILING_AVAILABLE and get_profiler:
         return get_profiler()
@@ -1196,7 +1195,7 @@ class AnomalyResponse(BaseModel):
     anomalyType: str
     severity: str
     description: str
-    metrics: Dict[str, Any] = field(default_factory=dict)
+    metrics: dict[str, Any] = field(default_factory=dict)
     expectedValue: float = 0.0
     actualValue: float = 0.0
 
@@ -1208,8 +1207,8 @@ class AlertResponse(BaseModel):
     anomaly: AnomalyResponse
     message: str
     acknowledged: bool
-    acknowledgedAt: Optional[str] = None
-    acknowledgedBy: Optional[str] = None
+    acknowledgedAt: str | None = None
+    acknowledgedBy: str | None = None
 
 
 class ProfilingStatsResponse(BaseModel):
@@ -1227,32 +1226,32 @@ class ProfilingStatsResponse(BaseModel):
 async def get_agent_profiling_metrics(
     instance_id: str,
     registry: EnhancedAgentRegistry = Depends(get_registry),
-    profiler: Optional[BehaviorProfiler] = Depends(get_profiler_instance),
+    profiler: BehaviorProfiler | None = Depends(get_profiler_instance),
     authenticated: str = Depends(verify_auth),
 ) -> ProfilingMetricsResponse:
     """
     Get behavior profiling metrics for an agent.
-    
+
     Args:
         instance_id: Agent instance ID
-        
+
     Returns:
         Agent behavior metrics
     """
     if not PROFILING_AVAILABLE or not profiler:
         raise HTTPException(503, "Behavior profiling not available")
-    
+
     # Verify agent exists
     instance = registry.get_instance(instance_id)
     if not instance:
         raise HTTPException(404, f"Agent instance '{instance_id}' not found")
-    
+
     # Compute and get metrics
     metrics = profiler.compute_metrics(instance_id)
-    
+
     if not metrics:
         return ProfilingMetricsResponse(agentId=instance_id)
-    
+
     return ProfilingMetricsResponse(
         agentId=instance_id,
         totalActions=metrics.total_actions,
@@ -1278,38 +1277,38 @@ async def get_agent_profiling_metrics(
 async def get_agent_profiling_profile(
     instance_id: str,
     registry: EnhancedAgentRegistry = Depends(get_registry),
-    profiler: Optional[BehaviorProfiler] = Depends(get_profiler_instance),
+    profiler: BehaviorProfiler | None = Depends(get_profiler_instance),
     authenticated: str = Depends(verify_auth),
 ) -> ProfilingProfileResponse:
     """
     Get behavior profile for an agent's type.
-    
+
     Args:
         instance_id: Agent instance ID
-        
+
     Returns:
         Behavior profile for the agent type
     """
     if not PROFILING_AVAILABLE or not profiler:
         raise HTTPException(503, "Behavior profiling not available")
-    
+
     # Verify agent exists
     instance = registry.get_instance(instance_id)
     if not instance:
         raise HTTPException(404, f"Agent instance '{instance_id}' not found")
-    
+
     # Get agent type from instance
     agent_type = instance.agent_type
-    
+
     # Update profile with current data
     profiler.update_profile(agent_type, instance_id)
-    
+
     # Get profile
     profile = profiler.get_profile(agent_type)
-    
+
     if not profile:
         raise HTTPException(404, f"No profile available for agent type '{agent_type}'")
-    
+
     return ProfilingProfileResponse(
         agentType=profile.agent_type,
         createdAt=profile.created_at.isoformat(),
@@ -1327,29 +1326,29 @@ async def get_agent_profiling_profile(
 async def detect_agent_anomalies(
     instance_id: str,
     registry: EnhancedAgentRegistry = Depends(get_registry),
-    profiler: Optional[BehaviorProfiler] = Depends(get_profiler_instance),
+    profiler: BehaviorProfiler | None = Depends(get_profiler_instance),
     authenticated: str = Depends(verify_auth),
-) -> List[AnomalyResponse]:
+) -> list[AnomalyResponse]:
     """
     Detect anomalies in agent behavior.
-    
+
     Args:
         instance_id: Agent instance ID
-        
+
     Returns:
         List of detected anomalies
     """
     if not PROFILING_AVAILABLE or not profiler:
         raise HTTPException(503, "Behavior profiling not available")
-    
+
     # Verify agent exists
     instance = registry.get_instance(instance_id)
     if not instance:
         raise HTTPException(404, f"Agent instance '{instance_id}' not found")
-    
+
     # Detect anomalies
     anomalies = profiler.detect_anomalies(instance_id)
-    
+
     return [
         AnomalyResponse(
             timestamp=a.timestamp.isoformat(),
@@ -1367,24 +1366,24 @@ async def detect_agent_anomalies(
 
 @router.get("/profiling/alerts")
 async def get_profiling_alerts(
-    severity: Optional[str] = None,
+    severity: str | None = None,
     unacknowledged_only: bool = False,
-    profiler: Optional[BehaviorProfiler] = Depends(get_profiler_instance),
+    profiler: BehaviorProfiler | None = Depends(get_profiler_instance),
     authenticated: str = Depends(verify_auth),
-) -> List[AlertResponse]:
+) -> list[AlertResponse]:
     """
     Get all profiling alerts.
-    
+
     Args:
         severity: Filter by severity (low, medium, high, critical)
         unacknowledged_only: Only return unacknowledged alerts
-        
+
     Returns:
         List of alerts
     """
     if not PROFILING_AVAILABLE or not profiler:
         raise HTTPException(503, "Behavior profiling not available")
-    
+
     # Parse severity
     severity_filter = None
     if severity:
@@ -1392,13 +1391,13 @@ async def get_profiling_alerts(
             severity_filter = AlertSeverity(severity.lower())
         except ValueError:
             raise HTTPException(400, f"Invalid severity: {severity}")
-    
+
     # Get alerts
     alerts = profiler.get_alerts(
         severity=severity_filter,
         unacknowledged_only=unacknowledged_only,
     )
-    
+
     return [
         AlertResponse(
             timestamp=a.timestamp.isoformat(),
@@ -1426,44 +1425,44 @@ async def get_profiling_alerts(
 async def acknowledge_profiling_alert(
     index: int,
     acknowledged_by: str,
-    profiler: Optional[BehaviorProfiler] = Depends(get_profiler_instance),
+    profiler: BehaviorProfiler | None = Depends(get_profiler_instance),
     authenticated: str = Depends(verify_auth),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Acknowledge a profiling alert.
-    
+
     Args:
         index: Alert index in list
         acknowledged_by: User/system acknowledging
-        
+
     Returns:
         Success status
     """
     if not PROFILING_AVAILABLE or not profiler:
         raise HTTPException(503, "Behavior profiling not available")
-    
+
     if not profiler.acknowledge_alert(index, acknowledged_by):
         raise HTTPException(404, f"Alert at index {index} not found")
-    
+
     return {"status": "success", "message": f"Alert {index} acknowledged"}
 
 
 @router.get("/profiling/stats")
 async def get_profiling_stats(
-    profiler: Optional[BehaviorProfiler] = Depends(get_profiler_instance),
+    profiler: BehaviorProfiler | None = Depends(get_profiler_instance),
     authenticated: str = Depends(verify_auth),
 ) -> ProfilingStatsResponse:
     """
     Get profiler statistics.
-    
+
     Returns:
         Profiler statistics
     """
     if not PROFILING_AVAILABLE or not profiler:
         raise HTTPException(503, "Behavior profiling not available")
-    
+
     stats = profiler.get_stats()
-    
+
     return ProfilingStatsResponse(
         totalActivitiesRecorded=stats["total_activities_recorded"],
         totalAnomaliesDetected=stats["total_anomalies_detected"],
@@ -1477,17 +1476,17 @@ async def get_profiling_stats(
 
 @router.get("/profiling/prometheus")
 async def get_profiling_prometheus_metrics(
-    profiler: Optional[BehaviorProfiler] = Depends(get_profiler_instance),
+    profiler: BehaviorProfiler | None = Depends(get_profiler_instance),
 ) -> str:
     """
     Get profiling metrics in Prometheus format.
-    
+
     Returns:
         Prometheus-formatted metrics string
     """
     if not PROFILING_AVAILABLE or not profiler:
         return "# Behavior profiling not available\n"
-    
+
     return profiler.export_prometheus_metrics()
 
 
@@ -1497,38 +1496,38 @@ async def record_agent_activity(
     action: str,
     duration_ms: float = 0.0,
     success: bool = True,
-    metadata: Optional[Dict[str, Any]] = None,
+    metadata: dict[str, Any] | None = None,
     registry: EnhancedAgentRegistry = Depends(get_registry),
-    profiler: Optional[BehaviorProfiler] = Depends(get_profiler_instance),
+    profiler: BehaviorProfiler | None = Depends(get_profiler_instance),
     authenticated: str = Depends(verify_auth),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Record an agent activity for profiling.
-    
+
     Args:
         instance_id: Agent instance ID
         action: Action type (message_sent, task_completed, etc.)
         duration_ms: Action duration in milliseconds
         success: Whether action was successful
         metadata: Additional metadata
-        
+
     Returns:
         Success status
     """
     if not PROFILING_AVAILABLE or not profiler:
         raise HTTPException(503, "Behavior profiling not available")
-    
+
     # Verify agent exists
     instance = registry.get_instance(instance_id)
     if not instance:
         raise HTTPException(404, f"Agent instance '{instance_id}' not found")
-    
+
     # Parse action type
     try:
         action_type = ActionType(action.lower())
     except ValueError:
         action_type = ActionType.CUSTOM
-    
+
     # Record activity
     profiler.record_activity(
         agent_id=instance_id,
@@ -1537,7 +1536,7 @@ async def record_agent_activity(
         duration_ms=duration_ms,
         success=success,
     )
-    
+
     return {"status": "success", "message": f"Activity recorded: {action}"}
 
 
@@ -1545,7 +1544,7 @@ async def record_agent_activity(
 # JetStream Stream Management Endpoints
 # =============================================================================
 
-def get_jetstream_manager() -> Optional[Any]:
+def get_jetstream_manager() -> Any | None:
     """Dependency to get the JetStream manager."""
     try:
         from heretek_swarm.gateway.jetstream_manager import get_jetstream_manager as get_js
@@ -1557,14 +1556,14 @@ def get_jetstream_manager() -> Optional[Any]:
 class JetStreamConfigCreate(BaseModel):
     """Request model for creating a JetStream."""
     stream_name: str = Field(..., description="Stream name")
-    subjects: List[str] = Field(..., description="List of subjects to capture")
+    subjects: list[str] = Field(..., description="List of subjects to capture")
     retention: str = Field(default="limits", description="Retention policy (limits, interest, workqueue)")
     max_messages: int = Field(default=1000000, description="Maximum messages to retain")
     max_age: str = Field(default="72h", description="Maximum age (e.g., 72h, 7d)")
     storage: str = Field(default="file", description="Storage type (file, memory)")
     replicas: int = Field(default=1, description="Number of replicas")
     max_bytes: int = Field(default=1073741824, description="Maximum size in bytes")
-    description: Optional[str] = Field(None, description="Stream description")
+    description: str | None = Field(None, description="Stream description")
 
 
 class JetStreamConsumerCreate(BaseModel):
@@ -1573,47 +1572,47 @@ class JetStreamConsumerCreate(BaseModel):
     stream_name: str = Field(..., description="Source stream name")
     deliver_policy: str = Field(default="all", description="Delivery policy")
     ack_policy: str = Field(default="explicit", description="Acknowledgment policy")
-    filter_subject: Optional[str] = Field(None, description="Subject filter")
+    filter_subject: str | None = Field(None, description="Subject filter")
 
 
 class StreamInfoResponse(BaseModel):
     """Response model for stream information."""
     name: str
-    subjects: List[str]
+    subjects: list[str]
     retention: str
     max_messages: int
     max_age: str
     storage: str
     replicas: int
     max_bytes: int
-    description: Optional[str]
-    state: Dict[str, Any]
-    created_at: Optional[str]
+    description: str | None
+    state: dict[str, Any]
+    created_at: str | None
 
 
 class StreamListResponse(BaseModel):
     """Response model for listing streams."""
-    streams: List[StreamInfoResponse]
+    streams: list[StreamInfoResponse]
     total: int
 
 
 @router.get("/jetstream/streams")
 async def list_jetstream_streams(
-    js_manager: Optional[Any] = Depends(get_jetstream_manager),
+    js_manager: Any | None = Depends(get_jetstream_manager),
     authenticated: str = Depends(verify_auth),
 ) -> StreamListResponse:
     """
     List all JetStream streams.
-    
+
     Returns:
         List of stream information
     """
     if not js_manager:
         raise HTTPException(503, "JetStream manager not available")
-    
+
     try:
         streams = await js_manager.list_streams()
-        
+
         return StreamListResponse(
             streams=[
                 StreamInfoResponse(
@@ -1635,30 +1634,30 @@ async def list_jetstream_streams(
         )
     except Exception as e:
         logger.error(f"Failed to list streams: {e}", exc_info=True)
-        raise HTTPException(500, f"Failed to list streams: {str(e)}")
+        raise HTTPException(500, f"Failed to list streams: {e!s}")
 
 
 @router.get("/jetstream/streams/{stream_name}")
 async def get_jetstream_stream(
     stream_name: str,
-    js_manager: Optional[Any] = Depends(get_jetstream_manager),
+    js_manager: Any | None = Depends(get_jetstream_manager),
     authenticated: str = Depends(verify_auth),
 ) -> StreamInfoResponse:
     """
     Get information about a specific stream.
-    
+
     Args:
         stream_name: Stream name
     """
     if not js_manager:
         raise HTTPException(503, "JetStream manager not available")
-    
+
     try:
         info = await js_manager.get_stream_info(stream_name)
-        
+
         if not info:
             raise HTTPException(404, f"Stream '{stream_name}' not found")
-        
+
         return StreamInfoResponse(
             name=info.name,
             subjects=info.config.subjects,
@@ -1676,31 +1675,31 @@ async def get_jetstream_stream(
         raise
     except Exception as e:
         logger.error(f"Failed to get stream info: {e}", exc_info=True)
-        raise HTTPException(500, f"Failed to get stream info: {str(e)}")
+        raise HTTPException(500, f"Failed to get stream info: {e!s}")
 
 
 @router.post("/jetstream/streams")
 async def create_jetstream_stream(
     config_data: JetStreamConfigCreate,
-    js_manager: Optional[Any] = Depends(get_jetstream_manager),
+    js_manager: Any | None = Depends(get_jetstream_manager),
     authenticated: str = Depends(verify_auth),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Create a new JetStream.
-    
+
     Args:
         config_data: Stream configuration
     """
     if not js_manager:
         raise HTTPException(503, "JetStream manager not available")
-    
+
     try:
         from heretek_swarm.gateway.jetstream_manager import (
             JetStreamConfig,
             RetentionPolicy,
             StorageType,
         )
-        
+
         config = JetStreamConfig(
             stream_name=config_data.stream_name,
             subjects=config_data.subjects,
@@ -1712,18 +1711,18 @@ async def create_jetstream_stream(
             max_bytes=config_data.max_bytes,
             description=config_data.description,
         )
-        
+
         success = await js_manager.create_stream(config)
-        
+
         if not success:
             raise HTTPException(500, "Failed to create stream")
-        
+
         logger.info(
             "jetstream_stream_created",
             stream_name=config_data.stream_name,
             subjects=config_data.subjects,
         )
-        
+
         return {
             "status": "success",
             "stream_name": config_data.stream_name,
@@ -1733,52 +1732,52 @@ async def create_jetstream_stream(
         raise
     except Exception as e:
         logger.error(f"Failed to create stream: {e}", exc_info=True)
-        raise HTTPException(500, f"Failed to create stream: {str(e)}")
+        raise HTTPException(500, f"Failed to create stream: {e!s}")
 
 
 @router.delete("/jetstream/streams/{stream_name}")
 async def delete_jetstream_stream(
     stream_name: str,
-    js_manager: Optional[Any] = Depends(get_jetstream_manager),
+    js_manager: Any | None = Depends(get_jetstream_manager),
     authenticated: str = Depends(verify_auth),
-) -> Dict[str, str]:
+) -> dict[str, str]:
     """
     Delete a JetStream.
-    
+
     Args:
         stream_name: Stream name
     """
     if not js_manager:
         raise HTTPException(503, "JetStream manager not available")
-    
+
     try:
         success = await js_manager.delete_stream(stream_name)
-        
+
         if not success:
             raise HTTPException(404, f"Stream '{stream_name}' not found or delete failed")
-        
+
         logger.info("jetstream_stream_deleted", stream_name=stream_name)
-        
+
         return {"status": "success", "message": f"Deleted stream '{stream_name}'"}
     except HTTPException:
         raise
     except Exception as e:
         logger.error(f"Failed to delete stream: {e}", exc_info=True)
-        raise HTTPException(500, f"Failed to delete stream: {str(e)}")
+        raise HTTPException(500, f"Failed to delete stream: {e!s}")
 
 
 @router.post("/jetstream/streams/{stream_name}/replay")
 async def replay_stream_messages(
     stream_name: str,
-    start_sequence: Optional[int] = None,
-    end_sequence: Optional[int] = None,
-    subject_filter: Optional[str] = None,
-    js_manager: Optional[Any] = Depends(get_jetstream_manager),
+    start_sequence: int | None = None,
+    end_sequence: int | None = None,
+    subject_filter: str | None = None,
+    js_manager: Any | None = Depends(get_jetstream_manager),
     authenticated: str = Depends(verify_auth),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Replay messages from a stream.
-    
+
     Args:
         stream_name: Stream name
         start_sequence: Start sequence number
@@ -1787,7 +1786,7 @@ async def replay_stream_messages(
     """
     if not js_manager:
         raise HTTPException(503, "JetStream manager not available")
-    
+
     try:
         messages = await js_manager.replay_messages(
             stream_name=stream_name,
@@ -1795,7 +1794,7 @@ async def replay_stream_messages(
             end_sequence=end_sequence,
             subject_filter=subject_filter,
         )
-        
+
         return {
             "stream_name": stream_name,
             "messages_replayed": len(messages),
@@ -1803,54 +1802,53 @@ async def replay_stream_messages(
         }
     except Exception as e:
         logger.error(f"Failed to replay messages: {e}", exc_info=True)
-        raise HTTPException(500, f"Failed to replay messages: {str(e)}")
+        raise HTTPException(500, f"Failed to replay messages: {e!s}")
 
 
 @router.get("/jetstream/stats")
 async def get_jetstream_stats(
-    js_manager: Optional[Any] = Depends(get_jetstream_manager),
+    js_manager: Any | None = Depends(get_jetstream_manager),
     authenticated: str = Depends(verify_auth),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Get JetStream manager statistics.
-    
+
     Returns:
         Manager statistics
     """
     if not js_manager:
         raise HTTPException(503, "JetStream manager not available")
-    
+
     try:
-        stats = await js_manager.get_stats()
-        return stats
+        return await js_manager.get_stats()
     except Exception as e:
         logger.error(f"Failed to get JetStream stats: {e}", exc_info=True)
-        raise HTTPException(500, f"Failed to get JetStream stats: {str(e)}")
+        raise HTTPException(500, f"Failed to get JetStream stats: {e!s}")
 
 
 @router.post("/jetstream/initialize")
 async def initialize_jetstream(
     create_defaults: bool = True,
-    js_manager: Optional[Any] = Depends(get_jetstream_manager),
+    js_manager: Any | None = Depends(get_jetstream_manager),
     authenticated: str = Depends(verify_auth),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Initialize JetStream with default streams.
-    
+
     Args:
         create_defaults: Create default stream configurations
-        
+
     Returns:
         Creation results for each stream
     """
     if not js_manager:
         raise HTTPException(503, "JetStream manager not available")
-    
+
     try:
         results = await js_manager.initialize_default_streams()
-        
+
         logger.info("JetStream default streams initialized", results=results)
-        
+
         return {
             "status": "success",
             "streams": results,
@@ -1858,4 +1856,4 @@ async def initialize_jetstream(
         }
     except Exception as e:
         logger.error(f"Failed to initialize JetStream: {e}", exc_info=True)
-        raise HTTPException(500, f"Failed to initialize JetStream: {str(e)}")
+        raise HTTPException(500, f"Failed to initialize JetStream: {e!s}")

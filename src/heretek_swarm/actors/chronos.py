@@ -16,29 +16,29 @@ Version: 1.0.0
 from __future__ import annotations
 
 import asyncio
+import contextlib
 import uuid
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from enum import Enum
-from typing import Any, Dict, List, Optional, Set, Tuple
+from typing import Any
 
 import structlog
 
-from heretek_swarm.actors.base import AgentActor, ActorMessage
+from heretek_swarm.actors.base import ActorMessage, AgentActor
 from heretek_swarm.actors.validation import validate_message
 
 # Session 44: Collective Learning Integration
 from heretek_swarm.collective.learning import PatternExtractor, PatternType
 
 # Session 44: Consensus Integration
-from heretek_swarm.consensus.swarm_deliberation import SwarmDeliberationEngine, Position
+from heretek_swarm.consensus.swarm_deliberation import Position, SwarmDeliberationEngine
 
 # Session 44: Memory Optimization Integration
 from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer, AccessTier
 
 # Session 44: Zero-Trust Validation
 from heretek_swarm.security.zero_trust import ZeroTrustValidator
-
 
 logger = structlog.get_logger(__name__)
 
@@ -84,20 +84,20 @@ class ScheduledTask:
     scheduled_at: datetime
     status: ScheduleStatus = ScheduleStatus.PENDING
     priority: Priority = Priority.NORMAL
-    recurrence: Optional[RecurrenceType] = None
-    recurrence_config: Dict[str, Any] = field(default_factory=dict)
-    target_agents: List[str] = field(default_factory=list)
+    recurrence: RecurrenceType | None = None
+    recurrence_config: dict[str, Any] = field(default_factory=dict)
+    target_agents: list[str] = field(default_factory=list)
     action: str = ""
-    payload: Dict[str, Any] = field(default_factory=dict)
-    deadline: Optional[datetime] = None
-    completed_at: Optional[datetime] = None
-    next_run: Optional[datetime] = None
+    payload: dict[str, Any] = field(default_factory=dict)
+    deadline: datetime | None = None
+    completed_at: datetime | None = None
+    next_run: datetime | None = None
     run_count: int = 0
-    max_runs: Optional[int] = None
-    metadata: Dict[str, Any] = field(default_factory=dict)
-    created_at: datetime = field(default_factory=lambda: datetime.now(timezone.utc))
+    max_runs: int | None = None
+    metadata: dict[str, Any] = field(default_factory=dict)
+    created_at: datetime = field(default_factory=lambda: datetime.now(UTC))
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for serialization."""
         return {
             "task_id": self.task_id,
@@ -127,13 +127,13 @@ class Deadline:
     deadline_id: str
     name: str
     due_at: datetime
-    assigned_to: List[str] = field(default_factory=list)
+    assigned_to: list[str] = field(default_factory=list)
     status: str = "pending"  # pending, met, missed
-    warning_thresholds: List[timedelta] = field(default_factory=list)
-    warnings_sent: Set[str] = field(default_factory=set)
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    warning_thresholds: list[timedelta] = field(default_factory=list)
+    warnings_sent: set[str] = field(default_factory=set)
+    metadata: dict[str, Any] = field(default_factory=dict)
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for serialization."""
         return {
             "deadline_id": self.deadline_id,
@@ -144,7 +144,7 @@ class Deadline:
             "warning_thresholds": [str(t) for t in self.warning_thresholds],
             "warnings_sent": list(self.warnings_sent),
             "metadata": self.metadata,
-            "time_remaining": str(self.due_at - datetime.now(timezone.utc)),
+            "time_remaining": str(self.due_at - datetime.now(UTC)),
         }
 
 
@@ -174,14 +174,14 @@ class ChronosAgent(AgentActor):
 
     def __init__(
         self,
-        agent_id: Optional[str] = None,
-        config: Optional[Dict[str, Any]] = None,
-    
+        agent_id: str | None = None,
+        config: dict[str, Any] | None = None,
+
         # Session 44: Integration components
-        pattern_extractor: Optional[PatternExtractor] = None,
-        deliberation_engine: Optional[SwarmDeliberationEngine] = None,
-        access_analyzer: Optional[AccessPatternAnalyzer] = None,
-        zero_trust_validator: Optional[ZeroTrustValidator] = None,
+        pattern_extractor: PatternExtractor | None = None,
+        deliberation_engine: SwarmDeliberationEngine | None = None,
+        access_analyzer: AccessPatternAnalyzer | None = None,
+        zero_trust_validator: ZeroTrustValidator | None = None,
 ):
         super().__init__(
             agent_id=agent_id or f"chronos_{uuid.uuid4().hex[:8]}",
@@ -189,40 +189,40 @@ class ChronosAgent(AgentActor):
         )
 
         # Task scheduling
-        self._tasks: Dict[str, ScheduledTask] = {}
-        self._task_queue: List[Tuple[datetime, str]] = []  # (scheduled_at, task_id)
+        self._tasks: dict[str, ScheduledTask] = {}
+        self._task_queue: list[tuple[datetime, str]] = []  # (scheduled_at, task_id)
         self._max_tasks: int = self._config.get("max_tasks", 1000)
 
         # Deadlines
-        self._deadlines: Dict[str, Deadline] = {}
+        self._deadlines: dict[str, Deadline] = {}
         self._max_deadlines: int = self._config.get("max_deadlines", 500)
 
         # Scheduler control
         self._scheduler_running: bool = False
-        self._scheduler_task: Optional[asyncio.Task] = None
+        self._scheduler_task: asyncio.Task | None = None
         self._check_interval: float = self._config.get("check_interval", 1.0)  # seconds
 
         # Calendars
-        self._calendars: Dict[str, List[str]] = {}  # calendar_id -> task_ids
+        self._calendars: dict[str, list[str]] = {}  # calendar_id -> task_ids
 
-        
+
         # Session 44: Collective Learning Integration
         self.pattern_extractor = pattern_extractor or PatternExtractor(min_support=3, min_confidence=0.6)
-        
+
         # Session 44: Consensus Integration
         self.deliberation_engine = deliberation_engine or SwarmDeliberationEngine(
             max_rounds=5, consensus_threshold=0.75, min_participants=2
         )
-        
+
         # Session 44: Memory Optimization Integration
         self.access_analyzer = access_analyzer or AccessPatternAnalyzer()
-        
+
         # Session 44: Zero-Trust Validation
         self.zero_trust_validator = zero_trust_validator or ZeroTrustValidator()
-        
+
         # Session 44: Integration state
-        self._active_deliberations: Dict[str, str] = {}
-        self._pattern_emitted: Set[str] = set()
+        self._active_deliberations: dict[str, str] = {}
+        self._pattern_emitted: set[str] = set()
 
 
         logger.info(
@@ -244,19 +244,17 @@ class ChronosAgent(AgentActor):
         self._scheduler_running = False
         if self._scheduler_task:
             self._scheduler_task.cancel()
-            try:
+            with contextlib.suppress(asyncio.CancelledError):
                 await self._scheduler_task
-            except asyncio.CancelledError:
-                pass
             self._scheduler_task = None
             logger.info("chronos_scheduler_stopped")
         await super().terminate()
 
-    async def _validate_message(self, message: ActorMessage) -> Dict[str, Any]:
+    async def _validate_message(self, message: ActorMessage) -> dict[str, Any]:
         """Validate incoming message content."""
         try:
             validated = validate_message(message.message_type, message.content)
-            if hasattr(validated, 'dict'):
+            if hasattr(validated, "dict"):
                 return validated.dict()
             return validated
         except Exception:
@@ -266,7 +264,7 @@ class ChronosAgent(AgentActor):
         """Main scheduler loop - checks and executes due tasks."""
         while self._scheduler_running:
             try:
-                now = datetime.now(timezone.utc)
+                now = datetime.now(UTC)
 
                 # Check for due tasks
                 due_tasks = []
@@ -328,7 +326,7 @@ class ChronosAgent(AgentActor):
                 )
 
             task.status = ScheduleStatus.COMPLETED
-            task.completed_at = datetime.now(timezone.utc)
+            task.completed_at = datetime.now(UTC)
 
             # Handle recurrence
             if task.recurrence:
@@ -353,7 +351,7 @@ class ChronosAgent(AgentActor):
             return
 
         # Calculate next run time
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
 
         if task.recurrence == RecurrenceType.HOURLY:
             task.next_run = now + timedelta(hours=1)
@@ -385,7 +383,7 @@ class ChronosAgent(AgentActor):
 
     async def _check_deadlines(self) -> None:
         """Check deadlines and send warnings."""
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
 
         for deadline in self._deadlines.values():
             if deadline.status != "pending":
@@ -418,7 +416,7 @@ class ChronosAgent(AgentActor):
                         "name": deadline.name,
                         "due_at": deadline.due_at.isoformat(),
                         "threshold": str(threshold),
-                        "time_remaining": str(deadline.due_at - datetime.now(timezone.utc)),
+                        "time_remaining": str(deadline.due_at - datetime.now(UTC)),
                     },
                     sender_id=self.agent_id,
                 ),
@@ -465,7 +463,7 @@ class ChronosAgent(AgentActor):
                 return
 
             scheduled_at_str = content.get("scheduled_at")
-            scheduled_at = datetime.fromisoformat(scheduled_at_str) if scheduled_at_str else datetime.now(timezone.utc)
+            scheduled_at = datetime.fromisoformat(scheduled_at_str) if scheduled_at_str else datetime.now(UTC)
 
             recurrence_str = content.get("recurrence")
             recurrence = RecurrenceType(recurrence_str) if recurrence_str else RecurrenceType.ONCE
@@ -513,7 +511,7 @@ class ChronosAgent(AgentActor):
             logger.error("schedule_task_failed", error=str(e))
             await self._send_error(
                 message.sender_id,
-                f"Failed to schedule task: {str(e)}",
+                f"Failed to schedule task: {e!s}",
                 message.message_type,
             )
 
@@ -566,7 +564,7 @@ class ChronosAgent(AgentActor):
             logger.error("cancel_task_failed", error=str(e))
             await self._send_error(
                 message.sender_id,
-                f"Failed to cancel task: {str(e)}",
+                f"Failed to cancel task: {e!s}",
                 message.message_type,
             )
 
@@ -619,7 +617,7 @@ class ChronosAgent(AgentActor):
             logger.error("pause_task_failed", error=str(e))
             await self._send_error(
                 message.sender_id,
-                f"Failed to pause task: {str(e)}",
+                f"Failed to pause task: {e!s}",
                 message.message_type,
             )
 
@@ -670,7 +668,7 @@ class ChronosAgent(AgentActor):
             logger.error("resume_task_failed", error=str(e))
             await self._send_error(
                 message.sender_id,
-                f"Failed to resume task: {str(e)}",
+                f"Failed to resume task: {e!s}",
                 message.message_type,
             )
 
@@ -708,7 +706,7 @@ class ChronosAgent(AgentActor):
             logger.error("get_task_status_failed", error=str(e))
             await self._send_error(
                 message.sender_id,
-                f"Failed to get task status: {str(e)}",
+                f"Failed to get task status: {e!s}",
                 message.message_type,
             )
 
@@ -745,7 +743,7 @@ class ChronosAgent(AgentActor):
                 )
                 return
 
-            due_at = datetime.fromisoformat(content.get("due_at", datetime.now(timezone.utc).isoformat()))
+            due_at = datetime.fromisoformat(content.get("due_at", datetime.now(UTC).isoformat()))
 
             # Parse warning thresholds
             thresholds = []
@@ -792,7 +790,7 @@ class ChronosAgent(AgentActor):
             logger.error("set_deadline_failed", error=str(e))
             await self._send_error(
                 message.sender_id,
-                f"Failed to set deadline: {str(e)}",
+                f"Failed to set deadline: {e!s}",
                 message.message_type,
             )
 
@@ -816,7 +814,7 @@ class ChronosAgent(AgentActor):
                 return
 
             deadline = self._deadlines[deadline_id]
-            now = datetime.now(timezone.utc)
+            now = datetime.now(UTC)
             time_remaining = deadline.due_at - now
 
             # Update status
@@ -841,7 +839,7 @@ class ChronosAgent(AgentActor):
             logger.error("check_deadline_failed", error=str(e))
             await self._send_error(
                 message.sender_id,
-                f"Failed to check deadline: {str(e)}",
+                f"Failed to check deadline: {e!s}",
                 message.message_type,
             )
 
@@ -891,7 +889,7 @@ class ChronosAgent(AgentActor):
             logger.error("get_timeline_failed", error=str(e))
             await self._send_error(
                 message.sender_id,
-                f"Failed to get timeline: {str(e)}",
+                f"Failed to get timeline: {e!s}",
                 message.message_type,
             )
 
@@ -908,7 +906,7 @@ class ChronosAgent(AgentActor):
             start_str = content.get("start")
             end_str = content.get("end")
 
-            start = datetime.fromisoformat(start_str) if start_str else datetime.now(timezone.utc)
+            start = datetime.fromisoformat(start_str) if start_str else datetime.now(UTC)
             end = datetime.fromisoformat(end_str) if end_str else start + timedelta(days=1)
 
             # Find tasks in range
@@ -937,7 +935,7 @@ class ChronosAgent(AgentActor):
             logger.error("get_schedule_failed", error=str(e))
             await self._send_error(
                 message.sender_id,
-                f"Failed to get schedule: {str(e)}",
+                f"Failed to get schedule: {e!s}",
                 message.message_type,
             )
 
@@ -956,7 +954,7 @@ class ChronosAgent(AgentActor):
 
             reminder_id = content.get("reminder_id") or f"reminder_{uuid.uuid4().hex[:12]}"
             remind_at_str = content.get("remind_at")
-            remind_at = datetime.fromisoformat(remind_at_str) if remind_at_str else datetime.now(timezone.utc)
+            remind_at = datetime.fromisoformat(remind_at_str) if remind_at_str else datetime.now(UTC)
             target_agents = content.get("target_agents", [message.sender_id])
 
             # Create as a scheduled task
@@ -992,7 +990,7 @@ class ChronosAgent(AgentActor):
             logger.error("register_reminder_failed", error=str(e))
             await self._send_error(
                 message.sender_id,
-                f"Failed to register reminder: {str(e)}",
+                f"Failed to register reminder: {e!s}",
                 message.message_type,
             )
 
@@ -1001,14 +999,14 @@ class ChronosAgent(AgentActor):
     # Session 44: Collective Learning Integration Methods
     # =========================================================================
 
-    async def _emit_pattern(self, item_id: str, item_type: str, outcome: str, content: Dict[str, Any]) -> None:
+    async def _emit_pattern(self, item_id: str, item_type: str, outcome: str, content: dict[str, Any]) -> None:
         """Emit pattern for collective learning."""
         if not self.pattern_extractor:
             return
-        
+
         if item_id in self._pattern_emitted:
             return
-        
+
         try:
             await self.pattern_extractor.analyze_message(
                 message_id=f"{item_type}_{item_id}",
@@ -1016,19 +1014,19 @@ class ChronosAgent(AgentActor):
                 recipient="broadcast",
                 message_type=f"{item_type}_completion",
                 content=content,
-                timestamp=datetime.now(timezone.utc).isoformat(),
+                timestamp=datetime.now(UTC).isoformat(),
             )
-            
+
             self._pattern_emitted.add(item_id)
             logger.info(f"{item_type}_pattern_emitted", item_id=item_id, outcome=outcome)
         except Exception as e:
             logger.warning("failed_to_emit_pattern", item_id=item_id, error=str(e))
 
-    async def _consume_patterns(self, pattern_types: Optional[List[PatternType]] = None) -> List[Dict[str, Any]]:
+    async def _consume_patterns(self, pattern_types: list[PatternType] | None = None) -> list[dict[str, Any]]:
         """Consume patterns from collective learning."""
         if not self.pattern_extractor:
             return []
-        
+
         try:
             patterns = await self.pattern_extractor.extract_patterns(
                 time_window_hours=24,
@@ -1047,13 +1045,13 @@ class ChronosAgent(AgentActor):
         self,
         item_id: str,
         proposal: str,
-        participating_agents: List[str],
+        participating_agents: list[str],
         domain: str = "general",
-    ) -> Optional[str]:
+    ) -> str | None:
         """Initiate swarm deliberation."""
         if not self.deliberation_engine:
             return None
-        
+
         try:
             deliberation_id = f"delib_{item_id}"
             self.deliberation_engine.start_deliberation(
@@ -1063,7 +1061,7 @@ class ChronosAgent(AgentActor):
                 domain=domain,
             )
             self._active_deliberations[item_id] = deliberation_id
-            
+
             logger.info("deliberation_initiated", deliberation_id=deliberation_id, item_id=item_id)
             return deliberation_id
         except Exception as e:
@@ -1081,11 +1079,11 @@ class ChronosAgent(AgentActor):
         """Submit agent position in deliberation."""
         if not self.deliberation_engine:
             return False
-        
+
         deliberation_id = self._active_deliberations.get(item_id)
         if not deliberation_id:
             return False
-        
+
         try:
             success = self.deliberation_engine.submit_position(
                 deliberation_id=deliberation_id,
@@ -1094,36 +1092,36 @@ class ChronosAgent(AgentActor):
                 confidence=confidence,
                 argument=argument,
             )
-            
+
             if success and self.access_analyzer:
                 self.access_analyzer.record_access(
                     memory_id=f"delib_{deliberation_id}_{agent_id}",
                     access_type="write",
                     agent_id=agent_id,
                 )
-            
+
             return success
         except Exception as e:
             logger.error("failed_to_submit_deliberation_position", error=str(e))
             return False
 
-    async def _finalize_deliberation(self, item_id: str) -> Optional[Any]:
+    async def _finalize_deliberation(self, item_id: str) -> Any | None:
         """Finalize deliberation and apply result."""
         if not self.deliberation_engine:
             return None
-        
+
         deliberation_id = self._active_deliberations.get(item_id)
         if not deliberation_id:
             return None
-        
+
         try:
             result = self.deliberation_engine.finalize_deliberation(deliberation_id)
-            
+
             if result:
                 self.deliberation_engine.cleanup_deliberation(deliberation_id)
                 del self._active_deliberations[item_id]
                 logger.info("deliberation_finalized", deliberation_id=deliberation_id)
-            
+
             return result
         except Exception as e:
             logger.error("failed_to_finalize_deliberation", error=str(e))
@@ -1137,7 +1135,7 @@ class ChronosAgent(AgentActor):
         """Track memory access patterns."""
         if not self.access_analyzer:
             return
-        
+
         memory_id = f"{item_type}_{item_id}"
         self.access_analyzer.record_access(
             memory_id=memory_id,
@@ -1149,16 +1147,16 @@ class ChronosAgent(AgentActor):
         """Get memory tier classification."""
         if not self.access_analyzer:
             return AccessTier.COLD
-        
+
         memory_id = f"{item_type}_{item_id}"
         profile = self.access_analyzer.get_profile(memory_id)
         return profile.tier if profile else AccessTier.COLD
 
-    async def _prefetch_relevant(self, agent_id: str, item_type: str) -> List[str]:
+    async def _prefetch_relevant(self, agent_id: str, item_type: str) -> list[str]:
         """Prefetch items an agent is likely to need."""
         if not self.access_analyzer:
             return []
-        
+
         try:
             predicted_memories = self.access_analyzer.predict_agent_access(agent_id)
             return [
@@ -1170,7 +1168,7 @@ class ChronosAgent(AgentActor):
             logger.warning("failed_to_prefetch", agent_id=agent_id, error=str(e))
             return []
 
-    def get_learning_status(self) -> Dict[str, Any]:
+    def get_learning_status(self) -> dict[str, Any]:
         """Get collective learning and memory optimization status."""
         return {
             "agent_id": self.agent_id,
@@ -1204,7 +1202,7 @@ class ChronosAgent(AgentActor):
             ),
         )
 
-    def get_capabilities(self) -> List[str]:
+    def get_capabilities(self) -> list[str]:
         """Return list of capabilities this agent provides."""
         return [
             "task_scheduling",

@@ -11,12 +11,14 @@ Reference: EXPANSION_ROADMAP.md S-1 Horizontal Scaling
 """
 
 import asyncio
+import contextlib
 import time
-from dataclasses import dataclass, field
-from datetime import datetime, timezone
-from enum import Enum
-from typing import Any, Dict, List, Optional, Set
 from collections import defaultdict
+from dataclasses import dataclass, field
+from datetime import UTC, datetime
+from enum import StrEnum
+from typing import Any
+
 import structlog
 
 logger = structlog.get_logger(__name__)
@@ -26,14 +28,14 @@ logger = structlog.get_logger(__name__)
 # Enums and Constants
 # =============================================================================
 
-class ScalingAction(str, Enum):
+class ScalingAction(StrEnum):
     """Scaling action types."""
     SCALE_UP = "scale_up"
     SCALE_DOWN = "scale_down"
     NO_OP = "no_op"
 
 
-class LoadBalancingStrategy(str, Enum):
+class LoadBalancingStrategy(StrEnum):
     """Load balancing strategies."""
     ROUND_ROBIN = "round_robin"
     LEAST_CONNECTIONS = "least_connections"
@@ -41,7 +43,7 @@ class LoadBalancingStrategy(str, Enum):
     STICKY_SESSION = "sticky_session"
 
 
-class AgentStatus(str, Enum):
+class AgentStatus(StrEnum):
     """Agent instance status."""
     ACTIVE = "active"
     IDLE = "idle"
@@ -62,18 +64,18 @@ class ScalingConfig:
     namespace: str = "default"
     min_replicas: int = 3
     max_replicas: int = 50
-    
+
     # Scaling thresholds
     cpu_threshold_percent: float = 70.0
     memory_threshold_percent: float = 80.0
     queue_depth_threshold: int = 10000
     response_time_p95_threshold_ms: float = 500.0
-    
+
     # Timing
     scale_up_cooldown_seconds: int = 300
     scale_down_cooldown_seconds: int = 600
     evaluation_interval_seconds: int = 60
-    
+
     # Scaling policies
     scale_up_step: int = 2
     scale_down_step: int = 2
@@ -92,7 +94,7 @@ class ScalingResult:
     previous_count: int = 0
     new_count: int = 0
     duration_ms: float = 0.0
-    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
 
 @dataclass
@@ -116,8 +118,8 @@ class AgentInstance:
     memory_usage: float = 0.0
     active_connections: int = 0
     messages_processed: int = 0
-    last_heartbeat: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
-    created_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    last_heartbeat: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
+    created_at: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
 
 @dataclass
@@ -134,7 +136,7 @@ class AgentPoolState:
     message_queue_depth: int
     response_time_p95: float
     total_connections: int
-    timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
 
 
 @dataclass
@@ -143,7 +145,7 @@ class LoadBalancerResult:
     selected_instance: str
     strategy: LoadBalancingStrategy
     decision_time_ms: float
-    instance_health: Dict[str, Any] = field(default_factory=dict)
+    instance_health: dict[str, Any] = field(default_factory=dict)
 
 
 # =============================================================================
@@ -153,7 +155,7 @@ class LoadBalancerResult:
 class AgentPoolManager:
     """
     Manages agent pool lifecycle and scaling.
-    
+
     Features:
     - 5 scaling triggers (CPU, memory, queue, response time, utilization)
     - Cooldown periods respected
@@ -161,30 +163,30 @@ class AgentPoolManager:
     - Scale up completes in < 30s per agent
     - Support for 100+ concurrent agents
     """
-    
-    def __init__(self, config: Optional[ScalingConfig] = None):
+
+    def __init__(self, config: ScalingConfig | None = None):
         self.config = config or ScalingConfig()
         self.triggers = self._load_triggers()
-        self.scaling_history: List[ScalingResult] = []
-        self.last_scaling_time: Dict[str, datetime] = {}
-        
+        self.scaling_history: list[ScalingResult] = []
+        self.last_scaling_time: dict[str, datetime] = {}
+
         # Agent instance tracking
-        self._instances: Dict[str, AgentInstance] = {}
-        self._instance_metrics: Dict[str, Dict] = defaultdict(dict)
-        
+        self._instances: dict[str, AgentInstance] = {}
+        self._instance_metrics: dict[str, dict] = defaultdict(dict)
+
         # Metrics
         self._evaluation_count = 0
         self._scaling_count = 0
         self._total_agents_added = 0
         self._total_agents_removed = 0
-        
+
         logger.info(
             "agent_pool_manager_initialized",
             min_replicas=self.config.min_replicas,
             max_replicas=self.config.max_replicas,
         )
-    
-    def _load_triggers(self) -> Dict[str, ScalingTrigger]:
+
+    def _load_triggers(self) -> dict[str, ScalingTrigger]:
         """Load scaling trigger configurations."""
         return {
             "cpu_high": ScalingTrigger(
@@ -233,29 +235,29 @@ class AgentPoolManager:
                 cooldown_seconds=self.config.scale_down_cooldown_seconds,
             ),
         }
-    
+
     def register_instance(self, instance_id: str) -> AgentInstance:
         """Register a new agent instance."""
         instance = AgentInstance(instance_id=instance_id, status=AgentStatus.PENDING)
         self._instances[instance_id] = instance
         logger.info("agent_instance_registered", instance_id=instance_id)
         return instance
-    
+
     def update_instance_status(
         self,
         instance_id: str,
         status: AgentStatus,
-        metrics: Optional[Dict[str, Any]] = None,
+        metrics: dict[str, Any] | None = None,
     ):
         """Update agent instance status and metrics."""
         if instance_id not in self._instances:
             logger.warning("instance_not_found", instance_id=instance_id)
             return
-        
+
         instance = self._instances[instance_id]
         instance.status = status
-        instance.last_heartbeat = datetime.now(timezone.utc).isoformat()
-        
+        instance.last_heartbeat = datetime.now(UTC).isoformat()
+
         if metrics:
             instance.cpu_usage = metrics.get("cpu_usage", instance.cpu_usage)
             instance.memory_usage = metrics.get("memory_usage", instance.memory_usage)
@@ -266,11 +268,11 @@ class AgentPoolManager:
                 "messages_processed", instance.messages_processed
             )
             self._instance_metrics[instance_id] = metrics
-    
+
     async def get_pool_state(self) -> AgentPoolState:
         """Get current agent pool state."""
         instances = list(self._instances.values())
-        
+
         if not instances:
             return AgentPoolState(
                 total_agents=0,
@@ -285,17 +287,17 @@ class AgentPoolManager:
                 response_time_p95=0.0,
                 total_connections=0,
             )
-        
+
         # Count by status
         status_counts = defaultdict(int)
         for instance in instances:
             status_counts[instance.status] += 1
-        
+
         # Calculate averages
         avg_cpu = sum(i.cpu_usage for i in instances) / len(instances)
         avg_memory = sum(i.memory_usage for i in instances) / len(instances)
         total_connections = sum(i.active_connections for i in instances)
-        
+
         return AgentPoolState(
             total_agents=len(instances),
             active_agents=status_counts[AgentStatus.ACTIVE],
@@ -309,26 +311,26 @@ class AgentPoolManager:
             response_time_p95=0.0,
             total_connections=total_connections,
         )
-    
+
     async def evaluate_scaling(
         self,
-        metrics: Optional[Dict[str, float]] = None,
-    ) -> Optional[ScalingResult]:
+        metrics: dict[str, float] | None = None,
+    ) -> ScalingResult | None:
         """
         Evaluate scaling triggers and execute if needed.
-        
+
         Args:
             metrics: Current metrics for evaluation
-            
+
         Returns:
             ScalingResult if scaling triggered, None otherwise
         """
         self._evaluation_count += 1
         metrics = metrics or {}
-        
+
         # Get current pool state
         state = await self.get_pool_state()
-        
+
         # Populate metrics from state if not provided
         if "cpu_usage" not in metrics:
             metrics["cpu_usage"] = state.avg_cpu_usage
@@ -338,7 +340,7 @@ class AgentPoolManager:
             metrics["message_queue_depth"] = state.message_queue_depth
         if "response_time_p95" not in metrics:
             metrics["response_time_p95"] = state.response_time_p95
-        
+
         # Calculate utilization
         if state.total_agents > 0:
             metrics["agent_pool_utilization"] = (
@@ -346,14 +348,14 @@ class AgentPoolManager:
             )
         else:
             metrics["agent_pool_utilization"] = 0
-        
+
         # Check each trigger
         for trigger_name, trigger in self.triggers.items():
             metric_value = metrics.get(trigger.metric_name, 0)
-            
+
             # Check if trigger condition is met
             should_trigger = self._should_trigger(metric_value, trigger)
-            
+
             if should_trigger:
                 # Check cooldown
                 if not self._cooldown_expired(trigger_name, trigger.action):
@@ -363,13 +365,13 @@ class AgentPoolManager:
                         action=trigger.action.value,
                     )
                     continue
-                
+
                 # Execute scaling
                 result = await self._execute_scaling(trigger, state)
                 self.scaling_history.append(result)
-                self.last_scaling_time[trigger_name] = datetime.now(timezone.utc)
+                self.last_scaling_time[trigger_name] = datetime.now(UTC)
                 self._scaling_count += 1
-                
+
                 logger.info(
                     "scaling_executed",
                     trigger=trigger_name,
@@ -377,34 +379,34 @@ class AgentPoolManager:
                     agents_added=result.agents_added,
                     agents_removed=result.agents_removed,
                 )
-                
+
                 return result
-        
+
         return None
-    
+
     def _should_trigger(self, metric_value: float, trigger: ScalingTrigger) -> bool:
         """Check if metric value should trigger scaling."""
         if trigger.action == ScalingAction.SCALE_UP:
             return metric_value > trigger.threshold
-        else:  # SCALE_DOWN
-            return metric_value < trigger.threshold
-    
+        # SCALE_DOWN
+        return metric_value < trigger.threshold
+
     def _cooldown_expired(self, trigger_name: str, action: ScalingAction) -> bool:
         """Check if cooldown period has expired."""
         if trigger_name not in self.last_scaling_time:
             return True
-        
+
         last_time = self.last_scaling_time[trigger_name]
-        now = datetime.now(timezone.utc)
-        
+        now = datetime.now(UTC)
+
         if action == ScalingAction.SCALE_UP:
             cooldown = self.config.scale_up_cooldown_seconds
         else:
             cooldown = self.config.scale_down_cooldown_seconds
-        
+
         elapsed = (now - last_time).total_seconds()
         return elapsed >= cooldown
-    
+
     async def _execute_scaling(
         self,
         trigger: ScalingTrigger,
@@ -412,12 +414,11 @@ class AgentPoolManager:
     ) -> ScalingResult:
         """Execute scaling operation."""
         start_time = time.time()
-        
+
         if trigger.action == ScalingAction.SCALE_UP:
             return await self._scale_up(trigger.count, start_time, state.total_agents)
-        else:
-            return await self._scale_down(trigger.count, start_time, state.total_agents)
-    
+        return await self._scale_down(trigger.count, start_time, state.total_agents)
+
     async def _scale_up(
         self,
         count: int,
@@ -428,7 +429,7 @@ class AgentPoolManager:
         # Check max replicas
         target_count = min(current_count + count, self.config.max_replicas)
         actual_add = target_count - current_count
-        
+
         if actual_add <= 0:
             return ScalingResult(
                 success=False,
@@ -437,15 +438,15 @@ class AgentPoolManager:
                 previous_count=current_count,
                 new_count=current_count,
             )
-        
+
         # Simulate adding instances (in real impl, would call Kubernetes API)
         for i in range(actual_add):
             instance_id = f"agent-{current_count + i + 1}"
             self.register_instance(instance_id)
-        
+
         duration_ms = (time.time() - start_time) * 1000
         self._total_agents_added += actual_add
-        
+
         return ScalingResult(
             success=True,
             message=f"Scaled up by {actual_add} agents",
@@ -455,7 +456,7 @@ class AgentPoolManager:
             new_count=target_count,
             duration_ms=duration_ms,
         )
-    
+
     async def _scale_down(
         self,
         count: int,
@@ -466,7 +467,7 @@ class AgentPoolManager:
         # Check min replicas
         target_count = max(current_count - count, self.config.min_replicas)
         actual_remove = current_count - target_count
-        
+
         if actual_remove <= 0:
             return ScalingResult(
                 success=False,
@@ -475,7 +476,7 @@ class AgentPoolManager:
                 previous_count=current_count,
                 new_count=current_count,
             )
-        
+
         # Graceful drain: mark instances as draining
         draining_count = 0
         for instance_id, instance in list(self._instances.items()):
@@ -484,19 +485,19 @@ class AgentPoolManager:
             if instance.status == AgentStatus.IDLE:
                 instance.status = AgentStatus.DRAINING
                 draining_count += 1
-        
+
         # Remove draining instances (simulated)
         removed_ids = [
             iid for iid, inst in self._instances.items()
             if inst.status == AgentStatus.DRAINING
         ][:actual_remove]
-        
+
         for instance_id in removed_ids:
             del self._instances[instance_id]
-        
+
         duration_ms = (time.time() - start_time) * 1000
         self._total_agents_removed += len(removed_ids)
-        
+
         return ScalingResult(
             success=True,
             message=f"Scaled down by {len(removed_ids)} agents (graceful drain)",
@@ -506,35 +507,34 @@ class AgentPoolManager:
             new_count=len(self._instances),
             duration_ms=duration_ms,
         )
-    
+
     async def scale_to(self, target_count: int) -> ScalingResult:
         """Scale agent pool to specific target count."""
         start_time = time.time()
         state = await self.get_pool_state()
         current_count = state.total_agents
-        
+
         if target_count > current_count:
             return await self._scale_up(
                 target_count - current_count,
                 start_time,
                 current_count,
             )
-        elif target_count < current_count:
+        if target_count < current_count:
             return await self._scale_down(
                 current_count - target_count,
                 start_time,
                 current_count,
             )
-        else:
-            return ScalingResult(
-                success=True,
-                message="Already at target count",
-                action=ScalingAction.NO_OP,
-                previous_count=current_count,
-                new_count=current_count,
-            )
-    
-    def get_metrics(self) -> Dict[str, Any]:
+        return ScalingResult(
+            success=True,
+            message="Already at target count",
+            action=ScalingAction.NO_OP,
+            previous_count=current_count,
+            new_count=current_count,
+        )
+
+    def get_metrics(self) -> dict[str, Any]:
         """Get pool manager metrics."""
         return {
             "evaluation_count": self._evaluation_count,
@@ -553,14 +553,14 @@ class AgentPoolManager:
 class LoadBalancer:
     """
     Load balancer with multiple strategies.
-    
+
     Features:
     - 4 strategies (least connections, round robin, weighted, sticky session)
     - Sub-5ms load balancing decision latency
     - Session affinity with 1 hour TTL
     - Health check integration
     """
-    
+
     def __init__(
         self,
         strategy: LoadBalancingStrategy = LoadBalancingStrategy.LEAST_CONNECTIONS,
@@ -568,35 +568,35 @@ class LoadBalancer:
     ):
         self.strategy = strategy
         self.session_ttl_seconds = session_ttl_seconds
-        
+
         # Round robin state
         self._rr_index = 0
-        
+
         # Sticky sessions
-        self._session_map: Dict[str, str] = {}  # session_id -> instance_id
-        self._session_timestamps: Dict[str, float] = {}
-        
+        self._session_map: dict[str, str] = {}  # session_id -> instance_id
+        self._session_timestamps: dict[str, float] = {}
+
         # Weights for weighted strategy
-        self._weights: Dict[str, int] = defaultdict(lambda: 1)
-        
+        self._weights: dict[str, int] = defaultdict(lambda: 1)
+
         # Health status
-        self._healthy_instances: Set[str] = set()
-        
+        self._healthy_instances: set[str] = set()
+
         # Metrics
         self._request_count = 0
         self._total_decision_time_ms = 0.0
-    
+
     def register_instance(self, instance_id: str, weight: int = 1):
         """Register an instance with the load balancer."""
         self._healthy_instances.add(instance_id)
         self._weights[instance_id] = weight
         logger.info("lb_instance_registered", instance_id=instance_id, weight=weight)
-    
+
     def unregister_instance(self, instance_id: str):
         """Unregister an instance from the load balancer."""
         self._healthy_instances.discard(instance_id)
         self._weights.pop(instance_id, None)
-        
+
         # Clean up sessions
         sessions_to_remove = [
             sid for sid, iid in self._session_map.items()
@@ -605,35 +605,35 @@ class LoadBalancer:
         for session_id in sessions_to_remove:
             del self._session_map[session_id]
             del self._session_timestamps[session_id]
-        
+
         logger.info("lb_instance_unregistered", instance_id=instance_id)
-    
+
     def set_instance_health(self, instance_id: str, healthy: bool):
         """Set instance health status."""
         if healthy:
             self._healthy_instances.add(instance_id)
         else:
             self._healthy_instances.discard(instance_id)
-    
+
     async def select_instance(
         self,
-        session_id: Optional[str] = None,
+        session_id: str | None = None,
     ) -> LoadBalancerResult:
         """
         Select an instance for a request.
-        
+
         Args:
             session_id: Optional session ID for sticky sessions
-            
+
         Returns:
             LoadBalancerResult with selected instance
         """
         start_time = time.time()
         self._request_count += 1
-        
+
         # Clean expired sessions
         self._cleanup_sessions()
-        
+
         # Check for sticky session
         if session_id and self.strategy == LoadBalancingStrategy.STICKY_SESSION:
             if session_id in self._session_map:
@@ -641,14 +641,14 @@ class LoadBalancer:
                 if instance_id in self._healthy_instances:
                     decision_time_ms = (time.time() - start_time) * 1000
                     self._total_decision_time_ms += decision_time_ms
-                    
+
                     return LoadBalancerResult(
                         selected_instance=instance_id,
                         strategy=self.strategy,
                         decision_time_ms=decision_time_ms,
                         instance_health={"healthy": True},
                     )
-        
+
         # Select based on strategy
         if self.strategy == LoadBalancingStrategy.ROUND_ROBIN:
             instance_id = self._select_round_robin()
@@ -663,73 +663,73 @@ class LoadBalancer:
                 self._session_timestamps[session_id] = time.time()
         else:
             instance_id = self._select_round_robin()
-        
+
         decision_time_ms = (time.time() - start_time) * 1000
         self._total_decision_time_ms += decision_time_ms
-        
+
         return LoadBalancerResult(
             selected_instance=instance_id,
             strategy=self.strategy,
             decision_time_ms=decision_time_ms,
             instance_health={"healthy": instance_id in self._healthy_instances},
         )
-    
+
     def _select_round_robin(self) -> str:
         """Select instance using round robin."""
         healthy = list(self._healthy_instances)
         if not healthy:
             raise ValueError("No healthy instances available")
-        
+
         self._rr_index = (self._rr_index + 1) % len(healthy)
         return healthy[self._rr_index]
-    
+
     def _select_least_connections(self) -> str:
         """Select instance with least active connections."""
         # In real implementation, would query actual connection counts
         # For now, use round robin as fallback
         return self._select_round_robin()
-    
+
     def _select_weighted(self) -> str:
         """Select instance based on weights."""
         healthy = list(self._healthy_instances)
         if not healthy:
             raise ValueError("No healthy instances available")
-        
+
         # Weighted random selection
         total_weight = sum(self._weights[iid] for iid in healthy)
         import random
         r = random.uniform(0, total_weight)
-        
+
         cumulative = 0
         for instance_id in healthy:
             cumulative += self._weights[instance_id]
             if r <= cumulative:
                 return instance_id
-        
+
         return healthy[-1]
-    
+
     def _cleanup_sessions(self):
         """Clean up expired sessions."""
         now = time.time()
         cutoff = now - self.session_ttl_seconds
-        
+
         expired = [
             sid for sid, ts in self._session_timestamps.items()
             if ts < cutoff
         ]
-        
+
         for session_id in expired:
             del self._session_map[session_id]
             del self._session_timestamps[session_id]
-    
-    def get_metrics(self) -> Dict[str, Any]:
+
+    def get_metrics(self) -> dict[str, Any]:
         """Get load balancer metrics."""
         avg_decision_time = (
             self._total_decision_time_ms / self._request_count
             if self._request_count > 0
             else 0
         )
-        
+
         return {
             "total_requests": self._request_count,
             "avg_decision_time_ms": avg_decision_time,
@@ -746,14 +746,14 @@ class LoadBalancer:
 class StateSynchronizer:
     """
     State synchronization across instances.
-    
+
     Features:
     - Redis pub/sub for real-time updates
     - PostgreSQL persistence for durability
     - State recovery on instance restart
     - < 100ms state propagation latency
     """
-    
+
     def __init__(
         self,
         redis_url: str = "redis://localhost:6379",
@@ -763,26 +763,26 @@ class StateSynchronizer:
         self.redis_url = redis_url
         self.postgres_url = postgres_url
         self.channel_prefix = channel_prefix
-        
+
         # State storage
-        self._local_state: Dict[str, Any] = {}
+        self._local_state: dict[str, Any] = {}
         self._state_version: int = 0
-        
+
         # Redis pub/sub (lazy init)
         self._redis = None
         self._pubsub = None
-        
+
         # Metrics
         self._sync_count = 0
         self._total_latency_ms = 0.0
         self._conflict_count = 0
-        
+
         logger.info(
             "state_synchronizer_initialized",
             redis_url=redis_url,
             channel_prefix=channel_prefix,
         )
-    
+
     async def initialize(self):
         """Initialize Redis connection."""
         try:
@@ -794,7 +794,7 @@ class StateSynchronizer:
         except Exception as e:
             logger.warning("state_synchronizer_redis_failed", error=str(e))
             self._redis = None
-    
+
     async def set_state(
         self,
         key: str,
@@ -803,55 +803,55 @@ class StateSynchronizer:
     ) -> bool:
         """
         Set state value.
-        
+
         Args:
             key: State key
             value: State value
             broadcast: Whether to broadcast to other instances
-            
+
         Returns:
             Success status
         """
         start_time = time.time()
         self._state_version += 1
-        
+
         # Update local state
         self._local_state[key] = {
             "value": value,
             "version": self._state_version,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
-        
+
         # Persist to PostgreSQL (simulated)
         await self._persist_state(key, value)
-        
+
         # Broadcast to other instances
         if broadcast and self._redis:
             await self._broadcast_update(key, value)
-        
+
         latency_ms = (time.time() - start_time) * 1000
         self._sync_count += 1
         self._total_latency_ms += latency_ms
-        
+
         return True
-    
+
     async def get_state(self, key: str, default: Any = None) -> Any:
         """Get state value."""
         if key in self._local_state:
             return self._local_state[key]["value"]
-        
+
         # Try to fetch from PostgreSQL
         value = await self._fetch_state(key)
         if value is not None:
             self._local_state[key] = {
                 "value": value,
                 "version": self._state_version,
-                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
             }
             return value
-        
+
         return default
-    
+
     async def _broadcast_update(self, key: str, value: Any):
         """Broadcast state update to other instances."""
         try:
@@ -859,38 +859,37 @@ class StateSynchronizer:
                 "key": key,
                 "value": value,
                 "version": self._state_version,
-                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
             }
             await self._redis.publish(f"{self.channel_prefix}updates", str(message))
         except Exception as e:
             logger.warning("state_broadcast_failed", error=str(e))
-    
+
     async def _persist_state(self, key: str, value: Any):
         """Persist state to PostgreSQL."""
         # Simulated persistence
         # In real implementation, would use asyncpg or similar
-        pass
-    
-    async def _fetch_state(self, key: str) -> Optional[Any]:
+
+    async def _fetch_state(self, key: str) -> Any | None:
         """Fetch state from PostgreSQL."""
         # Simulated fetch
         return None
-    
-    async def recover_state(self) -> Dict[str, Any]:
+
+    async def recover_state(self) -> dict[str, Any]:
         """Recover state from persistent storage."""
         # Fetch all state from PostgreSQL
         # In real implementation, would query database
         logger.info("state_recovery_completed")
         return self._local_state.copy()
-    
-    def get_metrics(self) -> Dict[str, Any]:
+
+    def get_metrics(self) -> dict[str, Any]:
         """Get synchronizer metrics."""
         avg_latency = (
             self._total_latency_ms / self._sync_count
             if self._sync_count > 0
             else 0
         )
-        
+
         return {
             "sync_count": self._sync_count,
             "avg_latency_ms": avg_latency,
@@ -908,95 +907,93 @@ class StateSynchronizer:
 class HorizontalScaling:
     """
     Orchestrates horizontal scaling components.
-    
+
     Combines:
     - Agent Pool Manager
     - Load Balancer
     - State Synchronizer
     """
-    
+
     def __init__(
         self,
-        config: Optional[ScalingConfig] = None,
+        config: ScalingConfig | None = None,
     ):
         self.config = config or ScalingConfig()
-        
+
         self.pool_manager = AgentPoolManager(self.config)
         self.load_balancer = LoadBalancer()
         self.state_sync = StateSynchronizer()
-        
+
         # Background tasks
         self._running = False
-        self._evaluation_task: Optional[asyncio.Task] = None
-        
+        self._evaluation_task: asyncio.Task | None = None
+
         logger.info("horizontal_scaling_initialized")
-    
+
     async def start(self):
         """Start horizontal scaling system."""
         self._running = True
-        
+
         # Initialize state synchronizer
         await self.state_sync.initialize()
-        
+
         # Start background evaluation loop
         self._evaluation_task = asyncio.create_task(self._evaluation_loop())
-        
+
         logger.info("horizontal_scaling_started")
-    
+
     async def stop(self):
         """Stop horizontal scaling system."""
         self._running = False
-        
+
         if self._evaluation_task:
             self._evaluation_task.cancel()
-            try:
+            with contextlib.suppress(asyncio.CancelledError):
                 await self._evaluation_task
-            except asyncio.CancelledError:
-                pass
-        
+
         logger.info("horizontal_scaling_stopped")
-    
+
     async def _evaluation_loop(self):
         """Background loop for scaling evaluation."""
         while self._running:
             try:
                 # Evaluate scaling
                 result = await self.pool_manager.evaluate_scaling()
-                
+
                 if result:
                     # Update load balancer
                     if result.action == ScalingAction.SCALE_UP:
                         for i in range(result.agents_added):
                             instance_id = f"agent-{result.new_count - result.agents_added + i + 1}"
                             self.load_balancer.register_instance(instance_id)
-                    
+
                     elif result.action == ScalingAction.SCALE_DOWN:
                         # Unregister removed instances
                         pass
-                
+
                 # Wait for next evaluation
                 await asyncio.sleep(self.config.evaluation_interval_seconds)
-                
+
             except asyncio.CancelledError:
                 break
             except Exception as e:
                 logger.error("scaling_evaluation_error", error=str(e))
                 await asyncio.sleep(self.config.evaluation_interval_seconds)
-    
-    async def handle_request(self, session_id: Optional[str] = None) -> str:
+
+    async def handle_request(self, session_id: str | None = None) -> str:
         """
         Handle incoming request with load balancing.
-        
+
         Args:
             session_id: Optional session ID for sticky sessions
-            
+
         Returns:
             Selected instance ID
         """
         result = await self.load_balancer.select_instance(session_id)
         return result.selected_instance
-    
-    def get_all_metrics(self) -> Dict[str, Any]:
+
+    def get_all_metrics(self) -> dict[str, Any]:
         """Get comprehensive metrics from all components."""
         return {
             "pool_manager": self.pool_manager.get_metrics(),

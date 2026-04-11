@@ -8,30 +8,28 @@ Provides CRUD operations through a RESTful API.
 from __future__ import annotations
 
 from datetime import datetime
-from typing import Any, Dict, Optional
-from uuid import UUID
-
-from fastapi import APIRouter, Depends, HTTPException, Query
+from typing import TYPE_CHECKING, Any
 
 import structlog
+from fastapi import APIRouter, Depends, HTTPException, Query
 
-from heretek_swarm.config.service import (
-    ConfigurationService,
-    get_config_service,
-)
 from heretek_swarm.config.models import (
-    UserConfigurationCreate,
-    UserConfigurationUpdate,
-    LLMProviderCreate,
-    LLMProviderUpdate,
-    LLMProviderTestRequest,
-    EmbeddingProviderCreate,
-    EmbeddingProviderUpdate,
-    EmbeddingProviderTestRequest,
     AgentConfigCreate,
     AgentConfigUpdate,
     ConfigurationImport,
+    EmbeddingProviderCreate,
+    EmbeddingProviderTestRequest,
+    EmbeddingProviderUpdate,
     ImportOptions,
+    LLMProviderCreate,
+    LLMProviderTestRequest,
+    LLMProviderUpdate,
+    UserConfigurationCreate,
+    UserConfigurationUpdate,
+)
+from heretek_swarm.config.service import (
+    ConfigurationService,
+    get_config_service,
 )
 from heretek_swarm.gateway.auth import verify_auth
 
@@ -39,9 +37,12 @@ from heretek_swarm.gateway.auth import verify_auth
 # These imports are resolved only when the functions are called
 from heretek_swarm.utils import get_lazy_import
 
+if TYPE_CHECKING:
+    from uuid import UUID
+
 # Lazy-loaded provider factory functions
-_llm_factory = get_lazy_import('heretek_swarm.llm.providers.factory')
-_embedding_factory = get_lazy_import('heretek_swarm.embeddings.providers.factory')
+_llm_factory = get_lazy_import("heretek_swarm.llm.providers.factory")
+_embedding_factory = get_lazy_import("heretek_swarm.embeddings.providers.factory")
 
 
 def _get_llm_provider_factory():
@@ -73,12 +74,12 @@ def get_service() -> ConfigurationService:
 
 @router.get("")
 async def get_all_configs(
-    category: Optional[str] = Query(None, description="Filter by category"),
+    category: str | None = Query(None, description="Filter by category"),
     limit: int = Query(100, ge=1, le=1000),
     offset: int = Query(0, ge=0),
     authenticated: str = Depends(verify_auth),
     service: ConfigurationService = Depends(get_service),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Get all configurations with optional filtering."""
     configs = await service.list_configs(category=category, limit=limit, offset=offset)
     return {
@@ -94,7 +95,7 @@ async def get_config(
     key: str,
     authenticated: str = Depends(verify_auth),
     service: ConfigurationService = Depends(get_service),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Get a specific configuration by key."""
     config = await service.get_config(key)
     if not config:
@@ -108,7 +109,7 @@ async def update_config(
     update: UserConfigurationUpdate,
     authenticated: str = Depends(verify_auth),
     service: ConfigurationService = Depends(get_service),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Update a configuration."""
     config = await service.update_config(key, update, changed_by=authenticated)
     if not config:
@@ -121,7 +122,7 @@ async def create_config(
     config: UserConfigurationCreate,
     authenticated: str = Depends(verify_auth),
     service: ConfigurationService = Depends(get_service),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Create a new configuration."""
     try:
         new_config = await service.create_config(config, changed_by=authenticated)
@@ -135,7 +136,7 @@ async def delete_config(
     key: str,
     authenticated: str = Depends(verify_auth),
     service: ConfigurationService = Depends(get_service),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Delete a configuration."""
     success = await service.delete_config(key, changed_by=authenticated)
     if not success:
@@ -148,7 +149,7 @@ async def delete_config(
 # =============================================================================
 
 @router.get("/llm/types")
-async def list_llm_provider_types() -> Dict[str, Any]:
+async def list_llm_provider_types() -> dict[str, Any]:
     """List available LLM provider types."""
     types = list_llm_provider_types()
     info = [get_llm_provider_info(t) for t in types]
@@ -157,11 +158,11 @@ async def list_llm_provider_types() -> Dict[str, Any]:
 
 @router.get("/llm/providers")
 async def list_llm_providers(
-    provider_type: Optional[str] = Query(None, description="Filter by provider type"),
+    provider_type: str | None = Query(None, description="Filter by provider type"),
     enabled_only: bool = Query(False, description="Only return enabled providers"),
     authenticated: str = Depends(verify_auth),
     service: ConfigurationService = Depends(get_service),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """List configured LLM providers."""
     providers = await service.list_llm_providers(
         provider_type=provider_type,
@@ -178,7 +179,7 @@ async def get_llm_provider(
     provider_id: UUID,
     authenticated: str = Depends(verify_auth),
     service: ConfigurationService = Depends(get_service),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Get a specific LLM provider."""
     provider = await service.get_llm_provider(provider_id)
     if not provider:
@@ -191,7 +192,7 @@ async def create_llm_provider(
     provider: LLMProviderCreate,
     authenticated: str = Depends(verify_auth),
     service: ConfigurationService = Depends(get_service),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Create a new LLM provider."""
     try:
         # Note: API key should be encrypted before storage in production
@@ -207,7 +208,7 @@ async def update_llm_provider(
     update: LLMProviderUpdate,
     authenticated: str = Depends(verify_auth),
     service: ConfigurationService = Depends(get_service),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Update an LLM provider."""
     provider = await service.update_llm_provider(provider_id, update, changed_by=authenticated)
     if not provider:
@@ -220,7 +221,7 @@ async def delete_llm_provider(
     provider_id: UUID,
     authenticated: str = Depends(verify_auth),
     service: ConfigurationService = Depends(get_service),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Delete an LLM provider."""
     success = await service.delete_llm_provider(provider_id, changed_by=authenticated)
     if not success:
@@ -234,12 +235,12 @@ async def test_llm_provider(
     test_request: LLMProviderTestRequest,
     authenticated: str = Depends(verify_auth),
     service: ConfigurationService = Depends(get_service),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Test LLM provider connectivity."""
     provider = await service.get_llm_provider(provider_id)
     if not provider:
         raise HTTPException(404, f"LLM provider '{provider_id}' not found")
-    
+
     try:
         # Create provider instance
         llm_provider = _get_llm_provider_factory().create_llm_provider(
@@ -251,10 +252,10 @@ async def test_llm_provider(
                 "extra_config": provider.extra_config,
             }
         )
-        
+
         # Test connectivity
         result = await llm_provider.test_connectivity(model=test_request.model)
-        
+
         return {
             "provider_id": str(provider_id),
             "provider_name": provider.provider_name,
@@ -264,7 +265,7 @@ async def test_llm_provider(
             "response_text": result.response_text if result.success else None,
             "error": result.error if not result.success else None,
         }
-        
+
     except Exception as e:
         return {
             "provider_id": str(provider_id),
@@ -279,7 +280,7 @@ async def test_llm_provider(
 # =============================================================================
 
 @router.get("/embedding/types")
-async def list_embedding_provider_types() -> Dict[str, Any]:
+async def list_embedding_provider_types() -> dict[str, Any]:
     """List available embedding provider types."""
     types = list_embedding_provider_types()
     info = [get_embedding_provider_info(t) for t in types]
@@ -288,11 +289,11 @@ async def list_embedding_provider_types() -> Dict[str, Any]:
 
 @router.get("/embedding/providers")
 async def list_embedding_providers(
-    provider_type: Optional[str] = Query(None, description="Filter by provider type"),
+    provider_type: str | None = Query(None, description="Filter by provider type"),
     enabled_only: bool = Query(False, description="Only return enabled providers"),
     authenticated: str = Depends(verify_auth),
     service: ConfigurationService = Depends(get_service),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """List configured embedding providers."""
     providers = await service.list_embedding_providers(
         provider_type=provider_type,
@@ -309,7 +310,7 @@ async def get_embedding_provider(
     provider_id: UUID,
     authenticated: str = Depends(verify_auth),
     service: ConfigurationService = Depends(get_service),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Get a specific embedding provider."""
     provider = await service.get_embedding_provider(provider_id)
     if not provider:
@@ -322,7 +323,7 @@ async def create_embedding_provider(
     provider: EmbeddingProviderCreate,
     authenticated: str = Depends(verify_auth),
     service: ConfigurationService = Depends(get_service),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Create a new embedding provider."""
     try:
         new_provider = await service.create_embedding_provider(provider, changed_by=authenticated)
@@ -337,7 +338,7 @@ async def update_embedding_provider(
     update: EmbeddingProviderUpdate,
     authenticated: str = Depends(verify_auth),
     service: ConfigurationService = Depends(get_service),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Update an embedding provider."""
     provider = await service.update_embedding_provider(provider_id, update, changed_by=authenticated)
     if not provider:
@@ -350,7 +351,7 @@ async def delete_embedding_provider(
     provider_id: UUID,
     authenticated: str = Depends(verify_auth),
     service: ConfigurationService = Depends(get_service),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Delete an embedding provider."""
     success = await service.delete_embedding_provider(provider_id, changed_by=authenticated)
     if not success:
@@ -364,12 +365,12 @@ async def test_embedding_provider(
     test_request: EmbeddingProviderTestRequest,
     authenticated: str = Depends(verify_auth),
     service: ConfigurationService = Depends(get_service),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Test embedding provider connectivity."""
     provider = await service.get_embedding_provider(provider_id)
     if not provider:
         raise HTTPException(404, f"Embedding provider '{provider_id}' not found")
-    
+
     try:
         # Create provider instance
         embedding_provider = _get_embedding_provider_factory().create_embedding_provider(
@@ -381,7 +382,7 @@ async def test_embedding_provider(
                 "extra_config": provider.extra_config,
             }
         )
-        
+
         # Test connectivity by generating an embedding
         import time
         start_time = time.time()
@@ -390,7 +391,7 @@ async def test_embedding_provider(
             model=test_request.model,
         )
         latency_ms = (time.time() - start_time) * 1000
-        
+
         return {
             "provider_id": str(provider_id),
             "provider_name": provider.provider_name,
@@ -399,7 +400,7 @@ async def test_embedding_provider(
             "dimensions": response.dimensions,
             "latency_ms": latency_ms,
         }
-        
+
     except Exception as e:
         return {
             "provider_id": str(provider_id),
@@ -415,11 +416,11 @@ async def test_embedding_provider(
 
 @router.get("/agent/configs")
 async def list_agent_configs(
-    agent_type: Optional[str] = Query(None, description="Filter by agent type"),
+    agent_type: str | None = Query(None, description="Filter by agent type"),
     active_only: bool = Query(True, description="Only return active configs"),
     authenticated: str = Depends(verify_auth),
     service: ConfigurationService = Depends(get_service),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """List agent configurations."""
     configs = await service.list_agent_configs(agent_type=agent_type, active_only=active_only)
     return {
@@ -433,7 +434,7 @@ async def get_agent_config(
     config_id: UUID,
     authenticated: str = Depends(verify_auth),
     service: ConfigurationService = Depends(get_service),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Get a specific agent configuration."""
     config = await service.get_agent_config(config_id)
     if not config:
@@ -446,7 +447,7 @@ async def create_agent_config(
     config: AgentConfigCreate,
     authenticated: str = Depends(verify_auth),
     service: ConfigurationService = Depends(get_service),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Create a new agent configuration."""
     try:
         new_config = await service.create_agent_config(config, changed_by=authenticated)
@@ -461,7 +462,7 @@ async def update_agent_config(
     update: AgentConfigUpdate,
     authenticated: str = Depends(verify_auth),
     service: ConfigurationService = Depends(get_service),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Update an agent configuration."""
     config = await service.update_agent_config(config_id, update, changed_by=authenticated)
     if not config:
@@ -474,7 +475,7 @@ async def delete_agent_config(
     config_id: UUID,
     authenticated: str = Depends(verify_auth),
     service: ConfigurationService = Depends(get_service),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Delete an agent configuration."""
     success = await service.delete_agent_config(config_id, changed_by=authenticated)
     if not success:
@@ -488,11 +489,11 @@ async def delete_agent_config(
 
 @router.get("/audit-log")
 async def get_audit_log(
-    entity_type: Optional[str] = Query(None, description="Filter by entity type"),
+    entity_type: str | None = Query(None, description="Filter by entity type"),
     limit: int = Query(100, ge=1, le=1000),
     authenticated: str = Depends(verify_auth),
     service: ConfigurationService = Depends(get_service),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Get configuration audit log."""
     logs = await service.get_audit_log(entity_type=entity_type, limit=limit)
     return {
@@ -509,7 +510,7 @@ async def get_audit_log(
 async def export_configurations(
     authenticated: str = Depends(verify_auth),
     service: ConfigurationService = Depends(get_service),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Export all configurations."""
     export_data = await service.export_configurations(exported_by=authenticated)
     return export_data.model_dump()
@@ -521,7 +522,7 @@ async def import_configurations(
     options: ImportOptions = ImportOptions(),
     authenticated: str = Depends(verify_auth),
     service: ConfigurationService = Depends(get_service),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Import configurations from a bundle."""
     result = await service.import_configurations(import_data, options, changed_by=authenticated)
     return result.model_dump()
@@ -535,10 +536,9 @@ async def import_configurations(
 async def migrate_from_env(
     authenticated: str = Depends(verify_auth),
     service: ConfigurationService = Depends(get_service),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """Migrate configurations from environment variables to database."""
-    result = await service.migrate_from_env(changed_by=authenticated)
-    return result
+    return await service.migrate_from_env(changed_by=authenticated)
 
 
 # =============================================================================
@@ -549,36 +549,36 @@ async def migrate_from_env(
 async def reload_configurations(
     authenticated: str = Depends(verify_auth),
     service: ConfigurationService = Depends(get_service),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Reload configuration cache from database.
-    
+
     This endpoint invalidates the cached configurations and reloads them
     from the database. Useful for applying configuration changes at runtime
     without restarting the application.
-    
+
     Returns:
         Reload status and cache statistics
     """
     from heretek_swarm.config.loader import get_config_loader, reload_config
-    
+
     try:
         # Reload the configuration cache
         reload_result = await reload_config()
-        
+
         # Get cache stats
         loader = get_config_loader()
         cache_stats = loader.get_cache_stats()
-        
+
         logger.info("Configuration reloaded", cached_keys=reload_result.get("cached_keys", []))
-        
+
         return {
             "status": "reloaded",
             "cached_keys": reload_result.get("cached_keys", []),
             "cache_count": reload_result.get("cache_count", 0),
             "cache_stats": cache_stats,
             "reloaded_by": authenticated,
-            "reloaded_at": datetime.utcnow().isoformat() if hasattr(datetime, 'utcnow') else datetime.now().isoformat(),
+            "reloaded_at": datetime.utcnow().isoformat() if hasattr(datetime, "utcnow") else datetime.now().isoformat(),
         }
     except Exception as e:
         logger.error("Configuration reload failed", error=str(e))
@@ -592,24 +592,24 @@ async def reload_configurations(
 @router.get("/health")
 async def configuration_health(
     service: ConfigurationService = Depends(get_service),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Check configuration service health status.
-    
+
     Returns:
         Health status including database connectivity and cache status
     """
     from heretek_swarm.config.loader import get_config_loader
-    
+
     try:
         # Test database connectivity
         test_config = await service.get_config("system.health_check")
         database_healthy = test_config is not None or True  # Config may not exist but connection works
-        
+
         # Get cache stats
         loader = get_config_loader()
         cache_stats = loader.get_cache_stats()
-        
+
         return {
             "status": "healthy",
             "database_connected": database_healthy,
@@ -632,16 +632,16 @@ async def configuration_health(
 async def export_configuration_bundle(
     authenticated: str = Depends(verify_auth),
     service: ConfigurationService = Depends(get_service),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Export all configurations as a downloadable bundle.
-    
+
     Returns:
         Complete configuration export with metadata
     """
-    
+
     export_data = await service.export_configurations(exported_by=authenticated)
-    
+
     return {
         "version": export_data.version,
         "exported_at": export_data.exported_at.isoformat(),
@@ -665,20 +665,20 @@ async def import_configuration_bundle(
     options: ImportOptions = ImportOptions(),
     authenticated: str = Depends(verify_auth),
     service: ConfigurationService = Depends(get_service),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Import configurations from a bundle.
-    
+
     Args:
         import_data: Configuration bundle to import
         options: Import options (skip_conflicts, etc.)
         authenticated: Authenticated user
-        
+
     Returns:
         Import result summary
     """
     result = await service.import_configurations(import_data, options, changed_by=authenticated)
-    
+
     return {
         "success": result.success,
         "imported_count": result.imported_count,

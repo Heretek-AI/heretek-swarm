@@ -4,14 +4,16 @@ Example Plugins for Heretek Swarm
 This module contains example plugins demonstrating the plugin system.
 """
 
-from typing import Dict, Any, Optional
+from datetime import UTC
+from typing import Any
+
 from .manager import Plugin, PluginMetadata, PluginState
 
 
 class LoggingPlugin(Plugin):
     """
     Example plugin that logs all messages.
-    
+
     Demonstrates basic message handling.
     """
 
@@ -28,9 +30,8 @@ class LoggingPlugin(Plugin):
     async def on_load(self, runtime) -> None:
         """Called when plugin is loaded."""
         await super().on_load(runtime)
-        print(f"LoggingPlugin loaded: {self.metadata.name}")
 
-    async def on_message(self, message: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    async def on_message(self, message: dict[str, Any]) -> dict[str, Any] | None:
         """
         Handle incoming messages.
 
@@ -41,7 +42,6 @@ class LoggingPlugin(Plugin):
             None (no response)
         """
         self.message_count += 1
-        print(f"[LoggingPlugin] Message {self.message_count}: {message.get('type', 'unknown')}")
 
         # Don't modify the message, just log it
         return None
@@ -50,7 +50,7 @@ class LoggingPlugin(Plugin):
 class MemoryEnhancementPlugin(Plugin):
     """
     Example plugin that enhances memory operations.
-    
+
     Demonstrates agent lifecycle hooks.
     """
 
@@ -62,12 +62,11 @@ class MemoryEnhancementPlugin(Plugin):
             author="Heretek Swarm",
             dependencies=["memory"]
         )
-        self.active_agents: Dict[str, Any] = {}
+        self.active_agents: dict[str, Any] = {}
 
     async def on_load(self, runtime) -> None:
         """Called when plugin is loaded."""
         await super().on_load(runtime)
-        print(f"MemoryEnhancementPlugin loaded: {self.metadata.name}")
 
     async def on_agent_spawn(self, agent_id: str) -> None:
         """
@@ -80,7 +79,6 @@ class MemoryEnhancementPlugin(Plugin):
             "spawned_at": self._get_timestamp(),
             "message_count": 0
         }
-        print(f"[MemoryEnhancementPlugin] Agent spawned: {agent_id}")
 
     async def on_agent_terminate(self, agent_id: str) -> None:
         """
@@ -90,12 +88,10 @@ class MemoryEnhancementPlugin(Plugin):
             agent_id: Agent identifier
         """
         if agent_id in self.active_agents:
-            stats = self.active_agents[agent_id]
-            print(f"[MemoryEnhancementPlugin] Agent terminated: {agent_id}")
-            print(f"  Messages processed: {stats['message_count']}")
+            self.active_agents[agent_id]
             del self.active_agents[agent_id]
 
-    async def on_message(self, message: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    async def on_message(self, message: dict[str, Any]) -> dict[str, Any] | None:
         """
         Handle incoming messages.
 
@@ -151,14 +147,14 @@ class MemoryEnhancementPlugin(Plugin):
 
     def _get_timestamp(self) -> str:
         """Get current timestamp in ISO format."""
-        from datetime import datetime, timezone
-        return datetime.now(timezone.utc).isoformat()
+        from datetime import datetime
+        return datetime.now(UTC).isoformat()
 
 
 class HealthMonitorPlugin(Plugin):
     """
     Example plugin that monitors system health.
-    
+
     Demonstrates periodic tasks.
     """
 
@@ -176,8 +172,7 @@ class HealthMonitorPlugin(Plugin):
     async def on_load(self, runtime) -> None:
         """Called when plugin is loaded."""
         await super().on_load(runtime)
-        print(f"HealthMonitorPlugin loaded: {self.metadata.name}")
-        
+
         # Start periodic health checks
         self._start_health_checks()
 
@@ -195,22 +190,21 @@ class HealthMonitorPlugin(Plugin):
     async def _check_health(self) -> None:
         """Perform health check."""
         self.check_count += 1
-        
+
         # Check memory
         try:
             from memory.persistent import PersistentMemoryStore
             memory_store = PersistentMemoryStore()
             await memory_store.connect()
-            
+
             # Simple health check
             self.health_status = "healthy"
-            
-        except Exception as e:
-            self.health_status = f"unhealthy: {str(e)}"
-        
-        print(f"[HealthMonitorPlugin] Health check #{self.check_count}: {self.health_status}")
 
-    async def on_message(self, message: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+        except Exception as e:
+            self.health_status = f"unhealthy: {e!s}"
+
+
+    async def on_message(self, message: dict[str, Any]) -> dict[str, Any] | None:
         """
         Handle incoming messages.
 
@@ -239,7 +233,7 @@ AVAILABLE_PLUGINS = {
 }
 
 
-def get_plugin(plugin_name: str) -> Optional[type]:
+def get_plugin(plugin_name: str) -> type | None:
     """
     Get a plugin class by name.
 

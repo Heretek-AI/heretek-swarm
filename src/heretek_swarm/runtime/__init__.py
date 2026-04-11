@@ -4,8 +4,14 @@ Heretek Swarm Runtime Package.
 Provides agent runtime, character system, and tool registry for the swarm.
 """
 
-from .agent_runtime import AgentRuntime, AgentContext, AgentState
-from .tools import ToolRegistry
+import json
+
+# New class-based character system
+from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Any, Dict, List, Optional
+
+from .agent_runtime import AgentContext, AgentRuntime, AgentState
 from .autonomous_runtime import (
     AutonomousRuntime,
     RuntimeState,
@@ -13,27 +19,22 @@ from .autonomous_runtime import (
 
 # Support both old dictionary-based and new class-based character systems
 from .characters import CHARACTERS, get_character
-
-# New class-based character system
-from dataclasses import dataclass, field
-from pathlib import Path
-from typing import Any, Dict, List, Optional
-import json
+from .tools import ToolRegistry
 
 
 @dataclass
 class CharacterStyle:
     """Defines the character's communication style."""
-    all: List[str] = field(default_factory=list)
-    chat: List[str] = field(default_factory=list)
-    speak: List[str] = field(default_factory=list)
+    all: list[str] = field(default_factory=list)
+    chat: list[str] = field(default_factory=list)
+    speak: list[str] = field(default_factory=list)
 
 
-@dataclass 
+@dataclass
 class Character:
     """
     Character definition for an agent.
-    
+
     Contains all the configuration needed to define an agent's
     personality, knowledge, and behavior patterns.
     """
@@ -41,16 +42,16 @@ class Character:
     role: str
     bio: str
     lore: str = ""
-    knowledge: List[str] = field(default_factory=list)
-    message_examples: List[List[List[str]]] = field(default_factory=list)
-    topics: List[str] = field(default_factory=list)
+    knowledge: list[str] = field(default_factory=list)
+    message_examples: list[list[list[str]]] = field(default_factory=list)
+    topics: list[str] = field(default_factory=list)
     style: CharacterStyle = field(default_factory=CharacterStyle)
-    adjectives: List[str] = field(default_factory=list)
-    goals: List[str] = field(default_factory=list)
-    constraints: List[str] = field(default_factory=list)
-    
+    adjectives: list[str] = field(default_factory=list)
+    goals: list[str] = field(default_factory=list)
+    constraints: list[str] = field(default_factory=list)
+
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "Character":
+    def from_dict(cls, data: dict[str, Any]) -> "Character":
         """Create a Character from a dictionary."""
         style_data = data.get("style", {})
         style = CharacterStyle(
@@ -71,15 +72,15 @@ class Character:
             goals=data.get("goals", []),
             constraints=data.get("constraints", []),
         )
-    
+
     @classmethod
     def from_json(cls, json_path: Path) -> "Character":
         """Load a character from a JSON file."""
-        with open(json_path, "r", encoding="utf-8") as f:
+        with open(json_path, encoding="utf-8") as f:
             data = json.load(f)
         return cls.from_dict(data)
-    
-    def to_dict(self) -> Dict[str, Any]:
+
+    def to_dict(self) -> dict[str, Any]:
         """Convert character to dictionary."""
         return {
             "name": self.name,
@@ -102,21 +103,21 @@ class Character:
 
 class CharacterRegistry:
     """Registry for loading and managing characters."""
-    
-    def __init__(self, characters_dir: Optional[Path] = None):
+
+    def __init__(self, characters_dir: Path | None = None):
         if characters_dir is None:
             characters_dir = Path(__file__).parent / "characters"
         self.characters_dir = Path(characters_dir)
-        self._characters: Dict[str, Character] = {}
-    
-    def load_character(self, name: str) -> Optional[Character]:
+        self._characters: dict[str, Character] = {}
+
+    def load_character(self, name: str) -> Character | None:
         """Load a character by name."""
         char_file = self.characters_dir / f"{name.lower()}.json"
         if char_file.exists():
             return Character.from_json(char_file)
         return None
-    
-    def get_character(self, name: str) -> Optional[Character]:
+
+    def get_character(self, name: str) -> Character | None:
         """Get a character, loading if necessary."""
         if name not in self._characters:
             char = self.load_character(name)
@@ -126,13 +127,13 @@ class CharacterRegistry:
 
 
 __all__ = [
+    "CHARACTERS",
+    "AgentContext",
     "AgentRuntime",
-    "AgentContext", 
     "AgentState",
     "Character",
-    "CharacterStyle",
     "CharacterRegistry",
-    "CHARACTERS",
-    "get_character",
+    "CharacterStyle",
     "ToolRegistry",
+    "get_character",
 ]

@@ -22,17 +22,18 @@ from __future__ import annotations
 
 import asyncio
 import json
-import logging
-import os
 import time
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from enum import Enum
+from enum import StrEnum
 from pathlib import Path
-from typing import Any, AsyncIterator, Callable, Dict, List, Optional, Type, Union
+from typing import TYPE_CHECKING, Any
 
 import httpx
 import structlog
+
+if TYPE_CHECKING:
+    from collections.abc import AsyncIterator
 
 logger = structlog.get_logger("model_garage")
 
@@ -49,7 +50,7 @@ HERETEK_DATA_DIR.mkdir(parents=True, exist_ok=True)
 HERETEK_LOGS_DIR.mkdir(parents=True, exist_ok=True)
 
 
-class ProviderType(str, Enum):
+class ProviderType(StrEnum):
     """Supported LLM provider types."""
     OPENAI = "openai"
     OLLAMA = "ollama"
@@ -68,13 +69,13 @@ class ModelInfo:
     """Information about a model."""
     name: str
     provider: ProviderType
-    max_tokens: Optional[int] = None
+    max_tokens: int | None = None
     supports_streaming: bool = True
     supports_function_calling: bool = False
     supports_vision: bool = False
-    context_length: Optional[int] = None
-    cost_per_1k_input: Optional[float] = None
-    cost_per_1k_output: Optional[float] = None
+    context_length: int | None = None
+    cost_per_1k_input: float | None = None
+    cost_per_1k_output: float | None = None
     is_local: bool = False
 
 
@@ -85,22 +86,22 @@ class ProviderConfig:
     name: str
     provider_type: ProviderType
     base_url: str
-    api_key: Optional[str] = None
-    default_model: Optional[str] = None
-    available_models: List[str] = field(default_factory=list)
+    api_key: str | None = None
+    default_model: str | None = None
+    available_models: list[str] = field(default_factory=list)
     is_enabled: bool = True
     is_default: bool = False
     priority: int = 100
-    max_rpm: Optional[int] = None
-    max_tpm: Optional[int] = None
+    max_rpm: int | None = None
+    max_tpm: int | None = None
     timeout: float = 60.0
     retry_count: int = 3
     retry_delay: float = 1.0
     health_status: str = "unknown"
-    last_health_check: Optional[str] = None
-    error_message: Optional[str] = None
+    last_health_check: str | None = None
+    error_message: str | None = None
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary."""
         return {
             "id": self.id,
@@ -124,13 +125,13 @@ class ChatMessage:
     """A chat message."""
     role: str  # system, user, assistant
     content: str
-    name: Optional[str] = None
-    tool_calls: Optional[List[Dict[str, Any]]] = None
-    tool_call_id: Optional[str] = None
+    name: str | None = None
+    tool_calls: list[dict[str, Any]] | None = None
+    tool_call_id: str | None = None
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary."""
-        result: Dict[str, Any] = {"role": self.role, "content": self.content}
+        result: dict[str, Any] = {"role": self.role, "content": self.content}
         if self.name:
             result["name"] = self.name
         if self.tool_calls:
@@ -143,24 +144,24 @@ class ChatMessage:
 @dataclass
 class LLMRequest:
     """Request for LLM completion."""
-    messages: List[ChatMessage]
-    model: Optional[str] = None
+    messages: list[ChatMessage]
+    model: str | None = None
     temperature: float = 0.7
-    max_tokens: Optional[int] = None
+    max_tokens: int | None = None
     top_p: float = 1.0
     frequency_penalty: float = 0.0
     presence_penalty: float = 0.0
-    stop: Optional[List[str]] = None
+    stop: list[str] | None = None
     stream: bool = False
-    tools: Optional[List[Dict[str, Any]]] = None
-    tool_choice: Optional[Union[str, Dict[str, Any]]] = None
-    response_format: Optional[Dict[str, Any]] = None
-    seed: Optional[int] = None
-    extra_body: Optional[Dict[str, Any]] = None
+    tools: list[dict[str, Any]] | None = None
+    tool_choice: str | dict[str, Any] | None = None
+    response_format: dict[str, Any] | None = None
+    seed: int | None = None
+    extra_body: dict[str, Any] | None = None
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary."""
-        result: Dict[str, Any] = {
+        result: dict[str, Any] = {
             "messages": [m.to_dict() for m in self.messages],
             "temperature": self.temperature,
             "max_tokens": self.max_tokens,
@@ -192,12 +193,12 @@ class LLMResponse:
     content: str
     model: str
     provider: ProviderType
-    usage: Dict[str, int] = field(default_factory=dict)
-    finish_reason: Optional[str] = None
-    tool_calls: List[Dict[str, Any]] = field(default_factory=list)
-    raw_response: Optional[Dict[str, Any]] = None
+    usage: dict[str, int] = field(default_factory=dict)
+    finish_reason: str | None = None
+    tool_calls: list[dict[str, Any]] = field(default_factory=list)
+    raw_response: dict[str, Any] | None = None
     latency_ms: float = 0.0
-    cost: Optional[float] = None
+    cost: float | None = None
 
     @property
     def prompt_tokens(self) -> int:
@@ -221,19 +222,17 @@ class LLMProvider(ABC):
 
     def __init__(self, config: ProviderConfig):
         self.config = config
-        self._client: Optional[httpx.AsyncClient] = None
+        self._client: httpx.AsyncClient | None = None
         self._rate_limiter = asyncio.Semaphore(10)
         self._last_request_time: float = 0
 
     @abstractmethod
     async def complete(self, request: LLMRequest) -> LLMResponse:
         """Complete a chat request."""
-        pass
 
     @abstractmethod
     async def stream(self, request: LLMRequest) -> AsyncIterator[str]:
         """Stream chat completion tokens."""
-        pass
 
     async def health_check(self) -> bool:
         """Check if the provider is healthy."""
@@ -253,7 +252,7 @@ class LLMProvider(ABC):
     async def _get_client(self) -> httpx.AsyncClient:
         """Get or create HTTP client."""
         if self._client is None or self._client.is_closed:
-            headers: Dict[str, str] = {"Content-Type": "application/json"}
+            headers: dict[str, str] = {"Content-Type": "application/json"}
             if self.config.api_key:
                 headers["Authorization"] = f"Bearer {self.config.api_key}"
 
@@ -475,7 +474,7 @@ class AnthropicProvider(LLMProvider):
                 else:
                     anthropic_messages.append({"role": msg.role, "content": msg.content})
 
-            payload: Dict[str, Any] = {
+            payload: dict[str, Any] = {
                 "model": model,
                 "messages": anthropic_messages,
                 "max_tokens": request.max_tokens or 4096,
@@ -559,7 +558,7 @@ class OpenAICompatibleProvider(LLMProvider):
 # Provider Registry
 # ============================================================================
 
-PROVIDER_CLASSES: Dict[ProviderType, Type[LLMProvider]] = {
+PROVIDER_CLASSES: dict[ProviderType, type[LLMProvider]] = {
     ProviderType.OPENAI: OpenAIProvider,
     ProviderType.OLLAMA: OllamaProvider,
     ProviderType.MINIMAX: MiniMaxProvider,
@@ -568,7 +567,7 @@ PROVIDER_CLASSES: Dict[ProviderType, Type[LLMProvider]] = {
 }
 
 
-def register_provider_class(provider_type: ProviderType, provider_class: Type[LLMProvider]) -> None:
+def register_provider_class(provider_type: ProviderType, provider_class: type[LLMProvider]) -> None:
     """Register a custom provider class."""
     PROVIDER_CLASSES[provider_type] = provider_class
 
@@ -592,12 +591,12 @@ class ModelGarage:
 
     def __init__(
         self,
-        config_file: Optional[Path] = None,
-        default_provider: Optional[ProviderType] = None,
+        config_file: Path | None = None,
+        default_provider: ProviderType | None = None,
     ):
         self.config_file = config_file or HERETEK_CONFIG_FILE
-        self._providers: Dict[str, LLMProvider] = {}
-        self._provider_configs: Dict[str, ProviderConfig] = {}
+        self._providers: dict[str, LLMProvider] = {}
+        self._provider_configs: dict[str, ProviderConfig] = {}
         self._initialized = False
         self._default_provider = default_provider or ProviderType.OLLAMA
 
@@ -607,7 +606,7 @@ class ModelGarage:
         """Load provider configuration from file."""
         try:
             if self.config_file.exists():
-                with open(self.config_file, "r") as f:
+                with open(self.config_file) as f:
                     config_data = json.load(f)
 
                 providers = config_data.get("modelProviders", [])
@@ -730,15 +729,15 @@ class ModelGarage:
             del self._providers[provider_id]
         self._save_config()
 
-    def get_provider_config(self, provider_id: str) -> Optional[ProviderConfig]:
+    def get_provider_config(self, provider_id: str) -> ProviderConfig | None:
         """Get provider configuration by ID."""
         return self._provider_configs.get(provider_id)
 
-    def list_providers(self) -> List[Dict[str, Any]]:
+    def list_providers(self) -> list[dict[str, Any]]:
         """List all configured providers."""
         return [config.to_dict() for config in self._provider_configs.values()]
 
-    async def health_check(self, provider_id: Optional[str] = None) -> Dict[str, bool]:
+    async def health_check(self, provider_id: str | None = None) -> dict[str, bool]:
         """Check health of providers."""
         results = {}
         providers_to_check = (
@@ -762,10 +761,10 @@ class ModelGarage:
 
     async def complete(
         self,
-        messages: List[ChatMessage],
-        model: Optional[str] = None,
-        provider_id: Optional[str] = None,
-        provider_preference: Optional[List[ProviderType]] = None,
+        messages: list[ChatMessage],
+        model: str | None = None,
+        provider_id: str | None = None,
+        provider_preference: list[ProviderType] | None = None,
         **kwargs,
     ) -> LLMResponse:
         """
@@ -817,9 +816,9 @@ class ModelGarage:
 
     async def stream(
         self,
-        messages: List[ChatMessage],
-        model: Optional[str] = None,
-        provider_id: Optional[str] = None,
+        messages: list[ChatMessage],
+        model: str | None = None,
+        provider_id: str | None = None,
         **kwargs,
     ) -> AsyncIterator[str]:
         """Stream chat completion tokens."""
@@ -857,7 +856,7 @@ class ModelGarage:
 # Global Instance
 # ============================================================================
 
-_model_garage: Optional[ModelGarage] = None
+_model_garage: ModelGarage | None = None
 
 
 def get_model_garage() -> ModelGarage:
@@ -884,20 +883,15 @@ async def main():
     """Example usage of ModelGarage."""
     garage = await initialize_model_garage()
 
-    providers = garage.list_providers()
-    print("Available providers:", json.dumps(providers, indent=2))
+    garage.list_providers()
 
-    response = await garage.complete(
+    await garage.complete(
         messages=[
             ChatMessage(role="system", content="You are a helpful AI assistant."),
             ChatMessage(role="user", content="What is the capital of France?"),
         ]
     )
 
-    print(f"Response: {response.content}")
-    print(f"Model: {response.model}")
-    print(f"Provider: {response.provider.value}")
-    print(f"Latency: {response.latency_ms:.2f}ms")
 
     await garage.close()
 

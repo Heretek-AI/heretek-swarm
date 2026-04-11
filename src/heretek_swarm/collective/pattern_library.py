@@ -20,33 +20,35 @@ Zero-Trust Principles:
 """
 
 import asyncio
+import contextlib
 import json
 import os
 import uuid
+from collections.abc import Callable
 from dataclasses import dataclass, field
-from datetime import datetime, timezone, timedelta
-from enum import Enum
-from typing import Any, Callable, Dict, List, Optional, Set
+from datetime import UTC, datetime, timedelta
+from enum import StrEnum
+from typing import Any
 
 import structlog
 
-from .learning import ExtractedPattern, PatternType, PatternMetadata, PatternSource
+from .learning import ExtractedPattern, PatternMetadata, PatternSource, PatternType
 
 logger = structlog.get_logger(__name__)
 
 
-class StorageBackend(str, Enum):
+class StorageBackend(StrEnum):
     """Storage backend options."""
-    
+
     IN_MEMORY = "in_memory"
     FILE_SYSTEM = "file_system"
     REDIS = "redis"
     POSTGRESQL = "postgresql"
 
 
-class PatternCategory(str, Enum):
+class PatternCategory(StrEnum):
     """Pattern categories for organization."""
-    
+
     INTERACTION = "interaction"
     DECISION = "decision"
     OPTIMIZATION = "optimization"
@@ -62,21 +64,21 @@ class PatternCategory(str, Enum):
 @dataclass
 class PatternEntry:
     """A stored pattern entry in the library."""
-    
+
     entry_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     pattern: ExtractedPattern = None
     category: PatternCategory = PatternCategory.INTERACTION
-    stored_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
-    last_accessed: Optional[str] = None
+    stored_at: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
+    last_accessed: str | None = None
     access_count: int = 0
     version: int = 1
-    version_history: List[str] = field(default_factory=list)
-    tags: List[str] = field(default_factory=list)
+    version_history: list[str] = field(default_factory=list)
+    tags: list[str] = field(default_factory=list)
     is_active: bool = True
-    expiration_date: Optional[str] = None
-    metadata: Dict[str, Any] = field(default_factory=dict)
-    
-    def to_dict(self) -> Dict[str, Any]:
+    expiration_date: str | None = None
+    metadata: dict[str, Any] = field(default_factory=dict)
+
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for serialization."""
         return {
             "entry_id": self.entry_id,
@@ -92,12 +94,12 @@ class PatternEntry:
             "expiration_date": self.expiration_date,
             "metadata": self.metadata,
         }
-    
+
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "PatternEntry":
+    def from_dict(cls, data: dict[str, Any]) -> "PatternEntry":
         """Create from dictionary."""
         pattern_dict = data.get("pattern", {})
-        
+
         # Reconstruct pattern
         if pattern_dict:
             metadata_dict = pattern_dict.get("metadata", {})
@@ -113,7 +115,7 @@ class PatternEntry:
                 topics=metadata_dict.get("topics", []),
                 tags=metadata_dict.get("tags", []),
             )
-            
+
             pattern = ExtractedPattern(
                 metadata=metadata,
                 pattern_data=pattern_dict.get("pattern_data", {}),
@@ -125,12 +127,12 @@ class PatternEntry:
             )
         else:
             pattern = None
-        
+
         return cls(
             entry_id=data.get("entry_id", str(uuid.uuid4())),
             pattern=pattern,
             category=PatternCategory(data.get("category", "interaction")),
-            stored_at=data.get("stored_at", datetime.now(timezone.utc).isoformat()),
+            stored_at=data.get("stored_at", datetime.now(UTC).isoformat()),
             last_accessed=data.get("last_accessed"),
             access_count=data.get("access_count", 0),
             version=data.get("version", 1),
@@ -145,15 +147,15 @@ class PatternEntry:
 @dataclass
 class QueryResult:
     """Result of a pattern query."""
-    
+
     query_id: str = field(default_factory=lambda: str(uuid.uuid4()))
-    patterns: List[PatternEntry] = field(default_factory=list)
+    patterns: list[PatternEntry] = field(default_factory=list)
     total_count: int = 0
     query_time_ms: float = 0.0
-    filters_applied: Dict[str, Any] = field(default_factory=dict)
-    warnings: List[str] = field(default_factory=list)
-    
-    def to_dict(self) -> Dict[str, Any]:
+    filters_applied: dict[str, Any] = field(default_factory=dict)
+    warnings: list[str] = field(default_factory=list)
+
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary."""
         return {
             "query_id": self.query_id,
@@ -168,41 +170,41 @@ class QueryResult:
 @dataclass
 class StorageStats:
     """Storage statistics."""
-    
+
     total_patterns: int = 0
     active_patterns: int = 0
     expired_patterns: int = 0
-    patterns_by_type: Dict[str, int] = field(default_factory=dict)
-    patterns_by_category: Dict[str, int] = field(default_factory=dict)
+    patterns_by_type: dict[str, int] = field(default_factory=dict)
+    patterns_by_category: dict[str, int] = field(default_factory=dict)
     storage_size_bytes: int = 0
-    oldest_pattern: Optional[str] = None
-    newest_pattern: Optional[str] = None
+    oldest_pattern: str | None = None
+    newest_pattern: str | None = None
     avg_access_count: float = 0.0
 
 
 class PatternLibrary:
     """
     Persistent storage and query interface for validated patterns.
-    
+
     This library provides centralized pattern storage with support for
     multiple storage backends, categorization, and efficient querying.
-    
+
     Attributes:
         backend: Storage backend type
         storage_path: Path for file system storage
         patterns: In-memory pattern cache
     """
-    
+
     def __init__(
         self,
         backend: StorageBackend = StorageBackend.IN_MEMORY,
-        storage_path: Optional[str] = None,
-        redis_url: Optional[str] = None,
+        storage_path: str | None = None,
+        redis_url: str | None = None,
         default_ttl_days: int = 30,
     ):
         """
         Initialize pattern library.
-        
+
         Args:
             backend: Storage backend type
             storage_path: Path for file system storage
@@ -213,36 +215,36 @@ class PatternLibrary:
         self.storage_path = storage_path or "./.pattern_library"
         self.redis_url = redis_url
         self.default_ttl_days = default_ttl_days
-        
-        self._patterns: Dict[str, PatternEntry] = {}
-        self._category_index: Dict[PatternCategory, Set[str]] = {
+
+        self._patterns: dict[str, PatternEntry] = {}
+        self._category_index: dict[PatternCategory, set[str]] = {
             cat: set() for cat in PatternCategory
         }
-        self._type_index: Dict[PatternType, Set[str]] = {
+        self._type_index: dict[PatternType, set[str]] = {
             pt: set() for pt in PatternType
         }
-        self._tag_index: Dict[str, Set[str]] = {}
-        
+        self._tag_index: dict[str, set[str]] = {}
+
         self._redis = None
-        self._query_history: List[QueryResult] = []
-        self._callbacks: Dict[str, List[Callable]] = {
+        self._query_history: list[QueryResult] = []
+        self._callbacks: dict[str, list[Callable]] = {
             "on_store": [],
             "on_retrieve": [],
             "on_delete": [],
             "on_expire": [],
         }
-        
+
         logger.info(
             "pattern_library_initialized",
             backend=backend.value,
             storage_path=storage_path,
             default_ttl_days=default_ttl_days,
         )
-    
+
     def register_callback(self, event: str, callback: Callable) -> None:
         """
         Register callback for library events.
-        
+
         Args:
             event: Event type (on_store, on_retrieve, on_delete, on_expire)
             callback: Callback function
@@ -250,36 +252,36 @@ class PatternLibrary:
         if event in self._callbacks:
             self._callbacks[event].append(callback)
             logger.debug("callback_registered", event=event, callback=callback.__name__)
-    
+
     async def store_pattern(
         self,
         pattern: ExtractedPattern,
-        category: Optional[PatternCategory] = None,
-        tags: Optional[List[str]] = None,
-        ttl_days: Optional[int] = None,
+        category: PatternCategory | None = None,
+        tags: list[str] | None = None,
+        ttl_days: int | None = None,
     ) -> PatternEntry:
         """
         Store a pattern in the library.
-        
+
         Args:
             pattern: Pattern to store
             category: Pattern category (auto-detected if None)
             tags: Additional tags for indexing
             ttl_days: Time-to-live in days (default: library default)
-            
+
         Returns:
             PatternEntry for stored pattern
         """
-        start_time = datetime.now(timezone.utc)
-        
+        start_time = datetime.now(UTC)
+
         # Determine category
         if category is None:
             category = self._auto_detect_category(pattern)
-        
+
         # Calculate expiration
         ttl = ttl_days or self.default_ttl_days
         expiration = (start_time + timedelta(days=ttl)).isoformat()
-        
+
         # Create entry
         entry = PatternEntry(
             pattern=pattern,
@@ -291,19 +293,19 @@ class PatternLibrary:
                 "storage_version": "1.0",
             },
         )
-        
+
         # Store in memory
         self._patterns[entry.entry_id] = entry
-        
+
         # Update indexes
         self._update_indexes(entry)
-        
+
         # Persist to backend
         await self._persist_entry(entry)
-        
+
         # Call callbacks
         await self._call_callbacks("on_store", entry)
-        
+
         logger.info(
             "pattern_stored",
             entry_id=entry.entry_id,
@@ -311,54 +313,54 @@ class PatternLibrary:
             category=category.value,
             expiration=expiration,
         )
-        
+
         return entry
-    
+
     async def retrieve_pattern(
         self,
         entry_id: str,
-    ) -> Optional[PatternEntry]:
+    ) -> PatternEntry | None:
         """
         Retrieve a pattern by entry ID.
-        
+
         Args:
             entry_id: Entry identifier
-            
+
         Returns:
             PatternEntry or None if not found
         """
         entry = self._patterns.get(entry_id)
-        
+
         if entry:
             # Update access stats
             entry.access_count += 1
-            entry.last_accessed = datetime.now(timezone.utc).isoformat()
-            
+            entry.last_accessed = datetime.now(UTC).isoformat()
+
             # Call callbacks
             await self._call_callbacks("on_retrieve", entry)
-            
+
             logger.debug(
                 "pattern_retrieved",
                 entry_id=entry_id,
                 access_count=entry.access_count,
             )
-        
+
         return entry
-    
+
     async def query_patterns(
         self,
-        pattern_type: Optional[PatternType] = None,
-        category: Optional[PatternCategory] = None,
-        tags: Optional[List[str]] = None,
+        pattern_type: PatternType | None = None,
+        category: PatternCategory | None = None,
+        tags: list[str] | None = None,
         min_confidence: float = 0.0,
-        max_age_days: Optional[int] = None,
+        max_age_days: int | None = None,
         limit: int = 100,
         offset: int = 0,
         include_inactive: bool = False,
     ) -> QueryResult:
         """
         Query patterns with filters.
-        
+
         Args:
             pattern_type: Filter by pattern type
             category: Filter by category
@@ -368,11 +370,11 @@ class PatternLibrary:
             limit: Maximum results to return
             offset: Results offset for pagination
             include_inactive: Include inactive patterns
-            
+
         Returns:
             QueryResult with matching patterns
         """
-        start_time = datetime.now(timezone.utc)
+        start_time = datetime.now(UTC)
         filters_applied = {
             "pattern_type": pattern_type.value if pattern_type else None,
             "category": category.value if category else None,
@@ -384,18 +386,18 @@ class PatternLibrary:
             "include_inactive": include_inactive,
         }
         warnings = []
-        
+
         # Start with all pattern IDs or use index
-        candidate_ids: Set[str] = set(self._patterns.keys())
-        
+        candidate_ids: set[str] = set(self._patterns.keys())
+
         # Apply category filter using index
         if category and category in self._category_index:
             candidate_ids &= self._category_index[category]
-        
+
         # Apply type filter using index
         if pattern_type and pattern_type in self._type_index:
             candidate_ids &= self._type_index[pattern_type]
-        
+
         # Apply tag filter using index
         if tags:
             for tag in tags:
@@ -404,26 +406,26 @@ class PatternLibrary:
                 else:
                     candidate_ids = set()  # Tag not found
                     break
-        
+
         # Filter remaining candidates
         filtered = []
         cutoff_date = None
         if max_age_days:
-            cutoff_date = datetime.now(timezone.utc) - timedelta(days=max_age_days)
-        
+            cutoff_date = datetime.now(UTC) - timedelta(days=max_age_days)
+
         for entry_id in candidate_ids:
             entry = self._patterns.get(entry_id)
             if not entry:
                 continue
-            
+
             # Skip inactive patterns
             if not include_inactive and not entry.is_active:
                 continue
-            
+
             # Check confidence
             if entry.pattern and entry.pattern.metadata.confidence < min_confidence:
                 continue
-            
+
             # Check age
             if cutoff_date and entry.stored_at:
                 try:
@@ -432,30 +434,30 @@ class PatternLibrary:
                         continue
                 except (ValueError, TypeError):
                     pass
-            
+
             # Check expiration
             if entry.expiration_date:
                 try:
                     exp_date = datetime.fromisoformat(entry.expiration_date)
-                    if exp_date < datetime.now(timezone.utc):
+                    if exp_date < datetime.now(UTC):
                         continue
                 except (ValueError, TypeError):
                     pass
-            
+
             filtered.append(entry)
-        
+
         # Sort by confidence (descending)
         filtered.sort(
             key=lambda e: e.pattern.metadata.confidence if e.pattern else 0,
             reverse=True,
         )
-        
+
         # Apply pagination
         total_count = len(filtered)
         paginated = filtered[offset:offset + limit]
-        
-        query_time = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
-        
+
+        query_time = (datetime.now(UTC) - start_time).total_seconds() * 1000
+
         result = QueryResult(
             patterns=paginated,
             total_count=total_count,
@@ -463,82 +465,82 @@ class PatternLibrary:
             filters_applied=filters_applied,
             warnings=warnings,
         )
-        
+
         # Store query history
         self._query_history.append(result)
         if len(self._query_history) > 1000:
             self._query_history = self._query_history[-500:]
-        
+
         logger.debug(
             "query_executed",
             total_count=total_count,
             returned_count=len(paginated),
             query_time_ms=query_time,
         )
-        
+
         return result
-    
+
     async def delete_pattern(self, entry_id: str) -> bool:
         """
         Delete a pattern from the library.
-        
+
         Args:
             entry_id: Entry identifier
-            
+
         Returns:
             True if deleted successfully
         """
         entry = self._patterns.get(entry_id)
         if not entry:
             return False
-        
+
         # Remove from memory
         del self._patterns[entry_id]
-        
+
         # Remove from indexes
         self._remove_from_indexes(entry)
-        
+
         # Remove from backend
         await self._delete_from_backend(entry_id)
-        
+
         # Call callbacks
         await self._call_callbacks("on_delete", entry)
-        
+
         logger.info(
             "pattern_deleted",
             entry_id=entry_id,
             pattern_id=entry.pattern.metadata.pattern_id if entry.pattern else None,
         )
-        
+
         return True
-    
+
     async def update_pattern(
         self,
         entry_id: str,
-        pattern: Optional[ExtractedPattern] = None,
-        tags: Optional[List[str]] = None,
-        category: Optional[PatternCategory] = None,
-    ) -> Optional[PatternEntry]:
+        pattern: ExtractedPattern | None = None,
+        tags: list[str] | None = None,
+        category: PatternCategory | None = None,
+    ) -> PatternEntry | None:
         """
         Update a pattern in the library.
-        
+
         Args:
             entry_id: Entry identifier
             pattern: New pattern data (optional)
             tags: New tags (optional)
             category: New category (optional)
-            
+
         Returns:
             Updated PatternEntry or None if not found
         """
         entry = self._patterns.get(entry_id)
         if not entry:
             return None
-        
+
         # Store old version
         entry.version_history.append(entry.pattern.to_dict() if entry.pattern else {})
         entry.version += 1
-        
+
         # Update fields
         if pattern:
             entry.pattern = pattern
@@ -549,32 +551,32 @@ class PatternLibrary:
         if category:
             self._remove_from_indexes(entry)
             entry.category = category
-        
+
         # Rebuild indexes if needed
         if tags is not None or category:
             self._update_indexes(entry)
-        
+
         # Persist update
         await self._persist_entry(entry)
-        
+
         logger.info(
             "pattern_updated",
             entry_id=entry_id,
             version=entry.version,
         )
-        
+
         return entry
-    
+
     async def cleanup_expired(self) -> int:
         """
         Remove expired patterns from the library.
-        
+
         Returns:
             Number of patterns removed
         """
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
         expired = []
-        
+
         for entry_id, entry in list(self._patterns.items()):
             if entry.expiration_date:
                 try:
@@ -583,22 +585,22 @@ class PatternLibrary:
                         expired.append(entry_id)
                 except (ValueError, TypeError):
                     pass
-        
+
         removed = 0
         for entry_id in expired:
             if await self.delete_pattern(entry_id):
                 removed += 1
                 # Call expire callback
                 await self._call_callbacks("on_expire", entry_id)
-        
+
         logger.info(
             "cleanup_complete",
             expired_count=len(expired),
             removed_count=removed,
         )
-        
+
         return removed
-    
+
     def _auto_detect_category(self, pattern: ExtractedPattern) -> PatternCategory:
         """Auto-detect pattern category based on type and content."""
         type_category_map = {
@@ -613,47 +615,47 @@ class PatternLibrary:
             PatternType.EMERGENT: PatternCategory.EMERGENT,
             PatternType.RESOURCE_USAGE: PatternCategory.RESOURCE_MANAGEMENT,
         }
-        
+
         return type_category_map.get(
             pattern.metadata.pattern_type,
             PatternCategory.INTERACTION,
         )
-    
+
     def _update_indexes(self, entry: PatternEntry) -> None:
         """Update indexes for a pattern entry."""
         # Category index
         if entry.category in self._category_index:
             self._category_index[entry.category].add(entry.entry_id)
-        
+
         # Type index
         if entry.pattern:
             pattern_type = entry.pattern.metadata.pattern_type
             if pattern_type in self._type_index:
                 self._type_index[pattern_type].add(entry.entry_id)
-        
+
         # Tag index
         for tag in entry.tags:
             if tag not in self._tag_index:
                 self._tag_index[tag] = set()
             self._tag_index[tag].add(entry.entry_id)
-    
+
     def _remove_from_indexes(self, entry: PatternEntry) -> None:
         """Remove entry from all indexes."""
         # Category index
         if entry.category in self._category_index:
             self._category_index[entry.category].discard(entry.entry_id)
-        
+
         # Type index
         if entry.pattern:
             pattern_type = entry.pattern.metadata.pattern_type
             if pattern_type in self._type_index:
                 self._type_index[pattern_type].discard(entry.entry_id)
-        
+
         # Tag index
         for tag in entry.tags:
             if tag in self._tag_index:
                 self._tag_index[tag].discard(entry.entry_id)
-    
+
     async def _persist_entry(self, entry: PatternEntry) -> None:
         """Persist entry to storage backend."""
         if self.backend == StorageBackend.FILE_SYSTEM:
@@ -661,34 +663,34 @@ class PatternLibrary:
         elif self.backend == StorageBackend.REDIS:
             await self._persist_to_redis(entry)
         # In-memory backend doesn't need persistence
-    
+
     async def _persist_to_filesystem(self, entry: PatternEntry) -> None:
         """Persist entry to file system."""
         try:
             os.makedirs(self.storage_path, exist_ok=True)
-            
+
             # Create category subdirectory
             category_path = os.path.join(self.storage_path, entry.category.value)
             os.makedirs(category_path, exist_ok=True)
-            
+
             # Write entry file
             file_path = os.path.join(category_path, f"{entry.entry_id}.json")
-            with open(file_path, 'w') as f:
+            with open(file_path, "w") as f:
                 json.dump(entry.to_dict(), f, indent=2)
-            
+
             logger.debug(
                 "entry_persisted_to_filesystem",
                 entry_id=entry.entry_id,
                 file_path=file_path,
             )
-            
+
         except Exception as e:
             logger.error(
                 "filesystem_persist_failed",
                 entry_id=entry.entry_id,
                 error=str(e),
             )
-    
+
     async def _persist_to_redis(self, entry: PatternEntry) -> None:
         """Persist entry to Redis."""
         if not self._redis:
@@ -701,30 +703,30 @@ class PatternLibrary:
                     error=str(e),
                 )
                 return
-        
+
         try:
             key = f"heretek:patterns:{entry.entry_id}"
             await self._redis.set(key, json.dumps(entry.to_dict()))
-            
+
             # Add to category set
             await self._redis.sadd(
                 f"heretek:patterns:category:{entry.category.value}",
                 entry.entry_id,
             )
-            
+
             logger.debug(
                 "entry_persisted_to_redis",
                 entry_id=entry.entry_id,
                 key=key,
             )
-            
+
         except Exception as e:
             logger.error(
                 "redis_persist_failed",
                 entry_id=entry.entry_id,
                 error=str(e),
             )
-    
+
     async def _delete_from_backend(self, entry_id: str) -> None:
         """Delete entry from storage backend."""
         if self.backend == StorageBackend.FILE_SYSTEM:
@@ -738,7 +740,7 @@ class PatternLibrary:
                 if os.path.exists(file_path):
                     os.remove(file_path)
                     break
-        
+
         elif self.backend == StorageBackend.REDIS and self._redis:
             try:
                 await self._redis.delete(f"heretek:patterns:{entry_id}")
@@ -748,7 +750,7 @@ class PatternLibrary:
                     entry_id=entry_id,
                     error=str(e),
                 )
-    
+
     async def _call_callbacks(self, event: str, *args) -> None:
         """Call registered callbacks for an event."""
         for callback in self._callbacks.get(event, []):
@@ -764,52 +766,50 @@ class PatternLibrary:
                     callback=callback.__name__,
                     error=str(e),
                 )
-    
+
     def get_stats(self) -> StorageStats:
         """
         Get library storage statistics.
-        
+
         Returns:
             StorageStats with current statistics
         """
-        now = datetime.now(timezone.utc)
-        
+        datetime.now(UTC)
+
         total = len(self._patterns)
         active = sum(1 for e in self._patterns.values() if e.is_active)
         expired = total - active
-        
+
         # Patterns by type
-        by_type: Dict[str, int] = {}
+        by_type: dict[str, int] = {}
         for pt in PatternType:
             by_type[pt.value] = len(self._type_index.get(pt, set()))
-        
+
         # Patterns by category
-        by_category: Dict[str, int] = {}
+        by_category: dict[str, int] = {}
         for cat in PatternCategory:
             by_category[cat.value] = len(self._category_index.get(cat, set()))
-        
+
         # Estimate storage size
         size_bytes = sum(
             len(json.dumps(e.to_dict()))
             for e in self._patterns.values()
         )
-        
+
         # Find oldest and newest
         dates = []
         for entry in self._patterns.values():
             if entry.stored_at:
-                try:
+                with contextlib.suppress(ValueError, TypeError):
                     dates.append(datetime.fromisoformat(entry.stored_at))
-                except (ValueError, TypeError):
-                    pass
-        
+
         oldest = min(dates).isoformat() if dates else None
         newest = max(dates).isoformat() if dates else None
-        
+
         # Average access count
         total_access = sum(e.access_count for e in self._patterns.values())
         avg_access = total_access / total if total > 0 else 0.0
-        
+
         return StorageStats(
             total_patterns=total,
             active_patterns=active,
@@ -821,27 +821,27 @@ class PatternLibrary:
             newest_pattern=newest,
             avg_access_count=avg_access,
         )
-    
+
     def get_pattern(
         self,
         entry_id: str,
-    ) -> Optional[ExtractedPattern]:
+    ) -> ExtractedPattern | None:
         """
         Get pattern by entry ID.
-        
+
         Args:
             entry_id: Entry identifier
-            
+
         Returns:
             ExtractedPattern or None
         """
         entry = self._patterns.get(entry_id)
         return entry.pattern if entry else None
-    
-    def list_categories(self) -> Dict[str, int]:
+
+    def list_categories(self) -> dict[str, int]:
         """
         List all categories with pattern counts.
-        
+
         Returns:
             Dictionary of category names to counts
         """
@@ -849,11 +849,11 @@ class PatternLibrary:
             cat.value: len(self._category_index.get(cat, set()))
             for cat in PatternCategory
         }
-    
-    def list_tags(self) -> Dict[str, int]:
+
+    def list_tags(self) -> dict[str, int]:
         """
         List all tags with pattern counts.
-        
+
         Returns:
             Dictionary of tags to counts
         """
@@ -866,33 +866,33 @@ class PatternLibrary:
 class PatternLibraryService:
     """
     High-level service for pattern library operations.
-    
+
     Provides convenient methods for common pattern library tasks.
     """
-    
+
     def __init__(self, library: PatternLibrary):
         """
         Initialize pattern library service.
-        
+
         Args:
             library: PatternLibrary instance
         """
         self.library = library
-        
+
         logger.info("pattern_library_service_initialized")
-    
+
     async def add_success_pattern(
         self,
         pattern: ExtractedPattern,
-        tags: Optional[List[str]] = None,
+        tags: list[str] | None = None,
     ) -> PatternEntry:
         """
         Add a success pattern to the library.
-        
+
         Args:
             pattern: Pattern to add
             tags: Additional tags
-            
+
         Returns:
             PatternEntry for stored pattern
         """
@@ -901,19 +901,19 @@ class PatternLibraryService:
             category=PatternCategory.INTERACTION,
             tags=tags,
         )
-    
+
     async def add_failure_pattern(
         self,
         pattern: ExtractedPattern,
-        tags: Optional[List[str]] = None,
+        tags: list[str] | None = None,
     ) -> PatternEntry:
         """
         Add a failure pattern to the library.
-        
+
         Args:
             pattern: Pattern to add
             tags: Additional tags
-            
+
         Returns:
             PatternEntry for stored pattern
         """
@@ -922,19 +922,19 @@ class PatternLibraryService:
             category=PatternCategory.ERROR_HANDLING,
             tags=tags or ["failure"],
         )
-    
+
     async def get_best_practices(
         self,
-        agent_type: Optional[str] = None,
+        agent_type: str | None = None,
         limit: int = 10,
     ) -> QueryResult:
         """
         Get best practice patterns (high confidence success patterns).
-        
+
         Args:
             agent_type: Filter by agent type
             limit: Maximum results
-            
+
         Returns:
             QueryResult with best practices
         """
@@ -943,17 +943,17 @@ class PatternLibraryService:
             min_confidence=0.8,
             limit=limit,
         )
-    
+
     async def get_common_pitfalls(
         self,
         limit: int = 10,
     ) -> QueryResult:
         """
         Get common failure patterns to avoid.
-        
+
         Args:
             limit: Maximum results
-            
+
         Returns:
             QueryResult with pitfalls
         """
@@ -962,7 +962,7 @@ class PatternLibraryService:
             min_confidence=0.5,
             limit=limit,
         )
-    
+
     async def search_patterns(
         self,
         query: str,
@@ -970,11 +970,11 @@ class PatternLibraryService:
     ) -> QueryResult:
         """
         Search patterns by text query.
-        
+
         Args:
             query: Search query string
             limit: Maximum results
-            
+
         Returns:
             QueryResult with matching patterns
         """
@@ -983,16 +983,16 @@ class PatternLibraryService:
         return await self.library.query_patterns(
             limit=limit,
         )
-    
-    def get_library_status(self) -> Dict[str, Any]:
+
+    def get_library_status(self) -> dict[str, Any]:
         """
         Get library status summary.
-        
+
         Returns:
             Status dictionary
         """
         stats = self.library.get_stats()
-        
+
         return {
             "total_patterns": stats.total_patterns,
             "active_patterns": stats.active_patterns,

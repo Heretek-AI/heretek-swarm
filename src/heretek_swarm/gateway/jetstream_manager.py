@@ -15,23 +15,26 @@ Streams Managed:
 - SYSTEM_HEALTH - Heartbeats, resource usage
 """
 
-import json
 import asyncio
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Callable
-from enum import Enum
+import builtins
+import contextlib
+import json
+from collections.abc import Callable
 from dataclasses import dataclass, field
+from datetime import UTC, datetime
+from enum import StrEnum
+from typing import Any
 
 import structlog
 
-from heretek_swarm.security.zero_trust import ZeroTrustValidator, ZeroTrustResult, LayerResult
+from heretek_swarm.security.zero_trust import LayerResult, ZeroTrustResult, ZeroTrustValidator
 
 logger = structlog.get_logger(__name__)
 
 # Try to import NATS
 try:
     import nats
-    from nats.errors import NatsError, TimeoutError, ConnectionClosedError
+    from nats.errors import ConnectionClosedError, NatsError, TimeoutError
     NATS_AVAILABLE = True
 except ImportError:
     NATS_AVAILABLE = False
@@ -40,20 +43,20 @@ except ImportError:
     ConnectionClosedError = Exception
 
 
-class RetentionPolicy(str, Enum):
+class RetentionPolicy(StrEnum):
     """Stream retention policies."""
     LIMITS = "limits"  # Retain until max messages/bytes/age
     INTEREST = "interest"  # Retain while consumers interested
     WORKQUEUE = "workqueue"  # Retain until acknowledged
 
 
-class StorageType(str, Enum):
+class StorageType(StrEnum):
     """Stream storage types."""
     FILE = "file"
     MEMORY = "memory"
 
 
-class DeliverPolicy(str, Enum):
+class DeliverPolicy(StrEnum):
     """Consumer delivery policies."""
     ALL = "all"  # Start from beginning
     LAST = "last"  # Start from last message
@@ -62,7 +65,7 @@ class DeliverPolicy(str, Enum):
     BY_START_TIME = "by_start_time"  # Start from specific timestamp
 
 
-class AckPolicy(str, Enum):
+class AckPolicy(StrEnum):
     """Consumer acknowledgment policies."""
     EXPLICIT = "explicit"  # Must acknowledge each message
     ALL = "all"  # Acknowledge all up to this message
@@ -73,7 +76,7 @@ class AckPolicy(str, Enum):
 class JetStreamConfig:
     """
     JetStream configuration model.
-    
+
     Attributes:
         stream_name: Unique stream identifier
         subjects: List of subjects to capture (supports wildcards)
@@ -87,17 +90,17 @@ class JetStreamConfig:
         metadata: Custom metadata for the stream
     """
     stream_name: str
-    subjects: List[str]
+    subjects: list[str]
     retention: RetentionPolicy = RetentionPolicy.LIMITS
     max_messages: int = 1000000
     max_age: str = "72h"
     storage: StorageType = StorageType.FILE
     replicas: int = 1
     max_bytes: int = 1073741824  # 1GB default
-    description: Optional[str] = None
-    metadata: Dict[str, Any] = field(default_factory=dict)
-    
-    def to_dict(self) -> Dict[str, Any]:
+    description: str | None = None
+    metadata: dict[str, Any] = field(default_factory=dict)
+
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for serialization."""
         return {
             "stream_name": self.stream_name,
@@ -111,9 +114,9 @@ class JetStreamConfig:
             "description": self.description,
             "metadata": self.metadata,
         }
-    
+
     @classmethod
-    def from_dict(cls, data: Dict[str, Any]) -> "JetStreamConfig":
+    def from_dict(cls, data: dict[str, Any]) -> "JetStreamConfig":
         """Create from dictionary."""
         return cls(
             stream_name=data["stream_name"],
@@ -133,7 +136,7 @@ class JetStreamConfig:
 class ConsumerConfig:
     """
     JetStream consumer configuration.
-    
+
     Attributes:
         durable_name: Durable consumer name (persists across reconnects)
         stream_name: Source stream name
@@ -150,10 +153,10 @@ class ConsumerConfig:
     ack_policy: AckPolicy = AckPolicy.EXPLICIT
     max_deliver: int = 100
     ack_wait: float = 30.0  # seconds
-    filter_subject: Optional[str] = None
-    description: Optional[str] = None
-    
-    def to_dict(self) -> Dict[str, Any]:
+    filter_subject: str | None = None
+    description: str | None = None
+
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary."""
         return {
             "durable_name": self.durable_name,
@@ -173,10 +176,10 @@ class StreamInfo:
     name: str
     config: JetStreamConfig
     created_at: datetime
-    state: Dict[str, Any]
-    cluster: Optional[Dict[str, Any]] = None
-    
-    def to_dict(self) -> Dict[str, Any]:
+    state: dict[str, Any]
+    cluster: dict[str, Any] | None = None
+
+    def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary."""
         return {
             "name": self.name,
@@ -190,19 +193,19 @@ class StreamInfo:
 class JetStreamManager:
     """
     NATS JetStream Manager for Heretek Swarm.
-    
+
     Provides comprehensive stream and consumer management:
     - Create/delete streams with configuration
     - Manage durable consumers
     - Monitor stream state and statistics
     - Zero-trust security integration
     - Graceful fallback to in-memory storage
-    
+
     Example:
         ```python
         manager = JetStreamManager(servers=["nats://localhost:4222"])
         await manager.connect()
-        
+
         # Create stream
         config = JetStreamConfig(
             stream_name="AGENT_EVENTS",
@@ -211,7 +214,7 @@ class JetStreamManager:
             max_age="168h",  # 7 days
         )
         await manager.create_stream(config)
-        
+
         # Create durable consumer
         consumer_config = ConsumerConfig(
             durable_name="agent-processor",
@@ -221,7 +224,7 @@ class JetStreamManager:
         await manager.create_consumer(consumer_config, callback)
         ```
     """
-    
+
     # Predefined stream configurations
     DEFAULT_STREAMS = {
         "AGENT_EVENTS": JetStreamConfig(
@@ -269,17 +272,17 @@ class JetStreamManager:
             description="System health, heartbeats, and resource usage",
         ),
     }
-    
+
     def __init__(
         self,
-        servers: Optional[List[str]] = None,
+        servers: list[str] | None = None,
         name: str = "heretek-jetstream-manager",
         zero_trust_enabled: bool = True,
         fallback_enabled: bool = True,
     ) -> None:
         """
         Initialize JetStream Manager.
-        
+
         Args:
             servers: List of NATS server URLs
             name: Client name for identification
@@ -290,25 +293,25 @@ class JetStreamManager:
         self.client_name = name
         self.zero_trust_enabled = zero_trust_enabled
         self.fallback_enabled = fallback_enabled
-        
+
         # Connection state
         self._nc = None
         self._js = None
         self._connected = False
         self._fallback_mode = False
-        
+
         # Stream state
-        self._streams: Dict[str, StreamInfo] = {}
-        self._consumers: Dict[str, Any] = {}
-        self._subscriptions: Dict[str, Any] = {}
-        
+        self._streams: dict[str, StreamInfo] = {}
+        self._consumers: dict[str, Any] = {}
+        self._subscriptions: dict[str, Any] = {}
+
         # In-memory fallback storage
-        self._memory_store: Dict[str, List[Dict[str, Any]]] = {}
-        self._memory_sequences: Dict[str, int] = {}
-        
+        self._memory_store: dict[str, list[dict[str, Any]]] = {}
+        self._memory_sequences: dict[str, int] = {}
+
         # Zero-trust validator
         self._zero_trust = ZeroTrustValidator() if zero_trust_enabled else None
-        
+
         # Statistics
         self._stats = {
             "streams_created": 0,
@@ -318,40 +321,40 @@ class JetStreamManager:
             "messages_consumed": 0,
             "fallback_activations": 0,
         }
-        
+
         logger.info(
             "JetStreamManager initialized",
             servers=self.servers,
             zero_trust=self.zero_trust_enabled,
             fallback=self.fallback_enabled,
         )
-    
+
     @property
     def is_connected(self) -> bool:
         """Check if connected to NATS with JetStream."""
         return self._connected and self._js is not None
-    
+
     @property
     def is_fallback_mode(self) -> bool:
         """Check if running in fallback mode."""
         return self._fallback_mode
-    
+
     @property
-    def stream_names(self) -> List[str]:
+    def stream_names(self) -> list[str]:
         """Get list of managed stream names."""
         return list(self._streams.keys())
-    
+
     async def connect(self) -> bool:
         """
         Connect to NATS servers and initialize JetStream.
-        
+
         Returns:
             True if connected successfully
         """
         if not NATS_AVAILABLE:
             logger.warning("NATS not available, enabling fallback mode")
             return await self._enable_fallback()
-        
+
         try:
             # Connect to NATS
             self._nc = await nats.connect(
@@ -360,62 +363,58 @@ class JetStreamManager:
                 reconnect_time_wait=1.0,
                 max_reconnect_attempts=5,
             )
-            
+
             # Initialize JetStream context
             self._js = self._nc.jetstream()
             self._connected = True
-            
+
             logger.info("Connected to NATS with JetStream")
-            
+
             # Audit logging
             if self.zero_trust_enabled:
                 await self._audit_connection()
-            
+
             return True
-            
+
         except Exception as e:
             logger.error(f"Failed to connect to NATS: {e}")
             if self.fallback_enabled:
                 return await self._enable_fallback()
             return False
-    
+
     async def disconnect(self) -> None:
         """Disconnect from NATS and cleanup."""
         # Cleanup subscriptions
         for sub in self._subscriptions.values():
-            try:
+            with contextlib.suppress(Exception):
                 await sub.unsubscribe()
-            except Exception:
-                pass
-        
+
         # Close NATS connection
         if self._nc:
-            try:
+            with contextlib.suppress(Exception):
                 await self._nc.close()
-            except Exception:
-                pass
-        
+
         self._connected = False
         self._js = None
         self._nc = None
-        
+
         logger.info("Disconnected from NATS JetStream")
-    
+
     async def _enable_fallback(self) -> bool:
         """Enable in-memory fallback mode."""
         self._fallback_mode = True
         self._connected = True  # Consider "connected" for API compatibility
         self._stats["fallback_activations"] += 1
-        
+
         logger.info("JetStreamManager running in fallback mode (in-memory)")
         return True
-    
+
     async def _audit_connection(self) -> None:
         """Audit connection event."""
         if not self._zero_trust:
             return
-        
-        request_id = f"js-connect-{datetime.now(timezone.utc).isoformat()}"
+
+        request_id = f"js-connect-{datetime.now(UTC).isoformat()}"
         result = ZeroTrustResult(
             passed=True,
             layer1=LayerResult(layer="connection", passed=True),
@@ -426,7 +425,7 @@ class JetStreamManager:
             result=result,
             additional_context={"client_name": self.client_name},
         )
-    
+
     async def _audit_stream_operation(
         self,
         operation: str,
@@ -436,8 +435,8 @@ class JetStreamManager:
         """Audit stream operation."""
         if not self._zero_trust:
             return
-        
-        request_id = f"js-{operation}-{stream_name}-{datetime.now(timezone.utc).isoformat()}"
+
+        request_id = f"js-{operation}-{stream_name}-{datetime.now(UTC).isoformat()}"
         result = ZeroTrustResult(
             passed=success,
             layer1=LayerResult(layer="stream_operation", passed=success),
@@ -448,43 +447,43 @@ class JetStreamManager:
             result=result,
             additional_context={"stream_name": stream_name},
         )
-    
+
     async def create_stream(self, config: JetStreamConfig) -> bool:
         """
         Create a JetStream with the given configuration.
-        
+
         Args:
             config: Stream configuration
-            
+
         Returns:
             True if created successfully
         """
         if not self._connected:
             logger.error("Not connected, cannot create stream")
             return False
-        
+
         if self._fallback_mode:
             return self._create_stream_fallback(config)
-        
+
         try:
             import nats.js.api as js_api
-            
+
             # Map configuration to NATS API
             storage_type = (
                 js_api.StorageType.FILE
                 if config.storage == StorageType.FILE
                 else js_api.StorageType.MEMORY
             )
-            
+
             retention_policy = getattr(
                 js_api.RetentionPolicy,
                 config.retention.value.upper(),
                 js_api.RetentionPolicy.LIMITS,
             )
-            
+
             # Parse max_age to nanoseconds
             max_age_ns = self._parse_duration_to_nanos(config.max_age)
-            
+
             # Create stream configuration
             stream_config = js_api.StreamConfig(
                 name=config.stream_name,
@@ -498,87 +497,87 @@ class JetStreamManager:
                 description=config.description,
                 metadata=config.metadata,
             )
-            
+
             # Create the stream
             stream_info = await self._js.add_stream(config=stream_config)
-            
+
             # Store local reference
             self._streams[config.stream_name] = StreamInfo(
                 name=config.stream_name,
                 config=config,
-                created_at=datetime.now(timezone.utc),
+                created_at=datetime.now(UTC),
                 state={
                     "messages": stream_info.state.messages if stream_info.state else 0,
                     "bytes": stream_info.state.bytes if stream_info.state else 0,
                 },
             )
-            
+
             self._stats["streams_created"] += 1
-            
+
             logger.info(
                 "JetStream created",
                 stream_name=config.stream_name,
                 subjects=config.subjects,
             )
-            
+
             await self._audit_stream_operation("create_stream", config.stream_name, True)
             return True
-            
+
         except Exception as e:
             logger.error(f"Failed to create stream: {e}")
             await self._audit_stream_operation("create_stream", config.stream_name, False)
             return False
-    
+
     def _create_stream_fallback(self, config: JetStreamConfig) -> bool:
         """Create stream in fallback mode."""
         self._memory_store[config.stream_name] = []
         self._memory_sequences[config.stream_name] = 0
-        
+
         self._streams[config.stream_name] = StreamInfo(
             name=config.stream_name,
             config=config,
-            created_at=datetime.now(timezone.utc),
+            created_at=datetime.now(UTC),
             state={"messages": 0, "bytes": 0},
         )
-        
+
         self._stats["streams_created"] += 1
         logger.info(f"Fallback stream created: {config.stream_name}")
         return True
-    
+
     async def delete_stream(self, stream_name: str) -> bool:
         """
         Delete a JetStream.
-        
+
         Args:
             stream_name: Name of stream to delete
-            
+
         Returns:
             True if deleted successfully
         """
         if not self._connected:
             return False
-        
+
         if stream_name not in self._streams:
             logger.warning(f"Stream not found: {stream_name}")
             return False
-        
+
         if self._fallback_mode:
             return self._delete_stream_fallback(stream_name)
-        
+
         try:
             await self._js.delete_stream(stream_name)
             del self._streams[stream_name]
             self._stats["streams_deleted"] += 1
-            
+
             logger.info(f"JetStream deleted: {stream_name}")
             await self._audit_stream_operation("delete_stream", stream_name, True)
             return True
-            
+
         except Exception as e:
             logger.error(f"Failed to delete stream: {e}")
             await self._audit_stream_operation("delete_stream", stream_name, False)
             return False
-    
+
     def _delete_stream_fallback(self, stream_name: str) -> bool:
         """Delete stream in fallback mode."""
         if stream_name in self._memory_store:
@@ -587,30 +586,30 @@ class JetStreamManager:
             del self._memory_sequences[stream_name]
         if stream_name in self._streams:
             del self._streams[stream_name]
-        
+
         self._stats["streams_deleted"] += 1
         logger.info(f"Fallback stream deleted: {stream_name}")
         return True
-    
-    async def get_stream_info(self, stream_name: str) -> Optional[StreamInfo]:
+
+    async def get_stream_info(self, stream_name: str) -> StreamInfo | None:
         """
         Get information about a stream.
-        
+
         Args:
             stream_name: Name of stream
-            
+
         Returns:
             StreamInfo or None if not found
         """
         if stream_name not in self._streams:
             return None
-        
+
         if self._fallback_mode:
             return self._streams[stream_name]
-        
+
         try:
             info = await self._js.stream_info(stream_name)
-            
+
             # Update local state
             self._streams[stream_name].state = {
                 "messages": info.state.messages if info.state else 0,
@@ -618,59 +617,59 @@ class JetStreamManager:
                 "first_seq": info.state.first_seq if info.state else 0,
                 "last_seq": info.state.last_seq if info.state else 0,
             }
-            
+
             return self._streams[stream_name]
-            
+
         except Exception as e:
             logger.error(f"Failed to get stream info: {e}")
             return self._streams[stream_name]
-    
-    async def list_streams(self) -> List[StreamInfo]:
+
+    async def list_streams(self) -> list[StreamInfo]:
         """Get list of all managed streams."""
         return list(self._streams.values())
-    
+
     async def create_consumer(
         self,
         config: ConsumerConfig,
-        callback: Callable[[str, Dict[str, Any]], None],
-    ) -> Optional[str]:
+        callback: Callable[[str, dict[str, Any]], None],
+    ) -> str | None:
         """
         Create a durable consumer with callback.
-        
+
         Args:
             config: Consumer configuration
             callback: Async callback function (subject, data)
-            
+
         Returns:
             Consumer ID or None if failed
         """
         if not self._connected:
             return None
-        
+
         if config.stream_name not in self._streams:
             logger.warning(f"Stream not found: {config.stream_name}")
             return None
-        
+
         if self._fallback_mode:
             return self._create_consumer_fallback(config, callback)
-        
+
         try:
             import nats.js.api as js_api
-            
+
             # Map delivery policy
             deliver_policy = getattr(
                 js_api.DeliverPolicy,
                 config.deliver_policy.value.upper(),
                 js_api.DeliverPolicy.ALL,
             )
-            
+
             # Map ack policy
             ack_policy = getattr(
                 js_api.AckPolicy,
                 config.ack_policy.value.upper(),
                 js_api.AckPolicy.EXPLICIT,
             )
-            
+
             # Create consumer
             consumer = await self._js.pull_subscribe(
                 stream=config.stream_name,
@@ -681,33 +680,33 @@ class JetStreamManager:
                 ack_wait=config.ack_wait,
                 filter_subject=config.filter_subject,
             )
-            
+
             consumer_id = f"{config.stream_name}_{config.durable_name}"
             self._consumers[consumer_id] = consumer
-            
+
             # Start message processing
             asyncio.create_task(
                 self._process_consumer_messages(consumer, callback, consumer_id)
             )
-            
+
             self._stats["consumers_created"] += 1
-            
+
             logger.info(
                 "Durable consumer created",
                 consumer_id=consumer_id,
                 stream=config.stream_name,
             )
-            
+
             return consumer_id
-            
+
         except Exception as e:
             logger.error(f"Failed to create consumer: {e}")
             return None
-    
+
     def _create_consumer_fallback(
         self,
         config: ConsumerConfig,
-        callback: Callable[[str, Dict[str, Any]], None],
+        callback: Callable[[str, dict[str, Any]], None],
     ) -> str:
         """Create consumer in fallback mode."""
         consumer_id = f"{config.stream_name}_{config.durable_name}"
@@ -716,15 +715,15 @@ class JetStreamManager:
             "callback": callback,
             "sequence": 0,
         }
-        
+
         self._stats["consumers_created"] += 1
         logger.info(f"Fallback consumer created: {consumer_id}")
         return consumer_id
-    
+
     async def _process_consumer_messages(
         self,
         consumer: Any,
-        callback: Callable[[str, Dict[str, Any]], None],
+        callback: Callable[[str, dict[str, Any]], None],
         consumer_id: str,
     ) -> None:
         """Process messages from a consumer."""
@@ -735,56 +734,56 @@ class JetStreamManager:
                     try:
                         data = json.loads(msg.data.decode("utf-8"))
                         subject = msg.subject
-                        
+
                         # Call callback
                         if asyncio.iscoroutinefunction(callback):
                             await callback(subject, data)
                         else:
                             callback(subject, data)
-                        
+
                         # Acknowledge
                         await msg.ack()
                         self._stats["messages_consumed"] += 1
-                        
+
                     except Exception as e:
                         logger.error(f"Error processing message: {e}")
                         await msg.nak()
-                        
-            except asyncio.TimeoutError:
+
+            except builtins.TimeoutError:
                 continue
             except Exception as e:
                 logger.error(f"Consumer error: {e}")
                 await asyncio.sleep(1.0)
-    
+
     async def publish(
         self,
         stream_name: str,
         subject: str,
-        data: Dict[str, Any],
-        correlation_id: Optional[str] = None,
+        data: dict[str, Any],
+        correlation_id: str | None = None,
     ) -> bool:
         """
         Publish a message to a stream.
-        
+
         Args:
             stream_name: Target stream name
             subject: Message subject
             data: Message payload
             correlation_id: Optional correlation ID for tracing
-            
+
         Returns:
             True if published successfully
         """
         if not self._connected:
             return False
-        
+
         if stream_name not in self._streams:
             logger.warning(f"Stream not found: {stream_name}")
             return False
-        
+
         if self._fallback_mode:
             return self._publish_fallback(stream_name, subject, data)
-        
+
         try:
             # Add metadata
             envelope = {
@@ -792,106 +791,106 @@ class JetStreamManager:
                 "metadata": {
                     "subject": subject,
                     "stream": stream_name,
-                    "timestamp": datetime.now(timezone.utc).isoformat(),
+                    "timestamp": datetime.now(UTC).isoformat(),
                 },
             }
             if correlation_id:
                 envelope["metadata"]["correlation_id"] = correlation_id
-            
+
             # Publish to JetStream
             ack = await self._js.publish(subject, json.dumps(envelope).encode("utf-8"))
-            
+
             self._stats["messages_published"] += 1
-            
+
             logger.debug(
                 "Message published",
                 stream=stream_name,
                 subject=subject,
                 seq=ack.seq,
             )
-            
+
             return True
-            
+
         except Exception as e:
             logger.error(f"Failed to publish message: {e}")
             return False
-    
+
     def _publish_fallback(
         self,
         stream_name: str,
         subject: str,
-        data: Dict[str, Any],
+        data: dict[str, Any],
     ) -> bool:
         """Publish in fallback mode."""
         if stream_name not in self._memory_store:
             return False
-        
+
         # Increment sequence
         self._memory_sequences[stream_name] += 1
         seq = self._memory_sequences[stream_name]
-        
+
         # Store message
         message = {
             "sequence": seq,
             "subject": subject,
             "data": data,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
         self._memory_store[stream_name].append(message)
-        
+
         self._stats["messages_published"] += 1
         logger.debug(f"Fallback message published: {stream_name}:{seq}")
         return True
-    
+
     async def replay_messages(
         self,
         stream_name: str,
-        start_sequence: Optional[int] = None,
-        end_sequence: Optional[int] = None,
-        subject_filter: Optional[str] = None,
-        callback: Optional[Callable[[str, Dict[str, Any]], None]] = None,
-    ) -> List[Dict[str, Any]]:
+        start_sequence: int | None = None,
+        end_sequence: int | None = None,
+        subject_filter: str | None = None,
+        callback: Callable[[str, dict[str, Any]], None] | None = None,
+    ) -> list[dict[str, Any]]:
         """
         Replay messages from a stream.
-        
+
         Args:
             stream_name: Source stream name
             start_sequence: Start sequence number (default: beginning)
             end_sequence: End sequence number (default: end)
             subject_filter: Filter by subject pattern
             callback: Optional callback for each message
-            
+
         Returns:
             List of replayed messages
         """
         if stream_name not in self._streams:
             logger.warning(f"Stream not found: {stream_name}")
             return []
-        
+
         if self._fallback_mode:
             return self._replay_fallback(
                 stream_name, start_sequence, end_sequence, subject_filter, callback
             )
-        
+
         messages = []
-        
+
         try:
             import nats.js.api as js_api
-            
+
             # Determine deliver policy
             if start_sequence:
                 deliver_policy = js_api.DeliverPolicy.BY_START_SEQUENCE
             else:
                 deliver_policy = js_api.DeliverPolicy.ALL
-            
+
             # Create temporary consumer
             consumer = await self._js.pull_subscribe(
                 stream=stream_name,
-                durable=f"replay_{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}",
+                durable=f"replay_{datetime.now(UTC).strftime('%Y%m%d%H%M%S')}",
                 deliver_policy=deliver_policy,
                 opt_start_seq=start_sequence or 1,
             )
-            
+
             # Fetch messages
             while True:
                 try:
@@ -900,20 +899,20 @@ class JetStreamManager:
                         try:
                             envelope = json.loads(msg.data.decode("utf-8"))
                             subject = msg.subject
-                            
+
                             # Apply subject filter
                             if subject_filter and not self._match_subject(
                                 subject, subject_filter
                             ):
                                 await msg.ack()
                                 continue
-                            
+
                             # Check end sequence
                             seq = msg.metadata.sequence.stream if msg.metadata else 0
                             if end_sequence and seq > end_sequence:
                                 await msg.ack()
                                 break
-                            
+
                             data = envelope.get("data", envelope)
                             messages.append({
                                 "sequence": seq,
@@ -921,83 +920,83 @@ class JetStreamManager:
                                 "data": data,
                                 "timestamp": envelope.get("metadata", {}).get("timestamp"),
                             })
-                            
+
                             if callback:
                                 if asyncio.iscoroutinefunction(callback):
                                     await callback(subject, data)
                                 else:
                                     callback(subject, data)
-                            
+
                             await msg.ack()
-                            
+
                         except Exception as e:
                             logger.error(f"Error replaying message: {e}")
                             await msg.nak()
-                            
-                except asyncio.TimeoutError:
+
+                except builtins.TimeoutError:
                     break
-            
+
             logger.info(f"Replayed {len(messages)} messages from {stream_name}")
             return messages
-            
+
         except Exception as e:
             logger.error(f"Failed to replay messages: {e}")
             return []
-    
+
     def _replay_fallback(
         self,
         stream_name: str,
-        start_sequence: Optional[int],
-        end_sequence: Optional[int],
-        subject_filter: Optional[str],
-        callback: Optional[Callable[[str, Dict[str, Any]], None]],
-    ) -> List[Dict[str, Any]]:
+        start_sequence: int | None,
+        end_sequence: int | None,
+        subject_filter: str | None,
+        callback: Callable[[str, dict[str, Any]], None] | None,
+    ) -> list[dict[str, Any]]:
         """Replay messages in fallback mode."""
         if stream_name not in self._memory_store:
             return []
-        
+
         messages = []
         for msg in self._memory_store[stream_name]:
             seq = msg.get("sequence", 0)
-            
+
             # Apply sequence filters
             if start_sequence and seq < start_sequence:
                 continue
             if end_sequence and seq > end_sequence:
                 break
-            
+
             # Apply subject filter
             subject = msg.get("subject", "")
             if subject_filter and not self._match_subject(subject, subject_filter):
                 continue
-            
+
             messages.append(msg)
-            
+
             if callback:
                 if asyncio.iscoroutinefunction(callback):
                     callback(msg["subject"], msg["data"])
                 else:
                     callback(msg["subject"], msg["data"])
-        
+
         return messages
-    
+
     def _match_subject(self, subject: str, pattern: str) -> bool:
         """Match subject against wildcard pattern."""
         import fnmatch
         return fnmatch.fnmatch(subject, pattern)
-    
+
     def _parse_duration_to_nanos(self, duration: str) -> int:
         """Parse duration string to nanoseconds."""
         # Parse formats like "72h", "7d", "168h"
         import re
-        
+
         match = re.match(r"(\d+)([hdm])", duration.lower())
         if not match:
             return 0
-        
+
         value = int(match.group(1))
         unit = match.group(2)
-        
+
         if unit == "h":
             nanos = value * 3600 * 1_000_000_000
         elif unit == "d":
@@ -1006,10 +1005,10 @@ class JetStreamManager:
             nanos = value * 30 * 86400 * 1_000_000_000
         else:
             nanos = 0
-        
+
         return nanos
-    
-    async def get_stats(self) -> Dict[str, Any]:
+
+    async def get_stats(self) -> dict[str, Any]:
         """Get manager statistics."""
         return {
             **self._stats,
@@ -1018,11 +1017,11 @@ class JetStreamManager:
             "stream_count": len(self._streams),
             "consumer_count": len(self._consumers),
         }
-    
-    async def initialize_default_streams(self) -> Dict[str, bool]:
+
+    async def initialize_default_streams(self) -> dict[str, bool]:
         """
         Initialize all default streams.
-        
+
         Returns:
             Dictionary of stream names to creation status
         """
@@ -1033,7 +1032,7 @@ class JetStreamManager:
 
 
 # Module singleton
-_manager: Optional[JetStreamManager] = None
+_manager: JetStreamManager | None = None
 
 
 def get_jetstream_manager() -> JetStreamManager:
@@ -1045,24 +1044,24 @@ def get_jetstream_manager() -> JetStreamManager:
 
 
 async def setup_jetstream(
-    servers: Optional[List[str]] = None,
+    servers: list[str] | None = None,
     create_default_streams: bool = True,
 ) -> JetStreamManager:
     """
     Setup and initialize JetStream manager.
-    
+
     Args:
         servers: Optional NATS server URLs
         create_default_streams: Create default streams
-        
+
     Returns:
         Initialized JetStreamManager
     """
     global _manager
     _manager = JetStreamManager(servers=servers or ["nats://localhost:4222"])
     await _manager.connect()
-    
+
     if create_default_streams:
         await _manager.initialize_default_streams()
-    
+
     return _manager

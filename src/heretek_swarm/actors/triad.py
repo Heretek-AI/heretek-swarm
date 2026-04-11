@@ -11,13 +11,13 @@ This module implements the core Triad agents:
 These agents work together using MAKER consensus for deliberation.
 """
 
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional
+from datetime import UTC, datetime
+from typing import Any
 
 import structlog
 from swarms import Agent
 
-from heretek_swarm.actors.base import AgentActor, ActorMessage
+from heretek_swarm.actors.base import ActorMessage, AgentActor
 
 logger = structlog.get_logger("TriadAgents")
 
@@ -39,7 +39,7 @@ class StewardAgent(AgentActor):
         agent_id: str = "steward",
         name: str = "Steward",
         description: str = "Triad coordinator and governance agent",
-        swarms_agent: Optional[Agent] = None,
+        swarms_agent: Agent | None = None,
         **kwargs,
     ) -> None:
         """
@@ -68,9 +68,9 @@ class StewardAgent(AgentActor):
         )
 
         # Steward-specific state
-        self.active_deliberations: Dict[str, Dict[str, Any]] = {}
-        self.governance_policies: Dict[str, Any] = {}
-        self.resource_allocations: Dict[str, float] = {}
+        self.active_deliberations: dict[str, dict[str, Any]] = {}
+        self.governance_policies: dict[str, Any] = {}
+        self.resource_allocations: dict[str, float] = {}
 
         logger.info(f"[{self.agent_id}] Steward agent initialized")
 
@@ -131,7 +131,7 @@ class StewardAgent(AgentActor):
                 deliberation_id = message.content.get("deliberation_id")
                 topic = message.content.get("topic")
                 triad_members = message.content.get("triad_members", [])
-                
+
                 if not deliberation_id or not topic:
                     logger.error(f"[{self.agent_id}] Missing deliberation parameters")
                     return
@@ -145,7 +145,7 @@ class StewardAgent(AgentActor):
             "topic": topic,
             "triad_members": triad_members,
             "status": "initiated",
-            "started_at": datetime.now(timezone.utc).isoformat(),
+            "started_at": datetime.now(UTC).isoformat(),
             "votes": {},
         }
 
@@ -225,7 +225,7 @@ class StewardAgent(AgentActor):
             # P2-1 fix: Use timezone-aware datetime
             self.governance_policies[policy_id] = {
                 **policy_data,
-                "updated_at": datetime.now(timezone.utc).isoformat(),
+                "updated_at": datetime.now(UTC).isoformat(),
                 "updated_by": message.sender,
             }
             logger.info(f"[{self.agent_id}] Updated policy: {policy_id}")
@@ -233,7 +233,7 @@ class StewardAgent(AgentActor):
     async def coordinate_triad(
         self,
         topic: str,
-        triad_members: List[str],
+        triad_members: list[str],
     ) -> str:
         """
         Coordinate a triad deliberation.
@@ -246,7 +246,7 @@ class StewardAgent(AgentActor):
             Deliberation ID
         """
         # P2-1 fix: Use timezone-aware datetime
-        deliberation_id = f"del_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}"
+        deliberation_id = f"del_{datetime.now(UTC).strftime('%Y%m%d_%H%M%S')}"
 
         await self.send(
             topic="triad",
@@ -260,11 +260,11 @@ class StewardAgent(AgentActor):
 
         return deliberation_id
 
-    def get_deliberation_status(self, deliberation_id: str) -> Optional[Dict[str, Any]]:
+    def get_deliberation_status(self, deliberation_id: str) -> dict[str, Any] | None:
         """Get status of a deliberation."""
         return self.active_deliberations.get(deliberation_id)
 
-    def get_governance_policy(self, policy_id: str) -> Optional[Dict[str, Any]]:
+    def get_governance_policy(self, policy_id: str) -> dict[str, Any] | None:
         """Get a governance policy."""
         return self.governance_policies.get(policy_id)
 
@@ -285,7 +285,7 @@ class AlphaAgent(AgentActor):
         agent_id: str = "alpha",
         name: str = "Alpha",
         description: str = "Primary decision maker and analyst",
-        swarms_agent: Optional[Agent] = None,
+        swarms_agent: Agent | None = None,
         analysis_depth: str = "deep",
         **kwargs,
     ) -> None:
@@ -317,7 +317,7 @@ class AlphaAgent(AgentActor):
 
         self.analysis_depth = analysis_depth
         self.max_history_size = 1000  # P1-3: Limit history size to prevent memory leaks
-        self.analysis_history: List[Dict[str, Any]] = []
+        self.analysis_history: list[dict[str, Any]] = []
         self.decision_count = 0
 
         logger.info(f"[{self.agent_id}] Alpha agent initialized")
@@ -419,7 +419,7 @@ class AlphaAgent(AgentActor):
         self.analysis_history.append({
             "request_id": request_id,
             "analysis": analysis,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         })
         # P1-3: Trim history if it exceeds max size
         if len(self.analysis_history) > self.max_history_size:
@@ -433,7 +433,6 @@ class AlphaAgent(AgentActor):
             if validated:
                 request_id = validated.request_id
                 decision_to_validate = validated.decision
-                original_analysis = validated.original_analysis
             else:
                 # Fallback to unvalidated access
                 request_id = message.content.get("request_id")
@@ -458,7 +457,7 @@ class AlphaAgent(AgentActor):
             correlation_id=message.correlation_id,
         )
 
-    async def _perform_analysis(self, problem: str) -> Dict[str, Any]:
+    async def _perform_analysis(self, problem: str) -> dict[str, Any]:
         """
         Perform analysis on a problem.
 
@@ -491,7 +490,7 @@ class AlphaAgent(AgentActor):
             "depth": self.analysis_depth,
         }
 
-    async def _validate_decision(self, decision: Any) -> Dict[str, Any]:
+    async def _validate_decision(self, decision: Any) -> dict[str, Any]:
         """
         Validate a decision.
 
@@ -521,7 +520,7 @@ class AlphaAgent(AgentActor):
             "feedback": "Fallback validation",
         }
 
-    def get_analysis_statistics(self) -> Dict[str, Any]:
+    def get_analysis_statistics(self) -> dict[str, Any]:
         """Get analysis statistics."""
         return {
             "total_analyses": len(self.analysis_history),
@@ -547,7 +546,7 @@ class BetaAgent(AgentActor):
         agent_id: str = "beta",
         name: str = "Beta",
         description: str = "Secondary analyst and validator",
-        swarms_agent: Optional[Agent] = None,
+        swarms_agent: Agent | None = None,
         validation_strictness: float = 0.8,
         **kwargs,
     ) -> None:
@@ -579,8 +578,8 @@ class BetaAgent(AgentActor):
 
         self.validation_strictness = validation_strictness
         self.max_history_size = 1000  # P1-3: Limit history size to prevent memory leaks
-        self.validation_history: List[Dict[str, Any]] = []
-        self.error_detections: List[Dict[str, Any]] = []
+        self.validation_history: list[dict[str, Any]] = []
+        self.error_detections: list[dict[str, Any]] = []
 
         logger.info(f"[{self.agent_id}] Beta agent initialized")
 
@@ -660,7 +659,7 @@ class BetaAgent(AgentActor):
         self.validation_history.append({
             "request_id": request_id,
             "validation": validation,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         })
         # P1-3: Trim history if it exceeds max size
         if len(self.validation_history) > self.max_history_size:
@@ -688,7 +687,7 @@ class BetaAgent(AgentActor):
             self.error_detections.append({
                 "content": content,
                 "errors": errors,
-                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
             })
             # P1-3: Trim history if it exceeds max size
             if len(self.error_detections) > self.max_history_size:
@@ -706,7 +705,7 @@ class BetaAgent(AgentActor):
             correlation_id=message.correlation_id,
         )
 
-    async def _perform_analysis(self, problem: str) -> Dict[str, Any]:
+    async def _perform_analysis(self, problem: str) -> dict[str, Any]:
         """Perform independent analysis."""
         if self.swarms_agent:
             try:
@@ -733,8 +732,8 @@ class BetaAgent(AgentActor):
     async def _validate_decision(
         self,
         decision: Any,
-        original_analysis: Optional[Dict[str, Any]] = None,
-    ) -> Dict[str, Any]:
+        original_analysis: dict[str, Any] | None = None,
+    ) -> dict[str, Any]:
         """Validate a decision with Beta's perspective."""
         if self.swarms_agent:
             try:
@@ -758,7 +757,7 @@ class BetaAgent(AgentActor):
             "perspective": "secondary",
         }
 
-    async def _detect_errors(self, content: Any) -> List[Dict[str, Any]]:
+    async def _detect_errors(self, content: Any) -> list[dict[str, Any]]:
         """Detect errors in content."""
         errors = []
 
@@ -779,7 +778,7 @@ class BetaAgent(AgentActor):
 
         return errors
 
-    def get_validation_statistics(self) -> Dict[str, Any]:
+    def get_validation_statistics(self) -> dict[str, Any]:
         """Get validation statistics."""
         return {
             "total_validations": len(self.validation_history),
@@ -805,7 +804,7 @@ class CharlieAgent(AgentActor):
         agent_id: str = "charlie",
         name: str = "Charlie",
         description: str = "Tertiary perspective and challenger",
-        swarms_agent: Optional[Agent] = None,
+        swarms_agent: Agent | None = None,
         challenge_intensity: str = "moderate",
         **kwargs,
     ) -> None:
@@ -837,8 +836,8 @@ class CharlieAgent(AgentActor):
 
         self.challenge_intensity = challenge_intensity
         self.max_history_size = 1000  # P1-3: Limit history size to prevent memory leaks
-        self.challenges_raised: List[Dict[str, Any]] = []
-        self.risk_assessments: List[Dict[str, Any]] = []
+        self.challenges_raised: list[dict[str, Any]] = []
+        self.risk_assessments: list[dict[str, Any]] = []
 
         logger.info(f"[{self.agent_id}] Charlie agent initialized")
 
@@ -915,7 +914,7 @@ class CharlieAgent(AgentActor):
         self.challenges_raised.append({
             "proposition": proposition,
             "challenges": challenges,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         })
         # P1-3: Trim history if it exceeds max size
         if len(self.challenges_raised) > self.max_history_size:
@@ -946,7 +945,7 @@ class CharlieAgent(AgentActor):
         self.risk_assessments.append({
             "scenario": scenario,
             "assessment": assessment,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         })
         # P1-3: Trim history if it exceeds max size
         if len(self.risk_assessments) > self.max_history_size:
@@ -963,7 +962,7 @@ class CharlieAgent(AgentActor):
             correlation_id=message.correlation_id,
         )
 
-    async def _perform_analysis(self, problem: str) -> Dict[str, Any]:
+    async def _perform_analysis(self, problem: str) -> dict[str, Any]:
         """Perform challenging analysis."""
         if self.swarms_agent:
             try:
@@ -989,7 +988,7 @@ class CharlieAgent(AgentActor):
             "challenges": [],
         }
 
-    async def _generate_challenges(self, proposition: Any) -> List[Dict[str, Any]]:
+    async def _generate_challenges(self, proposition: Any) -> list[dict[str, Any]]:
         """Generate challenges to a proposition."""
         challenges = []
 
@@ -1009,7 +1008,7 @@ class CharlieAgent(AgentActor):
 
         return challenges
 
-    async def _assess_risks(self, scenario: Any) -> Dict[str, Any]:
+    async def _assess_risks(self, scenario: Any) -> dict[str, Any]:
         """Assess risks in a scenario."""
         if self.swarms_agent:
             try:
@@ -1031,7 +1030,7 @@ class CharlieAgent(AgentActor):
             "mitigations": [],
         }
 
-    def get_challenge_statistics(self) -> Dict[str, Any]:
+    def get_challenge_statistics(self) -> dict[str, Any]:
         """Get challenge statistics."""
         return {
             "total_challenges": len(self.challenges_raised),

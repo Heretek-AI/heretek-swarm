@@ -14,11 +14,11 @@ mem0 provides:
 - 90% lower token usage
 """
 
-from .base import MemoryEntry, MemoryQuery, MemoryResult, EmbeddingVector, MemoryType, MemoryTier
-from .ephemeral import EphemeralMemoryStore, EphemeralConfig
+from .base import EmbeddingVector, MemoryEntry, MemoryQuery, MemoryResult, MemoryTier, MemoryType
+from .embeddings import EmbeddingConfig, EmbeddingService
+from .ephemeral import EphemeralConfig, EphemeralMemoryStore
 from .persistent import PersistentMemoryStore
-from .unified import DualTierMemorySystem, DualTierConfig
-from .embeddings import EmbeddingService, EmbeddingConfig
+from .unified import DualTierConfig, DualTierMemorySystem
 
 # mem0 backend integration
 try:
@@ -30,17 +30,17 @@ except ImportError:
     Mem0Config = None
 
 __all__ = [
+    "MEM0_AVAILABLE",
+    "DualTierMemorySystem",
+    "EmbeddingService",
+    "EmbeddingVector",
+    "EphemeralMemoryStore",
+    "Mem0Backend",
+    "Mem0Config",
     "MemoryEntry",
     "MemoryQuery",
     "MemoryResult",
-    "EmbeddingVector",
-    "EphemeralMemoryStore",
     "PersistentMemoryStore",
-    "DualTierMemorySystem",
-    "EmbeddingService",
-    "Mem0Backend",
-    "Mem0Config",
-    "MEM0_AVAILABLE",
 ]
 
 __version__ = "0.1.0"
