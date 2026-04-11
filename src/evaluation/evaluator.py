@@ -439,7 +439,7 @@ class AgentEvaluator:
             return [e for e in evaluations if e.agent_id == agent_id]
         return evaluations
 
-    def compare_agents(self, _agent_evaluations: dict[str, _EvaluationResult]) -> dict[str, QualityMetrics]:
+    def compare_agents(self, _agent_evaluations: dict[str, EvaluationResult]) -> dict[str, QualityMetrics]:
         """
         Compare multiple agents by their evaluation metrics.
 
