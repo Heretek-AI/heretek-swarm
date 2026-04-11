@@ -6,7 +6,6 @@
  */
 
 import React, { createContext, useContext, useState, useCallback, useRef } from 'react';
-
 export type ToastType = 'success' | 'error' | 'warning' | 'info';
 
 export interface Toast {
@@ -31,7 +30,7 @@ interface ToastContextType {
   info: (title: string, message?: string, duration?: number) => string;
 }
 
-const ToastContext = createContext<ToastContextType | undefined>(undefined);
+const ToastContext = createContext<ToastContextType | undefined>();
 
 export function useToast() {
   const context = useContext(ToastContext);

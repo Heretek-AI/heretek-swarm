@@ -596,7 +596,7 @@ export function ModelGarage() {
       setLlmProviders((prev) => [...prev, provider as LLMProvider]);
     }
     setShowLlmForm(false);
-    setEditingLlmProvider(undefined);
+    setEditingLlmProvider();
   }, [editingLlmProvider]);
 
   const handleSaveEmbeddingProvider = useCallback((provider: Partial<EmbeddingProvider>) => {
@@ -606,7 +606,7 @@ export function ModelGarage() {
       setEmbeddingProviders((prev) => [...prev, provider as EmbeddingProvider]);
     }
     setShowEmbeddingForm(false);
-    setEditingEmbeddingProvider(undefined);
+    setEditingEmbeddingProvider();
   }, [editingEmbeddingProvider]);
 
   const handleTestLlm = useCallback(async (id: string) => {
@@ -749,7 +749,7 @@ export function ModelGarage() {
                 onSave={handleSaveLlmProvider}
                 onCancel={() => {
                   setShowLlmForm(false);
-                  setEditingLlmProvider(undefined);
+                  setEditingLlmProvider();
                 }}
               />
             </div>
