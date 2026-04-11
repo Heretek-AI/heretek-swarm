@@ -1,0 +1,10 @@
+Traceback (most recent call last):
+  File "C:\Users\derek\Desktop\Heretek-AI\heretek-swarm\fix_antipatterns_v2.py", line 471, in <module>
+    main()
+    ~~~~^^
+  File "C:\Users\derek\Desktop\Heretek-AI\heretek-swarm\fix_antipatterns_v2.py", line 446, in main
+    files = find_py_files(script_dir)
+  File "C:\Users\derek\Desktop\Heretek-AI\heretek-swarm\fix_antipatterns_v2.py", line 37, in find_py_files
+    for d in root.rglob('*'):
+             ^^^^
+NameError: name 'root' is not defined. Did you mean: '_root'?
