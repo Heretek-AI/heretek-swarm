@@ -296,7 +296,6 @@ export function useRealTimeAgentUpdates(
   } = useWebSocket('dashboard', {
     onMessage: throttledProcessMessage.current,
     onOpen: () => {
-      console.log('Real-time updates connected');
       // Subscribe to enabled channels
       const subscriptions: string[] = [];
       if (enableAgentStatus) subscriptions.push('agent_status');
@@ -310,9 +309,7 @@ export function useRealTimeAgentUpdates(
         });
       });
     },
-    onClose: () => {
-      console.log('Real-time updates disconnected');
-    },
+    onClose: () => {},
     onError: (error) => {
       console.error('Real-time updates error:', error);
     },

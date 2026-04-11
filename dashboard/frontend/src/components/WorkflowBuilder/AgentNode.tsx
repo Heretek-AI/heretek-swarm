@@ -95,7 +95,6 @@ function AgentNode({ data, selected }: NodeProps<AgentData>) {
   
   // Handle click on a specific handle
   const handleHandleClick = useCallback((handleId: string) => {
-    console.log('Handle clicked:', handleId);
     // Could open channel configuration or show channel details
   }, []);
   

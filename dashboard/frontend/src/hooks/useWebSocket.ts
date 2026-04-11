@@ -55,18 +55,15 @@ export function useWebSocket(
         setConnected(true);
         reconnectAttempts.current = 0;
         onOpen?.();
-        console.log(`WebSocket connected to ${channel}`);
       };
 
       wsRef.current.onclose = () => {
         setConnected(false);
         onClose?.();
-        console.log(`WebSocket disconnected from ${channel}`);
 
         // Attempt reconnection
         if (reconnectAttempts.current < maxReconnectAttempts) {
           reconnectAttempts.current += 1;
-          console.log(`Reconnecting... attempt ${reconnectAttempts.current}`);
           reconnectTimeout.current = setTimeout(connect, reconnectInterval);
         }
       };
