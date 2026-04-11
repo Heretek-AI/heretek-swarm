@@ -199,7 +199,7 @@ class BaseTool(ABC, Generic[_TInput, _TOutput]):
         """
         pass
 
-    async def run(self, _input_data: Dict[str, _Any], _context: Optional[ToolContext]) -> ToolExecutionResult:
+    async def run(self, _input_data: Dict[str, Any], _context: Optional[ToolContext]) -> ToolExecutionResult:
         """
         Run the tool with input validation and monitoring.
         
@@ -340,7 +340,7 @@ class BaseTool(ABC, Generic[_TInput, _TOutput]):
                 _input_data = input_data
             )
 
-    async def _validate_input(self, _input_data: Dict[str, _Any]) -> _TInput:
+    async def _validate_input(self, _input_data: Dict[str, Any]) -> _TInput:
         """
         Validate input data against expected schema.
         
@@ -415,7 +415,7 @@ class BaseTool(ABC, Generic[_TInput, _TOutput]):
 class ToolExecutionError(Exception):
     """Custom exception for tool execution errors"""
 
-    def __init__(self, _message: str, _tool_name: Optional[str], _execution_id: Optional[UUID], _details: Optional[Dict[str, _Any]]):
+    def __init__(self, _message: str, _tool_name: Optional[str], _execution_id: Optional[UUID], _details: Optional[Dict[str, Any]]):
         super().__init__(message)
         self.tool_name = tool_name
         self.execution_id = execution_id
@@ -439,7 +439,7 @@ class SimpleTool(BaseTool[Dict[str, Any], Dict[str, Any]]):
         )
         self._func = func
 
-    async def execute(self, _input_data: Dict[str, _Any], _context: ToolContext) -> Dict[str, Any]:
+    async def execute(self, _input_data: Dict[str, Any], _context: ToolContext) -> Dict[str, Any]:
         """Execute the wrapped function"""
         import asyncio
 

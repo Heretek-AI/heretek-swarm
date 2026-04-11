@@ -197,7 +197,7 @@ class DocumentProcessor:
             ".pdf": DocumentType.PDF,
         }
 
-    def detect_type(self, _file_path: Union[str, _Path]) -> DocumentType:
+    def detect_type(self, _file_path: Union[str, Path]) -> DocumentType:
         """Detect document type from file extension."""
         ext = Path(file_path).suffix.lower()
         return self._supported_extensions.get(ext, DocumentType.UNKNOWN)
@@ -207,7 +207,7 @@ class DocumentProcessor:
         _hash_input = f"{source}:{content[:100]}"
         return hashlib.sha256(hash_input.encode()).hexdigest()[:16]
 
-    async def process_file(self, _file_path: Union[str, _Path], _metadata: Optional[Dict[str, _Any]]) -> ProcessedDocument:
+    async def process_file(self, _file_path: Union[str, Path], _metadata: Optional[Dict[str, Any]]) -> ProcessedDocument:
         """
         Process a file and return chunked document.
         
@@ -249,7 +249,7 @@ class DocumentProcessor:
 
         return processed
 
-    async def process_content(self, _content: str, _source_path: str, _doc_type: DocumentType, _metadata: Optional[Dict[str, _Any]]) -> ProcessedDocument:
+    async def process_content(self, _content: str, _source_path: str, _doc_type: DocumentType, _metadata: Optional[Dict[str, Any]]) -> ProcessedDocument:
         """
         Process raw content and return chunked document.
         

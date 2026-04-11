@@ -178,7 +178,7 @@ class MockLLMProvider:
         """Set mock latency in milliseconds."""
         self._latency_ms = latency_ms
 
-    async def generate(self, _prompt: str, _**kwargs) -> str:
+    async def generate(self, _prompt: str, **kwargs) -> str:
         """Generate response based on prompt pattern."""
         self._call_count += 1
         _start_time = time.time()

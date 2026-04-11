@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-11T01:19:13.960586+00:00",
-  "overall_score": 0.7199847481054287,
+  "timestamp": "2026-04-11T01:21:33.694572+00:00",
+  "overall_score": 0.7193675889328063,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -982,8 +982,8 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 11568,
-      "findings_count": 11568,
+      "total_entities_checked": 11604,
+      "findings_count": 11604,
       "warning_count": 68,
       "score": 0.0,
       "finding_groups": [
@@ -30113,13 +30113,6 @@
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] \"_RetrievalStrategyType\" is not accessed",
-              "file_path": "src/heretek_swarm/knowledge/unified_access.py",
-              "line_start": 45,
-              "line_end": 45,
-              "metric_value": 0.0
-            },
-            {
               "entity_name": "[unused_variable] \"_RetrievalResult\" is not accessed",
               "file_path": "src/heretek_swarm/knowledge/unified_access.py",
               "line_start": 46,
@@ -30159,13 +30152,6 @@
               "file_path": "src/heretek_swarm/knowledge/unified_access.py",
               "line_start": 51,
               "line_end": 51,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"_HybridRetrieverConfig\" is not accessed",
-              "file_path": "src/heretek_swarm/knowledge/unified_access.py",
-              "line_start": 52,
-              "line_end": 52,
               "metric_value": 0.0
             },
             {
@@ -81253,6 +81239,272 @@
               "line_start": 989,
               "line_end": 989,
               "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_config\" is not accessed",
+              "file_path": "src/observability/tracing.py",
+              "line_start": 42,
+              "line_end": 42,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_config\" is not accessed",
+              "file_path": "src/observability/tracing.py",
+              "line_start": 45,
+              "line_end": 45,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_config\" is not accessed",
+              "file_path": "src/observability/tracing.py",
+              "line_start": 60,
+              "line_end": 60,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_config\" is not accessed",
+              "file_path": "src/observability/tracing.py",
+              "line_start": 61,
+              "line_end": 61,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_resource\" is not accessed",
+              "file_path": "src/observability/tracing.py",
+              "line_start": 64,
+              "line_end": 64,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_provider\" is not accessed",
+              "file_path": "src/observability/tracing.py",
+              "line_start": 71,
+              "line_end": 71,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_otlp_exporter\" is not accessed",
+              "file_path": "src/observability/tracing.py",
+              "line_start": 75,
+              "line_end": 75,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_console_exporter\" is not accessed",
+              "file_path": "src/observability/tracing.py",
+              "line_start": 79,
+              "line_end": 79,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_tracer\" is not accessed",
+              "file_path": "src/observability/tracing.py",
+              "line_start": 161,
+              "line_end": 161,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_result\" is not accessed",
+              "file_path": "src/observability/tracing.py",
+              "line_start": 168,
+              "line_end": 168,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_tracer\" is not accessed",
+              "file_path": "src/observability/tracing.py",
+              "line_start": 178,
+              "line_end": 178,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_result\" is not accessed",
+              "file_path": "src/observability/tracing.py",
+              "line_start": 185,
+              "line_end": 185,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_func\" is not accessed",
+              "file_path": "src/observability/tracing.py",
+              "line_start": 156,
+              "line_end": 156,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_span_name\" is not accessed",
+              "file_path": "src/observability/tracing.py",
+              "line_start": 157,
+              "line_end": 157,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_name\" is not accessed",
+              "file_path": "src/observability/tracing.py",
+              "line_start": 144,
+              "line_end": 144,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_tracer\" is not accessed",
+              "file_path": "src/observability/tracing.py",
+              "line_start": 214,
+              "line_end": 214,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_agent_id\" is not accessed",
+              "file_path": "src/observability/tracing.py",
+              "line_start": 215,
+              "line_end": 215,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_agent_type\" is not accessed",
+              "file_path": "src/observability/tracing.py",
+              "line_start": 216,
+              "line_end": 216,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_result\" is not accessed",
+              "file_path": "src/observability/tracing.py",
+              "line_start": 228,
+              "line_end": 228,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_tracer\" is not accessed",
+              "file_path": "src/observability/tracing.py",
+              "line_start": 238,
+              "line_end": 238,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_agent_id\" is not accessed",
+              "file_path": "src/observability/tracing.py",
+              "line_start": 239,
+              "line_end": 239,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_agent_type\" is not accessed",
+              "file_path": "src/observability/tracing.py",
+              "line_start": 240,
+              "line_end": 240,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_result\" is not accessed",
+              "file_path": "src/observability/tracing.py",
+              "line_start": 252,
+              "line_end": 252,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_func\" is not accessed",
+              "file_path": "src/observability/tracing.py",
+              "line_start": 211,
+              "line_end": 211,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_operation\" is not accessed",
+              "file_path": "src/observability/tracing.py",
+              "line_start": 201,
+              "line_end": 201,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_operation\" is not accessed",
+              "file_path": "src/observability/tracing.py",
+              "line_start": 274,
+              "line_end": 274,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_tracer\" is not accessed",
+              "file_path": "src/observability/tracing.py",
+              "line_start": 286,
+              "line_end": 286,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_attrs\" is not accessed",
+              "file_path": "src/observability/tracing.py",
+              "line_start": 287,
+              "line_end": 287,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_start_time\" is not accessed",
+              "file_path": "src/observability/tracing.py",
+              "line_start": 290,
+              "line_end": 290,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_elapsed_ms\" is not accessed",
+              "file_path": "src/observability/tracing.py",
+              "line_start": 299,
+              "line_end": 299,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_elapsed_ms\" is not accessed",
+              "file_path": "src/observability/tracing.py",
+              "line_start": 321,
+              "line_end": 321,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_sender_id\" is not accessed",
+              "file_path": "src/observability/tracing.py",
+              "line_start": 328,
+              "line_end": 328,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_tracer\" is not accessed",
+              "file_path": "src/observability/tracing.py",
+              "line_start": 341,
+              "line_end": 341,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_attributes\" is not accessed",
+              "file_path": "src/observability/tracing.py",
+              "line_start": 343,
+              "line_end": 343,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_consensus_id\" is not accessed",
+              "file_path": "src/observability/tracing.py",
+              "line_start": 361,
+              "line_end": 361,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_tracer\" is not accessed",
+              "file_path": "src/observability/tracing.py",
+              "line_start": 373,
+              "line_end": 373,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_agent_id\" is not accessed",
+              "file_path": "src/observability/tracing.py",
+              "line_start": 386,
+              "line_end": 386,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_current_span\" is not accessed",
+              "file_path": "src/observability/tracing.py",
+              "line_start": 395,
+              "line_end": 395,
+              "metric_value": 0.0
             }
           ]
         },
@@ -82422,7 +82674,7 @@
     },
     {
       "file_path": "src/heretek_swarm/knowledge/unified_access.py",
-      "total_findings": 88,
+      "total_findings": 86,
       "warning_findings": 5,
       "composite_risk_score": 75.0
     },

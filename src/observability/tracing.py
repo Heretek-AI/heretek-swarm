@@ -52,7 +52,7 @@ def init_tracing(_config: TracingConfig | None) -> trace.Tracer:
     Returns:
         Configured tracer instance.
     """
-    global _tracer, _config
+    global _tracer, config
     
     if _tracer is not None:
         return _tracer
@@ -141,7 +141,7 @@ class SpanAttributes:
 
 # ============== TRACING DECORATORS ==============
 
-def traced(_name: str | None, _kind: trace.SpanKind, _attributes: dict[str, _Any] | None) -> Callable[[F], F]:
+def traced(_name: str | None, _kind: trace.SpanKind, _attributes: dict[str, Any] | None) -> Callable[[F], F]:
     """
     Decorator to trace a function as a span.
     
@@ -157,7 +157,7 @@ def traced(_name: str | None, _kind: trace.SpanKind, _attributes: dict[str, _Any
         _span_name = name or func.__name__
         
         @wraps(func)
-        def sync_wrapper(_*args, _**kwargs):
+        def sync_wrapper(*args, **kwargs):
             _tracer = get_tracer()
             with tracer.start_as_current_span(
                 span_name,
@@ -174,7 +174,7 @@ def traced(_name: str | None, _kind: trace.SpanKind, _attributes: dict[str, _Any
                     raise
         
         @wraps(func)
-        async def async_wrapper(_*args, _**kwargs):
+        async def async_wrapper(*args, **kwargs):
             _tracer = get_tracer()
             with tracer.start_as_current_span(
                 span_name,
@@ -210,7 +210,7 @@ def traced_agent_method(_operation: str) -> Callable[[F], F]:
     """
     def decorator(_func: F) -> F:
         @wraps(func)
-        def wrapper(self, _*args, _**kwargs):
+        def wrapper(self, *args, **kwargs):
             _tracer = get_tracer()
             _agent_id = getattr(self, "agent_id", "unknown")
             _agent_type = getattr(self, "agent_type", "unknown")
@@ -234,7 +234,7 @@ def traced_agent_method(_operation: str) -> Callable[[F], F]:
                     raise
         
         @wraps(func)
-        async def async_wrapper(self, _*args, _**kwargs):
+        async def async_wrapper(self, *args, **kwargs):
             _tracer = get_tracer()
             _agent_id = getattr(self, "agent_id", "unknown")
             _agent_type = getattr(self, "agent_type", "unknown")
@@ -271,7 +271,7 @@ LATENCY_BASELINE_MS = 100  # <100ms requirement
 
 
 @contextmanager
-def track_latency(_operation: str, _baseline_ms: float, _attributes: dict[str, _Any] | None):
+def track_latency(_operation: str, _baseline_ms: float, _attributes: dict[str, Any] | None):
     """
     Context manager to track latency and flag if baseline exceeded.
     

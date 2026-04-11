@@ -362,7 +362,7 @@ class MemoryTieringSystem:
     COLD_TO_WARM_FREQUENCY_THRESHOLD = 0.6  # Frequency score above this triggers promotion
     WARM_TO_HOT_FREQUENCY_THRESHOLD = 0.8
 
-    def __init__(self, _tier_configs: Optional[Dict[MemoryTier, _TierConfig]], _enable_auto_migration: bool) -> None:
+    def __init__(self, _tier_configs: Optional[Dict[MemoryTier, TierConfig]], _enable_auto_migration: bool) -> None:
         """
         Initialize the memory tiering system.
         

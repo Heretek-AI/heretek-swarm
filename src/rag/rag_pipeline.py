@@ -141,7 +141,7 @@ class RAGPipeline:
         self._initialized = True
         logger.info("rag_pipeline_initialized")
 
-    async def ingest_file(self, _file_path: Union[str, _Path], _metadata: Optional[Dict[str, _Any]]) -> ProcessedDocument:
+    async def ingest_file(self, _file_path: Union[str, Path], _metadata: Optional[Dict[str, Any]]) -> ProcessedDocument:
         """
         Ingest a file into the RAG system.
         
@@ -202,7 +202,7 @@ class RAGPipeline:
 
         return doc
 
-    async def ingest_directory(self, _directory: Union[str, _Path], _recursive: bool, _extensions: Optional[List[str]], _metadata: Optional[Dict[str, _Any]]) -> List[ProcessedDocument]:
+    async def ingest_directory(self, _directory: Union[str, Path], _recursive: bool, _extensions: Optional[List[str]], _metadata: Optional[Dict[str, Any]]) -> List[ProcessedDocument]:
         """
         Ingest all files in a directory.
         
@@ -252,7 +252,7 @@ class RAGPipeline:
 
         return results
 
-    async def ingest_text(self, _content: str, _source: str, _doc_type: DocumentType, _metadata: Optional[Dict[str, _Any]]) -> ProcessedDocument:
+    async def ingest_text(self, _content: str, _source: str, _doc_type: DocumentType, _metadata: Optional[Dict[str, Any]]) -> ProcessedDocument:
         """
         Ingest raw text content.
         
@@ -303,7 +303,7 @@ class RAGPipeline:
 
         return doc
 
-    async def query(self, _query: str, _top_k: int, _filters: Optional[Dict[str, _Any]]) -> RAGResult:
+    async def query(self, _query: str, _top_k: int, _filters: Optional[Dict[str, Any]]) -> RAGResult:
         """
         Query the RAG system.
         

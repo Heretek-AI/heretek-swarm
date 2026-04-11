@@ -42,14 +42,14 @@ try:
     RAG_STRATEGIES_AVAILABLE = True
 except ImportError:
     RAG_STRATEGIES_AVAILABLE = False
-    _RetrievalStrategyType = None
+    RetrievalStrategyType = None
     _RetrievalResult = None
     _StrategySelector = None
     _QueryType = None
     _RAGStrategyConfig = None
     _create_strategy_selector = None
     _HybridRetriever = None
-    _HybridRetrieverConfig = None
+    HybridRetrieverConfig = None
     _FusionMethod = None
 
 

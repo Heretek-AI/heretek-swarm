@@ -120,7 +120,7 @@ class BM25Index:
         _tokens = re.findall(r"\b[a-z0-9]+\b", text)
         return tokens
 
-    def add_document(self, _doc_id: str, _content: str, _metadata: Dict[str, _Any]) -> None:
+    def add_document(self, _doc_id: str, _content: str, _metadata: Dict[str, Any]) -> None:
         """Add a document to the index."""
         _tokens = self.tokenize(content)
         _term_freqs = Counter(tokens)
@@ -142,7 +142,7 @@ class BM25Index:
 
         self._indexed = False
 
-    def add_documents(self, _documents: List[Dict[str, _Any]]) -> None:
+    def add_documents(self, _documents: List[Dict[str, Any]]) -> None:
         """Add multiple documents."""
         for doc in documents:
             self.add_document(
@@ -271,7 +271,7 @@ class HybridRetriever:
 
         self._initialized = True
 
-    async def index_documents(self, _documents: List[Dict[str, _Any]]) -> None:
+    async def index_documents(self, _documents: List[Dict[str, Any]]) -> None:
         """
         Index documents for both vector and keyword search.
         
@@ -287,7 +287,7 @@ class HybridRetriever:
 
         logger.info("documents_indexed", count=len(documents))
 
-    async def _index_vectors(self, _documents: List[Dict[str, _Any]]) -> None:
+    async def _index_vectors(self, _documents: List[Dict[str, Any]]) -> None:
         """Index documents in vector store."""
         try:
             from qdrant_client.models import PointStruct
@@ -314,7 +314,7 @@ class HybridRetriever:
         except Exception as e:
             logger.error("vector_index_failed", error=str(e))
 
-    async def search(self, _query: str, _query_embedding: Optional[List[float]], _filters: Optional[Dict[str, _Any]]) -> List[SearchResult]:
+    async def search(self, _query: str, _query_embedding: Optional[List[float]], _filters: Optional[Dict[str, Any]]) -> List[SearchResult]:
         """
         Perform hybrid search.
         
@@ -341,7 +341,7 @@ class HybridRetriever:
 
         return results
 
-    async def _vector_search(self, _query: str, _query_embedding: Optional[List[float]], _filters: Optional[Dict[str, _Any]]) -> List[SearchResult]:
+    async def _vector_search(self, _query: str, _query_embedding: Optional[List[float]], _filters: Optional[Dict[str, Any]]) -> List[SearchResult]:
         """Perform vector similarity search."""
         if not self._vector_client:
             return []
@@ -398,7 +398,7 @@ class HybridRetriever:
 
         return results
 
-    async def _hybrid_search(self, _query: str, _query_embedding: Optional[List[float]], _filters: Optional[Dict[str, _Any]]) -> List[SearchResult]:
+    async def _hybrid_search(self, _query: str, _query_embedding: Optional[List[float]], _filters: Optional[Dict[str, Any]]) -> List[SearchResult]:
         """
         Perform hybrid search with Reciprocal Rank Fusion.
         
@@ -455,7 +455,7 @@ class HybridRetriever:
 
         return final_results
 
-    def add_document(self, _doc_id: str, _content: str, _embedding: Optional[List[float]], _metadata: Optional[Dict[str, _Any]]) -> None:
+    def add_document(self, _doc_id: str, _content: str, _embedding: Optional[List[float]], _metadata: Optional[Dict[str, Any]]) -> None:
         """Add a single document to the index."""
         self._bm25_index.add_document(doc_id, content, metadata)
 

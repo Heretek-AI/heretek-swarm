@@ -886,7 +886,7 @@ class StrategySelector:
     - Performance tracking
     """
 
-    def __init__(self, _strategies: Optional[Dict[RetrievalStrategyType, _BaseRetrievalStrategy]], _cache_enabled: bool, _cache_ttl_seconds: int):
+    def __init__(self, _strategies: Optional[Dict[RetrievalStrategyType, BaseRetrievalStrategy]], _cache_enabled: bool, _cache_ttl_seconds: int):
         self.strategies = strategies or {}
         self.cache_enabled = cache_enabled
         self.cache_ttl_seconds = cache_ttl_seconds

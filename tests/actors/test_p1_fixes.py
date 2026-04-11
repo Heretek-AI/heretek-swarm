@@ -186,7 +186,7 @@ class TestExceptionHandling:
         assert sig.parameters['timeout'].default == 60  # Default timeout is 60 seconds
         
         # Mock swarms_agent to return immediately
-        def quick_run(_*args, _**kwargs):
+        def quick_run(*args, **kwargs):
             return "result"
         
         _mock_agent = MagicMock()

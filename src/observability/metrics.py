@@ -116,13 +116,13 @@ class MockInstrument:
         self.instrument_type = instrument_type
         self.values: List[float] = []
 
-    def set(self, _value: float, _attributes: Dict[str, _Any]) -> None:
+    def set(self, _value: float, _attributes: Dict[str, Any]) -> None:
         self.values.append(value)
 
-    def add(self, _value: float, _attributes: Dict[str, _Any]) -> None:
+    def add(self, _value: float, _attributes: Dict[str, Any]) -> None:
         self.values.append(value)
 
-    def record(self, _value: float, _attributes: Dict[str, _Any]) -> None:
+    def record(self, _value: float, _attributes: Dict[str, Any]) -> None:
         self.values.append(value)
 
 
@@ -425,7 +425,7 @@ class SwarmMetricsCollector:
         """Register a callback to fetch agent states."""
         self._agent_state_callbacks.append(callback)
 
-    def register_consciousness_callback(self, _callback: Callable[[], _Dict[str, _Any]]) -> None:
+    def register_consciousness_callback(self, _callback: Callable[[], _Dict[str, Any]]) -> None:
         """Register a callback to fetch consciousness metrics."""
         self._consciousness_callbacks.append(callback)
 

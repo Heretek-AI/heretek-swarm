@@ -161,7 +161,7 @@ class _LatencyContext:
         self._start = time.perf_counter()
         return self
     
-    def __exit__(self, _*args) -> None:
+    def __exit__(self, *args, **kwargs) -> None:
         self._elapsed_ms = (time.perf_counter() - self._start) * 1000
         self._samples.append(self._elapsed_ms)
     
@@ -313,7 +313,7 @@ def agent_validator(_harness_config: HarnessConfig) -> AgentValidator:
 
 # ============== BENCHMARK UTILITIES ==============
 
-def benchmark_sync(_func: callable, _*args, _iterations: int, _warmup: int, _**kwargs) -> LatencyMetrics:
+def benchmark_sync(func: callable, *args, iterations: int, warmup: int, **kwargs) -> LatencyMetrics:
     """
     Benchmark a synchronous function.
     
@@ -342,7 +342,7 @@ def benchmark_sync(_func: callable, _*args, _iterations: int, _warmup: int, _**k
     return LatencyMetrics(operation=func.__name__, samples=samples)
 
 
-async def benchmark_async(_func: callable, _*args, _iterations: int, _warmup: int, _**kwargs) -> LatencyMetrics:
+async def benchmark_async(func: callable, *args, iterations: int, warmup: int, **kwargs) -> LatencyMetrics:
     """
     Benchmark an async function.
     

@@ -409,7 +409,7 @@ class ToolRegistry:
 
         return entry.instance
 
-    async def execute_tool(self, _tool_name: str, _input_data: Dict[str, _Any], _context: Optional[ToolContext]) -> ToolExecutionResult:
+    async def execute_tool(self, _tool_name: str, _input_data: Dict[str, Any], _context: Optional[ToolContext]) -> ToolExecutionResult:
         """Execute a tool by name"""
         _start_time = datetime.now(timezone.utc)
 
