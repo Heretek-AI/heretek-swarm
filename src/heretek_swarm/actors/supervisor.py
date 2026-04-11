@@ -490,7 +490,7 @@ class ActorSupervisor:
             f"[{self.name}] Broadcasting to {len(self.actors)} actors",
         )
 
-        _tasks = [
+        tasks = [
             actor.broadcast(content, message_type)
             for actor in self.actors.values()
         ]
