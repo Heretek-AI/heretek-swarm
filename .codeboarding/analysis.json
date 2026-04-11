@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-11T19:20:12.271040+00:00",
+    "generated_at": "2026-04-11T22:03:32.706599+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 4,
@@ -46320,6 +46320,18 @@
       "methods": []
     },
     "src/tools/__init__.py": {
+      "file_status": "deleted",
+      "methods": []
+    },
+    "generate_docker_compose.py": {
+      "file_status": "deleted",
+      "methods": []
+    },
+    "generate_prometheus_config.py": {
+      "file_status": "deleted",
+      "methods": []
+    },
+    "temp_self_model_part1.py": {
       "file_status": "deleted",
       "methods": []
     }

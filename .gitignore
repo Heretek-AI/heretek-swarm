@@ -121,3 +121,7 @@ plans/OVERNIGHT_LOOP.md
 # Claw Code local artifacts
 .claw/settings.local.json
 .claw/sessions/
+.claude/*
+.omc/*
+.claude-flow/*
+.mcp.json
