@@ -35,13 +35,29 @@ class MemoryEntry:
         embedding: Optional vector embedding
     """
 
-    id: str
-    content: dict[str, Any]
-    metadata: dict[str, Any]
-    created_at: str
+    content: Any
+    metadata: dict[str, Any] = field(default_factory=dict)
+    id: str = field(default_factory=lambda: str(uuid.uuid4()))
+    created_at: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
+    memory_type: Any = None
+    tier: Any = None
+    access_count: int = 0
+    last_accessed_at: str | None = None
     expires_at: str | None = None
     lineage: list[str] = field(default_factory=list)
     embedding: list[float] | None = None
+
+    def __post_init__(self) -> None:
+        from heretek_swarm.memory import MemoryType, MemoryTier
+        if self.memory_type is None:
+            self.memory_type = MemoryType.EPISODIC
+        if self.tier is None:
+            self.tier = MemoryTier.PERSISTENT
+
+    def touch(self) -> None:
+        """Record an access."""
+        self.access_count += 1
+        self.last_accessed_at = datetime.now(UTC).isoformat()
 
 
 @dataclass

@@ -10,8 +10,8 @@ import pytest_asyncio
 from datetime import datetime
 from unittest.mock import AsyncMock, MagicMock, patch
 
-from src.heretek_swarm.actors.perceiver import PerceiverAgent, ModalityType
-from src.heretek_swarm.actors.base import ActorMessage, ActorState
+from heretek_swarm.actors.perceiver import PerceiverAgent, ModalityType
+from heretek_swarm.actors.base import ActorMessage, ActorState
 
 
 pytestmark = pytest.mark.integration
@@ -23,12 +23,12 @@ class TestPerceiverAgentIntegration:
     @pytest_asyncio.fixture
     async def perceiver_agent(self, mock_nats, mock_llm, mock_db):
         """Create PerceiverAgent with mock dependencies."""
-        with patch('src.heretek_swarm.actors.perceiver.get_nats_event_mesh', return_value=mock_nats):
-            with patch('src.heretek_swarm.actors.base.get_llm_provider', return_value=mock_llm):
-                with patch('src.heretek_swarm.actors.perceiver.get_db_pool', return_value=mock_db):
+        with patch('heretek_swarm.actors.stubs.get_nats_event_mesh', return_value=mock_nats):
+            with patch('heretek_swarm.actors.stubs.get_llm_provider', return_value=mock_llm):
+                with patch('heretek_swarm.actors.stubs.get_db_pool', return_value=mock_db):
                     agent = PerceiverAgent(agent_id="perceiver-test-001")
                     yield agent
-                    if agent._state != ActorState.TERMINATED:
+                    if agent.state != ActorState.TERMINATED:
                         await agent.terminate()
 
     @pytest_asyncio.fixture
@@ -40,17 +40,17 @@ class TestPerceiverAgentIntegration:
     @pytest.mark.asyncio
     async def test_agent_spawn(self, perceiver_agent):
         """Test agent spawning lifecycle."""
-        assert perceiver_agent._state == ActorState.SPAWNING
+        assert perceiver_agent.state == ActorState.SPAWNING
         await perceiver_agent.spawn()
-        assert perceiver_agent._state == ActorState.ACTIVE
+        assert perceiver_agent.state == ActorState.ACTIVE
         assert perceiver_agent.is_alive
 
     @pytest.mark.asyncio
     async def test_agent_terminate(self, spawned_perceiver):
         """Test agent termination lifecycle."""
-        assert spawned_perceiver._state == ActorState.ACTIVE
+        assert spawned_perceiver.state == ActorState.ACTIVE
         await spawned_perceiver.terminate()
-        assert spawned_perceiver._state == ActorState.TERMINATED
+        assert spawned_perceiver.state == ActorState.TERMINATED
         assert not spawned_perceiver.is_alive
 
     @pytest.mark.asyncio
@@ -240,7 +240,7 @@ class TestPerceiverAgentIntegration:
     async def test_store_in_historian(self, spawned_perceiver, mock_db):
         """Test storing features in Historian."""
         # Store features
-        with patch('src.heretek_swarm.actors.perceiver.get_db_pool', return_value=mock_db):
+        with patch('heretek_swarm.actors.stubs.get_db_pool', return_value=mock_db):
             await spawned_perceiver._store_in_historian(
                 input_id="test-input",
                 features={"key": "value"},
@@ -316,7 +316,7 @@ class TestPerceiverAgentIntegration:
         await spawned_perceiver.process_message(message)
 
         # Verify agent still active
-        assert spawned_perceiver._state == ActorState.ACTIVE
+        assert spawned_perceiver.state == ActorState.ACTIVE
 
     @pytest.mark.asyncio
     async def test_latency_baseline(self, spawned_perceiver, assert_latency_baseline):
@@ -347,7 +347,7 @@ class TestPerceiverAgentIntegration:
         }
 
         # Save state
-        with patch('src.heretek_swarm.actors.base.get_db_pool', return_value=mock_db):
+        with patch('heretek_swarm.actors.stubs.get_db_pool', return_value=mock_db):
             await spawned_perceiver.save_state()
 
         # Verify state saved
@@ -358,6 +358,6 @@ class TestPerceiverAgentIntegration:
     async def test_error_recovery(self, perceiver_agent):
         """Test agent error recovery."""
         await perceiver_agent.spawn()
-        perceiver_agent._state = ActorState.ERROR
+        perceiver_agent.state = ActorState.ERROR
         await perceiver_agent.resume()
-        assert perceiver_agent._state == ActorState.ACTIVE
+        assert perceiver_agent.state == ActorState.ACTIVE

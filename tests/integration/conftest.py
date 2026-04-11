@@ -133,6 +133,16 @@ class MockNATSEventMesh:
         regex_pattern = pattern.replace(".", r"\.").replace("*", r"[^.]+").replace(">", r".*")
         return bool(re.match(f"^{regex_pattern}$", subject))
 
+    async def send_to_json(self, subject: str, data: Dict[str, Any]) -> None:
+        """Send JSON message - used by base AgentActor.send(). Always records regardless of connection."""
+        message = {
+            "subject": subject,
+            "data": data,
+            "reply": None,
+            "timestamp": datetime.utcnow().isoformat(),
+        }
+        self._published_messages.append(message)
+
     def clear_messages(self) -> None:
         """Clear published messages for testing."""
         self._published_messages.clear()

@@ -33,6 +33,7 @@ class MemoryTier(StrEnum):
     L2_WARM = "l2_warm"         # PostgreSQL - balanced
     L3_COLD = "l3_cold"         # Compressed archive - slowest, cheapest
     ARCHIVE = "archive"         # Deep archive - very slow, minimal cost
+    PERSISTENT = "persistent"   # Generic persistent storage alias
 
 
 class TierMigrationStatus(StrEnum):

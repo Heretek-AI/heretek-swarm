@@ -10,8 +10,8 @@ import pytest_asyncio
 from datetime import datetime
 from unittest.mock import AsyncMock, MagicMock, patch
 
-from src.heretek_swarm.actors.metis import MetisAgent
-from src.heretek_swarm.actors.base import ActorMessage, ActorState
+from heretek_swarm.actors.metis import MetisAgent
+from heretek_swarm.actors.base import ActorMessage, ActorState
 
 
 pytestmark = pytest.mark.integration
@@ -23,12 +23,12 @@ class TestMetisAgentIntegration:
     @pytest_asyncio.fixture
     async def metis_agent(self, mock_nats, mock_llm, mock_db):
         """Create MetisAgent with mock dependencies."""
-        with patch('src.heretek_swarm.actors.metis.get_nats_event_mesh', return_value=mock_nats):
-            with patch('src.heretek_swarm.actors.base.get_llm_provider', return_value=mock_llm):
-                with patch('src.heretek_swarm.actors.metis.get_db_pool', return_value=mock_db):
+        with patch('heretek_swarm.actors.stubs.get_nats_event_mesh', return_value=mock_nats):
+            with patch('heretek_swarm.actors.stubs.get_llm_provider', return_value=mock_llm):
+                with patch('heretek_swarm.actors.stubs.get_db_pool', return_value=mock_db):
                     agent = MetisAgent(agent_id="metis-test-001")
                     yield agent
-                    if agent._state != ActorState.TERMINATED:
+                    if agent.state != ActorState.TERMINATED:
                         await agent.terminate()
 
     @pytest_asyncio.fixture
@@ -40,17 +40,17 @@ class TestMetisAgentIntegration:
     @pytest.mark.asyncio
     async def test_agent_spawn(self, metis_agent):
         """Test agent spawning lifecycle."""
-        assert metis_agent._state == ActorState.SPAWNING
+        assert metis_agent.state == ActorState.SPAWNING
         await metis_agent.spawn()
-        assert metis_agent._state == ActorState.ACTIVE
+        assert metis_agent.state == ActorState.ACTIVE
         assert metis_agent.is_alive
 
     @pytest.mark.asyncio
     async def test_agent_terminate(self, spawned_metis):
         """Test agent termination lifecycle."""
-        assert spawned_metis._state == ActorState.ACTIVE
+        assert spawned_metis.state == ActorState.ACTIVE
         await spawned_metis.terminate()
-        assert spawned_metis._state == ActorState.TERMINATED
+        assert spawned_metis.state == ActorState.TERMINATED
         assert not spawned_metis.is_alive
 
     @pytest.mark.asyncio
@@ -324,7 +324,7 @@ class TestMetisAgentIntegration:
         await spawned_metis.process_message(message)
 
         # Verify agent still active
-        assert spawned_metis._state == ActorState.ACTIVE
+        assert spawned_metis.state == ActorState.ACTIVE
 
     @pytest.mark.asyncio
     async def test_latency_baseline(self, spawned_metis, assert_latency_baseline):
@@ -356,7 +356,7 @@ class TestMetisAgentIntegration:
         }
 
         # Save state
-        with patch('src.heretek_swarm.actors.base.get_db_pool', return_value=mock_db):
+        with patch('heretek_swarm.actors.stubs.get_db_pool', return_value=mock_db):
             await spawned_metis.save_state()
 
         # Verify state saved
@@ -367,6 +367,6 @@ class TestMetisAgentIntegration:
     async def test_error_recovery(self, metis_agent):
         """Test agent error recovery."""
         await metis_agent.spawn()
-        metis_agent._state = ActorState.ERROR
+        metis_agent.state = ActorState.ERROR
         await metis_agent.resume()
-        assert metis_agent._state == ActorState.ACTIVE
+        assert metis_agent.state == ActorState.ACTIVE

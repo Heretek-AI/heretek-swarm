@@ -192,7 +192,7 @@ class ConsciousnessMetricsCalculator:
             CausalAnalysis with Phi and related metrics
         """
         n = len(connectivity_matrix)
-        if n == 0:
+        if n <= 1:
             return CausalAnalysis()
 
         # Build elements list from matrix
@@ -226,12 +226,17 @@ class ConsciousnessMetricsCalculator:
         # Use PhiCalculator for IIT calculation
         phi_result = self._phi_calculator.calculate_phi(cause_effect_structure)
 
+        # Compute cause/effect information from normalized matrix
+        norm_matrix = self._normalize_matrix(connectivity_matrix)
+        cause_info = self._compute_cause_information(norm_matrix)
+        effect_info = self._compute_effect_information(norm_matrix)
+
         # Map PhiResult to CausalAnalysis
         return CausalAnalysis(
-            cause_info=phi_result.phi_max,
-            effect_info=phi_result.phi,
-            integrated_info=phi_result.phi,
-            causal_density=self._compute_causal_density(self._normalize_matrix(connectivity_matrix)),
+            cause_info=cause_info,
+            effect_info=effect_info,
+            integrated_info=self._compute_integrated_information(norm_matrix, cause_info, effect_info),
+            causal_density=self._compute_causal_density(norm_matrix),
             differentiation=phi_result.phi_max,
         )
 

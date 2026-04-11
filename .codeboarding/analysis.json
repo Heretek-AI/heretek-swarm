@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-11T15:36:03.325741+00:00",
+    "generated_at": "2026-04-11T17:56:52.934257+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 4,
@@ -913,8 +913,8 @@
         },
         {
           "qualified_name": "src.heretek_swarm.actors.base.ActorMessage",
-          "start_line": 66,
-          "end_line": 86,
+          "start_line": 68,
+          "end_line": 89,
           "node_type": "CLASS",
           "status": "modified"
         },
@@ -927,8 +927,8 @@
         },
         {
           "qualified_name": "src.heretek_swarm.actors.base.AgentActor",
-          "start_line": 117,
-          "end_line": 1473,
+          "start_line": 120,
+          "end_line": 1529,
           "node_type": "CLASS",
           "status": "modified"
         },
@@ -941,8 +941,8 @@
         },
         {
           "qualified_name": "src.heretek_swarm.actors.base.AgentActor.__init__",
-          "start_line": 162,
-          "end_line": 245,
+          "start_line": 165,
+          "end_line": 252,
           "node_type": "METHOD",
           "status": "modified"
         },
@@ -952,6 +952,13 @@
           "end_line": 253,
           "node_type": "METHOD",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.base.AgentActor.is_alive",
+          "start_line": 255,
+          "end_line": 257,
+          "node_type": "METHOD",
+          "status": "added"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.base.AgentActor._validate_message_content",
@@ -990,8 +997,8 @@
         },
         {
           "qualified_name": "src.heretek_swarm.actors.base.AgentActor.send",
-          "start_line": 397,
-          "end_line": 491,
+          "start_line": 409,
+          "end_line": 503,
           "node_type": "METHOD",
           "status": "modified"
         },
@@ -1038,16 +1045,16 @@
           "status": "modified"
         },
         {
-          "qualified_name": "src.heretek_swarm.actors.base.AgentActor.process_message",
-          "start_line": 728,
-          "end_line": 737,
+          "qualified_name": "src.heretek_swarm.actors.base.AgentActor.initialize",
+          "start_line": 739,
+          "end_line": 744,
           "node_type": "METHOD",
           "status": "modified"
         },
         {
-          "qualified_name": "src.heretek_swarm.actors.base.AgentActor.initialize",
+          "qualified_name": "src.heretek_swarm.actors.base.AgentActor.process_message",
           "start_line": 739,
-          "end_line": 744,
+          "end_line": 771,
           "node_type": "METHOD",
           "status": "modified"
         },
@@ -1074,8 +1081,8 @@
         },
         {
           "qualified_name": "src.heretek_swarm.actors.base.AgentActor.save_state",
-          "start_line": 798,
-          "end_line": 889,
+          "start_line": 832,
+          "end_line": 945,
           "node_type": "METHOD",
           "status": "modified"
         },
@@ -2483,10 +2490,10 @@
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.actors.echo.CommunicationChannel",
-          "start_line": 39,
+          "start_line": 38,
           "end_line": 48,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.echo.MessagePriority",
@@ -2498,9 +2505,16 @@
         {
           "qualified_name": "src.heretek_swarm.actors.echo.CommunicationStyle",
           "start_line": 60,
-          "end_line": 66,
+          "end_line": 77,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.echo.CommunicationStyle.__post_init__",
+          "start_line": 69,
+          "end_line": 76,
+          "node_type": "METHOD",
+          "status": "added"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.echo.TranslationRule",
@@ -2511,15 +2525,15 @@
         },
         {
           "qualified_name": "src.heretek_swarm.actors.echo.EchoActor",
-          "start_line": 77,
-          "end_line": 903,
+          "start_line": 89,
+          "end_line": 935,
           "node_type": "CLASS",
           "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.echo.EchoActor.__init__",
-          "start_line": 89,
-          "end_line": 183,
+          "start_line": 101,
+          "end_line": 201,
           "node_type": "METHOD",
           "status": "modified"
         },
@@ -2538,13 +2552,6 @@
           "status": "modified"
         },
         {
-          "qualified_name": "src.heretek_swarm.actors.echo.EchoActor.initialize",
-          "start_line": 199,
-          "end_line": 211,
-          "node_type": "METHOD",
-          "status": "modified"
-        },
-        {
           "qualified_name": "src.heretek_swarm.actors.echo.EchoActor._validate_input",
           "start_line": 213,
           "end_line": 217,
@@ -2552,44 +2559,51 @@
           "status": "modified"
         },
         {
+          "qualified_name": "src.heretek_swarm.actors.echo.EchoActor.initialize",
+          "start_line": 217,
+          "end_line": 229,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
           "qualified_name": "src.heretek_swarm.actors.echo.EchoActor._handle_format_message",
-          "start_line": 223,
-          "end_line": 267,
+          "start_line": 241,
+          "end_line": 284,
           "node_type": "METHOD",
           "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.echo.EchoActor._handle_translate_protocol",
-          "start_line": 269,
-          "end_line": 308,
+          "start_line": 286,
+          "end_line": 325,
           "node_type": "METHOD",
           "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.echo.EchoActor._handle_send_to_channel",
-          "start_line": 310,
-          "end_line": 354,
+          "start_line": 327,
+          "end_line": 371,
           "node_type": "METHOD",
           "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.echo.EchoActor._handle_set_communication_style",
-          "start_line": 356,
-          "end_line": 405,
+          "start_line": 373,
+          "end_line": 422,
           "node_type": "METHOD",
           "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.echo.EchoActor._handle_get_channel_status",
-          "start_line": 407,
-          "end_line": 446,
+          "start_line": 424,
+          "end_line": 463,
           "node_type": "METHOD",
           "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.echo.EchoActor._handle_broadcast_message",
-          "start_line": 448,
-          "end_line": 515,
+          "start_line": 465,
+          "end_line": 533,
           "node_type": "METHOD",
           "status": "modified"
         },
@@ -2602,8 +2616,8 @@
         },
         {
           "qualified_name": "src.heretek_swarm.actors.echo.EchoActor._format_for_channel",
-          "start_line": 533,
-          "end_line": 562,
+          "start_line": 551,
+          "end_line": 584,
           "node_type": "METHOD",
           "status": "modified"
         },
@@ -2644,15 +2658,15 @@
         },
         {
           "qualified_name": "src.heretek_swarm.actors.echo.EchoActor._translate_content",
-          "start_line": 623,
-          "end_line": 656,
+          "start_line": 645,
+          "end_line": 683,
           "node_type": "METHOD",
           "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.echo.EchoActor._send_to_channel_impl",
-          "start_line": 662,
-          "end_line": 697,
+          "start_line": 689,
+          "end_line": 729,
           "node_type": "METHOD",
           "status": "modified"
         },
@@ -2721,8 +2735,8 @@
         },
         {
           "qualified_name": "src.heretek_swarm.actors.echo.EchoActor.terminate",
-          "start_line": 895,
-          "end_line": 903,
+          "start_line": 927,
+          "end_line": 935,
           "node_type": "METHOD",
           "status": "modified"
         }
@@ -7106,14 +7120,14 @@
         {
           "qualified_name": "src.heretek_swarm.actors.triad.StewardAgent",
           "start_line": 25,
-          "end_line": 269,
+          "end_line": 322,
           "node_type": "CLASS",
           "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.triad.StewardAgent.__init__",
           "start_line": 37,
-          "end_line": 75,
+          "end_line": 77,
           "node_type": "METHOD",
           "status": "modified"
         },
@@ -7133,36 +7147,29 @@
         },
         {
           "qualified_name": "src.heretek_swarm.actors.triad.StewardAgent._handle_start_deliberation",
-          "start_line": 120,
-          "end_line": 166,
+          "start_line": 122,
+          "end_line": 173,
           "node_type": "METHOD",
           "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.triad.StewardAgent._handle_request_decision",
-          "start_line": 168,
-          "end_line": 207,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.actors.triad.StewardAgent._handle_report_status",
-          "start_line": 209,
-          "end_line": 217,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.actors.triad.StewardAgent._handle_policy_update",
-          "start_line": 219,
-          "end_line": 231,
+          "start_line": 175,
+          "end_line": 223,
           "node_type": "METHOD",
           "status": "modified"
         },
         {
-          "qualified_name": "src.heretek_swarm.actors.triad.StewardAgent.coordinate_triad",
-          "start_line": 233,
-          "end_line": 261,
+          "qualified_name": "src.heretek_swarm.actors.triad.StewardAgent._handle_report_status",
+          "start_line": 225,
+          "end_line": 249,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.triad.StewardAgent._handle_policy_update",
+          "start_line": 251,
+          "end_line": 266,
           "node_type": "METHOD",
           "status": "modified"
         },
@@ -7181,6 +7188,13 @@
           "status": "modified"
         },
         {
+          "qualified_name": "src.heretek_swarm.actors.triad.StewardAgent.coordinate_triad",
+          "start_line": 268,
+          "end_line": 310,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
           "qualified_name": "src.heretek_swarm.actors.triad.AlphaAgent",
           "start_line": 272,
           "end_line": 530,
@@ -7193,6 +7207,13 @@
           "end_line": 323,
           "node_type": "METHOD",
           "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.triad.StewardAgent.get_all_deliberation_statuses",
+          "start_line": 288,
+          "end_line": 290,
+          "node_type": "METHOD",
+          "status": "added"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.triad.AlphaAgent.initialize",
@@ -7252,16 +7273,9 @@
         },
         {
           "qualified_name": "src.heretek_swarm.actors.triad.BetaAgent",
-          "start_line": 533,
-          "end_line": 788,
+          "start_line": 586,
+          "end_line": 862,
           "node_type": "CLASS",
-          "status": "modified"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.actors.triad.BetaAgent.__init__",
-          "start_line": 544,
-          "end_line": 584,
-          "node_type": "METHOD",
           "status": "modified"
         },
         {
@@ -7279,23 +7293,16 @@
           "status": "unchanged"
         },
         {
-          "qualified_name": "src.heretek_swarm.actors.triad.BetaAgent._handle_deliberation_request",
-          "start_line": 622,
-          "end_line": 644,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.actors.triad.BetaAgent._handle_validation_request",
-          "start_line": 645,
-          "end_line": 677,
+          "qualified_name": "src.heretek_swarm.actors.triad.BetaAgent.__init__",
+          "start_line": 597,
+          "end_line": 640,
           "node_type": "METHOD",
           "status": "modified"
         },
         {
-          "qualified_name": "src.heretek_swarm.actors.triad.BetaAgent._handle_error_check",
-          "start_line": 679,
-          "end_line": 706,
+          "qualified_name": "src.heretek_swarm.actors.triad.BetaAgent._handle_deliberation_request",
+          "start_line": 677,
+          "end_line": 707,
           "node_type": "METHOD",
           "status": "modified"
         },
@@ -7307,9 +7314,16 @@
           "status": "modified"
         },
         {
-          "qualified_name": "src.heretek_swarm.actors.triad.BetaAgent._validate_decision",
-          "start_line": 732,
-          "end_line": 758,
+          "qualified_name": "src.heretek_swarm.actors.triad.BetaAgent._handle_validation_request",
+          "start_line": 709,
+          "end_line": 744,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.triad.BetaAgent._handle_error_check",
+          "start_line": 746,
+          "end_line": 777,
           "node_type": "METHOD",
           "status": "modified"
         },
@@ -7321,23 +7335,9 @@
           "status": "modified"
         },
         {
-          "qualified_name": "src.heretek_swarm.actors.triad.BetaAgent.get_validation_statistics",
-          "start_line": 781,
-          "end_line": 788,
-          "node_type": "METHOD",
-          "status": "modified"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.actors.triad.CharlieAgent",
-          "start_line": 791,
-          "end_line": 1040,
-          "node_type": "CLASS",
-          "status": "modified"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.actors.triad.CharlieAgent.__init__",
-          "start_line": 802,
-          "end_line": 842,
+          "qualified_name": "src.heretek_swarm.actors.triad.BetaAgent._validate_decision",
+          "start_line": 803,
+          "end_line": 831,
           "node_type": "METHOD",
           "status": "modified"
         },
@@ -7356,23 +7356,30 @@
           "status": "unchanged"
         },
         {
-          "qualified_name": "src.heretek_swarm.actors.triad.CharlieAgent._handle_deliberation_request",
-          "start_line": 880,
-          "end_line": 903,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.actors.triad.CharlieAgent._handle_challenge_request",
-          "start_line": 904,
-          "end_line": 933,
+          "qualified_name": "src.heretek_swarm.actors.triad.BetaAgent.get_validation_statistics",
+          "start_line": 854,
+          "end_line": 862,
           "node_type": "METHOD",
           "status": "modified"
         },
         {
-          "qualified_name": "src.heretek_swarm.actors.triad.CharlieAgent._handle_risk_assessment",
-          "start_line": 935,
-          "end_line": 963,
+          "qualified_name": "src.heretek_swarm.actors.triad.CharlieAgent",
+          "start_line": 865,
+          "end_line": 1136,
+          "node_type": "CLASS",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.triad.CharlieAgent.__init__",
+          "start_line": 876,
+          "end_line": 919,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.triad.CharlieAgent._handle_deliberation_request",
+          "start_line": 956,
+          "end_line": 988,
           "node_type": "METHOD",
           "status": "modified"
         },
@@ -7384,23 +7391,37 @@
           "status": "modified"
         },
         {
+          "qualified_name": "src.heretek_swarm.actors.triad.CharlieAgent._handle_challenge_request",
+          "start_line": 990,
+          "end_line": 1021,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.triad.CharlieAgent._handle_risk_assessment",
+          "start_line": 1023,
+          "end_line": 1053,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
           "qualified_name": "src.heretek_swarm.actors.triad.CharlieAgent._generate_challenges",
-          "start_line": 991,
-          "end_line": 1009,
+          "start_line": 1081,
+          "end_line": 1104,
           "node_type": "METHOD",
           "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.triad.CharlieAgent._assess_risks",
-          "start_line": 1011,
-          "end_line": 1031,
+          "start_line": 1106,
+          "end_line": 1127,
           "node_type": "METHOD",
           "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.triad.CharlieAgent.get_challenge_statistics",
-          "start_line": 1033,
-          "end_line": 1040,
+          "start_line": 1129,
+          "end_line": 1136,
           "node_type": "METHOD",
           "status": "modified"
         }
@@ -10224,7 +10245,7 @@
         {
           "qualified_name": "src.heretek_swarm.collective.adaptive_learning.AgentLearningState",
           "start_line": 181,
-          "end_line": 205,
+          "end_line": 206,
           "node_type": "CLASS",
           "status": "modified"
         },
@@ -11247,7 +11268,7 @@
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EvolutionEngine",
           "start_line": 206,
-          "end_line": 637,
+          "end_line": 638,
           "node_type": "CLASS",
           "status": "modified"
         },
@@ -11302,10 +11323,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.get_evolution_metrics",
-          "start_line": 386,
-          "end_line": 387,
+          "start_line": 387,
+          "end_line": 389,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.get_capability_records",
@@ -11435,15 +11456,15 @@
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPattern",
-          "start_line": 695,
-          "end_line": 778,
+          "start_line": 696,
+          "end_line": 785,
           "node_type": "CLASS",
           "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPattern.to_dict",
-          "start_line": 722,
-          "end_line": 738,
+          "start_line": 723,
+          "end_line": 745,
           "node_type": "METHOD",
           "status": "modified"
         },
@@ -11476,17 +11497,17 @@
           "status": "modified"
         },
         {
-          "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector",
-          "start_line": 832,
-          "end_line": 1283,
-          "node_type": "CLASS",
-          "status": "modified"
-        },
-        {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.__init__",
           "start_line": 837,
           "end_line": 858,
           "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector",
+          "start_line": 839,
+          "end_line": 1358,
+          "node_type": "CLASS",
           "status": "modified"
         },
         {
@@ -11581,6 +11602,20 @@
           "status": "modified"
         },
         {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_harmful_patterns",
+          "start_line": 993,
+          "end_line": 996,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_patterns_by_impact",
+          "start_line": 994,
+          "end_line": 997,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._detect_phase_transitions",
           "start_line": 996,
           "end_line": 997,
@@ -11588,11 +11623,32 @@
           "status": "modified"
         },
         {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_beneficial_patterns",
+          "start_line": 998,
+          "end_line": 1001,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._analyze_temporal_windows",
           "start_line": 999,
           "end_line": 1026,
           "node_type": "METHOD",
           "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_collective_behaviors",
+          "start_line": 1003,
+          "end_line": 1005,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_detection_history",
+          "start_line": 1007,
+          "end_line": 1009,
+          "node_type": "METHOD",
+          "status": "added"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._calculate_window_metrics",
@@ -11721,11 +11777,25 @@
           "status": "unchanged"
         },
         {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_emergence_statistics",
+          "start_line": 1291,
+          "end_line": 1309,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.analyze_emergence_trends",
           "start_line": 1293,
           "end_line": 1316,
           "node_type": "METHOD",
           "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.calculate_emergence_metrics",
+          "start_line": 1311,
+          "end_line": 1334,
+          "node_type": "METHOD",
+          "status": "added"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.identify_key_contributors",
@@ -22157,7 +22227,7 @@
         {
           "qualified_name": "src.heretek_swarm.memory.access_patterns.AccessPatternAnalyzer",
           "start_line": 232,
-          "end_line": 862,
+          "end_line": 865,
           "node_type": "CLASS",
           "status": "modified"
         },
@@ -22192,7 +22262,7 @@
         {
           "qualified_name": "src.heretek_swarm.memory.access_patterns.AccessPatternAnalyzer._classify_tier",
           "start_line": 447,
-          "end_line": 457,
+          "end_line": 460,
           "node_type": "METHOD",
           "status": "modified"
         },
@@ -22261,8 +22331,8 @@
         },
         {
           "qualified_name": "src.heretek_swarm.memory.access_patterns.AccessPatternAnalyzer.get_hot_memories",
-          "start_line": 654,
-          "end_line": 656,
+          "start_line": 657,
+          "end_line": 659,
           "node_type": "METHOD",
           "status": "modified"
         },
@@ -22337,7 +22407,7 @@
         {
           "qualified_name": "src.heretek_swarm.memory.base.MemoryEntry",
           "start_line": 24,
-          "end_line": 44,
+          "end_line": 60,
           "node_type": "CLASS",
           "status": "modified"
         },
@@ -22347,6 +22417,20 @@
           "end_line": 64,
           "node_type": "CLASS",
           "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.memory.base.MemoryEntry.__post_init__",
+          "start_line": 50,
+          "end_line": 55,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.memory.base.MemoryEntry.touch",
+          "start_line": 57,
+          "end_line": 60,
+          "node_type": "METHOD",
+          "status": "added"
         },
         {
           "qualified_name": "src.heretek_swarm.memory.base.MemorySystem",
@@ -23281,7 +23365,7 @@
         {
           "qualified_name": "src.heretek_swarm.memory.prefetcher.LFUCache",
           "start_line": 334,
-          "end_line": 445,
+          "end_line": 449,
           "node_type": "CLASS",
           "status": "modified"
         },
@@ -23305,6 +23389,13 @@
           "end_line": 430,
           "node_type": "METHOD",
           "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.memory.prefetcher.LFUCache.contains",
+          "start_line": 432,
+          "end_line": 434,
+          "node_type": "METHOD",
+          "status": "added"
         },
         {
           "qualified_name": "src.heretek_swarm.memory.prefetcher.LFUCache.get_statistics",
@@ -23510,7 +23601,7 @@
         {
           "qualified_name": "src.heretek_swarm.memory.tiering.MemoryTier",
           "start_line": 30,
-          "end_line": 35,
+          "end_line": 36,
           "node_type": "CLASS",
           "status": "modified"
         },
@@ -23966,6 +24057,13 @@
           "end_line": 442,
           "node_type": "METHOD",
           "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.observability.metrics.get_metrics_collector",
+          "start_line": 448,
+          "end_line": 453,
+          "node_type": "FUNCTION",
+          "status": "added"
         }
       ]
     },
@@ -24912,7 +25010,7 @@
         {
           "qualified_name": "src.heretek_swarm.plugins.consciousness_metrics.ConsciousnessMetricsCalculator",
           "start_line": 135,
-          "end_line": 674,
+          "end_line": 679,
           "node_type": "CLASS",
           "status": "modified"
         },
@@ -24926,7 +25024,7 @@
         {
           "qualified_name": "src.heretek_swarm.plugins.consciousness_metrics.ConsciousnessMetricsCalculator.calculate_phi",
           "start_line": 174,
-          "end_line": 236,
+          "end_line": 241,
           "node_type": "METHOD",
           "status": "modified"
         },
@@ -47184,8 +47282,8 @@
     "src/heretek_swarm/actors/base.py|src.heretek_swarm.actors.base.ActorMessage": {
       "file_path": "src/heretek_swarm/actors/base.py",
       "qualified_name": "src.heretek_swarm.actors.base.ActorMessage",
-      "start_line": 66,
-      "end_line": 86,
+      "start_line": 68,
+      "end_line": 89,
       "type": "CLASS",
       "status": "modified"
     },
@@ -47200,8 +47298,8 @@
     "src/heretek_swarm/actors/base.py|src.heretek_swarm.actors.base.AgentActor": {
       "file_path": "src/heretek_swarm/actors/base.py",
       "qualified_name": "src.heretek_swarm.actors.base.AgentActor",
-      "start_line": 117,
-      "end_line": 1473,
+      "start_line": 120,
+      "end_line": 1529,
       "type": "CLASS",
       "status": "modified"
     },
@@ -47216,8 +47314,8 @@
     "src/heretek_swarm/actors/base.py|src.heretek_swarm.actors.base.AgentActor.__init__": {
       "file_path": "src/heretek_swarm/actors/base.py",
       "qualified_name": "src.heretek_swarm.actors.base.AgentActor.__init__",
-      "start_line": 162,
-      "end_line": 245,
+      "start_line": 165,
+      "end_line": 252,
       "type": "METHOD",
       "status": "modified"
     },
@@ -47228,6 +47326,14 @@
       "end_line": 253,
       "type": "METHOD",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/actors/base.py|src.heretek_swarm.actors.base.AgentActor.is_alive": {
+      "file_path": "src/heretek_swarm/actors/base.py",
+      "qualified_name": "src.heretek_swarm.actors.base.AgentActor.is_alive",
+      "start_line": 255,
+      "end_line": 257,
+      "type": "METHOD",
+      "status": "added"
     },
     "src/heretek_swarm/actors/base.py|src.heretek_swarm.actors.base.AgentActor._validate_message_content": {
       "file_path": "src/heretek_swarm/actors/base.py",
@@ -47272,8 +47378,8 @@
     "src/heretek_swarm/actors/base.py|src.heretek_swarm.actors.base.AgentActor.send": {
       "file_path": "src/heretek_swarm/actors/base.py",
       "qualified_name": "src.heretek_swarm.actors.base.AgentActor.send",
-      "start_line": 397,
-      "end_line": 491,
+      "start_line": 409,
+      "end_line": 503,
       "type": "METHOD",
       "status": "modified"
     },
@@ -47325,19 +47431,19 @@
       "type": "METHOD",
       "status": "modified"
     },
-    "src/heretek_swarm/actors/base.py|src.heretek_swarm.actors.base.AgentActor.process_message": {
-      "file_path": "src/heretek_swarm/actors/base.py",
-      "qualified_name": "src.heretek_swarm.actors.base.AgentActor.process_message",
-      "start_line": 728,
-      "end_line": 737,
-      "type": "METHOD",
-      "status": "modified"
-    },
     "src/heretek_swarm/actors/base.py|src.heretek_swarm.actors.base.AgentActor.initialize": {
       "file_path": "src/heretek_swarm/actors/base.py",
       "qualified_name": "src.heretek_swarm.actors.base.AgentActor.initialize",
       "start_line": 739,
       "end_line": 744,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/actors/base.py|src.heretek_swarm.actors.base.AgentActor.process_message": {
+      "file_path": "src/heretek_swarm/actors/base.py",
+      "qualified_name": "src.heretek_swarm.actors.base.AgentActor.process_message",
+      "start_line": 739,
+      "end_line": 771,
       "type": "METHOD",
       "status": "modified"
     },
@@ -47368,8 +47474,8 @@
     "src/heretek_swarm/actors/base.py|src.heretek_swarm.actors.base.AgentActor.save_state": {
       "file_path": "src/heretek_swarm/actors/base.py",
       "qualified_name": "src.heretek_swarm.actors.base.AgentActor.save_state",
-      "start_line": 798,
-      "end_line": 889,
+      "start_line": 832,
+      "end_line": 945,
       "type": "METHOD",
       "status": "modified"
     },
@@ -48944,10 +49050,10 @@
     "src/heretek_swarm/actors/echo.py|src.heretek_swarm.actors.echo.CommunicationChannel": {
       "file_path": "src/heretek_swarm/actors/echo.py",
       "qualified_name": "src.heretek_swarm.actors.echo.CommunicationChannel",
-      "start_line": 39,
+      "start_line": 38,
       "end_line": 48,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/echo.py|src.heretek_swarm.actors.echo.MessagePriority": {
       "file_path": "src/heretek_swarm/actors/echo.py",
@@ -48961,9 +49067,17 @@
       "file_path": "src/heretek_swarm/actors/echo.py",
       "qualified_name": "src.heretek_swarm.actors.echo.CommunicationStyle",
       "start_line": 60,
-      "end_line": 66,
+      "end_line": 77,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
+    },
+    "src/heretek_swarm/actors/echo.py|src.heretek_swarm.actors.echo.CommunicationStyle.__post_init__": {
+      "file_path": "src/heretek_swarm/actors/echo.py",
+      "qualified_name": "src.heretek_swarm.actors.echo.CommunicationStyle.__post_init__",
+      "start_line": 69,
+      "end_line": 76,
+      "type": "METHOD",
+      "status": "added"
     },
     "src/heretek_swarm/actors/echo.py|src.heretek_swarm.actors.echo.TranslationRule": {
       "file_path": "src/heretek_swarm/actors/echo.py",
@@ -48976,16 +49090,16 @@
     "src/heretek_swarm/actors/echo.py|src.heretek_swarm.actors.echo.EchoActor": {
       "file_path": "src/heretek_swarm/actors/echo.py",
       "qualified_name": "src.heretek_swarm.actors.echo.EchoActor",
-      "start_line": 77,
-      "end_line": 903,
+      "start_line": 89,
+      "end_line": 935,
       "type": "CLASS",
       "status": "modified"
     },
     "src/heretek_swarm/actors/echo.py|src.heretek_swarm.actors.echo.EchoActor.__init__": {
       "file_path": "src/heretek_swarm/actors/echo.py",
       "qualified_name": "src.heretek_swarm.actors.echo.EchoActor.__init__",
-      "start_line": 89,
-      "end_line": 183,
+      "start_line": 101,
+      "end_line": 201,
       "type": "METHOD",
       "status": "modified"
     },
@@ -49005,14 +49119,6 @@
       "type": "METHOD",
       "status": "modified"
     },
-    "src/heretek_swarm/actors/echo.py|src.heretek_swarm.actors.echo.EchoActor.initialize": {
-      "file_path": "src/heretek_swarm/actors/echo.py",
-      "qualified_name": "src.heretek_swarm.actors.echo.EchoActor.initialize",
-      "start_line": 199,
-      "end_line": 211,
-      "type": "METHOD",
-      "status": "modified"
-    },
     "src/heretek_swarm/actors/echo.py|src.heretek_swarm.actors.echo.EchoActor._validate_input": {
       "file_path": "src/heretek_swarm/actors/echo.py",
       "qualified_name": "src.heretek_swarm.actors.echo.EchoActor._validate_input",
@@ -49021,51 +49127,59 @@
       "type": "METHOD",
       "status": "modified"
     },
+    "src/heretek_swarm/actors/echo.py|src.heretek_swarm.actors.echo.EchoActor.initialize": {
+      "file_path": "src/heretek_swarm/actors/echo.py",
+      "qualified_name": "src.heretek_swarm.actors.echo.EchoActor.initialize",
+      "start_line": 217,
+      "end_line": 229,
+      "type": "METHOD",
+      "status": "modified"
+    },
     "src/heretek_swarm/actors/echo.py|src.heretek_swarm.actors.echo.EchoActor._handle_format_message": {
       "file_path": "src/heretek_swarm/actors/echo.py",
       "qualified_name": "src.heretek_swarm.actors.echo.EchoActor._handle_format_message",
-      "start_line": 223,
-      "end_line": 267,
+      "start_line": 241,
+      "end_line": 284,
       "type": "METHOD",
       "status": "modified"
     },
     "src/heretek_swarm/actors/echo.py|src.heretek_swarm.actors.echo.EchoActor._handle_translate_protocol": {
       "file_path": "src/heretek_swarm/actors/echo.py",
       "qualified_name": "src.heretek_swarm.actors.echo.EchoActor._handle_translate_protocol",
-      "start_line": 269,
-      "end_line": 308,
+      "start_line": 286,
+      "end_line": 325,
       "type": "METHOD",
       "status": "modified"
     },
     "src/heretek_swarm/actors/echo.py|src.heretek_swarm.actors.echo.EchoActor._handle_send_to_channel": {
       "file_path": "src/heretek_swarm/actors/echo.py",
       "qualified_name": "src.heretek_swarm.actors.echo.EchoActor._handle_send_to_channel",
-      "start_line": 310,
-      "end_line": 354,
+      "start_line": 327,
+      "end_line": 371,
       "type": "METHOD",
       "status": "modified"
     },
     "src/heretek_swarm/actors/echo.py|src.heretek_swarm.actors.echo.EchoActor._handle_set_communication_style": {
       "file_path": "src/heretek_swarm/actors/echo.py",
       "qualified_name": "src.heretek_swarm.actors.echo.EchoActor._handle_set_communication_style",
-      "start_line": 356,
-      "end_line": 405,
+      "start_line": 373,
+      "end_line": 422,
       "type": "METHOD",
       "status": "modified"
     },
     "src/heretek_swarm/actors/echo.py|src.heretek_swarm.actors.echo.EchoActor._handle_get_channel_status": {
       "file_path": "src/heretek_swarm/actors/echo.py",
       "qualified_name": "src.heretek_swarm.actors.echo.EchoActor._handle_get_channel_status",
-      "start_line": 407,
-      "end_line": 446,
+      "start_line": 424,
+      "end_line": 463,
       "type": "METHOD",
       "status": "modified"
     },
     "src/heretek_swarm/actors/echo.py|src.heretek_swarm.actors.echo.EchoActor._handle_broadcast_message": {
       "file_path": "src/heretek_swarm/actors/echo.py",
       "qualified_name": "src.heretek_swarm.actors.echo.EchoActor._handle_broadcast_message",
-      "start_line": 448,
-      "end_line": 515,
+      "start_line": 465,
+      "end_line": 533,
       "type": "METHOD",
       "status": "modified"
     },
@@ -49080,8 +49194,8 @@
     "src/heretek_swarm/actors/echo.py|src.heretek_swarm.actors.echo.EchoActor._format_for_channel": {
       "file_path": "src/heretek_swarm/actors/echo.py",
       "qualified_name": "src.heretek_swarm.actors.echo.EchoActor._format_for_channel",
-      "start_line": 533,
-      "end_line": 562,
+      "start_line": 551,
+      "end_line": 584,
       "type": "METHOD",
       "status": "modified"
     },
@@ -49128,16 +49242,16 @@
     "src/heretek_swarm/actors/echo.py|src.heretek_swarm.actors.echo.EchoActor._translate_content": {
       "file_path": "src/heretek_swarm/actors/echo.py",
       "qualified_name": "src.heretek_swarm.actors.echo.EchoActor._translate_content",
-      "start_line": 623,
-      "end_line": 656,
+      "start_line": 645,
+      "end_line": 683,
       "type": "METHOD",
       "status": "modified"
     },
     "src/heretek_swarm/actors/echo.py|src.heretek_swarm.actors.echo.EchoActor._send_to_channel_impl": {
       "file_path": "src/heretek_swarm/actors/echo.py",
       "qualified_name": "src.heretek_swarm.actors.echo.EchoActor._send_to_channel_impl",
-      "start_line": 662,
-      "end_line": 697,
+      "start_line": 689,
+      "end_line": 729,
       "type": "METHOD",
       "status": "modified"
     },
@@ -49216,8 +49330,8 @@
     "src/heretek_swarm/actors/echo.py|src.heretek_swarm.actors.echo.EchoActor.terminate": {
       "file_path": "src/heretek_swarm/actors/echo.py",
       "qualified_name": "src.heretek_swarm.actors.echo.EchoActor.terminate",
-      "start_line": 895,
-      "end_line": 903,
+      "start_line": 927,
+      "end_line": 935,
       "type": "METHOD",
       "status": "modified"
     },
@@ -54113,7 +54227,7 @@
       "file_path": "src/heretek_swarm/actors/triad.py",
       "qualified_name": "src.heretek_swarm.actors.triad.StewardAgent",
       "start_line": 25,
-      "end_line": 269,
+      "end_line": 322,
       "type": "CLASS",
       "status": "modified"
     },
@@ -54121,7 +54235,7 @@
       "file_path": "src/heretek_swarm/actors/triad.py",
       "qualified_name": "src.heretek_swarm.actors.triad.StewardAgent.__init__",
       "start_line": 37,
-      "end_line": 75,
+      "end_line": 77,
       "type": "METHOD",
       "status": "modified"
     },
@@ -54144,40 +54258,32 @@
     "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.StewardAgent._handle_start_deliberation": {
       "file_path": "src/heretek_swarm/actors/triad.py",
       "qualified_name": "src.heretek_swarm.actors.triad.StewardAgent._handle_start_deliberation",
-      "start_line": 120,
-      "end_line": 166,
+      "start_line": 122,
+      "end_line": 173,
       "type": "METHOD",
       "status": "modified"
     },
     "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.StewardAgent._handle_request_decision": {
       "file_path": "src/heretek_swarm/actors/triad.py",
       "qualified_name": "src.heretek_swarm.actors.triad.StewardAgent._handle_request_decision",
-      "start_line": 168,
-      "end_line": 207,
+      "start_line": 175,
+      "end_line": 223,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.StewardAgent._handle_report_status": {
       "file_path": "src/heretek_swarm/actors/triad.py",
       "qualified_name": "src.heretek_swarm.actors.triad.StewardAgent._handle_report_status",
-      "start_line": 209,
-      "end_line": 217,
+      "start_line": 225,
+      "end_line": 249,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.StewardAgent._handle_policy_update": {
       "file_path": "src/heretek_swarm/actors/triad.py",
       "qualified_name": "src.heretek_swarm.actors.triad.StewardAgent._handle_policy_update",
-      "start_line": 219,
-      "end_line": 231,
-      "type": "METHOD",
-      "status": "modified"
-    },
-    "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.StewardAgent.coordinate_triad": {
-      "file_path": "src/heretek_swarm/actors/triad.py",
-      "qualified_name": "src.heretek_swarm.actors.triad.StewardAgent.coordinate_triad",
-      "start_line": 233,
-      "end_line": 261,
+      "start_line": 251,
+      "end_line": 266,
       "type": "METHOD",
       "status": "modified"
     },
@@ -54197,6 +54303,14 @@
       "type": "METHOD",
       "status": "modified"
     },
+    "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.StewardAgent.coordinate_triad": {
+      "file_path": "src/heretek_swarm/actors/triad.py",
+      "qualified_name": "src.heretek_swarm.actors.triad.StewardAgent.coordinate_triad",
+      "start_line": 268,
+      "end_line": 310,
+      "type": "METHOD",
+      "status": "modified"
+    },
     "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.AlphaAgent": {
       "file_path": "src/heretek_swarm/actors/triad.py",
       "qualified_name": "src.heretek_swarm.actors.triad.AlphaAgent",
@@ -54212,6 +54326,14 @@
       "end_line": 323,
       "type": "METHOD",
       "status": "modified"
+    },
+    "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.StewardAgent.get_all_deliberation_statuses": {
+      "file_path": "src/heretek_swarm/actors/triad.py",
+      "qualified_name": "src.heretek_swarm.actors.triad.StewardAgent.get_all_deliberation_statuses",
+      "start_line": 288,
+      "end_line": 290,
+      "type": "METHOD",
+      "status": "added"
     },
     "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.AlphaAgent.initialize": {
       "file_path": "src/heretek_swarm/actors/triad.py",
@@ -54280,17 +54402,9 @@
     "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.BetaAgent": {
       "file_path": "src/heretek_swarm/actors/triad.py",
       "qualified_name": "src.heretek_swarm.actors.triad.BetaAgent",
-      "start_line": 533,
-      "end_line": 788,
+      "start_line": 586,
+      "end_line": 862,
       "type": "CLASS",
-      "status": "modified"
-    },
-    "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.BetaAgent.__init__": {
-      "file_path": "src/heretek_swarm/actors/triad.py",
-      "qualified_name": "src.heretek_swarm.actors.triad.BetaAgent.__init__",
-      "start_line": 544,
-      "end_line": 584,
-      "type": "METHOD",
       "status": "modified"
     },
     "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.BetaAgent.initialize": {
@@ -54309,27 +54423,19 @@
       "type": "METHOD",
       "status": "unchanged"
     },
-    "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.BetaAgent._handle_deliberation_request": {
+    "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.BetaAgent.__init__": {
       "file_path": "src/heretek_swarm/actors/triad.py",
-      "qualified_name": "src.heretek_swarm.actors.triad.BetaAgent._handle_deliberation_request",
-      "start_line": 622,
-      "end_line": 644,
-      "type": "METHOD",
-      "status": "unchanged"
-    },
-    "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.BetaAgent._handle_validation_request": {
-      "file_path": "src/heretek_swarm/actors/triad.py",
-      "qualified_name": "src.heretek_swarm.actors.triad.BetaAgent._handle_validation_request",
-      "start_line": 645,
-      "end_line": 677,
+      "qualified_name": "src.heretek_swarm.actors.triad.BetaAgent.__init__",
+      "start_line": 597,
+      "end_line": 640,
       "type": "METHOD",
       "status": "modified"
     },
-    "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.BetaAgent._handle_error_check": {
+    "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.BetaAgent._handle_deliberation_request": {
       "file_path": "src/heretek_swarm/actors/triad.py",
-      "qualified_name": "src.heretek_swarm.actors.triad.BetaAgent._handle_error_check",
-      "start_line": 679,
-      "end_line": 706,
+      "qualified_name": "src.heretek_swarm.actors.triad.BetaAgent._handle_deliberation_request",
+      "start_line": 677,
+      "end_line": 707,
       "type": "METHOD",
       "status": "modified"
     },
@@ -54341,11 +54447,19 @@
       "type": "METHOD",
       "status": "modified"
     },
-    "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.BetaAgent._validate_decision": {
+    "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.BetaAgent._handle_validation_request": {
       "file_path": "src/heretek_swarm/actors/triad.py",
-      "qualified_name": "src.heretek_swarm.actors.triad.BetaAgent._validate_decision",
-      "start_line": 732,
-      "end_line": 758,
+      "qualified_name": "src.heretek_swarm.actors.triad.BetaAgent._handle_validation_request",
+      "start_line": 709,
+      "end_line": 744,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.BetaAgent._handle_error_check": {
+      "file_path": "src/heretek_swarm/actors/triad.py",
+      "qualified_name": "src.heretek_swarm.actors.triad.BetaAgent._handle_error_check",
+      "start_line": 746,
+      "end_line": 777,
       "type": "METHOD",
       "status": "modified"
     },
@@ -54357,27 +54471,11 @@
       "type": "METHOD",
       "status": "modified"
     },
-    "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.BetaAgent.get_validation_statistics": {
+    "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.BetaAgent._validate_decision": {
       "file_path": "src/heretek_swarm/actors/triad.py",
-      "qualified_name": "src.heretek_swarm.actors.triad.BetaAgent.get_validation_statistics",
-      "start_line": 781,
-      "end_line": 788,
-      "type": "METHOD",
-      "status": "modified"
-    },
-    "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.CharlieAgent": {
-      "file_path": "src/heretek_swarm/actors/triad.py",
-      "qualified_name": "src.heretek_swarm.actors.triad.CharlieAgent",
-      "start_line": 791,
-      "end_line": 1040,
-      "type": "CLASS",
-      "status": "modified"
-    },
-    "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.CharlieAgent.__init__": {
-      "file_path": "src/heretek_swarm/actors/triad.py",
-      "qualified_name": "src.heretek_swarm.actors.triad.CharlieAgent.__init__",
-      "start_line": 802,
-      "end_line": 842,
+      "qualified_name": "src.heretek_swarm.actors.triad.BetaAgent._validate_decision",
+      "start_line": 803,
+      "end_line": 831,
       "type": "METHOD",
       "status": "modified"
     },
@@ -54397,27 +54495,35 @@
       "type": "METHOD",
       "status": "unchanged"
     },
-    "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.CharlieAgent._handle_deliberation_request": {
+    "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.BetaAgent.get_validation_statistics": {
       "file_path": "src/heretek_swarm/actors/triad.py",
-      "qualified_name": "src.heretek_swarm.actors.triad.CharlieAgent._handle_deliberation_request",
-      "start_line": 880,
-      "end_line": 903,
-      "type": "METHOD",
-      "status": "unchanged"
-    },
-    "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.CharlieAgent._handle_challenge_request": {
-      "file_path": "src/heretek_swarm/actors/triad.py",
-      "qualified_name": "src.heretek_swarm.actors.triad.CharlieAgent._handle_challenge_request",
-      "start_line": 904,
-      "end_line": 933,
+      "qualified_name": "src.heretek_swarm.actors.triad.BetaAgent.get_validation_statistics",
+      "start_line": 854,
+      "end_line": 862,
       "type": "METHOD",
       "status": "modified"
     },
-    "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.CharlieAgent._handle_risk_assessment": {
+    "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.CharlieAgent": {
       "file_path": "src/heretek_swarm/actors/triad.py",
-      "qualified_name": "src.heretek_swarm.actors.triad.CharlieAgent._handle_risk_assessment",
-      "start_line": 935,
-      "end_line": 963,
+      "qualified_name": "src.heretek_swarm.actors.triad.CharlieAgent",
+      "start_line": 865,
+      "end_line": 1136,
+      "type": "CLASS",
+      "status": "modified"
+    },
+    "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.CharlieAgent.__init__": {
+      "file_path": "src/heretek_swarm/actors/triad.py",
+      "qualified_name": "src.heretek_swarm.actors.triad.CharlieAgent.__init__",
+      "start_line": 876,
+      "end_line": 919,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.CharlieAgent._handle_deliberation_request": {
+      "file_path": "src/heretek_swarm/actors/triad.py",
+      "qualified_name": "src.heretek_swarm.actors.triad.CharlieAgent._handle_deliberation_request",
+      "start_line": 956,
+      "end_line": 988,
       "type": "METHOD",
       "status": "modified"
     },
@@ -54429,27 +54535,43 @@
       "type": "METHOD",
       "status": "modified"
     },
+    "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.CharlieAgent._handle_challenge_request": {
+      "file_path": "src/heretek_swarm/actors/triad.py",
+      "qualified_name": "src.heretek_swarm.actors.triad.CharlieAgent._handle_challenge_request",
+      "start_line": 990,
+      "end_line": 1021,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.CharlieAgent._handle_risk_assessment": {
+      "file_path": "src/heretek_swarm/actors/triad.py",
+      "qualified_name": "src.heretek_swarm.actors.triad.CharlieAgent._handle_risk_assessment",
+      "start_line": 1023,
+      "end_line": 1053,
+      "type": "METHOD",
+      "status": "modified"
+    },
     "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.CharlieAgent._generate_challenges": {
       "file_path": "src/heretek_swarm/actors/triad.py",
       "qualified_name": "src.heretek_swarm.actors.triad.CharlieAgent._generate_challenges",
-      "start_line": 991,
-      "end_line": 1009,
+      "start_line": 1081,
+      "end_line": 1104,
       "type": "METHOD",
       "status": "modified"
     },
     "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.CharlieAgent._assess_risks": {
       "file_path": "src/heretek_swarm/actors/triad.py",
       "qualified_name": "src.heretek_swarm.actors.triad.CharlieAgent._assess_risks",
-      "start_line": 1011,
-      "end_line": 1031,
+      "start_line": 1106,
+      "end_line": 1127,
       "type": "METHOD",
       "status": "modified"
     },
     "src/heretek_swarm/actors/triad.py|src.heretek_swarm.actors.triad.CharlieAgent.get_challenge_statistics": {
       "file_path": "src/heretek_swarm/actors/triad.py",
       "qualified_name": "src.heretek_swarm.actors.triad.CharlieAgent.get_challenge_statistics",
-      "start_line": 1033,
-      "end_line": 1040,
+      "start_line": 1129,
+      "end_line": 1136,
       "type": "METHOD",
       "status": "modified"
     },
@@ -57585,7 +57707,7 @@
       "file_path": "src/heretek_swarm/collective/adaptive_learning.py",
       "qualified_name": "src.heretek_swarm.collective.adaptive_learning.AgentLearningState",
       "start_line": 181,
-      "end_line": 205,
+      "end_line": 206,
       "type": "CLASS",
       "status": "modified"
     },
@@ -58737,7 +58859,7 @@
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
       "qualified_name": "src.heretek_swarm.collective.emergent_detection.EvolutionEngine",
       "start_line": 206,
-      "end_line": 637,
+      "end_line": 638,
       "type": "CLASS",
       "status": "modified"
     },
@@ -58800,10 +58922,10 @@
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EvolutionEngine.get_evolution_metrics": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
       "qualified_name": "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.get_evolution_metrics",
-      "start_line": 386,
-      "end_line": 387,
+      "start_line": 387,
+      "end_line": 389,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EvolutionEngine.get_capability_records": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -58952,16 +59074,16 @@
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPattern": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
       "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPattern",
-      "start_line": 695,
-      "end_line": 778,
+      "start_line": 696,
+      "end_line": 785,
       "type": "CLASS",
       "status": "modified"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPattern.to_dict": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
       "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPattern.to_dict",
-      "start_line": 722,
-      "end_line": 738,
+      "start_line": 723,
+      "end_line": 745,
       "type": "METHOD",
       "status": "modified"
     },
@@ -58997,20 +59119,20 @@
       "type": "CLASS",
       "status": "modified"
     },
-    "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector": {
-      "file_path": "src/heretek_swarm/collective/emergent_detection.py",
-      "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector",
-      "start_line": 832,
-      "end_line": 1283,
-      "type": "CLASS",
-      "status": "modified"
-    },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.__init__": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
       "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.__init__",
       "start_line": 837,
       "end_line": 858,
       "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector",
+      "start_line": 839,
+      "end_line": 1358,
+      "type": "CLASS",
       "status": "modified"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.evolution_engine": {
@@ -59117,6 +59239,22 @@
       "type": "METHOD",
       "status": "modified"
     },
+    "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_harmful_patterns": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_harmful_patterns",
+      "start_line": 993,
+      "end_line": 996,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_patterns_by_impact": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_patterns_by_impact",
+      "start_line": 994,
+      "end_line": 997,
+      "type": "METHOD",
+      "status": "added"
+    },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._detect_phase_transitions": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
       "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._detect_phase_transitions",
@@ -59125,6 +59263,14 @@
       "type": "METHOD",
       "status": "modified"
     },
+    "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_beneficial_patterns": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_beneficial_patterns",
+      "start_line": 998,
+      "end_line": 1001,
+      "type": "METHOD",
+      "status": "added"
+    },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._analyze_temporal_windows": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
       "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._analyze_temporal_windows",
@@ -59132,6 +59278,22 @@
       "end_line": 1026,
       "type": "METHOD",
       "status": "modified"
+    },
+    "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_collective_behaviors": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_collective_behaviors",
+      "start_line": 1003,
+      "end_line": 1005,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_detection_history": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_detection_history",
+      "start_line": 1007,
+      "end_line": 1009,
+      "type": "METHOD",
+      "status": "added"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._calculate_window_metrics": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -59277,6 +59439,14 @@
       "type": "METHOD",
       "status": "unchanged"
     },
+    "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_emergence_statistics": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_emergence_statistics",
+      "start_line": 1291,
+      "end_line": 1309,
+      "type": "METHOD",
+      "status": "added"
+    },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.analyze_emergence_trends": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
       "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.analyze_emergence_trends",
@@ -59284,6 +59454,14 @@
       "end_line": 1316,
       "type": "METHOD",
       "status": "modified"
+    },
+    "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.calculate_emergence_metrics": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.calculate_emergence_metrics",
+      "start_line": 1311,
+      "end_line": 1334,
+      "type": "METHOD",
+      "status": "added"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.identify_key_contributors": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -70897,7 +71075,7 @@
       "file_path": "src/heretek_swarm/memory/access_patterns.py",
       "qualified_name": "src.heretek_swarm.memory.access_patterns.AccessPatternAnalyzer",
       "start_line": 232,
-      "end_line": 862,
+      "end_line": 865,
       "type": "CLASS",
       "status": "modified"
     },
@@ -70937,7 +71115,7 @@
       "file_path": "src/heretek_swarm/memory/access_patterns.py",
       "qualified_name": "src.heretek_swarm.memory.access_patterns.AccessPatternAnalyzer._classify_tier",
       "start_line": 447,
-      "end_line": 457,
+      "end_line": 460,
       "type": "METHOD",
       "status": "modified"
     },
@@ -71016,8 +71194,8 @@
     "src/heretek_swarm/memory/access_patterns.py|src.heretek_swarm.memory.access_patterns.AccessPatternAnalyzer.get_hot_memories": {
       "file_path": "src/heretek_swarm/memory/access_patterns.py",
       "qualified_name": "src.heretek_swarm.memory.access_patterns.AccessPatternAnalyzer.get_hot_memories",
-      "start_line": 654,
-      "end_line": 656,
+      "start_line": 657,
+      "end_line": 659,
       "type": "METHOD",
       "status": "modified"
     },
@@ -71097,7 +71275,7 @@
       "file_path": "src/heretek_swarm/memory/base.py",
       "qualified_name": "src.heretek_swarm.memory.base.MemoryEntry",
       "start_line": 24,
-      "end_line": 44,
+      "end_line": 60,
       "type": "CLASS",
       "status": "modified"
     },
@@ -71108,6 +71286,22 @@
       "end_line": 64,
       "type": "CLASS",
       "status": "modified"
+    },
+    "src/heretek_swarm/memory/base.py|src.heretek_swarm.memory.base.MemoryEntry.__post_init__": {
+      "file_path": "src/heretek_swarm/memory/base.py",
+      "qualified_name": "src.heretek_swarm.memory.base.MemoryEntry.__post_init__",
+      "start_line": 50,
+      "end_line": 55,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/memory/base.py|src.heretek_swarm.memory.base.MemoryEntry.touch": {
+      "file_path": "src/heretek_swarm/memory/base.py",
+      "qualified_name": "src.heretek_swarm.memory.base.MemoryEntry.touch",
+      "start_line": 57,
+      "end_line": 60,
+      "type": "METHOD",
+      "status": "added"
     },
     "src/heretek_swarm/memory/base.py|src.heretek_swarm.memory.base.MemorySystem": {
       "file_path": "src/heretek_swarm/memory/base.py",
@@ -72153,7 +72347,7 @@
       "file_path": "src/heretek_swarm/memory/prefetcher.py",
       "qualified_name": "src.heretek_swarm.memory.prefetcher.LFUCache",
       "start_line": 334,
-      "end_line": 445,
+      "end_line": 449,
       "type": "CLASS",
       "status": "modified"
     },
@@ -72180,6 +72374,14 @@
       "end_line": 430,
       "type": "METHOD",
       "status": "modified"
+    },
+    "src/heretek_swarm/memory/prefetcher.py|src.heretek_swarm.memory.prefetcher.LFUCache.contains": {
+      "file_path": "src/heretek_swarm/memory/prefetcher.py",
+      "qualified_name": "src.heretek_swarm.memory.prefetcher.LFUCache.contains",
+      "start_line": 432,
+      "end_line": 434,
+      "type": "METHOD",
+      "status": "added"
     },
     "src/heretek_swarm/memory/prefetcher.py|src.heretek_swarm.memory.prefetcher.LFUCache.get_statistics": {
       "file_path": "src/heretek_swarm/memory/prefetcher.py",
@@ -72409,7 +72611,7 @@
       "file_path": "src/heretek_swarm/memory/tiering.py",
       "qualified_name": "src.heretek_swarm.memory.tiering.MemoryTier",
       "start_line": 30,
-      "end_line": 35,
+      "end_line": 36,
       "type": "CLASS",
       "status": "modified"
     },
@@ -72924,6 +73126,14 @@
       "end_line": 442,
       "type": "METHOD",
       "status": "modified"
+    },
+    "src/heretek_swarm/observability/metrics.py|src.heretek_swarm.observability.metrics.get_metrics_collector": {
+      "file_path": "src/heretek_swarm/observability/metrics.py",
+      "qualified_name": "src.heretek_swarm.observability.metrics.get_metrics_collector",
+      "start_line": 448,
+      "end_line": 453,
+      "type": "FUNCTION",
+      "status": "added"
     },
     "src/heretek_swarm/orchestration/heavyswarm.py|src.heretek_swarm.orchestration.heavyswarm.WorkflowPhase": {
       "file_path": "src/heretek_swarm/orchestration/heavyswarm.py",
@@ -73977,7 +74187,7 @@
       "file_path": "src/heretek_swarm/plugins/consciousness_metrics.py",
       "qualified_name": "src.heretek_swarm.plugins.consciousness_metrics.ConsciousnessMetricsCalculator",
       "start_line": 135,
-      "end_line": 674,
+      "end_line": 679,
       "type": "CLASS",
       "status": "modified"
     },
@@ -73993,7 +74203,7 @@
       "file_path": "src/heretek_swarm/plugins/consciousness_metrics.py",
       "qualified_name": "src.heretek_swarm.plugins.consciousness_metrics.ConsciousnessMetricsCalculator.calculate_phi",
       "start_line": 174,
-      "end_line": 236,
+      "end_line": 241,
       "type": "METHOD",
       "status": "modified"
     },
@@ -97572,6 +97782,7 @@
             "src.heretek_swarm.actors.base.AgentActor.get_actor_type",
             "src.heretek_swarm.actors.base.AgentActor.__init__",
             "src.heretek_swarm.actors.base.AgentActor._register_default_handlers",
+            "src.heretek_swarm.actors.base.AgentActor.is_alive",
             "src.heretek_swarm.actors.base.AgentActor._validate_message_content",
             "src.heretek_swarm.actors.base.AgentActor.register_handler",
             "src.heretek_swarm.actors.base.AgentActor.spawn",
@@ -97584,8 +97795,8 @@
             "src.heretek_swarm.actors.base.AgentActor.send_with_reply.handle_reply",
             "src.heretek_swarm.actors.base.AgentActor.put_message",
             "src.heretek_swarm.actors.base.AgentActor._process_mailbox",
-            "src.heretek_swarm.actors.base.AgentActor.process_message",
             "src.heretek_swarm.actors.base.AgentActor.initialize",
+            "src.heretek_swarm.actors.base.AgentActor.process_message",
             "src.heretek_swarm.actors.base.AgentActor.cleanup",
             "src.heretek_swarm.actors.base.AgentActor._heartbeat_loop",
             "src.heretek_swarm.actors.base.AgentActor.heartbeat",
@@ -97825,13 +98036,14 @@
             "src.heretek_swarm.actors.echo.CommunicationChannel",
             "src.heretek_swarm.actors.echo.MessagePriority",
             "src.heretek_swarm.actors.echo.CommunicationStyle",
+            "src.heretek_swarm.actors.echo.CommunicationStyle.__post_init__",
             "src.heretek_swarm.actors.echo.TranslationRule",
             "src.heretek_swarm.actors.echo.EchoActor",
             "src.heretek_swarm.actors.echo.EchoActor.__init__",
             "src.heretek_swarm.actors.echo.EchoActor.active_channels",
             "src.heretek_swarm.actors.echo.EchoActor.statistics",
-            "src.heretek_swarm.actors.echo.EchoActor.initialize",
             "src.heretek_swarm.actors.echo.EchoActor._validate_input",
+            "src.heretek_swarm.actors.echo.EchoActor.initialize",
             "src.heretek_swarm.actors.echo.EchoActor._handle_format_message",
             "src.heretek_swarm.actors.echo.EchoActor._handle_translate_protocol",
             "src.heretek_swarm.actors.echo.EchoActor._handle_send_to_channel",
@@ -98596,11 +98808,12 @@
             "src.heretek_swarm.actors.triad.StewardAgent._handle_request_decision",
             "src.heretek_swarm.actors.triad.StewardAgent._handle_report_status",
             "src.heretek_swarm.actors.triad.StewardAgent._handle_policy_update",
-            "src.heretek_swarm.actors.triad.StewardAgent.coordinate_triad",
             "src.heretek_swarm.actors.triad.StewardAgent.get_deliberation_status",
             "src.heretek_swarm.actors.triad.StewardAgent.get_governance_policy",
+            "src.heretek_swarm.actors.triad.StewardAgent.coordinate_triad",
             "src.heretek_swarm.actors.triad.AlphaAgent",
             "src.heretek_swarm.actors.triad.AlphaAgent.__init__",
+            "src.heretek_swarm.actors.triad.StewardAgent.get_all_deliberation_statuses",
             "src.heretek_swarm.actors.triad.AlphaAgent.initialize",
             "src.heretek_swarm.actors.triad.AlphaAgent.process_message",
             "src.heretek_swarm.actors.triad.AlphaAgent._handle_deliberation_request",
@@ -98610,24 +98823,24 @@
             "src.heretek_swarm.actors.triad.AlphaAgent._validate_decision",
             "src.heretek_swarm.actors.triad.AlphaAgent.get_analysis_statistics",
             "src.heretek_swarm.actors.triad.BetaAgent",
-            "src.heretek_swarm.actors.triad.BetaAgent.__init__",
             "src.heretek_swarm.actors.triad.BetaAgent.initialize",
             "src.heretek_swarm.actors.triad.BetaAgent.process_message",
+            "src.heretek_swarm.actors.triad.BetaAgent.__init__",
             "src.heretek_swarm.actors.triad.BetaAgent._handle_deliberation_request",
+            "src.heretek_swarm.actors.triad.BetaAgent._perform_analysis",
             "src.heretek_swarm.actors.triad.BetaAgent._handle_validation_request",
             "src.heretek_swarm.actors.triad.BetaAgent._handle_error_check",
-            "src.heretek_swarm.actors.triad.BetaAgent._perform_analysis",
-            "src.heretek_swarm.actors.triad.BetaAgent._validate_decision",
             "src.heretek_swarm.actors.triad.BetaAgent._detect_errors",
+            "src.heretek_swarm.actors.triad.BetaAgent._validate_decision",
+            "src.heretek_swarm.actors.triad.CharlieAgent.initialize",
+            "src.heretek_swarm.actors.triad.CharlieAgent.process_message",
             "src.heretek_swarm.actors.triad.BetaAgent.get_validation_statistics",
             "src.heretek_swarm.actors.triad.CharlieAgent",
             "src.heretek_swarm.actors.triad.CharlieAgent.__init__",
-            "src.heretek_swarm.actors.triad.CharlieAgent.initialize",
-            "src.heretek_swarm.actors.triad.CharlieAgent.process_message",
             "src.heretek_swarm.actors.triad.CharlieAgent._handle_deliberation_request",
+            "src.heretek_swarm.actors.triad.CharlieAgent._perform_analysis",
             "src.heretek_swarm.actors.triad.CharlieAgent._handle_challenge_request",
             "src.heretek_swarm.actors.triad.CharlieAgent._handle_risk_assessment",
-            "src.heretek_swarm.actors.triad.CharlieAgent._perform_analysis",
             "src.heretek_swarm.actors.triad.CharlieAgent._generate_challenges",
             "src.heretek_swarm.actors.triad.CharlieAgent._assess_risks",
             "src.heretek_swarm.actors.triad.CharlieAgent.get_challenge_statistics"
@@ -99313,8 +99526,8 @@
             "src.heretek_swarm.collective.emergent_detection.DetectionEvent",
             "src.heretek_swarm.collective.emergent_detection.DetectionEvent.to_dict",
             "src.heretek_swarm.collective.emergent_detection.EmergenceDetectionConfig",
-            "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector",
             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.__init__",
+            "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector",
             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.evolution_engine",
             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.set_evolution_engine",
             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.register_detection_callback",
@@ -99328,8 +99541,13 @@
             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._detect_coordination_patterns",
             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._detect_optimization_patterns",
             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._detect_innovation_patterns",
+            "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_harmful_patterns",
+            "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_patterns_by_impact",
             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._detect_phase_transitions",
+            "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_beneficial_patterns",
             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._analyze_temporal_windows",
+            "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_collective_behaviors",
+            "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_detection_history",
             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._calculate_window_metrics",
             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._calculate_shift_score",
             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._get_active_agents",
@@ -99348,7 +99566,9 @@
             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_status",
             "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer",
             "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.__init__",
+            "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_emergence_statistics",
             "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.analyze_emergence_trends",
+            "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.calculate_emergence_metrics",
             "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.identify_key_contributors",
             "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.analyze_pattern_correlations",
             "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.get_emergence_timeline"
@@ -101157,6 +101377,8 @@
           "methods": [
             "src.heretek_swarm.memory.base.MemoryEntry",
             "src.heretek_swarm.memory.base.MemoryQuery",
+            "src.heretek_swarm.memory.base.MemoryEntry.__post_init__",
+            "src.heretek_swarm.memory.base.MemoryEntry.touch",
             "src.heretek_swarm.memory.base.MemorySystem",
             "src.heretek_swarm.memory.base.MemorySystem.__init__",
             "src.heretek_swarm.memory.base.MemorySystem.initialize",
@@ -101315,6 +101537,7 @@
             "src.heretek_swarm.memory.prefetcher.LFUCache.__init__",
             "src.heretek_swarm.memory.prefetcher.LFUCache.get",
             "src.heretek_swarm.memory.prefetcher.LFUCache.put",
+            "src.heretek_swarm.memory.prefetcher.LFUCache.contains",
             "src.heretek_swarm.memory.prefetcher.LFUCache.get_statistics",
             "src.heretek_swarm.memory.prefetcher.PreFetchSchedule",
             "src.heretek_swarm.memory.prefetcher.PreFetchScheduler",
@@ -101419,7 +101642,8 @@
             "src.heretek_swarm.observability.metrics.RealTimeMetricsStream",
             "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.__init__",
             "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.get_metrics_snapshot",
-            "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.export_prometheus_format"
+            "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.export_prometheus_format",
+            "src.heretek_swarm.observability.metrics.get_metrics_collector"
           ]
         },
         {
@@ -103032,6 +103256,7 @@
                 "src.heretek_swarm.actors.base.AgentActor.get_actor_type",
                 "src.heretek_swarm.actors.base.AgentActor.__init__",
                 "src.heretek_swarm.actors.base.AgentActor._register_default_handlers",
+                "src.heretek_swarm.actors.base.AgentActor.is_alive",
                 "src.heretek_swarm.actors.base.AgentActor._validate_message_content",
                 "src.heretek_swarm.actors.base.AgentActor.register_handler",
                 "src.heretek_swarm.actors.base.AgentActor.spawn",
@@ -103044,8 +103269,8 @@
                 "src.heretek_swarm.actors.base.AgentActor.send_with_reply.handle_reply",
                 "src.heretek_swarm.actors.base.AgentActor.put_message",
                 "src.heretek_swarm.actors.base.AgentActor._process_mailbox",
-                "src.heretek_swarm.actors.base.AgentActor.process_message",
                 "src.heretek_swarm.actors.base.AgentActor.initialize",
+                "src.heretek_swarm.actors.base.AgentActor.process_message",
                 "src.heretek_swarm.actors.base.AgentActor.cleanup",
                 "src.heretek_swarm.actors.base.AgentActor._heartbeat_loop",
                 "src.heretek_swarm.actors.base.AgentActor.heartbeat",
@@ -103121,13 +103346,14 @@
                 "src.heretek_swarm.actors.echo.CommunicationChannel",
                 "src.heretek_swarm.actors.echo.MessagePriority",
                 "src.heretek_swarm.actors.echo.CommunicationStyle",
+                "src.heretek_swarm.actors.echo.CommunicationStyle.__post_init__",
                 "src.heretek_swarm.actors.echo.TranslationRule",
                 "src.heretek_swarm.actors.echo.EchoActor",
                 "src.heretek_swarm.actors.echo.EchoActor.__init__",
                 "src.heretek_swarm.actors.echo.EchoActor.active_channels",
                 "src.heretek_swarm.actors.echo.EchoActor.statistics",
-                "src.heretek_swarm.actors.echo.EchoActor.initialize",
                 "src.heretek_swarm.actors.echo.EchoActor._validate_input",
+                "src.heretek_swarm.actors.echo.EchoActor.initialize",
                 "src.heretek_swarm.actors.echo.EchoActor._handle_format_message",
                 "src.heretek_swarm.actors.echo.EchoActor._handle_translate_protocol",
                 "src.heretek_swarm.actors.echo.EchoActor._handle_send_to_channel",
@@ -103859,8 +104085,8 @@
                 "src.heretek_swarm.collective.emergent_detection.DetectionEvent",
                 "src.heretek_swarm.collective.emergent_detection.DetectionEvent.to_dict",
                 "src.heretek_swarm.collective.emergent_detection.EmergenceDetectionConfig",
-                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.__init__",
+                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.evolution_engine",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.set_evolution_engine",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.register_detection_callback",
@@ -103874,8 +104100,13 @@
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._detect_coordination_patterns",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._detect_optimization_patterns",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._detect_innovation_patterns",
+                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_harmful_patterns",
+                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_patterns_by_impact",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._detect_phase_transitions",
+                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_beneficial_patterns",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._analyze_temporal_windows",
+                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_collective_behaviors",
+                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_detection_history",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._calculate_window_metrics",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._calculate_shift_score",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._get_active_agents",
@@ -103894,7 +104125,9 @@
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_status",
                 "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer",
                 "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.__init__",
+                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_emergence_statistics",
                 "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.analyze_emergence_trends",
+                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.calculate_emergence_metrics",
                 "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.identify_key_contributors",
                 "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.analyze_pattern_correlations",
                 "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.get_emergence_timeline"
@@ -104547,6 +104780,8 @@
               "methods": [
                 "src.heretek_swarm.memory.base.MemoryEntry",
                 "src.heretek_swarm.memory.base.MemoryQuery",
+                "src.heretek_swarm.memory.base.MemoryEntry.__post_init__",
+                "src.heretek_swarm.memory.base.MemoryEntry.touch",
                 "src.heretek_swarm.memory.base.MemorySystem",
                 "src.heretek_swarm.memory.base.MemorySystem.__init__",
                 "src.heretek_swarm.memory.base.MemorySystem.initialize",
@@ -104616,7 +104851,8 @@
                 "src.heretek_swarm.observability.metrics.RealTimeMetricsStream",
                 "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.__init__",
                 "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.get_metrics_snapshot",
-                "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.export_prometheus_format"
+                "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.export_prometheus_format",
+                "src.heretek_swarm.observability.metrics.get_metrics_collector"
               ]
             },
             {
@@ -105722,6 +105958,7 @@
                     "src.heretek_swarm.actors.base.AgentActor.get_actor_type",
                     "src.heretek_swarm.actors.base.AgentActor.__init__",
                     "src.heretek_swarm.actors.base.AgentActor._register_default_handlers",
+                    "src.heretek_swarm.actors.base.AgentActor.is_alive",
                     "src.heretek_swarm.actors.base.AgentActor._validate_message_content",
                     "src.heretek_swarm.actors.base.AgentActor.register_handler",
                     "src.heretek_swarm.actors.base.AgentActor.spawn",
@@ -105734,8 +105971,8 @@
                     "src.heretek_swarm.actors.base.AgentActor.send_with_reply.handle_reply",
                     "src.heretek_swarm.actors.base.AgentActor.put_message",
                     "src.heretek_swarm.actors.base.AgentActor._process_mailbox",
-                    "src.heretek_swarm.actors.base.AgentActor.process_message",
                     "src.heretek_swarm.actors.base.AgentActor.initialize",
+                    "src.heretek_swarm.actors.base.AgentActor.process_message",
                     "src.heretek_swarm.actors.base.AgentActor.cleanup",
                     "src.heretek_swarm.actors.base.AgentActor._heartbeat_loop",
                     "src.heretek_swarm.actors.base.AgentActor.heartbeat",
@@ -105811,13 +106048,14 @@
                     "src.heretek_swarm.actors.echo.CommunicationChannel",
                     "src.heretek_swarm.actors.echo.MessagePriority",
                     "src.heretek_swarm.actors.echo.CommunicationStyle",
+                    "src.heretek_swarm.actors.echo.CommunicationStyle.__post_init__",
                     "src.heretek_swarm.actors.echo.TranslationRule",
                     "src.heretek_swarm.actors.echo.EchoActor",
                     "src.heretek_swarm.actors.echo.EchoActor.__init__",
                     "src.heretek_swarm.actors.echo.EchoActor.active_channels",
                     "src.heretek_swarm.actors.echo.EchoActor.statistics",
-                    "src.heretek_swarm.actors.echo.EchoActor.initialize",
                     "src.heretek_swarm.actors.echo.EchoActor._validate_input",
+                    "src.heretek_swarm.actors.echo.EchoActor.initialize",
                     "src.heretek_swarm.actors.echo.EchoActor._handle_format_message",
                     "src.heretek_swarm.actors.echo.EchoActor._handle_translate_protocol",
                     "src.heretek_swarm.actors.echo.EchoActor._handle_send_to_channel",
@@ -106276,6 +106514,8 @@
                   "methods": [
                     "src.heretek_swarm.memory.base.MemoryEntry",
                     "src.heretek_swarm.memory.base.MemoryQuery",
+                    "src.heretek_swarm.memory.base.MemoryEntry.__post_init__",
+                    "src.heretek_swarm.memory.base.MemoryEntry.touch",
                     "src.heretek_swarm.memory.base.MemorySystem",
                     "src.heretek_swarm.memory.base.MemorySystem.__init__",
                     "src.heretek_swarm.memory.base.MemorySystem.initialize",
@@ -107106,6 +107346,8 @@
                   "methods": [
                     "src.heretek_swarm.memory.base.MemoryEntry",
                     "src.heretek_swarm.memory.base.MemoryQuery",
+                    "src.heretek_swarm.memory.base.MemoryEntry.__post_init__",
+                    "src.heretek_swarm.memory.base.MemoryEntry.touch",
                     "src.heretek_swarm.memory.base.MemorySystem",
                     "src.heretek_swarm.memory.base.MemorySystem.__init__",
                     "src.heretek_swarm.memory.base.MemorySystem.initialize",
@@ -108131,8 +108373,8 @@
                     "src.heretek_swarm.collective.emergent_detection.DetectionEvent",
                     "src.heretek_swarm.collective.emergent_detection.DetectionEvent.to_dict",
                     "src.heretek_swarm.collective.emergent_detection.EmergenceDetectionConfig",
-                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.__init__",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.evolution_engine",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.set_evolution_engine",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.register_detection_callback",
@@ -108146,8 +108388,13 @@
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._detect_coordination_patterns",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._detect_optimization_patterns",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._detect_innovation_patterns",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_harmful_patterns",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_patterns_by_impact",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._detect_phase_transitions",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_beneficial_patterns",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._analyze_temporal_windows",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_collective_behaviors",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_detection_history",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._calculate_window_metrics",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._calculate_shift_score",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._get_active_agents",
@@ -108166,7 +108413,9 @@
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_status",
                     "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer",
                     "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.__init__",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_emergence_statistics",
                     "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.analyze_emergence_trends",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.calculate_emergence_metrics",
                     "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.identify_key_contributors",
                     "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.analyze_pattern_correlations",
                     "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.get_emergence_timeline"
@@ -108675,7 +108924,8 @@
                     "src.heretek_swarm.observability.metrics.RealTimeMetricsStream",
                     "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.__init__",
                     "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.get_metrics_snapshot",
-                    "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.export_prometheus_format"
+                    "src.heretek_swarm.observability.metrics.RealTimeMetricsStream.export_prometheus_format",
+                    "src.heretek_swarm.observability.metrics.get_metrics_collector"
                   ]
                 },
                 {
@@ -109527,8 +109777,8 @@
                     "src.heretek_swarm.collective.emergent_detection.DetectionEvent",
                     "src.heretek_swarm.collective.emergent_detection.DetectionEvent.to_dict",
                     "src.heretek_swarm.collective.emergent_detection.EmergenceDetectionConfig",
-                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.__init__",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.evolution_engine",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.set_evolution_engine",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.register_detection_callback",
@@ -109542,8 +109792,13 @@
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._detect_coordination_patterns",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._detect_optimization_patterns",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._detect_innovation_patterns",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_harmful_patterns",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_patterns_by_impact",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._detect_phase_transitions",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_beneficial_patterns",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._analyze_temporal_windows",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_collective_behaviors",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_detection_history",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._calculate_window_metrics",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._calculate_shift_score",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._get_active_agents",
@@ -109562,7 +109817,9 @@
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_status",
                     "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer",
                     "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.__init__",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_emergence_statistics",
                     "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.analyze_emergence_trends",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.calculate_emergence_metrics",
                     "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.identify_key_contributors",
                     "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.analyze_pattern_correlations",
                     "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.get_emergence_timeline"
@@ -110140,6 +110397,7 @@
                 "src.heretek_swarm.actors.base.AgentActor.get_actor_type",
                 "src.heretek_swarm.actors.base.AgentActor.__init__",
                 "src.heretek_swarm.actors.base.AgentActor._register_default_handlers",
+                "src.heretek_swarm.actors.base.AgentActor.is_alive",
                 "src.heretek_swarm.actors.base.AgentActor._validate_message_content",
                 "src.heretek_swarm.actors.base.AgentActor.register_handler",
                 "src.heretek_swarm.actors.base.AgentActor.spawn",
@@ -110152,8 +110410,8 @@
                 "src.heretek_swarm.actors.base.AgentActor.send_with_reply.handle_reply",
                 "src.heretek_swarm.actors.base.AgentActor.put_message",
                 "src.heretek_swarm.actors.base.AgentActor._process_mailbox",
-                "src.heretek_swarm.actors.base.AgentActor.process_message",
                 "src.heretek_swarm.actors.base.AgentActor.initialize",
+                "src.heretek_swarm.actors.base.AgentActor.process_message",
                 "src.heretek_swarm.actors.base.AgentActor.cleanup",
                 "src.heretek_swarm.actors.base.AgentActor._heartbeat_loop",
                 "src.heretek_swarm.actors.base.AgentActor.heartbeat",
@@ -110393,13 +110651,14 @@
                 "src.heretek_swarm.actors.echo.CommunicationChannel",
                 "src.heretek_swarm.actors.echo.MessagePriority",
                 "src.heretek_swarm.actors.echo.CommunicationStyle",
+                "src.heretek_swarm.actors.echo.CommunicationStyle.__post_init__",
                 "src.heretek_swarm.actors.echo.TranslationRule",
                 "src.heretek_swarm.actors.echo.EchoActor",
                 "src.heretek_swarm.actors.echo.EchoActor.__init__",
                 "src.heretek_swarm.actors.echo.EchoActor.active_channels",
                 "src.heretek_swarm.actors.echo.EchoActor.statistics",
-                "src.heretek_swarm.actors.echo.EchoActor.initialize",
                 "src.heretek_swarm.actors.echo.EchoActor._validate_input",
+                "src.heretek_swarm.actors.echo.EchoActor.initialize",
                 "src.heretek_swarm.actors.echo.EchoActor._handle_format_message",
                 "src.heretek_swarm.actors.echo.EchoActor._handle_translate_protocol",
                 "src.heretek_swarm.actors.echo.EchoActor._handle_send_to_channel",
@@ -111095,11 +111354,12 @@
                 "src.heretek_swarm.actors.triad.StewardAgent._handle_request_decision",
                 "src.heretek_swarm.actors.triad.StewardAgent._handle_report_status",
                 "src.heretek_swarm.actors.triad.StewardAgent._handle_policy_update",
-                "src.heretek_swarm.actors.triad.StewardAgent.coordinate_triad",
                 "src.heretek_swarm.actors.triad.StewardAgent.get_deliberation_status",
                 "src.heretek_swarm.actors.triad.StewardAgent.get_governance_policy",
+                "src.heretek_swarm.actors.triad.StewardAgent.coordinate_triad",
                 "src.heretek_swarm.actors.triad.AlphaAgent",
                 "src.heretek_swarm.actors.triad.AlphaAgent.__init__",
+                "src.heretek_swarm.actors.triad.StewardAgent.get_all_deliberation_statuses",
                 "src.heretek_swarm.actors.triad.AlphaAgent.initialize",
                 "src.heretek_swarm.actors.triad.AlphaAgent.process_message",
                 "src.heretek_swarm.actors.triad.AlphaAgent._handle_deliberation_request",
@@ -111109,24 +111369,24 @@
                 "src.heretek_swarm.actors.triad.AlphaAgent._validate_decision",
                 "src.heretek_swarm.actors.triad.AlphaAgent.get_analysis_statistics",
                 "src.heretek_swarm.actors.triad.BetaAgent",
-                "src.heretek_swarm.actors.triad.BetaAgent.__init__",
                 "src.heretek_swarm.actors.triad.BetaAgent.initialize",
                 "src.heretek_swarm.actors.triad.BetaAgent.process_message",
+                "src.heretek_swarm.actors.triad.BetaAgent.__init__",
                 "src.heretek_swarm.actors.triad.BetaAgent._handle_deliberation_request",
+                "src.heretek_swarm.actors.triad.BetaAgent._perform_analysis",
                 "src.heretek_swarm.actors.triad.BetaAgent._handle_validation_request",
                 "src.heretek_swarm.actors.triad.BetaAgent._handle_error_check",
-                "src.heretek_swarm.actors.triad.BetaAgent._perform_analysis",
-                "src.heretek_swarm.actors.triad.BetaAgent._validate_decision",
                 "src.heretek_swarm.actors.triad.BetaAgent._detect_errors",
+                "src.heretek_swarm.actors.triad.BetaAgent._validate_decision",
+                "src.heretek_swarm.actors.triad.CharlieAgent.initialize",
+                "src.heretek_swarm.actors.triad.CharlieAgent.process_message",
                 "src.heretek_swarm.actors.triad.BetaAgent.get_validation_statistics",
                 "src.heretek_swarm.actors.triad.CharlieAgent",
                 "src.heretek_swarm.actors.triad.CharlieAgent.__init__",
-                "src.heretek_swarm.actors.triad.CharlieAgent.initialize",
-                "src.heretek_swarm.actors.triad.CharlieAgent.process_message",
                 "src.heretek_swarm.actors.triad.CharlieAgent._handle_deliberation_request",
+                "src.heretek_swarm.actors.triad.CharlieAgent._perform_analysis",
                 "src.heretek_swarm.actors.triad.CharlieAgent._handle_challenge_request",
                 "src.heretek_swarm.actors.triad.CharlieAgent._handle_risk_assessment",
-                "src.heretek_swarm.actors.triad.CharlieAgent._perform_analysis",
                 "src.heretek_swarm.actors.triad.CharlieAgent._generate_challenges",
                 "src.heretek_swarm.actors.triad.CharlieAgent._assess_risks",
                 "src.heretek_swarm.actors.triad.CharlieAgent.get_challenge_statistics"
@@ -112023,6 +112283,8 @@
               "methods": [
                 "src.heretek_swarm.memory.base.MemoryEntry",
                 "src.heretek_swarm.memory.base.MemoryQuery",
+                "src.heretek_swarm.memory.base.MemoryEntry.__post_init__",
+                "src.heretek_swarm.memory.base.MemoryEntry.touch",
                 "src.heretek_swarm.memory.base.MemorySystem",
                 "src.heretek_swarm.memory.base.MemorySystem.__init__",
                 "src.heretek_swarm.memory.base.MemorySystem.initialize",
@@ -112441,6 +112703,7 @@
                     "src.heretek_swarm.actors.base.AgentActor.get_actor_type",
                     "src.heretek_swarm.actors.base.AgentActor.__init__",
                     "src.heretek_swarm.actors.base.AgentActor._register_default_handlers",
+                    "src.heretek_swarm.actors.base.AgentActor.is_alive",
                     "src.heretek_swarm.actors.base.AgentActor._validate_message_content",
                     "src.heretek_swarm.actors.base.AgentActor.register_handler",
                     "src.heretek_swarm.actors.base.AgentActor.spawn",
@@ -112453,8 +112716,8 @@
                     "src.heretek_swarm.actors.base.AgentActor.send_with_reply.handle_reply",
                     "src.heretek_swarm.actors.base.AgentActor.put_message",
                     "src.heretek_swarm.actors.base.AgentActor._process_mailbox",
-                    "src.heretek_swarm.actors.base.AgentActor.process_message",
                     "src.heretek_swarm.actors.base.AgentActor.initialize",
+                    "src.heretek_swarm.actors.base.AgentActor.process_message",
                     "src.heretek_swarm.actors.base.AgentActor.cleanup",
                     "src.heretek_swarm.actors.base.AgentActor._heartbeat_loop",
                     "src.heretek_swarm.actors.base.AgentActor.heartbeat",
@@ -112841,11 +113104,12 @@
                     "src.heretek_swarm.actors.triad.StewardAgent._handle_request_decision",
                     "src.heretek_swarm.actors.triad.StewardAgent._handle_report_status",
                     "src.heretek_swarm.actors.triad.StewardAgent._handle_policy_update",
-                    "src.heretek_swarm.actors.triad.StewardAgent.coordinate_triad",
                     "src.heretek_swarm.actors.triad.StewardAgent.get_deliberation_status",
                     "src.heretek_swarm.actors.triad.StewardAgent.get_governance_policy",
+                    "src.heretek_swarm.actors.triad.StewardAgent.coordinate_triad",
                     "src.heretek_swarm.actors.triad.AlphaAgent",
                     "src.heretek_swarm.actors.triad.AlphaAgent.__init__",
+                    "src.heretek_swarm.actors.triad.StewardAgent.get_all_deliberation_statuses",
                     "src.heretek_swarm.actors.triad.AlphaAgent.initialize",
                     "src.heretek_swarm.actors.triad.AlphaAgent.process_message",
                     "src.heretek_swarm.actors.triad.AlphaAgent._handle_deliberation_request",
@@ -112855,24 +113119,24 @@
                     "src.heretek_swarm.actors.triad.AlphaAgent._validate_decision",
                     "src.heretek_swarm.actors.triad.AlphaAgent.get_analysis_statistics",
                     "src.heretek_swarm.actors.triad.BetaAgent",
-                    "src.heretek_swarm.actors.triad.BetaAgent.__init__",
                     "src.heretek_swarm.actors.triad.BetaAgent.initialize",
                     "src.heretek_swarm.actors.triad.BetaAgent.process_message",
+                    "src.heretek_swarm.actors.triad.BetaAgent.__init__",
                     "src.heretek_swarm.actors.triad.BetaAgent._handle_deliberation_request",
+                    "src.heretek_swarm.actors.triad.BetaAgent._perform_analysis",
                     "src.heretek_swarm.actors.triad.BetaAgent._handle_validation_request",
                     "src.heretek_swarm.actors.triad.BetaAgent._handle_error_check",
-                    "src.heretek_swarm.actors.triad.BetaAgent._perform_analysis",
-                    "src.heretek_swarm.actors.triad.BetaAgent._validate_decision",
                     "src.heretek_swarm.actors.triad.BetaAgent._detect_errors",
+                    "src.heretek_swarm.actors.triad.BetaAgent._validate_decision",
+                    "src.heretek_swarm.actors.triad.CharlieAgent.initialize",
+                    "src.heretek_swarm.actors.triad.CharlieAgent.process_message",
                     "src.heretek_swarm.actors.triad.BetaAgent.get_validation_statistics",
                     "src.heretek_swarm.actors.triad.CharlieAgent",
                     "src.heretek_swarm.actors.triad.CharlieAgent.__init__",
-                    "src.heretek_swarm.actors.triad.CharlieAgent.initialize",
-                    "src.heretek_swarm.actors.triad.CharlieAgent.process_message",
                     "src.heretek_swarm.actors.triad.CharlieAgent._handle_deliberation_request",
+                    "src.heretek_swarm.actors.triad.CharlieAgent._perform_analysis",
                     "src.heretek_swarm.actors.triad.CharlieAgent._handle_challenge_request",
                     "src.heretek_swarm.actors.triad.CharlieAgent._handle_risk_assessment",
-                    "src.heretek_swarm.actors.triad.CharlieAgent._perform_analysis",
                     "src.heretek_swarm.actors.triad.CharlieAgent._generate_challenges",
                     "src.heretek_swarm.actors.triad.CharlieAgent._assess_risks",
                     "src.heretek_swarm.actors.triad.CharlieAgent.get_challenge_statistics"
@@ -112993,6 +113257,7 @@
                         "src.heretek_swarm.actors.base.AgentActor.get_actor_type",
                         "src.heretek_swarm.actors.base.AgentActor.__init__",
                         "src.heretek_swarm.actors.base.AgentActor._register_default_handlers",
+                        "src.heretek_swarm.actors.base.AgentActor.is_alive",
                         "src.heretek_swarm.actors.base.AgentActor._validate_message_content",
                         "src.heretek_swarm.actors.base.AgentActor.register_handler",
                         "src.heretek_swarm.actors.base.AgentActor.spawn",
@@ -113005,8 +113270,8 @@
                         "src.heretek_swarm.actors.base.AgentActor.send_with_reply.handle_reply",
                         "src.heretek_swarm.actors.base.AgentActor.put_message",
                         "src.heretek_swarm.actors.base.AgentActor._process_mailbox",
-                        "src.heretek_swarm.actors.base.AgentActor.process_message",
                         "src.heretek_swarm.actors.base.AgentActor.initialize",
+                        "src.heretek_swarm.actors.base.AgentActor.process_message",
                         "src.heretek_swarm.actors.base.AgentActor.cleanup",
                         "src.heretek_swarm.actors.base.AgentActor._heartbeat_loop",
                         "src.heretek_swarm.actors.base.AgentActor.heartbeat",
@@ -113110,11 +113375,12 @@
                         "src.heretek_swarm.actors.triad.StewardAgent._handle_request_decision",
                         "src.heretek_swarm.actors.triad.StewardAgent._handle_report_status",
                         "src.heretek_swarm.actors.triad.StewardAgent._handle_policy_update",
-                        "src.heretek_swarm.actors.triad.StewardAgent.coordinate_triad",
                         "src.heretek_swarm.actors.triad.StewardAgent.get_deliberation_status",
                         "src.heretek_swarm.actors.triad.StewardAgent.get_governance_policy",
+                        "src.heretek_swarm.actors.triad.StewardAgent.coordinate_triad",
                         "src.heretek_swarm.actors.triad.AlphaAgent",
                         "src.heretek_swarm.actors.triad.AlphaAgent.__init__",
+                        "src.heretek_swarm.actors.triad.StewardAgent.get_all_deliberation_statuses",
                         "src.heretek_swarm.actors.triad.AlphaAgent.initialize",
                         "src.heretek_swarm.actors.triad.AlphaAgent.process_message",
                         "src.heretek_swarm.actors.triad.AlphaAgent._handle_deliberation_request",
@@ -113124,24 +113390,24 @@
                         "src.heretek_swarm.actors.triad.AlphaAgent._validate_decision",
                         "src.heretek_swarm.actors.triad.AlphaAgent.get_analysis_statistics",
                         "src.heretek_swarm.actors.triad.BetaAgent",
-                        "src.heretek_swarm.actors.triad.BetaAgent.__init__",
                         "src.heretek_swarm.actors.triad.BetaAgent.initialize",
                         "src.heretek_swarm.actors.triad.BetaAgent.process_message",
+                        "src.heretek_swarm.actors.triad.BetaAgent.__init__",
                         "src.heretek_swarm.actors.triad.BetaAgent._handle_deliberation_request",
+                        "src.heretek_swarm.actors.triad.BetaAgent._perform_analysis",
                         "src.heretek_swarm.actors.triad.BetaAgent._handle_validation_request",
                         "src.heretek_swarm.actors.triad.BetaAgent._handle_error_check",
-                        "src.heretek_swarm.actors.triad.BetaAgent._perform_analysis",
-                        "src.heretek_swarm.actors.triad.BetaAgent._validate_decision",
                         "src.heretek_swarm.actors.triad.BetaAgent._detect_errors",
+                        "src.heretek_swarm.actors.triad.BetaAgent._validate_decision",
+                        "src.heretek_swarm.actors.triad.CharlieAgent.initialize",
+                        "src.heretek_swarm.actors.triad.CharlieAgent.process_message",
                         "src.heretek_swarm.actors.triad.BetaAgent.get_validation_statistics",
                         "src.heretek_swarm.actors.triad.CharlieAgent",
                         "src.heretek_swarm.actors.triad.CharlieAgent.__init__",
-                        "src.heretek_swarm.actors.triad.CharlieAgent.initialize",
-                        "src.heretek_swarm.actors.triad.CharlieAgent.process_message",
                         "src.heretek_swarm.actors.triad.CharlieAgent._handle_deliberation_request",
+                        "src.heretek_swarm.actors.triad.CharlieAgent._perform_analysis",
                         "src.heretek_swarm.actors.triad.CharlieAgent._handle_challenge_request",
                         "src.heretek_swarm.actors.triad.CharlieAgent._handle_risk_assessment",
-                        "src.heretek_swarm.actors.triad.CharlieAgent._perform_analysis",
                         "src.heretek_swarm.actors.triad.CharlieAgent._generate_challenges",
                         "src.heretek_swarm.actors.triad.CharlieAgent._assess_risks",
                         "src.heretek_swarm.actors.triad.CharlieAgent.get_challenge_statistics"
@@ -113305,11 +113571,12 @@
                         "src.heretek_swarm.actors.triad.StewardAgent._handle_request_decision",
                         "src.heretek_swarm.actors.triad.StewardAgent._handle_report_status",
                         "src.heretek_swarm.actors.triad.StewardAgent._handle_policy_update",
-                        "src.heretek_swarm.actors.triad.StewardAgent.coordinate_triad",
                         "src.heretek_swarm.actors.triad.StewardAgent.get_deliberation_status",
                         "src.heretek_swarm.actors.triad.StewardAgent.get_governance_policy",
+                        "src.heretek_swarm.actors.triad.StewardAgent.coordinate_triad",
                         "src.heretek_swarm.actors.triad.AlphaAgent",
                         "src.heretek_swarm.actors.triad.AlphaAgent.__init__",
+                        "src.heretek_swarm.actors.triad.StewardAgent.get_all_deliberation_statuses",
                         "src.heretek_swarm.actors.triad.AlphaAgent.initialize",
                         "src.heretek_swarm.actors.triad.AlphaAgent.process_message",
                         "src.heretek_swarm.actors.triad.AlphaAgent._handle_deliberation_request",
@@ -113319,24 +113586,24 @@
                         "src.heretek_swarm.actors.triad.AlphaAgent._validate_decision",
                         "src.heretek_swarm.actors.triad.AlphaAgent.get_analysis_statistics",
                         "src.heretek_swarm.actors.triad.BetaAgent",
-                        "src.heretek_swarm.actors.triad.BetaAgent.__init__",
                         "src.heretek_swarm.actors.triad.BetaAgent.initialize",
                         "src.heretek_swarm.actors.triad.BetaAgent.process_message",
+                        "src.heretek_swarm.actors.triad.BetaAgent.__init__",
                         "src.heretek_swarm.actors.triad.BetaAgent._handle_deliberation_request",
+                        "src.heretek_swarm.actors.triad.BetaAgent._perform_analysis",
                         "src.heretek_swarm.actors.triad.BetaAgent._handle_validation_request",
                         "src.heretek_swarm.actors.triad.BetaAgent._handle_error_check",
-                        "src.heretek_swarm.actors.triad.BetaAgent._perform_analysis",
-                        "src.heretek_swarm.actors.triad.BetaAgent._validate_decision",
                         "src.heretek_swarm.actors.triad.BetaAgent._detect_errors",
+                        "src.heretek_swarm.actors.triad.BetaAgent._validate_decision",
+                        "src.heretek_swarm.actors.triad.CharlieAgent.initialize",
+                        "src.heretek_swarm.actors.triad.CharlieAgent.process_message",
                         "src.heretek_swarm.actors.triad.BetaAgent.get_validation_statistics",
                         "src.heretek_swarm.actors.triad.CharlieAgent",
                         "src.heretek_swarm.actors.triad.CharlieAgent.__init__",
-                        "src.heretek_swarm.actors.triad.CharlieAgent.initialize",
-                        "src.heretek_swarm.actors.triad.CharlieAgent.process_message",
                         "src.heretek_swarm.actors.triad.CharlieAgent._handle_deliberation_request",
+                        "src.heretek_swarm.actors.triad.CharlieAgent._perform_analysis",
                         "src.heretek_swarm.actors.triad.CharlieAgent._handle_challenge_request",
                         "src.heretek_swarm.actors.triad.CharlieAgent._handle_risk_assessment",
-                        "src.heretek_swarm.actors.triad.CharlieAgent._perform_analysis",
                         "src.heretek_swarm.actors.triad.CharlieAgent._generate_challenges",
                         "src.heretek_swarm.actors.triad.CharlieAgent._assess_risks",
                         "src.heretek_swarm.actors.triad.CharlieAgent.get_challenge_statistics"
@@ -113938,13 +114205,14 @@
                     "src.heretek_swarm.actors.echo.CommunicationChannel",
                     "src.heretek_swarm.actors.echo.MessagePriority",
                     "src.heretek_swarm.actors.echo.CommunicationStyle",
+                    "src.heretek_swarm.actors.echo.CommunicationStyle.__post_init__",
                     "src.heretek_swarm.actors.echo.TranslationRule",
                     "src.heretek_swarm.actors.echo.EchoActor",
                     "src.heretek_swarm.actors.echo.EchoActor.__init__",
                     "src.heretek_swarm.actors.echo.EchoActor.active_channels",
                     "src.heretek_swarm.actors.echo.EchoActor.statistics",
-                    "src.heretek_swarm.actors.echo.EchoActor.initialize",
                     "src.heretek_swarm.actors.echo.EchoActor._validate_input",
+                    "src.heretek_swarm.actors.echo.EchoActor.initialize",
                     "src.heretek_swarm.actors.echo.EchoActor._handle_format_message",
                     "src.heretek_swarm.actors.echo.EchoActor._handle_translate_protocol",
                     "src.heretek_swarm.actors.echo.EchoActor._handle_send_to_channel",
@@ -114360,11 +114628,12 @@
                     "src.heretek_swarm.actors.triad.StewardAgent._handle_request_decision",
                     "src.heretek_swarm.actors.triad.StewardAgent._handle_report_status",
                     "src.heretek_swarm.actors.triad.StewardAgent._handle_policy_update",
-                    "src.heretek_swarm.actors.triad.StewardAgent.coordinate_triad",
                     "src.heretek_swarm.actors.triad.StewardAgent.get_deliberation_status",
                     "src.heretek_swarm.actors.triad.StewardAgent.get_governance_policy",
+                    "src.heretek_swarm.actors.triad.StewardAgent.coordinate_triad",
                     "src.heretek_swarm.actors.triad.AlphaAgent",
                     "src.heretek_swarm.actors.triad.AlphaAgent.__init__",
+                    "src.heretek_swarm.actors.triad.StewardAgent.get_all_deliberation_statuses",
                     "src.heretek_swarm.actors.triad.AlphaAgent.initialize",
                     "src.heretek_swarm.actors.triad.AlphaAgent.process_message",
                     "src.heretek_swarm.actors.triad.AlphaAgent._handle_deliberation_request",
@@ -114374,24 +114643,24 @@
                     "src.heretek_swarm.actors.triad.AlphaAgent._validate_decision",
                     "src.heretek_swarm.actors.triad.AlphaAgent.get_analysis_statistics",
                     "src.heretek_swarm.actors.triad.BetaAgent",
-                    "src.heretek_swarm.actors.triad.BetaAgent.__init__",
                     "src.heretek_swarm.actors.triad.BetaAgent.initialize",
                     "src.heretek_swarm.actors.triad.BetaAgent.process_message",
+                    "src.heretek_swarm.actors.triad.BetaAgent.__init__",
                     "src.heretek_swarm.actors.triad.BetaAgent._handle_deliberation_request",
+                    "src.heretek_swarm.actors.triad.BetaAgent._perform_analysis",
                     "src.heretek_swarm.actors.triad.BetaAgent._handle_validation_request",
                     "src.heretek_swarm.actors.triad.BetaAgent._handle_error_check",
-                    "src.heretek_swarm.actors.triad.BetaAgent._perform_analysis",
-                    "src.heretek_swarm.actors.triad.BetaAgent._validate_decision",
                     "src.heretek_swarm.actors.triad.BetaAgent._detect_errors",
+                    "src.heretek_swarm.actors.triad.BetaAgent._validate_decision",
+                    "src.heretek_swarm.actors.triad.CharlieAgent.initialize",
+                    "src.heretek_swarm.actors.triad.CharlieAgent.process_message",
                     "src.heretek_swarm.actors.triad.BetaAgent.get_validation_statistics",
                     "src.heretek_swarm.actors.triad.CharlieAgent",
                     "src.heretek_swarm.actors.triad.CharlieAgent.__init__",
-                    "src.heretek_swarm.actors.triad.CharlieAgent.initialize",
-                    "src.heretek_swarm.actors.triad.CharlieAgent.process_message",
                     "src.heretek_swarm.actors.triad.CharlieAgent._handle_deliberation_request",
+                    "src.heretek_swarm.actors.triad.CharlieAgent._perform_analysis",
                     "src.heretek_swarm.actors.triad.CharlieAgent._handle_challenge_request",
                     "src.heretek_swarm.actors.triad.CharlieAgent._handle_risk_assessment",
-                    "src.heretek_swarm.actors.triad.CharlieAgent._perform_analysis",
                     "src.heretek_swarm.actors.triad.CharlieAgent._generate_challenges",
                     "src.heretek_swarm.actors.triad.CharlieAgent._assess_risks",
                     "src.heretek_swarm.actors.triad.CharlieAgent.get_challenge_statistics"
@@ -114949,13 +115218,14 @@
                         "src.heretek_swarm.actors.echo.CommunicationChannel",
                         "src.heretek_swarm.actors.echo.MessagePriority",
                         "src.heretek_swarm.actors.echo.CommunicationStyle",
+                        "src.heretek_swarm.actors.echo.CommunicationStyle.__post_init__",
                         "src.heretek_swarm.actors.echo.TranslationRule",
                         "src.heretek_swarm.actors.echo.EchoActor",
                         "src.heretek_swarm.actors.echo.EchoActor.__init__",
                         "src.heretek_swarm.actors.echo.EchoActor.active_channels",
                         "src.heretek_swarm.actors.echo.EchoActor.statistics",
-                        "src.heretek_swarm.actors.echo.EchoActor.initialize",
                         "src.heretek_swarm.actors.echo.EchoActor._validate_input",
+                        "src.heretek_swarm.actors.echo.EchoActor.initialize",
                         "src.heretek_swarm.actors.echo.EchoActor._handle_format_message",
                         "src.heretek_swarm.actors.echo.EchoActor._handle_translate_protocol",
                         "src.heretek_swarm.actors.echo.EchoActor._handle_send_to_channel",
@@ -115227,11 +115497,12 @@
                         "src.heretek_swarm.actors.triad.StewardAgent._handle_request_decision",
                         "src.heretek_swarm.actors.triad.StewardAgent._handle_report_status",
                         "src.heretek_swarm.actors.triad.StewardAgent._handle_policy_update",
-                        "src.heretek_swarm.actors.triad.StewardAgent.coordinate_triad",
                         "src.heretek_swarm.actors.triad.StewardAgent.get_deliberation_status",
                         "src.heretek_swarm.actors.triad.StewardAgent.get_governance_policy",
+                        "src.heretek_swarm.actors.triad.StewardAgent.coordinate_triad",
                         "src.heretek_swarm.actors.triad.AlphaAgent",
                         "src.heretek_swarm.actors.triad.AlphaAgent.__init__",
+                        "src.heretek_swarm.actors.triad.StewardAgent.get_all_deliberation_statuses",
                         "src.heretek_swarm.actors.triad.AlphaAgent.initialize",
                         "src.heretek_swarm.actors.triad.AlphaAgent.process_message",
                         "src.heretek_swarm.actors.triad.AlphaAgent._handle_deliberation_request",
@@ -115241,24 +115512,24 @@
                         "src.heretek_swarm.actors.triad.AlphaAgent._validate_decision",
                         "src.heretek_swarm.actors.triad.AlphaAgent.get_analysis_statistics",
                         "src.heretek_swarm.actors.triad.BetaAgent",
-                        "src.heretek_swarm.actors.triad.BetaAgent.__init__",
                         "src.heretek_swarm.actors.triad.BetaAgent.initialize",
                         "src.heretek_swarm.actors.triad.BetaAgent.process_message",
+                        "src.heretek_swarm.actors.triad.BetaAgent.__init__",
                         "src.heretek_swarm.actors.triad.BetaAgent._handle_deliberation_request",
+                        "src.heretek_swarm.actors.triad.BetaAgent._perform_analysis",
                         "src.heretek_swarm.actors.triad.BetaAgent._handle_validation_request",
                         "src.heretek_swarm.actors.triad.BetaAgent._handle_error_check",
-                        "src.heretek_swarm.actors.triad.BetaAgent._perform_analysis",
-                        "src.heretek_swarm.actors.triad.BetaAgent._validate_decision",
                         "src.heretek_swarm.actors.triad.BetaAgent._detect_errors",
+                        "src.heretek_swarm.actors.triad.BetaAgent._validate_decision",
+                        "src.heretek_swarm.actors.triad.CharlieAgent.initialize",
+                        "src.heretek_swarm.actors.triad.CharlieAgent.process_message",
                         "src.heretek_swarm.actors.triad.BetaAgent.get_validation_statistics",
                         "src.heretek_swarm.actors.triad.CharlieAgent",
                         "src.heretek_swarm.actors.triad.CharlieAgent.__init__",
-                        "src.heretek_swarm.actors.triad.CharlieAgent.initialize",
-                        "src.heretek_swarm.actors.triad.CharlieAgent.process_message",
                         "src.heretek_swarm.actors.triad.CharlieAgent._handle_deliberation_request",
+                        "src.heretek_swarm.actors.triad.CharlieAgent._perform_analysis",
                         "src.heretek_swarm.actors.triad.CharlieAgent._handle_challenge_request",
                         "src.heretek_swarm.actors.triad.CharlieAgent._handle_risk_assessment",
-                        "src.heretek_swarm.actors.triad.CharlieAgent._perform_analysis",
                         "src.heretek_swarm.actors.triad.CharlieAgent._generate_challenges",
                         "src.heretek_swarm.actors.triad.CharlieAgent._assess_risks",
                         "src.heretek_swarm.actors.triad.CharlieAgent.get_challenge_statistics"
@@ -118203,6 +118474,8 @@
                   "methods": [
                     "src.heretek_swarm.memory.base.MemoryEntry",
                     "src.heretek_swarm.memory.base.MemoryQuery",
+                    "src.heretek_swarm.memory.base.MemoryEntry.__post_init__",
+                    "src.heretek_swarm.memory.base.MemoryEntry.touch",
                     "src.heretek_swarm.memory.base.MemorySystem",
                     "src.heretek_swarm.memory.base.MemorySystem.__init__",
                     "src.heretek_swarm.memory.base.MemorySystem.initialize",
@@ -118444,6 +118717,8 @@
                       "methods": [
                         "src.heretek_swarm.memory.base.MemoryEntry",
                         "src.heretek_swarm.memory.base.MemoryQuery",
+                        "src.heretek_swarm.memory.base.MemoryEntry.__post_init__",
+                        "src.heretek_swarm.memory.base.MemoryEntry.touch",
                         "src.heretek_swarm.memory.base.MemorySystem",
                         "src.heretek_swarm.memory.base.MemorySystem.__init__",
                         "src.heretek_swarm.memory.base.MemorySystem.initialize",
@@ -119989,13 +120264,14 @@
                 "src.heretek_swarm.actors.echo.CommunicationChannel",
                 "src.heretek_swarm.actors.echo.MessagePriority",
                 "src.heretek_swarm.actors.echo.CommunicationStyle",
+                "src.heretek_swarm.actors.echo.CommunicationStyle.__post_init__",
                 "src.heretek_swarm.actors.echo.TranslationRule",
                 "src.heretek_swarm.actors.echo.EchoActor",
                 "src.heretek_swarm.actors.echo.EchoActor.__init__",
                 "src.heretek_swarm.actors.echo.EchoActor.active_channels",
                 "src.heretek_swarm.actors.echo.EchoActor.statistics",
-                "src.heretek_swarm.actors.echo.EchoActor.initialize",
                 "src.heretek_swarm.actors.echo.EchoActor._validate_input",
+                "src.heretek_swarm.actors.echo.EchoActor.initialize",
                 "src.heretek_swarm.actors.echo.EchoActor._handle_format_message",
                 "src.heretek_swarm.actors.echo.EchoActor._handle_translate_protocol",
                 "src.heretek_swarm.actors.echo.EchoActor._handle_send_to_channel",
@@ -120602,8 +120878,8 @@
                 "src.heretek_swarm.collective.emergent_detection.DetectionEvent",
                 "src.heretek_swarm.collective.emergent_detection.DetectionEvent.to_dict",
                 "src.heretek_swarm.collective.emergent_detection.EmergenceDetectionConfig",
-                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.__init__",
+                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.evolution_engine",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.set_evolution_engine",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.register_detection_callback",
@@ -120617,8 +120893,13 @@
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._detect_coordination_patterns",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._detect_optimization_patterns",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._detect_innovation_patterns",
+                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_harmful_patterns",
+                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_patterns_by_impact",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._detect_phase_transitions",
+                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_beneficial_patterns",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._analyze_temporal_windows",
+                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_collective_behaviors",
+                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_detection_history",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._calculate_window_metrics",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._calculate_shift_score",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._get_active_agents",
@@ -120637,7 +120918,9 @@
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_status",
                 "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer",
                 "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.__init__",
+                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_emergence_statistics",
                 "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.analyze_emergence_trends",
+                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.calculate_emergence_metrics",
                 "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.identify_key_contributors",
                 "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.analyze_pattern_correlations",
                 "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.get_emergence_timeline"
@@ -121638,13 +121921,14 @@
                     "src.heretek_swarm.actors.echo.CommunicationChannel",
                     "src.heretek_swarm.actors.echo.MessagePriority",
                     "src.heretek_swarm.actors.echo.CommunicationStyle",
+                    "src.heretek_swarm.actors.echo.CommunicationStyle.__post_init__",
                     "src.heretek_swarm.actors.echo.TranslationRule",
                     "src.heretek_swarm.actors.echo.EchoActor",
                     "src.heretek_swarm.actors.echo.EchoActor.__init__",
                     "src.heretek_swarm.actors.echo.EchoActor.active_channels",
                     "src.heretek_swarm.actors.echo.EchoActor.statistics",
-                    "src.heretek_swarm.actors.echo.EchoActor.initialize",
                     "src.heretek_swarm.actors.echo.EchoActor._validate_input",
+                    "src.heretek_swarm.actors.echo.EchoActor.initialize",
                     "src.heretek_swarm.actors.echo.EchoActor._handle_format_message",
                     "src.heretek_swarm.actors.echo.EchoActor._handle_translate_protocol",
                     "src.heretek_swarm.actors.echo.EchoActor._handle_send_to_channel",
@@ -122757,13 +123041,14 @@
                     "src.heretek_swarm.actors.echo.CommunicationChannel",
                     "src.heretek_swarm.actors.echo.MessagePriority",
                     "src.heretek_swarm.actors.echo.CommunicationStyle",
+                    "src.heretek_swarm.actors.echo.CommunicationStyle.__post_init__",
                     "src.heretek_swarm.actors.echo.TranslationRule",
                     "src.heretek_swarm.actors.echo.EchoActor",
                     "src.heretek_swarm.actors.echo.EchoActor.__init__",
                     "src.heretek_swarm.actors.echo.EchoActor.active_channels",
                     "src.heretek_swarm.actors.echo.EchoActor.statistics",
-                    "src.heretek_swarm.actors.echo.EchoActor.initialize",
                     "src.heretek_swarm.actors.echo.EchoActor._validate_input",
+                    "src.heretek_swarm.actors.echo.EchoActor.initialize",
                     "src.heretek_swarm.actors.echo.EchoActor._handle_format_message",
                     "src.heretek_swarm.actors.echo.EchoActor._handle_translate_protocol",
                     "src.heretek_swarm.actors.echo.EchoActor._handle_send_to_channel",
@@ -123330,8 +123615,8 @@
                     "src.heretek_swarm.collective.emergent_detection.DetectionEvent",
                     "src.heretek_swarm.collective.emergent_detection.DetectionEvent.to_dict",
                     "src.heretek_swarm.collective.emergent_detection.EmergenceDetectionConfig",
-                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.__init__",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.evolution_engine",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.set_evolution_engine",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.register_detection_callback",
@@ -123345,8 +123630,13 @@
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._detect_coordination_patterns",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._detect_optimization_patterns",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._detect_innovation_patterns",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_harmful_patterns",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_patterns_by_impact",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._detect_phase_transitions",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_beneficial_patterns",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._analyze_temporal_windows",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_collective_behaviors",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_detection_history",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._calculate_window_metrics",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._calculate_shift_score",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._get_active_agents",
@@ -123365,7 +123655,9 @@
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_status",
                     "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer",
                     "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.__init__",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_emergence_statistics",
                     "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.analyze_emergence_trends",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.calculate_emergence_metrics",
                     "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.identify_key_contributors",
                     "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.analyze_pattern_correlations",
                     "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.get_emergence_timeline"
@@ -124372,6 +124664,7 @@
                 "src.heretek_swarm.memory.prefetcher.LFUCache.__init__",
                 "src.heretek_swarm.memory.prefetcher.LFUCache.get",
                 "src.heretek_swarm.memory.prefetcher.LFUCache.put",
+                "src.heretek_swarm.memory.prefetcher.LFUCache.contains",
                 "src.heretek_swarm.memory.prefetcher.LFUCache.get_statistics",
                 "src.heretek_swarm.memory.prefetcher.PreFetchSchedule",
                 "src.heretek_swarm.memory.prefetcher.PreFetchScheduler",
@@ -124945,6 +125238,7 @@
                     "src.heretek_swarm.memory.prefetcher.LFUCache.__init__",
                     "src.heretek_swarm.memory.prefetcher.LFUCache.get",
                     "src.heretek_swarm.memory.prefetcher.LFUCache.put",
+                    "src.heretek_swarm.memory.prefetcher.LFUCache.contains",
                     "src.heretek_swarm.memory.prefetcher.LFUCache.get_statistics",
                     "src.heretek_swarm.memory.prefetcher.PreFetchSchedule",
                     "src.heretek_swarm.memory.prefetcher.PreFetchScheduler",

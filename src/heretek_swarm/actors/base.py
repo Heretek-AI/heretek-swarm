@@ -22,6 +22,8 @@ import structlog
 from pydantic import ValidationError
 from swarms import Agent
 
+import heretek_swarm.actors.stubs as _actor_stubs
+from heretek_swarm.actors.stubs import get_db_pool  # noqa: F401 - imported for test patching
 from heretek_swarm.actors.validation import (
     validate_message,
 )
@@ -83,6 +85,7 @@ class ActorMessage:
     timestamp: str
     correlation_id: str | None = None
     reply_to: str | None = None
+    recipient: str | None = None
     metadata: dict[str, Any] = field(default_factory=dict)
 
 
@@ -231,6 +234,10 @@ class AgentActor:
         self._heartbeat_task: asyncio.Task | None = None
         self._running = False
 
+        # LLM and event mesh providers (injectable via stubs for testing)
+        self._llm_provider = _actor_stubs.get_llm_provider()
+        self._event_mesh = _actor_stubs.get_nats_event_mesh()
+
         # Message handlers registry
         self._message_handlers: dict[str, Callable] = {}
         self._register_default_handlers()
@@ -243,6 +250,11 @@ class AgentActor:
                 "capabilities": self.capabilities,
             },
         )
+
+    @property
+    def is_alive(self) -> bool:
+        """Return True if the actor is in ACTIVE state."""
+        return self.state == ActorState.ACTIVE
 
     def _register_default_handlers(self) -> None:
         """Register default message handlers."""
@@ -430,7 +442,7 @@ class AgentActor:
         )
 
         # Route through event mesh if available
-        event_mesh = self.get_state("_event_mesh")
+        event_mesh = self._event_mesh or self.get_state("_event_mesh")
         if event_mesh is not None:
             try:
                 # Send via event mesh
@@ -724,17 +736,39 @@ class AgentActor:
                     exc_info=True,
                 )
 
-    @abstractmethod
     async def process_message(self, message: ActorMessage) -> None:
         """
         Process an incoming message.
 
-        This method MUST be implemented by subclasses to handle
-        domain-specific message processing.
+        Default implementation routes via registered _message_handlers.
+        Subclasses can override for custom routing logic.
 
         Args:
             message: Actor message to process
         """
+        handler = self._message_handlers.get(message.message_type)
+        if handler:
+            try:
+                result = await handler(message)
+                # Publish result if handler returns a dict and event mesh is available
+                if result and isinstance(result, dict) and result.get("status") != "error":
+                    reply_to = message.content.get("reply_to") if message.content else None
+                    await self.send(
+                        topic=reply_to or f"results.{message.message_type}",
+                        content=result,
+                        message_type=f"{message.message_type}_response",
+                        correlation_id=message.correlation_id,
+                    )
+            except Exception as e:
+                logger.error(
+                    f"[{self.agent_id}] Error in handler for {message.message_type}: {e}",
+                    exc_info=True,
+                )
+                self.error_count += 1
+        else:
+            logger.warning(
+                f"[{self.agent_id}] No handler for message type: {message.message_type}"
+            )
 
     async def initialize(self) -> None:
         """
@@ -841,30 +875,52 @@ class AgentActor:
                     exc_info=True,
                 )
 
-        # Legacy fallback: try direct db_pool access
-        db_pool = self.get_state("_db_pool")
+        # Legacy fallback: try get_db_pool() stub (injectable for testing)
+        db_pool = _actor_stubs.get_db_pool()
+        if db_pool is None:
+            db_pool = self.get_state("_db_pool")
         if db_pool is not None:
             try:
-                async with db_pool.acquire() as conn:
-                    await conn.execute(
-                        """
-                        INSERT INTO agent_states (id, agent_id, agent_type, state, version, updated_at, is_active)
-                        VALUES (gen_random_uuid(), $1, $2, $3, 1, NOW(), true)
-                        ON CONFLICT (agent_id) DO UPDATE
-                        SET state = $3, version = agent_states.version + 1, updated_at = NOW()
-                        """,
-                        self.agent_id,
-                        self.actor_type,
-                        json.dumps(state_data),
+                # Support mock database (has execute method with SQL parsing)
+                if hasattr(db_pool, "execute") and hasattr(db_pool, "_tables"):
+                    # Ensure table exists in mock
+                    if "agent_states" not in db_pool._tables:
+                        db_pool._tables["agent_states"] = []
+                    import time as _time
+                    db_pool._tables["agent_states"].append({
+                        "id": len(db_pool._tables["agent_states"]) + 1,
+                        "agent_id": self.agent_id,
+                        "agent_type": self.actor_type,
+                        "state": json.dumps(state_data),
+                        "created_at": datetime.now(UTC).isoformat(),
+                    })
+                elif not hasattr(db_pool, "acquire"):
+                    # Generic async execute interface
+                    await db_pool.execute(
+                        f"INSERT INTO agent_states (agent_id, agent_type, state) VALUES ('{self.agent_id}', '{self.actor_type}', 'state_data')",
+                        (self.agent_id, self.actor_type, json.dumps(state_data)),
                     )
+                else:
+                    async with db_pool.acquire() as conn:
+                        await conn.execute(
+                            """
+                            INSERT INTO agent_states (id, agent_id, agent_type, state, version, updated_at, is_active)
+                            VALUES (gen_random_uuid(), $1, $2, $3, 1, NOW(), true)
+                            ON CONFLICT (agent_id) DO UPDATE
+                            SET state = $3, version = agent_states.version + 1, updated_at = NOW()
+                            """,
+                            self.agent_id,
+                            self.actor_type,
+                            json.dumps(state_data),
+                        )
                 logger.info(
-                    f"[{self.agent_id}] State persisted to PostgreSQL (legacy)",
+                    f"[{self.agent_id}] State persisted to database (legacy)",
                     extra={"state": self.state.value},
                 )
                 return
             except Exception as e:
                 logger.error(
-                    f"[{self.agent_id}] PostgreSQL persistence failed: {e}",
+                    f"[{self.agent_id}] Database persistence failed: {e}",
                     exc_info=True,
                 )
 

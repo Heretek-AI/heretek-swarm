@@ -18,7 +18,7 @@ from unittest.mock import AsyncMock, MagicMock, patch
 from fastapi import FastAPI, HTTPException
 from fastapi.testclient import TestClient
 
-from src.heretek_swarm.api.observability import (
+from heretek_swarm.api.observability import (
     router,
     get_metrics_collector,
     get_metrics_stream,
@@ -158,7 +158,7 @@ heretek_agents_total 5
     
     def test_get_swarm_health(self, client, mock_collector):
         """Test GET /api/v1/observability/swarm endpoint."""
-        with patch('src.heretek_swarm.api.observability.get_metrics_collector', return_value=mock_collector):
+        with patch('heretek_swarm.api.observability.get_metrics_collector', return_value=mock_collector):
             response = client.get("/api/v1/observability/swarm")
             
             assert response.status_code == 200
@@ -170,7 +170,7 @@ heretek_agents_total 5
     
     def test_get_agent_metrics(self, client, mock_collector):
         """Test GET /api/v1/observability/agents/{agent_id} endpoint."""
-        with patch('src.heretek_swarm.api.observability.get_metrics_collector', return_value=mock_collector):
+        with patch('heretek_swarm.api.observability.get_metrics_collector', return_value=mock_collector):
             response = client.get("/api/v1/observability/agents/test-agent")
             
             assert response.status_code == 200
@@ -181,7 +181,7 @@ heretek_agents_total 5
     
     def test_get_all_agents(self, client, mock_collector):
         """Test GET /api/v1/observability/agents endpoint."""
-        with patch('src.heretek_swarm.api.observability.get_metrics_collector', return_value=mock_collector):
+        with patch('heretek_swarm.api.observability.get_metrics_collector', return_value=mock_collector):
             response = client.get("/api/v1/observability/agents")
             
             assert response.status_code == 200
@@ -193,7 +193,7 @@ heretek_agents_total 5
     
     def test_get_consciousness_metrics(self, client, mock_collector):
         """Test GET /api/v1/observability/consciousness endpoint."""
-        with patch('src.heretek_swarm.api.observability.get_metrics_collector', return_value=mock_collector):
+        with patch('heretek_swarm.api.observability.get_metrics_collector', return_value=mock_collector):
             response = client.get("/api/v1/observability/consciousness")
             
             assert response.status_code == 200
@@ -205,7 +205,7 @@ heretek_agents_total 5
     
     def test_get_agent_consciousness(self, client, mock_collector):
         """Test GET /api/v1/observability/consciousness/agent/{agent_id} endpoint."""
-        with patch('src.heretek_swarm.api.observability.get_metrics_collector', return_value=mock_collector):
+        with patch('heretek_swarm.api.observability.get_metrics_collector', return_value=mock_collector):
             response = client.get("/api/v1/observability/consciousness/agent/agent-1")
             
             assert response.status_code == 200
@@ -216,8 +216,8 @@ heretek_agents_total 5
     
     def test_stream_metrics(self, client, mock_collector, mock_stream):
         """Test GET /api/v1/observability/metrics/stream endpoint."""
-        with patch('src.heretek_swarm.api.observability.get_metrics_collector', return_value=mock_collector):
-            with patch('src.heretek_swarm.api.observability.get_metrics_stream', return_value=mock_stream):
+        with patch('heretek_swarm.api.observability.get_metrics_collector', return_value=mock_collector):
+            with patch('heretek_swarm.api.observability.get_metrics_stream', return_value=mock_stream):
                 response = client.get("/api/v1/observability/metrics/stream")
                 
                 assert response.status_code == 200
@@ -228,7 +228,7 @@ heretek_agents_total 5
     
     def test_get_alerts(self, client, mock_collector):
         """Test GET /api/v1/observability/alerts endpoint."""
-        with patch('src.heretek_swarm.api.observability.get_metrics_collector', return_value=mock_collector):
+        with patch('heretek_swarm.api.observability.get_metrics_collector', return_value=mock_collector):
             response = client.get("/api/v1/observability/alerts")
             
             assert response.status_code == 200
@@ -239,7 +239,7 @@ heretek_agents_total 5
     
     def test_get_prometheus_metrics(self, client, mock_stream):
         """Test GET /api/v1/observability/metrics/prometheus endpoint."""
-        with patch('src.heretek_swarm.api.observability.get_metrics_stream', return_value=mock_stream):
+        with patch('heretek_swarm.api.observability.get_metrics_stream', return_value=mock_stream):
             response = client.get("/api/v1/observability/metrics/prometheus")
             
             assert response.status_code == 200
@@ -250,11 +250,11 @@ heretek_agents_total 5
     def test_rate_limiting(self, client):
         """Test rate limiting on endpoints."""
         # Reset rate limit state
-        from src.heretek_swarm.api.observability import _rate_limit_state
+        from heretek_swarm.api.observability import _rate_limit_state
         _rate_limit_state.clear()
         
         # Make many requests quickly
-        with patch('src.heretek_swarm.api.observability.RATE_LIMIT_REQUESTS', 5):
+        with patch('heretek_swarm.api.observability.RATE_LIMIT_REQUESTS', 5):
             for i in range(5):
                 response = client.get("/api/v1/observability/swarm")
                 assert response.status_code == 200
@@ -381,8 +381,8 @@ class TestZeroTrustValidation:
     
     def test_audit_logging(self, client, mock_collector):
         """Test that audit logging is performed."""
-        with patch('src.heretek_swarm.api.observability.get_metrics_collector', return_value=mock_collector):
-            with patch('src.heretek_swarm.api.observability.get_zero_trust') as mock_validator:
+        with patch('heretek_swarm.api.observability.get_metrics_collector', return_value=mock_collector):
+            with patch('heretek_swarm.api.observability.get_zero_trust') as mock_validator:
                 mock_instance = MagicMock()
                 mock_validator.return_value = mock_instance
                 
@@ -412,7 +412,7 @@ class TestMetricsCollectorSingleton:
     
     def test_get_metrics_stream_singleton(self, mock_collector):
         """Test that get_metrics_stream returns singleton."""
-        with patch('src.heretek_swarm.api.observability._metrics_collector', mock_collector):
+        with patch('heretek_swarm.api.observability._metrics_collector', mock_collector):
             stream1 = get_metrics_stream()
             stream2 = get_metrics_stream()
             
@@ -424,7 +424,7 @@ class TestRateLimiting:
     
     def test_check_rate_limit_first_request(self):
         """Test that first request passes rate limit."""
-        from src.heretek_swarm.api.observability import _rate_limit_state
+        from heretek_swarm.api.observability import _rate_limit_state
         _rate_limit_state.clear()
         
         result = check_rate_limit("test-client")
@@ -432,7 +432,7 @@ class TestRateLimiting:
     
     def test_check_rate_limit_exceeded(self):
         """Test rate limit enforcement."""
-        from src.heretek_swarm.api.observability import _rate_limit_state, RATE_LIMIT_REQUESTS
+        from heretek_swarm.api.observability import _rate_limit_state, RATE_LIMIT_REQUESTS
         _rate_limit_state.clear()
         
         # Make requests up to limit
@@ -445,7 +445,7 @@ class TestRateLimiting:
     
     def test_check_rate_limit_window_expiry(self):
         """Test that rate limit window expires."""
-        from src.heretek_swarm.api.observability import _rate_limit_state
+        from heretek_swarm.api.observability import _rate_limit_state
         from datetime import timedelta
         
         _rate_limit_state.clear()

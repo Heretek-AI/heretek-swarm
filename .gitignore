@@ -117,3 +117,4 @@ coverage-final.json
 .github/copilot-instructions.md
 plans/OVERNIGHT_LOOP.md
 .roo/*
+.claw/sessions/*

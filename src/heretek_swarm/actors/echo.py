@@ -40,6 +40,7 @@ class CommunicationChannel(Enum):
     INTERNAL = "internal"
     API = "api"
     WEBSOCKET = "websocket"
+    WEBHOOK = "webhook"
     SLACK = "slack"
     DISCORD = "discord"
     TELEGRAM = "telegram"
@@ -60,9 +61,20 @@ class CommunicationStyle:
     """Communication style configuration."""
     tone: str = "professional"
     formality: float = 0.7
-    verbosity: float = 0.5
+    verbosity: Any = 0.5  # Accept float or string ("concise", "verbose")
     emoji_usage: bool = False
     audience: str = "technical"
+    format_type: str = "text"
+    emoji: bool = False
+
+    def __post_init__(self) -> None:
+        # Normalize verbosity to float
+        if isinstance(self.verbosity, str):
+            verbosity_map = {"concise": 0.3, "normal": 0.5, "verbose": 0.8}
+            self.verbosity = verbosity_map.get(self.verbosity, 0.5)
+        # Sync emoji and emoji_usage
+        if self.emoji and not self.emoji_usage:
+            self.emoji_usage = self.emoji
 
 
 @dataclass
@@ -89,19 +101,24 @@ class EchoActor(AgentActor):
     def __init__(
         self,
         agent_id: str | None = None,
-        config: dict[str, Any] | None = None
+        config: dict[str, Any] | None = None,
+        pattern_extractor: Any | None = None,
+        deliberation_engine: Any | None = None,
+        access_analyzer: Any | None = None,
+        zero_trust_validator: Any | None = None,
     ):
         super().__init__(
             agent_id=agent_id or f"echo-{uuid.uuid4().hex[:8]}",
             actor_type="echo",
-            config=config
         )
+        self._config = config or {}
 
         # Communication state
         self._active_channels: set[str] = set()
         self._message_queue: list[dict[str, Any]] = []
         self._translation_rules: dict[str, TranslationRule] = {}
         self._communication_styles: dict[str, CommunicationStyle] = {}
+        self._channel_status: dict[str, Any] = {}  # Per-channel status tracking
 
         # Channel-specific configurations
         self._channel_configs: dict[str, dict[str, Any]] = {
@@ -155,6 +172,7 @@ class EchoActor(AgentActor):
         self._stats = {
             "messages_formatted": 0,
             "messages_translated": 0,
+            "messages_sent": 0,
             "channels_used": set(),
             "errors": 0
         }
@@ -201,14 +219,14 @@ class EchoActor(AgentActor):
         await super().initialize()
 
         # Register default message handlers
-        await self.register_handler("format_message", self._handle_format_message)
-        await self.register_handler("translate_protocol", self._handle_translate_protocol)
-        await self.register_handler("send_to_channel", self._handle_send_to_channel)
-        await self.register_handler("set_communication_style", self._handle_set_communication_style)
-        await self.register_handler("get_channel_status", self._handle_get_channel_status)
-        await self.register_handler("broadcast_message", self._handle_broadcast_message)
+        self.register_handler("format_message", self._handle_format_message)
+        self.register_handler("translate_protocol", self._handle_translate_protocol)
+        self.register_handler("send_to_channel", self._handle_send_to_channel)
+        self.register_handler("set_communication_style", self._handle_set_communication_style)
+        self.register_handler("get_channel_status", self._handle_get_channel_status)
+        self.register_handler("broadcast_message", self._handle_broadcast_message)
 
-        self.logger.info("Echo agent handlers registered", agent_id=self.agent_id)
+        logger.info("Echo agent handlers registered", agent_id=self.agent_id)
 
     async def _validate_input(self, content: dict[str, Any]) -> dict[str, Any]:
         """Validate input using shared validation."""
@@ -233,8 +251,7 @@ class EchoActor(AgentActor):
         }
         """
         try:
-            validated = await self._validate_input(message.content)
-            content = validated.content
+            content = await self._validate_input(message.content)
             channel = content.get("channel", "internal")
             style_config = content.get("style")
             priority = content.get("priority", "normal")
@@ -261,7 +278,7 @@ class EchoActor(AgentActor):
 
         except Exception as e:
             self._stats["errors"] += 1
-            self.logger.error("Failed to format message",
+            logger.error("Failed to format message",
                             error=str(e),
                             channel=message.content.get("channel", "unknown"))
             return {"status": "error", "error": str(e)}
@@ -301,7 +318,7 @@ class EchoActor(AgentActor):
 
         except Exception as e:
             self._stats["errors"] += 1
-            self.logger.error("Failed to translate protocol",
+            logger.error("Failed to translate protocol",
                             error=str(e),
                             source=message.content.get("source_format"),
                             target=message.content.get("target_format"))
@@ -348,7 +365,7 @@ class EchoActor(AgentActor):
 
         except Exception as e:
             self._stats["errors"] += 1
-            self.logger.error("Failed to send to channel",
+            logger.error("Failed to send to channel",
                             error=str(e),
                             channel=message.content.get("channel"))
             return {"status": "error", "error": str(e)}
@@ -371,7 +388,7 @@ class EchoActor(AgentActor):
         """
         try:
             content = message.content
-            context = content.get("context", "default")
+            context = content.get("context") or content.get("channel", "default")
             style_config = content.get("style", {})
 
             # Create and store communication style
@@ -399,7 +416,7 @@ class EchoActor(AgentActor):
 
         except Exception as e:
             self._stats["errors"] += 1
-            self.logger.error("Failed to set communication style",
+            logger.error("Failed to set communication style",
                             error=str(e),
                             context=message.content.get("context"))
             return {"status": "error", "error": str(e)}
@@ -441,7 +458,7 @@ class EchoActor(AgentActor):
 
         except Exception as e:
             self._stats["errors"] += 1
-            self.logger.error("Failed to get channel status",
+            logger.error("Failed to get channel status",
                             error=str(e))
             return {"status": "error", "error": str(e)}
 
@@ -491,6 +508,7 @@ class EchoActor(AgentActor):
 
                     if send_result:
                         self._stats["channels_used"].add(channel)
+                        self._stats["messages_sent"] += 1
 
                 except Exception as e:
                     results[channel] = {
@@ -510,7 +528,7 @@ class EchoActor(AgentActor):
 
         except Exception as e:
             self._stats["errors"] += 1
-            self.logger.error("Failed to broadcast message",
+            logger.error("Failed to broadcast message",
                             error=str(e))
             return {"status": "error", "error": str(e)}
 
@@ -532,18 +550,22 @@ class EchoActor(AgentActor):
 
     async def _format_for_channel(
         self,
-        content: str,
-        channel: str,
-        style: CommunicationStyle,
+        content: Any,
+        channel: Any = "internal",
+        style: CommunicationStyle | None = None,
         priority: str = "normal"
     ) -> str:
         """Format content for a specific channel and style."""
-        config = self._channel_configs.get(channel, self._channel_configs["internal"])
+        # Normalize channel to string value
+        channel_str = channel.value if hasattr(channel, "value") else str(channel)
+        config = self._channel_configs.get(channel_str, self._channel_configs.get("internal", {}))
         max_length = config.get("max_length")
         format_type = config.get("format", "text")
 
         # Apply style transformations
-        formatted = self._apply_style(content, style)
+        style = style or CommunicationStyle()
+        content_str = str(content) if not isinstance(content, str) else content
+        formatted = self._apply_style(content_str, style)
 
         # Apply channel-specific formatting
         if format_type == "json":
@@ -623,9 +645,14 @@ class EchoActor(AgentActor):
     async def _translate_content(
         self,
         content: Any,
-        source_format: str,
-        target_format: str
+        source_format: str | None = None,
+        target_format: str | None = None,
+        from_lang: str | None = None,
+        to_lang: str | None = None,
     ) -> Any:
+        # Accept from_lang/to_lang as aliases
+        source_format = source_format or from_lang or "text"
+        target_format = target_format or to_lang or "text"
         """Translate content between formats."""
         import json
 
@@ -661,10 +688,15 @@ class EchoActor(AgentActor):
 
     async def _send_to_channel_impl(
         self,
-        channel: str,
-        message: str,
-        metadata: dict[str, Any]
+        channel: Any,
+        message: str | None = None,
+        metadata: dict[str, Any] | None = None,
+        content: str | None = None,
+        style_config: dict[str, Any] | None = None,
     ) -> bool:
+        # Accept 'content' as alias for 'message'
+        message = message or content or ""
+        metadata = metadata or style_config or {}
         """
         Send message to channel (implementation stub).
 
@@ -676,7 +708,7 @@ class EchoActor(AgentActor):
         - WebSocket connections
         """
         # Log the send attempt
-        self.logger.info("Sending to channel",
+        logger.info("Sending to channel",
                         channel=channel,
                         message_length=len(message),
                         metadata=metadata)
@@ -896,8 +928,8 @@ class EchoActor(AgentActor):
         """Terminate the Echo agent."""
         # Process remaining messages
         if self._message_queue:
-            self.logger.info("Processing remaining messages",
+            logger.info("Processing remaining messages",
                             count=len(self._message_queue))
 
         await super().terminate()
-        self.logger.info("Echo agent terminated", agent_id=self.agent_id)
+        logger.info("Echo agent terminated", agent_id=self.agent_id)

@@ -16,13 +16,13 @@ import pytest
 from datetime import datetime, timezone
 from typing import Dict, Any, List
 
-from src.heretek_swarm.consciousness.iit_phi import (
+from heretek_swarm.consciousness.iit_phi import (
     PhiCalculator,
     PhiResult,
     CauseEffectStructure,
     SystemPartition,
 )
-from src.heretek_swarm.plugins.consciousness_metrics import (
+from heretek_swarm.plugins.consciousness_metrics import (
     ConsciousnessMetricsCalculator,
     CausalAnalysis,
 )

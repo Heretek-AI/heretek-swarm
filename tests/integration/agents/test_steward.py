@@ -23,8 +23,8 @@ class TestStewardAgentIntegration:
     @pytest_asyncio.fixture
     async def steward_agent(self, mock_nats, mock_llm):
         """Create StewardAgent with mock dependencies."""
-        with patch('src.heretek_swarm.actors.stubs.get_nats_event_mesh', return_value=mock_nats):
-            with patch('src.heretek_swarm.actors.stubs.get_llm_provider', return_value=mock_llm):
+        with patch('heretek_swarm.actors.stubs.get_nats_event_mesh', return_value=mock_nats):
+            with patch('heretek_swarm.actors.stubs.get_llm_provider', return_value=mock_llm):
                 agent = StewardAgent(agent_id="steward-test-001")
                 yield agent
                 if agent.state != ActorState.TERMINATED:
@@ -113,7 +113,7 @@ class TestStewardAgentIntegration:
         assert spawned_steward._deliberations["delib-002"]["phase"] == "beta"
 
     @pytest.mark.asyncio
-    async def test_handle_report_status(self, spawned_steward):
+    async def test_handle_report_status(self, spawned_steward, mock_nats):
         """Test handling status report request."""
         # Create message
         message = ActorMessage(
@@ -238,7 +238,7 @@ class TestStewardAgentIntegration:
         }
 
         # Save state
-        with patch('src.heretek_swarm.actors.base.get_db_pool', return_value=mock_db):
+        with patch('heretek_swarm.actors.base.get_db_pool', return_value=mock_db):
             await spawned_steward.save_state()
 
         # Verify state saved

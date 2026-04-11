@@ -10,8 +10,8 @@ import pytest_asyncio
 from datetime import datetime
 from unittest.mock import AsyncMock, MagicMock, patch
 
-from src.heretek_swarm.actors.empath import EmpathAgent
-from src.heretek_swarm.actors.base import ActorMessage, ActorState
+from heretek_swarm.actors.empath import EmpathAgent
+from heretek_swarm.actors.base import ActorMessage, ActorState
 
 
 pytestmark = pytest.mark.integration
@@ -23,12 +23,12 @@ class TestEmpathAgentIntegration:
     @pytest_asyncio.fixture
     async def empath_agent(self, mock_nats, mock_llm, mock_db):
         """Create EmpathAgent with mock dependencies."""
-        with patch('src.heretek_swarm.actors.empath.get_nats_event_mesh', return_value=mock_nats):
-            with patch('src.heretek_swarm.actors.base.get_llm_provider', return_value=mock_llm):
-                with patch('src.heretek_swarm.actors.empath.get_db_pool', return_value=mock_db):
+        with patch('heretek_swarm.actors.stubs.get_nats_event_mesh', return_value=mock_nats):
+            with patch('heretek_swarm.actors.stubs.get_llm_provider', return_value=mock_llm):
+                with patch('heretek_swarm.actors.stubs.get_db_pool', return_value=mock_db):
                     agent = EmpathAgent(agent_id="empath-test-001")
                     yield agent
-                    if agent._state != ActorState.TERMINATED:
+                    if agent.state != ActorState.TERMINATED:
                         await agent.terminate()
 
     @pytest_asyncio.fixture
@@ -40,17 +40,17 @@ class TestEmpathAgentIntegration:
     @pytest.mark.asyncio
     async def test_agent_spawn(self, empath_agent):
         """Test agent spawning lifecycle."""
-        assert empath_agent._state == ActorState.SPAWNING
+        assert empath_agent.state == ActorState.SPAWNING
         await empath_agent.spawn()
-        assert empath_agent._state == ActorState.ACTIVE
+        assert empath_agent.state == ActorState.ACTIVE
         assert empath_agent.is_alive
 
     @pytest.mark.asyncio
     async def test_agent_terminate(self, spawned_empath):
         """Test agent termination lifecycle."""
-        assert spawned_empath._state == ActorState.ACTIVE
+        assert spawned_empath.state == ActorState.ACTIVE
         await spawned_empath.terminate()
-        assert spawned_empath._state == ActorState.TERMINATED
+        assert spawned_empath.state == ActorState.TERMINATED
         assert not spawned_empath.is_alive
 
     @pytest.mark.asyncio
@@ -356,7 +356,7 @@ class TestEmpathAgentIntegration:
         await spawned_empath.process_message(message)
 
         # Verify agent still active
-        assert spawned_empath._state == ActorState.ACTIVE
+        assert spawned_empath.state == ActorState.ACTIVE
 
     @pytest.mark.asyncio
     async def test_latency_baseline(self, spawned_empath, assert_latency_baseline):
@@ -387,7 +387,7 @@ class TestEmpathAgentIntegration:
         }
 
         # Save state
-        with patch('src.heretek_swarm.actors.base.get_db_pool', return_value=mock_db):
+        with patch('heretek_swarm.actors.stubs.get_db_pool', return_value=mock_db):
             await spawned_empath.save_state()
 
         # Verify state saved
@@ -398,6 +398,6 @@ class TestEmpathAgentIntegration:
     async def test_error_recovery(self, empath_agent):
         """Test agent error recovery."""
         await empath_agent.spawn()
-        empath_agent._state = ActorState.ERROR
+        empath_agent.state = ActorState.ERROR
         await empath_agent.resume()
-        assert empath_agent._state == ActorState.ACTIVE
+        assert empath_agent.state == ActorState.ACTIVE

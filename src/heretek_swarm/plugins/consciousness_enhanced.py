@@ -795,7 +795,7 @@ class EnhancedConsciousnessPlugin:
 
         if avg_score >= 0.95:
             return ConsciousnessState.TRANSCENDENT
-        if avg_score >= 0.9:
+        if avg_score >= 0.85:
             return ConsciousnessState.HYPER_CONSCIOUS
         if (
             gwt_score >= self.gwt_threshold

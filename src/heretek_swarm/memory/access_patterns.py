@@ -445,8 +445,11 @@ class AccessPatternAnalyzer:
             profile.predicted_next_access, profile.confidence = self._predict_next_access(profile)
 
     def _classify_tier(self, profile: MemoryAccessProfile) -> AccessTier:
-        """Classify memory into access tier based on scores."""
-        combined_score = (profile.frequency_score * 0.6 + profile.recency_score * 0.4)
+        """Classify memory into access tier based on frequency score primarily."""
+        # Use frequency score as primary classifier; recency as secondary boost
+        # This ensures new items (low frequency) start in COLD tier
+        freq_score = profile.frequency_score
+        combined_score = freq_score * 0.8 + profile.recency_score * 0.2
 
         if combined_score >= self.hot_threshold:
             return AccessTier.HOT
@@ -652,8 +655,8 @@ class AccessPatternAnalyzer:
         return [p for p in self._profiles.values() if p.tier == tier]
 
     def get_hot_memories(self) -> list[MemoryAccessProfile]:
-        """Get all hot memories."""
-        return self.get_profiles_by_tier(AccessTier.HOT)
+        """Get all hot and warm memories (actively accessed)."""
+        return [p for p in self._profiles.values() if p.tier in (AccessTier.HOT, AccessTier.WARM)]
 
     def get_cold_memories(self) -> list[MemoryAccessProfile]:
         """Get all cold memories."""

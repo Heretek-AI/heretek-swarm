@@ -429,6 +429,10 @@ class LFUCache:
 
         return evicted
 
+    def contains(self, memory_id: str) -> bool:
+        """Check if memory_id is in cache."""
+        return memory_id in self._cache
+
     def get_statistics(self) -> CacheStatistics:
         """Get cache statistics."""
         total_ops = self._hit_count + self._miss_count

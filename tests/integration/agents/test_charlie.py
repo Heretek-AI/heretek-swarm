@@ -23,11 +23,11 @@ class TestCharlieAgentIntegration:
     @pytest_asyncio.fixture
     async def charlie_agent(self, mock_nats, mock_llm):
         """Create CharlieAgent with mock dependencies."""
-        with patch('src.heretek_swarm.actors.stubs.get_nats_event_mesh', return_value=mock_nats):
-            with patch('src.heretek_swarm.actors.stubs.get_llm_provider', return_value=mock_llm):
+        with patch('heretek_swarm.actors.stubs.get_nats_event_mesh', return_value=mock_nats):
+            with patch('heretek_swarm.actors.stubs.get_llm_provider', return_value=mock_llm):
                 agent = CharlieAgent(agent_id="charlie-test-001")
                 yield agent
-                if agent._state != ActorState.TERMINATED:
+                if agent.state != ActorState.TERMINATED:
                     await agent.terminate()
 
     @pytest_asyncio.fixture
@@ -39,17 +39,17 @@ class TestCharlieAgentIntegration:
     @pytest.mark.asyncio
     async def test_agent_spawn(self, charlie_agent):
         """Test agent spawning lifecycle."""
-        assert charlie_agent._state == ActorState.SPAWNING
+        assert charlie_agent.state == ActorState.SPAWNING
         await charlie_agent.spawn()
-        assert charlie_agent._state == ActorState.ACTIVE
+        assert charlie_agent.state == ActorState.ACTIVE
         assert charlie_agent.is_alive
 
     @pytest.mark.asyncio
     async def test_agent_terminate(self, spawned_charlie):
         """Test agent termination lifecycle."""
-        assert spawned_charlie._state == ActorState.ACTIVE
+        assert spawned_charlie.state == ActorState.ACTIVE
         await spawned_charlie.terminate()
-        assert spawned_charlie._state == ActorState.TERMINATED
+        assert spawned_charlie.state == ActorState.TERMINATED
         assert not spawned_charlie.is_alive
 
     @pytest.mark.asyncio
@@ -240,7 +240,7 @@ class TestCharlieAgentIntegration:
         await spawned_charlie.process_message(message)
 
         # Verify agent still active
-        assert spawned_charlie._state == ActorState.ACTIVE
+        assert spawned_charlie.state == ActorState.ACTIVE
 
     @pytest.mark.asyncio
     async def test_latency_baseline(self, spawned_charlie, assert_latency_baseline):
@@ -271,7 +271,7 @@ class TestCharlieAgentIntegration:
         }
 
         # Save state
-        with patch('src.heretek_swarm.actors.base.get_db_pool', return_value=mock_db):
+        with patch('heretek_swarm.actors.base.get_db_pool', return_value=mock_db):
             await spawned_charlie.save_state()
 
         # Verify state saved

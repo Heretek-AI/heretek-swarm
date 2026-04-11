@@ -258,7 +258,7 @@ class CompressionConfig:
     """
     default_algorithm: CompressionAlgorithm = CompressionAlgorithm.ZLIB
     default_level: CompressionLevel = CompressionLevel.BALANCED
-    min_size_for_compression: int = 1024  # 1KB minimum
+    min_size_for_compression: int = 256  # 256 bytes minimum
     max_compression_latency_ms: float = 100.0
     enable_integrity_check: bool = True
     compression_threshold: float = 0.1  # At least 10% savings

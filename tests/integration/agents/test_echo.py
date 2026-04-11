@@ -10,8 +10,8 @@ import pytest_asyncio
 from datetime import datetime
 from unittest.mock import AsyncMock, MagicMock, patch
 
-from src.heretek_swarm.actors.echo import EchoActor, CommunicationChannel, MessagePriority
-from src.heretek_swarm.actors.base import ActorMessage, ActorState
+from heretek_swarm.actors.echo import EchoActor, CommunicationChannel, MessagePriority
+from heretek_swarm.actors.base import ActorMessage, ActorState
 
 
 pytestmark = pytest.mark.integration
@@ -23,12 +23,12 @@ class TestEchoActorIntegration:
     @pytest_asyncio.fixture
     async def echo_actor(self, mock_nats, mock_llm, mock_db):
         """Create EchoActor with mock dependencies."""
-        with patch('src.heretek_swarm.actors.echo.get_nats_event_mesh', return_value=mock_nats):
-            with patch('src.heretek_swarm.actors.base.get_llm_provider', return_value=mock_llm):
-                with patch('src.heretek_swarm.actors.echo.get_db_pool', return_value=mock_db):
-                    actor = EchoActor(actor_id="echo-test-001")
+        with patch('heretek_swarm.actors.stubs.get_nats_event_mesh', return_value=mock_nats):
+            with patch('heretek_swarm.actors.stubs.get_llm_provider', return_value=mock_llm):
+                with patch('heretek_swarm.actors.stubs.get_db_pool', return_value=mock_db):
+                    actor = EchoActor(agent_id="echo-test-001")
                     yield actor
-                    if actor._state != ActorState.TERMINATED:
+                    if actor.state != ActorState.TERMINATED:
                         await actor.terminate()
 
     @pytest_asyncio.fixture
@@ -40,17 +40,17 @@ class TestEchoActorIntegration:
     @pytest.mark.asyncio
     async def test_actor_spawn(self, echo_actor):
         """Test actor spawning lifecycle."""
-        assert echo_actor._state == ActorState.SPAWNING
+        assert echo_actor.state == ActorState.SPAWNING
         await echo_actor.spawn()
-        assert echo_actor._state == ActorState.ACTIVE
+        assert echo_actor.state == ActorState.ACTIVE
         assert echo_actor.is_alive
 
     @pytest.mark.asyncio
     async def test_actor_terminate(self, spawned_echo):
         """Test actor termination lifecycle."""
-        assert spawned_echo._state == ActorState.ACTIVE
+        assert spawned_echo.state == ActorState.ACTIVE
         await spawned_echo.terminate()
-        assert spawned_echo._state == ActorState.TERMINATED
+        assert spawned_echo.state == ActorState.TERMINATED
         assert not spawned_echo.is_alive
 
     @pytest.mark.asyncio
@@ -220,7 +220,7 @@ class TestEchoActorIntegration:
     @pytest.mark.asyncio
     async def test_apply_style(self, spawned_echo):
         """Test applying communication style."""
-        from src.heretek_swarm.actors.echo import CommunicationStyle
+        from heretek_swarm.actors.echo import CommunicationStyle
 
         style = CommunicationStyle(
             tone="professional",
@@ -250,7 +250,7 @@ class TestEchoActorIntegration:
     @pytest.mark.asyncio
     async def test_format_as_markdown(self, spawned_echo):
         """Test Markdown formatting."""
-        from src.heretek_swarm.actors.echo import CommunicationStyle
+        from heretek_swarm.actors.echo import CommunicationStyle
 
         style = CommunicationStyle(
             tone="professional",
@@ -337,7 +337,7 @@ class TestEchoActorIntegration:
         await spawned_echo.process_message(message)
 
         # Verify actor still active
-        assert spawned_echo._state == ActorState.ACTIVE
+        assert spawned_echo.state == ActorState.ACTIVE
 
     @pytest.mark.asyncio
     async def test_latency_baseline(self, spawned_echo, assert_latency_baseline):
@@ -368,7 +368,7 @@ class TestEchoActorIntegration:
         }
 
         # Save state
-        with patch('src.heretek_swarm.actors.base.get_db_pool', return_value=mock_db):
+        with patch('heretek_swarm.actors.stubs.get_db_pool', return_value=mock_db):
             await spawned_echo.save_state()
 
         # Verify state saved
@@ -379,6 +379,6 @@ class TestEchoActorIntegration:
     async def test_error_recovery(self, echo_actor):
         """Test actor error recovery."""
         await echo_actor.spawn()
-        echo_actor._state = ActorState.ERROR
+        echo_actor.state = ActorState.ERROR
         await echo_actor.resume()
-        assert echo_actor._state == ActorState.ACTIVE
+        assert echo_actor.state == ActorState.ACTIVE
