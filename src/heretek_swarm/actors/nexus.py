@@ -271,8 +271,8 @@ class NexusAgent(AgentActor):
             if hasattr(validated, "dict"):
                 return validated.dict()
             return validated
-        except Exception:
-            # Fallback: return content as-is for unknown message types
+        except Exception as e:
+            logger.debug("nexus_message_parse_failed", error=str(e))
             return message.content
 
     async def _handle_create_connection(self, message: ActorMessage) -> None:
@@ -559,7 +559,8 @@ class NexusAgent(AgentActor):
 
                 try:
                     data = await response.json()
-                except:
+                except Exception as e:
+                    logger.debug("nexus_response_parse_failed", error=str(e))
                     data = await response.text()
 
                 # Update connection stats

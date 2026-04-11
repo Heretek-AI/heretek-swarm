@@ -1,5 +1,12 @@
 # DeepSource Issues Report - Heretek-AI/heretek-swarm
 
+---
+## ⚠️ DEPRECATED / SUPERSEDED
+See `docs/REMEDIATION_BACKLOG.md` for current status.
+*Archived: 2026-04-11*
+---
+
+
 **Generated:** 2026-04-10  
 **Source:** https://app.deepsource.com/gh/Heretek-AI/heretek-swarm/issues
 

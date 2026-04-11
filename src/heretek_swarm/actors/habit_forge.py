@@ -26,7 +26,6 @@ from heretek_swarm.collective.learning import PatternExtractor, PatternType
 
 # Phi Training Integration
 from heretek_swarm.consciousness.phi_training import (
-    AgentActor,
     CommunicationTrainingScenario,
     PhiTrainingEnvironment,
     TrainingScenario,
@@ -53,14 +52,6 @@ class HabitStage(StrEnum):
     AUTOMATICITY = "automaticity"
     MAINTENANCE = "maintenance"
 
-
-class PatternType(StrEnum):
-    """Types of behavioral patterns."""
-    PRODUCTIVE = "productive"
-    COUNTERPRODUCTIVE = "counterproductive"
-    NEUTRAL = "neutral"
-    COMPOUND = "compound"
-    TRIGGERED = "triggered"
 
 
 class ReinforcementType(StrEnum):
@@ -648,8 +639,8 @@ Respond in JSON format:
                                 impact_score=float(item.get("impact_score", 0.5)),
                             )
                             patterns.append(pattern)
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.debug("habit_forge_reinforcement_parse_failed_642", error=str(e))
 
             # Fallback: Heuristic pattern detection
             if not patterns:
@@ -905,8 +896,8 @@ Respond in JSON:
                     end_idx = result.rfind("}") + 1
                     if start_idx >= 0 and end_idx > start_idx:
                         return json.loads(result[start_idx:end_idx])
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.debug("habit_forge_observation_parse_failed_899", error=str(e))
 
             # Fallback
             return {
@@ -1350,8 +1341,8 @@ Respond in JSON:
                     end_idx = result.rfind("}") + 1
                     if start_idx >= 0 and end_idx > start_idx:
                         return json.loads(result[start_idx:end_idx])
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.debug("habit_forge_observation_parse_failed_899", error=str(e))
 
             # Fallback
             return {

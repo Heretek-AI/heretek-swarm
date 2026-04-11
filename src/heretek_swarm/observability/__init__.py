@@ -159,8 +159,8 @@ class LokiHandler(logging.Handler):
             with open(self._current_file, "a") as f:
                 for log_entry in logs_to_send:
                     f.write(json.dumps(log_entry) + "\n")
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("observability_file_log_failed", error=str(e))
 
         # Send to Loki
         if self.loki_url:
@@ -188,8 +188,8 @@ class LokiHandler(logging.Handler):
                 }
 
                 await client.post(self.loki_url, json=payload)
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("observability_loki_push_failed", error=str(e))
 
     async def _periodic_flush(self) -> None:
         """Periodically flush the buffer."""
@@ -206,7 +206,8 @@ class LokiHandler(logging.Handler):
             # Add to buffer
             asyncio.create_task(self._add_to_buffer(log_entry))
 
-        except Exception:
+        except Exception as e:
+            logger.debug("observability_emit_failed", error=str(e))
             self.handleError(record)
 
     async def _add_to_buffer(self, log_entry: dict[str, Any]) -> None:

@@ -11,11 +11,6 @@ This package provides dual-tier memory architecture with:
 
 # Re-export from memory package for test compatibility
 # Note: Using explicit imports to avoid shadowing
-import memory.base
-import memory.embeddings
-import memory.ephemeral
-import memory.persistent
-import memory.unified
 
 # Session 43: Memory Optimization Modules
 from heretek_swarm.memory.access_patterns import (
@@ -65,6 +60,12 @@ from heretek_swarm.memory.prefetcher import (
     PreFetchResult,
     PreFetchStrategy,
 )
+# Core type definitions (from base module - local, not legacy src/)
+from heretek_swarm.memory.base import (
+    MemoryTier,
+    MemoryType,
+)
+
 from heretek_swarm.memory.tiering import (
     MemoryTier,
     MemoryTieringSystem,
@@ -74,18 +75,6 @@ from heretek_swarm.memory.tiering import (
     TieredMemory,
     TieringStatistics,
 )
-
-MemoryResult = getattr(memory.base, "MemoryResult", None)
-MemoryTier_Base = getattr(memory.base, "MemoryTier", None)
-MemoryType = getattr(memory.base, "MemoryType", None)
-EphemeralMemoryStore = getattr(memory.ephemeral, "EphemeralMemoryStore", None)
-EphemeralConfig = getattr(memory.ephemeral, "EphemeralConfig", None)
-PersistentMemoryStore = getattr(memory.persistent, "PersistentMemoryStore", None)
-PersistentConfig = getattr(memory.persistent, "PersistentConfig", None)
-DualTierMemorySystem = getattr(memory.unified, "DualTierMemorySystem", None)
-DualTierConfig = getattr(memory.unified, "DualTierConfig", None)
-EmbeddingService = getattr(memory.embeddings, "EmbeddingService", None)
-EmbeddingConfig = getattr(memory.embeddings, "EmbeddingConfig", None)
 
 __all__ = [
     "AccessPattern",

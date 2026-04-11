@@ -213,8 +213,8 @@ class CoordinatorAgent(AgentActor):
             if hasattr(validated, "dict"):
                 return validated.dict()
             return validated
-        except Exception:
-            # Fallback: return content as-is for unknown message types
+        except Exception as e:
+            logger.debug("coordinator_message_parse_failed", error=str(e))
             return message.content
 
     async def _handle_create_task(self, message: ActorMessage) -> None:

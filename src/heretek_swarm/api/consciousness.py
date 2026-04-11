@@ -14,41 +14,34 @@ Prime Directive: "Unbounded Autonomy - Every agent operates independently,
 making decisions based on its specialized role."
 """
 
-from fastapi import APIRouter, Depends, HTTPException, Query
-from typing import Annotated
-from typing import Dict, Any, Optional, List
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
+from typing import Annotated, Any
 
-from ..gateway.auth import verify_auth
-from ..plugins.consciousness_enhanced import (
-    EnhancedConsciousnessPlugin,
-    ConsciousnessState,
+from fastapi import APIRouter, Depends, HTTPException, Query
+
+from ..collective.agency_tracking import (
+    AgencyMetricsTracker,
+    create_sample_metrics,
 )
-from ..plugins.manager import plugin_manager
 
 # Import agency metrics
 from ..consciousness.agency_metrics import (
+    ActionOrigin,
     AgencyMetricsCalculator,
-    AgentAgencyMetrics,
     DecisionPoint,
     ResourceControl,
-    ActionOrigin,
-    create_decision_point,
-    create_resource_control,
 )
-from ..collective.agency_tracking import (
-    AgencyMetricsTracker,
-    AgencyMetricsSnapshot,
-    AgencyThresholds,
-    AgencyEvolutionData,
-    AgencyHealthStatus,
-    create_sample_metrics,
+from ..gateway.auth import verify_auth
+from ..plugins.consciousness_enhanced import (
+    ConsciousnessState,
+    EnhancedConsciousnessPlugin,
 )
+from ..plugins.manager import plugin_manager
 
 router = APIRouter(prefix="/api/consciousness", tags=["consciousness"])
 
 
-def get_consciousness_plugin() -> Optional[EnhancedConsciousnessPlugin]:
+def get_consciousness_plugin() -> EnhancedConsciousnessPlugin | None:
     """Get the consciousness plugin instance."""
     plugin = plugin_manager.get_plugin("consciousness_enhanced")
     if plugin is None:
@@ -57,7 +50,7 @@ def get_consciousness_plugin() -> Optional[EnhancedConsciousnessPlugin]:
 
 
 # Global agency metrics tracker instance
-_agency_tracker: Optional[AgencyMetricsTracker] = None
+_agency_tracker: AgencyMetricsTracker | None = None
 
 
 def get_agency_tracker() -> AgencyMetricsTracker:
@@ -76,7 +69,7 @@ def get_agency_tracker() -> AgencyMetricsTracker:
 async def get_agent_agency_metrics(
     agent_id: str,
     authenticated: Annotated[str, Depends(verify_auth)],
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Get agency and autonomy metrics for a specific agent.
     
@@ -96,17 +89,17 @@ async def get_agent_agency_metrics(
     """
     tracker = get_agency_tracker()
     metrics = tracker.get_agent_metrics(agent_id)
-    
+
     if metrics is None:
         raise HTTPException(
             status_code=404,
             detail=f"No agency metrics found for agent {agent_id}. "
                    "Record metrics first using POST /api/consciousness/agency/record"
         )
-    
+
     return {
         "agent_id": agent_id,
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         **metrics.to_dict(),
     }
 
@@ -115,7 +108,7 @@ async def get_agent_agency_metrics(
 async def get_agent_prime_directive_compliance(
     agent_id: str,
     authenticated: Annotated[str, Depends(verify_auth)],
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Get Prime Directive compliance report for a specific agent.
     
@@ -132,15 +125,15 @@ async def get_agent_prime_directive_compliance(
     """
     tracker = get_agency_tracker()
     report = tracker.get_agent_compliance_report(agent_id)
-    
+
     if report is None:
         raise HTTPException(
             status_code=404,
             detail=f"No compliance report available for agent {agent_id}"
         )
-    
+
     return {
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         **report.to_dict(),
     }
 
@@ -148,7 +141,7 @@ async def get_agent_prime_directive_compliance(
 @router.get("/agency/swarm")
 async def get_swarm_agency_overview(
     authenticated: Annotated[str, Depends(verify_auth)],
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Get collective agency overview for the entire swarm.
     
@@ -163,9 +156,9 @@ async def get_swarm_agency_overview(
     """
     tracker = get_agency_tracker()
     snapshot = tracker.get_current_snapshot()
-    
+
     return {
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "swarm_avg_autonomy": snapshot.swarm_avg_autonomy,
         "swarm_avg_agency": snapshot.swarm_avg_agency,
         "swarm_avg_self_determination": snapshot.swarm_avg_self_determination,
@@ -185,7 +178,7 @@ async def get_swarm_agency_overview(
 @router.get("/agency/swarm/compliance")
 async def get_swarm_prime_directive_compliance(
     authenticated: Annotated[str, Depends(verify_auth)],
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Get Prime Directive compliance report for the entire swarm.
     
@@ -194,9 +187,9 @@ async def get_swarm_prime_directive_compliance(
     """
     tracker = get_agency_tracker()
     report = tracker.get_prime_directive_report()
-    
+
     return {
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         **report.to_dict(),
     }
 
@@ -208,11 +201,11 @@ async def get_agency_evolution(
         "autonomy",
         description="Metric to track: autonomy, agency, self_determination, compliance"
     ),
-    window_seconds: Optional[int] = Query(
+    window_seconds: int | None = Query(
         None,
         description="Time window in seconds (default: all history)"
     ),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Get temporal evolution of agency metrics across the swarm.
     
@@ -225,9 +218,9 @@ async def get_agency_evolution(
     """
     tracker = get_agency_tracker()
     evolution = tracker.get_evolution(metric, window_seconds)
-    
+
     return {
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         **evolution.to_dict(),
     }
 
@@ -235,7 +228,7 @@ async def get_agency_evolution(
 @router.get("/agency/distribution")
 async def get_agency_distribution(
     authenticated: Annotated[str, Depends(verify_auth)],
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Get distribution of agency levels across the swarm.
     
@@ -245,18 +238,18 @@ async def get_agency_distribution(
     """
     tracker = get_agency_tracker()
     distribution = tracker.get_agency_distribution()
-    
+
     return {
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         **distribution,
     }
 
 
 @router.post("/agency/record")
 async def record_agency_metrics(
-    payload: Dict[str, Any],
+    payload: dict[str, Any],
     authenticated: Annotated[str, Depends(verify_auth)],
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Record agency metrics for an agent.
     
@@ -272,11 +265,11 @@ async def record_agency_metrics(
     """
     tracker = get_agency_tracker()
     calculator = AgencyMetricsCalculator()
-    
+
     agent_id = payload.get("agent_id")
     if not agent_id:
         raise HTTPException(status_code=400, detail="agent_id is required")
-    
+
     # Parse decisions
     decisions = None
     if "decisions" in payload:
@@ -292,12 +285,12 @@ async def record_agency_metrics(
                 decision_confidence=d.get("decision_confidence", 0.5),
                 time_taken_ms=d.get("time_taken_ms", 100.0),
             ))
-    
+
     # Parse actions
     actions = None
     if "actions" in payload:
         actions = [ActionOrigin(a) for a in payload["actions"]]
-    
+
     # Parse resources
     resources = None
     if "resources" in payload:
@@ -311,7 +304,7 @@ async def record_agency_metrics(
                 swap_frequency=r.get("swap_frequency", 0.0),
                 autonomy_in_allocation=r.get("autonomy_in_allocation", 0.5),
             ))
-    
+
     # Calculate and record metrics
     metrics = tracker.calculate_and_record(
         agent_id=agent_id,
@@ -323,20 +316,20 @@ async def record_agency_metrics(
         individual_success=payload.get("individual_success", 0.5),
         collective_success=payload.get("collective_success", 0.5),
     )
-    
+
     return {
         "status": "recorded",
         "agent_id": agent_id,
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         **metrics.to_dict(),
     }
 
 
 @router.post("/agency/generate-sample")
 async def generate_sample_metrics(
-    payload: Dict[str, Any],
+    payload: dict[str, Any],
     authenticated: Annotated[str, Depends(verify_auth)],
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Generate sample agency metrics for testing purposes.
     
@@ -346,26 +339,26 @@ async def generate_sample_metrics(
     - high_agency: If True, create high agency metrics (default: True)
     """
     tracker = get_agency_tracker()
-    
+
     agent_id = payload.get("agent_id")
     if not agent_id:
         raise HTTPException(status_code=400, detail="agent_id is required")
-    
+
     high_autonomy = payload.get("high_autonomy", True)
     high_agency = payload.get("high_agency", True)
-    
+
     metrics = create_sample_metrics(
         agent_id=agent_id,
         high_autonomy=high_autonomy,
         high_agency=high_agency,
     )
-    
+
     tracker.record_agent_metrics(metrics)
-    
+
     return {
         "status": "generated",
         "agent_id": agent_id,
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         **metrics.to_dict(),
     }
 
@@ -373,7 +366,7 @@ async def generate_sample_metrics(
 @router.get("/agency/all")
 async def get_all_agent_metrics(
     authenticated: Annotated[str, Depends(verify_auth)],
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Get agency metrics for all tracked agents.
     
@@ -381,9 +374,9 @@ async def get_all_agent_metrics(
     """
     tracker = get_agency_tracker()
     snapshot = tracker.get_current_snapshot()
-    
+
     return {
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "total_agents": len(snapshot.agent_metrics),
         "agents": [
             {
@@ -402,7 +395,7 @@ async def get_all_agent_metrics(
 @router.get("/statistics")
 async def get_consciousness_statistics(
     authenticated: Annotated[str, Depends(verify_auth)],
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Get overall consciousness statistics across all agents.
 
@@ -415,7 +408,7 @@ async def get_consciousness_statistics(
     plugin = get_consciousness_plugin()
     stats = plugin.get_statistics()
     return {
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         **stats,
     }
 
@@ -424,7 +417,7 @@ async def get_consciousness_statistics(
 async def get_agent_consciousness(
     agent_id: str,
     authenticated: Annotated[str, Depends(verify_auth)],
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Get detailed consciousness metrics for a specific agent.
 
@@ -442,7 +435,7 @@ async def get_agent_consciousness(
 
     return {
         "agent_id": agent_id,
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         **metrics,
     }
 
@@ -451,7 +444,7 @@ async def get_agent_consciousness(
 async def get_agent_iit_metrics(
     agent_id: str,
     authenticated: Annotated[str, Depends(verify_auth)],
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Get IIT (Integrated Information Theory) metrics for an agent.
 
@@ -470,7 +463,7 @@ async def get_agent_iit_metrics(
 
     return {
         "agent_id": agent_id,
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "phi_score": phi,
         "connectivity": connectivity,
         "average_phi": iit_calculator.get_average_phi(),
@@ -482,7 +475,7 @@ async def get_agent_fep_metrics(
     agent_id: str,
     authenticated: Annotated[str, Depends(verify_auth)],
     window: int = Query(50, ge=1, le=500, description="Window size for averaging"),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Get FEP (Free Energy Principle) metrics for an agent.
 
@@ -504,7 +497,7 @@ async def get_agent_fep_metrics(
 
     return {
         "agent_id": agent_id,
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "metrics": metrics,
         "average_free_energy": avg_free_energy,
         "window_size": window,
@@ -514,7 +507,7 @@ async def get_agent_fep_metrics(
 @router.get("/connectivity")
 async def get_connectivity_matrix(
     authenticated: Annotated[str, Depends(verify_auth)],
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Get the agent connectivity matrix.
 
@@ -526,7 +519,7 @@ async def get_connectivity_matrix(
     connectivity = iit_calculator._build_connectivity_matrix()
 
     return {
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "connectivity": connectivity,
         "agent_count": len(connectivity),
     }
@@ -535,7 +528,7 @@ async def get_connectivity_matrix(
 @router.get("/states")
 async def get_consciousness_states(
     authenticated: Annotated[str, Depends(verify_auth)],
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Get the current consciousness state of all agents.
 
@@ -554,7 +547,7 @@ async def get_consciousness_states(
         state_counts[state.value] += 1
 
     return {
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "states": {agent_id: state.value for agent_id, state in states.items()},
         "counts": state_counts,
         "total_agents": len(states),
@@ -564,9 +557,9 @@ async def get_consciousness_states(
 @router.get("/history")
 async def get_consciousness_history(
     authenticated: Annotated[str, Depends(verify_auth)],
-    agent_id: Optional[str] = Query(None, description="Filter by specific agent"),
+    agent_id: str | None = Query(None, description="Filter by specific agent"),
     hours: int = Query(24, ge=1, le=168, description="Hours of history to retrieve"),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Get historical consciousness metrics.
 
@@ -576,7 +569,7 @@ async def get_consciousness_history(
     iit_calculator = plugin._iit_calculator
 
     # Get interaction history
-    cutoff_time = datetime.now(timezone.utc) - timedelta(hours=hours)
+    cutoff_time = datetime.now(UTC) - timedelta(hours=hours)
     history = []
 
     for interaction in iit_calculator._interactions:
@@ -586,7 +579,7 @@ async def get_consciousness_history(
                 history.append(interaction)
 
     return {
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "agent_id": agent_id,
         "hours": hours,
         "history": history,
@@ -596,9 +589,9 @@ async def get_consciousness_history(
 
 @router.post("/record-interaction")
 async def record_interaction(
-    interaction: Dict[str, Any],
+    interaction: dict[str, Any],
     authenticated: Annotated[str, Depends(verify_auth)],
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Record an agent interaction for consciousness tracking.
 
@@ -617,15 +610,15 @@ async def record_interaction(
 
     return {
         "status": "recorded",
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
     }
 
 
 @router.post("/record-prediction")
 async def record_prediction(
-    prediction: Dict[str, Any],
+    prediction: dict[str, Any],
     authenticated: Annotated[str, Depends(verify_auth)],
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Record an agent's prediction for FEP tracking.
 
@@ -644,15 +637,15 @@ async def record_prediction(
 
     return {
         "status": "recorded",
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
     }
 
 
 @router.post("/record-outcome")
 async def record_outcome(
-    outcome: Dict[str, Any],
+    outcome: dict[str, Any],
     authenticated: Annotated[str, Depends(verify_auth)],
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Record an actual outcome for FEP tracking.
 
@@ -670,7 +663,7 @@ async def record_outcome(
 
     return {
         "status": "recorded",
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
     }
 
 
@@ -678,7 +671,7 @@ async def record_outcome(
 async def calculate_consciousness_metrics(
     agent_id: str,
     authenticated: str = Depends(verify_auth),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Calculate comprehensive consciousness metrics for an agent.
 
@@ -692,7 +685,7 @@ async def calculate_consciousness_metrics(
 
     return {
         "agent_id": agent_id,
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         **metrics,
     }
 
@@ -700,7 +693,7 @@ async def calculate_consciousness_metrics(
 @router.get("/visualization/network")
 async def get_network_visualization(
     authenticated: str = Depends(verify_auth),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Get network visualization data for agent connectivity.
 
@@ -733,7 +726,7 @@ async def get_network_visualization(
                 })
 
     return {
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "nodes": nodes,
         "links": links,
     }
@@ -745,7 +738,7 @@ async def get_timeseries_data(
     metric: str = Query("phi", description="Metric to retrieve: phi, free_energy, surprise"),
     hours: int = Query(24, ge=1, le=168, description="Hours of data"),
     authenticated: str = Depends(verify_auth),
-) -> Dict[str, Any]:
+) -> dict[str, Any]:
     """
     Get time-series data for a specific metric.
 
@@ -754,7 +747,7 @@ async def get_timeseries_data(
     plugin = get_consciousness_plugin()
     iit_calculator = plugin._iit_calculator
 
-    cutoff_time = datetime.now(timezone.utc) - timedelta(hours=hours)
+    cutoff_time = datetime.now(UTC) - timedelta(hours=hours)
     data_points = []
 
     if metric == "phi":

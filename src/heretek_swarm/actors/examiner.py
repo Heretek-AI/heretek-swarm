@@ -658,7 +658,8 @@ Format as JSON with keys: objectives, test_cases, success_criteria, risks"""
             import json
             try:
                 return json.loads(response)
-            except:
+            except Exception as e:
+                logger.debug("examiner_objectives_parse_failed_661", error=str(e))
                 return {
                     "objectives": [response[:500]],
                     "test_cases": [],
@@ -781,7 +782,8 @@ Return JSON with keys: valid (bool), confidence (0-1), issues (list), recommenda
             import json
             try:
                 return json.loads(response)
-            except:
+            except Exception as e:
+                logger.debug("examiner_review_parse_failed_784", error=str(e))
                 return {
                     "valid": True,
                     "confidence": 0.8,
@@ -860,7 +862,8 @@ Return a score from 0-100."""
             if match:
                 return min(100.0, float(match.group(1)))
             return 50.0
-        except:
+        except Exception as e:
+            logger.debug("examiner_confidence_calc_failed_863", error=str(e))
             return 50.0
 
     def _calculate_overall_score(self, metrics: dict[QualityMetric, float]) -> float:
@@ -1168,5 +1171,6 @@ Provide a 2-3 sentence summary of the quality status."""
 
             response = await self.run_with_llm(prompt=prompt, timeout=30)
             return response.strip()
-        except:
+        except Exception as e:
+            logger.debug("examiner_summary_gen_failed_1171", error=str(e))
             return f"Quality score: {overall_score:.1f}/100. {len(bugs)} bugs detected. {sum(s.failed for s in test_suites)} tests failing."

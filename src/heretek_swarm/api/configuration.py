@@ -7,7 +7,7 @@ Provides CRUD operations through a RESTful API.
 
 from __future__ import annotations
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from typing import TYPE_CHECKING, Any
 
 import structlog
@@ -578,7 +578,7 @@ async def reload_configurations(
             "cache_count": reload_result.get("cache_count", 0),
             "cache_stats": cache_stats,
             "reloaded_by": authenticated,
-            "reloaded_at": datetime.now(timezone.utc).isoformat() if hasattr(datetime, "utcnow") else datetime.now().isoformat(),
+            "reloaded_at": datetime.now(UTC).isoformat() if hasattr(datetime, "utcnow") else datetime.now().isoformat(),
         }
     except Exception as e:
         logger.error("Configuration reload failed", error=str(e))
@@ -686,5 +686,5 @@ async def import_configuration_bundle(
         "error_count": result.error_count,
         "errors": result.errors,
         "imported_by": authenticated,
-        "imported_at": datetime.now(timezone.utc).isoformat(),
+        "imported_at": datetime.now(UTC).isoformat(),
     }

@@ -546,8 +546,8 @@ async def get_agent_logs(
                 "message_count": status.message_count,
                 "error_count": status.error_count,
             })
-        except Exception:
-            pass
+        except Exception as e:
+            logger.debug("agent_status_log_read_failed", error=str(e))
 
     # Sort by timestamp (newest first) and limit
     logs = sorted(logs, key=lambda x: x.get("timestamp", ""), reverse=True)[:limit]

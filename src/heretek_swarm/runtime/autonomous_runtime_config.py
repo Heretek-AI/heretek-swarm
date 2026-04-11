@@ -164,19 +164,55 @@ async def load_config_from_env() -> AutonomousRuntimeConfig:
 
         if loader._initialized:
             # Load from database with environment fallback
-            monitoring_enabled = await loader.get_async("runtime.monitoring_enabled", default=os.getenv("MONITORING_ENABLED", "true"))
-            auto_restart_enabled = await loader.get_async("runtime.auto_restart_enabled", default=os.getenv("AUTO_RESTART_ENABLED", "true"))
-            consciousness_enabled = await loader.get_async("consciousness.enabled", default=os.getenv("CONSCIOUSNESS_ENABLED", "true"))
-            rag_enabled = await loader.get_async("rag.enabled", default=os.getenv("RAG_ENABLED", "true"))
-            discord_enabled = await loader.get_async("integrations.discord_enabled", default=os.getenv("DISCORD_BOT_ENABLED", "false"))
-            telegram_enabled = await loader.get_async("integrations.telegram_enabled", default=os.getenv("TELEGRAM_BOT_ENABLED", "false"))
-            slack_enabled = await loader.get_async("integrations.slack_enabled", default=os.getenv("SLACK_BOT_ENABLED", "false"))
-            api_host = await loader.get_async("api.host", default=os.getenv("API_HOST", "0.0.0.0"))
-            api_port = await loader.get_async("api.port", default=int(os.getenv("API_PORT", "8000")))
+            monitoring_enabled = await loader.get_async(
+                "runtime.monitoring_enabled",
+                default=os.getenv("MONITORING_ENABLED", "true"),
+            )
+            auto_restart_enabled = await loader.get_async(
+                "runtime.auto_restart_enabled",
+                default=os.getenv("AUTO_RESTART_ENABLED", "true"),
+            )
+            consciousness_enabled = await loader.get_async(
+                "consciousness.enabled",
+                default=os.getenv("CONSCIOUSNESS_ENABLED", "true"),
+            )
+            rag_enabled = await loader.get_async(
+                "rag.enabled",
+                default=os.getenv("RAG_ENABLED", "true"),
+            )
+            discord_enabled = await loader.get_async(
+                "integrations.discord_enabled",
+                default=os.getenv("DISCORD_BOT_ENABLED", "false"),
+            )
+            telegram_enabled = await loader.get_async(
+                "integrations.telegram_enabled",
+                default=os.getenv("TELEGRAM_BOT_ENABLED", "false"),
+            )
+            slack_enabled = await loader.get_async(
+                "integrations.slack_enabled",
+                default=os.getenv("SLACK_BOT_ENABLED", "false"),
+            )
+            api_host = await loader.get_async(
+                "api.host",
+                default=os.getenv("API_HOST", "0.0.0.0"),
+            )
+            api_port = await loader.get_async(
+                "api.port",
+                default=int(os.getenv("API_PORT", "8000")),
+            )
             database_url = await loader.get_async("database.url", default=os.getenv("DATABASE_URL"))
-            redis_url = await loader.get_async("redis.url", default=os.getenv("REDIS_URL", "redis://localhost:6379"))
-            qdrant_url = await loader.get_async("qdrant.url", default=os.getenv("QDRANT_URL", "http://localhost:6333"))
-            log_level = await loader.get_async("logging.level", default=os.getenv("LOG_LEVEL", "INFO"))
+            redis_url = await loader.get_async(
+                "redis.url",
+                default=os.getenv("REDIS_URL", "redis://localhost:6379"),
+            )
+            qdrant_url = await loader.get_async(
+                "qdrant.url",
+                default=os.getenv("QDRANT_URL", "http://localhost:6333"),
+            )
+            log_level = await loader.get_async(
+                "logging.level",
+                default=os.getenv("LOG_LEVEL", "INFO"),
+            )
 
             # Convert string values to bool if needed
             if isinstance(monitoring_enabled, str):

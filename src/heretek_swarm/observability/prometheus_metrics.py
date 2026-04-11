@@ -454,9 +454,9 @@ def setup_metrics_middleware(app) -> None:
                     status=response.status_code,
                     duration=duration,
                 )
-            except Exception:
+            except Exception as e:
                 # Don't let metrics collection break the app
-                pass
+                logger.debug("prometheus_metrics_collection_failed", error=str(e))
 
             return response
 

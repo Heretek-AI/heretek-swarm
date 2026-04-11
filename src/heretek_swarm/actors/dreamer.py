@@ -614,8 +614,8 @@ Return as JSON array."""
                     )
                     ideas.append(idea)
                 return ideas
-            except:
-                # Fallback: create simple ideas
+            except Exception as e:
+                logger.debug("dreamer_ideas_parse_failed_617", error=str(e))
                 return [
                     CreativeIdea(
                         id="",
@@ -685,7 +685,8 @@ Return as JSON array."""
             import json
             try:
                 return json.loads(response)
-            except:
+            except Exception as e:
+                logger.debug("dreamer_alternatives_parse_failed_688", error=str(e))
                 return [{"name": f"Alternative {i+1}", "concept": "Different approach"} for i in range(5)]
 
         except Exception as e:
@@ -735,7 +736,8 @@ Provide insights from this perspective."""
             try:
                 response = await self.run_with_llm(prompt=prompt, timeout=30, temperature=0.4)
                 insights.append({"hat": hat_name, "type": hat_type, "insight": response.strip()})
-            except:
+            except Exception as e:
+                logger.debug("dreamer_hat_insight_failed", hat=hat_name, error=str(e))
                 insights.append({"hat": hat_name, "type": hat_type, "insight": "Unable to generate"})
 
         return {"technique": "six_thinking_hats", "insights": insights}
@@ -764,7 +766,8 @@ Generate ideas using this SCAMPER prompt."""
             try:
                 response = await self.run_with_llm(prompt=prompt, timeout=30, temperature=0.7)
                 insights.append({"letter": letter, "prompt": question, "ideas": response.strip()})
-            except:
+            except Exception as e:
+                logger.debug("dreamer_scamper_insight_failed", letter=letter, error=str(e))
                 insights.append({"letter": letter, "prompt": question, "ideas": "Unable to generate"})
 
         return {"technique": "scamper", "insights": insights}
@@ -784,7 +787,8 @@ Provide a structured analysis."""
         try:
             response = await self.run_with_llm(prompt=prompt, timeout=60, temperature=0.3)
             return {"technique": "first_principles", "analysis": response.strip()}
-        except:
+        except Exception as e:
+            logger.debug("dreamer_first_principles_failed", error=str(e))
             return {"technique": "first_principles", "analysis": "Unable to complete analysis"}
 
     async def _apply_generic_technique(self, problem: str, technique: CreativityTechnique, context: dict[str, Any]) -> dict[str, Any]:
@@ -798,7 +802,8 @@ Generate insights and ideas."""
         try:
             response = await self.run_with_llm(prompt=prompt, timeout=60, temperature=0.7)
             return {"technique": technique.value, "insights": [response.strip()]}
-        except:
+        except Exception as e:
+            logger.debug("dreamer_generic_technique_failed", technique=technique.value, error=str(e))
             return {"technique": technique.value, "insights": []}
 
     def _calculate_innovation_score(self, ideas: list[CreativeIdea], sessions: list[CreativeSession]) -> float:
@@ -857,14 +862,16 @@ Return as JSON with keys: recommendations, roadmap, risks, opportunities"""
             import json
             try:
                 return json.loads(response)
-            except:
+            except Exception as e:
+                logger.debug("dreamer_innovation_report_parse_failed_860", error=str(e))
                 return {
                     "recommendations": ["Continue innovation efforts", "Prioritize breakthrough ideas"],
                     "roadmap": [{"step": 1, "action": "Review top ideas"}, {"step": 2, "action": "Select for implementation"}],
                     "risks": ["Implementation complexity"],
                     "opportunities": ["Breakthrough potential"]
                 }
-        except:
+        except Exception as e:
+            logger.debug("dreamer_innovation_report_llm_failed", error=str(e))
             return {"recommendations": [], "roadmap": [], "risks": [], "opportunities": []}
 
 
@@ -1084,7 +1091,8 @@ Return as JSON."""
             import json
             try:
                 return json.loads(response)
-            except:
+            except Exception as e:
+                logger.debug("dreamer_synthesis_parse_failed_1087", error=str(e))
                 return {
                     "title": "Combined Solution",
                     "description": "Synthesis of multiple ideas",
@@ -1094,5 +1102,6 @@ Return as JSON."""
                     "originality": 0.8,
                     "variations": []
                 }
-        except:
+        except Exception as e:
+            logger.debug("dreamer_synthesis_llm_failed", error=str(e))
             return {}

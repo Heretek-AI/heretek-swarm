@@ -1,5 +1,12 @@
 # **Engineering a Sovereign Synthetic Society: A Technical Roadmap for Emergent AI Swarms**
 
+---
+## ⚠️ DEPRECATED / SUPERSEDED
+See `docs/REMEDIATION_BACKLOG.md` for current status.
+*Archived: 2026-04-11*
+---
+
+
 The paradigm of artificial intelligence is currently undergoing a profound architectural transition, moving away from monolithic, prompt-driven execution models and toward decentralized, continuously operating networks capable of unprompted action. The ultimate objective of this evolution, as outlined in contemporary gap analyses and technical roadmaps, is the engineering of a sovereign synthetic society capable of emergent, organic evolution.1 Achieving this vision requires a fundamental departure from existing computational constraints, demanding a paradigm where agents do not simply wait for human initiation but actively monitor their environment, identify conceptual or operational gaps, and initiate workflows autonomously.1
 
 This report provides an exhaustive, multi-layered technical roadmap for engineering such a sovereign swarm. It details the necessary transitions across critical capability domains: substrate architecture, global cognitive state, governance and consensus, zero-trust security, self-sustaining operations, and emergent intelligence measurement. Through the integration of advanced open-source software (OSS), cognitive architectures derived from neurobiology, and robust distributed consensus algorithms, the realization of autopoietic, self-governing artificial systems is now technically feasible. The following sections will deconstruct the current baseline, explore the theoretical frameworks necessary for this leap, and detail the specific engineering patterns and software repositories required to build a persistent, self-evolving digital ecology.

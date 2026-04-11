@@ -562,8 +562,8 @@ Respond in JSON:
                     raise ValueError("No JSON found")
             else:
                 raise RuntimeError("LLM not available")
-        except Exception:
-            # Fallback
+        except Exception as e:
+            logger.debug("perceiver_plus_diagnostic_failed", error=str(e))
             findings = ["Diagnostic analysis requires LLM capabilities"]
             confidence = 0.3
 
@@ -621,7 +621,8 @@ Respond in JSON:
                     raise ValueError("No JSON found")
             else:
                 raise RuntimeError("LLM not available")
-        except Exception:
+        except Exception as e:
+            logger.debug("perceiver_plus_predictive_failed", error=str(e))
             findings = ["Predictive analysis requires LLM capabilities"]
             confidence = 0.3
 

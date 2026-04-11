@@ -325,7 +325,8 @@ class PerceiverAgent(AgentActor):
                 import json
                 return len(json.dumps(input_data).encode()) <= max_bytes
             return True  # Assume valid for other types
-        except Exception:
+        except Exception as e:
+            logger.debug("perceiver_validation_failed", error=str(e))
             return True  # Fail open on validation errors
 
     def _detect_modality(

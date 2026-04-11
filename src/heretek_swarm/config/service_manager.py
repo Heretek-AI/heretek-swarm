@@ -1,29 +1,28 @@
 """
-Configuration Service
+Service Manager - Core CRUD operations for the configuration service.
 
-Provides CRUD operations for configurations with caching and validation.
-Supports migration from .env to database-backed configuration.
-Features API key encryption using Fernet symmetric encryption.
+This module contains the main ConfigurationService class with all
+async database operations: CRUD for configurations, LLM providers,
+embedding providers, and agent configs.
 """
 
 from __future__ import annotations
 
-import base64
 import os
 from datetime import UTC, datetime, timedelta
-from typing import TYPE_CHECKING, Any, TypeVar
+from typing import Any, TypeVar
+from uuid import UUID
 
-import structlog
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
+from .encryption import ApiKeyEncryptor
 from .models import (
     AgentConfig,
     AgentConfigCreate,
     AgentConfigUpdate,
     ConfigAuditLog,
     ConfigCacheEntry,
-    ConfigType,
     ConfigurationExport,
     ConfigurationImport,
     EmbeddingProvider,
@@ -39,18 +38,7 @@ from .models import (
     UserConfigurationUpdate,
 )
 
-if TYPE_CHECKING:
-    from uuid import UUID
-
-# Fernet encryption for API keys
-try:
-    from cryptography.fernet import Fernet
-    CRYPTOGRAPHY_AVAILABLE = True
-except ImportError:
-    CRYPTOGRAPHY_AVAILABLE = False
-    Fernet = None
-
-logger = structlog.get_logger("config.service")
+logger = __import__("structlog").get_logger("config.service_manager")
 
 T = TypeVar("T")
 
@@ -68,7 +56,7 @@ class ConfigurationService:
     - Migration from .env files
     """
 
-    def __init__(self, database_url: str | None = None):
+    def __init__(self, database_url: str | None = None) -> None:
         """
         Initialize the configuration service.
 
@@ -98,89 +86,11 @@ class ConfigurationService:
         self._cache: dict[str, ConfigCacheEntry] = {}
         self._cache_ttl = timedelta(minutes=5)
 
-        # Initialize Fernet encryption for API keys
-        self._fernet: Fernet | None = None
-        self._encryption_key = os.environ.get("CONFIG_ENCRYPTION_KEY")
-        if self._encryption_key:
-            self._initialize_encryption()
-        else:
-            logger.warning("CONFIG_ENCRYPTION_KEY not set - API keys will not be encrypted")
+        # Encryption for API keys
+        self._encryptor = ApiKeyEncryptor(os.environ.get("CONFIG_ENCRYPTION_KEY"))
+        self._fernet = self._encryptor._fernet
 
         logger.info("ConfigurationService initialized", database_url=self.database_url)
-
-    def _initialize_encryption(self) -> None:
-        """
-        Initialize Fernet encryption for API keys.
-
-        The encryption key should be a 32-byte URL-safe base64-encoded key.
-        Generate with: Fernet.generate_key().decode()
-        """
-        if not CRYPTOGRAPHY_AVAILABLE:
-            logger.error("cryptography package not installed - encryption disabled")
-            return
-
-        try:
-            # Handle both raw keys and URL-safe base64 encoded keys
-            if len(self._encryption_key) == 44 and self._encryption_key.endswith("="):
-                # Already base64 encoded
-                key = self._encryption_key.encode()
-            else:
-                # Raw key - encode it
-                key = base64.urlsafe_b64encode(self._encryption_key.encode().ljust(32))
-
-            self._fernet = Fernet(key)
-            logger.info("API key encryption initialized")
-        except Exception as e:
-            logger.error("Failed to initialize encryption", error=str(e))
-            self._fernet = None
-
-    def encrypt_api_key(self, api_key: str) -> str:
-        """
-        Encrypt an API key using Fernet symmetric encryption.
-
-        Args:
-            api_key: The plain text API key to encrypt
-
-        Returns:
-            Encrypted API key (base64 encoded)
-
-        Raises:
-            ValueError: If encryption is not configured
-        """
-        if not self._fernet:
-            # Return as-is if encryption not configured (backward compatibility)
-            return api_key
-
-        try:
-            encrypted = self._fernet.encrypt(api_key.encode())
-            return encrypted.decode()
-        except Exception as e:
-            logger.error("Failed to encrypt API key", error=str(e))
-            raise ValueError(f"Encryption failed: {e}")
-
-    def decrypt_api_key(self, encrypted_key: str) -> str:
-        """
-        Decrypt an API key using Fernet symmetric encryption.
-
-        Args:
-            encrypted_key: The encrypted API key to decrypt
-
-        Returns:
-            Decrypted plain text API key
-
-        Raises:
-            ValueError: If decryption fails or encryption not configured
-        """
-        if not self._fernet:
-            # Return as-is if encryption not configured (backward compatibility)
-            return encrypted_key
-
-        try:
-            decrypted = self._fernet.decrypt(encrypted_key.encode())
-            return decrypted.decode()
-        except Exception as e:
-            logger.error("Failed to decrypt API key", error=str(e))
-            raise ValueError(f"Decryption failed: {e}")
 
     async def initialize(self) -> None:
         """Initialize the service and warm up the cache."""
@@ -200,7 +110,6 @@ class ConfigurationService:
         """Warm up the cache with frequently accessed configurations."""
         try:
             async with self._session_factory() as session:
-                # Cache system configurations
                 result = await session.execute(
                     select(UserConfiguration).where(
                         UserConfiguration.category.in_(["system", "rate_limiting"])
@@ -264,16 +173,7 @@ class ConfigurationService:
     # =========================================================================
 
     async def get_config(self, config_key: str) -> UserConfiguration | None:
-        """
-        Get a configuration by key.
-
-        Args:
-            config_key: The configuration key
-
-        Returns:
-            Configuration if found, None otherwise
-        """
-        # Check cache first
+        """Get a configuration by key."""
         cached = self._get_cache("config", config_key)
         if cached is not None:
             logger.debug("Cache hit for config", key=config_key)
@@ -297,16 +197,7 @@ class ConfigurationService:
         config_key: str,
         default: Any = None,
     ) -> Any:
-        """
-        Get a configuration value by key.
-
-        Args:
-            config_key: The configuration key
-            default: Default value if not found
-
-        Returns:
-            Configuration value or default
-        """
+        """Get a configuration value by key."""
         config = await self.get_config(config_key)
         return config.config_value if config else default
 
@@ -316,17 +207,7 @@ class ConfigurationService:
         limit: int = 100,
         offset: int = 0,
     ) -> list[UserConfiguration]:
-        """
-        List configurations with optional filtering.
-
-        Args:
-            category: Filter by category
-            limit: Maximum results
-            offset: Result offset
-
-        Returns:
-            List of configurations
-        """
+        """List configurations with optional filtering."""
         async with self._session_factory() as session:
             query = select(UserConfiguration)
 
@@ -343,16 +224,7 @@ class ConfigurationService:
         config: UserConfigurationCreate,
         changed_by: str | None = None,
     ) -> UserConfiguration:
-        """
-        Create a new configuration.
-
-        Args:
-            config: Configuration data
-            changed_by: User making the change
-
-        Returns:
-            Created configuration
-        """
+        """Create a new configuration."""
         async with self._session_factory() as session:
             new_config = UserConfiguration(
                 config_key=config.config_key,
@@ -366,18 +238,13 @@ class ConfigurationService:
                 updated_by=changed_by,
             )
 
-            # Validate if schema provided
             if config.validation_schema:
-                self._validate_config_value(
-                    config.config_value,
-                    config.validation_schema,
-                )
+                self._validate_config_value(config.config_value, config.validation_schema)
 
             session.add(new_config)
             await session.commit()
             await session.refresh(new_config)
 
-            # Log the change
             await self._log_change(
                 session,
                 "user_configuration",
@@ -388,7 +255,6 @@ class ConfigurationService:
                 changed_by,
             )
 
-            # Invalidate cache
             self._invalidate_cache("config", new_config.config_key)
 
             logger.info("Configuration created", key=new_config.config_key)
@@ -400,17 +266,7 @@ class ConfigurationService:
         update: UserConfigurationUpdate,
         changed_by: str | None = None,
     ) -> UserConfiguration | None:
-        """
-        Update a configuration.
-
-        Args:
-            config_key: The configuration key
-            update: Update data
-            changed_by: User making the change
-
-        Returns:
-            Updated configuration or None if not found
-        """
+        """Update a configuration."""
         async with self._session_factory() as session:
             result = await session.execute(
                 select(UserConfiguration).where(
@@ -432,12 +288,8 @@ class ConfigurationService:
                 if value is not None:
                     setattr(config, field, value)
 
-            # Validate if schema exists
             if config.validation_schema and update.config_value is not None:
-                self._validate_config_value(
-                    update.config_value,
-                    config.validation_schema,
-                )
+                self._validate_config_value(update.config_value, config.validation_schema)
 
             config.updated_at = datetime.now(UTC)
             config.updated_by = changed_by
@@ -445,7 +297,6 @@ class ConfigurationService:
             await session.commit()
             await session.refresh(config)
 
-            # Log the change
             await self._log_change(
                 session,
                 "user_configuration",
@@ -456,7 +307,6 @@ class ConfigurationService:
                 changed_by,
             )
 
-            # Invalidate cache
             self._invalidate_cache("config", config_key)
 
             logger.info("Configuration updated", key=config_key)
@@ -467,16 +317,7 @@ class ConfigurationService:
         config_key: str,
         changed_by: str | None = None,
     ) -> bool:
-        """
-        Delete a configuration.
-
-        Args:
-            config_key: The configuration key
-            changed_by: User making the change
-
-        Returns:
-            True if deleted, False if not found
-        """
+        """Delete a configuration."""
         async with self._session_factory() as session:
             result = await session.execute(
                 select(UserConfiguration).where(
@@ -500,7 +341,6 @@ class ConfigurationService:
             )
             await session.commit()
 
-            # Log the change
             await self._log_change(
                 session,
                 "user_configuration",
@@ -511,7 +351,6 @@ class ConfigurationService:
                 changed_by,
             )
 
-            # Invalidate cache
             self._invalidate_cache("config", config_key)
 
             logger.info("Configuration deleted", key=config_key)
@@ -529,16 +368,11 @@ class ConfigurationService:
             )
             return result.scalar_one_or_none()
 
-    async def get_llm_provider_by_name(
-        self,
-        provider_name: str,
-    ) -> LLMProvider | None:
+    async def get_llm_provider_by_name(self, provider_name: str) -> LLMProvider | None:
         """Get an LLM provider by name."""
         async with self._session_factory() as session:
             result = await session.execute(
-                select(LLMProvider).where(
-                    LLMProvider.provider_name == provider_name
-                )
+                select(LLMProvider).where(LLMProvider.provider_name == provider_name)
             )
             return result.scalar_one_or_none()
 
@@ -548,17 +382,7 @@ class ConfigurationService:
         enabled_only: bool = False,
         include_disabled: bool = False,
     ) -> list[LLMProvider]:
-        """
-        List LLM providers with optional filtering.
-
-        Args:
-            provider_type: Filter by provider type
-            enabled_only: Only return enabled providers
-            include_disabled: Include disabled providers (overrides enabled_only)
-
-        Returns:
-            List of LLM providers
-        """
+        """List LLM providers with optional filtering."""
         async with self._session_factory() as session:
             query = select(LLMProvider).order_by(
                 LLMProvider.priority,
@@ -586,46 +410,12 @@ class ConfigurationService:
             return result.scalar_one_or_none()
 
     def _encrypt_extra_config(self, extra_config: dict[str, Any]) -> dict[str, Any]:
-        """
-        Encrypt sensitive fields in extra_config.
-
-        Encrypts fields like 'api_key', 'auth_token', 'secret' etc.
-        """
-        if not extra_config:
-            return {}
-
-        sensitive_keys = {"api_key", "auth_token", "secret", "password", "credential"}
-        encrypted_config = {}
-
-        for key, value in extra_config.items():
-            if any(sensitive in key.lower() for sensitive in sensitive_keys) and isinstance(value, str):
-                encrypted_config[key] = self.encrypt_api_key(value)
-            else:
-                encrypted_config[key] = value
-
-        return encrypted_config
+        """Encrypt sensitive fields in extra_config."""
+        return self._encryptor.encrypt_config(extra_config or {})
 
     def _decrypt_extra_config(self, extra_config: dict[str, Any]) -> dict[str, Any]:
-        """
-        Decrypt sensitive fields in extra_config.
-        """
-        if not extra_config:
-            return {}
-
-        sensitive_keys = {"api_key", "auth_token", "secret", "password", "credential"}
-        decrypted_config = {}
-
-        for key, value in extra_config.items():
-            if any(sensitive in key.lower() for sensitive in sensitive_keys) and isinstance(value, str):
-                try:
-                    decrypted_config[key] = self.decrypt_api_key(value)
-                except ValueError:
-                    # If decryption fails, return as-is (might not be encrypted)
-                    decrypted_config[key] = value
-            else:
-                decrypted_config[key] = value
-
-        return decrypted_config
+        """Decrypt sensitive fields in extra_config."""
+        return self._encryptor.decrypt_config(extra_config or {})
 
     async def create_llm_provider(
         self,
@@ -634,7 +424,6 @@ class ConfigurationService:
     ) -> LLMProvider:
         """Create a new LLM provider."""
         async with self._session_factory() as session:
-            # If setting as default, unset other defaults of same type
             if provider.is_default:
                 await session.execute(
                     select(LLMProvider).update()
@@ -645,12 +434,10 @@ class ConfigurationService:
                     .values(is_default=False)
                 )
 
-            # Encrypt API key in extra_config if present
             extra_config = self._encrypt_extra_config(provider.extra_config or {})
 
-            # Also encrypt api_key if passed in extra_config
             if hasattr(provider, "api_key") and provider.api_key:
-                extra_config["api_key"] = self.encrypt_api_key(provider.api_key)
+                extra_config["api_key"] = self._encryptor.encrypt(provider.api_key)
 
             new_provider = LLMProvider(
                 provider_name=provider.provider_name,
@@ -677,7 +464,6 @@ class ConfigurationService:
             await session.commit()
             await session.refresh(new_provider)
 
-            # Log the change
             await self._log_change(
                 session,
                 "llm_provider",
@@ -714,7 +500,6 @@ class ConfigurationService:
                 if value is not None:
                     setattr(provider, field, value)
 
-            # If setting as default, unset other defaults of same type
             if update.is_default:
                 await session.execute(
                     select(LLMProvider).update()
@@ -731,7 +516,6 @@ class ConfigurationService:
             await session.commit()
             await session.refresh(provider)
 
-            # Log the change
             await self._log_change(
                 session,
                 "llm_provider",
@@ -767,7 +551,6 @@ class ConfigurationService:
             )
             await session.commit()
 
-            # Log the change
             await self._log_change(
                 session,
                 "llm_provider",
@@ -782,40 +565,24 @@ class ConfigurationService:
             return True
 
     def get_llm_provider_api_key(self, provider: LLMProvider) -> str | None:
-        """
-        Get the decrypted API key for an LLM provider.
-
-        Args:
-            provider: The LLM provider object
-
-        Returns:
-            Decrypted API key or None if not found
-        """
+        """Get the decrypted API key for an LLM provider."""
         if not provider.extra_config:
             return None
-        return self.decrypt_api_key(provider.extra_config.get("api_key", ""))
+        return self._encryptor.decrypt(provider.extra_config.get("api_key", ""))
 
     # =========================================================================
     # Embedding Provider CRUD
     # =========================================================================
 
-    async def get_embedding_provider(
-        self,
-        provider_id: UUID,
-    ) -> EmbeddingProvider | None:
+    async def get_embedding_provider(self, provider_id: UUID) -> EmbeddingProvider | None:
         """Get an embedding provider by ID."""
         async with self._session_factory() as session:
             result = await session.execute(
-                select(EmbeddingProvider).where(
-                    EmbeddingProvider.id == provider_id
-                )
+                select(EmbeddingProvider).where(EmbeddingProvider.id == provider_id)
             )
             return result.scalar_one_or_none()
 
-    async def get_embedding_provider_by_name(
-        self,
-        provider_name: str,
-    ) -> EmbeddingProvider | None:
+    async def get_embedding_provider_by_name(self, provider_name: str) -> EmbeddingProvider | None:
         """Get an embedding provider by name."""
         async with self._session_factory() as session:
             result = await session.execute(
@@ -846,9 +613,7 @@ class ConfigurationService:
             result = await session.execute(query)
             return list(result.scalars().all())
 
-    async def get_default_embedding_provider(
-        self,
-    ) -> EmbeddingProvider | None:
+    async def get_default_embedding_provider(self) -> EmbeddingProvider | None:
         """Get the default embedding provider."""
         async with self._session_factory() as session:
             result = await session.execute(
@@ -866,7 +631,6 @@ class ConfigurationService:
     ) -> EmbeddingProvider:
         """Create a new embedding provider."""
         async with self._session_factory() as session:
-            # If setting as default, unset other defaults of same type
             if provider.is_default:
                 await session.execute(
                     select(EmbeddingProvider).update()
@@ -877,12 +641,10 @@ class ConfigurationService:
                     .values(is_default=False)
                 )
 
-            # Encrypt API key in extra_config if present
             extra_config = self._encrypt_extra_config(provider.extra_config or {})
 
-            # Also encrypt api_key if passed in extra_config
             if hasattr(provider, "api_key") and provider.api_key:
-                extra_config["api_key"] = self.encrypt_api_key(provider.api_key)
+                extra_config["api_key"] = self._encryptor.encrypt(provider.api_key)
 
             new_provider = EmbeddingProvider(
                 provider_name=provider.provider_name,
@@ -905,7 +667,6 @@ class ConfigurationService:
             await session.commit()
             await session.refresh(new_provider)
 
-            # Log the change
             await self._log_change(
                 session,
                 "embedding_provider",
@@ -928,9 +689,7 @@ class ConfigurationService:
         """Update an embedding provider."""
         async with self._session_factory() as session:
             result = await session.execute(
-                select(EmbeddingProvider).where(
-                    EmbeddingProvider.id == provider_id
-                )
+                select(EmbeddingProvider).where(EmbeddingProvider.id == provider_id)
             )
             provider = result.scalar_one_or_none()
 
@@ -944,7 +703,6 @@ class ConfigurationService:
                 if value is not None:
                     setattr(provider, field, value)
 
-            # If setting as default, unset other defaults of same type
             if update.is_default:
                 await session.execute(
                     select(EmbeddingProvider).update()
@@ -961,7 +719,6 @@ class ConfigurationService:
             await session.commit()
             await session.refresh(provider)
 
-            # Log the change
             await self._log_change(
                 session,
                 "embedding_provider",
@@ -983,9 +740,7 @@ class ConfigurationService:
         """Delete an embedding provider."""
         async with self._session_factory() as session:
             result = await session.execute(
-                select(EmbeddingProvider).where(
-                    EmbeddingProvider.id == provider_id
-                )
+                select(EmbeddingProvider).where(EmbeddingProvider.id == provider_id)
             )
             provider = result.scalar_one_or_none()
 
@@ -995,13 +750,10 @@ class ConfigurationService:
             old_value = provider.model_dump()
 
             await session.execute(
-                delete(EmbeddingProvider).where(
-                    EmbeddingProvider.id == provider_id
-                )
+                delete(EmbeddingProvider).where(EmbeddingProvider.id == provider_id)
             )
             await session.commit()
 
-            # Log the change
             await self._log_change(
                 session,
                 "embedding_provider",
@@ -1016,18 +768,10 @@ class ConfigurationService:
             return True
 
     def get_embedding_provider_api_key(self, provider: EmbeddingProvider) -> str | None:
-        """
-        Get the decrypted API key for an embedding provider.
-
-        Args:
-            provider: The embedding provider object
-
-        Returns:
-            Decrypted API key or None if not found
-        """
+        """Get the decrypted API key for an embedding provider."""
         if not provider.extra_config:
             return None
-        return self.decrypt_api_key(provider.extra_config.get("api_key", ""))
+        return self._encryptor.decrypt(provider.extra_config.get("api_key", ""))
 
     # =========================================================================
     # Agent Configuration CRUD
@@ -1089,7 +833,6 @@ class ConfigurationService:
     ) -> AgentConfig:
         """Create a new agent configuration."""
         async with self._session_factory() as session:
-            # If setting as default for type, unset other defaults
             if config.is_default_for_type:
                 await session.execute(
                     select(AgentConfig).update()
@@ -1118,7 +861,6 @@ class ConfigurationService:
             await session.commit()
             await session.refresh(new_config)
 
-            # Log the change
             await self._log_change(
                 session,
                 "agent_config",
@@ -1155,7 +897,6 @@ class ConfigurationService:
                 if value is not None:
                     setattr(config, field, value)
 
-            # If setting as default for type, unset other defaults
             if update.is_default_for_type:
                 await session.execute(
                     select(AgentConfig).update()
@@ -1173,7 +914,6 @@ class ConfigurationService:
             await session.commit()
             await session.refresh(config)
 
-            # Log the change
             await self._log_change(
                 session,
                 "agent_config",
@@ -1209,7 +949,6 @@ class ConfigurationService:
             )
             await session.commit()
 
-            # Log the change
             await self._log_change(
                 session,
                 "agent_config",
@@ -1239,7 +978,6 @@ class ConfigurationService:
         reason: str | None = None,
     ) -> None:
         """Log a configuration change."""
-        # Determine changed fields
         changed_fields = None
         if old_value and new_value:
             changed_fields = [
@@ -1291,25 +1029,16 @@ class ConfigurationService:
     ) -> ConfigurationExport:
         """Export all configurations."""
         async with self._session_factory() as session:
-            # Get all configurations
-            user_configs_result = await session.execute(
-                select(UserConfiguration)
-            )
+            user_configs_result = await session.execute(select(UserConfiguration))
             user_configs = list(user_configs_result.scalars().all())
 
-            llm_providers_result = await session.execute(
-                select(LLMProvider)
-            )
+            llm_providers_result = await session.execute(select(LLMProvider))
             llm_providers = list(llm_providers_result.scalars().all())
 
-            embedding_providers_result = await session.execute(
-                select(EmbeddingProvider)
-            )
+            embedding_providers_result = await session.execute(select(EmbeddingProvider))
             embedding_providers = list(embedding_providers_result.scalars().all())
 
-            agent_configs_result = await session.execute(
-                select(AgentConfig)
-            )
+            agent_configs_result = await session.execute(select(AgentConfig))
             agent_configs = list(agent_configs_result.scalars().all())
 
             return ConfigurationExport(
@@ -1332,7 +1061,6 @@ class ConfigurationService:
         result = ImportResult(success=True)
 
         try:
-            # Import user configurations
             if options.import_user_configs and import_data.user_configurations:
                 for config_data in import_data.user_configurations:
                     try:
@@ -1352,7 +1080,6 @@ class ConfigurationService:
                             )
                             result.errors.append(f"User config import error: {e}")
 
-            # Import LLM providers
             if options.import_llm_providers and import_data.llm_providers:
                 for provider_data in import_data.llm_providers:
                     try:
@@ -1372,7 +1099,6 @@ class ConfigurationService:
                             )
                             result.errors.append(f"LLM provider import error: {e}")
 
-            # Import embedding providers
             if options.import_embedding_providers and import_data.embedding_providers:
                 for provider_data in import_data.embedding_providers:
                     try:
@@ -1392,7 +1118,6 @@ class ConfigurationService:
                             )
                             result.errors.append(f"Embedding provider import error: {e}")
 
-            # Import agent configs
             if options.import_agent_configs and import_data.agent_configs:
                 for config_data in import_data.agent_configs:
                     try:
@@ -1429,15 +1154,7 @@ class ConfigurationService:
     ) -> None:
         """
         Validate a configuration value against a JSON schema.
-
-        Args:
-            value: The value to validate
-            schema: JSON schema for validation
-
-        Raises:
-            ValueError: If validation fails
         """
-        # Simple type validation
         expected_type = schema.get("type")
         if expected_type:
             type_map = {
@@ -1455,21 +1172,18 @@ class ConfigurationService:
                     f"Expected type {expected_type}, got {type(value).__name__}"
                 )
 
-        # Min/max validation for numbers
         if isinstance(value, (int, float)):
             if "minimum" in schema and value < schema["minimum"]:
                 raise ValueError(f"Value must be >= {schema['minimum']}")
             if "maximum" in schema and value > schema["maximum"]:
                 raise ValueError(f"Value must be <= {schema['maximum']}")
 
-        # Min/max length for strings
         if isinstance(value, str):
             if "minLength" in schema and len(value) < schema["minLength"]:
                 raise ValueError(f"String length must be >= {schema['minLength']}")
             if "maxLength" in schema and len(value) > schema["maxLength"]:
                 raise ValueError(f"String length must be <= {schema['maxLength']}")
 
-        # Enum validation
         if "enum" in schema and value not in schema["enum"]:
             raise ValueError(f"Value must be one of: {schema['enum']}")
 
@@ -1483,12 +1197,6 @@ class ConfigurationService:
     ) -> dict[str, Any]:
         """
         Migrate configuration from .env file to database.
-
-        This method reads environment variables and creates corresponding
-        database configurations. It's idempotent and safe to run multiple times.
-
-        Returns:
-            Migration result summary
         """
         migration_result = {
             "migrated": [],
@@ -1496,21 +1204,19 @@ class ConfigurationService:
             "errors": [],
         }
 
-        # Define environment variable mappings
         env_mappings = [
-            # Rate limiting
-            ("RATE_LIMIT_ENABLED", "rate_limit.enabled", ConfigType.BOOLEAN),
-            # Memory
-            ("MEMORY_MAX_SIZE", "memory.max_size", ConfigType.INTEGER),
-            ("MEMORY_DEFAULT_TTL", "memory.default_ttl", ConfigType.INTEGER),
-            # Consciousness
-            ("CONSCIOUSNESS_PHI_THRESHOLD", "consciousness.phi_threshold", ConfigType.FLOAT),
-            # Consensus
-            ("CONSENSUS_MIN_VOTES", "consensus.min_votes", ConfigType.INTEGER),
-            ("CONSENSUS_CONFIDENCE_THRESHOLD", "consensus.confidence_threshold", ConfigType.FLOAT),
+            ("RATE_LIMIT_ENABLED", "rate_limit.enabled", "BOOLEAN"),
+            ("MEMORY_MAX_SIZE", "memory.max_size", "INTEGER"),
+            ("MEMORY_DEFAULT_TTL", "memory.default_ttl", "INTEGER"),
+            ("CONSCIOUSNESS_PHI_THRESHOLD", "consciousness.phi_threshold", "FLOAT"),
+            ("CONSENSUS_MIN_VOTES", "consensus.min_votes", "INTEGER"),
+            ("CONSENSUS_CONFIDENCE_THRESHOLD", "consensus.confidence_threshold", "FLOAT"),
         ]
 
-        for env_var, config_key, config_type in env_mappings:
+        # Import ConfigType here to avoid circular imports
+        from .models import ConfigType as CT
+
+        for env_var, config_key, config_type_name in env_mappings:
             env_value = os.environ.get(env_var)
 
             if env_value is None:
@@ -1520,17 +1226,16 @@ class ConfigurationService:
                 continue
 
             try:
-                # Convert value based on type
-                if config_type == ConfigType.BOOLEAN:
+                config_type = CT[config_type_name]
+                if config_type == CT.BOOLEAN:
                     converted_value = env_value.lower() in ("true", "1", "yes")
-                elif config_type == ConfigType.INTEGER:
+                elif config_type == CT.INTEGER:
                     converted_value = int(env_value)
-                elif config_type == ConfigType.FLOAT:
+                elif config_type == CT.FLOAT:
                     converted_value = float(env_value)
                 else:
                     converted_value = env_value
 
-                # Check if config already exists
                 existing = await self.get_config(config_key)
 
                 if existing:
@@ -1539,7 +1244,6 @@ class ConfigurationService:
                     )
                     continue
 
-                # Create new configuration
                 config = UserConfigurationCreate(
                     config_key=config_key,
                     config_value=converted_value,

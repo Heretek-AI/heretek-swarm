@@ -134,7 +134,8 @@ class EventMesh:
                     disconnecting = getattr(client_state, "disconnecting", False)
                     # Handle Mock objects - check if it's a boolean
                     return bool(disconnecting) if not hasattr(disconnecting, "name") else False
-                except Exception:
+                except Exception as e:
+                    logger.debug("event_mesh_disconnect_check_failed", error=str(e))
                     return False
 
             # Identify null/disconnecting clients for cleanup

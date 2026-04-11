@@ -1,4 +1,11 @@
 # Phase 1 Zero-Trust Audit Report
+
+---
+## ⚠️ DEPRECATED / SUPERSEDED
+See `docs/REMEDIATION_BACKLOG.md` for current status.
+*Archived: 2026-04-11*
+---
+
 ## Heretek Swarm - Complete Verification
 
 **Auditor:** Autonomous AI Lead Architect & Zero-Trust Security Engineer

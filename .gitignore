@@ -118,3 +118,6 @@ coverage-final.json
 plans/OVERNIGHT_LOOP.md
 .roo/*
 .claw/sessions/*
+# Claw Code local artifacts
+.claw/settings.local.json
+.claw/sessions/

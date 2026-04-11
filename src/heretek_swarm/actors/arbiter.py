@@ -1355,9 +1355,9 @@ class ArbiterAgent(AgentActor):
 
     async def _resolve_resource_contention(
         self,
-        resource: str | None,
+        resource: str | None,  # noqa: ARG002 — part of public API signature
         competing_agents: list[str],
-        priority_override: dict[str, int],
+        priority_override: dict[str, int],  # noqa: ARG002 — part of public API signature
     ) -> dict[str, Any]:
         """Resolve contention over a resource."""
         if not competing_agents:
@@ -1384,7 +1384,7 @@ class ArbiterAgent(AgentActor):
     async def _resolve_task_contention(
         self,
         competing_agents: list[str],
-        priority_override: dict[str, int],
+        priority_override: dict[str, int],  # noqa: ARG002 — part of public API signature
     ) -> dict[str, Any]:
         """Resolve contention over task ownership."""
         if not competing_agents:

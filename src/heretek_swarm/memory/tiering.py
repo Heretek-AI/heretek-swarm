@@ -567,7 +567,8 @@ class MemoryTieringSystem:
             # Exponential decay with 24-hour half-life
             import math
             return math.exp(-math.log(2) * age_hours / 24)
-        except (ValueError, TypeError):
+        except (ValueError, TypeError) as e:
+            logger.warning("recency_score_calculation_failed", memory_id=memory.memory_id, error=str(e))
             return 0.0
 
     def _calculate_frequency_score(self, memory: TieredMemory) -> float:
@@ -583,7 +584,8 @@ class MemoryTieringSystem:
 
             # Logarithmic scaling
             return min(1.0, math.log(accesses_per_hour + 1) / math.log(100))
-        except (ValueError, TypeError):
+        except (ValueError, TypeError) as e:
+            logger.warning("frequency_score_calculation_failed", memory_id=memory.memory_id, error=str(e))
             return 0.0
 
     def store(
@@ -649,7 +651,7 @@ class MemoryTieringSystem:
                 try:
                     return MemoryTier(tier_hint)
                 except ValueError:
-                    pass
+                    logger.debug("invalid_tier_hint_skipped", tier_hint=tier_hint, valid_tiers=[t.value for t in MemoryTier])
 
             # Check importance/priority
             importance = metadata.get("importance", 0)

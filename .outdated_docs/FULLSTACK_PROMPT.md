@@ -1,5 +1,12 @@
 # Full-Featured Dashboard Build: Comprehensive Prompt
 
+---
+## ⚠️ DEPRECATED / SUPERSEDED
+See `docs/REMEDIATION_BACKLOG.md` for current status.
+*Archived: 2026-04-11*
+---
+
+
 ## Project Overview
 
 Build a complete, production-ready Heretek Swarm dashboard with a first-time setup wizard, full LLM/external service configuration, and all 23 agents integrated into the visual Workflow Builder.

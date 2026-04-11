@@ -1,4 +1,11 @@
 # Phase Audit Report - Heretek Swarm
+
+---
+## ⚠️ DEPRECATED / SUPERSEDED
+See `docs/REMEDIATION_BACKLOG.md` for current status.
+*Archived: 2026-04-11*
+---
+
 ## Zero-Trust Security Audit - Complete
 
 **Date:** 2026-04-10  

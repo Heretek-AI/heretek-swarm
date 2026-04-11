@@ -202,7 +202,8 @@ class ConnectionManager:
             for websocket in self.execution_watchers[execution_id]:
                 try:
                     await websocket.send_json(data)
-                except Exception:
+                except Exception as e:
+                    logger.debug("workflow_broadcast_disconnect", workflow_id=workflow_id, error=str(e))
                     disconnected.add(websocket)
             # Clean up disconnected
             for ws in disconnected:
@@ -214,7 +215,8 @@ class ConnectionManager:
         for websocket in self.a2a_listeners:
             try:
                 await websocket.send_json(data)
-            except Exception:
+            except Exception as e:
+                logger.debug("websocket_broadcast_disconnect", websocket_id=id(websocket), error=str(e))
                 disconnected.add(websocket)
         for ws in disconnected:
             self.a2a_listeners.discard(ws)
@@ -225,7 +227,8 @@ class ConnectionManager:
         for websocket in self.dashboard_listeners:
             try:
                 await websocket.send_json(data)
-            except Exception:
+            except Exception as e:
+                logger.debug("websocket_broadcast_disconnect", websocket_id=id(websocket), error=str(e))
                 disconnected.add(websocket)
         for ws in disconnected:
             self.dashboard_listeners.discard(ws)
@@ -236,7 +239,8 @@ class ConnectionManager:
         for websocket in self.observability_listeners:
             try:
                 await websocket.send_json(data)
-            except Exception:
+            except Exception as e:
+                logger.debug("websocket_broadcast_disconnect", websocket_id=id(websocket), error=str(e))
                 disconnected.add(websocket)
         for ws in disconnected:
             self.observability_listeners.discard(ws)
@@ -251,7 +255,8 @@ class ConnectionManager:
                     "agentId": agent_id,
                     **data,
                 })
-            except Exception:
+            except Exception as e:
+                logger.debug("agent_status_broadcast_disconnect", agent_id=agent_id, error=str(e))
                 del self.agent_status_listeners[agent_id]
 
     async def broadcast_workflow_progress(self, workflow_id: str, data: dict[str, Any]):
@@ -265,7 +270,8 @@ class ConnectionManager:
                         "workflowId": workflow_id,
                         **data,
                     })
-                except Exception:
+                except Exception as e:
+                    logger.debug("workflow_broadcast_disconnect", workflow_id=workflow_id, error=str(e))
                     disconnected.add(websocket)
             for ws in disconnected:
                 self.workflow_progress_listeners[workflow_id].discard(ws)
@@ -281,7 +287,8 @@ class ConnectionManager:
                         "agentId": agent_id,
                         "metrics": data,
                     })
-                except Exception:
+                except Exception as e:
+                    logger.debug("workflow_broadcast_disconnect", workflow_id=workflow_id, error=str(e))
                     disconnected.add(websocket)
             for ws in disconnected:
                 self.metrics_listeners[agent_id].discard(ws)
@@ -377,9 +384,9 @@ async def execution_websocket(
                 "error": f"Authentication failed: {error}"
             })
             await websocket.close()
-        except Exception:
+        except Exception as e:
             pass
-        logger.warning("websocket_execution_auth_failed", execution_id=execution_id, error=error)
+        logger.warning("websocket_execution_auth_failed", exc_info=True, execution_id=execution_id, error=error, exc_info=True)
         return
 
     await manager.connect_execution(websocket, execution_id)
@@ -500,9 +507,9 @@ async def a2a_websocket(
                 "error": f"Authentication failed: {error}"
             })
             await websocket.close()
-        except Exception:
+        except Exception as e:
             pass
-        logger.warning("websocket_a2a_auth_failed", error=error)
+        logger.warning("websocket_a2a_auth_failed", exc_info=True, error=error, exc_info=True)
         return
 
     await manager.connect_a2a(websocket)
@@ -593,9 +600,9 @@ async def agent_events_websocket(
                 "error": f"Authentication failed: {error}"
             })
             await websocket.close()
-        except Exception:
+        except Exception as e:
             pass
-        logger.warning("websocket_agent_events_auth_failed", agent_id=agent_id, error=error)
+        logger.warning("websocket_agent_events_auth_failed", exc_info=True, agent_id=agent_id, error=error, exc_info=True)
         return
 
     await websocket.accept()
@@ -671,9 +678,9 @@ async def agent_status_websocket(
                 "error": f"Authentication failed: {error}"
             })
             await websocket.close()
-        except Exception:
+        except Exception as e:
             pass
-        logger.warning("websocket_agent_status_auth_failed", error=error)
+        logger.warning("websocket_agent_status_auth_failed", exc_info=True, error=error, exc_info=True)
         return
 
     await websocket.accept()
@@ -771,9 +778,9 @@ async def workflow_progress_websocket(
                 "error": f"Authentication failed: {error}"
             })
             await websocket.close()
-        except Exception:
+        except Exception as e:
             pass
-        logger.warning("websocket_workflow_progress_auth_failed", error=error)
+        logger.warning("websocket_workflow_progress_auth_failed", exc_info=True, error=error, exc_info=True)
         return
 
     await websocket.accept()
@@ -867,9 +874,9 @@ async def agent_metrics_websocket(
                 "error": f"Authentication failed: {error}"
             })
             await websocket.close()
-        except Exception:
+        except Exception as e:
             pass
-        logger.warning("websocket_agent_metrics_auth_failed", error=error)
+        logger.warning("websocket_agent_metrics_auth_failed", exc_info=True, error=error, exc_info=True)
         return
 
     await websocket.accept()
@@ -954,9 +961,9 @@ async def dashboard_websocket(
                 "error": f"Authentication failed: {error}"
             })
             await websocket.close()
-        except Exception:
+        except Exception as e:
             pass
-        logger.warning("websocket_dashboard_auth_failed", error=error)
+        logger.warning("websocket_dashboard_auth_failed", exc_info=True, error=error, exc_info=True)
         return
 
     await manager.connect_dashboard(websocket)
@@ -1051,9 +1058,9 @@ async def observability_websocket(
                 "error": f"Authentication failed: {error}"
             })
             await websocket.close()
-        except Exception:
+        except Exception as e:
             pass
-        logger.warning("websocket_observability_auth_failed", error=error)
+        logger.warning("websocket_observability_auth_failed", exc_info=True, error=error, exc_info=True)
         return
 
     await manager.connect_observability(websocket)
@@ -1126,9 +1133,9 @@ async def all_agents_websocket(
                 "error": f"Authentication failed: {error}"
             })
             await websocket.close()
-        except Exception:
+        except Exception as e:
             pass
-        logger.warning("websocket_all_agents_auth_failed", error=error)
+        logger.warning("websocket_all_agents_auth_failed", exc_info=True, error=error, exc_info=True)
         return
 
     await websocket.accept()

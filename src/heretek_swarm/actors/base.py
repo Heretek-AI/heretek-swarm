@@ -11,7 +11,6 @@ This module provides the foundational actor implementation with:
 
 import asyncio
 import uuid
-from abc import abstractmethod
 from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -886,7 +885,6 @@ class AgentActor:
                     # Ensure table exists in mock
                     if "agent_states" not in db_pool._tables:
                         db_pool._tables["agent_states"] = []
-                    import time as _time
                     db_pool._tables["agent_states"].append({
                         "id": len(db_pool._tables["agent_states"]) + 1,
                         "agent_id": self.agent_id,
@@ -1399,7 +1397,7 @@ class AgentActor:
         task_type: str,
         description: str,
         input_data: dict[str, Any],
-        protocol: dict[str, Any]
+        protocol: dict[str, Any],  # noqa: ARG002 — part of public API signature
     ) -> dict[str, Any]:
         """
         Generate contribution for a collective task.
@@ -1467,7 +1465,7 @@ Please provide your analysis and recommendation for this collective task."""
             if supervisor and hasattr(supervisor, "actors"):
                 return supervisor.actors
         except (ImportError, Exception):
-            pass
+            logger.warning("Failed to retrieve supervisor actors", exc_info=True)
         return None
 
     def update_state(self, key: str, value: Any) -> None:

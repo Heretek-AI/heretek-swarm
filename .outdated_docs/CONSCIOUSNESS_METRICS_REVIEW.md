@@ -1,4 +1,11 @@
 # CONSCIOUSNESS METRICS REVIEW
+
+---
+## ⚠️ DEPRECATED / SUPERSEDED
+See `docs/REMEDIATION_BACKLOG.md` for current status.
+*Archived: 2026-04-11*
+---
+
 ## Heretek Swarm Codebase - Comprehensive Analysis
 
 **Review Date:** April 10, 2026  

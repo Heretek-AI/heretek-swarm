@@ -471,8 +471,8 @@ Respond in JSON format:
                             blind_spots=data.get("blind_spots", []),
                             confidence=float(data.get("confidence", 0.5)),
                         )
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.debug("prism_parse_failed_line474", error=str(e))
 
             # Fallback: Generate heuristic perspective
             return self._heuristic_perspective(issue, perspective_type)
@@ -648,8 +648,8 @@ Respond in JSON format:
                                     severity=item.get("severity", "medium"),
                                     recommendation=item.get("recommendation"),
                                 ))
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.debug("prism_parse_failed_line651", error=str(e))
 
             # Fallback: Pattern-based bias detection
             biases.extend(self._heuristic_bias_detection(content))
@@ -866,8 +866,8 @@ Respond in JSON:
                     if start_idx >= 0 and end_idx > start_idx:
                         json_str = result[start_idx:end_idx]
                         return json.loads(json_str)
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.debug("prism_json_parse_failed_869", error=str(e))
 
             # Fallback
             return {
@@ -976,8 +976,8 @@ Respond in JSON:
                     end_idx = result.rfind("}") + 1
                     if start_idx >= 0 and end_idx > start_idx:
                         return json.loads(result[start_idx:end_idx])
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.debug("prism_json_parse_failed_979", error=str(e))
 
             # Fallback
             return {
@@ -1391,8 +1391,8 @@ Respond in JSON:
                     end_idx = result.rfind("]") + 1
                     if start_idx >= 0 and end_idx > start_idx:
                         return json.loads(result[start_idx:end_idx])
-                except Exception:
-                    pass
+                except Exception as e:
+                    logger.debug("prism_json_parse_failed_1394", error=str(e))
 
             # Fallback
             return [

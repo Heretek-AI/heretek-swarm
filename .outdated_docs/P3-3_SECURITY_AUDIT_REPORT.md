@@ -1,4 +1,11 @@
 # P3-3 SECURITY AUDIT REPORT (Zero-Trust)
+
+---
+## ⚠️ DEPRECATED / SUPERSEDED
+See `docs/REMEDIATION_BACKLOG.md` for current status.
+*Archived: 2026-04-11*
+---
+
 ## Heretek Swarm - Steward/Historian Agent
 **Date:** 2026-04-10  
 **Version:** 1.0  

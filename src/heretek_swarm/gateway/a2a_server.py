@@ -142,8 +142,8 @@ class A2AServer:
                     "error": "Authentication required. Provide valid auth_token."
                 })
                 await websocket.close()
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("a2a_close_failed", error=str(e))
             logger.warning("a2a_connection_rejected_no_auth", agent_id=agent_id)
             return
 
@@ -157,8 +157,8 @@ class A2AServer:
                     "error": f"Authentication failed: {error}"
                 })
                 await websocket.close()
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("a2a_close_failed", error=str(e))
             logger.warning("a2a_connection_rejected_invalid_token", agent_id=agent_id, error=error)
             return
 
@@ -171,8 +171,8 @@ class A2AServer:
                     "error": f"Agent ID mismatch. Token belongs to {valid_agent_id}"
                 })
                 await websocket.close()
-            except Exception:
-                pass
+            except Exception as e:
+                logger.debug("a2a_close_failed", error=str(e))
             logger.warning(
                 "a2a_connection_rejected_agent_mismatch",
                 requested_agent=agent_id,

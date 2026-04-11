@@ -1,6 +1,27 @@
 # Audit Findings — 2026-04-11
 
-## Overview
+## ⚠️ SUPERSEDED
+
+This file is superseded by `docs/REMEDIATION_BACKLOG.md` (v1.44.0, 2026-04-11).
+
+The comprehensive post-overnight-loop review found additional issues beyond this file's scope including:
+- ~8,000 lines of dead code in legacy `src/` directories (P0-B)
+- 12 oversized files violating the 500-line DDD limit (P1-A)
+- GAP-003 (Observability Dashboard) still unimplemented (P0-C)
+- 15+ outdated/duplicate root-level markdown files (P2-B)
+- GAP tracking accuracy concerns (P2-C)
+
+See `docs/REMEDIATION_BACKLOG.md` for the full prioritized remediation backlog.
+
+---
+
+*Supersession note added: 2026-04-11*
+
+---
+
+## Original Content
+
+
 
 **Date:** 2026-04-11  
 **Session:** Overnight Loop Phase 1 — SonarQube/Static Analysis Audit  

@@ -759,7 +759,8 @@ Return as JSON with keys: code, dependencies, purpose, complexity"""
                     logger.warning("Generated code contains dangerous patterns", code_preview=code[:100])
                     result["security_warning"] = "Generated code contains potentially dangerous patterns"
                 return result
-            except:
+            except Exception as e:
+                logger.debug("coder_json_parse_failed_762", error=str(e))
                 return {
                     "code": response,
                     "dependencies": [],
@@ -794,7 +795,8 @@ Include:
 Return only the test code."""
 
             return await self.run_with_llm(prompt=prompt, timeout=60, temperature=0.2)
-        except:
+        except Exception as e:
+            logger.debug("coder_test_gen_failed", error=str(e))
             return "# Test generation failed"
 
     async def _review_code_llm(
@@ -830,14 +832,16 @@ Return as JSON array of issues plus summary, score, recommendations."""
             import json
             try:
                 return json.loads(response)
-            except:
+            except Exception as e:
+                logger.debug("coder_review_parse_failed_833", error=str(e))
                 return {
                     "issues": [],
                     "summary": "Review completed",
                     "score": 75.0,
                     "recommendations": []
                 }
-        except:
+        except Exception as e:
+            logger.debug("coder_review_llm_failed", error=str(e))
             return {"issues": [], "summary": "Review failed", "score": 50.0, "recommendations": []}
 
     async def _debug_code_llm(
@@ -867,13 +871,15 @@ Return as JSON."""
             import json
             try:
                 return json.loads(response)
-            except:
+            except Exception as e:
+                logger.debug("coder_debug_parse_failed_870", error=str(e))
                 return {
                     "root_cause": "Unable to determine",
                     "fix": None,
                     "explanation": "Debug analysis failed"
                 }
-        except:
+        except Exception as e:
+            logger.debug("coder_debug_llm_failed", error=str(e))
             return {"root_cause": "", "fix": None, "explanation": ""}
 
     async def _generate_docs_llm(
@@ -891,7 +897,8 @@ Return as JSON."""
 Return only the documentation."""
 
             return await self.run_with_llm(prompt=prompt, timeout=60, temperature=0.2)
-        except:
+        except Exception as e:
+            logger.debug("coder_docs_gen_failed", error=str(e))
             return "# Documentation generation failed"
 
     async def _refactor_code_llm(
@@ -920,13 +927,15 @@ Return as JSON."""
             import json
             try:
                 return json.loads(response)
-            except:
+            except Exception as e:
+                logger.debug("coder_refactor_parse_failed_923", error=str(e))
                 return {
                     "code": code,
                     "improvements": [],
                     "changes": "No changes made"
                 }
-        except:
+        except Exception as e:
+            logger.debug("coder_refactor_llm_failed", error=str(e))
             return {"code": code, "improvements": [], "changes": "Refactor failed"}
 
 
@@ -1136,5 +1145,6 @@ Return as JSON."""
 Provide a clear, educational explanation."""
 
             return await self.run_with_llm(prompt=prompt, timeout=60, temperature=0.2)
-        except:
+        except Exception as e:
+            logger.debug("coder_explain_failed", error=str(e))
             return "# Explanation unavailable"

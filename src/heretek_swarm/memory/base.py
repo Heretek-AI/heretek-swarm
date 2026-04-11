@@ -13,6 +13,7 @@ import uuid
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
+from enum import StrEnum
 from typing import Any
 
 import structlog
@@ -21,6 +22,21 @@ logger = structlog.get_logger("MemorySystem")
 
 
 @dataclass
+
+
+class MemoryTier(StrEnum):
+    """Memory tier classification."""
+    EPHEMERAL = "ephemeral"   # Redis - short-term, TTL-based
+    PERSISTENT = "persistent"  # PostgreSQL/PGVector - long-term
+
+
+class MemoryType(StrEnum):
+    """Types of memory entries."""
+    EPISODIC = "episodic"      # Event-based memories
+    SEMANTIC = "semantic"      # Facts and knowledge
+    PROCEDURAL = "procedural"  # Skills and procedures
+    WORKING = "working"        # Current task context
+
 class MemoryEntry:
     """
     A single memory entry.
@@ -48,7 +64,7 @@ class MemoryEntry:
     embedding: list[float] | None = None
 
     def __post_init__(self) -> None:
-        from heretek_swarm.memory import MemoryType, MemoryTier
+        # types are defined in this module
         if self.memory_type is None:
             self.memory_type = MemoryType.EPISODIC
         if self.tier is None:

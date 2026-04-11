@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-11T17:56:53.274375+00:00",
-  "overall_score": 0.9900380128457202,
+  "timestamp": "2026-04-11T19:20:14.702983+00:00",
+  "overall_score": 0.9869332287991637,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -982,9 +982,9 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 122,
-      "findings_count": 122,
-      "warning_count": 16,
+      "total_entities_checked": 218,
+      "findings_count": 218,
+      "warning_count": 14,
       "score": 0.0,
       "finding_groups": [
         {
@@ -1357,220 +1357,164 @@
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] \"List\" is not accessed",
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
               "file_path": "src/heretek_swarm/api/consciousness.py",
-              "line_start": 19,
-              "line_end": 19,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"AgentAgencyMetrics\" is not accessed",
-              "file_path": "src/heretek_swarm/api/consciousness.py",
-              "line_start": 32,
-              "line_end": 32,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"create_decision_point\" is not accessed",
-              "file_path": "src/heretek_swarm/api/consciousness.py",
-              "line_start": 36,
-              "line_end": 36,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"create_resource_control\" is not accessed",
-              "file_path": "src/heretek_swarm/api/consciousness.py",
-              "line_start": 37,
-              "line_end": 37,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"AgencyMetricsSnapshot\" is not accessed",
-              "file_path": "src/heretek_swarm/api/consciousness.py",
-              "line_start": 41,
-              "line_end": 41,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"AgencyThresholds\" is not accessed",
-              "file_path": "src/heretek_swarm/api/consciousness.py",
-              "line_start": 42,
-              "line_end": 42,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"AgencyEvolutionData\" is not accessed",
-              "file_path": "src/heretek_swarm/api/consciousness.py",
-              "line_start": 43,
-              "line_end": 43,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"AgencyHealthStatus\" is not accessed",
-              "file_path": "src/heretek_swarm/api/consciousness.py",
-              "line_start": 44,
-              "line_end": 44,
+              "line_start": 71,
+              "line_end": 71,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"authenticated\" is not accessed",
               "file_path": "src/heretek_swarm/api/consciousness.py",
-              "line_start": 78,
-              "line_end": 78,
+              "line_start": 110,
+              "line_end": 110,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"authenticated\" is not accessed",
               "file_path": "src/heretek_swarm/api/consciousness.py",
-              "line_start": 117,
-              "line_end": 117,
+              "line_start": 143,
+              "line_end": 143,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"authenticated\" is not accessed",
               "file_path": "src/heretek_swarm/api/consciousness.py",
-              "line_start": 150,
-              "line_end": 150,
+              "line_start": 180,
+              "line_end": 180,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"authenticated\" is not accessed",
               "file_path": "src/heretek_swarm/api/consciousness.py",
-              "line_start": 187,
-              "line_end": 187,
+              "line_start": 199,
+              "line_end": 199,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"authenticated\" is not accessed",
               "file_path": "src/heretek_swarm/api/consciousness.py",
-              "line_start": 206,
-              "line_end": 206,
+              "line_start": 230,
+              "line_end": 230,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"authenticated\" is not accessed",
               "file_path": "src/heretek_swarm/api/consciousness.py",
-              "line_start": 237,
-              "line_end": 237,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
-              "file_path": "src/heretek_swarm/api/consciousness.py",
-              "line_start": 258,
-              "line_end": 258,
+              "line_start": 251,
+              "line_end": 251,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"calculator\" is not accessed",
               "file_path": "src/heretek_swarm/api/consciousness.py",
-              "line_start": 274,
-              "line_end": 274,
+              "line_start": 267,
+              "line_end": 267,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"authenticated\" is not accessed",
               "file_path": "src/heretek_swarm/api/consciousness.py",
-              "line_start": 338,
-              "line_end": 338,
+              "line_start": 331,
+              "line_end": 331,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"authenticated\" is not accessed",
               "file_path": "src/heretek_swarm/api/consciousness.py",
-              "line_start": 375,
-              "line_end": 375,
+              "line_start": 368,
+              "line_end": 368,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"authenticated\" is not accessed",
               "file_path": "src/heretek_swarm/api/consciousness.py",
-              "line_start": 404,
-              "line_end": 404,
+              "line_start": 397,
+              "line_end": 397,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"authenticated\" is not accessed",
               "file_path": "src/heretek_swarm/api/consciousness.py",
-              "line_start": 426,
-              "line_end": 426,
+              "line_start": 419,
+              "line_end": 419,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"authenticated\" is not accessed",
               "file_path": "src/heretek_swarm/api/consciousness.py",
-              "line_start": 453,
-              "line_end": 453,
+              "line_start": 446,
+              "line_end": 446,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"authenticated\" is not accessed",
               "file_path": "src/heretek_swarm/api/consciousness.py",
-              "line_start": 483,
-              "line_end": 483,
+              "line_start": 476,
+              "line_end": 476,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"authenticated\" is not accessed",
               "file_path": "src/heretek_swarm/api/consciousness.py",
-              "line_start": 516,
-              "line_end": 516,
+              "line_start": 509,
+              "line_end": 509,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"authenticated\" is not accessed",
               "file_path": "src/heretek_swarm/api/consciousness.py",
-              "line_start": 537,
-              "line_end": 537,
+              "line_start": 530,
+              "line_end": 530,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"authenticated\" is not accessed",
               "file_path": "src/heretek_swarm/api/consciousness.py",
-              "line_start": 566,
-              "line_end": 566,
+              "line_start": 559,
+              "line_end": 559,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"authenticated\" is not accessed",
               "file_path": "src/heretek_swarm/api/consciousness.py",
-              "line_start": 600,
-              "line_end": 600,
+              "line_start": 593,
+              "line_end": 593,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"authenticated\" is not accessed",
               "file_path": "src/heretek_swarm/api/consciousness.py",
-              "line_start": 627,
-              "line_end": 627,
+              "line_start": 620,
+              "line_end": 620,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"authenticated\" is not accessed",
               "file_path": "src/heretek_swarm/api/consciousness.py",
-              "line_start": 654,
-              "line_end": 654,
+              "line_start": 647,
+              "line_end": 647,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"authenticated\" is not accessed",
               "file_path": "src/heretek_swarm/api/consciousness.py",
-              "line_start": 680,
-              "line_end": 680,
+              "line_start": 673,
+              "line_end": 673,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"authenticated\" is not accessed",
               "file_path": "src/heretek_swarm/api/consciousness.py",
-              "line_start": 702,
-              "line_end": 702,
+              "line_start": 695,
+              "line_end": 695,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"authenticated\" is not accessed",
               "file_path": "src/heretek_swarm/api/consciousness.py",
-              "line_start": 747,
-              "line_end": 747,
+              "line_start": 740,
+              "line_end": 740,
               "metric_value": 0.0
             },
             {
@@ -1623,31 +1567,17 @@
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] \"abstractmethod\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/base.py",
-              "line_start": 14,
-              "line_end": 14,
-              "metric_value": 0.0
-            },
-            {
               "entity_name": "[unused_variable] \"get_db_pool\" is not accessed",
               "file_path": "src/heretek_swarm/actors/base.py",
-              "line_start": 26,
-              "line_end": 26,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] \"_time\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/base.py",
-              "line_start": 889,
-              "line_end": 889,
+              "line_start": 25,
+              "line_end": 25,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"protocol\" is not accessed",
               "file_path": "src/heretek_swarm/actors/base.py",
-              "line_start": 1402,
-              "line_end": 1402,
+              "line_start": 1400,
+              "line_end": 1400,
               "metric_value": 0.0
             },
             {
@@ -1695,15 +1625,15 @@
             {
               "entity_name": "[unused_variable] \"ttl\" is not accessed",
               "file_path": "src/heretek_swarm/memory/base.py",
-              "line_start": 439,
-              "line_end": 439,
+              "line_start": 455,
+              "line_end": 455,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"data\" is not accessed",
               "file_path": "src/heretek_swarm/memory/tiering.py",
-              "line_start": 641,
-              "line_end": 641,
+              "line_start": 643,
+              "line_end": 643,
               "metric_value": 0.0
             },
             {
@@ -1711,6 +1641,748 @@
               "file_path": "src/heretek_swarm/plugins/consciousness_enhanced.py",
               "line_start": 499,
               "line_end": 499,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"source_agent\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/empath.py",
+              "line_start": 292,
+              "line_end": 292,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"request_content\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/habit_forge.py",
+              "line_start": 846,
+              "line_end": 846,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"observation\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/habit_forge.py",
+              "line_start": 1213,
+              "line_end": 1213,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"websocket\" is not accessed",
+              "file_path": "src/heretek_swarm/api/websockets.py",
+              "line_start": 116,
+              "line_end": 116,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_user_id\" is not accessed",
+              "file_path": "src/heretek_swarm/api/websockets.py",
+              "line_start": 378,
+              "line_end": 378,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_message\" is not accessed",
+              "file_path": "src/heretek_swarm/api/websockets.py",
+              "line_start": 420,
+              "line_end": 420,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_user_id\" is not accessed",
+              "file_path": "src/heretek_swarm/api/websockets.py",
+              "line_start": 501,
+              "line_end": 501,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_user_id\" is not accessed",
+              "file_path": "src/heretek_swarm/api/websockets.py",
+              "line_start": 594,
+              "line_end": 594,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_message\" is not accessed",
+              "file_path": "src/heretek_swarm/api/websockets.py",
+              "line_start": 618,
+              "line_end": 618,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_user_id\" is not accessed",
+              "file_path": "src/heretek_swarm/api/websockets.py",
+              "line_start": 672,
+              "line_end": 672,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_message\" is not accessed",
+              "file_path": "src/heretek_swarm/api/websockets.py",
+              "line_start": 695,
+              "line_end": 695,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_user_id\" is not accessed",
+              "file_path": "src/heretek_swarm/api/websockets.py",
+              "line_start": 772,
+              "line_end": 772,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_message\" is not accessed",
+              "file_path": "src/heretek_swarm/api/websockets.py",
+              "line_start": 795,
+              "line_end": 795,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_user_id\" is not accessed",
+              "file_path": "src/heretek_swarm/api/websockets.py",
+              "line_start": 868,
+              "line_end": 868,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_message\" is not accessed",
+              "file_path": "src/heretek_swarm/api/websockets.py",
+              "line_start": 891,
+              "line_end": 891,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_user_id\" is not accessed",
+              "file_path": "src/heretek_swarm/api/websockets.py",
+              "line_start": 955,
+              "line_end": 955,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_message\" is not accessed",
+              "file_path": "src/heretek_swarm/api/websockets.py",
+              "line_start": 986,
+              "line_end": 986,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_user_id\" is not accessed",
+              "file_path": "src/heretek_swarm/api/websockets.py",
+              "line_start": 1052,
+              "line_end": 1052,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_message\" is not accessed",
+              "file_path": "src/heretek_swarm/api/websockets.py",
+              "line_start": 1076,
+              "line_end": 1076,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_user_id\" is not accessed",
+              "file_path": "src/heretek_swarm/api/websockets.py",
+              "line_start": 1127,
+              "line_end": 1127,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_all_agent_listeners\" is not accessed",
+              "file_path": "src/heretek_swarm/api/websockets.py",
+              "line_start": 1146,
+              "line_end": 1146,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_message\" is not accessed",
+              "file_path": "src/heretek_swarm/api/websockets.py",
+              "line_start": 1152,
+              "line_end": 1152,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"context\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/dreamer.py",
+              "line_start": 716,
+              "line_end": 716,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"context\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/dreamer.py",
+              "line_start": 745,
+              "line_end": 745,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"context\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/dreamer.py",
+              "line_start": 775,
+              "line_end": 775,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"context\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/dreamer.py",
+              "line_start": 794,
+              "line_end": 794,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"target_type\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/examiner.py",
+              "line_start": 806,
+              "line_end": 806,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"target\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/examiner.py",
+              "line_start": 831,
+              "line_end": 831,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"target\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/examiner.py",
+              "line_start": 836,
+              "line_end": 836,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"target\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/examiner.py",
+              "line_start": 841,
+              "line_end": 841,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"target\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/examiner.py",
+              "line_start": 846,
+              "line_end": 846,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"image_data\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/perceiver.py",
+              "line_start": 506,
+              "line_end": 506,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"input_data\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/perceiver.py",
+              "line_start": 619,
+              "line_end": 619,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"issue\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/prism.py",
+              "line_start": 486,
+              "line_end": 486,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"ProfilingConfig\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents_management.py",
+              "line_start": 58,
+              "line_end": 58,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents_management.py",
+              "line_start": 88,
+              "line_end": 88,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents_management.py",
+              "line_start": 126,
+              "line_end": 126,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents_management.py",
+              "line_start": 161,
+              "line_end": 161,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents_management.py",
+              "line_start": 208,
+              "line_end": 208,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents_management.py",
+              "line_start": 246,
+              "line_end": 246,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents_management.py",
+              "line_start": 280,
+              "line_end": 280,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents_management.py",
+              "line_start": 314,
+              "line_end": 314,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents_management.py",
+              "line_start": 348,
+              "line_end": 348,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents_management.py",
+              "line_start": 388,
+              "line_end": 388,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents_management.py",
+              "line_start": 428,
+              "line_end": 428,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents_management.py",
+              "line_start": 464,
+              "line_end": 464,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents_management.py",
+              "line_start": 511,
+              "line_end": 511,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents_management.py",
+              "line_start": 570,
+              "line_end": 570,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents_management.py",
+              "line_start": 643,
+              "line_end": 643,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents_management.py",
+              "line_start": 693,
+              "line_end": 693,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents_management.py",
+              "line_start": 745,
+              "line_end": 745,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents_management.py",
+              "line_start": 840,
+              "line_end": 840,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents_management.py",
+              "line_start": 869,
+              "line_end": 869,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents_management.py",
+              "line_start": 905,
+              "line_end": 905,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents_management.py",
+              "line_start": 976,
+              "line_end": 976,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents_management.py",
+              "line_start": 1039,
+              "line_end": 1039,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents_management.py",
+              "line_start": 1062,
+              "line_end": 1062,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents_management.py",
+              "line_start": 1075,
+              "line_end": 1075,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents_management.py",
+              "line_start": 1087,
+              "line_end": 1087,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents_management.py",
+              "line_start": 1108,
+              "line_end": 1108,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents_management.py",
+              "line_start": 1230,
+              "line_end": 1230,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents_management.py",
+              "line_start": 1281,
+              "line_end": 1281,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents_management.py",
+              "line_start": 1330,
+              "line_end": 1330,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents_management.py",
+              "line_start": 1372,
+              "line_end": 1372,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents_management.py",
+              "line_start": 1429,
+              "line_end": 1429,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents_management.py",
+              "line_start": 1453,
+              "line_end": 1453,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents_management.py",
+              "line_start": 1502,
+              "line_end": 1502,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents_management.py",
+              "line_start": 1602,
+              "line_end": 1602,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents_management.py",
+              "line_start": 1644,
+              "line_end": 1644,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents_management.py",
+              "line_start": 1685,
+              "line_end": 1685,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents_management.py",
+              "line_start": 1742,
+              "line_end": 1742,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents_management.py",
+              "line_start": 1776,
+              "line_end": 1776,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents_management.py",
+              "line_start": 1811,
+              "line_end": 1811,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"create_defaults\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents_management.py",
+              "line_start": 1831,
+              "line_end": 1831,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents_management.py",
+              "line_start": 1833,
+              "line_end": 1833,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"app\" is not accessed",
+              "file_path": "src/heretek_swarm/api/main.py",
+              "line_start": 85,
+              "line_end": 85,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/main.py",
+              "line_start": 396,
+              "line_end": 396,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/main.py",
+              "line_start": 421,
+              "line_end": 421,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/main.py",
+              "line_start": 453,
+              "line_end": 453,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/main.py",
+              "line_start": 481,
+              "line_end": 481,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/main.py",
+              "line_start": 510,
+              "line_end": 510,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/main.py",
+              "line_start": 528,
+              "line_end": 528,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/main.py",
+              "line_start": 595,
+              "line_end": 595,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/main.py",
+              "line_start": 639,
+              "line_end": 639,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/main.py",
+              "line_start": 660,
+              "line_end": 660,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/main.py",
+              "line_start": 703,
+              "line_end": 703,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/main.py",
+              "line_start": 740,
+              "line_end": 740,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"data\" is not accessed",
+              "file_path": "src/heretek_swarm/gateway/a2a_server.py",
+              "line_start": 260,
+              "line_end": 260,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"data\" is not accessed",
+              "file_path": "src/heretek_swarm/gateway/a2a_server.py",
+              "line_start": 265,
+              "line_end": 265,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_client_id\" is not accessed",
+              "file_path": "src/heretek_swarm/gateway/event_mesh.py",
+              "line_start": 319,
+              "line_end": 319,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"request\" is not accessed",
+              "file_path": "src/heretek_swarm/llm/model_garage.py",
+              "line_start": 454,
+              "line_end": 454,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"request\" is not accessed",
+              "file_path": "src/heretek_swarm/llm/model_garage.py",
+              "line_start": 510,
+              "line_end": 510,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"request\" is not accessed",
+              "file_path": "src/heretek_swarm/llm/model_garage.py",
+              "line_start": 553,
+              "line_end": 553,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"uuid\" is not accessed",
+              "file_path": "src/heretek_swarm/observability/__init__.py",
+              "line_start": 26,
+              "line_end": 26,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"field\" is not accessed",
+              "file_path": "src/heretek_swarm/observability/__init__.py",
+              "line_start": 27,
+              "line_end": 27,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"timezone\" is not accessed",
+              "file_path": "src/heretek_swarm/observability/__init__.py",
+              "line_start": 28,
+              "line_end": 28,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"Enum\" is not accessed",
+              "file_path": "src/heretek_swarm/observability/__init__.py",
+              "line_start": 29,
+              "line_end": 29,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"Dict\" is not accessed",
+              "file_path": "src/heretek_swarm/observability/__init__.py",
+              "line_start": 31,
+              "line_end": 31,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"CollectorRegistry\" is not accessed",
+              "file_path": "src/heretek_swarm/observability/__init__.py",
+              "line_start": 34,
+              "line_end": 34,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"get_tracer\" is not accessed",
+              "file_path": "src/heretek_swarm/observability/__init__.py",
+              "line_start": 37,
+              "line_end": 37,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"agent_id\" is not accessed",
+              "file_path": "src/heretek_swarm/observability/prometheus_metrics.py",
+              "line_start": 208,
+              "line_end": 208,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"agent_id\" is not accessed",
+              "file_path": "src/heretek_swarm/observability/prometheus_metrics.py",
+              "line_start": 212,
+              "line_end": 212,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"agent_type\" is not accessed",
+              "file_path": "src/heretek_swarm/observability/prometheus_metrics.py",
+              "line_start": 225,
+              "line_end": 225,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"agent_type\" is not accessed",
+              "file_path": "src/heretek_swarm/observability/prometheus_metrics.py",
+              "line_start": 233,
+              "line_end": 233,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"resource\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/arbiter.py",
+              "line_start": 1358,
+              "line_end": 1358,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"priority_override\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/arbiter.py",
+              "line_start": 1387,
+              "line_end": 1387,
               "metric_value": 0.0
             }
           ]
@@ -1739,6 +2411,20 @@
               "file_path": "src/heretek_swarm/consciousness/iit_phi.py",
               "line_start": 366,
               "line_end": 372,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unreachable_code] Type analysis indicates code is unreachable",
+              "file_path": "src/heretek_swarm/actors/perceiver.py",
+              "line_start": 417,
+              "line_end": 417,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unreachable_code] Type analysis indicates code is unreachable",
+              "file_path": "src/heretek_swarm/actors/perceiver.py",
+              "line_start": 595,
+              "line_end": 595,
               "metric_value": 0.0
             }
           ]
@@ -1784,80 +2470,66 @@
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_import] Import \"List\" is not accessed",
-              "file_path": "src/heretek_swarm/api/consciousness.py",
-              "line_start": 19,
-              "line_end": 19,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_import] Import \"AgentAgencyMetrics\" is not accessed",
-              "file_path": "src/heretek_swarm/api/consciousness.py",
-              "line_start": 32,
-              "line_end": 32,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_import] Import \"create_decision_point\" is not accessed",
-              "file_path": "src/heretek_swarm/api/consciousness.py",
-              "line_start": 36,
-              "line_end": 36,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_import] Import \"create_resource_control\" is not accessed",
-              "file_path": "src/heretek_swarm/api/consciousness.py",
-              "line_start": 37,
-              "line_end": 37,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_import] Import \"AgencyMetricsSnapshot\" is not accessed",
-              "file_path": "src/heretek_swarm/api/consciousness.py",
-              "line_start": 41,
-              "line_end": 41,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_import] Import \"AgencyThresholds\" is not accessed",
-              "file_path": "src/heretek_swarm/api/consciousness.py",
-              "line_start": 42,
-              "line_end": 42,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_import] Import \"AgencyEvolutionData\" is not accessed",
-              "file_path": "src/heretek_swarm/api/consciousness.py",
-              "line_start": 43,
-              "line_end": 43,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_import] Import \"AgencyHealthStatus\" is not accessed",
-              "file_path": "src/heretek_swarm/api/consciousness.py",
-              "line_start": 44,
-              "line_end": 44,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_import] Import \"abstractmethod\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/base.py",
-              "line_start": 14,
-              "line_end": 14,
-              "metric_value": 0.0
-            },
-            {
               "entity_name": "[unused_import] Import \"get_db_pool\" is not accessed",
               "file_path": "src/heretek_swarm/actors/base.py",
+              "line_start": 25,
+              "line_end": 25,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"ProfilingConfig\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents_management.py",
+              "line_start": 58,
+              "line_end": 58,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"uuid\" is not accessed",
+              "file_path": "src/heretek_swarm/observability/__init__.py",
               "line_start": 26,
               "line_end": 26,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_import] Import \"_time\" is not accessed",
-              "file_path": "src/heretek_swarm/actors/base.py",
-              "line_start": 889,
-              "line_end": 889,
+              "entity_name": "[unused_import] Import \"field\" is not accessed",
+              "file_path": "src/heretek_swarm/observability/__init__.py",
+              "line_start": 27,
+              "line_end": 27,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"timezone\" is not accessed",
+              "file_path": "src/heretek_swarm/observability/__init__.py",
+              "line_start": 28,
+              "line_end": 28,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"Enum\" is not accessed",
+              "file_path": "src/heretek_swarm/observability/__init__.py",
+              "line_start": 29,
+              "line_end": 29,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"Dict\" is not accessed",
+              "file_path": "src/heretek_swarm/observability/__init__.py",
+              "line_start": 31,
+              "line_end": 31,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"CollectorRegistry\" is not accessed",
+              "file_path": "src/heretek_swarm/observability/__init__.py",
+              "line_start": 34,
+              "line_end": 34,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"get_tracer\" is not accessed",
+              "file_path": "src/heretek_swarm/observability/__init__.py",
+              "line_start": 37,
+              "line_end": 37,
               "metric_value": 0.0
             }
           ]
@@ -2251,15 +2923,15 @@
   "file_summaries": [
     {
       "file_path": "src/heretek_swarm/actors/base.py",
-      "total_findings": 14,
-      "warning_findings": 10,
-      "composite_risk_score": 100.0
+      "total_findings": 10,
+      "warning_findings": 8,
+      "composite_risk_score": 90.0
     },
     {
-      "file_path": "src/heretek_swarm/api/consciousness.py",
-      "total_findings": 40,
-      "warning_findings": 9,
-      "composite_risk_score": 95.0
+      "file_path": "src/heretek_swarm/observability/__init__.py",
+      "total_findings": 14,
+      "warning_findings": 7,
+      "composite_risk_score": 85.0
     },
     {
       "file_path": "src/heretek_swarm/memory/access_patterns.py",
@@ -2280,6 +2952,12 @@
       "composite_risk_score": 75.0
     },
     {
+      "file_path": "src/heretek_swarm/actors/arbiter.py",
+      "total_findings": 5,
+      "warning_findings": 3,
+      "composite_risk_score": 65.0
+    },
+    {
       "file_path": "src/heretek_swarm/consciousness/fep_active_inference.py",
       "total_findings": 8,
       "warning_findings": 3,
@@ -2292,14 +2970,50 @@
       "composite_risk_score": 60.0
     },
     {
+      "file_path": "src/heretek_swarm/api/agents_management.py",
+      "total_findings": 43,
+      "warning_findings": 2,
+      "composite_risk_score": 60.0
+    },
+    {
       "file_path": "src/heretek_swarm/memory/tiering.py",
       "total_findings": 4,
       "warning_findings": 3,
       "composite_risk_score": 55.0
     },
     {
+      "file_path": "src/heretek_swarm/api/main.py",
+      "total_findings": 13,
+      "warning_findings": 1,
+      "composite_risk_score": 55.0
+    },
+    {
       "file_path": "src/heretek_swarm/api/configuration.py",
       "total_findings": 13,
+      "warning_findings": 1,
+      "composite_risk_score": 55.0
+    },
+    {
+      "file_path": "src/heretek_swarm/api/consciousness.py",
+      "total_findings": 24,
+      "warning_findings": 1,
+      "composite_risk_score": 55.0
+    },
+    {
+      "file_path": "src/heretek_swarm/actors/perceiver.py",
+      "total_findings": 5,
+      "warning_findings": 1,
+      "composite_risk_score": 55.0
+    },
+    {
+      "file_path": "src/heretek_swarm/actors/examiner.py",
+      "total_findings": 6,
+      "warning_findings": 1,
+      "composite_risk_score": 55.0
+    },
+    {
+      "file_path": "src/heretek_swarm/actors/dreamer.py",
+      "total_findings": 5,
       "warning_findings": 1,
       "composite_risk_score": 55.0
     },
@@ -2326,48 +3040,6 @@
       "total_findings": 5,
       "warning_findings": 0,
       "composite_risk_score": 50.0
-    },
-    {
-      "file_path": "src/heretek_swarm/orchestration/heavyswarm.py",
-      "total_findings": 3,
-      "warning_findings": 3,
-      "composite_risk_score": 45.0
-    },
-    {
-      "file_path": "src/heretek_swarm/actors/arbiter.py",
-      "total_findings": 3,
-      "warning_findings": 3,
-      "composite_risk_score": 45.0
-    },
-    {
-      "file_path": "serverless/handler.py",
-      "total_findings": 3,
-      "warning_findings": 3,
-      "composite_risk_score": 45.0
-    },
-    {
-      "file_path": "src/heretek_swarm/actors/nexus.py",
-      "total_findings": 3,
-      "warning_findings": 3,
-      "composite_risk_score": 45.0
-    },
-    {
-      "file_path": "src/heretek_swarm/actors/catalyst.py",
-      "total_findings": 3,
-      "warning_findings": 3,
-      "composite_risk_score": 45.0
-    },
-    {
-      "file_path": "src/heretek_swarm/actors/chronos.py",
-      "total_findings": 3,
-      "warning_findings": 3,
-      "composite_risk_score": 45.0
-    },
-    {
-      "file_path": "src/heretek_swarm/collective/emergent_detection.py",
-      "total_findings": 4,
-      "warning_findings": 1,
-      "composite_risk_score": 45.0
     }
   ]
 }

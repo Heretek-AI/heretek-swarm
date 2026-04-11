@@ -240,7 +240,8 @@ class LLMProvider(ABC):
             client = await self._get_client()
             response = await client.get("/")
             return response.status_code < 500
-        except Exception:
+        except Exception as e:
+            logger.debug("model_provider_health_check_failed", error=str(e))
             return False
 
     async def close(self) -> None:

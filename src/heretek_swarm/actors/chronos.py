@@ -257,7 +257,8 @@ class ChronosAgent(AgentActor):
             if hasattr(validated, "dict"):
                 return validated.dict()
             return validated
-        except Exception:
+        except Exception as e:
+            logger.debug("chronos_message_parse_failed", error=str(e))
             return message.content
 
     async def _run_scheduler(self) -> None:

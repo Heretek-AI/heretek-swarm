@@ -1,5 +1,12 @@
 # Agency/Autonomy Metrics - Prime Directive Compliance Matrix
 
+---
+## ⚠️ DEPRECATED / SUPERSEDED
+See `docs/REMEDIATION_BACKLOG.md` for current status.
+*Archived: 2026-04-11*
+---
+
+
 **Document Version:** 1.0  
 **Date:** 2026-04-10  
 **Author:** Heretek Swarm Collective  

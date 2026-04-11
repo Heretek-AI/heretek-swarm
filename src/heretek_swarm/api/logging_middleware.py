@@ -104,9 +104,10 @@ class LoggingMiddleware(BaseHTTPMiddleware):
 
             return response
 
-        except Exception:
+        except Exception as e:
             # Calculate duration for error case
             duration_ms = (time.perf_counter() - start_time) * 1000
+            logger.warning("api_request_error", path=request.url.path, error=str(e), exc_info=True)
 
             # Log error
             log_api_request(

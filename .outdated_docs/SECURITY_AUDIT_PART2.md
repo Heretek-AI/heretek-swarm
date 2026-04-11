@@ -1,5 +1,12 @@
 # SECURITY AUDIT - Part 2: Input Validation & Auth/Authz
 
+---
+## ⚠️ DEPRECATED / SUPERSEDED
+See `docs/REMEDIATION_BACKLOG.md` for current status.
+*Archived: 2026-04-11*
+---
+
+
 **Heretek Swarm Codebase**  
 **Audit Date:** 2026-04-10  
 **Auditor:** Security Analysis Tool  

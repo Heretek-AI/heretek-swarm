@@ -1,5 +1,12 @@
 # Heretek Swarm - Infrastructure & Integrations Report
 
+---
+## ⚠️ DEPRECATED / SUPERSEDED
+See `docs/REMEDIATION_BACKLOG.md` for current status.
+*Archived: 2026-04-11*
+---
+
+
 ## Alpha Agent Status Report
 **Date:** 2026-04-10  
 **Agent:** Alpha (Infrastructure & Integrations)  

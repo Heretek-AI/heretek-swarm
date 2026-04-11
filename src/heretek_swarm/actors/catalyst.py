@@ -227,7 +227,8 @@ class CatalystAgent(AgentActor):
             if hasattr(validated, "dict"):
                 return validated.dict()
             return validated
-        except Exception:
+        except Exception as e:
+            logger.debug("catalyst_message_parse_failed", error=str(e))
             return message.content
 
     async def _handle_propose_change(self, message: ActorMessage) -> None:
