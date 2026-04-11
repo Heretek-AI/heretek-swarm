@@ -76,7 +76,7 @@ function DecisionNode({ data, selected }: NodeProps<DecisionData>) {
         <div className="text-sm font-medium text-gray-900">
           Condition: {data.condition}
         </div>
-        {data.branches && data.branches.length > 0 && (
+        {data.branches?.length > 0 && (
           <div className="space-y-1">
             <div className="text-xs font-semibold text-gray-700">Branches:</div>
             {data.branches.map((branch, index) => (
@@ -98,7 +98,7 @@ function DecisionNode({ data, selected }: NodeProps<DecisionData>) {
       </div>
       
       {/* Source Handles (one per branch) */}
-      {data.branches && data.branches.map((branch, index) => (
+      {data.branches?.map((branch, index) => (
         <Handle
           key={branch.id}
           type="source"
