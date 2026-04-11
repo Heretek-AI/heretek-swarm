@@ -137,7 +137,7 @@ class EvaluationResult:
 
     Attributes:
         agent_id: Agent identifier
-        evaluation_id: Unique evaluation ID
+        _evaluation_id: Unique evaluation ID
         status: Evaluation status
         test_results: List of test results
         metrics: Quality metrics
@@ -148,7 +148,7 @@ class EvaluationResult:
     """
 
     agent_id: str
-    evaluation_id: str
+    _evaluation_id: str
     status: EvaluationStatus
     started_at: str
     completed_at: str | None = None
@@ -202,17 +202,17 @@ class AgentEvaluator:
             timeout: Timeout for individual test cases (seconds)
             parallel: Whether to run tests in parallel
         """
-        self.timeout = timeout
-        self.parallel = parallel
+        self._timeout = _timeout
+        self._parallel = _parallel
         self._evaluations: dict[str, EvaluationResult] = {}
 
-        logger.info(
+        _logger.info(
             "evaluator_initialized",
-            timeout=timeout,
-            parallel=parallel,
+            _timeout=timeout,
+            _parallel=parallel,
         )
 
-    async def evaluate_agent(self, _agent_id: str, _agent: Any, _test_cases: list[TestCase], _evaluation_id: str | None) -> EvaluationResult:
+    async def evaluate_agent(self, _agent_id: str, _agent: Any, _test_cases: list[TestCase], __evaluation_id: str | None) -> EvaluationResult:
         """
         Evaluate an agent against test cases.
 
@@ -220,21 +220,21 @@ class AgentEvaluator:
             agent_id: Agent identifier
             agent: Agent instance (must have execute method)
             test_cases: List of test cases
-            evaluation_id: Optional evaluation ID
+            _evaluation_id: Optional evaluation ID
 
         Returns:
             EvaluationResult with test results and metrics
         """
-        if evaluation_id is None:
-            _evaluation_id = f"eval-{datetime.now(UTC).strftime('%Y%m%d%H%M%S%f')}"
+        if _evaluation_id is None:
+            __evaluation_id = f"eval-{datetime.now(UTC).strftime('%Y%m%d%H%M%S%f')}"
 
         _started_at = datetime.now(UTC).isoformat()
         _start_time = time.time()
 
-        logger.info(
+        _logger.info(
             "evaluation_started",
             agent_id=agent_id,
-            _evaluation_id = evaluation_id,
+            __evaluation_id = _evaluation_id,
             _test_cases_count = len(test_cases),
         )
 
@@ -252,7 +252,7 @@ class AgentEvaluator:
 
         _result = EvaluationResult(
             agent_id=agent_id,
-            _evaluation_id = evaluation_id,
+            __evaluation_id = _evaluation_id,
             _status = EvaluationStatus.COMPLETED,
             _test_results = test_results,
             metrics=metrics,
@@ -261,12 +261,12 @@ class AgentEvaluator:
             _total_time = total_time,
         )
 
-        self._evaluations[evaluation_id] = result
+        self._evaluations[_evaluation_id] = result
 
-        logger.info(
+        _logger.info(
             "evaluation_completed",
             agent_id=agent_id,
-            _evaluation_id = evaluation_id,
+            __evaluation_id = _evaluation_id,
             _success_rate = metrics.success_rate,
             _total_time = total_time,
         )
@@ -298,12 +298,12 @@ class AgentEvaluator:
             if hasattr(agent, "execute"):
                 _output = await asyncio.wait_for(
                     agent.execute(test_case.input_data),
-                    timeout=self.timeout,
+                    _timeout=self.timeout,
                 )
             elif hasattr(agent, "run"):
                 _output = await asyncio.wait_for(
                     agent.run(test_case.input_data),
-                    timeout=self.timeout,
+                    _timeout=self.timeout,
                 )
             else:
                 raise AttributeError(
@@ -337,10 +337,10 @@ class AgentEvaluator:
 
         except TimeoutError:
             execution_time = time.time() - start_time
-            logger.warning(
+            _logger.warning(
                 "test_case_timeout",
                 _test_case_id = test_case.id,
-                timeout=self.timeout,
+                _timeout=self.timeout,
             )
             return TestResult(
                 _test_case_id = test_case.id,
@@ -352,7 +352,7 @@ class AgentEvaluator:
 
         except Exception as e:
             execution_time = time.time() - start_time
-            logger.error(
+            _logger.error(
                 "test_case_failed",
                 _test_case_id = test_case.id,
                 _error = str(e),
@@ -428,9 +428,9 @@ class AgentEvaluator:
             _output_quality = output_quality,
         )
 
-    def get_evaluation(self, _evaluation_id: str) -> EvaluationResult | None:
+    def get_evaluation(self, __evaluation_id: str) -> EvaluationResult | None:
         """Get evaluation result by ID."""
-        return self._evaluations.get(evaluation_id)
+        return self._evaluations.get(_evaluation_id)
 
     def list_evaluations(self, _agent_id: str | None) -> list[EvaluationResult]:
         """List all evaluations, optionally filtered by agent."""
@@ -470,5 +470,5 @@ def get_evaluator() -> AgentEvaluator:
     global _evaluator_instance
     if _evaluator_instance is None:
         _evaluator_instance = AgentEvaluator()
-        logger.info("evaluator_singleton_created")
+        _logger.info("evaluator_singleton_created")
     return _evaluator_instance
