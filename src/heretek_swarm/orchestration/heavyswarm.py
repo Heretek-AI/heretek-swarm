@@ -17,28 +17,19 @@ from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Callable, Dict, List, Optional
 
-from .phase_handlers import (
-    PhaseHandler,
-    PhaseHandlerRegistry,
-    ResearchPhaseHandler,
-    AnalysisPhaseHandler,
-    AlternativesPhaseHandler,
-    VerificationPhaseHandler,
-    DecisionPhaseHandler,
-)
-
 import structlog
 
 from heretek_swarm.actors.base import AgentActor
-from heretek_swarm.consensus.maker import MAKERConsensus, ConsensusResult
+from heretek_swarm.consensus.maker import ConsensusResult, MAKERConsensus
 
 from .phase_handlers import (
+    AlternativesPhaseHandler,
+    AnalysisPhaseHandler,
+    DecisionPhaseHandler,
+    PhaseHandler,
     PhaseHandlerRegistry,
     ResearchPhaseHandler,
-    AnalysisPhaseHandler,
-    AlternativesPhaseHandler,
     VerificationPhaseHandler,
-    DecisionPhaseHandler,
 )
 
 _logger = structlog.get_logger("HeavySwarmWorkflow")
@@ -186,7 +177,7 @@ class HeavySwarmWorkflow:
         """Get or create a phase handler for the given phase"""
         if not self.agents:
             return None
-        
+
         if phase == WorkflowPhase.RESEARCH:
             return ResearchPhaseHandler(self.historian, self.agents)
         elif phase == WorkflowPhase.ANALYSIS:

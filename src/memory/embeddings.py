@@ -21,24 +21,24 @@ _logger = structlog.get_logger()
 
 class EmbeddingConfig(BaseModel):
     """Configuration for embedding service"""
-    
+
     # LiteLLM configuration
     litellm_base_url: str = Field(default="http://localhost:4000")
     api_key: Optional[str] = Field(None)
-    
+
     # Model settings
     default_model: str = Field(default="text-embedding-3-small")
     dimensions: int = Field(default=1536)
-    
+
     # Performance
     batch_size: int = Field(default=32, description="Max items per batch")
     max_concurrent_batches: int = Field(default=5)
     timeout_seconds: float = Field(default=30.0)
-    
+
     # Caching
     cache_ttl_seconds: int = Field(default=3600 * 24, description="24 hour TTL")
     cache_max_size: int = Field(default=10000)
-    
+
     # Retry
     max_retries: int = Field(default=3)
     retry_delay_seconds: float = Field(default=0.5)
@@ -46,56 +46,56 @@ class EmbeddingConfig(BaseModel):
 
 class EmbeddingCache:
     """Simple in-memory LRU cache for embeddings"""
-    
+
     def __init__(self, _max_size: int, _ttl_seconds: int):
         self.max_size = max_size
         self.ttl_seconds = ttl_seconds
         self._cache: Dict[str, Tuple[EmbeddingVector, datetime]] = {}
         self._access_order: List[str] = []
-    
+
     def _hash_text(self, _text: str, _model: str) -> str:
         """Generate cache key"""
         _content = f"{model}:{text}"
         return hashlib.sha256(content.encode()).hexdigest()
-    
+
     def get(self, _text: str, _model: str) -> Optional[EmbeddingVector]:
         """Get cached embedding if exists and not expired"""
         _key = self._hash_text(text, model)
-        
+
         if key not in self._cache:
             return None
-        
+
         embedding, created_at = self._cache[key]
-        
+
         # Check TTL
         if datetime.now(timezone.utc) - created_at > timedelta(seconds=self.ttl_seconds):
             del self._cache[key]
             self._access_order.remove(key)
             return None
-        
+
         # Update access order
         self._access_order.remove(key)
         self._access_order.append(key)
-        
+
         return embedding
-    
+
     def set(self, _text: str, _model: str, _embedding: EmbeddingVector) -> None:
         """Cache an embedding"""
         _key = self._hash_text(text, model)
-        
+
         # Evict oldest if at capacity
         while len(self._cache) >= self.max_size and self._access_order:
             _oldest_key = self._access_order.pop(0)
             del self._cache[oldest_key]
-        
+
         self._cache[key] = (embedding, datetime.now(timezone.utc))
         self._access_order.append(key)
-    
+
     def clear(self) -> None:
         """Clear the cache"""
         self._cache.clear()
         self._access_order.clear()
-    
+
     def size(self) -> int:
         """Get current cache size"""
         return len(self._cache)
@@ -111,7 +111,7 @@ class EmbeddingService:
     - Automatic retries
     - Performance monitoring
     """
-    
+
     def __init__(self, _config: Optional[EmbeddingConfig]):
         self.config = config or EmbeddingConfig()
         self.cache = EmbeddingCache(
@@ -120,40 +120,40 @@ class EmbeddingService:
         )
         self._session: Optional[aiohttp.ClientSession] = None
         self._semaphore = asyncio.Semaphore(self.config.max_concurrent_batches)
-        
+
         # Metrics
         self._total_requests = 0
         self._cache_hits = 0
         self._total_time_ms = 0.0
         self._errors = 0
-    
+
     async def _get_session(self) -> aiohttp.ClientSession:
         """Get or create HTTP session"""
         if self._session is None or self._session.closed:
             _timeout = aiohttp.ClientTimeout(total=self.config.timeout_seconds)
             _headers = {"Content-Type": "application/json"}
-            
+
             if self.config.api_key:
                 headers["Authorization"] = f"Bearer {self.config.api_key}"
-            
+
             self._session = aiohttp.ClientSession(
                 _base_url = self.config.litellm_base_url,
                 _headers = headers,
                 _timeout = timeout
             )
-        
+
         return self._session
-    
+
     async def close(self) -> None:
         """Close the HTTP session"""
         if self._session and not self._session.closed:
             await self._session.close()
-    
+
     async def embed_single(self, _text: str, _model: Optional[str]) -> EmbeddingVector:
         """Generate embedding for a single text"""
         _results = await self.embed_batch([text], model)
         return results[0]
-    
+
     async def embed_batch(self, _texts: List[str], _model: Optional[str]) -> List[EmbeddingVector]:
         """
         Generate embeddings for multiple texts.
@@ -162,11 +162,11 @@ class EmbeddingService:
         """
         if not texts:
             return []
-        
+
         _model = model or self.config.default_model
         results: List[Optional[EmbeddingVector]] = [None] * len(texts)
         to_fetch: List[Tuple[int, str]] = []
-        
+
         # Check cache first
         for i, text in enumerate(texts):
             _cached = self.cache.get(text, model)
@@ -175,7 +175,7 @@ class EmbeddingService:
                 self._cache_hits += 1
             else:
                 to_fetch.append((i, text))
-        
+
         # Fetch uncached embeddings in batches
         if to_fetch:
             # Split into API batches
@@ -183,19 +183,19 @@ class EmbeddingService:
                 to_fetch[i:i + self.config.batch_size]
                 for i in range(0, len(to_fetch), self.config.batch_size)
             ]
-            
+
             # Process batches concurrently (with semaphore)
             _tasks = [
                 self._fetch_batch(batch, model)
                 for batch in batches
             ]
-            
+
             _batch_results = await asyncio.gather(*tasks, return_exceptions=True)
-            
+
             # Collect results
             for batch_idx, batch_result in enumerate(batch_results):
                 _batch = batches[batch_idx]
-                
+
                 if isinstance(batch_result, Exception):
                     logger.error(
                         "embedding_batch_failed",
@@ -220,33 +220,33 @@ class EmbeddingService:
                     for (idx, text), embedding in zip(batch, batch_result):
                         results[idx] = embedding
                         self.cache.set(text, model, embedding)
-        
+
         self._total_requests += len(texts)
-        
+
         # Filter out any remaining Nones
         return [r for r in results if r is not None]
-    
-    async def _fetch_batch(self, _batch: List[Tuple[int, _str]], _model: str) -> List[EmbeddingVector]:
+
+    async def _fetch_batch(self, _batch: List[Tuple[int, str]], _model: str) -> List[EmbeddingVector]:
         """Fetch embeddings for a batch from LiteLLM"""
         async with self._semaphore:
             _start_time = datetime.now(timezone.utc)
-            
+
             _texts = [text for _, text in batch]
-            
+
             for attempt in range(self.config.max_retries):
                 try:
                     _session = await self._get_session()
-                    
+
                     _payload = {
                         "model": model,
                         "input": texts,
                         "dimensions": self.config.dimensions
                     }
-                    
+
                     async with session.post("/v1/embeddings", json=payload) as response:
                         response.raise_for_status()
                         _data = await response.json()
-                    
+
                     # Parse response
                     _embeddings = []
                     for item in data["data"]:
@@ -257,19 +257,19 @@ class EmbeddingService:
                             _created_at = datetime.now(timezone.utc)
                         )
                         embeddings.append(vector)
-                    
+
                     # Track timing
                     _elapsed_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
                     self._total_time_ms += elapsed_ms
-                    
+
                     logger.debug(
                         "embedding_batch_fetched",
                         _batch_size = len(batch),
                         _elapsed_ms = elapsed_ms
                     )
-                    
+
                     return embeddings
-                
+
                 except aiohttp.ClientError as e:
                     if attempt < self.config.max_retries - 1:
                         await asyncio.sleep(
@@ -277,14 +277,14 @@ class EmbeddingService:
                         )
                     else:
                         raise
-            
+
             raise RuntimeError("Failed to fetch embeddings after all retries")
-    
+
     async def _fetch_single(self, _text: str, _model: str) -> EmbeddingVector:
         """Fetch embedding for a single text (fallback)"""
         _results = await self._fetch_batch([(0, text)], model)
         return results[0]
-    
+
     def get_stats(self) -> Dict[str, any]:
         """Get embedding service statistics"""
         _cache_hit_rate = (
@@ -293,7 +293,7 @@ class EmbeddingService:
         _avg_latency_ms = (
             self._total_time_ms / self._total_requests if self._total_requests > 0 else 0
         )
-        
+
         return {
             "total_requests": self._total_requests,
             "cache_hits": self._cache_hits,
@@ -302,7 +302,7 @@ class EmbeddingService:
             "avg_latency_ms": avg_latency_ms,
             "total_errors": self._errors,
         }
-    
+
     async def health_check(self) -> bool:
         """Check if the embedding service is healthy"""
         try:

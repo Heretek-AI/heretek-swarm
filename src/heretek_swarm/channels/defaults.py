@@ -30,7 +30,7 @@ def get_internal_channels() -> List[ChannelDefinition]:
             _retention = "24h",
             _priority = "high",
         ),
-        
+
         # Coordination Channel - Multi-agent task coordination
         ChannelDefinition(
             _name = "swarm.internal.coordination",
@@ -44,7 +44,7 @@ def get_internal_channels() -> List[ChannelDefinition]:
             _qos = QoSLevel.AT_LEAST_ONCE,
             _retention = "12h",
         ),
-        
+
         # Safety Channel - Security and safety alerts
         ChannelDefinition(
             _name = "swarm.internal.safety",
@@ -59,7 +59,7 @@ def get_internal_channels() -> List[ChannelDefinition]:
             _retention = "7d",
             _priority = "critical",
         ),
-        
+
         # Memory Channel - Memory and knowledge operations
         ChannelDefinition(
             _name = "swarm.internal.memory",
@@ -73,7 +73,7 @@ def get_internal_channels() -> List[ChannelDefinition]:
             _qos = QoSLevel.AT_MOST_ONCE,
             _retention = "1h",
         ),
-        
+
         # Exploration Channel - Research and implementation
         ChannelDefinition(
             _name = "swarm.internal.exploration",
@@ -87,7 +87,7 @@ def get_internal_channels() -> List[ChannelDefinition]:
             _qos = QoSLevel.AT_LEAST_ONCE,
             _retention = "6h",
         ),
-        
+
         # Perception Channel - Input processing and translation
         ChannelDefinition(
             _name = "swarm.internal.perception",
@@ -124,7 +124,7 @@ def get_system_channels() -> List[ChannelDefinition]:
             _qos = QoSLevel.AT_MOST_ONCE,
             _retention = "1h",
         ),
-        
+
         # Consciousness Channel - Consciousness metrics broadcast
         ChannelDefinition(
             _name = "swarm.system.consciousness",
@@ -138,7 +138,7 @@ def get_system_channels() -> List[ChannelDefinition]:
             _qos = QoSLevel.AT_MOST_ONCE,
             _retention = "30m",
         ),
-        
+
         # Consensus Channel - MAKER consensus voting
         ChannelDefinition(
             _name = "swarm.system.consensus",
@@ -153,7 +153,7 @@ def get_system_channels() -> List[ChannelDefinition]:
             _retention = "24h",
             _priority = "high",
         ),
-        
+
         # Workflow Channel - Workflow events
         ChannelDefinition(
             _name = "swarm.workflow.events",
@@ -189,7 +189,7 @@ def get_external_channels() -> List[ChannelDefinition]:
             _qos = QoSLevel.AT_LEAST_ONCE,
             _retention = "1h",
         ),
-        
+
         # Slack Channel
         ChannelDefinition(
             _name = "swarm.external.slack",
@@ -202,7 +202,7 @@ def get_external_channels() -> List[ChannelDefinition]:
             _qos = QoSLevel.AT_LEAST_ONCE,
             _retention = "1h",
         ),
-        
+
         # Telegram Channel
         ChannelDefinition(
             _name = "swarm.external.telegram",
@@ -215,7 +215,7 @@ def get_external_channels() -> List[ChannelDefinition]:
             _qos = QoSLevel.AT_LEAST_ONCE,
             _retention = "1h",
         ),
-        
+
         # API Channel - External API requests
         ChannelDefinition(
             _name = "swarm.external.api",

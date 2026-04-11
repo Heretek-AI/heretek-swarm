@@ -18,15 +18,16 @@ Based on architecture from:
 
 import asyncio
 from datetime import datetime, timezone
-from typing import Optional, Dict, Any, List
+from typing import Any, Dict, List, Optional
+
 import structlog
 
 from heretek_swarm.actors.supervisor import ActorSupervisor
+from heretek_swarm.channels.registry import ChannelRegistry, GroupRegistry
+from heretek_swarm.consensus.maker import MAKERConsensus
 from heretek_swarm.gateway.nats_event_mesh import NATSEventMesh
 from heretek_swarm.memory.base import DualTierMemory
-from heretek_swarm.consensus.maker import MAKERConsensus
 from heretek_swarm.tools.mcp_tools import CoreMCPTools
-from heretek_swarm.channels.registry import ChannelRegistry, GroupRegistry
 
 _logger = structlog.get_logger(__name__)
 
@@ -51,10 +52,10 @@ class AutonomousSwarm:
         channel_registry: Communication channel registry
         mcp_tools: MCP tools registry
     """
-    
+
     def __init__(self, config: Optional[Dict[str, Any]]):
         self.config = config or self._default_config()
-        
+
         # Core components (initialized in initialize())
         self.supervisor: Optional[ActorSupervisor] = None
         self.event_mesh: Optional[NATSEventMesh] = None
@@ -64,7 +65,7 @@ class AutonomousSwarm:
         self.channel_registry: Optional[ChannelRegistry] = None
         self.group_registry: Optional[GroupRegistry] = None
         self.mcp_tools: Optional[CoreMCPTools] = None
-        
+
         # State
         self._running = False
         self._tasks: List[asyncio.Task] = []
@@ -73,7 +74,7 @@ class AutonomousSwarm:
         self._consciousness_interval = self.config.get("consciousness_interval", 5)
         self._memory_maintenance_interval = self.config.get("memory_maintenance_interval", 300)
         self._scaling_interval = self.config.get("scaling_interval", 60)
-    
+
     def _default_config(self) -> Dict[str, Any]:
         """Default configuration for autonomous swarm."""
         return {
@@ -97,16 +98,16 @@ class AutonomousSwarm:
                 "red_flag_threshold": 0.3,
             },
         }
-    
+
     async def initialize(self) -> None:
         """Initialize all swarm components."""
         logger.info("initializing_autonomous_swarm")
-        
+
         # 1. Initialize channel registry
         self.channel_registry = ChannelRegistry()
         self.group_registry = GroupRegistry(self.channel_registry)
         logger.info("channel_registry_initialized")
-        
+
         # 2. Initialize memory system
         self.memory = DualTierMemory(
             _ephemeral_config = self.config.get("ephemeral", {}),
@@ -114,7 +115,7 @@ class AutonomousSwarm:
         )
         await self.memory.initialize()
         logger.info("memory_system_initialized")
-        
+
         # 3. Initialize RAG pipeline
         self.rag = RAGPipeline(
             config=self.config.get("rag", {}),
@@ -122,7 +123,7 @@ class AutonomousSwarm:
         )
         await self.rag.initialize()
         logger.info("rag_pipeline_initialized")
-        
+
         # 4. Initialize consensus engine
         _consensus_config = self.config.get("consensus", {})
         self.consensus = MAKERConsensus(
@@ -131,7 +132,7 @@ class AutonomousSwarm:
             _red_flag_threshold = consensus_config.get("red_flag_threshold", 0.3),
         )
         logger.info("maker_consensus_initialized")
-        
+
         # 5. Initialize event mesh (NATS)
         self.event_mesh = NATSEventMesh(
             _servers = self.config.get("nats_servers", ["nats://localhost:4222"]),
@@ -139,7 +140,7 @@ class AutonomousSwarm:
         )
         await self.event_mesh.connect()
         logger.info("event_mesh_connected")
-        
+
         # 6. Initialize MCP tools
         self.mcp_tools = CoreMCPTools(
             _memory_system = self.memory,
@@ -148,7 +149,7 @@ class AutonomousSwarm:
             event_mesh=self.event_mesh,
         )
         logger.info("mcp_tools_initialized", tool_count=len(self.mcp_tools.get_registry().list_tools()))
-        
+
         # 7. Initialize supervisor
         self.supervisor = ActorSupervisor(
             _health_check_interval = self._health_check_interval,
@@ -156,51 +157,51 @@ class AutonomousSwarm:
             _max_restarts = 5,
         )
         logger.info("actor_supervisor_initialized")
-        
+
         # 8. Spawn all 23 agents
         await self._spawn_all_actors()
         logger.info("all_actors_spawned", count=23)
-        
+
         # 9. Set up channel subscriptions
         await self._setup_channel_subscriptions()
         logger.info("channel_subscriptions_configured")
-        
+
         logger.info("autonomous_swarm_fully_initialized")
-    
+
     async def _spawn_all_actors(self) -> None:
         """Spawn all 23 agents across 6 tiers."""
         # Tier 1: Core Triad (Governance)
-        from heretek_swarm.actors.triad import StewardAgent, AlphaAgent, BetaAgent, CharlieAgent
-        
+        from heretek_swarm.actors.arbiter import ArbiterAgent
+        from heretek_swarm.actors.catalyst import CatalystAgent
+        from heretek_swarm.actors.chronos import ChronosAgent
+        from heretek_swarm.actors.coder import CoderAgent
+
+        # Tier 5: Coordination Agents (Integration)
+        from heretek_swarm.actors.coordinator import CoordinatorAgent
+        from heretek_swarm.actors.dreamer import DreamerAgent
+        from heretek_swarm.actors.echo import EchoAgent
+        from heretek_swarm.actors.empath import EmpathAgent
+        from heretek_swarm.actors.examiner import ExaminerAgent
+
+        # Tier 3: Exploration Agents (Discovery & Creation)
+        from heretek_swarm.actors.explorer import ExplorerAgent
+        from heretek_swarm.actors.habit_forge import HabitForgeAgent
+
         # Tier 2: Support Agents (Knowledge & Memory)
         from heretek_swarm.actors.historian import HistorianAgent
         from heretek_swarm.actors.metis import MetisAgent
-        from heretek_swarm.actors.empath import EmpathAgent
+        from heretek_swarm.actors.nexus import NexusAgent
         from heretek_swarm.actors.perceiver import PerceiverAgent
-        from heretek_swarm.actors.echo import EchoAgent
-        
-        # Tier 3: Exploration Agents (Discovery & Creation)
-        from heretek_swarm.actors.explorer import ExplorerAgent
-        from heretek_swarm.actors.examiner import ExaminerAgent
-        from heretek_swarm.actors.dreamer import DreamerAgent
-        from heretek_swarm.actors.coder import CoderAgent
-        
+        from heretek_swarm.actors.perceiver_plus import PerceiverPlusAgent
+
+        # Tier 6: Enhancement Agents (Optimization)
+        from heretek_swarm.actors.prism import PrismAgent
+
         # Tier 4: Safety & Security (Protection)
         from heretek_swarm.actors.sentinel import SentinelAgent
         from heretek_swarm.actors.sentinel_prime import SentinelPrimeAgent
-        from heretek_swarm.actors.arbiter import ArbiterAgent
-        
-        # Tier 5: Coordination Agents (Integration)
-        from heretek_swarm.actors.coordinator import CoordinatorAgent
-        from heretek_swarm.actors.nexus import NexusAgent
-        from heretek_swarm.actors.catalyst import CatalystAgent
-        from heretek_swarm.actors.chronos import ChronosAgent
-        
-        # Tier 6: Enhancement Agents (Optimization)
-        from heretek_swarm.actors.prism import PrismAgent
-        from heretek_swarm.actors.habit_forge import HabitForgeAgent
-        from heretek_swarm.actors.perceiver_plus import PerceiverPlusAgent
-        
+        from heretek_swarm.actors.triad import AlphaAgent, BetaAgent, CharlieAgent, StewardAgent
+
         # Define all agents with their topics
         actors = [
             # Tier 1: Core Triad
@@ -208,37 +209,37 @@ class AutonomousSwarm:
             (AlphaAgent, "alpha", ["analysis", "decisions", "triad"]),
             (BetaAgent, "beta", ["validation", "quality", "triad"]),
             (CharlieAgent, "charlie", ["risk", "challenges", "triad"]),
-            
+
             # Tier 2: Support
             (HistorianAgent, "historian", ["memory", "context", "triad"]),
             (MetisAgent, "metis", ["planning", "strategy", "coordination"]),
             (EmpathAgent, "empath", ["sentiment", "mediation", "perception"]),
             (PerceiverAgent, "perceiver", ["input", "sensory", "perception"]),
             (EchoAgent, "echo", ["communication", "broadcast", "perception"]),
-            
+
             # Tier 3: Exploration
             (ExplorerAgent, "explorer", ["discovery", "monitoring", "exploration"]),
             (ExaminerAgent, "examiner", ["testing", "quality", "exploration"]),
             (DreamerAgent, "dreamer", ["creative", "alternatives", "exploration"]),
             (CoderAgent, "coder", ["code", "implementation", "exploration"]),
-            
+
             # Tier 4: Safety
             (SentinelAgent, "sentinel", ["validation", "safety", "safety"]),
             (SentinelPrimeAgent, "sentinel-prime", ["threats", "security", "safety"]),
             (ArbiterAgent, "arbiter", ["conflict", "resolution", "safety"]),
-            
+
             # Tier 5: Coordination
             (CoordinatorAgent, "coordinator", ["coordination", "tasks", "coordination"]),
             (NexusAgent, "nexus", ["external", "api", "external"]),
             (CatalystAgent, "catalyst", ["change", "transition", "coordination"]),
             (ChronosAgent, "chronos", ["scheduling", "temporal", "coordination"]),
-            
+
             # Tier 6: Enhancement
             (PrismAgent, "prism", ["perspective", "viewpoints", "memory"]),
             (HabitForgeAgent, "habit-forge", ["patterns", "behavior", "memory"]),
             (PerceiverPlusAgent, "perceiver-plus", ["analytics", "advanced", "perception"]),
         ]
-        
+
         for agent_class, agent_id, topics in actors:
             try:
                 _agent = agent_class(
@@ -252,7 +253,7 @@ class AutonomousSwarm:
             except Exception as e:
                 logger.error("actor_spawn_failed", agent_id=agent_id, error=str(e))
                 raise
-    
+
     def _get_tier(self, agent_id: str) -> str:
         """Get the tier name for an agent."""
         _tier_mapping = {
@@ -281,40 +282,40 @@ class AutonomousSwarm:
             "perceiver-plus": "Tier 6 (Enhancement)",
         }
         return tier_mapping.get(agent_id, "Unknown")
-    
+
     async def _setup_channel_subscriptions(self) -> None:
         """Set up channel subscriptions for all agents based on the channel registry."""
         # The ChannelRegistry already has default channels set up
         # Subscribe each agent to their designated channels
-        
+
         # Get all agent IDs
         _agent_ids = list(self.supervisor.actors.keys())
-        
+
         for agent_id in agent_ids:
             # Get channels for this agent
             _channels = self.channel_registry.get_subscriptions(agent_id)
-            
+
             for channel_name in channels:
                 # Subscribe to NATS subject
                 _nats_subject = self.channel_registry.get_nats_subject(channel_name)
-                
+
                 # Create subscription handler
                 async def create_handler(aid: str, ch_name: str):
                     async def handler(message: Dict[str, Any]):
                         await self._handle_channel_message(aid, ch_name, message)
                     return handler
-                
+
                 await self.event_mesh.subscribe(
                     _subject = nats_subject,
                     _handler = await create_handler(agent_id, channel_name),
                 )
-            
+
             logger.debug(
                 "agent_channel_subscriptions",
                 _agent_id = agent_id,
                 _channels = channels,
             )
-    
+
     async def _handle_channel_message(self, agent_id: str, channel_name: str, message: Dict[str, Any]) -> None:
         """Handle incoming channel message for an agent."""
         try:
@@ -323,13 +324,13 @@ class AutonomousSwarm:
             if not actor:
                 logger.warning("message_for_missing_actor", agent_id=agent_id)
                 return
-            
+
             # Route message to actor mailbox
             await actor.send_message(message)
-            
+
             # Record delivery
             self.channel_registry.record_message(channel_name, delivered=True)
-            
+
         except Exception as e:
             logger.error(
                 "channel_message_handling_error",
@@ -338,12 +339,12 @@ class AutonomousSwarm:
                 error=str(e),
             )
             self.channel_registry.record_error(channel_name)
-    
+
     async def run(self) -> None:
         """Main autonomous loop - runs 24/7."""
         logger.info("starting_autonomous_loop")
         self._running = True
-        
+
         # Start background tasks
         self._tasks = [
             asyncio.create_task(self._health_monitor_loop()),
@@ -352,9 +353,9 @@ class AutonomousSwarm:
             asyncio.create_task(self._memory_maintenance_loop()),
             asyncio.create_task(self._scaling_loop()),
         ]
-        
+
         logger.info("autonomous_loop_started", background_tasks=len(self._tasks))
-        
+
         # Main loop
         try:
             while self._running:
@@ -368,39 +369,39 @@ class AutonomousSwarm:
                     await asyncio.sleep(5)  # Backoff on error
         finally:
             await self.shutdown()
-    
+
     async def _process_cycle(self) -> None:
         """Process one cycle of the autonomous loop."""
         # 1. Check for scheduled tasks (Chronos)
         await self._process_scheduled_tasks()
-        
+
         # 2. Check for external events (Nexus/Echo)
         await self._process_external_events()
-        
+
         # 3. Process pending workflows
         await self._process_workflows()
-        
+
         # 4. Run health checks
         await self._run_health_checks()
-    
+
     async def _process_scheduled_tasks(self) -> None:
         """Process tasks scheduled by Chronos."""
         # Query memory for scheduled tasks
         # Trigger appropriate agents based on schedule
         pass
-    
+
     async def _process_external_events(self) -> None:
         """Process external events from Discord, Slack, Telegram, webhooks."""
         # Check event mesh for external messages
         # Route through Steward for triage
         pass
-    
+
     async def _process_workflows(self) -> None:
         """Process pending workflows."""
         # Check for workflows needing execution
         # Execute HeavySwarm workflows as needed
         pass
-    
+
     async def _run_health_checks(self) -> None:
         """Run health checks on all actors."""
         for agent_id, actor in self.supervisor.actors.items():
@@ -408,7 +409,7 @@ class AutonomousSwarm:
             if status.state.value == "error":
                 logger.warning("actor_error", agent_id=agent_id)
                 await self.supervisor.restart_actor(agent_id)
-    
+
     async def _health_monitor_loop(self) -> None:
         """Continuous health monitoring loop."""
         while self._running:
@@ -423,20 +424,20 @@ class AutonomousSwarm:
                     },
                     "system_status": "healthy",
                 }
-                
+
                 await self.event_mesh.publish(
                     "swarm.system.health",
                     health_data,
                 )
-                
+
                 logger.debug("health_metrics_published", active_actors=health_data["active_actors"])
-                
+
                 await asyncio.sleep(self._health_check_interval)
             except asyncio.CancelledError:
                 break
             except Exception as e:
                 logger.error("health_monitor_error", error=str(e))
-    
+
     async def _consciousness_loop(self) -> None:
         """Consciousness metrics update loop."""
         while self._running:
@@ -444,25 +445,25 @@ class AutonomousSwarm:
                 # Broadcast global workspace updates
                 # Update Phi metrics (IIT)
                 # Process attention schemas (AST)
-                
+
                 _consciousness_data = {
                     "timestamp": datetime.now(timezone.utc).isoformat(),
                     "workspace_coherence": 0.85,  # Placeholder
                     "attention_distribution": {},  # Computed per agent
                     "phi_metric": 0.0,  # IIT integration metric
                 }
-                
+
                 await self.event_mesh.publish(
                     "swarm.system.consciousness",
                     consciousness_data,
                 )
-                
+
                 await asyncio.sleep(self._consciousness_interval)
             except asyncio.CancelledError:
                 break
             except Exception as e:
                 logger.error("consciousness_loop_error", error=str(e))
-    
+
     async def _task_processing_loop(self) -> None:
         """Task processing loop - polls for new tasks."""
         while self._running:
@@ -472,14 +473,14 @@ class AutonomousSwarm:
                 # - Webhooks
                 # - Scheduled tasks (Chronos)
                 # - Internal agent requests
-                
+
                 # Route tasks through Steward for triage
                 await asyncio.sleep(self._loop_interval)
             except asyncio.CancelledError:
                 break
             except Exception as e:
                 logger.error("task_processing_error", error=str(e))
-    
+
     async def _memory_maintenance_loop(self) -> None:
         """Memory tier optimization and cleanup loop."""
         while self._running:
@@ -487,15 +488,15 @@ class AutonomousSwarm:
                 # Run memory maintenance
                 if self.memory:
                     await self.memory.run_maintenance()
-                
+
                 logger.debug("memory_maintenance_completed")
-                
+
                 await asyncio.sleep(self._memory_maintenance_interval)
             except asyncio.CancelledError:
                 break
             except Exception as e:
                 logger.error("memory_maintenance_error", error=str(e))
-    
+
     async def _scaling_loop(self) -> None:
         """Auto-scaling check loop."""
         while self._running:
@@ -503,19 +504,19 @@ class AutonomousSwarm:
                 # Check queue depths
                 # Check resource utilization
                 # Scale up/down based on load
-                
+
                 await asyncio.sleep(self._scaling_interval)
             except asyncio.CancelledError:
                 break
             except Exception as e:
                 logger.error("scaling_check_error", error=str(e))
-    
+
     async def shutdown(self) -> None:
         """Graceful shutdown of the autonomous swarm."""
         logger.info("shutting_down_autonomous_swarm")
-        
+
         self._running = False
-        
+
         # Cancel background tasks
         for task in self._tasks:
             task.cancel()
@@ -523,22 +524,22 @@ class AutonomousSwarm:
                 await task
             except asyncio.CancelledError:
                 pass
-        
+
         # Terminate all actors
         if self.supervisor:
             await self.supervisor.terminate_all()
             logger.info("all_actors_terminated")
-        
+
         # Disconnect event mesh
         if self.event_mesh:
             await self.event_mesh.disconnect()
             logger.info("event_mesh_disconnected")
-        
+
         # Shutdown RAG
         if self.rag:
             await self.rag.shutdown()
             logger.info("rag_shutdown_complete")
-        
+
         logger.info("autonomous_swarm_shutdown_complete")
 
 
@@ -569,7 +570,7 @@ async def main():
             "red_flag_threshold": 0.3,
         },
     }
-    
+
     _swarm = AutonomousSwarm(config)
     await swarm.initialize()
     await swarm.run()

@@ -31,7 +31,7 @@ class EmbeddingRequest:
             "input": self.inputs,
             "encoding_format": self.encoding_format,
         }
-        
+
         if self.model:
             result["model"] = self.model
         if self.dimensions is not None:
@@ -40,7 +40,7 @@ class EmbeddingRequest:
             result["user"] = self.user
         if self.extra_body:
             result.update(self.extra_body)
-        
+
         return result
 
 
@@ -52,19 +52,19 @@ class EmbeddingResponse:
     usage: Dict[str, int] = field(default_factory=dict)
     raw_response: Optional[Dict[str, Any]] = None
     latency_ms: float = 0.0
-    
+
     @property
     def dimensions(self) -> int:
         """Get the embedding dimensions."""
         if self.embeddings and len(self.embeddings) > 0:
             return len(self.embeddings[0])
         return 0
-    
+
     @property
     def prompt_tokens(self) -> int:
         """Get the number of prompt tokens used."""
         return self.usage.get("prompt_tokens", 0)
-    
+
     @property
     def total_tokens(self) -> int:
         """Get the total tokens used."""
@@ -109,9 +109,9 @@ class EmbeddingProviderBase(ABC):
         self.api_key = api_key
         self.default_model = default_model
         self.extra_config = extra_config or {}
-        
+
         self._capabilities = self._init_capabilities()
-        
+
         logger.debug(
             "Embedding provider initialized",
             provider_name=provider_name,
@@ -164,9 +164,9 @@ class EmbeddingProviderBase(ABC):
             ProviderError: If all retries fail
         """
         import asyncio
-        
+
         _last_error = None
-        
+
         for attempt in range(max_retries):
             try:
                 return await self.embed(texts, model, dimensions)
@@ -181,7 +181,7 @@ class EmbeddingProviderBase(ABC):
                         _error = str(e),
                     )
                     await asyncio.sleep(retry_delay * (attempt + 1))
-        
+
         raise EmbeddingProviderError(
             f"Failed after {max_retries} attempts",
             provider=self.provider_name,
@@ -213,13 +213,13 @@ class EmbeddingProviderBase(ABC):
 
 class EmbeddingProviderError(Exception):
     """Exception raised for embedding provider-related errors."""
-    
+
     def __init__(self, message: str, provider: Optional[str], cause: Optional[Exception]):
         self.message = message
         self.provider = provider
         self.cause = cause
         super().__init__(self.format_message())
-    
+
     def format_message(self) -> str:
         """Format the error message."""
         _msg = self.message

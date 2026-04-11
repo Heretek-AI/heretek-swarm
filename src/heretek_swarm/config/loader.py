@@ -22,9 +22,9 @@ Usage:
 
 
 import os
+from dataclasses import dataclass
 from datetime import datetime, timedelta
 from typing import Any, Dict, Optional, Tuple
-from dataclasses import dataclass
 
 import structlog
 
@@ -54,7 +54,7 @@ class ConfigLoader:
     - Thread-safe access
     - Bulk loading capabilities
     """
-    
+
     def __init__(self, service: Optional[ConfigurationService], cache_ttl_seconds: int):
         """
         Initialize the configuration loader.
@@ -68,7 +68,7 @@ class ConfigLoader:
         self._cache_ttl = timedelta(seconds=cache_ttl_seconds)
         self._initialized = False
         self._config_keys: Dict[str, str] = self._build_config_key_mapping()
-        
+
     def _build_config_key_mapping(self) -> Dict[str, str]:
         """
         Build mapping from config keys to environment variable names.
@@ -80,54 +80,54 @@ class ConfigLoader:
             # Rate limiting
             "rate_limit.enabled": "RATE_LIMIT_ENABLED",
             "rate_limit.requests_per_minute": "RATE_LIMIT_REQUESTS_PER_MINUTE",
-            
+
             # Memory
             "memory.max_size": "MEMORY_MAX_SIZE",
             "memory.default_ttl": "MEMORY_DEFAULT_TTL",
             "memory.retention_days": "MEMORY_RETENTION_DAYS",
-            
+
             # Consciousness
             "consciousness.phi_threshold": "CONSCIOUSNESS_PHI_THRESHOLD",
             "consciousness.enabled": "CONSCIOUSNESS_ENABLED",
-            
+
             # Consensus
             "consensus.min_votes": "CONSENSUS_MIN_VOTES",
             "consensus.confidence_threshold": "CONSENSUS_CONFIDENCE_THRESHOLD",
-            
+
             # Runtime
             "runtime.monitoring_enabled": "MONITORING_ENABLED",
             "runtime.auto_restart_enabled": "AUTO_RESTART_ENABLED",
             "runtime.health_check_interval": "HEALTH_CHECK_INTERVAL",
             "runtime.metrics_collection_interval": "METRICS_COLLECTION_INTERVAL",
-            
+
             # RAG
             "rag.enabled": "RAG_ENABLED",
-            
+
             # Bot integrations
             "integrations.discord_enabled": "DISCORD_BOT_ENABLED",
             "integrations.telegram_enabled": "TELEGRAM_BOT_ENABLED",
             "integrations.slack_enabled": "SLACK_BOT_ENABLED",
-            
+
             # API
             "api.host": "API_HOST",
             "api.port": "API_PORT",
             "api.workers": "API_WORKERS",
             "api.environment": "ENVIRONMENT",
             "api.cors_origins": "CORS_ORIGINS",
-            
+
             # Database
             "database.url": "DATABASE_URL",
             "redis.url": "REDIS_URL",
             "qdrant.url": "QDRANT_URL",
-            
+
             # Logging
             "logging.level": "LOG_LEVEL",
             "logging.format": "LOG_FORMAT",
-            
+
             # Security
             "security.auth_enabled": "AUTH_ENABLED",
             "security.rate_limit_enabled": "RATE_LIMIT_ENABLED",
-            
+
             # LLM
             "llm.provider": "LLM_PROVIDER",
             "llm.model": "MINIMAX_MODEL",
@@ -151,19 +151,19 @@ class ConfigLoader:
         """
         if self._initialized:
             return
-            
+
         if self._service is None:
             self._service = get_config_service()
-        
+
         # Initialize the service if not already done
         await self._service.initialize()
-        
+
         # Warm up cache with common configurations
         await self._warm_cache()
-        
+
         self._initialized = True
         logger.info("ConfigLoader initialized")
-    
+
     async def _warm_cache(self) -> None:
         """Warm up the cache with frequently accessed configurations."""
         _common_keys = [
@@ -174,13 +174,13 @@ class ConfigLoader:
             "api.environment",
             "logging.level",
         ]
-        
+
         for key in common_keys:
             try:
                 await self._load_config(key)
             except Exception as e:
                 logger.debug(f"Failed to warm cache for {key}: {e}")
-    
+
     async def _load_config(self, config_key: str) -> Tuple[Any, str]:
         """
         Load a configuration value from database or environment.
@@ -199,7 +199,7 @@ class ConfigLoader:
                 # Convert type if needed
                 if config.config_type:
                     value = self._convert_value(value, config.config_type.value)
-                
+
                 self._cache[config_key] = CacheEntry(
                     value=value,
                     source="database",
@@ -209,7 +209,7 @@ class ConfigLoader:
                 return value, "database"
         except Exception as e:
             logger.debug(f"Database config lookup failed for {config_key}: {e}")
-        
+
         # Fallback to environment variable
         _env_var = self._config_keys.get(config_key)
         if env_var:
@@ -224,15 +224,15 @@ class ConfigLoader:
                 )
                 logger.debug(f"Loaded config from environment: {config_key} ({env_var})")
                 return converted_value, "environment"
-        
+
         # Not found anywhere
         return None, "not_found"
-    
+
     def _convert_value(self, value: Any, config_type: str) -> Any:
         """Convert a value to the specified type."""
         if value is None:
             return None
-            
+
         _type_map = {
             "string": str,
             "integer": int,
@@ -240,13 +240,13 @@ class ConfigLoader:
             "boolean": lambda x: str(x).lower() in ("true", "1", "yes"),
             "json": lambda x: x,  # Already parsed from JSON
         }
-        
+
         _converter = type_map.get(config_type, str)
         try:
             return converter(value)
         except (ValueError, TypeError):
             return value
-    
+
     def _convert_env_value(self, value: str) -> Any:
         """
         Convert an environment variable value to appropriate type.
@@ -258,19 +258,19 @@ class ConfigLoader:
             return True
         if value.lower() in ("false", "0", "no"):
             return False
-        
+
         # Integer
         try:
             return int(value)
         except ValueError:
             pass
-        
+
         # Float
         try:
             return float(value)
         except ValueError:
             pass
-        
+
         # JSON array/object
         if value.startswith("[") or value.startswith("{"):
             import json
@@ -278,25 +278,25 @@ class ConfigLoader:
                 return json.loads(value)
             except json.JSONDecodeError:
                 pass
-        
+
         # Default to string
         return value
-    
+
     def _get_cache(self, config_key: str) -> Optional[CacheEntry]:
         """Get a cached value if available and not expired."""
         _entry = self._cache.get(config_key)
-        
+
         if entry is None:
             return None
-        
+
         if datetime.utcnow() > entry.expires_at:
             del self._cache[config_key]
             return None
-        
+
         entry.access_count += 1
         entry.last_accessed_at = datetime.utcnow()
         return entry
-    
+
     def get(self, config_key: str, default: Any) -> Any:
         """
         Get a configuration value.
@@ -315,11 +315,11 @@ class ConfigLoader:
         _entry = self._get_cache(config_key)
         if entry is not None:
             return entry.value
-        
+
         # Not in cache - return default
         # (async loading should be done via get_async)
         return default
-    
+
     async def get_async(self, config_key: str, default: Any) -> Any:
         """
         Get a configuration value asynchronously.
@@ -337,15 +337,15 @@ class ConfigLoader:
         _entry = self._get_cache(config_key)
         if entry is not None:
             return entry.value
-        
+
         # Load from database or environment
         if self._initialized:
             value, _ = await self._load_config(config_key)
             if value is not None:
                 return value
-        
+
         return default
-    
+
     def get_with_source(self, config_key: str, default: Any) -> Tuple[Any, str]:
         """
         Get a configuration value with its source.
@@ -360,9 +360,9 @@ class ConfigLoader:
         _entry = self._get_cache(config_key)
         if entry is not None:
             return entry.value, entry.source
-        
+
         return default, "default"
-    
+
     async def get_async_with_source(self, config_key: str, default: Any) -> Tuple[Any, str]:
         """
         Get a configuration value with its source asynchronously.
@@ -377,14 +377,14 @@ class ConfigLoader:
         _entry = self._get_cache(config_key)
         if entry is not None:
             return entry.value, entry.source
-        
+
         if self._initialized:
             value, source = await self._load_config(config_key)
             if value is not None:
                 return value, source
-        
+
         return default, "default"
-    
+
     async def get_many(self, config_keys: list[str]) -> Dict[str, Any]:
         """
         Get multiple configuration values at once.
@@ -399,7 +399,7 @@ class ConfigLoader:
         for key in config_keys:
             results[key] = await self.get_async(key)
         return results
-    
+
     def invalidate(self, config_key: str) -> None:
         """
         Invalidate a cached configuration.
@@ -410,12 +410,12 @@ class ConfigLoader:
         if config_key in self._cache:
             del self._cache[config_key]
             logger.debug(f"Invalidated cache for: {config_key}")
-    
+
     def invalidate_all(self) -> None:
         """Invalidate all cached configurations."""
         self._cache.clear()
         logger.info("Invalidated all configuration cache")
-    
+
     async def reload(self) -> Dict[str, Any]:
         """
         Reload all configurations from database.
@@ -425,13 +425,13 @@ class ConfigLoader:
         """
         self._cache.clear()
         await self._warm_cache()
-        
+
         return {
             "status": "reloaded",
             "cached_keys": list(self._cache.keys()),
             "cache_count": len(self._cache),
         }
-    
+
     def get_cache_stats(self) -> Dict[str, Any]:
         """
         Get cache statistics.
@@ -446,11 +446,11 @@ class ConfigLoader:
                 "oldest_entry": None,
                 "newest_entry": None,
             }
-        
+
         _now = datetime.utcnow()
         _total_accesses = sum(e.access_count for e in self._cache.values())
         _expires_at_list = [e.expires_at for e in self._cache.values()]
-        
+
         return {
             "total_entries": len(self._cache),
             "total_accesses": total_accesses,

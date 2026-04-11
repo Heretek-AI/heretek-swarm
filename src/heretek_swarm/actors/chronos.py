@@ -23,21 +23,20 @@ from typing import Any, Dict, List, Optional, Set, Tuple
 
 import structlog
 
-from heretek_swarm.actors.base import AgentActor, ActorMessage
+from heretek_swarm.actors.base import ActorMessage, AgentActor
 from heretek_swarm.actors.validation import validate_message
 
 # Session 44: Collective Learning Integration
 from heretek_swarm.collective.learning import PatternExtractor, PatternType
 
 # Session 44: Consensus Integration
-from heretek_swarm.consensus.swarm_deliberation import SwarmDeliberationEngine, Position
+from heretek_swarm.consensus.swarm_deliberation import Position, SwarmDeliberationEngine
 
 # Session 44: Memory Optimization Integration
 from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer, AccessTier
 
 # Session 44: Zero-Trust Validation
 from heretek_swarm.security.zero_trust import ZeroTrustValidator
-
 
 _logger = structlog.get_logger(__name__)
 
@@ -195,21 +194,21 @@ class ChronosAgent(AgentActor):
         # Calendars
         self._calendars: Dict[str, List[str]] = {}  # calendar_id -> task_ids
 
-        
+
         # Session 44: Collective Learning Integration
         self.pattern_extractor = pattern_extractor or PatternExtractor(min_support=3, min_confidence=0.6)
-        
+
         # Session 44: Consensus Integration
         self.deliberation_engine = deliberation_engine or SwarmDeliberationEngine(
             _max_rounds = 5, consensus_threshold=0.75, min_participants=2
         )
-        
+
         # Session 44: Memory Optimization Integration
         self.access_analyzer = access_analyzer or AccessPatternAnalyzer()
-        
+
         # Session 44: Zero-Trust Validation
         self.zero_trust_validator = zero_trust_validator or ZeroTrustValidator()
-        
+
         # Session 44: Integration state
         self._active_deliberations: Dict[str, str] = {}
         self._pattern_emitted: Set[str] = set()
@@ -995,10 +994,10 @@ class ChronosAgent(AgentActor):
         """Emit pattern for collective learning."""
         if not self.pattern_extractor:
             return
-        
+
         if item_id in self._pattern_emitted:
             return
-        
+
         try:
             await self.pattern_extractor.analyze_message(
                 _message_id = f"{item_type}_{item_id}",
@@ -1008,7 +1007,7 @@ class ChronosAgent(AgentActor):
                 _content = content,
                 _timestamp = datetime.now(timezone.utc).isoformat(),
             )
-            
+
             self._pattern_emitted.add(item_id)
             logger.info(f"{item_type}_pattern_emitted", item_id=item_id, outcome=outcome)
         except Exception as e:
@@ -1018,7 +1017,7 @@ class ChronosAgent(AgentActor):
         """Consume patterns from collective learning."""
         if not self.pattern_extractor:
             return []
-        
+
         try:
             _patterns = await self.pattern_extractor.extract_patterns(
                 _time_window_hours = 24,
@@ -1037,7 +1036,7 @@ class ChronosAgent(AgentActor):
         """Initiate swarm deliberation."""
         if not self.deliberation_engine:
             return None
-        
+
         try:
             _deliberation_id = f"delib_{item_id}"
             self.deliberation_engine.start_deliberation(
@@ -1047,7 +1046,7 @@ class ChronosAgent(AgentActor):
                 _domain = domain,
             )
             self._active_deliberations[item_id] = deliberation_id
-            
+
             logger.info("deliberation_initiated", deliberation_id=deliberation_id, item_id=item_id)
             return deliberation_id
         except Exception as e:
@@ -1058,11 +1057,11 @@ class ChronosAgent(AgentActor):
         """Submit agent position in deliberation."""
         if not self.deliberation_engine:
             return False
-        
+
         _deliberation_id = self._active_deliberations.get(item_id)
         if not deliberation_id:
             return False
-        
+
         try:
             _success = self.deliberation_engine.submit_position(
                 _deliberation_id = deliberation_id,
@@ -1071,14 +1070,14 @@ class ChronosAgent(AgentActor):
                 _confidence = confidence,
                 _argument = argument,
             )
-            
+
             if success and self.access_analyzer:
                 self.access_analyzer.record_access(
                     _memory_id = f"delib_{deliberation_id}_{agent_id}",
                     _access_type = "write",
                     agent_id=agent_id,
                 )
-            
+
             return success
         except Exception as e:
             logger.error("failed_to_submit_deliberation_position", error=str(e))
@@ -1088,19 +1087,19 @@ class ChronosAgent(AgentActor):
         """Finalize deliberation and apply result."""
         if not self.deliberation_engine:
             return None
-        
+
         _deliberation_id = self._active_deliberations.get(item_id)
         if not deliberation_id:
             return None
-        
+
         try:
             _result = self.deliberation_engine.finalize_deliberation(deliberation_id)
-            
+
             if result:
                 self.deliberation_engine.cleanup_deliberation(deliberation_id)
                 del self._active_deliberations[item_id]
                 logger.info("deliberation_finalized", deliberation_id=deliberation_id)
-            
+
             return result
         except Exception as e:
             logger.error("failed_to_finalize_deliberation", error=str(e))
@@ -1114,7 +1113,7 @@ class ChronosAgent(AgentActor):
         """Track memory access patterns."""
         if not self.access_analyzer:
             return
-        
+
         _memory_id = f"{item_type}_{item_id}"
         self.access_analyzer.record_access(
             _memory_id = memory_id,
@@ -1126,7 +1125,7 @@ class ChronosAgent(AgentActor):
         """Get memory tier classification."""
         if not self.access_analyzer:
             return AccessTier.COLD
-        
+
         _memory_id = f"{item_type}_{item_id}"
         _profile = self.access_analyzer.get_profile(memory_id)
         return profile.tier if profile else AccessTier.COLD
@@ -1135,7 +1134,7 @@ class ChronosAgent(AgentActor):
         """Prefetch items an agent is likely to need."""
         if not self.access_analyzer:
             return []
-        
+
         try:
             _predicted_memories = self.access_analyzer.predict_agent_access(agent_id)
             return [

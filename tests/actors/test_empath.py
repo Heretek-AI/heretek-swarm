@@ -12,17 +12,17 @@ This module provides comprehensive tests for the Empath agent including:
 """
 
 import asyncio
-import pytest
 from datetime import datetime, timezone
 from unittest.mock import AsyncMock, MagicMock
 
-from heretek_swarm.actors.empath import EmpathAgent
+import pytest
+
 from heretek_swarm.actors.base import ActorMessage
+from heretek_swarm.actors.empath import EmpathAgent
 from heretek_swarm.collective.learning import PatternExtractor
 from heretek_swarm.consensus.swarm_deliberation import SwarmDeliberationEngine
 from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer
 from heretek_swarm.security.zero_trust import ZeroTrustValidator
-
 
 # ============== FIXTURES ==============
 
@@ -122,7 +122,7 @@ class TestEmpathInitialization:
     def test_init_default(self) -> None:
         """Test initialization with default parameters."""
         agent = EmpathAgent()
-        
+
         assert agent.agent_id == "empath"
         assert agent.name == "Empath"
         assert agent.sentiment_threshold == 0.7
@@ -142,7 +142,7 @@ class TestEmpathInitialization:
             stress_threshold=0.6,
             max_mood_history=200,
         )
-        
+
         assert agent.agent_id == "custom-empath"
         assert agent.name == "CustomEmpath"
         assert agent.sentiment_threshold == 0.5
@@ -174,7 +174,7 @@ class TestSentimentAnalysis:
     def test_analyze_sentiment_heuristic_positive(self, _empath_agent: EmpathAgent, _sample_positive_text: str) -> None:
         """Test heuristic sentiment analysis for positive text."""
         _result = empath_agent._analyze_sentiment_heuristic(sample_positive_text)
-        
+
         assert "sentiment" in result
         assert "confidence" in result
         assert "intensity" in result
@@ -187,20 +187,20 @@ class TestSentimentAnalysis:
     def test_analyze_sentiment_heuristic_negative(self, _empath_agent: EmpathAgent, _sample_negative_text: str) -> None:
         """Test heuristic sentiment analysis for negative text."""
         _result = empath_agent._analyze_sentiment_heuristic(sample_negative_text)
-        
+
         assert result["sentiment"] == "negative"
         assert "anger" in result["emotions"] or len(result["emotions"]) > 0
 
     def test_analyze_sentiment_heuristic_neutral(self, _empath_agent: EmpathAgent, _sample_neutral_text: str) -> None:
         """Test heuristic sentiment analysis for neutral text."""
         _result = empath_agent._analyze_sentiment_heuristic(sample_neutral_text)
-        
+
         assert result["sentiment"] == "neutral"
 
     def test_analyze_sentiment_heuristic_empty(self, _empath_agent: EmpathAgent) -> None:
         """Test heuristic sentiment analysis for empty text."""
         _result = empath_agent._analyze_sentiment_heuristic("")
-        
+
         assert result["sentiment"] == "neutral"
         assert result["confidence"] >= 0.0
         assert result["confidence"] <= 1.0
@@ -209,25 +209,25 @@ class TestSentimentAnalysis:
         """Test stress indicator detection."""
         _stress_text = "This is urgent! I'm stressed and overwhelmed by the crisis!"
         _result = empath_agent._analyze_sentiment_heuristic(stress_text)
-        
+
         assert result["stress_indicators"] is True
 
     def test_analyze_sentiment_heuristic_conflict_detection(self, _empath_agent: EmpathAgent) -> None:
         """Test conflict potential detection."""
         _conflict_text = "I disagree with you. This is wrong and I oppose this decision."
         _result = empath_agent._analyze_sentiment_heuristic(conflict_text)
-        
+
         assert result["conflict_potential"] is True
 
     @pytest.mark.asyncio
     async def test_analyze_sentiment_llm(self, _empath_agent: EmpathAgent, _mock_swarms_agent: MagicMock) -> None:
         """Test LLM-based sentiment analysis."""
         empath_agent.swarms_agent = mock_swarms_agent
-        
+
         _result = await empath_agent._analyze_sentiment_llm(
             "Great job!", "agent-1", {}
         )
-        
+
         assert result["sentiment"] == "positive"
         assert result["confidence"] == 0.9
 
@@ -236,11 +236,11 @@ class TestSentimentAnalysis:
         """Test LLM sentiment analysis timeout fallback."""
         mock_swarms_agent.llm = AsyncMock(side_effect=asyncio.TimeoutError())
         empath_agent.swarms_agent = mock_swarms_agent
-        
+
         _result = await empath_agent._analyze_sentiment_llm(
             "Test text", "agent-1", {}
         )
-        
+
         # Should fallback to heuristic
         assert "sentiment" in result
 
@@ -248,7 +248,7 @@ class TestSentimentAnalysis:
         """Test sentiment prompt building."""
         _context = {"topic": "testing", "priority": "high"}
         _prompt = empath_agent._build_sentiment_prompt("Test text", context)
-        
+
         assert "Test text" in prompt
         assert "topic" in prompt or "testing" in prompt
         assert "JSON" in prompt or "json" in prompt
@@ -257,7 +257,7 @@ class TestSentimentAnalysis:
         """Test parsing valid JSON response."""
         _response = '{"sentiment": "positive", "confidence": 0.8}'
         _result = empath_agent._parse_sentiment_response(response)
-        
+
         assert result["sentiment"] == "positive"
         assert result["confidence"] == 0.8
 
@@ -265,7 +265,7 @@ class TestSentimentAnalysis:
         """Test parsing invalid JSON response fallback."""
         _response = "This is not JSON"
         _result = empath_agent._parse_sentiment_response(response)
-        
+
         # Should fallback to heuristic
         assert "sentiment" in result
 
@@ -284,9 +284,9 @@ class TestMoodTracking:
             "stress_indicators": False,
             "conflict_potential": False,
         }
-        
+
         empath_agent._update_agent_mood("agent-1", sentiment_result)
-        
+
         assert "agent-1" in empath_agent.agent_moods
         assert len(empath_agent.agent_moods["agent-1"]) == 1
         _mood_entry = empath_agent.agent_moods["agent-1"][0]
@@ -302,11 +302,11 @@ class TestMoodTracking:
             "stress_indicators": False,
             "conflict_potential": False,
         }
-        
+
         # Add multiple mood entries
         for i in range(5):
             empath_agent._update_agent_mood("agent-1", sentiment_result)
-        
+
         assert len(empath_agent.agent_moods["agent-1"]) == 5
 
     def test_update_agent_mood_history_limit(self, _empath_agent: EmpathAgent) -> None:
@@ -318,11 +318,11 @@ class TestMoodTracking:
             "stress_indicators": False,
             "conflict_potential": False,
         }
-        
+
         # Add more entries than max_mood_history
         for i in range(empath_agent.max_mood_history + 10):
             empath_agent._update_agent_mood("agent-1", sentiment_result)
-        
+
         assert len(empath_agent.agent_moods["agent-1"]) <= empath_agent.max_mood_history
 
     def test_check_stress_indicators_increase(self, _empath_agent: EmpathAgent) -> None:
@@ -334,16 +334,16 @@ class TestMoodTracking:
             "stress_indicators": True,
             "conflict_potential": False,
         }
-        
+
         empath_agent._check_stress_indicators("agent-1", sentiment_result)
-        
+
         assert empath_agent.agent_stress_levels.get("agent-1", 0.0) > 0.0
 
     def test_check_stress_indicators_decrease(self, _empath_agent: EmpathAgent) -> None:
         """Test stress level decreases without stress indicators."""
         # Set initial stress
         empath_agent.agent_stress_levels["agent-1"] = 0.5
-        
+
         _sentiment_result = {
             "sentiment": "positive",
             "intensity": 0.5,
@@ -351,9 +351,9 @@ class TestMoodTracking:
             "stress_indicators": False,
             "conflict_potential": False,
         }
-        
+
         empath_agent._check_stress_indicators("agent-1", sentiment_result)
-        
+
         # Stress should decrease
         assert empath_agent.agent_stress_levels["agent-1"] < 0.5
 
@@ -366,9 +366,9 @@ class TestMoodTracking:
             "stress_indicators": False,
             "conflict_potential": False,
         }
-        
+
         empath_agent._log_sentiment("agent-1", sentiment_result)
-        
+
         assert len(empath_agent.sentiment_history) == 1
         _logged = empath_agent.sentiment_history[0]
         assert logged["agent_id"] == "agent-1"
@@ -393,7 +393,7 @@ class TestMessageHandling:
             },
             _timestamp = datetime.now(timezone.utc).isoformat(),
         )
-        
+
         empath_agent.send = AsyncMock(return_value="msg-123")
         # Mock _validate_message_content to return None (no validator for this type)
         empath_agent._validate_message_content = MagicMock(return_value=None)
@@ -406,9 +406,9 @@ class TestMessageHandling:
             "stress_indicators": False,
             "conflict_potential": False,
         })
-        
+
         await empath_agent._handle_analyze_sentiment(message)
-        
+
         assert empath_agent.send.called
         _call_args = empath_agent.send.call_args
         assert call_args[1]["content"]["message_type"] == "sentiment_result"
@@ -426,11 +426,11 @@ class TestMessageHandling:
             },
             _timestamp = datetime.now(timezone.utc).isoformat(),
         )
-        
+
         empath_agent.send = AsyncMock(return_value="msg-123")
-        
+
         await empath_agent._handle_analyze_sentiment(message)
-        
+
         _call_args = empath_agent.send.call_args
         assert call_args[1]["content"]["message_type"] == "error_response"
 
@@ -448,11 +448,11 @@ class TestMessageHandling:
             },
             _timestamp = datetime.now(timezone.utc).isoformat(),
         )
-        
+
         empath_agent.send = AsyncMock(return_value="msg-123")
-        
+
         await empath_agent._handle_track_emotion(message)
-        
+
         assert "agent-1" in empath_agent.agent_moods
 
     @pytest.mark.asyncio
@@ -466,11 +466,11 @@ class TestMessageHandling:
             },
             _timestamp = datetime.now(timezone.utc).isoformat(),
         )
-        
+
         empath_agent.send = AsyncMock(return_value="msg-123")
-        
+
         await empath_agent._handle_track_emotion(message)
-        
+
         _call_args = empath_agent.send.call_args
         assert call_args[1]["content"]["message_type"] == "error_response"
 
@@ -487,11 +487,11 @@ class TestMessageHandling:
             },
             _timestamp = datetime.now(timezone.utc).isoformat(),
         )
-        
+
         empath_agent.send = AsyncMock(return_value="msg-123")
-        
+
         await empath_agent._handle_detect_conflict(message)
-        
+
         assert empath_agent.send.called
         _call_args = empath_agent.send.call_args
         assert call_args[1]["content"]["message_type"] == "conflict_result"
@@ -508,11 +508,11 @@ class TestMessageHandling:
             },
             _timestamp = datetime.now(timezone.utc).isoformat(),
         )
-        
+
         empath_agent.send = AsyncMock(return_value="msg-123")
-        
+
         await empath_agent._handle_detect_conflict(message)
-        
+
         _call_args = empath_agent.send.call_args
         assert call_args[1]["content"]["message_type"] == "error_response"
 
@@ -525,7 +525,7 @@ class TestMessageHandling:
         ]
         empath_agent.agent_stress_levels["agent-1"] = 0.3
         empath_agent.agent_confidence["agent-1"] = 0.8
-        
+
         _message = ActorMessage(
             _sender = "test-sender",
             _message_type = "get_emotional_state",
@@ -535,11 +535,11 @@ class TestMessageHandling:
             },
             _timestamp = datetime.now(timezone.utc).isoformat(),
         )
-        
+
         empath_agent.send = AsyncMock(return_value="msg-123")
-        
+
         await empath_agent._handle_get_emotional_state(message)
-        
+
         _call_args = empath_agent.send.call_args
         assert call_args[1]["content"]["message_type"] == "emotional_state_result"
         assert call_args[1]["content"]["agent_id"] == "agent-1"
@@ -555,11 +555,11 @@ class TestMessageHandling:
             },
             _timestamp = datetime.now(timezone.utc).isoformat(),
         )
-        
+
         empath_agent.send = AsyncMock(return_value="msg-123")
-        
+
         await empath_agent._handle_get_emotional_state(message)
-        
+
         _call_args = empath_agent.send.call_args
         _content = call_args[1]["content"]
         assert content["message_type"] == "emotional_state_result"
@@ -578,11 +578,11 @@ class TestMessageHandling:
             },
             _timestamp = datetime.now(timezone.utc).isoformat(),
         )
-        
+
         empath_agent.send = AsyncMock(return_value="msg-123")
-        
+
         await empath_agent._handle_mediate_conflict(message)
-        
+
         assert empath_agent.send.called
         # Should have sent to both agents and reply topic
         assert empath_agent.send.call_count >= 1
@@ -594,7 +594,7 @@ class TestMessageHandling:
         empath_agent.agent_moods["agent-1"] = [
             {"sentiment": "positive", "intensity": 0.7, "emotions": ["joy"]}
         ]
-        
+
         _message = ActorMessage(
             _sender = "test-sender",
             _message_type = "get_collective_mood",
@@ -603,11 +603,11 @@ class TestMessageHandling:
             },
             _timestamp = datetime.now(timezone.utc).isoformat(),
         )
-        
+
         empath_agent.send = AsyncMock(return_value="msg-123")
-        
+
         await empath_agent._handle_get_collective_mood(message)
-        
+
         _call_args = empath_agent.send.call_args
         _content = call_args[1]["content"]
         assert content["message_type"] == "collective_mood_result"
@@ -631,22 +631,22 @@ class TestConflictAnalysis:
             {"sentiment": "negative", "intensity": 0.9, "emotions": ["anger"]}
             for _ in range(10)
         ]
-        
+
         _conflict_detected = empath_agent._analyze_conflict_potential(
             ["agent-1", "agent-2"]
         )
-        
+
         assert conflict_detected is True
 
     def test_analyze_conflict_potential_high_stress(self, _empath_agent: EmpathAgent) -> None:
         """Test conflict detection based on high stress."""
         empath_agent.agent_stress_levels["agent-1"] = 0.9  # Above threshold
         empath_agent.agent_stress_levels["agent-2"] = 0.5
-        
+
         _conflict_detected = empath_agent._analyze_conflict_potential(
             ["agent-1", "agent-2"]
         )
-        
+
         assert conflict_detected is True
 
     def test_analyze_conflict_potential_no_conflict(self, _empath_agent: EmpathAgent) -> None:
@@ -658,11 +658,11 @@ class TestConflictAnalysis:
         empath_agent.agent_moods["agent-2"] = [
             {"sentiment": "positive", "intensity": 0.6, "emotions": ["joy"]}
         ]
-        
+
         _conflict_detected = empath_agent._analyze_conflict_potential(
             ["agent-1", "agent-2"]
         )
-        
+
         assert conflict_detected is False
 
 
@@ -676,12 +676,12 @@ class TestMediation:
         """Test mediation generation using LLM."""
         mock_swarms_agent.llm = AsyncMock(return_value='{"resolution": "Compromise", "reasoning": "Fair solution"}')
         empath_agent.swarms_agent = mock_swarms_agent
-        
+
         _result = await empath_agent._generate_mediation(
             ["agent-1", "agent-2"],
             "Both agents should compromise",
         )
-        
+
         assert "resolution" in result
         assert "reasoning" in result
 
@@ -691,7 +691,7 @@ class TestMediation:
         _result = await empath_agent._generate_mediation(
             ["agent-1", "agent-2"], None
         )
-        
+
         assert "resolution" in result
         assert "reasoning" in result
 
@@ -709,17 +709,17 @@ class TestCollectiveMood:
                 {"sentiment": "positive", "intensity": 0.7, "emotions": ["joy"]}
                 for _ in range(5)
             ]
-        
+
         empath_agent._update_collective_mood()
-        
+
         assert empath_agent.collective_mood["positive"] > 0.0
 
     def test_update_collective_mood_empty(self, _empath_agent: EmpathAgent) -> None:
         """Test collective mood update with no data."""
         empath_agent.agent_moods = {}
-        
+
         empath_agent._update_collective_mood()
-        
+
         # Should handle empty case gracefully
         assert isinstance(empath_agent.collective_mood, dict)
 
@@ -735,15 +735,15 @@ class TestCollectiveMood:
         empath_agent.agent_moods["agent-3"] = [
             {"sentiment": "neutral", "intensity": 0.5, "emotions": ["neutral"]}
         ]
-        
+
         empath_agent.agent_stress_levels = {
             "agent-1": 0.3,
             "agent-2": 0.6,
             "agent-3": 0.9,
         }
-        
+
         empath_agent._update_collective_mood()
-        
+
         assert empath_agent.collective_stress > 0.0
         assert empath_agent.collective_stress <= 1.0
 
@@ -762,11 +762,11 @@ class TestProcessMessage:
             _content = {"reply_to": "reply"},
             _timestamp = datetime.now(timezone.utc).isoformat(),
         )
-        
+
         empath_agent.send = AsyncMock(return_value="msg-123")
-        
+
         await empath_agent.process_message(message)
-        
+
         assert True  # Should not raise
 
     @pytest.mark.asyncio
@@ -778,7 +778,7 @@ class TestProcessMessage:
             _content = {},
             _timestamp = datetime.now(timezone.utc).isoformat(),
         )
-        
+
         await empath_agent.process_message(message)
 
     @pytest.mark.asyncio
@@ -786,20 +786,20 @@ class TestProcessMessage:
         """Test error handling in message processing."""
         async def failing_handler(_msg: ActorMessage) -> None:
             raise ValueError("Test error")
-        
+
         empath_agent.register_handler("failing", failing_handler)
-        
+
         _message = ActorMessage(
             _sender = "test",
             _message_type = "failing",
             _content = {"reply_to": "reply"},
             _timestamp = datetime.now(timezone.utc).isoformat(),
         )
-        
+
         empath_agent.send = AsyncMock(return_value="msg-123")
-        
+
         await empath_agent.process_message(message)
-        
+
         assert empath_agent.error_count >= 1
 
 
@@ -812,7 +812,7 @@ class TestEmpathIntegration:
     async def test_full_sentiment_workflow(self, _empath_agent: EmpathAgent) -> None:
         """Test complete sentiment analysis workflow."""
         await empath_agent.initialize()
-        
+
         # Verify handlers are registered
         assert "analyze_sentiment" in empath_agent._message_handlers
         assert "track_emotion" in empath_agent._message_handlers
@@ -823,7 +823,7 @@ class TestEmpathIntegration:
     async def test_learning_status(self, _empath_agent: EmpathAgent) -> None:
         """Test getting learning status."""
         _status = empath_agent.get_learning_status()
-        
+
         assert "agent_id" in status
         assert "collective_learning" in status
         assert "consensus" in status
@@ -845,12 +845,12 @@ class TestErrorHandling:
             _content = {"reply_to": "reply"},
             _timestamp = datetime.now(timezone.utc).isoformat(),
         )
-        
+
         empath_agent.send = AsyncMock(return_value="msg-123")
-        
+
         # Should not raise, should send error response
         await empath_agent._handle_analyze_sentiment(message)
-        
+
         assert empath_agent.send.called
 
     @pytest.mark.asyncio
@@ -865,8 +865,8 @@ class TestErrorHandling:
             },
             _timestamp = datetime.now(timezone.utc).isoformat(),
         )
-        
+
         empath_agent.send = AsyncMock(return_value="msg-123")
-        
+
         # Should not raise
         await empath_agent._handle_mediate_conflict(message)

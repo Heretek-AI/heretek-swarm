@@ -4,7 +4,8 @@ Example Plugins for Heretek Swarm
 This module contains example plugins demonstrating the plugin system.
 """
 
-from typing import Dict, Any, Optional
+from typing import Any, Dict, Optional
+
 from .manager import Plugin, PluginMetadata, PluginState
 
 
@@ -177,7 +178,7 @@ class HealthMonitorPlugin(Plugin):
         """Called when plugin is loaded."""
         await super().on_load(runtime)
         print(f"HealthMonitorPlugin loaded: {self.metadata.name}")
-        
+
         # Start periodic health checks
         self._start_health_checks()
 
@@ -195,19 +196,19 @@ class HealthMonitorPlugin(Plugin):
     async def _check_health(self) -> None:
         """Perform health check."""
         self.check_count += 1
-        
+
         # Check memory
         try:
             from memory.persistent import PersistentMemoryStore
             _memory_store = PersistentMemoryStore()
             await memory_store.connect()
-            
+
             # Simple health check
             self.health_status = "healthy"
-            
+
         except Exception as e:
             self.health_status = f"unhealthy: {str(e)}"
-        
+
         print(f"[HealthMonitorPlugin] Health check #{self.check_count}: {self.health_status}")
 
     async def on_message(self, message: Dict[str, Any]) -> Optional[Dict[str, Any]]:

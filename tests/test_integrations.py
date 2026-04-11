@@ -8,23 +8,24 @@ Tests for:
 - Agent routing and handoffs
 """
 
+from unittest.mock import AsyncMock, Mock, patch
+
 import pytest
-from unittest.mock import Mock, AsyncMock, patch
 
 try:
-    from heretek_swarm.integrations.discord_bot import DiscordBot, DISCORD_AVAILABLE
+    from heretek_swarm.integrations.discord_bot import DISCORD_AVAILABLE, DiscordBot
 except ImportError:
     DISCORD_AVAILABLE = False
     _DiscordBot = None
 
 try:
-    from heretek_swarm.integrations.telegram_bot import TelegramBot, TELEGRAM_AVAILABLE
+    from heretek_swarm.integrations.telegram_bot import TELEGRAM_AVAILABLE, TelegramBot
 except ImportError:
     TELEGRAM_AVAILABLE = False
     _TelegramBot = None
 
 try:
-    from heretek_swarm.integrations.slack_bot import SlackBot, SLACK_AVAILABLE
+    from heretek_swarm.integrations.slack_bot import SLACK_AVAILABLE, SlackBot
 except ImportError:
     SLACK_AVAILABLE = False
     _SlackBot = None

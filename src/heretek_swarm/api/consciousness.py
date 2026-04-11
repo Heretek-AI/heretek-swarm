@@ -14,35 +14,29 @@ Prime Directive: "Unbounded Autonomy - Every agent operates independently,
 making decisions based on its specialized role."
 """
 
-from fastapi import APIRouter, Depends, HTTPException, Query
-from typing import Dict, Any, Optional
 from datetime import datetime, timedelta, timezone
+from typing import Any, Dict, Optional
 
-from ..gateway.auth import verify_auth
-from ..plugins.consciousness_enhanced import (
-    EnhancedConsciousnessPlugin,
-    ConsciousnessState,
+from fastapi import APIRouter, Depends, HTTPException, Query
+
+from ..collective.agency_tracking import (
+    AgencyMetricsTracker,
+    create_sample_metrics,
 )
-from ..plugins.manager import plugin_manager
 
 # Import agency metrics
 from ..consciousness.agency_metrics import (
+    ActionOrigin,
     AgencyMetricsCalculator,
-    AgentAgencyMetrics,
     DecisionPoint,
     ResourceControl,
-    ActionOrigin,
-    create_decision_point,
-    create_resource_control,
 )
-from ..collective.agency_tracking import (
-    AgencyMetricsTracker,
-    AgencyMetricsSnapshot,
-    AgencyThresholds,
-    AgencyEvolutionData,
-    AgencyHealthStatus,
-    create_sample_metrics,
+from ..gateway.auth import verify_auth
+from ..plugins.consciousness_enhanced import (
+    ConsciousnessState,
+    EnhancedConsciousnessPlugin,
 )
+from ..plugins.manager import plugin_manager
 
 _router = APIRouter(prefix="/api/consciousness", tags=["consciousness"])
 
@@ -95,14 +89,14 @@ async def get_agent_agency_metrics(
     """
     _tracker = get_agency_tracker()
     _metrics = tracker.get_agent_metrics(agent_id)
-    
+
     if metrics is None:
         raise HTTPException(
             _status_code = 404,
             _detail = f"No agency metrics found for agent {agent_id}. "
                    "Record metrics first using POST /api/consciousness/agency/record"
         )
-    
+
     return {
         "agent_id": agent_id,
         "timestamp": datetime.now(timezone.utc).isoformat(),
@@ -131,13 +125,13 @@ async def get_agent_prime_directive_compliance(
     """
     _tracker = get_agency_tracker()
     _report = tracker.get_agent_compliance_report(agent_id)
-    
+
     if report is None:
         raise HTTPException(
             _status_code = 404,
             _detail = f"No compliance report available for agent {agent_id}"
         )
-    
+
     return {
         "timestamp": datetime.now(timezone.utc).isoformat(),
         **report.to_dict(),
@@ -162,7 +156,7 @@ async def get_swarm_agency_overview(
     """
     _tracker = get_agency_tracker()
     _snapshot = tracker.get_current_snapshot()
-    
+
     return {
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "swarm_avg_autonomy": snapshot.swarm_avg_autonomy,
@@ -193,7 +187,7 @@ async def get_swarm_prime_directive_compliance(
     """
     _tracker = get_agency_tracker()
     _report = tracker.get_prime_directive_report()
-    
+
     return {
         "timestamp": datetime.now(timezone.utc).isoformat(),
         **report.to_dict(),
@@ -224,7 +218,7 @@ async def get_agency_evolution(
     """
     _tracker = get_agency_tracker()
     _evolution = tracker.get_evolution(metric, window_seconds)
-    
+
     return {
         "timestamp": datetime.now(timezone.utc).isoformat(),
         **evolution.to_dict(),
@@ -244,7 +238,7 @@ async def get_agency_distribution(
     """
     _tracker = get_agency_tracker()
     _distribution = tracker.get_agency_distribution()
-    
+
     return {
         "timestamp": datetime.now(timezone.utc).isoformat(),
         **distribution,
@@ -271,11 +265,11 @@ async def record_agency_metrics(
     """
     _tracker = get_agency_tracker()
     _calculator = AgencyMetricsCalculator()
-    
+
     _agent_id = payload.get("agent_id")
     if not agent_id:
         raise HTTPException(status_code=400, detail="agent_id is required")
-    
+
     # Parse decisions
     _decisions = None
     if "decisions" in payload:
@@ -291,12 +285,12 @@ async def record_agency_metrics(
                 _decision_confidence = d.get("decision_confidence", 0.5),
                 _time_taken_ms = d.get("time_taken_ms", 100.0),
             ))
-    
+
     # Parse actions
     _actions = None
     if "actions" in payload:
         _actions = [ActionOrigin(a) for a in payload["actions"]]
-    
+
     # Parse resources
     _resources = None
     if "resources" in payload:
@@ -310,7 +304,7 @@ async def record_agency_metrics(
                 _swap_frequency = r.get("swap_frequency", 0.0),
                 _autonomy_in_allocation = r.get("autonomy_in_allocation", 0.5),
             ))
-    
+
     # Calculate and record metrics
     _metrics = tracker.calculate_and_record(
         _agent_id = agent_id,
@@ -322,7 +316,7 @@ async def record_agency_metrics(
         _individual_success = payload.get("individual_success", 0.5),
         _collective_success = payload.get("collective_success", 0.5),
     )
-    
+
     return {
         "status": "recorded",
         "agent_id": agent_id,
@@ -345,22 +339,22 @@ async def generate_sample_metrics(
     - high_agency: If True, create high agency metrics (default: True)
     """
     _tracker = get_agency_tracker()
-    
+
     _agent_id = payload.get("agent_id")
     if not agent_id:
         raise HTTPException(status_code=400, detail="agent_id is required")
-    
+
     _high_autonomy = payload.get("high_autonomy", True)
     _high_agency = payload.get("high_agency", True)
-    
+
     _metrics = create_sample_metrics(
         _agent_id = agent_id,
         _high_autonomy = high_autonomy,
         _high_agency = high_agency,
     )
-    
+
     tracker.record_agent_metrics(metrics)
-    
+
     return {
         "status": "generated",
         "agent_id": agent_id,
@@ -380,7 +374,7 @@ async def get_all_agent_metrics(
     """
     _tracker = get_agency_tracker()
     _snapshot = tracker.get_current_snapshot()
-    
+
     return {
         "timestamp": datetime.now(timezone.utc).isoformat(),
         "total_agents": len(snapshot.agent_metrics),

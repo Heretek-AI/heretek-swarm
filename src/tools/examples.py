@@ -12,7 +12,6 @@ from pydantic import BaseModel, Field
 
 from .base import BaseTool, SimpleTool, ToolContext
 
-
 # ============================================================================
 # Example 1: Memory Search Tool (migrated from knowledge-retrieval shell script)
 # ============================================================================
@@ -43,7 +42,7 @@ class MemorySearchTool(BaseTool[MemorySearchInput, MemorySearchOutput]):
     - Performance monitoring
     - Integration with dual-tier memory
     """
-    
+
     def __init__(self):
         super().__init__(
             _name = "memory_search",
@@ -52,20 +51,20 @@ class MemorySearchTool(BaseTool[MemorySearchInput, MemorySearchOutput]):
             _tags = ["search", "memory", "retrieval"],
             _requires_memory = True
         )
-    
+
     async def execute(self, _input_data: MemorySearchInput, _context: ToolContext) -> MemorySearchOutput:
         """Execute memory search"""
         _start_time = datetime.now(timezone.utc)
-        
+
         # Placeholder implementation
         # In production, this would integrate with the DualTierMemorySystem
         _results = []
-        
+
         # Simulate search
         await asyncio.sleep(0.01)  # Simulate query time
-        
+
         _query_time_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
-        
+
         return MemorySearchOutput(
             _results = results,
             _total_count = len(results),
@@ -108,7 +107,7 @@ class HealthCheckTool(BaseTool[HealthCheckInput, HealthCheckOutput]):
     - Detailed latency metrics
     - Structured output
     """
-    
+
     def __init__(self):
         super().__init__(
             _name = "health_check",
@@ -116,38 +115,38 @@ class HealthCheckTool(BaseTool[HealthCheckInput, HealthCheckOutput]):
             _category = "system",
             _tags = ["health", "monitoring", "diagnostics"]
         )
-    
+
     async def execute(self, _input_data: HealthCheckInput, _context: ToolContext) -> HealthCheckOutput:
         """Execute health checks"""
         _services = input_data.services or ["redis", "postgres", "litellm"]
-        
+
         _results = []
         _overall_healthy = True
-        
+
         for service in services:
             _status = await self._check_service(service)
             results.append(status)
-            
+
             if not status.healthy:
                 _overall_healthy = False
-        
+
         return HealthCheckOutput(
             _overall_healthy = overall_healthy,
             _services = results
         )
-    
+
     async def _check_service(self, _service: str) -> ServiceStatus:
         """Check individual service health"""
         import asyncio
-        
+
         _start_time = datetime.now(timezone.utc)
-        
+
         try:
             # Simulate health check
             await asyncio.sleep(0.01)
-            
+
             _latency_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
-            
+
             return ServiceStatus(
                 _name = service,
                 _healthy = True,
@@ -191,7 +190,7 @@ class ConsensusVoteTool(BaseTool[ConsensusVoteInput, ConsensusVoteOutput]):
     - Real-time quorum tracking
     - Vote justification storage
     """
-    
+
     def __init__(self):
         super().__init__(
             _name = "consensus_vote",
@@ -199,22 +198,22 @@ class ConsensusVoteTool(BaseTool[ConsensusVoteInput, ConsensusVoteOutput]):
             _category = "governance",
             _tags = ["consensus", "voting", "governance", "bft"]
         )
-    
+
     async def execute(self, _input_data: ConsensusVoteInput, _context: ToolContext) -> ConsensusVoteOutput:
         """Record a consensus vote"""
         import uuid
-        
+
         # Validate vote
         if input_data.vote not in ["yes", "no", "abstain"]:
             raise ValueError(f"Invalid vote: {input_data.vote}")
-        
+
         # Record vote (placeholder)
         _vote_id = str(uuid.uuid4())
-        
+
         # Simulate vote tally
         _tally = {"yes": 5, "no": 2, "abstain": 1}
         _quorum_reached = sum(tally.values()) >= 7
-        
+
         return ConsensusVoteOutput(
             _vote_recorded = True,
             _vote_id = vote_id,
@@ -233,33 +232,32 @@ class LegacyWrapperTool(SimpleTool):
     
     Allows gradual migration while maintaining compatibility.
     """
-    
+
     def __init__(self, _name: str, script_path: str, _description: str, _category: str):
-        import subprocess
-        
+
         async def execute_shell(**kwargs):
             """Execute shell script with arguments"""
             import asyncio
-            
+
             cmd = [script_path]
             for key, value in kwargs.items():
                 cmd.extend([f"--{key}", str(value)])
-            
+
             process = await asyncio.create_subprocess_exec(
                 *cmd,
                 stdout = asyncio.subprocess.PIPE,
                 stderr = asyncio.subprocess.PIPE
             )
-            
+
             stdout, stderr = await process.communicate()
-            
+
             return {
                 "success": process.returncode == 0,
                 "output": stdout.decode(),
                 "error": stderr.decode(),
                 "returncode": process.returncode
             }
-        
+
         super().__init__(
             _name = name,
             _description = description,

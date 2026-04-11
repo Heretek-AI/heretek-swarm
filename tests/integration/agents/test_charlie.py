@@ -4,15 +4,14 @@ Integration tests for CharlieAgent.
 Tier 1 (Core Triad) - CharlieAgent serves as devil's advocate, performing risk assessment and challenge generation.
 """
 
-import asyncio
-import pytest
-import pytest_asyncio
 from datetime import datetime
 from unittest.mock import patch
 
-from heretek_swarm.actors.triad import CharlieAgent
-from heretek_swarm.actors.base import ActorMessage, ActorState
+import pytest
+import pytest_asyncio
 
+from heretek_swarm.actors.base import ActorMessage, ActorState
+from heretek_swarm.actors.triad import CharlieAgent
 
 _pytestmark = pytest.mark.integration
 

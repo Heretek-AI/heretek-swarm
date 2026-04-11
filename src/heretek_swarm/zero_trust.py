@@ -11,17 +11,16 @@ Reference: EXPANSION_ROADMAP.md SH-1 Enhanced Zero-Trust
 """
 
 import re
-import uuid
 import time
+import uuid
+from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional, Set, Type
-from collections import defaultdict
-
-from pydantic import BaseModel, field_validator, ConfigDict
 
 import structlog
+from pydantic import BaseModel, ConfigDict, field_validator
 
 _logger = structlog.get_logger(__name__)
 
@@ -65,7 +64,7 @@ class ZeroTrustResult:
     agent_id: Optional[str] = None
     total_latency_ms: float = 0.0
     sanitized_output: Optional[str] = None
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for logging/serialization."""
         return {
@@ -110,16 +109,16 @@ class ValidatedInput(BaseModel):
     - UUID v4 validation for all ID fields
     - Content size limits enforced
     """
-    
+
     _model_config = ConfigDict(
         extra='forbid',  # Reject unknown fields - critical for injection protection
         _validate_assignment = True,  # Validate on field assignment
         _str_strip_whitespace = True,  # Strip whitespace from strings
     )
-    
+
     request_id: str
     timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
-    
+
     @field_validator('request_id')
     @classmethod
     def validate_request_id(cls, v: str) -> str:
@@ -160,7 +159,7 @@ class InputValidator:
     - Content size limits (max 10KB default)
     - Type validation for all fields
     """
-    
+
     # Injection patterns to detect at input level
     INJECTION_PATTERNS = [
         # Python injection
@@ -186,14 +185,14 @@ class InputValidator:
         (r'\.\./', "path traversal detected"),
         (r'\.\.\\', "path traversal detected"),
     ]
-    
+
     def __init__(self, config: Optional[InputValidationConfig]):
         self.config = config or InputValidationConfig()
         self._compiled_patterns = [
             (re.compile(p, re.IGNORECASE), desc)
             for p, desc in self.INJECTION_PATTERNS
         ]
-    
+
     def validate(self, data: Dict[str, Any], model_class: Optional[Type[ValidatedInput]], agent_id: Optional[str]) -> LayerResult:
         """
         Validate input data against Layer 1 rules.
@@ -207,7 +206,7 @@ class InputValidator:
             LayerResult with validation status
         """
         _start_time = time.time()
-        
+
         try:
             # Check content size
             _content_size = len(str(data))
@@ -219,7 +218,7 @@ class InputValidator:
                     severity=Severity.WARNING,
                     details={"content_size": content_size, "max_size": self.config.max_content_size},
                 )
-            
+
             if content_size < self.config.min_content_size:
                 return LayerResult(
                     layer="input",
@@ -228,7 +227,7 @@ class InputValidator:
                     _severity = Severity.INFO,
                     details={"content_size": content_size, "min_size": self.config.min_content_size},
                 )
-            
+
             # Validate request_id if present
             if "request_id" in data and self.config.require_uuid_v4:
                 try:
@@ -247,7 +246,7 @@ class InputValidator:
                         _reason = f"Invalid UUID v4 request_id: {e}",
                         severity=Severity.WARNING,
                     )
-            
+
             # Check for injection patterns
             _content_str = str(data)
             for pattern, description in self._compiled_patterns:
@@ -259,7 +258,7 @@ class InputValidator:
                         severity=Severity.HIGH,
                         details={"pattern": pattern.pattern, "description": description},
                     )
-            
+
             # Validate nesting depth
             _depth = self._calculate_depth(data)
             if depth > self.config.max_nesting_depth:
@@ -270,7 +269,7 @@ class InputValidator:
                     severity=Severity.WARNING,
                     details={"depth": depth, "max_depth": self.config.max_nesting_depth},
                 )
-            
+
             # If a model class is provided, perform Pydantic validation
             if model_class is not None:
                 try:
@@ -288,9 +287,9 @@ class InputValidator:
                         severity=Severity.WARNING,
                         details={"pydantic_error": str(e)},
                     )
-            
+
             _latency_ms = (time.time() - start_time) * 1000
-            
+
             return LayerResult(
                 layer="input",
                 passed=True,
@@ -301,7 +300,7 @@ class InputValidator:
                     "latency_ms": latency_ms,
                 },
             )
-            
+
         except Exception as e:
             logger.error("input_validation_error", error=str(e), agent_id=agent_id)
             return LayerResult(
@@ -310,12 +309,12 @@ class InputValidator:
                 _reason = f"Validation error: {e}",
                 severity=Severity.HIGH,
             )
-    
+
     def _calculate_depth(self, obj: Any, current_depth: int) -> int:
         """Calculate the maximum nesting depth of a data structure."""
         if current_depth > self.config.max_nesting_depth + 5:
             return current_depth
-        
+
         if isinstance(obj, dict):
             if not obj:
                 return current_depth
@@ -371,7 +370,7 @@ class ContextValidator:
     - Anomaly detection with configurable threshold
     - False positive rate < 1%
     """
-    
+
     # Advanced injection patterns for context analysis
     CONTEXT_INJECTION_PATTERNS = [
         # Prompt injection patterns
@@ -392,7 +391,7 @@ class ContextValidator:
         (r'%[0-9a-fA-F]{2}', "URL encoding detected"),
         (r'base64[_\s]*decode', "base64 decode detected"),
     ]
-    
+
     def __init__(self, config: Optional[ContextValidationConfig]):
         self.config = config or ContextValidationConfig()
         self._baselines: Dict[str, BehavioralBaseline] = {}
@@ -400,7 +399,7 @@ class ContextValidator:
             (re.compile(p, re.IGNORECASE), desc)
             for p, desc in self.CONTEXT_INJECTION_PATTERNS
         ]
-    
+
     def validate(self, data: Dict[str, Any], context: Optional[Dict[str, Any]], agent_id: Optional[str]) -> LayerResult:
         """
         Validate request context against Layer 2 rules.
@@ -416,10 +415,10 @@ class ContextValidator:
         _start_time = time.time()
         context = context or {}
         _anomalies_detected = []
-        
+
         try:
             _content_str = str(data)
-            
+
             # Injection detection
             if self.config.enable_injection_detection:
                 for pattern, description in self._compiled_patterns:
@@ -431,20 +430,20 @@ class ContextValidator:
                             severity=Severity.HIGH,
                             details={"pattern": pattern.pattern, "description": description},
                         )
-            
+
             # Behavioral analysis
             if self.config.enable_behavioral_analysis and agent_id:
                 _baseline = self._get_or_create_baseline(agent_id)
                 _behavioral_result = self._analyze_behavior(data, baseline)
                 if behavioral_result:
                     anomalies_detected.extend(behavioral_result)
-            
+
             # Anomaly detection
             if self.config.enable_anomaly_detection and anomalies_detected:
                 severity = Severity.WARNING
                 if len(anomalies_detected) >= 3:
                     severity = Severity.HIGH
-                
+
                 return LayerResult(
                     layer="context",
                     passed=False,
@@ -452,9 +451,9 @@ class ContextValidator:
                     severity=severity,
                     details={"anomalies": anomalies_detected},
                 )
-            
+
             _latency_ms = (time.time() - start_time) * 1000
-            
+
             return LayerResult(
                 layer="context",
                 passed=True,
@@ -465,7 +464,7 @@ class ContextValidator:
                     "injection_detection": self.config.enable_injection_detection,
                 },
             )
-            
+
         except Exception as e:
             logger.error("context_validation_error", error=str(e), agent_id=agent_id)
             return LayerResult(
@@ -474,13 +473,13 @@ class ContextValidator:
                 _reason = f"Context validation error: {e}",
                 severity=Severity.HIGH,
             )
-    
+
     def _get_or_create_baseline(self, agent_id: str) -> BehavioralBaseline:
         """Get or create behavioral baseline for an agent."""
         if agent_id not in self._baselines:
             self._baselines[agent_id] = BehavioralBaseline(agent_id=agent_id)
         return self._baselines[agent_id]
-    
+
     def _analyze_behavior(self, data: Dict[str, Any], baseline: BehavioralBaseline) -> List[str]:
         """
         Analyze request against behavioral baseline.
@@ -490,7 +489,7 @@ class ContextValidator:
         _anomalies = []
         _current_time = datetime.now(timezone.utc)
         _request_size = len(str(data))
-        
+
         # Update baseline statistics
         if baseline.total_requests > 0:
             # Check for size anomaly
@@ -501,18 +500,18 @@ class ContextValidator:
                     anomalies.append(
                         f"Request size anomaly (z={z_score:.2f})"
                     )
-            
+
             # Check for timing anomaly (rapid requests)
             if baseline.last_request_time:
                 _last_time = datetime.fromisoformat(baseline.last_request_time)
                 _interval_ms = (current_time - last_time).total_seconds() * 1000
-                
+
                 if baseline.avg_request_interval_ms > 0:
                     if interval_ms < baseline.avg_request_interval_ms * 0.1:
                         anomalies.append(
                             f"Rapid request detected (interval={interval_ms:.0f}ms)"
                         )
-        
+
         # Update baseline
         baseline.total_requests += 1
         baseline.avg_request_size = (
@@ -520,9 +519,9 @@ class ContextValidator:
             / baseline.total_requests
         )
         baseline.last_request_time = current_time.isoformat()
-        
+
         return anomalies
-    
+
     def update_baseline(self, agent_id: str, avg_request_size: float, avg_request_interval_ms: float) -> None:
         """Manually update behavioral baseline."""
         _baseline = self._get_or_create_baseline(agent_id)
@@ -553,7 +552,7 @@ class OutputValidator:
     - Sensitive data pattern detection
     - Response sanitization
     """
-    
+
     # PII patterns for detection
     PII_PATTERNS = [
         # Email addresses
@@ -570,7 +569,7 @@ class OutputValidator:
         (r'\b(?:api[_-]?key|apikey|token|secret|password)\s*[=:]\s*["\']?[a-zA-Z0-9_-]{16,}["\']?', 
          "[API_KEY_REDACTED]"),
     ]
-    
+
     # Sensitive data patterns
     SENSITIVE_PATTERNS = [
         # Private keys
@@ -581,7 +580,7 @@ class OutputValidator:
         # JWT tokens
         (r'eyJ[a-zA-Z0-9_-]*\.eyJ[a-zA-Z0-9_-]*\.[a-zA-Z0-9_-]*', "[JWT_REDACTED]"),
     ]
-    
+
     def __init__(self, config: Optional[OutputValidationConfig]):
         self.config = config or OutputValidationConfig()
         self._compiled_pii = [
@@ -592,7 +591,7 @@ class OutputValidator:
             (re.compile(p, re.IGNORECASE), replacement)
             for p, replacement in self.SENSITIVE_PATTERNS
         ]
-    
+
     def validate(self, output: Any, agent_id: Optional[str]) -> LayerResult:
         """
         Validate output data against Layer 3 rules.
@@ -609,7 +608,7 @@ class OutputValidator:
         _sanitized_output = output_str
         _detected_pii = []
         _detected_sensitive = []
-        
+
         try:
             # Check output size
             if len(output_str) > self.config.max_output_size:
@@ -620,7 +619,7 @@ class OutputValidator:
                     severity=Severity.WARNING,
                     details={"output_size": len(output_str), "max_size": self.config.max_output_size},
                 )
-            
+
             # PII detection
             if self.config.enable_pii_detection:
                 for pattern, replacement in self._compiled_pii:
@@ -629,7 +628,7 @@ class OutputValidator:
                         detected_pii.append(pattern.pattern)
                         if self.config.redact_pii:
                             _sanitized_output = pattern.sub(replacement, sanitized_output)
-            
+
             # Sensitive data detection
             if self.config.enable_sensitive_data_filtering:
                 for pattern, replacement in self._compiled_sensitive:
@@ -638,9 +637,9 @@ class OutputValidator:
                         detected_sensitive.append(pattern.pattern)
                         if self.config.redact_pii:
                             _sanitized_output = pattern.sub(replacement, sanitized_output)
-            
+
             _latency_ms = (time.time() - start_time) * 1000
-            
+
             # Determine if validation passed
             passed = True
             _reason = None
@@ -648,7 +647,7 @@ class OutputValidator:
                 if not self.config.redact_pii:
                     passed = False
                     _reason = f"PII or sensitive data detected: {detected_pii + detected_sensitive}"
-            
+
             return LayerResult(
                 layer="output",
                 passed=passed,
@@ -662,7 +661,7 @@ class OutputValidator:
                     "sanitized_output": sanitized_output,
                 },
             )
-            
+
         except Exception as e:
             logger.error("output_validation_error", error=str(e), agent_id=agent_id)
             return LayerResult(
@@ -671,7 +670,7 @@ class OutputValidator:
                 _reason = f"Output validation error: {e}",
                 severity=Severity.HIGH,
             )
-    
+
     def sanitize(self, output: str) -> str:
         """
         Sanitize output by redacting PII and sensitive data.
@@ -683,13 +682,13 @@ class OutputValidator:
             Sanitized string with PII/sensitive data redacted
         """
         _sanitized = output
-        
+
         for pattern, replacement in self._compiled_pii:
             _sanitized = pattern.sub(replacement, sanitized)
-        
+
         for pattern, replacement in self._compiled_sensitive:
             _sanitized = pattern.sub(replacement, sanitized)
-        
+
         return sanitized
 
 
@@ -719,12 +718,12 @@ class AuditLogger:
     - Severity levels (INFO, WARNING, HIGH, CRITICAL)
     - Log retention policy (30 days default)
     """
-    
+
     def __init__(self, config: Optional[AuditLogConfig]):
         self.config = config or AuditLogConfig()
         self._event_counts: Dict[str, int] = defaultdict(int)
         self._high_severity_events: List[Dict[str, Any]] = []
-    
+
     def log(self, event_type: str, result: ZeroTrustResult, additional_context: Optional[Dict[str, Any]]) -> LayerResult:
         """
         Log a security event.
@@ -739,7 +738,7 @@ class AuditLogger:
         """
         try:
             context = additional_context or {}
-            
+
             # Build log entry
             _log_entry = {
                 "event_type": event_type,
@@ -750,7 +749,7 @@ class AuditLogger:
                 "timestamp": datetime.now(timezone.utc).isoformat(),
                 **context,
             }
-            
+
             # Determine severity and log level
             severity = Severity.INFO
             if not result.passed:
@@ -762,20 +761,20 @@ class AuditLogger:
                     severity = result.layer3.severity
                 else:
                     severity = Severity.WARNING
-            
+
             log_entry["severity"] = severity.value
-            
+
             # Track event counts
             self._event_counts[event_type] += 1
             self._event_counts[f"{event_type}:{severity.value}"] += 1
-            
+
             # Store high severity events for review
             if severity in (Severity.HIGH, Severity.CRITICAL):
                 self._high_severity_events.append(log_entry)
                 # Keep only last 1000 high severity events
                 if len(self._high_severity_events) > 1000:
                     self._high_severity_events = self._high_severity_events[-1000:]
-            
+
             # Log to structlog
             _log_method = {
                 Severity.INFO: logger.info,
@@ -783,12 +782,12 @@ class AuditLogger:
                 Severity.HIGH: logger.error,
                 Severity.CRITICAL: logger.critical,
             }.get(severity, logger.info)
-            
+
             log_method(
                 f"security_event_{event_type}",
                 **log_entry,
             )
-            
+
             return LayerResult(
                 layer="audit",
                 passed=True,
@@ -799,7 +798,7 @@ class AuditLogger:
                     "severity": severity.value,
                 },
             )
-            
+
         except Exception as e:
             logger.error("audit_logging_error", error=str(e))
             return LayerResult(
@@ -808,11 +807,11 @@ class AuditLogger:
                 _reason = f"Audit logging error: {e}",
                 severity=Severity.WARNING,
             )
-    
+
     def get_event_counts(self) -> Dict[str, int]:
         """Get counts of logged events by type."""
         return dict(self._event_counts)
-    
+
     def get_high_severity_events(self, limit: int) -> List[Dict[str, Any]]:
         """Get recent high severity events."""
         return self._high_severity_events[-limit:]
@@ -837,18 +836,18 @@ class ZeroTrustValidator:
     - False negative rate < 0.1%
     - Throughput > 1000 validations/second
     """
-    
+
     def __init__(self, input_config: Optional[InputValidationConfig], context_config: Optional[ContextValidationConfig], output_config: Optional[OutputValidationConfig], audit_config: Optional[AuditLogConfig]):
         self.input_validator = InputValidator(input_config)
         self.context_validator = ContextValidator(context_config)
         self.output_validator = OutputValidator(output_config)
         self.audit_logger = AuditLogger(audit_config)
-        
+
         # Performance metrics
         self._validation_count = 0
         self._total_latency_ms = 0.0
         self._failed_validations = 0
-    
+
     async def validate_request(self, data: Dict[str, Any], context: Optional[Dict[str, Any]], agent_id: Optional[str], request_id: Optional[str], model_class: Optional[Type[ValidatedInput]]) -> ZeroTrustResult:
         """
         Validate a request through all 4 layers.
@@ -865,10 +864,10 @@ class ZeroTrustValidator:
         """
         _start_time = time.time()
         _request_id = request_id or str(uuid.uuid4())
-        
+
         # Layer 1: Input Validation
         _layer1 = self.input_validator.validate(data, model_class, agent_id)
-        
+
         # Layer 2: Context Validation (skip if Layer 1 failed critically)
         if layer1.severity == Severity.CRITICAL:
             _layer2 = LayerResult(
@@ -879,7 +878,7 @@ class ZeroTrustValidator:
             )
         else:
             _layer2 = self.context_validator.validate(data, context, agent_id)
-        
+
         # Layer 3: Output Validation (for response data, pass-through for input)
         _layer3 = LayerResult(
             layer="output",
@@ -887,13 +886,13 @@ class ZeroTrustValidator:
             _reason = "Input validation - output layer applied on response",
             _severity = Severity.INFO,
         )
-        
+
         # Determine overall pass/fail
         passed = layer1.passed and layer2.passed
-        
+
         # Calculate total latency
         _latency_ms = (time.time() - start_time) * 1000
-        
+
         # Create result
         _result = ZeroTrustResult(
             passed=passed,
@@ -905,7 +904,7 @@ class ZeroTrustValidator:
             _agent_id = agent_id,
             _total_latency_ms = latency_ms,
         )
-        
+
         # Layer 4: Audit Logging
         result.layer4 = self.audit_logger.log(
             _event_type = "request_validation",
@@ -915,15 +914,15 @@ class ZeroTrustValidator:
                 "layer2_passed": layer2.passed,
             },
         )
-        
+
         # Update metrics
         self._validation_count += 1
         self._total_latency_ms += latency_ms
         if not passed:
             self._failed_validations += 1
-        
+
         return result
-    
+
     async def validate_response(self, output: Any, agent_id: Optional[str], request_id: Optional[str]) -> ZeroTrustResult:
         """
         Validate a response through output validation layer.
@@ -938,7 +937,7 @@ class ZeroTrustValidator:
         """
         _start_time = time.time()
         _request_id = request_id or str(uuid.uuid4())
-        
+
         # Skip layers 1-2 for response validation
         _layer1 = LayerResult(
             layer="input",
@@ -952,15 +951,15 @@ class ZeroTrustValidator:
             _reason = "Response validation - context layer skipped",
             _severity = Severity.INFO,
         )
-        
+
         # Layer 3: Output Validation
         _layer3 = self.output_validator.validate(output, agent_id)
-        
+
         _latency_ms = (time.time() - start_time) * 1000
-        
+
         # Extract sanitized output from layer3 details if available
         _sanitized = layer3.details.get("sanitized_output")
-        
+
         _result = ZeroTrustResult(
             passed=layer3.passed,
             _layer1 = layer1,
@@ -972,7 +971,7 @@ class ZeroTrustValidator:
             _total_latency_ms = latency_ms,
             _sanitized_output = sanitized,
         )
-        
+
         # Layer 4: Audit Logging
         result.layer4 = self.audit_logger.log(
             _event_type = "response_validation",
@@ -982,9 +981,9 @@ class ZeroTrustValidator:
                 "pii_detected": layer3.details.get("pii_detected", []),
             },
         )
-        
+
         return result
-    
+
     def get_metrics(self) -> Dict[str, Any]:
         """Get validation metrics."""
         _avg_latency = (
@@ -992,7 +991,7 @@ class ZeroTrustValidator:
             if self._validation_count > 0
             else 0
         )
-        
+
         return {
             "total_validations": self._validation_count,
             "failed_validations": self._failed_validations,
@@ -1004,7 +1003,7 @@ class ZeroTrustValidator:
             "avg_latency_ms": avg_latency,
             "event_counts": self.audit_logger.get_event_counts(),
         }
-    
+
     def get_high_severity_events(self, limit: int) -> List[Dict[str, Any]]:
         """Get recent high severity security events."""
         return self.audit_logger.get_high_severity_events(limit)

@@ -11,19 +11,15 @@ GET /api/collective/evolution-status
 """
 
 from typing import Any, Dict, List, Optional
-from fastapi import APIRouter, HTTPException, Depends
-import structlog
 
-from heretek_swarm.collective.emergent_detection import (
-    EvolutionEngine,
-    EvolutionMetrics,
-    CapabilityRecord,
-    EmergentPatternDetector,
-)
+import structlog
+from fastapi import APIRouter, HTTPException
+
 from heretek_swarm.collective.adaptive_learning import (
     AdaptiveLearningRateController,
-    EvolutionResult,
-    EnvironmentProfile,
+)
+from heretek_swarm.collective.emergent_detection import (
+    EvolutionEngine,
 )
 
 logger = structlog.get_logger("api.collective_evolution")
@@ -87,22 +83,22 @@ async def get_evolution_status() -> Dict[str, Any]:
     try:
         engine = get_evolution_engine()
         adaptive = get_adaptive_learning()
-        
+
         # Get evolution metrics from engine
         metrics = engine.get_evolution_metrics()
-        
+
         # Get environment profile
         env_profile = adaptive.get_environment_profile()
-        
+
         # Get swarm statistics
         swarm_stats = adaptive.get_swarm_statistics()
-        
+
         # Get capability records
         capabilities = engine.get_capability_records()
-        
+
         # Get recent evolution events
         recent_capabilities = capabilities[-10:] if capabilities else []
-        
+
         return {
             "status": "healthy",
             "timestamp": metrics.timestamp.isoformat() if hasattr(metrics, 'timestamp') else None,
@@ -152,7 +148,7 @@ async def get_evolution_status() -> Dict[str, Any]:
             ],
             "generations": metrics.generations,
         }
-    
+
     except Exception as e:
         logger.error("evolution_status_error", error=str(e))
         raise HTTPException(500, f"Failed to get evolution status: {str(e)}")
@@ -179,16 +175,16 @@ async def get_capabilities(
     """
     try:
         engine = get_evolution_engine()
-        
+
         capabilities = engine.get_capability_records(
             capability_type=capability_type,
             min_fitness=min_fitness,
             stabilized_only=stabilized_only,
         )
-        
+
         # Apply limit
         capabilities = capabilities[-limit:]
-        
+
         return {
             "total": len(capabilities),
             "capabilities": [
@@ -211,7 +207,7 @@ async def get_capabilities(
                 for cap in capabilities
             ],
         }
-    
+
     except Exception as e:
         logger.error("get_capabilities_error", error=str(e))
         raise HTTPException(500, f"Failed to get capabilities: {str(e)}")
@@ -230,7 +226,7 @@ async def get_capability(capability_id: str) -> Dict[str, Any]:
     """
     try:
         engine = get_evolution_engine()
-        
+
         # Search for the capability
         for cap in engine.get_capability_records():
             if cap.capability_id == capability_id:
@@ -254,9 +250,9 @@ async def get_capability(capability_id: str) -> Dict[str, Any]:
                         "inheritance_count": cap.inheritance_count,
                     }
                 }
-        
+
         raise HTTPException(404, f"Capability not found: {capability_id}")
-    
+
     except HTTPException:
         raise
     except Exception as e:
@@ -278,16 +274,16 @@ async def get_agent_evolution(agent_id: str) -> Dict[str, Any]:
     try:
         engine = get_evolution_engine()
         adaptive = get_adaptive_learning()
-        
+
         # Get agent capability history
         history = engine.get_agent_capability_history(agent_id)
-        
+
         # Get agent learning state
         state = adaptive.get_agent_state(agent_id)
-        
+
         # Get convergence metrics
         convergence = adaptive.get_convergence_metrics(agent_id)
-        
+
         return {
             "agent_id": agent_id,
             "capability_history": [
@@ -322,7 +318,7 @@ async def get_agent_evolution(agent_id: str) -> Dict[str, Any]:
                 "performance_stability": convergence.performance_stability,
             },
         }
-    
+
     except Exception as e:
         logger.error("agent_evolution_error", error=str(e))
         raise HTTPException(500, f"Failed to get agent evolution: {str(e)}")
@@ -339,19 +335,19 @@ async def get_fitness_landscape() -> Dict[str, Any]:
     try:
         engine = get_evolution_engine()
         adaptive = get_adaptive_learning()
-        
+
         # Get all agent states
         states = adaptive.get_all_agent_states()
-        
+
         # Build fitness distribution
         fitness_values = [s.fitness_score for s in states.values()]
-        
+
         # Get environment profile
         env_profile = adaptive.get_environment_profile()
-        
+
         # Get evolution metrics
         metrics = engine.get_evolution_metrics()
-        
+
         # Calculate fitness percentiles
         if fitness_values:
             sorted_fitness = sorted(fitness_values)
@@ -360,7 +356,7 @@ async def get_fitness_landscape() -> Dict[str, Any]:
             p75 = sorted_fitness[3 * len(sorted_fitness) // 4] if sorted_fitness else 0
         else:
             p25 = p50 = p75 = 0
-        
+
         return {
             "fitness_landscape": metrics.fitness_landscape,
             "fitness_variance": metrics.fitness_variance,
@@ -384,7 +380,7 @@ async def get_fitness_landscape() -> Dict[str, Any]:
                 "description": _get_phase_description(metrics.current_phase),
             },
         }
-    
+
     except Exception as e:
         logger.error("fitness_landscape_error", error=str(e))
         raise HTTPException(500, f"Failed to get fitness landscape: {str(e)}")
@@ -415,18 +411,18 @@ async def get_adaptability_metrics() -> Dict[str, Any]:
     try:
         engine = get_evolution_engine()
         adaptive = get_adaptive_learning()
-        
+
         # Get evolution metrics
         metrics = engine.get_evolution_metrics()
-        
+
         # Get environment profile
         env_profile = adaptive.get_environment_profile()
-        
+
         # Calculate adaptability components
         rate_component = min(metrics.evolution_rate / 10.0, 1.0) if metrics.evolution_rate else 0
         diversity_component = metrics.capability_diversity
         environment_component = env_profile.get("stability", 0.5)
-        
+
         return {
             "adaptability_index": metrics.adaptability_index,
             "adaptation_latency": metrics.adaptation_latency,
@@ -447,7 +443,7 @@ async def get_adaptability_metrics() -> Dict[str, Any]:
                 "evolution_rate": metrics.evolution_rate,
             },
         }
-    
+
     except Exception as e:
         logger.error("adaptability_metrics_error", error=str(e))
         raise HTTPException(500, f"Failed to get adaptability metrics: {str(e)}")
@@ -470,9 +466,9 @@ async def evolve_agent_behaviors(
     """
     try:
         adaptive = get_adaptive_learning()
-        
+
         result = await adaptive.evolve_behaviors(agent_id, environment_demands)
-        
+
         return {
             "agent_id": agent_id,
             "evolution_result": {
@@ -484,7 +480,7 @@ async def evolve_agent_behaviors(
                 "fitness_improvement": result.fitness_improvement,
             },
         }
-    
+
     except Exception as e:
         logger.error("evolve_agent_error", error=str(e))
         raise HTTPException(500, f"Failed to evolve agent: {str(e)}")
@@ -515,7 +511,7 @@ async def record_capability(
     """
     try:
         engine = get_evolution_engine()
-        
+
         record = engine.record_capability_gain(
             agent_id=agent_id,
             capability_type=capability_type,
@@ -524,7 +520,7 @@ async def record_capability(
             description=description,
             contributing_agents=contributing_agents,
         )
-        
+
         return {
             "status": "recorded",
             "capability": {
@@ -536,7 +532,7 @@ async def record_capability(
                 "first_observed": record.first_observed,
             },
         }
-    
+
     except Exception as e:
         logger.error("record_capability_error", error=str(e))
         raise HTTPException(500, f"Failed to record capability: {str(e)}")
@@ -557,9 +553,9 @@ async def detect_evolution(
     """
     try:
         engine = get_evolution_engine()
-        
+
         new_capabilities = engine.detect_evolution(agent_states)
-        
+
         return {
             "detected_count": len(new_capabilities),
             "capabilities": [
@@ -572,7 +568,7 @@ async def detect_evolution(
                 for cap in new_capabilities
             ],
         }
-    
+
     except Exception as e:
         logger.error("detect_evolution_error", error=str(e))
         raise HTTPException(500, f"Failed to detect evolution: {str(e)}")

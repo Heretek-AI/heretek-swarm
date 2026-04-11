@@ -61,7 +61,7 @@ class LlamaCppProvider(LLMProviderBase):
             default_model=default_model,
             extra_config=extra_config,
         )
-        
+
         self._client: Optional[httpx.AsyncClient] = None
 
     def _init_capabilities(self) -> ProviderCapabilities:
@@ -99,11 +99,11 @@ class LlamaCppProvider(LLMProviderBase):
         """
         _client = await self._get_client()
         _start_time = time.time()
-        
+
         # Convert messages to llama.cpp format
         # llama.cpp server uses a prompt format
         _prompt = self._format_prompt(request.messages)
-        
+
         # Build llama.cpp-specific payload
         _payload = {
             "prompt": prompt,
@@ -112,26 +112,26 @@ class LlamaCppProvider(LLMProviderBase):
             "n_predict": request.max_tokens or 256,
             "stream": False,
         }
-        
+
         # Add stop sequences
         if request.stop:
             payload["stop"] = request.stop
-        
+
         # Add any extra parameters
         if request.extra_body:
             payload.update(request.extra_body)
-        
+
         logger.debug(
             "Sending llama.cpp completion request",
             _prompt_length = len(prompt),
         )
-        
+
         try:
             _response = await client.post(
                 "/completion",
                 _json = payload,
             )
-            
+
             if response.status_code >= 500:
                 raise ProviderUnavailableError(
                     "llama.cpp service unavailable",
@@ -142,16 +142,16 @@ class LlamaCppProvider(LLMProviderBase):
                     f"llama.cpp API error: {response.status_code} - {response.text[:200]}",
                     _provider = "llamacpp",
                 )
-            
+
             _data = response.json()
             _latency_ms = (time.time() - start_time) * 1000
-            
+
             content = data.get("content", "")
-            
+
             # Calculate approximate token usage
             _prompt_tokens = self._estimate_tokens(prompt)
             _completion_tokens = self._estimate_tokens(content)
-            
+
             return LLMResponse(
                 content=content,
                 _model = self.default_model or "llamacpp",
@@ -164,7 +164,7 @@ class LlamaCppProvider(LLMProviderBase):
                 _raw_response = data,
                 _latency_ms = latency_ms,
             )
-            
+
         except httpx.RequestError as e:
             raise ProviderUnavailableError(
                 f"Request failed: {e}. Is llama.cpp server running?",
@@ -183,9 +183,9 @@ class LlamaCppProvider(LLMProviderBase):
             Chunks of the completion text
         """
         _client = await self._get_client()
-        
+
         _prompt = self._format_prompt(request.messages)
-        
+
         _payload = {
             "prompt": prompt,
             "temperature": request.temperature,
@@ -193,15 +193,15 @@ class LlamaCppProvider(LLMProviderBase):
             "n_predict": request.max_tokens or 256,
             "stream": True,
         }
-        
+
         if request.stop:
             payload["stop"] = request.stop
-        
+
         logger.debug(
             "Sending llama.cpp streaming request",
             _prompt_length = len(prompt),
         )
-        
+
         try:
             async with client.stream(
                 "POST",
@@ -213,11 +213,11 @@ class LlamaCppProvider(LLMProviderBase):
                         f"llama.cpp API error: {response.status_code}",
                         _provider = "llamacpp",
                     )
-                
+
                 async for line in response.aiter_lines():
                     if not line.strip():
                         continue
-                    
+
                     # llama.cpp sends raw text in streaming mode
                     # or JSON with "content" field
                     try:
@@ -226,14 +226,14 @@ class LlamaCppProvider(LLMProviderBase):
                             content = chunk.get("content", "")
                         else:
                             content = line
-                        
+
                         if content:
                             yield content
                     except json.JSONDecodeError:
                         # Raw text mode
                         if line:
                             yield line
-                        
+
         except httpx.RequestError as e:
             raise ProviderUnavailableError(
                 f"Stream request failed: {e}",
@@ -248,7 +248,7 @@ class LlamaCppProvider(LLMProviderBase):
         Uses a simple chat format. Can be customized based on the model.
         """
         _formatted = ""
-        
+
         for msg in messages:
             if msg.role == "system":
                 formatted += f"System: {msg.content}\n"
@@ -256,10 +256,10 @@ class LlamaCppProvider(LLMProviderBase):
                 formatted += f"User: {msg.content}\n"
             elif msg.role == "assistant":
                 formatted += f"Assistant: {msg.content}\n"
-        
+
         # Add assistant prefix to prompt completion
         formatted += "Assistant: "
-        
+
         return formatted
 
     def _estimate_tokens(self, text: str) -> int:

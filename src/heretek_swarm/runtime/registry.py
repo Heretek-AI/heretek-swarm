@@ -20,38 +20,38 @@ _logger = structlog.get_logger("AgentRegistry")
 
 class AgentRole(Enum):
     """Classification of agent roles within the collective."""
-    
+
     # Orchestration
     ORCHESTRATOR = "orchestrator"
     ORCHESTRATOR_SUPPORT = "orchestrator_support"
     COORDINATOR = "coordinator"
-    
+
     # Triad (Decision Making)
     TRIAD_NODE = "triad_node"
-    
+
     # Safety & Alignment
     SAFETY_REVIEWER = "safety_reviewer"
     GUARDIAN_PRIME = "guardian_prime"
-    
+
     # Intelligence & Analysis
     INTELLIGENCE_GATHERER = "intelligence_gatherer"
     PERSPECTIVE_ANALYST = "perspective_analyst"
     SENSOR = "sensor"
     QUESTIONER = "questioner"
-    
+
     # Implementation
     IMPLEMENTER = "implementer"
-    
+
     # Communication & Relationships
     COMMUNICATOR = "communicator"
     RELATIONSHIP_MANAGER = "relationship_manager"
     INTEGRATOR = "integrator"
-    
+
     # Processing & Synthesis
     SYNTHESIZER = "synthesizer"
     SAGE = "sage"
     MEDIATOR = "mediator"
-    
+
     # Specialized
     TIMEKEEPER = "timekeeper"
     BEHAVIOR_ARCHITECT = "behavior_architect"
@@ -72,7 +72,7 @@ class AgentInfo:
         topics_subscribed: Message topics this agent subscribes to
         priority: Agent priority level (higher = more critical)
     """
-    
+
     name: str
     role: AgentRole
     character: Character
@@ -89,48 +89,48 @@ class AgentRegistry:
     Provides access to agent definitions, capabilities, and relationships.
     Supports dynamic loading and querying of agent information.
     """
-    
+
     # Agent name to role mapping
     AGENT_ROLES: Dict[str, AgentRole] = {
         # Core Orchestration
         "Steward": AgentRole.ORCHESTRATOR,
         "Coordinator": AgentRole.ORCHESTRATOR_SUPPORT,
-        
+
         # Triad
         "Alpha": AgentRole.TRIAD_NODE,
         "Beta": AgentRole.TRIAD_NODE,
         "Charlie": AgentRole.TRIAD_NODE,
-        
+
         # Safety
         "Sentinel": AgentRole.SAFETY_REVIEWER,
         "Sentinel-Prime": AgentRole.GUARDIAN_PRIME,
-        
+
         # Intelligence & Analysis
         "Explorer": AgentRole.INTELLIGENCE_GATHERER,
         "Examiner": AgentRole.QUESTIONER,
         "Perceiver": AgentRole.SENSOR,
         "Prism": AgentRole.PERSPECTIVE_ANALYST,
-        
+
         # Implementation
         "Coder": AgentRole.IMPLEMENTER,
-        
+
         # Communication
         "Echo": AgentRole.COMMUNICATOR,
         "Empath": AgentRole.RELATIONSHIP_MANAGER,
         "Nexus": AgentRole.INTEGRATOR,
-        
+
         # Processing
         "Dreamer": AgentRole.SYNTHESIZER,
         "Metis": AgentRole.SAGE,
         "Arbiter": AgentRole.MEDIATOR,
-        
+
         # Specialized
         "Chronos": AgentRole.TIMEKEEPER,
         "Habit-Forge": AgentRole.BEHAVIOR_ARCHITECT,
         "Catalyst": AgentRole.CHANGE_AGENT,
         "Historian": AgentRole.SYNTHESIZER,  # Memory keeper
     }
-    
+
     # Agent dependencies (who they need to work with)
     AGENT_DEPENDENCIES: Dict[str, List[str]] = {
         "Steward": ["Coordinator", "Chronos"],
@@ -156,7 +156,7 @@ class AgentRegistry:
         "Catalyst": ["Explorer", "Coordinator"],
         "Historian": [],
     }
-    
+
     # Agent capabilities
     AGENT_CAPABILITIES: Dict[str, List[str]] = {
         "Steward": ["orchestration", "task_routing", "agent_coordination"],
@@ -182,7 +182,7 @@ class AgentRegistry:
         "Catalyst": ["change_management", "innovation", "experiment_design"],
         "Historian": ["memory_keeping", "knowledge_storage", "historical_analysis"],
     }
-    
+
     def __init__(self, characters_dir: Optional[Path]):
         """
         Initialize the agent registry.
@@ -193,33 +193,33 @@ class AgentRegistry:
         """
         if characters_dir is None:
             characters_dir = Path(__file__).parent / "characters"
-        
+
         self.characters_dir = Path(characters_dir)
         self._agents: Dict[str, AgentInfo] = {}
         self._loaded = False
-        
+
         logger.info(f"AgentRegistry initialized with characters_dir: {self.characters_dir}")
-    
+
     def load_all(self) -> None:
         """Load all agent definitions from character files."""
         if self._loaded:
             return
-        
+
         for char_file in self.characters_dir.glob("*.json"):
             try:
                 character = Character.from_json(char_file)
                 _name = character.name
-                
+
                 role = self.AGENT_ROLES.get(name, AgentRole.IMPLEMENTER)
                 capabilities = self.AGENT_CAPABILITIES.get(name, [])
                 dependencies = self.AGENT_DEPENDENCIES.get(name, [])
-                
+
                 # Generate subscribed topics based on role and capabilities
                 _topics = self._generate_topics(name, role, capabilities)
-                
+
                 # Determine priority based on role
                 priority = self._get_priority(role)
-                
+
                 self._agents[name] = AgentInfo(
                     _name = name,
                     role=role,
@@ -229,35 +229,35 @@ class AgentRegistry:
                     _topics_subscribed = topics,
                     priority=priority,
                 )
-                
+
                 logger.debug(f"Loaded agent: {name} with role {role.value}")
-                
+
             except Exception as e:
                 logger.error(f"Failed to load character from {char_file}: {e}")
-        
+
         self._loaded = True
         logger.info(f"Loaded {len(self._agents)} agents into registry")
-    
+
     def _generate_topics(self, name: str, role: AgentRole, capabilities: List[str]) -> List[str]:
         """Generate message topics this agent should subscribe to."""
         _topics = [f"agent.{name.lower()}", "broadcast.all"]
-        
+
         # Add role-based topics
         if role in [AgentRole.TRIAD_NODE, AgentRole.ORCHESTRATOR]:
             topics.append("triad.deliberation")
-        
+
         if role in [AgentRole.SAFETY_REVIEWER, AgentRole.GUARDIAN_PRIME]:
             topics.append("safety.review")
-        
+
         if role == AgentRole.MEDIATOR:
             topics.append("conflict.resolution")
-        
+
         # Add capability-based topics
         for cap in capabilities:
             topics.append(f"capability.{cap}")
-        
+
         return list(set(topics))
-    
+
     def _get_priority(self, role: AgentRole) -> int:
         """Get priority level for a role (1-10 scale)."""
         _priorities = {
@@ -282,7 +282,7 @@ class AgentRegistry:
             AgentRole.CHANGE_AGENT: 4,
         }
         return priorities.get(role, 5)
-    
+
     def get_agent(self, name: str) -> Optional[AgentInfo]:
         """
         Get agent information by name.
@@ -296,7 +296,7 @@ class AgentRegistry:
         if not self._loaded:
             self.load_all()
         return self._agents.get(name)
-    
+
     def get_all_agents(self) -> Dict[str, AgentInfo]:
         """
         Get all registered agents.
@@ -307,7 +307,7 @@ class AgentRegistry:
         if not self._loaded:
             self.load_all()
         return self._agents.copy()
-    
+
     def get_agents_by_role(self, role: AgentRole) -> List[AgentInfo]:
         """
         Get all agents with a specific role.
@@ -321,7 +321,7 @@ class AgentRegistry:
         if not self._loaded:
             self.load_all()
         return [info for info in self._agents.values() if info.role == role]
-    
+
     def get_agents_by_capability(self, capability: str) -> List[AgentInfo]:
         """
         Get all agents with a specific capability.
@@ -338,7 +338,7 @@ class AgentRegistry:
             info for info in self._agents.values()
             if capability in info.capabilities
         ]
-    
+
     def get_agent_dependencies(self, name: str) -> List[AgentInfo]:
         """
         Get agents that the specified agent depends on.
@@ -351,17 +351,17 @@ class AgentRegistry:
         """
         if not self._loaded:
             self.load_all()
-        
+
         _agent = self._agents.get(name)
         if not agent:
             return []
-        
+
         return [
             self._agents[dep]
             for dep in agent.dependencies
             if dep in self._agents
         ]
-    
+
     def get_agent_dependents(self, name: str) -> List[AgentInfo]:
         """
         Get agents that depend on the specified agent.
@@ -374,12 +374,12 @@ class AgentRegistry:
         """
         if not self._loaded:
             self.load_all()
-        
+
         return [
             info for info in self._agents.values()
             if name in info.dependencies
         ]
-    
+
     def get_collective_roster(self) -> Dict[str, Dict[str, Any]]:
         """
         Get the complete collective roster with summary information.
@@ -389,7 +389,7 @@ class AgentRegistry:
         """
         if not self._loaded:
             self.load_all()
-        
+
         return {
             name: {
                 "role": info.role.value,
@@ -400,7 +400,7 @@ class AgentRegistry:
             }
             for name, info in self._agents.items()
         }
-    
+
     def get_registry_stats(self) -> Dict[str, Any]:
         """
         Get statistics about the registry.
@@ -410,17 +410,17 @@ class AgentRegistry:
         """
         if not self._loaded:
             self.load_all()
-        
+
         _roles = {}
         capabilities = {}
-        
+
         for info in self._agents.values():
             _role = info.role.value
             roles[role] = roles.get(role, 0) + 1
-            
+
             for cap in info.capabilities:
                 capabilities[cap] = capabilities.get(cap, 0) + 1
-        
+
         return {
             "total_agents": len(self._agents),
             "roles": roles,

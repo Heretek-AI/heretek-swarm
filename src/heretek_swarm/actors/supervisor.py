@@ -13,7 +13,7 @@ from typing import Any, Dict, List, Optional, Type
 
 import structlog
 
-from heretek_swarm.actors.base import AgentActor, ActorState, ActorStatus
+from heretek_swarm.actors.base import ActorState, ActorStatus, AgentActor
 from heretek_swarm.actors.factory import ActorConfig
 
 _logger = structlog.get_logger("ActorSupervisor")
@@ -80,7 +80,7 @@ class ActorSupervisor:
             raise ValueError("health_check_interval must be positive")
         if max_restarts < 0:
             raise ValueError("max_restarts must be non-negative")
-        
+
         self.name = name or "ActorSupervisor"
         self.health_check_interval = health_check_interval
         self.auto_restart = auto_restart

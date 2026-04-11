@@ -13,17 +13,17 @@ Features:
 - Health metrics for container orchestration
 """
 
+import structlog
 from fastapi import APIRouter, Response
 from fastapi.responses import PlainTextResponse
-import structlog
 
-from heretek_swarm.observability.prometheus_metrics import (
-    get_metrics,
-    PrometheusMetrics,
-)
 from heretek_swarm.observability.metrics import (
     SwarmMetricsCollector,
     get_metrics_collector,
+)
+from heretek_swarm.observability.prometheus_metrics import (
+    PrometheusMetrics,
+    get_metrics,
 )
 
 logger = structlog.get_logger(__name__)

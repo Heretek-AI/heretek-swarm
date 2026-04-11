@@ -13,17 +13,16 @@ Coder is the "implementation engine" of the Collective, translating
 decisions and designs into working, tested, and documented code.
 """
 
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Set
-from dataclasses import dataclass, field
-from enum import Enum
 import uuid
+from dataclasses import dataclass, field
+from datetime import datetime, timezone
+from enum import Enum
+from typing import Any, Dict, List, Optional, Set
 
 import structlog
 
-from heretek_swarm.actors.base import AgentActor, ActorMessage
+from heretek_swarm.actors.base import ActorMessage, AgentActor
 from heretek_swarm.actors.validation import validate_message as validate_message_schema
-
 from heretek_swarm.validation import (
     LLMOutputValidator,
     is_code_safe,
@@ -37,14 +36,13 @@ validate_message = validate_message_schema
 from heretek_swarm.collective.learning import PatternExtractor, PatternType
 
 # Session 44: Consensus Integration
-from heretek_swarm.consensus.swarm_deliberation import SwarmDeliberationEngine, Position
+from heretek_swarm.consensus.swarm_deliberation import Position, SwarmDeliberationEngine
 
 # Session 44: Memory Optimization Integration
 from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer, AccessTier
 
 # Session 44: Zero-Trust Validation
 from heretek_swarm.security.zero_trust import ZeroTrustValidator
-
 
 logger = structlog.get_logger("CoderAgent")
 
@@ -166,7 +164,7 @@ class CoderAgent(AgentActor):
     Coder translates requirements into working code, performs reviews,
     debugs issues, and generates tests and documentation.
     """
-    
+
     def __init__(self, agent_id: str = None, config: Dict[str, Any] = None):
         super().__init__(
             agent_id=agent_id,
@@ -174,48 +172,48 @@ class CoderAgent(AgentActor):
             description="Code Implementation & Debugging Specialist",
             config=config or {}
         )
-        
+
         # Code storage
         self._code_snippets: Dict[str, CodeSnippet] = {}
         self._snippet_counter = 0
         self.max_snippets = self._config.get("max_snippets", 500)
-        
+
         # Reviews
         self._reviews: Dict[str, CodeReview] = {}
         self.max_reviews = self._config.get("max_reviews", 200)
-        
+
         # Debug sessions
         self._debug_sessions: Dict[str, DebugSession] = {}
         self._active_debugs: Set[str] = set()
         self.max_debug_sessions = self._config.get("max_debug_sessions", 50)
-        
+
         # Implementation tasks
         self._tasks: Dict[str, ImplementationTask] = {}
         self._task_counter = 0
-        
+
         # Configuration
         self._default_language = CodeLanguage(self._config.get("default_language", "python"))
         self._enable_tests = self._config.get("enable_tests", True)
         self._enable_docs = self._config.get("enable_docs", True)
-        
-        
+
+
         # Session 44: Collective Learning Integration
         self.pattern_extractor = pattern_extractor or PatternExtractor(min_support=3, min_confidence=0.6)
-        
+
         # Session 44: Consensus Integration
         self.deliberation_engine = deliberation_engine or SwarmDeliberationEngine(
             max_rounds=5, consensus_threshold=0.75, min_participants=2
         )
-        
+
         # Session 44: Memory Optimization Integration
         self.access_analyzer = access_analyzer or AccessPatternAnalyzer()
-        
+
         # Session 44: Zero-Trust Validation
         self.zero_trust_validator = zero_trust_validator or ZeroTrustValidator()
-        
+
         # Session 44: LLM Output Validation
         self.llm_output_validator = LLMOutputValidator(strict_mode=True)
-        
+
         # Session 44: Integration state
         self._active_deliberations: Dict[str, str] = {}
         self._pattern_emitted: Set[str] = set()
@@ -226,7 +224,7 @@ class CoderAgent(AgentActor):
             agent_id=self.agent_id,
             default_language=self._default_language.value
         )
-    
+
     def get_handlers(self) -> Dict[str, callable]:
         """Return message handlers for Coder agent."""
         return {
@@ -239,7 +237,7 @@ class CoderAgent(AgentActor):
             "explain_code": self._handle_explain_code,
             "implement_task": self._handle_implement_task,
         }
-    
+
     async def _handle_generate_code(self, message: ActorMessage) -> Optional[Dict[str, Any]]:
         """
         Generate code for a specific purpose.
@@ -255,7 +253,7 @@ class CoderAgent(AgentActor):
         try:
             # Schema validation
             content = validate_message_schema(message.content, "CoderGenerateCode")
-            
+
             # Security validation for code-related content
             description = content.get("description", "")
             if not is_text_safe(description):
@@ -264,20 +262,20 @@ class CoderAgent(AgentActor):
             language = CodeLanguage(content.get("language", self._default_language.value))
             requirements = content.get("requirements", [])
             include_tests = content.get("include_tests", self._enable_tests)
-            
+
             logger.info(
                 "Generating code",
                 description=description[:100],
                 language=language.value
             )
-            
+
             # Generate code using LLM
             code_result = await self._generate_code_llm(
                 description=description,
                 language=language,
                 requirements=requirements
             )
-            
+
             # Store snippet
             self._snippet_counter += 1
             snippet = CodeSnippet(
@@ -292,7 +290,7 @@ class CoderAgent(AgentActor):
                 metadata=code_result.get("metadata", {})
             )
             self._code_snippets[snippet.id] = snippet
-            
+
             # Generate tests if requested
             test_code = None
             if include_tests:
@@ -302,14 +300,14 @@ class CoderAgent(AgentActor):
                     description=description
                 )
                 snippet.test_coverage = 0.8  # Estimate
-            
+
             # LRU eviction
             if len(self._code_snippets) > self.max_snippets:
                 excess = len(self._code_snippets) - self.max_snippets
                 for _ in range(excess):
                     oldest_id = next(iter(self._code_snippets))
                     del self._code_snippets[oldest_id]
-            
+
             return {
                 "status": "success",
                 "code_id": snippet.id,
@@ -319,11 +317,11 @@ class CoderAgent(AgentActor):
                 "dependencies": snippet.dependencies,
                 "complexity_score": snippet.complexity_score
             }
-            
+
         except Exception as e:
             logger.error("Failed to generate code", error=str(e))
             return {"status": "error", "error": str(e)}
-    
+
     async def _handle_review_code(self, message: ActorMessage) -> Optional[Dict[str, Any]]:
         """
         Review code for issues and quality.
@@ -338,7 +336,7 @@ class CoderAgent(AgentActor):
         try:
             # Schema validation
             content = validate_message_schema(message.content, "CoderReviewCode")
-            
+
             # Security validation for code
             code = content.get("code", "")
             if not is_code_safe(code):
@@ -346,20 +344,20 @@ class CoderAgent(AgentActor):
                 return {"status": "error", "error": "Unsafe code detected - contains dangerous patterns"}
             language = CodeLanguage(content.get("language", self._default_language.value))
             focus_areas = content.get("focus_areas", ["security", "bugs", "style"])
-            
+
             logger.info(
                 "Reviewing code",
                 language=language.value,
                 focus_areas=focus_areas
             )
-            
+
             # Perform code review
             review_result = await self._review_code_llm(
                 code=code,
                 language=language,
                 focus_areas=focus_areas
             )
-            
+
             # Parse issues
             issues = []
             for issue_data in review_result.get("issues", []):
@@ -373,12 +371,12 @@ class CoderAgent(AgentActor):
                     code_context=issue_data.get("context")
                 )
                 issues.append(issue)
-            
+
             # Count by severity
             critical_count = len([i for i in issues if i.severity == ReviewSeverity.CRITICAL])
             error_count = len([i for i in issues if i.severity == ReviewSeverity.ERROR])
             warning_count = len([i for i in issues if i.severity == ReviewSeverity.WARNING])
-            
+
             # Store review
             self._snippet_counter += 1
             review = CodeReview(
@@ -394,7 +392,7 @@ class CoderAgent(AgentActor):
                 recommendations=review_result.get("recommendations", [])
             )
             self._reviews[review.id] = review
-            
+
             return {
                 "status": "success",
                 "review_id": review.id,
@@ -416,11 +414,11 @@ class CoderAgent(AgentActor):
                 ],
                 "recommendations": review.recommendations
             }
-            
+
         except Exception as e:
             logger.error("Failed to review code", error=str(e))
             return {"status": "error", "error": str(e)}
-    
+
     async def _handle_debug_code(self, message: ActorMessage) -> Optional[Dict[str, Any]]:
         """
         Debug code with error.
@@ -435,7 +433,7 @@ class CoderAgent(AgentActor):
         try:
             # Schema validation
             content = validate_message_schema(message.content, "CoderDebugCode")
-            
+
             # Security validation for code
             code = content.get("code", "")
             if not is_code_safe(code):
@@ -444,7 +442,7 @@ class CoderAgent(AgentActor):
                 logger.info("Proceeding with debug but code contains dangerous patterns")
             error_message = content.get("error_message", "")
             symptoms = content.get("symptoms", [])
-            
+
             session_id = f"debug_{uuid.uuid4().hex[:8]}"
             session = DebugSession(
                 id=session_id,
@@ -455,20 +453,20 @@ class CoderAgent(AgentActor):
             )
             self._debug_sessions[session_id] = session
             self._active_debugs.add(session_id)
-            
+
             logger.info(
                 "Debugging code",
                 session_id=session_id,
                 error=error_message[:100]
             )
-            
+
             # Analyze and fix
             debug_result = await self._debug_code_llm(
                 code=code,
                 error_message=error_message,
                 symptoms=symptoms
             )
-            
+
             # Update session
             session.root_cause = debug_result.get("root_cause")
             session.fix = debug_result.get("fix")
@@ -476,7 +474,7 @@ class CoderAgent(AgentActor):
             session.status = "fixed" if session.fix else "identified"
             session.resolved_at = datetime.now(timezone.utc)
             self._active_debugs.discard(session_id)
-            
+
             return {
                 "status": "success",
                 "session_id": session_id,
@@ -485,11 +483,11 @@ class CoderAgent(AgentActor):
                 "explanation": session.explanation,
                 "status": session.status
             }
-            
+
         except Exception as e:
             logger.error("Failed to debug code", error=str(e))
             return {"status": "error", "error": str(e)}
-    
+
     async def _handle_generate_tests(self, message: ActorMessage) -> Optional[Dict[str, Any]]:
         """
         Generate tests for code.
@@ -506,30 +504,30 @@ class CoderAgent(AgentActor):
             code = content.get("code", "")
             language = CodeLanguage(content.get("language", self._default_language.value))
             framework = content.get("framework", "pytest")
-            
+
             logger.info(
                 "Generating tests",
                 language=language.value,
                 framework=framework
             )
-            
+
             tests = await self._generate_tests_for_code(
                 code=code,
                 language=language,
                 framework=framework
             )
-            
+
             return {
                 "status": "success",
                 "tests": tests,
                 "framework": framework,
                 "estimated_coverage": 0.85
             }
-            
+
         except Exception as e:
             logger.error("Failed to generate tests", error=str(e))
             return {"status": "error", "error": str(e)}
-    
+
     async def _handle_generate_docs(self, message: ActorMessage) -> Optional[Dict[str, Any]]:
         """
         Generate documentation for code.
@@ -546,30 +544,30 @@ class CoderAgent(AgentActor):
             code = content.get("code", "")
             doc_type = content.get("doc_type", "api")
             style = content.get("style", "google")
-            
+
             logger.info(
                 "Generating documentation",
                 doc_type=doc_type,
                 style=style
             )
-            
+
             docs = await self._generate_docs_llm(
                 code=code,
                 doc_type=doc_type,
                 style=style
             )
-            
+
             return {
                 "status": "success",
                 "documentation": docs,
                 "doc_type": doc_type,
                 "style": style
             }
-            
+
         except Exception as e:
             logger.error("Failed to generate docs", error=str(e))
             return {"status": "error", "error": str(e)}
-    
+
     async def _handle_refactor_code(self, message: ActorMessage) -> Optional[Dict[str, Any]]:
         """
         Refactor code for improvement.
@@ -586,19 +584,19 @@ class CoderAgent(AgentActor):
             code = content.get("code", "")
             goals = content.get("goals", ["readability"])
             constraints = content.get("constraints", [])
-            
+
             logger.info(
                 "Refactoring code",
                 goals=goals,
                 constraints=constraints
             )
-            
+
             refactored = await self._refactor_code_llm(
                 code=code,
                 goals=goals,
                 constraints=constraints
             )
-            
+
             return {
                 "status": "success",
                 "original_code": code[:500],
@@ -606,11 +604,11 @@ class CoderAgent(AgentActor):
                 "improvements": refactored.get("improvements", []),
                 "changes_summary": refactored.get("changes", "")
             }
-            
+
         except Exception as e:
             logger.error("Failed to refactor code", error=str(e))
             return {"status": "error", "error": str(e)}
-    
+
     async def _handle_explain_code(self, message: ActorMessage) -> Optional[Dict[str, Any]]:
         """
         Explain what code does.
@@ -627,29 +625,29 @@ class CoderAgent(AgentActor):
             code = content.get("code", "")
             audience = content.get("audience", "intermediate")
             detail_level = content.get("detail_level", "medium")
-            
+
             logger.info(
                 "Explaining code",
                 audience=audience,
                 detail_level=detail_level
             )
-            
+
             explanation = await self._explain_code_llm(
                 code=code,
                 audience=audience,
                 detail_level=detail_level
             )
-            
+
             return {
                 "status": "success",
                 "explanation": explanation,
                 "code_summary": code[:200] if len(code) > 200 else code
             }
-            
+
         except Exception as e:
             logger.error("Failed to explain code", error=str(e))
             return {"status": "error", "error": str(e)}
-    
+
     async def _handle_implement_task(self, message: ActorMessage) -> Optional[Dict[str, Any]]:
         """
         Implement a complete coding task.
@@ -670,7 +668,7 @@ class CoderAgent(AgentActor):
             language = CodeLanguage(content.get("language", self._default_language.value))
             include_tests = content.get("include_tests", self._enable_tests)
             include_docs = content.get("include_docs", self._enable_docs)
-            
+
             self._task_counter += 1
             task = ImplementationTask(
                 id=f"task_{self._task_counter}",
@@ -680,13 +678,13 @@ class CoderAgent(AgentActor):
                 status="in_progress"
             )
             self._tasks[task.id] = task
-            
+
             logger.info(
                 "Implementing task",
                 task_id=task.id,
                 description=description[:100]
             )
-            
+
             # Generate implementation
             code_result = await self._generate_code_llm(
                 description=description,
@@ -694,24 +692,24 @@ class CoderAgent(AgentActor):
                 requirements=requirements
             )
             task.generated_code = code_result.get("code", "")
-            
+
             # Generate tests
             if include_tests:
                 task.tests = await self._generate_tests_for_code(
                     code=task.generated_code,
                     language=language
                 )
-            
+
             # Generate docs
             if include_docs:
                 task.documentation = await self._generate_docs_llm(
                     code=task.generated_code,
                     doc_type="api"
                 )
-            
+
             task.status = "completed"
             task.completed_at = datetime.now(timezone.utc)
-            
+
             return {
                 "status": "success",
                 "task_id": task.id,
@@ -720,13 +718,13 @@ class CoderAgent(AgentActor):
                 "documentation": task.documentation,
                 "completed_at": task.completed_at.isoformat()
             }
-            
+
         except Exception as e:
             logger.error("Failed to implement task", error=str(e))
             return {"status": "error", "error": str(e)}
-    
+
     # Internal helper methods
-    
+
     async def _generate_code_llm(
         self,
         description: str,
@@ -751,7 +749,7 @@ Provide:
 Return as JSON with keys: code, dependencies, purpose, complexity"""
 
             response = await self.run_with_llm(prompt=prompt, timeout=60, temperature=0.3)
-            
+
             import json
             try:
                 result = json.loads(response)
@@ -772,7 +770,7 @@ Return as JSON with keys: code, dependencies, purpose, complexity"""
         except Exception as e:
             logger.error("Code generation failed", error=str(e))
             return {"code": "", "dependencies": [], "purpose": "", "complexity": 0}
-    
+
     async def _generate_tests_for_code(
         self,
         code: str,
@@ -798,7 +796,7 @@ Return only the test code."""
             return await self.run_with_llm(prompt=prompt, timeout=60, temperature=0.2)
         except:
             return "# Test generation failed"
-    
+
     async def _review_code_llm(
         self,
         code: str,
@@ -828,7 +826,7 @@ Also provide:
 Return as JSON array of issues plus summary, score, recommendations."""
 
             response = await self.run_with_llm(prompt=prompt, timeout=60, temperature=0.2)
-            
+
             import json
             try:
                 return json.loads(response)
@@ -841,7 +839,7 @@ Return as JSON array of issues plus summary, score, recommendations."""
                 }
         except:
             return {"issues": [], "summary": "Review failed", "score": 50.0, "recommendations": []}
-    
+
     async def _debug_code_llm(
         self,
         code: str,
@@ -865,7 +863,7 @@ Provide:
 Return as JSON."""
 
             response = await self.run_with_llm(prompt=prompt, timeout=60, temperature=0.2)
-            
+
             import json
             try:
                 return json.loads(response)
@@ -877,7 +875,7 @@ Return as JSON."""
                 }
         except:
             return {"root_cause": "", "fix": None, "explanation": ""}
-    
+
     async def _generate_docs_llm(
         self,
         code: str,
@@ -895,7 +893,7 @@ Return only the documentation."""
             return await self.run_with_llm(prompt=prompt, timeout=60, temperature=0.2)
         except:
             return "# Documentation generation failed"
-    
+
     async def _refactor_code_llm(
         self,
         code: str,
@@ -918,7 +916,7 @@ Provide:
 Return as JSON."""
 
             response = await self.run_with_llm(prompt=prompt, timeout=60, temperature=0.3)
-            
+
             import json
             try:
                 return json.loads(response)
@@ -930,7 +928,7 @@ Return as JSON."""
                 }
         except:
             return {"code": code, "improvements": [], "changes": "Refactor failed"}
-    
+
 
     # =========================================================================
     # Session 44: Collective Learning Integration Methods
@@ -940,10 +938,10 @@ Return as JSON."""
         """Emit pattern for collective learning."""
         if not self.pattern_extractor:
             return
-        
+
         if item_id in self._pattern_emitted:
             return
-        
+
         try:
             await self.pattern_extractor.analyze_message(
                 message_id=f"{item_type}_{item_id}",
@@ -953,7 +951,7 @@ Return as JSON."""
                 content=content,
                 timestamp=datetime.now(timezone.utc).isoformat(),
             )
-            
+
             self._pattern_emitted.add(item_id)
             logger.info(f"{item_type}_pattern_emitted", item_id=item_id, outcome=outcome)
         except Exception as e:
@@ -963,7 +961,7 @@ Return as JSON."""
         """Consume patterns from collective learning."""
         if not self.pattern_extractor:
             return []
-        
+
         try:
             patterns = await self.pattern_extractor.extract_patterns(
                 time_window_hours=24,
@@ -988,7 +986,7 @@ Return as JSON."""
         """Initiate swarm deliberation."""
         if not self.deliberation_engine:
             return None
-        
+
         try:
             deliberation_id = f"delib_{item_id}"
             self.deliberation_engine.start_deliberation(
@@ -998,7 +996,7 @@ Return as JSON."""
                 domain=domain,
             )
             self._active_deliberations[item_id] = deliberation_id
-            
+
             logger.info("deliberation_initiated", deliberation_id=deliberation_id, item_id=item_id)
             return deliberation_id
         except Exception as e:
@@ -1016,11 +1014,11 @@ Return as JSON."""
         """Submit agent position in deliberation."""
         if not self.deliberation_engine:
             return False
-        
+
         deliberation_id = self._active_deliberations.get(item_id)
         if not deliberation_id:
             return False
-        
+
         try:
             success = self.deliberation_engine.submit_position(
                 deliberation_id=deliberation_id,
@@ -1029,14 +1027,14 @@ Return as JSON."""
                 confidence=confidence,
                 argument=argument,
             )
-            
+
             if success and self.access_analyzer:
                 self.access_analyzer.record_access(
                     memory_id=f"delib_{deliberation_id}_{agent_id}",
                     access_type="write",
                     agent_id=agent_id,
                 )
-            
+
             return success
         except Exception as e:
             logger.error("failed_to_submit_deliberation_position", error=str(e))
@@ -1046,19 +1044,19 @@ Return as JSON."""
         """Finalize deliberation and apply result."""
         if not self.deliberation_engine:
             return None
-        
+
         deliberation_id = self._active_deliberations.get(item_id)
         if not deliberation_id:
             return None
-        
+
         try:
             result = self.deliberation_engine.finalize_deliberation(deliberation_id)
-            
+
             if result:
                 self.deliberation_engine.cleanup_deliberation(deliberation_id)
                 del self._active_deliberations[item_id]
                 logger.info("deliberation_finalized", deliberation_id=deliberation_id)
-            
+
             return result
         except Exception as e:
             logger.error("failed_to_finalize_deliberation", error=str(e))
@@ -1072,7 +1070,7 @@ Return as JSON."""
         """Track memory access patterns."""
         if not self.access_analyzer:
             return
-        
+
         memory_id = f"{item_type}_{item_id}"
         self.access_analyzer.record_access(
             memory_id=memory_id,
@@ -1084,7 +1082,7 @@ Return as JSON."""
         """Get memory tier classification."""
         if not self.access_analyzer:
             return AccessTier.COLD
-        
+
         memory_id = f"{item_type}_{item_id}"
         profile = self.access_analyzer.get_profile(memory_id)
         return profile.tier if profile else AccessTier.COLD
@@ -1093,7 +1091,7 @@ Return as JSON."""
         """Prefetch items an agent is likely to need."""
         if not self.access_analyzer:
             return []
-        
+
         try:
             predicted_memories = self.access_analyzer.predict_agent_access(agent_id)
             return [

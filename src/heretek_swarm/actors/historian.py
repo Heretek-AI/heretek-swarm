@@ -16,28 +16,26 @@ Features:
 import asyncio
 from collections import OrderedDict
 from datetime import datetime, timezone
-
 from typing import Any, Dict, List, Optional
 
 import structlog
 from swarms import Agent
 
-from heretek_swarm.actors.base import AgentActor, ActorMessage
-from heretek_swarm.memory.base import DualTierMemory, MemoryEntry
-from heretek_swarm.knowledge.unified_access import UnifiedKnowledgeAccess, KnowledgeQueryResult
+from heretek_swarm.actors.base import ActorMessage, AgentActor
 
 # Session 44: Collective Learning Integration
 from heretek_swarm.collective.learning import PatternExtractor, PatternType
 
 # Session 44: Consensus Integration
-from heretek_swarm.consensus.swarm_deliberation import SwarmDeliberationEngine, Position
+from heretek_swarm.consensus.swarm_deliberation import Position, SwarmDeliberationEngine
+from heretek_swarm.knowledge.unified_access import KnowledgeQueryResult, UnifiedKnowledgeAccess
 
 # Session 44: Memory Optimization Integration
 from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer, AccessTier
+from heretek_swarm.memory.base import DualTierMemory, MemoryEntry
 
 # Session 44: Zero-Trust Validation
 from heretek_swarm.security.zero_trust import ZeroTrustValidator
-
 
 _logger = structlog.get_logger("HistorianAgent")
 
@@ -48,7 +46,7 @@ class LRUCache:
     
     Provides automatic eviction of least-recently-used items when capacity is exceeded.
     """
-    
+
     def __init__(self, _max_size: int):
         """
         Initialize LRU cache.
@@ -60,7 +58,7 @@ class LRUCache:
         self.max_size = max_size
         self.hits = 0
         self.misses = 0
-    
+
     def get(self, _key: str, _default: Any) -> Any:
         """
         Get item from cache.
@@ -75,12 +73,12 @@ class LRUCache:
         if key not in self._cache:
             self.misses += 1
             return default
-        
+
         # Move to end (most recently used)
         self._cache.move_to_end(key)
         self.hits += 1
         return self._cache[key]
-    
+
     def set(self, _key: str, _value: Any) -> None:
         """
         Set item in cache.
@@ -97,13 +95,13 @@ class LRUCache:
                 # Evict least recently used
                 self._cache.popitem(last=False)
             self._cache[key] = value
-    
+
     def clear(self) -> None:
         """Clear all cached items."""
         self._cache.clear()
         self.hits = 0
         self.misses = 0
-    
+
     def invalidate(self, _key: str) -> bool:
         """
         Invalidate a specific cache entry.
@@ -118,7 +116,7 @@ class LRUCache:
             del self._cache[key]
             return True
         return False
-    
+
     def invalidate_pattern(self, _pattern: str) -> int:
         """
         Invalidate all cache entries matching a pattern.
@@ -137,15 +135,15 @@ class LRUCache:
         for key in keys_to_remove:
             del self._cache[key]
         return len(keys_to_remove)
-    
+
     def __contains__(self, _key: str) -> bool:
         """Check if key is in cache."""
         return key in self._cache
-    
+
     def __len__(self) -> int:
         """Return number of cached items."""
         return len(self._cache)
-    
+
     def get_statistics(self) -> Dict[str, Any]:
         """Get cache statistics."""
         total = self.hits + self.misses
@@ -211,25 +209,25 @@ class HistorianAgent(AgentActor):
         self.decision_lineage: Dict[str, List[str]] = {}
         self.pattern_cache = LRUCache(max_size=pattern_cache_max_size)
         self.context_cache = LRUCache(max_size=context_cache_max_size)
-        
+
         # Unified knowledge access layer
         self.knowledge_access: Optional[UnifiedKnowledgeAccess] = None
 
-        
+
         # Session 44: Collective Learning Integration
         self.pattern_extractor = pattern_extractor or PatternExtractor(min_support=3, min_confidence=0.6)
-        
+
         # Session 44: Consensus Integration
         self.deliberation_engine = deliberation_engine or SwarmDeliberationEngine(
             _max_rounds = 5, consensus_threshold=0.75, min_participants=2
         )
-        
+
         # Session 44: Memory Optimization Integration
         self.access_analyzer = access_analyzer or AccessPatternAnalyzer()
-        
+
         # Session 44: Zero-Trust Validation
         self.zero_trust_validator = zero_trust_validator or ZeroTrustValidator()
-        
+
         # Session 44: Integration state
         self._active_deliberations: Dict[str, str] = {}
         self._pattern_emitted: Set[str] = set()
@@ -485,13 +483,13 @@ class HistorianAgent(AgentActor):
             rerank = message.content.get("rerank", True)
             _diversity_lambda = message.content.get("diversity_lambda", 0.5)
             _filters = message.content.get("filters", {})
-            
+
             if not query_text:
                 logger.error(f"[{self.agent_id}] Unified query requires query text")
                 return
-            
+
             logger.debug(f"[{self.agent_id}] Executing unified query: {query_text[:50]}")
-            
+
             # Execute unified query
             _result = await self.knowledge_access.query(
                 query=query_text,
@@ -501,7 +499,7 @@ class HistorianAgent(AgentActor):
                 _diversity_lambda = diversity_lambda,
                 _filters = filters,
             )
-            
+
             # Send response
             _reply_topic = message.content.get("reply_to", "knowledge")
             await self.send(
@@ -517,7 +515,7 @@ class HistorianAgent(AgentActor):
                 },
                 correlation_id=message.correlation_id,
             )
-            
+
         except Exception as e:
             logger.error(f"[{self.agent_id}] Unified query error: {e}", exc_info=True)
             if message.content.get("reply_to"):
@@ -548,7 +546,7 @@ class HistorianAgent(AgentActor):
         if not self.knowledge_access:
             logger.warning(f"[{self.agent_id}] Knowledge access not initialized")
             return KnowledgeQueryResult(entries=[], total_results=0)
-        
+
         return await self.knowledge_access.query(
             query=query,
             _sources = sources or ["memory", "rag"],
@@ -723,7 +721,7 @@ class HistorianAgent(AgentActor):
         _cached = self.pattern_cache.get(situation)
         if cached is not None:
             return cached
-        
+
         _matched = []
 
         # Query for similar situations
@@ -772,33 +770,33 @@ class HistorianAgent(AgentActor):
                 _ngram = text[i:i+n]
                 ngrams[ngram] = ngrams.get(ngram, 0) + 1
             return ngrams
-        
+
         def cosine_similarity(_vec1: Dict[str, int], _vec2: Dict[str, int]) -> float:
             """Compute cosine similarity between two frequency vectors."""
             # Get all unique keys
             _all_keys = set(vec1.keys()) | set(vec2.keys())
-            
+
             # Compute dot product and magnitudes
             _dot_product = 0.0
             _mag1 = 0.0
             _mag2 = 0.0
-            
+
             for key in all_keys:
                 _v1 = vec1.get(key, 0)
                 _v2 = vec2.get(key, 0)
                 dot_product += v1 * v2
                 mag1 += v1 * v1
                 mag2 += v2 * v2
-            
+
             if mag1 in (0, 0):
                 return 0.0
-            
+
             return dot_product / (mag1 ** 0.5 * mag2 ** 0.5)
-        
+
         # Get n-grams for both texts
         _ngrams1 = get_ngrams(text1)
         _ngrams2 = get_ngrams(text2)
-        
+
         return cosine_similarity(ngrams1, ngrams2)
 
     async def provide_deliberation_context(self, _deliberation_id: str, _topic: str) -> Dict[str, Any]:
@@ -942,10 +940,10 @@ class HistorianAgent(AgentActor):
         """Emit pattern for collective learning."""
         if not self.pattern_extractor:
             return
-        
+
         if item_id in self._pattern_emitted:
             return
-        
+
         try:
             await self.pattern_extractor.analyze_message(
                 _message_id = f"{item_type}_{item_id}",
@@ -955,7 +953,7 @@ class HistorianAgent(AgentActor):
                 _content = content,
                 _timestamp = datetime.now(timezone.utc).isoformat(),
             )
-            
+
             self._pattern_emitted.add(item_id)
             logger.info(f"{item_type}_pattern_emitted", item_id=item_id, outcome=outcome)
         except Exception as e:
@@ -965,7 +963,7 @@ class HistorianAgent(AgentActor):
         """Consume patterns from collective learning."""
         if not self.pattern_extractor:
             return []
-        
+
         try:
             _patterns = await self.pattern_extractor.extract_patterns(
                 _time_window_hours = 24,
@@ -984,7 +982,7 @@ class HistorianAgent(AgentActor):
         """Initiate swarm deliberation."""
         if not self.deliberation_engine:
             return None
-        
+
         try:
             _deliberation_id = f"delib_{item_id}"
             self.deliberation_engine.start_deliberation(
@@ -994,7 +992,7 @@ class HistorianAgent(AgentActor):
                 _domain = domain,
             )
             self._active_deliberations[item_id] = deliberation_id
-            
+
             logger.info("deliberation_initiated", deliberation_id=deliberation_id, item_id=item_id)
             return deliberation_id
         except Exception as e:
@@ -1005,11 +1003,11 @@ class HistorianAgent(AgentActor):
         """Submit agent position in deliberation."""
         if not self.deliberation_engine:
             return False
-        
+
         _deliberation_id = self._active_deliberations.get(item_id)
         if not deliberation_id:
             return False
-        
+
         try:
             _success = self.deliberation_engine.submit_position(
                 _deliberation_id = deliberation_id,
@@ -1018,14 +1016,14 @@ class HistorianAgent(AgentActor):
                 _confidence = confidence,
                 _argument = argument,
             )
-            
+
             if success and self.access_analyzer:
                 self.access_analyzer.record_access(
                     _memory_id = f"delib_{deliberation_id}_{agent_id}",
                     _access_type = "write",
                     agent_id=agent_id,
                 )
-            
+
             return success
         except Exception as e:
             logger.error("failed_to_submit_deliberation_position", error=str(e))
@@ -1035,19 +1033,19 @@ class HistorianAgent(AgentActor):
         """Finalize deliberation and apply result."""
         if not self.deliberation_engine:
             return None
-        
+
         _deliberation_id = self._active_deliberations.get(item_id)
         if not deliberation_id:
             return None
-        
+
         try:
             _result = self.deliberation_engine.finalize_deliberation(deliberation_id)
-            
+
             if result:
                 self.deliberation_engine.cleanup_deliberation(deliberation_id)
                 del self._active_deliberations[item_id]
                 logger.info("deliberation_finalized", deliberation_id=deliberation_id)
-            
+
             return result
         except Exception as e:
             logger.error("failed_to_finalize_deliberation", error=str(e))
@@ -1061,7 +1059,7 @@ class HistorianAgent(AgentActor):
         """Track memory access patterns."""
         if not self.access_analyzer:
             return
-        
+
         _memory_id = f"{item_type}_{item_id}"
         self.access_analyzer.record_access(
             _memory_id = memory_id,
@@ -1073,7 +1071,7 @@ class HistorianAgent(AgentActor):
         """Get memory tier classification."""
         if not self.access_analyzer:
             return AccessTier.COLD
-        
+
         _memory_id = f"{item_type}_{item_id}"
         _profile = self.access_analyzer.get_profile(memory_id)
         return profile.tier if profile else AccessTier.COLD
@@ -1082,7 +1080,7 @@ class HistorianAgent(AgentActor):
         """Prefetch items an agent is likely to need."""
         if not self.access_analyzer:
             return []
-        
+
         try:
             _predicted_memories = self.access_analyzer.predict_agent_access(agent_id)
             return [

@@ -17,7 +17,8 @@ from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel, Field, ValidationError, validator as pydantic_validator
+from pydantic import BaseModel, Field, ValidationError
+from pydantic import validator as pydantic_validator
 
 
 class ValidationSeverity(str, Enum):
@@ -51,7 +52,7 @@ DANGEROUS_PATTERNS = {
     "exec": r"\bexec\s*\(",
     "__import__": r"\b__import__\s*\(",
     "compile": r"\bcompile\s*\(",
-    
+
     # Python introspection attacks
     "__class__": r"\b__class__\b",
     "__mro__": r"\b__mro__\b",
@@ -60,25 +61,25 @@ DANGEROUS_PATTERNS = {
     "__builtins__": r"\b__builtins__\b",
     "__code__": r"\b__code__\b",
     "__qualname__": r"\b__qualname__\b",
-    
+
     # Attribute manipulation
     "getattr": r"\bgetattr\s*\(",
     "setattr": r"\bsetattr\s*\(",
     "delattr": r"\bdelattr\s*\(",
     "hasattr": r"\bhasattr\s*\(",
-    
+
     # Namespace access
     "globals": r"\bglobals\s*\(",
     "locals": r"\blocals\s*\(",
     "vars": r"\bvars\s*\(",
     "dir": r"\bdir\s*\(",
-    
+
     # File and I/O operations
     "input": r"\binput\s*\(",
     "open": r"\bopen\s*\(",
     "file": r"\bfile\s*\(",
     "io.open": r"\bio\.open\s*\(",
-    
+
     # System commands
     "os.system": r"\bos\.system\s*\(",
     "os.popen": r"\bos\.popen\s*\(",
@@ -96,32 +97,32 @@ DANGEROUS_PATTERNS = {
     "subprocess.check_output": r"\bsubprocess\.check_output\s*\(",
     "subprocess.check_call": r"\bsubprocess\.check_call\s*\(",
     "subprocess": r"\bsubprocess\.",
-    
+
     # SQL injection patterns
     "sql_injection": r"(\bSELECT\b.*\bFROM\b.*\bWHERE\b.*=.*['\"]?\s*%s|\bINSERT\b.*\bINTO\b.*\bVALUES\b.*['\"]?\s*%s|\bDELETE\b.*\bFROM\b.*\bWHERE\b.*['\"]?\s*%s|\bUPDATE\b.*\bSET\b.*\bWHERE\b.*['\"]?\s*%s|;\s*DROP\s+TABLE|;\s*DELETE\s+FROM|--\s*$)",
-    
+
     # Command injection (pipes, semicolons, logical operators, backticks)
     "cmd_injection_pipe": r"\|\s*(rm|cat|ls|wget|curl|bash|sh|nc|netcat|python|perl|ruby|php|node|java|gcc|g\+\+)",
     "cmd_injection_semicolon": r";\s*(rm|cat|ls|wget|curl|bash|sh|nc|netcat|python|perl|ruby|php|node|java|gcc|g\+\+)",
     "cmd_injection_and": r"&&\s*(rm|cat|ls|wget|curl|bash|sh|nc|netcat|python|perl|ruby|php|node|java|gcc|g\+\+)",
     "cmd_injection_or": r"\|\|\s*(rm|cat|ls|wget|curl|bash|sh|nc|netcat|python|perl|ruby|php|node|java|gcc|g\+\+)",
     "cmd_injection_backtick": r"`[^`]*`",
-    
+
     # Pickle deserialization
     "pickle": r"\bpickle\.(load|loads|Unpickler)",
-    
+
     # YAML unsafe loading
     "yaml_unsafe": r"\byaml\.load\s*\([^)]*\)\s*(?!Loader=yaml\.SafeLoader)",
-    
+
     # Shell command substitution
     "shell_subst": r"\$\(.*\)|`.*`",
-    
+
     # Path traversal
     "path_traversal": r"\.\./|\.\.\\",
-    
+
     # XML external entity (XXE) patterns
     "xxe": r"<!ENTITY\s+.*SYSTEM",
-    
+
     # Server-side request forgery (SSRF) patterns
     "ssrf": r"(https?://)(localhost|127\.0\.0\.1|0\.0\.0\.0|169\.254\.|10\.|172\.(1[6-9]|2[0-9]|3[01])\.|192\.168\.)",
 }
@@ -130,7 +131,7 @@ DANGEROUS_PATTERNS = {
 SANITIZE_PATTERNS = {
     # HTML/XML that might be unintentional
     "html_tags": (r"<[^>]+>", "[REDACTED_HTML]"),
-    
+
     # Potential markdown injection
     "markdown_code": (r"```[\s\S]*?```", "[CODE_BLOCK]"),
 }
@@ -145,7 +146,7 @@ class ValidationResult:
     warnings: List[str] = field(default_factory=list)
     sanitized_content: Optional[Any] = None
     severity: ValidationSeverity = ValidationSeverity.INFO
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for serialization."""
         return {
@@ -160,7 +161,7 @@ class ValidationResult:
 
 class LLMOutputBase(BaseModel):
     """Base class for all LLM output models."""
-    
+
     class Config:
         _extra = "forbid"  # Reject extra fields by default
         _validate_assignment = True
@@ -168,63 +169,63 @@ class LLMOutputBase(BaseModel):
 
 class CodeBlock(LLMOutputBase):
     """Validated code block from LLM output."""
-    
+
     language: CodeLanguage = Field(..., description="Programming language of the code")
     code: str = Field(..., min_length=1, description="The actual code content")
     description: Optional[str] = Field(None, max_length=500, description="Brief description of what the code does")
-    
+
     @pydantic_validator("code")
     def validate_code_safety(cls, v: str) -> str:
         """Validate that code doesn't contain dangerous patterns."""
         if not v:
             return v
-            
+
         for pattern_name, pattern in DANGEROUS_PATTERNS.items():
             if re.search(pattern, v, re.IGNORECASE | re.MULTILINE):
                 raise ValueError(f"Code contains dangerous pattern: {pattern_name}")
-        
+
         return v
-    
+
     class Config:
         _extra = "ignore"  # Allow extra fields for flexibility
 
 
 class TextOutput(LLMOutputBase):
     """Validated text output from LLM."""
-    
+
     content: str = Field(..., min_length=1, max_length=100000, description="The text content")
     content_type: str = Field(default="text", description="Type of content (text, markdown, json, etc.)")
-    
+
     @pydantic_validator("content")
     def validate_text_safety(cls, v: str) -> str:
         """Validate that text doesn't contain dangerous patterns."""
         if not v:
             return v
-            
+
         # Check for code execution patterns
         for pattern_name, pattern in DANGEROUS_PATTERNS.items():
             if pattern_name not in ["sql_injection", "cmd_injection"]:  # Skip context-specific patterns
                 if re.search(pattern, v, re.IGNORECASE | re.MULTILINE):
                     raise ValueError(f"Text contains dangerous pattern: {pattern_name}")
-        
+
         return v
-    
+
     class Config:
         _extra = "ignore"
 
 
 class StructuredResponse(LLMOutputBase):
     """Validated structured JSON response from LLM."""
-    
+
     data: Dict[str, Any] = Field(..., description="The structured data")
     schema_version: str = Field(default="1.0", description="Schema version for validation")
-    
+
     @pydantic_validator("data")
     def validate_data_safety(cls, v: Dict[str, Any]) -> Dict[str, Any]:
         """Validate that structured data doesn't contain dangerous patterns."""
         if not v:
             return v
-            
+
         def check_value(value: Any, path: str) -> None:
             """Recursively check values for dangerous patterns."""
             if isinstance(value, str):
@@ -237,42 +238,42 @@ class StructuredResponse(LLMOutputBase):
             elif isinstance(value, list):
                 for i, item in enumerate(value):
                     check_value(item, f"{path}[{i}]")
-        
+
         check_value(v)
         return v
-    
+
     class Config:
         _extra = "allow"  # Allow extra fields in structured data
 
 
 class ToolCall(LLMOutputBase):
     """Validated tool/function call from LLM."""
-    
+
     tool_name: str = Field(..., min_length=1, max_length=100, description="Name of the tool to call")
     arguments: Dict[str, Any] = Field(default_factory=dict, description="Arguments for the tool")
     call_id: str = Field(default_factory=lambda: f"call_{datetime.now(timezone.utc).timestamp()}", description="Unique call identifier")
-    
+
     @pydantic_validator("tool_name")
     def validate_tool_name(cls, v: str) -> str:
         """Validate tool name format."""
         if not re.match(r"^[a-zA-Z_][a-zA-Z0-9_]*$", v):
             raise ValueError(f"Invalid tool name format: {v}")
         return v
-    
+
     @pydantic_validator("arguments")
     def validate_arguments_safety(cls, v: Dict[str, Any]) -> Dict[str, Any]:
         """Validate that arguments don't contain dangerous patterns."""
         if not v:
             return v
-            
+
         for key, value in v.items():
             if isinstance(value, str):
                 for pattern_name, pattern in DANGEROUS_PATTERNS.items():
                     if re.search(pattern, value, re.IGNORECASE | re.MULTILINE):
                         raise ValueError(f"Dangerous pattern '{pattern_name}' in argument '{key}'")
-        
+
         return v
-    
+
     class Config:
         _extra = "forbid"
 
@@ -285,7 +286,7 @@ class LLMOutputValidator:
     before it's used in the system. It checks for dangerous patterns, validates
     schemas, and provides sanitization when possible.
     """
-    
+
     def __init__(self, strict_mode: bool):
         """
         Initialize the validator.
@@ -297,12 +298,12 @@ class LLMOutputValidator:
         self.strict_mode = strict_mode
         self._compiled_patterns: Dict[str, re.Pattern] = {}
         self._compile_patterns()
-    
+
     def _compile_patterns(self) -> None:
         """Pre-compile regex patterns for performance."""
         for name, pattern in DANGEROUS_PATTERNS.items():
             self._compiled_patterns[name] = re.compile(pattern, re.IGNORECASE | re.MULTILINE)
-    
+
     def validate_code(self, code: str, language: str, allow_dangerous: bool) -> ValidationResult:
         """
         Validate a code block for safety.
@@ -317,7 +318,7 @@ class LLMOutputValidator:
         """
         errors: List[str] = []
         warnings: List[str] = []
-        
+
         if not code or not code.strip():
             return ValidationResult(
                 valid=False,
@@ -325,19 +326,19 @@ class LLMOutputValidator:
                 _errors = ["Code is empty"],
                 _severity = ValidationSeverity.ERROR,
             )
-        
+
         # Check for dangerous patterns
         detected_patterns: List[str] = []
         for pattern_name, compiled_pattern in self._compiled_patterns.items():
             if compiled_pattern.search(code):
                 detected_patterns.append(pattern_name)
-        
+
         if detected_patterns:
             if self.strict_mode and not allow_dangerous:
                 errors.append(f"Code contains dangerous patterns: {', '.join(detected_patterns)}")
             else:
                 warnings.append(f"Code contains potentially dangerous patterns: {', '.join(detected_patterns)}")
-        
+
         # Try to create validated model
         try:
             _code_block = CodeBlock(
@@ -348,7 +349,7 @@ class LLMOutputValidator:
         except ValidationError as e:
             errors.append(f"Code validation failed: {e}")
             _validated_code = code
-        
+
         # Attempt sanitization if in non-strict mode
         _sanitized = None
         if errors and not self.strict_mode:
@@ -356,7 +357,7 @@ class LLMOutputValidator:
             if sanitized != code:
                 warnings.append("Code was sanitized")
                 errors = []  # Clear errors if sanitization succeeded
-        
+
         return ValidationResult(
             _valid = len(errors) == 0,
             content=code,
@@ -365,7 +366,7 @@ class LLMOutputValidator:
             _sanitized_content = sanitized,
             _severity = ValidationSeverity.CRITICAL if errors else (ValidationSeverity.WARNING if warnings else ValidationSeverity.INFO),
         )
-    
+
     def validate_text(self, text: str, content_type: str) -> ValidationResult:
         """
         Validate text output for safety.
@@ -379,7 +380,7 @@ class LLMOutputValidator:
         """
         errors: List[str] = []
         warnings: List[str] = []
-        
+
         if not text or not text.strip():
             return ValidationResult(
                 valid=False,
@@ -387,7 +388,7 @@ class LLMOutputValidator:
                 _errors = ["Text is empty"],
                 _severity = ValidationSeverity.ERROR,
             )
-        
+
         # Check for dangerous patterns (skip SQL and command injection for general text)
         detected_patterns: List[str] = []
         for pattern_name, compiled_pattern in self._compiled_patterns.items():
@@ -395,13 +396,13 @@ class LLMOutputValidator:
                 continue  # Skip context-specific patterns for general text
             if compiled_pattern.search(text):
                 detected_patterns.append(pattern_name)
-        
+
         if detected_patterns:
             if self.strict_mode:
                 errors.append(f"Text contains dangerous patterns: {', '.join(detected_patterns)}")
             else:
                 warnings.append(f"Text contains potentially dangerous patterns: {', '.join(detected_patterns)}")
-        
+
         # Try to create validated model
         try:
             _text_output = TextOutput(content=text, content_type=content_type)
@@ -409,7 +410,7 @@ class LLMOutputValidator:
         except ValidationError as e:
             errors.append(f"Text validation failed: {e}")
             _validated_text = text
-        
+
         return ValidationResult(
             _valid = len(errors) == 0,
             _content = text,
@@ -417,7 +418,7 @@ class LLMOutputValidator:
             _warnings = warnings,
             _severity = ValidationSeverity.CRITICAL if errors else (ValidationSeverity.WARNING if warnings else ValidationSeverity.INFO),
         )
-    
+
     def validate_structured(self, data: Dict[str, Any], schema_version: str) -> ValidationResult:
         """
         Validate structured JSON response.
@@ -431,7 +432,7 @@ class LLMOutputValidator:
         """
         errors: List[str] = []
         warnings: List[str] = []
-        
+
         if not data:
             return ValidationResult(
                 valid=False,
@@ -439,7 +440,7 @@ class LLMOutputValidator:
                 _errors = ["Data is empty"],
                 _severity = ValidationSeverity.ERROR,
             )
-        
+
         # Try to create validated model
         try:
             _structured = StructuredResponse(data=data, schema_version=schema_version)
@@ -447,7 +448,7 @@ class LLMOutputValidator:
         except ValidationError as e:
             errors.append(f"Structured data validation failed: {e}")
             _validated_data = data
-        
+
         return ValidationResult(
             _valid = len(errors) == 0,
             _content = data,
@@ -455,7 +456,7 @@ class LLMOutputValidator:
             _warnings = warnings,
             _severity = ValidationSeverity.CRITICAL if errors else (ValidationSeverity.WARNING if warnings else ValidationSeverity.INFO),
         )
-    
+
     def validate_tool_call(self, tool_name: str, arguments: Dict[str, Any]) -> ValidationResult:
         """
         Validate a tool/function call.
@@ -469,7 +470,7 @@ class LLMOutputValidator:
         """
         errors: List[str] = []
         warnings: List[str] = []
-        
+
         # Try to create validated model
         try:
             _tool_call = ToolCall(tool_name=tool_name, arguments=arguments)
@@ -477,7 +478,7 @@ class LLMOutputValidator:
         except ValidationError as e:
             errors.append(f"Tool call validation failed: {e}")
             _validated_args = arguments
-        
+
         return ValidationResult(
             _valid = len(errors) == 0,
             _content = {"tool_name": tool_name, "arguments": arguments},
@@ -485,7 +486,7 @@ class LLMOutputValidator:
             _warnings = warnings,
             _severity = ValidationSeverity.CRITICAL if errors else (ValidationSeverity.WARNING if warnings else ValidationSeverity.INFO),
         )
-    
+
     def _sanitize_code(self, code: str) -> str:
         """
         Attempt to sanitize code by removing or replacing dangerous patterns.
@@ -497,20 +498,20 @@ class LLMOutputValidator:
             Sanitized code with dangerous patterns removed or replaced
         """
         _sanitized = code
-        
+
         # Apply sanitization patterns
         for pattern_name, (pattern, replacement) in SANITIZE_PATTERNS.items():
             _sanitized = re.sub(pattern, replacement, sanitized)
-        
+
         # Comment out dangerous Python patterns instead of removing them
         _dangerous_python = ["eval(", "exec(", "__import__(", "getattr(", "setattr(", "delattr(", "globals(", "locals(", "vars("]
         for pattern in dangerous_python:
             if pattern in sanitized:
                 # Replace the dangerous call with a commented version
                 sanitized = sanitized.replace(pattern, f"# DANGEROUS: {pattern}")
-        
+
         return sanitized
-    
+
     def sanitize_string(self, text: str) -> str:
         """
         Sanitize a string by removing dangerous patterns.
@@ -522,13 +523,13 @@ class LLMOutputValidator:
             Sanitized text
         """
         _sanitized = text
-        
+
         # Apply sanitization patterns
         for pattern_name, (pattern, replacement) in SANITIZE_PATTERNS.items():
             _sanitized = re.sub(pattern, replacement, sanitized)
-        
+
         return sanitized
-    
+
     def is_safe_code(self, code: str) -> bool:
         """
         Quick check if code is safe (no dangerous patterns).
@@ -543,7 +544,7 @@ class LLMOutputValidator:
             not compiled_pattern.search(code)
             for compiled_pattern in self._compiled_patterns.values()
         )
-    
+
     def is_safe_text(self, text: str) -> bool:
         """
         Quick check if text is safe (no dangerous patterns).

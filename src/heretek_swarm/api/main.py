@@ -14,15 +14,17 @@ Reference: MiniMax Audit Lines 585-725
 """
 
 import os
-from typing import Any, Dict, Optional
 from contextlib import asynccontextmanager
+from typing import Any, Dict, Optional
 
-from fastapi import FastAPI, HTTPException, Depends
-from fastapi.middleware.cors import CORSMiddleware
 import structlog
+from fastapi import Depends, FastAPI, HTTPException
+from fastapi.middleware.cors import CORSMiddleware
+
+from heretek_swarm.logging.config import logger as logging_logger
 
 # Initialize logging with JSON output for Loki/Promtail
-from heretek_swarm.logging.config import setup_logging, get_logger, logger as logging_logger
+from heretek_swarm.logging.config import setup_logging
 
 # Setup structured JSON logging
 log_level = os.getenv("LOG_LEVEL", "INFO").upper()
@@ -30,38 +32,38 @@ json_output = os.getenv("LOG_FORMAT", "json").lower() == "json"
 setup_logging(log_level=log_level, json_output=json_output)
 
 from heretek_swarm.actors.supervisor import ActorSupervisor
-from memory.persistent import PersistentMemoryStore
 from heretek_swarm.api import (
-    websockets,
-    consensus,
-    plugins,
-    workflows,
-    evaluation,
-    observability,
-    rag,
-    consciousness,
-    emergent_intelligence,
     agents_management,
-    configuration,
-    metrics,
     collective_evolution,
+    configuration,
+    consciousness,
+    consensus,
+    emergent_intelligence,
+    evaluation,
+    metrics,
+    observability,
+    plugins,
+    rag,
+    websockets,
+    workflows,
 )
 from heretek_swarm.api.rate_limiting import setup_rate_limiting
-from heretek_swarm.gateway.auth import verify_auth
+from heretek_swarm.config.loader import (
+    get_config,
+    initialize_config_loader,
+)
 from heretek_swarm.config.service import (
+    get_config_service,
     initialize_config_service,
     shutdown_config_service,
-    get_config_service,
 )
-from heretek_swarm.config.loader import (
-    initialize_config_loader,
-    get_config,
-)
+from heretek_swarm.gateway.auth import verify_auth
 from heretek_swarm.observability.tracing import setup_telemetry_middleware
+from memory.persistent import PersistentMemoryStore
 
 # Import mem0 backend
 try:
-    from memory import Mem0Backend, Mem0Config, MEM0_AVAILABLE
+    from memory import MEM0_AVAILABLE, Mem0Backend, Mem0Config
 except ImportError:
     MEM0_AVAILABLE = False
     Mem0Backend = None
@@ -82,16 +84,16 @@ mem0_backend: Optional[Any] = None  # Mem0Backend when available
 async def lifespan(app: FastAPI):
     """Application lifespan handler for startup and shutdown."""
     global supervisor, memory_store, mem0_backend
-    
+
     # Startup
     logger.info("Starting Heretek Swarm API...")
-    
+
     # Initialize ConfigurationService FIRST before other services
     config_source = "environment"
     try:
         await initialize_config_service()
         await initialize_config_loader()
-        
+
         # Check if configurations are loaded from database
         config_service = get_config_service()
         rate_limit_config = await config_service.get_config("rate_limit.enabled")
@@ -103,11 +105,11 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logger.warning("ConfigurationService not available", error=str(e))
         logger.info("Using environment variables for configuration")
-    
+
     # Initialize supervisor
     supervisor = ActorSupervisor()
     logger.info("ActorSupervisor initialized")
-    
+
     # Initialize memory store
     try:
         # Use ConfigurationService to get DATABASE_URL
@@ -120,14 +122,14 @@ async def lifespan(app: FastAPI):
     except Exception as e:
         logger.warning("PersistentMemoryStore not available", error=str(e))
         memory_store = None
-    
+
     # Initialize mem0 backend if available
     if MEM0_AVAILABLE:
         try:
             qdrant_host = await get_config("qdrant.url", default=os.environ.get("QDRANT_HOST", "localhost"))
             qdrant_port = await get_config("qdrant.port", default=int(os.environ.get("QDRANT_PORT", "6333")))
             openai_api_key = await get_config("llm.api_key", default=os.environ.get("OPENAI_API_KEY"))
-            
+
             mem0_config = Mem0Config(
                 qdrant_host=qdrant_host,
                 qdrant_port=int(qdrant_port),
@@ -141,29 +143,29 @@ async def lifespan(app: FastAPI):
             mem0_backend = None
     else:
         logger.info("mem0 not installed - using PostgreSQL memory only")
-    
+
     # Log configuration source
     logger.info(
         "Application startup complete",
         config_source=config_source,
         rate_limit_enabled=await get_config("rate_limit.enabled", default=True),
     )
-    
-    
+
+
     yield
-    
+
     # Shutdown
     logger.info("Shutting down Heretek Swarm API...")
-    
+
     if supervisor:
         await supervisor.terminate_all()
-    
+
     if mem0_backend:
         await mem0_backend.shutdown()
-    
+
     if memory_store:
         await memory_store.disconnect()
-    
+
     # Shutdown ConfigurationService
     await shutdown_config_service()
     logger.info("ConfigurationService shutdown complete")
@@ -220,6 +222,7 @@ app.include_router(collective_evolution.router)
 
 # Setup Prometheus metrics middleware
 from heretek_swarm.observability.prometheus_metrics import setup_metrics_middleware
+
 setup_metrics_middleware(app)
 logger.info("Prometheus metrics middleware configured")
 
@@ -283,8 +286,8 @@ async def check_postgres() -> Dict[str, Any]:
         if not memory_store:
             # Try to get database URL and connect directly
             db_url = os.environ.get("DATABASE_URL", "postgresql+asyncpg://heretek:langfuse@postgres:5432/heretek_swarm")
-            from sqlalchemy.ext.asyncio import create_async_engine
             from sqlalchemy import text
+            from sqlalchemy.ext.asyncio import create_async_engine
             engine = create_async_engine(db_url)
             async with engine.connect() as conn:
                 await conn.execute(text("SELECT 1"))
@@ -395,7 +398,7 @@ async def get_agents(authenticated: str = Depends(verify_auth)):
     """
     if not supervisor:
         raise HTTPException(503, "Supervisor not initialized")
-    
+
     agents = []
     for agent_id, actor in supervisor.actors.items():
         status = actor.get_status()
@@ -407,7 +410,7 @@ async def get_agents(authenticated: str = Depends(verify_auth)):
             "error_count": status.error_count if status else 0,
             "last_activity": status.last_activity.isoformat() if status and status.last_activity else None,
         })
-    
+
     return {"agents": agents, "total": len(agents)}
 
 
@@ -424,13 +427,13 @@ async def get_agent(agent_id: str, authenticated: str = Depends(verify_auth)):
     """
     if not supervisor:
         raise HTTPException(503, "Supervisor not initialized")
-    
+
     if agent_id not in supervisor.actors:
         raise HTTPException(404, f"Agent {agent_id} not found")
-    
+
     actor = supervisor.actors[agent_id]
     status = actor.get_status()
-    
+
     return {
         "id": agent_id,
         "type": actor.__class__.__name__,
@@ -456,13 +459,13 @@ async def get_agent_metrics(agent_id: str, authenticated: str = Depends(verify_a
     """
     if not supervisor:
         raise HTTPException(503, "Supervisor not initialized")
-    
+
     if agent_id not in supervisor.actors:
         raise HTTPException(404, f"Agent {agent_id} not found")
-    
+
     actor = supervisor.actors[agent_id]
     status = actor.get_status()
-    
+
     return {
         "agent_id": agent_id,
         "messages_processed": status.message_count if status else 0,
@@ -484,12 +487,12 @@ async def terminate_agent(agent_id: str, authenticated: str = Depends(verify_aut
     """
     if not supervisor:
         raise HTTPException(503, "Supervisor not initialized")
-    
+
     if agent_id not in supervisor.actors:
         raise HTTPException(404, f"Agent {agent_id} not found")
-    
+
     await supervisor.terminate_actor(agent_id)
-    
+
     return {
         "status": "terminated",
         "agent_id": agent_id,
@@ -510,7 +513,7 @@ async def get_supervisor_status(authenticated: str = Depends(verify_auth)):
     """
     if not supervisor:
         raise HTTPException(503, "Supervisor not initialized")
-    
+
     return supervisor.get_statistics()
 
 
@@ -535,18 +538,19 @@ async def get_memory_stats(authenticated: str = Depends(verify_auth)):
             "by_type": {},
             "status": "unavailable",
         }
-    
+
     try:
         # Get total count
-        from sqlalchemy import select, func
+        from sqlalchemy import func, select
+
         from heretek_swarm.memory.persistent import MemoryEntryModel
-        
+
         async with memory_store._session_factory() as session:
             # Total count
             stmt = select(func.count()).select_from(MemoryEntryModel)
             result = await session.execute(stmt)
             total = result.scalar() or 0
-            
+
             # By agent
             agent_stmt = select(
                 MemoryEntryModel.agent_id,
@@ -554,7 +558,7 @@ async def get_memory_stats(authenticated: str = Depends(verify_auth)):
             ).group_by(MemoryEntryModel.agent_id)
             agent_result = await session.execute(agent_stmt)
             by_agent = {row[0]: row[1] for row in agent_result.all()}
-            
+
             # By type
             type_stmt = select(
                 MemoryEntryModel.memory_type,
@@ -562,7 +566,7 @@ async def get_memory_stats(authenticated: str = Depends(verify_auth)):
             ).group_by(MemoryEntryModel.memory_type)
             type_result = await session.execute(type_stmt)
             by_type = {row[0]: row[1] for row in type_result.all()}
-        
+
         return {
             "total_memories": total,
             "by_agent": by_agent,
@@ -593,25 +597,25 @@ async def get_litellm_metrics(authenticated: str = Depends(verify_auth)):
         LiteLLM proxy metrics
     """
     import httpx
-    
+
     litellm_url = os.environ.get("LITELLM_URL", "http://localhost:4000")
     litellm_key = os.environ.get("LITELLM_MASTER_KEY", "")
-    
+
     try:
         async with httpx.AsyncClient() as client:
             headers = {}
             if litellm_key:
                 headers["Authorization"] = f"Bearer {litellm_key}"
-            
+
             response = await client.get(
                 f"{litellm_url}/metrics",
                 headers=headers,
                 timeout=5.0,
             )
-            
+
             if response.status_code == 200:
                 return response.json()
-            
+
             return {
                 "status": "error",
                 "code": response.status_code,
@@ -642,7 +646,7 @@ async def get_mem0_stats(authenticated: str = Depends(verify_auth)):
             "available": False,
             "message": "mem0 not installed or not initialized",
         }
-    
+
     return {
         "available": True,
         "latency_stats": mem0_backend.get_latency_stats(),
@@ -664,17 +668,17 @@ async def search_mem0_memory(query: str, agent_id: str, limit: int = 10, authent
     """
     if not MEM0_AVAILABLE or not mem0_backend:
         raise HTTPException(503, "mem0 not available")
-    
+
     from memory import MemoryQuery
-    
+
     search_query = MemoryQuery(
         query_text=query,
         agent_ids=[agent_id],
         limit=limit,
     )
-    
+
     result = await mem0_backend.search(search_query)
-    
+
     return {
         "query": query,
         "agent_id": agent_id,
@@ -706,9 +710,9 @@ async def get_agent_memories(agent_id: str, limit: int = 100, authenticated: str
     """
     if not MEM0_AVAILABLE or not mem0_backend:
         raise HTTPException(503, "mem0 not available")
-    
+
     entries = await mem0_backend.get_all(agent_id)
-    
+
     return {
         "agent_id": agent_id,
         "memories": [
@@ -741,21 +745,22 @@ async def get_a2a_messages(limit: int = 100, authenticated: str = Depends(verify
         List of recent A2A messages
     """
     try:
-        import redis.asyncio as redis
         import json
-        
+
+        import redis.asyncio as redis
+
         redis_url = os.environ.get("REDIS_URL", "redis://localhost:6379")
         r = redis.from_url(redis_url)
-        
+
         # Get recent messages from Redis list
         messages = await r.lrange("a2a:messages", 0, limit - 1)
         await r.close()
-        
+
         return {
             "messages": [json.loads(m) for m in messages],
             "count": len(messages),
         }
-        
+
     except Exception as e:
         logger.warning("Failed to get A2A messages", error=str(e))
         return {
@@ -783,16 +788,17 @@ async def get_a2a_conversation(
         List of messages between the agents
     """
     try:
-        import redis.asyncio as redis
         import json
-        
+
+        import redis.asyncio as redis
+
         redis_url = os.environ.get("REDIS_URL", "redis://localhost:6379")
         r = redis.from_url(redis_url)
-        
+
         # Get messages and filter
         all_messages = await r.lrange("a2a:messages", 0, 1000)
         await r.close()
-        
+
         # Filter for this conversation
         conversation = []
         for msg_bytes in all_messages:
@@ -802,14 +808,14 @@ async def get_a2a_conversation(
                 conversation.append(msg)
                 if len(conversation) >= limit:
                     break
-        
+
         return {
             "from_agent": from_agent,
             "to_agent": to_agent,
             "messages": conversation[:limit],
             "count": len(conversation[:limit]),
         }
-        
+
     except Exception as e:
         logger.warning("Failed to get A2A conversation", error=str(e))
         return {

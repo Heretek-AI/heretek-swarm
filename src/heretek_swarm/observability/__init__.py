@@ -28,7 +28,7 @@ from pathlib import Path
 from typing import Any, Callable, Dict, List, Optional
 
 import structlog
-from prometheus_client import generate_latest, CONTENT_TYPE_LATEST
+from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
 
 from .prometheus_metrics import PrometheusMetrics
 from .tracing import initialize_tracing, span_context

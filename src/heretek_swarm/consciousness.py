@@ -794,26 +794,26 @@ class ConsciousnessPlugin:
         try:
             # Get attention schema for baseline
             _schema = self.attention_manager.get_schema(agent_id)
-            
+
             # Build connectivity matrix from agent's interaction history
             _connectivity = self._build_connectivity_matrix(agent_id)
-            
+
             if not connectivity or len(connectivity) < 2:
                 # Not enough data for integration analysis
                 return schema.metacognitive_awareness * 0.5 if schema else 0.2
-            
+
             # Calculate integration score
             _integration = self._calculate_integration(connectivity)
-            
+
             # Calculate information differentiation
             _differentiation = self._calculate_differentiation(agent_id)
-            
+
             # Phi = integration * differentiation (core IIT formula)
             _phi = integration * differentiation
-            
+
             # Normalize to 0.0-1.0 range
             _phi = min(1.0, max(0.0, phi))
-            
+
             logger.debug(
                 "IIT Phi calculated",
                 _extra = {
@@ -823,14 +823,14 @@ class ConsciousnessPlugin:
                     "phi": phi,
                 }
             )
-            
+
             return phi
-            
+
         except Exception as e:
             logger.error(f"IIT Phi calculation error: {e}")
             # Fallback to attention-based estimate
             return schema.metacognitive_awareness * 0.5 if schema else 0.2
-    
+
     def _build_connectivity_matrix(self, agent_id: str) -> List[List[float]]:
         """
         Build connectivity matrix from agent interaction history.
@@ -846,36 +846,36 @@ class ConsciousnessPlugin:
         """
         # Get attention history for connectivity analysis
         _history = self.attention_manager.attention_history.get(agent_id, [])
-        
+
         if len(history) < 2:
             return []
-        
+
         # Extract unique focus targets as "nodes"
         _nodes = list(set(h.get("focus_target", "unknown") for h in history[-50:]))
         n = len(nodes)
-        
+
         if n < 2:
             return []
-        
+
         # Build adjacency matrix based on transition frequency
         _matrix = [[0.0] * n for _ in range(n)]
-        
+
         for i in range(len(history) - 1):
             _current = history[i].get("focus_target", "unknown")
             _next_focus = history[i + 1].get("focus_target", "unknown")
-            
+
             if current in nodes and next_focus in nodes:
                 _src_idx = nodes.index(current)
                 _dst_idx = nodes.index(next_focus)
                 matrix[src_idx][dst_idx] += 1
-        
+
         # Normalize matrix values to 0.0-1.0
         _max_val = max(max(row) for row in matrix)
         if max_val > 0:
             _matrix = [[val / max_val for val in row] for row in matrix]
-        
+
         return matrix
-    
+
     def _calculate_integration(self, connectivity: List[List[float]]) -> float:
         """
         Calculate integration score from connectivity matrix.
@@ -898,30 +898,30 @@ class ConsciousnessPlugin:
             n = len(connectivity)
             if n < 2:
                 return 0.0
-            
+
             # Calculate row sums (total connectivity per node)
             _row_sums = [sum(row) for row in connectivity]
             _avg_connectivity = sum(row_sums) / n
-            
+
             # Calculate connectivity variance
             _variance = sum((s - avg_connectivity) ** 2 for s in row_sums) / n
-            
+
             # Low variance = more uniform integration
             # Normalize: lower variance = higher integration
             _integration = 1.0 / (1.0 + variance)
-            
+
             # Factor in overall connectivity strength
             _connectivity_factor = min(1.0, avg_connectivity)
-            
+
             # Combined integration score
             _integration = integration * (0.5 + 0.5 * connectivity_factor)
-            
+
             return min(1.0, max(0.0, integration))
-            
+
         except Exception as e:
             logger.error(f"Integration calculation error: {e}")
             return 0.0
-    
+
     def _calculate_differentiation(self, agent_id: str) -> float:
         """
         Calculate information differentiation score.
@@ -939,33 +939,33 @@ class ConsciousnessPlugin:
         try:
             # Get attention history for entropy calculation
             _history = self.attention_manager.attention_history.get(agent_id, [])
-            
+
             if len(history) < 5:
                 return 0.3  # Default for insufficient data
-            
+
             # Extract focus targets
             _targets = [h.get("focus_target", "unknown") for h in history[-50:]]
-            
+
             # Calculate entropy (diversity of focus targets)
             _unique_targets = set(targets)
             _n_total = len(targets)
-            
+
             if len(unique_targets) < 2:
                 return 0.1  # Low differentiation - always focused on same thing
-            
+
             # Shannon entropy calculation
             _entropy = 0.0
             for target in unique_targets:
                 _p = targets.count(target) / n_total
                 if p > 0:
                     entropy -= p * (p if p == 1 else (p * (1 - p)))
-            
+
             # Normalize entropy to 0.0-1.0
             _max_entropy = len(unique_targets) - 1
             _normalized_entropy = entropy / max_entropy if max_entropy > 0 else 0.0
-            
+
             return min(1.0, max(0.0, normalized_entropy))
-            
+
         except Exception as e:
             logger.error(f"Differentiation calculation error: {e}")
             return 0.3
@@ -996,25 +996,25 @@ class ConsciousnessPlugin:
         try:
             # Get attention history for prediction analysis
             _history = self.attention_manager.attention_history.get(agent_id, [])
-            
+
             if len(history) < 5:
                 return 0.5  # Default for insufficient data
-            
+
             # Calculate prediction error from attention stability
             _prediction_error = self._calculate_prediction_error(agent_id, history)
-            
+
             # Calculate entropy of internal states
             _entropy = self._calculate_state_entropy(history)
-            
+
             # Free energy = prediction error - entropy
             # (simplified - actual FEP uses variational bounds)
             _free_energy = prediction_error - entropy
-            
+
             # Invert and normalize: lower free energy = higher score
             # Range: free_energy can be negative to positive
             # Map to 0.0-1.0 where 1.0 = minimal free energy
             fep_score = 1.0 / (1.0 + math.exp(free_energy))  # Sigmoid normalization
-            
+
             logger.debug(
                 "FEP calculated",
                 _extra = {
@@ -1025,13 +1025,13 @@ class ConsciousnessPlugin:
                     "fep_score": fep_score,
                 }
             )
-            
+
             return min(1.0, max(0.0, fep_score))
-            
+
         except Exception as e:
             logger.error(f"FEP calculation error: {e}")
             return 0.5
-    
+
     def _calculate_prediction_error(self, _agent_id: str, history: List[Dict[str, Any]]) -> float:
         """
         Calculate prediction error from attention history.
@@ -1048,25 +1048,25 @@ class ConsciousnessPlugin:
         """
         if len(history) < 3:
             return 0.5
-        
+
         _errors = []
-        
+
         # Analyze transitions for predictability
         for i in range(2, len(history)):
             _prev_focus = history[i-2].get("focus_target", "")
             _curr_focus = history[i-1].get("focus_target", "")
             _actual_next = history[i].get("focus_target", "")
-            
+
             # Simple prediction: expect continuation of pattern
             predicted = curr_focus  # Naive prediction: same as current
-            
+
             # Error: 0 if prediction matches, 1 if different
             _error = 0.0 if predicted == actual_next else 1.0
             errors.append(error)
-        
+
         # Average prediction error
         _avg_error = sum(errors) / len(errors) if errors else 0.5
-        
+
         # Scale by intensity variance (more variance = more surprise)
         _intensities = [h.get("attention_intensity", 0.5) for h in history[-10:]]
         if len(intensities) >= 2:
@@ -1076,9 +1076,9 @@ class ConsciousnessPlugin:
             ) / len(intensities)
             # Higher variance = more surprise
             avg_error += intensity_variance * 0.5
-        
+
         return min(1.0, avg_error)
-    
+
     def _calculate_state_entropy(self, history: List[Dict[str, Any]]) -> float:
         """
         Calculate entropy of internal states from history.
@@ -1094,7 +1094,7 @@ class ConsciousnessPlugin:
         """
         if len(history) < 2:
             return 0.0
-        
+
         # Count unique states (focus + intensity combinations)
         _states = []
         for h in history:
@@ -1103,13 +1103,13 @@ class ConsciousnessPlugin:
             # Bin intensity into categories
             _intensity_bin = "low" if intensity < 0.33 else ("medium" if intensity < 0.66 else "high")
             states.append(f"{focus}_{intensity_bin}")
-        
+
         _unique_states = set(states)
         _n_total = len(states)
-        
+
         if len(unique_states) < 2:
             return 0.1  # Low entropy - same state repeatedly
-        
+
         # Calculate Shannon entropy
         _entropy = 0.0
         for state in unique_states:
@@ -1117,11 +1117,11 @@ class ConsciousnessPlugin:
             _p = count / n_total
             if p > 0:
                 entropy -= p * math.log2(p)
-        
+
         # Normalize by maximum possible entropy
         _max_entropy = math.log2(len(unique_states))
         _normalized = entropy / max_entropy if max_entropy > 0 else 0.0
-        
+
         return min(1.0, normalized)
 
     def _calculate_ast_competence(self, agent_id: str) -> float:

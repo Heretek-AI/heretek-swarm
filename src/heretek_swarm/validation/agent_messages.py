@@ -18,7 +18,8 @@ from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional
 
-from pydantic import BaseModel, Field, validator as pydantic_validator, ValidationError
+from pydantic import BaseModel, Field, ValidationError
+from pydantic import validator as pydantic_validator
 
 from heretek_swarm.validation.llm_output import (
     LLMOutputValidator,
@@ -33,39 +34,39 @@ class MessageType(str, Enum):
     ACTOR_MESSAGE = "actor_message"
     STATE_UPDATE = "state_update"
     STATE_REQUEST = "state_request"
-    
+
     # Tool-related messages
     TOOL_REQUEST = "tool_request"
     TOOL_RESPONSE = "tool_response"
     TOOL_ERROR = "tool_error"
-    
+
     # Coordination messages
     COORDINATION_REQUEST = "coordination_request"
     COORDINATION_RESPONSE = "coordination_response"
     HANDOFF_REQUEST = "handoff_request"
     HANDOFF_ACCEPTED = "handoff_accepted"
     HANDOFF_REJECTED = "handoff_rejected"
-    
+
     # Task-related messages
     TASK_CREATED = "task_created"
     TASK_UPDATED = "task_updated"
     TASK_COMPLETED = "task_completed"
     TASK_FAILED = "task_failed"
-    
+
     # Consensus messages
     CONSENSUS_PROPOSAL = "consensus_proposal"
     CONSENSUS_VOTE = "consensus_vote"
     CONSENSUS_RESULT = "consensus_result"
-    
+
     # Error messages
     ERROR = "error"
     WARNING = "warning"
-    
+
     # Status messages
     STATUS_UPDATE = "status_update"
     HEALTH_CHECK = "health_check"
     HEARTBEAT = "heartbeat"
-    
+
     # Nexus-specific messages
     CONNECTION_CREATED = "connection_created"
     CONNECTION_UPDATED = "connection_updated"
@@ -78,7 +79,7 @@ class MessageType(str, Enum):
     WEBHOOK_STATUS = "webhook_status"
     PROTOCOL_TRANSLATED = "protocol_translated"
     INTEGRATION_REPORT = "integration_report"
-    
+
     # Coder-specific messages
     CODE_GENERATED = "code_generated"
     CODE_REVIEWED = "code_reviewed"
@@ -100,7 +101,7 @@ class MessagePriority(str, Enum):
 
 class AgentMessageBase(BaseModel):
     """Base class for all agent messages."""
-    
+
     message_id: str = Field(default_factory=lambda: f"msg_{uuid.uuid4().hex[:12]}")
     message_type: str = Field(..., description="Type of the message")
     sender_id: str = Field(..., description="ID of the sending agent")
@@ -109,7 +110,7 @@ class AgentMessageBase(BaseModel):
     priority: MessagePriority = Field(default=MessagePriority.NORMAL)
     correlation_id: Optional[str] = Field(None, description="ID to correlate related messages")
     metadata: Dict[str, Any] = Field(default_factory=dict, description="Additional metadata")
-    
+
     class Config:
         extra = "allow"  # Allow extra fields for flexibility
         validate_assignment = True
@@ -121,18 +122,18 @@ class ActorMessage(AgentMessageBase):
     
     This is the primary message type used for inter-agent communication.
     """
-    
+
     message_type: str = Field(default=MessageType.ACTOR_MESSAGE.value)
     content: Dict[str, Any] = Field(..., description="Message content payload")
-    
+
     @pydantic_validator("content")
     def validate_content_safety(cls, v: Dict[str, Any]) -> Dict[str, Any]:
         """Validate that message content doesn't contain dangerous patterns."""
         if not v:
             return v
-        
+
         validator = LLMOutputValidator(strict_mode=True)
-        
+
         def check_value(value: Any, path: str = "") -> None:
             """Recursively check values for dangerous patterns."""
             if isinstance(value, str):
@@ -145,10 +146,10 @@ class ActorMessage(AgentMessageBase):
             elif isinstance(value, list):
                 for i, item in enumerate(value):
                     check_value(item, f"{path}[{i}]")
-        
+
         check_value(v)
         return v
-    
+
     class Config:
         extra = "allow"
 
@@ -159,25 +160,25 @@ class StateUpdate(AgentMessageBase):
     
     State updates are critical and require strict validation before application.
     """
-    
+
     message_type: str = Field(default=MessageType.STATE_UPDATE.value)
     state_key: str = Field(..., min_length=1, max_length=256, description="Key identifying the state to update")
     state_value: Any = Field(..., description="New value for the state")
     operation: str = Field(default="set", description="Operation to perform (set, append, delete, merge)")
     version: Optional[int] = Field(None, description="Expected version for optimistic locking")
-    
+
     @pydantic_validator("state_key")
     def validate_state_key(cls, v: str) -> str:
         """Validate state key format."""
         if not re.match(r"^[a-zA-Z_][a-zA-Z0-9_.]*$", v):
             raise ValueError(f"Invalid state key format: {v}")
         return v
-    
+
     @pydantic_validator("state_value")
     def validate_state_value_safety(cls, v: Any) -> Any:
         """Validate that state value doesn't contain dangerous patterns."""
         validator = LLMOutputValidator(strict_mode=True)
-        
+
         def check_value(value: Any, path: str = "") -> Any:
             """Recursively check and sanitize values."""
             if isinstance(value, str):
@@ -191,9 +192,9 @@ class StateUpdate(AgentMessageBase):
             elif isinstance(value, list):
                 return [check_value(item, f"{path}[{i}]") for i, item in enumerate(value)]
             return value
-        
+
         return check_value(v)
-    
+
     @pydantic_validator("operation")
     def validate_operation(cls, v: str) -> str:
         """Validate operation type."""
@@ -201,7 +202,7 @@ class StateUpdate(AgentMessageBase):
         if v not in valid_operations:
             raise ValueError(f"Invalid operation: {v}. Must be one of {valid_operations}")
         return v
-    
+
     class Config:
         extra = "forbid"
 
@@ -212,39 +213,39 @@ class ToolRequest(AgentMessageBase):
     
     Tool requests require validation of both the tool name and arguments.
     """
-    
+
     message_type: str = Field(default=MessageType.TOOL_REQUEST.value)
     tool_name: str = Field(..., min_length=1, max_length=100, description="Name of the tool to execute")
     arguments: Dict[str, Any] = Field(default_factory=dict, description="Arguments for the tool")
     timeout: int = Field(default=30, ge=1, le=300, description="Execution timeout in seconds")
     execution_id: str = Field(default_factory=lambda: f"exec_{uuid.uuid4().hex[:8]}")
-    
+
     @pydantic_validator("tool_name")
     def validate_tool_name(cls, v: str) -> str:
         """Validate tool name format."""
         if not re.match(r"^[a-zA-Z_][a-zA-Z0-9_]*$", v):
             raise ValueError(f"Invalid tool name format: {v}")
-        
+
         # Block dangerous tool names
         dangerous_tools = {"eval", "exec", "compile", "__import__", "getattr", "setattr", "delattr", "hasattr", "globals", "locals", "vars", "dir", "open", "input"}
         if v.lower() in dangerous_tools:
             raise ValueError(f"Dangerous tool name not allowed: {v}")
-        
+
         return v
-    
+
     @pydantic_validator("arguments")
     def validate_arguments_safety(cls, v: Dict[str, Any]) -> Dict[str, Any]:
         """Validate that tool arguments don't contain dangerous patterns."""
         validator = LLMOutputValidator(strict_mode=True)
-        
+
         for key, value in v.items():
             if isinstance(value, str):
                 result = validator.validate_text(value)
                 if not result.valid:
                     raise ValueError(f"Unsafe argument '{key}': {', '.join(result.errors)}")
-        
+
         return v
-    
+
     class Config:
         extra = "forbid"
 
@@ -255,28 +256,28 @@ class ToolResponse(AgentMessageBase):
     
     Contains the result or error from tool execution.
     """
-    
+
     message_type: str = Field(default=MessageType.TOOL_RESPONSE.value)
     execution_id: str = Field(..., description="ID of the executed tool request")
     success: bool = Field(..., description="Whether the tool execution succeeded")
     result: Optional[Any] = Field(None, description="Result of the tool execution")
     error: Optional[str] = Field(None, description="Error message if execution failed")
     execution_time_ms: int = Field(default=0, ge=0, description="Execution time in milliseconds")
-    
+
     @pydantic_validator("error")
     def validate_error_safety(cls, v: Optional[str]) -> Optional[str]:
         """Validate that error messages don't contain dangerous patterns."""
         if not v:
             return v
-        
+
         validator = LLMOutputValidator(strict_mode=False)  # Sanitize errors instead of rejecting
         result = validator.validate_text(v)
-        
+
         if not result.valid and result.sanitized_content:
             return result.sanitized_content
-        
+
         return v
-    
+
     class Config:
         extra = "forbid"
 
@@ -287,14 +288,14 @@ class CoordinationRequest(AgentMessageBase):
     
     Used for inter-agent coordination and task delegation.
     """
-    
+
     message_type: str = Field(default=MessageType.COORDINATION_REQUEST.value)
     request_type: str = Field(..., description="Type of coordination request")
     description: str = Field(..., max_length=2000, description="Description of the coordination needed")
     required_capabilities: List[str] = Field(default_factory=list, description="Required agent capabilities")
     deadline: Optional[datetime] = Field(None, description="Optional deadline for the request")
     payload: Optional[Dict[str, Any]] = Field(None, description="Additional payload for the request")
-    
+
     @pydantic_validator("description")
     def validate_description_safety(cls, v: str) -> str:
         """Validate description safety."""
@@ -303,15 +304,15 @@ class CoordinationRequest(AgentMessageBase):
         if not result.valid:
             raise ValueError(f"Unsafe description: {', '.join(result.errors)}")
         return v
-    
+
     @pydantic_validator("payload")
     def validate_payload_safety(cls, v: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
         """Validate payload safety."""
         if not v:
             return v
-        
+
         validator = LLMOutputValidator(strict_mode=True)
-        
+
         def check_value(value: Any, path: str = "") -> Any:
             if isinstance(value, str):
                 result = validator.validate_text(value)
@@ -323,9 +324,9 @@ class CoordinationRequest(AgentMessageBase):
             elif isinstance(value, list):
                 return [check_value(item, f"{path}[{i}]") for i, item in enumerate(value)]
             return value
-        
+
         return check_value(v)
-    
+
     class Config:
         extra = "forbid"
 
@@ -336,14 +337,14 @@ class ConsensusProposal(AgentMessageBase):
     
     Used in swarm consensus mechanisms for decision making.
     """
-    
+
     message_type: str = Field(default=MessageType.CONSENSUS_PROPOSAL.value)
     proposal_id: str = Field(default_factory=lambda: f"prop_{uuid.uuid4().hex[:12]}")
     title: str = Field(..., min_length=1, max_length=200, description="Title of the proposal")
     description: str = Field(..., max_length=5000, description="Detailed description of the proposal")
     options: List[str] = Field(default_factory=list, description="Available options for voting")
     proposer_id: str = Field(..., description="ID of the proposing agent")
-    
+
     @pydantic_validator("title", "description")
     def validate_text_safety(cls, v: str) -> str:
         """Validate text safety."""
@@ -352,7 +353,7 @@ class ConsensusProposal(AgentMessageBase):
         if not result.valid:
             raise ValueError(f"Unsafe text: {', '.join(result.errors)}")
         return v
-    
+
     class Config:
         extra = "forbid"
 
@@ -361,25 +362,25 @@ class ConsensusVote(AgentMessageBase):
     """
     Vote in a consensus deliberation.
     """
-    
+
     message_type: str = Field(default=MessageType.CONSENSUS_VOTE.value)
     proposal_id: str = Field(..., description="ID of the proposal being voted on")
     vote: str = Field(..., description="The vote value (option name or yes/no)")
     confidence: float = Field(default=1.0, ge=0.0, le=1.0, description="Confidence in the vote (0-1)")
     reasoning: Optional[str] = Field(None, max_length=1000, description="Optional reasoning for the vote")
-    
+
     @pydantic_validator("reasoning")
     def validate_reasoning_safety(cls, v: Optional[str]) -> Optional[str]:
         """Validate reasoning safety."""
         if not v:
             return v
-        
+
         validator = LLMOutputValidator(strict_mode=True)
         result = validator.validate_text(v)
         if not result.valid:
             raise ValueError(f"Unsafe reasoning: {', '.join(result.errors)}")
         return v
-    
+
     class Config:
         extra = "forbid"
 
@@ -388,23 +389,23 @@ class ErrorMessage(AgentMessageBase):
     """
     Error message from an agent.
     """
-    
+
     message_type: str = Field(default=MessageType.ERROR.value)
     error_code: str = Field(..., description="Error code for categorization")
     error_message: str = Field(..., description="Human-readable error message")
     stack_trace: Optional[str] = Field(None, description="Optional stack trace")
     context: Optional[Dict[str, Any]] = Field(None, description="Context information about the error")
-    
+
     @pydantic_validator("error_message", "stack_trace")
     def validate_error_safety(cls, v: Optional[str]) -> Optional[str]:
         """Validate and sanitize error messages."""
         if not v:
             return v
-        
+
         validator = LLMOutputValidator(strict_mode=False)  # Sanitize instead of reject
         result = validator.validate_text(v)
         return result.sanitized_content or v
-    
+
     class Config:
         extra = "forbid"
 
@@ -413,20 +414,20 @@ class TaskMessage(AgentMessageBase):
     """
     Message related to task management.
     """
-    
+
     message_type: str = Field(..., description="Specific task message type")
     task_id: str = Field(..., description="ID of the task")
     task_status: str = Field(default="pending", description="Status of the task")
     task_data: Optional[Dict[str, Any]] = Field(None, description="Task-related data")
-    
+
     @pydantic_validator("task_data")
     def validate_task_data_safety(cls, v: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
         """Validate task data safety."""
         if not v:
             return v
-        
+
         validator = LLMOutputValidator(strict_mode=True)
-        
+
         def check_value(value: Any, path: str = "") -> Any:
             if isinstance(value, str):
                 result = validator.validate_text(value)
@@ -438,9 +439,9 @@ class TaskMessage(AgentMessageBase):
             elif isinstance(value, list):
                 return [check_value(item, f"{path}[{i}]") for i, item in enumerate(value)]
             return value
-        
+
         return check_value(v)
-    
+
     class Config:
         extra = "forbid"
 
@@ -452,24 +453,24 @@ class CodeExecutionRequest(AgentMessageBase):
     This is a specialized message for the Coder agent that includes
     additional validation for code content.
     """
-    
+
     message_type: str = Field(default="code_execution_request")
     code: str = Field(..., min_length=1, description="Code to execute")
     language: str = Field(default="python", description="Programming language")
     timeout: int = Field(default=30, ge=1, le=300, description="Execution timeout in seconds")
     sandbox: bool = Field(default=True, description="Whether to execute in sandbox")
-    
+
     @pydantic_validator("code")
     def validate_code_safety(cls, v: str) -> str:
         """Validate code for dangerous patterns."""
         validator = LLMOutputValidator(strict_mode=True)
         result = validator.validate_code(v)
-        
+
         if not result.valid:
             raise ValueError(f"Unsafe code: {', '.join(result.errors)}")
-        
+
         return v
-    
+
     class Config:
         extra = "forbid"
 
@@ -511,17 +512,17 @@ def validate_message(message_type: str, content: Dict[str, Any]) -> ValidationRe
         # For unknown types, do basic content validation
         validator = LLMOutputValidator(strict_mode=True)
         return validator.validate_structured(content)
-    
+
     model_class = MESSAGE_TYPES[message_type]
-    
+
     try:
         # Add message_type to content if not present
         if "message_type" not in content:
             content["message_type"] = message_type
-        
+
         # Try to create validated model
         model = model_class(**content)
-        
+
         return ValidationResult(
             valid=True,
             content=model.dict(),

@@ -24,23 +24,23 @@ Zero-Trust Principles:
 import asyncio
 import uuid
 from dataclasses import dataclass, field
-from datetime import datetime, timezone, timedelta
+from datetime import datetime, timedelta, timezone
 from enum import Enum
 from typing import Any, Callable, Dict, List, Optional, Tuple
 
 import structlog
 
-from .pattern_library import PatternLibrary
 from .adaptive_learning import AdaptiveLearningRateController
 from .agent_adaptation import PatternBasedAgentAdaptor
-from .emergent_detection import EmergentPatternDetector, EmergenceLevel
+from .emergent_detection import EmergenceLevel, EmergentPatternDetector
+from .pattern_library import PatternLibrary
 
 _logger = structlog.get_logger(__name__)
 
 
 class MetricCategory(str, Enum):
     """Categories of collective intelligence metrics."""
-    
+
     SWARM_INTELLIGENCE = "swarm_intelligence"
     PROBLEM_SOLVING = "problem_solving"
     KNOWLEDGE_TRANSFER = "knowledge_transfer"
@@ -53,7 +53,7 @@ class MetricCategory(str, Enum):
 
 class MetricAggregation(str, Enum):
     """Aggregation methods for metrics."""
-    
+
     MEAN = "mean"
     MEDIAN = "median"
     MAX = "max"
@@ -66,7 +66,7 @@ class MetricAggregation(str, Enum):
 @dataclass
 class MetricDefinition:
     """Definition of a collectible metric."""
-    
+
     metric_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     name: str = ""
     description: str = ""
@@ -77,7 +77,7 @@ class MetricDefinition:
     max_value: Optional[float] = None
     target_value: Optional[float] = None
     metadata: Dict[str, Any] = field(default_factory=dict)
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for serialization."""
         return {
@@ -97,7 +97,7 @@ class MetricDefinition:
 @dataclass
 class MetricValue:
     """A single metric value with metadata."""
-    
+
     value_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     metric_id: str = ""
     value: float = 0.0
@@ -107,7 +107,7 @@ class MetricValue:
     sample_size: int = 1
     statistical_significance: float = 1.0
     metadata: Dict[str, Any] = field(default_factory=dict)
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for serialization."""
         return {
@@ -126,13 +126,13 @@ class MetricValue:
 @dataclass
 class MetricTimeSeries:
     """Time series of metric values."""
-    
+
     metric_id: str = ""
     values: List[MetricValue] = field(default_factory=list)
     start_time: Optional[str] = None
     end_time: Optional[str] = None
     sample_count: int = 0
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for serialization."""
         return {
@@ -147,10 +147,10 @@ class MetricTimeSeries:
 @dataclass
 class SwarmIntelligenceQuotient:
     """Swarm Intelligence Quotient (SIQ) calculation result."""
-    
+
     calculation_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
-    
+
     # Component scores (0.0 to 1.0)
     coordination_score: float = 0.0
     adaptation_score: float = 0.0
@@ -158,22 +158,22 @@ class SwarmIntelligenceQuotient:
     problem_solving_score: float = 0.0
     emergence_score: float = 0.0
     resilience_score: float = 0.0
-    
+
     # Overall SIQ (0.0 to 100.0, normalized like IQ)
     overall_siq: float = 100.0
     siq_percentile: float = 50.0
-    
+
     # Breakdown
     component_weights: Dict[str, float] = field(default_factory=dict)
     component_contributions: Dict[str, float] = field(default_factory=dict)
-    
+
     # Context
     agent_count: int = 0
     observation_window_seconds: float = 0.0
     sample_size: int = 0
-    
+
     metadata: Dict[str, Any] = field(default_factory=dict)
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for serialization."""
         return {
@@ -199,31 +199,31 @@ class SwarmIntelligenceQuotient:
 @dataclass
 class CollectiveEfficiencyMetrics:
     """Collective problem-solving efficiency metrics."""
-    
+
     calculation_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
-    
+
     # Efficiency metrics
     task_completion_rate: float = 0.0  # Tasks completed / Tasks attempted
     avg_task_time_seconds: float = 0.0
     optimal_task_time_seconds: float = 0.0  # Theoretical optimal
     efficiency_ratio: float = 0.0  # optimal / actual
-    
+
     # Resource metrics
     resource_utilization: float = 0.0
     redundant_work_ratio: float = 0.0
     parallel_efficiency: float = 0.0
-    
+
     # Quality metrics
     solution_quality_avg: float = 0.0
     solution_quality_std: float = 0.0
     first_attempt_success_rate: float = 0.0
-    
+
     # Collective factor
     collective_efficiency_factor: float = 0.0  # How much better than individuals
-    
+
     metadata: Dict[str, Any] = field(default_factory=dict)
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for serialization."""
         return {
@@ -247,33 +247,33 @@ class CollectiveEfficiencyMetrics:
 @dataclass
 class KnowledgeTransferMetrics:
     """Knowledge transfer rate metrics."""
-    
+
     calculation_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
-    
+
     # Transfer rates
     patterns_shared: int = 0
     patterns_adopted: int = 0
     adoption_rate: float = 0.0  # adopted / shared
     transfer_rate_per_hour: float = 0.0
-    
+
     # Knowledge flow
     knowledge_inflow: float = 0.0
     knowledge_outflow: float = 0.0
     knowledge_balance: float = 0.0  # inflow - outflow
-    
+
     # Network metrics
     active_transmitters: int = 0
     active_receivers: int = 0
     network_density: float = 0.0
     avg_path_length: float = 0.0
-    
+
     # Retention
     knowledge_retention_rate: float = 0.0
     knowledge_decay_rate: float = 0.0
-    
+
     metadata: Dict[str, Any] = field(default_factory=dict)
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for serialization."""
         return {
@@ -299,31 +299,31 @@ class KnowledgeTransferMetrics:
 @dataclass
 class EmergenceCoefficient:
     """Emergence coefficient calculation result."""
-    
+
     calculation_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
-    
+
     # Overall coefficient
     emergence_coefficient: float = 0.0  # 0.0 to 1.0
-    
+
     # Component coefficients
     behavioral_emergence: float = 0.0
     structural_emergence: float = 0.0
     functional_emergence: float = 0.0
     cognitive_emergence: float = 0.0
-    
+
     # Emergence indicators
     macro_patterns_detected: int = 0
     micro_macro_link_strength: float = 0.0
     downward_causation_strength: float = 0.0
     novelty_score: float = 0.0
-    
+
     # Classification
     emergence_type: str = ""
     emergence_strength: str = ""
-    
+
     metadata: Dict[str, Any] = field(default_factory=dict)
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for serialization."""
         return {
@@ -347,41 +347,41 @@ class EmergenceCoefficient:
 @dataclass
 class MetricsDashboard:
     """Real-time metrics dashboard data."""
-    
+
     dashboard_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
-    
+
     # Summary metrics
     swarm_health_score: float = 0.0  # 0.0 to 100.0
     swarm_intelligence_quotient: float = 0.0
     collective_efficiency: float = 0.0
     emergence_coefficient: float = 0.0
-    
+
     # Agent metrics
     total_agents: int = 0
     active_agents: int = 0
     avg_agent_performance: float = 0.0
-    
+
     # Pattern metrics
     total_patterns: int = 0
     validated_patterns: int = 0
     emergent_patterns: int = 0
-    
+
     # Learning metrics
     learning_rate_avg: float = 0.0
     adaptation_rate: float = 0.0
     convergence_rate: float = 0.0
-    
+
     # Time series data (recent values)
     siq_history: List[float] = field(default_factory=list)
     efficiency_history: List[float] = field(default_factory=list)
     emergence_history: List[float] = field(default_factory=list)
-    
+
     # Alerts
     alerts: List[Dict[str, Any]] = field(default_factory=list)
-    
+
     metadata: Dict[str, Any] = field(default_factory=dict)
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for serialization."""
         return {
@@ -421,7 +421,7 @@ class CollectiveIntelligenceMetrics:
         agent_adaptor: PatternBasedAgentAdaptor instance
         emergence_detector: EmergentPatternDetector instance
     """
-    
+
     def __init__(self, learning_controller: Optional[AdaptiveLearningRateController], agent_adaptor: Optional[PatternBasedAgentAdaptor], emergence_detector: Optional[EmergentPatternDetector], pattern_library: Optional[PatternLibrary]):
         """
         Initialize collective intelligence metrics.
@@ -436,25 +436,25 @@ class CollectiveIntelligenceMetrics:
         self.agent_adaptor = agent_adaptor or PatternBasedAgentAdaptor()
         self.emergence_detector = emergence_detector or EmergentPatternDetector()
         self.pattern_library = pattern_library
-        
+
         self._metric_definitions: Dict[str, MetricDefinition] = {}
         self._metric_values: Dict[str, List[MetricValue]] = {}
         self._siq_history: List[SwarmIntelligenceQuotient] = []
         self._efficiency_history: List[CollectiveEfficiencyMetrics] = []
         self._transfer_history: List[KnowledgeTransferMetrics] = []
         self._emergence_history: List[EmergenceCoefficient] = []
-        
+
         # Callbacks
         self._on_metric_calculated: List[Callable] = []
         self._on_threshold_exceeded: List[Callable] = []
-        
+
         # Thresholds
         self._thresholds: Dict[str, Tuple[float, float]] = {}  # metric_id -> (min, max)
-        
+
         self._register_default_metrics()
-        
+
         logger.info("collective_intelligence_metrics_initialized")
-    
+
     def register_metric_callback(self, callback: Callable) -> None:
         """
         Register callback for metric calculation events.
@@ -464,7 +464,7 @@ class CollectiveIntelligenceMetrics:
         """
         self._on_metric_calculated.append(callback)
         logger.debug("metric_callback_registered", callback=callback.__name__)
-    
+
     def register_threshold_callback(self, callback: Callable) -> None:
         """
         Register callback for threshold exceeded events.
@@ -474,7 +474,7 @@ class CollectiveIntelligenceMetrics:
         """
         self._on_threshold_exceeded.append(callback)
         logger.debug("threshold_callback_registered", callback=callback.__name__)
-    
+
     def set_threshold(self, metric_id: str, min_value: Optional[float], max_value: Optional[float]) -> None:
         """
         Set threshold for a metric.
@@ -491,7 +491,7 @@ class CollectiveIntelligenceMetrics:
             _min_value = min_value,
             _max_value = max_value,
         )
-    
+
     async def calculate_siq(self) -> SwarmIntelligenceQuotient:
         """
         Calculate Swarm Intelligence Quotient (SIQ).
@@ -506,7 +506,7 @@ class CollectiveIntelligenceMetrics:
         _problem_solving_score = await self._calculate_problem_solving_score()
         _emergence_score = await self._calculate_emergence_score()
         _resilience_score = await self._calculate_resilience_score()
-        
+
         # Component weights (can be customized)
         _weights = {
             "coordination": 0.20,
@@ -516,7 +516,7 @@ class CollectiveIntelligenceMetrics:
             "emergence": 0.15,
             "resilience": 0.10,
         }
-        
+
         # Calculate weighted overall score (0.0 to 1.0)
         _raw_score = (
             coordination_score * weights["coordination"] +
@@ -526,14 +526,14 @@ class CollectiveIntelligenceMetrics:
             emergence_score * weights["emergence"] +
             resilience_score * weights["resilience"]
         )
-        
+
         # Normalize to SIQ scale (50-150, with 100 as average)
         # Using linear transformation: SIQ = raw_score * 100 + 50
         overall_siq = min(150.0, max(50.0, raw_score * 100 + 50))
-        
+
         # Calculate percentile (simplified - assumes normal distribution)
         _siq_percentile = self._calculate_siq_percentile(overall_siq)
-        
+
         # Calculate component contributions
         _contributions = {
             "coordination": coordination_score * weights["coordination"] / raw_score if raw_score > 0 else 0,
@@ -543,7 +543,7 @@ class CollectiveIntelligenceMetrics:
             "emergence": emergence_score * weights["emergence"] / raw_score if raw_score > 0 else 0,
             "resilience": resilience_score * weights["resilience"] / raw_score if raw_score > 0 else 0,
         }
-        
+
         _siq = SwarmIntelligenceQuotient(
             _coordination_score = coordination_score,
             _adaptation_score = adaptation_score,
@@ -559,25 +559,25 @@ class CollectiveIntelligenceMetrics:
             _observation_window_seconds = 300.0,  # 5 minutes
             _sample_size = len(self._siq_history) + 1,
         )
-        
+
         # Store in history
         self._siq_history.append(siq)
-        
+
         # Store metric values
         await self._store_metric_value(
             "siq_overall",
             overall_siq,
             _source = "collective_intelligence_metrics",
         )
-        
+
         logger.info(
             "siq_calculated",
             overall_siq=overall_siq,
             _siq_percentile = siq_percentile,
         )
-        
+
         return siq
-    
+
     async def calculate_collective_efficiency(self) -> CollectiveEfficiencyMetrics:
         """
         Calculate collective problem-solving efficiency metrics.
@@ -587,28 +587,28 @@ class CollectiveIntelligenceMetrics:
         """
         # Get task statistics from agent states
         _agent_states = self.learning_controller._agent_states.values()
-        
+
         total_updates = sum(s.total_updates for s in agent_states)
         successful_updates = sum(s.successful_updates for s in agent_states)
-        
+
         # Task completion rate
         _task_completion_rate = successful_updates / max(total_updates, 1)
-        
+
         # Efficiency ratio (simplified)
         _avg_success_rate = sum(s.success_rate for s in agent_states) / max(len(agent_states), 1)
         efficiency_ratio = avg_success_rate
-        
+
         # Resource utilization (based on adaptation activity)
         _adaptation_states = self.agent_adaptor._agent_states.values()
         _total_adaptations = sum(s.adaptation_count for s in adaptation_states)
         _resource_utilization = min(1.0, total_adaptations / max(len(adaptation_states) * 10, 1))
-        
+
         # Collective efficiency factor
         # How much better the collective performs vs individuals
         _individual_avg = avg_success_rate
         _collective_avg = task_completion_rate
         _collective_efficiency_factor = collective_avg / max(individual_avg, 0.01)
-        
+
         metrics = CollectiveEfficiencyMetrics(
             _task_completion_rate = task_completion_rate,
             _avg_task_time_seconds = 0.0,  # Would need timing data
@@ -622,23 +622,23 @@ class CollectiveIntelligenceMetrics:
             _first_attempt_success_rate = task_completion_rate,
             _collective_efficiency_factor = collective_efficiency_factor,
         )
-        
+
         self._efficiency_history.append(metrics)
-        
+
         await self._store_metric_value(
             "collective_efficiency",
             efficiency_ratio,
             _source = "collective_intelligence_metrics",
         )
-        
+
         logger.info(
             "collective_efficiency_calculated",
             efficiency_ratio=efficiency_ratio,
             _collective_efficiency_factor = collective_efficiency_factor,
         )
-        
+
         return metrics
-    
+
     async def calculate_knowledge_transfer(self) -> KnowledgeTransferMetrics:
         """
         Calculate knowledge transfer rate metrics.
@@ -648,12 +648,12 @@ class CollectiveIntelligenceMetrics:
         """
         # Get pattern statistics
         _adaptor_stats = self.agent_adaptor.get_swarm_adaptation_stats()
-        
+
         _patterns_shared = adaptor_stats.get("total_patterns_adopted", 0) + adaptor_stats.get("total_patterns_rejected", 0)
         _patterns_adopted = adaptor_stats.get("total_patterns_adopted", 0)
-        
+
         _adoption_rate = patterns_adopted / max(patterns_shared, 1)
-        
+
         # Calculate transfer rate per hour
         # Based on adaptation events in the last hour
         _one_hour_ago = datetime.now(timezone.utc) - timedelta(hours=1)
@@ -662,14 +662,14 @@ class CollectiveIntelligenceMetrics:
             if datetime.fromisoformat(e.timestamp) > one_hour_ago
         ]
         _transfer_rate_per_hour = len(recent_adaptations)
-        
+
         # Knowledge flow
         # Inflow: patterns adopted from external sources
         # Outflow: patterns contributed to the swarm
         _knowledge_inflow = patterns_adopted
         _knowledge_outflow = len(self.learning_controller._adaptation_events)
         _knowledge_balance = knowledge_inflow - knowledge_outflow
-        
+
         # Network metrics (simplified)
         _active_transmitters = sum(
             1 for s in self.learning_controller._agent_states.values()
@@ -679,13 +679,13 @@ class CollectiveIntelligenceMetrics:
             1 for s in self.agent_adaptor._agent_states.values()
             if len(s.adopted_patterns) > 0
         )
-        
+
         # Network density (simplified)
         total_agents = len(self.learning_controller._agent_states)
         _max_connections = total_agents * (total_agents - 1) / 2
         _actual_connections = active_transmitters * active_receivers
         _network_density = actual_connections / max(max_connections, 1)
-        
+
         metrics = KnowledgeTransferMetrics(
             _patterns_shared = patterns_shared,
             _patterns_adopted = patterns_adopted,
@@ -701,23 +701,23 @@ class CollectiveIntelligenceMetrics:
             _knowledge_retention_rate = adoption_rate,
             _knowledge_decay_rate = 0.0,  # Would need longitudinal data
         )
-        
+
         self._transfer_history.append(metrics)
-        
+
         await self._store_metric_value(
             "knowledge_transfer_rate",
             transfer_rate_per_hour,
             _source = "collective_intelligence_metrics",
         )
-        
+
         logger.info(
             "knowledge_transfer_calculated",
             _adoption_rate = adoption_rate,
             _transfer_rate_per_hour = transfer_rate_per_hour,
         )
-        
+
         return metrics
-    
+
     async def calculate_emergence_coefficient(self) -> EmergenceCoefficient:
         """
         Calculate emergence coefficient.
@@ -727,38 +727,38 @@ class CollectiveIntelligenceMetrics:
         """
         # Get emergence statistics
         _emergence_stats = self.emergence_detector.get_emergence_statistics()
-        
+
         total_patterns = emergence_stats.get("total_patterns", 0)
         validated_patterns = emergence_stats.get("validated_patterns", 0)
-        
+
         # Overall emergence coefficient
         _emergence_metrics = self.emergence_detector.calculate_emergence_metrics()
         emergence_coefficient = emergence_metrics.get("swarm_emergence_index", 0.0)
-        
+
         # Component coefficients
         _behavioral_emergence = emergence_metrics.get("coordination_level", 0.0)
         structural_emergence = 0.0  # Would need structural analysis
         _functional_emergence = emergence_metrics.get("collective_intelligence_factor", 0.0)
         _cognitive_emergence = emergence_coefficient
-        
+
         # Emergence indicators
         _macro_patterns = len([
             p for p in self.emergence_detector._emergent_patterns
             if p.emergence_level in [EmergenceLevel.STRONG, EmergenceLevel.CRITICAL]
         ])
-        
+
         # Micro-macro link strength
         # How well individual behaviors predict collective patterns
         micro_macro_link = emergence_coefficient * 0.8  # Simplified
-        
+
         # Downward causation strength
         # How much collective patterns influence individual behavior
         _downward_causation = len(self.agent_adaptor._adaptation_events) / max(total_patterns, 1)
         _downward_causation = min(1.0, downward_causation)
-        
+
         # Novelty score
         _novelty_score = emergence_coefficient * emergence_stats.get("avg_confidence", 0.5)
-        
+
         # Classification
         if emergence_coefficient >= 0.8:
             _emergence_strength = "critical"
@@ -772,7 +772,7 @@ class CollectiveIntelligenceMetrics:
         else:
             _emergence_strength = "weak"
             _emergence_type = "minimal_emergence"
-        
+
         _coefficient = EmergenceCoefficient(
             emergence_coefficient=emergence_coefficient,
             _behavioral_emergence = behavioral_emergence,
@@ -786,23 +786,23 @@ class CollectiveIntelligenceMetrics:
             _emergence_type = emergence_type,
             _emergence_strength = emergence_strength,
         )
-        
+
         self._emergence_history.append(coefficient)
-        
+
         await self._store_metric_value(
             "emergence_coefficient",
             emergence_coefficient,
             _source = "collective_intelligence_metrics",
         )
-        
+
         logger.info(
             "emergence_coefficient_calculated",
             emergence_coefficient=emergence_coefficient,
             _emergence_strength = emergence_strength,
         )
-        
+
         return coefficient
-    
+
     def get_dashboard_data(self) -> MetricsDashboard:
         """
         Get real-time metrics dashboard data.
@@ -814,7 +814,7 @@ class CollectiveIntelligenceMetrics:
         _siq_history = [s.overall_siq for s in self._siq_history[-20:]]
         _efficiency_history = [e.efficiency_ratio for e in self._efficiency_history[-20:]]
         _emergence_history = [e.emergence_coefficient for e in self._emergence_history[-20:]]
-        
+
         # Calculate swarm health score
         _health_components = []
         if siq_history:
@@ -823,35 +823,35 @@ class CollectiveIntelligenceMetrics:
             health_components.append(efficiency_history[-1])
         if emergence_history:
             health_components.append(emergence_history[-1])
-        
+
         swarm_health_score = (sum(health_components) / len(health_components)) * 100.0 if health_components else 0.0
-        
+
         # Get current metrics
         _current_siq = self._siq_history[-1].overall_siq if self._siq_history else 100.0
         _current_efficiency = efficiency_history[-1] if efficiency_history else 0.0
         _current_emergence = emergence_history[-1] if emergence_history else 0.0
-        
+
         # Agent metrics
         _agent_states = list(self.learning_controller._agent_states.values())
         active_agents = sum(1 for s in agent_states if s.total_updates > 0)
         _avg_performance = sum(s.success_rate for s in agent_states) / max(len(agent_states), 1)
-        
+
         # Pattern metrics
         _adaptor_stats = self.agent_adaptor.get_swarm_adaptation_stats()
         _emergence_stats = self.emergence_detector.get_emergence_statistics()
-        
+
         # Learning metrics
         _swarm_stats = self.learning_controller.get_swarm_statistics()
         learning_rate_avg = swarm_stats.get("avg_learning_rate", 0.0)
-        
+
         # Convergence rate
         _converged = swarm_stats.get("converged_agents", 0)
         total = swarm_stats.get("total_agents", 1)
         convergence_rate = converged / total if total > 0 else 0.0
-        
+
         # Generate alerts
         _alerts = self._generate_alerts()
-        
+
         _dashboard = MetricsDashboard(
             swarm_health_score=swarm_health_score,
             swarm_intelligence_quotient=current_siq,
@@ -871,11 +871,11 @@ class CollectiveIntelligenceMetrics:
             _emergence_history = emergence_history,
             _alerts = alerts,
         )
-        
+
         logger.debug("dashboard_data_generated")
-        
+
         return dashboard
-    
+
     def get_metric_time_series(self, metric_id: str, start_time: Optional[datetime], end_time: Optional[datetime]) -> MetricTimeSeries:
         """
         Get time series data for a metric.
@@ -889,23 +889,23 @@ class CollectiveIntelligenceMetrics:
             MetricTimeSeries with values
         """
         values = self._metric_values.get(metric_id, [])
-        
+
         # Apply time filters
         if start_time:
             values = [
                 v for v in values
                 if datetime.fromisoformat(v.timestamp) >= start_time
             ]
-        
+
         if end_time:
             values = [
                 v for v in values
                 if datetime.fromisoformat(v.timestamp) <= end_time
             ]
-        
+
         _start = values[0].timestamp if values else None
         _end = values[-1].timestamp if values else None
-        
+
         return MetricTimeSeries(
             metric_id=metric_id,
             values=values,
@@ -913,7 +913,7 @@ class CollectiveIntelligenceMetrics:
             _end_time = end,
             _sample_count = len(values),
         )
-    
+
     def get_all_metric_definitions(self) -> List[MetricDefinition]:
         """
         Get all registered metric definitions.
@@ -922,28 +922,28 @@ class CollectiveIntelligenceMetrics:
             List of metric definitions
         """
         return list(self._metric_definitions.values())
-    
+
     async def _calculate_coordination_score(self) -> float:
         """Calculate coordination score component."""
         # Based on collective behavior coherence
         _behaviors = self.emergence_detector._collective_behaviors
         if not behaviors:
             return 0.5  # Default
-        
+
         _avg_coherence = sum(b.coherence for b in behaviors) / len(behaviors)
         return avg_coherence
-    
+
     async def _calculate_adaptation_score(self) -> float:
         """Calculate adaptation score component."""
         # Based on adaptation rate and success
         _adaptor_stats = self.agent_adaptor.get_swarm_adaptation_stats()
         _adoption_rate = adaptor_stats.get("adoption_rate", 0.5)
-        
+
         # Also consider learning rate adaptations
         _learning_stats = self.learning_controller.get_swarm_statistics()
-        
+
         return adoption_rate
-    
+
     async def _calculate_knowledge_sharing_score(self) -> float:
         """Calculate knowledge sharing score component."""
         # Based on pattern library statistics
@@ -951,33 +951,33 @@ class CollectiveIntelligenceMetrics:
             _stats = self.pattern_library.get_stats()
             if stats.total_patterns > 0:
                 return min(1.0, stats.avg_access_count / 10.0)
-        
+
         # Fallback to adaptor stats
         _adaptor_stats = self.agent_adaptor.get_swarm_adaptation_stats()
         return adaptor_stats.get("adoption_rate", 0.5)
-    
+
     async def _calculate_problem_solving_score(self) -> float:
         """Calculate problem solving score component."""
         # Based on agent success rates
         _agent_states = self.learning_controller._agent_states.values()
         if not agent_states:
             return 0.5
-        
+
         _avg_success = sum(s.success_rate for s in agent_states) / len(agent_states)
         return avg_success
-    
+
     async def _calculate_emergence_score(self) -> float:
         """Calculate emergence score component."""
         _emergence_metrics = self.emergence_detector.calculate_emergence_metrics()
         return emergence_metrics.get("swarm_emergence_index", 0.0)
-    
+
     async def _calculate_resilience_score(self) -> float:
         """Calculate resilience score component."""
         # Based on recovery from failures
         _agent_states = self.learning_controller._agent_states.values()
         if not agent_states:
             return 0.5
-        
+
         # Calculate average recovery rate
         _recovery_rates = []
         for state in agent_states:
@@ -985,25 +985,25 @@ class CollectiveIntelligenceMetrics:
                 # Recovery = how many successes after failures
                 _recovery = state.successful_updates / max(state.total_updates, 1)
                 recovery_rates.append(recovery)
-        
+
         if not recovery_rates:
             return 0.5
-        
+
         return sum(recovery_rates) / len(recovery_rates)
-    
+
     def _calculate_siq_percentile(self, siq: float) -> float:
         """Calculate SIQ percentile."""
         # Simplified percentile calculation
         # Assumes SIQ follows normal distribution with mean 100, std 15
-        
+
         if siq <= 50:
             return 0.0
         elif siq >= 150:
             return 100.0
-        
+
         # Linear approximation
         return (siq - 50)  # 50-150 maps to 0-100 percentile
-    
+
     def _register_default_metrics(self) -> None:
         """Register default metric definitions."""
         _defaults = [
@@ -1042,10 +1042,10 @@ class CollectiveIntelligenceMetrics:
                 _target_value = 0.5,
             ),
         ]
-        
+
         for metric in defaults:
             self._metric_definitions[metric.metric_id] = metric
-    
+
     async def _store_metric_value(self, metric_id: str, value: float, source: str, confidence: float, sample_size: int) -> None:
         """Store a metric value."""
         _metric_value = MetricValue(
@@ -1055,43 +1055,43 @@ class CollectiveIntelligenceMetrics:
             _confidence = confidence,
             _sample_size = sample_size,
         )
-        
+
         if metric_id not in self._metric_values:
             self._metric_values[metric_id] = []
-        
+
         self._metric_values[metric_id].append(metric_value)
-        
+
         # Trim old values (keep last 1000)
         if len(self._metric_values[metric_id]) > 1000:
             self._metric_values[metric_id] = self._metric_values[metric_id][-1000:]
-        
+
         # Check thresholds
         await self._check_thresholds(metric_value)
-        
+
         # Call callbacks
         await self._call_metric_callbacks(metric_value)
-    
+
     async def _check_thresholds(self, value: MetricValue) -> None:
         """Check if metric value exceeds thresholds."""
         if value.metric_id not in self._thresholds:
             return
-        
+
         min_thresh, max_thresh = self._thresholds[value.metric_id]
-        
+
         _exceeded = False
         _reason = ""
-        
+
         if min_thresh is not None and value.value < min_thresh:
             _exceeded = True
             _reason = f"below_minimum:{min_thresh}"
-        
+
         if max_thresh is not None and value.value > max_thresh:
             _exceeded = True
             _reason = f"above_maximum:{max_thresh}"
-        
+
         if exceeded:
             await self._call_threshold_callbacks(value, reason)
-    
+
     async def _call_metric_callbacks(self, value: MetricValue) -> None:
         """Call registered metric callbacks."""
         for callback in self._on_metric_calculated:
@@ -1106,7 +1106,7 @@ class CollectiveIntelligenceMetrics:
                     _callback = callback.__name__,
                     _error = str(e),
                 )
-    
+
     async def _call_threshold_callbacks(self, value: MetricValue, reason: str) -> None:
         """Call registered threshold callbacks."""
         _event = {
@@ -1115,7 +1115,7 @@ class CollectiveIntelligenceMetrics:
             "reason": reason,
             "timestamp": value.timestamp,
         }
-        
+
         for callback in self._on_threshold_exceeded:
             try:
                 if asyncio.iscoroutinefunction(callback):
@@ -1128,11 +1128,11 @@ class CollectiveIntelligenceMetrics:
                     _callback = callback.__name__,
                     _error = str(e),
                 )
-    
+
     def _generate_alerts(self) -> List[Dict[str, Any]]:
         """Generate alerts based on current metrics."""
         _alerts = []
-        
+
         # Check SIQ
         if self._siq_history:
             _current_siq = self._siq_history[-1].overall_siq
@@ -1143,7 +1143,7 @@ class CollectiveIntelligenceMetrics:
                     "message": f"Low SIQ detected: {current_siq:.1f}",
                     "timestamp": datetime.now(timezone.utc).isoformat(),
                 })
-        
+
         # Check efficiency
         if self._efficiency_history:
             _current_eff = self._efficiency_history[-1].efficiency_ratio
@@ -1154,7 +1154,7 @@ class CollectiveIntelligenceMetrics:
                     "message": f"Low efficiency detected: {current_eff:.2f}",
                     "timestamp": datetime.now(timezone.utc).isoformat(),
                 })
-        
+
         # Check emergence
         if self._emergence_history:
             _current_emerg = self._emergence_history[-1].emergence_coefficient
@@ -1165,9 +1165,9 @@ class CollectiveIntelligenceMetrics:
                     "message": f"High emergence detected: {current_emerg:.2f}",
                     "timestamp": datetime.now(timezone.utc).isoformat(),
                 })
-        
+
         return alerts
-    
+
     def get_status(self) -> Dict[str, Any]:
         """
         Get metrics system status.
@@ -1193,7 +1193,7 @@ class MetricsExporter:
     This class provides export capabilities for metrics data
     in various formats.
     """
-    
+
     def __init__(self, metrics: CollectiveIntelligenceMetrics):
         """
         Initialize metrics exporter.
@@ -1202,9 +1202,9 @@ class MetricsExporter:
             metrics: CollectiveIntelligenceMetrics instance
         """
         self.metrics = metrics
-        
+
         logger.info("metrics_exporter_initialized")
-    
+
     def export_summary(self) -> Dict[str, Any]:
         """
         Export metrics summary.
@@ -1213,7 +1213,7 @@ class MetricsExporter:
             Dictionary of summary metrics
         """
         _dashboard = self.metrics.get_dashboard_data()
-        
+
         return {
             "timestamp": dashboard.timestamp,
             "swarm_health": dashboard.swarm_health_score,
@@ -1236,7 +1236,7 @@ class MetricsExporter:
                 "convergence_rate": dashboard.convergence_rate,
             },
         }
-    
+
     def export_time_series(self, metric_ids: Optional[List[str]], _format: str) -> Dict[str, Any]:
         """
         Export time series data for metrics.
@@ -1250,10 +1250,10 @@ class MetricsExporter:
         """
         if metric_ids is None:
             _metric_ids = list(self.metrics._metric_values.keys())
-        
+
         _data = {}
         for metric_id in metric_ids:
             _series = self.metrics.get_metric_time_series(metric_id)
             data[metric_id] = [v.to_dict() for v in series.values]
-        
+
         return data

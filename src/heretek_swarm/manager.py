@@ -8,10 +8,10 @@ Pattern inspired by elizaOS plugin system.
 import asyncio
 import importlib
 import inspect
-from pathlib import Path
-from typing import Any, Callable, Dict, List, Optional
 from dataclasses import dataclass, field
 from enum import Enum
+from pathlib import Path
+from typing import Any, Callable, Dict, List, Optional
 
 import structlog
 
@@ -167,7 +167,7 @@ class PluginRuntime:
                 # Import plugin module
                 spec = importlib.util.spec_from_file_location(plugin_path.name, str(plugin_file))
                 _module = importlib.util.module_from_spec(spec)
-                
+
                 # Find plugin class
                 for name, obj in inspect.getmembers(module):
                     if inspect.isclass(obj) and issubclass(obj, Plugin) and obj is not Plugin:

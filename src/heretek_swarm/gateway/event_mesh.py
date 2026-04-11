@@ -9,15 +9,16 @@ Now integrated with Content Router for content-based message routing.
 
 import asyncio
 import json
-from typing import Dict, Optional, Set, Any
-from fastapi import WebSocket
+from typing import Any, Dict, Optional, Set
+
 import structlog
+from fastapi import WebSocket
 
 from heretek_swarm.gateway.content_router import (
     ContentRouter,
-    get_content_router,
-    RoutingDecision,
     RouteDecision,
+    RoutingDecision,
+    get_content_router,
 )
 
 logger = structlog.get_logger(__name__)
@@ -37,17 +38,17 @@ class EventMesh:
     - Routes messages to specific channels/agents based on content
     - Logs routing decisions with correlation IDs
     """
-    
+
     def __init__(self, content_router: Optional[ContentRouter] = None):
         self.clients: Dict[str, WebSocket] = {}
         self._lock = asyncio.Lock()
         self._content_router = content_router or get_content_router()
-    
+
     @property
     def client_count(self) -> int:
         """Get number of connected clients."""
         return len(self.clients)
-    
+
     async def register(self, client_id: str, websocket: WebSocket) -> None:
         """
         Register a new client connection.
@@ -59,7 +60,7 @@ class EventMesh:
         async with self._lock:
             self.clients[client_id] = websocket
             logger.info("client_registered", client_id=client_id, total=self.client_count)
-    
+
     async def unregister(self, client_id: str) -> None:
         """
         Unregister client and cleanup.
@@ -71,7 +72,7 @@ class EventMesh:
             if client_id in self.clients:
                 del self.clients[client_id]
                 logger.info("client_unregistered", client_id=client_id, total=self.client_count)
-    
+
     async def broadcast(
         self,
         message: bytes,
@@ -97,14 +98,14 @@ class EventMesh:
         # Content-based routing (if subject and payload provided)
         routing_decision: Optional[RoutingDecision] = None
         target_clients: Optional[Set[str]] = None
-        
+
         if subject and payload:
             routing_decision = self._content_router.route(
                 subject=subject,
                 payload=payload,
                 correlation_id=correlation_id,
             )
-            
+
             # If message is routed to specific agents, filter clients
             if routing_decision.decision == RouteDecision.MATCHED and routing_decision.matched_rule:
                 target_agents = routing_decision.matched_rule.target_agents
@@ -118,7 +119,7 @@ class EventMesh:
                         target_agents=target_agents,
                         target_clients=len(target_clients),
                     )
-        
+
         # Filter to active connections ONLY (null-safe)
         async with self._lock:
             def _is_disconnecting(ws):
@@ -134,13 +135,13 @@ class EventMesh:
                     return bool(disconnecting) if not hasattr(disconnecting, 'name') else False
                 except Exception:
                     return False
-            
+
             # Identify null/disconnecting clients for cleanup
             to_cleanup = [
                 cid for cid, ws in self.clients.items()
                 if _is_disconnecting(ws)
             ]
-            
+
             # Create active clients dict
             if target_clients is not None:
                 # Filter to target clients only
@@ -153,19 +154,19 @@ class EventMesh:
                     cid: ws for cid, ws in self.clients.items()
                     if ws is not None and not _is_disconnecting(ws)
                 }
-        
+
         # Cleanup null/disconnecting clients
         for client_id in to_cleanup:
             await self.unregister(client_id)
-        
+
         if not active_clients:
             logger.debug("broadcast_no_clients")
             return {"sent": 0, "failed": 0, "routed": routing_decision is not None}
-        
+
         sent = 0
         failed = 0
         to_remove = []
-        
+
         # Send to all active clients
         for client_id, websocket in active_clients.items():
             try:
@@ -175,24 +176,24 @@ class EventMesh:
                 logger.error("broadcast_send_failed", client_id=client_id, error=str(e))
                 failed += 1
                 to_remove.append(client_id)
-        
+
         # Cleanup failed connections
         for client_id in to_remove:
             await self.unregister(client_id)
-        
+
         result = {
             "sent": sent,
             "failed": failed,
             "active": len(active_clients),
             "routed": routing_decision is not None,
         }
-        
+
         if routing_decision:
             result["routing_decision"] = routing_decision.to_dict()
-        
+
         logger.debug("broadcast_complete", **result)
         return result
-    
+
     async def broadcast_json(
         self,
         data: dict,
@@ -217,7 +218,7 @@ class EventMesh:
             payload=data,
             correlation_id=correlation_id,
         )
-    
+
     async def send_to(
         self,
         client_id: str,
@@ -246,7 +247,7 @@ class EventMesh:
                 payload=payload,
                 correlation_id=correlation_id,
             )
-            
+
             if routing_decision.decision == RouteDecision.MATCHED and routing_decision.matched_rule:
                 # Check if client is in target agents
                 target_agents = routing_decision.matched_rule.target_agents
@@ -258,13 +259,13 @@ class EventMesh:
                         target_agents=target_agents,
                     )
                     return False
-        
+
         websocket = self.clients.get(client_id)
-        
+
         if websocket is None:
             logger.warning("send_to_client_not_found", client_id=client_id)
             return False
-        
+
         try:
             await websocket.send_bytes(message)
             logger.debug("send_to_success", client_id=client_id)
@@ -273,7 +274,7 @@ class EventMesh:
             logger.error("send_to_failed", client_id=client_id, error=str(e))
             await self.unregister(client_id)
             return False
-    
+
     async def send_to_json(
         self,
         client_id: str,
@@ -301,15 +302,15 @@ class EventMesh:
             payload=data,
             correlation_id=correlation_id,
         )
-    
+
     def get_client_ids(self) -> Set[str]:
         """Get set of all connected client IDs."""
         return set(self.clients.keys())
-    
+
     def get_content_router(self) -> ContentRouter:
         """Get the content router instance."""
         return self._content_router
-    
+
     async def close_all(self) -> None:
         """Close all connections and cleanup."""
         async with self._lock:
@@ -319,5 +320,5 @@ class EventMesh:
                 except Exception:
                     pass
             self.clients.clear()
-        
+
         logger.info("eventmesh_closed_all", initial_count=len(self.clients))

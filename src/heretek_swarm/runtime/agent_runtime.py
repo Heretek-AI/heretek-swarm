@@ -5,10 +5,11 @@ Runtime environment for single agent with state management, memory, and tools.
 Reference: MiniMax Audit Lines 153-242 (elizaOS runtime patterns)
 """
 
-from enum import Enum
 from dataclasses import dataclass, field
-from typing import Any, Callable, Dict, List, Optional
 from datetime import datetime, timezone
+from enum import Enum
+from typing import Any, Callable, Dict, List, Optional
+
 import structlog
 
 _logger = structlog.get_logger(__name__)
@@ -43,7 +44,7 @@ class AgentRuntime:
     Manages state, memory, and tool execution.
     Pattern stolen from elizaOS/packages/core/runtime/
     """
-    
+
     def __init__(self, agent_id: str, model_provider: str, model_name: str, character: Optional[Dict]):
         self.agent_id = agent_id
         self.model_provider = model_provider
@@ -53,22 +54,22 @@ class AgentRuntime:
         self._memory = None  # Injected
         self._tools: Dict[str, Callable] = {}
         self._initialized = False
-    
+
     async def initialize(self, memory_backend) -> None:
         """Initialize runtime with memory backend."""
         self._memory = memory_backend
         self._initialized = True
         logger.info("agent_runtime_initialized", agent_id=self.agent_id)
-    
+
     def register_tool(self, name: str, handler: Callable) -> None:
         """Register a tool with the runtime."""
         self._tools[name] = handler
         logger.debug("tool_registered", agent_id=self.agent_id, tool=name)
-    
+
     def get_tools(self) -> List[str]:
         """Get list of registered tools."""
         return list(self._tools.keys())
-    
+
     async def think(self, prompt: str) -> str:
         """
         Process input and generate response.
@@ -81,7 +82,7 @@ class AgentRuntime:
         """
         self.context.state = AgentState.THINKING
         self.context.last_activity = datetime.now(timezone.utc)
-        
+
         try:
             # Get relevant memories
             _memories = []
@@ -97,13 +98,13 @@ class AgentRuntime:
                     _memories = result.entries[:5]
                 except Exception as e:
                     logger.warning("memory_search_failed", error=str(e))
-            
+
             # Build context with memories
             context = self._build_context(memories, prompt)
-            
+
             # Generate response via LiteLLM
             _response = await self._call_llm(context)
-            
+
             # Store in conversation history
             self.context.conversation_history.append({
                 "role": "user",
@@ -115,16 +116,16 @@ class AgentRuntime:
                 "content": response,
                 "timestamp": datetime.now(timezone.utc).isoformat()
             })
-            
+
             return response
-            
+
         except Exception as e:
             logger.error("think_failed", agent_id=self.agent_id, error=str(e))
             self.context.state = AgentState.ERROR
             raise
         finally:
             self.context.state = AgentState.IDLE
-    
+
     async def act(self, action: str, params: Dict) -> Any:
         """
         Execute an action using registered tools.
@@ -138,17 +139,17 @@ class AgentRuntime:
         """
         self.context.state = AgentState.ACTING
         self.context.last_activity = datetime.now(timezone.utc)
-        
+
         try:
             if action not in self._tools:
                 raise ValueError(f"Unknown action: {action}")
-            
+
             _result = await self._tools[action](**params)
-            
+
             # Store action in memory
             if self._memory:
                 try:
-                    from memory.base import MemoryEntry, MemoryType, MemoryTier
+                    from memory.base import MemoryEntry, MemoryTier, MemoryType
                     _entry = MemoryEntry(
                         agent_id=self.agent_id,
                         content=f"Executed {action} with {params}",
@@ -159,16 +160,16 @@ class AgentRuntime:
                     await self._memory.store(entry)
                 except Exception as e:
                     logger.warning("memory_store_failed", error=str(e))
-            
+
             return result
-            
+
         except Exception as e:
             logger.error("act_failed", agent_id=self.agent_id, action=action, error=str(e))
             self.context.state = AgentState.ERROR
             raise
         finally:
             self.context.state = AgentState.IDLE
-    
+
     def _build_context(self, memories: List, prompt: str) -> str:
         """
         Build LLM context with memories and character.
@@ -181,33 +182,33 @@ class AgentRuntime:
             Formatted context string
         """
         _context_parts = []
-        
+
         # Character system prompt
         if self.character:
             _bio = self.character.get("bio", "")
             if bio:
                 context_parts.append(f"System: {bio}")
-            
+
             _style = self.character.get("style", {}).get("all", [])
             if style:
                 context_parts.append(f"Style: {', '.join(style)}")
-        
+
         # Memories
         if memories:
             _memory_texts = [m.content for m in memories[:5]]
             context_parts.append(f"Memories:\n" + "\n".join(f"- {m}" for m in memory_texts))
-        
+
         # Conversation history (last 10)
         _recent_history = self.context.conversation_history[-10:]
         if recent_history:
             _history_text = "\n".join(f"{h['role']}: {h['content']}" for h in recent_history)
             context_parts.append(f"History:\n{history_text}")
-        
+
         # Current prompt
         context_parts.append(f"User: {prompt}")
-        
+
         return "\n\n".join(context_parts)
-    
+
     async def _call_llm(self, context: str) -> str:
         """
         Call LLM for response generation.
@@ -221,22 +222,22 @@ class AgentRuntime:
         try:
             import litellm
             litellm.api_key = __import__('os').getenv("OPENAI_API_KEY")
-            
+
             _response = await litellm.acompletion(
                 model=f"{self.model_provider}/{self.model_name}",
                 _messages = [{"role": "user", "content": context}],
                 _max_tokens = 1000,
             )
-            
+
             return response.choices[0].message.content
-            
+
         except ImportError:
             logger.warning("litellm_not_installed")
             return f"[Simulated response for: {context[:50]}...]"
         except Exception as e:
             logger.error("llm_call_failed", error=str(e))
             return f"[Error generating response: {str(e)}]"
-    
+
     def get_status(self) -> Dict:
         """Get runtime status."""
         return {

@@ -6,8 +6,8 @@ circular dependency cycles at module load time.
 
 
 import importlib
-from typing import Any, Callable, Dict, Optional, TypeVar
 from functools import wraps
+from typing import Any, Callable, Dict, Optional, TypeVar
 
 T = TypeVar('T')
 
@@ -26,7 +26,7 @@ class LazyImport:
         # Later, when you need it:
         _result = Bar.some_method()  # Import happens here
     """
-    
+
     def __init__(self, _import_path: str, _attr: Optional[str]):
         """Initialize lazy import.
         
@@ -38,24 +38,24 @@ class LazyImport:
         self._attr = attr
         self._module: Optional[Any] = None
         self._resolved_attr: Optional[Any] = None
-    
+
     def _resolve(self) -> Any:
         """Resolve the import."""
         if self._module is None:
             self._module = importlib.import_module(self._import_path)
-        
+
         if self._attr is not None:
             if self._resolved_attr is None:
                 self._resolved_attr = getattr(self._module, self._attr)
             return self._resolved_attr
-        
+
         return self._module
-    
+
     def __getattr__(self, _name: str) -> Any:
         """Delegate attribute access to the imported module/attribute."""
         _resolved = self._resolve()
         return getattr(resolved, name)
-    
+
     def __call__(self, *args: Any, **kwargs: Any) -> Any:
         """If the imported attribute is callable, call it."""
         _resolved = self._resolve()
@@ -82,7 +82,7 @@ class LazyModule(Dict[str, Any]):
         
         # Then use: factory.create_llm_provider(...)
     """
-    
+
     def __init__(self, _attrs: Optional[Dict[str, Union[str, _LazyImport, Callable]]]):
         super().__init__()
         if attrs:
@@ -106,7 +106,7 @@ def lazy_import(_import_path: str) -> Callable[[Callable[..., T]], Callable[...,
     def decorator(_func: Callable[..., _T]) -> Callable[..., T]:
         # Store the import path in a mutable container to allow modification
         _import_ref = {'path': import_path}
-        
+
         @wraps(func)
         def wrapper(*args: Any, **kwargs: Any) -> T:
             module_path, attr_name = import_ref['path'].rsplit('.', 1)
@@ -146,10 +146,10 @@ def get_lazy_import(_import_path: str, _attr: Optional[str]) -> LazyImport:
         Cached or new LazyImport instance
     """
     _cache_key = f"{import_path}:{attr}" if attr else import_path
-    
+
     if cache_key not in _lazy_import_cache:
         _lazy_import_cache[cache_key] = LazyImport(import_path, attr)
-    
+
     return _lazy_import_cache[cache_key]
 
 

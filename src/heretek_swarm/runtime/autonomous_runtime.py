@@ -13,18 +13,18 @@ import asyncio
 import os
 import signal
 import time
+from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Dict, List, Optional, Any
-from dataclasses import dataclass
+from typing import Any, Dict, List, Optional
 
 import structlog
 
+from ..actors.supervisor import ActorSupervisor
+from .agent_runtime import AgentRuntime
 from .autonomous_runtime_config import (
     AutonomousRuntimeConfig,
 )
-from .agent_runtime import AgentRuntime
-from ..actors.supervisor import ActorSupervisor
 
 _logger = structlog.get_logger("AutonomousRuntime")
 
@@ -404,7 +404,7 @@ class AutonomousRuntime:
                             _last_activity_dt = datetime.fromisoformat(last_activity_str.replace('Z', '+00:00'))
                         else:
                             _last_activity_dt = last_activity_str
-                        
+
                         # P2-1 fix: Use timezone-aware datetime
                         _idle_time = datetime.now(timezone.utc) - last_activity_dt
                         if idle_time.total_seconds() > self.config.min_uptime_before_scale_down * 60:
@@ -534,7 +534,7 @@ class AutonomousRuntime:
         except Exception as e:
             logger.error(f"Unexpected error importing consciousness plugin: {e}")
             return
-        
+
         try:
             _plugin = ConsciousnessEnhancedPlugin()
         except Exception as e:
@@ -595,7 +595,7 @@ class AutonomousRuntime:
         except ImportError as e:
             logger.warning(f"SlackBot not available: {e}")
             return
-        
+
         try:
             _bot = SlackBot(
                 _token = os.getenv("SLACK_BOT_TOKEN"),
@@ -623,7 +623,7 @@ class AutonomousRuntime:
         except ImportError as e:
             logger.warning(f"DiscordBot not available: {e}")
             return
-        
+
         try:
             _bot = DiscordBot(
                 _token = os.getenv("DISCORD_BOT_TOKEN"),
@@ -645,8 +645,8 @@ class AutonomousRuntime:
         """Send alert via email."""
         try:
             import smtplib
-            from email.mime.text import MIMEText
             from email.mime.multipart import MIMEMultipart
+            from email.mime.text import MIMEText
 
             _msg = MIMEMultipart()
             msg["From"] = os.getenv("SMTP_FROM", "noreply@heretek.swarm")

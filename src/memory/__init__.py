@@ -14,11 +14,11 @@ mem0 provides:
 - 90% lower token usage
 """
 
-from .base import MemoryEntry, MemoryQuery, MemoryResult, EmbeddingVector
+from .base import EmbeddingVector, MemoryEntry, MemoryQuery, MemoryResult
+from .embeddings import EmbeddingService
 from .ephemeral import EphemeralMemoryStore
 from .persistent import PersistentMemoryStore
 from .unified import DualTierMemorySystem
-from .embeddings import EmbeddingService
 
 # mem0 backend integration
 try:

@@ -9,40 +9,27 @@ This test suite covers:
 - Integration between all modules
 """
 
-import pytest
-from datetime import datetime, timezone
-from unittest.mock import AsyncMock, MagicMock, patch
 
-from heretek_swarm.consensus.swarm_deliberation import (
-    SwarmDeliberationEngine,
-    DeliberationState,
-    DeliberationRound,
-    DeliberationResult,
-    Position,
-    AgentPosition,
-    Argument,
+import pytest
+
+from heretek_swarm.consensus.audit import (
+    ConsensusAuditTrail,
+    DecisionOutcome,
 )
 from heretek_swarm.consensus.expertise import (
     AgentExpertiseProfiler,
-    AgentExpertiseProfile,
-    DomainExpertise,
     ExpertiseLevel,
 )
 from heretek_swarm.consensus.maker_enhanced import (
     EnhancedMAKERConsensus,
     ReasoningChain,
-    ReasoningStep,
     ReasoningChainStatus,
-    DecisionProvenance,
-    RollbackResult,
+    ReasoningStep,
 )
-from heretek_swarm.consensus.audit import (
-    ConsensusAuditTrail,
-    DecisionOutcome,
-    DecisionRecord,
-    VoteRecord,
-    ArgumentRecord,
-    AuditEventType,
+from heretek_swarm.consensus.swarm_deliberation import (
+    DeliberationState,
+    Position,
+    SwarmDeliberationEngine,
 )
 
 
@@ -607,7 +594,7 @@ class TestEnhancedMAKERConsensus:
         consensus.add_vote("test-1", "agent-2", "deploy", 0.85)
         consensus.add_vote("test-1", "agent-3", "wait", 0.8)
         result = consensus.compute_consensus("test-1")
-        
+
         # Only test hash generation if consensus was reached
         if result is not None:
             hash_value = consensus.generate_decision_hash("test-1")

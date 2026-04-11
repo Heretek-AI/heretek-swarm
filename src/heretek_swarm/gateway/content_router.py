@@ -21,12 +21,13 @@ Routing Rule Structure:
 
 import re
 import time
-from typing import Any, Dict, List, Optional, Tuple
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from enum import Enum
+from typing import Any, Dict, List, Optional, Tuple
+
 import structlog
-from prometheus_client import Counter, Histogram, Gauge
+from prometheus_client import Counter, Gauge, Histogram
 
 _logger = structlog.get_logger(__name__)
 
@@ -68,20 +69,20 @@ class ContentFilter:
     field: str
     operator: FilterOperator
     value: Any
-    
+
     def __post_init__(self):
         """Validate filter after initialization."""
         # Validate JSONPath syntax
         if not self.field.startswith("$"):
             raise ValueError(f"Invalid JSONPath: {self.field}. Must start with '$'")
-        
+
         # Validate operator
         if not isinstance(self.operator, FilterOperator):
             try:
                 self.operator = FilterOperator(self.operator)
             except ValueError:
                 raise ValueError(f"Invalid operator: {self.operator}")
-        
+
         # Pre-compile regex for regex operator
         if self.operator == FilterOperator.REGEX:
             try:
@@ -115,15 +116,15 @@ class RoutingRule:
     target_agents: List[str]
     enabled: bool = True
     description: Optional[str] = None
-    
+
     def __post_init__(self):
         """Validate rule after initialization."""
         # Validate subject pattern (safe wildcard only)
         self._validate_subject_pattern()
-        
+
         # Compile subject pattern to regex (safe conversion)
         self._subject_regex = self._pattern_to_regex(self.subject_pattern)
-    
+
     def _validate_subject_pattern(self) -> None:
         """Validate subject pattern for safe wildcards."""
         # Only allow alphanumeric, dots, underscores, hyphens, and * wildcard
@@ -133,7 +134,7 @@ class RoutingRule:
                 f"Invalid subject pattern: {self.subject_pattern}. "
                 "Only alphanumeric, dots, underscores, hyphens, and * wildcard allowed"
             )
-    
+
     def _pattern_to_regex(self, pattern: str) -> re.Pattern:
         """Convert wildcard pattern to safe regex."""
         # Escape special regex chars except *
@@ -142,7 +143,7 @@ class RoutingRule:
         _regex_pattern = escaped.replace(r'\*', '.*')
         # Anchor pattern
         return re.compile(f'^{regex_pattern}$')
-    
+
     def matches_subject(self, subject: str) -> bool:
         """Check if subject matches the pattern."""
         return bool(self._subject_regex.match(subject))
@@ -167,7 +168,7 @@ class RoutingDecision:
     evaluation_time_ms: float = 0.0
     filters_evaluated: int = 0
     filters_matched: int = 0
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for logging."""
         return {
@@ -189,7 +190,7 @@ class RoutingDecision:
 
 class RoutingMetrics:
     """Prometheus metrics for content routing."""
-    
+
     def __init__(self, registry):
         """
         Initialize metrics.
@@ -199,9 +200,9 @@ class RoutingMetrics:
                      For tests, pass a new CollectorRegistry to avoid conflicts.
         """
         from prometheus_client import CollectorRegistry
-        
+
         self._registry = registry or CollectorRegistry()
-        
+
         # Message routing counter
         self.messages_routed = Counter(
             'content_router_messages_total',
@@ -209,7 +210,7 @@ class RoutingMetrics:
             ['decision', 'rule_id'],
             _registry = self._registry
         )
-        
+
         # Routing latency histogram
         self.routing_latency = Histogram(
             'content_router_routing_latency_seconds',
@@ -217,14 +218,14 @@ class RoutingMetrics:
             _buckets = (0.001, 0.005, 0.01, 0.025, 0.05, 0.1, 0.25, 0.5, 1.0),
             _registry = self._registry
         )
-        
+
         # Active rules gauge
         self.active_rules = Gauge(
             'content_router_active_rules',
             'Number of active routing rules',
             _registry = self._registry
         )
-        
+
         # Filter evaluation counter
         self.filters_evaluated = Counter(
             'content_router_filters_evaluated_total',
@@ -232,7 +233,7 @@ class RoutingMetrics:
             ['operator'],
             _registry = self._registry
         )
-        
+
         # Error counter
         self.routing_errors = Counter(
             'content_router_errors_total',
@@ -240,26 +241,26 @@ class RoutingMetrics:
             ['error_type'],
             _registry = self._registry
         )
-    
+
     def record_routing(self, decision: RouteDecision, rule_id: Optional[str]):
         """Record a routing decision."""
         self.messages_routed.labels(
             _decision = decision.value,
             _rule_id = rule_id or "none"
         ).inc()
-    
+
     def record_latency(self, duration_seconds: float):
         """Record routing latency."""
         self.routing_latency.observe(duration_seconds)
-    
+
     def record_filter_evaluation(self, operator: FilterOperator):
         """Record filter evaluation."""
         self.filters_evaluated.labels(operator=operator.value).inc()
-    
+
     def record_error(self, error_type: str):
         """Record routing error."""
         self.routing_errors.labels(error_type=error_type).inc()
-    
+
     def update_active_rules(self, count: int):
         """Update active rules count."""
         self.active_rules.set(count)
@@ -279,7 +280,7 @@ class SafeJSONPath:
     - $.array[0] - Array index
     - $.* - All root fields
     """
-    
+
     @staticmethod
     def extract(data: Dict[str, Any], path: str) -> Tuple[bool, Any]:
         """
@@ -292,49 +293,49 @@ class SafeJSONPath:
             # Validate path
             if not path.startswith("$"):
                 return False, f"Invalid path: must start with '$'"
-            
+
             # Handle root
             if path == "$":
                 return True, data
-            
+
             # Remove leading $.
             if path.startswith("$."):
                 _path = path[2:]
             else:
                 return False, f"Invalid path: {path}"
-            
+
             # Parse path components
             _components = path.split(".")
             _current = data
-            
+
             for component in components:
                 if not component:
                     continue
-                
+
                 # Handle array index
                 if "[" in component and "]" in component:
                     _field_name = component.split("[")[0]
                     _index_str = component[component.index("[")+1:component.index("]")]
-                    
+
                     # Navigate to field first
                     if isinstance(current, dict) and field_name in current:
                         _current = current[field_name]
                     else:
                         return False, f"Field not found: {field_name}"
-                    
+
                     # Parse index
                     try:
                         _index = int(index_str)
                     except ValueError:
                         return False, f"Invalid array index: {index_str}"
-                    
+
                     # Get array element
                     if not isinstance(current, list):
                         return False, f"Expected array for indexing"
-                    
+
                     if index < 0 or index >= len(current):
                         return False, f"Array index out of bounds: {index}"
-                    
+
                     _current = current[index]
                 else:
                     # Simple field access
@@ -342,9 +343,9 @@ class SafeJSONPath:
                         _current = current[component]
                     else:
                         return False, f"Field not found: {component}"
-            
+
             return True, current
-            
+
         except Exception as e:
             return False, str(e)
 
@@ -360,7 +361,7 @@ class ContentRouter:
     Evaluates messages against routing rules with content filters.
     Supports priority-based rule evaluation and comprehensive audit logging.
     """
-    
+
     def __init__(self, rate_limit_per_second: int, metrics_registry):
         """
         Initialize content router.
@@ -372,11 +373,11 @@ class ContentRouter:
         self._rules: Dict[str, RoutingRule] = {}
         self._rules_lock = None  # Will use asyncio.Lock when needed
         self._metrics = RoutingMetrics(registry=metrics_registry)
-        
+
         # Rate limiting
         self._rate_limit = rate_limit_per_second
         self._rate_window: List[float] = []
-        
+
         # Statistics
         self._stats = {
             "messages_evaluated": 0,
@@ -385,9 +386,9 @@ class ContentRouter:
             "errors": 0,
             "started_at": datetime.now(timezone.utc).isoformat(),
         }
-        
+
         logger.info("content_router_initialized", rate_limit=rate_limit_per_second)
-    
+
     def add_rule(self, rule: RoutingRule) -> bool:
         """
         Add a routing rule.
@@ -401,37 +402,37 @@ class ContentRouter:
         if rule.id in self._rules:
             logger.warning("routing_rule_conflict", rule_id=rule.id)
             return False
-        
+
         self._rules[rule.id] = rule
         self._metrics.update_active_rules(len([r for r in self._rules.values() if r.enabled]))
-        
+
         logger.info("routing_rule_added", rule_id=rule.id, name=rule.name, priority=rule.priority)
         return True
-    
+
     def remove_rule(self, rule_id: str) -> bool:
         """Remove a routing rule by ID."""
         if rule_id not in self._rules:
             return False
-        
+
         del self._rules[rule_id]
         self._metrics.update_active_rules(len([r for r in self._rules.values() if r.enabled]))
-        
+
         logger.info("routing_rule_removed", rule_id=rule_id)
         return True
-    
+
     def get_rule(self, rule_id: str) -> Optional[RoutingRule]:
         """Get a rule by ID."""
         return self._rules.get(rule_id)
-    
+
     def list_rules(self, enabled_only: bool) -> List[Dict[str, Any]]:
         """List all routing rules."""
         _rules = self._rules.values()
         if enabled_only:
             _rules = [r for r in rules if r.enabled]
-        
+
         # Sort by priority (descending)
         _sorted_rules = sorted(rules, key=lambda r: r.priority, reverse=True)
-        
+
         return [
             {
                 "id": r.id,
@@ -453,42 +454,42 @@ class ContentRouter:
             }
             for r in sorted_rules
         ]
-    
+
     def enable_rule(self, rule_id: str) -> bool:
         """Enable a routing rule."""
         if rule_id not in self._rules:
             return False
-        
+
         self._rules[rule_id].enabled = True
         self._metrics.update_active_rules(len([r for r in self._rules.values() if r.enabled]))
-        
+
         logger.info("routing_rule_enabled", rule_id=rule_id)
         return True
-    
+
     def disable_rule(self, rule_id: str) -> bool:
         """Disable a routing rule."""
         if rule_id not in self._rules:
             return False
-        
+
         self._rules[rule_id].enabled = False
         self._metrics.update_active_rules(len([r for r in self._rules.values() if r.enabled]))
-        
+
         logger.info("routing_rule_disabled", rule_id=rule_id)
         return True
-    
+
     def _check_rate_limit(self) -> bool:
         """Check if within rate limit. Returns True if allowed."""
         now = time.time()
-        
+
         # Remove old entries from window
         self._rate_window = [t for t in self._rate_window if now - t < 1.0]
-        
+
         if len(self._rate_window) >= self._rate_limit:
             return False
-        
+
         self._rate_window.append(now)
         return True
-    
+
     def _evaluate_filter(self, filter: ContentFilter, payload: Dict[str, Any]) -> Tuple[bool, Any]:
         """
         Evaluate a single content filter against payload.
@@ -498,69 +499,69 @@ class ContentRouter:
         """
         # Extract value using JSONPath
         success, result = SafeJSONPath.extract(payload, filter.field)
-        
+
         if not success:
             logger.debug("jsonpath_extraction_failed", field=filter.field, error=result)
             return False, None
-        
+
         value = result
         self._metrics.record_filter_evaluation(filter.operator)
-        
+
         # Evaluate based on operator
         try:
             if filter.operator == FilterOperator.EQ:
                 return value == filter.value, value
-            
+
             elif filter.operator == FilterOperator.NE:
                 return value != filter.value, value
-            
+
             elif filter.operator == FilterOperator.CONTAINS:
                 if not isinstance(value, str):
                     return False, value
                 return str(filter.value) in value, value
-            
+
             elif filter.operator == FilterOperator.REGEX:
                 if not isinstance(value, str):
                     return False, value
                 # Use pre-compiled regex from filter
                 return bool(filter._compiled_regex.search(value)), value
-            
+
             elif filter.operator == FilterOperator.GT:
                 return value > filter.value, value
-            
+
             elif filter.operator == FilterOperator.LT:
                 return value < filter.value, value
-            
+
             elif filter.operator == FilterOperator.GTE:
                 return value >= filter.value, value
-            
+
             elif filter.operator == FilterOperator.LTE:
                 return value <= filter.value, value
-            
+
             elif filter.operator == FilterOperator.IN:
                 if not isinstance(filter.value, (list, tuple, set)):
                     return False, value
                 return value in filter.value, value
-            
+
             elif filter.operator == FilterOperator.NOT_IN:
                 if not isinstance(filter.value, (list, tuple, set)):
                     return True, value
                 return value not in filter.value, value
-            
+
             elif filter.operator == FilterOperator.EXISTS:
                 return value is not None, value
-            
+
             elif filter.operator == FilterOperator.NOT_EXISTS:
                 return value is None, value
-            
+
             else:
                 logger.warning("unknown_filter_operator", operator=filter.operator)
                 return False, value
-                
+
         except Exception as e:
             logger.debug("filter_evaluation_error", filter=filter.field, error=str(e))
             return False, value
-    
+
     def route(self, subject: str, payload: Dict[str, Any], correlation_id: Optional[str]) -> RoutingDecision:
         """
         Route a message based on subject and content.
@@ -574,12 +575,12 @@ class ContentRouter:
             RoutingDecision with routing result
         """
         import uuid
-        
+
         _start_time = time.time()
         _corr_id = correlation_id or str(uuid.uuid4())
-        
+
         self._stats["messages_evaluated"] += 1
-        
+
         # Check rate limit
         if not self._check_rate_limit():
             self._stats["errors"] += 1
@@ -590,40 +591,40 @@ class ContentRouter:
                 _correlation_id = corr_id,
                 _evaluation_time_ms = (time.time() - start_time) * 1000,
             )
-        
+
         # Get enabled rules sorted by priority
         _enabled_rules = [r for r in self._rules.values() if r.enabled]
         _sorted_rules = sorted(enabled_rules, key=lambda r: r.priority, reverse=True)
-        
+
         # Evaluate rules
         for rule in sorted_rules:
             # Check subject pattern first (fast path)
             if not rule.matches_subject(subject):
                 continue
-            
+
             # Evaluate content filters
             _filters_evaluated = 0
             _filters_matched = 0
             _all_matched = True
-            
+
             for filter in rule.content_filters:
                 filters_evaluated += 1
                 matched, _ = self._evaluate_filter(filter, payload)
-                
+
                 if matched:
                     filters_matched += 1
                 else:
                     _all_matched = False
                     break
-            
+
             # All filters must match
             if all_matched and filters_evaluated > 0:
                 _evaluation_time = (time.time() - start_time) * 1000
-                
+
                 self._stats["messages_matched"] += 1
                 self._metrics.record_routing(RouteDecision.MATCHED, rule.id)
                 self._metrics.record_latency(evaluation_time / 1000)
-                
+
                 _decision = RoutingDecision(
                     _decision = RouteDecision.MATCHED,
                     _matched_rule = rule,
@@ -632,7 +633,7 @@ class ContentRouter:
                     _filters_evaluated = filters_evaluated,
                     _filters_matched = filters_matched,
                 )
-                
+
                 # Audit log
                 logger.info(
                     "message_routed",
@@ -644,17 +645,17 @@ class ContentRouter:
                     _target_agents = rule.target_agents,
                     _evaluation_time_ms = evaluation_time,
                 )
-                
+
                 return decision
-            
+
             # If no content filters, subject match is sufficient
             if all_matched and filters_evaluated == 0:
                 _evaluation_time = (time.time() - start_time) * 1000
-                
+
                 self._stats["messages_matched"] += 1
                 self._metrics.record_routing(RouteDecision.MATCHED, rule.id)
                 self._metrics.record_latency(evaluation_time / 1000)
-                
+
                 _decision = RoutingDecision(
                     _decision = RouteDecision.MATCHED,
                     _matched_rule = rule,
@@ -663,7 +664,7 @@ class ContentRouter:
                     _filters_evaluated = 0,
                     _filters_matched = 0,
                 )
-                
+
                 logger.info(
                     "message_routed_subject_only",
                     _correlation_id = corr_id,
@@ -671,28 +672,28 @@ class ContentRouter:
                     _rule_id = rule.id,
                     _target_channel = rule.target_channel,
                 )
-                
+
                 return decision
-        
+
         # No rule matched
         _evaluation_time = (time.time() - start_time) * 1000
         self._stats["messages_no_match"] += 1
         self._metrics.record_routing(RouteDecision.NO_MATCH)
         self._metrics.record_latency(evaluation_time / 1000)
-        
+
         logger.debug(
             "message_no_route",
             _correlation_id = corr_id,
             _subject = subject,
             _evaluation_time_ms = evaluation_time,
         )
-        
+
         return RoutingDecision(
             _decision = RouteDecision.NO_MATCH,
             _correlation_id = corr_id,
             _evaluation_time_ms = evaluation_time,
         )
-    
+
     def get_stats(self) -> Dict[str, Any]:
         """Get routing statistics."""
         return {

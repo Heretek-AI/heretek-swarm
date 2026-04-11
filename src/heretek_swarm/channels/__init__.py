@@ -6,12 +6,12 @@ communication using NATS subjects and A2A protocol patterns.
 """
 
 from heretek_swarm.channels.registry import (
-    ChannelRegistry,
-    GroupRegistry,
     ChannelDefinition,
     ChannelMessage,
-    CommunicationGroup,
+    ChannelRegistry,
     ChannelType,
+    CommunicationGroup,
+    GroupRegistry,
     QoSLevel,
 )
 

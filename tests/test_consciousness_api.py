@@ -8,22 +8,20 @@ Tests for:
 - API endpoints
 """
 
+
 import pytest
-from datetime import datetime, timedelta
-from unittest.mock import Mock, AsyncMock, patch
 
 from heretek_swarm.plugins.consciousness_enhanced import (
     EnhancedConsciousnessPlugin,
-    ConsciousnessState,
-    IITCalculator,
     FEPTracker,
-    IITConnectivity,
+    IITCalculator,
 )
 
 # Import app after fixing RAG imports
 try:
-    from heretek_swarm.api.main import app
     from fastapi.testclient import TestClient
+
+    from heretek_swarm.api.main import app
     APP_AVAILABLE = True
 except ImportError:
     APP_AVAILABLE = False

@@ -5,12 +5,13 @@ Tool Registry - Built-in Agent Tools
 Reference: MiniMax Audit + OpenClaw tool patterns
 """
 
-import os
 import asyncio
-import aiohttp
+import os
 import shlex
-from typing import Any, Callable, Dict, List, Optional, Set
 from datetime import datetime, timezone
+from typing import Any, Callable, Dict, List, Optional, Set
+
+import aiohttp
 import structlog
 
 _logger = structlog.get_logger(__name__)
@@ -25,14 +26,14 @@ ALLOWED_COMMANDS: Set[str] = {
     # File operations (safe)
     "ls", "pwd", "cd", "cat", "head", "tail", "wc",
     "grep", "find", "sort", "uniq", "diff",
-    
+
     # Text processing
     "echo", "printf", "sed", "awk", "cut",
-    
+
     # System information (read-only)
     "df", "du", "free", "top", "ps", "uptime",
     "date", "whoami", "id", "uname",
-    
+
     # Package management (controlled)
     "pip",
 }
@@ -54,7 +55,7 @@ class ToolRegistry:
     
     Manages tool registration, discovery, and execution.
     """
-    
+
     def __init__(self, _default_timeout: int):
         """
         Initialize tool registry.
@@ -64,7 +65,7 @@ class ToolRegistry:
         """
         self._tools: Dict[str, Dict] = {}
         self.default_timeout = default_timeout
-    
+
     def register(self, _name: str, _handler: Callable, _description: str, _parameters: Optional[Dict]) -> None:
         """
         Register a tool.
@@ -82,11 +83,11 @@ class ToolRegistry:
             "registered_at": datetime.now(timezone.utc),
         }
         logger.debug("tool_registered", tool=name)
-    
+
     def get(self, _name: str) -> Optional[Dict]:
         """Get tool by name."""
         return self._tools.get(name)
-    
+
     def list_tools(self) -> List[Dict]:
         """List all available tools."""
         return [
@@ -97,7 +98,7 @@ class ToolRegistry:
             }
             for name, tool in self._tools.items()
         ]
-    
+
     async def execute(self, _name: str, _timeout: Optional[int], **params) -> Any:
         """
         Execute a tool by name.
@@ -117,12 +118,12 @@ class ToolRegistry:
         _tool = self._tools.get(name)
         if not tool:
             raise ValueError(f"Unknown tool: {name}")
-        
+
         # Use provided timeout, tool-specific timeout, or default
         _execution_timeout = timeout or tool["parameters"].get("timeout", self.default_timeout)
-        
+
         logger.info("tool_executing", tool=name, params=params, timeout=execution_timeout)
-        
+
         try:
             _result = await asyncio.wait_for(
                 tool["handler"](**params),
@@ -154,17 +155,17 @@ async def search_memory(_query: str, _agent_id: str, _limit: int, _memory_backen
     """
     if not memory_backend:
         return {"error": "Memory backend not available"}
-    
+
     from memory.base import MemoryQuery
-    
+
     _search_query = MemoryQuery(
         _query_text = query,
         _agent_ids = [agent_id],
         _limit = limit,
     )
-    
+
     _result = await memory_backend.search(search_query)
-    
+
     return {
         "query": query,
         "results": [
@@ -191,7 +192,7 @@ async def call_agent(_agent_id: str, _message: str, _target_agent: str, _a2a_ser
     """
     if not a2a_server:
         return {"error": "A2A server not available"}
-    
+
     # Send via event mesh
     _success = await a2a_server.event_mesh.send_to_json(
         target_agent,
@@ -202,7 +203,7 @@ async def call_agent(_agent_id: str, _message: str, _target_agent: str, _a2a_ser
             "timestamp": datetime.now(timezone.utc).isoformat(),
         }
     )
-    
+
     return {
         "sent": success,
         "to": target_agent,
@@ -224,10 +225,10 @@ async def read_file(_path: str, _allowed_base_paths: Optional[List[str]]) -> Dic
     # Default to current working directory if not specified
     if allowed_base_paths is None:
         _allowed_base_paths = [os.getcwd()]
-    
+
     # Resolve to absolute path
     _resolved_path = os.path.realpath(os.path.abspath(path))
-    
+
     # Validate path is within allowed directories
     _path_allowed = False
     for base_path in allowed_base_paths:
@@ -235,7 +236,7 @@ async def read_file(_path: str, _allowed_base_paths: Optional[List[str]]) -> Dic
         if resolved_path.startswith(resolved_base + os.sep) or resolved_path == resolved_base:
             _path_allowed = True
             break
-    
+
     if not path_allowed:
         logger.warning(
             "path_traversal_blocked",
@@ -247,11 +248,11 @@ async def read_file(_path: str, _allowed_base_paths: Optional[List[str]]) -> Dic
             "success": False,
             "error": "Access denied: Path traversal detected. Access is restricted to allowed directories."
         }
-    
+
     try:
         with open(path, 'r', encoding='utf-8') as f:
             _content = f.read()
-        
+
         return {
             "success": True,
             "path": path,
@@ -280,10 +281,10 @@ async def write_file(_path: str, _content: str, _allowed_base_paths: Optional[Li
     # Default to current working directory if not specified
     if allowed_base_paths is None:
         _allowed_base_paths = [os.getcwd()]
-    
+
     # Resolve to absolute path
     _resolved_path = os.path.realpath(os.path.abspath(path))
-    
+
     # Validate path is within allowed directories
     _path_allowed = False
     for base_path in allowed_base_paths:
@@ -291,7 +292,7 @@ async def write_file(_path: str, _content: str, _allowed_base_paths: Optional[Li
         if resolved_path.startswith(resolved_base + os.sep) or resolved_path == resolved_base:
             _path_allowed = True
             break
-    
+
     if not path_allowed:
         logger.warning(
             "path_traversal_blocked",
@@ -303,11 +304,11 @@ async def write_file(_path: str, _content: str, _allowed_base_paths: Optional[Li
             "success": False,
             "error": "Access denied: Path traversal detected. Access is restricted to allowed directories."
         }
-    
+
     try:
         with open(path, 'w', encoding='utf-8') as f:
             f.write(content)
-        
+
         return {
             "success": True,
             "path": path,
@@ -343,7 +344,7 @@ async def run_command(_command: str, _timeout: int) -> Dict:
             "success": False,
             "error": "Empty command not allowed"
         }
-    
+
     # Parse command to extract base command
     _parts = command.strip().split()
     if not parts:
@@ -351,9 +352,9 @@ async def run_command(_command: str, _timeout: int) -> Dict:
             "success": False,
             "error": "Invalid command format"
         }
-    
+
     _base_cmd = parts[0]
-    
+
     # Check if command is blocked (security critical)
     if base_cmd in BLOCKED_COMMANDS:
         logger.warning(
@@ -365,7 +366,7 @@ async def run_command(_command: str, _timeout: int) -> Dict:
             "success": False,
             "error": f"Command '{base_cmd}' is not allowed for security reasons"
         }
-    
+
     # Check if command is allowed
     if base_cmd not in ALLOWED_COMMANDS:
         logger.warning(
@@ -377,7 +378,7 @@ async def run_command(_command: str, _timeout: int) -> Dict:
             "success": False,
             "error": f"Command '{base_cmd}' is not in the allowed command list"
         }
-    
+
     # Sanitize arguments to prevent injection
     try:
         _sanitized_args = [shlex.quote(arg) for arg in parts[1:]]
@@ -388,7 +389,7 @@ async def run_command(_command: str, _timeout: int) -> Dict:
             "success": False,
             "error": f"Failed to sanitize command arguments: {str(e)}"
         }
-    
+
     # Execute command with subprocess (no shell=True for security)
     try:
         _proc = await asyncio.create_subprocess_exec(
@@ -397,12 +398,12 @@ async def run_command(_command: str, _timeout: int) -> Dict:
             _stdout = asyncio.subprocess.PIPE,
             _stderr = asyncio.subprocess.PIPE,
         )
-        
+
         stdout, stderr = await asyncio.wait_for(
             proc.communicate(),
             _timeout = timeout,
         )
-        
+
         # Log command execution
         logger.info(
             "command_executed",
@@ -410,7 +411,7 @@ async def run_command(_command: str, _timeout: int) -> Dict:
             _args_count = len(parts) - 1,
             returncode=proc.returncode,
         )
-        
+
         return {
             "success": proc.returncode == 0,
             "returncode": proc.returncode,
@@ -465,7 +466,7 @@ async def http_request(_method: str, _url: str, _headers: Optional[Dict], _body:
             "success": False,
             "error": "Invalid URL provided",
         }
-    
+
     # Block private/internal IP ranges to prevent SSRF
     import re
     _private_ip_pattern = re.compile(
@@ -478,10 +479,10 @@ async def http_request(_method: str, _url: str, _headers: Optional[Dict], _body:
             "success": False,
             "error": "Access to internal addresses is not allowed",
         }
-    
+
     _attempt = 0
     _last_error = None
-    
+
     while attempt <= max_retries:
         try:
             async with aiohttp.ClientSession() as session:
@@ -493,7 +494,7 @@ async def http_request(_method: str, _url: str, _headers: Optional[Dict], _body:
                     _timeout = aiohttp.ClientTimeout(total=timeout),
                 ) as response:
                     _content = await response.text()
-                    
+
                     return {
                         "success": response.status < 400,
                         "status": response.status,
@@ -510,11 +511,11 @@ async def http_request(_method: str, _url: str, _headers: Optional[Dict], _body:
         except Exception as e:
             _last_error = str(e)
             logger.error("http_request_error", url=url, error=str(e))
-        
+
         attempt += 1
         if attempt <= max_retries:
             await asyncio.sleep(1.0 * attempt)  # Exponential backoff
-    
+
     return {
         "success": False,
         "error": last_error or "Unknown error",
@@ -538,7 +539,7 @@ def register_builtin_tools(_registry: ToolRegistry, _memory_backend = None, _a2a
     # Memory search (requires backend)
     async def memory_search_wrapper(_query: str, _agent_id: str, _limit: int):
         return await search_memory(query, agent_id, limit, memory_backend)
-    
+
     registry.register(
         _name = "search_memory",
         _handler = memory_search_wrapper,
@@ -549,11 +550,11 @@ def register_builtin_tools(_registry: ToolRegistry, _memory_backend = None, _a2a
             "limit": "integer (optional): Max results (default: 5)",
         },
     )
-    
+
     # Agent calling (requires A2A server)
     async def agent_call_wrapper(_agent_id: str, _message: str, _target: str):
         return await call_agent(agent_id, message, target, a2a_server)
-    
+
     registry.register(
         _name = "call_agent",
         _handler = agent_call_wrapper,
@@ -564,7 +565,7 @@ def register_builtin_tools(_registry: ToolRegistry, _memory_backend = None, _a2a
             "target": "string (required): Target agent ID",
         },
     )
-    
+
     # File operations
     registry.register(
         _name = "read_file",
@@ -572,7 +573,7 @@ def register_builtin_tools(_registry: ToolRegistry, _memory_backend = None, _a2a
         _description = "Read contents of a file",
         _parameters = {"path": "string (required): File path"},
     )
-    
+
     registry.register(
         _name = "write_file",
         _handler = write_file,
@@ -582,7 +583,7 @@ def register_builtin_tools(_registry: ToolRegistry, _memory_backend = None, _a2a
             "content": "string (required): Content to write",
         },
     )
-    
+
     # Command execution (with security validation)
     registry.register(
         _name = "run_command",
@@ -593,7 +594,7 @@ def register_builtin_tools(_registry: ToolRegistry, _memory_backend = None, _a2a
             "timeout": "integer (optional): Timeout in seconds (default: 30)",
         },
     )
-    
+
     # HTTP requests
     registry.register(
         _name = "http_request",
@@ -607,7 +608,7 @@ def register_builtin_tools(_registry: ToolRegistry, _memory_backend = None, _a2a
             "timeout": "integer (optional): Timeout in seconds (default: 30)",
         },
     )
-    
+
     logger.info(
         "builtin_tools_registered",
         _count = len(registry.list_tools()),

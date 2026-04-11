@@ -1,18 +1,18 @@
 """API Endpoints for Session 46."""
 
-from typing import Optional
 from datetime import datetime, timezone
+from typing import Optional
 
-from fastapi import APIRouter, HTTPException, Depends, Query
 import structlog
+from fastapi import APIRouter, Depends, HTTPException, Query
 
-from heretek_swarm.gateway.auth import verify_auth
 from heretek_swarm.collective import (
     CollectiveIntelligenceMetrics,
-    MetricsExporter,
-    EmergentPatternClass,
     EmergenceLevel,
+    EmergentPatternClass,
+    MetricsExporter,
 )
+from heretek_swarm.gateway.auth import verify_auth
 
 logger = structlog.get_logger(__name__)
 router = APIRouter(prefix="/api/v1/emergent-intelligence", tags=["emergent-intelligence"])

@@ -5,11 +5,12 @@ Enables seamless task transfer between agents with context preservation.
 Reference: PraisonAI agent handoff patterns
 """
 
-from typing import Dict, List, Optional, Any, Callable
+import asyncio
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
-import asyncio
+from typing import Any, Callable, Dict, List, Optional
+
 import structlog
 
 _logger = structlog.get_logger(__name__)
@@ -53,17 +54,17 @@ class AgentHandoff:
     - Status tracking and callbacks
     - Priority-based queueing
     """
-    
+
     def __init__(self):
         self._handoffs: Dict[str, HandoffContext] = {}
         self._pending_queue: List[str] = []
         self._callbacks: Dict[str, Callable] = {}
         self._a2a_server = None
-    
+
     def set_a2a_server(self, _server) -> None:
         """Set A2A server for inter-agent communication."""
         self._a2a_server = server
-    
+
     def register_callback(self, _event: str, _callback: Callable[[HandoffContext], Any]) -> None:
         """
         Register callback for handoff events.
@@ -74,7 +75,7 @@ class AgentHandoff:
         """
         self._callbacks[event] = callback
         logger.debug("handoff_callback_registered", event=event)
-    
+
     async def create_handoff(self, _task_id: str, _source_agent: str, _target_agent: str, _task_description: str, _context_data: Optional[Dict], _conversation_history: Optional[List[Dict]], _priority: str, _deadline: Optional[datetime]) -> str:
         """
         Create a new agent handoff.
@@ -93,7 +94,7 @@ class AgentHandoff:
             Handoff ID
         """
         _handoff_id = f"handoff_{task_id}_{datetime.now(timezone.utc).timestamp()}"
-        
+
         _context = HandoffContext(
             _task_id = task_id,
             _source_agent = source_agent,
@@ -104,10 +105,10 @@ class AgentHandoff:
             priority=priority,
             deadline=deadline,
         )
-        
+
         self._handoffs[handoff_id] = context
         self._pending_queue.append(handoff_id)
-        
+
         logger.info(
             "handoff_created",
             _handoff_id = handoff_id,
@@ -115,17 +116,17 @@ class AgentHandoff:
             target=target_agent,
             priority=priority,
         )
-        
+
         # Trigger callback
         if "created" in self._callbacks:
             await self._execute_callback("created", context)
-        
+
         # Send to target agent via A2A
         if self._a2a_server:
             await self._notify_target_agent(handoff_id, context)
-        
+
         return handoff_id
-    
+
     async def accept_handoff(self, _handoff_id: str, _agent_id: str) -> bool:
         """
         Accept a handoff (called by target agent).
@@ -140,9 +141,9 @@ class AgentHandoff:
         if handoff_id not in self._handoffs:
             logger.warning("handoff_not_found", handoff_id=handoff_id)
             return False
-        
+
         _context = self._handoffs[handoff_id]
-        
+
         if context.target_agent != agent_id:
             logger.warning(
                 "handoff_wrong_agent",
@@ -151,19 +152,19 @@ class AgentHandoff:
                 _actual = agent_id,
             )
             return False
-        
+
         context.status = HandoffStatus.IN_PROGRESS
-        
+
         if handoff_id in self._pending_queue:
             self._pending_queue.remove(handoff_id)
-        
+
         logger.info("handoff_accepted", handoff_id=handoff_id, agent=agent_id)
-        
+
         if "started" in self._callbacks:
             await self._execute_callback("started", context)
-        
+
         return True
-    
+
     async def complete_handoff(self, _handoff_id: str, _result: Any, _agent_id: str) -> bool:
         """
         Complete a handoff with result.
@@ -178,31 +179,31 @@ class AgentHandoff:
         """
         if handoff_id not in self._handoffs:
             return False
-        
+
         _context = self._handoffs[handoff_id]
-        
+
         if context.target_agent != agent_id:
             return False
-        
+
         context.status = HandoffStatus.COMPLETED
         context.completed_at = datetime.now(timezone.utc)
         context.result = result
-        
+
         logger.info(
             "handoff_completed",
             _handoff_id = handoff_id,
             _agent = agent_id,
         )
-        
+
         if "completed" in self._callbacks:
             await self._execute_callback("completed", context)
-        
+
         # Notify source agent
         if self._a2a_server:
             await self._notify_source_agent(handoff_id, context, result)
-        
+
         return True
-    
+
     async def fail_handoff(self, _handoff_id: str, _error: str, _agent_id: str) -> bool:
         """
         Mark handoff as failed.
@@ -217,42 +218,42 @@ class AgentHandoff:
         """
         if handoff_id not in self._handoffs:
             return False
-        
+
         _context = self._handoffs[handoff_id]
         context.status = HandoffStatus.FAILED
         context.error = error
         context.completed_at = datetime.now(timezone.utc)
-        
+
         logger.error(
             "handoff_failed",
             _handoff_id = handoff_id,
             _agent = agent_id,
             error=error,
         )
-        
+
         if "failed" in self._callbacks:
             await self._execute_callback("failed", context)
-        
+
         return True
-    
+
     def get_handoff(self, _handoff_id: str) -> Optional[HandoffContext]:
         """Get handoff by ID."""
         return self._handoffs.get(handoff_id)
-    
+
     def get_pending_handoffs(self, _agent_id: str) -> List[HandoffContext]:
         """Get pending handoffs for an agent."""
         return [
             h for h in self._handoffs.values()
             if h.target_agent == agent_id and h.status == HandoffStatus.PENDING
         ]
-    
+
     def get_active_handoffs(self, _agent_id: str) -> List[HandoffContext]:
         """Get active handoffs for an agent."""
         return [
             h for h in self._handoffs.values()
             if h.target_agent == agent_id and h.status == HandoffStatus.IN_PROGRESS
         ]
-    
+
     def get_handoff_history(self, _agent_id: str) -> List[HandoffContext]:
         """Get completed/failed handoff history."""
         return [
@@ -260,12 +261,12 @@ class AgentHandoff:
             if (h.source_agent == agent_id or h.target_agent == agent_id)
             and h.status in [HandoffStatus.COMPLETED, HandoffStatus.FAILED]
         ]
-    
+
     async def _notify_target_agent(self, _handoff_id: str, _context: HandoffContext) -> None:
         """Notify target agent of new handoff via A2A."""
         if not self._a2a_server:
             return
-        
+
         _message = {
             "type": "handoff_request",
             "handoff_id": handoff_id,
@@ -274,17 +275,17 @@ class AgentHandoff:
             "priority": context.priority,
             "deadline": context.deadline.isoformat() if context.deadline else None,
         }
-        
+
         await self._a2a_server.event_mesh.send_to_json(
             context.target_agent,
             message,
         )
-    
+
     async def _notify_source_agent(self, _handoff_id: str, _context: HandoffContext, _result: Any) -> None:
         """Notify source agent of handoff completion."""
         if not self._a2a_server:
             return
-        
+
         _message = {
             "type": "handoff_complete",
             "handoff_id": handoff_id,
@@ -292,12 +293,12 @@ class AgentHandoff:
             "status": context.status.value,
             "result": result,
         }
-        
+
         await self._a2a_server.event_mesh.send_to_json(
             context.source_agent,
             message,
         )
-    
+
     async def _execute_callback(self, _event: str, _context: HandoffContext) -> None:
         """Execute callback with error handling."""
         try:
@@ -313,7 +314,7 @@ class AgentHandoff:
                 _event = event,
                 _error = str(e),
             )
-    
+
     def get_statistics(self) -> Dict:
         """Get handoff statistics."""
         return {

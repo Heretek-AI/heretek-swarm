@@ -11,13 +11,13 @@ Supports:
 - Caching for performance
 """
 
+import asyncio
+import hashlib
 import os
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
 from enum import Enum
 from typing import Any, Dict, List, Optional
-import asyncio
-import hashlib
 
 import structlog
 
@@ -35,31 +35,31 @@ class EmbeddingProvider(Enum):
 @dataclass
 class EmbeddingConfig:
     """Configuration for embedding service."""
-    
+
     provider: EmbeddingProvider = EmbeddingProvider.OPENAI
-    
+
     # OpenAI settings
     openai_model: str = "text-embedding-3-small"
     openai_api_key: Optional[str] = None
     openai_dimensions: int = 1536  # 1536 for small, 3072 for large
-    
+
     # Sentence Transformers settings
     st_model: str = "all-MiniLM-L6-v2"
     st_device: str = "cpu"
-    
+
     # Cohere settings
     cohere_model: str = "embed-english-v3.0"
     cohere_api_key: Optional[str] = None
-    
+
     # Voyage settings
     voyage_model: str = "voyage-2"
     voyage_api_key: Optional[str] = None
-    
+
     # Batch settings
     batch_size: int = 100
     max_retries: int = 3
     retry_delay: float = 1.0
-    
+
     # Cache settings
     enable_cache: bool = True
     cache_ttl_seconds: int = 86400  # 24 hours
@@ -68,13 +68,13 @@ class EmbeddingConfig:
 @dataclass
 class EmbeddingResult:
     """Result of embedding generation."""
-    
+
     embedding: List[float]
     text_hash: str
     model: str
     dimensions: int
     created_at: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
         return {
@@ -88,16 +88,16 @@ class EmbeddingResult:
 
 class EmbeddingCache:
     """Simple in-memory cache for embeddings."""
-    
+
     def __init__(self, _ttl_seconds: int):
         self._cache: Dict[str, EmbeddingResult] = {}
         self._ttl = ttl_seconds
-    
+
     def _hash(self, _text: str, _model: str) -> str:
         """Generate cache key."""
         _content = f"{model}:{text}"
         return hashlib.sha256(content.encode()).hexdigest()
-    
+
     def get(self, _text: str, _model: str) -> Optional[EmbeddingResult]:
         """Get cached embedding if not expired."""
         _key = self._hash(text, model)
@@ -111,12 +111,12 @@ class EmbeddingCache:
             else:
                 del self._cache[key]
         return None
-    
+
     def set(self, _text: str, _model: str, _result: EmbeddingResult) -> None:
         """Cache an embedding."""
         _key = self._hash(text, model)
         self._cache[key] = result
-    
+
     def clear(self) -> None:
         """Clear cache."""
         self._cache.clear()
@@ -134,13 +134,13 @@ class EmbeddingService:
     
     Pattern stolen from elizaOS embedding service.
     """
-    
+
     def __init__(self, _config: Optional[EmbeddingConfig]):
         self.config = config or EmbeddingConfig()
         self._cache = EmbeddingCache(self.config.cache_ttl_seconds) if self.config.enable_cache else None
         self._client = None
         self._initialized = False
-    
+
     async def initialize(self) -> None:
         """Initialize the embedding service."""
         if self.config.provider == EmbeddingProvider.OPENAI:
@@ -151,32 +151,32 @@ class EmbeddingService:
             await self._init_cohere()
         elif self.config.provider == EmbeddingProvider.VOYAGE:
             await self._init_voyage()
-        
+
         self._initialized = True
         logger.info(
             "embedding_service_initialized",
             provider=self.config.provider.value,
         )
-    
+
     async def _init_openai(self) -> None:
         """Initialize OpenAI client."""
         try:
             from openai import AsyncOpenAI
-            
+
             _api_key = self.config.openai_api_key or os.getenv("OPENAI_API_KEY")
             if not api_key:
                 raise ValueError("OpenAI API key required")
-            
+
             self._client = AsyncOpenAI(api_key=api_key)
             logger.debug("openai_client_initialized")
         except ImportError:
             raise ImportError("Install openai: pip install openai")
-    
+
     async def _init_sentence_transformers(self) -> None:
         """Initialize Sentence Transformers."""
         try:
             from sentence_transformers import SentenceTransformer
-            
+
             self._client = SentenceTransformer(
                 self.config.st_model,
                 _device = self.config.st_device,
@@ -184,35 +184,35 @@ class EmbeddingService:
             logger.debug("sentence_transformers_initialized", model=self.config.st_model)
         except ImportError:
             raise ImportError("Install sentence-transformers: pip install sentence-transformers")
-    
+
     async def _init_cohere(self) -> None:
         """Initialize Cohere client."""
         try:
             import cohere
-            
+
             _api_key = self.config.cohere_api_key or os.getenv("COHERE_API_KEY")
             if not api_key:
                 raise ValueError("Cohere API key required")
-            
+
             self._client = cohere.AsyncClient(api_key)
             logger.debug("cohere_client_initialized")
         except ImportError:
             raise ImportError("Install cohere: pip install cohere")
-    
+
     async def _init_voyage(self) -> None:
         """Initialize Voyage client."""
         try:
             import voyageai
-            
+
             _api_key = self.config.voyage_api_key or os.getenv("VOYAGE_API_KEY")
             if not api_key:
                 raise ValueError("Voyage API key required")
-            
+
             self._client = voyageai.AsyncClient(api_key)
             logger.debug("voyage_client_initialized")
         except ImportError:
             raise ImportError("Install voyageai: pip install voyageai")
-    
+
     async def embed(self, _text: str) -> EmbeddingResult:
         """
         Generate embedding for a single text.
@@ -225,13 +225,13 @@ class EmbeddingService:
         """
         if not self._initialized:
             await self.initialize()
-        
+
         # Check cache
         if self._cache:
             _cached = self._cache.get(text, self._get_model_name())
             if cached:
                 return cached
-        
+
         # Generate embedding
         if self.config.provider == EmbeddingProvider.OPENAI:
             _result = await self._embed_openai([text])
@@ -247,13 +247,13 @@ class EmbeddingService:
             _result = result[0]
         else:
             raise ValueError(f"Unknown provider: {self.config.provider}")
-        
+
         # Cache result
         if self._cache:
             self._cache.set(text, self._get_model_name(), result)
-        
+
         return result
-    
+
     async def embed_batch(self, _texts: List[str]) -> List[EmbeddingResult]:
         """
         Generate embeddings for multiple texts.
@@ -266,15 +266,15 @@ class EmbeddingService:
         """
         if not self._initialized:
             await self.initialize()
-        
+
         if not texts:
             return []
-        
+
         # Check cache for all texts
         _results = [None] * len(texts)
         _uncached_indices = []
         _uncached_texts = []
-        
+
         if self._cache:
             _model = self._get_model_name()
             for i, text in enumerate(texts):
@@ -287,13 +287,13 @@ class EmbeddingService:
         else:
             _uncached_indices = list(range(len(texts)))
             _uncached_texts = texts
-        
+
         # Process uncached texts in batches
         if uncached_texts:
             for i in range(0, len(uncached_texts), self.config.batch_size):
                 batch = uncached_texts[i:i + self.config.batch_size]
                 _batch_indices = uncached_indices[i:i + self.config.batch_size]
-                
+
                 if self.config.provider == EmbeddingProvider.OPENAI:
                     _batch_results = await self._embed_openai(batch)
                 elif self.config.provider == EmbeddingProvider.SENTENCE_TRANSFORMERS:
@@ -304,23 +304,23 @@ class EmbeddingService:
                     _batch_results = await self._embed_voyage(batch)
                 else:
                     raise ValueError(f"Unknown provider: {self.config.provider}")
-                
+
                 # Store results
                 for j, result in enumerate(batch_results):
                     _idx = batch_indices[j]
                     results[idx] = result
-                    
+
                     # Cache
                     if self._cache:
                         self._cache.set(texts[idx], self._get_model_name(), result)
-        
+
         return results
-    
+
     async def _embed_openai(self, _texts: List[str]) -> List[EmbeddingResult]:
         """Generate embeddings using OpenAI."""
         _model = self.config.openai_model
         _results = []
-        
+
         for attempt in range(self.config.max_retries):
             try:
                 _response = await self._client.embeddings.create(
@@ -328,7 +328,7 @@ class EmbeddingService:
                     _model = model,
                     _dimensions = self.config.openai_dimensions,
                 )
-                
+
                 for i, item in enumerate(response.data):
                     results.append(EmbeddingResult(
                         embedding=item.embedding,
@@ -336,25 +336,25 @@ class EmbeddingService:
                         _model = model,
                         _dimensions = len(item.embedding),
                     ))
-                
+
                 return results
             except Exception as e:
                 if attempt < self.config.max_retries - 1:
                     await asyncio.sleep(self.config.retry_delay * (attempt + 1))
                 else:
                     raise
-    
+
     async def _embed_st(self, _texts: List[str]) -> List[EmbeddingResult]:
         """Generate embeddings using Sentence Transformers."""
         _model = self.config.st_model
-        
+
         # Run in thread pool since ST is synchronous
         _loop = asyncio.get_event_loop()
         embeddings = await loop.run_in_executor(
             None,
             lambda: self._client.encode(texts, convert_to_numpy=True),
         )
-        
+
         _results = []
         for i, embedding in enumerate(embeddings):
             results.append(EmbeddingResult(
@@ -363,19 +363,19 @@ class EmbeddingService:
                 _model = model,
                 _dimensions = len(embedding),
             ))
-        
+
         return results
-    
+
     async def _embed_cohere(self, _texts: List[str]) -> List[EmbeddingResult]:
         """Generate embeddings using Cohere."""
         _model = self.config.cohere_model
-        
+
         _response = await self._client.embed(
             _texts = texts,
             _model = model,
             _input_type = "search_document",
         )
-        
+
         _results = []
         for i, embedding in enumerate(response.embeddings):
             results.append(EmbeddingResult(
@@ -384,19 +384,19 @@ class EmbeddingService:
                 _model = model,
                 _dimensions = len(embedding),
             ))
-        
+
         return results
-    
+
     async def _embed_voyage(self, _texts: List[str]) -> List[EmbeddingResult]:
         """Generate embeddings using Voyage AI."""
         _model = self.config.voyage_model
-        
+
         _response = await self._client.embed(
             _texts = texts,
             _model = model,
             _input_type = "document",
         )
-        
+
         _results = []
         for i, embedding in enumerate(response.embeddings):
             results.append(EmbeddingResult(
@@ -405,9 +405,9 @@ class EmbeddingService:
                 _model = model,
                 _dimensions = len(embedding),
             ))
-        
+
         return results
-    
+
     def _get_model_name(self) -> str:
         """Get current model name for caching."""
         if self.config.provider == EmbeddingProvider.OPENAI:
@@ -419,7 +419,7 @@ class EmbeddingService:
         elif self.config.provider == EmbeddingProvider.VOYAGE:
             return self.config.voyage_model
         return "unknown"
-    
+
     def get_dimensions(self) -> int:
         """Get embedding dimensions for current configuration."""
         if self.config.provider == EmbeddingProvider.OPENAI:
@@ -437,13 +437,13 @@ class EmbeddingService:
         elif self.config.provider == EmbeddingProvider.VOYAGE:
             return 1024
         return 768
-    
+
     async def shutdown(self) -> None:
         """Shutdown the service."""
         if self._client and hasattr(self._client, "close"):
             await self._client.close()
-        
+
         if self._cache:
             self._cache.clear()
-        
+
         self._initialized = False

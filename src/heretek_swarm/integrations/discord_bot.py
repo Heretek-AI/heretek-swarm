@@ -6,7 +6,8 @@ Reference: PraisonAI Discord integration
 """
 
 import os
-from typing import Optional, Dict, TYPE_CHECKING
+from typing import TYPE_CHECKING, Dict, Optional
+
 import structlog
 
 try:
@@ -20,7 +21,7 @@ except ImportError:
 
 # TYPE_CHECKING ensures type hints are not evaluated at runtime when discord is None
 if TYPE_CHECKING:
-    from discord import Intents, Message, Embed
+    from discord import Embed, Intents, Message
 
 _logger = structlog.get_logger(__name__)
 
@@ -36,41 +37,41 @@ class DiscordBot:
     - Handoff updates
     - Embed-based rich responses
     """
-    
+
     def __init__(self, _token: Optional[str], _agent_runtime=None, _handoff_manager=None, _intents: "Optional[Intents]" = None):
         self.token = token or os.getenv("DISCORD_BOT_TOKEN")
         self.agent_runtime = agent_runtime
         self.handoff_manager = handoff_manager
         self._bot = None
         self._running = False
-        
+
         if not DISCORD_AVAILABLE:
             logger.warning("discord_bot_unavailable", message="discord.py not installed")
             return
-        
+
         # Set up intents - lazy import to avoid AttributeError at class definition
         if intents is None:
             _intents = discord.Intents.default()
             intents.message_content = True
             intents.members = True
-        
+
         # Initialize bot
         self._bot = commands.Bot(
             _command_prefix = "!",
             _intents = intents,
             _help_command = None,  # Custom help
         )
-        
+
         # Register events
         self._bot.event(self.on_ready)
         self._bot.event(self.on_message)
-        
+
         # Register commands
         self._register_commands()
-    
+
     def _register_commands(self) -> None:
         """Register Discord commands."""
-        
+
         @self._bot.command(name="start")
         async def start(_ctx):
             """Welcome message."""
@@ -95,7 +96,7 @@ class DiscordBot:
                 _inline = False,
             )
             await ctx.send(embed=embed)
-        
+
         @self._bot.command(name="help")
         async def help_cmd(_ctx):
             """Show help."""
@@ -121,7 +122,7 @@ class DiscordBot:
                 _inline = False,
             )
             await ctx.send(embed=embed)
-        
+
         @self._bot.command(name="status")
         async def status(_ctx):
             """Show swarm status."""
@@ -129,7 +130,7 @@ class DiscordBot:
                 title="📊 Swarm Status",
                 _color = discord.Color.purple(),
             )
-            
+
             if self.agent_runtime:
                 _status_text = ""
                 for agent_id, runtime in self.agent_runtime.items():
@@ -139,9 +140,9 @@ class DiscordBot:
                 embed.add_field(name="Active Agents", value=status_text, inline=False)
             else:
                 embed.add_field(name="Status", value="Swarm status unavailable", inline=False)
-            
+
             await ctx.send(embed=embed)
-        
+
         @self._bot.command(name="agents")
         async def agents(_ctx):
             """List available agents."""
@@ -180,14 +181,14 @@ class DiscordBot:
                 _inline = False,
             )
             await ctx.send(embed=embed)
-        
+
         @self._bot.command(name="chat")
         async def chat(_ctx, _agent: str, *, _message: str):
             """Chat with specific agent."""
             await ctx.typing()
-            
+
             _response = await self._route_message(f"{agent}: {message}", str(ctx.author.id))
-            
+
             _embed = discord.Embed(
                 title=f"🤖 {agent.title()}'s Response",
                 _description = response,
@@ -195,7 +196,7 @@ class DiscordBot:
             )
             embed.set_footer(text=f"Requested by {ctx.author.name}")
             await ctx.send(embed=embed)
-    
+
     async def on_ready(self) -> None:
         """Bot ready event."""
         logger.info(
@@ -205,61 +206,61 @@ class DiscordBot:
             _guilds = len(self._bot.guilds),
         )
         self._running = True
-    
+
     async def on_message(self, _message: "Message") -> None:
         """Message received event."""
         # Ignore bot messages
         if message.author.bot:
             return
-        
+
         # Ignore commands (handled separately)
         if message.content.startswith("!"):
             await self._bot.process_commands(message)
             return
-        
+
         # Route message in DMs or agent-chat channel
         if isinstance(message.channel, discord.DMChannel) or \
            (hasattr(message.channel, 'name') and message.channel.name == "agent-chat"):
-            
+
             await message.channel.typing()
-            
+
             _user_id = str(message.author.id)
             _response = await self._route_message(message.content, user_id)
-            
+
             _embed = discord.Embed(
                 _description = response,
                 _color = discord.Color.blue(),
             )
             await message.channel.send(embed=embed)
-    
+
     async def initialize(self) -> bool:
         """Initialize bot."""
         if not DISCORD_AVAILABLE:
             return False
-        
+
         if not self.token:
             logger.warning("discord_token_missing")
             return False
-        
+
         logger.info("discord_bot_initialized")
         return True
-    
+
     async def start(self) -> None:
         """Start bot."""
         if not self._bot:
             await self.initialize()
-        
+
         await self._bot.start(self.token)
-    
+
     async def stop(self) -> None:
         """Stop bot."""
         self._running = False
-        
+
         if self._bot:
             await self._bot.close()
-        
+
         logger.info("discord_bot_stopped")
-    
+
     async def _route_message(self, _message: str, _user_id: str) -> str:
         """
         Route message to appropriate agent.
@@ -272,7 +273,7 @@ class DiscordBot:
             Agent response
         """
         _message_lower = message.lower()
-        
+
         # Determine agent from message
         if any(word in message_lower for word in ["code", "program", "script", "debug"]):
             _agent_id = "coder"
@@ -286,13 +287,13 @@ class DiscordBot:
             _agent_id = "sentinel"
         else:
             _agent_id = "steward"
-        
+
         logger.info(
             "discord_message_routed",
             agent=agent_id,
             _user = user_id,
         )
-        
+
         # Get agent response
         if self.agent_runtime and agent_id in self.agent_runtime:
             try:
@@ -302,9 +303,9 @@ class DiscordBot:
             except Exception as e:
                 logger.error("agent_response_error", error=str(e))
                 return f"⚠️ Error: {str(e)}"
-        
+
         return f"🤖 Agent {agent_id} is unavailable."
-    
+
     async def send_notification(self, _channel_id: int, _message: str, _embed: "Optional[Embed]") -> bool:
         """
         Send notification to channel.
@@ -319,7 +320,7 @@ class DiscordBot:
         """
         if not self._bot:
             return False
-        
+
         try:
             _channel = self._bot.get_channel(channel_id)
             if channel:
@@ -335,7 +336,7 @@ class DiscordBot:
                 _error = str(e),
             )
         return False
-    
+
     async def notify_handoff(self, _channel_id: int, _handoff_context: Dict) -> None:
         """
         Send handoff notification.
@@ -360,7 +361,7 @@ class DiscordBot:
             _value = handoff_context.get("task_description"),
             _inline = False,
         )
-        
+
         await self.send_notification(channel_id, "", embed=embed)
 
 
@@ -376,16 +377,16 @@ def get_discord_bot() -> Optional["DiscordBot"]:
 async def start_discord_bot(_agent_runtime = None, _handoff_manager = None) -> None:
     """Start Discord bot."""
     global discord_bot
-    
+
     if not DISCORD_AVAILABLE:
         logger.warning("discord_not_available")
         return
-    
+
     _discord_bot = DiscordBot(
         _agent_runtime = agent_runtime,
         _handoff_manager = handoff_manager,
     )
-    
+
     await discord_bot.initialize()
     await discord_bot.start()
 
@@ -393,7 +394,7 @@ async def start_discord_bot(_agent_runtime = None, _handoff_manager = None) -> N
 async def stop_discord_bot() -> None:
     """Stop Discord bot."""
     global discord_bot
-    
+
     if discord_bot:
         await discord_bot.stop()
         _discord_bot = None

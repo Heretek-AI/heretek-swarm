@@ -84,7 +84,7 @@ class DomainExpertise:
     confidence_calibration: float = 0.0
     last_updated: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     recent_outcomes: List[Dict[str, Any]] = field(default_factory=list)
-    
+
     # Peer trust tracking (NEW)
     peer_trust_scores: Dict[str, float] = field(default_factory=dict)
     evidence_quality_avg: float = 0.5
@@ -124,7 +124,7 @@ class DomainExpertise:
         """
         # Map expertise score to multiplier range [0.5, 1.5]
         return 0.5 + (self.expertise_score * 1.0)
-    
+
     def get_peer_trust_score(self) -> float:
         """
         Calculate average peer trust score.
@@ -134,9 +134,9 @@ class DomainExpertise:
         """
         if not self.peer_trust_scores:
             return 0.5  # Default trust for new agents
-        
+
         return sum(self.peer_trust_scores.values()) / len(self.peer_trust_scores)
-    
+
     def update_peer_trust(self, peer_id: str, trust_delta: float) -> None:
         """
         Update trust score from a specific peer.
@@ -149,7 +149,7 @@ class DomainExpertise:
         _new_trust = max(0.0, min(1.0, current_trust + trust_delta))
         self.peer_trust_scores[peer_id] = new_trust
         self.last_updated = datetime.now(timezone.utc).isoformat()
-    
+
     def record_evidence_quality(self, quality_score: float) -> None:
         """
         Record evidence quality score for running average.

@@ -17,7 +17,7 @@ from typing import Any, Dict, List, Optional
 import structlog
 from swarms import Agent
 
-from heretek_swarm.actors.base import AgentActor, ActorMessage
+from heretek_swarm.actors.base import ActorMessage, AgentActor
 
 _logger = structlog.get_logger("TriadAgents")
 
@@ -124,7 +124,7 @@ class StewardAgent(AgentActor):
                 _deliberation_id = message.content.get("deliberation_id")
                 _topic = message.content.get("topic")
                 _triad_members = message.content.get("triad_members", [])
-                
+
                 if not deliberation_id or not topic:
                     logger.error(f"[{self.agent_id}] Missing deliberation parameters")
                     return

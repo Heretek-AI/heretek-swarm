@@ -10,83 +10,80 @@ Provides comprehensive security features:
 Reference: EXPANSION_ROADMAP.md Security Hardening (SH-1, SH-2, SH-3)
 """
 
-from heretek_swarm.security.zero_trust import (
-    # Core validator
-    ZeroTrustValidator,
-    ZeroTrustResult,
-    LayerResult,
-    # Layer 1: Input Validation
-    InputValidator,
-    InputValidationConfig,
-    ValidatedInput,
-    # Layer 2: Context Validation
-    ContextValidator,
-    ContextValidationConfig,
-    BehavioralBaseline,
-    # Layer 3: Output Validation
-    OutputValidator,
-    OutputValidationConfig,
-    # Layer 4: Audit Logging
-    AuditLogger,
-    AuditLogConfig,
-    # Severity levels
-    Severity,
-    # Convenience functions
-    create_default_validator,
-    create_strict_validator,
-)
-
 from heretek_swarm.security.adversarial import (
+    AdversarialDetectionResult,
     # Core detector
     AdversarialDetector,
-    AdversarialDetectionResult,
-    DetectionMatch,
-    # Configuration
-    PromptInjectionConfig,
-    JailbreakDetectionConfig,
-    # Enums
-    ThreatLevel,
     AttackCategory,
+    DetectionMatch,
+    JailbreakDetectionConfig,
     OWASPCategory,
     # Reporter
     OWASPComplianceReporter,
+    # Configuration
+    PromptInjectionConfig,
+    # Enums
+    ThreatLevel,
     # Convenience functions
     create_default_detector,
     create_strict_detector,
 )
-
 from heretek_swarm.security.ddos_protection import (
-    # Core protection
-    DDoSProtection,
-    RateLimiter,
+    DDoSDetectionConfig,
+    DDoSDetectionResult,
     DDoSDetector,
     DDoSMitigator,
-    # Results
-    RateLimitResult,
-    DDoSDetectionResult,
-    # Configuration
-    RateLimitConfig,
-    TierConfig,
-    DDoSDetectionConfig,
-    MitigationConfig,
-    # Enums
-    UserTier,
+    # Core protection
+    DDoSProtection,
     DDoSSeverity,
     MitigationAction,
+    MitigationConfig,
+    # Configuration
+    RateLimitConfig,
+    RateLimiter,
+    # Results
+    RateLimitResult,
+    TierConfig,
     # Token bucket
     TokenBucket,
+    # Enums
+    UserTier,
     # Convenience functions
     create_default_protection,
     create_strict_protection,
 )
-
 from heretek_swarm.security.guardrails import (
-    GuardrailsSystem,
-    GuardrailsConfig,
-    GuardrailsAction,
     BlockedPattern,
-    ValidationResult,
     FilterResult,
+    GuardrailsAction,
+    GuardrailsConfig,
+    GuardrailsSystem,
+    ValidationResult,
+)
+from heretek_swarm.security.zero_trust import (
+    AuditLogConfig,
+    # Layer 4: Audit Logging
+    AuditLogger,
+    BehavioralBaseline,
+    ContextValidationConfig,
+    # Layer 2: Context Validation
+    ContextValidator,
+    InputValidationConfig,
+    # Layer 1: Input Validation
+    InputValidator,
+    LayerResult,
+    OutputValidationConfig,
+    # Layer 3: Output Validation
+    OutputValidator,
+    # Severity levels
+    Severity,
+    ValidatedInput,
+    ZeroTrustResult,
+    # Core validator
+    ZeroTrustValidator,
+    # Convenience functions
+    create_default_validator,
+    create_strict_validator,
 )
 
 __all__ = [

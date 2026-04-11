@@ -13,13 +13,13 @@ import httpx
 import structlog
 
 from .base import (
+    EmbeddingAuthenticationError,
     EmbeddingProviderBase,
     EmbeddingProviderCapabilities,
-    EmbeddingResponse,
-    EmbeddingAuthenticationError,
-    EmbeddingRateLimitError,
-    EmbeddingUnavailableError,
     EmbeddingProviderError,
+    EmbeddingRateLimitError,
+    EmbeddingResponse,
+    EmbeddingUnavailableError,
 )
 
 _logger = structlog.get_logger("embeddings.providers.openai")
@@ -55,7 +55,7 @@ class OpenAIEmbeddingProvider(EmbeddingProviderBase):
         """
         if not api_key:
             raise EmbeddingAuthenticationError("OpenAI API key is required")
-        
+
         super().__init__(
             _provider_name = "openai",
             base_url=base_url,
@@ -63,7 +63,7 @@ class OpenAIEmbeddingProvider(EmbeddingProviderBase):
             _default_model = default_model or "text-embedding-3-small",
             _extra_config = extra_config,
         )
-        
+
         self.organization = organization
         self._client: Optional[httpx.AsyncClient] = None
 
@@ -86,7 +86,7 @@ class OpenAIEmbeddingProvider(EmbeddingProviderBase):
             }
             if self.organization:
                 headers["OpenAI-Organization"] = self.organization
-            
+
             self._client = httpx.AsyncClient(
                 _base_url = self.base_url,
                 headers=headers,
@@ -108,32 +108,32 @@ class OpenAIEmbeddingProvider(EmbeddingProviderBase):
         """
         _client = await self._get_client()
         _start_time = time.time()
-        
+
         _model = self._get_model(model)
         _inputs = self._ensure_list(texts)
-        
+
         _payload = {
             "model": model,
             "input": inputs,
             "encoding_format": "float",
         }
-        
+
         # Add dimensions if specified and model supports it
         if dimensions and self.capabilities.supports_dimensions_override:
             payload["dimensions"] = dimensions
-        
+
         logger.debug(
             "Sending OpenAI embedding request",
             _model = model,
             _text_count = len(inputs),
         )
-        
+
         try:
             _response = await client.post(
                 "/embeddings",
                 json=payload,
             )
-            
+
             if response.status_code == 401:
                 raise EmbeddingAuthenticationError(
                     "Invalid OpenAI API key",
@@ -156,13 +156,13 @@ class OpenAIEmbeddingProvider(EmbeddingProviderBase):
                     f"OpenAI API error: {response.status_code}",
                     _provider = "openai",
                 )
-            
+
             _data = response.json()
             _latency_ms = (time.time() - start_time) * 1000
-            
+
             # Extract embeddings from response
             _embeddings = [item["embedding"] for item in data.get("data", [])]
-            
+
             return EmbeddingResponse(
                 _embeddings = embeddings,
                 _model = data.get("model", model),
@@ -170,7 +170,7 @@ class OpenAIEmbeddingProvider(EmbeddingProviderBase):
                 _raw_response = data,
                 _latency_ms = latency_ms,
             )
-            
+
         except httpx.RequestError as e:
             raise EmbeddingUnavailableError(
                 f"Request failed: {e}",

@@ -11,11 +11,12 @@ Features:
 - Custom validators for complex constraints
 """
 
+import re
+import uuid
 from datetime import datetime, timezone
 from typing import Any, Dict, List, Optional
-from pydantic import BaseModel, Field, field_validator, ConfigDict
-import uuid
-import re
+
+from pydantic import BaseModel, ConfigDict, Field, field_validator
 
 
 class MessageContent(BaseModel):
@@ -25,9 +26,9 @@ class MessageContent(BaseModel):
     All message content must conform to this schema to prevent
     injection attacks and ensure consistent data structures.
     """
-    
+
     _model_config = ConfigDict(extra='forbid')  # Reject unknown fields
-    
+
     message_type: str = Field(
         ...,
         _min_length = 1,
@@ -59,7 +60,7 @@ class MessageContent(BaseModel):
         _default_factory = lambda: datetime.now(timezone.utc).isoformat(),
         _description = "ISO8601 timestamp"
     )
-    
+
     @field_validator('sender_id')
     @classmethod
     def validate_sender_id(cls, v: str) -> str:
@@ -75,7 +76,7 @@ class MessageContent(BaseModel):
         raise ValueError(
             f"Invalid sender_id format: {v}. Must be UUID hex or actor_<uuid> format"
         )
-    
+
     @field_validator('correlation_id')
     @classmethod
     def validate_correlation_id(cls, v: Optional[str]) -> Optional[str]:
@@ -95,7 +96,7 @@ class MessageContent(BaseModel):
             raise ValueError(
                 f"Invalid correlation_id format: {v}. Must be UUID or alphanumeric"
             )
-    
+
     @field_validator('content')
     @classmethod
     def validate_content(cls, v: Dict[str, Any]) -> Dict[str, Any]:
@@ -113,9 +114,9 @@ class MessageContent(BaseModel):
 
 class DeliberationRequest(BaseModel):
     """Validated deliberation request model."""
-    
+
     _model_config = ConfigDict(extra='forbid')
-    
+
     deliberation_id: str = Field(
         ...,
         _min_length = 1,
@@ -133,7 +134,7 @@ class DeliberationRequest(BaseModel):
         _default_factory = list,
         _description = "List of triad member IDs"
     )
-    
+
     @field_validator('triad_members')
     @classmethod
     def validate_triad_members(cls, v: List[str]) -> List[str]:
@@ -152,9 +153,9 @@ class DeliberationRequest(BaseModel):
 
 class MemoryStoreRequest(BaseModel):
     """Validated memory storage request model."""
-    
+
     _model_config = ConfigDict(extra='forbid')
-    
+
     content: Dict[str, Any] = Field(
         ...,
         _description = "Memory content to store"
@@ -177,7 +178,7 @@ class MemoryStoreRequest(BaseModel):
         None,
         _description = "Parent memory IDs"
     )
-    
+
     @field_validator('content')
     @classmethod
     def validate_content(cls, v: Dict[str, Any]) -> Dict[str, Any]:
@@ -185,7 +186,7 @@ class MemoryStoreRequest(BaseModel):
         if not v:
             raise ValueError("content cannot be empty")
         return v
-    
+
     @field_validator('metadata')
     @classmethod
     def validate_metadata(cls, v: Dict[str, Any]) -> Dict[str, Any]:
@@ -197,9 +198,9 @@ class MemoryStoreRequest(BaseModel):
 
 class AnalysisRequest(BaseModel):
     """Validated analysis request model."""
-    
+
     _model_config = ConfigDict(extra='forbid')
-    
+
     request_id: str = Field(
         ...,
         _min_length = 1,
@@ -212,7 +213,7 @@ class AnalysisRequest(BaseModel):
         _max_length = 10000,
         _description = "Problem description to analyze"
     )
-    
+
     @field_validator('request_id')
     @classmethod
     def validate_request_id(cls, v: str) -> str:
@@ -228,9 +229,9 @@ class AnalysisRequest(BaseModel):
 
 class ValidationRequest(BaseModel):
     """Validated validation request model."""
-    
+
     _model_config = ConfigDict(extra='forbid')
-    
+
     request_id: str = Field(
         ...,
         _min_length = 1,
@@ -249,9 +250,9 @@ class ValidationRequest(BaseModel):
 
 class QueryRequest(BaseModel):
     """Validated query request model."""
-    
+
     _model_config = ConfigDict(extra='forbid')
-    
+
     query_text: Optional[str] = Field(
         None,
         _max_length = 10000,
@@ -267,7 +268,7 @@ class QueryRequest(BaseModel):
         _le = 1000,
         _description = "Maximum results (1-1000)"
     )
-    
+
     @field_validator('filters')
     @classmethod
     def validate_filters(cls, v: Dict[str, Any]) -> Dict[str, Any]:
@@ -279,9 +280,9 @@ class QueryRequest(BaseModel):
 
 class LineageRequest(BaseModel):
     """Validated lineage tracking request model."""
-    
+
     _model_config = ConfigDict(extra='forbid')
-    
+
     decision_id: str = Field(
         ...,
         _min_length = 1,
@@ -292,7 +293,7 @@ class LineageRequest(BaseModel):
         _default_factory = list,
         _description = "Parent memory/decision IDs"
     )
-    
+
     @field_validator('parent_ids')
     @classmethod
     def validate_parent_ids(cls, v: List[str]) -> List[str]:
@@ -304,9 +305,9 @@ class LineageRequest(BaseModel):
 
 class HealthCheckRequest(BaseModel):
     """Validated health check request model."""
-    
+
     _model_config = ConfigDict(extra='forbid')
-    
+
     reply_to: str = Field(
         _default = "health",
         _max_length = 256,
@@ -316,9 +317,9 @@ class HealthCheckRequest(BaseModel):
 
 class SuspendResumeRequest(BaseModel):
     """Validated suspend/resume request model."""
-    
+
     _model_config = ConfigDict(extra='forbid')
-    
+
     actor_id: Optional[str] = Field(
         None,
         _max_length = 128,
@@ -328,9 +329,9 @@ class SuspendResumeRequest(BaseModel):
 
 class TerminateRequest(BaseModel):
     """Validated terminate request model."""
-    
+
     _model_config = ConfigDict(extra='forbid')
-    
+
     actor_id: Optional[str] = Field(
         None,
         _max_length = 128,
@@ -345,9 +346,9 @@ class TerminateRequest(BaseModel):
 
 class CollectiveTaskRequest(BaseModel):
     """Validated collective task request model."""
-    
+
     _model_config = ConfigDict(extra='forbid')
-    
+
     task: str = Field(
         ...,
         _min_length = 1,
@@ -362,9 +363,9 @@ class CollectiveTaskRequest(BaseModel):
 
 class TaskRequest(BaseModel):
     """Validated task coordination request model."""
-    
+
     _model_config = ConfigDict(extra='forbid')
-    
+
     task_id: Optional[str] = Field(
         None,
         _max_length = 64,
@@ -408,9 +409,9 @@ class TaskRequest(BaseModel):
 
 class DependencyRequest(BaseModel):
     """Validated dependency resolution request model."""
-    
+
     _model_config = ConfigDict(extra='forbid')
-    
+
     task_ids: Optional[List[str]] = Field(
         _default_factory = list,
         _description = "Tasks to analyze"
@@ -419,9 +420,9 @@ class DependencyRequest(BaseModel):
 
 class CoordinationRequest(BaseModel):
     """Validated coordination request model."""
-    
+
     _model_config = ConfigDict(extra='forbid')
-    
+
     workflow_id: Optional[str] = Field(
         None,
         _max_length = 64,
@@ -432,7 +433,7 @@ class CoordinationRequest(BaseModel):
         _max_length = 128,
         _description = "Agent identifier"
     )
-    
+
     task_id: str = Field(
         ...,
         _min_length = 1,
@@ -464,7 +465,7 @@ class CoordinationRequest(BaseModel):
         _max_length = 256,
         _description = "Reply topic"
     )
-    
+
     @field_validator('input_data')
     @classmethod
     def validate_input_data(cls, v: Dict[str, Any]) -> Dict[str, Any]:
@@ -472,7 +473,7 @@ class CoordinationRequest(BaseModel):
         if len(v) > 100:
             raise ValueError(f"Too many input fields: {len(v)}. Maximum is 100")
         return v
-    
+
     @field_validator('protocol')
     @classmethod
     def validate_protocol(cls, v: Dict[str, Any]) -> Dict[str, Any]:
@@ -541,6 +542,6 @@ def validate_message(message_type: str, content: Dict[str, Any]) -> BaseModel:
     if message_type not in MESSAGE_TYPE_VALIDATORS:
         # Unknown message type - allow but log
         return content
-    
+
     validator_class = MESSAGE_TYPE_VALIDATORS[message_type]
     return validator_class(**content)

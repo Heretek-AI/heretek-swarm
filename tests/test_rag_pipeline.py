@@ -8,25 +8,23 @@ Tests for:
 - RAG pipeline orchestration
 """
 
+from unittest.mock import AsyncMock
+
 import pytest
-from unittest.mock import Mock, AsyncMock, patch
-from pathlib import Path
 
 from rag.document_processor import (
+    ChunkStrategy,
     DocumentProcessor,
     DocumentType,
-    ChunkStrategy,
     ProcessedDocument,
     ProcessingConfig,
 )
+from rag.rag_pipeline import RAGConfig, RAGPipeline
 from rag.retriever import (
     HybridRetriever,
-    SearchMode,
-    SearchResult,
     RetrievalConfig,
+    SearchResult,
 )
-from rag.rag_pipeline import RAGPipeline, RAGConfig
-
 
 # =============================================================================
 # Document Processor Tests
@@ -509,7 +507,7 @@ class TestRAGIntegration:
     @pytest.mark.asyncio
     async def test_end_to_end_ingestion_and_query(self):
         """Test full workflow from ingestion to query."""
-        from rag.rag_pipeline import RAGPipeline, RAGConfig
+        from rag.rag_pipeline import RAGConfig, RAGPipeline
 
         # Create mocks
         mock_embedding = AsyncMock()

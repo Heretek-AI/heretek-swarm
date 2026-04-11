@@ -3,10 +3,10 @@ Re-export tools.examples for heretek_swarm.tools.examples compatibility.
 """
 
 from tools.examples import (
-    MemorySearchTool,
-    HealthCheckTool,
     ConsensusVoteTool,
+    HealthCheckTool,
     LegacyWrapperTool,
+    MemorySearchTool,
 )
 
 __all__ = [

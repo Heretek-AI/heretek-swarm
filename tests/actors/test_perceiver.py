@@ -11,19 +11,18 @@ This module provides comprehensive tests for the Perceiver agent including:
 - Zero-trust validation tests
 """
 
-import asyncio
-import pytest
 from datetime import datetime, timezone
 from typing import Any, Dict
 from unittest.mock import AsyncMock, MagicMock, patch
 
-from heretek_swarm.actors.perceiver import PerceiverAgent, ModalityType
+import pytest
+
 from heretek_swarm.actors.base import ActorMessage
+from heretek_swarm.actors.perceiver import ModalityType, PerceiverAgent
 from heretek_swarm.collective.learning import PatternExtractor
 from heretek_swarm.consensus.swarm_deliberation import SwarmDeliberationEngine
 from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer
 from heretek_swarm.security.zero_trust import ZeroTrustValidator
-
 
 # ============== FIXTURES ==============
 
@@ -116,7 +115,7 @@ class TestPerceiverInitialization:
     def test_init_default(self) -> None:
         """Test initialization with default parameters."""
         agent = PerceiverAgent()
-        
+
         assert agent.agent_id == "perceiver"
         assert agent.name == "Perceiver"
         assert agent.max_input_size_mb == 50
@@ -136,7 +135,7 @@ class TestPerceiverInitialization:
             feature_cache_size=500,
             enable_cross_modal=False,
         )
-        
+
         assert agent.agent_id == "custom-perceiver"
         assert agent.name == "CustomPerceiver"
         assert agent.max_input_size_mb == 100
@@ -152,14 +151,14 @@ class TestPerceiverInitialization:
     def test_supported_formats(self, _perceiver_agent: PerceiverAgent) -> None:
         """Test that supported formats are properly configured."""
         _formats = perceiver_agent.supported_formats
-        
+
         assert ModalityType.TEXT.value in formats
         assert ModalityType.IMAGE.value in formats
         assert ModalityType.AUDIO.value in formats
         assert ModalityType.VIDEO.value in formats
         assert ModalityType.DOCUMENT.value in formats
         assert ModalityType.SENSOR.value in formats
-        
+
         assert "txt" in formats[ModalityType.TEXT.value]
         assert "jpg" in formats[ModalityType.IMAGE.value]
         assert "mp3" in formats[ModalityType.AUDIO.value]
@@ -224,7 +223,7 @@ class TestModalityDetection:
             ("content", "pdf", ModalityType.DOCUMENT.value),
             ("content", "docx", ModalityType.DOCUMENT.value),
         ]
-        
+
         for content, fmt_hint, expected in test_cases:
             _modality = perceiver_agent._detect_modality(content, format_hint=fmt_hint)
             assert modality == expected, f"Failed for format hint: {fmt_hint}"
@@ -271,7 +270,7 @@ class TestInputIdGeneration:
         """Test ID generation for string input."""
         _input_data = "test input"
         _input_id = perceiver_agent._generate_input_id(input_data, "text")
-        
+
         assert input_id.startswith("input_text_")
         assert len(input_id) > 20  # Should include timestamp and hash
 
@@ -279,14 +278,14 @@ class TestInputIdGeneration:
         """Test ID generation for bytes input."""
         _input_data = b"test bytes"
         _input_id = perceiver_agent._generate_input_id(input_data, "image")
-        
+
         assert input_id.startswith("input_image_")
 
     def test_generate_input_id_dict(self, _perceiver_agent: PerceiverAgent) -> None:
         """Test ID generation for dict input."""
         _input_data = {"key": "value"}
         _input_id = perceiver_agent._generate_input_id(input_data, "sensor")
-        
+
         assert input_id.startswith("input_sensor_")
 
     def test_generate_input_id_deterministic(self, _perceiver_agent: PerceiverAgent) -> None:
@@ -294,7 +293,7 @@ class TestInputIdGeneration:
         _input_data = "consistent input"
         _id1 = perceiver_agent._generate_input_id(input_data, "text")
         _id2 = perceiver_agent._generate_input_id(input_data, "text")
-        
+
         # Hash portion should be the same (last 16 chars of hash)
         assert id1[-16:] == id2[-16:]
 
@@ -308,7 +307,7 @@ class TestFeatureExtraction:
     async def test_extract_text_features(self, _perceiver_agent: PerceiverAgent, _sample_text_input: str) -> None:
         """Test text feature extraction."""
         _features = perceiver_agent._extract_text_features(sample_text_input)
-        
+
         assert "char_count" in features
         assert "word_count" in features
         assert "sentence_count" in features
@@ -323,7 +322,7 @@ class TestFeatureExtraction:
     async def test_extract_text_features_empty(self, _perceiver_agent: PerceiverAgent) -> None:
         """Test text feature extraction with empty input."""
         _features = perceiver_agent._extract_text_features("")
-        
+
         assert features["word_count"] == 0
         assert features["sentence_count"] == 0
         assert features["char_count"] == 0
@@ -333,7 +332,7 @@ class TestFeatureExtraction:
         """Test code structure detection in text."""
         code_text = "def hello():\n    return 'world'"
         _features = perceiver_agent._extract_text_features(code_text)
-        
+
         assert features["has_code_structure"] is True
 
     @pytest.mark.asyncio
@@ -341,7 +340,7 @@ class TestFeatureExtraction:
         """Test JSON format detection in text."""
         _json_text = '{"key": "value"}'
         _features = perceiver_agent._extract_text_features(json_text)
-        
+
         assert features["has_json_format"] is True
 
     @pytest.mark.asyncio
@@ -350,7 +349,7 @@ class TestFeatureExtraction:
         _features = await perceiver_agent._extract_image_features(
             sample_image_data, format_hint="png"
         )
-        
+
         assert "format" in features
         assert "mime_type" in features
         assert "size_bytes" in features
@@ -363,7 +362,7 @@ class TestFeatureExtraction:
         _features = await perceiver_agent._extract_audio_features(
             audio_data, format_hint="mp3"
         )
-        
+
         assert "format" in features
         assert "size_bytes" in features
         assert features["format"] == "mp3"
@@ -375,7 +374,7 @@ class TestFeatureExtraction:
         _features = await perceiver_agent._extract_video_features(
             video_data, format_hint="mp4"
         )
-        
+
         assert "format" in features
         assert "size_bytes" in features
 
@@ -386,7 +385,7 @@ class TestFeatureExtraction:
         _features = await perceiver_agent._extract_document_features(
             doc_data, format_hint="pdf"
         )
-        
+
         assert "format" in features
         assert "size_bytes" in features
         assert "preview" in features
@@ -395,7 +394,7 @@ class TestFeatureExtraction:
     async def test_extract_sensor_features(self, _perceiver_agent: PerceiverAgent, _sample_sensor_data: Dict[str, _Any]) -> None:
         """Test sensor data feature extraction."""
         _features = perceiver_agent._extract_sensor_features(sample_sensor_data)
-        
+
         assert "keys" in features
         assert "numeric_stats" in features
         assert "analyzed_by" in features
@@ -406,7 +405,7 @@ class TestFeatureExtraction:
     async def test_extract_sensor_features_invalid(self, _perceiver_agent: PerceiverAgent) -> None:
         """Test sensor feature extraction with invalid input."""
         _features = perceiver_agent._extract_sensor_features("not a dict")
-        
+
         assert "error" in features
 
 
@@ -424,7 +423,7 @@ class TestQualityAssessment:
         quality = perceiver_agent._assess_input_quality(
             "text", ModalityType.TEXT.value, features
         )
-        
+
         assert 0.0 <= quality <= 1.0
 
     def test_assess_quality_text_short(self, _perceiver_agent: PerceiverAgent) -> None:
@@ -436,7 +435,7 @@ class TestQualityAssessment:
         quality = perceiver_agent._assess_input_quality(
             "text", ModalityType.TEXT.value, features
         )
-        
+
         assert quality < 1.0  # Should be penalized for short text
 
     def test_assess_quality_with_error(self, _perceiver_agent: PerceiverAgent) -> None:
@@ -445,7 +444,7 @@ class TestQualityAssessment:
         quality = perceiver_agent._assess_input_quality(
             None, ModalityType.TEXT.value, features
         )
-        
+
         assert quality <= 0.5  # Should be penalized for error
 
     def test_assess_quality_image_small(self, _perceiver_agent: PerceiverAgent) -> None:
@@ -457,7 +456,7 @@ class TestQualityAssessment:
         quality = perceiver_agent._assess_input_quality(
             None, ModalityType.IMAGE.value, features
         )
-        
+
         assert quality < 1.0  # Should be penalized for small size
 
 
@@ -472,9 +471,9 @@ class TestFeatureCaching:
         _modality = "text"
         _features = {"word_count": 100}
         _metadata = {"source": "test"}
-        
+
         perceiver_agent._cache_features(input_id, modality, features, metadata)
-        
+
         assert input_id in perceiver_agent.feature_cache
         _cached = perceiver_agent.feature_cache[input_id]
         assert cached["modality"] == modality
@@ -486,21 +485,21 @@ class TestFeatureCaching:
         """Test caching when cross-modal is disabled."""
         perceiver_agent.enable_cross_modal = False
         _input_id = "test-input-456"
-        
+
         perceiver_agent._cache_features(input_id, "text", {}, {})
-        
+
         assert input_id not in perceiver_agent.feature_cache
 
     def test_cache_features_size_limit(self, _perceiver_agent: PerceiverAgent) -> None:
         """Test cache enforces size limit."""
         perceiver_agent.feature_cache_size = 5
-        
+
         # Fill cache beyond limit
         for i in range(10):
             perceiver_agent._cache_features(
                 f"input-{i}", "text", {"index": i}, {}
             )
-        
+
         # Cache should be at or below limit
         assert len(perceiver_agent.feature_cache) <= perceiver_agent.feature_cache_size + 100
 
@@ -523,12 +522,12 @@ class TestMessageHandling:
             },
             _timestamp = datetime.now(timezone.utc).isoformat(),
         )
-        
+
         # Mock the send method
         perceiver_agent.send = AsyncMock(return_value="msg-123")
-        
+
         await perceiver_agent._handle_process_input(message)
-        
+
         # Verify send was called with processed result
         assert perceiver_agent.send.called
         _call_args = perceiver_agent.send.call_args
@@ -548,11 +547,11 @@ class TestMessageHandling:
             },
             _timestamp = datetime.now(timezone.utc).isoformat(),
         )
-        
+
         perceiver_agent.send = AsyncMock(return_value="msg-123")
-        
+
         await perceiver_agent._handle_process_input(message)
-        
+
         # Verify error response was sent
         assert perceiver_agent.send.called
         _call_args = perceiver_agent.send.call_args
@@ -562,7 +561,7 @@ class TestMessageHandling:
     async def test_process_input_size_exceeded(self, _perceiver_agent: PerceiverAgent) -> None:
         """Test processing input that exceeds size limit."""
         large_input = "A" * (60 * 1024 * 1024)  # 60MB
-        
+
         _message = ActorMessage(
             _sender = "test-sender",
             _message_type = "process_input",
@@ -572,11 +571,11 @@ class TestMessageHandling:
             },
             _timestamp = datetime.now(timezone.utc).isoformat(),
         )
-        
+
         perceiver_agent.send = AsyncMock(return_value="msg-123")
-        
+
         await perceiver_agent._handle_process_input(message)
-        
+
         # Verify error response for size exceeded
         assert perceiver_agent.send.called
         _call_args = perceiver_agent.send.call_args
@@ -594,7 +593,7 @@ class TestMessageHandling:
             "metadata": {},
             "timestamp": datetime.now(timezone.utc).isoformat(),
         }
-        
+
         _message = ActorMessage(
             _sender = "test-sender",
             _message_type = "extract_features",
@@ -604,11 +603,11 @@ class TestMessageHandling:
             },
             _timestamp = datetime.now(timezone.utc).isoformat(),
         )
-        
+
         perceiver_agent.send = AsyncMock(return_value="msg-123")
-        
+
         await perceiver_agent._handle_extract_features(message)
-        
+
         assert perceiver_agent.send.called
         _call_args = perceiver_agent.send.call_args
         assert call_args[1]["content"]["message_type"] == "features_result"
@@ -625,11 +624,11 @@ class TestMessageHandling:
             },
             _timestamp = datetime.now(timezone.utc).isoformat(),
         )
-        
+
         perceiver_agent.send = AsyncMock(return_value="msg-123")
-        
+
         await perceiver_agent._handle_extract_features(message)
-        
+
         _call_args = perceiver_agent.send.call_args
         assert call_args[1]["content"]["message_type"] == "error_response"
 
@@ -646,11 +645,11 @@ class TestMessageHandling:
             },
             _timestamp = datetime.now(timezone.utc).isoformat(),
         )
-        
+
         perceiver_agent.send = AsyncMock(return_value="msg-123")
-        
+
         await perceiver_agent._handle_classify_modality(message)
-        
+
         assert perceiver_agent.send.called
         _call_args = perceiver_agent.send.call_args
         assert call_args[1]["content"]["message_type"] == "modality_result"
@@ -665,7 +664,7 @@ class TestMessageHandling:
             "features": {"word_count": 100},
             "timestamp": datetime.now(timezone.utc).isoformat(),
         }
-        
+
         _message = ActorMessage(
             _sender = "test-sender",
             _message_type = "assess_quality",
@@ -675,11 +674,11 @@ class TestMessageHandling:
             },
             _timestamp = datetime.now(timezone.utc).isoformat(),
         )
-        
+
         perceiver_agent.send = AsyncMock(return_value="msg-123")
-        
+
         await perceiver_agent._handle_assess_quality(message)
-        
+
         assert perceiver_agent.send.called
         _call_args = perceiver_agent.send.call_args
         assert call_args[1]["content"]["message_type"] == "quality_result"
@@ -691,7 +690,7 @@ class TestMessageHandling:
         # Set some stats
         perceiver_agent.inputs_processed["text"] = 10
         perceiver_agent.total_features_extracted = 500
-        
+
         _message = ActorMessage(
             _sender = "test-sender",
             _message_type = "get_processing_stats",
@@ -700,11 +699,11 @@ class TestMessageHandling:
             },
             _timestamp = datetime.now(timezone.utc).isoformat(),
         )
-        
+
         perceiver_agent.send = AsyncMock(return_value="msg-123")
-        
+
         await perceiver_agent._handle_get_processing_stats(message)
-        
+
         assert perceiver_agent.send.called
         _call_args = perceiver_agent.send.call_args
         assert call_args[1]["content"]["message_type"] == "stats_result"
@@ -720,7 +719,7 @@ class TestMessageHandling:
                 "features": {},
                 "timestamp": datetime.now(timezone.utc).isoformat(),
             }
-        
+
         _message = ActorMessage(
             _sender = "test-sender",
             _message_type = "correlate_modalities",
@@ -730,11 +729,11 @@ class TestMessageHandling:
             },
             _timestamp = datetime.now(timezone.utc).isoformat(),
         )
-        
+
         perceiver_agent.send = AsyncMock(return_value="msg-123")
-        
+
         await perceiver_agent._handle_correlate_modalities(message)
-        
+
         assert perceiver_agent.send.called
         _call_args = perceiver_agent.send.call_args
         assert call_args[1]["content"]["message_type"] == "correlation_result"
@@ -752,11 +751,11 @@ class TestMessageHandling:
             },
             _timestamp = datetime.now(timezone.utc).isoformat(),
         )
-        
+
         perceiver_agent.send = AsyncMock(return_value="msg-123")
-        
+
         await perceiver_agent._handle_correlate_modalities(message)
-        
+
         _call_args = perceiver_agent.send.call_args
         assert call_args[1]["content"]["message_type"] == "error_response"
 
@@ -775,11 +774,11 @@ class TestProcessMessage:
             _content = {"reply_to": "reply"},
             _timestamp = datetime.now(timezone.utc).isoformat(),
         )
-        
+
         perceiver_agent.send = AsyncMock(return_value="msg-123")
-        
+
         await perceiver_agent.process_message(message)
-        
+
         # Should not raise exception
         assert True
 
@@ -792,7 +791,7 @@ class TestProcessMessage:
             _content = {},
             _timestamp = datetime.now(timezone.utc).isoformat(),
         )
-        
+
         # Should log warning but not raise
         await perceiver_agent.process_message(message)
 
@@ -802,20 +801,20 @@ class TestProcessMessage:
         # Register a handler that raises
         async def failing_handler(_msg: ActorMessage) -> None:
             raise ValueError("Test error")
-        
+
         perceiver_agent.register_handler("failing", failing_handler)
-        
+
         _message = ActorMessage(
             _sender = "test",
             _message_type = "failing",
             _content = {"reply_to": "reply"},
             _timestamp = datetime.now(timezone.utc).isoformat(),
         )
-        
+
         perceiver_agent.send = AsyncMock(return_value="msg-123")
-        
+
         await perceiver_agent.process_message(message)
-        
+
         # Error count should increase
         assert perceiver_agent.error_count >= 1
 
@@ -830,7 +829,7 @@ class TestPerceiverIntegration:
         """Test complete input processing workflow."""
         # Initialize agent
         await perceiver_agent.initialize()
-        
+
         # Verify handlers are registered
         assert "process_input" in perceiver_agent._message_handlers
         assert "extract_features" in perceiver_agent._message_handlers
@@ -840,7 +839,7 @@ class TestPerceiverIntegration:
     async def test_learning_status(self, _perceiver_agent: PerceiverAgent) -> None:
         """Test getting learning status."""
         _status = perceiver_agent.get_learning_status()
-        
+
         assert "agent_id" in status
         assert "collective_learning" in status
         assert "consensus" in status
@@ -869,12 +868,12 @@ class TestZeroTrustValidation:
             },
             _timestamp = datetime.now(timezone.utc).isoformat(),
         )
-        
+
         perceiver_agent.send = AsyncMock(return_value="msg-123")
-        
+
         # Should process without raising
         await perceiver_agent._handle_process_input(message)
-        
+
         assert perceiver_agent.send.called
 
 
@@ -892,7 +891,7 @@ class TestErrorHandling:
             _features = await perceiver_agent._extract_modality_features(
                 "test", "text", None
             )
-            
+
             assert "error" in features
 
     @pytest.mark.asyncio

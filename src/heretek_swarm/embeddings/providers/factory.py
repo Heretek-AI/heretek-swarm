@@ -10,9 +10,9 @@ from typing import Any, Dict, List, Optional, Type
 
 import structlog
 
-from .base import EmbeddingProviderBase, EmbeddingConfigurationError
-from .openai_provider import OpenAIEmbeddingProvider
+from .base import EmbeddingConfigurationError, EmbeddingProviderBase
 from .ollama_provider import OllamaEmbeddingProvider
+from .openai_provider import OpenAIEmbeddingProvider
 
 _logger = structlog.get_logger("embeddings.providers.factory")
 
@@ -117,14 +117,14 @@ def create_embedding_provider(provider_type: str, config: Dict[str, Any]) -> Emb
         )
     """
     provider_class = get_provider_class(provider_type)
-    
+
     try:
         # Extract common parameters
         base_url = config.get("base_url")
         api_key = config.get("api_key")
         default_model = config.get("default_model")
         extra_config = config.get("extra_config", {})
-        
+
         # Create provider based on type
         if provider_type == "openai":
             if not api_key:
@@ -138,7 +138,7 @@ def create_embedding_provider(provider_type: str, config: Dict[str, Any]) -> Emb
                 _organization = config.get("organization"),
                 extra_config=extra_config,
             )
-        
+
         elif provider_type == "openai_compatible":
             # Use OpenAI provider for compatible APIs
             if not base_url:
@@ -151,14 +151,14 @@ def create_embedding_provider(provider_type: str, config: Dict[str, Any]) -> Emb
                 default_model=default_model,
                 extra_config=extra_config,
             )
-        
+
         elif provider_type == "ollama":
             return OllamaEmbeddingProvider(
                 base_url=base_url or "http://localhost:11434",
                 default_model=default_model,
                 extra_config=extra_config,
             )
-        
+
         else:
             # Fallback to generic instantiation for registered providers
             return provider_class(
@@ -167,7 +167,7 @@ def create_embedding_provider(provider_type: str, config: Dict[str, Any]) -> Emb
                 default_model=default_model,
                 extra_config=extra_config,
             )
-            
+
     except TypeError as e:
         raise EmbeddingConfigurationError(
             f"Invalid configuration for {provider_type}: {e}"
@@ -197,11 +197,11 @@ def create_embedding_provider_from_db_config(db_config: Any, api_key_decrypt_fun
         "default_model": db_config.default_model,
         "extra_config": db_config.extra_config or {},
     }
-    
+
     # Decrypt API key if function provided and key exists
     if db_config.api_key_encrypted and api_key_decrypt_func:
         config["api_key"] = api_key_decrypt_func(db_config.api_key_encrypted)
-    
+
     return create_embedding_provider(db_config.provider_type, config)
 
 
@@ -216,7 +216,7 @@ def get_provider_info(provider_type: str) -> Dict[str, Any]:
         Dictionary with provider information
     """
     provider_class = get_provider_class(provider_type)
-    
+
     # Create a temporary instance to get capabilities
     try:
         if provider_type == "openai":
@@ -225,9 +225,9 @@ def get_provider_info(provider_type: str) -> Dict[str, Any]:
             _temp_provider = provider_class()
         else:
             _temp_provider = provider_class()
-        
+
         _capabilities = temp_provider.capabilities
-        
+
         return {
             "provider_type": provider_type,
             "class_name": provider_class.__name__,

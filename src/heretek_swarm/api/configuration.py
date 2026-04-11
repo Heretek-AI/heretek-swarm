@@ -11,27 +11,26 @@ from datetime import datetime
 from typing import Any, Dict, Optional
 from uuid import UUID
 
+import structlog
 from fastapi import APIRouter, Depends, HTTPException, Query
 
-import structlog
-
-from heretek_swarm.config.service import (
-    ConfigurationService,
-    get_config_service,
-)
 from heretek_swarm.config.models import (
-    UserConfigurationCreate,
-    UserConfigurationUpdate,
-    LLMProviderCreate,
-    LLMProviderUpdate,
-    LLMProviderTestRequest,
-    EmbeddingProviderCreate,
-    EmbeddingProviderUpdate,
-    EmbeddingProviderTestRequest,
     AgentConfigCreate,
     AgentConfigUpdate,
     ConfigurationImport,
+    EmbeddingProviderCreate,
+    EmbeddingProviderTestRequest,
+    EmbeddingProviderUpdate,
     ImportOptions,
+    LLMProviderCreate,
+    LLMProviderTestRequest,
+    LLMProviderUpdate,
+    UserConfigurationCreate,
+    UserConfigurationUpdate,
+)
+from heretek_swarm.config.service import (
+    ConfigurationService,
+    get_config_service,
 )
 from heretek_swarm.gateway.auth import verify_auth
 
@@ -239,7 +238,7 @@ async def test_llm_provider(
     provider = await service.get_llm_provider(provider_id)
     if not provider:
         raise HTTPException(404, f"LLM provider '{provider_id}' not found")
-    
+
     try:
         # Create provider instance
         llm_provider = _get_llm_provider_factory().create_llm_provider(
@@ -251,10 +250,10 @@ async def test_llm_provider(
                 "extra_config": provider.extra_config,
             }
         )
-        
+
         # Test connectivity
         result = await llm_provider.test_connectivity(model=test_request.model)
-        
+
         return {
             "provider_id": str(provider_id),
             "provider_name": provider.provider_name,
@@ -264,7 +263,7 @@ async def test_llm_provider(
             "response_text": result.response_text if result.success else None,
             "error": result.error if not result.success else None,
         }
-        
+
     except Exception as e:
         return {
             "provider_id": str(provider_id),
@@ -369,7 +368,7 @@ async def test_embedding_provider(
     provider = await service.get_embedding_provider(provider_id)
     if not provider:
         raise HTTPException(404, f"Embedding provider '{provider_id}' not found")
-    
+
     try:
         # Create provider instance
         embedding_provider = _get_embedding_provider_factory().create_embedding_provider(
@@ -381,7 +380,7 @@ async def test_embedding_provider(
                 "extra_config": provider.extra_config,
             }
         )
-        
+
         # Test connectivity by generating an embedding
         import time
         start_time = time.time()
@@ -390,7 +389,7 @@ async def test_embedding_provider(
             model=test_request.model,
         )
         latency_ms = (time.time() - start_time) * 1000
-        
+
         return {
             "provider_id": str(provider_id),
             "provider_name": provider.provider_name,
@@ -399,7 +398,7 @@ async def test_embedding_provider(
             "dimensions": response.dimensions,
             "latency_ms": latency_ms,
         }
-        
+
     except Exception as e:
         return {
             "provider_id": str(provider_id),
@@ -561,17 +560,17 @@ async def reload_configurations(
         Reload status and cache statistics
     """
     from heretek_swarm.config.loader import get_config_loader, reload_config
-    
+
     try:
         # Reload the configuration cache
         reload_result = await reload_config()
-        
+
         # Get cache stats
         loader = get_config_loader()
         cache_stats = loader.get_cache_stats()
-        
+
         logger.info("Configuration reloaded", cached_keys=reload_result.get("cached_keys", []))
-        
+
         return {
             "status": "reloaded",
             "cached_keys": reload_result.get("cached_keys", []),
@@ -600,16 +599,16 @@ async def configuration_health(
         Health status including database connectivity and cache status
     """
     from heretek_swarm.config.loader import get_config_loader
-    
+
     try:
         # Test database connectivity
         test_config = await service.get_config("system.health_check")
         database_healthy = test_config is not None or True  # Config may not exist but connection works
-        
+
         # Get cache stats
         loader = get_config_loader()
         cache_stats = loader.get_cache_stats()
-        
+
         return {
             "status": "healthy",
             "database_connected": database_healthy,
@@ -639,9 +638,9 @@ async def export_configuration_bundle(
     Returns:
         Complete configuration export with metadata
     """
-    
+
     export_data = await service.export_configurations(exported_by=authenticated)
-    
+
     return {
         "version": export_data.version,
         "exported_at": export_data.exported_at.isoformat(),
@@ -678,7 +677,7 @@ async def import_configuration_bundle(
         Import result summary
     """
     result = await service.import_configurations(import_data, options, changed_by=authenticated)
-    
+
     return {
         "success": result.success,
         "imported_count": result.imported_count,

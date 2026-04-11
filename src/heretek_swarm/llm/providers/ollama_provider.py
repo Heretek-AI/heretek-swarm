@@ -60,7 +60,7 @@ class OllamaProvider(LLMProviderBase):
             _default_model = default_model or "llama2",
             extra_config=extra_config,
         )
-        
+
         self._client: Optional[httpx.AsyncClient] = None
 
     def _init_capabilities(self) -> ProviderCapabilities:
@@ -98,9 +98,9 @@ class OllamaProvider(LLMProviderBase):
         """
         _client = await self._get_client()
         _start_time = time.time()
-        
+
         _model = self._get_model(request.model)
-        
+
         # Convert messages to Ollama format
         messages = []
         for msg in request.messages:
@@ -108,7 +108,7 @@ class OllamaProvider(LLMProviderBase):
                 "role": msg.role,
                 "content": msg.content,
             })
-        
+
         # Build Ollama-specific payload
         _payload = {
             "model": model,
@@ -119,29 +119,29 @@ class OllamaProvider(LLMProviderBase):
                 "top_p": request.top_p,
             },
         }
-        
+
         if request.max_tokens:
             payload["options"]["num_predict"] = request.max_tokens
-        
+
         if request.stop:
             payload["options"]["stop"] = request.stop
-        
+
         # Add any extra options
         if request.extra_body:
             payload["options"].update(request.extra_body)
-        
+
         logger.debug(
             "Sending Ollama completion request",
             _model = model,
             _message_count = len(messages),
         )
-        
+
         try:
             _response = await client.post(
                 "/api/chat",
                 json=payload,
             )
-            
+
             if response.status_code == 404:
                 raise ProviderError(
                     f"Model '{model}' not found. Try: ollama pull {model}",
@@ -157,16 +157,16 @@ class OllamaProvider(LLMProviderBase):
                     f"Ollama API error: {response.status_code} - {response.text[:200]}",
                     _provider = "ollama",
                 )
-            
+
             _data = response.json()
             _latency_ms = (time.time() - start_time) * 1000
-            
+
             _message_data = data.get("message", {})
-            
+
             # Calculate approximate token usage
             _prompt_tokens = self._estimate_tokens(messages)
             _completion_tokens = self._estimate_tokens([{"content": message_data.get("content", "")}])
-            
+
             return LLMResponse(
                 content=message_data.get("content", ""),
                 _model = model,
@@ -179,7 +179,7 @@ class OllamaProvider(LLMProviderBase):
                 _raw_response = data,
                 _latency_ms = latency_ms,
             )
-            
+
         except httpx.RequestError as e:
             raise ProviderUnavailableError(
                 f"Request failed: {e}. Is Ollama running? (ollama serve)",
@@ -198,9 +198,9 @@ class OllamaProvider(LLMProviderBase):
             Chunks of the completion text
         """
         _client = await self._get_client()
-        
+
         _model = self._get_model(request.model)
-        
+
         # Convert messages to Ollama format
         messages = []
         for msg in request.messages:
@@ -208,7 +208,7 @@ class OllamaProvider(LLMProviderBase):
                 "role": msg.role,
                 "content": msg.content,
             })
-        
+
         _payload = {
             "model": model,
             "messages": messages,
@@ -218,15 +218,15 @@ class OllamaProvider(LLMProviderBase):
                 "top_p": request.top_p,
             },
         }
-        
+
         if request.max_tokens:
             payload["options"]["num_predict"] = request.max_tokens
-        
+
         logger.debug(
             "Sending Ollama streaming request",
             _model = model,
         )
-        
+
         try:
             async with client.stream(
                 "POST",
@@ -243,11 +243,11 @@ class OllamaProvider(LLMProviderBase):
                         f"Ollama API error: {response.status_code}",
                         _provider = "ollama",
                     )
-                
+
                 async for line in response.aiter_lines():
                     if not line.strip():
                         continue
-                    
+
                     try:
                         _chunk = json.loads(line)
                         _message_data = chunk.get("message", {})
@@ -256,7 +256,7 @@ class OllamaProvider(LLMProviderBase):
                             yield content
                     except json.JSONDecodeError:
                         continue
-                        
+
         except httpx.RequestError as e:
             raise ProviderUnavailableError(
                 f"Stream request failed: {e}",
@@ -267,7 +267,7 @@ class OllamaProvider(LLMProviderBase):
     async def list_models(self) -> List[str]:
         """List available Ollama models."""
         _client = await self._get_client()
-        
+
         try:
             _response = await client.get("/api/tags")
             if response.status_code == 200:
@@ -275,7 +275,7 @@ class OllamaProvider(LLMProviderBase):
                 return [m.get("name", "") for m in data.get("models", [])]
         except Exception as e:
             logger.warning("Failed to list Ollama models", error=str(e))
-        
+
         return []
 
     def _estimate_tokens(self, messages: List[Dict[str, str]]) -> int:

@@ -7,10 +7,10 @@ and performance benchmarking. Inspired by Harbor and RagaAI-Catalyst patterns.
 
 import asyncio
 import time
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional
 from dataclasses import dataclass, field
+from datetime import UTC, datetime
 from enum import Enum
+from typing import Any, Optional
 
 import structlog
 
@@ -58,10 +58,10 @@ class TestCase:
     id: str
     name: str
     description: str
-    input_data: Dict[str, Any]
-    expected_output: Optional[Any] = None
+    input_data: dict[str, Any]
+    expected_output: Any | None = None
     constraints: Optional["OutputConstraints"] = None
-    metadata: Dict[str, Any] = field(default_factory=dict)
+    metadata: dict[str, Any] = field(default_factory=dict)
 
 
 @dataclass
@@ -77,11 +77,11 @@ class OutputConstraints:
         allowed_patterns: Allowed patterns in output
     """
 
-    max_length: Optional[int] = None
-    min_length: Optional[int] = None
-    required_keys: List[str] = field(default_factory=list)
-    forbidden_patterns: List[str] = field(default_factory=list)
-    allowed_patterns: List[str] = field(default_factory=list)
+    max_length: int | None = None
+    min_length: int | None = None
+    required_keys: list[str] = field(default_factory=list)
+    forbidden_patterns: list[str] = field(default_factory=list)
+    allowed_patterns: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -103,9 +103,9 @@ class TestResult:
     success: bool
     output: Any = None
     expected: Any = None
-    error: Optional[Exception] = None
+    error: Exception | None = None
     execution_time: float = 0.0
-    validation_errors: List[str] = field(default_factory=list)
+    validation_errors: list[str] = field(default_factory=list)
 
 
 @dataclass
@@ -151,11 +151,11 @@ class EvaluationResult:
     evaluation_id: str
     status: EvaluationStatus
     started_at: str
-    completed_at: Optional[str] = None
+    completed_at: str | None = None
     total_time: float = 0.0
-    error: Optional[Exception] = None
-    metrics: Optional[QualityMetrics] = None
-    test_results: List[TestResult] = field(default_factory=list)
+    error: Exception | None = None
+    metrics: QualityMetrics | None = None
+    test_results: list[TestResult] = field(default_factory=list)
 
 
 class AgentEvaluator:
@@ -204,7 +204,7 @@ class AgentEvaluator:
         """
         self.timeout = timeout
         self.parallel = parallel
-        self._evaluations: Dict[str, EvaluationResult] = {}
+        self._evaluations: dict[str, EvaluationResult] = {}
 
         logger.info(
             "evaluator_initialized",
@@ -212,7 +212,7 @@ class AgentEvaluator:
             parallel=parallel,
         )
 
-    async def evaluate_agent(self, _agent_id: str, _agent: Any, _test_cases: List[TestCase], _evaluation_id: Optional[str]) -> EvaluationResult:
+    async def evaluate_agent(self, _agent_id: str, _agent: Any, _test_cases: list[TestCase], _evaluation_id: str | None) -> EvaluationResult:
         """
         Evaluate an agent against test cases.
 
@@ -226,9 +226,9 @@ class AgentEvaluator:
             EvaluationResult with test results and metrics
         """
         if evaluation_id is None:
-            _evaluation_id = f"eval-{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S%f')}"
+            _evaluation_id = f"eval-{datetime.now(UTC).strftime('%Y%m%d%H%M%S%f')}"
 
-        _started_at = datetime.now(timezone.utc).isoformat()
+        _started_at = datetime.now(UTC).isoformat()
         _start_time = time.time()
 
         logger.info(
@@ -247,7 +247,7 @@ class AgentEvaluator:
         # Calculate metrics
         metrics = self._calculate_metrics(test_results)
 
-        _completed_at = datetime.now(timezone.utc).isoformat()
+        _completed_at = datetime.now(UTC).isoformat()
         _total_time = time.time() - start_time
 
         _result = EvaluationResult(
@@ -273,7 +273,7 @@ class AgentEvaluator:
 
         return result
 
-    async def _execute_parallel(self, _agent: Any, _test_cases: List[TestCase]) -> List[TestResult]:
+    async def _execute_parallel(self, _agent: Any, _test_cases: list[TestCase]) -> list[TestResult]:
         """Execute test cases in parallel."""
         _tasks = [
             self._execute_test_case(agent, test_case)
@@ -281,7 +281,7 @@ class AgentEvaluator:
         ]
         return await asyncio.gather(*tasks, return_exceptions=True)
 
-    async def _execute_sequential(self, _agent: Any, _test_cases: List[TestCase]) -> List[TestResult]:
+    async def _execute_sequential(self, _agent: Any, _test_cases: list[TestCase]) -> list[TestResult]:
         """Execute test cases sequentially."""
         _results = []
         for test_case in test_cases:
@@ -335,7 +335,7 @@ class AgentEvaluator:
                 validation_errors=validation_errors,
             )
 
-        except asyncio.TimeoutError:
+        except TimeoutError:
             execution_time = time.time() - start_time
             logger.warning(
                 "test_case_timeout",
@@ -365,7 +365,7 @@ class AgentEvaluator:
                 validation_errors=[str(e)],
             )
 
-    def _validate_output(self, _output: Any, _constraints: Optional[OutputConstraints]) -> List[str]:
+    def _validate_output(self, _output: Any, _constraints: OutputConstraints | None) -> list[str]:
         """Validate output against constraints."""
         _errors = []
 
@@ -374,13 +374,11 @@ class AgentEvaluator:
 
         # Check length constraints
         _output_str = str(output)
-        if constraints.max_length is not None:
-            if len(output_str) > constraints.max_length:
-                errors.append(f"Output exceeds max length of {constraints.max_length}")
+        if constraints.max_length is not None and len(output_str) > constraints.max_length:
+            errors.append(f"Output exceeds max length of {constraints.max_length}")
 
-        if constraints.min_length is not None:
-            if len(output_str) < constraints.min_length:
-                errors.append(f"Output below min length of {constraints.min_length}")
+        if constraints.min_length is not None and len(output_str) < constraints.min_length:
+            errors.append(f"Output below min length of {constraints.min_length}")
 
         # Check required keys
         if isinstance(output, dict):
@@ -397,11 +395,11 @@ class AgentEvaluator:
         # Check allowed patterns
         if constraints.allowed_patterns:
             if not any(re.search(pattern, output_str) for pattern in constraints.allowed_patterns):
-                errors.append(f"Output does not contain any allowed pattern")
+                errors.append("Output does not contain any allowed pattern")
 
         return errors
 
-    def _calculate_metrics(self, _test_results: List[TestResult]) -> QualityMetrics:
+    def _calculate_metrics(self, _test_results: list[TestResult]) -> QualityMetrics:
         """Calculate quality metrics from test results."""
         if not test_results:
             return QualityMetrics()
@@ -430,18 +428,18 @@ class AgentEvaluator:
             _output_quality = output_quality,
         )
 
-    def get_evaluation(self, _evaluation_id: str) -> Optional[EvaluationResult]:
+    def get_evaluation(self, _evaluation_id: str) -> EvaluationResult | None:
         """Get evaluation result by ID."""
         return self._evaluations.get(evaluation_id)
 
-    def list_evaluations(self, _agent_id: Optional[str]) -> List[EvaluationResult]:
+    def list_evaluations(self, _agent_id: str | None) -> list[EvaluationResult]:
         """List all evaluations, optionally filtered by agent."""
         _evaluations = list(self._evaluations.values())
         if agent_id:
             return [e for e in evaluations if e.agent_id == agent_id]
         return evaluations
 
-    def compare_agents(self, _agent_evaluations: Dict[str, _EvaluationResult]) -> Dict[str, QualityMetrics]:
+    def compare_agents(self, _agent_evaluations: dict[str, _EvaluationResult]) -> dict[str, QualityMetrics]:
         """
         Compare multiple agents by their evaluation metrics.
 
@@ -459,13 +457,13 @@ class AgentEvaluator:
 
 
 # Singleton evaluator instance
-_evaluator_instance: Optional[AgentEvaluator] = None
+_evaluator_instance: AgentEvaluator | None = None
 
 
 def get_evaluator() -> AgentEvaluator:
     """
     Get singleton evaluator instance.
-    
+
     Returns:
         AgentEvaluator instance
     """

@@ -80,7 +80,7 @@ class IntegrationConfig:
     enabled: bool = True
     config: Dict[str, Any] = field(default_factory=dict)
     metadata: Dict[str, Any] = field(default_factory=dict)
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
         return {
@@ -110,7 +110,7 @@ class HealthCheckResult:
     latency_ms: float
     details: Dict[str, Any] = field(default_factory=dict)
     timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
         return {
@@ -147,7 +147,7 @@ class IntegrationState:
     restart_count: int = 0
     error_count: int = 0
     metadata: Dict[str, Any] = field(default_factory=dict)
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
         return {
@@ -179,7 +179,7 @@ class IntegrationEvent:
     integration_id: str
     data: Dict[str, Any] = field(default_factory=dict)
     timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
         return {
@@ -207,7 +207,7 @@ class IntegrationManager:
         states: Integration states
         configs: Integration configurations
     """
-    
+
     def __init__(self, health_check_interval: float, max_restart_attempts: int, enable_auto_restart: bool) -> None:
         """
         Initialize the Integration Manager.
@@ -220,37 +220,37 @@ class IntegrationManager:
         self.integrations: Dict[str, Any] = {}
         self.states: Dict[str, IntegrationState] = {}
         self.configs: Dict[str, IntegrationConfig] = {}
-        
+
         self.health_check_interval = health_check_interval
         self.max_restart_attempts = max_restart_attempts
         self.enable_auto_restart = enable_auto_restart
-        
+
         # Event callbacks
         self._event_callbacks: List[Callable] = []
-        
+
         # Health check task
         self._health_check_task: Optional[asyncio.Task] = None
         self._running = False
-        
+
         # Adapter instances
         self._langgraph_adapter = None
         self._autogen_adapter = None
         self._crewai_adapter = None
         self._openai_adapter = None
         self._anthropic_adapter = None
-        
+
         logger.info(
             "integration_manager_initialized",
             health_check_interval=health_check_interval,
             max_restart_attempts=max_restart_attempts,
             _auto_restart = enable_auto_restart,
         )
-    
+
     def register_event_callback(self, callback: Callable) -> None:
         """Register a callback for integration events."""
         self._event_callbacks.append(callback)
         logger.debug("event_callback_registered", callback=callback.__name__)
-    
+
     async def _emit_event(self, event_type: str, integration_id: str, data: Optional[Dict[str, Any]]) -> None:
         """Emit an integration event."""
         event = IntegrationEvent(
@@ -259,7 +259,7 @@ class IntegrationManager:
             integration_id=integration_id,
             _data = data or {},
         )
-        
+
         for callback in self._event_callbacks:
             try:
                 if asyncio.iscoroutinefunction(callback):
@@ -268,14 +268,14 @@ class IntegrationManager:
                     callback(event)
             except Exception as e:
                 logger.error("event_callback_error", error=str(e))
-        
+
         logger.debug(
             "event_emitted",
             _event_id = event.event_id,
             _event_type = event_type,
             integration_id=integration_id,
         )
-    
+
     async def register_integration(self, integration_id: str, integration_type: IntegrationType, name: str, config: Optional[Dict[str, Any]], metadata: Optional[Dict[str, Any]], instance: Optional[Any]) -> IntegrationConfig:
         """
         Register a new integration.
@@ -298,32 +298,32 @@ class IntegrationManager:
             config=config or {},
             _metadata = metadata or {},
         )
-        
+
         state = IntegrationState(
             integration_id=integration_id,
             instance=instance,
         )
-        
+
         self.configs[integration_id] = integration_config
         self.states[integration_id] = state
-        
+
         if instance:
             state.status = IntegrationStatus.INITIALIZED
-        
+
         logger.info(
             "integration_registered",
             integration_id=integration_id,
             _type = integration_type.value,
         )
-        
+
         await self._emit_event(
             "integration_registered",
             integration_id,
             {"type": integration_type.value, "name": name},
         )
-        
+
         return integration_config
-    
+
     async def unregister_integration(self, integration_id: str) -> bool:
         """
         Unregister an integration.
@@ -336,27 +336,27 @@ class IntegrationManager:
         """
         if integration_id not in self.configs:
             return False
-        
+
         # Stop if running
         state = self.states.get(integration_id)
         if state and state.status == IntegrationStatus.RUNNING:
             await self.stop_integration(integration_id)
-        
+
         del self.configs[integration_id]
         if integration_id in self.states:
             del self.states[integration_id]
         if integration_id in self.integrations:
             del self.integrations[integration_id]
-        
+
         logger.info("integration_unregistered", integration_id=integration_id)
-        
+
         await self._emit_event(
             "integration_unregistered",
             integration_id,
         )
-        
+
         return True
-    
+
     async def start_integration(self, integration_id: str) -> bool:
         """
         Start an integration.
@@ -370,57 +370,57 @@ class IntegrationManager:
         if integration_id not in self.configs:
             logger.error("integration_not_found", integration_id=integration_id)
             return False
-        
+
         config = self.configs[integration_id]
         state = self.states[integration_id]
-        
+
         if not config.enabled:
             logger.warning("integration_disabled", integration_id=integration_id)
             return False
-        
+
         if state.status == IntegrationStatus.RUNNING:
             logger.info("integration_already_running", integration_id=integration_id)
             return True
-        
+
         state.status = IntegrationStatus.STARTING
-        
+
         try:
             # Create adapter instance based on type
             instance = await self._create_adapter_instance(config)
             state.instance = instance
             state.status = IntegrationStatus.RUNNING
             state.started_at = datetime.now(timezone.utc).isoformat()
-            
+
             self.integrations[integration_id] = instance
-            
+
             logger.info("integration_started", integration_id=integration_id)
-            
+
             await self._emit_event(
                 "integration_started",
                 integration_id,
                 {"type": config.integration_type.value},
             )
-            
+
             return True
-            
+
         except Exception as e:
             state.status = IntegrationStatus.FAILED
             state.error_count += 1
-            
+
             logger.error(
                 "integration_start_failed",
                 integration_id=integration_id,
                 error=str(e),
             )
-            
+
             await self._emit_event(
                 "integration_failed",
                 integration_id,
                 {"error": str(e)},
             )
-            
+
             return False
-    
+
     async def stop_integration(self, integration_id: str) -> bool:
         """
         Stop an integration.
@@ -433,16 +433,16 @@ class IntegrationManager:
         """
         if integration_id not in self.states:
             return False
-        
+
         state = self.states[integration_id]
         config = self.configs.get(integration_id)
-        
+
         if state.status not in [IntegrationStatus.RUNNING, IntegrationStatus.STARTING]:
             logger.info("integration_not_running", integration_id=integration_id)
             return True
-        
+
         state.status = IntegrationStatus.STOPPING
-        
+
         try:
             # Call stop method if available
             instance = state.instance
@@ -454,32 +454,32 @@ class IntegrationManager:
                         instance.stop()
                 elif hasattr(instance, 'clear_all'):
                     instance.clear_all()
-            
+
             state.status = IntegrationStatus.STOPPED
             state.stopped_at = datetime.now(timezone.utc).isoformat()
-            
+
             logger.info("integration_stopped", integration_id=integration_id)
-            
+
             await self._emit_event(
                 "integration_stopped",
                 integration_id,
                 {"type": config.integration_type.value if config else "unknown"},
             )
-            
+
             return True
-            
+
         except Exception as e:
             state.status = IntegrationStatus.FAILED
             state.error_count += 1
-            
+
             logger.error(
                 "integration_stop_failed",
                 integration_id=integration_id,
                 error=str(e),
             )
-            
+
             return False
-    
+
     async def restart_integration(self, integration_id: str) -> bool:
         """
         Restart an integration.
@@ -492,29 +492,29 @@ class IntegrationManager:
         """
         if integration_id not in self.states:
             return False
-        
+
         state = self.states[integration_id]
         state.status = IntegrationStatus.RESTARTING
         state.restart_count += 1
-        
+
         logger.info("integration_restart", integration_id=integration_id)
-        
+
         await self._emit_event(
             "integration_restarting",
             integration_id,
             {"restart_count": state.restart_count},
         )
-        
+
         # Stop
         await self.stop_integration(integration_id)
-        
+
         # Start
         return await self.start_integration(integration_id)
-    
+
     async def _create_adapter_instance(self, config: IntegrationConfig) -> Any:
         """Create an adapter instance based on integration type."""
         integration_type = config.integration_type
-        
+
         if integration_type == IntegrationType.LANGGRAPH:
             from .langgraph import get_langgraph_adapter
             _adapter = get_langgraph_adapter()
@@ -525,14 +525,14 @@ class IntegrationManager:
                         config.config.get('state_schema'),
                     )
             return adapter
-            
+
         elif integration_type == IntegrationType.AUTOGEN:
             from .autogen import get_autogen_adapter
             _adapter = get_autogen_adapter()
             if config.config.get('llm_config'):
                 adapter.llm_config = config.config['llm_config']
             return adapter
-            
+
         elif integration_type == IntegrationType.CREWAI:
             from .crewai import get_crewai_adapter
             _adapter = get_crewai_adapter(
@@ -541,7 +541,7 @@ class IntegrationManager:
                 _cache_enabled = config.config.get('cache_enabled', True),
             )
             return adapter
-            
+
         elif integration_type == IntegrationType.OPENAI_ASSISTANTS:
             from .openai_assistants import get_openai_assistants_adapter
             _adapter = get_openai_assistants_adapter(
@@ -549,7 +549,7 @@ class IntegrationManager:
                 _base_url = config.config.get('base_url'),
             )
             return adapter
-            
+
         elif integration_type == IntegrationType.ANTHROPIC:
             from .anthropic import get_anthropic_adapter
             _adapter = get_anthropic_adapter(
@@ -557,11 +557,11 @@ class IntegrationManager:
                 _base_url = config.config.get('base_url'),
             )
             return adapter
-        
+
         else:
             logger.warning("unknown_integration_type", type=integration_type.value)
             return None
-    
+
     async def check_health(self, integration_id: str) -> HealthCheckResult:
         """
         Check health of an integration.
@@ -573,7 +573,7 @@ class IntegrationManager:
             HealthCheckResult
         """
         _start_time = datetime.now(timezone.utc)
-        
+
         if integration_id not in self.states:
             return HealthCheckResult(
                 integration_id=integration_id,
@@ -581,9 +581,9 @@ class IntegrationManager:
                 _latency_ms = 0,
                 _details = {"error": "Integration not found"},
             )
-        
+
         state = self.states[integration_id]
-        
+
         if state.status != IntegrationStatus.RUNNING:
             return HealthCheckResult(
                 integration_id=integration_id,
@@ -591,16 +591,16 @@ class IntegrationManager:
                 _latency_ms = 0,
                 _details = {"status": state.status.value},
             )
-        
+
         try:
             # Check adapter statistics method
             instance = state.instance
             _health_details = {}
-            
+
             if instance and hasattr(instance, 'get_statistics'):
                 _stats = instance.get_statistics()
                 health_details["statistics"] = stats
-                
+
                 # Determine health based on statistics
                 if stats:
                     _health_status = HealthStatus.HEALTHY
@@ -609,37 +609,37 @@ class IntegrationManager:
             else:
                 _health_status = HealthStatus.HEALTHY
                 health_details["note"] = "No statistics available"
-            
+
             _latency_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
-            
+
             _result = HealthCheckResult(
                 integration_id=integration_id,
                 status=health_status,
                 _latency_ms = latency_ms,
                 _details = health_details,
             )
-            
+
             state.last_health_check = result
-            
+
             return result
-            
+
         except Exception as e:
             _latency_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
-            
+
             return HealthCheckResult(
                 integration_id=integration_id,
                 status=HealthStatus.UNHEALTHY,
                 _latency_ms = latency_ms,
                 _details = {"error": str(e)},
             )
-    
+
     async def _run_health_check_loop(self) -> None:
         """Background health check loop."""
         while self._running:
             try:
                 for integration_id in list(self.configs.keys()):
                     _result = await self.check_health(integration_id)
-                    
+
                     # Auto-restart on failure
                     if (
                         result.status == HealthStatus.UNHEALTHY
@@ -654,35 +654,35 @@ class IntegrationManager:
                                 "max_restart_attempts_reached",
                                 integration_id=integration_id,
                             )
-                
+
                 await asyncio.sleep(self.health_check_interval)
-                
+
             except asyncio.CancelledError:
                 break
             except Exception as e:
                 logger.error("health_check_loop_error", error=str(e))
                 await asyncio.sleep(self.health_check_interval)
-    
+
     async def start(self) -> None:
         """Start the integration manager."""
         if self._running:
             return
-        
+
         self._running = True
         self._health_check_task = asyncio.create_task(self._run_health_check_loop())
-        
+
         logger.info("integration_manager_started")
-        
+
         await self._emit_event("manager_started", "manager")
-    
+
     async def stop(self) -> None:
         """Stop the integration manager."""
         self._running = False
-        
+
         # Stop all integrations
         for integration_id in list(self.configs.keys()):
             await self.stop_integration(integration_id)
-        
+
         # Cancel health check task
         if self._health_check_task:
             self._health_check_task.cancel()
@@ -690,65 +690,65 @@ class IntegrationManager:
                 await self._health_check_task
             except asyncio.CancelledError:
                 pass
-        
+
         logger.info("integration_manager_stopped")
-        
+
         await self._emit_event("manager_stopped", "manager")
-    
+
     def get_integration(self, integration_id: str) -> Optional[Any]:
         """Get integration instance by ID."""
         state = self.states.get(integration_id)
         return state.instance if state else None
-    
+
     def get_integration_state(self, integration_id: str) -> Optional[IntegrationState]:
         """Get integration state by ID."""
         return self.states.get(integration_id)
-    
+
     def get_integration_config(self, integration_id: str) -> Optional[IntegrationConfig]:
         """Get integration configuration by ID."""
         return self.configs.get(integration_id)
-    
+
     def list_integrations(self, status: Optional[IntegrationStatus], integration_type: Optional[IntegrationType]) -> List[Dict[str, Any]]:
         """List integrations with optional filtering."""
         _result = []
-        
+
         for integration_id, config in self.configs.items():
             if integration_type and config.integration_type != integration_type:
                 continue
-            
+
             state = self.states.get(integration_id)
             if status and (not state or state.status != status):
                 continue
-            
+
             result.append({
                 "config": config.to_dict(),
                 "state": state.to_dict() if state else None,
             })
-        
+
         return result
-    
+
     def get_statistics(self) -> Dict[str, Any]:
         """Get manager statistics."""
         _status_counts = {}
         _type_counts = {}
         _healthy_count = 0
         _unhealthy_count = 0
-        
+
         for state in self.states.values():
             status = state.status.value
             status_counts[status] = status_counts.get(status, 0) + 1
-            
+
             config = self.configs.get(state.integration_id)
             if config:
                 _type_name = config.integration_type.value
                 type_counts[type_name] = type_counts.get(type_name, 0) + 1
-            
+
             if state.last_health_check:
                 if state.last_health_check.status == HealthStatus.HEALTHY:
                     healthy_count += 1
                 elif state.last_health_check.status == HealthStatus.UNHEALTHY:
                     unhealthy_count += 1
-        
+
         return {
             "total_integrations": len(self.configs),
             "running_count": sum(
@@ -762,15 +762,15 @@ class IntegrationManager:
             "health_check_interval": self.health_check_interval,
             "auto_restart_enabled": self.enable_auto_restart,
         }
-    
+
     async def get_health_summary(self) -> Dict[str, Any]:
         """Get health summary for all integrations."""
         _health_results = {}
-        
+
         for integration_id in self.configs:
             _result = await self.check_health(integration_id)
             health_results[integration_id] = result.to_dict()
-        
+
         _total = len(health_results)
         _healthy = sum(
             1 for r in health_results.values()
@@ -784,7 +784,7 @@ class IntegrationManager:
             1 for r in health_results.values()
             if r["status"] == HealthStatus.UNHEALTHY.value
         )
-        
+
         return {
             "total": total,
             "healthy": healthy,
@@ -823,7 +823,7 @@ async def initialize_integrations(configs: List[Dict[str, Any]], agent_runtime: 
         IntegrationManager instance
     """
     _manager = get_integration_manager()
-    
+
     for config in configs:
         await manager.register_integration(
             _integration_id = config["integration_id"],
@@ -832,21 +832,21 @@ async def initialize_integrations(configs: List[Dict[str, Any]], agent_runtime: 
             config=config.get("config", {}),
             _metadata = config.get("metadata", {}),
         )
-    
+
     # Set agent runtime for all adapters
     if agent_runtime:
         for integration_id in list(manager.configs.keys()):
             _instance = manager.get_integration(integration_id)
             if instance and hasattr(instance, 'set_agent_runtime'):
                 instance.set_agent_runtime(agent_runtime)
-    
+
     # Start manager
     await manager.start()
-    
+
     # Start all enabled integrations
     for integration_id in list(manager.configs.keys()):
         if manager.configs[integration_id].enabled:
             await manager.start_integration(integration_id)
-    
+
     logger.info("integrations_initialized", count=len(configs))
     return manager

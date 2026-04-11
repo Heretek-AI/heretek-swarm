@@ -4,12 +4,11 @@ Gateway Tests - EventMesh and A2A Protocol
 Test coverage for gateway components.
 """
 
-import pytest
-import asyncio
 from unittest.mock import AsyncMock, MagicMock
 
-from heretek_swarm.gateway import EventMesh, A2AServer
+import pytest
 
+from heretek_swarm.gateway import A2AServer, EventMesh
 
 # =============================================================================
 # EventMesh Tests
@@ -27,7 +26,7 @@ class TestEventMesh:
         """Test client registration."""
         _mock_ws = AsyncMock()
         await event_mesh.register("test-client", mock_ws)
-        
+
         assert "test-client" in event_mesh.clients
         assert event_mesh.client_count == 1
 
@@ -37,7 +36,7 @@ class TestEventMesh:
         _mock_ws = AsyncMock()
         await event_mesh.register("test-client", mock_ws)
         await event_mesh.unregister("test-client")
-        
+
         assert "test-client" not in event_mesh.clients
         assert event_mesh.client_count == 0
 
@@ -49,10 +48,10 @@ class TestEventMesh:
         _mock_ws2 = AsyncMock()
         await event_mesh.register("client-1", mock_ws1)
         await event_mesh.register("client-2", mock_ws2)
-        
+
         # Broadcast
         _result = await event_mesh.broadcast(b"test message")
-        
+
         assert result["sent"] == 2
         assert result["failed"] == 0
         mock_ws1.send_bytes.assert_called_once()
@@ -65,19 +64,19 @@ class TestEventMesh:
         _mock_ws1 = AsyncMock()
         mock_ws1.client_state = MagicMock()
         mock_ws1.client_state.disconnecting = False
-        
+
         # For failing client, we need to set up client_state BEFORE the side_effect
         # because broadcast checks _is_disconnecting() before calling send_bytes
         _mock_ws2 = AsyncMock()
         mock_ws2.client_state = MagicMock()
         mock_ws2.client_state.disconnecting = False
         mock_ws2.send_bytes = AsyncMock(side_effect=Exception("Connection lost"))
-        
+
         await event_mesh.register("client-1", mock_ws1)
         await event_mesh.register("client-2", mock_ws2)
-        
+
         _result = await event_mesh.broadcast(b"test")
-        
+
         assert result["sent"] == 1
         assert result["failed"] == 1
 
@@ -86,9 +85,9 @@ class TestEventMesh:
         """Test targeted send."""
         _mock_ws = AsyncMock()
         await event_mesh.register("target-client", mock_ws)
-        
+
         _success = await event_mesh.send_to("target-client", b"direct message")
-        
+
         assert success is True
         mock_ws.send_bytes.assert_called_once()
 
@@ -105,9 +104,9 @@ class TestEventMesh:
         _mock_ws2 = AsyncMock()
         await event_mesh.register("client-1", mock_ws1)
         await event_mesh.register("client-2", mock_ws2)
-        
+
         await event_mesh.close_all()
-        
+
         assert event_mesh.client_count == 0
         mock_ws1.close.assert_called()
         mock_ws2.close.assert_called()
@@ -141,12 +140,12 @@ class TestA2AServer:
             _connected_at = "2026-04-07T00:00:00Z",
             _last_activity = "2026-04-07T00:00:00Z"
         )
-        
+
         # Mock event mesh send
         a2a_server.event_mesh.send_to_json = AsyncMock()
-        
+
         await a2a_server._handle_discovery("requesting-agent", {})
-        
+
         a2a_server.event_mesh.send_to_json.assert_called_once()
         call_args = a2a_server.event_mesh.send_to_json.call_args[0][1]
         assert call_args["type"] == "discovery"
@@ -156,12 +155,12 @@ class TestA2AServer:
     async def test_message_broadcast(self, _a2a_server):
         """Test message broadcast to all agents."""
         a2a_server.event_mesh.broadcast_json = AsyncMock()
-        
+
         await a2a_server._handle_message_broadcast(
             "sender-agent",
             {"content": "Hello swarm!"}
         )
-        
+
         a2a_server.event_mesh.broadcast_json.assert_called_once()
         _call_args = a2a_server.event_mesh.broadcast_json.call_args[0][0]
         assert call_args["type"] == "message"
@@ -171,12 +170,12 @@ class TestA2AServer:
     async def test_proposal_creation(self, _a2a_server):
         """Test consensus proposal."""
         a2a_server.event_mesh.broadcast_json = AsyncMock()
-        
+
         await a2a_server._handle_proposal(
             "proposer-agent",
             {"action": "deploy", "details": {"target": "production"}}
         )
-        
+
         a2a_server.event_mesh.broadcast_json.assert_called_once()
         _call_args = a2a_server.event_mesh.broadcast_json.call_args[0][0]
         assert call_args["type"] == "proposal"
@@ -186,12 +185,12 @@ class TestA2AServer:
     async def test_vote_casting(self, _a2a_server):
         """Test consensus voting."""
         a2a_server.event_mesh.broadcast_json = AsyncMock()
-        
+
         await a2a_server._handle_vote(
             "voter-agent",
             {"proposal_id": "prop-123", "vote": "yes", "reason": "Looks good"}
         )
-        
+
         a2a_server.event_mesh.broadcast_json.assert_called_once()
         _call_args = a2a_server.event_mesh.broadcast_json.call_args[0][0]
         assert call_args["type"] == "vote"
@@ -200,7 +199,7 @@ class TestA2AServer:
     def test_get_statistics(self, _a2a_server):
         """Test server statistics."""
         _stats = a2a_server.get_statistics()
-        
+
         assert "connected_agents" in stats
         assert "agent_ids" in stats
         assert "message_log_size" in stats
@@ -217,10 +216,10 @@ class TestAuthentication:
     def test_generate_api_key(self):
         """Test API key generation."""
         from heretek_swarm.gateway.auth import generate_api_key
-        
+
         _key1 = generate_api_key()
         _key2 = generate_api_key()
-        
+
         assert key1.startswith("htsk_")
         assert key2.startswith("htsk_")
         assert key1 != key2  # Keys should be unique
@@ -228,14 +227,15 @@ class TestAuthentication:
     def test_get_api_key_from_env(self):
         """Test environment variable retrieval."""
         import os
+
         from heretek_swarm.gateway.auth import get_api_key_from_env
-        
+
         # Set test key
         os.environ["HERETEK_API_KEY"] = "htsk_test_key"
-        
+
         _key = get_api_key_from_env()
         assert key == "htsk_test_key"
-        
+
         # Cleanup
         del os.environ["HERETEK_API_KEY"]
 

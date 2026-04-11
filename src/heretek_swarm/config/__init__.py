@@ -18,20 +18,19 @@ Usage:
     )
 """
 
+from .loader import (
+    ConfigLoader,
+    get_config,
+    get_config_loader,
+    get_config_with_source,
+    initialize_config_loader,
+    reload_config,
+)
 from .service import (
     ConfigurationService,
     get_config_service,
     initialize_config_service,
     shutdown_config_service,
-)
-
-from .loader import (
-    ConfigLoader,
-    get_config_loader,
-    get_config,
-    get_config_with_source,
-    reload_config,
-    initialize_config_loader,
 )
 
 __all__ = [
@@ -40,7 +39,7 @@ __all__ = [
     "get_config_service",
     "initialize_config_service",
     "shutdown_config_service",
-    
+
     # Loader
     "ConfigLoader",
     "get_config_loader",

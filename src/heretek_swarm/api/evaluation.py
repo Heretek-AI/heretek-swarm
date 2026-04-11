@@ -9,14 +9,16 @@ Provides REST API for:
 """
 
 from typing import Any, Dict, List, Optional
-from fastapi import APIRouter, HTTPException, Depends
+
 import structlog
+from fastapi import APIRouter, Depends, HTTPException
 
 from evaluation.evaluator import (
-    get_evaluator,
-    TestCase,
     EvaluationMetric,
+    TestCase,
+    get_evaluator,
 )
+
 from ..gateway.auth import verify_auth
 
 logger = structlog.get_logger(__name__)
@@ -40,7 +42,7 @@ async def create_test_case(
         Created test case
     """
     evaluator = get_evaluator()
-    
+
     # Create test case object
     case = TestCase(
         id=test_case.get("id", f"test_{len(evaluator.test_cases)}"),
@@ -53,12 +55,12 @@ async def create_test_case(
         ],
         metadata=test_case.get("metadata", {})
     )
-    
+
     # Load into evaluator
     evaluator.load_test_cases([case])
-    
+
     logger.info("test_case_created", test_case_id=case.id)
-    
+
     return {
         "id": case.id,
         "name": case.name,
@@ -82,7 +84,7 @@ async def create_test_cases_batch(
         Number of test cases created
     """
     evaluator = get_evaluator()
-    
+
     # Create test case objects
     cases = [
         TestCase(
@@ -98,12 +100,12 @@ async def create_test_cases_batch(
         )
         for i, tc in enumerate(test_cases)
     ]
-    
+
     # Load into evaluator
     evaluator.load_test_cases(cases)
-    
+
     logger.info("test_cases_created_batch", count=len(cases))
-    
+
     return {
         "count": len(cases),
         "test_case_ids": [case.id for case in cases]
@@ -124,7 +126,7 @@ async def list_test_cases(
         List of test cases
     """
     evaluator = get_evaluator()
-    
+
     return {
         "test_cases": [
             {
@@ -156,12 +158,12 @@ async def evaluate_agent(
         Evaluation results
     """
     evaluator = get_evaluator()
-    
+
     # Run evaluation
     executions = await evaluator.evaluate_agent(agent_id, test_case_ids)
-    
+
     logger.info("agent_evaluated", agent_id=agent_id, tests_run=len(executions))
-    
+
     return {
         "agent_id": agent_id,
         "executions": [
@@ -203,9 +205,9 @@ async def get_agent_evaluation_summary(
         Agent evaluation summary
     """
     evaluator = get_evaluator()
-    
+
     summary = evaluator.get_agent_summary(agent_id)
-    
+
     return summary
 
 
@@ -223,9 +225,9 @@ async def get_all_evaluation_summaries(
         List of agent summaries
     """
     evaluator = get_evaluator()
-    
+
     summaries = evaluator.get_all_summaries()
-    
+
     return {
         "summaries": summaries
     }
@@ -247,12 +249,12 @@ async def delete_test_case(
         204 No Content on success
     """
     evaluator = get_evaluator()
-    
+
     if test_case_id not in evaluator.test_cases:
         raise HTTPException(status_code=404, detail="Test case not found")
-    
+
     del evaluator.test_cases[test_case_id]
-    
+
     logger.info("test_case_deleted", test_case_id=test_case_id)
-    
+
     return None

@@ -4,15 +4,14 @@ Integration tests for EmpathAgent.
 Tier 2 (Support) - EmpathAgent handles sentiment analysis, emotion tracking, and conflict mediation.
 """
 
-import asyncio
-import pytest
-import pytest_asyncio
 from datetime import datetime
 from unittest.mock import patch
 
-from src.heretek_swarm.actors.empath import EmpathAgent
-from src.heretek_swarm.actors.base import ActorMessage, ActorState
+import pytest
+import pytest_asyncio
 
+from src.heretek_swarm.actors.base import ActorMessage, ActorState
+from src.heretek_swarm.actors.empath import EmpathAgent
 
 _pytestmark = pytest.mark.integration
 

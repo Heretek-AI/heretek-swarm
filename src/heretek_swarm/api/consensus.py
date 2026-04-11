@@ -14,27 +14,27 @@ SECURITY: All endpoints require authentication. Agent identity verification requ
 
 import os
 import secrets
-from typing import Any, Dict, List, Optional, Tuple
 from datetime import datetime, timedelta, timezone
+from typing import Any, Dict, List, Optional, Tuple
 from uuid import uuid4
 
-from fastapi import APIRouter, HTTPException, Header, Depends
-from fastapi.security import HTTPBearer, HTTPAuthorizationCredentials
 import structlog
+from fastapi import APIRouter, Depends, Header, HTTPException
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 from heretek_swarm.consensus import (
-    MAKERConsensus,
     ConsensusState,
+    MAKERConsensus,
     Vote,
-)
-from heretek_swarm.consensus.deliberation import (
-    DeliberationEngine,
-    Argument,
-    Evidence,
-    Position,
 )
 from heretek_swarm.consensus.audit import (
     ConsensusAuditTrail,
+)
+from heretek_swarm.consensus.deliberation import (
+    Argument,
+    DeliberationEngine,
+    Evidence,
+    Position,
 )
 
 logger = structlog.get_logger("api.consensus")
@@ -47,12 +47,12 @@ security = HTTPBearer(auto_error=False)
 
 class ConsensusAuthManager:
     """Manages authentication for consensus operations."""
-    
+
     def __init__(self):
         self._valid_tokens: Dict[str, Dict[str, Any]] = {}
         self._token_expiry = timedelta(hours=24)
         self._agent_permissions: Dict[str, List[str]] = {}  # agent_id -> allowed operations
-    
+
     def generate_token(self, agent_id: str, permissions: Optional[List[str]] = None) -> str:
         """Generate an authentication token for an agent."""
         token = secrets.token_urlsafe(32)
@@ -63,7 +63,7 @@ class ConsensusAuthManager:
         }
         self._agent_permissions[agent_id] = permissions or ["vote", "create", "view"]
         return token
-    
+
     def validate_token(self, token: str) -> Tuple[bool, Optional[str], Optional[str]]:
         """
         Validate an authentication token.
@@ -73,22 +73,22 @@ class ConsensusAuthManager:
         """
         if not token:
             return False, None, "Token required"
-        
+
         if token not in self._valid_tokens:
             return False, None, "Invalid token"
-        
+
         token_data = self._valid_tokens[token]
         if datetime.now(timezone.utc) > token_data["expires_at"]:
             del self._valid_tokens[token]
             return False, None, "Token expired"
-        
+
         return True, token_data["agent_id"], None
-    
+
     def check_permission(self, agent_id: str, operation: str) -> bool:
         """Check if agent has permission for operation."""
         permissions = self._agent_permissions.get(agent_id, [])
         return operation in permissions
-    
+
     def revoke_token(self, token: str) -> bool:
         """Revoke a token."""
         if token in self._valid_tokens:
@@ -119,17 +119,17 @@ async def get_authenticated_agent(
     """
     if not credentials:
         raise HTTPException(401, "Authentication required. Provide Bearer token.")
-    
+
     token = credentials.credentials
     is_valid, agent_id, error = consensus_auth_manager.validate_token(token)
-    
+
     if not is_valid:
         raise HTTPException(401, f"Authentication failed: {error}")
-    
+
     # Verify agent ID matches if provided in header
     if x_agent_id and x_agent_id != agent_id:
         raise HTTPException(403, "Agent ID mismatch. Token does not match provided agent ID.")
-    
+
     return agent_id
 
 
@@ -168,7 +168,7 @@ async def get_active_consensus_rounds(
                 "created_at": data["created_at"],
                 "deadline": data.get("deadline"),
             })
-    
+
     return {"consensus_rounds": active, "total": len(active)}
 
 
@@ -200,10 +200,10 @@ async def get_consensus_history(
                 "completed_at": data.get("completed_at"),
                 "red_flags": data.get("red_flags", []),
             })
-    
+
     # Sort by completion time, most recent first
     completed.sort(key=lambda x: x.get("completed_at", ""), reverse=True)
-    
+
     return {
         "consensus_history": completed[:limit],
         "total": len(completed),
@@ -228,9 +228,9 @@ async def get_consensus_round(
     """
     if consensus_id not in _active_rounds:
         raise HTTPException(404, f"Consensus round {consensus_id} not found")
-    
+
     data = _active_rounds[consensus_id]
-    
+
     return {
         "id": consensus_id,
         "topic": data["topic"],
@@ -267,15 +267,15 @@ async def create_consensus_round(
     if not consensus_auth_manager.check_permission(agent_id, "create"):
         raise HTTPException(403, "Permission denied. Agent cannot create consensus rounds.")
     consensus_id = str(uuid4())
-    
+
     # Create MAKER consensus instance
     ahead_by_k = int(os.environ.get("CONSENSUS_AHEAD_BY_K", "2"))
     min_votes = int(os.environ.get("CONSENSUS_MIN_VOTES", "3"))
     consensus = MAKERConsensus(ahead_by_k=ahead_by_k, min_votes=min_votes)
-    
+
     # Store consensus instance
     _consensus_store[consensus_id] = consensus
-    
+
     # Store round data
     _active_rounds[consensus_id] = {
         "id": consensus_id,
@@ -286,9 +286,9 @@ async def create_consensus_round(
         "created_at": datetime.now(timezone.utc).isoformat(),
         "metadata": {},
     }
-    
+
     logger.info("Created consensus round", consensus_id=consensus_id, topic=topic)
-    
+
     return {
         "id": consensus_id,
         "topic": topic,
@@ -324,29 +324,29 @@ async def submit_vote(
     """
     # Use authenticated agent ID
     agent_id = x_agent_id or authenticated_agent_id
-    
+
     # Check permission
     if not consensus_auth_manager.check_permission(authenticated_agent_id, "vote"):
         raise HTTPException(403, "Permission denied. Agent cannot vote.")
-    
+
     if consensus_id not in _active_rounds:
         raise HTTPException(404, f"Consensus round {consensus_id} not found")
-    
+
     data = _active_rounds[consensus_id]
-    
+
     # Check if consensus is still accepting votes
     if data["state"] in [ConsensusState.COMPLETED.value, ConsensusState.FAILED.value]:
         raise HTTPException(400, f"Consensus round {consensus_id} is already {data['state']}")
-    
+
     # Validate confidence
     if not 0.0 <= confidence <= 1.0:
         raise HTTPException(400, "Confidence must be between 0.0 and 1.0")
-    
+
     # Check for duplicate votes from same agent
     for vote in data["votes"]:
         if vote["agent_id"] == agent_id:
             raise HTTPException(400, f"Agent {agent_id} has already voted")
-    
+
     # Create vote
     vote = Vote(
         agent_id=agent_id,
@@ -355,7 +355,7 @@ async def submit_vote(
         timestamp=datetime.now(timezone.utc).isoformat(),
         metadata=metadata or {},
     )
-    
+
     # Add to store
     data["votes"].append({
         "agent_id": vote.agent_id,
@@ -364,16 +364,16 @@ async def submit_vote(
         "timestamp": vote.timestamp,
         "metadata": vote.metadata,
     })
-    
+
     # Get consensus and process vote
     consensus = _consensus_store.get(consensus_id)
     if consensus:
         consensus.add_vote(consensus_id, agent_id, decision, confidence)
-    
+
     # Transition state if enough votes
     if len(data["votes"]) >= int(os.environ.get("CONSENSUS_MIN_VOTES", "3")):
         data["state"] = ConsensusState.AGGREGATING.value
-    
+
     logger.info(
         "Vote submitted",
         consensus_id=consensus_id,
@@ -381,7 +381,7 @@ async def submit_vote(
         decision=decision,
         confidence=confidence,
     )
-    
+
     return {
         "status": "vote_accepted",
         "consensus_id": consensus_id,
@@ -412,34 +412,34 @@ async def aggregate_consensus(
         raise HTTPException(403, "Permission denied. Agent cannot aggregate consensus.")
     if consensus_id not in _active_rounds:
         raise HTTPException(404, f"Consensus round {consensus_id} not found")
-    
+
     data = _active_rounds[consensus_id]
-    
+
     if len(data["votes"]) == 0:
         raise HTTPException(400, "No votes to aggregate")
-    
+
     # Get consensus instance
     consensus = _consensus_store.get(consensus_id)
     if not consensus:
         raise HTTPException(500, "Consensus instance not found")
-    
+
     # Aggregate
     result = consensus.aggregate_consensus(consensus_id)
-    
+
     # Update store
     data["state"] = result.state.value
     data["decision"] = result.decision
     data["confidence"] = result.confidence
     data["red_flags"] = result.red_flags
     data["completed_at"] = result.timestamp
-    
+
     logger.info(
         "Consensus aggregated",
         consensus_id=consensus_id,
         decision=result.decision,
         confidence=result.confidence,
     )
-    
+
     return {
         "id": consensus_id,
         "decision": result.decision,
@@ -464,9 +464,9 @@ async def get_consensus_results(consensus_id: str):
     """
     if consensus_id not in _active_rounds:
         raise HTTPException(404, f"Consensus round {consensus_id} not found")
-    
+
     data = _active_rounds[consensus_id]
-    
+
     if data["state"] != ConsensusState.COMPLETED.value:
         return {
             "id": consensus_id,
@@ -475,7 +475,7 @@ async def get_consensus_results(consensus_id: str):
             "confidence": None,
             "message": "Consensus not yet completed",
         }
-    
+
     return {
         "id": consensus_id,
         "topic": data["topic"],
@@ -509,16 +509,16 @@ async def cancel_consensus(
         raise HTTPException(403, "Permission denied. Agent cannot cancel consensus.")
     if consensus_id not in _active_rounds:
         raise HTTPException(404, f"Consensus round {consensus_id} not found")
-    
+
     data = _active_rounds[consensus_id]
     data["state"] = ConsensusState.FAILED.value
-    
+
     # Clean up consensus instance
     if consensus_id in _consensus_store:
         del _consensus_store[consensus_id]
-    
+
     logger.info("Consensus cancelled", consensus_id=consensus_id)
-    
+
     return {
         "status": "cancelled",
         "consensus_id": consensus_id,
@@ -620,14 +620,14 @@ async def start_deliberation(
     """
     agent_id = auth["agent_id"]
     logger.info("starting_deliberation", agent_id=agent_id, participants=len(participants))
-    
+
     deliberation_id = deliberation_engine.start_deliberation(
         proposal=proposal,
         participants=participants,
         topic=topic,
         max_rounds=max_rounds,
     )
-    
+
     return {
         "deliberation_id": deliberation_id,
         "proposal": proposal,
@@ -661,12 +661,12 @@ async def submit_deliberation_position(
     """
     agent_id = auth["agent_id"]
     logger.info("submitting_position", deliberation_id=deliberation_id, agent_id=agent_id)
-    
+
     try:
         position_enum = Position(position.lower())
     except ValueError:
         raise HTTPException(status_code=400, detail=f"Invalid position. Must be one of: {[p.value for p in Position]}")
-    
+
     success = deliberation_engine.submit_position(
         deliberation_id=deliberation_id,
         agent_id=agent_id,
@@ -674,10 +674,10 @@ async def submit_deliberation_position(
         confidence=confidence,
         reasoning=reasoning,
     )
-    
+
     if not success:
         raise HTTPException(status_code=400, detail="Failed to submit position")
-    
+
     return {
         "deliberation_id": deliberation_id,
         "agent_id": agent_id,
@@ -711,12 +711,12 @@ async def submit_deliberation_argument(
     """
     agent_id = auth["agent_id"]
     logger.info("submitting_argument", deliberation_id=deliberation_id, agent_id=agent_id)
-    
+
     try:
         position_enum = Position(position.lower())
     except ValueError:
         raise HTTPException(status_code=400, detail=f"Invalid position. Must be one of: {[p.value for p in Position]}")
-    
+
     argument = Argument(
         agent_id=agent_id,
         position=position_enum,
@@ -724,15 +724,15 @@ async def submit_deliberation_argument(
         evidence_refs=evidence_refs or [],
         confidence=confidence,
     )
-    
+
     argument_id = deliberation_engine.submit_argument(
         deliberation_id=deliberation_id,
         argument=argument,
     )
-    
+
     if not argument_id:
         raise HTTPException(status_code=400, detail="Failed to submit argument")
-    
+
     return {
         "argument_id": argument_id,
         "deliberation_id": deliberation_id,
@@ -767,22 +767,22 @@ async def submit_deliberation_evidence(
     """
     agent_id = auth["agent_id"]
     logger.info("submitting_evidence", deliberation_id=deliberation_id, agent_id=agent_id)
-    
+
     evidence = Evidence(
         argument_id=argument_id,
         content=content,
         source=source,
         quality_score=quality_score,
     )
-    
+
     evidence_id = deliberation_engine.submit_evidence(
         deliberation_id=deliberation_id,
         evidence=evidence,
     )
-    
+
     if not evidence_id:
         raise HTTPException(status_code=400, detail="Failed to submit evidence")
-    
+
     return {
         "evidence_id": evidence_id,
         "argument_id": argument_id,
@@ -805,12 +805,12 @@ async def run_deliberation_round(deliberation_id: str, auth: dict = Depends(get_
     """
     agent_id = auth["agent_id"]
     logger.info("running_deliberation_round", deliberation_id=deliberation_id, agent_id=agent_id)
-    
+
     round_result = deliberation_engine.run_deliberation_round(deliberation_id=deliberation_id)
-    
+
     if not round_result:
         raise HTTPException(status_code=400, detail="Failed to run deliberation round")
-    
+
     return {
         "deliberation_id": deliberation_id,
         "round_number": round_result.round_number,
@@ -834,10 +834,10 @@ async def get_deliberation_state(deliberation_id: str, auth: dict = Depends(get_
         Current deliberation state including positions and consensus score
     """
     state = deliberation_engine.get_deliberation_state(deliberation_id=deliberation_id)
-    
+
     if not state:
         raise HTTPException(status_code=404, detail="Deliberation not found")
-    
+
     return {
         "deliberation_id": deliberation_id,
         "state": state.state.value,
@@ -868,7 +868,7 @@ async def get_deliberation_history(
         List of deliberation rounds
     """
     history = deliberation_engine.get_round_history(deliberation_id=deliberation_id, limit=limit)
-    
+
     return {
         "deliberation_id": deliberation_id,
         "rounds": [
@@ -898,12 +898,12 @@ async def finalize_deliberation(deliberation_id: str, auth: dict = Depends(get_a
     """
     agent_id = auth["agent_id"]
     logger.info("finalizing_deliberation", deliberation_id=deliberation_id, agent_id=agent_id)
-    
+
     result = deliberation_engine.finalize_deliberation(deliberation_id=deliberation_id)
-    
+
     if not result:
         raise HTTPException(status_code=400, detail="Failed to finalize deliberation")
-    
+
     return {
         "deliberation_id": deliberation_id,
         "final_position": result.final_position.value,
@@ -929,7 +929,7 @@ async def cleanup_deliberation(deliberation_id: str, auth: dict = Depends(get_au
         Cleanup confirmation
     """
     deliberation_engine.cleanup_deliberation(deliberation_id=deliberation_id)
-    
+
     return {
         "deliberation_id": deliberation_id,
         "cleaned_up": True,
@@ -956,10 +956,10 @@ async def get_decision_audit(decision_id: str, auth: dict = Depends(get_authenti
         Complete audit record with deliberation history and votes
     """
     audit_record = audit_trail.get_decision_audit(decision_id=decision_id)
-    
+
     if not audit_record:
         raise HTTPException(status_code=404, detail="Decision audit not found")
-    
+
     return audit_record.to_dict()
 
 
@@ -997,14 +997,14 @@ async def verify_decision_audit(decision_id: str, auth: dict = Depends(get_authe
         Verification result with hash validation
     """
     verification = audit_trail.verify_audit_integrity(decision_id=decision_id)
-    
+
     if not verification.get("valid"):
         return {
             "decision_id": decision_id,
             "valid": False,
             "error": verification.get("error", "Unknown verification failure"),
         }
-    
+
     return verification
 
 

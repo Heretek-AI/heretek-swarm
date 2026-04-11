@@ -9,16 +9,17 @@ Reference: OpenClaw A2A Protocol + MiniMax Audit
 SECURITY: Token-based authentication required for all connections.
 """
 
-import os
-import json
 import asyncio
+import json
+import os
 import secrets
-from datetime import datetime, timedelta, timezone
-from typing import Dict, List, Optional, Any, Tuple
 from dataclasses import dataclass, field
+from datetime import datetime, timedelta, timezone
 from enum import Enum
-from fastapi import WebSocket, WebSocketDisconnect
+from typing import Any, Dict, List, Optional, Tuple
+
 import structlog
+from fastapi import WebSocket, WebSocketDisconnect
 
 from .event_mesh import EventMesh
 
@@ -30,12 +31,12 @@ _logger = structlog.get_logger(__name__)
 
 class AuthTokenManager:
     """Manages authentication tokens for A2A connections."""
-    
+
     def __init__(self, secret_key: Optional[str]):
         self.secret_key = secret_key or os.environ.get("A2A_SECRET_KEY", secrets.token_hex(32))
         self._valid_tokens: Dict[str, Dict[str, Any]] = {}
         self._token_expiry = timedelta(hours=24)
-    
+
     def generate_token(self, agent_id: str, metadata: Optional[Dict]) -> str:
         """Generate an authentication token for an agent."""
         _token = secrets.token_urlsafe(32)
@@ -46,7 +47,7 @@ class AuthTokenManager:
             "metadata": metadata or {},
         }
         return token
-    
+
     def validate_token(self, token: str) -> Tuple[bool, Optional[str], Optional[str]]:
         """
         Validate an authentication token.
@@ -56,21 +57,21 @@ class AuthTokenManager:
         """
         if token not in self._valid_tokens:
             return False, None, "Invalid token"
-        
+
         _token_data = self._valid_tokens[token]
         if datetime.now(timezone.utc) > token_data["expires_at"]:
             del self._valid_tokens[token]
             return False, None, "Token expired"
-        
+
         return True, token_data["agent_id"], None
-    
+
     def revoke_token(self, token: str) -> bool:
         """Revoke a token."""
         if token in self._valid_tokens:
             del self._valid_tokens[token]
             return True
         return False
-    
+
     def cleanup_expired(self) -> int:
         """Remove expired tokens. Returns count of removed tokens."""
         now = datetime.now(timezone.utc)
@@ -113,14 +114,14 @@ class A2AServer:
     
     Runs on port 18789, manages agent connections and message routing.
     """
-    
+
     def __init__(self, event_mesh: EventMesh):
         self.event_mesh = event_mesh
         self.agents: Dict[str, AgentInfo] = {}
         self._lock = asyncio.Lock()
         self._message_log: List[Dict] = []
         self._max_log_size = 1000
-    
+
     async def handle_connection(self, websocket: WebSocket, agent_id: str, auth_token: Optional[str]) -> None:
         """
         Handle new agent connection with authentication.
@@ -145,7 +146,7 @@ class A2AServer:
                 pass
             logger.warning("a2a_connection_rejected_no_auth", agent_id=agent_id)
             return
-        
+
         # Validate token
         is_valid, valid_agent_id, error = token_manager.validate_token(auth_token)
         if not is_valid:
@@ -160,7 +161,7 @@ class A2AServer:
                 pass
             logger.warning("a2a_connection_rejected_invalid_token", agent_id=agent_id, error=error)
             return
-        
+
         # SECURITY: Verify agent_id matches token
         if valid_agent_id != agent_id:
             try:
@@ -178,18 +179,18 @@ class A2AServer:
                 _token_agent = valid_agent_id
             )
             return
-        
+
         # Accept connection
         await websocket.accept()
         logger.info("a2a_connection_accepted", agent_id=agent_id, authenticated=True)
-        
+
         # Register agent
         _agent_info = AgentInfo(id=agent_id, websocket=websocket)
         async with self._lock:
             self.agents[agent_id] = agent_info
-        
+
         await self.event_mesh.register(agent_id, websocket)
-        
+
         # Send handshake response
         await websocket.send_json({
             "type": MessageType.HANDSHAKE.value,
@@ -199,7 +200,7 @@ class A2AServer:
             "server": "heretek-swarm-a2a",
             "authenticated": True
         })
-        
+
         # Log connection
         self._log_message({
             "type": "connection",
@@ -208,7 +209,7 @@ class A2AServer:
             "authenticated": True,
             "timestamp": datetime.now(timezone.utc).isoformat()
         })
-        
+
         try:
             # Message loop
             while True:
@@ -225,7 +226,7 @@ class A2AServer:
             logger.info("a2a_agent_disconnected", agent_id=agent_id)
         finally:
             await self._cleanup_agent(agent_id)
-    
+
     async def _handle_message(self, agent_id: str, data: dict) -> None:
         """
         Handle incoming message from agent.
@@ -236,12 +237,12 @@ class A2AServer:
         """
         _msg_type = data.get("type", "message")
         logger.debug("a2a_message_received", agent_id=agent_id, type=msg_type)
-        
+
         # Update last activity
         async with self._lock:
             if agent_id in self.agents:
                 self.agents[agent_id].last_activity = datetime.now(timezone.utc)
-        
+
         # Route by message type
         if msg_type == MessageType.HANDSHAKE.value:
             await self._handle_handshake(agent_id, data)
@@ -255,12 +256,12 @@ class A2AServer:
             await self._handle_vote(agent_id, data)
         else:
             logger.warning("a2a_unknown_message_type", type=msg_type)
-    
+
     async def _handle_handshake(self, agent_id: str, _data: dict) -> None:
         """Handle handshake message."""
         logger.info("a2a_handshake", agent_id=agent_id)
         # Already handled in connection setup
-    
+
     async def _handle_discovery(self, agent_id: str, _data: dict) -> None:
         """
         Handle discovery request - return list of all agents.
@@ -279,16 +280,16 @@ class A2AServer:
                 }
                 for aid, info in self.agents.items()
             ]
-        
+
         _response = {
             "type": MessageType.DISCOVERY.value,
             "agents": agents_list,
             "count": len(agents_list),
             "timestamp": datetime.now(timezone.utc).isoformat()
         }
-        
+
         await self.event_mesh.send_to_json(agent_id, response)
-    
+
     async def _handle_message_broadcast(self, sender_id: str, data: dict) -> None:
         """
         Handle message broadcast to all agents.
@@ -304,13 +305,13 @@ class A2AServer:
             "metadata": data.get("metadata", {}),
             "timestamp": datetime.now(timezone.utc).isoformat()
         }
-        
+
         # Broadcast to all except sender
         await self.event_mesh.broadcast_json(message)
-        
+
         # Log message
         self._log_message(message)
-    
+
     async def _handle_proposal(self, agent_id: str, data: dict) -> None:
         """
         Handle consensus proposal.
@@ -327,15 +328,15 @@ class A2AServer:
             "details": data.get("details", {}),
             "timestamp": datetime.now(timezone.utc).isoformat()
         }
-        
+
         logger.info("a2a_proposal_created", proposal_id=proposal["id"], agent_id=agent_id)
-        
+
         # Broadcast to all agents
         await self.event_mesh.broadcast_json(proposal)
-        
+
         # Log
         self._log_message(proposal)
-    
+
     async def _handle_vote(self, agent_id: str, data: dict) -> None:
         """
         Handle consensus vote.
@@ -352,15 +353,15 @@ class A2AServer:
             "reason": data.get("reason", ""),
             "timestamp": datetime.now(timezone.utc).isoformat()
         }
-        
+
         logger.info("a2a_vote_cast", proposal_id=vote["proposal_id"], vote=vote["vote"])
-        
+
         # Broadcast vote
         await self.event_mesh.broadcast_json(vote)
-        
+
         # Log
         self._log_message(vote)
-    
+
     async def _cleanup_agent(self, agent_id: str) -> None:
         """
         Cleanup agent connection.
@@ -371,9 +372,9 @@ class A2AServer:
         async with self._lock:
             if agent_id in self.agents:
                 del self.agents[agent_id]
-        
+
         await self.event_mesh.unregister(agent_id)
-        
+
         # Log disconnection
         self._log_message({
             "type": "connection",
@@ -381,7 +382,7 @@ class A2AServer:
             "action": "disconnected",
             "timestamp": datetime.now(timezone.utc).isoformat()
         })
-    
+
     def _log_message(self, message: dict) -> None:
         """
         Log message to internal log with size limit.
@@ -390,15 +391,15 @@ class A2AServer:
             message: Message to log
         """
         self._message_log.append(message)
-        
+
         # Trim if over limit
         if len(self._message_log) > self._max_log_size:
             self._message_log = self._message_log[-self._max_log_size:]
-    
+
     def get_message_log(self, limit: int) -> List[Dict]:
         """Get recent message log."""
         return self._message_log[-limit:]
-    
+
     def get_statistics(self) -> dict:
         """Get server statistics."""
         return {
@@ -408,12 +409,12 @@ class A2AServer:
             "uptime": "active",
             "active_tokens": len(token_manager._valid_tokens),
         }
-    
+
     @staticmethod
     def generate_auth_token(agent_id: str, metadata: Optional[Dict]) -> str:
         """Generate an authentication token for an agent."""
         return token_manager.generate_token(agent_id, metadata)
-    
+
     @staticmethod
     def revoke_auth_token(token: str) -> bool:
         """Revoke an authentication token."""

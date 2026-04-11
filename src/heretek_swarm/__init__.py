@@ -4,12 +4,12 @@ Heretek Swarm Runtime Package.
 Provides agent runtime, character system, and tool registry for the swarm.
 """
 
-from .runtime.agent_runtime import AgentRuntime, AgentContext, AgentState
-from .tools import ToolRegistry
 from .autonomous_runtime import (
     AutonomousRuntime,
     RuntimeState,
 )
+from .runtime.agent_runtime import AgentContext, AgentRuntime, AgentState
+from .tools import ToolRegistry
 
 # Support both old dictionary-based and new class-based character systems
 # Note: characters module may not exist in all configurations
@@ -21,10 +21,10 @@ except ImportError:
         return None
 
 # New class-based character system
+import json
 from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any, Dict, List, Optional
-import json
 
 
 @dataclass
@@ -54,7 +54,7 @@ class Character:
     adjectives: List[str] = field(default_factory=list)
     goals: List[str] = field(default_factory=list)
     constraints: List[str] = field(default_factory=list)
-    
+
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "Character":
         """Create a Character from a dictionary."""
@@ -77,14 +77,14 @@ class Character:
             goals=data.get("goals", []),
             constraints=data.get("constraints", []),
         )
-    
+
     @classmethod
     def from_json(cls, json_path: Path) -> "Character":
         """Load a character from a JSON file."""
         with open(json_path, "r", encoding="utf-8") as f:
             data = json.load(f)
         return cls.from_dict(data)
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert character to dictionary."""
         return {
@@ -108,20 +108,20 @@ class Character:
 
 class CharacterRegistry:
     """Registry for loading and managing characters."""
-    
+
     def __init__(self, characters_dir: Optional[Path]):
         if characters_dir is None:
             characters_dir = Path(__file__).parent / "characters"
         self.characters_dir = Path(characters_dir)
         self._characters: Dict[str, Character] = {}
-    
+
     def load_character(self, name: str) -> Optional[Character]:
         """Load a character by name."""
         char_file = self.characters_dir / f"{name.lower()}.json"
         if char_file.exists():
             return Character.from_json(char_file)
         return None
-    
+
     def get_character(self, name: str) -> Optional[Character]:
         """Get a character, loading if necessary."""
         if name not in self._characters:

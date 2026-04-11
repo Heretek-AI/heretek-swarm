@@ -37,18 +37,18 @@ Usage:
     return PlainTextResponse(get_metrics().export_prometheus())
 """
 
+import time
+from typing import Dict, Optional
+
 from prometheus_client import (
-    Gauge,
-    Counter,
-    Histogram,
-    CollectorRegistry,
-    generate_latest,
     CONTENT_TYPE_LATEST,
     REGISTRY,
+    CollectorRegistry,
+    Counter,
+    Gauge,
+    Histogram,
+    generate_latest,
 )
-from typing import Optional, Dict, Any
-import time
-from functools import wraps
 
 # Default registry (use default to allow automatic metric collection)
 DEFAULT_REGISTRY = REGISTRY
@@ -431,10 +431,10 @@ def setup_metrics_middleware(app) -> None:
         app = FastAPI()
         setup_metrics_middleware(app)
     """
+    import time
+
     from starlette.middleware.base import BaseHTTPMiddleware
     from starlette.requests import Request
-    from starlette.responses import Response
-    import time
 
     class PrometheusMiddleware(BaseHTTPMiddleware):
         async def dispatch(self, request: Request, call_next):

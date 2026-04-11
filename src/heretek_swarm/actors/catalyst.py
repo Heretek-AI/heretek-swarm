@@ -22,14 +22,14 @@ from typing import Any, Dict, List, Optional, Set
 
 import structlog
 
-from heretek_swarm.actors.base import AgentActor, ActorMessage
+from heretek_swarm.actors.base import ActorMessage, AgentActor
 from heretek_swarm.actors.validation import validate_message
 
 # Session 44: Collective Learning Integration
 from heretek_swarm.collective.learning import PatternExtractor, PatternType
 
 # Session 44: Consensus Integration
-from heretek_swarm.consensus.swarm_deliberation import SwarmDeliberationEngine, Position
+from heretek_swarm.consensus.swarm_deliberation import Position, SwarmDeliberationEngine
 
 # Session 44: Memory Optimization Integration
 from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer, AccessTier
@@ -186,18 +186,18 @@ class CatalystAgent(AgentActor):
 
         # Session 44: Collective Learning Integration
         self.pattern_extractor = pattern_extractor or PatternExtractor(min_support=3, min_confidence=0.6)
-        
+
         # Session 44: Consensus Integration
         self.deliberation_engine = deliberation_engine or SwarmDeliberationEngine(
             _max_rounds = 5, consensus_threshold=0.75, min_participants=2
         )
-        
+
         # Session 44: Memory Optimization Integration
         self.access_analyzer = access_analyzer or AccessPatternAnalyzer()
-        
+
         # Session 44: Zero-Trust Validation
         self.zero_trust_validator = zero_trust_validator or ZeroTrustValidator()
-        
+
         # Session 44: Integration state
         self._active_deliberations: Dict[str, str] = {}  # change_id -> deliberation_id
         self._pattern_emitted_changes: Set[str] = set()
@@ -910,10 +910,10 @@ class CatalystAgent(AgentActor):
         """
         if not self.pattern_extractor:
             return
-        
+
         if change.change_id in self._pattern_emitted_changes:
             return
-        
+
         try:
             await self.pattern_extractor.analyze_message(
                 _message_id = f"change_{change.change_id}",
@@ -929,7 +929,7 @@ class CatalystAgent(AgentActor):
                 },
                 _timestamp = change.completed_at.isoformat() if change.completed_at else datetime.now(timezone.utc).isoformat(),
             )
-            
+
             self._pattern_emitted_changes.add(change.change_id)
             logger.info("change_pattern_emitted", change_id=change.change_id, outcome=outcome)
         except Exception as e:
@@ -939,7 +939,7 @@ class CatalystAgent(AgentActor):
         """Consume patterns from collective learning for change guidance."""
         if not self.pattern_extractor:
             return []
-        
+
         try:
             _patterns = await self.pattern_extractor.extract_patterns(
                 _time_window_hours = 24,
@@ -958,7 +958,7 @@ class CatalystAgent(AgentActor):
         """Initiate swarm deliberation for high-impact change approval."""
         if not self.deliberation_engine:
             return None
-        
+
         try:
             _deliberation_id = f"delib_{change.change_id}"
             self.deliberation_engine.start_deliberation(
@@ -968,7 +968,7 @@ class CatalystAgent(AgentActor):
                 _domain = "change_management",
             )
             self._active_deliberations[change.change_id] = deliberation_id
-            
+
             logger.info("deliberation_initiated", deliberation_id=deliberation_id, change_id=change.change_id)
             return deliberation_id
         except Exception as e:
@@ -979,11 +979,11 @@ class CatalystAgent(AgentActor):
         """Submit agent position in change deliberation."""
         if not self.deliberation_engine:
             return False
-        
+
         _deliberation_id = self._active_deliberations.get(change.change_id)
         if not deliberation_id:
             return False
-        
+
         try:
             _success = self.deliberation_engine.submit_position(
                 _deliberation_id = deliberation_id,
@@ -992,14 +992,14 @@ class CatalystAgent(AgentActor):
                 _confidence = confidence,
                 _argument = argument,
             )
-            
+
             if success and self.access_analyzer:
                 self.access_analyzer.record_access(
                     _memory_id = f"delib_{deliberation_id}_{agent_id}",
                     _access_type = "write",
                     agent_id=agent_id,
                 )
-            
+
             return success
         except Exception as e:
             logger.error("failed_to_submit_deliberation_position", deliberation_id=deliberation_id, error=str(e))
@@ -1009,14 +1009,14 @@ class CatalystAgent(AgentActor):
         """Finalize deliberation and apply result to change approval."""
         if not self.deliberation_engine:
             return None
-        
+
         _deliberation_id = self._active_deliberations.get(change.change_id)
         if not deliberation_id:
             return None
-        
+
         try:
             _result = self.deliberation_engine.finalize_deliberation(deliberation_id)
-            
+
             if result:
                 change.approval_status[f"deliberation_{deliberation_id}"] = (
                     result.consensus_score >= 0.75
@@ -1026,12 +1026,12 @@ class CatalystAgent(AgentActor):
                     "final_position": result.final_position.value,
                     "consensus_score": result.consensus_score,
                 }
-                
+
                 self.deliberation_engine.cleanup_deliberation(deliberation_id)
                 del self._active_deliberations[change.change_id]
-                
+
                 logger.info("deliberation_finalized", deliberation_id=deliberation_id)
-            
+
             return result
         except Exception as e:
             logger.error("failed_to_finalize_deliberation", deliberation_id=deliberation_id, error=str(e))
@@ -1045,7 +1045,7 @@ class CatalystAgent(AgentActor):
         """Track memory access patterns for change data."""
         if not self.access_analyzer:
             return
-        
+
         _memory_id = f"change_{change_id}"
         self.access_analyzer.record_access(
             _memory_id = memory_id,
@@ -1057,7 +1057,7 @@ class CatalystAgent(AgentActor):
         """Get memory tier classification for a change."""
         if not self.access_analyzer:
             return AccessTier.COLD
-        
+
         _memory_id = f"change_{change_id}"
         _profile = self.access_analyzer.get_profile(memory_id)
         return profile.tier if profile else AccessTier.COLD
@@ -1066,7 +1066,7 @@ class CatalystAgent(AgentActor):
         """Prefetch changes an agent is likely to need."""
         if not self.access_analyzer:
             return []
-        
+
         try:
             _predicted_memories = self.access_analyzer.predict_agent_access(agent_id)
             return [

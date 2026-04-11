@@ -1,21 +1,19 @@
 """Tests for emergent pattern detection system."""
 
+from unittest.mock import AsyncMock, Mock
+
 import pytest
-from datetime import datetime, timedelta, timezone
-from typing import List, Dict, Any
-from unittest.mock import Mock, AsyncMock, patch
-import uuid
 
 from heretek_swarm.collective.emergent_detection import (
-    EmergentPatternDetector,
+    AgentBehaviorSnapshot,
+    CollectiveBehavior,
+    DetectionEvent,
+    EmergenceAnalyzer,
+    EmergenceDetectionConfig,
+    EmergenceLevel,
     EmergentPattern,
     EmergentPatternClass,
-    EmergenceLevel,
-    CollectiveBehavior,
-    AgentBehaviorSnapshot,
-    DetectionEvent,
-    EmergenceDetectionConfig,
-    EmergenceAnalyzer,
+    EmergentPatternDetector,
 )
 
 
@@ -672,7 +670,7 @@ class TestEmergentDetectionIntegration:
         """Test analyzer with populated detector data."""
         # Create detector
         detector = EmergentPatternDetector()
-        
+
         # Populate detector with data
         for i in range(10):
             snapshot = AgentBehaviorSnapshot(

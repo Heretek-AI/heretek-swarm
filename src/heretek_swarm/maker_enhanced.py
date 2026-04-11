@@ -56,7 +56,7 @@ from typing import Any, Dict, List, Optional, Tuple
 import structlog
 
 from .expertise import AgentExpertiseProfiler
-from .maker import MAKERConsensus, ConsensusResult, ConsensusState, Vote
+from .maker import ConsensusResult, ConsensusState, MAKERConsensus, Vote
 
 # Evidence quality thresholds
 EVIDENCE_QUALITY_WEIGHT = 0.35  # Weight for evidence quality
@@ -626,7 +626,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
             List of (decision, weight) tuples
         """
         _weighted = []
-        
+
         # Get domain for expertise weighting
         _domain = None
         if consensus_id in self.decision_provenance:
@@ -637,7 +637,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
             ]
             if domain_agents:
                 _domain = domain_agents[0].replace("_domain:", "")
-        
+
         # Find matching enhanced votes and apply weights
         for vote in votes:
             # Look for matching enhanced vote
@@ -647,7 +647,7 @@ class EnhancedMAKERConsensus(MAKERConsensus):
                     if ev.vote.agent_id == vote.agent_id and ev.vote.decision == vote.decision:
                         enhanced_vote = ev
                         break
-            
+
             if enhanced_vote:
                 # Use pre-calculated vote weight
                 _weight = enhanced_vote.vote_weight
@@ -655,9 +655,9 @@ class EnhancedMAKERConsensus(MAKERConsensus):
                 # Create temporary enhanced vote for weighting
                 _temp_enhanced = EnhancedVote(vote=vote)
                 _weight = self.calculate_vote_weight(consensus_id, temp_enhanced, domain)
-            
+
             weighted.append((vote.decision, weight))
-        
+
         return weighted
 
     def _calculate_evidence_quality_score(self, enhanced_vote: EnhancedVote) -> float:

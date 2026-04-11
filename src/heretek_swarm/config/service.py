@@ -14,29 +14,29 @@ from typing import Any, Dict, List, Optional, TypeVar
 from uuid import UUID
 
 import structlog
-from sqlalchemy import select, delete
+from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from .models import (
-    UserConfiguration,
-    UserConfigurationCreate,
-    UserConfigurationUpdate,
-    LLMProvider,
-    LLMProviderCreate,
-    LLMProviderUpdate,
-    EmbeddingProvider,
-    EmbeddingProviderCreate,
-    EmbeddingProviderUpdate,
     AgentConfig,
     AgentConfigCreate,
     AgentConfigUpdate,
     ConfigAuditLog,
     ConfigCacheEntry,
+    ConfigType,
     ConfigurationExport,
     ConfigurationImport,
+    EmbeddingProvider,
+    EmbeddingProviderCreate,
+    EmbeddingProviderUpdate,
     ImportOptions,
     ImportResult,
-    ConfigType,
+    LLMProvider,
+    LLMProviderCreate,
+    LLMProviderUpdate,
+    UserConfiguration,
+    UserConfigurationCreate,
+    UserConfigurationUpdate,
 )
 
 # Fernet encryption for API keys
@@ -78,23 +78,23 @@ class ConfigurationService:
         self.database_url = database_url or os.environ.get("DATABASE_URL")
         if not self.database_url:
             raise ValueError("DATABASE_URL environment variable is required")
-        
+
         self._engine = create_async_engine(
             self.database_url,
             _echo = False,
             _pool_pre_ping = True,
         )
-        
+
         self._session_factory = async_sessionmaker(
             self._engine,
             _class_ = AsyncSession,
             _expire_on_commit = False,
         )
-        
+
         # In-memory cache for frequently accessed configurations
         self._cache: Dict[str, ConfigCacheEntry] = {}
         self._cache_ttl = timedelta(minutes=5)
-        
+
         # Initialize Fernet encryption for API keys
         self._fernet: Optional[Fernet] = None
         self._encryption_key = os.environ.get("CONFIG_ENCRYPTION_KEY")
@@ -102,7 +102,7 @@ class ConfigurationService:
             self._initialize_encryption()
         else:
             logger.warning("CONFIG_ENCRYPTION_KEY not set - API keys will not be encrypted")
-        
+
         logger.info("ConfigurationService initialized", database_url=self.database_url)
 
     def _initialize_encryption(self) -> None:
@@ -115,7 +115,7 @@ class ConfigurationService:
         if not CRYPTOGRAPHY_AVAILABLE:
             logger.error("cryptography package not installed - encryption disabled")
             return
-        
+
         try:
             # Handle both raw keys and URL-safe base64 encoded keys
             if len(self._encryption_key) == 44 and self._encryption_key.endswith('='):
@@ -124,7 +124,7 @@ class ConfigurationService:
             else:
                 # Raw key - encode it
                 key = base64.urlsafe_b64encode(self._encryption_key.encode().ljust(32))
-            
+
             self._fernet = Fernet(key)
             logger.info("API key encryption initialized")
         except Exception as e:
@@ -147,7 +147,7 @@ class ConfigurationService:
         if not self._fernet:
             # Return as-is if encryption not configured (backward compatibility)
             return api_key
-        
+
         try:
             _encrypted = self._fernet.encrypt(api_key.encode())
             return encrypted.decode()
@@ -171,7 +171,7 @@ class ConfigurationService:
         if not self._fernet:
             # Return as-is if encryption not configured (backward compatibility)
             return encrypted_key
-        
+
         try:
             _decrypted = self._fernet.decrypt(encrypted_key.encode())
             return decrypted.decode()
@@ -204,7 +204,7 @@ class ConfigurationService:
                     )
                 )
                 _configs = result.scalars().all()
-                
+
                 for config in configs:
                     _cache_key = f"config:{config.config_key}"
                     self._cache[cache_key] = ConfigCacheEntry(
@@ -238,14 +238,14 @@ class ConfigurationService:
         """Get a cached value if available and not expired."""
         _cache_key = self._get_cache_key(entity_type, key)
         _entry = self._cache.get(cache_key)
-        
+
         if entry is None:
             return None
-        
+
         if entry.expires_at and datetime.utcnow() > entry.expires_at:
             del self._cache[cache_key]
             return None
-        
+
         entry.access_count += 1
         entry.last_accessed_at = datetime.utcnow()
         return entry.cache_value.get("value")
@@ -269,7 +269,7 @@ class ConfigurationService:
         if cached is not None:
             logger.debug("Cache hit for config", key=config_key)
             return UserConfiguration(**cached)
-        
+
         async with self._session_factory() as session:
             _result = await session.execute(
                 select(UserConfiguration).where(
@@ -277,10 +277,10 @@ class ConfigurationService:
                 )
             )
             config = result.scalar_one_or_none()
-            
+
             if config:
                 self._set_cache("config", config_key, config.model_dump())
-            
+
             return config
 
     async def get_config_value(self, config_key: str, default: Any) -> Any:
@@ -311,12 +311,12 @@ class ConfigurationService:
         """
         async with self._session_factory() as session:
             _query = select(UserConfiguration)
-            
+
             if category:
                 _query = query.where(UserConfiguration.category == category)
-            
+
             _query = query.order_by(UserConfiguration.config_key).offset(offset).limit(limit)
-            
+
             _result = await session.execute(query)
             return list(result.scalars().all())
 
@@ -343,18 +343,18 @@ class ConfigurationService:
                 validation_schema=config.validation_schema,
                 updated_by=changed_by,
             )
-            
+
             # Validate if schema provided
             if config.validation_schema:
                 self._validate_config_value(
                     config.config_value,
                     config.validation_schema,
                 )
-            
+
             session.add(new_config)
             await session.commit()
             await session.refresh(new_config)
-            
+
             # Log the change
             await self._log_change(
                 session,
@@ -365,10 +365,10 @@ class ConfigurationService:
                 new_config.model_dump(),
                 changed_by,
             )
-            
+
             # Invalidate cache
             self._invalidate_cache("config", new_config.config_key)
-            
+
             logger.info("Configuration created", key=new_config.config_key)
             return new_config
 
@@ -391,33 +391,33 @@ class ConfigurationService:
                 )
             )
             config = result.scalar_one_or_none()
-            
+
             if not config:
                 return None
-            
+
             if not config.is_editable:
                 raise ValueError(f"Configuration {config_key} is not editable")
-            
+
             _old_value = config.model_dump()
-            
+
             _update_data = update.model_dump(exclude_unset=True)
             for field, value in update_data.items():
                 if value is not None:
                     setattr(config, field, value)
-            
+
             # Validate if schema exists
             if config.validation_schema and update.config_value is not None:
                 self._validate_config_value(
                     update.config_value,
                     config.validation_schema,
                 )
-            
+
             config.updated_at = datetime.utcnow()
             config.updated_by = changed_by
-            
+
             await session.commit()
             await session.refresh(config)
-            
+
             # Log the change
             await self._log_change(
                 session,
@@ -428,10 +428,10 @@ class ConfigurationService:
                 config.model_dump(),
                 changed_by,
             )
-            
+
             # Invalidate cache
             self._invalidate_cache("config", config_key)
-            
+
             logger.info("Configuration updated", key=config_key)
             return config
 
@@ -453,22 +453,22 @@ class ConfigurationService:
                 )
             )
             config = result.scalar_one_or_none()
-            
+
             if not config:
                 return False
-            
+
             if not config.is_editable:
                 raise ValueError(f"Configuration {config_key} is not deletable")
-            
+
             _old_value = config.model_dump()
-            
+
             await session.execute(
                 delete(UserConfiguration).where(
                     UserConfiguration.config_key == config_key
                 )
             )
             await session.commit()
-            
+
             # Log the change
             await self._log_change(
                 session,
@@ -479,10 +479,10 @@ class ConfigurationService:
                 None,
                 changed_by,
             )
-            
+
             # Invalidate cache
             self._invalidate_cache("config", config_key)
-            
+
             logger.info("Configuration deleted", key=config_key)
             return True
 
@@ -525,13 +525,13 @@ class ConfigurationService:
                 LLMProvider.priority,
                 LLMProvider.provider_name,
             )
-            
+
             if provider_type:
                 _query = query.where(LLMProvider.provider_type == provider_type)
-            
+
             if enabled_only and not include_disabled:
                 _query = query.where(LLMProvider.is_enabled == True)
-            
+
             _result = await session.execute(query)
             return list(result.scalars().all())
 
@@ -554,16 +554,16 @@ class ConfigurationService:
         """
         if not extra_config:
             return {}
-        
+
         _sensitive_keys = {'api_key', 'auth_token', 'secret', 'password', 'credential'}
         _encrypted_config = {}
-        
+
         for key, value in extra_config.items():
             if any(sensitive in key.lower() for sensitive in sensitive_keys) and isinstance(value, str):
                 encrypted_config[key] = self.encrypt_api_key(value)
             else:
                 encrypted_config[key] = value
-        
+
         return encrypted_config
 
     def _decrypt_extra_config(self, extra_config: Dict[str, Any]) -> Dict[str, Any]:
@@ -572,10 +572,10 @@ class ConfigurationService:
         """
         if not extra_config:
             return {}
-        
+
         _sensitive_keys = {'api_key', 'auth_token', 'secret', 'password', 'credential'}
         _decrypted_config = {}
-        
+
         for key, value in extra_config.items():
             if any(sensitive in key.lower() for sensitive in sensitive_keys) and isinstance(value, str):
                 try:
@@ -585,7 +585,7 @@ class ConfigurationService:
                     decrypted_config[key] = value
             else:
                 decrypted_config[key] = value
-        
+
         return decrypted_config
 
     async def create_llm_provider(self, provider: LLMProviderCreate, changed_by: Optional[str]) -> LLMProvider:
@@ -601,14 +601,14 @@ class ConfigurationService:
                     )
                     .values(is_default=False)
                 )
-            
+
             # Encrypt API key in extra_config if present
             extra_config = self._encrypt_extra_config(provider.extra_config or {})
-            
+
             # Also encrypt api_key if passed in extra_config
             if hasattr(provider, 'api_key') and provider.api_key:
                 extra_config['api_key'] = self.encrypt_api_key(provider.api_key)
-            
+
             _new_provider = LLMProvider(
                 provider_name=provider.provider_name,
                 provider_type=provider.provider_type,
@@ -629,11 +629,11 @@ class ConfigurationService:
                 _priority = provider.priority,
                 extra_config=extra_config,
             )
-            
+
             session.add(new_provider)
             await session.commit()
             await session.refresh(new_provider)
-            
+
             # Log the change
             await self._log_change(
                 session,
@@ -644,7 +644,7 @@ class ConfigurationService:
                 new_provider.model_dump(),
                 changed_by,
             )
-            
+
             logger.info("LLM provider created", name=new_provider.provider_name)
             return new_provider
 
@@ -655,17 +655,17 @@ class ConfigurationService:
                 select(LLMProvider).where(LLMProvider.id == provider_id)
             )
             provider = result.scalar_one_or_none()
-            
+
             if not provider:
                 return None
-            
+
             _old_value = provider.model_dump()
-            
+
             _update_data = update.model_dump(exclude_unset=True)
             for field, value in update_data.items():
                 if value is not None:
                     setattr(provider, field, value)
-            
+
             # If setting as default, unset other defaults of same type
             if update.is_default:
                 await session.execute(
@@ -677,12 +677,12 @@ class ConfigurationService:
                     )
                     .values(is_default=False)
                 )
-            
+
             provider.updated_at = datetime.utcnow()
-            
+
             await session.commit()
             await session.refresh(provider)
-            
+
             # Log the change
             await self._log_change(
                 session,
@@ -693,7 +693,7 @@ class ConfigurationService:
                 provider.model_dump(),
                 changed_by,
             )
-            
+
             logger.info("LLM provider updated", name=provider.provider_name)
             return provider
 
@@ -704,17 +704,17 @@ class ConfigurationService:
                 select(LLMProvider).where(LLMProvider.id == provider_id)
             )
             provider = result.scalar_one_or_none()
-            
+
             if not provider:
                 return False
-            
+
             _old_value = provider.model_dump()
-            
+
             await session.execute(
                 delete(LLMProvider).where(LLMProvider.id == provider_id)
             )
             await session.commit()
-            
+
             # Log the change
             await self._log_change(
                 session,
@@ -725,7 +725,7 @@ class ConfigurationService:
                 None,
                 changed_by,
             )
-            
+
             logger.info("LLM provider deleted", name=provider.provider_name)
             return True
 
@@ -774,13 +774,13 @@ class ConfigurationService:
                 EmbeddingProvider.priority,
                 EmbeddingProvider.provider_name,
             )
-            
+
             if provider_type:
                 _query = query.where(EmbeddingProvider.provider_type == provider_type)
-            
+
             if enabled_only:
                 _query = query.where(EmbeddingProvider.is_enabled == True)
-            
+
             _result = await session.execute(query)
             return list(result.scalars().all())
 
@@ -808,14 +808,14 @@ class ConfigurationService:
                     )
                     .values(is_default=False)
                 )
-            
+
             # Encrypt API key in extra_config if present
             extra_config = self._encrypt_extra_config(provider.extra_config or {})
-            
+
             # Also encrypt api_key if passed in extra_config
             if hasattr(provider, 'api_key') and provider.api_key:
                 extra_config['api_key'] = self.encrypt_api_key(provider.api_key)
-            
+
             _new_provider = EmbeddingProvider(
                 provider_name=provider.provider_name,
                 provider_type=provider.provider_type,
@@ -832,11 +832,11 @@ class ConfigurationService:
                 _priority = provider.priority,
                 extra_config=extra_config,
             )
-            
+
             session.add(new_provider)
             await session.commit()
             await session.refresh(new_provider)
-            
+
             # Log the change
             await self._log_change(
                 session,
@@ -847,7 +847,7 @@ class ConfigurationService:
                 new_provider.model_dump(),
                 changed_by,
             )
-            
+
             logger.info("Embedding provider created", name=new_provider.provider_name)
             return new_provider
 
@@ -860,17 +860,17 @@ class ConfigurationService:
                 )
             )
             provider = result.scalar_one_or_none()
-            
+
             if not provider:
                 return None
-            
+
             _old_value = provider.model_dump()
-            
+
             _update_data = update.model_dump(exclude_unset=True)
             for field, value in update_data.items():
                 if value is not None:
                     setattr(provider, field, value)
-            
+
             # If setting as default, unset other defaults of same type
             if update.is_default:
                 await session.execute(
@@ -882,12 +882,12 @@ class ConfigurationService:
                     )
                     .values(is_default=False)
                 )
-            
+
             provider.updated_at = datetime.utcnow()
-            
+
             await session.commit()
             await session.refresh(provider)
-            
+
             # Log the change
             await self._log_change(
                 session,
@@ -898,7 +898,7 @@ class ConfigurationService:
                 provider.model_dump(),
                 changed_by,
             )
-            
+
             logger.info("Embedding provider updated", name=provider.provider_name)
             return provider
 
@@ -911,19 +911,19 @@ class ConfigurationService:
                 )
             )
             provider = result.scalar_one_or_none()
-            
+
             if not provider:
                 return False
-            
+
             _old_value = provider.model_dump()
-            
+
             await session.execute(
                 delete(EmbeddingProvider).where(
                     EmbeddingProvider.id == provider_id
                 )
             )
             await session.commit()
-            
+
             # Log the change
             await self._log_change(
                 session,
@@ -934,7 +934,7 @@ class ConfigurationService:
                 None,
                 changed_by,
             )
-            
+
             logger.info("Embedding provider deleted", name=provider.provider_name)
             return True
 
@@ -971,12 +971,12 @@ class ConfigurationService:
                 AgentConfig.agent_type == agent_type,
                 AgentConfig.is_active == True,
             )
-            
+
             if agent_id:
                 _query = query.where(AgentConfig.agent_id == agent_id)
             else:
                 _query = query.where(AgentConfig.is_default_for_type == True)
-            
+
             _result = await session.execute(query)
             return result.scalar_one_or_none()
 
@@ -987,13 +987,13 @@ class ConfigurationService:
                 AgentConfig.agent_type,
                 AgentConfig.config_name,
             )
-            
+
             if agent_type:
                 _query = query.where(AgentConfig.agent_type == agent_type)
-            
+
             if active_only:
                 _query = query.where(AgentConfig.is_active == True)
-            
+
             _result = await session.execute(query)
             return list(result.scalars().all())
 
@@ -1010,7 +1010,7 @@ class ConfigurationService:
                     )
                     .values(is_default_for_type=False)
                 )
-            
+
             _new_config = AgentConfig(
                 agent_type=config.agent_type,
                 _agent_id = config.agent_id,
@@ -1024,11 +1024,11 @@ class ConfigurationService:
                 _tags = config.tags or [],
                 _created_by = changed_by,
             )
-            
+
             session.add(new_config)
             await session.commit()
             await session.refresh(new_config)
-            
+
             # Log the change
             await self._log_change(
                 session,
@@ -1039,7 +1039,7 @@ class ConfigurationService:
                 new_config.model_dump(),
                 changed_by,
             )
-            
+
             logger.info("Agent config created", name=new_config.config_name)
             return new_config
 
@@ -1050,17 +1050,17 @@ class ConfigurationService:
                 select(AgentConfig).where(AgentConfig.id == config_id)
             )
             config = result.scalar_one_or_none()
-            
+
             if not config:
                 return None
-            
+
             _old_value = config.model_dump()
-            
+
             _update_data = update.model_dump(exclude_unset=True)
             for field, value in update_data.items():
                 if value is not None:
                     setattr(config, field, value)
-            
+
             # If setting as default for type, unset other defaults
             if update.is_default_for_type:
                 await session.execute(
@@ -1072,13 +1072,13 @@ class ConfigurationService:
                     )
                     .values(is_default_for_type=False)
                 )
-            
+
             config.updated_at = datetime.utcnow()
             config.updated_by = changed_by
-            
+
             await session.commit()
             await session.refresh(config)
-            
+
             # Log the change
             await self._log_change(
                 session,
@@ -1089,7 +1089,7 @@ class ConfigurationService:
                 config.model_dump(),
                 changed_by,
             )
-            
+
             logger.info("Agent config updated", name=config.config_name)
             return config
 
@@ -1100,17 +1100,17 @@ class ConfigurationService:
                 select(AgentConfig).where(AgentConfig.id == config_id)
             )
             config = result.scalar_one_or_none()
-            
+
             if not config:
                 return False
-            
+
             _old_value = config.model_dump()
-            
+
             await session.execute(
                 delete(AgentConfig).where(AgentConfig.id == config_id)
             )
             await session.commit()
-            
+
             # Log the change
             await self._log_change(
                 session,
@@ -1121,7 +1121,7 @@ class ConfigurationService:
                 None,
                 changed_by,
             )
-            
+
             logger.info("Agent config deleted", name=config.config_name)
             return True
 
@@ -1138,7 +1138,7 @@ class ConfigurationService:
                 k for k in old_value.keys()
                 if k in new_value and old_value[k] != new_value[k]
             ]
-        
+
         _audit_log = ConfigAuditLog(
             entity_type=entity_type,
             entity_id=entity_id,
@@ -1149,7 +1149,7 @@ class ConfigurationService:
             _changed_by = changed_by,
             _change_reason = reason,
         )
-        
+
         session.add(audit_log)
 
     async def get_audit_log(self, entity_type: Optional[str], entity_id: Optional[UUID], limit: int) -> List[ConfigAuditLog]:
@@ -1158,13 +1158,13 @@ class ConfigurationService:
             _query = select(ConfigAuditLog).order_by(
                 ConfigAuditLog.changed_at.desc()
             ).limit(limit)
-            
+
             if entity_type:
                 _query = query.where(ConfigAuditLog.entity_type == entity_type)
-            
+
             if entity_id:
                 _query = query.where(ConfigAuditLog.entity_id == entity_id)
-            
+
             _result = await session.execute(query)
             return list(result.scalars().all())
 
@@ -1180,22 +1180,22 @@ class ConfigurationService:
                 select(UserConfiguration)
             )
             _user_configs = list(user_configs_result.scalars().all())
-            
+
             _llm_providers_result = await session.execute(
                 select(LLMProvider)
             )
             llm_providers = list(llm_providers_result.scalars().all())
-            
+
             _embedding_providers_result = await session.execute(
                 select(EmbeddingProvider)
             )
             embedding_providers = list(embedding_providers_result.scalars().all())
-            
+
             _agent_configs_result = await session.execute(
                 select(AgentConfig)
             )
             agent_configs = list(agent_configs_result.scalars().all())
-            
+
             return ConfigurationExport(
                 _version = "1.0",
                 _exported_at = datetime.utcnow(),
@@ -1209,7 +1209,7 @@ class ConfigurationService:
     async def import_configurations(self, import_data: ConfigurationImport, options: ImportOptions, changed_by: Optional[str]) -> ImportResult:
         """Import configurations from a bundle."""
         _result = ImportResult(success=True)
-        
+
         try:
             # Import user configurations
             if options.import_user_configs and import_data.user_configurations:
@@ -1230,7 +1230,7 @@ class ConfigurationService:
                                 result.error_count.get("user_configurations", 0) + 1
                             )
                             result.errors.append(f"User config import error: {e}")
-            
+
             # Import LLM providers
             if options.import_llm_providers and import_data.llm_providers:
                 for provider_data in import_data.llm_providers:
@@ -1250,7 +1250,7 @@ class ConfigurationService:
                                 result.error_count.get("llm_providers", 0) + 1
                             )
                             result.errors.append(f"LLM provider import error: {e}")
-            
+
             # Import embedding providers
             if options.import_embedding_providers and import_data.embedding_providers:
                 for provider_data in import_data.embedding_providers:
@@ -1270,7 +1270,7 @@ class ConfigurationService:
                                 result.error_count.get("embedding_providers", 0) + 1
                             )
                             result.errors.append(f"Embedding provider import error: {e}")
-            
+
             # Import agent configs
             if options.import_agent_configs and import_data.agent_configs:
                 for config_data in import_data.agent_configs:
@@ -1290,11 +1290,11 @@ class ConfigurationService:
                                 result.error_count.get("agent_configs", 0) + 1
                             )
                             result.errors.append(f"Agent config import error: {e}")
-            
+
         except Exception as e:
             result.success = False
             result.errors.append(f"Import failed: {e}")
-        
+
         return result
 
     # =========================================================================
@@ -1323,27 +1323,27 @@ class ConfigurationService:
                 "array": list,
                 "object": dict,
             }
-            
+
             _expected_python_type = type_map.get(expected_type)
             if expected_python_type and not isinstance(value, expected_python_type):
                 raise ValueError(
                     f"Expected type {expected_type}, got {type(value).__name__}"
                 )
-        
+
         # Min/max validation for numbers
         if isinstance(value, (int, float)):
             if "minimum" in schema and value < schema["minimum"]:
                 raise ValueError(f"Value must be >= {schema['minimum']}")
             if "maximum" in schema and value > schema["maximum"]:
                 raise ValueError(f"Value must be <= {schema['maximum']}")
-        
+
         # Min/max length for strings
         if isinstance(value, str):
             if "minLength" in schema and len(value) < schema["minLength"]:
                 raise ValueError(f"String length must be >= {schema['minLength']}")
             if "maxLength" in schema and len(value) > schema["maxLength"]:
                 raise ValueError(f"String length must be <= {schema['maxLength']}")
-        
+
         # Enum validation
         if "enum" in schema and value not in schema["enum"]:
             raise ValueError(f"Value must be one of: {schema['enum']}")
@@ -1367,7 +1367,7 @@ class ConfigurationService:
             "skipped": [],
             "errors": [],
         }
-        
+
         # Define environment variable mappings
         _env_mappings = [
             # Rate limiting
@@ -1381,16 +1381,16 @@ class ConfigurationService:
             ("CONSENSUS_MIN_VOTES", "consensus.min_votes", ConfigType.INTEGER),
             ("CONSENSUS_CONFIDENCE_THRESHOLD", "consensus.confidence_threshold", ConfigType.FLOAT),
         ]
-        
+
         for env_var, config_key, config_type in env_mappings:
             _env_value = os.environ.get(env_var)
-            
+
             if env_value is None:
                 migration_result["skipped"].append(
                     f"{env_var} not set in environment"
                 )
                 continue
-            
+
             try:
                 # Convert value based on type
                 if config_type == ConfigType.BOOLEAN:
@@ -1401,16 +1401,16 @@ class ConfigurationService:
                     _converted_value = float(env_value)
                 else:
                     _converted_value = env_value
-                
+
                 # Check if config already exists
                 _existing = await self.get_config(config_key)
-                
+
                 if existing:
                     migration_result["skipped"].append(
                         f"{config_key} already exists in database"
                     )
                     continue
-                
+
                 # Create new configuration
                 _config = UserConfigurationCreate(
                     _config_key = config_key,
@@ -1419,17 +1419,17 @@ class ConfigurationService:
                     description=f"Migrated from {env_var} environment variable",
                     _category = config_key.split(".")[0] if "." in config_key else "general",
                 )
-                
+
                 await self.create_config(config, changed_by)
                 migration_result["migrated"].append(
                     f"Migrated {env_var} -> {config_key}"
                 )
-                
+
             except Exception as e:
                 migration_result["errors"].append(
                     f"Error migrating {env_var}: {e}"
                 )
-        
+
         logger.info("Environment migration complete", result=migration_result)
         return migration_result
 

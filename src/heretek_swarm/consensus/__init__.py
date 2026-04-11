@@ -19,6 +19,20 @@ Core Features:
 - Complete decision provenance tracking
 """
 
+from heretek_swarm.consensus.audit import (
+    ArgumentRecord,
+    ConsensusAuditTrail,
+    DecisionOutcome,
+    DecisionRecord,
+    QueryResult,
+    VoteRecord,
+)
+from heretek_swarm.consensus.expertise import (
+    AgentExpertiseProfile,
+    AgentExpertiseProfiler,
+    DomainExpertise,
+    ExpertiseLevel,
+)
 from heretek_swarm.consensus.maker import (
     ConsensusResult,
     ConsensusState,
@@ -34,29 +48,6 @@ from heretek_swarm.consensus.maker_enhanced import (
     ReasoningStep,
     RollbackResult,
 )
-from heretek_swarm.consensus.swarm_deliberation import (
-    AgentPosition,
-    Argument,
-    DeliberationResult,
-    DeliberationRound,
-    DeliberationState,
-    Position,
-    SwarmDeliberationEngine,
-)
-from heretek_swarm.consensus.expertise import (
-    AgentExpertiseProfiler,
-    AgentExpertiseProfile,
-    DomainExpertise,
-    ExpertiseLevel,
-)
-from heretek_swarm.consensus.audit import (
-    ArgumentRecord,
-    ConsensusAuditTrail,
-    DecisionOutcome,
-    DecisionRecord,
-    QueryResult,
-    VoteRecord,
-)
 from heretek_swarm.consensus.raft_election import (
     AppendEntriesRequest,
     AppendEntriesResponse,
@@ -67,6 +58,15 @@ from heretek_swarm.consensus.raft_election import (
     RaftState,
     RequestVoteRequest,
     RequestVoteResponse,
+)
+from heretek_swarm.consensus.swarm_deliberation import (
+    AgentPosition,
+    Argument,
+    DeliberationResult,
+    DeliberationRound,
+    DeliberationState,
+    Position,
+    SwarmDeliberationEngine,
 )
 
 __all__ = [

@@ -35,7 +35,7 @@ _logger = structlog.get_logger(__name__)
 
 class PatternType(str, Enum):
     """Types of patterns that can be extracted."""
-    
+
     SUCCESS = "success"
     FAILURE = "failure"
     OPTIMIZATION = "optimization"
@@ -50,7 +50,7 @@ class PatternType(str, Enum):
 
 class PatternSource(str, Enum):
     """Source of pattern extraction."""
-    
+
     MESSAGE_HISTORY = "message_history"
     DECISION_LOG = "decision_log"
     PERFORMANCE_METRICS = "performance_metrics"
@@ -63,7 +63,7 @@ class PatternSource(str, Enum):
 @dataclass
 class PatternMetadata:
     """Metadata for extracted patterns."""
-    
+
     pattern_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     pattern_type: PatternType = PatternType.SUCCESS
     source: PatternSource = PatternSource.MESSAGE_HISTORY
@@ -80,7 +80,7 @@ class PatternMetadata:
 @dataclass
 class ExtractedPattern:
     """Represents an extracted pattern from agent interactions."""
-    
+
     metadata: PatternMetadata
     pattern_data: Dict[str, Any]
     context: Dict[str, Any] = field(default_factory=dict)
@@ -88,7 +88,7 @@ class ExtractedPattern:
     preconditions: List[str] = field(default_factory=list)
     postconditions: List[str] = field(default_factory=list)
     applicability_conditions: List[str] = field(default_factory=list)
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert pattern to dictionary for serialization."""
         return {
@@ -114,7 +114,7 @@ class ExtractedPattern:
 @dataclass
 class LearningSignal:
     """Represents a learning signal extracted from agent interactions."""
-    
+
     signal_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     signal_type: str = "reward"
     magnitude: float = 0.0
@@ -123,7 +123,7 @@ class LearningSignal:
     target_agents: List[str] = field(default_factory=list)
     context: Dict[str, Any] = field(default_factory=dict)
     metadata: Dict[str, Any] = field(default_factory=dict)
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert signal to dictionary for serialization."""
         return {
@@ -141,7 +141,7 @@ class LearningSignal:
 @dataclass
 class MessageAnalysis:
     """Analysis result for a single message."""
-    
+
     message_id: str
     sender: str
     recipient: str
@@ -170,7 +170,7 @@ class PatternExtractor:
         min_confidence: Minimum confidence threshold for pattern acceptance
         max_pattern_age_days: Maximum age for patterns before expiration
     """
-    
+
     def __init__(self, min_support: int, min_confidence: float, max_pattern_age_days: int):
         """
         Initialize pattern extractor.
@@ -183,22 +183,22 @@ class PatternExtractor:
         self.min_support = min_support
         self.min_confidence = min_confidence
         self.max_pattern_age_days = max_pattern_age_days
-        
+
         self._message_cache: List[MessageAnalysis] = []
         self._pattern_candidates: Dict[str, ExtractedPattern] = {}
         self._validated_patterns: Dict[str, ExtractedPattern] = {}
         self._learning_signals: List[LearningSignal] = []
-        
+
         # Pattern extraction callbacks
         self._extraction_hooks: List[Callable] = []
-        
+
         logger.info(
             "pattern_extractor_initialized",
             _min_support = min_support,
             _min_confidence = min_confidence,
             _max_pattern_age_days = max_pattern_age_days,
         )
-    
+
     def register_extraction_hook(self, hook: Callable) -> None:
         """
         Register a hook to be called after pattern extraction.
@@ -208,7 +208,7 @@ class PatternExtractor:
         """
         self._extraction_hooks.append(hook)
         logger.debug("extraction_hook_registered", hook=hook.__name__)
-    
+
     async def analyze_message(self, message_id: str, sender: str, recipient: str, message_type: str, content: Dict[str, Any], timestamp: Optional[str]) -> MessageAnalysis:
         """
         Analyze a single message for pattern extraction.
@@ -225,16 +225,16 @@ class PatternExtractor:
             MessageAnalysis with extracted features
         """
         _ts = timestamp or datetime.now(timezone.utc).isoformat()
-        
+
         # Generate content hash for deduplication
         _content_hash = self._generate_content_hash(content)
-        
+
         # Analyze message characteristics
         sentiment = self._analyze_sentiment(content)
         complexity = self._analyze_complexity(content)
         topic = self._extract_topic(content)
         intent = self._infer_intent(message_type, content)
-        
+
         _analysis = MessageAnalysis(
             _message_id = message_id,
             _sender = sender,
@@ -252,14 +252,14 @@ class PatternExtractor:
                 "has_correlation": "correlation_id" in content,
             },
         )
-        
+
         # Cache for pattern analysis
         self._message_cache.append(analysis)
-        
+
         # Trim cache if too large
         if len(self._message_cache) > 10000:
             self._message_cache = self._message_cache[-5000:]
-        
+
         logger.debug(
             "message_analyzed",
             _message_id = message_id,
@@ -267,9 +267,9 @@ class PatternExtractor:
             topic=topic,
             intent=intent,
         )
-        
+
         return analysis
-    
+
     async def extract_patterns(self, time_window_hours: int, pattern_types: Optional[List[PatternType]]) -> List[ExtractedPattern]:
         """
         Extract patterns from cached message history.
@@ -283,26 +283,26 @@ class PatternExtractor:
         """
         if pattern_types is None:
             _pattern_types = list(PatternType)
-        
+
         # Filter messages within time window
         _cutoff = datetime.now(timezone.utc)
         from datetime import timedelta
         _cutoff = cutoff - timedelta(hours=time_window_hours)
-        
+
         _recent_messages = [
             m for m in self._message_cache
             if datetime.fromisoformat(m.timestamp) >= cutoff
         ]
-        
+
         logger.info(
             "extracting_patterns",
             _message_count = len(recent_messages),
             _time_window_hours = time_window_hours,
             _pattern_types = [pt.value for pt in pattern_types],
         )
-        
+
         _extracted = []
-        
+
         # Extract different pattern types
         for pattern_type in pattern_types:
             _patterns = await self._extract_pattern_type(
@@ -310,14 +310,14 @@ class PatternExtractor:
                 recent_messages,
             )
             extracted.extend(patterns)
-        
+
         # Validate and store patterns
         _validated = []
         for pattern in extracted:
             if await self._validate_pattern(pattern):
                 self._validated_patterns[pattern.metadata.pattern_id] = pattern
                 validated.append(pattern)
-                
+
                 # Call extraction hooks
                 for hook in self._extraction_hooks:
                     try:
@@ -331,15 +331,15 @@ class PatternExtractor:
                             _hook = hook.__name__,
                             _error = str(e),
                         )
-        
+
         logger.info(
             "pattern_extraction_complete",
             _total_extracted = len(extracted),
             _total_validated = len(validated),
         )
-        
+
         return validated
-    
+
     async def track_outcome(self, pattern_id: str, outcome: str, outcome_data: Dict[str, Any]) -> None:
         """
         Track outcome for a specific pattern.
@@ -356,22 +356,22 @@ class PatternExtractor:
                 "data": outcome_data,
                 "timestamp": datetime.now(timezone.utc).isoformat(),
             })
-            
+
             # Update confidence based on outcome
             self._update_pattern_confidence(pattern, outcome)
-            
+
             logger.debug(
                 "outcome_tracked",
                 pattern_id=pattern_id,
                 outcome=outcome,
                 _total_outcomes = len(pattern.outcomes),
             )
-    
+
     def _generate_content_hash(self, content: Dict[str, Any]) -> str:
         """Generate SHA256 hash of message content."""
         _content_str = str(sorted(content.items()))
         return hashlib.sha256(content_str.encode()).hexdigest()[:16]
-    
+
     def _analyze_sentiment(self, _content: Dict[str, Any]) -> float:
         """
         Analyze sentiment of message content.
@@ -382,7 +382,7 @@ class PatternExtractor:
         # Placeholder for sentiment analysis
         # Could integrate with NLP library for actual analysis
         return 0.0
-    
+
     def _analyze_complexity(self, content: Dict[str, Any]) -> float:
         """
         Analyze complexity of message content.
@@ -393,13 +393,13 @@ class PatternExtractor:
         _content_str = str(content)
         _length = len(content_str)
         _nesting = content_str.count("{") + content_str.count("[")
-        
+
         # Normalize complexity score
         _length_score = min(length / 1000, 1.0)
         _nesting_score = min(nesting / 10, 1.0)
-        
+
         return (length_score + nesting_score) / 2
-    
+
     def _extract_topic(self, content: Dict[str, Any]) -> Optional[str]:
         """Extract topic from message content."""
         # Look for topic indicators in content
@@ -410,7 +410,7 @@ class PatternExtractor:
         if "task_type" in content:
             return content["task_type"]
         return None
-    
+
     def _infer_intent(self, message_type: str, _content: Dict[str, Any]) -> Optional[str]:
         """Infer intent from message type and content."""
         _intent_map = {
@@ -425,7 +425,7 @@ class PatternExtractor:
             "health_response": "status_report",
         }
         return intent_map.get(message_type, "unknown")
-    
+
     async def _extract_pattern_type(self, pattern_type: PatternType, messages: List[MessageAnalysis]) -> List[ExtractedPattern]:
         """Extract patterns of a specific type."""
         _extractors = {
@@ -439,16 +439,16 @@ class PatternExtractor:
             PatternType.ERROR_RECOVERY: self._extract_error_recovery_patterns,
             PatternType.EMERGENT: self._extract_emergent_patterns,
         }
-        
+
         extractor = extractors.get(pattern_type)
         if extractor:
             return await extractor(messages)
         return []
-    
+
     async def _extract_success_patterns(self, messages: List[MessageAnalysis]) -> List[ExtractedPattern]:
         """Extract patterns from successful interactions."""
         _patterns = []
-        
+
         # Group by sender-recipient pairs
         interaction_groups: Dict[Tuple[str, str], List[MessageAnalysis]] = {}
         for msg in messages:
@@ -456,14 +456,14 @@ class PatternExtractor:
             if key not in interaction_groups:
                 interaction_groups[key] = []
             interaction_groups[key].append(msg)
-        
+
         # Find recurring successful interactions
         for (sender, recipient), group in interaction_groups.items():
             if len(group) >= self.min_support:
                 # Calculate success rate based on outcomes
                 _successful = sum(1 for m in group if m.outcome == "success")
                 _success_rate = successful / len(group) if group else 0
-                
+
                 if success_rate >= self.min_confidence:
                     pattern = ExtractedPattern(
                         metadata=PatternMetadata(
@@ -487,13 +487,13 @@ class PatternExtractor:
                         ],
                     )
                     patterns.append(pattern)
-        
+
         return patterns
-    
+
     async def _extract_optimization_patterns(self, messages: List[MessageAnalysis]) -> List[ExtractedPattern]:
         """Extract patterns for optimization opportunities."""
         _patterns = []
-        
+
         # Group by interaction type
         interaction_groups: Dict[str, List[MessageAnalysis]] = {}
         for msg in messages:
@@ -501,7 +501,7 @@ class PatternExtractor:
             if key not in interaction_groups:
                 interaction_groups[key] = []
             interaction_groups[key].append(msg)
-        
+
         # Find interactions with high latency or resource usage
         for interaction_type, group in interaction_groups.items():
             if len(group) >= self.min_support:
@@ -523,13 +523,13 @@ class PatternExtractor:
                             _context = {"avg_latency_ms": avg_latency, "interaction_count": len(group)},
                         )
                         patterns.append(pattern)
-        
+
         return patterns
-    
+
     async def _extract_failure_patterns(self, messages: List[MessageAnalysis]) -> List[ExtractedPattern]:
         """Extract patterns from failed interactions."""
         _patterns = []
-        
+
         # Group failures by type
         failure_groups: Dict[str, List[MessageAnalysis]] = {}
         for msg in messages:
@@ -538,7 +538,7 @@ class PatternExtractor:
                 if key not in failure_groups:
                     failure_groups[key] = []
                 failure_groups[key].append(msg)
-        
+
         # Find recurring failure patterns
         for failure_type, group in failure_groups.items():
             if len(group) >= self.min_support:
@@ -560,16 +560,16 @@ class PatternExtractor:
                     _preconditions = self._extract_preconditions(group),
                 )
                 patterns.append(pattern)
-        
+
         return patterns
-    
+
     async def _extract_handoff_patterns(self, messages: List[MessageAnalysis]) -> List[ExtractedPattern]:
         """Extract patterns from agent handoffs."""
         _patterns = []
-        
+
         # Find handoff message sequences
         _handoffs = [m for m in messages if m.message_type == "handoff"]
-        
+
         # Group by source-target agent pairs
         handoff_pairs: Dict[Tuple[str, str], List[MessageAnalysis]] = {}
         for handoff in handoffs:
@@ -577,7 +577,7 @@ class PatternExtractor:
             if key not in handoff_pairs:
                 handoff_pairs[key] = []
             handoff_pairs[key].append(handoff)
-        
+
         # Create patterns for frequent handoffs
         for (source, target), group in handoff_pairs.items():
             if len(group) >= self.min_support:
@@ -602,19 +602,19 @@ class PatternExtractor:
                     ],
                 )
                 patterns.append(pattern)
-        
+
         return patterns
-    
+
     async def _extract_collaboration_patterns(self, messages: List[MessageAnalysis]) -> List[ExtractedPattern]:
         """Extract patterns from collaborative interactions."""
         _patterns = []
-        
+
         # Find collective task messages
         _collaborative = [
             m for m in messages
             if m.message_type in ["collective_task", "collective_task_response"]
         ]
-        
+
         if len(collaborative) >= self.min_support:
             # Analyze collaboration structures
             _participants = set()
@@ -622,7 +622,7 @@ class PatternExtractor:
                 participants.add(msg.sender)
                 if msg.recipient != "broadcast":
                     participants.add(msg.recipient)
-            
+
             pattern = ExtractedPattern(
                 metadata=PatternMetadata(
                     pattern_type=PatternType.COLLABORATION,
@@ -643,19 +643,19 @@ class PatternExtractor:
                 ],
             )
             patterns.append(pattern)
-        
+
         return patterns
-    
+
     async def _extract_decision_patterns(self, messages: List[MessageAnalysis]) -> List[ExtractedPattern]:
         """Extract patterns from decision-making processes."""
         _patterns = []
-        
+
         # Find decision-related messages
         _decisions = [
             m for m in messages
             if "decision" in m.intent or "consensus" in (m.topic or "")
         ]
-        
+
         if len(decisions) >= self.min_support:
             pattern = ExtractedPattern(
                 metadata=PatternMetadata(
@@ -672,13 +672,13 @@ class PatternExtractor:
                 },
             )
             patterns.append(pattern)
-        
+
         return patterns
-    
+
     async def _extract_communication_patterns(self, messages: List[MessageAnalysis]) -> List[ExtractedPattern]:
         """Extract patterns from communication flows."""
         _patterns = []
-        
+
         # Analyze communication frequency and patterns
         comm_matrix: Dict[str, Dict[str, int]] = {}
         for msg in messages:
@@ -687,7 +687,7 @@ class PatternExtractor:
             if msg.recipient not in comm_matrix[msg.sender]:
                 comm_matrix[msg.sender][msg.recipient] = 0
             comm_matrix[msg.sender][msg.recipient] += 1
-        
+
         # Find high-frequency communication pairs
         for sender, recipients in comm_matrix.items():
             for recipient, count in recipients.items():
@@ -708,16 +708,16 @@ class PatternExtractor:
                         },
                     )
                     patterns.append(pattern)
-        
+
         return patterns
-    
+
     async def _extract_error_recovery_patterns(self, messages: List[MessageAnalysis]) -> List[ExtractedPattern]:
         """Extract patterns from error recovery scenarios."""
         _patterns = []
-        
+
         # Find error and recovery sequences
         _errors = [m for m in messages if m.outcome == "error"]
-        
+
         if len(errors) >= self.min_support:
             pattern = ExtractedPattern(
                 metadata=PatternMetadata(
@@ -736,16 +736,16 @@ class PatternExtractor:
                 _preconditions = self._extract_preconditions(errors),
             )
             patterns.append(pattern)
-        
+
         return patterns
-    
+
     async def _extract_emergent_patterns(self, messages: List[MessageAnalysis]) -> List[ExtractedPattern]:
         """Extract emergent behavior patterns."""
         _patterns = []
-        
+
         # Look for patterns that span multiple agents
         _multi_agent_sequences = self._find_multi_agent_sequences(messages)
-        
+
         for sequence in multi_agent_sequences:
             if len(sequence["agents"]) >= 3:  # At least 3 agents involved
                 pattern = ExtractedPattern(
@@ -768,20 +768,20 @@ class PatternExtractor:
                     ],
                 )
                 patterns.append(pattern)
-        
+
         return patterns
-    
+
     def _find_multi_agent_sequences(self, messages: List[MessageAnalysis]) -> List[Dict[str, Any]]:
         """Find message sequences involving multiple agents."""
         _sequences = []
-        
+
         # Sort messages by timestamp
         _sorted_messages = sorted(messages, key=lambda m: m.timestamp)
-        
+
         # Find sequences where messages chain through multiple agents
         _current_sequence = []
         _current_agents = set()
-        
+
         for msg in sorted_messages:
             if not current_sequence:
                 _current_sequence = [msg]
@@ -799,41 +799,41 @@ class PatternExtractor:
                     })
                 _current_sequence = [msg]
                 _current_agents = {msg.sender, msg.recipient}
-        
+
         return sequences
-    
+
     def _extract_preconditions(self, messages: List[MessageAnalysis]) -> List[str]:
         """Extract common preconditions from a group of messages."""
         _preconditions = []
-        
+
         # Find common characteristics
         if messages:
             # Check for common message types
             type_counts: Dict[str, int] = {}
             for msg in messages:
                 type_counts[msg.message_type] = type_counts.get(msg.message_type, 0) + 1
-            
+
             _dominant_type = max(type_counts, key=type_counts.get)
             if type_counts[dominant_type] > len(messages) * 0.5:
                 preconditions.append(f"message_type={dominant_type}")
-            
+
             # Check for common topics
             _topics = [m.topic for m in messages if m.topic]
             if topics:
                 topic_counts: Dict[str, int] = {}
                 for topic in topics:
                     topic_counts[topic] = topic_counts.get(topic, 0) + 1
-                
+
                 _dominant_topic = max(topic_counts, key=topic_counts.get)
                 if topic_counts[dominant_topic] > len(topics) * 0.3:
                     preconditions.append(f"topic={dominant_topic}")
-        
+
         return preconditions
-    
+
     def _find_common_characteristics(self, messages: List[MessageAnalysis]) -> List[str]:
         """Find common characteristics in a group of messages."""
         _characteristics = []
-        
+
         if messages:
             # Analyze complexity distribution
             _avg_complexity = sum(m.complexity_score for m in messages) / len(messages)
@@ -841,34 +841,34 @@ class PatternExtractor:
                 characteristics.append("high_complexity")
             elif avg_complexity < 0.3:
                 characteristics.append("low_complexity")
-            
+
             # Analyze sentiment distribution
             _avg_sentiment = sum(m.sentiment_score for m in messages) / len(messages)
             if avg_sentiment < -0.3:
                 characteristics.append("negative_sentiment")
-        
+
         return characteristics
-    
+
     def _calculate_avg_handoff_time(self, handoffs: List[MessageAnalysis]) -> float:
         """Calculate average time between handoffs."""
         if len(handoffs) < 2:
             return 0.0
-        
+
         _sorted_handoffs = sorted(handoffs, key=lambda m: m.timestamp)
         _deltas = []
-        
+
         for i in range(1, len(sorted_handoffs)):
             _t1 = datetime.fromisoformat(sorted_handoffs[i - 1].timestamp)
             _t2 = datetime.fromisoformat(sorted_handoffs[i].timestamp)
             deltas.append((t2 - t1).total_seconds())
-        
+
         return sum(deltas) / len(deltas) if deltas else 0.0
-    
+
     def _calculate_avg_decision_time(self, _decisions: List[MessageAnalysis]) -> float:
         """Calculate average decision time."""
         # Placeholder - would need correlation with decision outcomes
         return 0.0
-    
+
     async def _validate_pattern(self, pattern: ExtractedPattern) -> bool:
         """
         Validate a pattern before storing.
@@ -882,7 +882,7 @@ class PatternExtractor:
         try:
             # Validate UUID
             uuid.UUID(pattern.metadata.pattern_id)
-            
+
             # Validate confidence range
             if not 0.0 <= pattern.metadata.confidence <= 1.0:
                 logger.warning(
@@ -891,7 +891,7 @@ class PatternExtractor:
                     confidence=pattern.metadata.confidence,
                 )
                 return False
-            
+
             # Validate support count
             if pattern.metadata.support_count < self.min_support:
                 logger.warning(
@@ -900,7 +900,7 @@ class PatternExtractor:
                     _support_count = pattern.metadata.support_count,
                 )
                 return False
-            
+
             # Validate pattern data non-empty
             if not pattern.pattern_data:
                 logger.warning(
@@ -908,16 +908,16 @@ class PatternExtractor:
                     _reason = "empty_pattern_data",
                 )
                 return False
-            
+
             logger.debug(
                 "pattern_validated",
                 pattern_id=pattern.metadata.pattern_id,
                 pattern_type=pattern.metadata.pattern_type.value,
                 confidence=pattern.metadata.confidence,
             )
-            
+
             return True
-            
+
         except (ValueError, TypeError) as e:
             logger.warning(
                 "pattern_validation_error",
@@ -925,22 +925,22 @@ class PatternExtractor:
                 pattern_id=pattern.metadata.pattern_id,
             )
             return False
-    
+
     def _update_pattern_confidence(self, pattern: ExtractedPattern, outcome: str) -> None:
         """Update pattern confidence based on outcome."""
         # Simple exponential moving average
         alpha = 0.1  # Learning rate
-        
+
         if outcome == "success":
             _new_confidence = (1 - alpha) * pattern.metadata.confidence + alpha * 1.0
         elif outcome == "failure":
             _new_confidence = (1 - alpha) * pattern.metadata.confidence + alpha * 0.0
         else:
             _new_confidence = pattern.metadata.confidence
-        
+
         pattern.metadata.confidence = max(0.0, min(1.0, new_confidence))
         pattern.metadata.last_observed = datetime.now(timezone.utc).isoformat()
-    
+
     def get_validated_patterns(self, pattern_type: Optional[PatternType], min_confidence: float) -> List[ExtractedPattern]:
         """
         Get validated patterns with optional filtering.
@@ -953,18 +953,18 @@ class PatternExtractor:
             List of matching patterns
         """
         _patterns = list(self._validated_patterns.values())
-        
+
         if pattern_type:
             _patterns = [p for p in patterns if p.metadata.pattern_type == pattern_type]
-        
+
         _patterns = [p for p in patterns if p.metadata.confidence >= min_confidence]
-        
+
         return sorted(
             patterns,
             _key = lambda p: p.metadata.confidence,
             _reverse = True,
         )
-    
+
     def generate_learning_signal(self, pattern: ExtractedPattern, outcome: str) -> LearningSignal:
         """
         Generate a learning signal from a pattern outcome.
@@ -977,12 +977,12 @@ class PatternExtractor:
             LearningSignal for distribution
         """
         _magnitude = pattern.metadata.confidence
-        
+
         if outcome == "failure":
             _magnitude = -magnitude
         elif outcome == "partial":
             _magnitude = magnitude * 0.5
-        
+
         _signal = LearningSignal(
             _signal_type = "pattern_outcome",
             _magnitude = magnitude,
@@ -994,13 +994,13 @@ class PatternExtractor:
                 "outcome": outcome,
             },
         )
-        
+
         self._learning_signals.append(signal)
-        
+
         # Trim signal history
         if len(self._learning_signals) > 10000:
             self._learning_signals = self._learning_signals[-5000:]
-        
+
         return signal
 
 
@@ -1016,7 +1016,7 @@ class CollectiveLearning:
         patterns: Dictionary of extracted patterns
         learning_signals: List of generated learning signals
     """
-    
+
     def __init__(self, min_support: int, min_confidence: float):
         """
         Initialize collective learning system.
@@ -1031,13 +1031,13 @@ class CollectiveLearning:
         )
         self._patterns: Dict[str, ExtractedPattern] = {}
         self._learning_signals: List[LearningSignal] = []
-        
+
         logger.info(
             "collective_learning_initialized",
             _min_support = min_support,
             _min_confidence = min_confidence,
         )
-    
+
     async def process_message(self, message_id: str, sender: str, recipient: str, message_type: str, content: Dict[str, Any], timestamp: Optional[str]) -> MessageAnalysis:
         """
         Process a message for pattern extraction.
@@ -1061,7 +1061,7 @@ class CollectiveLearning:
             _content = content,
             _timestamp = timestamp,
         )
-    
+
     async def extract_and_validate(self, time_window_hours: int) -> List[ExtractedPattern]:
         """
         Extract and validate patterns from message history.
@@ -1075,12 +1075,12 @@ class CollectiveLearning:
         _patterns = await self.extractor.extract_patterns(
             _time_window_hours = time_window_hours,
         )
-        
+
         for pattern in patterns:
             self._patterns[pattern.metadata.pattern_id] = pattern
-        
+
         return patterns
-    
+
     def get_patterns(self, pattern_type: Optional[PatternType], min_confidence: float) -> List[ExtractedPattern]:
         """
         Get stored patterns with optional filtering.
@@ -1096,7 +1096,7 @@ class CollectiveLearning:
             pattern_type=pattern_type,
             _min_confidence = min_confidence,
         )
-    
+
     async def record_outcome(self, pattern_id: str, outcome: str, outcome_data: Dict[str, Any]) -> Optional[LearningSignal]:
         """
         Record outcome for a pattern and generate learning signal.
@@ -1116,7 +1116,7 @@ class CollectiveLearning:
             self._learning_signals.append(signal)
             return signal
         return None
-    
+
     def get_learning_status(self) -> Dict[str, Any]:
         """
         Get current learning system status.
@@ -1125,7 +1125,7 @@ class CollectiveLearning:
             Status dictionary with metrics
         """
         _patterns = list(self._patterns.values())
-        
+
         return {
             "total_patterns": len(patterns),
             "patterns_by_type": {

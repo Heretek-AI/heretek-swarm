@@ -59,7 +59,7 @@ class LemonadeProvider(LLMProviderBase):
             default_model=default_model,
             extra_config=extra_config,
         )
-        
+
         self._client: Optional[httpx.AsyncClient] = None
 
     def _init_capabilities(self) -> ProviderCapabilities:
@@ -97,13 +97,13 @@ class LemonadeProvider(LLMProviderBase):
         """
         _client = await self._get_client()
         _start_time = time.time()
-        
+
         _model = self._get_model(request.model)
-        
+
         # Convert messages to lemonade format
         # lemonade-server typically uses OpenAI-compatible format
         _messages = [msg.to_dict() for msg in request.messages]
-        
+
         # Build payload
         _payload = {
             "model": model,
@@ -113,26 +113,26 @@ class LemonadeProvider(LLMProviderBase):
             "max_tokens": request.max_tokens,
             "stream": False,
         }
-        
+
         if request.stop:
             payload["stop"] = request.stop
-        
+
         # Add any extra parameters
         if request.extra_body:
             payload.update(request.extra_body)
-        
+
         logger.debug(
             "Sending lemonade-server completion request",
             _model = model,
             _message_count = len(messages),
         )
-        
+
         try:
             _response = await client.post(
                 "/v1/chat/completions",
                 json=payload,
             )
-            
+
             if response.status_code >= 500:
                 raise ProviderUnavailableError(
                     "lemonade-server service unavailable",
@@ -144,13 +144,13 @@ class LemonadeProvider(LLMProviderBase):
                     f"lemonade-server API error: {response.status_code} - {error_text}",
                     _provider = "lemonade",
                 )
-            
+
             _data = response.json()
             _latency_ms = (time.time() - start_time) * 1000
-            
+
             _choice = data.get("choices", [{}])[0]
             _message_data = choice.get("message", {})
-            
+
             return LLMResponse(
                 _content = message_data.get("content", ""),
                 model=data.get("model", model),
@@ -159,7 +159,7 @@ class LemonadeProvider(LLMProviderBase):
                 _raw_response = data,
                 _latency_ms = latency_ms,
             )
-            
+
         except httpx.RequestError as e:
             raise ProviderUnavailableError(
                 f"Request failed: {e}. Is lemonade-server running?",
@@ -178,11 +178,11 @@ class LemonadeProvider(LLMProviderBase):
             Chunks of the completion text
         """
         _client = await self._get_client()
-        
+
         _model = self._get_model(request.model)
-        
+
         _messages = [msg.to_dict() for msg in request.messages]
-        
+
         _payload = {
             "model": model,
             "messages": messages,
@@ -191,15 +191,15 @@ class LemonadeProvider(LLMProviderBase):
             "max_tokens": request.max_tokens,
             "stream": True,
         }
-        
+
         if request.stop:
             payload["stop"] = request.stop
-        
+
         logger.debug(
             "Sending lemonade-server streaming request",
             _model = model,
         )
-        
+
         try:
             async with client.stream(
                 "POST",
@@ -211,14 +211,14 @@ class LemonadeProvider(LLMProviderBase):
                         f"lemonade-server API error: {response.status_code}",
                         _provider = "lemonade",
                     )
-                
+
                 async for line in response.aiter_lines():
                     if line.startswith("data: "):
                         data = line[6:]  # Remove "data: " prefix
-                        
+
                         if data.strip() == "[DONE]":
                             break
-                        
+
                         try:
                             _chunk = json.loads(data)
                             _choices = chunk.get("choices", [])
@@ -229,7 +229,7 @@ class LemonadeProvider(LLMProviderBase):
                                     yield content
                         except json.JSONDecodeError:
                             continue
-                            
+
         except httpx.RequestError as e:
             raise ProviderUnavailableError(
                 f"Stream request failed: {e}",
@@ -240,7 +240,7 @@ class LemonadeProvider(LLMProviderBase):
     async def list_models(self) -> List[str]:
         """List available models from lemonade-server."""
         _client = await self._get_client()
-        
+
         try:
             _response = await client.get("/v1/models")
             if response.status_code == 200:
@@ -248,7 +248,7 @@ class LemonadeProvider(LLMProviderBase):
                 return [m.get("id", m.get("name", "")) for m in data.get("data", [])]
         except Exception as e:
             logger.warning("Failed to list lemonade-server models", error=str(e))
-        
+
         if self.default_model:
             return [self.default_model]
         return []

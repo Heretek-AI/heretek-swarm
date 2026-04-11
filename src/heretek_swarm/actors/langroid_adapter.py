@@ -136,7 +136,7 @@ class LangroidAgent:
         _response = await agent.receive_message()
         ```
     """
-    
+
     def __init__(self, _agent_id: Optional[str], _name: Optional[str], _config: Optional[LangroidConfig], _swarms_agent: Optional[Any], _max_conversations: int, _conversation_timeout: float) -> None:
         """
         Initialize LangroidAgent.
@@ -153,10 +153,10 @@ class LangroidAgent:
         self.name = name or "LangroidAgent"
         self.config = config or LangroidConfig(agent_name=self.name)
         self.swarms_agent = swarms_agent
-        
+
         self.max_conversations = max_conversations
         self.conversation_timeout = conversation_timeout
-        
+
         # Langroid agent (if available)
         self._langroid_agent = None
         if LANGROID_AVAILABLE and self.config:
@@ -164,18 +164,18 @@ class LangroidAgent:
                 self._langroid_agent = self._create_langroid_agent()
             except Exception as e:
                 logger.warning(f"Failed to create Langroid agent: {e}")
-        
+
         # Conversations
         self._conversations: Dict[str, AgentConversation] = {}
         self._active_conversations: Set[str] = set()
-        
+
         # Message queues
         self._message_queues: Dict[str, asyncio.Queue] = {}
-        
+
         # Callbacks
         self._on_message: Optional[callable] = None
         self._on_error: Optional[callable] = None
-        
+
         logger.info(
             f"LangroidAgent initialized",
             _extra = {
@@ -219,23 +219,23 @@ class LangroidAgent:
         """
         if len(self._conversations) >= self.max_conversations:
             raise RuntimeError("Max conversations reached")
-        
+
         _conversation_id = f"conv_{uuid.uuid4().hex[:8]}"
-        
+
         _conversation = AgentConversation(
             _conversation_id = conversation_id,
             agent_id=self.agent_id,
             _metadata = metadata or {},
         )
-        
+
         if initial_message:
             conversation.add_message("user", initial_message)
             conversation.state = ConversationState.ACTIVE
-        
+
         self._conversations[conversation_id] = conversation
         self._active_conversations.add(conversation_id)
         self._message_queues[conversation_id] = asyncio.Queue()
-        
+
         logger.info(
             f"Started conversation",
             _extra = {
@@ -243,7 +243,7 @@ class LangroidAgent:
                 "user_id": user_id,
             },
         )
-        
+
         return conversation_id
 
     async def end_conversation(self, _conversation_id: str) -> None:
@@ -255,16 +255,16 @@ class LangroidAgent:
         """
         if conversation_id not in self._conversations:
             return
-        
+
         _conversation = self._conversations[conversation_id]
         conversation.state = ConversationState.COMPLETED
-        
+
         if conversation_id in self._active_conversations:
             self._active_conversations.remove(conversation_id)
-        
+
         if conversation_id in self._message_queues:
             del self._message_queues[conversation_id]
-        
+
         logger.info(f"Ended conversation {conversation_id}")
 
     async def send_message(self, _content: str, _conversation_id: Optional[str], _role: str) -> str:
@@ -284,25 +284,25 @@ class LangroidAgent:
             _conversation_id = await self.start_conversation("default", content)
         elif conversation_id not in self._conversations:
             raise ValueError(f"Conversation {conversation_id} not found")
-        
+
         _conversation = self._conversations[conversation_id]
-        
+
         # Add message to conversation
         conversation.add_message(role, content)
         conversation.state = ConversationState.ACTIVE
-        
+
         # Generate response
         try:
             _response = await self._generate_response(conversation)
             conversation.add_message("assistant", response)
-            
+
             logger.debug(
                 f"Sent message",
                 _extra = {"conversation_id": conversation_id, "response": response[:50]},
             )
-            
+
             return response
-            
+
         except Exception as e:
             logger.error(f"Failed to generate response: {e}")
             conversation.state = ConversationState.ERROR
@@ -321,9 +321,9 @@ class LangroidAgent:
         """
         if conversation_id not in self._message_queues:
             return None
-        
+
         _queue = self._message_queues[conversation_id]
-        
+
         try:
             if timeout:
                 _message = await asyncio.wait_for(
@@ -332,9 +332,9 @@ class LangroidAgent:
                 )
             else:
                 _message = await queue.get()
-            
+
             return message
-            
+
         except asyncio.TimeoutError:
             return None
 
@@ -344,11 +344,11 @@ class LangroidAgent:
         if self.is_available and self._langroid_agent:
             _messages = self._format_messages(conversation)
             return await self._langroid_agent.chat(messages)
-        
+
         # Fallback to Swarms Agent
         if self.swarms_agent:
             return await self._use_swarms_agent(conversation)
-        
+
         # Simple echo fallback
         return await self._echo_response(conversation)
 
@@ -362,20 +362,20 @@ class LangroidAgent:
     async def _use_swarms_agent(self, _conversation: AgentConversation) -> str:
         """Use Swarms agent for response."""
         _messages = conversation.get_messages()
-        
+
         if not messages:
             return "No messages in conversation"
-        
+
         # Get last user message
         _last_user = None
         for msg in reversed(messages):
             if msg["role"] == "user":
                 _last_user = msg["content"]
                 break
-        
+
         if last_user is None:
             return "No user message found"
-        
+
         # Run through Swarms agent
         try:
             _response = await asyncio.to_thread(
@@ -390,15 +390,15 @@ class LangroidAgent:
     async def _echo_response(self, _conversation: AgentConversation) -> str:
         """Simple echo response."""
         _messages = conversation.get_messages()
-        
+
         if not messages:
             return "Hello! How can I help you?"
-        
+
         _last = messages[-1]
-        
+
         if last["role"] == "user":
             return f"I received your message: {last['content'][:50]}..."
-        
+
         return "Understood."
 
     def get_conversation(self, _conversation_id: str) -> Optional[AgentConversation]:
@@ -454,13 +454,13 @@ class ConversationHandlerMixin:
         await agent.send_message("Hello!")
         ```
     """
-    
+
     def __init__(self, *args, **kwargs) -> None:
         """Initialize mixin."""
         self._conversations: Dict[str, AgentConversation] = {}
         self._active_conversation: Optional[str] = None
         self._conversation_config: Dict[str, Any] = kwargs.copy()
-    
+
     async def start_conversation(self, _user_id: str, _initial_message: Optional[str]) -> str:
         """
         Start a new conversation.
@@ -473,24 +473,24 @@ class ConversationHandlerMixin:
             Conversation ID
         """
         _conversation_id = f"conv_{uuid.uuid4().hex[:8]}"
-        
+
         _conversation = AgentConversation(
             _conversation_id = conversation_id,
             agent_id=self.agent_id,
         )
-        
+
         if initial_message:
             conversation.add_message("user", initial_message)
             conversation.state = ConversationState.ACTIVE
-        
+
         self._conversations[conversation_id] = conversation
         self._active_conversation = conversation_id
-        
+
         logger.debug(
             f"[{self.agent_id}] Started conversation",
             _extra = {"conversation_id": conversation_id},
         )
-        
+
         return conversation_id
 
     async def end_conversation(self, _conversation_id: str) -> None:
@@ -502,13 +502,13 @@ class ConversationHandlerMixin:
         """
         if conversation_id not in self._conversations:
             return
-        
+
         _conversation = self._conversations[conversation_id]
         conversation.state = ConversationState.COMPLETED
-        
+
         if self._active_conversation == conversation_id:
             self._active_conversation = None
-        
+
         logger.debug(f"[{self.agent_id}] Ended conversation {conversation_id}")
 
     async def send_message(self, _content: str, _conversation_id: Optional[str], _role: str) -> str:
@@ -524,28 +524,28 @@ class ConversationHandlerMixin:
             Response content
         """
         _conv_id = conversation_id or self._active_conversation
-        
+
         if conv_id is None:
             _conv_id = await self.start_conversation("default", content)
         elif conv_id not in self._conversations:
             raise ValueError(f"Conversation {conv_id} not found")
-        
+
         _conversation = self._conversations[conv_id]
         conversation.add_message(role, content)
-        
+
         # Generate response
         _response = await self._generate_response(conversation)
         conversation.add_message("assistant", response)
-        
+
         return response
 
     async def _generate_response(self, _conversation: AgentConversation) -> str:
         """Generate response (override in subclass)."""
         _last_msg = conversation.get_last_message()
-        
+
         if last_msg and last_msg["role"] == "user":
             return f"I received: {last_msg['content'][:50]}..."
-        
+
         return "How can I help?"
 
     def get_conversation(self, _conversation_id: str) -> Optional[AgentConversation]:

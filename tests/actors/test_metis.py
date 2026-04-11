@@ -12,19 +12,18 @@ This module provides comprehensive tests for the Metis agent including:
 - Zero-trust validation tests
 """
 
-import asyncio
-import pytest
 from datetime import datetime, timezone
 from typing import List
 from unittest.mock import AsyncMock, MagicMock
 
-from heretek_swarm.actors.metis import MetisAgent
+import pytest
+
 from heretek_swarm.actors.base import ActorMessage
+from heretek_swarm.actors.metis import MetisAgent
 from heretek_swarm.collective.learning import PatternExtractor
 from heretek_swarm.consensus.swarm_deliberation import SwarmDeliberationEngine
 from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer
 from heretek_swarm.security.zero_trust import ZeroTrustValidator
-
 
 # ============== FIXTURES ==============
 
@@ -117,7 +116,7 @@ class TestMetisInitialization:
     def test_init_default(self) -> None:
         """Test initialization with default parameters."""
         agent = MetisAgent()
-        
+
         assert agent.agent_id == "metis"
         assert agent.name == "Metis"
         assert agent.planning_horizon_days == 90
@@ -135,7 +134,7 @@ class TestMetisInitialization:
             planning_horizon_days=180,
             max_scenarios=10,
         )
-        
+
         assert agent.agent_id == "custom-metis"
         assert agent.name == "CustomMetis"
         assert agent.planning_horizon_days == 180
@@ -163,14 +162,14 @@ class TestStrategicPlanning:
     async def test_generate_strategic_plan(self, _metis_agent: MetisAgent, _mock_swarms_agent: MagicMock) -> None:
         """Test strategic plan generation."""
         metis_agent.swarms_agent = mock_swarms_agent
-        
+
         _plan = await metis_agent._generate_strategic_plan(
             _plan_id = "plan-123",
             _objective = "Test objective",
             _horizon_days = 90,
             _constraints = ["Constraint 1"],
         )
-        
+
         assert "plan_id" not in plan or plan.get("objective") == "Test objective"
         assert "phases" in plan
         assert "status" in plan
@@ -179,14 +178,14 @@ class TestStrategicPlanning:
     async def test_generate_strategic_plan_no_llm(self, _metis_agent: MetisAgent) -> None:
         """Test strategic plan generation without LLM."""
         metis_agent.swarms_agent = None
-        
+
         _plan = await metis_agent._generate_strategic_plan(
             _plan_id = "plan-456",
             _objective = "Test objective",
             _horizon_days = 90,
             _constraints = [],
         )
-        
+
         assert plan["objective"] == "Test objective"
         assert plan["status"] == "degraded"
 
@@ -201,7 +200,7 @@ class TestStrategicPlanning:
         }
         """
         _phases = metis_agent._extract_phases(response)
-        
+
         assert len(phases) >= 4  # Default phases
         assert phases[0]["phase"] == 1
 
@@ -210,13 +209,13 @@ class TestStrategicPlanning:
         """Test resource allocation optimization."""
         _resources = {"budget": 100000, "time": 180}
         _priorities = {"budget": 0.7, "time": 0.3}
-        
+
         _allocation = await metis_agent._optimize_resource_allocation(
             _plan_id = "plan-123",
             _resources = resources,
             _priorities = priorities,
         )
-        
+
         assert "allocation" in allocation
         assert allocation["plan_id"] == "plan-123"
         assert allocation["optimization_method"] == "priority_weighted"
@@ -226,12 +225,12 @@ class TestStrategicPlanning:
         """Test risk assessment."""
         metis_agent.swarms_agent = mock_swarms_agent
         metis_agent.active_plans["plan-123"] = {"objective": "Test plan"}
-        
+
         _risks = await metis_agent._assess_plan_risks(
             _plan_id = "plan-123",
             _domain = "technical",
         )
-        
+
         assert isinstance(risks, list)
         # May return empty list if LLM parsing fails
         if risks:
@@ -242,12 +241,12 @@ class TestStrategicPlanning:
         """Test risk assessment without LLM."""
         metis_agent.swarms_agent = None
         metis_agent.active_plans["plan-123"] = {"objective": "Test plan"}
-        
+
         _risks = await metis_agent._assess_plan_risks(
             _plan_id = "plan-123",
             _domain = "technical",
         )
-        
+
         assert isinstance(risks, list)
 
 
@@ -261,13 +260,13 @@ class TestScenarioAnalysis:
         """Test scenario generation."""
         _base_scenario = {"market_growth": 0.05, "competition": "moderate"}
         _variables = ["market_growth", "competition", "regulation"]
-        
+
         _scenarios = await metis_agent._generate_scenarios(
             _base_scenario = base_scenario,
             _variables = variables,
             _max_scenarios = 5,
         )
-        
+
         assert len(scenarios) >= 1  # At least base scenario
         assert scenarios[0]["scenario_id"] == "base"
         assert scenarios[0]["name"] == "Base Case"
@@ -276,13 +275,13 @@ class TestScenarioAnalysis:
     async def test_generate_scenarios_empty_variables(self, _metis_agent: MetisAgent) -> None:
         """Test scenario generation with no variables."""
         _base_scenario = {"param": "value"}
-        
+
         _scenarios = await metis_agent._generate_scenarios(
             _base_scenario = base_scenario,
             _variables = [],
             _max_scenarios = 5,
         )
-        
+
         assert len(scenarios) == 1  # Only base scenario
         assert scenarios[0]["scenario_id"] == "base"
 
@@ -291,13 +290,13 @@ class TestScenarioAnalysis:
         """Test scenario generation respects max limit."""
         _base_scenario = {}
         _variables = ["v1", "v2", "v3", "v4", "v5", "v6", "v7", "v8", "v9", "v10"]
-        
+
         _scenarios = await metis_agent._generate_scenarios(
             _base_scenario = base_scenario,
             _variables = variables,
             _max_scenarios = 3,
         )
-        
+
         assert len(scenarios) <= 3
 
 
@@ -320,7 +319,7 @@ class TestMessageHandling:
             },
             _timestamp = datetime.now(timezone.utc).isoformat(),
         )
-        
+
         metis_agent.send = AsyncMock(return_value="msg-123")
         metis_agent._validate_message_content = MagicMock(return_value=None)
         metis_agent._generate_strategic_plan = AsyncMock(return_value={
@@ -328,9 +327,9 @@ class TestMessageHandling:
             "phases": [],
             "status": "active",
         })
-        
+
         await metis_agent._handle_create_strategic_plan(message)
-        
+
         assert metis_agent.send.called
         _call_args = metis_agent.send.call_args
         assert call_args[1]["content"]["message_type"] == "strategic_plan_created"
@@ -346,12 +345,12 @@ class TestMessageHandling:
             },
             _timestamp = datetime.now(timezone.utc).isoformat(),
         )
-        
+
         metis_agent.send = AsyncMock(return_value="msg-123")
         metis_agent._validate_message_content = MagicMock(return_value=None)
-        
+
         await metis_agent._handle_create_strategic_plan(message)
-        
+
         # Should log error but not raise
         assert True
 
@@ -360,7 +359,7 @@ class TestMessageHandling:
         """Test allocate_resources message handler."""
         # Create a plan first
         metis_agent.active_plans["plan-123"] = {"objective": "Test"}
-        
+
         _message = ActorMessage(
             _sender = "test-sender",
             _message_type = "allocate_resources",
@@ -372,15 +371,15 @@ class TestMessageHandling:
             },
             _timestamp = datetime.now(timezone.utc).isoformat(),
         )
-        
+
         metis_agent.send = AsyncMock(return_value="msg-123")
         metis_agent._validate_message_content = MagicMock(return_value=None)
         metis_agent._optimize_resource_allocation = AsyncMock(return_value={
             "allocation": {"budget": 100000}
         })
-        
+
         await metis_agent._handle_allocate_resources(message)
-        
+
         assert metis_agent.send.called
         _call_args = metis_agent.send.call_args
         assert call_args[1]["content"]["message_type"] == "resources_allocated"
@@ -398,12 +397,12 @@ class TestMessageHandling:
             },
             _timestamp = datetime.now(timezone.utc).isoformat(),
         )
-        
+
         metis_agent.send = AsyncMock(return_value="msg-123")
         metis_agent._validate_message_content = MagicMock(return_value=None)
-        
+
         await metis_agent._handle_allocate_resources(message)
-        
+
         # Should log error
         assert True
 
@@ -420,15 +419,15 @@ class TestMessageHandling:
             },
             _timestamp = datetime.now(timezone.utc).isoformat(),
         )
-        
+
         metis_agent.send = AsyncMock(return_value="msg-123")
         metis_agent._validate_message_content = MagicMock(return_value=None)
         metis_agent._assess_plan_risks = AsyncMock(return_value=[
             {"risk_id": "risk-1", "description": "Test risk"}
         ])
-        
+
         await metis_agent._handle_assess_risks(message)
-        
+
         assert metis_agent.send.called
         _call_args = metis_agent.send.call_args
         assert call_args[1]["content"]["message_type"] == "risks_assessed"
@@ -446,15 +445,15 @@ class TestMessageHandling:
             },
             _timestamp = datetime.now(timezone.utc).isoformat(),
         )
-        
+
         metis_agent.send = AsyncMock(return_value="msg-123")
         metis_agent._validate_message_content = MagicMock(return_value=None)
         metis_agent._generate_scenarios = AsyncMock(return_value=[
             {"scenario_id": "base", "name": "Base Case"}
         ])
-        
+
         await metis_agent._handle_analyze_scenarios(message)
-        
+
         assert metis_agent.send.called
         _call_args = metis_agent.send.call_args
         assert call_args[1]["content"]["message_type"] == "scenarios_analyzed"
@@ -473,12 +472,12 @@ class TestMessageHandling:
             },
             _timestamp = datetime.now(timezone.utc).isoformat(),
         )
-        
+
         metis_agent.send = AsyncMock(return_value="msg-123")
         metis_agent._validate_message_content = MagicMock(return_value=None)
-        
+
         await metis_agent._handle_set_strategic_objective(message)
-        
+
         assert metis_agent.send.called
         assert len(metis_agent.strategic_objectives) == 1
 
@@ -494,12 +493,12 @@ class TestMessageHandling:
             },
             _timestamp = datetime.now(timezone.utc).isoformat(),
         )
-        
+
         metis_agent.send = AsyncMock(return_value="msg-123")
         metis_agent._validate_message_content = MagicMock(return_value=None)
-        
+
         await metis_agent._handle_set_strategic_objective(message)
-        
+
         # Should log error, no objective added
         assert len(metis_agent.strategic_objectives) == 0
 
@@ -514,7 +513,7 @@ class TestMessageHandling:
             "created_at": datetime.now(timezone.utc).isoformat(),
             "horizon_days": 90,
         }
-        
+
         _message = ActorMessage(
             _sender = "test-sender",
             _message_type = "get_plan_status",
@@ -524,12 +523,12 @@ class TestMessageHandling:
             },
             _timestamp = datetime.now(timezone.utc).isoformat(),
         )
-        
+
         metis_agent.send = AsyncMock(return_value="msg-123")
         metis_agent._validate_message_content = MagicMock(return_value=None)
-        
+
         await metis_agent._handle_get_plan_status(message)
-        
+
         assert metis_agent.send.called
         _call_args = metis_agent.send.call_args
         assert call_args[1]["content"]["message_type"] == "plan_status"
@@ -546,12 +545,12 @@ class TestMessageHandling:
             },
             _timestamp = datetime.now(timezone.utc).isoformat(),
         )
-        
+
         metis_agent.send = AsyncMock(return_value="msg-123")
         metis_agent._validate_message_content = MagicMock(return_value=None)
-        
+
         await metis_agent._handle_get_plan_status(message)
-        
+
         _call_args = metis_agent.send.call_args
         assert call_args[1]["content"]["message_type"] == "error_response"
 
@@ -570,11 +569,11 @@ class TestProcessMessage:
             _content = {"reply_to": "reply"},
             _timestamp = datetime.now(timezone.utc).isoformat(),
         )
-        
+
         metis_agent.send = AsyncMock(return_value="msg-123")
-        
+
         await metis_agent.process_message(message)
-        
+
         assert True  # Should not raise
 
     @pytest.mark.asyncio
@@ -586,7 +585,7 @@ class TestProcessMessage:
             _content = {},
             _timestamp = datetime.now(timezone.utc).isoformat(),
         )
-        
+
         await metis_agent.process_message(message)
 
     @pytest.mark.asyncio
@@ -594,20 +593,20 @@ class TestProcessMessage:
         """Test error handling in message processing."""
         async def failing_handler(_msg: ActorMessage) -> None:
             raise ValueError("Test error")
-        
+
         metis_agent.register_handler("failing", failing_handler)
-        
+
         _message = ActorMessage(
             _sender = "test",
             _message_type = "failing",
             _content = {"reply_to": "reply"},
             _timestamp = datetime.now(timezone.utc).isoformat(),
         )
-        
+
         metis_agent.send = AsyncMock(return_value="msg-123")
-        
+
         await metis_agent.process_message(message)
-        
+
         assert metis_agent.error_count >= 1
 
 
@@ -620,7 +619,7 @@ class TestMetisIntegration:
     async def test_full_planning_workflow(self, _metis_agent: MetisAgent) -> None:
         """Test complete strategic planning workflow."""
         await metis_agent.initialize()
-        
+
         # Verify handlers are registered
         assert "create_strategic_plan" in metis_agent._message_handlers
         assert "allocate_resources" in metis_agent._message_handlers
@@ -631,7 +630,7 @@ class TestMetisIntegration:
     async def test_learning_status(self, _metis_agent: MetisAgent) -> None:
         """Test getting learning status."""
         _status = metis_agent.get_learning_status()
-        
+
         assert "agent_id" in status
         assert "collective_learning" in status
         assert "consensus" in status
@@ -647,9 +646,9 @@ class TestMetisIntegration:
         metis_agent.risk_register["risk-1"] = {}
         metis_agent.strategic_objectives.append({"objective": "Test"})
         metis_agent.scenario_analyses["analysis-1"] = []
-        
+
         _summary = await metis_agent.get_strategic_summary()
-        
+
         assert summary["active_plans"] == 1
         assert summary["registered_risks"] == 1
         assert summary["strategic_objectives"] == 1
@@ -660,9 +659,9 @@ class TestMetisIntegration:
         # Add some data
         metis_agent.active_plans["plan-1"] = {"objective": "Test"}
         metis_agent.risk_register["risk-1"] = {}
-        
+
         await metis_agent.cleanup()
-        
+
         assert len(metis_agent.active_plans) == 0
         assert len(metis_agent.risk_register) == 0
 
@@ -677,14 +676,14 @@ class TestErrorHandling:
         """Test handling of strategic plan generation errors."""
         metis_agent.swarms_agent = MagicMock()
         metis_agent.swarms_agent.run = MagicMock(side_effect=Exception("LLM error"))
-        
+
         _plan = await metis_agent._generate_strategic_plan(
             _plan_id = "plan-123",
             _objective = "Test",
             _horizon_days = 90,
             _constraints = [],
         )
-        
+
         # Should return degraded plan
         assert plan["status"] == "degraded"
 
@@ -697,5 +696,5 @@ class TestErrorHandling:
             _resources = {},
             _priorities = {},
         )
-        
+
         assert "allocation" in allocation

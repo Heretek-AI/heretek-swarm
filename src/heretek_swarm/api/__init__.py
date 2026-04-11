@@ -19,8 +19,16 @@ Example:
     ```
 """
 
+from heretek_swarm.api import (
+    collective_evolution,
+    consciousness,
+    consensus,
+    emergent_intelligence,
+    observability,
+    plugins,
+    websockets,
+)
 from heretek_swarm.api.main import app
-from heretek_swarm.api import websockets, consensus, plugins, observability, consciousness, emergent_intelligence, collective_evolution
 
 __all__ = [
     "app",

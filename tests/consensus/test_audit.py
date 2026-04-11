@@ -11,22 +11,21 @@ Tests cover:
 - Hash chain integrity
 """
 
-import pytest
 import json
-from datetime import datetime, timezone, timedelta
-from typing import Dict, Any
+from datetime import datetime, timezone
+
+import pytest
 
 from heretek_swarm.consensus.audit import (
-    ConsensusAuditTrail,
+    ArgumentRecord,
     AuditEvent,
     AuditEventType,
-    VoteRecord,
-    ArgumentRecord,
-    DecisionRecord,
-    DecisionOutcome,
-    QueryResult,
-    DeliberationRoundRecord,
+    ConsensusAuditTrail,
     DecisionAudit,
+    DecisionOutcome,
+    DecisionRecord,
+    DeliberationRoundRecord,
+    VoteRecord,
 )
 
 
@@ -55,7 +54,7 @@ class TestAuditEvent:
             agent_id="agent-1",
             data={"vote": "yes", "confidence": 0.8},
         )
-        
+
         assert event.event_id == "evt-001"
         assert event.event_type == AuditEventType.VOTE_SUBMITTED
         assert event.consensus_id == "consensus-1"
@@ -71,7 +70,7 @@ class TestAuditEvent:
             consensus_id="consensus-1",
             agent_id="agent-1",
         )
-        
+
         assert event.hash is not None
         assert len(event.hash) == 64  # SHA-256 hex length
 
@@ -83,7 +82,7 @@ class TestAuditEvent:
             timestamp="2026-04-07T12:00:00Z",
             consensus_id="consensus-1",
         )
-        
+
         event2 = AuditEvent(
             event_id="evt-002",
             event_type=AuditEventType.VOTE_SUBMITTED,
@@ -91,7 +90,7 @@ class TestAuditEvent:
             consensus_id="consensus-1",
             previous_hash=event1.hash,
         )
-        
+
         assert event2.previous_hash == event1.hash
 
 
@@ -108,7 +107,7 @@ class TestVoteRecord:
             confidence=0.85,
             reasoning="All tests passed",
         )
-        
+
         assert vote.vote_id == "vote-001"
         assert vote.consensus_id == "consensus-1"
         assert vote.agent_id == "agent-1"
@@ -125,7 +124,7 @@ class TestVoteRecord:
             decision="approve",
             confidence=0.8,
         )
-        
+
         # Default values should be present
         assert vote.reasoning is None or isinstance(vote.reasoning, str)
         assert isinstance(vote.metadata, dict)
@@ -145,7 +144,7 @@ class TestArgumentRecord:
             supports=["arg-000"],
             rebuttals=[],
         )
-        
+
         assert arg.argument_id == "arg-001"
         assert arg.position == "for"
         assert len(arg.supports) == 1
@@ -165,7 +164,7 @@ class TestDecisionRecord:
             confidence=0.85,
             participants=["agent-1", "agent-2", "agent-3"],
         )
-        
+
         assert decision.decision_id == "decision-001"
         assert decision.proposal == "Deploy to production"
         assert decision.decision == "deploy"
@@ -199,7 +198,7 @@ class TestDeliberationRoundRecord:
             positions={"agent-1": "for", "agent-2": "against"},
             consensus_score=0.65,
         )
-        
+
         assert record.round_id == "round-001"
         assert record.round_number == 1
         assert len(record.arguments_submitted) == 2
@@ -219,7 +218,7 @@ class TestDecisionAudit:
             confidence_score=0.85,
             dissenting_agents=["agent-3"],
         )
-        
+
         assert audit.decision_id == "decision-001"
         assert audit.final_decision == "deploy"
         assert audit.consensus_method == "MAKER"
@@ -235,7 +234,7 @@ class TestDecisionAudit:
             final_decision="deploy",
             consensus_method="MAKER",
         )
-        
+
         assert audit.provenance_hash is not None
         assert len(audit.provenance_hash) == 64
 
@@ -246,11 +245,11 @@ class TestDecisionAudit:
             consensus_id="consensus-1",
             final_decision="deploy",
         )
-        
+
         original_hash = audit.provenance_hash
-        
+
         audit.update_outcome(DecisionOutcome.SUCCESS, verified=True)
-        
+
         assert audit.outcome == DecisionOutcome.SUCCESS
         assert audit.outcome_verified_at is not None
         assert audit.provenance_hash != original_hash  # Hash should change
@@ -262,19 +261,19 @@ class TestDecisionAudit:
             consensus_id="consensus-1",
             final_decision="deploy",
         )
-        
+
         original_hash = audit.provenance_hash
         original_count = len(audit.deliberation_rounds)
-        
+
         round_record = DeliberationRoundRecord(
             round_id="round-001",
             round_number=1,
             consensus_id="consensus-1",
             consensus_score=0.7,
         )
-        
+
         audit.add_deliberation_round(round_record)
-        
+
         assert len(audit.deliberation_rounds) == original_count + 1
         assert audit.provenance_hash != original_hash
 
@@ -285,7 +284,7 @@ class TestDecisionAudit:
             consensus_id="consensus-1",
             final_decision="deploy",
         )
-        
+
         is_valid = audit.verify_integrity()
         assert is_valid is True
 
@@ -297,9 +296,9 @@ class TestDecisionAudit:
             final_decision="deploy",
             confidence_score=0.85,
         )
-        
+
         data = audit.to_dict()
-        
+
         assert data["decision_id"] == "decision-001"
         assert data["final_decision"] == "deploy"
         assert data["confidence_score"] == 0.85
@@ -333,7 +332,7 @@ class TestConsensusAuditTrail:
             consensus_id="consensus-1",
             data={"proposal": "Test proposal"},
         )
-        
+
         assert event.event_id is not None
         assert event.event_type == AuditEventType.CONSENSUS_INITIATED
         assert len(audit_trail.events) == 1
@@ -344,13 +343,13 @@ class TestConsensusAuditTrail:
             event_type=AuditEventType.CONSENSUS_INITIATED,
             consensus_id="consensus-1",
         )
-        
+
         event2 = audit_trail.record_event(
             event_type=AuditEventType.VOTE_SUBMITTED,
             consensus_id="consensus-1",
             agent_id="agent-1",
         )
-        
+
         assert event2.previous_hash == event1.hash
 
     def test_record_decision(self, audit_trail):
@@ -364,10 +363,10 @@ class TestConsensusAuditTrail:
             participants=["agent-1", "agent-2"],
             reasoning="All tests passed",
         )
-        
+
         assert decision.decision_id == "decision-001"
         assert len(audit_trail.decisions) == 1
-        
+
         # Should have recorded events
         assert len(audit_trail.events) >= 2  # Initiated + Reached
 
@@ -380,7 +379,7 @@ class TestConsensusAuditTrail:
             confidence=0.8,
             reasoning="Looks good",
         )
-        
+
         assert vote.vote_id is not None
         assert vote.agent_id == "agent-1"
         assert len(audit_trail.votes["consensus-1"]) == 1
@@ -395,7 +394,7 @@ class TestConsensusAuditTrail:
             supports=[],
             rebuttals=[],
         )
-        
+
         assert arg.argument_id is not None
         assert len(audit_trail.arguments["consensus-1"]) == 1
 
@@ -409,14 +408,14 @@ class TestConsensusAuditTrail:
             decision="approve",
             confidence=0.8,
         )
-        
+
         # Record outcome
         audit_trail.record_decision_outcome(
             decision_id="decision-001",
             outcome=DecisionOutcome.SUCCESS,
             outcome_data={"deployment_id": "deploy-123"},
         )
-        
+
         assert audit_trail.outcomes["decision-001"] == DecisionOutcome.SUCCESS
 
     def test_record_rollback(self, audit_trail):
@@ -428,12 +427,12 @@ class TestConsensusAuditTrail:
             decision="approve",
             confidence=0.8,
         )
-        
+
         audit_trail.record_rollback(
             decision_id="decision-001",
             reason="Deployment failed health check",
         )
-        
+
         # Should have recorded rollback event
         rollback_events = [
             e for e in audit_trail.events
@@ -451,14 +450,14 @@ class TestConsensusAuditTrail:
             decision="approve",
             confidence=0.8,
         )
-        
+
         audit_trail.record_vote(
             consensus_id="consensus-1",
             agent_id="agent-1",
             decision="approve",
             confidence=0.85,
         )
-        
+
         # Create audit
         audit = audit_trail.create_decision_audit(
             decision_id="decision-001",
@@ -468,7 +467,7 @@ class TestConsensusAuditTrail:
             confidence_score=0.8,
             dissenting_agents=[],
         )
-        
+
         assert audit.audit_id is not None
         assert audit.final_decision == "approve"
         assert len(audit.votes_with_reasoning) == 1
@@ -482,10 +481,10 @@ class TestConsensusAuditTrail:
             positions={"agent-1": "for"},
             consensus_score=0.7,
         )
-        
+
         assert round_record.round_id is not None
         assert round_record.round_number == 1
-        
+
         # Should be stored
         history = audit_trail.get_deliberation_history("consensus-1")
         assert len(history) == 1
@@ -498,9 +497,9 @@ class TestConsensusAuditTrail:
             final_decision="approve",
             consensus_method="MAKER",
         )
-        
+
         audit = audit_trail.get_decision_audit("decision-001")
-        
+
         assert audit is not None
         assert audit.decision_id == "decision-001"
 
@@ -511,15 +510,15 @@ class TestConsensusAuditTrail:
             round_number=1,
             consensus_score=0.6,
         )
-        
+
         audit_trail.record_deliberation_round(
             consensus_id="consensus-1",
             round_number=2,
             consensus_score=0.75,
         )
-        
+
         history = audit_trail.get_deliberation_history("consensus-1")
-        
+
         assert len(history) == 2
         assert history[0].round_number == 1
         assert history[1].round_number == 2
@@ -531,9 +530,9 @@ class TestConsensusAuditTrail:
             consensus_id="consensus-1",
             final_decision="approve",
         )
-        
+
         export_data = audit_trail.export_decision_audit("decision-001", format="json")
-        
+
         assert isinstance(export_data, str)
         data = json.loads(export_data)
         assert data["decision_id"] == "decision-001"
@@ -545,9 +544,9 @@ class TestConsensusAuditTrail:
             consensus_id="consensus-1",
             final_decision="approve",
         )
-        
+
         verification = audit_trail.verify_audit_integrity("decision-001")
-        
+
         assert "valid" in verification
         assert verification["valid"] is True
 
@@ -561,7 +560,7 @@ class TestConsensusAuditTrail:
             decision="approve",
             confidence=0.8,
         )
-        
+
         audit_trail.record_decision(
             decision_id="decision-002",
             consensus_id="consensus-2",
@@ -569,27 +568,27 @@ class TestConsensusAuditTrail:
             decision="reject",
             confidence=0.7,
         )
-        
+
         # Create decision audits
         audit_trail.create_decision_audit(
             decision_id="decision-001",
             consensus_id="consensus-1",
             final_decision="approve",
         )
-        
+
         audit_trail.create_decision_audit(
             decision_id="decision-002",
             consensus_id="consensus-2",
             final_decision="reject",
         )
-        
+
         # Update outcomes
         audit_trail.record_decision_outcome("decision-001", DecisionOutcome.SUCCESS)
         audit_trail.record_decision_outcome("decision-002", DecisionOutcome.FAILURE)
-        
+
         successful = audit_trail.get_audits_by_outcome(DecisionOutcome.SUCCESS)
         failed = audit_trail.get_audits_by_outcome(DecisionOutcome.FAILURE)
-        
+
         assert len(successful) >= 0
         assert len(failed) >= 0
 
@@ -608,9 +607,9 @@ class TestConsensusAuditTrail:
             final_decision="approve",
         )
         audit_trail.record_decision_outcome("decision-001", DecisionOutcome.FAILURE)
-        
+
         failed = audit_trail.get_failed_audits()
-        
+
         assert len(failed) >= 0
 
     def test_get_successful_audits(self, audit_trail):
@@ -628,9 +627,9 @@ class TestConsensusAuditTrail:
             final_decision="approve",
         )
         audit_trail.record_decision_outcome("decision-001", DecisionOutcome.SUCCESS)
-        
+
         successful = audit_trail.get_successful_audits()
-        
+
         assert len(successful) >= 0
 
     def test_get_audit_statistics(self, audit_trail):
@@ -641,16 +640,16 @@ class TestConsensusAuditTrail:
             final_decision="approve",
             confidence_score=0.8,
         )
-        
+
         audit_trail.create_decision_audit(
             decision_id="decision-002",
             consensus_id="consensus-2",
             final_decision="reject",
             confidence_score=0.6,
         )
-        
+
         stats = audit_trail.get_audit_statistics()
-        
+
         assert stats["total_audits"] == 2
         assert stats["average_confidence"] == 0.7
 
@@ -663,9 +662,9 @@ class TestConsensusAuditTrail:
             decision="approve",
             confidence=0.8,
         )
-        
+
         decision = audit_trail.get_decision("decision-001")
-        
+
         assert decision is not None
         assert decision.decision_id == "decision-001"
 
@@ -677,23 +676,23 @@ class TestConsensusAuditTrail:
             decision="approve",
             confidence=0.9,
         )
-        
+
         audit_trail.record_vote(
             consensus_id="consensus-1",
             agent_id="agent-2",
             decision="approve",
             confidence=0.8,
         )
-        
+
         audit_trail.record_vote(
             consensus_id="consensus-1",
             agent_id="agent-3",
             decision="reject",
             confidence=0.6,
         )
-        
+
         breakdown = audit_trail.get_vote_breakdown("consensus-1")
-        
+
         assert breakdown["total_votes"] == 3
         assert "approve" in breakdown["by_decision"]
         assert "reject" in breakdown["by_decision"]
@@ -708,7 +707,7 @@ class TestConsensusAuditTrail:
             confidence=0.8,
             participants=["agent-1"],
         )
-        
+
         audit_trail.record_decision(
             decision_id="decision-002",
             consensus_id="consensus-2",
@@ -717,11 +716,11 @@ class TestConsensusAuditTrail:
             confidence=0.6,
             participants=["agent-2"],
         )
-        
+
         # Query all
         result = audit_trail.query_decisions()
         assert result.total_results == 2
-        
+
         # Query by min confidence
         result = audit_trail.query_decisions(min_confidence=0.7)
         assert result.total_results == 1
@@ -732,21 +731,21 @@ class TestConsensusAuditTrail:
             event_type=AuditEventType.CONSENSUS_INITIATED,
             consensus_id="consensus-1",
         )
-        
+
         audit_trail.record_vote(
             consensus_id="consensus-1",
             agent_id="agent-1",
             decision="approve",
             confidence=0.8,
         )
-        
+
         audit_trail.record_event(
             event_type=AuditEventType.CONSENSUS_REACHED,
             consensus_id="consensus-1",
         )
-        
+
         timeline = audit_trail.get_decision_timeline("consensus-1")
-        
+
         assert len(timeline) >= 2
         # Timeline should be sorted by timestamp
         for i in range(len(timeline) - 1):
@@ -761,14 +760,14 @@ class TestConsensusAuditTrail:
             decision="approve",
             confidence=0.8,
         )
-        
+
         export_data = audit_trail.export_audit_data(
             format="json",
             consensus_id="consensus-1",
             include_events=True,
             include_votes=True,
         )
-        
+
         assert "export_timestamp" in export_data
         assert "decisions" in export_data
         assert len(export_data["decisions"]) == 1
@@ -779,15 +778,15 @@ class TestConsensusAuditTrail:
             event_type=AuditEventType.CONSENSUS_INITIATED,
             consensus_id="consensus-1",
         )
-        
+
         audit_trail.record_event(
             event_type=AuditEventType.VOTE_SUBMITTED,
             consensus_id="consensus-1",
             agent_id="agent-1",
         )
-        
+
         result = audit_trail.verify_integrity()
-        
+
         assert "status" in result
         assert "total_events" in result
         assert "verified_events" in result
@@ -801,16 +800,16 @@ class TestConsensusAuditTrail:
             decision="approve",
             confidence=0.8,
         )
-        
+
         audit_trail.record_vote(
             consensus_id="consensus-1",
             agent_id="agent-1",
             decision="approve",
             confidence=0.85,
         )
-        
+
         stats = audit_trail.get_statistics()
-        
+
         assert stats["total_decisions"] == 1
         assert stats["total_votes"] == 1
         assert stats["hash_chain_enabled"] is True
@@ -819,7 +818,7 @@ class TestConsensusAuditTrail:
         """Test cleaning up old data."""
         # This is a placeholder test since cleanup depends on storage backend
         cleaned = audit_trail.cleanup_old_data()
-        
+
         assert isinstance(cleaned, int)
 
 
@@ -839,7 +838,7 @@ class TestAuditTrailIntegration:
             consensus_id="consensus-1",
             data={"proposal": "Deploy feature X"},
         )
-        
+
         # Record votes
         audit_trail.record_vote(
             consensus_id="consensus-1",
@@ -848,14 +847,14 @@ class TestAuditTrailIntegration:
             confidence=0.9,
             reasoning="All tests passed",
         )
-        
+
         audit_trail.record_vote(
             consensus_id="consensus-1",
             agent_id="agent-2",
             decision="approve",
             confidence=0.85,
         )
-        
+
         audit_trail.record_vote(
             consensus_id="consensus-1",
             agent_id="agent-3",
@@ -863,7 +862,7 @@ class TestAuditTrailIntegration:
             confidence=0.6,
             reasoning="Need more testing",
         )
-        
+
         # Record arguments
         audit_trail.record_argument(
             consensus_id="consensus-1",
@@ -871,14 +870,14 @@ class TestAuditTrailIntegration:
             position="for",
             content="CI/CD pipeline passed",
         )
-        
+
         # Record deliberation rounds
         audit_trail.record_deliberation_round(
             consensus_id="consensus-1",
             round_number=1,
             consensus_score=0.7,
         )
-        
+
         # Record decision
         audit_trail.record_decision(
             decision_id="decision-001",
@@ -888,7 +887,7 @@ class TestAuditTrailIntegration:
             confidence=0.8,
             participants=["agent-1", "agent-2", "agent-3"],
         )
-        
+
         # Create comprehensive audit
         audit = audit_trail.create_decision_audit(
             decision_id="decision-001",
@@ -898,17 +897,17 @@ class TestAuditTrailIntegration:
             confidence_score=0.8,
             dissenting_agents=["agent-3"],
         )
-        
+
         # Record outcome
         audit_trail.record_decision_outcome(
             decision_id="decision-001",
             outcome=DecisionOutcome.SUCCESS,
         )
-        
+
         # Verify integrity
         verification = audit_trail.verify_audit_integrity("decision-001")
         assert verification["valid"] is True
-        
+
         # Export
         export_data = audit_trail.export_decision_audit("decision-001")
         assert export_data is not None
@@ -923,11 +922,11 @@ class TestAuditTrailIntegration:
                 agent_id=f"agent-{i}",
             )
             events.append(event)
-        
+
         # Verify chain
         for i in range(1, len(events)):
             assert events[i].previous_hash == events[i - 1].hash
-        
+
         # Verify overall integrity
         result = audit_trail.verify_integrity()
         assert result["chain_broken"] is False
@@ -945,14 +944,14 @@ class TestAuditTrailIntegration:
                 confidence=0.5 + (i * 0.1),
                 participants=[f"agent-{j}" for j in range(3)],
             )
-            
+
             outcome = DecisionOutcome.SUCCESS if i % 2 == 0 else DecisionOutcome.FAILURE
             audit_trail.record_decision_outcome(f"decision-{i:03d}", outcome)
-        
+
         # Query by outcome
         result = audit_trail.query_decisions(outcome=DecisionOutcome.SUCCESS)
         assert result.total_results == 3  # 0, 2, 4
-        
+
         # Export all
         export_data = audit_trail.export_audit_data(format="json")
         assert export_data["total_audits"] if "total_audits" in export_data else len(export_data.get("decisions", [])) == 5

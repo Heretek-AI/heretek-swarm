@@ -13,29 +13,28 @@ Dreamer is the "creative engine" of the Collective, generating novel
 solutions that other agents might not consider through conventional analysis.
 """
 
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Set
-from dataclasses import dataclass, field
-from enum import Enum
 import uuid
+from dataclasses import dataclass, field
+from datetime import datetime, timezone
+from enum import Enum
+from typing import Any, Dict, List, Optional, Set
 
 import structlog
 
-from heretek_swarm.actors.base import AgentActor, ActorMessage
+from heretek_swarm.actors.base import ActorMessage, AgentActor
 from heretek_swarm.actors.validation import validate_message
 
 # Session 44: Collective Learning Integration
 from heretek_swarm.collective.learning import PatternExtractor, PatternType
 
 # Session 44: Consensus Integration
-from heretek_swarm.consensus.swarm_deliberation import SwarmDeliberationEngine, Position
+from heretek_swarm.consensus.swarm_deliberation import Position, SwarmDeliberationEngine
 
 # Session 44: Memory Optimization Integration
 from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer, AccessTier
 
 # Session 44: Zero-Trust Validation
 from heretek_swarm.security.zero_trust import ZeroTrustValidator
-
 
 _logger = structlog.get_logger("DreamerAgent")
 
@@ -125,7 +124,7 @@ class DreamerAgent(AgentActor):
     Dreamer generates novel solutions through creative thinking techniques,
     providing the Collective with innovative approaches to complex problems.
     """
-    
+
     def __init__(self, agent_id: str, config: Dict[str, Any]):
         super().__init__(
             agent_id=agent_id,
@@ -133,41 +132,41 @@ class DreamerAgent(AgentActor):
             description="Creative Solution Generation Specialist",
             _config = config or {}
         )
-        
+
         # Idea storage
         self._ideas: Dict[str, CreativeIdea] = {}
         self._idea_counter = 0
         self.max_ideas = self._config.get("max_ideas", 500)
-        
+
         # Creative sessions
         self._sessions: Dict[str, CreativeSession] = {}
         self._active_sessions: Set[str] = set()
         self.max_sessions = self._config.get("max_sessions", 50)
-        
+
         # Creativity configuration
         self._default_technique = self._config.get("default_technique", CreativityTechnique.BRAINSTORMING)
         self._creativity_temperature = self._config.get("creativity_temperature", 0.8)  # LLM temp
         self._divergence_factor = self._config.get("divergence_factor", 5)  # Ideas per session
-        
+
         # Inspiration cache
         self._inspiration_cache: List[Dict[str, Any]] = []
         self.max_inspiration = self._config.get("max_inspiration", 100)
-        
-        
+
+
         # Session 44: Collective Learning Integration
         self.pattern_extractor = pattern_extractor or PatternExtractor(min_support=3, min_confidence=0.6)
-        
+
         # Session 44: Consensus Integration
         self.deliberation_engine = deliberation_engine or SwarmDeliberationEngine(
             _max_rounds = 5, consensus_threshold=0.75, min_participants=2
         )
-        
+
         # Session 44: Memory Optimization Integration
         self.access_analyzer = access_analyzer or AccessPatternAnalyzer()
-        
+
         # Session 44: Zero-Trust Validation
         self.zero_trust_validator = zero_trust_validator or ZeroTrustValidator()
-        
+
         # Session 44: Integration state
         self._active_deliberations: Dict[str, str] = {}
         self._pattern_emitted: Set[str] = set()
@@ -179,7 +178,7 @@ class DreamerAgent(AgentActor):
             _default_technique = self._default_technique.value,
             _creativity_temperature = self._creativity_temperature
         )
-    
+
     def get_handlers(self) -> Dict[str, callable]:
         """Return message handlers for Dreamer agent."""
         return {
@@ -191,7 +190,7 @@ class DreamerAgent(AgentActor):
             "get_idea_details": self._handle_get_idea_details,
             "combine_ideas": self._handle_combine_ideas,
         }
-    
+
     async def _handle_generate_ideas(self, message: ActorMessage) -> Optional[Dict[str, Any]]:
         """
         Generate creative ideas for a problem.
@@ -210,14 +209,14 @@ class DreamerAgent(AgentActor):
             _constraints = content.get("constraints", [])
             _technique = CreativityTechnique(content.get("technique", self._default_technique.value))
             _num_ideas = content.get("num_ideas", self._divergence_factor)
-            
+
             logger.info(
                 "Generating ideas",
                 _problem = problem[:100],
                 _technique = technique.value,
                 _num_ideas = num_ideas
             )
-            
+
             # Generate ideas using specified technique
             _ideas = await self._generate_creative_ideas(
                 _problem = problem,
@@ -225,7 +224,7 @@ class DreamerAgent(AgentActor):
                 _technique = technique,
                 _num_ideas = num_ideas
             )
-            
+
             # Store ideas
             _stored_ids = []
             for idea in ideas:
@@ -233,14 +232,14 @@ class DreamerAgent(AgentActor):
                 idea.id = f"idea_{self._idea_counter}"
                 self._ideas[idea.id] = idea
                 stored_ids.append(idea.id)
-            
+
             # LRU eviction
             if len(self._ideas) > self.max_ideas:
                 _excess = len(self._ideas) - self.max_ideas
                 for _ in range(excess):
                     _oldest_id = next(iter(self._ideas))
                     del self._ideas[oldest_id]
-            
+
             return {
                 "status": "success",
                 "ideas_generated": len(ideas),
@@ -252,11 +251,11 @@ class DreamerAgent(AgentActor):
                     "novelty": ideas[0].novelty.value if ideas else None
                 } if ideas else None
             }
-            
+
         except Exception as e:
             logger.error("Failed to generate ideas", error=str(e))
             return {"status": "error", "error": str(e)}
-    
+
     async def _handle_start_creative_session(self, message: ActorMessage) -> Optional[Dict[str, Any]]:
         """
         Start a structured creative thinking session.
@@ -275,7 +274,7 @@ class DreamerAgent(AgentActor):
             _technique = CreativityTechnique(content.get("technique", self._default_technique.value))
             _constraints = content.get("constraints", [])
             _inspiration_sources = content.get("inspiration_sources", [])
-            
+
             _session_id = f"session_{uuid.uuid4().hex[:8]}"
             _session = CreativeSession(
                 id=session_id,
@@ -286,22 +285,22 @@ class DreamerAgent(AgentActor):
                 _constraints = constraints,
                 _inspiration_sources = inspiration_sources
             )
-            
+
             self._sessions[session_id] = session
             self._active_sessions.add(session_id)
-            
+
             # Trim sessions if needed
             if len(self._sessions) > self.max_sessions:
                 _oldest_id = next(iter(self._sessions))
                 del self._sessions[oldest_id]
                 self._active_sessions.discard(oldest_id)
-            
+
             logger.info(
                 "Creative session started",
                 _session_id = session_id,
                 _technique = technique.value
             )
-            
+
             return {
                 "status": "success",
                 "session_id": session_id,
@@ -309,11 +308,11 @@ class DreamerAgent(AgentActor):
                 "problem_statement": problem_statement[:100],
                 "estimated_duration_minutes": 15
             }
-            
+
         except Exception as e:
             logger.error("Failed to start creative session", error=str(e))
             return {"status": "error", "error": str(e)}
-    
+
     async def _handle_explore_alternatives(self, message: ActorMessage) -> Optional[Dict[str, Any]]:
         """
         Explore alternative approaches to a solution.
@@ -330,32 +329,32 @@ class DreamerAgent(AgentActor):
             _current_solution = content.get("current_solution", "")
             _domain = content.get("domain", "general")
             _divergence_level = content.get("divergence_level", "medium")
-            
+
             logger.info(
                 "Exploring alternatives",
                 _current_solution = current_solution[:100],
                 _domain = domain,
                 _divergence_level = divergence_level
             )
-            
+
             # Generate alternatives using analogical thinking
             _alternatives = await self._generate_alternatives(
                 _current_solution = current_solution,
                 _domain = domain,
                 _divergence_level = divergence_level
             )
-            
+
             return {
                 "status": "success",
                 "current_solution": current_solution[:200],
                 "alternatives": alternatives,
                 "count": len(alternatives)
             }
-            
+
         except Exception as e:
             logger.error("Failed to explore alternatives", error=str(e))
             return {"status": "error", "error": str(e)}
-    
+
     async def _handle_apply_creativity_technique(self, message: ActorMessage) -> Optional[Dict[str, Any]]:
         """
         Apply a specific creativity technique to a problem.
@@ -372,31 +371,31 @@ class DreamerAgent(AgentActor):
             _problem = content.get("problem", "")
             _technique = CreativityTechnique(content.get("technique", self._default_technique.value))
             _context = content.get("context", {})
-            
+
             logger.info(
                 "Applying creativity technique",
                 _technique = technique.value,
                 _problem = problem[:100]
             )
-            
+
             # Apply specific technique
             _result = await self._apply_technique(
                 _problem = problem,
                 _technique = technique,
                 _context = context
             )
-            
+
             return {
                 "status": "success",
                 "technique": technique.value,
                 "result": result,
                 "insights_count": len(result.get("insights", []))
             }
-            
+
         except Exception as e:
             logger.error("Failed to apply creativity technique", error=str(e))
             return {"status": "error", "error": str(e)}
-    
+
     async def _handle_get_innovation_report(self, message: ActorMessage) -> Optional[Dict[str, Any]]:
         """
         Get comprehensive innovation report.
@@ -413,22 +412,22 @@ class DreamerAgent(AgentActor):
             _problem_area = content.get("problem_area", "all")
             _include_sessions = content.get("include_sessions", True)
             _time_range_days = content.get("time_range_days", 7)
-            
+
             logger.info("Generating innovation report", problem_area=problem_area)
-            
+
             # Gather ideas
             _cutoff = datetime.now(timezone.utc)
             _ideas = [
                 idea for idea in self._ideas.values()
                 if idea.generated_at >= cutoff
             ]
-            
+
             # Gather sessions
             _sessions = list(self._sessions.values()) if include_sessions else []
-            
+
             # Calculate innovation score
             _innovation_score = self._calculate_innovation_score(ideas, sessions)
-            
+
             # Generate report using LLM
             _report_content = await self._generate_innovation_report(
                 _ideas = ideas,
@@ -436,7 +435,7 @@ class DreamerAgent(AgentActor):
                 _problem_area = problem_area,
                 _innovation_score = innovation_score
             )
-            
+
             return {
                 "status": "success",
                 "report": {
@@ -451,11 +450,11 @@ class DreamerAgent(AgentActor):
                     "opportunities": report_content.get("opportunities", [])
                 }
             }
-            
+
         except Exception as e:
             logger.error("Failed to generate innovation report", error=str(e))
             return {"status": "error", "error": str(e)}
-    
+
     async def _handle_get_idea_details(self, message: ActorMessage) -> Optional[Dict[str, Any]]:
         """
         Get details of a specific idea.
@@ -468,14 +467,14 @@ class DreamerAgent(AgentActor):
         try:
             content = validate_message(message.content, "DreamerGetIdeaDetails")
             _idea_id = content.get("idea_id")
-            
+
             if not idea_id:
                 return {"status": "error", "error": "idea_id required"}
-            
+
             _idea = self._ideas.get(idea_id)
             if not idea:
                 return {"status": "error", "error": f"Idea {idea_id} not found"}
-            
+
             return {
                 "status": "success",
                 "idea": {
@@ -491,11 +490,11 @@ class DreamerAgent(AgentActor):
                     "variations": idea.variations
                 }
             }
-            
+
         except Exception as e:
             logger.error("Failed to get idea details", error=str(e))
             return {"status": "error", "error": str(e)}
-    
+
     async def _handle_combine_ideas(self, message: ActorMessage) -> Optional[Dict[str, Any]]:
         """
         Combine multiple ideas into a novel solution.
@@ -510,26 +509,26 @@ class DreamerAgent(AgentActor):
             _content = validate_message(message.content, "DreamerCombineIdeas")
             _idea_ids = content.get("idea_ids", [])
             _combination_method = content.get("combination_method", "synthesis")
-            
+
             # Get ideas
             _ideas = [self._ideas.get(iid) for iid in idea_ids]
             _ideas = [i for i in ideas if i is not None]
-            
+
             if len(ideas) < 2:
                 return {"status": "error", "error": "Need at least 2 valid ideas to combine"}
-            
+
             logger.info(
                 "Combining ideas",
                 _idea_count = len(ideas),
                 _method = combination_method
             )
-            
+
             # Generate combination using LLM
             _combined = await self._combine_ideas_llm(
                 _ideas = ideas,
                 _method = combination_method
             )
-            
+
             # Store as new idea
             self._idea_counter += 1
             _new_idea = CreativeIdea(
@@ -547,7 +546,7 @@ class DreamerAgent(AgentActor):
                 _variations = combined.get("variations", [])
             )
             self._ideas[new_idea.id] = new_idea
-            
+
             return {
                 "status": "success",
                 "combined_idea_id": new_idea.id,
@@ -555,18 +554,18 @@ class DreamerAgent(AgentActor):
                 "novelty": new_idea.novelty.value,
                 "source_ideas": idea_ids
             }
-            
+
         except Exception as e:
             logger.error("Failed to combine ideas", error=str(e))
             return {"status": "error", "error": str(e)}
-    
+
     # Internal helper methods
-    
+
     async def _generate_creative_ideas(self, problem: str, constraints: List[str], technique: CreativityTechnique, num_ideas: int) -> List[CreativeIdea]:
         """Generate creative ideas using specified technique."""
         try:
             _technique_prompt = self._build_technique_prompt(technique)
-            
+
             _prompt = f"""{technique_prompt}
 
 Problem: {problem}
@@ -588,7 +587,7 @@ Return as JSON array."""
                 _timeout = 60,
                 _temperature = self._creativity_temperature
             )
-            
+
             # Parse response
             import json
             try:
@@ -626,11 +625,11 @@ Return as JSON array."""
                     )
                     for i in range(num_ideas)
                 ]
-                
+
         except Exception as e:
             logger.error("Failed to generate ideas", error=str(e))
             return []
-    
+
     def _build_technique_prompt(self, technique: CreativityTechnique) -> str:
         """Build prompt for specific creativity technique."""
         _prompts = {
@@ -644,13 +643,13 @@ Return as JSON array."""
             CreativityTechnique.FIRST_PRINCIPLES: "Break down to first principles and rebuild from fundamental truths."
         }
         return prompts.get(technique, "Generate creative ideas.")
-    
+
     async def _generate_alternatives(self, current_solution: str, domain: str, divergence_level: str) -> List[Dict[str, Any]]:
         """Generate alternative approaches using analogical thinking."""
         try:
             _temperature_map = {"low": 0.5, "medium": 0.7, "high": 0.9}
             _temperature = temperature_map.get(divergence_level, 0.7)
-            
+
             _prompt = f"""Current solution: {current_solution}
 Domain: {domain}
 
@@ -671,17 +670,17 @@ Return as JSON array."""
                 _timeout = 60,
                 _temperature = temperature
             )
-            
+
             import json
             try:
                 return json.loads(response)
             except:
                 return [{"name": f"Alternative {i+1}", "concept": "Different approach"} for i in range(5)]
-                
+
         except Exception as e:
             logger.error("Failed to generate alternatives", error=str(e))
             return []
-    
+
     async def _apply_technique(self, problem: str, technique: CreativityTechnique, context: Dict[str, Any]) -> Dict[str, Any]:
         """Apply specific creativity technique."""
         _technique_prompts = {
@@ -689,14 +688,14 @@ Return as JSON array."""
             CreativityTechnique.SCAMPER: self._apply_scamper,
             CreativityTechnique.FIRST_PRINCIPLES: self._apply_first_principles,
         }
-        
+
         _handler = technique_prompts.get(technique)
         if handler:
             return await handler(problem, context)
-        
+
         # Default: generic technique application
         return await self._apply_generic_technique(problem, technique, context)
-    
+
     async def _apply_six_hats(self, problem: str, _context: Dict[str, Any]) -> Dict[str, Any]:
         """Apply Six Thinking Hats technique."""
         _hats = [
@@ -707,7 +706,7 @@ Return as JSON array."""
             ("Green", "creativity", "What are the creative alternatives?"),
             ("Blue", "process", "What is the summary and next steps?")
         ]
-        
+
         _insights = []
         for hat_name, hat_type, question in hats:
             _prompt = f"""Six Thinking Hats - {hat_name} Hat ({hat_type})
@@ -716,15 +715,15 @@ Problem: {problem}
 {question}
 
 Provide insights from this perspective."""
-            
+
             try:
                 _response = await self.run_with_llm(prompt=prompt, timeout=30, temperature=0.4)
                 insights.append({"hat": hat_name, "type": hat_type, "insight": response.strip()})
             except:
                 insights.append({"hat": hat_name, "type": hat_type, "insight": "Unable to generate"})
-        
+
         return {"technique": "six_thinking_hats", "insights": insights}
-    
+
     async def _apply_scamper(self, problem: str, _context: Dict[str, Any]) -> Dict[str, Any]:
         """Apply SCAMPER technique."""
         _scamper_prompts = {
@@ -736,7 +735,7 @@ Provide insights from this perspective."""
             "Eliminate": "What can be eliminated or simplified?",
             "Reverse": "What can be reversed or rearranged?"
         }
-        
+
         _insights = []
         for letter, question in scamper_prompts.items():
             _prompt = f"""SCAMPER Technique - {letter}
@@ -745,15 +744,15 @@ Problem: {problem}
 {question}
 
 Generate ideas using this SCAMPER prompt."""
-            
+
             try:
                 _response = await self.run_with_llm(prompt=prompt, timeout=30, temperature=0.7)
                 insights.append({"letter": letter, "prompt": question, "ideas": response.strip()})
             except:
                 insights.append({"letter": letter, "prompt": question, "ideas": "Unable to generate"})
-        
+
         return {"technique": "scamper", "insights": insights}
-    
+
     async def _apply_first_principles(self, problem: str, _context: Dict[str, Any]) -> Dict[str, Any]:
         """Apply First Principles thinking."""
         _prompt = f"""First Principles Analysis
@@ -771,7 +770,7 @@ Provide a structured analysis."""
             return {"technique": "first_principles", "analysis": response.strip()}
         except:
             return {"technique": "first_principles", "analysis": "Unable to complete analysis"}
-    
+
     async def _apply_generic_technique(self, problem: str, technique: CreativityTechnique, _context: Dict[str, Any]) -> Dict[str, Any]:
         """Generic technique application."""
         _prompt = f"""Apply {technique.value} technique to:
@@ -785,35 +784,35 @@ Generate insights and ideas."""
             return {"technique": technique.value, "insights": [response.strip()]}
         except:
             return {"technique": technique.value, "insights": []}
-    
+
     def _calculate_innovation_score(self, ideas: List[CreativeIdea], sessions: List[CreativeSession]) -> float:
         """Calculate overall innovation score."""
         if not ideas and not sessions:
             return 0.0
-        
+
         _scores = []
-        
+
         # Idea quality score
         if ideas:
             _avg_originality = sum(i.originality_score for i in ideas) / len(ideas)
             _avg_impact = sum(i.impact_score for i in ideas) / len(ideas)
             _breakthrough_count = len([i for i in ideas if i.novelty == NoveltyLevel.BREAKTHROUGH])
-            
+
             _idea_score = (avg_originality * 0.4 + avg_impact * 0.4 + min(breakthrough_count / 5, 1) * 0.2) * 100
             scores.append(idea_score)
-        
+
         # Session activity score
         if sessions:
             _session_score = min(len(sessions) / 10, 1) * 100
             scores.append(session_score)
-        
+
         return sum(scores) / len(scores) if scores else 0.0
-    
+
     async def _generate_innovation_report(self, ideas: List[CreativeIdea], sessions: List[CreativeSession], problem_area: str, innovation_score: float) -> Dict[str, Any]:
         """Generate innovation report using LLM."""
         try:
             _ideas_summary = "\n".join([f"- {i.title} ({i.novelty.value})" for i in ideas[:10]])
-            
+
             _prompt = f"""Innovation Report for: {problem_area}
 
 Innovation Score: {innovation_score:.1f}/100
@@ -832,7 +831,7 @@ Provide:
 Return as JSON with keys: recommendations, roadmap, risks, opportunities"""
 
             _response = await self.run_with_llm(prompt=prompt, timeout=60, temperature=0.3)
-            
+
             import json
             try:
                 return json.loads(response)
@@ -845,7 +844,7 @@ Return as JSON with keys: recommendations, roadmap, risks, opportunities"""
                 }
         except:
             return {"recommendations": [], "roadmap": [], "risks": [], "opportunities": []}
-    
+
 
     # =========================================================================
     # Session 44: Collective Learning Integration Methods
@@ -855,10 +854,10 @@ Return as JSON with keys: recommendations, roadmap, risks, opportunities"""
         """Emit pattern for collective learning."""
         if not self.pattern_extractor:
             return
-        
+
         if item_id in self._pattern_emitted:
             return
-        
+
         try:
             await self.pattern_extractor.analyze_message(
                 _message_id = f"{item_type}_{item_id}",
@@ -868,7 +867,7 @@ Return as JSON with keys: recommendations, roadmap, risks, opportunities"""
                 _content = content,
                 _timestamp = datetime.now(timezone.utc).isoformat(),
             )
-            
+
             self._pattern_emitted.add(item_id)
             logger.info(f"{item_type}_pattern_emitted", item_id=item_id, outcome=outcome)
         except Exception as e:
@@ -878,7 +877,7 @@ Return as JSON with keys: recommendations, roadmap, risks, opportunities"""
         """Consume patterns from collective learning."""
         if not self.pattern_extractor:
             return []
-        
+
         try:
             _patterns = await self.pattern_extractor.extract_patterns(
                 _time_window_hours = 24,
@@ -897,7 +896,7 @@ Return as JSON with keys: recommendations, roadmap, risks, opportunities"""
         """Initiate swarm deliberation."""
         if not self.deliberation_engine:
             return None
-        
+
         try:
             _deliberation_id = f"delib_{item_id}"
             self.deliberation_engine.start_deliberation(
@@ -907,7 +906,7 @@ Return as JSON with keys: recommendations, roadmap, risks, opportunities"""
                 _domain = domain,
             )
             self._active_deliberations[item_id] = deliberation_id
-            
+
             logger.info("deliberation_initiated", deliberation_id=deliberation_id, item_id=item_id)
             return deliberation_id
         except Exception as e:
@@ -918,11 +917,11 @@ Return as JSON with keys: recommendations, roadmap, risks, opportunities"""
         """Submit agent position in deliberation."""
         if not self.deliberation_engine:
             return False
-        
+
         _deliberation_id = self._active_deliberations.get(item_id)
         if not deliberation_id:
             return False
-        
+
         try:
             _success = self.deliberation_engine.submit_position(
                 _deliberation_id = deliberation_id,
@@ -931,14 +930,14 @@ Return as JSON with keys: recommendations, roadmap, risks, opportunities"""
                 _confidence = confidence,
                 _argument = argument,
             )
-            
+
             if success and self.access_analyzer:
                 self.access_analyzer.record_access(
                     _memory_id = f"delib_{deliberation_id}_{agent_id}",
                     _access_type = "write",
                     agent_id=agent_id,
                 )
-            
+
             return success
         except Exception as e:
             logger.error("failed_to_submit_deliberation_position", error=str(e))
@@ -948,19 +947,19 @@ Return as JSON with keys: recommendations, roadmap, risks, opportunities"""
         """Finalize deliberation and apply result."""
         if not self.deliberation_engine:
             return None
-        
+
         _deliberation_id = self._active_deliberations.get(item_id)
         if not deliberation_id:
             return None
-        
+
         try:
             _result = self.deliberation_engine.finalize_deliberation(deliberation_id)
-            
+
             if result:
                 self.deliberation_engine.cleanup_deliberation(deliberation_id)
                 del self._active_deliberations[item_id]
                 logger.info("deliberation_finalized", deliberation_id=deliberation_id)
-            
+
             return result
         except Exception as e:
             logger.error("failed_to_finalize_deliberation", error=str(e))
@@ -974,7 +973,7 @@ Return as JSON with keys: recommendations, roadmap, risks, opportunities"""
         """Track memory access patterns."""
         if not self.access_analyzer:
             return
-        
+
         _memory_id = f"{item_type}_{item_id}"
         self.access_analyzer.record_access(
             _memory_id = memory_id,
@@ -986,7 +985,7 @@ Return as JSON with keys: recommendations, roadmap, risks, opportunities"""
         """Get memory tier classification."""
         if not self.access_analyzer:
             return AccessTier.COLD
-        
+
         _memory_id = f"{item_type}_{item_id}"
         _profile = self.access_analyzer.get_profile(memory_id)
         return profile.tier if profile else AccessTier.COLD
@@ -995,7 +994,7 @@ Return as JSON with keys: recommendations, roadmap, risks, opportunities"""
         """Prefetch items an agent is likely to need."""
         if not self.access_analyzer:
             return []
-        
+
         try:
             _predicted_memories = self.access_analyzer.predict_agent_access(agent_id)
             return [
@@ -1029,7 +1028,7 @@ Return as JSON with keys: recommendations, roadmap, risks, opportunities"""
         """Combine ideas using LLM."""
         try:
             _ideas_text = "\n\n".join([f"{i.title}: {i.description}" for i in ideas])
-            
+
             _prompt = f"""Combine these ideas into a novel solution using {method}:
 
 {ideas_text}
@@ -1046,7 +1045,7 @@ Provide:
 Return as JSON."""
 
             _response = await self.run_with_llm(prompt=prompt, timeout=60, temperature=0.8)
-            
+
             import json
             try:
                 return json.loads(response)

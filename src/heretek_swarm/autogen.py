@@ -27,8 +27,14 @@ _logger = structlog.get_logger(__name__)
 
 # Try to import autogen components
 try:
-    from autogen import ConversableAgent, AssistantAgent, UserProxyAgent, GroupChat, GroupChatManager
-    from autogen import register_function
+    from autogen import (
+        AssistantAgent,
+        ConversableAgent,
+        GroupChat,
+        GroupChatManager,
+        UserProxyAgent,
+        register_function,
+    )
     from autogen.agentchat import ChatResult
     AUTOGEN_AVAILABLE = True
 except ImportError:
@@ -81,7 +87,7 @@ class AutoGenMessage:
     tool_calls: Optional[List[Dict[str, Any]]] = None
     timestamp: str = field(default_factory=lambda: datetime.now(timezone.utc).isoformat())
     metadata: Dict[str, Any] = field(default_factory=dict)
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
         return {
@@ -94,7 +100,7 @@ class AutoGenMessage:
             "timestamp": self.timestamp,
             "metadata": self.metadata,
         }
-    
+
     def to_autogen_format(self) -> Dict[str, Any]:
         """Convert to AutoGen message format."""
         _msg = {
@@ -134,7 +140,7 @@ class AutoGenAgentConfig:
     max_consecutive_auto_reply: int = 10
     llm_config: Optional[Dict[str, Any]] = None
     metadata: Dict[str, Any] = field(default_factory=dict)
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
         return {
@@ -170,7 +176,7 @@ class GroupChatConfig:
     max_round: int = 10
     speaker_selection_method: str = "auto"
     metadata: Dict[str, Any] = field(default_factory=dict)
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
         return {
@@ -202,7 +208,7 @@ class ToolRegistration:
     function: Callable
     heretek_tool: bool = False
     metadata: Dict[str, Any] = field(default_factory=dict)
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
         return {
@@ -229,7 +235,7 @@ class AutoGenAdapter:
         group_chats: Registered group chats
         tools: Registered tools
     """
-    
+
     def __init__(self, llm_config: Optional[Dict[str, Any]], enable_message_translation: bool, max_messages: int) -> None:
         """
         Initialize the AutoGen adapter.
@@ -244,34 +250,34 @@ class AutoGenAdapter:
         self.group_chats: Dict[str, Any] = {}
         self.group_chat_configs: Dict[str, GroupChatConfig] = {}
         self.group_chat_managers: Dict[str, Any] = {}
-        
+
         self.tools: Dict[str, ToolRegistration] = {}
         self.llm_config = llm_config or {}
-        
+
         self.enable_message_translation = enable_message_translation
         self.max_messages = max_messages
-        
+
         # Message history
         self.message_history: Dict[str, List[AutoGenMessage]] = {}
-        
+
         # Heretek integration
         self._agent_runtime = None
         self._heretek_agents: Dict[str, Any] = {}
-        
+
         # Conversation callbacks
         self._conversation_callbacks: List[Callable] = []
-        
+
         logger.info(
             "autogen_adapter_initialized",
             llm_config=bool(llm_config),
             _message_translation = enable_message_translation,
         )
-    
+
     def set_agent_runtime(self, runtime: Any) -> None:
         """Set the Heretek agent runtime for integration."""
         self._agent_runtime = runtime
         logger.debug("agent_runtime_set", runtime_type=type(runtime).__name__)
-    
+
     def register_heretek_agent(self, heretek_agent_id: str, autogen_agent_id: str) -> None:
         """Register a mapping between Heretek and AutoGen agents."""
         self._heretek_agents[heretek_agent_id] = autogen_agent_id
@@ -280,12 +286,12 @@ class AutoGenAdapter:
             _heretek_agent_id = heretek_agent_id,
             _autogen_agent_id = autogen_agent_id,
         )
-    
+
     def register_conversation_callback(self, callback: Callable) -> None:
         """Register a callback for conversation events."""
         self._conversation_callbacks.append(callback)
         logger.debug("conversation_callback_registered", callback=callback.__name__)
-    
+
     async def _notify_conversation_event(self, event_type: str, agent_id: str, message: Dict[str, Any]) -> None:
         """Notify callbacks of conversation events."""
         for callback in self._conversation_callbacks:
@@ -296,7 +302,7 @@ class AutoGenAdapter:
                     callback(event_type, agent_id, message)
             except Exception as e:
                 logger.error("conversation_callback_error", error=str(e))
-    
+
     def create_agent(self, agent_id: str, name: str, role: AgentRole, system_message: Optional[str], description: Optional[str], human_input_mode: str, max_consecutive_auto_reply: int, llm_config: Optional[Dict[str, Any]], metadata: Optional[Dict[str, Any]]) -> Any:
         """
         Create an AutoGen agent.
@@ -320,7 +326,7 @@ class AutoGenAdapter:
             raise RuntimeError(
                 "AutoGen is not available. Install with: pip install pyautogen"
             )
-        
+
         _config = AutoGenAgentConfig(
             _agent_id = agent_id,
             _name = name,
@@ -333,10 +339,10 @@ class AutoGenAdapter:
             _metadata = metadata or {},
         )
         self.agent_configs[agent_id] = config
-        
+
         # Create agent based on role
         agent: Optional[ConversableAgent] = None
-        
+
         if role == AgentRole.ASSISTANT:
             agent = AssistantAgent(
                 _name = name,
@@ -368,7 +374,7 @@ class AutoGenAdapter:
                 self._heretek_reply_callback,
                 _position = 0,
             )
-        
+
         if agent:
             self.agents[agent_id] = agent
             self.message_history[agent_id] = []
@@ -378,9 +384,9 @@ class AutoGenAdapter:
                 _role = role.value,
                 _name = name,
             )
-        
+
         return agent
-    
+
     def _heretek_reply_callback(self, recipient: ConversableAgent, messages: Optional[List[Dict]], _sender: Optional[ConversableAgent], _config: Optional[Any]) -> Tuple[bool, Optional[Dict]]:
         """
         Reply callback for Heretek bridge agents.
@@ -389,17 +395,17 @@ class AutoGenAdapter:
         """
         if messages is None or not messages:
             return False, None
-        
+
         _last_message = messages[-1]
         _content = last_message.get("content", "")
-        
+
         # Find corresponding Heretek agent
         _heretek_agent_id = None
         for h_id, a_id in self._heretek_agents.items():
             if a_id == recipient.name:
                 _heretek_agent_id = h_id
                 break
-        
+
         if heretek_agent_id and self._agent_runtime:
             try:
                 # Route to Heretek agent
@@ -413,9 +419,9 @@ class AutoGenAdapter:
                         return True, {"role": "assistant", "content": response}
             except Exception as e:
                 logger.error("heretek_reply_error", error=str(e))
-        
+
         return False, None
-    
+
     def create_group_chat(self, group_id: str, name: str, agent_ids: List[str], max_round: int, speaker_selection_method: str, metadata: Optional[Dict[str, Any]]) -> Any:
         """
         Create an AutoGen group chat.
@@ -433,13 +439,13 @@ class AutoGenAdapter:
         """
         if not AUTOGEN_AVAILABLE:
             raise RuntimeError("AutoGen is not available")
-        
+
         # Get agents
         agents = [self.agents[aid] for aid in agent_ids if aid in self.agents]
-        
+
         if not agents:
             raise ValueError(f"No valid agents found for IDs: {agent_ids}")
-        
+
         _config = GroupChatConfig(
             _group_id = group_id,
             _name = name,
@@ -449,7 +455,7 @@ class AutoGenAdapter:
             _metadata = metadata or {},
         )
         self.group_chat_configs[group_id] = config
-        
+
         # Create group chat
         group_chat = GroupChat(
             agents=agents,
@@ -458,22 +464,22 @@ class AutoGenAdapter:
             _speaker_selection_method = speaker_selection_method,
         )
         self.group_chats[group_id] = group_chat
-        
+
         # Create group chat manager
         _manager = GroupChatManager(
             _groupchat = group_chat,
             _llm_config = self.llm_config,
         )
         self.group_chat_managers[group_id] = manager
-        
+
         logger.info(
             "group_chat_created",
             _group_id = group_id,
             _agent_count = len(agents),
         )
-        
+
         return group_chat
-    
+
     def register_tool(self, tool_id: str, name: str, description: str, function: Callable, agent_ids: Optional[List[str]], heretek_tool: bool, metadata: Optional[Dict[str, Any]]) -> str:
         """
         Register a tool with AutoGen agents.
@@ -492,7 +498,7 @@ class AutoGenAdapter:
         """
         if not AUTOGEN_AVAILABLE:
             raise RuntimeError("AutoGen is not available")
-        
+
         _registration = ToolRegistration(
             _tool_id = tool_id,
             _name = name,
@@ -502,10 +508,10 @@ class AutoGenAdapter:
             _metadata = metadata or {},
         )
         self.tools[tool_id] = registration
-        
+
         # Register with specified agents
         _target_agents = agent_ids or list(self.agents.keys())
-        
+
         for agent_id in target_agents:
             if agent_id in self.agents:
                 agent = self.agents[agent_id]
@@ -528,10 +534,10 @@ class AutoGenAdapter:
                         _agent_id = agent_id,
                         error=str(e),
                     )
-        
+
         logger.info("tool_registered", tool_id=tool_id, name=name)
         return tool_id
-    
+
     def translate_message(self, message: Dict[str, Any], from_format: str, to_format: str) -> AutoGenMessage:
         """
         Translate a message between formats.
@@ -545,14 +551,14 @@ class AutoGenAdapter:
             Translated AutoGenMessage
         """
         _message_id = str(uuid.uuid4())
-        
+
         # Parse source message
         _role = message.get("role", MessageRole.USER.value)
         _content = message.get("content")
         name = message.get("name")
         _function_call = message.get("function_call")
         _tool_calls = message.get("tool_calls")
-        
+
         # Translate role if needed
         if from_format == "heretek":
             _role_map = {
@@ -563,7 +569,7 @@ class AutoGenAdapter:
                 "tool": MessageRole.TOOL.value,
             }
             _role = role_map.get(role, role)
-        
+
         _autogen_message = AutoGenMessage(
             _message_id = message_id,
             _role = role,
@@ -573,16 +579,16 @@ class AutoGenAdapter:
             _tool_calls = tool_calls,
             _metadata = {"from_format": from_format, "to_format": to_format},
         )
-        
+
         logger.debug(
             "message_translated",
             _message_id = message_id,
             _from_format = from_format,
             _to_format = to_format,
         )
-        
+
         return autogen_message
-    
+
     async def send_message(self, sender_id: str, recipient_id: str, content: str, _metadata: Optional[Dict[str, Any]]) -> Optional[Dict[str, Any]]:
         """
         Send a message between agents.
@@ -600,17 +606,17 @@ class AutoGenAdapter:
             raise ValueError(f"Sender agent {sender_id} not found")
         if recipient_id not in self.agents:
             raise ValueError(f"Recipient agent {recipient_id} not found")
-        
+
         _sender = self.agents[sender_id]
         _recipient = self.agents[recipient_id]
-        
+
         # Create message
         message = {
             "role": "user",
             "content": content,
             "name": sender.name if hasattr(sender, 'name') else sender_id,
         }
-        
+
         # Track message
         _autogen_msg = self.translate_message(message, from_format="autogen")
         if recipient_id in self.message_history:
@@ -618,10 +624,10 @@ class AutoGenAdapter:
             # Trim history
             if len(self.message_history[recipient_id]) > self.max_messages:
                 self.message_history[recipient_id] = self.message_history[recipient_id][-self.max_messages:]
-        
+
         # Notify callbacks
         await self._notify_conversation_event("message_sent", sender_id, message)
-        
+
         # Send message and get response
         try:
             _response = await recipient.a_send(
@@ -629,27 +635,27 @@ class AutoGenAdapter:
                 _sender = sender,
                 _max_turns = 1,
             )
-            
+
             if response and len(response) > 0:
                 _last_response = response[-1]
-                
+
                 # Track response
                 _response_msg = self.translate_message(last_response, from_format="autogen")
                 if sender_id in self.message_history:
                     self.message_history[sender_id].append(response_msg)
-                
+
                 # Notify callbacks
                 await self._notify_conversation_event(
                     "message_received", recipient_id, last_response
                 )
-                
+
                 return last_response
-            
+
         except Exception as e:
             logger.error("message_send_error", error=str(e))
-        
+
         return None
-    
+
     async def initiate_chat(self, initiator_id: str, recipient_id: str, message: str, max_turns: int) -> Optional[ChatResult]:
         """
         Initiate a chat between two agents.
@@ -665,35 +671,35 @@ class AutoGenAdapter:
         """
         if not AUTOGEN_AVAILABLE:
             raise RuntimeError("AutoGen is not available")
-        
+
         if initiator_id not in self.agents:
             raise ValueError(f"Initiator agent {initiator_id} not found")
         if recipient_id not in self.agents:
             raise ValueError(f"Recipient agent {recipient_id} not found")
-        
+
         _initiator = self.agents[initiator_id]
         _recipient = self.agents[recipient_id]
-        
+
         try:
             _result = await initiator.a_initiate_chat(
                 _recipient = recipient,
                 message=message,
                 _max_turns = max_turns,
             )
-            
+
             logger.info(
                 "chat_initiated",
                 _initiator = initiator_id,
                 _recipient = recipient_id,
                 _turns = max_turns,
             )
-            
+
             return result
-            
+
         except Exception as e:
             logger.error("chat_initiation_error", error=str(e))
             return None
-    
+
     async def run_group_chat(self, group_id: str, message: str, initiator_id: Optional[str]) -> Optional[ChatResult]:
         """
         Run a group chat conversation.
@@ -708,10 +714,10 @@ class AutoGenAdapter:
         """
         if group_id not in self.group_chat_managers:
             raise ValueError(f"Group chat {group_id} not found")
-        
+
         _manager = self.group_chat_managers[group_id]
         _config = self.group_chat_configs[group_id]
-        
+
         # Determine initiator
         _initiator = None
         if initiator_id and initiator_id in self.agents:
@@ -719,50 +725,50 @@ class AutoGenAdapter:
         elif self.agents:
             # Use first agent as initiator
             _initiator = list(self.agents.values())[0]
-        
+
         if not initiator:
             raise ValueError("No initiator agent available")
-        
+
         try:
             _result = await initiator.a_initiate_chat(
                 _recipient = manager,
                 message=message,
                 _max_turns = config.max_round,
             )
-            
+
             # Update group chat messages
             if group_id in self.group_chats:
                 self.group_chats[group_id].messages = result.chat_history
-            
+
             logger.info(
                 "group_chat_completed",
                 _group_id = group_id,
                 _message_count = len(result.chat_history) if result else 0,
             )
-            
+
             return result
-            
+
         except Exception as e:
             logger.error("group_chat_error", group_id=group_id, error=str(e))
             return None
-    
+
     def get_agent(self, agent_id: str) -> Optional[Any]:
         """Get an agent by ID."""
         return self.agents.get(agent_id)
-    
+
     def get_agent_config(self, agent_id: str) -> Optional[AutoGenAgentConfig]:
         """Get agent configuration."""
         return self.agent_configs.get(agent_id)
-    
+
     def get_group_chat(self, group_id: str) -> Optional[Any]:
         """Get a group chat by ID."""
         return self.group_chats.get(group_id)
-    
+
     def get_message_history(self, agent_id: str, limit: int) -> List[Dict[str, Any]]:
         """Get message history for an agent."""
         _history = self.message_history.get(agent_id, [])
         return [msg.to_dict() for msg in history[-limit:]]
-    
+
     def get_statistics(self) -> Dict[str, Any]:
         """Get adapter statistics."""
         return {
@@ -773,37 +779,37 @@ class AutoGenAdapter:
             "autogen_available": AUTOGEN_AVAILABLE,
             "message_translation_enabled": self.enable_message_translation,
         }
-    
+
     def clear_agent(self, agent_id: str) -> bool:
         """Clear an agent and its history."""
         if agent_id not in self.agents:
             return False
-        
+
         if agent_id in self.agents:
             del self.agents[agent_id]
         if agent_id in self.agent_configs:
             del self.agent_configs[agent_id]
         if agent_id in self.message_history:
             del self.message_history[agent_id]
-        
+
         logger.info("agent_cleared", agent_id=agent_id)
         return True
-    
+
     def clear_group_chat(self, group_id: str) -> bool:
         """Clear a group chat."""
         if group_id not in self.group_chats:
             return False
-        
+
         if group_id in self.group_chats:
             del self.group_chats[group_id]
         if group_id in self.group_chat_configs:
             del self.group_chat_configs[group_id]
         if group_id in self.group_chat_managers:
             del self.group_chat_managers[group_id]
-        
+
         logger.info("group_chat_cleared", group_id=group_id)
         return True
-    
+
     def clear_all(self) -> None:
         """Clear all agents and state."""
         self.agents.clear()
@@ -844,7 +850,7 @@ def create_assistant_agent(agent_id: str, name: str, system_message: str, llm_co
         Created AssistantAgent
     """
     _adapter = get_autogen_adapter()
-    
+
     _agent = adapter.create_agent(
         _agent_id = agent_id,
         _name = name,
@@ -852,7 +858,7 @@ def create_assistant_agent(agent_id: str, name: str, system_message: str, llm_co
         _system_message = system_message,
         _llm_config = llm_config,
     )
-    
+
     # Register tools if provided
     if tools and AUTOGEN_AVAILABLE:
         for tool in tools:
@@ -864,5 +870,5 @@ def create_assistant_agent(agent_id: str, name: str, system_message: str, llm_co
                 _function = tool,
                 _agent_ids = [agent_id],
             )
-    
+
     return agent

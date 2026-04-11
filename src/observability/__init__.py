@@ -4,19 +4,6 @@ Observability package for Heretek Swarm.
 Provides OpenTelemetry-based distributed tracing and metrics collection.
 """
 
-from .tracing import (
-    LATENCY_BASELINE_MS,
-    SpanAttributes,
-    TracingConfig,
-    get_tracer,
-    init_tracing,
-    record_vote,
-    trace_consensus_round,
-    trace_message_flow,
-    track_latency,
-    traced,
-    traced_agent_method,
-)
 from .metrics import (
     MetricsConfig,
     SwarmMetrics,
@@ -27,6 +14,19 @@ from .metrics import (
     record_message_sent,
     record_state_rollback,
     record_task_completion,
+)
+from .tracing import (
+    LATENCY_BASELINE_MS,
+    SpanAttributes,
+    TracingConfig,
+    get_tracer,
+    init_tracing,
+    record_vote,
+    trace_consensus_round,
+    trace_message_flow,
+    traced,
+    traced_agent_method,
+    track_latency,
 )
 
 __all__ = [

@@ -7,11 +7,10 @@ Tests cover:
 - Supervisor actor restart mechanism
 """
 
-import asyncio
 import pytest
 
-from heretek_swarm.actors.base import AgentActor, ActorMessage, ActorState
-from heretek_swarm.actors.factory import ActorFactory, ActorConfig, get_factory
+from heretek_swarm.actors.base import ActorMessage, ActorState, AgentActor
+from heretek_swarm.actors.factory import ActorConfig, ActorFactory, get_factory
 from heretek_swarm.actors.supervisor import ActorSupervisor
 
 
@@ -42,7 +41,7 @@ class TestActorActor:
 class MockAgentActor(AgentActor):
     """Mock actor for testing purposes."""
 
-    def __init__(self, _agent_id: str, _**kwargs):
+    def __init__(self, agent_id: str, **kwargs):
         # Extract actor_type if provided
         actor_type = kwargs.pop("actor_type", None)
         super().__init__(agent_id=agent_id, actor_type=actor_type, **kwargs)
@@ -92,7 +91,7 @@ class TestActorFactory:
             {"agent_id": "test-instance", "name": "Test Actor", "topics": ["test"]}
         )
         actor = factory.create_actor("mock-actor")
-        
+
         assert actor.agent_id == "test-instance"
         assert actor.name == "Test Actor"
         assert actor.topics == ["test"]
@@ -109,7 +108,7 @@ class TestActorFactory:
             name="Overridden Name",
             capabilities=["special"]
         )
-        
+
         assert actor.agent_id == "test-instance"
         assert actor.name == "Overridden Name"
         assert actor.capabilities == ["special"]
@@ -123,9 +122,9 @@ class TestActorFactory:
         """Test retrieving actor configuration."""
         factory.register_actor_class("mock-actor", MockAgentActor)
         actor = factory.create_actor("mock-actor", agent_id="test-instance")
-        
+
         _config = factory.get_actor_info("test-instance")
-        
+
         assert config is not None
         assert config.actor_type == "mock-actor"
         assert config.class_ref == MockAgentActor
@@ -140,7 +139,7 @@ class TestActorFactory:
         """Test unregistering an actor class."""
         factory.register_actor_class("mock-actor", MockAgentActor)
         assert "mock-actor" in factory.get_registered_types()
-        
+
         factory.unregister_actor_class("mock-actor")
         assert "mock-actor" not in factory.get_registered_types()
 
@@ -154,9 +153,9 @@ class TestActorFactory:
         factory.register_actor_class("mock-actor", MockAgentActor)
         factory.create_actor("mock-actor", agent_id="instance-1")
         factory.create_actor("mock-actor", agent_id="instance-2")
-        
+
         assert len(factory.get_instance_configs()) == 2
-        
+
         factory.clear_instances()
         assert len(factory.get_instance_configs()) == 0
 
@@ -179,7 +178,7 @@ class TestActorConfig:
             capabilities=["test-cap"],
             actor_id="test-actor"
         )
-        
+
         assert config.actor_type == "mock-actor"
         assert config.class_ref == MockAgentActor
         assert config.init_kwargs == {"agent_id": "test", "name": "Test"}
@@ -218,10 +217,10 @@ class TestActorSupervisorRestart:
             _name = "Test Actor",
             _topics = ["test"]
         )
-        
+
         assert "test-actor" in supervisor.actors
         assert "test-actor" in supervisor.actor_configs
-        
+
         _config = supervisor.actor_configs["test-actor"]
         assert config.actor_type == "MockAgentActor"
         assert config.class_ref == MockAgentActor
@@ -236,7 +235,7 @@ class TestActorSupervisorRestart:
             actor_type="CustomType",
             _name = "Test Actor"
         )
-        
+
         _config = supervisor.actor_configs["test-actor"]
         assert config.actor_type == "CustomType"
 
@@ -249,22 +248,22 @@ class TestActorSupervisorRestart:
             "test-actor",
             _name = "Test Actor"
         )
-        
+
         # Set actor to error state to trigger restart
         actor = supervisor.actors["test-actor"]
         actor.state = ActorState.ERROR
-        
+
         # Get initial config
         _initial_config = supervisor.actor_configs["test-actor"]
         _initial_initialized = actor.initialized
-        
+
         # Attempt restart
         await supervisor._attempt_restart("test-actor")
-        
+
         # Verify restart occurred
         assert supervisor.restart_counts["test-actor"] == 1
         assert "test-actor" in supervisor.actors
-        
+
         # New actor should be different instance
         _new_actor = supervisor.actors["test-actor"]
         assert new_actor is not actor
@@ -275,10 +274,10 @@ class TestActorSupervisorRestart:
         # Manually add actor without config
         actor = MockAgentActor(agent_id="test-actor")
         supervisor.actors["test-actor"] = actor
-        
+
         # Should not raise, just log error
         await supervisor._attempt_restart("test-actor")
-        
+
         # Restart count should not increment
         assert supervisor.restart_counts.get("test-actor", 0) == 0
 
@@ -286,23 +285,23 @@ class TestActorSupervisorRestart:
     async def test_attempt_restart_exceeds_max(self, _supervisor):
         """Test restart exceeds maximum attempts."""
         supervisor.max_restarts = 2
-        
+
         # Add actor and config
         await supervisor.spawn_actor(
             MockAgentActor,
             "test-actor",
             _name = "Test Actor"
         )
-        
+
         # Set restart count to max
         supervisor.restart_counts["test-actor"] = 2
-        
+
         # Set to error state
         supervisor.actors["test-actor"].state = ActorState.ERROR
-        
+
         # Should terminate instead of restart
         await supervisor._attempt_restart("test-actor")
-        
+
         # Actor should be terminated
         assert "test-actor" not in supervisor.actors
 
@@ -325,9 +324,9 @@ class TestActorSupervisorRestart:
             "actor-2",
             _name = "Actor 2"
         )
-        
+
         _stats = supervisor.get_statistics()
-        
+
         assert stats["total_actors"] == 2
         assert stats["total_configs"] == 2
         assert stats["total_restarts"] == 0
@@ -340,11 +339,11 @@ class TestActorSupervisorRestart:
             "test-actor",
             _name = "Test Actor"
         )
-        
+
         assert "test-actor" in supervisor.actor_configs
-        
+
         await supervisor.terminate_actor("test-actor")
-        
+
         assert "test-actor" not in supervisor.actors
         # Note: actor_configs is kept for potential future restarts
         # but actor is removed from active actors
@@ -359,16 +358,16 @@ class TestActorSupervisorRestart:
             "test-actor",
             _name = "Test Actor"
         )
-        
+
         # Get reference to original actor
         _original_actor = supervisor.actors["test-actor"]
-        
+
         # Set to error state
         original_actor.state = ActorState.ERROR
-        
+
         # Run one iteration of monitor loop
         await supervisor._monitor_loop()
-        
+
         # Should have attempted restart (check that restart was attempted)
         # The restart count may be 0 if restart failed, but we check that
         # the monitor loop processed the actor
@@ -391,7 +390,7 @@ class TestBackwardCompatibility:
             "test-actor",
             _name = "Test"
         )
-        
+
         # Should use class name as default
         _config = supervisor.actor_configs["test-actor"]
         assert config.actor_type == "MockAgentActor"
@@ -408,7 +407,7 @@ class TestBackwardCompatibility:
             _capabilities = ["cap1"],
             _max_mailbox_size = 500
         )
-        
+
         _config = supervisor.actor_configs["test-actor"]
         assert config.init_kwargs["name"] == "Test"
         assert config.init_kwargs["description"] == "Test Description"

@@ -7,7 +7,6 @@ Reference: MiniMax Audit + elizaOS character patterns
 
 from typing import Dict
 
-
 # =============================================================================
 # STEWARD - Orchestrator Agent
 # =============================================================================
@@ -206,18 +205,18 @@ def get_all_characters() -> Dict[str, Dict]:
 def character_to_system_prompt(character: Dict) -> str:
     """Convert character to system prompt."""
     _parts = []
-    
+
     parts.append(f"You are {character['name']}, {character['role']}.")
     parts.append(character['bio'])
-    
+
     if character.get('lore'):
         parts.append(f"Background: {character['lore']}")
-    
+
     if character.get('knowledge'):
         parts.append(f"Expertise: {', '.join(character['knowledge'])}")
-    
+
     if character.get('style', {}).get('all'):
         _styles = character['style']['all']
         parts.append(f"Communication style: {', '.join(styles)}")
-    
+
     return "\n\n".join(parts)

@@ -71,7 +71,7 @@ class LLMRequest:
             "stream": self.stream,
             "n": self.n,
         }
-        
+
         if self.model:
             result["model"] = self.model
         if self.stop:
@@ -86,7 +86,7 @@ class LLMRequest:
             result["seed"] = self.seed
         if self.extra_body:
             result.update(self.extra_body)
-        
+
         return result
 
 
@@ -108,17 +108,17 @@ class LLMResponse:
     tool_calls: List[ToolCall] = field(default_factory=list)
     raw_response: Optional[Dict[str, Any]] = None
     latency_ms: float = 0.0
-    
+
     @property
     def prompt_tokens(self) -> int:
         """Get the number of prompt tokens used."""
         return self.usage.get("prompt_tokens", 0)
-    
+
     @property
     def completion_tokens(self) -> int:
         """Get the number of completion tokens used."""
         return self.usage.get("completion_tokens", 0)
-    
+
     @property
     def total_tokens(self) -> int:
         """Get the total tokens used."""
@@ -169,9 +169,9 @@ class LLMProviderBase(ABC):
         self.api_key = api_key
         self.default_model = default_model
         self.extra_config = extra_config or {}
-        
+
         self._capabilities = self._init_capabilities()
-        
+
         logger.debug(
             "LLM provider initialized",
             provider_name=provider_name,
@@ -237,7 +237,7 @@ class LLMProviderBase(ABC):
             ProviderError: If all retries fail
         """
         _last_error = None
-        
+
         for attempt in range(max_retries):
             try:
                 return await self.complete(request)
@@ -252,7 +252,7 @@ class LLMProviderBase(ABC):
                         _error = str(e),
                     )
                     await asyncio.sleep(retry_delay * (attempt + 1))
-        
+
         raise ProviderError(
             f"Failed after {max_retries} attempts",
             provider=self.provider_name,
@@ -270,17 +270,17 @@ class LLMProviderBase(ABC):
             Connectivity test result
         """
         _start_time = time.time()
-        
+
         try:
             _test_request = LLMRequest(
                 _messages = [Message(role="user", content="Hello, this is a connectivity test.")],
                 model=model or self.default_model,
                 _max_tokens = 10,
             )
-            
+
             _response = await self.complete(test_request)
             _latency_ms = (time.time() - start_time) * 1000
-            
+
             return ConnectivityTestResult(
                 _success = True,
                 _provider_name = self.provider_name,
@@ -288,7 +288,7 @@ class LLMProviderBase(ABC):
                 _response_text = response.content,
                 _latency_ms = latency_ms,
             )
-            
+
         except Exception as e:
             _latency_ms = (time.time() - start_time) * 1000
             return ConnectivityTestResult(
@@ -341,13 +341,13 @@ class ConnectivityTestResult:
 
 class ProviderError(Exception):
     """Exception raised for provider-related errors."""
-    
+
     def __init__(self, message: str, provider: Optional[str], cause: Optional[Exception]):
         self.message = message
         self.provider = provider
         self.cause = cause
         super().__init__(self.format_message())
-    
+
     def format_message(self) -> str:
         """Format the error message."""
         _msg = self.message

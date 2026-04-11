@@ -10,9 +10,9 @@ This module provides document ingestion, processing, and retrieval capabilities:
 Reference: MiniMax Audit + elizaOS advanced_capabilities/document-ingestion
 """
 
-from .document_processor import DocumentProcessor, DocumentChunk, ProcessingConfig
-from .embedding_service import EmbeddingService, EmbeddingConfig
-from .rag_pipeline import RAGPipeline, RAGConfig, RAGResult
+from .document_processor import DocumentChunk, DocumentProcessor, ProcessingConfig
+from .embedding_service import EmbeddingConfig, EmbeddingService
+from .rag_pipeline import RAGConfig, RAGPipeline, RAGResult
 from .retriever import HybridRetriever, RetrievalConfig
 
 __all__ = [

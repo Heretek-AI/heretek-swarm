@@ -10,19 +10,20 @@ Provides REST API for:
 - Validating workflows
 """
 
-from typing import Dict, Any
-from fastapi import APIRouter, HTTPException, Depends
-import structlog
+from typing import Any, Dict
 
+import structlog
+from fastapi import APIRouter, Depends, HTTPException
+
+from ..gateway.auth import verify_auth
 from ..workflow.engine import (
     Workflow,
-    get_workflow_engine,
     WorkflowState,
+    get_workflow_engine,
 )
 from ..workflow.validator import (
     WorkflowValidator,
 )
-from ..gateway.auth import verify_auth
 
 _logger = structlog.get_logger(__name__)
 
@@ -289,12 +290,12 @@ async def validate_workflow_endpoint(
         Validation result with errors, warnings, and info messages
     """
     _engine = get_workflow_engine()
-    
+
     if workflow_id not in engine.workflows:
         raise HTTPException(status_code=404, detail="Workflow not found")
-    
+
     _workflow = engine.workflows[workflow_id]
-    
+
     # Convert workflow to validation format
     _workflow_definition = {
         "id": workflow.id,
@@ -318,11 +319,11 @@ async def validate_workflow_endpoint(
             for edge in workflow.edges
         ],
     }
-    
+
     # Validate
     _validator = WorkflowValidator()
     _result = validator.validate(workflow_definition)
-    
+
     logger.info(
         "workflow_validated",
         _workflow_id = workflow_id,
@@ -330,7 +331,7 @@ async def validate_workflow_endpoint(
         _error_count = len(result.errors),
         _warning_count = len(result.warnings),
     )
-    
+
     return result.to_dict()
 
 
@@ -353,12 +354,12 @@ async def validate_workflow_draft(
     """
     _validator = WorkflowValidator()
     _result = validator.validate(workflow_definition)
-    
+
     logger.info(
         "workflow_draft_validated",
         _valid = result.valid,
         _error_count = len(result.errors),
         _warning_count = len(result.warnings),
     )
-    
+
     return result.to_dict()

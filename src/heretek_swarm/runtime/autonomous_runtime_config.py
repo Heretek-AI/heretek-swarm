@@ -5,10 +5,10 @@ Configuration for 24/7 autonomous operation of Heretek Swarm.
 Supports loading from database via ConfigurationService with environment fallback.
 """
 
-from dataclasses import dataclass, field
-from typing import Dict, List, Optional
-from pathlib import Path
 import os
+from dataclasses import dataclass, field
+from pathlib import Path
+from typing import Dict, List, Optional
 
 
 @dataclass
@@ -163,7 +163,7 @@ async def load_config_from_env() -> AutonomousRuntimeConfig:
     try:
         from heretek_swarm.config.loader import get_config_loader
         loader = get_config_loader()
-        
+
         if loader._initialized:
             # Load from database with environment fallback
             monitoring_enabled = await loader.get_async("runtime.monitoring_enabled", default=os.getenv("MONITORING_ENABLED", "true"))
@@ -179,7 +179,7 @@ async def load_config_from_env() -> AutonomousRuntimeConfig:
             redis_url = await loader.get_async("redis.url", default=os.getenv("REDIS_URL", "redis://localhost:6379"))
             qdrant_url = await loader.get_async("qdrant.url", default=os.getenv("QDRANT_URL", "http://localhost:6333"))
             log_level = await loader.get_async("logging.level", default=os.getenv("LOG_LEVEL", "INFO"))
-            
+
             # Convert string values to bool if needed
             if isinstance(monitoring_enabled, str):
                 _monitoring_enabled = monitoring_enabled.lower() == "true"
@@ -195,7 +195,7 @@ async def load_config_from_env() -> AutonomousRuntimeConfig:
                 _telegram_enabled = telegram_enabled.lower() == "true"
             if isinstance(slack_enabled, str):
                 _slack_enabled = slack_enabled.lower() == "true"
-            
+
             return AutonomousRuntimeConfig(
                 monitoring_enabled = monitoring_enabled,
                 auto_restart_enabled = auto_restart_enabled,
@@ -215,7 +215,7 @@ async def load_config_from_env() -> AutonomousRuntimeConfig:
         import structlog
         logger = structlog.get_logger("config.runtime")
         logger.warning("Failed to load config from database, using environment fallback", error=str(e))
-    
+
     # Fallback to direct environment variable loading
     return AutonomousRuntimeConfig(
         monitoring_enabled = os.getenv("MONITORING_ENABLED", "true").lower() == "true",
@@ -242,7 +242,7 @@ def load_config_from_env_sync() -> AutonomousRuntimeConfig:
         AutonomousRuntimeConfig instance
     """
     import asyncio
-    
+
     try:
         loop = asyncio.get_event_loop()
         if loop.is_running():

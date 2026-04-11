@@ -25,11 +25,10 @@ from heretek_swarm.actors.validation import (
     validate_message,
 )
 from heretek_swarm.state.repository import (
-    StateRepository,
     AgentStateRecord,
     StateCheckpoint,
+    StateRepository,
 )
-
 
 structlog.configure(
     processors=[
@@ -198,7 +197,7 @@ class AgentActor:
             raise ValueError("max_mailbox_size must be positive")
         if heartbeat_interval <= 0:
             raise ValueError("heartbeat_interval must be positive")
-        
+
         # P1-10a fix: Use full 128-bit uuid for agent_id instead of truncated 32-bit
         self.agent_id = agent_id or f"actor_{uuid.uuid4().hex}"
         self.name = name or self.__class__.__name__
@@ -307,7 +306,7 @@ class AgentActor:
         if self._running:
             logger.warning(f"[{self.agent_id}] Already running, ignoring spawn request")
             return
-        
+
         try:
             logger.info(
                 f"[{self.agent_id}] Agent spawned: {self.name}",
@@ -456,7 +455,7 @@ class AgentActor:
                     f"[{self.agent_id}] Event mesh send failed: {e}",
                     extra={"message_id": message_id, "topic": topic},
                 )
-        
+
         # Fallback: Direct delivery to actors subscribed to topic
         # Use global actor registry from supervisor
         actor_registry = self._get_actor_registry()
@@ -479,17 +478,17 @@ class AgentActor:
                     f"[{self.agent_id}] Direct delivery failed: {e}",
                     extra={"message_id": message_id, "topic": topic},
                 )
-        
+
         # Last resort: log the message (should not happen in production)
         logger.warning(
             f"[{self.agent_id}] Message {message_id} queued (no delivery mechanism available)",
             extra={"message_type": message_type, "topic": topic},
         )
-        
+
         # Store in internal queue for later delivery
         self._queue_message(message)
         return message_id
-    
+
     def _queue_message(self, message: ActorMessage) -> None:
         """Queue a message for later delivery when event mesh becomes available."""
         pending_messages = self.get_state("_pending_messages", [])
@@ -520,7 +519,7 @@ class AgentActor:
             Message ID
         """
         message_id = str(uuid.uuid4())
-        
+
         # Use global actor registry from supervisor
         actor_registry = self._get_actor_registry()
         if actor_registry is not None and target_actor_id in actor_registry:
@@ -548,7 +547,7 @@ class AgentActor:
                     f"[{self.agent_id}] Direct actor send failed: {e}",
                     extra={"target": target_actor_id},
                 )
-        
+
         # Fallback to topic-based routing
         return await self.send(
             topic=f"actor:{target_actor_id}",
@@ -587,27 +586,27 @@ class AgentActor:
             asyncio.TimeoutError: If no reply received within timeout
         """
         import asyncio
-        
+
         # Generate unique correlation ID for this request
         correlation_id = str(uuid.uuid4())
         reply_channel = f"reply_{self.agent_id}_{correlation_id}"
-        
+
         logger.info(
             f"[{self.agent_id}] Sending request to {recipient} with correlation_id={correlation_id}",
             extra={"message_type": message_type, "timeout": timeout},
         )
-        
+
         # Create a temporary queue for the reply
         reply_queue: asyncio.Queue = asyncio.Queue()
-        
+
         # Register reply handler
         async def handle_reply(message: ActorMessage) -> None:
             """Handle incoming reply message."""
             await reply_queue.put(message)
-        
+
         # Register the reply handler for this specific channel
         self.register_handler(reply_channel, handle_reply)
-        
+
         try:
             # Send request with reply_to channel
             await self.send(
@@ -617,32 +616,32 @@ class AgentActor:
                 correlation_id=correlation_id,
                 reply_to=reply_channel,
             )
-            
+
             # Wait for reply with timeout
             try:
                 reply_message = await asyncio.wait_for(
                     reply_queue.get(),
                     timeout=timeout,
                 )
-                
+
                 logger.info(
                     f"[{self.agent_id}] Reply received for correlation_id={correlation_id}",
                     extra={"message_type": reply_message.message_type},
                 )
-                
+
                 return reply_message.content
-                
+
             except asyncio.TimeoutError:
                 logger.warning(
                     f"[{self.agent_id}] Request timeout after {timeout}s for correlation_id={correlation_id}",
                     extra={"recipient": recipient, "message_type": message_type},
                 )
                 raise
-                
+
         finally:
             # Cleanup: unregister reply handler
             self.unregister_handler(reply_channel)
-    
+
     async def put_message(self, message: ActorMessage) -> None:
         """
         Put a message in the actor's mailbox.
@@ -653,7 +652,7 @@ class AgentActor:
         # P1-10e fix: Add retry logic for message queuing instead of dropping
         max_retries = 3
         retry_delay = 0.1  # 100ms initial delay
-        
+
         for attempt in range(max_retries):
             try:
                 await asyncio.wait_for(
@@ -759,13 +758,13 @@ class AgentActor:
                     self.mailbox.get_nowait()
                 except asyncio.QueueEmpty:
                     break
-            
+
             # Clear internal state
             self.internal_state.clear()
-            
+
             # Clear message handlers
             self._message_handlers.clear()
-            
+
             logger.debug(f"[{self.agent_id}] Cleanup complete")
         except Exception as e:
             logger.error(f"[{self.agent_id}] Cleanup error: {e}", exc_info=True)
@@ -805,7 +804,7 @@ class AgentActor:
         Falls back to legacy file system persistence if repository not available.
         """
         import json
-        
+
         state_data = {
             "internal_state": self.internal_state,
             "message_count": self.message_count,
@@ -817,7 +816,7 @@ class AgentActor:
             "capabilities": self.capabilities,
             "saved_at": datetime.now(timezone.utc).isoformat(),
         }
-        
+
         # Use state repository if available
         if self._state_repository is not None:
             try:
@@ -825,7 +824,7 @@ class AgentActor:
                 version = None
                 if self._state_record:
                     version = self._state_record.version + 1
-                
+
                 self._state_record = await self._state_repository.save_state(
                     agent_id=self.agent_id,
                     state=state_data,
@@ -842,7 +841,7 @@ class AgentActor:
                     f"[{self.agent_id}] StateRepository persistence failed: {e}",
                     exc_info=True,
                 )
-        
+
         # Legacy fallback: try direct db_pool access
         db_pool = self.get_state("_db_pool")
         if db_pool is not None:
@@ -869,17 +868,17 @@ class AgentActor:
                     f"[{self.agent_id}] PostgreSQL persistence failed: {e}",
                     exc_info=True,
                 )
-        
+
         # Final fallback: persist to file system
         try:
             import os
             state_dir = os.path.join(os.getcwd(), ".actor_states")
             os.makedirs(state_dir, exist_ok=True)
             state_file = os.path.join(state_dir, f"{self.agent_id}.json")
-            
+
             with open(state_file, 'w') as f:
                 json.dump(state_data, f, indent=2)
-            
+
             logger.info(
                 f"[{self.agent_id}] State persisted to file system",
                 extra={"path": state_file},
@@ -897,7 +896,7 @@ class AgentActor:
         Attempts to load from repository first, then falls back to legacy methods.
         """
         import json
-        
+
         # Try StateRepository first
         if self._state_repository is not None:
             try:
@@ -905,7 +904,7 @@ class AgentActor:
                 if record:
                     self._state_record = record
                     loaded_state = record.state
-                    
+
                     self.internal_state = loaded_state.get("internal_state", {})
                     self.message_count = loaded_state.get("message_count", 0)
                     self.error_count = loaded_state.get("error_count", 0)
@@ -914,7 +913,7 @@ class AgentActor:
                     self.last_activity = loaded_state.get("last_activity")
                     self.topics = loaded_state.get("topics", self.topics)
                     self.capabilities = loaded_state.get("capabilities", self.capabilities)
-                    
+
                     logger.info(
                         f"[{self.agent_id}] State loaded from StateRepository",
                         extra={"state": self.state.value, "version": record.version},
@@ -925,7 +924,7 @@ class AgentActor:
                     f"[{self.agent_id}] StateRepository load failed: {e}",
                     exc_info=True,
                 )
-        
+
         # Legacy fallback: try direct db_pool access
         db_pool = self.get_state("_db_pool")
         if db_pool is not None:
@@ -945,7 +944,7 @@ class AgentActor:
                         self.last_activity = loaded_state.get("last_activity")
                         self.topics = loaded_state.get("topics", self.topics)
                         self.capabilities = loaded_state.get("capabilities", self.capabilities)
-                        
+
                         logger.info(
                             f"[{self.agent_id}] State loaded from PostgreSQL (legacy)",
                             extra={"state": self.state.value},
@@ -956,16 +955,16 @@ class AgentActor:
                     f"[{self.agent_id}] PostgreSQL load failed: {e}",
                     exc_info=True,
                 )
-        
+
         # Final fallback: load from file system
         try:
             import os
             state_file = os.path.join(os.getcwd(), ".actor_states", f"{self.agent_id}.json")
-            
+
             if os.path.exists(state_file):
                 with open(state_file, 'r') as f:
                     loaded_state = json.load(f)
-                
+
                 self.internal_state = loaded_state.get("internal_state", {})
                 self.message_count = loaded_state.get("message_count", 0)
                 self.error_count = loaded_state.get("error_count", 0)
@@ -974,7 +973,7 @@ class AgentActor:
                 self.last_activity = loaded_state.get("last_activity")
                 self.topics = loaded_state.get("topics", self.topics)
                 self.capabilities = loaded_state.get("capabilities", self.capabilities)
-                
+
                 logger.info(
                     f"[{self.agent_id}] State loaded from file system",
                     extra={"path": state_file},
@@ -982,7 +981,7 @@ class AgentActor:
                 return
         except Exception as e:
             logger.error(f"[{self.agent_id}] File system load failed: {e}", exc_info=True)
-        
+
         # No state found - actor is starting fresh
         logger.info(f"[{self.agent_id}] No previous state found, starting fresh")
 
@@ -1007,7 +1006,7 @@ class AgentActor:
         if self._state_repository is None:
             logger.warning(f"[{self.agent_id}] Cannot save checkpoint: no state repository")
             return None
-        
+
         state_data = {
             "internal_state": self.internal_state,
             "message_count": self.message_count,
@@ -1018,7 +1017,7 @@ class AgentActor:
             "topics": self.topics,
             "capabilities": self.capabilities,
         }
-        
+
         try:
             version = self._state_record.version + 1 if self._state_record else 1
             checkpoint = await self._state_repository.checkpoint(
@@ -1055,13 +1054,13 @@ class AgentActor:
         if self._state_repository is None:
             logger.warning(f"[{self.agent_id}] Cannot restore checkpoint: no state repository")
             return False
-        
+
         try:
             success = await self._state_repository.restore_from_checkpoint(
                 agent_id=self.agent_id,
                 checkpoint_id=checkpoint_id,
             )
-            
+
             if success:
                 # Reload the state
                 await self.load_state()
@@ -1069,7 +1068,7 @@ class AgentActor:
                     f"[{self.agent_id}] State restored from checkpoint",
                     extra={"checkpoint_id": str(checkpoint_id)},
                 )
-            
+
             return success
         except Exception as e:
             logger.error(
@@ -1093,7 +1092,7 @@ class AgentActor:
         """
         if self._state_repository is None:
             return []
-        
+
         try:
             return await self._state_repository.get_checkpoints(
                 agent_id=self.agent_id,
@@ -1172,7 +1171,7 @@ class AgentActor:
                     f"[{self.agent_id}] Event mesh broadcast failed: {e}",
                     extra={"message_type": message_type},
                 )
-        
+
         # Fallback: Broadcast to all actors via registry
         actor_registry = self._get_actor_registry()
         if actor_registry is not None:
@@ -1202,7 +1201,7 @@ class AgentActor:
                 extra={"message_type": message_type},
             )
             return
-        
+
         # Last resort: topic-based broadcast
         await self.send(
             topic="broadcast",
@@ -1227,7 +1226,7 @@ class AgentActor:
         except ValueError as e:
             logger.error(f"[{self.agent_id}] Health check validation failed: {e}")
             return
-        
+
         status = self.get_status()
 
         await self.send(
@@ -1307,7 +1306,7 @@ class AgentActor:
         except ValueError as e:
             logger.error(f"[{self.agent_id}] Collective task validation failed: {e}")
             return
-        
+
         logger.info(
             f"[{self.agent_id}] Received collective task",
             extra={
@@ -1316,7 +1315,7 @@ class AgentActor:
                 "description": description,
             }
         )
-        
+
         # Generate contribution (subclasses should override for custom logic)
         contribution = await self._generate_collective_contribution(
             task_id=task_id,
@@ -1325,7 +1324,7 @@ class AgentActor:
             input_data=input_data,
             protocol=protocol
         )
-        
+
         # Send response if reply_to is provided
         if reply_to:
             await self.send(
@@ -1338,7 +1337,7 @@ class AgentActor:
                 },
                 correlation_id=message.correlation_id,
             )
-    
+
     async def _generate_collective_contribution(
         self,
         task_id: str,
@@ -1375,7 +1374,7 @@ Task Details:
 - Input Data: {input_data}
 
 Please provide your analysis and recommendation for this collective task."""
-                
+
                 response = await self.run_with_llm(prompt, timeout=60)
                 return {
                     "contribution": {
@@ -1387,7 +1386,7 @@ Please provide your analysis and recommendation for this collective task."""
                 }
             except Exception as e:
                 logger.error(f"[{self.agent_id}] LLM contribution error: {e}")
-        
+
         # Fallback contribution
         return {
             "contribution": {

@@ -5,14 +5,14 @@ Tier 2 (Support) - HistorianAgent manages dual-tier memory system with LRU cachi
 """
 
 import asyncio
-import pytest
-import pytest_asyncio
 from datetime import datetime
 from unittest.mock import patch
 
-from src.heretek_swarm.actors.historian import HistorianAgent, LRUCache
-from src.heretek_swarm.actors.base import ActorMessage, ActorState
+import pytest
+import pytest_asyncio
 
+from src.heretek_swarm.actors.base import ActorMessage, ActorState
+from src.heretek_swarm.actors.historian import HistorianAgent, LRUCache
 
 _pytestmark = pytest.mark.integration
 
@@ -23,76 +23,76 @@ class TestLRUCache:
     def test_cache_set_get(self):
         """Test basic cache set and get operations."""
         _cache = LRUCache(max_size=10)
-        
+
         cache.set("key1", "value1")
         assert cache.get("key1") == "value1"
-    
+
     def test_cache_lru_eviction(self):
         """Test LRU eviction when cache is full."""
         _cache = LRUCache(max_size=3)
-        
+
         cache.set("key1", "value1")
         cache.set("key2", "value2")
         cache.set("key3", "value3")
-        
+
         # Access key1 to make it recently used
         cache.get("key1")
-        
+
         # Add new key, should evict key2 (least recently used)
         cache.set("key4", "value4")
-        
+
         assert cache.get("key1") == "value1"
         assert cache.get("key2") is None  # Evicted
         assert cache.get("key3") == "value3"
         assert cache.get("key4") == "value4"
-    
+
     def test_cache_invalidate(self):
         """Test cache invalidation."""
         _cache = LRUCache(max_size=10)
-        
+
         cache.set("key1", "value1")
         cache.set("key2", "value2")
-        
+
         _result = cache.invalidate("key1")
         assert result is True
         assert cache.get("key1") is None
         assert cache.get("key2") == "value2"
-    
+
     def test_cache_invalidate_pattern(self):
         """Test pattern-based invalidation."""
         _cache = LRUCache(max_size=10)
-        
+
         cache.set("session:001", "data1")
         cache.set("session:002", "data2")
         cache.set("user:001", "data3")
-        
+
         _count = cache.invalidate_pattern("session:*")
         assert count == 2
         assert cache.get("session:001") is None
         assert cache.get("session:002") is None
         assert cache.get("user:001") == "data3"
-    
+
     def test_cache_clear(self):
         """Test cache clear."""
         _cache = LRUCache(max_size=10)
-        
+
         cache.set("key1", "value1")
         cache.set("key2", "value2")
-        
+
         cache.clear()
-        
+
         assert cache.get("key1") is None
         assert cache.get("key2") is None
-    
+
     def test_cache_statistics(self):
         """Test cache statistics."""
         _cache = LRUCache(max_size=10)
-        
+
         cache.set("key1", "value1")
         cache.get("key1")
         cache.get("key1")
         cache.get("missing")
-        
+
         _stats = cache.get_statistics()
         assert stats["size"] == 1
         assert stats["hits"] >= 2

@@ -1,6 +1,6 @@
 """Dual-tier memory system tests."""
+from heretek_swarm.memory import DualTierMemorySystem, MemoryTier, MemoryType
 from heretek_swarm.memory.base import MemoryEntry
-from heretek_swarm.memory import MemoryType, MemoryTier, DualTierMemorySystem
 
 
 class TestMemoryEntry:

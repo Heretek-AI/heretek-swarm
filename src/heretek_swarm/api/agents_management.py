@@ -26,37 +26,37 @@ Enhanced with Behavior Profiling:
 """
 
 from dataclasses import field
-from typing import Any, Dict, List, Optional
 from datetime import datetime, timezone
 from enum import Enum
+from typing import Any, Dict, List, Optional
+
+import structlog
+from fastapi import APIRouter, Depends, HTTPException
 from pydantic import BaseModel, Field
 
-from fastapi import APIRouter, HTTPException, Depends
-import structlog
-
-from heretek_swarm.gateway.auth import verify_auth
-from heretek_swarm.runtime.registry_enhanced import (
-    get_enhanced_registry,
-    EnhancedAgentRegistry,
-    AgentLifecycleState,
-)
 from heretek_swarm.channels.registry import ChannelRegistry, get_channel_registry
+from heretek_swarm.gateway.auth import verify_auth
 from heretek_swarm.gateway.content_router import (
-    ContentRouter,
-    get_content_router,
-    RoutingRule,
     ContentFilter,
+    ContentRouter,
     FilterOperator,
+    RoutingRule,
+    get_content_router,
+)
+from heretek_swarm.runtime.registry_enhanced import (
+    AgentLifecycleState,
+    EnhancedAgentRegistry,
+    get_enhanced_registry,
 )
 
 # Import behavior profiling
 try:
     from heretek_swarm.actors.profiling import (
+        ActionType,
+        AlertSeverity,
         BehaviorProfiler,
         ProfilingConfig,
         get_profiler,
-        ActionType,
-        AlertSeverity,
     )
     PROFILING_AVAILABLE = True
 except ImportError:
@@ -98,7 +98,7 @@ async def list_available_agents(
     """
     try:
         agent_types = registry.get_available_agents()
-        
+
         return {
             "available_agents": [
                 {
@@ -132,10 +132,10 @@ async def get_agent_type_metadata(
         agent_type: Agent type name
     """
     metadata = registry.get_agent_metadata(agent_type)
-    
+
     if not metadata:
         raise HTTPException(404, f"Agent type '{agent_type}' not found")
-    
+
     return {
         "type_name": metadata.type_name,
         "module_path": metadata.module_path,
@@ -175,7 +175,7 @@ async def deploy_agent(
     metadata = registry.get_agent_metadata(agent_type)
     if not metadata:
         raise HTTPException(400, f"Unknown agent type: {agent_type}")
-    
+
     try:
         # Deploy the agent
         instance = await registry.deploy_agent(
@@ -183,10 +183,10 @@ async def deploy_agent(
             config=config,
             instance_id=instance_id,
         )
-        
+
         if not instance:
             raise HTTPException(500, "Failed to deploy agent")
-        
+
         return {
             "instance_id": instance.instance_id,
             "agent_type": instance.agent_type,
@@ -216,13 +216,13 @@ async def remove_agent(
     instance = registry.get_instance(instance_id)
     if not instance:
         raise HTTPException(404, f"Agent instance '{instance_id}' not found")
-    
+
     try:
         success = await registry.remove_agent(instance_id)
-        
+
         if not success:
             raise HTTPException(500, "Failed to remove agent")
-        
+
         return {
             "instance_id": instance_id,
             "status": "removed",
@@ -254,13 +254,13 @@ async def start_agent(
     instance = registry.get_instance(instance_id)
     if not instance:
         raise HTTPException(404, f"Agent instance '{instance_id}' not found")
-    
+
     try:
         success = await registry.start_agent(instance_id)
-        
+
         if not success:
             raise HTTPException(500, "Failed to start agent")
-        
+
         return {
             "instance_id": instance_id,
             "status": "running",
@@ -288,13 +288,13 @@ async def stop_agent(
     instance = registry.get_instance(instance_id)
     if not instance:
         raise HTTPException(404, f"Agent instance '{instance_id}' not found")
-    
+
     try:
         success = await registry.stop_agent(instance_id)
-        
+
         if not success:
             raise HTTPException(500, "Failed to stop agent")
-        
+
         return {
             "instance_id": instance_id,
             "status": "stopped",
@@ -322,13 +322,13 @@ async def suspend_agent(
     instance = registry.get_instance(instance_id)
     if not instance:
         raise HTTPException(404, f"Agent instance '{instance_id}' not found")
-    
+
     try:
         success = await registry.suspend_agent(instance_id)
-        
+
         if not success:
             raise HTTPException(500, "Failed to suspend agent")
-        
+
         return {
             "instance_id": instance_id,
             "status": "suspended",
@@ -356,13 +356,13 @@ async def resume_agent(
     instance = registry.get_instance(instance_id)
     if not instance:
         raise HTTPException(404, f"Agent instance '{instance_id}' not found")
-    
+
     try:
         success = await registry.resume_agent(instance_id)
-        
+
         if not success:
             raise HTTPException(500, "Failed to resume agent")
-        
+
         return {
             "instance_id": instance_id,
             "status": "running",
@@ -397,13 +397,13 @@ async def update_agent_config(
     instance = registry.get_instance(instance_id)
     if not instance:
         raise HTTPException(404, f"Agent instance '{instance_id}' not found")
-    
+
     try:
         success = registry.update_agent_config(instance_id, config)
-        
+
         if not success:
             raise HTTPException(500, "Failed to update configuration")
-        
+
         return {
             "instance_id": instance_id,
             "config": instance.config,
@@ -438,7 +438,7 @@ async def list_agent_instances(
             instances = registry.get_instances_by_type(agent_type)
         else:
             instances = registry.get_all_instances()
-        
+
         return {
             "instances": [
                 {
@@ -472,7 +472,7 @@ async def get_agent_instance(
     instance = registry.get_instance(instance_id)
     if not instance:
         raise HTTPException(404, f"Agent instance '{instance_id}' not found")
-    
+
     # Get actor status if running
     actor_status = None
     if instance.actor:
@@ -488,7 +488,7 @@ async def get_agent_instance(
             }
         except Exception as e:
             logger.warning(f"Failed to get actor status: {e}")
-    
+
     return {
         "instance_id": instance.instance_id,
         "agent_type": instance.agent_type,
@@ -523,11 +523,11 @@ async def get_agent_logs(
     instance = registry.get_instance(instance_id)
     if not instance:
         raise HTTPException(404, f"Agent instance '{instance_id}' not found")
-    
+
     # Placeholder: Return agent state information as "logs"
     # In production, this would query a logging system
     logs = []
-    
+
     # Add lifecycle events
     logs.append({
         "timestamp": instance.config.get("created_at", "unknown"),
@@ -535,7 +535,7 @@ async def get_agent_logs(
         "message": f"Agent instance {instance_id} deployed",
         "agent_type": instance.agent_type,
     })
-    
+
     if instance.actor:
         try:
             status = instance.actor.get_status()
@@ -548,10 +548,10 @@ async def get_agent_logs(
             })
         except Exception:
             pass
-    
+
     # Sort by timestamp (newest first) and limit
     logs = sorted(logs, key=lambda x: x.get("timestamp", ""), reverse=True)[:limit]
-    
+
     return {
         "instance_id": instance_id,
         "logs": logs,
@@ -656,11 +656,11 @@ async def get_agent_channels(
     instance = registry.get_instance(instance_id)
     if not instance:
         raise HTTPException(404, f"Agent instance '{instance_id}' not found")
-    
+
     try:
         # Get subscriptions from channel registry
         subscriptions = channel_registry.get_subscriptions(instance_id)
-        
+
         # Format response
         subscription_list = []
         for sub in subscriptions:
@@ -674,7 +674,7 @@ async def get_agent_channels(
                     description=channel.description,
                     subscribedAt=channel_registry.get_stats(channel.name).get("created_at", "") if channel_registry.get_stats(channel.name) else "",
                 ))
-        
+
         return ChannelSubscriptionsListResponse(
             agentId=instance_id,
             subscriptions=subscription_list,
@@ -707,21 +707,21 @@ async def add_agent_channel_subscription(
     instance = registry.get_instance(instance_id)
     if not instance:
         raise HTTPException(404, f"Agent instance '{instance_id}' not found")
-    
+
     try:
         # Subscribe agent to channel
         success = channel_registry.subscribe_agent(instance_id, subscription.channelName)
-        
+
         if not success:
             raise HTTPException(400, f"Failed to subscribe to channel '{subscription.channelName}'")
-        
+
         logger.info(
             "agent_channel_subscribed",
             agent_id=instance_id,
             channel=subscription.channelName,
             type=subscription.channelType.value,
         )
-        
+
         return ChannelSubscriptionResponse(
             channelName=subscription.channelName,
             channelType=subscription.channelType,
@@ -759,20 +759,20 @@ async def remove_agent_channel_subscription(
     instance = registry.get_instance(instance_id)
     if not instance:
         raise HTTPException(404, f"Agent instance '{instance_id}' not found")
-    
+
     try:
         # Unsubscribe agent from channel
         success = channel_registry.unsubscribe_agent(instance_id, channel_name)
-        
+
         if not success:
             raise HTTPException(400, f"Agent not subscribed to channel '{channel_name}'")
-        
+
         logger.info(
             "agent_channel_unsubscribed",
             agent_id=instance_id,
             channel=channel_name,
         )
-        
+
         return {"status": "success", "message": f"Unsubscribed from channel '{channel_name}'"}
     except HTTPException:
         raise
@@ -852,7 +852,7 @@ async def list_routing_rules(
     try:
         rules_data = router.list_rules(enabled_only=enabled_only)
         active_count = len([r for r in rules_data if r.get("enabled", False)])
-        
+
         return RoutingRulesListResponse(
             rules=[RoutingRuleResponse(**r) for r in rules_data],
             total=len(rules_data),
@@ -879,10 +879,10 @@ async def get_routing_rule(
         Routing rule details
     """
     rule = router.get_rule(rule_id)
-    
+
     if not rule:
         raise HTTPException(404, f"Routing rule '{rule_id}' not found")
-    
+
     return RoutingRuleResponse(
         id=rule.id,
         name=rule.name,
@@ -923,7 +923,7 @@ async def create_routing_rule(
                 operator=FilterOperator(cf["operator"]),
                 value=cf["value"],
             ))
-        
+
         # Create rule
         rule = RoutingRule(
             id=rule_data.id,
@@ -936,18 +936,18 @@ async def create_routing_rule(
             enabled=rule_data.enabled,
             description=rule_data.description,
         )
-        
+
         # Add to router
         if not router.add_rule(rule):
             raise HTTPException(409, f"Routing rule '{rule_data.id}' already exists")
-        
+
         logger.info(
             "routing_rule_created",
             rule_id=rule.id,
             name=rule.name,
             priority=rule.priority,
         )
-        
+
         return RoutingRuleResponse(
             id=rule.id,
             name=rule.name,
@@ -988,7 +988,7 @@ async def update_routing_rule(
     """
     # Remove existing rule
     router.remove_rule(rule_id)
-    
+
     # Convert content filters
     content_filters = []
     for cf in rule_data.content_filters:
@@ -997,7 +997,7 @@ async def update_routing_rule(
             operator=FilterOperator(cf["operator"]),
             value=cf["value"],
         ))
-    
+
     # Create updated rule
     rule = RoutingRule(
         id=rule_data.id,
@@ -1010,13 +1010,13 @@ async def update_routing_rule(
         enabled=rule_data.enabled,
         description=rule_data.description,
     )
-    
+
     # Add to router
     if not router.add_rule(rule):
         raise HTTPException(500, "Failed to add updated rule")
-    
+
     logger.info("routing_rule_updated", rule_id=rule_id)
-    
+
     return RoutingRuleResponse(
         id=rule.id,
         name=rule.name,
@@ -1050,9 +1050,9 @@ async def delete_routing_rule(
     """
     if not router.remove_rule(rule_id):
         raise HTTPException(404, f"Routing rule '{rule_id}' not found")
-    
+
     logger.info("routing_rule_deleted", rule_id=rule_id)
-    
+
     return {"status": "success", "message": f"Deleted rule '{rule_id}'"}
 
 
@@ -1065,7 +1065,7 @@ async def enable_routing_rule(
     """Enable a routing rule."""
     if not router.enable_rule(rule_id):
         raise HTTPException(404, f"Routing rule '{rule_id}' not found")
-    
+
     return {"status": "success", "message": f"Enabled rule '{rule_id}'"}
 
 
@@ -1078,7 +1078,7 @@ async def disable_routing_rule(
     """Disable a routing rule."""
     if not router.disable_rule(rule_id):
         raise HTTPException(404, f"Routing rule '{rule_id}' not found")
-    
+
     return {"status": "success", "message": f"Disabled rule '{rule_id}'"}
 
 
@@ -1125,7 +1125,7 @@ async def evaluate_routing(
             payload=payload,
             correlation_id=correlation_id,
         )
-        
+
         return {
             "decision": decision.decision.value,
             "matched_rule": {
@@ -1241,18 +1241,18 @@ async def get_agent_profiling_metrics(
     """
     if not PROFILING_AVAILABLE or not profiler:
         raise HTTPException(503, "Behavior profiling not available")
-    
+
     # Verify agent exists
     instance = registry.get_instance(instance_id)
     if not instance:
         raise HTTPException(404, f"Agent instance '{instance_id}' not found")
-    
+
     # Compute and get metrics
     metrics = profiler.compute_metrics(instance_id)
-    
+
     if not metrics:
         return ProfilingMetricsResponse(agentId=instance_id)
-    
+
     return ProfilingMetricsResponse(
         agentId=instance_id,
         totalActions=metrics.total_actions,
@@ -1292,24 +1292,24 @@ async def get_agent_profiling_profile(
     """
     if not PROFILING_AVAILABLE or not profiler:
         raise HTTPException(503, "Behavior profiling not available")
-    
+
     # Verify agent exists
     instance = registry.get_instance(instance_id)
     if not instance:
         raise HTTPException(404, f"Agent instance '{instance_id}' not found")
-    
+
     # Get agent type from instance
     agent_type = instance.agent_type
-    
+
     # Update profile with current data
     profiler.update_profile(agent_type, instance_id)
-    
+
     # Get profile
     profile = profiler.get_profile(agent_type)
-    
+
     if not profile:
         raise HTTPException(404, f"No profile available for agent type '{agent_type}'")
-    
+
     return ProfilingProfileResponse(
         agentType=profile.agent_type,
         createdAt=profile.created_at.isoformat(),
@@ -1341,15 +1341,15 @@ async def detect_agent_anomalies(
     """
     if not PROFILING_AVAILABLE or not profiler:
         raise HTTPException(503, "Behavior profiling not available")
-    
+
     # Verify agent exists
     instance = registry.get_instance(instance_id)
     if not instance:
         raise HTTPException(404, f"Agent instance '{instance_id}' not found")
-    
+
     # Detect anomalies
     anomalies = profiler.detect_anomalies(instance_id)
-    
+
     return [
         AnomalyResponse(
             timestamp=a.timestamp.isoformat(),
@@ -1384,7 +1384,7 @@ async def get_profiling_alerts(
     """
     if not PROFILING_AVAILABLE or not profiler:
         raise HTTPException(503, "Behavior profiling not available")
-    
+
     # Parse severity
     severity_filter = None
     if severity:
@@ -1392,13 +1392,13 @@ async def get_profiling_alerts(
             severity_filter = AlertSeverity(severity.lower())
         except ValueError:
             raise HTTPException(400, f"Invalid severity: {severity}")
-    
+
     # Get alerts
     alerts = profiler.get_alerts(
         severity=severity_filter,
         unacknowledged_only=unacknowledged_only,
     )
-    
+
     return [
         AlertResponse(
             timestamp=a.timestamp.isoformat(),
@@ -1441,10 +1441,10 @@ async def acknowledge_profiling_alert(
     """
     if not PROFILING_AVAILABLE or not profiler:
         raise HTTPException(503, "Behavior profiling not available")
-    
+
     if not profiler.acknowledge_alert(index, acknowledged_by):
         raise HTTPException(404, f"Alert at index {index} not found")
-    
+
     return {"status": "success", "message": f"Alert {index} acknowledged"}
 
 
@@ -1461,9 +1461,9 @@ async def get_profiling_stats(
     """
     if not PROFILING_AVAILABLE or not profiler:
         raise HTTPException(503, "Behavior profiling not available")
-    
+
     stats = profiler.get_stats()
-    
+
     return ProfilingStatsResponse(
         totalActivitiesRecorded=stats["total_activities_recorded"],
         totalAnomaliesDetected=stats["total_anomalies_detected"],
@@ -1487,7 +1487,7 @@ async def get_profiling_prometheus_metrics(
     """
     if not PROFILING_AVAILABLE or not profiler:
         return "# Behavior profiling not available\n"
-    
+
     return profiler.export_prometheus_metrics()
 
 
@@ -1517,18 +1517,18 @@ async def record_agent_activity(
     """
     if not PROFILING_AVAILABLE or not profiler:
         raise HTTPException(503, "Behavior profiling not available")
-    
+
     # Verify agent exists
     instance = registry.get_instance(instance_id)
     if not instance:
         raise HTTPException(404, f"Agent instance '{instance_id}' not found")
-    
+
     # Parse action type
     try:
         action_type = ActionType(action.lower())
     except ValueError:
         action_type = ActionType.CUSTOM
-    
+
     # Record activity
     profiler.record_activity(
         agent_id=instance_id,
@@ -1537,7 +1537,7 @@ async def record_agent_activity(
         duration_ms=duration_ms,
         success=success,
     )
-    
+
     return {"status": "success", "message": f"Activity recorded: {action}"}
 
 
@@ -1610,10 +1610,10 @@ async def list_jetstream_streams(
     """
     if not js_manager:
         raise HTTPException(503, "JetStream manager not available")
-    
+
     try:
         streams = await js_manager.list_streams()
-        
+
         return StreamListResponse(
             streams=[
                 StreamInfoResponse(
@@ -1652,13 +1652,13 @@ async def get_jetstream_stream(
     """
     if not js_manager:
         raise HTTPException(503, "JetStream manager not available")
-    
+
     try:
         info = await js_manager.get_stream_info(stream_name)
-        
+
         if not info:
             raise HTTPException(404, f"Stream '{stream_name}' not found")
-        
+
         return StreamInfoResponse(
             name=info.name,
             subjects=info.config.subjects,
@@ -1693,14 +1693,14 @@ async def create_jetstream_stream(
     """
     if not js_manager:
         raise HTTPException(503, "JetStream manager not available")
-    
+
     try:
         from heretek_swarm.gateway.jetstream_manager import (
             JetStreamConfig,
             RetentionPolicy,
             StorageType,
         )
-        
+
         config = JetStreamConfig(
             stream_name=config_data.stream_name,
             subjects=config_data.subjects,
@@ -1712,18 +1712,18 @@ async def create_jetstream_stream(
             max_bytes=config_data.max_bytes,
             description=config_data.description,
         )
-        
+
         success = await js_manager.create_stream(config)
-        
+
         if not success:
             raise HTTPException(500, "Failed to create stream")
-        
+
         logger.info(
             "jetstream_stream_created",
             stream_name=config_data.stream_name,
             subjects=config_data.subjects,
         )
-        
+
         return {
             "status": "success",
             "stream_name": config_data.stream_name,
@@ -1750,15 +1750,15 @@ async def delete_jetstream_stream(
     """
     if not js_manager:
         raise HTTPException(503, "JetStream manager not available")
-    
+
     try:
         success = await js_manager.delete_stream(stream_name)
-        
+
         if not success:
             raise HTTPException(404, f"Stream '{stream_name}' not found or delete failed")
-        
+
         logger.info("jetstream_stream_deleted", stream_name=stream_name)
-        
+
         return {"status": "success", "message": f"Deleted stream '{stream_name}'"}
     except HTTPException:
         raise
@@ -1787,7 +1787,7 @@ async def replay_stream_messages(
     """
     if not js_manager:
         raise HTTPException(503, "JetStream manager not available")
-    
+
     try:
         messages = await js_manager.replay_messages(
             stream_name=stream_name,
@@ -1795,7 +1795,7 @@ async def replay_stream_messages(
             end_sequence=end_sequence,
             subject_filter=subject_filter,
         )
-        
+
         return {
             "stream_name": stream_name,
             "messages_replayed": len(messages),
@@ -1819,7 +1819,7 @@ async def get_jetstream_stats(
     """
     if not js_manager:
         raise HTTPException(503, "JetStream manager not available")
-    
+
     try:
         stats = await js_manager.get_stats()
         return stats
@@ -1845,12 +1845,12 @@ async def initialize_jetstream(
     """
     if not js_manager:
         raise HTTPException(503, "JetStream manager not available")
-    
+
     try:
         results = await js_manager.initialize_default_streams()
-        
+
         logger.info("JetStream default streams initialized", results=results)
-        
+
         return {
             "status": "success",
             "streams": results,

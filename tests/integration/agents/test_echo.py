@@ -4,15 +4,14 @@ Integration tests for EchoActor.
 Tier 2 (Support) - EchoActor handles multi-channel communication and protocol translation.
 """
 
-import asyncio
-import pytest
-import pytest_asyncio
 from datetime import datetime
 from unittest.mock import patch
 
-from src.heretek_swarm.actors.echo import EchoActor, CommunicationChannel
-from src.heretek_swarm.actors.base import ActorMessage, ActorState
+import pytest
+import pytest_asyncio
 
+from src.heretek_swarm.actors.base import ActorMessage, ActorState
+from src.heretek_swarm.actors.echo import CommunicationChannel, EchoActor
 
 _pytestmark = pytest.mark.integration
 

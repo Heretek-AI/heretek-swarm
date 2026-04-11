@@ -17,9 +17,9 @@ from .base import (
     LLMProviderBase,
     LLMRequest,
     LLMResponse,
+    ProviderAuthenticationError,
     ProviderCapabilities,
     ProviderError,
-    ProviderAuthenticationError,
     ProviderRateLimitError,
     ProviderUnavailableError,
     ToolCall,
@@ -61,7 +61,7 @@ class OpenAIProvider(LLMProviderBase):
         """
         if not api_key:
             raise ProviderAuthenticationError("OpenAI API key is required")
-        
+
         super().__init__(
             _provider_name = "openai",
             base_url=base_url,
@@ -69,7 +69,7 @@ class OpenAIProvider(LLMProviderBase):
             _default_model = default_model or "gpt-4o",
             _extra_config = extra_config,
         )
-        
+
         self.organization = organization
         self._client: Optional[httpx.AsyncClient] = None
 
@@ -95,7 +95,7 @@ class OpenAIProvider(LLMProviderBase):
             }
             if self.organization:
                 headers["OpenAI-Organization"] = self.organization
-            
+
             self._client = httpx.AsyncClient(
                 _base_url = self.base_url,
                 headers=headers,
@@ -115,24 +115,24 @@ class OpenAIProvider(LLMProviderBase):
         """
         _client = await self._get_client()
         _start_time = time.time()
-        
+
         _payload = request.to_dict()
         _model = self._get_model(request.model)
         payload["model"] = model
-        
+
         logger.debug(
             "Sending OpenAI completion request",
             _model = model,
             stream=False,
             _message_count = len(request.messages),
         )
-        
+
         try:
             _response = await client.post(
                 "/chat/completions",
                 json=payload,
             )
-            
+
             if response.status_code == 401:
                 raise ProviderAuthenticationError(
                     "Invalid OpenAI API key",
@@ -155,13 +155,13 @@ class OpenAIProvider(LLMProviderBase):
                     f"OpenAI API error: {response.status_code}",
                     _provider = "openai",
                 )
-            
+
             _data = response.json()
             _latency_ms = (time.time() - start_time) * 1000
-            
+
             _choice = data["choices"][0]
             _message_data = choice.get("message", {})
-            
+
             # Parse tool calls if present
             _tool_calls = []
             if "tool_calls" in message_data:
@@ -173,7 +173,7 @@ class OpenAIProvider(LLMProviderBase):
                             _arguments = json.loads(tc["function"]["arguments"]),
                         )
                     )
-            
+
             return LLMResponse(
                 _content = message_data.get("content", ""),
                 model=data.get("model", model),
@@ -183,7 +183,7 @@ class OpenAIProvider(LLMProviderBase):
                 _raw_response = data,
                 _latency_ms = latency_ms,
             )
-            
+
         except httpx.RequestError as e:
             raise ProviderUnavailableError(
                 f"Request failed: {e}",
@@ -202,18 +202,18 @@ class OpenAIProvider(LLMProviderBase):
             Chunks of the completion text
         """
         _client = await self._get_client()
-        
+
         _payload = request.to_dict()
         payload["stream"] = True
         _model = self._get_model(request.model)
         payload["model"] = model
-        
+
         logger.debug(
             "Sending OpenAI streaming request",
             _model = model,
             stream=True,
         )
-        
+
         try:
             async with client.stream(
                 "POST",
@@ -235,14 +235,14 @@ class OpenAIProvider(LLMProviderBase):
                         f"OpenAI API error: {response.status_code}",
                         _provider = "openai",
                     )
-                
+
                 async for line in response.aiter_lines():
                     if line.startswith("data: "):
                         data = line[6:]  # Remove "data: " prefix
-                        
+
                         if data.strip() == "[DONE]":
                             break
-                        
+
                         try:
                             _chunk = json.loads(data)
                             _choices = chunk.get("choices", [])
@@ -253,7 +253,7 @@ class OpenAIProvider(LLMProviderBase):
                                     yield content
                         except json.JSONDecodeError:
                             continue
-                            
+
         except httpx.RequestError as e:
             raise ProviderUnavailableError(
                 f"Stream request failed: {e}",
@@ -264,7 +264,7 @@ class OpenAIProvider(LLMProviderBase):
     async def list_models(self) -> List[str]:
         """List available OpenAI models."""
         _client = await self._get_client()
-        
+
         try:
             _response = await client.get("/models")
             if response.status_code == 200:
@@ -272,7 +272,7 @@ class OpenAIProvider(LLMProviderBase):
                 return [m["id"] for m in data.get("data", [])]
         except Exception as e:
             logger.warning("Failed to list OpenAI models", error=str(e))
-        
+
         # Return common models as fallback
         return [
             "gpt-4o",

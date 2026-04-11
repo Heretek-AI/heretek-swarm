@@ -8,19 +8,16 @@ Tests the calculate_vote_weight() method and related functionality:
 - Historical accuracy tracking
 """
 
-import pytest
 from datetime import datetime, timezone
 
+from heretek_swarm.consensus.maker import Vote
 from heretek_swarm.consensus.maker_enhanced import (
     EnhancedMAKERConsensus,
     EnhancedVote,
     EvidenceQuality,
     ReasoningChain,
     ReasoningStep,
-    ReasoningChainStatus,
 )
-from heretek_swarm.consensus.maker import Vote
-from heretek_swarm.consensus.expertise import AgentExpertiseProfiler
 
 
 class TestEvidenceQualityScoring:
@@ -105,13 +102,13 @@ class TestCalculateVoteWeight:
             timestamp=datetime.now(timezone.utc).isoformat(),
         )
         enhanced_vote = EnhancedVote(vote=vote)
-        
+
         weight = self.consensus.calculate_vote_weight(
             consensus_id="test-consensus",
             enhanced_vote=enhanced_vote,
             domain="testing",
         )
-        
+
         # Weight should be in valid range
         assert 0.0 <= weight <= 2.0
 
@@ -129,10 +126,10 @@ class TestCalculateVoteWeight:
             confidence=0.9,
             timestamp=datetime.now(timezone.utc).isoformat(),
         )
-        
+
         enhanced_vote_low = EnhancedVote(vote=vote_low)
         enhanced_vote_high = EnhancedVote(vote=vote_high)
-        
+
         weight_low = self.consensus.calculate_vote_weight(
             consensus_id="test-consensus",
             enhanced_vote=enhanced_vote_low,
@@ -143,7 +140,7 @@ class TestCalculateVoteWeight:
             enhanced_vote=enhanced_vote_high,
             domain="testing",
         )
-        
+
         # Higher confidence should yield higher weight
         assert weight_high > weight_low
 
@@ -156,7 +153,7 @@ class TestCalculateVoteWeight:
         self.consensus.expertise_profiler.register_agent(
             "novice-agent", domains=["testing"], initial_expertise=0.3
         )
-        
+
         vote_expert = Vote(
             agent_id="expert-agent",
             decision="approve",
@@ -169,10 +166,10 @@ class TestCalculateVoteWeight:
             confidence=0.8,
             timestamp=datetime.now(timezone.utc).isoformat(),
         )
-        
+
         enhanced_vote_expert = EnhancedVote(vote=vote_expert)
         enhanced_vote_novice = EnhancedVote(vote=vote_novice)
-        
+
         weight_expert = self.consensus.calculate_vote_weight(
             consensus_id="test-consensus",
             enhanced_vote=enhanced_vote_expert,
@@ -183,7 +180,7 @@ class TestCalculateVoteWeight:
             enhanced_vote=enhanced_vote_novice,
             domain="testing",
         )
-        
+
         # Expert should have higher weight
         assert weight_expert > weight_novice
 
@@ -196,7 +193,7 @@ class TestCalculateVoteWeight:
             confidence=0.8,
             timestamp=datetime.now(timezone.utc).isoformat(),
         )
-        
+
         chain = ReasoningChain(
             chain_id="test-chain",
             agent_id="agent-1",
@@ -223,12 +220,12 @@ class TestCalculateVoteWeight:
             ],
         )
         chain.validate_chain()
-        
+
         enhanced_vote_with_reasoning = EnhancedVote(
             vote=vote_with_reasoning,
             reasoning_chain=chain,
         )
-        
+
         # Create vote without reasoning
         vote_no_reasoning = Vote(
             agent_id="agent-2",
@@ -237,7 +234,7 @@ class TestCalculateVoteWeight:
             timestamp=datetime.now(timezone.utc).isoformat(),
         )
         enhanced_vote_no_reasoning = EnhancedVote(vote=vote_no_reasoning)
-        
+
         weight_with = self.consensus.calculate_vote_weight(
             consensus_id="test-consensus",
             enhanced_vote=enhanced_vote_with_reasoning,
@@ -248,7 +245,7 @@ class TestCalculateVoteWeight:
             enhanced_vote=enhanced_vote_no_reasoning,
             domain="testing",
         )
-        
+
         # Valid reasoning should increase weight
         assert weight_with > weight_without
 
@@ -259,7 +256,7 @@ class TestCalculateVoteWeight:
             "agent-1": [True, True, True, True, True],  # 100% accuracy
             "agent-2": [False, False, False, False, False],  # 0% accuracy
         }
-        
+
         vote_1 = Vote(
             agent_id="agent-1",
             decision="approve",
@@ -272,10 +269,10 @@ class TestCalculateVoteWeight:
             confidence=0.7,
             timestamp=datetime.now(timezone.utc).isoformat(),
         )
-        
+
         enhanced_vote_1 = EnhancedVote(vote=vote_1)
         enhanced_vote_2 = EnhancedVote(vote=vote_2)
-        
+
         weight_1 = self.consensus.calculate_vote_weight(
             consensus_id="test-consensus",
             enhanced_vote=enhanced_vote_1,
@@ -286,7 +283,7 @@ class TestCalculateVoteWeight:
             enhanced_vote=enhanced_vote_2,
             domain="testing",
         )
-        
+
         # Agent with good history should have higher weight
         assert weight_1 > weight_2
 
@@ -299,7 +296,7 @@ class TestCalculateVoteWeight:
         self.consensus.agent_accuracy_history["test-consensus"] = {
             "ideal-agent": [True, True, True, True, True],
         }
-        
+
         # Create vote with valid reasoning chain
         vote = Vote(
             agent_id="ideal-agent",
@@ -307,7 +304,7 @@ class TestCalculateVoteWeight:
             confidence=0.9,
             timestamp=datetime.now(timezone.utc).isoformat(),
         )
-        
+
         chain = ReasoningChain(
             chain_id="ideal-chain",
             agent_id="ideal-agent",
@@ -334,18 +331,18 @@ class TestCalculateVoteWeight:
             ],
         )
         chain.validate_chain()
-        
+
         enhanced_vote = EnhancedVote(
             vote=vote,
             reasoning_chain=chain,
         )
-        
+
         weight = self.consensus.calculate_vote_weight(
             consensus_id="test-consensus",
             enhanced_vote=enhanced_vote,
             domain="testing",
         )
-        
+
         # Should be high weight (> 1.0 baseline)
         assert weight > 1.0
         assert weight <= 2.0
@@ -381,7 +378,7 @@ class TestEvidenceQualityExtraction:
             ],
         )
         chain.validate_chain()
-        
+
         vote = Vote(
             agent_id="agent-1",
             decision="approve",
@@ -389,9 +386,9 @@ class TestEvidenceQualityExtraction:
             timestamp=datetime.now(timezone.utc).isoformat(),
         )
         enhanced_vote = EnhancedVote(vote=vote, reasoning_chain=chain)
-        
+
         score = self.consensus._calculate_evidence_quality_score(enhanced_vote)
-        
+
         # Valid chain with sources should have good score
         assert score > 0.5
 
@@ -403,7 +400,7 @@ class TestEvidenceQualityExtraction:
             steps=[],  # Empty chain is invalid
         )
         chain.validate_chain()
-        
+
         vote = Vote(
             agent_id="agent-1",
             decision="approve",
@@ -411,9 +408,9 @@ class TestEvidenceQualityExtraction:
             timestamp=datetime.now(timezone.utc).isoformat(),
         )
         enhanced_vote = EnhancedVote(vote=vote, reasoning_chain=chain)
-        
+
         score = self.consensus._calculate_evidence_quality_score(enhanced_vote)
-        
+
         # Invalid chain should have lower score
         assert score < 0.7
 
@@ -425,7 +422,7 @@ class TestEvidenceQualityExtraction:
             confidence=0.85,
             timestamp=datetime.now(timezone.utc).isoformat(),
         )
-        
+
         # Pre-populate with high quality evidence
         cached_evidence = EvidenceQuality(
             source_count=10,
@@ -434,14 +431,14 @@ class TestEvidenceQualityExtraction:
             consistency=0.9,
             recency_score=0.95,
         )
-        
+
         enhanced_vote = EnhancedVote(
             vote=vote,
             evidence_quality=cached_evidence,
         )
-        
+
         score = self.consensus._calculate_evidence_quality_score(enhanced_vote)
-        
+
         # Should use cached high quality score
         assert score > 0.8
 
@@ -464,7 +461,7 @@ class TestExpertiseScore:
         self.consensus.expertise_profiler.register_agent(
             "agent-1", domains=["testing"], initial_expertise=0.8
         )
-        
+
         score = self.consensus._calculate_expertise_score("agent-1", "testing")
         assert score == 0.8
 
@@ -473,12 +470,12 @@ class TestExpertiseScore:
         profile = self.consensus.expertise_profiler.register_agent(
             "agent-1", domains=["testing", "security"], initial_expertise=0.7
         )
-        
+
         # Update domain expertise
         profile.domains["testing"].expertise_score = 0.8
         profile.domains["security"].expertise_score = 0.6
         profile.overall_reputation = 0.7
-        
+
         score = self.consensus._calculate_expertise_score("agent-1")
         assert score == 0.7  # Overall reputation
 
@@ -503,7 +500,7 @@ class TestHistoricalAccuracy:
         self.consensus.agent_accuracy_history["test-consensus"] = {
             "agent-1": [True, True, True, True, True]
         }
-        
+
         score = self.consensus._calculate_historical_accuracy_score(
             "test-consensus", "agent-1"
         )
@@ -514,7 +511,7 @@ class TestHistoricalAccuracy:
         self.consensus.agent_accuracy_history["test-consensus"] = {
             "agent-1": [False, False, True, False, False]
         }
-        
+
         score = self.consensus._calculate_historical_accuracy_score(
             "test-consensus", "agent-1"
         )
@@ -525,7 +522,7 @@ class TestHistoricalAccuracy:
         self.consensus.agent_accuracy_history["test-consensus"] = {
             "agent-1": [True, False, True, True, False]
         }
-        
+
         score = self.consensus._calculate_historical_accuracy_score(
             "test-consensus", "agent-1"
         )
@@ -547,7 +544,7 @@ class TestRecordDecisionOutcome:
             agent_id="agent-1",
             was_correct=True,
         )
-        
+
         # Check accuracy history was updated
         assert "agent-1" in self.consensus.agent_accuracy_history["test-consensus"]
         assert self.consensus.agent_accuracy_history["test-consensus"]["agent-1"] == [True]
@@ -569,7 +566,7 @@ class TestRecordDecisionOutcome:
             agent_id="agent-1",
             was_correct=True,
         )
-        
+
         outcomes = self.consensus.agent_accuracy_history["test-consensus"]["agent-1"]
         assert outcomes == [True, False, True]
         assert len(outcomes) == 3
@@ -592,12 +589,12 @@ class TestWeightNormalization:
             timestamp=datetime.now(timezone.utc).isoformat(),
         )
         enhanced_vote = EnhancedVote(vote=vote)
-        
+
         weight = self.consensus.calculate_vote_weight(
             consensus_id="test-consensus",
             enhanced_vote=enhanced_vote,
         )
-        
+
         assert weight >= 0.0
 
     def test_weight_bounds_maximum(self):
@@ -609,14 +606,14 @@ class TestWeightNormalization:
         self.consensus.agent_accuracy_history["test-consensus"] = {
             "agent-1": [True] * 20  # Perfect history
         }
-        
+
         vote = Vote(
             agent_id="agent-1",
             decision="approve",
             confidence=1.0,
             timestamp=datetime.now(timezone.utc).isoformat(),
         )
-        
+
         chain = ReasoningChain(
             chain_id="perfect-chain",
             agent_id="agent-1",
@@ -637,15 +634,15 @@ class TestWeightNormalization:
             ],
         )
         chain.validate_chain()
-        
+
         enhanced_vote = EnhancedVote(vote=vote, reasoning_chain=chain)
-        
+
         weight = self.consensus.calculate_vote_weight(
             consensus_id="test-consensus",
             enhanced_vote=enhanced_vote,
             domain="testing",
         )
-        
+
         assert weight <= 2.0
 
 
@@ -660,7 +657,7 @@ class TestIntegrationWithConsensus:
             enable_cross_validation=False,
         )
         consensus.start_consensus("weighted-test", domain="testing")
-        
+
         # Register expert and novice agents
         consensus.expertise_profiler.register_agent(
             "expert", domains=["testing"], initial_expertise=0.95
@@ -668,11 +665,11 @@ class TestIntegrationWithConsensus:
         consensus.expertise_profiler.register_agent(
             "novice", domains=["testing"], initial_expertise=0.3
         )
-        
+
         # Create votes
         from heretek_swarm.consensus.maker import Vote
         from heretek_swarm.consensus.maker_enhanced import EnhancedVote
-        
+
         expert_vote = Vote(
             agent_id="expert",
             decision="approve",
@@ -685,7 +682,7 @@ class TestIntegrationWithConsensus:
             confidence=0.8,
             timestamp=datetime.now(timezone.utc).isoformat(),
         )
-        
+
         # Calculate weights
         expert_weight = consensus.calculate_vote_weight(
             consensus_id="weighted-test",
@@ -697,7 +694,7 @@ class TestIntegrationWithConsensus:
             enhanced_vote=EnhancedVote(vote=novice_vote),
             domain="testing",
         )
-        
+
         # Expert should have significantly higher weight
         assert expert_weight > novice_weight
         assert expert_weight > 1.0  # Expert should boost above baseline
@@ -713,7 +710,7 @@ class TestIntegrationWithConsensus:
             confidence_threshold=0.5,
         )
         consensus.start_consensus("outcome-test", domain="testing")
-        
+
         # Register experts on one side
         consensus.expertise_profiler.register_agent(
             "expert1", domains=["testing"], initial_expertise=0.95
@@ -724,7 +721,7 @@ class TestIntegrationWithConsensus:
         consensus.expertise_profiler.register_agent(
             "novice1", domains=["testing"], initial_expertise=0.3
         )
-        
+
         # Add votes - 2 experts for approve, 1 novice for reject
         consensus.add_vote_with_reasoning(
             consensus_id="outcome-test",
@@ -733,7 +730,7 @@ class TestIntegrationWithConsensus:
             confidence=0.8,
             reasoning_chain=[{"type": "observation", "content": "Good", "confidence": 0.8}],
         )
-        
+
         consensus.add_vote_with_reasoning(
             consensus_id="outcome-test",
             agent_id="expert2",
@@ -741,7 +738,7 @@ class TestIntegrationWithConsensus:
             confidence=0.8,
             reasoning_chain=[{"type": "observation", "content": "Good", "confidence": 0.8}],
         )
-        
+
         consensus.add_vote_with_reasoning(
             consensus_id="outcome-test",
             agent_id="novice1",
@@ -749,10 +746,10 @@ class TestIntegrationWithConsensus:
             confidence=0.8,  # Same confidence but lower expertise
             reasoning_chain=[{"type": "observation", "content": "Bad", "confidence": 0.8}],
         )
-        
+
         # Compute consensus
         result = consensus.compute_consensus("outcome-test")
-        
+
         # With weighted voting, experts should win
         # Note: This may still fail if weights aren't applied - that's a bug to investigate
         if result is not None:

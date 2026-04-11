@@ -19,13 +19,13 @@ Event Structure:
     - metadata: Correlation ID, causation ID, user_id, etc.
 """
 
-import json
 import asyncio
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Callable
+import json
 from dataclasses import dataclass, field
-from uuid import uuid4
+from datetime import datetime, timezone
 from enum import Enum
+from typing import Any, Callable, Dict, List, Optional
+from uuid import uuid4
 
 import structlog
 
@@ -45,7 +45,7 @@ class EventType(str, Enum):
     AGENT_MESSAGE_RECEIVED = "agent.message.received"
     AGENT_MESSAGE_SENT = "agent.message.sent"
     AGENT_ERROR = "agent.error"
-    
+
     # Workflow events
     WORKFLOW_CREATED = "workflow.created"
     WORKFLOW_STARTED = "workflow.started"
@@ -53,12 +53,12 @@ class EventType(str, Enum):
     WORKFLOW_FAILED = "workflow.failed"
     WORKFLOW_STEP_EXECUTED = "workflow.step.executed"
     WORKFLOW_STATE_CHANGED = "workflow.state.changed"
-    
+
     # Consciousness events
     PHI_CALCULATED = "consciousness.phi.calculated"
     COHERENCE_UPDATED = "consciousness.coherence.updated"
     EMERGENCE_DETECTED = "consciousness.emergence.detected"
-    
+
     # System events
     SYSTEM_HEALTH_CHECK = "system.health.check"
     SYSTEM_RESOURCE_UPDATED = "system.resource.updated"
@@ -88,7 +88,7 @@ class DomainEvent:
     version: int
     payload: Dict[str, Any]
     metadata: Dict[str, Any] = field(default_factory=dict)
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for serialization."""
         return {
@@ -101,7 +101,7 @@ class DomainEvent:
             "payload": self.payload,
             "metadata": self.metadata,
         }
-    
+
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "DomainEvent":
         """Create from dictionary."""
@@ -119,7 +119,7 @@ class DomainEvent:
             payload=data["payload"],
             metadata=data.get("metadata", {}),
         )
-    
+
     @classmethod
     def create(cls, event_type: str, aggregate_id: str, aggregate_type: str, payload: Dict[str, Any], version: int, metadata: Optional[Dict[str, Any]]) -> "DomainEvent":
         """
@@ -169,7 +169,7 @@ class Snapshot:
     version: int
     created_at: datetime
     metadata: Optional[Dict[str, Any]] = None
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary."""
         return {
@@ -181,7 +181,7 @@ class Snapshot:
             "created_at": self.created_at.isoformat(),
             "metadata": self.metadata,
         }
-    
+
     @classmethod
     def from_dict(cls, data: Dict[str, Any]) -> "Snapshot":
         """Create from dictionary."""
@@ -232,7 +232,7 @@ class EventStore:
         state = await store.reconstruct_state("agent-1", apply_event)
         ```
     """
-    
+
     # SQL queries
     APPEND_EVENT_QUERY = """
         INSERT INTO domain_events (
@@ -240,7 +240,7 @@ class EventStore:
             timestamp, version, payload, metadata, created_at
         ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9)
     """
-    
+
     GET_EVENTS_QUERY = """
         SELECT event_id, event_type, aggregate_id, aggregate_type,
                timestamp, version, payload, metadata
@@ -248,7 +248,7 @@ class EventStore:
         WHERE aggregate_id = $1
         ORDER BY version ASC
     """
-    
+
     GET_EVENTS_BY_TYPE_QUERY = """
         SELECT event_id, event_type, aggregate_id, aggregate_type,
                timestamp, version, payload, metadata
@@ -257,7 +257,7 @@ class EventStore:
         ORDER BY timestamp DESC
         LIMIT $2
     """
-    
+
     GET_EVENTS_BY_TIME_RANGE_QUERY = """
         SELECT event_id, event_type, aggregate_id, aggregate_type,
                timestamp, version, payload, metadata
@@ -266,7 +266,7 @@ class EventStore:
         ORDER BY timestamp ASC
         LIMIT $3
     """
-    
+
     GET_EVENTS_BY_AGGREGATE_TYPE_QUERY = """
         SELECT event_id, event_type, aggregate_id, aggregate_type,
                timestamp, version, payload, metadata
@@ -275,13 +275,13 @@ class EventStore:
         ORDER BY timestamp DESC
         LIMIT $2
     """
-    
+
     GET_LAST_VERSION_QUERY = """
         SELECT MAX(version) as version
         FROM domain_events
         WHERE aggregate_id = $1
     """
-    
+
     APPEND_SNAPSHOT_QUERY = """
         INSERT INTO event_snapshots (
             snapshot_id, aggregate_id, aggregate_type,
@@ -290,14 +290,14 @@ class EventStore:
         ON CONFLICT (aggregate_id) DO UPDATE
         SET state = $4, version = $5, created_at = $6, metadata = $7
     """
-    
+
     GET_SNAPSHOT_QUERY = """
         SELECT snapshot_id, aggregate_id, aggregate_type,
                state, version, created_at, metadata
         FROM event_snapshots
         WHERE aggregate_id = $1
     """
-    
+
     def __init__(self, db_pool: Optional[Any], snapshot_interval: int, zero_trust_enabled: bool):
         """
         Initialize event store.
@@ -310,14 +310,14 @@ class EventStore:
         self._db_pool = db_pool
         self._snapshot_interval = snapshot_interval
         self._zero_trust_enabled = zero_trust_enabled
-        
+
         # In-memory storage
         self._memory_events: List[DomainEvent] = []
         self._memory_snapshots: Dict[str, Snapshot] = {}
-        
+
         # Event handlers
         self._event_handlers: Dict[str, List[Callable]] = {}
-        
+
         # Statistics
         self._stats = {
             "events_appended": 0,
@@ -325,15 +325,15 @@ class EventStore:
             "snapshots_created": 0,
             "snapshots_restored": 0,
         }
-        
+
         self._initialized = False
-        
+
         logger.info(
             "EventStore initialized",
             _db_enabled = db_pool is not None,
             _snapshot_interval = snapshot_interval,
         )
-    
+
     async def initialize(self, db_pool: Optional[Any]) -> None:
         """
         Initialize the event store.
@@ -343,7 +343,7 @@ class EventStore:
         """
         if db_pool:
             self._db_pool = db_pool
-        
+
         if self._db_pool:
             try:
                 await self._create_tables()
@@ -356,12 +356,12 @@ class EventStore:
         else:
             self._initialized = True
             logger.info("EventStore initialized with in-memory storage")
-    
+
     async def _create_tables(self) -> None:
         """Create database tables if they don't exist."""
         if not self._db_pool:
             return
-        
+
         async with self._db_pool.acquire() as conn:
             # Domain events table
             await conn.execute("""
@@ -382,7 +382,7 @@ class EventStore:
                 CREATE INDEX IF NOT EXISTS idx_events_aggregate_type ON domain_events(aggregate_type);
                 CREATE INDEX IF NOT EXISTS idx_events_version ON domain_events(aggregate_id, version);
             """)
-            
+
             # Snapshots table
             await conn.execute("""
                 CREATE TABLE IF NOT EXISTS event_snapshots (
@@ -396,7 +396,7 @@ class EventStore:
                 );
                 CREATE INDEX IF NOT EXISTS idx_snapshots_aggregate ON event_snapshots(aggregate_id);
             """)
-    
+
     async def append(self, event: DomainEvent) -> bool:
         """
         Append an event to the store.
@@ -411,7 +411,7 @@ class EventStore:
             return await self._append_to_db(event)
         else:
             return self._append_to_memory(event)
-    
+
     async def _append_to_db(self, event: DomainEvent) -> bool:
         """Append event to database."""
         try:
@@ -428,36 +428,36 @@ class EventStore:
                     json.dumps(event.metadata),
                     datetime.now(timezone.utc),
                 )
-                
+
                 self._stats["events_appended"] += 1
-                
+
                 # Check if snapshot needed
                 await self._check_snapshot(event.aggregate_id, event.aggregate_type)
-                
+
                 # Notify handlers
                 await self._notify_handlers(event)
-                
+
                 logger.debug(f"Event appended: {event.event_id}")
                 return True
-                
+
         except Exception as e:
             logger.error(f"Failed to append event: {e}")
             return False
-    
+
     def _append_to_memory(self, event: DomainEvent) -> bool:
         """Append event to in-memory storage."""
         self._memory_events.append(event)
         self._stats["events_appended"] += 1
-        
+
         # Check if snapshot needed
         self._check_snapshot_memory(event.aggregate_id, event.aggregate_type)
-        
+
         # Notify handlers
         asyncio.create_task(self._notify_handlers(event))
-        
+
         logger.debug(f"Event appended to memory: {event.event_id}")
         return True
-    
+
     async def _check_snapshot(self, aggregate_id: str, aggregate_type: str) -> None:
         """Check if snapshot should be created."""
         # Get event count for aggregate
@@ -466,22 +466,22 @@ class EventStore:
                 "SELECT COUNT(*) FROM domain_events WHERE aggregate_id = $1",
                 aggregate_id,
             )
-            
+
             if row and row % self._snapshot_interval == 0:
                 # Create snapshot
                 state = await self.reconstruct_state(aggregate_id, self._default_applier)
                 await self.create_snapshot(aggregate_id, aggregate_type, state, row)
-    
+
     def _check_snapshot_memory(self, aggregate_id: str, _aggregate_type: str) -> None:
         """Check if snapshot should be created in memory."""
         _count = sum(
             1 for e in self._memory_events if e.aggregate_id == aggregate_id
         )
-        
+
         if count > 0 and count % self._snapshot_interval == 0:
             # Skip snapshot reconstruction during event append to avoid recursion
             pass
-    
+
     async def get_events(self, aggregate_id: str, from_version: int, to_version: Optional[int]) -> List[DomainEvent]:
         """
         Get events for an aggregate.
@@ -498,7 +498,7 @@ class EventStore:
             return await self._get_events_from_db(aggregate_id, from_version, to_version)
         else:
             return self._get_events_from_memory(aggregate_id, from_version, to_version)
-    
+
     async def _get_events_from_db(self, aggregate_id: str, from_version: int, to_version: Optional[int]) -> List[DomainEvent]:
         """Get events from database."""
         async with self._db_pool.acquire() as conn:
@@ -524,7 +524,7 @@ class EventStore:
                     """,
                     aggregate_id, from_version,
                 )
-            
+
             return [
                 DomainEvent(
                     _event_id = row["event_id"],
@@ -538,19 +538,19 @@ class EventStore:
                 )
                 for row in rows
             ]
-    
+
     def _get_events_from_memory(self, aggregate_id: str, from_version: int, to_version: Optional[int]) -> List[DomainEvent]:
         """Get events from memory."""
         _events = [
             e for e in self._memory_events
             if e.aggregate_id == aggregate_id and e.version > from_version
         ]
-        
+
         if to_version:
             _events = [e for e in events if e.version <= to_version]
-        
+
         return sorted(events, key=lambda e: e.version)
-    
+
     async def get_events_by_type(self, event_type: str, limit: int) -> List[DomainEvent]:
         """Get events by type."""
         if self._db_pool:
@@ -564,7 +564,7 @@ class EventStore:
             return [
                 e for e in self._memory_events if e.event_type == event_type
             ][-limit:]
-    
+
     async def get_events_by_time_range(self, start_time: datetime, end_time: datetime, limit: int) -> List[DomainEvent]:
         """Get events within a time range."""
         if self._db_pool:
@@ -579,7 +579,7 @@ class EventStore:
                 e for e in self._memory_events
                 if start_time <= e.timestamp <= end_time
             ][-limit:]
-    
+
     async def get_events_by_aggregate_type(self, aggregate_type: str, limit: int) -> List[DomainEvent]:
         """Get events by aggregate type."""
         if self._db_pool:
@@ -593,7 +593,7 @@ class EventStore:
             return [
                 e for e in self._memory_events if e.aggregate_type == aggregate_type
             ][-limit:]
-    
+
     def _row_to_event(self, row) -> DomainEvent:
         """Convert database row to DomainEvent."""
         return DomainEvent(
@@ -606,7 +606,7 @@ class EventStore:
             payload=json.loads(row["payload"]),
             metadata=json.loads(row["metadata"]) if row["metadata"] else {},
         )
-    
+
     async def get_last_version(self, aggregate_id: str) -> int:
         """Get the last version number for an aggregate."""
         if self._db_pool:
@@ -622,7 +622,7 @@ class EventStore:
                 if e.aggregate_id == aggregate_id
             ]
             return max(versions) if versions else 0
-    
+
     async def reconstruct_state(self, aggregate_id: str, applier: Callable[[Dict[str, Any], DomainEvent], Dict[str, Any]], initial_state: Optional[Dict[str, Any]]) -> Dict[str, Any]:
         """
         Reconstruct state by replaying events.
@@ -637,7 +637,7 @@ class EventStore:
         """
         # Get snapshot if available
         snapshot = await self.get_snapshot(aggregate_id)
-        
+
         if snapshot:
             state = snapshot.state.copy()
             _from_version = snapshot.version
@@ -646,42 +646,42 @@ class EventStore:
         else:
             state = initial_state or {}
             _from_version = 0
-        
+
         # Get events after snapshot
         _events = await self.get_events(aggregate_id, from_version=from_version)
-        
+
         # Apply events
         for event in events:
             state = applier(state, event)
             self._stats["events_replayed"] += 1
-        
+
         logger.debug(f"Reconstructed state for {aggregate_id} with {len(events)} events")
         return state
-    
+
     def _default_applier(self, state: Dict[str, Any], event: DomainEvent) -> Dict[str, Any]:
         """Default state applier that merges payload."""
         state.update(event.payload)
         return state
-    
+
     def _reconstruct_from_memory(self, aggregate_id: str, applier: Callable[[Dict[str, Any], DomainEvent], Dict[str, Any]], initial_state: Optional[Dict[str, Any]]) -> Dict[str, Any]:
         """Reconstruct state from memory."""
         # Check for snapshot
         snapshot = self._memory_snapshots.get(aggregate_id)
-        
+
         if snapshot:
             state = snapshot.state.copy()
             _from_version = snapshot.version
         else:
             state = initial_state or {}
             _from_version = 0
-        
+
         # Get and apply events
         _events = self._get_events_from_memory(aggregate_id, from_version=from_version)
         for event in events:
             state = applier(state, event)
-        
+
         return state
-    
+
     async def create_snapshot(self, aggregate_id: str, aggregate_type: str, state: Dict[str, Any], version: int, metadata: Optional[Dict[str, Any]]) -> bool:
         """
         Create a state snapshot.
@@ -705,12 +705,12 @@ class EventStore:
             created_at=datetime.now(timezone.utc),
             metadata=metadata,
         )
-        
+
         if self._db_pool:
             return await self._create_snapshot_db(snapshot)
         else:
             return self._create_snapshot_memory(snapshot)
-    
+
     async def _create_snapshot_db(self, snapshot: Snapshot) -> bool:
         """Create snapshot in database."""
         try:
@@ -725,22 +725,22 @@ class EventStore:
                     snapshot.created_at,
                     json.dumps(snapshot.metadata) if snapshot.metadata else None,
                 )
-                
+
                 self._stats["snapshots_created"] += 1
                 logger.debug(f"Snapshot created: {snapshot.aggregate_id} v{snapshot.version}")
                 return True
-                
+
         except Exception as e:
             logger.error(f"Failed to create snapshot: {e}")
             return False
-    
+
     def _create_snapshot_memory(self, snapshot: Snapshot) -> bool:
         """Create snapshot in memory."""
         self._memory_snapshots[snapshot.aggregate_id] = snapshot
         self._stats["snapshots_created"] += 1
         logger.debug(f"Memory snapshot created: {snapshot.aggregate_id}")
         return True
-    
+
     async def get_snapshot(self, aggregate_id: str) -> Optional[Snapshot]:
         """Get snapshot for an aggregate."""
         if self._db_pool:
@@ -761,9 +761,9 @@ class EventStore:
                     )
         else:
             return self._memory_snapshots.get(aggregate_id)
-        
+
         return None
-    
+
     def register_handler(self, event_type: str, handler: Callable[[DomainEvent], None]) -> None:
         """
         Register an event handler.
@@ -776,11 +776,11 @@ class EventStore:
             self._event_handlers[event_type] = []
         self._event_handlers[event_type].append(handler)
         logger.debug(f"Event handler registered for {event_type}")
-    
+
     async def _notify_handlers(self, event: DomainEvent) -> None:
         """Notify registered handlers."""
         _handlers = self._event_handlers.get(event.event_type, [])
-        
+
         for handler in handlers:
             try:
                 if asyncio.iscoroutinefunction(handler):
@@ -789,7 +789,7 @@ class EventStore:
                     handler(event)
             except Exception as e:
                 logger.error(f"Event handler error: {e}")
-    
+
     async def get_stats(self) -> Dict[str, Any]:
         """Get event store statistics."""
         return {
@@ -817,7 +817,7 @@ def create_event_applier(state_field: str, value_field: str) -> Callable[[Dict[s
     def applier(state: Dict[str, Any], event: DomainEvent) -> Dict[str, Any]:
         state[state_field] = event.payload.get(value_field)
         return state
-    
+
     return applier
 
 

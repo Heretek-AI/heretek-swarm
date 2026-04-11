@@ -17,20 +17,19 @@ from typing import Any, Dict, List, Optional
 import structlog
 from swarms import Agent
 
-from heretek_swarm.actors.base import AgentActor, ActorMessage
+from heretek_swarm.actors.base import ActorMessage, AgentActor
 
 # Session 44: Collective Learning Integration
 from heretek_swarm.collective.learning import PatternExtractor, PatternType
 
 # Session 44: Consensus Integration
-from heretek_swarm.consensus.swarm_deliberation import SwarmDeliberationEngine, Position
+from heretek_swarm.consensus.swarm_deliberation import Position, SwarmDeliberationEngine
 
 # Session 44: Memory Optimization Integration
 from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer, AccessTier
 
 # Session 44: Zero-Trust Validation
 from heretek_swarm.security.zero_trust import ZeroTrustValidator
-
 
 _logger = structlog.get_logger("MetisAgent")
 
@@ -98,21 +97,21 @@ class MetisAgent(AgentActor):
         self.strategic_objectives: List[Dict[str, Any]] = []
         self.scenario_analyses: Dict[str, List[Dict[str, Any]]] = {}
 
-        
+
         # Session 44: Collective Learning Integration
         self.pattern_extractor = pattern_extractor or PatternExtractor(min_support=3, min_confidence=0.6)
-        
+
         # Session 44: Consensus Integration
         self.deliberation_engine = deliberation_engine or SwarmDeliberationEngine(
             _max_rounds = 5, consensus_threshold=0.75, min_participants=2
         )
-        
+
         # Session 44: Memory Optimization Integration
         self.access_analyzer = access_analyzer or AccessPatternAnalyzer()
-        
+
         # Session 44: Zero-Trust Validation
         self.zero_trust_validator = zero_trust_validator or ZeroTrustValidator()
-        
+
         # Session 44: Integration state
         self._active_deliberations: Dict[str, str] = {}
         self._pattern_emitted: Set[str] = set()
@@ -178,7 +177,7 @@ class MetisAgent(AgentActor):
                 _objective = message.content.get("objective")
                 _horizon_days = message.content.get("horizon_days", self.planning_horizon_days)
                 _constraints = message.content.get("constraints", [])
-                
+
                 if not objective:
                     logger.error(f"[{self.agent_id}] Missing objective for strategic plan")
                     return
@@ -187,7 +186,7 @@ class MetisAgent(AgentActor):
             return
 
         _plan_id = f"plan_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}"
-        
+
         logger.info(
             f"[{self.agent_id}] Creating strategic plan: {plan_id}",
             extra={
@@ -205,10 +204,10 @@ class MetisAgent(AgentActor):
                 _horizon_days = horizon_days,
                 _constraints = constraints,
             )
-            
+
             # Store the plan
             self.active_plans[plan_id] = plan
-            
+
             # Send response
             if message.content.get("reply_to"):
                 await self.send(
@@ -221,9 +220,9 @@ class MetisAgent(AgentActor):
                     },
                     _correlation_id = message.correlation_id,
                 )
-            
+
             logger.info(f"[{self.agent_id}] Strategic plan {plan_id} created successfully")
-            
+
         except Exception as e:
             logger.error(
                 f"[{self.agent_id}] Failed to create strategic plan {plan_id}: {e}",
@@ -252,7 +251,7 @@ class MetisAgent(AgentActor):
                 _plan_id = message.content.get("plan_id")
                 _resources = message.content.get("resources", {})
                 _priorities = message.content.get("priorities", {})
-                
+
                 if not plan_id:
                     logger.error(f"[{self.agent_id}] Missing plan_id for resource allocation")
                     return
@@ -275,10 +274,10 @@ class MetisAgent(AgentActor):
             _resources = resources,
             _priorities = priorities,
         )
-        
+
         # Store allocation
         self.resource_allocations[plan_id] = allocation
-        
+
         # Send response
         if message.content.get("reply_to"):
             await self.send(
@@ -317,13 +316,13 @@ class MetisAgent(AgentActor):
             _plan_id = plan_id,
             _domain = domain,
         )
-        
+
         # Store risks in register
         for risk in risks:
             _risk_id = risk.get("risk_id")
             if risk_id:
                 self.risk_register[risk_id] = risk
-        
+
         # Send response
         if message.content.get("reply_to"):
             await self.send(
@@ -355,7 +354,7 @@ class MetisAgent(AgentActor):
             return
 
         _analysis_id = f"scenario_{datetime.now(timezone.utc).strftime('%Y%m%d_%H%M%S')}"
-        
+
         logger.info(
             f"[{self.agent_id}] Running scenario analysis: {analysis_id}",
             extra={"variables_count": len(variables)},
@@ -367,10 +366,10 @@ class MetisAgent(AgentActor):
             _variables = variables,
             _max_scenarios = self.max_scenarios,
         )
-        
+
         # Store analysis
         self.scenario_analyses[analysis_id] = scenarios
-        
+
         # Send response
         if message.content.get("reply_to"):
             await self.send(
@@ -399,7 +398,7 @@ class MetisAgent(AgentActor):
                 _objective = message.content.get("objective")
                 _priority = message.content.get("priority", "medium")
                 _metrics = message.content.get("metrics", [])
-                
+
                 if not objective:
                     logger.error(f"[{self.agent_id}] Missing objective")
                     return
@@ -414,9 +413,9 @@ class MetisAgent(AgentActor):
             "created_at": datetime.now(timezone.utc).isoformat(),
             "status": "active",
         }
-        
+
         self.strategic_objectives.append(objective_entry)
-        
+
         logger.info(
             f"[{self.agent_id}] Strategic objective set: {objective[:50]}...",
             _extra = {"priority": priority},
@@ -443,7 +442,7 @@ class MetisAgent(AgentActor):
             else:
                 # Fallback
                 _plan_id = message.content.get("plan_id")
-                
+
                 if not plan_id:
                     logger.error(f"[{self.agent_id}] Missing plan_id for status request")
                     return
@@ -467,7 +466,7 @@ class MetisAgent(AgentActor):
         _plan = self.active_plans[plan_id]
         _allocation = self.resource_allocations.get(plan_id, {})
         _risks = [r for r in self.risk_register.values() if r.get("plan_id") == plan_id]
-        
+
         _status = {
             "plan_id": plan_id,
             "objective": plan.get("objective"),
@@ -478,7 +477,7 @@ class MetisAgent(AgentActor):
             "created_at": plan.get("created_at"),
             "horizon_days": plan.get("horizon_days"),
         }
-        
+
         # Send response
         if message.content.get("reply_to"):
             await self.send(
@@ -525,14 +524,14 @@ Generate a comprehensive strategic plan including:
 
 Format as JSON with keys: summary, phases, resources, risks, metrics
 """
-        
+
         try:
             _response = await self.run_with_llm(
                 _prompt = prompt,
                 _system_prompt = "You are Metis, a strategic planning specialist AI. Create detailed, actionable strategic plans.",
                 _timeout = 60,
             )
-            
+
             # Parse response (simplified - in production use JSON parsing)
             _plan = {
                 "objective": objective,
@@ -546,9 +545,9 @@ Format as JSON with keys: summary, phases, resources, risks, metrics
                 "status": "active",
                 "created_at": datetime.now(timezone.utc).isoformat(),
             }
-            
+
             return plan
-            
+
         except Exception as e:
             logger.error(f"[{self.agent_id}] LLM failed for strategic planning: {e}")
             # Return minimal plan
@@ -589,7 +588,7 @@ Format as JSON with keys: summary, phases, resources, risks, metrics
         """
         # Simple priority-based allocation
         _total_priority = sum(priorities.values()) if priorities else 1.0
-        
+
         _allocation = {}
         for resource, amount in resources.items():
             if resource in priorities:
@@ -599,7 +598,7 @@ Format as JSON with keys: summary, phases, resources, risks, metrics
                 }
             else:
                 allocation[resource] = {"allocated": amount, "priority_weight": 0.0}
-        
+
         return {
             "plan_id": plan_id,
             "allocation": allocation,
@@ -619,7 +618,7 @@ Format as JSON with keys: summary, phases, resources, risks, metrics
             List of identified risks
         """
         _plan = self.active_plans.get(plan_id, {})
-        
+
         _prompt = f"""
 Risk Assessment Request:
 
@@ -635,14 +634,14 @@ Identify key risks including:
 
 Format each risk as JSON object.
 """
-        
+
         try:
             _response = await self.run_with_llm(
                 _prompt = prompt,
                 _system_prompt = "You are Metis, a strategic risk assessment specialist. Identify and analyze potential risks.",
                 _timeout = 60,
             )
-            
+
             # Generate structured risks
             _risks = [
                 {
@@ -657,9 +656,9 @@ Format each risk as JSON object.
                 }
                 for i in range(3)
             ]
-            
+
             return risks
-            
+
         except Exception as e:
             logger.error(f"[{self.agent_id}] LLM failed for risk assessment: {e}")
             return []
@@ -677,7 +676,7 @@ Format each risk as JSON object.
             List of scenario dictionaries
         """
         _scenarios = []
-        
+
         # Generate base scenario
         scenarios.append({
             "scenario_id": "base",
@@ -686,7 +685,7 @@ Format each risk as JSON object.
             "probability": 0.5,
             "outcomes": {},
         })
-        
+
         # Generate variation scenarios
         for i, var in enumerate(variables[:max_scenarios - 1]):
             scenarios.append({
@@ -696,7 +695,7 @@ Format each risk as JSON object.
                 "probability": 0.25 / (len(variables) or 1),
                 "outcomes": {},
             })
-        
+
         return scenarios
 
     async def get_strategic_summary(self) -> Dict[str, Any]:
@@ -724,10 +723,10 @@ Format each risk as JSON object.
         """Emit pattern for collective learning."""
         if not self.pattern_extractor:
             return
-        
+
         if item_id in self._pattern_emitted:
             return
-        
+
         try:
             await self.pattern_extractor.analyze_message(
                 _message_id = f"{item_type}_{item_id}",
@@ -737,7 +736,7 @@ Format each risk as JSON object.
                 _content = content,
                 _timestamp = datetime.now(timezone.utc).isoformat(),
             )
-            
+
             self._pattern_emitted.add(item_id)
             logger.info(f"{item_type}_pattern_emitted", item_id=item_id, outcome=outcome)
         except Exception as e:
@@ -747,7 +746,7 @@ Format each risk as JSON object.
         """Consume patterns from collective learning."""
         if not self.pattern_extractor:
             return []
-        
+
         try:
             _patterns = await self.pattern_extractor.extract_patterns(
                 _time_window_hours = 24,
@@ -766,7 +765,7 @@ Format each risk as JSON object.
         """Initiate swarm deliberation."""
         if not self.deliberation_engine:
             return None
-        
+
         try:
             _deliberation_id = f"delib_{item_id}"
             self.deliberation_engine.start_deliberation(
@@ -776,7 +775,7 @@ Format each risk as JSON object.
                 _domain = domain,
             )
             self._active_deliberations[item_id] = deliberation_id
-            
+
             logger.info("deliberation_initiated", deliberation_id=deliberation_id, item_id=item_id)
             return deliberation_id
         except Exception as e:
@@ -787,11 +786,11 @@ Format each risk as JSON object.
         """Submit agent position in deliberation."""
         if not self.deliberation_engine:
             return False
-        
+
         _deliberation_id = self._active_deliberations.get(item_id)
         if not deliberation_id:
             return False
-        
+
         try:
             _success = self.deliberation_engine.submit_position(
                 _deliberation_id = deliberation_id,
@@ -800,14 +799,14 @@ Format each risk as JSON object.
                 _confidence = confidence,
                 _argument = argument,
             )
-            
+
             if success and self.access_analyzer:
                 self.access_analyzer.record_access(
                     _memory_id = f"delib_{deliberation_id}_{agent_id}",
                     _access_type = "write",
                     agent_id=agent_id,
                 )
-            
+
             return success
         except Exception as e:
             logger.error("failed_to_submit_deliberation_position", error=str(e))
@@ -817,19 +816,19 @@ Format each risk as JSON object.
         """Finalize deliberation and apply result."""
         if not self.deliberation_engine:
             return None
-        
+
         _deliberation_id = self._active_deliberations.get(item_id)
         if not deliberation_id:
             return None
-        
+
         try:
             _result = self.deliberation_engine.finalize_deliberation(deliberation_id)
-            
+
             if result:
                 self.deliberation_engine.cleanup_deliberation(deliberation_id)
                 del self._active_deliberations[item_id]
                 logger.info("deliberation_finalized", deliberation_id=deliberation_id)
-            
+
             return result
         except Exception as e:
             logger.error("failed_to_finalize_deliberation", error=str(e))
@@ -843,7 +842,7 @@ Format each risk as JSON object.
         """Track memory access patterns."""
         if not self.access_analyzer:
             return
-        
+
         _memory_id = f"{item_type}_{item_id}"
         self.access_analyzer.record_access(
             _memory_id = memory_id,
@@ -855,7 +854,7 @@ Format each risk as JSON object.
         """Get memory tier classification."""
         if not self.access_analyzer:
             return AccessTier.COLD
-        
+
         _memory_id = f"{item_type}_{item_id}"
         _profile = self.access_analyzer.get_profile(memory_id)
         return profile.tier if profile else AccessTier.COLD
@@ -864,7 +863,7 @@ Format each risk as JSON object.
         """Prefetch items an agent is likely to need."""
         if not self.access_analyzer:
             return []
-        
+
         try:
             _predicted_memories = self.access_analyzer.predict_agent_access(agent_id)
             return [
@@ -897,12 +896,12 @@ Format each risk as JSON object.
     async def cleanup(self) -> None:
         """Clean up Metis resources."""
         logger.info(f"[{self.agent_id}] Metis agent cleanup initiated")
-        
+
         # Clear all state
         self.active_plans.clear()
         self.resource_allocations.clear()
         self.risk_register.clear()
         self.strategic_objectives.clear()
         self.scenario_analyses.clear()
-        
+
         logger.info(f"[{self.agent_id}] Metis agent cleanup complete")

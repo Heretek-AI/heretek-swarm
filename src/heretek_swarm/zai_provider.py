@@ -19,9 +19,9 @@ from .base import (
     LLMProviderBase,
     LLMRequest,
     LLMResponse,
+    ProviderAuthenticationError,
     ProviderCapabilities,
     ProviderError,
-    ProviderAuthenticationError,
     ProviderUnavailableError,
     ToolCall,
 )
@@ -59,7 +59,7 @@ class ZAIProvider(LLMProviderBase):
         """
         if not api_key:
             raise ProviderAuthenticationError("Z.AI API key is required")
-        
+
         super().__init__(
             _provider_name = "zai",
             base_url=base_url,
@@ -67,7 +67,7 @@ class ZAIProvider(LLMProviderBase):
             _default_model = default_model or "glm-4",
             _extra_config = extra_config,
         )
-        
+
         self._client: Optional[httpx.AsyncClient] = None
 
     def _init_capabilities(self) -> ProviderCapabilities:
@@ -90,7 +90,7 @@ class ZAIProvider(LLMProviderBase):
                 "Authorization": f"Bearer {self.api_key}",
                 "Content-Type": "application/json",
             }
-            
+
             self._client = httpx.AsyncClient(
                 _base_url = self.base_url,
                 headers=headers,
@@ -110,28 +110,28 @@ class ZAIProvider(LLMProviderBase):
         """
         _client = await self._get_client()
         _start_time = time.time()
-        
+
         _payload = request.to_dict()
         _model = self._get_model(request.model)
         payload["model"] = model
-        
+
         # Z.AI specific adjustments
         # Ensure temperature is within valid range (0-1)
         if payload.get("temperature", 0.7) > 1.0:
             payload["temperature"] = payload["temperature"] / 2.0
-        
+
         logger.debug(
             "Sending Z.AI completion request",
             _model = model,
             stream=False,
         )
-        
+
         try:
             _response = await client.post(
                 "/chat/completions",
                 _json = payload,
             )
-            
+
             if response.status_code == 401:
                 raise ProviderAuthenticationError(
                     "Invalid Z.AI API key",
@@ -153,13 +153,13 @@ class ZAIProvider(LLMProviderBase):
                     f"Z.AI API error: {response.status_code} - {error_data}",
                     _provider = "zai",
                 )
-            
+
             _data = response.json()
             _latency_ms = (time.time() - start_time) * 1000
-            
+
             _choice = data["choices"][0]
             _message_data = choice.get("message", {})
-            
+
             # Parse tool calls if present
             _tool_calls = []
             if "tool_calls" in message_data:
@@ -171,7 +171,7 @@ class ZAIProvider(LLMProviderBase):
                             _arguments = json.loads(tc["function"]["arguments"]),
                         )
                     )
-            
+
             return LLMResponse(
                 _content = message_data.get("content", ""),
                 model=data.get("model", model),
@@ -181,7 +181,7 @@ class ZAIProvider(LLMProviderBase):
                 _raw_response = data,
                 _latency_ms = latency_ms,
             )
-            
+
         except httpx.RequestError as e:
             raise ProviderUnavailableError(
                 f"Request failed: {e}",
@@ -200,21 +200,21 @@ class ZAIProvider(LLMProviderBase):
             Chunks of the completion text
         """
         _client = await self._get_client()
-        
+
         _payload = request.to_dict()
         payload["stream"] = True
         _model = self._get_model(request.model)
         payload["model"] = model
-        
+
         # Ensure temperature is within valid range
         if payload.get("temperature", 0.7) > 1.0:
             payload["temperature"] = payload["temperature"] / 2.0
-        
+
         logger.debug(
             "Sending Z.AI streaming request",
             _model = model,
         )
-        
+
         try:
             async with client.stream(
                 "POST",
@@ -231,14 +231,14 @@ class ZAIProvider(LLMProviderBase):
                         f"Z.AI API error: {response.status_code}",
                         _provider = "zai",
                     )
-                
+
                 async for line in response.aiter_lines():
                     if line.startswith("data: "):
                         data = line[6:]  # Remove "data: " prefix
-                        
+
                         if data.strip() == "[DONE]":
                             break
-                        
+
                         try:
                             _chunk = json.loads(data)
                             _choices = chunk.get("choices", [])
@@ -249,7 +249,7 @@ class ZAIProvider(LLMProviderBase):
                                     yield content
                         except json.JSONDecodeError:
                             continue
-                            
+
         except httpx.RequestError as e:
             raise ProviderUnavailableError(
                 f"Stream request failed: {e}",

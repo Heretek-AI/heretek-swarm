@@ -14,7 +14,7 @@ class LLMProviderInterface(ABC):
     All LLM provider implementations should inherit from this interface
     to ensure consistent API across different backends.
     """
-    
+
     @abstractmethod
     async def complete(self, _prompt: str, **kwargs) -> Any:
         """Generate a completion from a prompt.
@@ -27,7 +27,7 @@ class LLMProviderInterface(ABC):
             The completion response (format depends on provider)
         """
         pass
-    
+
     @abstractmethod
     async def chat(self, _messages: List[Dict[str, Any]], **kwargs) -> Any:
         """Generate a chat completion.
@@ -40,7 +40,7 @@ class LLMProviderInterface(ABC):
             The chat completion response
         """
         pass
-    
+
     @abstractmethod
     async def embed(self, _text: str) -> List[float]:
         """Generate embeddings for text.
@@ -52,7 +52,7 @@ class LLMProviderInterface(ABC):
             List of embedding values
         """
         pass
-    
+
     @abstractmethod
     async def initialize(self, _config: Dict[str, Any]) -> None:
         """Initialize the provider with configuration.
@@ -61,18 +61,18 @@ class LLMProviderInterface(ABC):
             config: Provider configuration dictionary
         """
         pass
-    
+
     @abstractmethod
     async def shutdown(self) -> None:
         """Clean up provider resources."""
         pass
-    
+
     @property
     @abstractmethod
     def provider_name(self) -> str:
         """Return the provider name identifier."""
         pass
-    
+
     @property
     @abstractmethod
     def is_initialized(self) -> bool:
@@ -86,7 +86,7 @@ class EmbeddingProviderInterface(ABC):
     All embedding provider implementations should inherit from this interface
     to ensure consistent API across different backends.
     """
-    
+
     @abstractmethod
     async def embed(self, _text: str) -> List[float]:
         """Generate embeddings for a single text.
@@ -98,7 +98,7 @@ class EmbeddingProviderInterface(ABC):
             List of embedding values
         """
         pass
-    
+
     @abstractmethod
     async def embed_batch(self, _texts: List[str]) -> List[List[float]]:
         """Generate embeddings for multiple texts.
@@ -110,7 +110,7 @@ class EmbeddingProviderInterface(ABC):
             List of embedding lists
         """
         pass
-    
+
     @abstractmethod
     async def initialize(self, _config: Dict[str, Any]) -> None:
         """Initialize the provider with configuration.
@@ -119,24 +119,24 @@ class EmbeddingProviderInterface(ABC):
             config: Provider configuration dictionary
         """
         pass
-    
+
     @abstractmethod
     async def shutdown(self) -> None:
         """Clean up provider resources."""
         pass
-    
+
     @property
     @abstractmethod
     def embedding_dimensions(self) -> int:
         """Return the dimensionality of embeddings."""
         pass
-    
+
     @property
     @abstractmethod
     def provider_name(self) -> str:
         """Return the provider name identifier."""
         pass
-    
+
     @property
     @abstractmethod
     def is_initialized(self) -> bool:

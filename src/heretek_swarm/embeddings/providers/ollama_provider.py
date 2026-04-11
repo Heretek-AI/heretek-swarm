@@ -17,9 +17,9 @@ import structlog
 from .base import (
     EmbeddingProviderBase,
     EmbeddingProviderCapabilities,
+    EmbeddingProviderError,
     EmbeddingResponse,
     EmbeddingUnavailableError,
-    EmbeddingProviderError,
 )
 
 _logger = structlog.get_logger("embeddings.providers.ollama")
@@ -59,7 +59,7 @@ class OllamaEmbeddingProvider(EmbeddingProviderBase):
             _default_model = default_model or "nomic-embed-text",
             _extra_config = extra_config,
         )
-        
+
         self._client: Optional[httpx.AsyncClient] = None
 
     def _init_capabilities(self) -> EmbeddingProviderCapabilities:
@@ -96,32 +96,32 @@ class OllamaEmbeddingProvider(EmbeddingProviderBase):
         """
         _client = await self._get_client()
         _start_time = time.time()
-        
+
         _model = self._get_model(model)
         _inputs = self._ensure_list(texts)
-        
+
         _embeddings = []
         _total_prompt_tokens = 0
-        
+
         # Ollama processes one text at a time for embeddings
         for text in inputs:
             _payload = {
                 "model": model,
                 "prompt": text,
             }
-            
+
             logger.debug(
                 "Sending Ollama embedding request",
                 _model = model,
                 _text_length = len(text),
             )
-            
+
             try:
                 _response = await client.post(
                     "/api/embeddings",
                     json=payload,
                 )
-                
+
                 if response.status_code == 404:
                     raise EmbeddingProviderError(
                         f"Model '{model}' not found. Try: ollama pull {model}",
@@ -137,23 +137,23 @@ class OllamaEmbeddingProvider(EmbeddingProviderBase):
                         f"Ollama API error: {response.status_code} - {response.text[:200]}",
                         _provider = "ollama",
                     )
-                
+
                 _data = response.json()
                 _embedding = data.get("embedding", [])
                 embeddings.append(embedding)
-                
+
                 # Estimate tokens (Ollama doesn't return token count for embeddings)
                 total_prompt_tokens += len(text) // 4  # Rough estimate
-                
+
             except httpx.RequestError as e:
                 raise EmbeddingUnavailableError(
                     f"Request failed: {e}. Is Ollama running? (ollama serve)",
                     _provider = "ollama",
                     _cause = e,
                 )
-        
+
         _latency_ms = (time.time() - start_time) * 1000
-        
+
         return EmbeddingResponse(
             _embeddings = embeddings,
             _model = model,
@@ -167,7 +167,7 @@ class OllamaEmbeddingProvider(EmbeddingProviderBase):
     async def list_models(self) -> List[str]:
         """List available Ollama embedding models."""
         _client = await self._get_client()
-        
+
         try:
             _response = await client.get("/api/tags")
             if response.status_code == 200:
@@ -181,7 +181,7 @@ class OllamaEmbeddingProvider(EmbeddingProviderBase):
                 return embedding_models if embedding_models else all_models
         except Exception as e:
             logger.warning("Failed to list Ollama models", error=str(e))
-        
+
         # Return common embedding models as fallback
         return [
             "nomic-embed-text",

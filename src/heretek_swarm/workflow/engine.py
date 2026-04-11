@@ -11,22 +11,22 @@ Features:
 - Conditional edges for dynamic workflow routing
 """
 
-import asyncio
 import ast
+import asyncio
 import operator
-from datetime import datetime, timezone
-from typing import Any, Dict, List, Optional, Set, TypeVar, Annotated
 from dataclasses import dataclass, field
+from datetime import datetime, timezone
 from enum import Enum
-from typing_extensions import TypedDict
+from typing import Annotated, Any, Dict, List, Optional, Set, TypeVar
 
 import structlog
+from typing_extensions import TypedDict
 
 _logger = structlog.get_logger(__name__)
 
 # Import cycle detection
 try:
-    from .cycle_detector import WorkflowCycleDetector, FivePhaseWorkflowTracker
+    from .cycle_detector import FivePhaseWorkflowTracker, WorkflowCycleDetector
 except ImportError:
     WorkflowCycleDetector = None  # type: ignore
     FivePhaseWorkflowTracker = None  # type: ignore
@@ -77,7 +77,7 @@ class SafeExpressionEvaluator:
     Security: Prevents code injection through object introspection attacks
     by never allowing execution of arbitrary Python code.
     """
-    
+
     # AST node types that are safe to evaluate
     SAFE_NODE_TYPES = (
         ast.Expression,
@@ -125,7 +125,7 @@ class SafeExpressionEvaluator:
         ast.USub,
         ast.UAdd,
     )
-    
+
     # Safe binary operators
     SAFE_BIN_OPS = {
         ast.Add: operator.add,
@@ -136,7 +136,7 @@ class SafeExpressionEvaluator:
         ast.Mod: operator.mod,
         ast.Pow: operator.pow,
     }
-    
+
     def __init__(self, allowed_variables: Optional[Dict[str, Any]]):
         """
         Initialize the evaluator with allowed variables.
@@ -146,7 +146,7 @@ class SafeExpressionEvaluator:
                                referenced in expressions
         """
         self.allowed_variables = allowed_variables or {}
-    
+
     def validate_and_eval(self, expr: str) -> Any:
         """
         Safely validate and evaluate an expression.
@@ -166,13 +166,13 @@ class SafeExpressionEvaluator:
             _tree = ast.parse(expr, mode='eval')
         except SyntaxError as e:
             raise ValueError(f"Invalid expression syntax: {e}")
-        
+
         # Validate the AST contains only safe nodes
         self._validate_ast(tree)
-        
+
         # Safely evaluate the validated AST
         return self._eval_node(tree.body)
-    
+
     def _validate_ast(self, node: ast.AST) -> None:
         """
         Recursively validate that an AST contains only safe node types.
@@ -189,7 +189,7 @@ class SafeExpressionEvaluator:
                 f"Unsafe node type '{type(node).__name__}' in expression. "
                 f"Only literals, comparisons, and boolean logic are allowed."
             )
-        
+
         # Special validation for Name nodes (variable access)
         if isinstance(node, ast.Name):
             if node.id not in self.allowed_variables:
@@ -197,7 +197,7 @@ class SafeExpressionEvaluator:
                     f"Variable '{node.id}' is not in the allowed variables list. "
                     f"Allowed: {list(self.allowed_variables.keys())}"
                 )
-        
+
         # Recursively validate all child nodes
         for field, value in ast.iter_fields(node):
             if isinstance(value, list):
@@ -206,7 +206,7 @@ class SafeExpressionEvaluator:
                         self._validate_ast(item)
             elif isinstance(value, ast.AST):
                 self._validate_ast(value)
-    
+
     def _eval_node(self, node: ast.AST) -> Any:
         """
         Recursively evaluate a validated AST node.
@@ -229,19 +229,19 @@ class SafeExpressionEvaluator:
             return node.s
         elif isinstance(node, ast.NameConstant):  # Deprecated, for compatibility
             return node.value
-        
+
         # Handle variable references
         elif isinstance(node, ast.Name):
             return self.allowed_variables[node.id]
-        
+
         # Handle lists
         elif isinstance(node, ast.List):
             return [self._eval_node(elt) for elt in node.elts]
-        
+
         # Handle tuples
         elif isinstance(node, ast.Tuple):
             return tuple(self._eval_node(elt) for elt in node.elts)
-        
+
         # Handle dicts
         elif isinstance(node, ast.Dict):
             return {
@@ -249,7 +249,7 @@ class SafeExpressionEvaluator:
                 for k, v in zip(node.keys, node.values)
                 if k is not None
             }
-        
+
         # Handle comparison operations
         elif isinstance(node, ast.Compare):
             _left = self._eval_node(node.left)
@@ -262,7 +262,7 @@ class SafeExpressionEvaluator:
                 _result = result and op_func(left, right)
                 left = right
             return result
-        
+
         # Handle boolean operations (and, or)
         elif isinstance(node, ast.BoolOp):
             _op_func = SAFE_BOOL_OPS.get(type(node.op))
@@ -272,14 +272,14 @@ class SafeExpressionEvaluator:
             for value in node.values[1:]:
                 _result = op_func(result, self._eval_node(value))
             return result
-        
+
         # Handle unary operations (not, -, +)
         elif isinstance(node, ast.UnaryOp):
             _op_func = SAFE_UNARY_OPS.get(type(node.op))
             if op_func is None:
                 raise ValueError(f"Unsupported unary operator: {type(node.op).__name__}")
             return op_func(self._eval_node(node.operand))
-        
+
         # Handle binary operations (+, -, *, /, etc.)
         elif isinstance(node, ast.BinOp):
             _op_func = self.SAFE_BIN_OPS.get(type(node.op))
@@ -288,13 +288,13 @@ class SafeExpressionEvaluator:
             _left = self._eval_node(node.left)
             _right = self._eval_node(node.right)
             return op_func(left, right)
-        
+
         # Handle subscript (indexing)
         elif isinstance(node, ast.Subscript):
             value = self._eval_node(node.value)
             _slice_val = self._eval_node(node.slice)
             return value[slice_val]
-        
+
         else:
             raise ValueError(f"Unsupported node type: {type(node).__name__}")
 
@@ -314,7 +314,7 @@ class WorkflowState(TypedDict, total=False):
         checkpoint: Optional checkpoint for resumption
         cycle_count: Counter for cycle detection
     """
-    
+
     messages: Annotated[List[Dict[str, Any]], "append"]
     results: Annotated[Dict[str, Any], "merge"]
     current_phase: str
@@ -453,10 +453,10 @@ def merge_workflow_states(current: WorkflowState, update: WorkflowState) -> Work
         New merged workflow state
     """
     result: WorkflowState = {}
-    
+
     # Get all keys from both states
     _all_keys = set(current.keys()) | set(update.keys())
-    
+
     for key in all_keys:
         if key in update and key in current:
             # Both have this key - apply merge logic
@@ -479,7 +479,7 @@ def merge_workflow_states(current: WorkflowState, update: WorkflowState) -> Work
             result[key] = update[key]
         else:
             result[key] = current[key]
-    
+
     return result
 
 
@@ -588,7 +588,7 @@ class WorkflowEngine:
         self.workflows: Dict[str, Workflow] = {}
         self.active_executions: Dict[str, WorkflowContext] = {}
         self._execution_lock = asyncio.Lock()
-        
+
         # Cycle detection integration
         self.cycle_detector = cycle_detector or WorkflowCycleDetector(
             _max_iterations = max_iterations,
@@ -713,7 +713,7 @@ class WorkflowEngine:
                             error=Exception(f"Node skipped due to cycle detection: {node_id}")
                         )
                         continue
-                
+
                 # Record node execution for tracking
                 self.cycle_detector.record_node_execution(
                     execution_id,
@@ -870,7 +870,7 @@ class WorkflowEngine:
         """
         # Create safe evaluator with context variables
         _evaluator = SafeExpressionEvaluator(allowed_variables=context.variables)
-        
+
         try:
             # Safely evaluate the condition expression
             _result = evaluator.validate_and_eval(condition)

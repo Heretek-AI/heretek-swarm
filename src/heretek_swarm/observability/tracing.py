@@ -15,25 +15,24 @@ Span attributes:
 """
 
 import os
-from typing import Optional, Callable, Any, Dict
-from contextlib import contextmanager
-from functools import wraps
 import time
 import uuid
+from contextlib import contextmanager
+from functools import wraps
+from typing import Any, Callable, Dict, Optional
 
+import structlog
 from opentelemetry import trace
+from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
+from opentelemetry.propagate import set_global_textmap
+from opentelemetry.sdk.resources import SERVICE_NAME, SERVICE_VERSION, Resource
 from opentelemetry.sdk.trace import TracerProvider
 from opentelemetry.sdk.trace.export import BatchSpanProcessor, ConsoleSpanExporter
-from opentelemetry.sdk.resources import Resource, SERVICE_NAME, SERVICE_VERSION
-from opentelemetry.exporter.otlp.proto.grpc.trace_exporter import OTLPSpanExporter
-from opentelemetry.trace import Status, StatusCode, Span
+from opentelemetry.trace import Span, Status, StatusCode
 from opentelemetry.trace.propagation.tracecontext import TraceContextTextMapPropagator
-from opentelemetry.context import Context
-from opentelemetry.propagate import set_global_textmap
 from starlette.middleware.base import BaseHTTPMiddleware
 from starlette.requests import Request
 from starlette.responses import Response
-import structlog
 
 _logger = structlog.get_logger("observability.tracing")
 
@@ -56,7 +55,7 @@ def initialize_tracing(_service_name: str, _service_version: str, _otlp_endpoint
         Configured tracer instance
     """
     global _tracer
-    
+
     # Create resource with service information
     _resource = Resource.create({
         SERVICE_NAME: service_name,
@@ -64,14 +63,14 @@ def initialize_tracing(_service_name: str, _service_version: str, _otlp_endpoint
         "deployment.environment": os.getenv("ENVIRONMENT", "development"),
         "heretek.swarm.node_id": os.getenv("NODE_ID", str(uuid.uuid4())),
     })
-    
+
     # Create tracer provider
     _provider = TracerProvider(resource=resource)
-    
+
     # Configure OTLP exporter if endpoint provided
     if otlp_endpoint is None:
         _otlp_endpoint = os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT", "http://otel-collector:4317")
-    
+
     # Add OTLP exporter for production
     if otlp_endpoint and not enable_console_export:
         try:
@@ -83,29 +82,29 @@ def initialize_tracing(_service_name: str, _service_version: str, _otlp_endpoint
             logger.info("OTLP tracing configured", endpoint=otlp_endpoint)
         except Exception as e:
             logger.warning("Failed to configure OTLP exporter", error=str(e))
-    
+
     # Add console exporter for debugging
     if enable_console_export or os.getenv("OTEL_DEBUG", "false").lower() == "true":
         _console_exporter = ConsoleSpanExporter()
         provider.add_span_processor(BatchSpanProcessor(console_exporter))
         logger.info("Console tracing export enabled")
-    
+
     # Set global tracer provider
     trace.set_tracer_provider(provider)
-    
+
     # Configure trace context propagation
     set_global_textmap(_propagator)
-    
+
     # Get tracer instance
     _tracer = trace.get_tracer(service_name, service_version)
-    
+
     logger.info(
         "OpenTelemetry tracing initialized",
         _service = service_name,
         _version = service_version,
         _otlp_endpoint = otlp_endpoint,
     )
-    
+
     return _tracer
 
 
@@ -148,7 +147,7 @@ def create_span(_name: str, _attributes: Optional[Dict[str, Any]], _kind: trace.
                     span.set_status(Status(StatusCode.ERROR, str(e)))
                     span.record_exception(e)
                     raise
-        
+
         @wraps(func)
         def sync_wrapper(*args, **kwargs):
             _tracer = get_tracer()
@@ -165,12 +164,12 @@ def create_span(_name: str, _attributes: Optional[Dict[str, Any]], _kind: trace.
                     span.set_status(Status(StatusCode.ERROR, str(e)))
                     span.record_exception(e)
                     raise
-        
+
         import asyncio
         if asyncio.iscoroutinefunction(func):
             return async_wrapper
         return sync_wrapper
-    
+
     return decorator
 
 
@@ -236,38 +235,38 @@ def set_span_attributes(_attributes: Dict[str, Any]) -> None:
 
 class SpanNames:
     """Standardized span names for Heretek Swarm operations."""
-    
+
     # API spans
     API_REQUEST = "api.request"
     API_HEALTH_CHECK = "api.health_check"
-    
+
     # Agent spans
     AGENT_INITIALIZE = "agent.initialize"
     AGENT_EXECUTE = "agent.execute"
     AGENT_PROCESS_MESSAGE = "agent.process_message"
     AGENT_TOOL_CALL = "agent.tool_call"
     AGENT_LLM_INFERENCE = "agent.llm_inference"
-    
+
     # Consensus spans
     CONSENSUS_ROUND_START = "consensus.round_start"
     CONSENSUS_VOTE = "consensus.vote"
     CONSENSUS_AGREEMENT = "consensus.agreement"
     CONSENSUS_ROUND_COMPLETE = "consensus.round_complete"
-    
+
     # Consciousness spans
     CONSCIOUSNESS_CALCULATE_PHI = "consciousness.calculate_phi"
     CONSCIOUSNESS_UPDATE = "consciousness.update"
     CONSCIOUSNESS_MEASURE = "consciousness.measure"
-    
+
     # Collective spans
     COLLECTIVE_BROADCAST = "collective.broadcast"
     COLLECTIVE_GATHER = "collective.gather"
     COLLECTIVE_SYNC = "collective.sync"
-    
+
     # Workflow spans
     WORKFLOW_EXECUTE = "workflow.execute"
     WORKFLOW_STEP = "workflow.step"
-    
+
     # Memory spans
     MEMORY_STORE = "memory.store"
     MEMORY_RETRIEVE = "memory.retrieve"
@@ -280,7 +279,7 @@ class SpanNames:
 
 class SpanAttributes:
     """Standardized attribute keys for Heretek Swarm spans."""
-    
+
     # Entity identifiers
     AGENT_ID = "heretek.agent.id"
     AGENT_TYPE = "heretek.agent.type"
@@ -290,24 +289,24 @@ class SpanAttributes:
     CONSENSUS_ROUND = "heretek.consensus.round"
     WORKFLOW_ID = "heretek.workflow.id"
     WORKFLOW_STEP = "heretek.workflow.step"
-    
+
     # Consciousness metrics
     PHI_SCORE = "heretek.consciousness.phi_score"
     CONSCIOUSNESS_LEVEL = "heretek.consciousness.level"
     INTEGRATION_SCORE = "heretek.consciousness.integration_score"
     INFORMATION_SCORE = "heretek.consciousness.information_score"
-    
+
     # Consensus metrics
     VOTES_TOTAL = "heretek.consensus.votes.total"
     VOTES_FOR = "heretek.consensus.votes.for"
     VOTES_AGAINST = "heretek.consensus.votes.against"
     QUORUM_REACHED = "heretek.consensus.quorum_reached"
-    
+
     # Performance metrics
     DURATION_MS = "heretek.duration_ms"
     TOKENS_USED = "heretek.tokens.used"
     TOKENS_COST = "heretek.tokens.cost"
-    
+
     # HTTP metrics
     HTTP_METHOD = "http.method"
     HTTP_URL = "http.url"
@@ -328,20 +327,20 @@ class TelemetryMiddleware(BaseHTTPMiddleware):
     - Request/response timing
     - Trace context propagation
     """
-    
+
     async def dispatch(self, _request: Request, _call_next: Callable) -> Response:
         """Process request with tracing."""
         _tracer = get_tracer()
-        
+
         # Extract trace context from incoming headers
         _ctx = _propagator.extract(carrier=dict(request.headers))
-        
+
         # Get client IP for attribute
         client_ip = request.client.host if request.client else "unknown"
-        
+
         # Create span for this request
         _span_name = f"{request.method} {request.url.path}"
-        
+
         with tracer.start_as_current_span(
             span_name,
             _context = ctx,
@@ -359,28 +358,28 @@ class TelemetryMiddleware(BaseHTTPMiddleware):
             # Add trace ID to request state for correlation
             if span.is_recording():
                 request.state.trace_id = format(span.get_span_context().trace_id, '032x')
-            
+
             _start_time = time.perf_counter()
-            
+
             try:
                 _response = await call_next(request)
-                
+
                 # Add response attributes
                 _duration_ms = (time.perf_counter() - start_time) * 1000
-                
+
                 span.set_attribute(SpanAttributes.HTTP_STATUS_CODE, response.status_code)
                 span.set_attribute(SpanAttributes.DURATION_MS, duration_ms)
-                
+
                 if response.status_code >= 400:
                     span.set_status(Status(StatusCode.ERROR))
                 else:
                     span.set_status(Status(StatusCode.OK))
-                
+
                 # Add trace ID to response headers
                 response.headers["X-Trace-ID"] = request.state.trace_id
-                
+
                 return response
-                
+
             except Exception as e:
                 _duration_ms = (time.perf_counter() - start_time) * 1000
                 span.set_attribute(SpanAttributes.DURATION_MS, duration_ms)
@@ -398,10 +397,10 @@ def setup_telemetry_middleware(_app):
     """
     # Initialize tracing first
     initialize_tracing()
-    
+
     # Add middleware
     app.add_middleware(TelemetryMiddleware)
-    
+
     logger.info("Telemetry middleware configured")
 
 
@@ -417,7 +416,7 @@ async def propagate_trace_context(_coro):
     """
     _tracer = get_tracer()
     _ctx = trace.get_current_context()
-    
+
     with tracer.start_as_current_span(
         "propagated.task",
         _context = ctx,

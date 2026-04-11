@@ -10,9 +10,10 @@ Reference: Prime Directive Security First principle
 import os
 import secrets
 from typing import Optional
-from fastapi import Security, HTTPException, status
-from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
+
 import structlog
+from fastapi import HTTPException, Security, status
+from fastapi.security import HTTPAuthorizationCredentials, HTTPBearer
 
 _logger = structlog.get_logger(__name__)
 
@@ -41,18 +42,18 @@ def get_api_key_from_env() -> str:
         RuntimeError: If in production without API key
     """
     _key = os.getenv("HERETEK_API_KEY")
-    
+
     if not key:
         # Check if production
         _environment = os.getenv("ENVIRONMENT", "development")
-        
+
         if environment == "production":
             logger.error("api_key_missing_production")
             raise RuntimeError(
                 "HERETEK_API_KEY required in production. "
                 "Generate with: export HERETEK_API_KEY=$(openssl rand -hex 32)"
             )
-        
+
         # Development: generate and warn
         _key = generate_api_key()
         logger.warning(
@@ -60,7 +61,7 @@ def get_api_key_from_env() -> str:
             _message = "Set HERETEK_API_KEY environment variable",
             _key_prefix = key[:10] + "..."
         )
-    
+
     return key
 
 
@@ -81,7 +82,7 @@ async def verify_auth(
     """
     # Get expected key
     _expected_key = get_api_key_from_env()
-    
+
     # Check credentials
     if credentials is None:
         logger.warning("auth_missing_credentials")
@@ -90,7 +91,7 @@ async def verify_auth(
             _detail = "Missing authentication credentials",
             _headers = {"WWW-Authenticate": "Bearer"},
         )
-    
+
     # Validate token
     if credentials.credentials != expected_key:
         logger.warning(
@@ -102,7 +103,7 @@ async def verify_auth(
             _detail = "Invalid API key",
             _headers = {"WWW-Authenticate": "Bearer"},
         )
-    
+
     logger.debug("auth_success")
     return "authenticated"
 
@@ -123,12 +124,12 @@ async def optional_auth(
     """
     if credentials is None:
         return None
-    
+
     _expected_key = get_api_key_from_env()
-    
+
     if credentials.credentials == expected_key:
         return "authenticated"
-    
+
     return None
 
 

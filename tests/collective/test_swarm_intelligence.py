@@ -9,20 +9,21 @@ Tests cover:
 - Stigmergy
 """
 
-import pytest
 import asyncio
-from typing import Dict, List, Any
+from typing import Dict
+
+import pytest
 
 from heretek_swarm.collective.swarm_intelligence import (
-    SwarmIntelligenceEngine,
-    SwarmPattern,
-    SwarmConfig,
-    SwarmDecision,
-    Particle,
-    PheromoneTrail,
     BeeAgent,
     FlockingAgent,
+    Particle,
+    PheromoneTrail,
     StigmergicTrace,
+    SwarmConfig,
+    SwarmDecision,
+    SwarmIntelligenceEngine,
+    SwarmPattern,
 )
 
 
@@ -32,27 +33,27 @@ class TestSwarmConfig:
     def test_default_config(self):
         """Test default configuration values."""
         config = SwarmConfig()
-        
+
         # PSO parameters
         assert config.pso_inertia == 0.7
         assert config.pso_cognitive == 1.5
         assert config.pso_social == 1.5
-        
+
         # Ant Colony parameters
         assert config.ant_evaporation == 0.1
         assert config.ant_alpha == 1.0
         assert config.ant_beta == 2.0
-        
+
         # Bee Algorithm parameters
         assert config.bee_scout_ratio == 0.2
         assert config.bee_dance_threshold == 0.7
-        
+
         # Flocking parameters
         assert config.flock_separation_weight == 1.5
         assert config.flock_alignment_weight == 1.0
         assert config.flock_cohesion_weight == 1.0
         assert config.flock_perception_radius == 10.0
-        
+
         # General parameters
         assert config.max_iterations == 100
         assert config.convergence_threshold == 0.95
@@ -64,7 +65,7 @@ class TestSwarmConfig:
             max_iterations=50,
             convergence_threshold=0.8,
         )
-        
+
         assert config.pso_inertia == 0.9
         assert config.max_iterations == 50
         assert config.convergence_threshold == 0.8
@@ -81,7 +82,7 @@ class TestParticle:
             velocity={"option_a": 0.01, "option_b": -0.01},
             agent_id="agent-1",
         )
-        
+
         assert particle.particle_id == "particle-1"
         assert particle.position["option_a"] == 0.5
         assert particle.velocity["option_a"] == 0.01
@@ -91,7 +92,7 @@ class TestParticle:
     def test_particle_default_values(self):
         """Test particle default values."""
         particle = Particle()
-        
+
         assert particle.particle_id is not None
         assert particle.position == {}
         assert particle.velocity == {}
@@ -110,7 +111,7 @@ class TestPheromoneTrail:
             pheromone_level=2.0,
             evaporation_rate=0.05,
         )
-        
+
         assert trail.from_node == "A"
         assert trail.to_node == "B"
         assert trail.pheromone_level == 2.0
@@ -119,7 +120,7 @@ class TestPheromoneTrail:
     def test_pheromone_trail_default(self):
         """Test pheromone trail default values."""
         trail = PheromoneTrail()
-        
+
         assert trail.trail_id is not None
         assert trail.pheromone_level == 1.0
         assert trail.evaporation_rate == 0.1
@@ -138,7 +139,7 @@ class TestBeeAgent:
             task_quality=0.8,
             agent_id="agent-1",
         )
-        
+
         assert bee.bee_id == "bee-1"
         assert bee.role == "forager"
         assert bee.current_task == "task-1"
@@ -148,7 +149,7 @@ class TestBeeAgent:
     def test_bee_agent_default(self):
         """Test bee agent default values."""
         bee = BeeAgent()
-        
+
         assert bee.bee_id is not None
         assert bee.role == "unemployed"
         assert bee.current_task is None
@@ -166,7 +167,7 @@ class TestFlockingAgent:
             velocity=(1.0, 0.0, -1.0),
             heading=(0.0, 0.0, 1.0),
         )
-        
+
         assert agent.agent_id == "flock-1"
         assert agent.position == (10.0, 20.0, 30.0)
         assert agent.velocity == (1.0, 0.0, -1.0)
@@ -175,7 +176,7 @@ class TestFlockingAgent:
     def test_flocking_agent_default(self):
         """Test flocking agent default values."""
         agent = FlockingAgent()
-        
+
         assert agent.agent_id == ""
         assert agent.position == (0.0, 0.0, 0.0)
         assert agent.velocity == (0.0, 0.0, 0.0)
@@ -193,7 +194,7 @@ class TestStigmergicTrace:
             strength=0.8,
             decay_rate=0.02,
         )
-        
+
         assert trace.agent_id == "agent-1"
         assert trace.trace_type == "marker"
         assert trace.content == {"position": (5, 5)}
@@ -224,13 +225,13 @@ class TestSwarmIntelligenceEngine:
         """Test basic PSO execution."""
         participants = ["agent-1", "agent-2", "agent-3"]
         decision_space = {"option_a": 0.5, "option_b": 0.5}
-        
+
         result: SwarmDecision = await engine.run_pso(
             participants=participants,
             decision_space=decision_space,
             iterations=5,
         )
-        
+
         assert result.pattern == SwarmPattern.PSO
         assert result.participants == participants
         assert result.convergence_iterations <= 5
@@ -242,18 +243,18 @@ class TestSwarmIntelligenceEngine:
         """Test PSO with custom fitness function."""
         participants = ["agent-1", "agent-2"]
         decision_space = {"x": 0.5, "y": 0.5}
-        
+
         def fitness_function(position: Dict[str, float]) -> float:
             # Maximize x + y
             return position.get("x", 0) + position.get("y", 0)
-        
+
         result: SwarmDecision = await engine.run_pso(
             participants=participants,
             decision_space=decision_space,
             fitness_function=fitness_function,
             iterations=10,
         )
-        
+
         assert result.pattern == SwarmPattern.PSO
         assert result.final_position is not None
 
@@ -265,7 +266,7 @@ class TestSwarmIntelligenceEngine:
             ("A", "B"), ("A", "C"),
             ("B", "D"), ("C", "D"),
         ]
-        
+
         result: SwarmDecision = await engine.run_ant_colony(
             nodes=nodes,
             edges=edges,
@@ -274,7 +275,7 @@ class TestSwarmIntelligenceEngine:
             num_ants=5,
             iterations=5,
         )
-        
+
         assert result.pattern == SwarmPattern.ANT_COLONY
         assert "path" in result.final_position
         assert "quality" in result.final_position
@@ -284,13 +285,13 @@ class TestSwarmIntelligenceEngine:
         """Test basic bee algorithm."""
         tasks = ["task-1", "task-2", "task-3"]
         foragers = ["agent-1", "agent-2", "agent-3", "agent-4", "agent-5"]
-        
+
         result: SwarmDecision = await engine.run_bee_algorithm(
             tasks=tasks,
             foragers=foragers,
             iterations=5,
         )
-        
+
         assert result.pattern == SwarmPattern.BEE_ALGORITHM
         assert "allocation" in result.final_position
         assert result.confidence >= 0.0
@@ -304,13 +305,13 @@ class TestSwarmIntelligenceEngine:
             "agent-2": (5.0, 5.0, 5.0),
             "agent-3": (10.0, 10.0, 10.0),
         }
-        
+
         result: SwarmDecision = await engine.run_flocking(
             agents=agents,
             initial_positions=initial_positions,
             iterations=10,
         )
-        
+
         assert result.pattern == SwarmPattern.FLOCKING
         assert "center" in result.final_position
         assert "heading" in result.final_position
@@ -319,13 +320,13 @@ class TestSwarmIntelligenceEngine:
     async def test_stigmergy_basic(self, engine):
         """Test basic stigmergy coordination."""
         agents = ["agent-1", "agent-2", "agent-3"]
-        
+
         result: SwarmDecision = await engine.run_stigmergy(
             agents=agents,
             environment_size=(50, 50),
             iterations=20,
         )
-        
+
         assert result.pattern == SwarmPattern.STIGMERGY
         assert "trace_density" in result.final_position
         assert "coordination_score" in result.final_position
@@ -337,7 +338,7 @@ class TestSwarmIntelligenceEngine:
     def test_get_statistics(self, engine):
         """Test getting statistics."""
         stats = engine.get_statistics()
-        
+
         assert "total_decisions" in stats
         assert "patterns_used" in stats
         assert "avg_confidence" in stats
@@ -350,9 +351,9 @@ class TestSwarmIntelligenceEngine:
             decision_space={"x": 0.5},
             iterations=1,
         ))
-        
+
         engine.clear_state()
-        
+
         assert engine.particles == {}
         assert engine.pheromone_trails == {}
         assert engine.bee_colony == []
@@ -373,7 +374,7 @@ class TestSwarmDecision:
             final_position={"option": 0.8},
             confidence=0.85,
         )
-        
+
         assert decision.pattern == SwarmPattern.PSO
         assert len(decision.participants) == 2
         assert decision.convergence_iterations == 5
@@ -387,7 +388,7 @@ class TestSwarmDecision:
             emergence_indicators=["tight_flock", "synchronized_movement"],
             quality_metrics={"cohesion": 0.9, "alignment": 0.85},
         )
-        
+
         assert "tight_flock" in decision.emergence_indicators
         assert decision.quality_metrics["cohesion"] == 0.9
 
@@ -407,13 +408,13 @@ class TestEmergenceDetection:
         """Test PSO emergence detection."""
         participants = ["agent-1", "agent-2", "agent-3", "agent-4"]
         decision_space = {"a": 0.25, "b": 0.25, "c": 0.25, "d": 0.25}
-        
+
         result = await engine.run_pso(
             participants=participants,
             decision_space=decision_space,
             iterations=15,
         )
-        
+
         # Should have some emergence indicators
         assert isinstance(result.emergence_indicators, list)
 
@@ -422,15 +423,15 @@ class TestEmergenceDetection:
     async def test_flocking_emergence_indicators(self, engine):
         """Test flocking emergence detection."""
         agents = ["agent-1", "agent-2", "agent-3", "agent-4", "agent-5"]
-        
+
         result = await engine.run_flocking(
             agents=agents,
             iterations=30,
         )
-        
+
         # Check for emergence indicators (may be empty list)
         assert hasattr(result, 'emergence_indicators') or True
-        
+
         # Quality metrics should be present if result has them
         if hasattr(result, 'quality_metrics'):
             assert isinstance(result.quality_metrics, dict) or True
@@ -453,18 +454,18 @@ class TestSwarmIntegration:
             decision_space={"x": 0.5, "y": 0.5},
             iterations=5,
         )
-        
+
         # Run Bee Algorithm
         bee_result = await engine.run_bee_algorithm(
             tasks=["task-1", "task-2"],
             foragers=["agent-1", "agent-2", "agent-3"],
             iterations=5,
         )
-        
+
         # Both should complete successfully
         assert pso_result.pattern == SwarmPattern.PSO
         assert bee_result.pattern == SwarmPattern.BEE_ALGORITHM
-        
+
         # Decision history should have both
         history = engine.get_decision_history()
         assert len(history) >= 2
@@ -478,15 +479,15 @@ class TestSwarmIntegration:
             decision_space={"x": 0.5},
             iterations=3,
         )
-        
+
         await engine.run_bee_algorithm(
             tasks=["task-1"],
             foragers=["agent-1", "agent-2"],
             iterations=3,
         )
-        
+
         stats = engine.get_statistics()
-        
+
         assert stats["total_decisions"] >= 2
         assert SwarmPattern.PSO.value in stats["patterns_used"]
         assert SwarmPattern.BEE_ALGORITHM.value in stats["patterns_used"]

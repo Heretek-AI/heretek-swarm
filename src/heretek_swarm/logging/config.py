@@ -8,25 +8,22 @@ Configured for Loki + Promtail log aggregation.
 import logging
 import sys
 import uuid
-from typing import Optional
 from contextvars import ContextVar
+from typing import Optional
 
 import structlog
-from structlog.types import Processor
-from structlog.stdlib import (
-    add_log_level,
-    add_logger_name,
-    filter_by_level,
-    ProcessorFormatter,
-)
+from structlog.output import LineWriter
 from structlog.processors import (
-    JSONRenderer,
-    TimeStamper,
-    StackInfoRenderer,
     CallsiteParameter,
     CallsiteParameterAdder,
+    JSONRenderer,
+    StackInfoRenderer,
+    TimeStamper,
 )
-from structlog.output import LineWriter
+from structlog.stdlib import (
+    ProcessorFormatter,
+)
+from structlog.types import Processor
 
 # Context variables for request tracing
 request_id_var: ContextVar[Optional[str]] = ContextVar("request_id", default=None)

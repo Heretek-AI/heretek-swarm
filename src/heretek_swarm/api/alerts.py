@@ -9,18 +9,16 @@ Provides HTTP endpoints for alert management:
 - GET /api/alerts/history - Get alert history
 """
 
-from typing import Optional
 from datetime import datetime, timezone
 
-from fastapi import APIRouter, HTTPException, Depends, Query
-from pydantic import BaseModel
 import structlog
+from fastapi import APIRouter, Depends, HTTPException, Query
+from pydantic import BaseModel
 
 from heretek_swarm.gateway.auth import verify_auth
 from heretek_swarm.observability.alerting import (
-    AlertManager,
-    AlertSeverity,
     Alert,
+    AlertSeverity,
     get_alert_manager,
 )
 
@@ -71,12 +69,12 @@ async def create_alert(
 ) -> dict:
     """Create a new alert."""
     manager = get_alert_manager()
-    
+
     try:
         severity = AlertSeverity(request.severity.lower())
     except ValueError:
         raise HTTPException(status_code=400, detail=f"Invalid severity: {request.severity}")
-    
+
     alert = Alert(
         severity=severity,
         title=request.title,
@@ -84,9 +82,9 @@ async def create_alert(
         source=request.source,
         tags=request.tags,
     )
-    
+
     success = await manager.send_alert(alert)
-    
+
     return {
         "success": success,
         "alert": alert.to_dict(),
@@ -101,10 +99,10 @@ async def resolve_alert(
     """Resolve an alert."""
     manager = get_alert_manager()
     success = await manager.resolve_alert(alert_id, resolved_by=auth.get("agent_id", "api"))
-    
+
     if not success:
         raise HTTPException(status_code=404, detail=f"Alert {alert_id} not found")
-    
+
     return {
         "success": True,
         "alert_id": alert_id,
@@ -116,7 +114,7 @@ async def resolve_alert(
 async def test_alert_configuration(auth: dict = Depends(verify_auth)) -> dict:
     """Test alert configuration by sending a test alert."""
     manager = get_alert_manager()
-    
+
     test_alert = Alert(
         severity=AlertSeverity.LOW,
         title="Heretek Swarm Test Alert",
@@ -124,12 +122,12 @@ async def test_alert_configuration(auth: dict = Depends(verify_auth)) -> dict:
         source="api.test",
         tags=["test"],
     )
-    
+
     success = await manager.send_alert(test_alert)
-    
+
     # Resolve immediately
     await manager.resolve_alert(test_alert.alert_id, resolved_by="api.test")
-    
+
     return {
         "success": success,
         "message": "Test alert sent and resolved",

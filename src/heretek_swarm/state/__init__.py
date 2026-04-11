@@ -21,24 +21,24 @@ import structlog
 logger = structlog.get_logger("state.init")
 
 from heretek_swarm.state.repository import (
-    StateRepository,
     AgentStateRecord,
-    StateCheckpoint,
     ConcurrencyError,
+    StateCheckpoint,
+    StateRepository,
 )
 
 # Import from src/state/ (legacy location)
 try:
     from state.base import (
-        StateSnapshot,
-        MessageLineage,
-        StateTransition,
         AgentState,
         ConversationState,
-        SystemState,
-        StateStatus,
-        TransitionType,
+        MessageLineage,
         MessageType,
+        StateSnapshot,
+        StateStatus,
+        StateTransition,
+        SystemState,
+        TransitionType,
     )
 except ImportError as e:
     # Fallback: try importing directly from sibling module
@@ -49,11 +49,11 @@ except ImportError as e:
 
 try:
     from state.manager import (
-        LineageTracker,
         LineageConfig,
+        LineageTracker,
         SnapshotManager,
-        StateManager,
         StateConfig,
+        StateManager,
     )
 except ImportError:
     LineageTracker = LineageConfig = SnapshotManager = StateManager = StateConfig = None

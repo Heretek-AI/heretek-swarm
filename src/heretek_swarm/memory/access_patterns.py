@@ -98,7 +98,7 @@ class AccessStatistics:
     hit_rate: float = 0.0
     miss_rate: float = 0.0
     predicted_hits: int = 0
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for reporting."""
         return {
@@ -159,7 +159,7 @@ class MemoryAccessProfile:
     pattern: AccessPattern = AccessPattern.RANDOM
     predicted_next_access: Optional[str] = None
     confidence: float = 0.0
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for reporting."""
         return {
@@ -203,7 +203,7 @@ class AccessPatternReport:
     pattern_distribution: Dict[str, int]
     predictions: Dict[str, Any]
     recommendations: List[str]
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for reporting."""
         return {
@@ -246,21 +246,21 @@ class AccessPatternAnalyzer:
     - Spatial locality detection
     - Predictive modeling
     """
-    
+
     # Tier classification thresholds
     HOT_FREQUENCY_THRESHOLD = 0.8      # Top 20% by frequency
     WARM_FREQUENCY_THRESHOLD = 0.4     # 40-80% by frequency
     COLD_FREQUENCY_THRESHOLD = 0.1     # 10-40% by frequency
-    
+
     # Recency decay constants
     RECENCY_HALF_LIFE_HOURS = 24       # Half-life for recency decay
     MAX_RECENCY_AGE_HOURS = 168        # 1 week max for recency
-    
+
     # Pattern detection parameters
     MIN_ACCESSES_FOR_PATTERN = 5       # Minimum accesses to detect pattern
     SEQUENTIAL_THRESHOLD = 0.7         # Correlation threshold for sequential
     CYCLICAL_THRESHOLD = 0.6           # Periodicity threshold
-    
+
     def __init__(self, hot_threshold: float, warm_threshold: float, cold_threshold: float, recency_half_life_hours: float) -> None:
         """
         Initialize the access pattern analyzer.
@@ -275,26 +275,26 @@ class AccessPatternAnalyzer:
         self.warm_threshold = warm_threshold
         self.cold_threshold = cold_threshold
         self.recency_half_life_hours = recency_half_life_hours
-        
+
         # Memory access profiles
         self._profiles: Dict[str, MemoryAccessProfile] = {}
-        
+
         # Access history for pattern detection
         self._access_history: List[MemoryAccessRecord] = []
         self._max_history_size = 100000
-        
+
         # Statistics tracking
         self._total_accesses = 0
         self._cache_hits = 0
         self._cache_misses = 0
-        
+
         # Agent behavior tracking
         self._agent_patterns: Dict[str, Dict[str, Any]] = defaultdict(
             lambda: {"accessed_memories": [], "preferred_times": [], "session_patterns": []}
         )
-        
+
         logger.info("access_pattern_analyzer_initialized")
-    
+
     def record_access(self, memory_id: str, access_type: str, agent_id: Optional[str], session_id: Optional[str], access_latency_ms: float, success: bool) -> MemoryAccessProfile:
         """
         Record a memory access event.
@@ -311,7 +311,7 @@ class AccessPatternAnalyzer:
             Updated memory access profile
         """
         _timestamp = datetime.now(timezone.utc).isoformat()
-        
+
         # Create access record
         _record = MemoryAccessRecord(
             memory_id=memory_id,
@@ -322,56 +322,56 @@ class AccessPatternAnalyzer:
             _access_latency_ms = access_latency_ms,
             _success = success,
         )
-        
+
         # Update history
         self._access_history.append(record)
         if len(self._access_history) > self._max_history_size:
             self._access_history = self._access_history[-self._max_history_size:]
-        
+
         # Update or create profile
         if memory_id not in self._profiles:
             self._profiles[memory_id] = MemoryAccessProfile(memory_id=memory_id)
-        
+
         _profile = self._profiles[memory_id]
         profile.access_count += 1
         profile.access_timestamps.append(timestamp)
-        
+
         if profile.first_access is None:
             profile.first_access = timestamp
         profile.last_access = timestamp
-        
+
         # Update access type counts
         profile.access_types[access_type] = profile.access_types.get(access_type, 0) + 1
-        
+
         # Update agent/session tracking
         if agent_id:
             profile.agents_accessed.add(agent_id)
             self._track_agent_behavior(agent_id, memory_id, timestamp, session_id)
-        
+
         if session_id:
             profile.sessions_accessed.add(session_id)
-        
+
         # Update statistics
         self._total_accesses += 1
         if success:
             self._cache_hits += 1
         else:
             self._cache_misses += 1
-        
+
         # Update scores and tier
         self._update_profile_scores(profile)
-        
+
         return profile
-    
+
     def _track_agent_behavior(self, agent_id: str, memory_id: str, timestamp: str, session_id: Optional[str]) -> None:
         """Track agent-specific access patterns for prediction."""
         _agent_data = self._agent_patterns[agent_id]
         agent_data["accessed_memories"].append((memory_id, timestamp))
-        
+
         # Keep only last 1000 accesses per agent
         if len(agent_data["accessed_memories"]) > 1000:
             agent_data["accessed_memories"] = agent_data["accessed_memories"][-1000:]
-        
+
         # Track preferred access times
         try:
             _dt = datetime.fromisoformat(timestamp)
@@ -379,15 +379,15 @@ class AccessPatternAnalyzer:
             agent_data["preferred_times"].append(hour)
         except (ValueError, TypeError):
             pass
-        
+
         # Track session patterns
         if session_id:
             agent_data["session_patterns"].append(session_id)
-    
+
     def _update_profile_scores(self, profile: MemoryAccessProfile) -> None:
         """Update frequency and recency scores for a profile."""
         now = datetime.now(timezone.utc)
-        
+
         # Calculate frequency score (normalized 0-1)
         # Using logarithmic scaling to handle wide range of access counts
         if profile.access_count > 0:
@@ -397,37 +397,37 @@ class AccessPatternAnalyzer:
                 math.log(profile.access_count + 1) / math.log(max_possible + 1)
                 if max_possible > 0 else 0.5
             )
-        
+
         # Calculate recency score with exponential decay
         if profile.last_access:
             try:
                 _last_access_dt = datetime.fromisoformat(profile.last_access)
                 _age_hours = (now - last_access_dt).total_seconds() / 3600
-                
+
                 # Exponential decay with half-life
                 profile.recency_score = math.exp(
                     -math.log(2) * age_hours / self.recency_half_life_hours
                 )
-                
+
                 # Clamp to valid range
                 profile.recency_score = max(0.0, min(1.0, profile.recency_score))
             except (ValueError, TypeError):
                 profile.recency_score = 0.0
-        
+
         # Update tier based on scores
         profile.tier = self._classify_tier(profile)
-        
+
         # Detect access pattern
         if profile.access_count >= self.MIN_ACCESSES_FOR_PATTERN:
             profile.pattern = self._detect_pattern(profile)
-            
+
             # Predict next access
             profile.predicted_next_access, profile.confidence = self._predict_next_access(profile)
-    
+
     def _classify_tier(self, profile: MemoryAccessProfile) -> AccessTier:
         """Classify memory into access tier based on scores."""
         _combined_score = (profile.frequency_score * 0.6 + profile.recency_score * 0.4)
-        
+
         if combined_score >= self.hot_threshold:
             return AccessTier.HOT
         elif combined_score >= self.warm_threshold:
@@ -436,182 +436,182 @@ class AccessPatternAnalyzer:
             return AccessTier.COLD
         else:
             return AccessTier.FROZEN
-    
+
     def _detect_pattern(self, profile: MemoryAccessProfile) -> AccessPattern:
         """Detect the dominant access pattern for a memory."""
         if len(profile.access_timestamps) < self.MIN_ACCESSES_FOR_PATTERN:
             return AccessPattern.RANDOM
-        
+
         _timestamps = profile.access_timestamps[-20:]  # Use last 20 accesses
-        
+
         # Try to detect sequential pattern
         if self._is_sequential(timestamps):
             return AccessPattern.SEQUENTIAL
-        
+
         # Try to detect cyclical pattern
         if self._is_cyclical(timestamps):
             return AccessPattern.CYCLICAL
-        
+
         # Check for burst pattern (many accesses in short time)
         if self._is_burst(timestamps):
             return AccessPattern.BURST
-        
+
         # Check for decaying pattern
         if self._is_decaying(timestamps):
             return AccessPattern.DECAYING
-        
+
         # Check for growing pattern
         if self._is_growing(timestamps):
             return AccessPattern.GROWING
-        
+
         return AccessPattern.RANDOM
-    
+
     def _is_sequential(self, timestamps: List[str]) -> bool:
         """Check if accesses follow a sequential pattern."""
         if len(timestamps) < 3:
             return False
-        
+
         try:
             _times = [datetime.fromisoformat(ts) for ts in timestamps]
             _intervals = [
                 (times[i+1] - times[i]).total_seconds()
                 for i in range(len(times) - 1)
             ]
-            
+
             if not intervals:
                 return False
-            
+
             # Check if intervals are consistent (low variance)
             _avg_interval = sum(intervals) / len(intervals)
             if avg_interval == 0:
                 return True
-            
+
             _variance = sum((i - avg_interval) ** 2 for i in intervals) / len(intervals)
             _std_dev = math.sqrt(variance)
             _coefficient_of_variation = std_dev / avg_interval if avg_interval > 0 else float('inf')
-            
+
             return coefficient_of_variation < (1 - self.SEQUENTIAL_THRESHOLD)
         except (ValueError, TypeError):
             return False
-    
+
     def _is_cyclical(self, timestamps: List[str]) -> bool:
         """Check if accesses follow a cyclical pattern."""
         if len(timestamps) < 6:
             return False
-        
+
         try:
             _times = [datetime.fromisoformat(ts) for ts in timestamps]
             _hours = [t.hour for t in times]
-            
+
             # Check for daily pattern (same hour accesses)
             _hour_counts = defaultdict(int)
             for h in hours:
                 hour_counts[h] += 1
-            
+
             _max_hour_count = max(hour_counts.values()) if hour_counts else 0
             return max_hour_count / len(hours) >= self.CYCLICAL_THRESHOLD
         except (ValueError, TypeError):
             return False
-    
+
     def _is_burst(self, timestamps: List[str]) -> bool:
         """Check for burst access pattern."""
         if len(timestamps) < 5:
             return False
-        
+
         try:
             _times = [datetime.fromisoformat(ts) for ts in timestamps]
-            
+
             # Check if many accesses happened in short time
             _total_span = (times[-1] - times[0]).total_seconds()
             if total_span == 0:
                 return True
-            
+
             # Burst if 80% of accesses in less than 10% of total time
             _burst_threshold = total_span * 0.1
             _burst_count = sum(
                 1 for i in range(len(times) - 1)
                 if (times[i+1] - times[i]).total_seconds() < burst_threshold
             )
-            
+
             return burst_count >= len(timestamps) * 0.8
         except (ValueError, TypeError):
             return False
-    
+
     def _is_decaying(self, timestamps: List[str]) -> AccessPattern:
         """Check for decaying access pattern."""
         if len(timestamps) < 5:
             return False
-        
+
         try:
             _times = [datetime.fromisoformat(ts) for ts in timestamps]
             _intervals = [
                 (times[i+1] - times[i]).total_seconds()
                 for i in range(len(times) - 1)
             ]
-            
+
             if len(intervals) < 3:
                 return False
-            
+
             # Check if intervals are increasing (access becoming less frequent)
             _increasing_count = sum(
                 1 for i in range(len(intervals) - 1)
                 if intervals[i+1] > intervals[i]
             )
-            
+
             return increasing_count / len(intervals) >= 0.7
         except (ValueError, TypeError):
             return False
-    
+
     def _is_growing(self, timestamps: List[str]) -> AccessPattern:
         """Check for growing access pattern."""
         if len(timestamps) < 5:
             return False
-        
+
         try:
             _times = [datetime.fromisoformat(ts) for ts in timestamps]
             _intervals = [
                 (times[i+1] - times[i]).total_seconds()
                 for i in range(len(times) - 1)
             ]
-            
+
             if len(intervals) < 3:
                 return False
-            
+
             # Check if intervals are decreasing (access becoming more frequent)
             _decreasing_count = sum(
                 1 for i in range(len(intervals) - 1)
                 if intervals[i+1] < intervals[i]
             )
-            
+
             return decreasing_count / len(intervals) >= 0.7
         except (ValueError, TypeError):
             return False
-    
+
     def _predict_next_access(self, profile: MemoryAccessProfile) -> Tuple[Optional[str], float]:
         """Predict the next access time for a memory."""
         if len(profile.access_timestamps) < self.MIN_ACCESSES_FOR_PATTERN:
             return None, 0.0
-        
+
         _timestamps = profile.access_timestamps[-20:]
-        
+
         try:
             _times = [datetime.fromisoformat(ts) for ts in timestamps]
-            
+
             # Calculate average interval
             _intervals = [
                 (times[i+1] - times[i]).total_seconds()
                 for i in range(len(times) - 1)
             ]
-            
+
             if not intervals:
                 return None, 0.0
-            
+
             _avg_interval = sum(intervals) / len(intervals)
-            
+
             # Predict next access
             _last_time = times[-1]
             _predicted_time = last_time + timedelta(seconds=avg_interval)
-            
+
             # Calculate confidence based on pattern consistency
             if len(intervals) > 1:
                 _variance = sum((i - avg_interval) ** 2 for i in intervals) / len(intervals)
@@ -619,58 +619,58 @@ class AccessPatternAnalyzer:
                 confidence = max(0.0, 1.0 - (std_dev / avg_interval)) if avg_interval > 0 else 0.5
             else:
                 confidence = 0.5
-            
+
             return predicted_time.isoformat(), confidence
         except (ValueError, TypeError, OverflowError):
             return None, 0.0
-    
+
     def get_profile(self, memory_id: str) -> Optional[MemoryAccessProfile]:
         """Get the access profile for a specific memory."""
         return self._profiles.get(memory_id)
-    
+
     def get_profiles_by_tier(self, tier: AccessTier) -> List[MemoryAccessProfile]:
         """Get all profiles for a specific tier."""
         return [p for p in self._profiles.values() if p.tier == tier]
-    
+
     def get_hot_memories(self) -> List[MemoryAccessProfile]:
         """Get all hot memories."""
         return self.get_profiles_by_tier(AccessTier.HOT)
-    
+
     def get_cold_memories(self) -> List[MemoryAccessProfile]:
         """Get all cold memories."""
         return self.get_profiles_by_tier(AccessTier.COLD)
-    
+
     def get_frozen_memories(self) -> List[MemoryAccessProfile]:
         """Get all frozen memories (candidates for deletion)."""
         return self.get_profiles_by_tier(AccessTier.FROZEN)
-    
+
     def get_statistics(self) -> AccessStatistics:
         """Get overall access statistics."""
         if not self._profiles:
             return AccessStatistics()
-        
+
         hot_count = sum(1 for p in self._profiles.values() if p.tier == AccessTier.HOT)
         warm_count = sum(1 for p in self._profiles.values() if p.tier == AccessTier.WARM)
         cold_count = sum(1 for p in self._profiles.values() if p.tier == AccessTier.COLD)
         frozen_count = sum(1 for p in self._profiles.values() if p.tier == AccessTier.FROZEN)
-        
+
         _avg_frequency = (
             sum(p.frequency_score for p in self._profiles.values()) / len(self._profiles)
         )
         _avg_recency = (
             sum(p.recency_score for p in self._profiles.values()) / len(self._profiles)
         )
-        
+
         _total_ops = self._cache_hits + self._cache_misses
         hit_rate = self._cache_hits / total_ops if total_ops > 0 else 0.0
         _miss_rate = self._cache_misses / total_ops if total_ops > 0 else 0.0
-        
+
         # Calculate predicted hits
         predicted_hits = sum(
             1 for p in self._profiles.values()
             if p.confidence > 0.7 and p.predicted_next_access is not None
         )
-        
+
         return AccessStatistics(
             _total_accesses = self._total_accesses,
             unique_memories=len(self._profiles),
@@ -684,7 +684,7 @@ class AccessPatternAnalyzer:
             _miss_rate = miss_rate,
             predicted_hits=predicted_hits,
         )
-    
+
     def generate_report(self, analysis_window_hours: int) -> AccessPatternReport:
         """
         Generate a comprehensive access pattern report.
@@ -696,7 +696,7 @@ class AccessPatternAnalyzer:
             Complete access pattern report
         """
         _stats = self.get_statistics()
-        
+
         # Calculate tier distribution
         _tier_distribution = {
             "hot": stats.hot_count,
@@ -704,18 +704,18 @@ class AccessPatternAnalyzer:
             "cold": stats.cold_count,
             "frozen": stats.frozen_count,
         }
-        
+
         # Calculate pattern distribution
         _pattern_counts = defaultdict(int)
         for profile in self._profiles.values():
             pattern_counts[profile.pattern.value] += 1
-        
+
         # Generate predictions
         _predictions = self._generate_predictions(analysis_window_hours)
-        
+
         # Generate recommendations
         _recommendations = self._generate_recommendations(stats)
-        
+
         return AccessPatternReport(
             _generated_at = datetime.now(timezone.utc).isoformat(),
             _analysis_window_hours = analysis_window_hours,
@@ -727,14 +727,14 @@ class AccessPatternAnalyzer:
             _predictions = predictions,
             _recommendations = recommendations,
         )
-    
+
     def _generate_predictions(self, _analysis_window_hours: int) -> Dict[str, Any]:
         """Generate access predictions for the analysis window."""
         _high_confidence_predictions = [
             p for p in self._profiles.values()
             if p.confidence > 0.7 and p.predicted_next_access is not None
         ]
-        
+
         # Predict tier migrations
         _migrations_predicted = []
         for profile in self._profiles.values():
@@ -752,47 +752,47 @@ class AccessPatternAnalyzer:
                     "to_tier": "warm",
                     "confidence": 0.7,
                 })
-        
+
         return {
             "high_confidence_accesses": len(high_confidence_predictions),
             "tier_migrations": migrations_predicted[:100],  # Limit to 100
             "expected_hot_set_size": stats.hot_count if (stats := self.get_statistics()) else 0,
         }
-    
+
     def _generate_recommendations(self, stats: AccessStatistics) -> List[str]:
         """Generate optimization recommendations based on statistics."""
         _recommendations = []
-        
+
         # Check for too many frozen memories
         if stats.frozen_count > stats.unique_memories * 0.5:
             recommendations.append(
                 f"Consider archiving or deleting {stats.frozen_count} frozen memories "
                 f"({stats.frozen_count / stats.unique_memories * 100:.1f}% of total)"
             )
-        
+
         # Check for cache performance
         if stats.hit_rate < 0.8:
             recommendations.append(
                 f"Cache hit rate is {stats.hit_rate:.1%}. Consider increasing cache size "
                 "or implementing better pre-fetching strategies."
             )
-        
+
         # Check for hot memory count
         if stats.hot_count > stats.unique_memories * 0.3:
             recommendations.append(
                 f"High number of hot memories ({stats.hot_count}). "
                 "Consider implementing more aggressive tiering."
             )
-        
+
         # Check for predicted accesses
         if stats.predicted_hits > 0:
             recommendations.append(
                 f"{stats.predicted_hits} memories have predictable access patterns. "
                 "Consider implementing pre-fetching for these memories."
             )
-        
+
         return recommendations
-    
+
     def clear(self) -> None:
         """Clear all access tracking data."""
         self._profiles.clear()
@@ -802,11 +802,11 @@ class AccessPatternAnalyzer:
         self._cache_misses = 0
         self._agent_patterns.clear()
         logger.info("access_pattern_analyzer_cleared")
-    
+
     def get_agent_patterns(self, agent_id: str) -> Dict[str, Any]:
         """Get access patterns for a specific agent."""
         return dict(self._agent_patterns.get(agent_id, {}))
-    
+
     def predict_agent_access(self, agent_id: str) -> List[str]:
         """
         Predict which memories an agent is likely to access next.
@@ -820,21 +820,21 @@ class AccessPatternAnalyzer:
         _agent_data = self._agent_patterns.get(agent_id)
         if not agent_data:
             return []
-        
+
         _accessed = agent_data.get("accessed_memories", [])
         if not accessed:
             return []
-        
+
         # Get recently accessed memories
         _recent_memories = [m[0] for m in accessed[-20:]]
-        
+
         # Find memories with high recency scores that agent has accessed
         _predictions = []
         for memory_id in set(recent_memories):
             _profile = self._profiles.get(memory_id)
             if profile and profile.recency_score > 0.5:
                 predictions.append((memory_id, profile.recency_score))
-        
+
         # Sort by recency score and return top predictions
         predictions.sort(key=lambda x: x[1], reverse=True)
         return [m[0] for m in predictions[:10]]

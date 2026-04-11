@@ -27,24 +27,23 @@ from typing import Any, Callable, Dict, List, Optional, Set
 import aiohttp
 import structlog
 
-from heretek_swarm.actors.base import AgentActor, ActorMessage
+from heretek_swarm.actors.base import ActorMessage, AgentActor
 from heretek_swarm.actors.validation import validate_message
-from heretek_swarm.validation import (
-    LLMOutputValidator,
-)
 
 # Session 44: Collective Learning Integration
 from heretek_swarm.collective.learning import PatternExtractor, PatternType
 
 # Session 44: Consensus Integration
-from heretek_swarm.consensus.swarm_deliberation import SwarmDeliberationEngine, Position
+from heretek_swarm.consensus.swarm_deliberation import Position, SwarmDeliberationEngine
 
 # Session 44: Memory Optimization Integration
 from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer, AccessTier
 
 # Session 44: Zero-Trust Validation
 from heretek_swarm.security.zero_trust import ZeroTrustValidator
-
+from heretek_swarm.validation import (
+    LLMOutputValidator,
+)
 
 logger = structlog.get_logger(__name__)
 
@@ -188,7 +187,7 @@ class NexusAgent(AgentActor):
         self,
         agent_id: Optional[str] = None,
         config: Optional[Dict[str, Any]] = None,
-    
+
         # Session 44: Integration components
         pattern_extractor: Optional[PatternExtractor] = None,
         deliberation_engine: Optional[SwarmDeliberationEngine] = None,
@@ -216,24 +215,24 @@ class NexusAgent(AgentActor):
         self._request_log: List[Dict[str, Any]] = []
         self._max_log_entries: int = self._config.get("max_request_log", 1000)
 
-        
+
         # Session 44: Collective Learning Integration
         self.pattern_extractor = pattern_extractor or PatternExtractor(min_support=3, min_confidence=0.6)
-        
+
         # Session 44: Consensus Integration
         self.deliberation_engine = deliberation_engine or SwarmDeliberationEngine(
             max_rounds=5, consensus_threshold=0.75, min_participants=2
         )
-        
+
         # Session 44: Memory Optimization Integration
         self.access_analyzer = access_analyzer or AccessPatternAnalyzer()
-        
+
         # Session 44: Zero-Trust Validation
         self.zero_trust_validator = zero_trust_validator or ZeroTrustValidator()
-        
+
         # Session 44: LLM Output Validation
         self.llm_output_validator = LLMOutputValidator(strict_mode=True)
-        
+
         # Session 44: Integration state
         self._active_deliberations: Dict[str, str] = {}
         self._pattern_emitted: Set[str] = set()
@@ -960,10 +959,10 @@ class NexusAgent(AgentActor):
         """Emit pattern for collective learning."""
         if not self.pattern_extractor:
             return
-        
+
         if item_id in self._pattern_emitted:
             return
-        
+
         try:
             await self.pattern_extractor.analyze_message(
                 message_id=f"{item_type}_{item_id}",
@@ -973,7 +972,7 @@ class NexusAgent(AgentActor):
                 content=content,
                 timestamp=datetime.now(timezone.utc).isoformat(),
             )
-            
+
             self._pattern_emitted.add(item_id)
             logger.info(f"{item_type}_pattern_emitted", item_id=item_id, outcome=outcome)
         except Exception as e:
@@ -983,7 +982,7 @@ class NexusAgent(AgentActor):
         """Consume patterns from collective learning."""
         if not self.pattern_extractor:
             return []
-        
+
         try:
             patterns = await self.pattern_extractor.extract_patterns(
                 time_window_hours=24,
@@ -1008,7 +1007,7 @@ class NexusAgent(AgentActor):
         """Initiate swarm deliberation."""
         if not self.deliberation_engine:
             return None
-        
+
         try:
             deliberation_id = f"delib_{item_id}"
             self.deliberation_engine.start_deliberation(
@@ -1018,7 +1017,7 @@ class NexusAgent(AgentActor):
                 domain=domain,
             )
             self._active_deliberations[item_id] = deliberation_id
-            
+
             logger.info("deliberation_initiated", deliberation_id=deliberation_id, item_id=item_id)
             return deliberation_id
         except Exception as e:
@@ -1036,11 +1035,11 @@ class NexusAgent(AgentActor):
         """Submit agent position in deliberation."""
         if not self.deliberation_engine:
             return False
-        
+
         deliberation_id = self._active_deliberations.get(item_id)
         if not deliberation_id:
             return False
-        
+
         try:
             success = self.deliberation_engine.submit_position(
                 deliberation_id=deliberation_id,
@@ -1049,14 +1048,14 @@ class NexusAgent(AgentActor):
                 confidence=confidence,
                 argument=argument,
             )
-            
+
             if success and self.access_analyzer:
                 self.access_analyzer.record_access(
                     memory_id=f"delib_{deliberation_id}_{agent_id}",
                     access_type="write",
                     agent_id=agent_id,
                 )
-            
+
             return success
         except Exception as e:
             logger.error("failed_to_submit_deliberation_position", error=str(e))
@@ -1066,19 +1065,19 @@ class NexusAgent(AgentActor):
         """Finalize deliberation and apply result."""
         if not self.deliberation_engine:
             return None
-        
+
         deliberation_id = self._active_deliberations.get(item_id)
         if not deliberation_id:
             return None
-        
+
         try:
             result = self.deliberation_engine.finalize_deliberation(deliberation_id)
-            
+
             if result:
                 self.deliberation_engine.cleanup_deliberation(deliberation_id)
                 del self._active_deliberations[item_id]
                 logger.info("deliberation_finalized", deliberation_id=deliberation_id)
-            
+
             return result
         except Exception as e:
             logger.error("failed_to_finalize_deliberation", error=str(e))
@@ -1092,7 +1091,7 @@ class NexusAgent(AgentActor):
         """Track memory access patterns."""
         if not self.access_analyzer:
             return
-        
+
         memory_id = f"{item_type}_{item_id}"
         self.access_analyzer.record_access(
             memory_id=memory_id,
@@ -1104,7 +1103,7 @@ class NexusAgent(AgentActor):
         """Get memory tier classification."""
         if not self.access_analyzer:
             return AccessTier.COLD
-        
+
         memory_id = f"{item_type}_{item_id}"
         profile = self.access_analyzer.get_profile(memory_id)
         return profile.tier if profile else AccessTier.COLD
@@ -1113,7 +1112,7 @@ class NexusAgent(AgentActor):
         """Prefetch items an agent is likely to need."""
         if not self.access_analyzer:
             return []
-        
+
         try:
             predicted_memories = self.access_analyzer.predict_agent_access(agent_id)
             return [

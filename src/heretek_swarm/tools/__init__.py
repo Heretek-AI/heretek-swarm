@@ -14,17 +14,17 @@ from tools.base import (
     ToolMetadata,
     ToolStatus,
 )
+from tools.examples import (
+    ConsensusVoteTool,
+    HealthCheckTool,
+    MemorySearchTool,
+)
 from tools.registry import (
     ToolRegistry,
     ToolRegistryConfig,
     ToolRegistryEntry,
     get_registry,
     initialize_registry,
-)
-from tools.examples import (
-    MemorySearchTool,
-    HealthCheckTool,
-    ConsensusVoteTool,
 )
 
 __all__ = [

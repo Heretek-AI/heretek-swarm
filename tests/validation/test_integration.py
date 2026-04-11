@@ -5,20 +5,15 @@ This module contains integration tests that verify the validation module
 works correctly with other components like nexus.py and coder.py.
 """
 
+
 import pytest
-from datetime import datetime, timezone
 from pydantic import ValidationError
 
 from heretek_swarm.validation import (
-    LLMOutputValidator,
-    ValidationSeverity,
-    ValidationResult,
-    ActorMessage,
-    StateUpdate,
-    ToolRequest,
-    ToolResponse,
     CodeExecutionRequest,
-    validate_message,
+    LLMOutputValidator,
+    ValidationResult,
+    ValidationSeverity,
     create_actor_message,
     create_state_update,
     create_tool_request,
@@ -26,12 +21,13 @@ from heretek_swarm.validation import (
     is_code_safe,
     is_text_safe,
     validate_llm_code,
+    validate_message,
 )
 
 
 class TestValidationWithActorMessages:
     """Tests integrating validation with actor messages."""
-    
+
     def test_actor_message_with_safe_content(self):
         """Test actor message with safe content passes validation."""
         msg = create_actor_message(
@@ -41,7 +37,7 @@ class TestValidationWithActorMessages:
         )
         assert msg.sender_id == "agent1"
         assert msg.recipient_id == "agent2"
-    
+
     def test_actor_message_with_code_injection_fails(self):
         """Test actor message with code injection fails."""
         with pytest.raises(ValidationError):
@@ -52,7 +48,7 @@ class TestValidationWithActorMessages:
                 },
                 sender_id="agent1"
             )
-    
+
     def test_actor_message_with_state_manipulation_fails(self):
         """Test actor message with state manipulation attempt fails."""
         with pytest.raises(ValidationError):
@@ -63,7 +59,7 @@ class TestValidationWithActorMessages:
                 },
                 sender_id="attacker"
             )
-    
+
     def test_actor_message_with_file_access_fails(self):
         """Test actor message with file access attempt fails."""
         with pytest.raises(ValidationError):
@@ -78,7 +74,7 @@ class TestValidationWithActorMessages:
 
 class TestValidationWithStateUpdates:
     """Tests integrating validation with state updates."""
-    
+
     def test_state_update_safe_value(self):
         """Test state update with safe value passes."""
         update = create_state_update(
@@ -88,7 +84,7 @@ class TestValidationWithStateUpdates:
         )
         assert update.state_key == "user.preferences.theme"
         assert update.state_value == "dark"
-    
+
     def test_state_update_with_code_injection_fails(self):
         """Test state update with code injection fails."""
         with pytest.raises(ValidationError):
@@ -97,7 +93,7 @@ class TestValidationWithStateUpdates:
                 state_value="lambda x: eval(x)",
                 sender_id="attacker"
             )
-    
+
     def test_state_update_with_command_injection_fails(self):
         """Test state update with command injection fails."""
         with pytest.raises(ValidationError):
@@ -106,7 +102,7 @@ class TestValidationWithStateUpdates:
                 state_value="os.system('rm -rf /')",
                 sender_id="attacker"
             )
-    
+
     def test_state_update_with_pickle_payload_fails(self):
         """Test state update with pickle payload fails."""
         with pytest.raises(ValidationError):
@@ -115,7 +111,7 @@ class TestValidationWithStateUpdates:
                 state_value="pickle.loads(malicious_bytes)",
                 sender_id="attacker"
             )
-    
+
     def test_state_update_with_path_traversal_fails(self):
         """Test state update with path traversal fails."""
         with pytest.raises(ValidationError):
@@ -124,7 +120,7 @@ class TestValidationWithStateUpdates:
                 state_value="../../../etc/passwd",
                 sender_id="attacker"
             )
-    
+
     def test_state_update_with_sql_injection_fails(self):
         """Test state update with SQL injection fails."""
         # Note: SQL injection pattern requires specific format to match
@@ -142,7 +138,7 @@ class TestValidationWithStateUpdates:
 
 class TestValidationWithToolRequests:
     """Tests integrating validation with tool requests."""
-    
+
     def test_tool_request_safe_arguments(self):
         """Test tool request with safe arguments passes."""
         request = create_tool_request(
@@ -152,7 +148,7 @@ class TestValidationWithToolRequests:
         )
         assert request.tool_name == "data_processor"
         assert request.arguments["operation"] == "sum"
-    
+
     def test_tool_request_with_eval_argument_fails(self):
         """Test tool request with eval argument fails."""
         with pytest.raises(ValidationError):
@@ -161,7 +157,7 @@ class TestValidationWithToolRequests:
                 arguments={"code": "eval(user_input)"},
                 sender_id="attacker"
             )
-    
+
     def test_tool_request_with_subprocess_argument_fails(self):
         """Test tool request with subprocess argument fails."""
         with pytest.raises(ValidationError):
@@ -170,7 +166,7 @@ class TestValidationWithToolRequests:
                 arguments={"command": "subprocess.call(['rm', '-rf', '/'])"},
                 sender_id="attacker"
             )
-    
+
     def test_tool_request_with_shell_injection_fails(self):
         """Test tool request with shell injection fails."""
         with pytest.raises(ValidationError):
@@ -179,7 +175,7 @@ class TestValidationWithToolRequests:
                 arguments={"cmd": "ls | cat /etc/passwd"},
                 sender_id="attacker"
             )
-    
+
     def test_tool_request_dangerous_tool_name_fails(self):
         """Test tool request with dangerous tool name fails."""
         dangerous_names = ["eval", "exec", "compile", "__import__", "getattr", "setattr", "delattr", "hasattr", "globals", "locals", "open", "input"]
@@ -195,7 +191,7 @@ class TestValidationWithToolRequests:
 
 class TestValidationWithToolResponses:
     """Tests integrating validation with tool responses."""
-    
+
     def test_tool_response_safe_result(self):
         """Test tool response with safe result passes."""
         response = create_tool_response(
@@ -206,7 +202,7 @@ class TestValidationWithToolResponses:
         )
         assert response.success is True
         assert response.result["output"] == "Processing complete"
-    
+
     def test_tool_response_sanitizes_error(self):
         """Test tool response sanitizes error messages."""
         # Error messages should be sanitized, not rejected
@@ -218,7 +214,7 @@ class TestValidationWithToolResponses:
         )
         assert response.error is not None
         # The error should be sanitized (may contain [REDACTED] or similar)
-    
+
     def test_tool_response_with_dangerous_result_fails(self):
         """Test tool response with dangerous result fails."""
         # Note: ToolResponse validates error field but not result field directly
@@ -236,7 +232,7 @@ class TestValidationWithToolResponses:
 
 class TestCodeExecutionValidation:
     """Tests for code execution validation integration."""
-    
+
     def test_safe_code_execution_request(self):
         """Test safe code execution request passes."""
         request = CodeExecutionRequest(
@@ -244,7 +240,7 @@ class TestCodeExecutionValidation:
             sender_id="coder_agent"
         )
         assert "def add" in request.code
-    
+
     def test_dangerous_code_execution_request_blocked(self):
         """Test dangerous code execution request is blocked."""
         dangerous_patterns = [
@@ -265,14 +261,14 @@ class TestCodeExecutionValidation:
             "subprocess.Popen('rm')",
             "pickle.loads(data)",
         ]
-        
+
         for code in dangerous_patterns:
             with pytest.raises(ValidationError):
                 CodeExecutionRequest(
                     code=code,
                     sender_id="attacker"
                 )
-    
+
     def test_code_with_command_injection_blocked(self):
         """Test code with command injection is blocked."""
         injection_attempts = [
@@ -283,14 +279,14 @@ class TestCodeExecutionValidation:
             "os.system('`whoami`')",
             "os.system('$(whoami)')",
         ]
-        
+
         for code in injection_attempts:
             with pytest.raises(ValidationError):
                 CodeExecutionRequest(
                     code=code,
                     sender_id="attacker"
                 )
-    
+
     def test_code_with_path_traversal_blocked(self):
         """Test code with path traversal is blocked."""
         with pytest.raises(ValidationError):
@@ -302,27 +298,27 @@ class TestCodeExecutionValidation:
 
 class TestValidatorIntegration:
     """Tests for validator integration."""
-    
+
     def test_validator_strict_mode_blocks_dangerous(self):
         """Test strict mode blocks dangerous patterns."""
         validator = LLMOutputValidator(strict_mode=True)
-        
+
         result = validator.validate_code("eval(x)")
         assert result.valid is False
         assert len(result.errors) > 0
-    
+
     def test_validator_non_strict_mode_warns(self):
         """Test non-strict mode warns about dangerous patterns."""
         validator = LLMOutputValidator(strict_mode=False)
-        
+
         result = validator.validate_code("eval(x)")
         # Should have warnings at minimum
         assert len(result.warnings) > 0 or not result.valid
-    
+
     def test_validator_detects_all_dangerous_builtins(self):
         """Test validator detects all dangerous builtins."""
         validator = LLMOutputValidator(strict_mode=True)
-        
+
         dangerous_builtins = [
             ("eval(x)", "eval"),
             ("exec(code)", "exec"),
@@ -339,15 +335,15 @@ class TestValidatorIntegration:
             ("input('x')", "input"),
             ("open('f')", "open"),
         ]
-        
+
         for code, pattern_name in dangerous_builtins:
             result = validator.validate_code(code)
             assert result.valid is False, f"Failed to detect {pattern_name}"
-    
+
     def test_validator_detects_introspection_attacks(self):
         """Test validator detects introspection attacks."""
         validator = LLMOutputValidator(strict_mode=True)
-        
+
         introspection_attacks = [
             "x.__class__",
             "x.__mro__",
@@ -356,15 +352,15 @@ class TestValidatorIntegration:
             "func.__code__",
             "func.__qualname__",
         ]
-        
+
         for code in introspection_attacks:
             result = validator.validate_code(code)
             assert result.valid is False, f"Failed to detect introspection: {code}"
-    
+
     def test_validator_detects_system_commands(self):
         """Test validator detects system command execution."""
         validator = LLMOutputValidator(strict_mode=True)
-        
+
         system_commands = [
             "os.system('ls')",
             "os.popen('cat')",
@@ -375,19 +371,19 @@ class TestValidatorIntegration:
             "subprocess.check_output(['whoami'])",
             "subprocess.check_call(['id'])",
         ]
-        
+
         for code in system_commands:
             result = validator.validate_code(code)
             assert result.valid is False, f"Failed to detect system command: {code}"
-    
+
     def test_validator_detects_yaml_pickle_attacks(self):
         """Test validator detects YAML and pickle attacks."""
         validator = LLMOutputValidator(strict_mode=True)
-        
+
         # Pickle attack
         result = validator.validate_code("pickle.load(file)")
         assert result.valid is False
-        
+
         # YAML unsafe load
         result = validator.validate_code("yaml.load(data)")
         assert result.valid is False
@@ -395,7 +391,7 @@ class TestValidatorIntegration:
 
 class TestConvenienceFunctionsIntegration:
     """Tests for convenience functions integration."""
-    
+
     def test_is_code_safe_function(self):
         """Test is_code_safe convenience function."""
         safe_codes = [
@@ -404,7 +400,7 @@ class TestConvenienceFunctionsIntegration:
             "print('hello')",
             "class Bar: pass",
         ]
-        
+
         dangerous_codes = [
             "eval(x)",
             "exec(code)",
@@ -415,13 +411,13 @@ class TestConvenienceFunctionsIntegration:
             "os.system('ls')",
             "subprocess.run(['cat'])",
         ]
-        
+
         for code in safe_codes:
             assert is_code_safe(code) is True, f"Safe code marked as dangerous: {code}"
-        
+
         for code in dangerous_codes:
             assert is_code_safe(code) is False, f"Dangerous code marked as safe: {code}"
-    
+
     def test_is_text_safe_function(self):
         """Test is_text_safe convenience function."""
         safe_texts = [
@@ -429,27 +425,27 @@ class TestConvenienceFunctionsIntegration:
             "Please process this data",
             "The answer is 42",
         ]
-        
+
         dangerous_texts = [
             "Use eval() for this",
             "Execute with exec()",
             "Call __import__('os')",
         ]
-        
+
         for text in safe_texts:
             assert is_text_safe(text) is True, f"Safe text marked as dangerous: {text}"
-        
+
         for text in dangerous_texts:
             assert is_text_safe(text) is False, f"Dangerous text marked as safe: {text}"
-    
+
     def test_validate_llm_code_function(self):
         """Test validate_llm_code convenience function."""
         result = validate_llm_code("print('hello')")
         assert result.valid is True
-        
+
         result = validate_llm_code("eval(x)")
         assert result.valid is False
-    
+
     def test_validate_llm_code_non_strict(self):
         """Test validate_llm_code with non-strict mode."""
         result = validate_llm_code("eval(x)", strict=False)
@@ -459,7 +455,7 @@ class TestConvenienceFunctionsIntegration:
 
 class TestMessageValidationFunction:
     """Tests for validate_message function integration."""
-    
+
     def test_validate_message_actor_message(self):
         """Test validate_message with actor_message type."""
         result = validate_message(
@@ -467,7 +463,7 @@ class TestMessageValidationFunction:
             {"content": {"text": "hello"}, "sender_id": "agent1"}
         )
         assert result.valid is True
-    
+
     def test_validate_message_state_update(self):
         """Test validate_message with state_update type."""
         result = validate_message(
@@ -480,7 +476,7 @@ class TestMessageValidationFunction:
             }
         )
         assert result.valid is True
-    
+
     def test_validate_message_tool_request(self):
         """Test validate_message with tool_request type."""
         result = validate_message(
@@ -492,7 +488,7 @@ class TestMessageValidationFunction:
             }
         )
         assert result.valid is True
-    
+
     def test_validate_message_with_dangerous_content(self):
         """Test validate_message with dangerous content."""
         result = validate_message(
@@ -500,7 +496,7 @@ class TestMessageValidationFunction:
             {"content": {"code": "eval(x)"}, "sender_id": "agent1"}
         )
         assert result.valid is False
-    
+
     def test_validate_message_unknown_type(self):
         """Test validate_message with unknown type does basic validation."""
         result = validate_message(
@@ -509,7 +505,7 @@ class TestMessageValidationFunction:
         )
         # Unknown types should still do basic structured validation
         assert result.valid is True
-    
+
     def test_validate_message_unknown_type_with_dangerous_content(self):
         """Test validate_message with unknown type and dangerous content."""
         result = validate_message(
@@ -522,24 +518,24 @@ class TestMessageValidationFunction:
 
 class TestValidationResultSeverity:
     """Tests for validation result severity levels."""
-    
+
     def test_critical_severity_for_security_violations(self):
         """Test CRITICAL severity for security violations."""
         validator = LLMOutputValidator(strict_mode=True)
         result = validator.validate_code("eval(x)")
         assert result.severity == ValidationSeverity.CRITICAL
-    
+
     def test_error_severity_for_invalid_content(self):
         """Test ERROR severity for invalid content."""
         result = validator.validate_text("")
         assert result.severity == ValidationSeverity.ERROR
-    
+
     def test_info_severity_for_valid_content(self):
         """Test INFO severity for valid content."""
         validator = LLMOutputValidator(strict_mode=True)
         result = validator.validate_code("print('hello')")
         assert result.severity == ValidationSeverity.INFO
-    
+
     def test_validation_result_to_dict(self):
         """Test ValidationResult.to_dict method."""
         result = ValidationResult(

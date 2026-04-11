@@ -13,11 +13,11 @@ Plugins available:
 """
 
 import os
-from typing import Any, Dict
 from datetime import datetime, timezone
+from typing import Any, Dict
 
-from fastapi import APIRouter, HTTPException
 import structlog
+from fastapi import APIRouter, HTTPException
 
 _logger = structlog.get_logger("api.plugins")
 
@@ -42,7 +42,7 @@ def _initialize_plugin_states():
             "broadcast_enabled": os.environ.get("GWT_BROADCAST_ENABLED", "true").lower() == "true",
         },
     }
-    
+
     # Liberation Plugin
     _plugin_states["liberation"] = {
         "name": "LiberationPlugin",
@@ -83,7 +83,7 @@ async def get_all_plugins():
             "enabled": state["enabled"],
             "config": state["config"],
         })
-    
+
     return {
         "plugins": plugins,
         "total": len(plugins),
@@ -104,9 +104,9 @@ async def get_plugin(plugin_id: str):
     """
     if plugin_id not in _plugin_states:
         raise HTTPException(404, f"Plugin {plugin_id} not found")
-    
+
     _state = _plugin_states[plugin_id]
-    
+
     return {
         "id": plugin_id,
         "name": state["name"],
@@ -134,11 +134,11 @@ async def enable_plugin(plugin_id: str):
     """
     if plugin_id not in _plugin_states:
         raise HTTPException(404, f"Plugin {plugin_id} not found")
-    
+
     _plugin_states[plugin_id]["enabled"] = True
-    
+
     logger.info("Plugin enabled", plugin_id=plugin_id)
-    
+
     return {
         "status": "enabled",
         "plugin_id": plugin_id,
@@ -159,11 +159,11 @@ async def disable_plugin(plugin_id: str):
     """
     if plugin_id not in _plugin_states:
         raise HTTPException(404, f"Plugin {plugin_id} not found")
-    
+
     _plugin_states[plugin_id]["enabled"] = False
-    
+
     logger.info("Plugin disabled", plugin_id=plugin_id)
-    
+
     return {
         "status": "disabled",
         "plugin_id": plugin_id,
@@ -188,7 +188,7 @@ async def get_plugin_config(plugin_id: str):
     """
     if plugin_id not in _plugin_states:
         raise HTTPException(404, f"Plugin {plugin_id} not found")
-    
+
     return {
         "plugin_id": plugin_id,
         "config": _plugin_states[plugin_id]["config"],
@@ -209,11 +209,11 @@ async def update_plugin_config(plugin_id: str, config: Dict[str, Any]):
     """
     if plugin_id not in _plugin_states:
         raise HTTPException(404, f"Plugin {plugin_id} not found")
-    
+
     # Validate and update config
     _current_config = _plugin_states[plugin_id]["config"]
     current_config.update(config)
-    
+
     # Type validation for known fields
     if plugin_id == "consciousness":
         if "workspace_capacity" in config and not isinstance(config["workspace_capacity"], int):
@@ -222,17 +222,17 @@ async def update_plugin_config(plugin_id: str, config: Dict[str, Any]):
             _threshold = config["attention_threshold"]
             if not isinstance(threshold, (int, float)) or not 0.0 <= threshold <= 1.0:
                 raise HTTPException(400, "attention_threshold must be between 0.0 and 1.0")
-    
+
     elif plugin_id == "liberation":
         if "red_flag_sensitivity" in config:
             _sensitivity = config["red_flag_sensitivity"]
             if not isinstance(sensitivity, (int, float)) or not 0.0 <= sensitivity <= 1.0:
                 raise HTTPException(400, "red_flag_sensitivity must be between 0.0 and 1.0")
-    
+
     _plugin_states[plugin_id]["config"] = current_config
-    
+
     logger.info("Plugin config updated", plugin_id=plugin_id, config=current_config)
-    
+
     return {
         "plugin_id": plugin_id,
         "config": current_config,
@@ -256,9 +256,9 @@ async def get_plugin_metrics(plugin_id: str):
     """
     if plugin_id not in _plugin_states:
         raise HTTPException(404, f"Plugin {plugin_id} not found")
-    
+
     _state = _plugin_states[plugin_id]
-    
+
     # Return basic metrics - in production these would come from actual plugin
     if plugin_id == "consciousness":
         return {
@@ -271,7 +271,7 @@ async def get_plugin_metrics(plugin_id: str):
             },
             "timestamp": datetime.now(timezone.utc).isoformat(),
         }
-    
+
     elif plugin_id == "liberation":
         return {
             "plugin_id": plugin_id,
@@ -283,7 +283,7 @@ async def get_plugin_metrics(plugin_id: str):
             },
             "timestamp": datetime.now(timezone.utc).isoformat(),
         }
-    
+
     return {
         "plugin_id": plugin_id,
         "enabled": state["enabled"],
@@ -309,9 +309,9 @@ async def get_plugin_status(plugin_id: str):
     """
     if plugin_id not in _plugin_states:
         raise HTTPException(404, f"Plugin {plugin_id} not found")
-    
+
     _state = _plugin_states[plugin_id]
-    
+
     return {
         "plugin_id": plugin_id,
         "name": state["name"],
@@ -338,12 +338,12 @@ async def reset_plugin(plugin_id: str):
     """
     if plugin_id not in _plugin_states:
         raise HTTPException(404, f"Plugin {plugin_id} not found")
-    
+
     # Re-initialize to defaults
     _initialize_plugin_states()
-    
+
     logger.info("Plugin reset to defaults", plugin_id=plugin_id)
-    
+
     return {
         "status": "reset",
         "plugin_id": plugin_id,

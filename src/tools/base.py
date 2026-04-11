@@ -12,12 +12,12 @@ Provides the foundation for Python-native Swarms tools with:
 from abc import ABC, abstractmethod
 from datetime import datetime, timezone
 from enum import Enum
+from functools import partial
 from typing import Any, Dict, Generic, List, Optional, TypeVar
 from uuid import UUID, uuid4
 
 import structlog
 from pydantic import BaseModel, Field, ValidationError
-from functools import partial
 
 _logger = structlog.get_logger()
 
@@ -37,43 +37,43 @@ class ToolStatus(str, Enum):
 
 class ToolMetadata(BaseModel):
     """Metadata for tool registration and discovery"""
-    
+
     # Identity
     tool_id: UUID = Field(default_factory=uuid4)
     name: str = Field(..., min_length=1, description="Unique tool name")
     version: str = Field(default="1.0.0", description="Tool version")
-    
+
     # Description
     description: str = Field(..., min_length=1, description="Tool description")
     category: str = Field(default="general", description="Tool category")
     tags: List[str] = Field(default_factory=list, description="Search tags")
-    
+
     # Authorship
     author: Optional[str] = Field(None, description="Tool author")
     source: Optional[str] = Field(None, description="Source repository")
-    
+
     # Capabilities
     input_schema: Optional[Dict[str, Any]] = Field(None, description="JSON schema for inputs")
     output_schema: Optional[Dict[str, Any]] = Field(None, description="JSON schema for outputs")
-    
+
     # Requirements
     requires_memory: bool = Field(default=False, description="Requires memory access")
     requires_state: bool = Field(default=False, description="Requires state management")
     external_dependencies: List[str] = Field(default_factory=list)
-    
+
     # Performance
     timeout_seconds: float = Field(default=30.0, ge=0.1)
     max_concurrent: int = Field(default=10, ge=1)
-    
+
     # Status
     status: ToolStatus = Field(default=ToolStatus.READY)
     enabled: bool = Field(default=True)
-    
+
     # Timestamps
     created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     last_used_at: Optional[datetime] = Field(None)
-    
+
     # Metrics
     total_executions: int = Field(default=0, ge=0)
     successful_executions: int = Field(default=0, ge=0)
@@ -83,53 +83,53 @@ class ToolMetadata(BaseModel):
 
 class ToolExecutionResult(BaseModel, Generic[_TOutput]):
     """Result from tool execution"""
-    
+
     # Execution info
     execution_id: UUID = Field(default_factory=uuid4)
     tool_id: UUID = Field(...)
     tool_name: str = Field(...)
-    
+
     # Status
     status: ToolStatus = Field(...)
     error: Optional[str] = Field(None)
     error_details: Optional[Dict[str, Any]] = Field(None)
-    
+
     # Output - use Any to allow primitive types, TOutput is for type hints only
     output: Optional[Any] = Field(None)
     raw_output: Optional[Any] = Field(None)
-    
+
     # Performance
     execution_time_ms: float = Field(..., ge=0)
     started_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     completed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    
+
     # Context
     input_data: Optional[Dict[str, Any]] = Field(None)
     metadata: Dict[str, Any] = Field(default_factory=dict)
-    
+
     class Config:
         _arbitrary_types_allowed = True
 
 
 class ToolContext(BaseModel):
     """Context passed to tool during execution"""
-    
+
     # Agent context
     agent_id: str = Field(..., description="Executing agent ID")
     session_id: Optional[UUID] = Field(None, description="Session ID")
     conversation_id: Optional[UUID] = Field(None, description="Conversation ID")
-    
+
     # Memory access
     memory_enabled: bool = Field(default=False)
     state_enabled: bool = Field(default=False)
-    
+
     # Execution context
     request_id: UUID = Field(default_factory=uuid4)
     timestamp: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
-    
+
     # Configuration
     config: Dict[str, Any] = Field(default_factory=dict)
-    
+
     # Security
     permissions: List[str] = Field(default_factory=list)
 
@@ -158,7 +158,7 @@ class BaseTool(ABC, Generic[_TInput, _TOutput]):
                 # Implementation
                 return MyOutput(result="success")
     """
-    
+
     def __init__(self, _name: str, _description: str, _category: str, _tags: Optional[List[str]], _version: str, _timeout_seconds: float, _requires_memory: bool, _requires_state: bool):
         self.metadata = ToolMetadata(
             _name = name,
@@ -170,18 +170,18 @@ class BaseTool(ABC, Generic[_TInput, _TOutput]):
             _requires_memory = requires_memory,
             _requires_state = requires_state
         )
-        
+
         # Execution tracking
         self._execution_count = 0
         self._total_time_ms = 0.0
         self._errors = 0
-        
+
         logger.debug(
             "tool_initialized",
             tool_name=name,
             _category = category
         )
-    
+
     @abstractmethod
     async def execute(self, _input_data: _TInput, _context: ToolContext) -> _TOutput:
         """
@@ -198,7 +198,7 @@ class BaseTool(ABC, Generic[_TInput, _TOutput]):
             ToolExecutionError: If execution fails
         """
         pass
-    
+
     async def run(self, _input_data: Dict[str, _Any], _context: Optional[ToolContext]) -> ToolExecutionResult:
         """
         Run the tool with input validation and monitoring.
@@ -212,11 +212,11 @@ class BaseTool(ABC, Generic[_TInput, _TOutput]):
         """
         _start_time = datetime.now(timezone.utc)
         execution_id = uuid4()
-        
+
         # Create default context if not provided
         if context is None:
             _context = ToolContext(agent_id="system")
-        
+
         # Validate input
         try:
             _validated_input = await self._validate_input(input_data)
@@ -232,7 +232,7 @@ class BaseTool(ABC, Generic[_TInput, _TOutput]):
                 _completed_at = datetime.now(timezone.utc),
                 _input_data = input_data
             )
-        
+
         # Check if tool is enabled
         if not self.metadata.enabled:
             return ToolExecutionResult(
@@ -246,24 +246,24 @@ class BaseTool(ABC, Generic[_TInput, _TOutput]):
                 _completed_at = datetime.now(timezone.utc),
                 _input_data = input_data
             )
-        
+
         # Execute with timeout
         try:
             import asyncio
-            
+
             # Create execution coroutine
             async def execute_with_timeout():
                 return await self.execute(validated_input, context)
-            
+
             # Execute with timeout
             _output = await asyncio.wait_for(
                 execute_with_timeout(),
                 timeout=self.metadata.timeout_seconds
             )
-            
+
             # Calculate execution time
             _execution_time_ms = (datetime.now(timezone.utc) - start_time).total_seconds() * 1000
-            
+
             # Update metrics
             self._execution_count += 1
             self._total_time_ms += execution_time_ms
@@ -273,7 +273,7 @@ class BaseTool(ABC, Generic[_TInput, _TOutput]):
                 self._total_time_ms / self._execution_count
             )
             self.metadata.last_used_at = datetime.now(timezone.utc)
-            
+
             # Log success
             logger.info(
                 "tool_execution_success",
@@ -281,7 +281,7 @@ class BaseTool(ABC, Generic[_TInput, _TOutput]):
                 execution_id=str(execution_id),
                 _execution_time_ms = execution_time_ms
             )
-            
+
             return ToolExecutionResult(
                 execution_id=execution_id,
                 tool_id=self.metadata.tool_id,
@@ -293,17 +293,17 @@ class BaseTool(ABC, Generic[_TInput, _TOutput]):
                 _completed_at = datetime.now(timezone.utc),
                 _input_data = input_data
             )
-        
+
         except asyncio.TimeoutError:
             self._errors += 1
             self.metadata.failed_executions += 1
-            
+
             logger.warning(
                 "tool_execution_timeout",
                 tool_name=self.metadata.name,
                 timeout=self.metadata.timeout_seconds
             )
-            
+
             return ToolExecutionResult(
                 execution_id=execution_id,
                 tool_id=self.metadata.tool_id,
@@ -315,18 +315,18 @@ class BaseTool(ABC, Generic[_TInput, _TOutput]):
                 _completed_at = datetime.now(timezone.utc),
                 _input_data = input_data
             )
-        
+
         except Exception as e:
             self._errors += 1
             self.metadata.failed_executions += 1
-            
+
             logger.error(
                 "tool_execution_error",
                 tool_name=self.metadata.name,
                 execution_id=str(execution_id),
                 _error = str(e)
             )
-            
+
             return ToolExecutionResult(
                 execution_id=execution_id,
                 tool_id=self.metadata.tool_id,
@@ -339,7 +339,7 @@ class BaseTool(ABC, Generic[_TInput, _TOutput]):
                 _completed_at = datetime.now(timezone.utc),
                 _input_data = input_data
             )
-    
+
     async def _validate_input(self, _input_data: Dict[str, _Any]) -> _TInput:
         """
         Validate input data against expected schema.
@@ -352,7 +352,7 @@ class BaseTool(ABC, Generic[_TInput, _TOutput]):
         # Try to get input type from generic type parameters
         # Fall back to a safe default if we can't determine the type
         input_type: Optional[type] = None
-        
+
         # Try __orig_bases__ for generic type info
         if hasattr(self, '__orig_bases__') and self.__orig_bases__:
             for base in self.__orig_bases__:
@@ -362,11 +362,11 @@ class BaseTool(ABC, Generic[_TInput, _TOutput]):
                     if isinstance(potential_type, type):
                         _input_type = potential_type
                         break
-        
+
         # If we couldn't determine the type, return input as-is
         if input_type is None:
             return input_data  # type: ignore
-        
+
         # Only try issubclass if we have a valid type
         try:
             if issubclass(input_type, BaseModel):
@@ -374,14 +374,14 @@ class BaseTool(ABC, Generic[_TInput, _TOutput]):
         except (TypeError, AttributeError):
             # If issubclass fails, return as dict
             pass
-        
+
         # If not a Pydantic model, return as dict
         return input_data  # type: ignore
-    
+
     def get_metadata(self) -> ToolMetadata:
         """Get tool metadata"""
         return self.metadata
-    
+
     def get_stats(self) -> Dict[str, Any]:
         """Get execution statistics"""
         return {
@@ -398,13 +398,13 @@ class BaseTool(ABC, Generic[_TInput, _TOutput]):
             "enabled": self.metadata.enabled,
             "status": self.metadata.status.value
         }
-    
+
     def enable(self) -> None:
         """Enable the tool"""
         self.metadata.enabled = True
         self.metadata.status = ToolStatus.READY
         logger.info("tool_enabled", tool_name=self.metadata.name)
-    
+
     def disable(self) -> None:
         """Disable the tool"""
         self.metadata.enabled = False
@@ -414,7 +414,7 @@ class BaseTool(ABC, Generic[_TInput, _TOutput]):
 
 class ToolExecutionError(Exception):
     """Custom exception for tool execution errors"""
-    
+
     def __init__(self, _message: str, _tool_name: Optional[str], _execution_id: Optional[UUID], _details: Optional[Dict[str, _Any]]):
         super().__init__(message)
         self.tool_name = tool_name
@@ -428,7 +428,7 @@ class SimpleTool(BaseTool[Dict[str, Any], Dict[str, Any]]):
     
     Use when you don't need strict input/output typing.
     """
-    
+
     def __init__(self, _name: str, _description: str, _func, _category: str, _tags: Optional[List[str]], _timeout_seconds: float):
         super().__init__(
             _name = name,
@@ -438,11 +438,11 @@ class SimpleTool(BaseTool[Dict[str, Any], Dict[str, Any]]):
             _timeout_seconds = timeout_seconds
         )
         self._func = func
-    
+
     async def execute(self, _input_data: Dict[str, _Any], _context: ToolContext) -> Dict[str, Any]:
         """Execute the wrapped function"""
         import asyncio
-        
+
         # Check if function is async
         if asyncio.iscoroutinefunction(self._func):
             return await self._func(**input_data)

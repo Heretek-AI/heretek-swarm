@@ -117,9 +117,9 @@ class AlertManager:
         """Send alert to PagerDuty Events API v2."""
         try:
             import aiohttp
-            
+
             _pd_urgency = "high" if alert.severity in (AlertSeverity.CRITICAL, AlertSeverity.HIGH) else "low"
-            
+
             _payload = {
                 "routing_key": os.getenv("PAGERDUTY_API_KEY"),
                 "event_action": "trigger",
@@ -155,11 +155,11 @@ class AlertManager:
         """Send alert to OpsGenie Alerts API."""
         try:
             import aiohttp
-            
+
             _opsgenie_priority = "P1" if alert.severity == AlertSeverity.CRITICAL else \
                               "P2" if alert.severity == AlertSeverity.HIGH else \
                               "P3" if alert.severity == AlertSeverity.MEDIUM else "P4"
-            
+
             _payload = {
                 "message": alert.title,
                 "description": alert.description,
@@ -201,7 +201,7 @@ class AlertManager:
         _alert = self._alerts[alert_id]
         alert.status = AlertStatus.RESOLVED
         alert.resolved_at = datetime.now(timezone.utc).isoformat()
-        
+
         # Move to history
         self._alert_history.append(alert)
         del self._alerts[alert_id]

@@ -4,15 +4,14 @@ Integration tests for BetaAgent.
 Tier 1 (Core Triad) - BetaAgent performs secondary analysis, validation, and error detection.
 """
 
-import asyncio
-import pytest
-import pytest_asyncio
 from datetime import datetime
 from unittest.mock import patch
 
-from heretek_swarm.actors.triad import BetaAgent
-from heretek_swarm.actors.base import ActorMessage, ActorState
+import pytest
+import pytest_asyncio
 
+from heretek_swarm.actors.base import ActorMessage, ActorState
+from heretek_swarm.actors.triad import BetaAgent
 
 _pytestmark = pytest.mark.integration
 

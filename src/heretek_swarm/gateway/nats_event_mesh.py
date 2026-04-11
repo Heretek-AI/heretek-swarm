@@ -18,8 +18,8 @@ import asyncio
 import json
 from dataclasses import dataclass, field
 from datetime import datetime, timezone
-from typing import Any, Callable, Dict, List, Optional, Set
 from enum import Enum
+from typing import Any, Callable, Dict, List, Optional, Set
 
 import structlog
 
@@ -100,7 +100,7 @@ class NATSEventMesh:
         )
         ```
     """
-    
+
     def __init__(self, _servers: Optional[List[str]], _name: Optional[str], _fallback: bool, _max_reconnect_attempts: int, _reconnect_timewait: float, _ping_interval: int, _max_outstanding: int) -> None:
         """
         Initialize NATS EventMesh.
@@ -121,30 +121,30 @@ class NATSEventMesh:
         self.reconnect_timewait = reconnect_timewait
         self.ping_interval = ping_interval
         self.max_outstanding = max_outstanding
-        
+
         # Connection state
         self._state = ConnectionState.DISCONNECTED
         self._nc = None  # NATS connection
         self._js = None  # JetStream context
         self._js_context: Optional[Any] = None  # JetStream context manager
-        
+
         # JetStream streams
         self._streams: Dict[str, Dict[str, Any]] = {}
-        
+
         # Subscriptions
         self._subscriptions: Dict[str, Subscription] = {}
         self._subscription_ids: Set[str] = set()
-        
+
         # Durable consumers
         self._consumers: Dict[str, Any] = {}
-        
+
         # In-memory fallback
         self._fallback_mesh: Optional["_InMemoryFallback"] = None
         self._use_fallback = False
-        
+
         # Connection lock
         self._lock = asyncio.Lock()
-        
+
         logger.info(
             "NATSEventMesh initialized",
             _extra = {
@@ -196,15 +196,15 @@ class NATSEventMesh:
 
         async with self._lock:
             self._state = ConnectionState.CONNECTING
-            
+
             try:
                 # Connect to first available server
                 self._nc = await self._connect_to_server()
-                
+
                 if self._nc is not None:
                     self._state = ConnectionState.CONNECTED
                     logger.info("Connected to NATS")
-                    
+
                     # Initialize JetStream context
                     try:
                         self._js = self._nc.jetstream()
@@ -212,28 +212,28 @@ class NATSEventMesh:
                     except Exception as e:
                         logger.warning(f"JetStream not available: {e}")
                         self._js = None
-                    
+
                     return True
-                    
+
             except Exception as e:
                 logger.error("Failed to connect to NATS", error=str(e))
-            
+
             # Fallback to in-memory mesh
             if self.fallback:
                 return await self._enable_fallback()
-            
+
             self._state = ConnectionState.DISCONNECTED
             return False
 
     async def _connect_to_server(self) -> Optional[Any]:
         """Connect to a NATS server with retry."""
         _last_error = None
-        
+
         for server in self.servers:
             for attempt in range(self.max_reconnect_attempts):
                 try:
                     logger.debug(f"Connecting to {server} (attempt {attempt + 1})")
-                    
+
                     _nc = await nats.connect(
                         server,
                         _name = self.client_name,
@@ -241,10 +241,10 @@ class NATSEventMesh:
                         _ping_interval = self.ping_interval,
                         _max_outstanding = self.max_outstanding,
                     )
-                    
+
                     logger.info(f"Connected to {server}")
                     return nc
-                    
+
                 except Exception as e:
                     _last_error = e
                     logger.warning(
@@ -253,7 +253,7 @@ class NATSEventMesh:
                         _attempt = attempt + 1,
                     )
                     await asyncio.sleep(self.reconnect_timewait)
-        
+
         raise last_error or Exception("No servers available")
 
     async def _enable_fallback(self) -> bool:
@@ -270,12 +270,12 @@ class NATSEventMesh:
         """Disconnect from NATS and cleanup."""
         async with self._lock:
             self._state = ConnectionState.CLOSING
-            
+
             # Unsubscribe all
             for sub in self._subscriptions.values():
                 if sub.active:
                     sub.active = False
-            
+
             # Close NATS connection
             if self._nc is not None:
                 try:
@@ -284,10 +284,10 @@ class NATSEventMesh:
                     logger.error("Error closing NATS connection", error=str(e))
                 finally:
                     self._nc = None
-            
+
             self._state = ConnectionState.DISCONNECTED
             self._subscriptions.clear()
-            
+
             logger.info("Disconnected from NATS")
 
     async def create_stream(self, _name: str, _subjects: List[str], _storage: str, _retention: str, _max_msgs: int, _max_age: int):  # 24 hours in seconds
@@ -308,13 +308,13 @@ class NATSEventMesh:
         if not self.jetstream_enabled:
             logger.warning("JetStream not available")
             return False
-        
+
         try:
             import nats.js.api as js_api
-            
+
             _storage_type = js_api.StorageType.FILE if storage == "file" else js_api.StorageType.MEMORY
             _retention_policy = getattr(js_api.RetentionPolicy, retention.upper(), js_api.RetentionPolicy.LIMITS)
-            
+
             _config = js_api.StreamConfig(
                 _name = name,
                 _subjects = subjects,
@@ -323,9 +323,9 @@ class NATSEventMesh:
                 _max_msgs = max_msgs,
                 max_age=max_age * 1_000_000_000,  # Convert to nanoseconds
             )
-            
+
             _stream_info = await self._js.add_stream(config=config)
-            
+
             self._streams[name] = {
                 "name": name,
                 "subjects": subjects,
@@ -335,10 +335,10 @@ class NATSEventMesh:
                 "max_age": max_age,
                 "created": datetime.now(timezone.utc).isoformat(),
             }
-            
+
             logger.info(f"JetStream '{name}' created", subjects=subjects)
             return True
-            
+
         except Exception as e:
             logger.error(f"Failed to create stream '{name}': {e}")
             return False
@@ -355,7 +355,7 @@ class NATSEventMesh:
         """
         if not self.jetstream_enabled:
             return False
-        
+
         try:
             await self._js.delete_stream(name)
             self._streams.pop(name, None)
@@ -379,11 +379,11 @@ class NATSEventMesh:
         """
         if not self.jetstream_enabled:
             return False
-        
+
         if stream_name not in self._streams:
             logger.warning(f"Stream '{stream_name}' not found")
             return False
-        
+
         try:
             ack = await self._js.publish(subject, json.dumps(data).encode('utf-8'))
             logger.debug(f"Published to stream '{stream_name}'", seq=ack.seq)
@@ -408,17 +408,17 @@ class NATSEventMesh:
         """
         if not self.jetstream_enabled:
             return None
-        
+
         if stream_name not in self._streams:
             logger.warning(f"Stream '{stream_name}' not found")
             return None
-        
+
         try:
             import nats.js.api as js_api
-            
+
             _deliver = getattr(js_api.DeliverPolicy, deliver_policy.upper(), js_api.DeliverPolicy.ALL)
             ack = js_api.AckPolicy.EXPLICIT if ack_policy else js_api.AckPolicy.NONE
-            
+
             # Create or bind to durable consumer
             _consumer_info = await self._js.pull_subscribe(
                 stream=stream_name,
@@ -426,10 +426,10 @@ class NATSEventMesh:
                 _deliver_policy = deliver,
                 _ack_policy = ack,
             )
-            
+
             _consumer_id = f"consumer_{stream_name}_{durable_name}"
             self._consumers[consumer_id] = consumer_info
-            
+
             # Start message processing loop
             asyncio.create_task(self._process_durable_messages(
                 consumer_info,
@@ -437,10 +437,10 @@ class NATSEventMesh:
                 durable_name,
                 callback
             ))
-            
+
             logger.info(f"Durable consumer '{durable_name}' created on stream '{stream_name}'")
             return consumer_id
-            
+
         except Exception as e:
             logger.error(f"Failed to create durable consumer: {e}")
             return None
@@ -487,16 +487,16 @@ class NATSEventMesh:
         """
         if not self.jetstream_enabled:
             return []
-        
+
         if stream_name not in self._streams:
             logger.warning(f"Stream '{stream_name}' not found")
             return []
-        
+
         _messages = []
-        
+
         try:
             import nats.js.api as js_api
-            
+
             # Determine deliver policy
             if start_sequence is not None:
                 _deliver_policy = js_api.DeliverPolicy.BY_START_SEQUENCE
@@ -504,7 +504,7 @@ class NATSEventMesh:
                 _deliver_policy = js_api.DeliverPolicy.BY_START_TIME
             else:
                 _deliver_policy = js_api.DeliverPolicy.ALL
-            
+
             _consumer_info = await self._js.pull_subscribe(
                 stream=stream_name,
                 _durable = f"replay_{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}",
@@ -512,7 +512,7 @@ class NATSEventMesh:
                 _opt_start_seq = start_sequence,
                 _opt_start_time = start_time,
             )
-            
+
             # Fetch all messages
             while True:
                 try:
@@ -530,10 +530,10 @@ class NATSEventMesh:
                         await msg.ack()
                 except asyncio.TimeoutError:
                     break
-            
+
             logger.info(f"Replayed {len(messages)} messages from stream '{stream_name}'")
             return messages
-            
+
         except Exception as e:
             logger.error(f"Failed to replay stream: {e}")
             return []
@@ -555,17 +555,17 @@ class NATSEventMesh:
             Reconstructed state dictionary
         """
         state = initial_state or {}
-        
+
         def filter_callback(_subject: str, _data: Dict[str, Any]):
             nonlocal state
             if data.get("entity_id") == entity_id:
                 state = event_applier(state, data)
-        
+
         await self.replay_stream(
             _stream_name = stream_name,
             _callback = filter_callback,
         )
-        
+
         logger.info(f"Reconstructed state for entity '{entity_id}' from {len(state)} fields")
         return state
 
@@ -583,11 +583,11 @@ class NATSEventMesh:
         """
         if self._use_fallback and self._fallback_mesh is not None:
             return await self._fallback_mesh.publish(subject, data)
-        
+
         if not self.is_connected:
             logger.warning("Not connected, cannot publish")
             return False
-        
+
         try:
             _message = json.dumps(data).encode('utf-8')
             await self._nc.publish(subject, message, reply=reply)
@@ -611,35 +611,35 @@ class NATSEventMesh:
         """
         if self._use_fallback and self._fallback_mesh is not None:
             return await self._fallback_mesh.subscribe(subject, callback)
-        
+
         if not self.is_connected:
             logger.warning("Not connected, cannot subscribe")
             return None
-        
+
         try:
             # Create subscription
             sid = f"sub_{len(self._subscriptions)}"
-            
+
             async def wrapper(_msg):
                 try:
                     data = json.loads(msg.data.decode('utf-8')) if msg.data else {}
                     await callback(self, msg.subject, data)
                 except Exception as e:
                     logger.error("Subscription callback error", subject=subject, error=str(e))
-            
+
             sub = await self._nc.subscribe(subject, cb=wrapper)
             sub.sid = sid
-            
+
             self._subscriptions[sid] = Subscription(
                 _subject = subject,
                 _callback = callback,
                 _sid = sid,
                 active=True,
             )
-            
+
             logger.info("Subscribed to subject", subject=subject, sid=sid)
             return sid
-            
+
         except Exception as e:
             logger.error("Failed to subscribe", subject=subject, error=str(e))
             return None
@@ -656,11 +656,11 @@ class NATSEventMesh:
         """
         if self._use_fallback and self._fallback_mesh is not None:
             return await self._fallback_mesh.unsubscribe(sid)
-        
+
         if sid not in self._subscriptions:
             logger.warning("Subscription not found", sid=sid)
             return False
-        
+
         try:
             sub = self._subscriptions[sid]
             sub.active = False
@@ -685,20 +685,20 @@ class NATSEventMesh:
         """
         if self._use_fallback and self._fallback_mesh is not None:
             return await self._fallback_mesh.request(subject, data, timeout)
-        
+
         if not self.is_connected:
             logger.warning("Not connected, cannot request")
             return None
-        
+
         try:
             _message = json.dumps(data).encode('utf-8')
             _msg = await self._nc.request(subject, message, timeout=timeout)
-            
+
             if msg and msg.data:
                 _response = json.loads(msg.data.decode('utf-8'))
                 logger.debug("Request response", subject=subject)
                 return response
-            
+
             return None
         except asyncio.TimeoutError:
             logger.warning("Request timeout", subject=subject, timeout=timeout)
@@ -718,7 +718,7 @@ class NATSEventMesh:
 
 class _InMemoryFallback:
     """In-memory fallback for when NATS is unavailable."""
-    
+
     def __init__(self) -> None:
         self._subscriptions: Dict[str, List[Callable]] = {}
         self._sub_counter = 0
@@ -741,11 +741,11 @@ class _InMemoryFallback:
         """Subscribe in-memory."""
         _sid = f"mem_{self._sub_counter}"
         self._sub_counter += 1
-        
+
         if subject not in self._subscriptions:
             self._subscriptions[subject] = []
         self._subscriptions[subject].append(callback)
-        
+
         return sid
 
     async def unsubscribe(self, _sid: str) -> bool:
@@ -771,13 +771,13 @@ class NATSEventMeshMixin:
         await mesh.setup_nats(servers=["nats://localhost:4222"])
         ```
     """
-    
+
     def __init__(self, *args, **kwargs) -> None:
         """Initialize mixin."""
         self._nats_mesh: Optional[NATSEventMesh] = None
         self._nats_enabled = False
         self._nats_config = kwargs.copy()
-    
+
     async def setup_nats(self, _servers: Optional[List[str]], _fallback: bool) -> bool:
         """
         Setup NATS EventMesh integration.
@@ -793,10 +793,10 @@ class NATSEventMeshMixin:
         if servers:
             config["servers"] = servers
         config["fallback"] = fallback
-        
+
         self._nats_mesh = NATSEventMesh(**config)
         self._nats_enabled = await self._nats_mesh.connect()
-        
+
         return self._nats_enabled
 
     @property
@@ -841,7 +841,7 @@ class NATSEventMeshWithJetStream(NATSEventMesh):
         )
         ```
     """
-    
+
     def __init__(self, _servers: Optional[List[str]], _name: Optional[str], _fallback: bool, _max_reconnect_attempts: int, _reconnect_timewait: float, _ping_interval: int, _max_outstanding: int, _zero_trust_enabled: bool) -> None:
         """
         Initialize enhanced NATSEventMesh with JetStream.
@@ -865,23 +865,23 @@ class NATSEventMeshWithJetStream(NATSEventMesh):
             _ping_interval = ping_interval,
             _max_outstanding = max_outstanding,
         )
-        
+
         # JetStream manager reference
         self._js_manager = None
         self._zero_trust_enabled = zero_trust_enabled
-        
+
         logger.info("NATSEventMeshWithJetStream initialized")
-    
+
     @property
     def jetstream_manager(self) -> Optional[Any]:
         """Get JetStream manager instance."""
         return self._js_manager
-    
+
     @property
     def jetstream_ready(self) -> bool:
         """Check if JetStream is ready."""
         return self._js_manager is not None and self._js_manager.is_connected
-    
+
     async def initialize_jetstream(self, _create_default_streams: bool) -> bool:
         """
         Initialize JetStream manager and create streams.
@@ -895,13 +895,13 @@ class NATSEventMeshWithJetStream(NATSEventMesh):
         if not self.is_connected:
             logger.warning("Not connected, cannot initialize JetStream")
             return False
-        
+
         try:
             # Import JetStreamManager
             from heretek_swarm.gateway.jetstream_manager import (
                 JetStreamManager,
             )
-            
+
             # Create manager
             self._js_manager = JetStreamManager(
                 _servers = self.servers,
@@ -909,25 +909,25 @@ class NATSEventMeshWithJetStream(NATSEventMesh):
                 _zero_trust_enabled = self._zero_trust_enabled,
                 _fallback_enabled = self.fallback,
             )
-            
+
             # Connect
             _connected = await self._js_manager.connect()
             if not connected:
                 logger.warning("JetStreamManager connection failed")
                 return False
-            
+
             # Create default streams if requested
             if create_default_streams:
                 _results = await self._js_manager.initialize_default_streams()
                 logger.info("Default streams initialized", results=results)
-            
+
             logger.info("JetStream initialized")
             return True
-            
+
         except Exception as e:
             logger.error(f"Failed to initialize JetStream: {e}")
             return False
-    
+
     async def publish_event(self, _stream_name: str, _event_type: str, _entity_id: str, _payload: Dict[str, Any], _correlation_id: Optional[str]) -> bool:
         """
         Publish a domain event to a stream.
@@ -946,7 +946,7 @@ class NATSEventMeshWithJetStream(NATSEventMesh):
             # Fallback to regular publish
             _subject = f"{stream_name}.{event_type}.{entity_id}"
             return await self.publish(subject, payload)
-        
+
         # Build event envelope
         event = {
             "event_id": f"{event_type}-{entity_id}-{datetime.now(timezone.utc).timestamp()}",
@@ -955,7 +955,7 @@ class NATSEventMeshWithJetStream(NATSEventMesh):
             "timestamp": datetime.now(timezone.utc).isoformat(),
             "payload": payload,
         }
-        
+
         # Determine subject based on stream type
         if stream_name == "AGENT_EVENTS":
             _subject = f"agent.{entity_id}.events"
@@ -967,14 +967,14 @@ class NATSEventMeshWithJetStream(NATSEventMesh):
             _subject = f"health.{entity_id}.metrics"
         else:
             _subject = f"{stream_name}.{event_type}"
-        
+
         return await self._js_manager.publish(
             _stream_name = stream_name,
             _subject = subject,
             _data = event,
             _correlation_id = correlation_id,
         )
-    
+
     async def subscribe_to_events(self, _stream_name: str, _event_type: Optional[str], _entity_id: Optional[str], _callback: Optional[Callable[[str, Dict[str, Any]], None]], _durable_name: Optional[str]) -> Optional[str]:
         """
         Subscribe to events from a stream.
@@ -998,7 +998,7 @@ class NATSEventMeshWithJetStream(NATSEventMesh):
             else:
                 _subject = f"{stream_name}.>"
             return await self.subscribe(subject, callback)
-        
+
         # Build subject filter
         if event_type and entity_id:
             _subject_filter = f"agent.{entity_id}.events"
@@ -1006,14 +1006,14 @@ class NATSEventMeshWithJetStream(NATSEventMesh):
             _subject_filter = f"agent.*.events"
         else:
             _subject_filter = ">"
-        
+
         # Create consumer config
         from heretek_swarm.gateway.jetstream_manager import (
+            AckPolicy,
             ConsumerConfig,
             DeliverPolicy,
-            AckPolicy,
         )
-        
+
         _consumer_config = ConsumerConfig(
             _durable_name = durable_name or f"consumer_{stream_name}_{datetime.now(timezone.utc).strftime('%Y%m%d%H%M%S')}",
             _stream_name = stream_name,
@@ -1021,9 +1021,9 @@ class NATSEventMeshWithJetStream(NATSEventMesh):
             _ack_policy = AckPolicy.EXPLICIT,
             _filter_subject = subject_filter,
         )
-        
+
         return await self._js_manager.create_consumer(consumer_config, callback)
-    
+
     async def replay_events(self, _stream_name: str, _start_sequence: Optional[int], _end_sequence: Optional[int], _event_type: Optional[str], _callback: Optional[Callable[[str, Dict[str, Any]], None]]) -> List[Dict[str, Any]]:
         """
         Replay events from a stream.
@@ -1041,12 +1041,12 @@ class NATSEventMeshWithJetStream(NATSEventMesh):
         if not self.jetstream_ready:
             logger.warning("JetStream not ready, cannot replay events")
             return []
-        
+
         # Build subject filter
         _subject_filter = None
         if event_type:
             _subject_filter = f"*.{event_type}.*"
-        
+
         return await self._js_manager.replay_messages(
             _stream_name = stream_name,
             _start_sequence = start_sequence,
@@ -1054,7 +1054,7 @@ class NATSEventMeshWithJetStream(NATSEventMesh):
             _subject_filter = subject_filter,
             _callback = callback,
         )
-    
+
     async def get_stream_stats(self, _stream_name: str) -> Optional[Dict[str, Any]]:
         """
         Get statistics for a stream.
@@ -1067,18 +1067,18 @@ class NATSEventMeshWithJetStream(NATSEventMesh):
         """
         if not self.jetstream_ready:
             return None
-        
+
         info = await self._js_manager.get_stream_info(stream_name)
         if not info:
             return None
-        
+
         return info.to_dict()
-    
+
     async def shutdown(self) -> None:
         """Shutdown JetStream and NATS connections."""
         if self._js_manager:
             await self._js_manager.disconnect()
             self._js_manager = None
-        
+
         await self.disconnect()
         logger.info("NATSEventMeshWithJetStream shutdown complete")

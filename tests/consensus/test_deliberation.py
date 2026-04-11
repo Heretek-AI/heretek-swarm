@@ -9,22 +9,22 @@ Tests cover:
 - Dissent tracking
 """
 
+
 import pytest
-from datetime import datetime, timezone, timedelta
 
 from heretek_swarm.consensus.deliberation import (
-    DeliberationEngine,
-    DeliberationConfig,
     Argument,
-    CounterArgument,
-    Evidence,
-    DeliberationRound,
-    ConsensusConfidence,
-    DissentRecord,
-    Position,
     ArgumentType,
-    EvidenceType,
+    ConsensusConfidence,
+    CounterArgument,
+    DeliberationConfig,
+    DeliberationEngine,
     DeliberationOutcome,
+    DeliberationRound,
+    DissentRecord,
+    Evidence,
+    EvidenceType,
+    Position,
 )
 
 
@@ -417,7 +417,7 @@ class TestConsensusConfidence:
     def test_confidence_calculation_high_agreement(self):
         """Test confidence calculation with high agreement."""
         cc = ConsensusConfidence()
-        
+
         dissent_records = []
         cc.calculate(
             for_weight=0.9,
@@ -434,7 +434,7 @@ class TestConsensusConfidence:
     def test_confidence_calculation_low_agreement(self):
         """Test confidence calculation with low agreement."""
         cc = ConsensusConfidence()
-        
+
         dissent_records = [
             DissentRecord(agent_id="agent-1", position=Position.AGAINST, confidence=0.8, reasoning="Disagree")
         ]

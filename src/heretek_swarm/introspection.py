@@ -20,7 +20,7 @@ from typing import Any, Dict, List, Optional, Tuple
 
 import structlog
 
-from .self_model import Belief, Goal, GoalStatus, SelfModel
+from .self_model import Belief, GoalStatus, SelfModel
 
 _logger = structlog.get_logger("IntrospectionModule")
 
@@ -42,7 +42,7 @@ class BeliefEvolutionRecord:
     new_confidence: float = 0.0
     evidence_count: int = 0
     reason: str = "update"
-    
+
     def to_dict(self) -> Dict[str, Any]:
         return {
             "belief_id": self.belief_id,
@@ -66,7 +66,7 @@ class GoalEvolutionRecord:
     old_status: str = ""
     new_status: str = ""
     reason: str = "update"
-    
+
     def to_dict(self) -> Dict[str, Any]:
         return {
             "goal_id": self.goal_id,
@@ -93,7 +93,7 @@ class BeliefInsight:
     evidence_quality: str  # "strong", "moderate", "weak"
     has_conflicts: bool
     conflict_count: int
-    
+
     def to_dict(self) -> Dict[str, Any]:
         return {
             "belief_id": self.belief_id,
@@ -119,7 +119,7 @@ class ConflictPair:
     belief_2_confidence: float
     resolution_suggestion: str
     resolution_strategy: ConflictResolutionStrategy
-    
+
     def to_dict(self) -> Dict[str, Any]:
         return {
             "belief_1_id": self.belief_1_id,
@@ -147,7 +147,7 @@ class IntrospectionReport:
     goal_status_distribution: Dict[str, int] = field(default_factory=dict)
     evolution_history: List[Dict[str, Any]] = field(default_factory=list)
     insights: List[Dict[str, Any]] = field(default_factory=list)
-    
+
     def to_dict(self) -> Dict[str, Any]:
         return {
             "timestamp": self.timestamp,
@@ -174,7 +174,7 @@ class IntrospectionModule:
     - Conflict detection and resolution
     - Introspection reporting
     """
-    
+
     # Configuration constants
     CONFIDENCE_DECAY_RATE = 0.01  # Per day decay rate for beliefs without evidence
     CONFIDENCE_GROWTH_RATE = 0.05  # Confidence increase per strong evidence
@@ -183,7 +183,7 @@ class IntrospectionModule:
     EVIDENCE_HALF_LIFE_DAYS = 30  # Evidence weight halves after this period
     MAX_EVOLUTION_HISTORY = 500
     BELIEF_AGE_WEIGHT = 0.1  # Weight given to belief age in confidence calculation
-    
+
     def __init__(self, self_model: SelfModel):
         """Initialize the IntrospectionModule.
         
@@ -196,7 +196,7 @@ class IntrospectionModule:
         self._belief_update_counts: Dict[str, int] = {}
         self._belief_last_update: Dict[str, datetime] = {}
         self._belief_initial_time: Dict[str, datetime] = {}
-        
+
         # Initialize tracking for existing beliefs
         for belief_id, belief in self_model.beliefs.items():
             self._belief_update_counts[belief_id] = 0
@@ -204,7 +204,7 @@ class IntrospectionModule:
                 self._belief_initial_time[belief_id] = datetime.fromisoformat(belief.created_at)
             except (ValueError, TypeError):
                 self._belief_initial_time[belief_id] = datetime.now(timezone.utc)
-        
+
         logger.info(
             "IntrospectionModule initialized",
             _extra = {
@@ -212,7 +212,7 @@ class IntrospectionModule:
                 "tracked_beliefs": len(self._belief_update_counts),
             }
         )
-    
+
     def reflect_on_beliefs(self) -> Dict[str, Any]:
         """Analyze current belief state and return insights.
         
@@ -228,12 +228,12 @@ class IntrospectionModule:
         insights: List[BeliefInsight] = []
         _confidence_distribution = {"very_low": 0, "low": 0, "moderate": 0, "high": 0, "very_high": 0}
         _evidence_quality_summary = {"strong": 0, "moderate": 0, "weak": 0}
-        
+
         _confidences = []
-        
+
         for belief in self.self_model.beliefs.values():
             confidences.append(belief.confidence)
-            
+
             # Calculate confidence distribution
             if belief.confidence < 0.2:
                 confidence_distribution["very_low"] += 1
@@ -245,19 +245,19 @@ class IntrospectionModule:
                 confidence_distribution["high"] += 1
             else:
                 confidence_distribution["very_high"] += 1
-            
+
             # Calculate belief age
             _initial_time = self._belief_initial_time.get(belief.belief_id, now)
             _age_seconds = (now - initial_time).total_seconds()
-            
+
             # Calculate update frequency (updates per day)
             _update_count = self._belief_update_counts.get(belief.belief_id, 0)
             _age_days = age_seconds / 86400 if age_seconds > 0 else 1
             _update_frequency = update_count / age_days if age_days > 0 else update_count
-            
+
             # Determine confidence trend
             _trend = self._get_confidence_trend(belief.belief_id)
-            
+
             # Assess evidence quality
             _evidence_quality = self._assess_evidence_quality(belief)
             if evidence_quality == "strong":
@@ -266,10 +266,10 @@ class IntrospectionModule:
                 evidence_quality_summary["moderate"] += 1
             else:
                 evidence_quality_summary["weak"] += 1
-            
+
             # Check for conflicts
             has_conflicts = len(belief.conflicting_beliefs) > 0
-            
+
             _insight = BeliefInsight(
                 belief_id=belief.belief_id,
                 state=belief.state,
@@ -282,14 +282,14 @@ class IntrospectionModule:
                 _conflict_count = len(belief.conflicting_beliefs),
             )
             insights.append(insight)
-        
+
         # Calculate statistics
         _avg_confidence = sum(confidences) / len(confidences) if confidences else 0.0
         _confidence_variance = (
             sum((c - avg_confidence) ** 2 for c in confidences) / len(confidences)
             if len(confidences) > 1 else 0.0
         )
-        
+
         _result = {
             "confidence_distribution": confidence_distribution,
             "insights": [i.to_dict() for i in insights],
@@ -299,10 +299,10 @@ class IntrospectionModule:
             "total_beliefs": len(self.self_model.beliefs),
             "beliefs_with_conflicts": sum(1 for i in insights if i.has_conflicts),
         }
-        
+
         logger.debug("Belief reflection completed", extra={"insight_count": len(insights)})
         return result
-    
+
     def update_belief_from_outcome(self, belief_id: str, outcome: Dict[str, Any], evidence: Dict[str, Any]) -> Optional[Belief]:
         """Update belief confidence based on observed outcomes.
         
@@ -324,14 +324,14 @@ class IntrospectionModule:
         if belief_id not in self.self_model.beliefs:
             logger.warning("Belief not found", extra={"belief_id": belief_id})
             return None
-        
+
         belief = self.self_model.beliefs[belief_id]
         old_confidence = belief.confidence
-        
+
         # Calculate confidence adjustment based on outcome
         _outcome_success = outcome.get("success", True)
         _evidence_strength = evidence.get("strength", 0.5)
-        
+
         # Base adjustment from outcome
         if outcome_success:
             # Positive outcome - increase confidence
@@ -339,20 +339,20 @@ class IntrospectionModule:
         else:
             # Negative outcome - decrease confidence
             _adjustment = -self.CONFIDENCE_GROWTH_RATE * evidence_strength
-        
+
         # Apply evidence quality bonus
         _evidence_quality = self._assess_evidence_quality(belief)
         if evidence_quality == "strong":
             adjustment *= 1.5
         elif evidence_quality == "weak":
             adjustment *= 0.5
-        
+
         # Calculate new confidence with bounds
         new_confidence = max(
             self.CONFIDENCE_MIN,
             min(self.CONFIDENCE_MAX, old_confidence + adjustment)
         )
-        
+
         # Record the evolution
         _evolution_record = BeliefEvolutionRecord(
             belief_id=belief_id,
@@ -363,27 +363,27 @@ class IntrospectionModule:
         )
         self._belief_evolution_history.append(evolution_record)
         self._trim_evolution_history()
-        
+
         # Update belief
         belief.confidence = new_confidence
         belief.updated_at = datetime.now(timezone.utc).isoformat()
-        
+
         # Add evidence to supporting evidence
         _evidence_source = evidence.get("source", "unknown")
         if evidence_source not in belief.supporting_evidence:
             belief.supporting_evidence.append(evidence_source)
-        
+
         # Update tracking
         self._belief_update_counts[belief_id] = self._belief_update_counts.get(belief_id, 0) + 1
         self._belief_last_update[belief_id] = datetime.now(timezone.utc)
-        
+
         # Check for conflicts if confidence changed significantly
         if abs(new_confidence - old_confidence) > 0.2:
             self.self_model._detect_belief_conflict(belief, old_confidence)
-        
+
         self.self_model._update_count += 1
         self.self_model._maybe_take_snapshot()
-        
+
         logger.info(
             "Belief updated from outcome",
             _extra = {
@@ -393,9 +393,9 @@ class IntrospectionModule:
                 "adjustment": adjustment,
             }
         )
-        
+
         return belief
-    
+
     def evolve_goals(self, current_state: Dict[str, Any]) -> Dict[str, Any]:
         """Update goal priorities and progress based on current system state.
         
@@ -418,37 +418,37 @@ class IntrospectionModule:
         priority_changes: Dict[str, float] = {}
         status_changes: Dict[str, Tuple[str, str]] = {}
         new_blocked_goals: List[str] = []
-        
+
         _completed_tasks = set(current_state.get("completed_tasks", []))
         _achievements = current_state.get("achievements", [])
         _resources = current_state.get("resources", {})
         _constraints = current_state.get("constraints", [])
-        
+
         for goal_id, goal in self.self_model.goals.items():
             _old_priority = goal.priority
             _old_status = goal.status.value
             _old_progress = goal.progress
-            
+
             # Update progress based on completed tasks
             if goal.goal_id in completed_tasks or any(
                 sg in completed_tasks for sg in goal.sub_goals
             ):
                 _progress_increment = 0.1
                 goal.progress = min(1.0, goal.progress + progress_increment)
-            
+
             # Check if goal should be completed
             if goal.progress >= 1.0 and goal.status != GoalStatus.COMPLETED:
                 goal.status = GoalStatus.COMPLETED
                 goal.completed_at = datetime.now(timezone.utc).isoformat()
                 status_changes[goal_id] = (old_status, GoalStatus.COMPLETED.value)
                 updated_goals.append(goal_id)
-            
+
             # Adjust priority based on achievements
             _goal_description_lower = goal.description.lower()
             for achievement in achievements:
                 if any(word in achievement.lower() for word in goal_description_lower.split()):
                     goal.priority = min(1.0, goal.priority + 0.05)
-            
+
             # Check for blocking constraints
             if constraints:
                 _constraint_blocks = False
@@ -456,7 +456,7 @@ class IntrospectionModule:
                     if constraint.lower() in goal_description_lower:
                         _constraint_blocks = True
                         break
-                
+
                 if constraint_blocks and goal.status == GoalStatus.ACTIVE:
                     goal.status = GoalStatus.BLOCKED
                     goal.blocked_by.append("constraint")
@@ -469,7 +469,7 @@ class IntrospectionModule:
                         goal.blocked_by.remove("constraint")
                     status_changes[goal_id] = (old_status, GoalStatus.ACTIVE.value)
                     updated_goals.append(goal_id)
-            
+
             # Resource-based priority adjustment
             if resources:
                 _resource_availability = sum(1 for v in resources.values() if v > 0.5) / max(1, len(resources))
@@ -477,7 +477,7 @@ class IntrospectionModule:
                     goal.priority = min(1.0, goal.priority + 0.1)
                 elif resource_availability < 0.3 and goal.priority > 0.3:
                     goal.priority = max(0.0, goal.priority - 0.1)
-            
+
             # Record evolution if changes occurred
             if goal.priority != old_priority or goal.status.value != old_status:
                 _evolution_record = GoalEvolutionRecord(
@@ -491,14 +491,14 @@ class IntrospectionModule:
                     _reason = "state_evolution",
                 )
                 self._goal_evolution_history.append(evolution_record)
-                
+
                 if goal.priority != old_priority:
                     priority_changes[goal_id] = goal.priority - old_priority
-                
+
                 updated_goals.append(goal_id)
-        
+
         self._trim_evolution_history()
-        
+
         _result = {
             "updated_goals": updated_goals,
             "priority_changes": priority_changes,
@@ -509,7 +509,7 @@ class IntrospectionModule:
                 if g.status == GoalStatus.ACTIVE
             ),
         }
-        
+
         logger.info(
             "Goal evolution completed",
             _extra = {
@@ -517,9 +517,9 @@ class IntrospectionModule:
                 "priority_changes_count": len(priority_changes),
             }
         )
-        
+
         return result
-    
+
     def detect_conflicting_beliefs(self, strategy: ConflictResolutionStrategy) -> List[ConflictPair]:
         """Find beliefs with contradictory states.
         
@@ -531,14 +531,14 @@ class IntrospectionModule:
         """
         conflicts: List[ConflictPair] = []
         _belief_list = list(self.self_model.beliefs.values())
-        
+
         for i, belief_1 in enumerate(belief_list):
             for belief_2 in belief_list[i + 1:]:
                 if self._are_beliefs_in_conflict(belief_1, belief_2):
                     resolution_suggestion, resolution_strategy = self._suggest_resolution(
                         belief_1, belief_2, strategy
                     )
-                    
+
                     _conflict_pair = ConflictPair(
                         _belief_1_id = belief_1.belief_id,
                         _belief_2_id = belief_2.belief_id,
@@ -550,20 +550,20 @@ class IntrospectionModule:
                         _resolution_strategy = resolution_strategy,
                     )
                     conflicts.append(conflict_pair)
-                    
+
                     # Update the beliefs' conflicting_beliefs lists
                     if belief_2.belief_id not in belief_1.conflicting_beliefs:
                         belief_1.conflicting_beliefs.append(belief_2.belief_id)
                     if belief_1.belief_id not in belief_2.conflicting_beliefs:
                         belief_2.conflicting_beliefs.append(belief_1.belief_id)
-        
+
         logger.info(
             "Conflict detection completed",
             _extra = {"conflict_count": len(conflicts)}
         )
-        
+
         return conflicts
-    
+
     def track_goal_progress(self, goal_id: str, outcome: Dict[str, Any]) -> bool:
         """Update specific goal progress based on outcomes.
         
@@ -581,30 +581,30 @@ class IntrospectionModule:
         if goal_id not in self.self_model.goals:
             logger.warning("Goal not found", extra={"goal_id": goal_id})
             return False
-        
+
         goal = self.self_model.goals[goal_id]
         _old_progress = goal.progress
         _old_status = goal.status
         _old_priority = goal.priority
-        
+
         # Apply progress delta
         _progress_delta = outcome.get("progress_delta", 0.0)
         if progress_delta != 0:
             goal.progress = max(0.0, min(1.0, goal.progress + progress_delta))
-        
+
         # Handle completion
         if outcome.get("completion", False) or goal.progress >= 1.0:
             goal.status = GoalStatus.COMPLETED
             goal.completed_at = datetime.now(timezone.utc).isoformat()
             goal.progress = 1.0
-            
+
             # Update parent goal progress if applicable
             if goal.parent_goal_id and goal.parent_goal_id in self.self_model.goals:
                 self.self_model._update_parent_progress(goal.parent_goal_id)
-            
+
             # Unblock dependent goals
             self.self_model._unblock_dependent_goals(goal_id)
-        
+
         # Handle success/failure
         _success = outcome.get("success")
         if success is not None:
@@ -615,7 +615,7 @@ class IntrospectionModule:
                 # Negative outcome - check if goal should be paused
                 if goal.progress < 0.3:
                     goal.status = GoalStatus.PAUSED
-        
+
         # Handle new blockers
         _blockers = outcome.get("blockers", [])
         if blockers and goal.status != GoalStatus.COMPLETED:
@@ -623,7 +623,7 @@ class IntrospectionModule:
             for blocker in blockers:
                 if blocker not in goal.blocked_by:
                     goal.blocked_by.append(blocker)
-        
+
         # Record evolution
         _evolution_record = GoalEvolutionRecord(
             goal_id=goal_id,
@@ -637,10 +637,10 @@ class IntrospectionModule:
         )
         self._goal_evolution_history.append(evolution_record)
         self._trim_evolution_history()
-        
+
         self.self_model._update_count += 1
         self.self_model._maybe_take_snapshot()
-        
+
         logger.info(
             "Goal progress tracked",
             _extra = {
@@ -650,9 +650,9 @@ class IntrospectionModule:
                 "new_status": goal.status.value,
             }
         )
-        
+
         return True
-    
+
     def get_introspection_report(self) -> IntrospectionReport:
         """Generate a complete introspection report.
         
@@ -666,10 +666,10 @@ class IntrospectionModule:
         """
         # Get belief insights
         _belief_reflection = self.reflect_on_beliefs()
-        
+
         # Detect conflicts
         _conflicts = self.detect_conflicting_beliefs()
-        
+
         # Build belief list
         beliefs = []
         for belief in self.self_model.beliefs.values():
@@ -681,26 +681,26 @@ class IntrospectionModule:
                 )
             ).total_seconds()
             beliefs.append(belief_data)
-        
+
         # Build goal list
         goals = [goal.to_dict() for goal in self.self_model.goals.values()]
-        
+
         # Build goal status distribution
         goal_status_distribution: Dict[str, int] = {}
         for goal in self.self_model.goals.values():
             _status = goal.status.value
             goal_status_distribution[status] = goal_status_distribution.get(status, 0) + 1
-        
+
         # Build evolution history
         _evolution_history = []
         for record in self._belief_evolution_history[-50:]:
             evolution_history.append(record.to_dict())
         for record in self._goal_evolution_history[-50:]:
             evolution_history.append(record.to_dict())
-        
+
         # Sort by timestamp
         evolution_history.sort(key=lambda x: x.get("timestamp", ""), reverse=True)
-        
+
         _report = IntrospectionReport(
             _agent_id = self.self_model.agent_id,
             belief_count=len(self.self_model.beliefs),
@@ -713,7 +713,7 @@ class IntrospectionModule:
             _evolution_history = evolution_history[:100],
             _insights = belief_reflection["insights"][:50],
         )
-        
+
         logger.info(
             "Introspection report generated",
             _extra = {
@@ -722,9 +722,9 @@ class IntrospectionModule:
                 "conflict_count": len(conflicts),
             }
         )
-        
+
         return report
-    
+
     def apply_confidence_decay(self, days_elapsed: float) -> Dict[str, float]:
         """Apply confidence decay to beliefs without recent evidence.
         
@@ -736,15 +736,15 @@ class IntrospectionModule:
         """
         changes: Dict[str, float] = {}
         _now = datetime.now(timezone.utc)
-        
+
         for belief_id, belief in self.self_model.beliefs.items():
             # Check if belief has recent updates
             _last_update = self._belief_last_update.get(belief_id)
             if last_update is None:
                 _last_update = self._belief_initial_time.get(belief_id, now)
-            
+
             _days_since_update = (now - last_update).total_seconds() / 86400
-            
+
             # Apply decay if no recent updates
             if days_since_update > 1:
                 _decay_factor = math.exp(-self.CONFIDENCE_DECAY_RATE * days_elapsed)
@@ -753,11 +753,11 @@ class IntrospectionModule:
                     self.CONFIDENCE_MIN,
                     old_confidence * decay_factor + (1 - decay_factor) * 0.5  # Decay toward neutral
                 )
-                
+
                 if abs(new_confidence - old_confidence) > 0.001:
                     belief.confidence = new_confidence
                     changes[belief_id] = new_confidence - old_confidence
-                    
+
                     # Record evolution
                     _evolution_record = BeliefEvolutionRecord(
                         belief_id=belief_id,
@@ -767,20 +767,20 @@ class IntrospectionModule:
                         _reason = "time_decay",
                     )
                     self._belief_evolution_history.append(evolution_record)
-        
+
         self._trim_evolution_history()
-        
+
         if changes:
             self.self_model._update_count += 1
             self.self_model._maybe_take_snapshot()
-        
+
         logger.debug(
             "Confidence decay applied",
             _extra = {"affected_beliefs": len(changes)}
         )
-        
+
         return changes
-    
+
     def get_belief_evolution_history(self, belief_id: str) -> List[Dict[str, Any]]:
         """Get evolution history for a specific belief.
         
@@ -795,7 +795,7 @@ class IntrospectionModule:
             for record in self._belief_evolution_history
             if record.belief_id == belief_id
         ]
-    
+
     def get_goal_evolution_history(self, goal_id: str) -> List[Dict[str, Any]]:
         """Get evolution history for a specific goal.
         
@@ -810,7 +810,7 @@ class IntrospectionModule:
             for record in self._goal_evolution_history
             if record.goal_id == goal_id
         ]
-    
+
     def _get_confidence_trend(self, belief_id: str) -> str:
         """Determine the confidence trend for a belief.
         
@@ -824,19 +824,19 @@ class IntrospectionModule:
             r for r in self._belief_evolution_history
             if r.belief_id == belief_id
         ][-5:]  # Last 5 records
-        
+
         if len(history) < 2:
             return "stable"
-        
+
         _changes = [r.new_confidence - r.old_confidence for r in history]
         _avg_change = sum(changes) / len(changes)
-        
+
         if avg_change > 0.01:
             return "increasing"
         elif avg_change < -0.01:
             return "decreasing"
         return "stable"
-    
+
     def _assess_evidence_quality(self, belief: Belief) -> str:
         """Assess the quality of evidence for a belief.
         
@@ -848,7 +848,7 @@ class IntrospectionModule:
         """
         _evidence_count = len(belief.supporting_evidence)
         _conflict_count = len(belief.conflicting_beliefs)
-        
+
         # Simple heuristic based on evidence count and conflicts
         if evidence_count >= 5 and conflict_count == 0:
             return "strong"
@@ -857,7 +857,7 @@ class IntrospectionModule:
         elif evidence_count >= 1:
             return "weak"
         return "weak"
-    
+
     def _are_beliefs_in_conflict(self, b1: Belief, b2: Belief) -> bool:
         """Check if two beliefs are in conflict.
         
@@ -870,7 +870,7 @@ class IntrospectionModule:
         """
         # Use existing method from SelfModel
         return self.self_model._are_beliefs_conflicting(b1, b2)
-    
+
     def _suggest_resolution(self, b1: Belief, b2: Belief, strategy: ConflictResolutionStrategy) -> Tuple[str, ConflictResolutionStrategy]:
         """Suggest a resolution for conflicting beliefs.
         
@@ -895,7 +895,7 @@ class IntrospectionModule:
                     f"over '{b1.state[:50]}...' (confidence: {b1.confidence:.2f})",
                     ConflictResolutionStrategy.CONFIDENCE_BASED,
                 )
-        
+
         elif strategy == ConflictResolutionStrategy.EVIDENCE_BASED:
             _evidence_1 = len(b1.supporting_evidence)
             _evidence_2 = len(b2.supporting_evidence)
@@ -911,7 +911,7 @@ class IntrospectionModule:
                     f"over '{b1.state[:50]}...' ({evidence_1} evidence sources)",
                     ConflictResolutionStrategy.EVIDENCE_BASED,
                 )
-        
+
         elif strategy == ConflictResolutionStrategy.RECENCY_BASED:
             try:
                 _time_1 = datetime.fromisoformat(b1.updated_at)
@@ -933,14 +933,14 @@ class IntrospectionModule:
                     "Unable to determine recency - falling back to confidence-based resolution",
                     ConflictResolutionStrategy.CONFIDENCE_BASED,
                 )
-        
+
         else:  # AVERAGE
             _avg_confidence = (b1.confidence + b2.confidence) / 2
             return (
                 f"Consider averaging confidence values: ({b1.confidence:.2f} + {b2.confidence:.2f}) / 2 = {avg_confidence:.2f}",
                 ConflictResolutionStrategy.AVERAGE,
             )
-    
+
     def _trim_evolution_history(self) -> None:
         """Trim evolution history to maximum size."""
         if len(self._belief_evolution_history) > self.MAX_EVOLUTION_HISTORY:

@@ -7,16 +7,15 @@ Enforces >80% test coverage and <100ms message latency baseline.
 
 import asyncio
 import time
+import uuid
 from collections.abc import AsyncGenerator, Generator
 from dataclasses import dataclass, field
 from typing import Any
 from unittest.mock import AsyncMock, MagicMock
-import uuid
 
 import pytest
 import pytest_asyncio
 from pydantic import BaseModel
-
 
 # ============== CONFIGURATION ==============
 

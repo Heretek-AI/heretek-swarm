@@ -10,20 +10,29 @@ Provides endpoints for:
 - Consciousness metrics (IIT Phi, FEP)
 """
 
+import uuid
 from datetime import datetime, timedelta, timezone
 from typing import Any, Dict, List, Optional
-from fastapi import APIRouter, Query, WebSocket, WebSocketDisconnect, HTTPException, Request, Depends
+
+import structlog
+from fastapi import (
+    APIRouter,
+    Depends,
+    HTTPException,
+    Query,
+    Request,
+    WebSocket,
+    WebSocketDisconnect,
+)
 from fastapi.responses import PlainTextResponse
 from pydantic import BaseModel, Field
-import structlog
-import uuid
 
 from heretek_swarm.gateway.auth import verify_auth
-from heretek_swarm.security.zero_trust import ZeroTrustValidator, ZeroTrustResult, LayerResult
 from heretek_swarm.observability.metrics import (
-    SwarmMetricsCollector,
     RealTimeMetricsStream,
+    SwarmMetricsCollector,
 )
+from heretek_swarm.security.zero_trust import LayerResult, ZeroTrustResult, ZeroTrustValidator
 
 logger = structlog.get_logger(__name__)
 
@@ -71,19 +80,19 @@ def check_rate_limit(client_id: str) -> bool:
     """Check if client has exceeded rate limit."""
     now = datetime.now(timezone.utc)
     window_start = now - timedelta(seconds=RATE_LIMIT_WINDOW)
-    
+
     if client_id not in _rate_limit_state:
         _rate_limit_state[client_id] = []
-    
+
     # Clean old entries
     _rate_limit_state[client_id] = [
         ts for ts in _rate_limit_state[client_id] if ts > window_start
     ]
-    
+
     # Check limit
     if len(_rate_limit_state[client_id]) >= RATE_LIMIT_REQUESTS:
         return False
-    
+
     # Record this request
     _rate_limit_state[client_id].append(now)
     return True
@@ -126,7 +135,7 @@ async def get_swarm_health(request: Request) -> Dict[str, Any]:
     client_id = request.client.host if request.client else "unknown"
     if not check_rate_limit(client_id):
         raise HTTPException(status_code=429, detail="Rate limit exceeded")
-    
+
     # Zero-trust validation (audit logging)
     validator = get_zero_trust()
     request_id = str(uuid.uuid4())
@@ -147,10 +156,10 @@ async def get_swarm_health(request: Request) -> Dict[str, Any]:
             "method": "GET",
         },
     )
-    
+
     collector = get_metrics_collector()
     swarm_data = collector.collect_swarm_metrics()
-    
+
     return {
         **swarm_data.to_dict(),
         "health_score": collector.calculate_health_score(),
@@ -179,12 +188,12 @@ async def get_agent_metrics(agent_id: str, request: Request) -> Dict[str, Any]:
     # Input validation
     validator = get_zero_trust()
     validate_input(validator, {"agent_id": agent_id}, "agent_id")
-    
+
     # Rate limiting
     client_id = request.client.host if request.client else "unknown"
     if not check_rate_limit(client_id):
         raise HTTPException(status_code=429, detail="Rate limit exceeded")
-    
+
     # Audit logging
     request_id = str(uuid.uuid4())
     audit_result = ZeroTrustResult(
@@ -205,10 +214,10 @@ async def get_agent_metrics(agent_id: str, request: Request) -> Dict[str, Any]:
             "method": "GET",
         },
     )
-    
+
     collector = get_metrics_collector()
     agent_data = collector.collect_agent_metrics(agent_id)
-    
+
     return agent_data.to_dict()
 
 
@@ -224,11 +233,11 @@ async def get_all_agents(request: Request) -> Dict[str, Any]:
     client_id = request.client.host if request.client else "unknown"
     if not check_rate_limit(client_id):
         raise HTTPException(status_code=429, detail="Rate limit exceeded")
-    
+
     collector = get_metrics_collector()
     agents = collector.get_all_agent_metrics()
     states = collector.get_agent_states()
-    
+
     return {
         "agents": {k: v.to_dict() for k, v in agents.items()},
         "states": states,
@@ -261,7 +270,7 @@ async def get_consciousness_metrics(request: Request) -> Dict[str, Any]:
     client_id = request.client.host if request.client else "unknown"
     if not check_rate_limit(client_id):
         raise HTTPException(status_code=429, detail="Rate limit exceeded")
-    
+
     validator = get_zero_trust()
     request_id = str(uuid.uuid4())
     audit_result = ZeroTrustResult(
@@ -281,10 +290,10 @@ async def get_consciousness_metrics(request: Request) -> Dict[str, Any]:
             "method": "GET",
         },
     )
-    
+
     collector = get_metrics_collector()
     consciousness_data = collector.collect_consciousness_metrics()
-    
+
     return consciousness_data.to_dict()
 
 
@@ -303,18 +312,18 @@ async def get_agent_consciousness(agent_id: str, request: Request) -> Dict[str, 
     # Input validation
     validator = get_zero_trust()
     validate_input(validator, {"agent_id": agent_id}, "agent_id")
-    
+
     # Rate limiting
     client_id = request.client.host if request.client else "unknown"
     if not check_rate_limit(client_id):
         raise HTTPException(status_code=429, detail="Rate limit exceeded")
-    
+
     collector = get_metrics_collector()
     consciousness_data = collector.collect_consciousness_metrics()
-    
+
     agent_phi = consciousness_data.agent_phi_scores.get(agent_id, 0.0)
     agent_fep = consciousness_data.agent_fep_scores.get(agent_id, 0.0)
-    
+
     return {
         "agent_id": agent_id,
         "phi_score": agent_phi,
@@ -347,7 +356,7 @@ async def stream_metrics(
     client_id = request.client.host if request.client else "unknown"
     if not check_rate_limit(client_id):
         raise HTTPException(status_code=429, detail="Rate limit exceeded")
-    
+
     validator = get_zero_trust()
     request_id = str(uuid.uuid4())
     audit_result = ZeroTrustResult(
@@ -367,10 +376,10 @@ async def stream_metrics(
             "method": "GET",
         },
     )
-    
+
     stream = get_metrics_stream()
     snapshot = stream.get_metrics_snapshot()
-    
+
     return {
         **snapshot.to_dict(),
         "stream_interval_seconds": interval,
@@ -387,7 +396,7 @@ async def websocket_metrics(websocket: WebSocket, interval: int = 5):
         interval: Stream interval in seconds (1-60)
     """
     await websocket.accept()
-    
+
     validator = get_zero_trust()
     validator.audit_log(
         event_type="websocket_connected",
@@ -396,9 +405,9 @@ async def websocket_metrics(websocket: WebSocket, interval: int = 5):
             "interval": interval,
         },
     )
-    
+
     stream = get_metrics_stream()
-    
+
     try:
         while True:
             try:
@@ -407,7 +416,7 @@ async def websocket_metrics(websocket: WebSocket, interval: int = 5):
                 consciousness = stream._collector.collect_consciousness_metrics()
                 agents = stream._collector.get_all_agent_metrics()
                 health = stream._collector.calculate_health_score()
-                
+
                 await websocket.send_json({
                     "swarm_metrics": swarm.to_dict(),
                     "consciousness_metrics": consciousness.to_dict(),
@@ -415,7 +424,7 @@ async def websocket_metrics(websocket: WebSocket, interval: int = 5):
                     "health_score": health,
                     "timestamp": datetime.now(timezone.utc).isoformat(),
                 })
-                
+
                 # Wait for interval or client message
                 try:
                     async with asyncio.timeout(interval):
@@ -425,7 +434,7 @@ async def websocket_metrics(websocket: WebSocket, interval: int = 5):
                             break
                 except asyncio.TimeoutError:
                     pass  # Continue streaming
-                    
+
             except WebSocketDisconnect:
                 logger.info("websocket_disconnected")
                 break
@@ -433,7 +442,7 @@ async def websocket_metrics(websocket: WebSocket, interval: int = 5):
                 logger.error("websocket_error", error=str(e))
                 await websocket.close()
                 break
-                
+
     finally:
         request_id = str(uuid.uuid4())
         audit_result = ZeroTrustResult(
@@ -475,7 +484,7 @@ async def get_alerts(request: Request) -> Dict[str, Any]:
     client_id = request.client.host if request.client else "unknown"
     if not check_rate_limit(client_id):
         raise HTTPException(status_code=429, detail="Rate limit exceeded")
-    
+
     validator = get_zero_trust()
     request_id = str(uuid.uuid4())
     audit_result = ZeroTrustResult(
@@ -495,10 +504,10 @@ async def get_alerts(request: Request) -> Dict[str, Any]:
             "method": "GET",
         },
     )
-    
+
     collector = get_metrics_collector()
     alerts: List[Dict[str, Any]] = []
-    
+
     # Check agent health
     agents = collector.get_all_agent_metrics()
     for agent_id, metrics in agents.items():
@@ -513,7 +522,7 @@ async def get_alerts(request: Request) -> Dict[str, Any]:
                 "threshold": 50,
                 "timestamp": datetime.now(timezone.utc).isoformat(),
             })
-        
+
         if metrics.error_count > 10:
             alerts.append({
                 "alert_id": f"errors_{agent_id}",
@@ -525,7 +534,7 @@ async def get_alerts(request: Request) -> Dict[str, Any]:
                 "threshold": 10,
                 "timestamp": datetime.now(timezone.utc).isoformat(),
             })
-    
+
     # Check consciousness metrics
     consciousness = collector.collect_consciousness_metrics()
     if consciousness.phi_avg < 0.3:
@@ -538,7 +547,7 @@ async def get_alerts(request: Request) -> Dict[str, Any]:
             "threshold": 0.3,
             "timestamp": datetime.now(timezone.utc).isoformat(),
         })
-    
+
     # Check overall health
     overall_health = collector.calculate_health_score()
     if overall_health < 60:
@@ -551,7 +560,7 @@ async def get_alerts(request: Request) -> Dict[str, Any]:
             "threshold": 60,
             "timestamp": datetime.now(timezone.utc).isoformat(),
         })
-    
+
     return {
         "alerts": alerts,
         "total_alerts": len(alerts),
@@ -576,10 +585,10 @@ async def get_prometheus_metrics(request: Request) -> PlainTextResponse:
     client_id = request.client.host if request.client else "unknown"
     if not check_rate_limit(client_id):
         raise HTTPException(status_code=429, detail="Rate limit exceeded")
-    
+
     stream = get_metrics_stream()
     prometheus_data = stream.export_prometheus_format()
-    
+
     return PlainTextResponse(
         content=prometheus_data,
         media_type="text/plain; version=0.0.4",
@@ -612,34 +621,34 @@ async def get_traces(
     """
     # Filter traces
     filtered_traces = []
-    
+
     for trace_id, traces in _traces.items():
         for trace in traces:
             # Apply filters
             if agent_id and trace.agent_id != agent_id:
                 continue
-            
+
             if event_type and trace.event_type != event_type:
                 continue
-            
+
             if start_time:
                 trace_time = datetime.fromisoformat(trace.timestamp)
                 start_dt = datetime.fromisoformat(start_time)
                 if trace_time < start_dt:
                     continue
-            
+
             if end_time:
                 trace_time = datetime.fromisoformat(trace.timestamp)
                 end_dt = datetime.fromisoformat(end_time)
                 if trace_time > end_dt:
                     continue
-            
+
             filtered_traces.append(trace)
-            
+
             # Apply limit
             if len(filtered_traces) >= limit:
                 break
-    
+
     return {
         "events": [trace.to_dict() for trace in filtered_traces],
         "total": len(filtered_traces),
@@ -663,7 +672,7 @@ async def get_trace(trace_id: str) -> Dict[str, Any]:
         for trace in agent_traces:
             if trace.id == trace_id:
                 return trace.to_dict()
-    
+
     return {"error": "Trace not found"}
 
 
@@ -689,30 +698,30 @@ async def create_trace(
     # Input validation
     validator = get_zero_trust()
     validate_input(validator, {"event_type": event_type, "agent_id": agent_id, "data": data}, "trace")
-    
+
     trace = TraceEvent(
         event_type=event_type,
         agent_id=agent_id,
         data=data,
         duration=duration,
     )
-    
+
     # Store in memory (in production, use database)
     if agent_id not in _traces:
         _traces[agent_id] = []
-    
+
     _traces[agent_id].append(trace)
-    
+
     # Broadcast to WebSocket connections
     await connection_manager.broadcast_trace(trace, agent_id)
-    
+
     logger.info(
         "trace_created",
         trace_id=trace.id,
         event_type=event_type,
         agent_id=agent_id,
     )
-    
+
     return trace.to_dict()
 
 
@@ -726,14 +735,14 @@ async def websocket_traces(websocket: WebSocket, agent_id: str):
         agent_id: Agent ID to stream traces for
     """
     await connection_manager.connect(websocket, agent_id)
-    
+
     try:
         # Send recent traces on connect
         if agent_id in _traces:
             recent_traces = _traces[agent_id][-100:]  # Last 100 traces
             for trace in recent_traces:
                 await websocket.send_json(trace.to_dict())
-        
+
         # Stream new traces as they arrive
         while True:
             try:
@@ -746,7 +755,7 @@ async def websocket_traces(websocket: WebSocket, agent_id: str):
             except Exception as e:
                 logger.error("websocket_error", agent_id=agent_id, error=str(e))
                 await websocket.close()
-    
+
     finally:
         await connection_manager.disconnect(websocket, agent_id)
 
@@ -762,19 +771,19 @@ async def get_legacy_metrics() -> Dict[str, Any]:
     total_events = 0
     events_by_type: Dict[str, int] = {}
     events_by_agent: Dict[str, int] = {}
-    
+
     for agent_traces in _traces.values():
         for trace in agent_traces:
             total_events += 1
             events_by_type[trace.event_type] = events_by_type.get(trace.event_type, 0) + 1
             events_by_agent[trace.agent_id] = events_by_agent.get(trace.agent_id, 0) + 1
-    
+
     # Calculate metrics
     avg_duration = 0
     if total_events > 0:
         total_duration = sum(trace.duration or 0 for traces in _traces.values() for trace in traces)
         avg_duration = total_duration / total_events
-    
+
     return {
         "total_events": total_events,
         "events_by_type": events_by_type,
@@ -802,7 +811,7 @@ async def clear_traces(agent_id: str) -> Dict[str, Any]:
         logger.info("traces_cleared", agent_id=agent_id, count=count)
     else:
         count = 0
-    
+
     return {
         "agent_id": agent_id,
         "cleared": count,
@@ -815,7 +824,7 @@ async def clear_traces(agent_id: str) -> Dict[str, Any]:
 
 class TraceEvent:
     """A trace event for observability."""
-    
+
     def __init__(
         self,
         event_type: str,
@@ -830,7 +839,7 @@ class TraceEvent:
         self.data = data
         self.timestamp = timestamp or datetime.now(timezone.utc)
         self.duration = duration
-    
+
     def to_dict(self) -> Dict[str, Any]:
         """Convert to dictionary for JSON serialization."""
         return {
@@ -845,21 +854,21 @@ class TraceEvent:
 
 class ConnectionManager:
     """Manage WebSocket connections for real-time trace streaming."""
-    
+
     def __init__(self):
         self.active_connections: Dict[str, WebSocket] = {}
-    
+
     async def connect(self, websocket: WebSocket, agent_id: str):
         """Handle new WebSocket connection."""
         self.active_connections[agent_id] = websocket
         logger.info("websocket_connected", agent_id=agent_id)
-    
+
     async def disconnect(self, websocket: WebSocket, agent_id: str):
         """Handle WebSocket disconnection."""
         if agent_id in self.active_connections:
             del self.active_connections[agent_id]
             logger.info("websocket_disconnected", agent_id=agent_id)
-    
+
     async def broadcast_trace(self, trace: TraceEvent, agent_id: str):
         """Broadcast trace to all connections for an agent."""
         if agent_id in self.active_connections:
@@ -875,7 +884,6 @@ connection_manager = ConnectionManager()
 # Import asyncio for timeout
 import asyncio
 
-
 # =============================================================================
 # Message Replay & Time Travel Debugging Endpoints
 # =============================================================================
@@ -888,18 +896,18 @@ def get_replay_manager() -> Optional[Any]:
     global _replay_manager
     if _replay_manager is None:
         try:
-            from heretek_swarm.gateway.message_replay import get_replay_manager as get_rm
             from heretek_swarm.gateway.jetstream_manager import get_jetstream_manager
+            from heretek_swarm.gateway.message_replay import get_replay_manager as get_rm
             from heretek_swarm.state.event_store import get_event_store
-            
+
             js_manager = get_jetstream_manager()
             event_store = get_event_store()
             _replay_manager = get_rm()
-            
+
             # Setup with dependencies
             _replay_manager._js_manager = js_manager
             _replay_manager._event_store = event_store
-            
+
         except ImportError:
             return None
     return _replay_manager
@@ -979,17 +987,17 @@ async def create_replay_job(
     """
     if not replay_manager:
         raise HTTPException(503, "Replay manager not available")
-    
+
     try:
         # Parse timestamps
         start_time = None
         end_time = None
-        
+
         if job_data.start_time:
             start_time = datetime.fromisoformat(job_data.start_time)
         if job_data.end_time:
             end_time = datetime.fromisoformat(job_data.end_time)
-        
+
         # Create job
         job = await replay_manager.create_replay_job(
             stream_name=job_data.stream_name,
@@ -1001,13 +1009,13 @@ async def create_replay_job(
             destination_stream=job_data.destination_stream,
             replay_speed=job_data.replay_speed,
         )
-        
+
         logger.info(
             "Replay job created",
             job_id=job.job_id,
             stream=job_data.stream_name,
         )
-        
+
         return ReplayJobResponse(
             job_id=job.job_id,
             stream_name=job.stream_name,
@@ -1043,15 +1051,15 @@ async def execute_replay_job(
     """
     if not replay_manager:
         raise HTTPException(503, "Replay manager not available")
-    
+
     job = replay_manager.get_job(job_id)
     if not job:
         raise HTTPException(404, f"Replay job '{job_id}' not found")
-    
+
     try:
         # Execute in background
         asyncio.create_task(replay_manager.execute_replay(job))
-        
+
         return {
             "status": "started",
             "job_id": job_id,
@@ -1071,10 +1079,10 @@ async def pause_replay_job(
     """Pause a replay job."""
     if not replay_manager:
         raise HTTPException(503, "Replay manager not available")
-    
+
     if not await replay_manager.pause_replay(job_id):
         raise HTTPException(400, f"Failed to pause job '{job_id}'")
-    
+
     return {"status": "paused", "job_id": job_id}
 
 
@@ -1087,10 +1095,10 @@ async def resume_replay_job(
     """Resume a paused replay job."""
     if not replay_manager:
         raise HTTPException(503, "Replay manager not available")
-    
+
     if not await replay_manager.resume_replay(job_id):
         raise HTTPException(400, f"Failed to resume job '{job_id}'")
-    
+
     return {"status": "resumed", "job_id": job_id}
 
 
@@ -1103,10 +1111,10 @@ async def cancel_replay_job(
     """Cancel a replay job."""
     if not replay_manager:
         raise HTTPException(503, "Replay manager not available")
-    
+
     if not await replay_manager.cancel_replay(job_id):
         raise HTTPException(400, f"Failed to cancel job '{job_id}'")
-    
+
     return {"status": "cancelled", "job_id": job_id}
 
 
@@ -1124,15 +1132,15 @@ async def list_replay_jobs(
     """
     if not replay_manager:
         raise HTTPException(503, "Replay manager not available")
-    
+
     try:
         jobs = replay_manager.get_all_jobs()
-        
+
         if active_only:
             jobs = replay_manager.active_jobs
-        
+
         active_count = len(replay_manager.active_jobs)
-        
+
         return ReplayJobListResponse(
             jobs=[
                 ReplayJobResponse(
@@ -1170,11 +1178,11 @@ async def get_replay_job(
     """Get details of a specific replay job."""
     if not replay_manager:
         raise HTTPException(503, "Replay manager not available")
-    
+
     job = replay_manager.get_job(job_id)
     if not job:
         raise HTTPException(404, f"Replay job '{job_id}' not found")
-    
+
     return ReplayJobResponse(
         job_id=job.job_id,
         stream_name=job.stream_name,
@@ -1207,11 +1215,11 @@ async def create_time_travel_request(
     """
     if not replay_manager:
         raise HTTPException(503, "Replay manager not available")
-    
+
     try:
         # Parse target time
         target_time = datetime.fromisoformat(request_data.target_time)
-        
+
         # Create request
         request = await replay_manager.create_time_travel_request(
             entity_id=request_data.entity_id,
@@ -1220,7 +1228,7 @@ async def create_time_travel_request(
             source_stream=request_data.source_stream,
             include_snapshots=request_data.include_snapshots,
         )
-        
+
         return {
             "request_id": request.request_id,
             "entity_id": request.entity_id,
@@ -1248,29 +1256,29 @@ async def execute_time_travel(
     """
     if not replay_manager:
         raise HTTPException(503, "Replay manager not available")
-    
+
     request = replay_manager._time_travel_requests.get(request_id)
     if not request:
         raise HTTPException(404, f"Time travel request '{request_id}' not found")
-    
+
     try:
         # Import event store for state applier
-        
+
         def state_applier(state: Dict[str, Any], event: Any) -> Dict[str, Any]:
             """Apply event to state."""
             if hasattr(event, 'payload'):
                 state.update(event.payload)
             return state
-        
+
         # Execute time travel
         state = await replay_manager.execute_time_travel(request, state_applier)
-        
+
         # Count events applied (approximate)
         events_applied = len(state.get("_events_applied", [])) if isinstance(state, dict) else 0
-        
+
         # Check if snapshot was used
         snapshot_used = state.get("_snapshot_used", False) if isinstance(state, dict) else False
-        
+
         return TimeTravelResponse(
             request_id=request_id,
             entity_id=request.entity_id,
@@ -1298,7 +1306,7 @@ async def get_event_stats(
     """
     if not replay_manager:
         raise HTTPException(503, "Replay manager not available")
-    
+
     try:
         stats = await replay_manager.get_stats()
         return stats
