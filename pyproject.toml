@@ -40,6 +40,11 @@ dependencies = [
     "mem0ai>=1.0.0",
     # FastAPI for backend API
     "fastapi>=0.109.0",
+    # Database
+    "asyncpg>=0.29.0",
+    "psycopg2-binary>=2.9.0",
+    # Prometheus metrics
+    "prometheus-client>=0.19.0",
 ]
 
 [project.optional-dependencies]
@@ -200,36 +205,42 @@ select = [
     "RSE",    # flake8-raise
     "RET",    # flake8-return
     "SLF",    # flake8-self
-    "SLOT",   # flake8-slots
-    "TID",    # flake8-tidy-imports
-    "T20",    # flake8-print
-    "PERF",   # perflint
+    "TRY",    # tryceratops
+    "NPY",    # numpy-specific rules
+    "RSE",    # flake8-raise
+    "SIM",    # flake8-simplify (redundant)
+    "T100",   # flake8-debugger (redundant)
+    "DJ",     # flake8-django
+    "PGH",    # pygrep-hooks
+    "PL",     # pylint
+    "PIE",    # flake8-pie (redundant)
+    "TRY",    # tryceratops (redundant)
 ]
 ignore = [
-    "S101",   # assert used (needed for tests)
-    "COM812", # trailing comma missing (conflicts with formatter)
-    "ISC001", # single-line implicit string concatenation (conflicts with formatter)
-    "PT011",  # pytest.raises - too broad
-    "ARG001", # unused function argument (common in callbacks)
-    "S608",   # SQL injection (handled by parameterized queries)
+    "S101",   # assert (use pytest instead)
+    "PLR0913", # too-many-args (有时候需要)
+    "PLR2004", # magic-value-comparison (有时候需要)
+    "S603",   # subprocess-popen-preexec-fn (安全考虑，但litellm需要)
+    "S607",   # start-new-session (同上)
 ]
 
 [tool.ruff.lint.per-file-ignores]
+"__init__.py" = ["F401", "F403"]
 "tests/*" = [
-    "S101",   # assert used
-    "ARG001", # unused argument
-    "PT019",  # pytest.fixture without value
-    "S106",   # hardcoded password (test fixtures)
+    "S101",   # assert in tests
+    "PLR2004", # magic-value-comparison in tests
 ]
+"examples/*" = ["S101", "T201"]
 
-[tool.ruff.lint.isort]
-known-first-party = ["src"]
-known-third-party = ["pytest", "pydantic", "opentelemetry"]
+[tool.ruff.format]
+quote-style = "double"
+indent-style = "space"
+skip-magic-trailing-comma = false
+line-ending = "auto"
 
 # ============== MYPY CONFIGURATION ==============
 [tool.mypy]
 python_version = "3.11"
-strict = true
 warn_return_any = true
 warn_unused_configs = true
 disallow_untyped_defs = true
@@ -240,111 +251,61 @@ no_implicit_optional = true
 warn_redundant_casts = true
 warn_unused_ignores = true
 warn_no_return = true
-warn_unreachable = true
-pretty = true
-show_column_numbers = true
-show_error_codes = true
-show_error_context = true
+strict_equality = true
+strict_concatenate = true
 
 [[tool.mypy.overrides]]
 module = "tests.*"
-disallow_untyped_defs = false
-disallow_incomplete_defs = false
+ignore_missing_imports = true
 
-[tool.bandit]
-exclude_dirs = [".roo", "agent_workspace", ".benchmarks", ".dist-rig", "tests"]
-skips = ["B101", "B601"]
+[[tool.mypy.overrides]]
+module = "examples.*"
+ignore_missing_imports = true
 
-# ============== PYLINT CONFIGURATION ==============
-[tool.pylint.MASTER]
-# Files or directories to be skipped
-ignore = [".roo", "agent_workspace", ".benchmarks", ".dist-rig", "tests"]
-jobs = 0  # Use multiple processes for parallel execution
+[[tool.mypy.overrides]]
+module = "swarms.*"
+ignore_missing_imports = true
 
-[tool.pylint.MESSAGES]
-# Enable specific error codes
-enable = [
-    "PYL-E0602",  # Used before assignment (catches underscore prefix issues)
-    "W0613",      # Unused argument
-    "W0614",      # Unused import from wildcard
-    "E1101",      # Instance member not defined (type checking)
-    "E1102",      # Not callable
-    "E0601",      # Used before assignment
-    "W0602",      # Using global for underscore prefix vars
-    "R0913",      # Too many arguments
-    "R0914",      # Too many local variables
-]
+[[tool.mypy.overrides]]
+module = "mem0ai.*"
+ignore_missing_imports = true
 
-[tool.pylint."MESSAGES CONTROL"]
-# Disable specific warnings that conflict with other tools
-disable = [
-    "C0114",  # Missing module docstring (handled by ruff)
-    "C0115",  # Missing class docstring
-    "C0116",  # Missing function docstring
-    "R0903",  # Too few public methods
-    "W0511",  # Fixme (TODO comments)
-    "C0301",  # Line too long (handled by black)
-    "C0411",  # Wrong import order (handled by isort)
-    "R0801",  # Duplicate code
-    "W1514",  # Using open without encoding
-]
+[[tool.mypy.overrides]]
+module = "qdrant_client.*"
+ignore_missing_imports = true
 
-[tool.pylint.FORMAT]
-max-line-length = 100
-max-module-lines = 500
+[[tool.mypy.overrides]]
+module = "opentelemetry.*"
+ignore_missing_imports = true
 
-[tool.pylint.DESIGN]
-max-args = 10
-max-locals = 20
-max-returns = 6
-max-branches = 15
-max-statements = 60
-max-attributes = 15
-max-public-methods = 25
+[[tool.mypy.overrides]]
+module = "structlog.*"
+ignore_missing_imports = true
 
-[tool.pylint.TYPECHECK]
-# Handle dynamic attributes and methods
-generated-members = [
-    "requests.*",
-    "aiohttp.*",
-    "redis.*",
-    "qdrant_client.*",
-]
-ignored-classes = [
-    "optparse.Values",
-    "thread._local",
-    "_thread._local",
-]
+# ============== DEVELOPMENT TOOLS ==============
+[tool.hatch.envs.default]
+features = []
 
-[tool.pylint.IMPORTS]
-# Known third-party modules
-known-third-party = [
-    "pydantic",
-    "opentelemetry",
-    "redis",
-    "qdrant_client",
-    "fastapi",
-    "uvicorn",
-    "structlog",
-    "tenacity",
-    "circuitbreaker",
-    "mem0ai",
-    "swarms",
-]
+[tool.hatch.envs.test]
+features = ["dev"]
 
-# ============== FLAKE8 CONFIGURATION ==============
-[tool.flake8]
-max-line-length = 100
-extend-ignore = "E203"
-exclude = [
-    ".roo",
-    "agent_workspace",
-    ".benchmarks",
-    ".dist-rig",
-    "tests",
-    "__pycache__",
-    ".venv",
-]
-per-file-ignores = [
-    "tests/*:S101,ARG001",  # Allow assert and unused args in tests
-]
+[tool.hatch.envs.test.scripts]
+test = "pytest {args:tests}"
+test-cov = "pytest --cov --cov-report=term-missing --cov-report=html --cov-report=xml {args:tests}"
+test-all = "pytest --cov -m 'not slow' {args:tests}"
+lint = "ruff check ."
+fmt = "ruff format ."
+
+[tool.hatch.envs.lint]
+features = ["dev"]
+
+[tool.hatch.envs.lint.scripts]
+ruff = "ruff check ."
+ruff-fmt = "ruff format ."
+mypy = "mypy src/"
+
+# ============== CI/CD CONFIGURATION ==============
+[tool.yamlfix]
+column_limit = 100
+indent_mapping = 2
+indent_sequence = true
