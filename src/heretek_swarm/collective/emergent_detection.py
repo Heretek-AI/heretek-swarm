@@ -325,7 +325,7 @@ class EvolutionEngine:
                     if level > prev_level + 0.2 and level > 0.5:
                         record = self.record_capability_gain(
                             agent_id=agent_id,
-                            capability_type=capability_type,
+                            capability_type=cap_type,
                             capability_name=f"{cap_type}_level_{int(level * 100)}",
                             fitness_contribution=level - prev_level,
                             description=f"Advanced {cap_type} capability",
@@ -385,6 +385,7 @@ class EvolutionEngine:
         return max(0.0, min(1.0, fitness))
 
     def get_evolution_metrics(self) -> EvolutionMetrics:
+        self._update_evolution_metrics()
         return self._metrics
 
     def get_capability_records(
@@ -721,6 +722,9 @@ class EmergentPattern:
 
     def to_dict(self) -> dict[str, Any]:
         return {
+            "pattern_id": self.pattern_id,
+            "pattern_class": self.pattern_class.value if hasattr(self.pattern_class, "value") else self.pattern_class,
+            "emergence_level": self.emergence_level.value if hasattr(self.emergence_level, "value") else self.emergence_level,
             "timestamp": self.timestamp,
             "description": self.description,
             "participating_agents": self.participating_agents,
@@ -732,6 +736,9 @@ class EmergentPattern:
             "statistical_significance": self.statistical_significance,
             "confidence": self.confidence,
             "is_validated": self.is_validated,
+            "impact_score": self.impact_score,
+            "first_detected": self.first_detected,
+            "last_observed": self.last_observed,
             "pattern_data": self.pattern_data,
             "context": self.context,
             "metadata": self.metadata,
@@ -983,6 +990,29 @@ class EmergentPatternDetector:
         if self._evolution_engine:
             return self._evolution_engine.get_evolution_metrics().to_dict()
         return {}
+
+    def get_patterns_by_impact(self, min_impact: float = 0.0, limit: int = 100) -> list[EmergentPattern]:
+        """Return patterns with impact score at or above the threshold."""
+        filtered = [p for p in self._emergent_patterns if p.impact_score >= min_impact]
+        return filtered[-limit:]
+
+    def get_harmful_patterns(self, limit: int = 100) -> list[EmergentPattern]:
+        """Return patterns classified as harmful (negative impact score)."""
+        harmful = [p for p in self._emergent_patterns if p.impact_score < 0]
+        return harmful[-limit:]
+
+    def get_beneficial_patterns(self, min_impact: float = 0.0, limit: int = 100) -> list[EmergentPattern]:
+        """Return patterns with positive impact above the threshold."""
+        beneficial = [p for p in self._emergent_patterns if p.impact_score >= min_impact]
+        return beneficial[-limit:]
+
+    def get_collective_behaviors(self) -> list[CollectiveBehavior]:
+        """Return all recorded collective behaviors."""
+        return list(self._collective_behaviors)
+
+    def get_detection_history(self, limit: int = 100) -> list[DetectionEvent]:
+        """Return the most recent detection events."""
+        return self._detection_events[-limit:]
 
     async def _detect_coordination_patterns(self) -> list[EmergentPattern]:
         return []
@@ -1280,6 +1310,51 @@ class EmergentPatternDetector:
                 "min_participating_agents": self.config.min_participating_agents,
                 "validation_required": self.config.validation_required,
             },
+        }
+
+    def get_emergence_statistics(self) -> dict[str, Any]:
+        """Get aggregated emergence statistics."""
+        by_class: dict[str, int] = {}
+        by_level: dict[str, int] = {}
+        for p in self._emergent_patterns:
+            pc = p.pattern_class.value if hasattr(p.pattern_class, "value") else str(p.pattern_class)
+            pl = p.emergence_level.value if hasattr(p.emergence_level, "value") else str(p.emergence_level)
+            by_class[pc] = by_class.get(pc, 0) + 1
+            by_level[pl] = by_level.get(pl, 0) + 1
+        validated = [p for p in self._emergent_patterns if p.is_validated]
+        avg_score = sum(p.emergence_score for p in self._emergent_patterns) / len(self._emergent_patterns) if self._emergent_patterns else 0.0
+        return {
+            "total_patterns": len(self._emergent_patterns),
+            "validated_patterns": len(validated),
+            "by_class": by_class,
+            "by_level": by_level,
+            "average_emergence_score": avg_score,
+            "tracked_agents": len(self._agent_snapshots),
+        }
+
+    def calculate_emergence_metrics(self) -> dict[str, Any]:
+        """Calculate high-level emergence metrics for the swarm."""
+        patterns = self._emergent_patterns
+        if not patterns:
+            return {
+                "swarm_emergence_index": 0.0,
+                "collective_intelligence_factor": 0.0,
+                "coordination_level": 0.0,
+                "pattern_diversity": 0.0,
+                "validation_rate": 0.0,
+            }
+        avg_score = sum(p.emergence_score for p in patterns) / len(patterns)
+        validation_rate = sum(1 for p in patterns if p.is_validated) / len(patterns)
+        unique_classes = len({p.pattern_class for p in patterns})
+        pattern_diversity = unique_classes / max(len(EmergentPatternClass), 1)
+        coordination_patterns = [p for p in patterns if hasattr(p.pattern_class, "value") and "coord" in p.pattern_class.value.lower()]
+        coordination_level = len(coordination_patterns) / len(patterns) if patterns else 0.0
+        return {
+            "swarm_emergence_index": avg_score,
+            "collective_intelligence_factor": avg_score * validation_rate,
+            "coordination_level": coordination_level,
+            "pattern_diversity": pattern_diversity,
+            "validation_rate": validation_rate,
         }
 
 

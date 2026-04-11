@@ -30,7 +30,7 @@ from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer, AccessTi
 
 # Session 44: Zero-Trust Validation
 from heretek_swarm.security.zero_trust import ZeroTrustValidator
-from src.heretek_swarm.actors.base import ActorMessage, AgentActor
+from heretek_swarm.actors.base import ActorMessage, AgentActor
 
 logger = structlog.get_logger("EchoAgent")
 

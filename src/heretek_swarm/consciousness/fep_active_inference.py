@@ -31,8 +31,8 @@ from typing import Any
 
 import structlog
 
-from src.heretek_swarm.security.zero_trust import ZeroTrustValidator
-from src.heretek_swarm.validation.llm_output import (
+from heretek_swarm.security.zero_trust import ZeroTrustValidator
+from heretek_swarm.validation.llm_output import (
     LLMOutputValidator,
     ValidationResult,
     ValidationSeverity,

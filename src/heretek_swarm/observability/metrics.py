@@ -19,8 +19,8 @@ from typing import Any
 
 # Import cycle detector and phi training for metrics integration
 try:
-    from src.heretek_swarm.consciousness.phi_training import PhiTrainingEnvironment
-    from src.heretek_swarm.workflow.engine import (
+    from heretek_swarm.consciousness.phi_training import PhiTrainingEnvironment
+    from heretek_swarm.workflow.engine import (
         export_cycle_detector_prometheus,
         get_cycle_detector_metrics,
     )
@@ -440,3 +440,14 @@ class RealTimeMetricsStream:
             ])
 
         return "\n".join(lines)
+
+
+_metrics_collector: SwarmMetricsCollector | None = None
+
+
+def get_metrics_collector() -> SwarmMetricsCollector:
+    """Get or create the singleton SwarmMetricsCollector instance."""
+    global _metrics_collector
+    if _metrics_collector is None:
+        _metrics_collector = SwarmMetricsCollector()
+    return _metrics_collector

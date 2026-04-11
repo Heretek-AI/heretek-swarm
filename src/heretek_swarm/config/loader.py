@@ -24,7 +24,7 @@ from __future__ import annotations
 
 import os
 from dataclasses import dataclass
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import Any
 
 import structlog
@@ -208,7 +208,7 @@ class ConfigLoader:
                 self._cache[config_key] = CacheEntry(
                     value=value,
                     source="database",
-                    expires_at=datetime.utcnow() + self._cache_ttl,
+                    expires_at=datetime.now(timezone.utc) + self._cache_ttl,
                 )
                 logger.debug(f"Loaded config from database: {config_key}")
                 return value, "database"
@@ -225,7 +225,7 @@ class ConfigLoader:
                 self._cache[config_key] = CacheEntry(
                     value=converted_value,
                     source="environment",
-                    expires_at=datetime.utcnow() + self._cache_ttl,
+                    expires_at=datetime.now(timezone.utc) + self._cache_ttl,
                 )
                 logger.debug(f"Loaded config from environment: {config_key} ({env_var})")
                 return converted_value, "environment"
@@ -294,12 +294,12 @@ class ConfigLoader:
         if entry is None:
             return None
 
-        if datetime.utcnow() > entry.expires_at:
+        if datetime.now(timezone.utc) > entry.expires_at:
             del self._cache[config_key]
             return None
 
         entry.access_count += 1
-        entry.last_accessed_at = datetime.utcnow()
+        entry.last_accessed_at = datetime.now(timezone.utc)
         return entry
 
     def get(self, config_key: str, default: Any = None) -> Any:
@@ -456,7 +456,7 @@ class ConfigLoader:
                 "newest_entry": None,
             }
 
-        datetime.utcnow()
+        datetime.now(timezone.utc)
         total_accesses = sum(e.access_count for e in self._cache.values())
         expires_at_list = [e.expires_at for e in self._cache.values()]
 

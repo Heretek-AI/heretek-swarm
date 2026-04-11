@@ -18,7 +18,7 @@ from evaluation.evaluator import (
     TestCase,
     get_evaluator,
 )
-from src.heretek_swarm.gateway.auth import verify_auth
+from heretek_swarm.gateway.auth import verify_auth
 
 logger = structlog.get_logger(__name__)
 

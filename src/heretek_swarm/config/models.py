@@ -7,7 +7,7 @@ Provides validation, serialization, and type safety for configuration data.
 
 from __future__ import annotations
 
-from datetime import datetime
+from datetime import datetime, timezone
 from enum import StrEnum
 from typing import Any
 from uuid import UUID, uuid4
@@ -68,8 +68,8 @@ class UserConfiguration(BaseModel):
     is_sensitive: bool = Field(default=False)
     is_editable: bool = Field(default=True)
     validation_schema: dict[str, Any] | None = None
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     updated_by: str | None = None
 
     class Config:
@@ -128,8 +128,8 @@ class LLMProvider(BaseModel):
     health_check_error: str | None = None
     priority: int = Field(default=100)
     extra_config: dict[str, Any] = Field(default_factory=dict)
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     class Config:
         use_enum_values = True
@@ -224,8 +224,8 @@ class EmbeddingProvider(BaseModel):
     health_check_error: str | None = None
     priority: int = Field(default=100)
     extra_config: dict[str, Any] = Field(default_factory=dict)
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     class Config:
         use_enum_values = True
@@ -304,8 +304,8 @@ class AgentConfig(BaseModel):
     is_default_for_type: bool = Field(default=False)
     description: str | None = None
     tags: list[str] = Field(default_factory=list)
-    created_at: datetime = Field(default_factory=datetime.utcnow)
-    updated_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     created_by: str | None = None
     updated_by: str | None = None
 
@@ -359,7 +359,7 @@ class ConfigAuditLog(BaseModel):
     changed_by: str | None = None
     change_reason: str | None = None
     ip_address: str | None = None
-    changed_at: datetime = Field(default_factory=datetime.utcnow)
+    changed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
     class Config:
         json_encoders = {
@@ -377,9 +377,9 @@ class ConfigCacheEntry(BaseModel):
     cache_key: str
     cache_value: dict[str, Any]
     expires_at: datetime | None = None
-    created_at: datetime = Field(default_factory=datetime.utcnow)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     access_count: int = Field(default=0)
-    last_accessed_at: datetime = Field(default_factory=datetime.utcnow)
+    last_accessed_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
 
 
 # =============================================================================
@@ -389,7 +389,7 @@ class ConfigCacheEntry(BaseModel):
 class ConfigurationExport(BaseModel):
     """Exported configuration bundle."""
     version: str = "1.0"
-    exported_at: datetime = Field(default_factory=datetime.utcnow)
+    exported_at: datetime = Field(default_factory=lambda: datetime.now(timezone.utc))
     exported_by: str | None = None
     user_configurations: list[UserConfiguration] = Field(default_factory=list)
     llm_providers: list[LLMProvider] = Field(default_factory=list)

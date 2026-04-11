@@ -10,7 +10,7 @@ from __future__ import annotations
 
 import base64
 import os
-from datetime import datetime, timedelta
+from datetime import datetime, timedelta, timezone
 from typing import TYPE_CHECKING, Any, TypeVar
 
 import structlog
@@ -213,7 +213,7 @@ class ConfigurationService:
                     self._cache[cache_key] = ConfigCacheEntry(
                         cache_key=cache_key,
                         cache_value={"value": config.config_value, "type": config.config_type.value},
-                        expires_at=datetime.utcnow() + self._cache_ttl,
+                        expires_at=datetime.now(timezone.utc) + self._cache_ttl,
                     )
         except Exception as e:
             logger.warning("cache_warmup_skipped", reason=str(e))
@@ -240,7 +240,7 @@ class ConfigurationService:
         self._cache[cache_key] = ConfigCacheEntry(
             cache_key=cache_key,
             cache_value={"value": value},
-            expires_at=datetime.utcnow() + (ttl or self._cache_ttl),
+            expires_at=datetime.now(timezone.utc) + (ttl or self._cache_ttl),
         )
 
     def _get_cache(self, entity_type: str, key: str) -> Any | None:
@@ -251,12 +251,12 @@ class ConfigurationService:
         if entry is None:
             return None
 
-        if entry.expires_at and datetime.utcnow() > entry.expires_at:
+        if entry.expires_at and datetime.now(timezone.utc) > entry.expires_at:
             del self._cache[cache_key]
             return None
 
         entry.access_count += 1
-        entry.last_accessed_at = datetime.utcnow()
+        entry.last_accessed_at = datetime.now(timezone.utc)
         return entry.cache_value.get("value")
 
     # =========================================================================
@@ -439,7 +439,7 @@ class ConfigurationService:
                     config.validation_schema,
                 )
 
-            config.updated_at = datetime.utcnow()
+            config.updated_at = datetime.now(timezone.utc)
             config.updated_by = changed_by
 
             await session.commit()
@@ -726,7 +726,7 @@ class ConfigurationService:
                     .values(is_default=False)
                 )
 
-            provider.updated_at = datetime.utcnow()
+            provider.updated_at = datetime.now(timezone.utc)
 
             await session.commit()
             await session.refresh(provider)
@@ -956,7 +956,7 @@ class ConfigurationService:
                     .values(is_default=False)
                 )
 
-            provider.updated_at = datetime.utcnow()
+            provider.updated_at = datetime.now(timezone.utc)
 
             await session.commit()
             await session.refresh(provider)
@@ -1167,7 +1167,7 @@ class ConfigurationService:
                     .values(is_default_for_type=False)
                 )
 
-            config.updated_at = datetime.utcnow()
+            config.updated_at = datetime.now(timezone.utc)
             config.updated_by = changed_by
 
             await session.commit()
@@ -1314,7 +1314,7 @@ class ConfigurationService:
 
             return ConfigurationExport(
                 version="1.0",
-                exported_at=datetime.utcnow(),
+                exported_at=datetime.now(timezone.utc),
                 exported_by=exported_by,
                 user_configurations=user_configs,
                 llm_providers=llm_providers,

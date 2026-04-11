@@ -11,11 +11,11 @@ import uuid
 from contextvars import ContextVar
 
 import structlog
-from structlog.output import LineWriter
+from structlog.dev import ConsoleRenderer
 from structlog.processors import (
     CallsiteParameter,
     CallsiteParameterAdder,
-    ExceptionFormatter,
+    ExceptionRenderer,
     JSONRenderer,
     StackInfoRenderer,
     TimeStamper,
@@ -145,7 +145,7 @@ def setup_logging(
     # Add stack info and exception formatting for errors
     shared_processors.extend([
         StackInfoRenderer(),
-        ExceptionFormatter(),
+        ExceptionRenderer(),
     ])
 
     # Configure renderer
@@ -154,7 +154,7 @@ def setup_logging(
         renderer = JSONRenderer()
     else:
         # Human-readable console output for development
-        renderer = LineWriter(flush=True)
+        renderer = ConsoleRenderer()
 
     # Chain processors with renderer
     processors = [*shared_processors, renderer]

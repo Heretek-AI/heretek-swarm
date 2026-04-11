@@ -15,9 +15,9 @@ from typing import Any
 import structlog
 from fastapi import APIRouter, Depends, HTTPException
 
-from src.heretek_swarm.gateway.auth import verify_auth
-from src.heretek_swarm.workflow.engine import Workflow, WorkflowState, get_workflow_engine
-from src.heretek_swarm.workflow.validator import WorkflowValidator
+from heretek_swarm.gateway.auth import verify_auth
+from heretek_swarm.workflow.engine import Workflow, WorkflowState, get_workflow_engine
+from heretek_swarm.workflow.validator import WorkflowValidator
 
 logger = structlog.get_logger(__name__)
 

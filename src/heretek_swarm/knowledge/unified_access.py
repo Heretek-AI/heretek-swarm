@@ -26,12 +26,12 @@ logger = structlog.get_logger(__name__)
 
 # Import advanced RAG strategies
 try:
-    from src.heretek_swarm.rag.hybrid_retriever import (
+    from heretek_swarm.rag.hybrid_retriever import (
         FusionMethod,
         HybridRetriever,
         HybridRetrieverConfig,
     )
-    from src.heretek_swarm.rag.strategies import (
+    from heretek_swarm.rag.strategies import (
         QueryType,
         RAGStrategyConfig,
         RetrievalResult,

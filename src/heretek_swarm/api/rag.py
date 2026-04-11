@@ -15,7 +15,7 @@ from fastapi import APIRouter, Depends, HTTPException, UploadFile
 
 from rag.document_processor import ProcessingConfig
 from rag.rag_pipeline import RAGPipeline
-from src.heretek_swarm.gateway.auth import verify_auth
+from heretek_swarm.gateway.auth import verify_auth
 
 logger = structlog.get_logger(__name__)
 
@@ -32,7 +32,7 @@ async def get_rag_pipeline() -> RAGPipeline:
     """Get or initialize RAG pipeline instance."""
     global _rag_pipeline
     if _rag_pipeline is None:
-        from src.heretek_swarm.rag.rag_pipeline import RAGPipeline
+        from heretek_swarm.rag.rag_pipeline import RAGPipeline
         _rag_pipeline = RAGPipeline()
         await _rag_pipeline.initialize()
     return _rag_pipeline

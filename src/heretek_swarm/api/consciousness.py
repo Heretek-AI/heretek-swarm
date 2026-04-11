@@ -480,8 +480,8 @@ async def get_agent_iit_metrics(
 @router.get("/agents/{agent_id}/fep")
 async def get_agent_fep_metrics(
     agent_id: str,
-    window: int = Query(50, ge=1, le=500, description="Window size for averaging"),
     authenticated: Annotated[str, Depends(verify_auth)],
+    window: int = Query(50, ge=1, le=500, description="Window size for averaging"),
 ) -> Dict[str, Any]:
     """
     Get FEP (Free Energy Principle) metrics for an agent.
@@ -563,9 +563,9 @@ async def get_consciousness_states(
 
 @router.get("/history")
 async def get_consciousness_history(
+    authenticated: Annotated[str, Depends(verify_auth)],
     agent_id: Optional[str] = Query(None, description="Filter by specific agent"),
     hours: int = Query(24, ge=1, le=168, description="Hours of history to retrieve"),
-    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> Dict[str, Any]:
     """
     Get historical consciousness metrics.

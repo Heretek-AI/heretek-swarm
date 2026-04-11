@@ -20,7 +20,7 @@ from typing import Any
 
 import structlog
 
-from src.heretek_swarm.actors.supervisor import ActorSupervisor
+from heretek_swarm.actors.supervisor import ActorSupervisor
 
 from .agent_runtime import AgentRuntime
 from .autonomous_runtime_config import (
@@ -528,7 +528,7 @@ class AutonomousRuntime:
         """Collect consciousness metrics from plugin."""
         # Import here to avoid circular dependency (P1-9 fix: specific ImportError handling)
         try:
-            from src.heretek_swarm.plugins.consciousness_enhanced import ConsciousnessEnhancedPlugin
+            from heretek_swarm.plugins.consciousness_enhanced import ConsciousnessEnhancedPlugin
         except ImportError as e:
             logger.warning(f"ConsciousnessEnhancedPlugin not available: {e}")
             return
@@ -592,7 +592,7 @@ class AutonomousRuntime:
         """Send alert to Slack."""
         # P1-9 fix: Specific ImportError handling
         try:
-            from src.heretek_swarm.integrations.slack_bot import SlackBot
+            from heretek_swarm.integrations.slack_bot import SlackBot
         except ImportError as e:
             logger.warning(f"SlackBot not available: {e}")
             return
@@ -620,7 +620,7 @@ class AutonomousRuntime:
         """Send alert to Discord."""
         # P1-9 fix: Specific ImportError handling
         try:
-            from src.heretek_swarm.integrations.discord_bot import DiscordBot
+            from heretek_swarm.integrations.discord_bot import DiscordBot
         except ImportError as e:
             logger.warning(f"DiscordBot not available: {e}")
             return
