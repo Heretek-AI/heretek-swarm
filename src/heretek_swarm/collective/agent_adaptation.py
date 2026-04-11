@@ -893,6 +893,7 @@ class PatternBasedAgentAdaptor:
             elif strategy == AdaptationStrategy.IMMEDIATE:
                 weight.current_value = target_value
             elif strategy == AdaptationStrategy.PROBABILISTIC:
+                # NOTE: random for probabilistic adaptation - not security-critical
                 import random
                 if random.random() < confidence:
                     weight.current_value = target_value

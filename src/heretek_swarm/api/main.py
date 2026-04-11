@@ -282,7 +282,9 @@ async def check_postgres() -> Dict[str, Any]:
     try:
         if not memory_store:
             # Try to get database URL and connect directly
-            db_url = os.environ.get("DATABASE_URL", "postgresql+asyncpg://heretek:langfuse@postgres:5432/heretek_swarm")
+            db_url = os.environ.get("DATABASE_URL", "")
+            if not db_url:
+                raise ValueError("DATABASE_URL environment variable is required")
             from sqlalchemy.ext.asyncio import create_async_engine
             from sqlalchemy import text
             engine = create_async_engine(db_url)
@@ -321,7 +323,7 @@ async def check_qdrant() -> Dict[str, Any]:
         if not qdrant_url:
             qdrant_host = os.environ.get("QDRANT_HOST", "localhost")
             qdrant_port = os.environ.get("QDRANT_PORT", "6333")
-            qdrant_url = f"http://{qdrant_host}:{qdrant_port}"
+            qdrant_url = f"https://{qdrant_host}:{qdrant_port}" if os.environ.get("ENVIRONMENT") == "production" else f"http://{qdrant_host}:{qdrant_port}"
         async with httpx.AsyncClient() as client:
             response = await client.get(f"{qdrant_url}/collections")
             if response.status_code == 200:
@@ -594,7 +596,7 @@ async def get_litellm_metrics(authenticated: str = Depends(verify_auth)):
     """
     import httpx
     
-    litellm_url = os.environ.get("LITELLM_URL", "http://localhost:4000")
+    litellm_url = os.environ.get("LITELLM_URL", "http://localhost:4000")  # Local dev only
     litellm_key = os.environ.get("LITELLM_MASTER_KEY", "")
     
     try:

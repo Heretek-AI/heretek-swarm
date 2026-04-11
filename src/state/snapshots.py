@@ -297,8 +297,11 @@ class SnapshotManager:
     
     def _cache_set(self, snapshot: StateSnapshot) -> None:
         """Set in cache with LRU eviction"""
+        # Enforce maximum cache size to prevent DoS via large limit
+        MAX_CACHE_SIZE = 1000
+        effective_size = min(self._cache_size, MAX_CACHE_SIZE)
         # Evict if at capacity
-        while len(self._cache) >= self._cache_size and self._cache_order:
+        while len(self._cache) >= effective_size and self._cache_order:
             oldest = self._cache_order.pop(0)
             del self._cache[oldest]
         

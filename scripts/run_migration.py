@@ -19,10 +19,9 @@ async def run_migration():
     """Run the swarm_memories table migration."""
     
     # Get database URL from environment
-    database_url = os.getenv(
-        "DATABASE_URL",
-        "postgresql+asyncpg://heretek:langfuse@localhost:5432/heretek_swarm"
-    )
+    database_url = os.getenv("DATABASE_URL", "")
+    if not database_url:
+        raise ValueError("DATABASE_URL environment variable is required")
     
     # Convert to asyncpg format
     if database_url.startswith("postgresql+asyncpg://"):

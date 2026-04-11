@@ -75,7 +75,7 @@ def initialize_tracing(
     
     # Configure OTLP exporter if endpoint provided
     if otlp_endpoint is None:
-        otlp_endpoint = os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT", "http://otel-collector:4317")
+        otlp_endpoint = os.getenv("OTEL_EXPORTER_OTLP_ENDPOINT", "http://otel-collector:4317")  # Internal only
     
     # Add OTLP exporter for production
     if otlp_endpoint and not enable_console_export:

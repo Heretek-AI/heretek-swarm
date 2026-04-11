@@ -16,6 +16,7 @@ Features:
 """
 
 import asyncio
+# NOTE: random used for genetic algorithm mutations - not security-critical
 import random
 import uuid
 from dataclasses import dataclass, field

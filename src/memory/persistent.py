@@ -84,8 +84,8 @@ class PersistentConfig(BaseModel):
     
     # PostgreSQL connection
     database_url: str = Field(
-        default="postgresql+asyncpg://postgres:langfuse@localhost:5432/heretek_swarm"
-    )
+            default=""
+        )
     
     # Connection pool
     pool_size: int = Field(default=10)

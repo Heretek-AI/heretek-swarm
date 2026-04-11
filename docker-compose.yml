@@ -11,7 +11,7 @@ services:
     ports:
       - "8000:8000"
     environment:
-      - DATABASE_URL=postgresql+asyncpg://heretek:langfuse@postgres:5432/heretek_swarm
+      - DATABASE_URL=${POSTGRES_URL:-postgresql+asyncpg://postgres:${POSTGRES_PASSWORD:-changeme}@postgres:5432/heretek_swarm}
       - REDIS_URL=redis://redis:6379
       - QDRANT_HOST=qdrant
       - QDRANT_PORT=6333

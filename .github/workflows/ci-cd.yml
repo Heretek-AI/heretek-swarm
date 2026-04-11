@@ -86,7 +86,7 @@ jobs:
         image: postgres:15-alpine
         env:
           POSTGRES_USER: heretek
-          POSTGRES_PASSWORD: heretek123
+          POSTGRES_PASSWORD: ${{ secrets.POSTGRES_PASSWORD }}
           POSTGRES_DB: heretek_swarm_test
         ports:
           - 5432:5432
@@ -130,9 +130,9 @@ jobs:
 
       - name: Run tests with coverage
         env:
-          DATABASE_URL: postgresql://heretek:heretek123@localhost:5432/heretek_swarm_test
-          REDIS_URL: redis://localhost:6379
-          QDRANT_URL: http://localhost:6333
+                  DATABASE_URL: ${{ secrets.DATABASE_URL }}
+                  REDIS_URL: ${{ secrets.REDIS_URL }}
+                  QDRANT_URL: ${{ secrets.QDRANT_URL }}
         run: |
           pytest tests/ -v --cov=src --cov-report=xml --cov-report=html --cov-report=term
 

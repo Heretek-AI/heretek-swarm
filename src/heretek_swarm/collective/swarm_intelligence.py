@@ -40,6 +40,7 @@ Example:
 
 import math
 import random
+# NOTE: random used for PSO/swarm simulations - not security-critical
 import uuid
 from collections import defaultdict
 from dataclasses import dataclass, field

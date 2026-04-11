@@ -16,8 +16,8 @@ metadata:
   name: qdrant-config
   namespace: heretek-swarm
 data:
-  host: "http://qdrant:6333"
-  grpc-host: "http://qdrant:6334"
+  host: "http://qdrant:6333"  # Internal K8s DNS
+  grpc-host: "http://qdrant:6334"  # Internal K8s DNS
 ---
 # API ConfigMap
 apiVersion: v1
@@ -38,7 +38,7 @@ metadata:
   name: dashboard-config
   namespace: heretek-swarm
 data:
-  api-url: "http://api:8000"
+  api-url: "http://api:8000"  # Internal K8s DNS
 ---
 # Autonomous Runtime ConfigMap
 apiVersion: v1

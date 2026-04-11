@@ -263,7 +263,7 @@ class AutonomousRuntime:
             start_time = time.time()
             async with httpx.AsyncClient() as client:
                 response = await client.get(
-                    f"http://{self.config.api_host}:{self.config.api_port}/api/health/live",
+                    f"http://{self.config.api_host}:{self.config.api_port}/api/health/live",  # Local health check
                     timeout=5.0,
                 )
             latency_ms = (time.time() - start_time) * 1000

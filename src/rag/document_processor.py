@@ -336,7 +336,11 @@ class DocumentProcessor:
                 logger.warning("pypdf not installed, cannot process PDF")
                 raise ImportError("Install pypdf to process PDF files")
         
-        # Default text loading
+        # Default text loading - validate path to prevent traversal attacks
+        resolved_path = path.resolve()
+        base_dir = self.config.upload_dir.resolve() if self.config.upload_dir else None
+        if base_dir and not str(resolved_path).startswith(str(base_dir)):
+            raise ValueError("Path traversal detected: file must be within allowed directory")
         with open(path, "r", encoding="utf-8", errors="replace") as f:
             return f.read()
     

@@ -15,6 +15,7 @@ making decisions based on its specialized role."
 """
 
 from fastapi import APIRouter, Depends, HTTPException, Query
+from typing import Annotated
 from typing import Dict, Any, Optional, List
 from datetime import datetime, timedelta, timezone
 
@@ -74,7 +75,7 @@ def get_agency_tracker() -> AgencyMetricsTracker:
 @router.get("/agency/{agent_id}")
 async def get_agent_agency_metrics(
     agent_id: str,
-    authenticated: str = Depends(verify_auth),
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> Dict[str, Any]:
     """
     Get agency and autonomy metrics for a specific agent.
@@ -113,7 +114,7 @@ async def get_agent_agency_metrics(
 @router.get("/agency/{agent_id}/compliance")
 async def get_agent_prime_directive_compliance(
     agent_id: str,
-    authenticated: str = Depends(verify_auth),
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> Dict[str, Any]:
     """
     Get Prime Directive compliance report for a specific agent.
@@ -146,7 +147,7 @@ async def get_agent_prime_directive_compliance(
 
 @router.get("/agency/swarm")
 async def get_swarm_agency_overview(
-    authenticated: str = Depends(verify_auth),
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> Dict[str, Any]:
     """
     Get collective agency overview for the entire swarm.
@@ -183,7 +184,7 @@ async def get_swarm_agency_overview(
 
 @router.get("/agency/swarm/compliance")
 async def get_swarm_prime_directive_compliance(
-    authenticated: str = Depends(verify_auth),
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> Dict[str, Any]:
     """
     Get Prime Directive compliance report for the entire swarm.
@@ -210,7 +211,7 @@ async def get_agency_evolution(
         None,
         description="Time window in seconds (default: all history)"
     ),
-    authenticated: str = Depends(verify_auth),
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> Dict[str, Any]:
     """
     Get temporal evolution of agency metrics across the swarm.
@@ -233,7 +234,7 @@ async def get_agency_evolution(
 
 @router.get("/agency/distribution")
 async def get_agency_distribution(
-    authenticated: str = Depends(verify_auth),
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> Dict[str, Any]:
     """
     Get distribution of agency levels across the swarm.
@@ -254,7 +255,7 @@ async def get_agency_distribution(
 @router.post("/agency/record")
 async def record_agency_metrics(
     payload: Dict[str, Any],
-    authenticated: str = Depends(verify_auth),
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> Dict[str, Any]:
     """
     Record agency metrics for an agent.
@@ -334,7 +335,7 @@ async def record_agency_metrics(
 @router.post("/agency/generate-sample")
 async def generate_sample_metrics(
     payload: Dict[str, Any],
-    authenticated: str = Depends(verify_auth),
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> Dict[str, Any]:
     """
     Generate sample agency metrics for testing purposes.
@@ -371,7 +372,7 @@ async def generate_sample_metrics(
 
 @router.get("/agency/all")
 async def get_all_agent_metrics(
-    authenticated: str = Depends(verify_auth),
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> Dict[str, Any]:
     """
     Get agency metrics for all tracked agents.
@@ -400,7 +401,7 @@ async def get_all_agent_metrics(
 
 @router.get("/statistics")
 async def get_consciousness_statistics(
-    authenticated: str = Depends(verify_auth),
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> Dict[str, Any]:
     """
     Get overall consciousness statistics across all agents.
@@ -422,7 +423,7 @@ async def get_consciousness_statistics(
 @router.get("/agents/{agent_id}")
 async def get_agent_consciousness(
     agent_id: str,
-    authenticated: str = Depends(verify_auth),
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> Dict[str, Any]:
     """
     Get detailed consciousness metrics for a specific agent.
@@ -449,7 +450,7 @@ async def get_agent_consciousness(
 @router.get("/agents/{agent_id}/iit")
 async def get_agent_iit_metrics(
     agent_id: str,
-    authenticated: str = Depends(verify_auth),
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> Dict[str, Any]:
     """
     Get IIT (Integrated Information Theory) metrics for an agent.
@@ -480,7 +481,7 @@ async def get_agent_iit_metrics(
 async def get_agent_fep_metrics(
     agent_id: str,
     window: int = Query(50, ge=1, le=500, description="Window size for averaging"),
-    authenticated: str = Depends(verify_auth),
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> Dict[str, Any]:
     """
     Get FEP (Free Energy Principle) metrics for an agent.
@@ -512,7 +513,7 @@ async def get_agent_fep_metrics(
 
 @router.get("/connectivity")
 async def get_connectivity_matrix(
-    authenticated: str = Depends(verify_auth),
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> Dict[str, Any]:
     """
     Get the agent connectivity matrix.
@@ -533,7 +534,7 @@ async def get_connectivity_matrix(
 
 @router.get("/states")
 async def get_consciousness_states(
-    authenticated: str = Depends(verify_auth),
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> Dict[str, Any]:
     """
     Get the current consciousness state of all agents.
@@ -564,7 +565,7 @@ async def get_consciousness_states(
 async def get_consciousness_history(
     agent_id: Optional[str] = Query(None, description="Filter by specific agent"),
     hours: int = Query(24, ge=1, le=168, description="Hours of history to retrieve"),
-    authenticated: str = Depends(verify_auth),
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> Dict[str, Any]:
     """
     Get historical consciousness metrics.
@@ -596,7 +597,7 @@ async def get_consciousness_history(
 @router.post("/record-interaction")
 async def record_interaction(
     interaction: Dict[str, Any],
-    authenticated: str = Depends(verify_auth),
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> Dict[str, Any]:
     """
     Record an agent interaction for consciousness tracking.
@@ -623,7 +624,7 @@ async def record_interaction(
 @router.post("/record-prediction")
 async def record_prediction(
     prediction: Dict[str, Any],
-    authenticated: str = Depends(verify_auth),
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> Dict[str, Any]:
     """
     Record an agent's prediction for FEP tracking.
@@ -650,7 +651,7 @@ async def record_prediction(
 @router.post("/record-outcome")
 async def record_outcome(
     outcome: Dict[str, Any],
-    authenticated: str = Depends(verify_auth),
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> Dict[str, Any]:
     """
     Record an actual outcome for FEP tracking.

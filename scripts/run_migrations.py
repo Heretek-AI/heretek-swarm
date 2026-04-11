@@ -24,7 +24,9 @@ logging.basicConfig(
 logger = logging.getLogger(__name__)
 
 # Database configuration from environment
-DATABASE_URL = os.getenv("DATABASE_URL", "postgresql://heretek:heretek@localhost:5432/heretek")
+DATABASE_URL = os.getenv("DATABASE_URL", "")
+if not DATABASE_URL:
+    raise ValueError("DATABASE_URL environment variable is required")
 MIGRATIONS_DIR = Path(__file__).parent.parent / "migrations"
 
 
