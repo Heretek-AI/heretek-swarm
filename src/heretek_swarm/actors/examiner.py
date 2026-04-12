@@ -21,6 +21,10 @@ from typing import Any
 import structlog
 
 from heretek_swarm.actors.base import ActorMessage, AgentActor
+from heretek_swarm.actors.mixins.deliberation import DeliberationMixin
+from heretek_swarm.actors.mixins.learning import LearningMixin
+from heretek_swarm.actors.mixins.memory import MemoryMixin
+from heretek_swarm.actors.mixins.pattern import PatternMixin
 from heretek_swarm.actors.validation import validate_message as validate_message_schema
 
 # Session 44: Collective Learning Integration
@@ -146,7 +150,7 @@ class QualityReport:
     passed: bool = True
 
 
-class ExaminerAgent(AgentActor):
+class ExaminerAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor):
     """
     Quality Assurance & Testing Specialist Agent.
 
@@ -154,12 +158,24 @@ class ExaminerAgent(AgentActor):
     through comprehensive testing, validation, and verification.
     """
 
-    def __init__(self, agent_id: str | None = None, config: dict[str, Any] | None = None):
+    def __init__(
+        self,
+        agent_id: str | None = None,
+        config: dict[str, Any] | None = None,
+        pattern_extractor: PatternExtractor | None = None,
+        deliberation_engine: SwarmDeliberationEngine | None = None,
+        access_analyzer: AccessPatternAnalyzer | None = None,
+        zero_trust_validator: ZeroTrustValidator | None = None,
+    ):
         super().__init__(
             agent_id=agent_id,
             name="Examiner",
             description="Quality Assurance & Testing Specialist",
-            config=config or {}
+            config=config or {},
+            pattern_extractor=pattern_extractor,
+            deliberation_engine=deliberation_engine,
+            access_analyzer=access_analyzer,
+            zero_trust_validator=zero_trust_validator,
         )
 
         # Test execution state
@@ -180,23 +196,6 @@ class ExaminerAgent(AgentActor):
         self._coverage_threshold = self._config.get("coverage_threshold", 80.0)
 
 
-        # Session 44: Collective Learning Integration
-        self.pattern_extractor = pattern_extractor or PatternExtractor(min_support=3, min_confidence=0.6)
-
-        # Session 44: Consensus Integration
-        self.deliberation_engine = deliberation_engine or SwarmDeliberationEngine(
-            max_rounds=5, consensus_threshold=0.75, min_participants=2
-        )
-
-        # Session 44: Memory Optimization Integration
-        self.access_analyzer = access_analyzer or AccessPatternAnalyzer()
-
-        # Session 44: Zero-Trust Validation
-        self.zero_trust_validator = zero_trust_validator or ZeroTrustValidator()
-
-        # Session 44: Integration state
-        self._active_deliberations: dict[str, str] = {}
-        self._pattern_emitted: set[str] = set()
 
 
         logger.info(
@@ -1091,65 +1090,6 @@ Return a score from 0-100."""
         except Exception as e:
             logger.error("failed_to_finalize_deliberation", error=str(e))
             return None
-
-    # =========================================================================
-    # Session 44: Memory Optimization Integration Methods
-    # =========================================================================
-
-    def _track_memory_access(self, item_id: str, item_type: str, access_type: str = "read") -> None:
-        """Track memory access patterns."""
-        if not self.access_analyzer:
-            return
-
-        memory_id = f"{item_type}_{item_id}"
-        self.access_analyzer.record_access(
-            memory_id=memory_id,
-            access_type=access_type,
-            agent_id=self.agent_id,
-        )
-
-    def _get_memory_tier(self, item_id: str, item_type: str) -> AccessTier:
-        """Get memory tier classification."""
-        if not self.access_analyzer:
-            return AccessTier.COLD
-
-        memory_id = f"{item_type}_{item_id}"
-        profile = self.access_analyzer.get_profile(memory_id)
-        return profile.tier if profile else AccessTier.COLD
-
-    async def _prefetch_relevant(self, agent_id: str, item_type: str) -> list[str]:
-        """Prefetch items an agent is likely to need."""
-        if not self.access_analyzer:
-            return []
-
-        try:
-            predicted_memories = self.access_analyzer.predict_agent_access(agent_id)
-            return [
-                mem.replace(f"{item_type}_", "")
-                for mem in predicted_memories
-                if mem.startswith(f"{item_type}_")
-            ]
-        except Exception as e:
-            logger.warning("failed_to_prefetch", agent_id=agent_id, error=str(e))
-            return []
-
-    def get_learning_status(self) -> dict[str, Any]:
-        """Get collective learning and memory optimization status."""
-        return {
-            "agent_id": self.agent_id,
-            "collective_learning": {
-                "patterns_extracted": len(self.pattern_extractor._validated_patterns) if self.pattern_extractor else 0,
-                "message_cache_size": len(self.pattern_extractor._message_cache) if self.pattern_extractor else 0,
-            },
-            "consensus": {
-                "active_deliberations": len(self._active_deliberations),
-                "deliberation_engine_stats": self.deliberation_engine.get_statistics() if self.deliberation_engine else {},
-            },
-            "memory_optimization": {
-                "access_statistics": self.access_analyzer.get_statistics().to_dict() if self.access_analyzer else {},
-            },
-        }
-
 
     async def _generate_quality_summary(
         self,
