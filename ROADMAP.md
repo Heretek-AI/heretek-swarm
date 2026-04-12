@@ -872,7 +872,7 @@ dev = [
 | Phase 2 | Config consolidation | Merged | ✅ service.py + service_manager.py |
 | Phase 2 | Cache module | Created | ✅ config/cache.py exists |
 | Phase 3 | Tribunal operational | Yes | No |
-| Phase 3 | Consciousness metrics | IIT/AST | None |
+| Phase 3 | Consciousness metrics | IIT/AST | IIT/AST implemented |
 | Phase 4 | Agent count | 23 | ~18 (blocked) |
 | Phase 4 | Emergence detection | Working | Partial |
 | Phase 5 | Installation time | <5 min | Manual |
