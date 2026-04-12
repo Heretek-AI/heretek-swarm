@@ -125,3 +125,4 @@ plans/OVERNIGHT_LOOP.md
 .omc/*
 .claude-flow/*
 .mcp.json
+.actor_states/
