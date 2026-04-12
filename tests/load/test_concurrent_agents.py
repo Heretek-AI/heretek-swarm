@@ -9,12 +9,10 @@ import asyncio
 import time
 from dataclasses import dataclass, field
 from typing import Any
-import uuid
 
 import pytest
 
-from tests.fixtures.test_data import create_mock_agent, MockAgent
-
+from tests.fixtures.test_data import MockAgent, create_mock_agent
 
 # ============== CONFIGURATION ==============
 
@@ -36,27 +34,27 @@ class LoadTestMetrics:
     latencies: list[float] = field(default_factory=list)
     start_time: float = 0.0
     end_time: float = 0.0
-    
+
     @property
     def duration_seconds(self) -> float:
         return self.end_time - self.start_time
-    
+
     @property
     def messages_per_second(self) -> float:
         if self.duration_seconds == 0:
             return 0.0
         return self.messages_sent / self.duration_seconds
-    
+
     @property
     def avg_latency_ms(self) -> float:
         if not self.latencies:
             return 0.0
         return sum(self.latencies) / len(self.latencies)
-    
+
     @property
     def max_latency_ms(self) -> float:
         return max(self.latencies) if self.latencies else 0.0
-    
+
     @property
     def p95_latency_ms(self) -> float:
         if not self.latencies:
@@ -64,13 +62,13 @@ class LoadTestMetrics:
         sorted_latencies = sorted(self.latencies)
         index = int(len(sorted_latencies) * 0.95)
         return sorted_latencies[min(index, len(sorted_latencies) - 1)]
-    
+
     @property
     def error_rate(self) -> float:
         if self.messages_sent + self.tasks_completed == 0:
             return 0.0
         return self.total_errors / (self.messages_sent + self.tasks_completed)
-    
+
     def to_dict(self) -> dict[str, Any]:
         return {
             "total_agents": self.total_agents,
@@ -92,16 +90,16 @@ class LoadTestMetrics:
 
 class AgentPool:
     """Pool of simulated agents for load testing."""
-    
+
     def __init__(self, size: int):
         self.size = size
         self.agents: list[MockAgent] = []
         self._metrics = LoadTestMetrics()
-    
+
     async def initialize(self) -> None:
         """Initialize all agents in the pool."""
         self._metrics.start_time = time.time()
-        
+
         # Create agents in batches to avoid overwhelming
         batch_size = 100
         for i in range(0, self.size, batch_size):
@@ -115,9 +113,9 @@ class AgentPool:
             ]
             self.agents.extend(batch)
             await asyncio.sleep(0.01)  # Small delay between batches
-        
+
         self._metrics.total_agents = len(self.agents)
-    
+
     async def run_message_load(
         self,
         messages_per_agent: int = 10,
@@ -134,7 +132,7 @@ class AgentPool:
             LoadTestMetrics with results.
         """
         semaphore = asyncio.Semaphore(concurrency)
-        
+
         async def send_message(agent: MockAgent) -> float:
             """Send a message and return latency."""
             async with semaphore:
@@ -149,19 +147,19 @@ class AgentPool:
                     self._metrics.messages_failed += 1
                     self._metrics.total_errors += 1
                     return -1
-        
+
         # Create tasks for all messages
         tasks = []
         for agent in self.agents:
             for _ in range(messages_per_agent):
                 tasks.append(send_message(agent))
-        
+
         # Execute all tasks
         await asyncio.gather(*tasks)
-        
+
         self._metrics.end_time = time.time()
         return self._metrics
-    
+
     async def run_task_load(
         self,
         tasks_per_agent: int = 5,
@@ -178,7 +176,7 @@ class AgentPool:
             LoadTestMetrics with results.
         """
         semaphore = asyncio.Semaphore(concurrency)
-        
+
         async def execute_task(agent: MockAgent) -> float:
             """Execute a task and return latency."""
             async with semaphore:
@@ -193,17 +191,17 @@ class AgentPool:
                     self._metrics.tasks_failed += 1
                     self._metrics.total_errors += 1
                     return -1
-        
+
         tasks = []
         for agent in self.agents:
             for _ in range(tasks_per_agent):
                 tasks.append(execute_task(agent))
-        
+
         await asyncio.gather(*tasks)
-        
+
         self._metrics.end_time = time.time()
         return self._metrics
-    
+
     async def cleanup(self) -> None:
         """Clean up agent pool."""
         self.agents.clear()
@@ -215,25 +213,25 @@ class AgentPool:
 @pytest.mark.slow
 class TestAgentLoad:
     """Load tests for concurrent agent operations."""
-    
+
     @pytest.mark.asyncio
     async def test_100_concurrent_agents(self) -> None:
         """Test system with 100 concurrent agents."""
         pool = AgentPool(size=100)
         await pool.initialize()
-        
+
         metrics = await pool.run_message_load(
             messages_per_agent=10,
             concurrency=50,
         )
-        
+
         await pool.cleanup()
-        
+
         # Assertions
         assert metrics.total_agents == 100
         assert metrics.error_rate < 0.01  # <1% error rate
         assert metrics.avg_latency_ms < LATENCY_BASELINE_MS
-        
+
         print(f"\n📊 Load Test Results (100 agents):")
         print(f"   Messages: {metrics.messages_sent}")
         print(f"   Msg/sec: {metrics.messages_per_second:.2f}")
@@ -241,30 +239,30 @@ class TestAgentLoad:
         print(f"   Max latency: {metrics.max_latency_ms:.2f}ms")
         print(f"   P95 latency: {metrics.p95_latency_ms:.2f}ms")
         print(f"   Error rate: {metrics.error_rate:.2%}")
-    
+
     @pytest.mark.asyncio
     async def test_500_concurrent_agents(self) -> None:
         """Test system with 500 concurrent agents."""
         pool = AgentPool(size=500)
         await pool.initialize()
-        
+
         metrics = await pool.run_message_load(
             messages_per_agent=5,
             concurrency=100,
         )
-        
+
         await pool.cleanup()
-        
+
         assert metrics.total_agents == 500
         assert metrics.error_rate < 0.02  # <2% error rate at scale
-        
+
         print(f"\n📊 Load Test Results (500 agents):")
         print(f"   Messages: {metrics.messages_sent}")
         print(f"   Msg/sec: {metrics.messages_per_second:.2f}")
         print(f"   Avg latency: {metrics.avg_latency_ms:.2f}ms")
         print(f"   Max latency: {metrics.max_latency_ms:.2f}ms")
         print(f"   Error rate: {metrics.error_rate:.2%}")
-    
+
     @pytest.mark.asyncio
     @pytest.mark.skipif(
         # Skip by default - run explicitly for full load test
@@ -280,49 +278,49 @@ class TestAgentLoad:
         """
         pool = AgentPool(size=CONCURRENT_AGENT_TARGET)
         await pool.initialize()
-        
+
         metrics = await pool.run_message_load(
             messages_per_agent=5,
             concurrency=200,
         )
-        
+
         await pool.cleanup()
-        
+
         # Phase Directive requirements
         assert metrics.total_agents >= CONCURRENT_AGENT_TARGET
         assert metrics.error_rate < 0.05  # <5% error rate acceptable at max scale
-        
+
         print(f"\n📊 Load Test Results ({CONCURRENT_AGENT_TARGET} agents):")
         print(f"   Messages: {metrics.messages_sent}")
         print(f"   Msg/sec: {metrics.messages_per_second:.2f}")
         print(f"   Avg latency: {metrics.avg_latency_ms:.2f}ms")
         print(f"   P95 latency: {metrics.p95_latency_ms:.2f}ms")
         print(f"   Error rate: {metrics.error_rate:.2%}")
-        
+
         # Flag if latency baseline exceeded
         if metrics.p95_latency_ms > LATENCY_BASELINE_MS:
             print(f"\n⚠️  P95 latency {metrics.p95_latency_ms:.2f}ms exceeds baseline {LATENCY_BASELINE_MS}ms")
             print("   FLAG FOR REFACTORING per Phase Directives")
-    
+
     @pytest.mark.asyncio
     async def test_burst_load(self) -> None:
         """Test system under burst load conditions."""
         pool = AgentPool(size=200)
         await pool.initialize()
-        
+
         # Simulate burst: all agents send messages simultaneously
         metrics = await pool.run_message_load(
             messages_per_agent=1,
             concurrency=200,  # All at once
         )
-        
+
         await pool.cleanup()
-        
+
         print(f"\n📊 Burst Load Results (200 agents x 1 msg):")
         print(f"   Messages: {metrics.messages_sent}")
         print(f"   Duration: {metrics.duration_seconds:.2f}s")
         print(f"   Max latency: {metrics.max_latency_ms:.2f}ms")
-        
+
         # System should handle burst without complete failure
         assert metrics.messages_failed < metrics.messages_sent * 0.1  # <10% failures
 
@@ -330,16 +328,16 @@ class TestAgentLoad:
 @pytest.mark.load
 class TestLoadMetrics:
     """Tests for load testing metrics collection."""
-    
+
     def test_metrics_initialization(self) -> None:
         """Test metrics initialize correctly."""
         metrics = LoadTestMetrics()
-        
+
         assert metrics.total_agents == 0
         assert metrics.messages_sent == 0
         assert metrics.avg_latency_ms == 0.0
         assert metrics.error_rate == 0.0
-    
+
     def test_metrics_calculations(self) -> None:
         """Test metrics calculations."""
         metrics = LoadTestMetrics()
@@ -348,21 +346,21 @@ class TestLoadMetrics:
         metrics.messages_sent = 100
         metrics.total_errors = 2
         metrics.latencies = [10.0] * 100
-        
+
         assert metrics.duration_seconds == 10.0
         assert metrics.messages_per_second == 10.0
         assert metrics.avg_latency_ms == 10.0
         assert metrics.error_rate == pytest.approx(0.02, rel=0.01)
-    
+
     def test_metrics_serialization(self) -> None:
         """Test metrics can be serialized."""
         metrics = LoadTestMetrics(
             total_agents=100,
             messages_sent=500,
         )
-        
+
         data = metrics.to_dict()
-        
+
         assert data["total_agents"] == 100
         assert data["messages_sent"] == 500
         assert "duration_seconds" in data

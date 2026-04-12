@@ -5,18 +5,18 @@ These tests verify the mem0 integration works correctly with the
 Heretek Swarm memory system.
 """
 
-import pytest
 from uuid import uuid4
-from datetime import datetime
+
+import pytest
 
 from memory import (
-    MemoryEntry,
-    MemoryQuery,
-    MemoryType,
-    MemoryTier,
+    MEM0_AVAILABLE,
     Mem0Backend,
     Mem0Config,
-    MEM0_AVAILABLE,
+    MemoryEntry,
+    MemoryQuery,
+    MemoryTier,
+    MemoryType,
 )
 
 
