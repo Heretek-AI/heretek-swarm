@@ -135,6 +135,22 @@ class EmpathAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, A
         self._active_deliberations: dict[str, str] = {}
         self._pattern_emitted: set[str] = set()
 
+        # Session 44: Collective Learning Integration - initialize pattern extractor
+        from heretek_swarm.collective.learning import PatternExtractor
+
+        self.pattern_extractor = _pattern_extractor or PatternExtractor(min_support=3, min_confidence=0.6)
+
+        # Session 44: Consensus Integration - initialize deliberation engine
+        from heretek_swarm.consensus.swarm_deliberation import SwarmDeliberationEngine
+
+        self.deliberation_engine = _deliberation_engine or SwarmDeliberationEngine(
+            max_rounds=5, consensus_threshold=0.75, min_participants=2
+        )
+
+        # Session 44: Memory Optimization Integration - initialize access analyzer
+        from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer
+
+        self.access_analyzer = _access_analyzer or AccessPatternAnalyzer()
 
         logger.info(f"[{self.agent_id}] Empath agent initialized")
 

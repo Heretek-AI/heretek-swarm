@@ -137,9 +137,12 @@ async def nats_client(nats_config: NATSConfig) -> NATSClient:
 async def memory_sync(nats_client: NATSClient) -> MemorySync:
     """Create a MemorySync instance for testing."""
     sync = MemorySync(nats_client, agent_id=f"stress-test-{uuid.uuid4().hex[:8]}")
-    await sync.connect()
+    connected = await sync.connect()
+    if not connected:
+        pytest.skip("NATS not available")
     yield sync
-    await sync.disconnect()
+    if sync.is_connected:
+        await sync.disconnect()
 
 
 @pytest.fixture
