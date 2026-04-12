@@ -5,10 +5,8 @@ Agent Gamma - QA and Validation Lead
 Provides consistent test data across test suites.
 """
 
-from dataclasses import dataclass, field
-from typing import Any
 import uuid
-
+from dataclasses import dataclass, field
 
 # ============== AGENT FIXTURES ==============
 
@@ -20,19 +18,19 @@ class MockAgent:
     capabilities: list[str] = field(default_factory=list)
     reputation: float = 1.0
     status: str = "idle"
-    
+
     async def send_message(self, message: dict) -> dict:
         """Mock send message."""
         return {"status": "sent", "message_id": str(uuid.uuid4())}
-    
+
     async def receive_message(self) -> dict:
         """Mock receive message."""
         return {"status": "received"}
-    
+
     async def execute_task(self, task: dict) -> dict:
         """Mock execute task."""
         return {"status": "completed", "result": "success"}
-    
+
     def get_state(self) -> dict:
         """Get agent state."""
         return {

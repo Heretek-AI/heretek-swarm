@@ -5,18 +5,16 @@ Test the evaluation framework including test case execution,
 output validation, and quality metrics calculation.
 """
 
-import pytest
 import asyncio
 from datetime import datetime
-from typing import Dict, Any
+from typing import Any, Dict
 
+import pytest
 from evaluation.evaluator import (
     AgentEvaluator,
-    TestCase,
-    OutputConstraints,
-    TestResult,
-    QualityMetrics,
     EvaluationStatus,
+    OutputConstraints,
+    TestCase,
 )
 
 
