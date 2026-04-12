@@ -9,11 +9,8 @@ import asyncio
 import time
 from dataclasses import dataclass, field
 from typing import Any
-import uuid
 
 import pytest
-import pytest_asyncio
-
 
 # ============== STATE MODELS ==============
 
@@ -25,7 +22,7 @@ class StateCheckpoint:
     state: dict[str, Any]
     timestamp: float = field(default_factory=time.time)
     parent_checkpoint_id: str | None = None
-    
+
     def to_dict(self) -> dict[str, Any]:
         return {
             "checkpoint_id": self.checkpoint_id,
@@ -44,7 +41,7 @@ class StateDelta:
     additions: dict[str, Any] = field(default_factory=dict)
     modifications: dict[str, Any] = field(default_factory=dict)
     deletions: list[str] = field(default_factory=list)
-    
+
     def apply(self, state: dict[str, Any]) -> dict[str, Any]:
         """Apply delta to a state."""
         new_state = state.copy()
@@ -64,7 +61,7 @@ class MockStateManager:
     Simulates the state management layer without requiring
     actual infrastructure (Redis, PostgreSQL, etc.).
     """
-    
+
     def __init__(self) -> None:
         self._states: dict[str, dict[str, Any]] = {}
         self._checkpoints: dict[str, list[StateCheckpoint]] = {}
@@ -72,19 +69,19 @@ class MockStateManager:
         self._checkpoint_counter = 0
         self._rollback_count = 0
         self._latency_simulator: float = 0.0  # Simulated latency in ms
-    
+
     async def initialize_agent(self, agent_id: str, initial_state: dict[str, Any] | None = None) -> None:
         """Initialize state for an agent."""
         self._states[agent_id] = initial_state or {"status": "initialized"}
         self._checkpoints[agent_id] = []
         self._deltas[agent_id] = []
-    
+
     async def get_state(self, agent_id: str) -> dict[str, Any] | None:
         """Get current state for an agent."""
         if self._latency_simulator > 0:
             await asyncio.sleep(self._latency_simulator / 1000)
         return self._states.get(agent_id)
-    
+
     async def update_state(
         self,
         agent_id: str,
@@ -104,25 +101,25 @@ class MockStateManager:
         """
         if agent_id not in self._states:
             return None
-        
+
         checkpoint = None
         if create_checkpoint:
             checkpoint = await self.create_checkpoint(agent_id)
-        
+
         # Apply updates
         old_state = self._states[agent_id].copy()
         self._states[agent_id].update(updates)
-        
+
         # Record delta
         delta = self._compute_delta(old_state, self._states[agent_id], checkpoint)
         if delta:
             self._deltas[agent_id].append(delta)
-        
+
         if self._latency_simulator > 0:
             await asyncio.sleep(self._latency_simulator / 1000)
-        
+
         return checkpoint
-    
+
     async def create_checkpoint(
         self,
         agent_id: str,
@@ -145,16 +142,16 @@ class MockStateManager:
             state=self._states.get(agent_id, {}).copy(),
             parent_checkpoint_id=parent_id,
         )
-        
+
         if agent_id not in self._checkpoints:
             self._checkpoints[agent_id] = []
         self._checkpoints[agent_id].append(checkpoint)
-        
+
         if self._latency_simulator > 0:
             await asyncio.sleep(self._latency_simulator / 1000)
-        
+
         return checkpoint
-    
+
     async def rollback(
         self,
         agent_id: str,
@@ -171,56 +168,56 @@ class MockStateManager:
             True if rollback successful.
         """
         start_time = time.perf_counter()
-        
+
         checkpoints = self._checkpoints.get(agent_id, [])
         target_checkpoint = None
-        
+
         for cp in checkpoints:
             if cp.checkpoint_id == checkpoint_id:
                 target_checkpoint = cp
                 break
-        
+
         if not target_checkpoint:
             return False
-        
+
         # Restore state
         self._states[agent_id] = target_checkpoint.state.copy()
-        
+
         # Remove checkpoints after the target
         checkpoint_index = checkpoints.index(target_checkpoint)
         self._checkpoints[agent_id] = checkpoints[:checkpoint_index + 1]
-        
+
         # Record rollback
         self._rollback_count += 1
-        
+
         if self._latency_simulator > 0:
             await asyncio.sleep(self._latency_simulator / 1000)
-        
+
         elapsed_ms = (time.perf_counter() - start_time) * 1000
         return True
-    
+
     async def rollback_to_last(self, agent_id: str) -> bool:
         """Rollback to the most recent checkpoint."""
         checkpoints = self._checkpoints.get(agent_id, [])
         if len(checkpoints) < 2:
             return False
-        
+
         # Get second-to-last checkpoint (last is current state)
         target_checkpoint = checkpoints[-2]
         return await self.rollback(agent_id, target_checkpoint.checkpoint_id)
-    
+
     def get_checkpoints(self, agent_id: str) -> list[StateCheckpoint]:
         """Get all checkpoints for an agent."""
         return self._checkpoints.get(agent_id, []).copy()
-    
+
     def get_rollback_count(self) -> int:
         """Get total number of rollbacks performed."""
         return self._rollback_count
-    
+
     def set_latency_simulator(self, latency_ms: float) -> None:
         """Set simulated latency for operations."""
         self._latency_simulator = latency_ms
-    
+
     def _compute_delta(
         self,
         old_state: dict[str, Any],
@@ -231,20 +228,20 @@ class MockStateManager:
         additions = {}
         modifications = {}
         deletions = []
-        
+
         for key, value in new_state.items():
             if key not in old_state:
                 additions[key] = value
             elif old_state[key] != value:
                 modifications[key] = value
-        
+
         for key in old_state:
             if key not in new_state:
                 deletions.append(key)
-        
+
         if not additions and not modifications and not deletions:
             return None
-        
+
         return StateDelta(
             checkpoint_from=checkpoint.checkpoint_id if checkpoint else "initial",
             checkpoint_to="current",
@@ -252,7 +249,7 @@ class MockStateManager:
             modifications=modifications,
             deletions=deletions,
         )
-    
+
     def reset(self) -> None:
         """Reset state manager."""
         self._states.clear()
@@ -266,19 +263,19 @@ class MockStateManager:
 
 class StateRollbackScenario:
     """Base class for state rollback test scenarios."""
-    
+
     def __init__(self, state_manager: MockStateManager) -> None:
         self.state_manager = state_manager
         self.results: dict[str, Any] = {}
-    
+
     async def setup(self) -> None:
         """Set up the scenario."""
         pass
-    
+
     async def teardown(self) -> None:
         """Tear down the scenario."""
         self.state_manager.reset()
-    
+
     async def run(self) -> dict[str, Any]:
         """Run the scenario and return results."""
         raise NotImplementedError
@@ -286,37 +283,37 @@ class StateRollbackScenario:
 
 class SimpleRollbackScenario(StateRollbackScenario):
     """Simple rollback to previous state."""
-    
+
     async def run(self) -> dict[str, Any]:
         """Run simple rollback scenario."""
         agent_id = "test-agent"
-        
+
         await self.state_manager.initialize_agent(
             agent_id,
             {"status": "initial", "counter": 0},
         )
-        
+
         # Create initial checkpoint
         cp1 = await self.state_manager.create_checkpoint(agent_id)
-        
+
         # Make changes
         await self.state_manager.update_state(
             agent_id,
             {"status": "modified", "counter": 5},
             create_checkpoint=True,
         )
-        
+
         # Verify state changed
         state_before = await self.state_manager.get_state(agent_id)
-        
+
         # Rollback
         start_time = time.perf_counter()
         success = await self.state_manager.rollback(agent_id, cp1.checkpoint_id)
         rollback_latency_ms = (time.perf_counter() - start_time) * 1000
-        
+
         # Verify state restored
         state_after = await self.state_manager.get_state(agent_id)
-        
+
         return {
             "success": success,
             "state_before_rollback": state_before,
@@ -328,16 +325,16 @@ class SimpleRollbackScenario(StateRollbackScenario):
 
 class MultiStepRollbackScenario(StateRollbackScenario):
     """Rollback through multiple state changes."""
-    
+
     async def run(self) -> dict[str, Any]:
         """Run multi-step rollback scenario."""
         agent_id = "test-agent"
-        
+
         await self.state_manager.initialize_agent(
             agent_id,
             {"step": 0, "data": "initial"},
         )
-        
+
         # Create series of state changes
         checkpoints = []
         for i in range(1, 6):
@@ -348,10 +345,10 @@ class MultiStepRollbackScenario(StateRollbackScenario):
                 {"step": i, "data": f"step-{i}"},
                 create_checkpoint=False,
             )
-        
+
         # Get current state
         current_state = await self.state_manager.get_state(agent_id)
-        
+
         # Rollback to step 2
         start_time = time.perf_counter()
         success = await self.state_manager.rollback(
@@ -359,10 +356,10 @@ class MultiStepRollbackScenario(StateRollbackScenario):
             checkpoints[1].checkpoint_id,  # Step 2
         )
         rollback_latency_ms = (time.perf_counter() - start_time) * 1000
-        
+
         # Verify state
         rolled_back_state = await self.state_manager.get_state(agent_id)
-        
+
         return {
             "success": success,
             "initial_step": 0,
@@ -375,23 +372,23 @@ class MultiStepRollbackScenario(StateRollbackScenario):
 
 class MultiAgentRollbackScenario(StateRollbackScenario):
     """Coordinated rollback across multiple agents."""
-    
+
     async def run(self) -> dict[str, Any]:
         """Run multi-agent rollback scenario."""
         agent_ids = ["agent-1", "agent-2", "agent-3"]
-        
+
         # Initialize all agents
         for agent_id in agent_ids:
             await self.state_manager.initialize_agent(
                 agent_id,
                 {"status": "ready", "task": None},
             )
-        
+
         # Create coordinated checkpoint
         checkpoints = {}
         for agent_id in agent_ids:
             checkpoints[agent_id] = await self.state_manager.create_checkpoint(agent_id)
-        
+
         # Update all agents
         for agent_id in agent_ids:
             await self.state_manager.update_state(
@@ -399,7 +396,7 @@ class MultiAgentRollbackScenario(StateRollbackScenario):
                 {"status": "working", "task": f"task-{agent_id}"},
                 create_checkpoint=True,
             )
-        
+
         # Simulate failure - rollback all agents
         start_time = time.perf_counter()
         rollback_results = {}
@@ -409,13 +406,13 @@ class MultiAgentRollbackScenario(StateRollbackScenario):
                 checkpoints[agent_id].checkpoint_id,
             )
         total_rollback_latency_ms = (time.perf_counter() - start_time) * 1000
-        
+
         # Verify all agents rolled back
         all_rolled_back = all(rollback_results.values())
         states_after = {}
         for agent_id in agent_ids:
             states_after[agent_id] = await self.state_manager.get_state(agent_id)
-        
+
         return {
             "success": all_rolled_back,
             "agents": agent_ids,
@@ -428,19 +425,19 @@ class MultiAgentRollbackScenario(StateRollbackScenario):
 
 class TaskFailureRollbackScenario(StateRollbackScenario):
     """Automatic rollback on task failure."""
-    
+
     async def run(self) -> dict[str, Any]:
         """Run task failure rollback scenario."""
         agent_id = "worker-agent"
-        
+
         await self.state_manager.initialize_agent(
             agent_id,
             {"status": "idle", "current_task": None, "progress": 0},
         )
-        
+
         # Create checkpoint before task
         pre_task_checkpoint = await self.state_manager.create_checkpoint(agent_id)
-        
+
         # Simulate task execution with progress updates
         for progress in [25, 50, 75]:
             await self.state_manager.update_state(
@@ -448,10 +445,10 @@ class TaskFailureRollbackScenario(StateRollbackScenario):
                 {"status": "executing", "progress": progress},
                 create_checkpoint=False,
             )
-        
+
         # Simulate task failure at 75%
         state_at_failure = await self.state_manager.get_state(agent_id)
-        
+
         # Automatic rollback on failure
         start_time = time.perf_counter()
         success = await self.state_manager.rollback(
@@ -459,10 +456,10 @@ class TaskFailureRollbackScenario(StateRollbackScenario):
             pre_task_checkpoint.checkpoint_id,
         )
         rollback_latency_ms = (time.perf_counter() - start_time) * 1000
-        
+
         # Verify state restored to pre-task
         state_after_rollback = await self.state_manager.get_state(agent_id)
-        
+
         return {
             "success": success,
             "state_at_failure": state_at_failure,

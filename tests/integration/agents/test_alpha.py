@@ -4,16 +4,15 @@ Integration tests for AlphaAgent.
 Tier 1 (Core Triad) - AlphaAgent performs primary analysis and decision-making.
 """
 
-import asyncio
+from unittest.mock import patch
+
 import pytest
 import pytest_asyncio
-from datetime import datetime
-from unittest.mock import AsyncMock, MagicMock, patch
+
+from heretek_swarm.actors.base import ActorState
 
 # Import from same path as the module under test to avoid enum identity issues
 from heretek_swarm.actors.triad import AlphaAgent
-from heretek_swarm.actors.base import ActorMessage, ActorState
-
 
 pytestmark = pytest.mark.integration
 

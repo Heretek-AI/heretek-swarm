@@ -4,15 +4,14 @@ Integration tests for StewardAgent.
 Tier 1 (Core Triad) - StewardAgent coordinates deliberation and manages governance policies.
 """
 
-import asyncio
+from datetime import datetime
+from unittest.mock import patch
+
 import pytest
 import pytest_asyncio
-from datetime import datetime
-from unittest.mock import AsyncMock, MagicMock, patch
 
-from heretek_swarm.actors.triad import StewardAgent
 from heretek_swarm.actors.base import ActorMessage, ActorState
-
+from heretek_swarm.actors.triad import StewardAgent
 
 pytestmark = pytest.mark.integration
 
@@ -238,7 +237,7 @@ class TestStewardAgentIntegration:
         }
 
         # Save state
-        with patch('heretek_swarm.actors.base.get_db_pool', return_value=mock_db):
+        with patch('heretek_swarm.actors.stubs.get_db_pool', return_value=mock_db):
             await spawned_steward.save_state()
 
         # Verify state saved

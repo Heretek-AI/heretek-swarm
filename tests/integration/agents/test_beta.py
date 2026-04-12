@@ -4,15 +4,14 @@ Integration tests for BetaAgent.
 Tier 1 (Core Triad) - BetaAgent performs secondary analysis, validation, and error detection.
 """
 
-import asyncio
+from datetime import datetime
+from unittest.mock import patch
+
 import pytest
 import pytest_asyncio
-from datetime import datetime
-from unittest.mock import AsyncMock, MagicMock, patch
 
-from heretek_swarm.actors.triad import BetaAgent
 from heretek_swarm.actors.base import ActorMessage, ActorState
-
+from heretek_swarm.actors.triad import BetaAgent
 
 pytestmark = pytest.mark.integration
 
@@ -254,7 +253,7 @@ class TestBetaAgentIntegration:
         }
 
         # Save state
-        with patch('heretek_swarm.actors.base.get_db_pool', return_value=mock_db):
+        with patch('heretek_swarm.actors.stubs.get_db_pool', return_value=mock_db):
             await spawned_beta.save_state()
 
         # Verify state saved
