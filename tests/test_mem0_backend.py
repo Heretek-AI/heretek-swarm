@@ -5,14 +5,14 @@ Tests for mem0 memory backend with latency tracking.
 Target: p95 latency <50ms
 """
 
-import os
-import pytest
 import asyncio
+import os
 from uuid import uuid4
-from datetime import datetime
 
-from memory import Mem0Backend, Mem0Config, MEM0_AVAILABLE
-from memory.base import MemoryEntry, MemoryType, MemoryTier, MemoryQuery
+import pytest
+from memory.base import MemoryEntry, MemoryQuery, MemoryTier, MemoryType
+
+from memory import MEM0_AVAILABLE, Mem0Backend, Mem0Config
 
 
 @pytest.fixture
@@ -32,7 +32,7 @@ async def mem0_backend(mem0_config):
     """Test fixture for mem0 backend."""
     if not MEM0_AVAILABLE:
         pytest.skip("mem0 not installed")
-    
+
     backend = Mem0Backend(config=mem0_config)
     try:
         await backend.initialize()
@@ -62,14 +62,14 @@ async def test_mem0_store_and_retrieve(mem0_backend):
         tier=MemoryTier.PERSISTENT,
         importance_score=0.8,
     )
-    
+
     # Store
     memory_id = await mem0_backend.store(entry)
     assert memory_id, "Memory ID should be returned"
-    
+
     # Small delay for mem0 processing
     await asyncio.sleep(0.5)
-    
+
     # Search
     query = MemoryQuery(
         query_text="test memory",
@@ -77,7 +77,7 @@ async def test_mem0_store_and_retrieve(mem0_backend):
         limit=10,
     )
     result = await mem0_backend.search(query)
-    
+
     assert result.total_count >= 1, "Should find at least one memory"
     assert any("Test memory" in e.content for e in result.entries)
 
@@ -95,7 +95,7 @@ async def test_mem0_batch_store(mem0_backend):
         )
         for i in range(10)
     ]
-    
+
     memory_ids = await mem0_backend.store_batch(entries)
     assert len(memory_ids) == 10, "Should return 10 memory IDs"
 
@@ -113,9 +113,9 @@ async def test_mem0_get_all(mem0_backend):
             tier=MemoryTier.PERSISTENT,
         )
         await mem0_backend.store(entry)
-    
+
     await asyncio.sleep(0.5)
-    
+
     # Get all
     entries = await mem0_backend.get_all("test-agent-getall")
     assert len(entries) >= 5, "Should retrieve all stored memories"
@@ -131,10 +131,10 @@ async def test_mem0_delete(mem0_backend):
         memory_type=MemoryType.EPISODIC,
         tier=MemoryTier.PERSISTENT,
     )
-    
+
     # Store
     memory_id = await mem0_backend.store(entry)
-    
+
     # Delete
     success = await mem0_backend.delete(memory_id)
     assert success, "Delete should succeed"
@@ -153,15 +153,15 @@ async def test_mem0_latency_tracking(mem0_backend):
             tier=MemoryTier.PERSISTENT,
         )
         await mem0_backend.store(entry)
-    
+
     # Get stats
     stats = mem0_backend.get_latency_stats()
-    
+
     assert "p50" in stats
     assert "p95" in stats
     assert "p99" in stats
     assert "avg" in stats
-    
+
     # Check p95 target (<50ms is ideal, <500ms acceptable for tests)
     assert stats["p95"] < 500, f"p95 latency {stats['p95']}ms exceeds 500ms target"
 
@@ -180,9 +180,9 @@ async def test_mem0_search_with_filters(mem0_backend):
             tags=[memory_type.value, "test"],
         )
         await mem0_backend.store(entry)
-    
+
     await asyncio.sleep(0.5)
-    
+
     # Search with agent filter
     query = MemoryQuery(
         query_text="memory type",
@@ -190,7 +190,7 @@ async def test_mem0_search_with_filters(mem0_backend):
         limit=10,
     )
     result = await mem0_backend.search(query)
-    
+
     assert result.total_count >= 3, "Should find memories of all types"
 
 
@@ -203,7 +203,7 @@ async def test_mem0_metadata_preservation(mem0_backend):
         "nested": {"key": "value"},
         "source": "test_suite",
     }
-    
+
     entry = MemoryEntry(
         id=uuid4(),
         agent_id="test-agent-metadata",
@@ -212,15 +212,15 @@ async def test_mem0_metadata_preservation(mem0_backend):
         tier=MemoryTier.PERSISTENT,
         metadata=test_metadata,
     )
-    
+
     # Store
     await mem0_backend.store(entry)
     await asyncio.sleep(0.5)
-    
+
     # Retrieve
     entries = await mem0_backend.get_all("test-agent-metadata")
     assert len(entries) > 0, "Should retrieve memory"
-    
+
     # Note: mem0 may transform metadata, so we check if custom data is present
     found_entry = entries[0]
     assert found_entry.content == "Memory with rich metadata"
