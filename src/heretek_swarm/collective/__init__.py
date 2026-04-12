@@ -78,8 +78,6 @@ from .distributed_learning import (
 from .emergence_analyzer import EmergenceAnalyzer
 from .emergent_detection import (
     AgentBehaviorSnapshot,
-    AgentCapabilitySnapshot,
-    CapabilityRecord,
     CollectiveBehavior,
     DetectionEvent,
     EmergenceDetectionConfig,
@@ -88,6 +86,10 @@ from .emergent_detection import (
     EmergentPatternClass,
     EmergentPatternDetector,
     EvolutionEngine,
+)
+from .emergent_detection_types import (
+    AgentCapabilitySnapshot,
+    CapabilityRecord,
     EvolutionMetrics,
     EvolutionPhase,
 )

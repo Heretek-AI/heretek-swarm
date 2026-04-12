@@ -185,56 +185,54 @@ class AgentCapabilitySnapshot:
 
 @dataclass
 class AgentBehaviorSnapshot:
-    """Snapshot of agent behavior at a point in time."""
+    """Snapshot of an agent's behavior at a point in time."""
 
     agent_id: str
     timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
-    behavior_type: str = ""
-    behavior_data: dict[str, Any] = field(default_factory=dict)
-
+    state: str = ""
+    active_strategies: list[str] = field(default_factory=list)
+    decision_history: list[dict[str, Any]] = field(default_factory=list)
     interaction_count: int = 0
     success_rate: float = 0.0
-    coherence: float = 0.0
-    convergent_strategies: list[str] = field(default_factory=list)
-    strategy_diversity: float = 0.0
+    metrics: dict[str, float] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         return {
             "agent_id": self.agent_id,
             "timestamp": self.timestamp,
-            "behavior_type": self.behavior_type,
-            "behavior_data": self.behavior_data,
+            "state": self.state,
+            "active_strategies": self.active_strategies,
+            "decision_history": self.decision_history,
             "interaction_count": self.interaction_count,
             "success_rate": self.success_rate,
-            "coherence": self.coherence,
-            "convergent_strategies": self.convergent_strategies,
-            "strategy_diversity": self.strategy_diversity,
+            "metrics": self.metrics,
         }
 
 
 @dataclass
 class CollectiveBehavior:
-    """Record of a collective behavior observed in the swarm."""
+    """Represents a collective behavior observed in the swarm."""
 
     behavior_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     behavior_type: str = ""
-    involved_agents: list[str] = field(default_factory=list)
-
-    coherence: float = 0.0
-    convergent_strategies: list[str] = field(default_factory=list)
+    participating_agents: list[str] = field(default_factory=list)
     start_time: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
     end_time: str | None = None
+    duration_seconds: float = 0.0
+    intensity: float = 0.0
+    coherence: float = 0.0
     metadata: dict[str, Any] = field(default_factory=dict)
 
     def to_dict(self) -> dict[str, Any]:
         return {
             "behavior_id": self.behavior_id,
             "behavior_type": self.behavior_type,
-            "involved_agents": self.involved_agents,
-            "coherence": self.coherence,
-            "convergent_strategies": self.convergent_strategies,
+            "participating_agents": self.participating_agents,
             "start_time": self.start_time,
             "end_time": self.end_time,
+            "duration_seconds": self.duration_seconds,
+            "intensity": self.intensity,
+            "coherence": self.coherence,
             "metadata": self.metadata,
         }
 
@@ -312,3 +310,26 @@ class DetectionEvent:
             "timestamp": self.timestamp,
             "details": self.details,
         }
+
+
+@dataclass
+class EmergenceDetectionConfig:
+    """Configuration for emergent pattern detection."""
+
+    min_emergence_score: float = 0.3
+    min_participating_agents: int = 3
+    min_coherence: float = 0.5
+    statistical_threshold: float = 0.05
+
+    analysis_window_seconds: float = 300.0
+    baseline_window_seconds: float = 600.0
+
+    validation_required: bool = True
+    min_confidence: float = 0.6
+
+    enable_coordination_detection: bool = True
+    enable_optimization_detection: bool = True
+    enable_innovation_detection: bool = True
+    enable_phase_transition_detection: bool = True
+
+    max_detections_per_window: int = 10

@@ -1,134 +1,25 @@
-"""Evolution Engine for tracking organic capability development."""
+"""
+Evolution Engine - Organic Capability Development Tracking
 
-from __future__ import annotations
+Extracted from emergent_detection.py as part of Phase 3 refactor.
+Tracks and manages organic capability development in the swarm.
+"""
 
 import asyncio
 from collections.abc import Callable
-from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
-from enum import StrEnum
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 import structlog
 
-if TYPE_CHECKING:
-    from .emergent_detection import CapabilityRecord
+from .emergent_detection_types import (
+    AgentCapabilitySnapshot,
+    CapabilityRecord,
+    EvolutionMetrics,
+    EvolutionPhase,
+)
 
 logger = structlog.get_logger(__name__)
-
-
-class EvolutionPhase(StrEnum):
-    """Phases of evolutionary development."""
-
-    INITIALIZATION = "initialization"
-    EXPLORATION = "exploration"
-    SELECTION = "selection"
-    CONSOLIDATION = "consolidation"
-    EMERGENCE = "emergence"
-    MATURATION = "maturation"
-    EQUILIBRIUM = "equilibrium"
-
-
-@dataclass
-class EvolutionMetrics:
-    """Metrics tracking evolution of collective capabilities."""
-
-    total_capabilities: int = 0
-    stabilized_capabilities: int = 0
-    inherited_capabilities: int = 0
-    active_capabilities: int = 0
-    evolution_rate: float = 0.0
-    capability_diversity: float = 0.0
-    avg_fitness: float = 0.0
-    max_fitness: float = 0.0
-    min_fitness: float = 0.0
-    fitness_variance: float = 0.0
-    fitness_trend: float = 0.0
-    fitness_landscape: float = 0.0
-    adaptability_index: float = 0.0
-    current_phase: EvolutionPhase = EvolutionPhase.INITIALIZATION
-    generations: int = 0
-    selection_fidelity: float = 0.5
-
-    def to_dict(self) -> dict[str, Any]:
-        return {
-            "total_capabilities": self.total_capabilities,
-            "stabilized_capabilities": self.stabilized_capabilities,
-            "inherited_capabilities": self.inherited_capabilities,
-            "active_capabilities": self.active_capabilities,
-            "evolution_rate": self.evolution_rate,
-            "capability_diversity": self.capability_diversity,
-            "avg_fitness": self.avg_fitness,
-            "max_fitness": self.max_fitness,
-            "min_fitness": self.min_fitness,
-            "fitness_variance": self.fitness_variance,
-            "fitness_trend": self.fitness_trend,
-            "fitness_landscape": self.fitness_landscape,
-            "adaptability_index": self.adaptability_index,
-            "current_phase": self.current_phase.value,
-            "generations": self.generations,
-            "selection_fidelity": self.selection_fidelity,
-        }
-
-
-@dataclass
-class CapabilityRecord:
-    """Record of a capability gained by an agent or the swarm."""
-
-    capability_id: str = field(default_factory=lambda: str(uuid.uuid4()))
-    capability_type: str = ""
-    capability_name: str = ""
-    description: str = ""
-    origin_agent_id: str = ""
-    contributing_agents: list[str] = field(default_factory=list)
-    first_observed: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
-    last_reinforced: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
-    development_time_seconds: float = 0.0
-    evolution_rate: float = 0.0
-    fitness_contribution: float = 0.0
-    is_stabilized: bool = False
-    stabilization_time_seconds: float = 0.0
-    inheritance_count: int = 0
-    metadata: dict[str, Any] = field(default_factory=dict)
-
-    def to_dict(self) -> dict[str, Any]:
-        return {
-            "capability_id": self.capability_id,
-            "capability_type": self.capability_type,
-            "capability_name": self.capability_name,
-            "description": self.description,
-            "origin_agent_id": self.origin_agent_id,
-            "contributing_agents": self.contributing_agents,
-            "first_observed": self.first_observed,
-            "last_reinforced": self.last_reinforced,
-            "development_time_seconds": self.development_time_seconds,
-            "evolution_rate": self.evolution_rate,
-            "fitness_contribution": self.fitness_contribution,
-            "is_stabilized": self.is_stabilized,
-            "stabilization_time_seconds": self.stabilization_time_seconds,
-            "inheritance_count": self.inheritance_count,
-            "metadata": self.metadata,
-        }
-
-
-@dataclass
-class AgentCapabilitySnapshot:
-    """Snapshot of an agent's capabilities at a point in time."""
-
-    agent_id: str = ""
-    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
-    capability_levels: dict[str, float] = field(default_factory=dict)
-    fitness_score: float = 0.0
-    fitness_history: list[float] = field(default_factory=list)
-    behavior_diversity: float = 0.0
-    behavior_innovation: float = 0.0
-    success_rate: float = 0.0
-    adaptation_count: int = 0
-    active_capabilities: list[str] = field(default_factory=list)
-    newly_acquired: list[str] = field(default_factory=list)
-
-
-import uuid
 
 
 class EvolutionEngine:

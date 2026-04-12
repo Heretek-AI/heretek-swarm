@@ -136,13 +136,13 @@ class TestEmergentPattern:
             pattern_class=EmergentPatternClass.COORDINATION,
             emergence_level=EmergenceLevel.WEAK,
             description="Agents synchronizing their task execution",
-            participating_agents=["agent-1", "agent-2"],
-            emergence_score=0.6,
+            involved_agents=["agent-1", "agent-2"],
+            impact_score=0.6,
             confidence=0.8,
         )
         assert pattern.pattern_class == EmergentPatternClass.COORDINATION
         assert pattern.emergence_level == EmergenceLevel.WEAK
-        assert pattern.emergence_score == 0.6
+        assert pattern.impact_score == 0.6
         assert pattern.confidence == 0.8
 
     def test_pattern_to_dict(self):
@@ -151,15 +151,14 @@ class TestEmergentPattern:
             pattern_class=EmergentPatternClass.OPTIMIZATION,
             emergence_level=EmergenceLevel.STRONG,
             description="Resource allocation optimization emerged",
-            participating_agents=["agent-a", "agent-b", "agent-c"],
-            emergence_score=0.85,
+            involved_agents=["agent-a", "agent-b", "agent-c"],
+            impact_score=0.85,
             confidence=0.9,
-            impact_score=0.7,
         )
         data = pattern.to_dict()
         assert data["pattern_class"] == "optimization"
         assert data["emergence_level"] == "strong"
-        assert data["emergence_score"] == 0.85
+        assert data["impact_score"] == 0.85
 
     def test_pattern_to_extracted_pattern(self):
         """Test conversion to extracted pattern."""
@@ -167,8 +166,8 @@ class TestEmergentPattern:
             pattern_class=EmergentPatternClass.COORDINATION,
             emergence_level=EmergenceLevel.WEAK,
             description="Test pattern",
-            participating_agents=["agent-1"],
-            emergence_score=0.5,
+            involved_agents=["agent-1"],
+            impact_score=0.5,
             confidence=0.5,
         )
         # This test may fail if ExtractedPattern dependencies not available
@@ -185,13 +184,12 @@ class TestEmergentPattern:
             pattern_class=EmergentPatternClass.PHASE_TRANSITION,
             emergence_level=EmergenceLevel.CRITICAL,
             description="System-wide phase transition detected",
-            participating_agents=[f"agent-{i}" for i in range(100)],
-            emergence_score=0.95,
-            confidence=0.98,
+            involved_agents=[f"agent-{i}" for i in range(100)],
             impact_score=0.95,
+            confidence=0.98,
         )
         assert pattern.impact_score > 0.9
-        assert len(pattern.participating_agents) == 100
+        assert len(pattern.involved_agents) == 100
 
 
 class TestDetectionEvent:
@@ -201,27 +199,25 @@ class TestDetectionEvent:
         """Test basic detection event creation."""
         event = DetectionEvent(
             event_id="detect-001",
-            detection_method="coordination_analysis",
-            raw_score=0.85,
-            threshold=0.5,
+            event_type="coordination_analysis",
+            details={"raw_score": 0.85, "threshold": 0.5},
         )
         assert event.event_id == "detect-001"
-        assert event.detection_method == "coordination_analysis"
-        assert event.raw_score == 0.85
+        assert event.event_type == "coordination_analysis"
+        assert event.details["raw_score"] == 0.85
 
     def test_detection_event_to_dict(self):
         """Test detection event serialization."""
         event = DetectionEvent(
             event_id="detect-002",
-            detection_method="optimization_analysis",
-            raw_score=0.9,
-            threshold=0.5,
-            metadata={"iterations": 10},
+            event_type="optimization_analysis",
+            details={"raw_score": 0.9, "threshold": 0.5, "iterations": 10},
         )
         data = event.to_dict()
         assert data["event_id"] == "detect-002"
-        assert data["raw_score"] == 0.9
-        assert data["metadata"]["iterations"] == 10
+        assert data["event_type"] == "optimization_analysis"
+        assert data["details"]["raw_score"] == 0.9
+        assert data["details"]["iterations"] == 10
 
 
 class TestEmergenceDetectionConfig:
