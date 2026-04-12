@@ -110,7 +110,7 @@ class ValidationResult(Generic[T]):
 class AgentValidator(ABC):
     """
     Abstract base class for agent validators.
-    
+
     Subclass this to create validators for specific agent types.
     """
 
@@ -321,14 +321,14 @@ def benchmark_sync(
 ) -> LatencyMetrics:
     """
     Benchmark a synchronous function.
-    
+
     Args:
         func: Function to benchmark.
         *args: Arguments to pass to function.
         iterations: Number of iterations to run.
         warmup: Number of warmup iterations (not counted).
         **kwargs: Keyword arguments to pass to function.
-    
+
     Returns:
         LatencyMetrics with benchmark results.
     """
@@ -356,14 +356,14 @@ async def benchmark_async(
 ) -> LatencyMetrics:
     """
     Benchmark an async function.
-    
+
     Args:
         func: Async function to benchmark.
         *args: Arguments to pass to function.
         iterations: Number of iterations to run.
         warmup: Number of warmup iterations (not counted).
         **kwargs: Keyword arguments to pass to function.
-    
+
     Returns:
         LatencyMetrics with benchmark results.
     """

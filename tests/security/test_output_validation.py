@@ -253,7 +253,7 @@ class TestPIIRegression:
     async def test_pii_redaction_end_to_end(self):
         """
         End-to-end test verifying PII redaction works correctly.
-        
+
         This is a regression test for the bypass bug where sanitized_output
         was computed but the original data was passed through.
         """

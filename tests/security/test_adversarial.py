@@ -416,7 +416,7 @@ class TestMetrics:
 
         # Should have 40+ injection signatures
         assert metrics["injection_signatures"] >= 40
-        # Should have 50+ jailbreak signatures  
+        # Should have 50+ jailbreak signatures
         assert metrics["jailbreak_signatures"] >= 50
 
 

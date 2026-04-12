@@ -57,7 +57,7 @@ class StateDelta:
 class MockStateManager:
     """
     Mock state manager for rollback testing.
-    
+
     Simulates the state management layer without requiring
     actual infrastructure (Redis, PostgreSQL, etc.).
     """
@@ -90,12 +90,12 @@ class MockStateManager:
     ) -> StateCheckpoint | None:
         """
         Update agent state.
-        
+
         Args:
             agent_id: Agent to update.
             updates: State updates to apply.
             create_checkpoint: Whether to create a checkpoint before update.
-        
+
         Returns:
             Checkpoint if created, None otherwise.
         """
@@ -127,11 +127,11 @@ class MockStateManager:
     ) -> StateCheckpoint:
         """
         Create a checkpoint of current state.
-        
+
         Args:
             agent_id: Agent to checkpoint.
             parent_id: Optional parent checkpoint ID.
-        
+
         Returns:
             Created checkpoint.
         """
@@ -159,11 +159,11 @@ class MockStateManager:
     ) -> bool:
         """
         Rollback agent state to a checkpoint.
-        
+
         Args:
             agent_id: Agent to rollback.
             checkpoint_id: Checkpoint to rollback to.
-        
+
         Returns:
             True if rollback successful.
         """

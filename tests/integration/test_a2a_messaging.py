@@ -21,17 +21,17 @@ class TestA2AMessaging:
         # TODO: Implement when message bus is available
         # sender = await create_agent("sender-1")
         # receiver = await create_agent("receiver-1")
-        # 
+        #
         # message = Message(
         #     sender_id=sender.agent_id,
         #     receiver_id=receiver.agent_id,
         #     message_type="ping",
         #     payload={"data": "test"},
         # )
-        # 
+        #
         # await sender.send_message(message)
         # received = await receiver.receive_message(timeout=5.0)
-        # 
+        #
         # assert received.message_id == message.message_id
         pass
 

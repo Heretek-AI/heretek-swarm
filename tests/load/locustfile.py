@@ -21,7 +21,7 @@ from locust import HttpUser, between, events, task
 class SpikeLoadShape:
     """
     Spike Load Test - Sudden increase in load
-    
+
     Tests system behavior under sudden traffic surge.
     Expected: System should handle spike gracefully, recover after spike ends.
     """
@@ -37,7 +37,7 @@ class SpikeLoadShape:
 class EnduranceLoadShape:
     """
     Endurance Load Test - Sustained load over extended period
-    
+
     Tests for memory leaks, resource exhaustion, degradation over time.
     Expected: Stable performance throughout test duration.
     """
@@ -51,7 +51,7 @@ class EnduranceLoadShape:
 class BreakingPointLoadShape:
     """
     Breaking Point Test - Find system limits
-    
+
     Gradually increases load until system fails.
     Expected: Identify maximum sustainable load and failure mode.
     """
@@ -68,7 +68,7 @@ class BreakingPointLoadShape:
 class RecoveryLoadShape:
     """
     Recovery Test - System recovery after failure
-    
+
     Tests system ability to recover after overload.
     Expected: System should recover and return to normal operation.
     """
@@ -87,7 +87,7 @@ class RecoveryLoadShape:
 class APIUser(HttpUser):
     """
     Simulates API client behavior
-    
+
     Tests: Authentication, agent operations, memory operations, consensus
     """
     wait_time = between(0.5, 2)  # Realistic user think time
@@ -172,7 +172,7 @@ class APIUser(HttpUser):
 class HeavyUser(HttpUser):
     """
     Simulates heavy API client behavior
-    
+
     Tests: Complex operations, large payloads, multi-step workflows
     """
     wait_time = between(1, 5)  # Longer think time for complex operations
@@ -278,7 +278,7 @@ class HeavyUser(HttpUser):
 class WebSocketUser(HttpUser):
     """
     Simulates WebSocket client behavior
-    
+
     Tests: Real-time communication, message streaming
     """
     wait_time = between(0.1, 1)  # Short wait time for real-time ops

@@ -20,7 +20,7 @@ class TestStateRollback:
         # TODO: Implement when state manager is available
         # state_manager = StateManager()
         # agent_id = "test-agent"
-        # 
+        #
         # checkpoint_id = await state_manager.create_checkpoint(agent_id)
         # assert checkpoint_id is not None
         pass
@@ -31,16 +31,16 @@ class TestStateRollback:
         # TODO: Implement rollback testing
         # state_manager = StateManager()
         # agent_id = "test-agent"
-        # 
+        #
         # # Create checkpoint
         # checkpoint_id = await state_manager.create_checkpoint(agent_id)
-        # 
+        #
         # # Modify state
         # await state_manager.update_state(agent_id, {"modified": True})
-        # 
+        #
         # # Rollback
         # await state_manager.rollback(agent_id, checkpoint_id)
-        # 
+        #
         # # Verify rollback
         # state = await state_manager.get_state(agent_id)
         # assert state.get("modified") is not True

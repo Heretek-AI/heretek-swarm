@@ -59,8 +59,8 @@ class TestAgentMessaging:
 
     @pytest.mark.latency
     def test_message_send_latency(
-        self, 
-        agent_config: AgentConfig, 
+        self,
+        agent_config: AgentConfig,
         sample_message: Message,
         assert_latency_baseline,
     ) -> None:

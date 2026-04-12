@@ -123,11 +123,11 @@ class AgentPool:
     ) -> LoadTestMetrics:
         """
         Run message load test.
-        
+
         Args:
             messages_per_agent: Number of messages each agent should send.
             concurrency: Maximum concurrent operations.
-        
+
         Returns:
             LoadTestMetrics with results.
         """
@@ -167,11 +167,11 @@ class AgentPool:
     ) -> LoadTestMetrics:
         """
         Run task execution load test.
-        
+
         Args:
             tasks_per_agent: Number of tasks each agent should execute.
             concurrency: Maximum concurrent operations.
-        
+
         Returns:
             LoadTestMetrics with results.
         """
@@ -272,7 +272,7 @@ class TestAgentLoad:
     async def test_1000_concurrent_agents(self) -> None:
         """
         Test system with 1,000+ concurrent agents.
-        
+
         This is the primary load test per Phase Directives.
         Run explicitly: pytest -m "load" --run-slow
         """
