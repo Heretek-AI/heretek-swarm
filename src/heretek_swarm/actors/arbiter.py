@@ -22,6 +22,12 @@ from typing import Any
 import structlog
 from pydantic import ValidationError
 
+from heretek_swarm.actors.mixins import (
+    DeliberationMixin,
+    LearningMixin,
+    MemoryMixin,
+    PatternMixin,
+)
 from heretek_swarm.actors.base import ActorMessage, AgentActor
 from heretek_swarm.actors.validation import validate_message
 
@@ -136,7 +142,7 @@ class ArbitrationReport:
     recommendations: list[str]
 
 
-class ArbiterAgent(AgentActor):
+class ArbiterAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor):
     """
     Arbiter Agent - Conflict Resolution Specialist for the Heretek Swarm Collective.
 
@@ -165,6 +171,10 @@ class ArbiterAgent(AgentActor):
             config=config,
             db_pool=db_pool,
             redis_client=redis_client,
+            pattern_extractor=pattern_extractor,
+            deliberation_engine=deliberation_engine,
+            access_analyzer=access_analyzer,
+            zero_trust_validator=zero_trust_validator,
         )
 
         # Configuration
@@ -189,23 +199,6 @@ class ArbiterAgent(AgentActor):
             "resolutions_escalated": 0,
             "average_resolution_time": 0.0,
         }
-
-        # Session 44: Collective Learning Integration
-        # PatternExtractor for tracking conflict resolution patterns
-        self.pattern_extractor = pattern_extractor or PatternExtractor(min_support=3, min_confidence=0.6)
-
-        # Session 44: Consensus Integration
-        # SwarmDeliberationEngine for multi-party dispute resolution
-        self.deliberation_engine = deliberation_engine or SwarmDeliberationEngine(
-            max_rounds=5, consensus_threshold=0.75, min_participants=2
-        )
-
-        # Session 44: Memory Optimization Integration
-        # AccessPatternAnalyzer for tracking conflict resolution memory access
-        self.access_analyzer = access_analyzer or AccessPatternAnalyzer()
-
-        # Session 44: Zero-Trust Validation
-        self.zero_trust_validator = zero_trust_validator or ZeroTrustValidator()
 
         # Session 44: Integration state
         self._active_deliberations: dict[str, str] = {}  # conflict_id -> deliberation_id
@@ -1795,25 +1788,5 @@ class ArbiterAgent(AgentActor):
             )
             return []
 
-    def get_learning_status(self) -> dict[str, Any]:
-        """
-        Get collective learning and memory optimization status.
 
-        Returns:
-            Status dictionary with learning metrics
-        """
-        return {
-            "agent_id": self.agent_id,
-            "collective_learning": {
-                "patterns_extracted": len(self.pattern_extractor._validated_patterns) if self.pattern_extractor else 0,
-                "message_cache_size": len(self.pattern_extractor._message_cache) if self.pattern_extractor else 0,
-            },
-            "consensus": {
-                "active_deliberations": len(self._active_deliberations),
-                "deliberation_engine_stats": self.deliberation_engine.get_statistics() if self.deliberation_engine else {},
-            },
-            "memory_optimization": {
-                "access_statistics": self.access_analyzer.get_statistics().to_dict() if self.access_analyzer else {},
-            },
-        }
 
