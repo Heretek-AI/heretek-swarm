@@ -1,15 +1,13 @@
 """Tests for agent expertise profiling system."""
 
-import pytest
-import json
-import tempfile
 import os
-from datetime import datetime, timezone
-from typing import Dict, Any
+import tempfile
+
+import pytest
 
 from heretek_swarm.consensus.expertise import (
-    AgentExpertiseProfiler,
     AgentExpertiseProfile,
+    AgentExpertiseProfiler,
     DomainExpertise,
     ExpertiseLevel,
 )
@@ -473,7 +471,7 @@ class TestAgentExpertiseProfiler:
 
             # Verify file was created
             assert os.path.exists(temp_path)
-            
+
             # Create new profiler and load
             new_profiler = AgentExpertiseProfiler()
             new_profiler.load_from_file(temp_path)
