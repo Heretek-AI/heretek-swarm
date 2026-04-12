@@ -11,14 +11,12 @@ import asyncio
 import re
 import time
 from collections import defaultdict
-from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any, Callable, Dict, List, Optional, Set
-from unittest.mock import AsyncMock, MagicMock, Mock
+from typing import Any, Callable, Dict, List, Optional
+from unittest.mock import AsyncMock, MagicMock
 
 import pytest
 import pytest_asyncio
-
 
 # ============================================================================
 # Mock NATS Event Mesh
@@ -451,13 +449,12 @@ def sample_decision() -> Dict[str, Any]:
 def sample_memory() -> Dict[str, Any]:
     """Sample memory for Historian testing."""
     return {
-        "content": "Decision made to implement feature X",
+        "content": {"text": "Decision made to implement feature X"},
         "metadata": {
             "type": "decision",
             "session_id": "delib-001",
             "agents_involved": ["alpha", "beta", "charlie"],
         },
-        "timestamp": datetime.utcnow().isoformat(),
     }
 
 
@@ -648,7 +645,6 @@ def reset_async_state() -> None:
 def cleanup_actor_states() -> None:
     """Clean up actor state files between tests to prevent state pollution."""
     import os
-    import shutil
     state_dir = os.path.join(os.getcwd(), ".actor_states")
     yield
     if os.path.exists(state_dir):
