@@ -1085,5 +1085,204 @@ async def get_deliberation_audit_history(consensus_id: str, auth: dict = Depends
     }
 
 
+# =============================================================================
+# Tribunal Endpoints
+# =============================================================================
+
+tribunal_instance: Tribunal | None = None
+
+
+def get_tribunal() -> Tribunal | None:
+    """Get the tribunal instance."""
+    return tribunal_instance
+
+
+@router.post("/tribunal/cases")
+async def create_tribunal_case(
+    original_decision_id: str,
+    grounds: str,
+    description: str,
+    original_consensus_id: str = "",
+    auth: dict = Depends(get_authenticated_agent),
+):
+    """
+    Submit an appeal case to the Tribunal.
+
+    Args:
+        original_decision_id: ID of the decision being appealed
+        grounds: Legal grounds for the appeal
+        description: Description of the appeal
+        original_consensus_id: Related consensus process ID
+
+    Returns:
+        The created TribunalCase
+    """
+    tribunal = get_tribunal()
+    if not tribunal:
+        raise HTTPException(status_code=503, detail="Tribunal not available")
+
+    try:
+        case = tribunal.create_case(
+            original_decision_id=original_decision_id,
+            appellant_agent_id=auth["agent_id"],
+            grounds=grounds,
+            description=description,
+            original_consensus_id=original_consensus_id,
+        )
+        return {"case": case}
+    except Exception as e:
+        logger.error("tribunal_case_creation_failed", error=str(e))
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.get("/tribunal/cases/{case_id}")
+async def get_tribunal_case(
+    case_id: str,
+    auth: dict = Depends(get_authenticated_agent),
+):
+    """
+    Get a Tribunal case by ID.
+
+    Args:
+        case_id: The case ID to retrieve
+
+    Returns:
+        The TribunalCase
+    """
+    tribunal = get_tribunal()
+    if not tribunal:
+        raise HTTPException(status_code=503, detail="Tribunal not available")
+
+    case = tribunal.get_case(case_id)
+    if not case:
+        raise HTTPException(status_code=404, detail="Case not found")
+    return {"case": case}
+
+
+@router.post("/tribunal/cases/{case_id}/evidence")
+async def submit_tribunal_evidence(
+    case_id: str,
+    content: str,
+    evidence_type: EvidenceType = EvidenceType.DOCUMENT,
+    source: str | None = None,
+    reliability_score: float = 0.5,
+    auth: dict = Depends(get_authenticated_agent),
+):
+    """
+    Submit evidence to a Tribunal case.
+
+    Args:
+        case_id: Case to submit evidence to
+        content: Evidence content
+        evidence_type: Type of evidence
+        source: Evidence source
+        reliability_score: Reliability score (0.0-1.0)
+
+    Returns:
+        The created TribunalEvidence
+    """
+    tribunal = get_tribunal()
+    if not tribunal:
+        raise HTTPException(status_code=503, detail="Tribunal not available")
+
+    try:
+        evidence = tribunal.submit_evidence(
+            agent_id=auth["agent_id"],
+            case_id=case_id,
+            content=content,
+            evidence_type=evidence_type,
+            source=source,
+            reliability_score=reliability_score,
+        )
+        return {"evidence": evidence}
+    except Exception as e:
+        logger.error("tribunal_evidence_submission_failed", error=str(e))
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.post("/tribunal/cases/{case_id}/rule")
+async def issue_tribunal_ruling(
+    case_id: str,
+    ruling_type: RulingType,
+    reasoning: str,
+    confidence: float = 1.0,
+    auth: dict = Depends(get_authenticated_agent),
+):
+    """
+    Issue a ruling on a Tribunal case.
+
+    Args:
+        case_id: Case to rule on
+        ruling_type: Type of ruling
+        reasoning: Reasoning behind the ruling
+        confidence: Confidence score (0.0-1.0)
+
+    Returns:
+        The issued TribunalRuling
+    """
+    tribunal = get_tribunal()
+    if not tribunal:
+        raise HTTPException(status_code=503, detail="Tribunal not available")
+
+    try:
+        ruling = tribunal.issue_ruling(
+            case_id=case_id,
+            ruling_type=ruling_type.value,
+            reasoning=reasoning,
+            issued_by=auth["agent_id"],
+            confidence=confidence,
+        )
+        return {"ruling": ruling}
+    except Exception as e:
+        logger.error("tribunal_ruling_failed", error=str(e))
+        raise HTTPException(status_code=400, detail=str(e))
+
+
+@router.get("/tribunal/precedents")
+async def get_tribunal_precedents(
+    limit: int = 10,
+    auth: dict = Depends(get_authenticated_agent),
+):
+    """
+    Get binding precedent rulings.
+
+    Args:
+        limit: Maximum number of precedents to return
+
+    Returns:
+        List of precedent TribunalRulings
+    """
+    tribunal = get_tribunal()
+    if not tribunal:
+        raise HTTPException(status_code=503, detail="Tribunal not available")
+
+    precedents = tribunal.get_precedents(limit=limit)
+    return {"precedents": precedents}
+
+
+@router.get("/tribunal/cases/{case_id}/precedents")
+async def find_similar_precedents(
+    case_id: str,
+    limit: int = 5,
+    auth: dict = Depends(get_authenticated_agent),
+):
+    """
+    Find precedents similar to a case.
+
+    Args:
+        case_id: Case to find precedents for
+        limit: Maximum number of precedents to return
+
+    Returns:
+        List of similar TribunalRulings
+    """
+    tribunal = get_tribunal()
+    if not tribunal:
+        raise HTTPException(status_code=503, detail="Tribunal not available")
+
+    precedents = tribunal.find_similar_precedents(case_id, limit=limit)
+    return {"precedents": precedents}
+
+
 # Export router
 __all__ = ["router"]

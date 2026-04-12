@@ -22,6 +22,7 @@ from heretek_swarm.actors.mixins import (
     LearningMixin,
     MemoryMixin,
     PatternMixin,
+    TribunalMixin,
 )
 
 logger = structlog.get_logger("StewardAgent")
@@ -32,6 +33,7 @@ class StewardAgent(
     PatternMixin,
     MemoryMixin,
     LearningMixin,
+    TribunalMixin,
     AgentActor,
 ):
     """

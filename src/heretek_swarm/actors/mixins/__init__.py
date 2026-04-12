@@ -12,10 +12,12 @@ from heretek_swarm.actors.mixins.deliberation import DeliberationMixin
 from heretek_swarm.actors.mixins.learning import LearningMixin
 from heretek_swarm.actors.mixins.memory import MemoryMixin
 from heretek_swarm.actors.mixins.pattern import PatternMixin
+from heretek_swarm.actors.mixins.tribunal import TribunalMixin
 
 __all__ = [
     "DeliberationMixin",
     "PatternMixin",
     "MemoryMixin",
     "LearningMixin",
+    "TribunalMixin",
 ]
