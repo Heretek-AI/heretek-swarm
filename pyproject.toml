@@ -40,10 +40,48 @@ dependencies = [
     "mem0ai>=1.0.0",
     # FastAPI for backend API
     "fastapi>=0.109.0",
+    # CLI framework
+    "click>=8.1.0",
 ]
 
 [project.optional-dependencies]
+core = [
+    # Core swarm framework only
+    "swarms>=5.0.0",
+    "pydantic>=2.0.0",
+    "structlog>=24.1.0",
+    "tenacity>=8.2.0",
+    "circuitbreaker>=2.0.0",
+]
+agents = [
+    "heretek-swarm[core]",
+    # Agent framework
+    "starlette>=0.27.0",
+    "uvicorn>=0.25.0",
+    "websockets>=12.0",
+    "fastapi>=0.109.0",
+    "click>=8.1.0",
+    "httpx>=0.25.0",
+    # Memory
+    "mem0ai>=1.0.0",
+    # Vector storage
+    "redis>=5.0.0",
+    "qdrant-client>=1.7.0",
+    # Observability
+    "opentelemetry-api>=1.22.0",
+    "opentelemetry-sdk>=1.22.0",
+    "opentelemetry-exporter-otlp>=1.22.0",
+]
+full = [
+    "heretek-swarm[agents]",
+    # Infrastructure
+    "nats-server>=3.0.0",
+    # Extended observability
+    "opentelemetry-instrumentation-fastapi>=0.53b0",
+    "opentelemetry-instrumentation-httpx>=0.53b0",
+]
 dev = [
+    "heretek-swarm[full]",
     # Testing
     "pytest>=8.0.0",
     "pytest-asyncio>=0.23.0",
@@ -55,19 +93,15 @@ dev = [
     "pytest-env>=1.1.0",
     "hypothesis>=6.98.0",
     "faker>=24.0.0",
-    
     # Coverage
     "coverage[toml]>=7.4.0",
-    
     # Code Quality
     "ruff>=0.2.0",
     "mypy>=1.8.0",
     "pre-commit>=3.6.0",
-    
     # Load Testing
     "locust>=2.23.0",
     "locust-plugins>=4.0.0",
-    
     # Observability Testing
     "testcontainers>=3.7.0",
 ]
