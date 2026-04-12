@@ -1,28 +1,33 @@
 """
 Agent Management API Endpoints.
 
-This module provides REST API endpoints for agent lifecycle management.
-Delegated to submodules:
-- agents/core.py: Agent type discovery and deployment
-- agents/lifecycle.py: Agent lifecycle control (start, stop, suspend, resume)
-- agents/instances.py: Agent instances, logs, stats, and channels
-- agents/routing.py: Routing rules and behavior profiling
-- agents/jetstream.py: JetStream stream management
+This module provides REST API endpoints for agent lifecycle management,
+delegating to submodules for each functional area.
+
+Submodules:
+- core: Agent type discovery and deployment
+- lifecycle: Agent start/stop/suspend/resume
+- instances: Agent instance management
+- jetstream: JetStream stream management
+- profiling: Behavior profiling endpoints
+- routing_rules: Content routing rules
+- routing_control: Routing rule control (enable/disable)
 """
 
+import structlog
 from fastapi import APIRouter
 
-from heretek_swarm.api.agents.core import router as core_router
-from heretek_swarm.api.agents.lifecycle import router as lifecycle_router
-from heretek_swarm.api.agents.instances import router as instances_router
-from heretek_swarm.api.agents.routing import router as routing_router
-from heretek_swarm.api.agents.jetstream import router as jetstream_router
+from heretek_swarm.api.agents import core, instances, jetstream, lifecycle, profiling, routing_control, routing_rules
 
-router = APIRouter(prefix="/api/agents", tags=["agents-management"])
+logger = structlog.get_logger()
 
-# Include all sub-routers
-router.include_router(core_router)
-router.include_router(lifecycle_router)
-router.include_router(instances_router)
-router.include_router(routing_router)
-router.include_router(jetstream_router)
+router = APIRouter()
+
+# Include routers from submodules
+router.include_router(core.router, tags=["core"])
+router.include_router(lifecycle.router, tags=["lifecycle"])
+router.include_router(instances.router, tags=["instances"])
+router.include_router(jetstream.router, tags=["jetstream"])
+router.include_router(profiling.router, tags=["profiling"])
+router.include_router(routing_rules.router, tags=["routing_rules"])
+router.include_router(routing_control.router, tags=["routing_control"])
