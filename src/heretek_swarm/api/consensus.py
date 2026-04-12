@@ -36,6 +36,15 @@ from heretek_swarm.consensus.deliberation import (
     Evidence,
     Position,
 )
+from heretek_swarm.consensus.tribunal import (
+    CaseStatus,
+    EvidenceType,
+    RulingType,
+    Tribunal,
+    TribunalCase,
+    TribunalEvidence,
+    TribunalRuling,
+)
 
 logger = structlog.get_logger("api.consensus")
 

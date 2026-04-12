@@ -68,6 +68,15 @@ from heretek_swarm.consensus.swarm_deliberation import (
     Position,
     SwarmDeliberationEngine,
 )
+from heretek_swarm.consensus.tribunal import (
+    CaseStatus,
+    EvidenceType,
+    RulingType,
+    Tribunal,
+    TribunalCase,
+    TribunalEvidence,
+    TribunalRuling,
+)
 
 __all__ = [
     "AgentExpertiseProfile",
@@ -111,6 +120,14 @@ __all__ = [
     "RollbackResult",
     # Swarm Deliberation
     "SwarmDeliberationEngine",
+    # Tribunal
+    "CaseStatus",
+    "EvidenceType",
+    "RulingType",
+    "Tribunal",
+    "TribunalCase",
+    "TribunalEvidence",
+    "TribunalRuling",
     "Vote",
     "VoteRecord",
 ]

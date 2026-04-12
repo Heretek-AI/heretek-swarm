@@ -31,6 +31,17 @@ from typing import Any
 
 import structlog
 
+from .emergent_detection_utils import (
+    calculate_confidence,
+    calculate_impact_score,
+    calculate_shift_score,
+    calculate_statistical_significance,
+    calculate_temporal_span,
+    calculate_window_metrics,
+    classify_emergence_level,
+    generate_recommended_action,
+    measure_collective_capability,
+)
 from .learning import ExtractedPattern, PatternMetadata, PatternSource, PatternType
 
 logger = structlog.get_logger(__name__)
@@ -1056,42 +1067,16 @@ class EmergentPatternDetector:
         return windows
 
     def _calculate_window_metrics(self, window: list[AgentBehaviorSnapshot]) -> dict[str, float]:
-        if not window:
-            return {}
-
-        return {
-            "avg_success_rate": sum(s.success_rate for s in window) / len(window),
-            "avg_interaction_count": sum(s.interaction_count for s in window) / len(window),
-            "unique_agents": len({s.agent_id for s in window}),
-            "total_interactions": sum(s.interaction_count for s in window),
-        }
+        return calculate_window_metrics(window)
 
     def _calculate_shift_score(self, prev_metrics: dict[str, float], curr_metrics: dict[str, float]) -> float:
-        if not prev_metrics or not curr_metrics:
-            return 0.0
-
-        shifts = []
-        for key in prev_metrics:
-            if key in curr_metrics and prev_metrics[key] != 0:
-                change = abs(curr_metrics[key] - prev_metrics[key]) / prev_metrics[key]
-                shifts.append(change)
-
-        if not shifts:
-            return 0.0
-
-        return sum(shifts) / len(shifts)
+        return calculate_shift_score(prev_metrics, curr_metrics)
 
     def _get_active_agents(self, window: list[AgentBehaviorSnapshot]) -> list[str]:
         return list({s.agent_id for s in window})
 
     def _classify_emergence_level(self, score: float) -> EmergenceLevel:
-        if score >= 0.8:
-            return EmergenceLevel.CRITICAL
-        if score >= 0.6:
-            return EmergenceLevel.STRONG
-        if score >= 0.4:
-            return EmergenceLevel.MODERATE
-        return EmergenceLevel.WEAK
+        return classify_emergence_level(score)
 
     def _update_individual_baseline(self, agent_id: str) -> None:
         snapshots = self._agent_snapshots.get(agent_id, [])
@@ -1117,26 +1102,10 @@ class EmergentPatternDetector:
         return sum(baselines) / len(baselines) if baselines else 0.5
 
     def _measure_collective_capability(self, behaviors: list[CollectiveBehavior]) -> float:
-        if not behaviors:
-            return 0.0
-
-        weighted_sum = sum(b.coherence * b.intensity for b in behaviors)
-        return weighted_sum / len(behaviors)
+        return measure_collective_capability(behaviors)
 
     def _calculate_temporal_span(self, behaviors: list[CollectiveBehavior]) -> float:
-        if not behaviors:
-            return 0.0
-
-        times = []
-        for b in behaviors:
-            times.append(datetime.fromisoformat(b.start_time))
-            if b.end_time:
-                times.append(datetime.fromisoformat(b.end_time))
-
-        if len(times) < 2:
-            return 0.0
-
-        return (max(times) - min(times)).total_seconds()
+        return calculate_temporal_span(behaviors)
 
     async def _validate_and_store_pattern(self, pattern: EmergentPattern) -> DetectionEvent:
         event = DetectionEvent(
@@ -1156,14 +1125,14 @@ class EmergentPatternDetector:
             event.validation_details["reason"] = "insufficient_participating_agents"
             return event
 
-        pattern.statistical_significance = self._calculate_statistical_significance(pattern)
+        pattern.statistical_significance = calculate_statistical_significance(pattern)
 
         if pattern.statistical_significance > self.config.statistical_threshold:
             event.passed_validation = False
             event.validation_details["reason"] = "not_statistically_significant"
             return event
 
-        pattern.confidence = self._calculate_confidence(pattern)
+        pattern.confidence = calculate_confidence(pattern)
 
         if pattern.confidence < self.config.min_confidence:
             event.passed_validation = False
@@ -1186,8 +1155,8 @@ class EmergentPatternDetector:
         event.passed_validation = True
         pattern.is_validated = True
 
-        pattern.impact_score = self._calculate_impact_score(pattern)
-        pattern.recommended_action = self._generate_recommended_action(pattern)
+        pattern.impact_score = calculate_impact_score(pattern)
+        pattern.recommended_action = generate_recommended_action(pattern)
 
         existing_pattern = self._find_similar_pattern(pattern)
 
@@ -1213,79 +1182,6 @@ class EmergentPatternDetector:
                 set(existing.participating_agents) == set(pattern.participating_agents)):
                 return existing
         return None
-
-    def _calculate_statistical_significance(self, pattern: EmergentPattern) -> float:
-        n_agents = len(pattern.participating_agents)
-        emergence_score = pattern.emergence_score
-
-        significance = 1.0 / (n_agents * (1.0 - emergence_score + 0.01))
-        return min(significance, 1.0)
-
-    def _calculate_confidence(self, pattern: EmergentPattern) -> float:
-        factors = []
-        factors.append(pattern.emergence_score)
-        agent_factor = min(len(pattern.participating_agents) / 10.0, 1.0)
-        factors.append(agent_factor)
-        factors.append(1.0 if pattern.is_validated else 0.5)
-        ratio_factor = min(pattern.emergence_ratio / 2.0, 1.0) if pattern.emergence_ratio > 0 else 0
-        factors.append(ratio_factor)
-
-        return sum(factors) / len(factors)
-
-    def _calculate_impact_score(self, pattern: EmergentPattern) -> float:
-        level_impact = {
-            EmergenceLevel.WEAK: 0.2,
-            EmergenceLevel.MODERATE: 0.4,
-            EmergenceLevel.STRONG: 0.6,
-            EmergenceLevel.CRITICAL: 0.8,
-        }
-        base_impact = level_impact.get(pattern.emergence_level, 0.2)
-
-        positive_patterns = [
-            EmergentPatternClass.COORDINATION,
-            EmergentPatternClass.OPTIMIZATION,
-            EmergentPatternClass.INNOVATION,
-            EmergentPatternClass.SELF_ORGANIZATION,
-            EmergentPatternClass.ADAPTATION,
-        ]
-
-        negative_patterns = [
-            EmergentPatternClass.CASCADE,
-            EmergentPatternClass.PHASE_TRANSITION,
-        ]
-
-        if pattern.pattern_class in positive_patterns:
-            class_modifier = 1.0
-        elif pattern.pattern_class in negative_patterns:
-            class_modifier = -0.5
-        elif pattern.pattern_class == EmergentPatternClass.RESONANCE:
-            if pattern.emergence_ratio > 1.5:
-                class_modifier = 0.8
-            elif pattern.emergence_ratio < 0.5:
-                class_modifier = -0.3
-            else:
-                class_modifier = 0.3
-        else:
-            class_modifier = 0.0
-
-        confidence_modifier = pattern.confidence * 0.2
-        frequency_modifier = min(0.2, pattern.frequency * 0.02)
-
-        impact = (base_impact * class_modifier) + confidence_modifier + frequency_modifier
-        return max(-1.0, min(1.0, impact))
-
-    def _generate_recommended_action(self, pattern: EmergentPattern) -> str | None:
-        impact_score = self._calculate_impact_score(pattern)
-
-        if impact_score >= 0.7:
-            return "REINFORCE: High-value emergent pattern detected. Consider reinforcing conditions that enabled this behavior."
-        if impact_score >= 0.3:
-            return "MONITOR: Beneficial pattern detected. Document conditions for future replication."
-        if impact_score >= -0.3:
-            return "OBSERVE: Neutral emergence. Continue monitoring for changes."
-        if impact_score >= -0.7:
-            return "INVESTIGATE: Potentially harmful pattern. Analyze root causes and consider intervention."
-        return "ALERT: Harmful emergent pattern detected. Immediate intervention recommended."
 
     async def _call_detection_callbacks(self, event: DetectionEvent) -> None:
         for callback in self._on_emergence_detected:
