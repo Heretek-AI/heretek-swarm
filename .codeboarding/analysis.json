@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-12T04:25:09.657817+00:00",
+    "generated_at": "2026-04-12T04:37:23.039054+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 4,
@@ -11305,301 +11305,364 @@
           "start_line": 50,
           "end_line": 60,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector",
+          "start_line": 58,
+          "end_line": 409,
+          "node_type": "CLASS",
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergenceLevel",
           "start_line": 63,
           "end_line": 69,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EvolutionPhase",
           "start_line": 72,
           "end_line": 81,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.CapabilityRecord",
           "start_line": 85,
           "end_line": 129,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.CapabilityRecord.to_dict",
           "start_line": 110,
           "end_line": 129,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EvolutionMetrics",
           "start_line": 133,
           "end_line": 182,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EvolutionMetrics.to_dict",
           "start_line": 161,
           "end_line": 182,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_patterns_by_impact",
+          "start_line": 180,
+          "end_line": 182,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_harmful_patterns",
+          "start_line": 184,
+          "end_line": 186,
+          "node_type": "METHOD",
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.AgentCapabilitySnapshot",
           "start_line": 186,
           "end_line": 214,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_beneficial_patterns",
+          "start_line": 188,
+          "end_line": 190,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_collective_behaviors",
+          "start_line": 192,
+          "end_line": 193,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_detection_history",
+          "start_line": 195,
+          "end_line": 196,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._get_snapshot_windows",
+          "start_line": 198,
+          "end_line": 225,
+          "node_type": "METHOD",
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.AgentCapabilitySnapshot.to_dict",
           "start_line": 201,
           "end_line": 214,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EvolutionEngine",
           "start_line": 217,
           "end_line": 649,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.__init__",
           "start_line": 227,
           "end_line": 255,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.register_capability_emerged_callback",
           "start_line": 257,
           "end_line": 258,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.register_capability_stabilized_callback",
           "start_line": 260,
           "end_line": 261,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.register_phase_changed_callback",
           "start_line": 263,
           "end_line": 264,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.record_capability_gain",
           "start_line": 266,
           "end_line": 317,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._validate_and_store_pattern",
+          "start_line": 268,
+          "end_line": 334,
+          "node_type": "METHOD",
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.detect_evolution",
           "start_line": 319,
           "end_line": 350,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.assess_fitness",
           "start_line": 352,
           "end_line": 396,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_emergence_statistics",
+          "start_line": 368,
+          "end_line": 385,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.calculate_emergence_metrics",
+          "start_line": 387,
+          "end_line": 409,
+          "node_type": "METHOD",
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.get_evolution_metrics",
           "start_line": 398,
           "end_line": 400,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.get_capability_records",
           "start_line": 402,
           "end_line": 419,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.get_agent_capability_history",
           "start_line": 421,
           "end_line": 422,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EvolutionEngine._update_agent_capabilities",
           "start_line": 424,
           "end_line": 431,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EvolutionEngine._get_latest_snapshot",
           "start_line": 433,
           "end_line": 435,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EvolutionEngine._create_agent_snapshot",
           "start_line": 437,
           "end_line": 473,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EvolutionEngine._update_evolution_metrics",
           "start_line": 475,
           "end_line": 534,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EvolutionEngine._calculate_variance",
           "start_line": 536,
           "end_line": 540,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EvolutionEngine._calculate_adaptability_index",
           "start_line": 542,
           "end_line": 565,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EvolutionEngine._determine_evolution_phase",
           "start_line": 567,
           "end_line": 591,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EvolutionEngine._calculate_selection_fidelity",
           "start_line": 593,
           "end_line": 605,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EvolutionEngine._call_capability_emerged_callbacks",
           "start_line": 607,
           "end_line": 615,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EvolutionEngine._call_capability_stabilized_callbacks",
           "start_line": 617,
           "end_line": 625,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EvolutionEngine._call_phase_changed_callbacks",
           "start_line": 627,
           "end_line": 639,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.get_status",
           "start_line": 641,
           "end_line": 649,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.AgentBehaviorSnapshot",
           "start_line": 653,
           "end_line": 675,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.AgentBehaviorSnapshot.to_dict",
           "start_line": 665,
           "end_line": 675,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.CollectiveBehavior",
           "start_line": 679,
           "end_line": 703,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.CollectiveBehavior.to_dict",
           "start_line": 692,
           "end_line": 703,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPattern",
           "start_line": 707,
           "end_line": 796,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPattern.to_dict",
           "start_line": 734,
           "end_line": 756,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPattern.to_extracted_pattern",
           "start_line": 759,
           "end_line": 796,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.DetectionEvent",
           "start_line": 800,
           "end_line": 824,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.DetectionEvent.to_dict",
           "start_line": 813,
           "end_line": 824,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergenceDetectionConfig",
           "start_line": 828,
           "end_line": 847,
           "node_type": "CLASS",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector",
-          "start_line": 850,
-          "end_line": 1207,
-          "node_type": "CLASS",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.__init__",
@@ -11672,44 +11735,9 @@
           "status": "unchanged"
         },
         {
-          "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_detection_history",
-          "start_line": 990,
-          "end_line": 1020,
-          "node_type": "METHOD",
-          "status": "modified"
-        },
-        {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_evolution_metrics",
           "start_line": 1000,
           "end_line": 1003,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_patterns_by_impact",
-          "start_line": 1005,
-          "end_line": 1008,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_harmful_patterns",
-          "start_line": 1010,
-          "end_line": 1013,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_beneficial_patterns",
-          "start_line": 1015,
-          "end_line": 1018,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_collective_behaviors",
-          "start_line": 1020,
-          "end_line": 1022,
           "node_type": "METHOD",
           "status": "unchanged"
         },
@@ -11805,13 +11833,6 @@
           "status": "unchanged"
         },
         {
-          "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._validate_and_store_pattern",
-          "start_line": 1110,
-          "end_line": 1177,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._find_similar_pattern",
           "start_line": 1179,
           "end_line": 1184,
@@ -11829,20 +11850,6 @@
           "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_status",
           "start_line": 1198,
           "end_line": 1209,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_emergence_statistics",
-          "start_line": 1211,
-          "end_line": 1229,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.calculate_emergence_metrics",
-          "start_line": 1231,
-          "end_line": 1254,
           "node_type": "METHOD",
           "status": "unchanged"
         },
@@ -48675,6 +48682,310 @@
           "status": "modified"
         }
       ]
+    },
+    "src/heretek_swarm/collective/evolution_engine.py": {
+      "file_status": "modified",
+      "methods": [
+        {
+          "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine",
+          "start_line": 25,
+          "end_line": 457,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine.__init__",
+          "start_line": 35,
+          "end_line": 63,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine.register_capability_emerged_callback",
+          "start_line": 65,
+          "end_line": 66,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine.register_capability_stabilized_callback",
+          "start_line": 68,
+          "end_line": 69,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine.register_phase_changed_callback",
+          "start_line": 71,
+          "end_line": 72,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine.record_capability_gain",
+          "start_line": 74,
+          "end_line": 125,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine.detect_evolution",
+          "start_line": 127,
+          "end_line": 158,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine.assess_fitness",
+          "start_line": 160,
+          "end_line": 204,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine.get_evolution_metrics",
+          "start_line": 206,
+          "end_line": 208,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine.get_capability_records",
+          "start_line": 210,
+          "end_line": 227,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine.get_agent_capability_history",
+          "start_line": 229,
+          "end_line": 230,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine._update_agent_capabilities",
+          "start_line": 232,
+          "end_line": 239,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine._get_latest_snapshot",
+          "start_line": 241,
+          "end_line": 243,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine._create_agent_snapshot",
+          "start_line": 245,
+          "end_line": 281,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine._update_evolution_metrics",
+          "start_line": 283,
+          "end_line": 342,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine._calculate_variance",
+          "start_line": 344,
+          "end_line": 348,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine._calculate_adaptability_index",
+          "start_line": 350,
+          "end_line": 373,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine._determine_evolution_phase",
+          "start_line": 375,
+          "end_line": 399,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine._calculate_selection_fidelity",
+          "start_line": 401,
+          "end_line": 413,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine._call_capability_emerged_callbacks",
+          "start_line": 415,
+          "end_line": 423,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine._call_capability_stabilized_callbacks",
+          "start_line": 425,
+          "end_line": 433,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine._call_phase_changed_callbacks",
+          "start_line": 435,
+          "end_line": 447,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine.get_status",
+          "start_line": 449,
+          "end_line": 457,
+          "node_type": "METHOD",
+          "status": "added"
+        }
+      ]
+    },
+    "src/heretek_swarm/collective/emergent_detection_types.py": {
+      "file_status": "modified",
+      "methods": [
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.EmergentPatternClass",
+          "start_line": 19,
+          "end_line": 29,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.EmergenceLevel",
+          "start_line": 32,
+          "end_line": 38,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.EvolutionPhase",
+          "start_line": 41,
+          "end_line": 50,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.CapabilityRecord",
+          "start_line": 54,
+          "end_line": 98,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.CapabilityRecord.to_dict",
+          "start_line": 79,
+          "end_line": 98,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.EvolutionMetrics",
+          "start_line": 102,
+          "end_line": 151,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.EvolutionMetrics.to_dict",
+          "start_line": 130,
+          "end_line": 151,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.AgentCapabilitySnapshot",
+          "start_line": 155,
+          "end_line": 183,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.AgentCapabilitySnapshot.to_dict",
+          "start_line": 170,
+          "end_line": 183,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.AgentBehaviorSnapshot",
+          "start_line": 187,
+          "end_line": 209,
+          "node_type": "CLASS",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.AgentBehaviorSnapshot.to_dict",
+          "start_line": 199,
+          "end_line": 209,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.CollectiveBehavior",
+          "start_line": 213,
+          "end_line": 237,
+          "node_type": "CLASS",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.CollectiveBehavior.to_dict",
+          "start_line": 226,
+          "end_line": 237,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.EmergentPattern",
+          "start_line": 243,
+          "end_line": 291,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.EmergentPattern.to_dict",
+          "start_line": 261,
+          "end_line": 274,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.EmergentPattern.to_extracted_pattern",
+          "start_line": 276,
+          "end_line": 291,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.EmergenceDetectionConfig",
+          "start_line": 318,
+          "end_line": 337,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.DetectionEvent",
+          "start_line": 323,
+          "end_line": 347,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.DetectionEvent.to_dict",
+          "start_line": 336,
+          "end_line": 347,
+          "node_type": "METHOD",
+          "status": "added"
+        }
+      ]
     }
   },
   "methods_index": {
@@ -61268,7 +61579,15 @@
       "start_line": 50,
       "end_line": 60,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
+    },
+    "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector",
+      "start_line": 58,
+      "end_line": 409,
+      "type": "CLASS",
+      "status": "modified"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergenceLevel": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -61276,7 +61595,7 @@
       "start_line": 63,
       "end_line": 69,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EvolutionPhase": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -61284,7 +61603,7 @@
       "start_line": 72,
       "end_line": 81,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.CapabilityRecord": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -61292,7 +61611,7 @@
       "start_line": 85,
       "end_line": 129,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.CapabilityRecord.to_dict": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -61300,7 +61619,7 @@
       "start_line": 110,
       "end_line": 129,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EvolutionMetrics": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -61308,7 +61627,7 @@
       "start_line": 133,
       "end_line": 182,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EvolutionMetrics.to_dict": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -61316,7 +61635,23 @@
       "start_line": 161,
       "end_line": 182,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
+    },
+    "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_patterns_by_impact": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_patterns_by_impact",
+      "start_line": 180,
+      "end_line": 182,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_harmful_patterns": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_harmful_patterns",
+      "start_line": 184,
+      "end_line": 186,
+      "type": "METHOD",
+      "status": "modified"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.AgentCapabilitySnapshot": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -61324,7 +61659,39 @@
       "start_line": 186,
       "end_line": 214,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
+    },
+    "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_beneficial_patterns": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_beneficial_patterns",
+      "start_line": 188,
+      "end_line": 190,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_collective_behaviors": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_collective_behaviors",
+      "start_line": 192,
+      "end_line": 193,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_detection_history": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_detection_history",
+      "start_line": 195,
+      "end_line": 196,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._get_snapshot_windows": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._get_snapshot_windows",
+      "start_line": 198,
+      "end_line": 225,
+      "type": "METHOD",
+      "status": "modified"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.AgentCapabilitySnapshot.to_dict": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -61332,7 +61699,7 @@
       "start_line": 201,
       "end_line": 214,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EvolutionEngine": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -61340,7 +61707,7 @@
       "start_line": 217,
       "end_line": 649,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EvolutionEngine.__init__": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -61348,7 +61715,7 @@
       "start_line": 227,
       "end_line": 255,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EvolutionEngine.register_capability_emerged_callback": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -61356,7 +61723,7 @@
       "start_line": 257,
       "end_line": 258,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EvolutionEngine.register_capability_stabilized_callback": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -61364,7 +61731,7 @@
       "start_line": 260,
       "end_line": 261,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EvolutionEngine.register_phase_changed_callback": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -61372,7 +61739,7 @@
       "start_line": 263,
       "end_line": 264,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EvolutionEngine.record_capability_gain": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -61380,7 +61747,15 @@
       "start_line": 266,
       "end_line": 317,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
+    },
+    "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._validate_and_store_pattern": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._validate_and_store_pattern",
+      "start_line": 268,
+      "end_line": 334,
+      "type": "METHOD",
+      "status": "modified"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EvolutionEngine.detect_evolution": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -61388,7 +61763,7 @@
       "start_line": 319,
       "end_line": 350,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EvolutionEngine.assess_fitness": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -61396,7 +61771,23 @@
       "start_line": 352,
       "end_line": 396,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
+    },
+    "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_emergence_statistics": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_emergence_statistics",
+      "start_line": 368,
+      "end_line": 385,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.calculate_emergence_metrics": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.calculate_emergence_metrics",
+      "start_line": 387,
+      "end_line": 409,
+      "type": "METHOD",
+      "status": "modified"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EvolutionEngine.get_evolution_metrics": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -61404,7 +61795,7 @@
       "start_line": 398,
       "end_line": 400,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EvolutionEngine.get_capability_records": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -61412,7 +61803,7 @@
       "start_line": 402,
       "end_line": 419,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EvolutionEngine.get_agent_capability_history": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -61420,7 +61811,7 @@
       "start_line": 421,
       "end_line": 422,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EvolutionEngine._update_agent_capabilities": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -61428,7 +61819,7 @@
       "start_line": 424,
       "end_line": 431,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EvolutionEngine._get_latest_snapshot": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -61436,7 +61827,7 @@
       "start_line": 433,
       "end_line": 435,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EvolutionEngine._create_agent_snapshot": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -61444,7 +61835,7 @@
       "start_line": 437,
       "end_line": 473,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EvolutionEngine._update_evolution_metrics": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -61452,7 +61843,7 @@
       "start_line": 475,
       "end_line": 534,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EvolutionEngine._calculate_variance": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -61460,7 +61851,7 @@
       "start_line": 536,
       "end_line": 540,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EvolutionEngine._calculate_adaptability_index": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -61468,7 +61859,7 @@
       "start_line": 542,
       "end_line": 565,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EvolutionEngine._determine_evolution_phase": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -61476,7 +61867,7 @@
       "start_line": 567,
       "end_line": 591,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EvolutionEngine._calculate_selection_fidelity": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -61484,7 +61875,7 @@
       "start_line": 593,
       "end_line": 605,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EvolutionEngine._call_capability_emerged_callbacks": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -61492,7 +61883,7 @@
       "start_line": 607,
       "end_line": 615,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EvolutionEngine._call_capability_stabilized_callbacks": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -61500,7 +61891,7 @@
       "start_line": 617,
       "end_line": 625,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EvolutionEngine._call_phase_changed_callbacks": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -61508,7 +61899,7 @@
       "start_line": 627,
       "end_line": 639,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EvolutionEngine.get_status": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -61516,7 +61907,7 @@
       "start_line": 641,
       "end_line": 649,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.AgentBehaviorSnapshot": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -61524,7 +61915,7 @@
       "start_line": 653,
       "end_line": 675,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.AgentBehaviorSnapshot.to_dict": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -61532,7 +61923,7 @@
       "start_line": 665,
       "end_line": 675,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.CollectiveBehavior": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -61540,7 +61931,7 @@
       "start_line": 679,
       "end_line": 703,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.CollectiveBehavior.to_dict": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -61548,7 +61939,7 @@
       "start_line": 692,
       "end_line": 703,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPattern": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -61556,7 +61947,7 @@
       "start_line": 707,
       "end_line": 796,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPattern.to_dict": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -61564,7 +61955,7 @@
       "start_line": 734,
       "end_line": 756,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPattern.to_extracted_pattern": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -61572,7 +61963,7 @@
       "start_line": 759,
       "end_line": 796,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.DetectionEvent": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -61580,7 +61971,7 @@
       "start_line": 800,
       "end_line": 824,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.DetectionEvent.to_dict": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -61588,7 +61979,7 @@
       "start_line": 813,
       "end_line": 824,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergenceDetectionConfig": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -61596,15 +61987,7 @@
       "start_line": 828,
       "end_line": 847,
       "type": "CLASS",
-      "status": "unchanged"
-    },
-    "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector": {
-      "file_path": "src/heretek_swarm/collective/emergent_detection.py",
-      "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector",
-      "start_line": 850,
-      "end_line": 1207,
-      "type": "CLASS",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.__init__": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
@@ -61686,51 +62069,11 @@
       "type": "METHOD",
       "status": "unchanged"
     },
-    "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_detection_history": {
-      "file_path": "src/heretek_swarm/collective/emergent_detection.py",
-      "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_detection_history",
-      "start_line": 990,
-      "end_line": 1020,
-      "type": "METHOD",
-      "status": "modified"
-    },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_evolution_metrics": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
       "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_evolution_metrics",
       "start_line": 1000,
       "end_line": 1003,
-      "type": "METHOD",
-      "status": "unchanged"
-    },
-    "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_patterns_by_impact": {
-      "file_path": "src/heretek_swarm/collective/emergent_detection.py",
-      "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_patterns_by_impact",
-      "start_line": 1005,
-      "end_line": 1008,
-      "type": "METHOD",
-      "status": "unchanged"
-    },
-    "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_harmful_patterns": {
-      "file_path": "src/heretek_swarm/collective/emergent_detection.py",
-      "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_harmful_patterns",
-      "start_line": 1010,
-      "end_line": 1013,
-      "type": "METHOD",
-      "status": "unchanged"
-    },
-    "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_beneficial_patterns": {
-      "file_path": "src/heretek_swarm/collective/emergent_detection.py",
-      "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_beneficial_patterns",
-      "start_line": 1015,
-      "end_line": 1018,
-      "type": "METHOD",
-      "status": "unchanged"
-    },
-    "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_collective_behaviors": {
-      "file_path": "src/heretek_swarm/collective/emergent_detection.py",
-      "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_collective_behaviors",
-      "start_line": 1020,
-      "end_line": 1022,
       "type": "METHOD",
       "status": "unchanged"
     },
@@ -61838,14 +62181,6 @@
       "type": "METHOD",
       "status": "unchanged"
     },
-    "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._validate_and_store_pattern": {
-      "file_path": "src/heretek_swarm/collective/emergent_detection.py",
-      "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._validate_and_store_pattern",
-      "start_line": 1110,
-      "end_line": 1177,
-      "type": "METHOD",
-      "status": "unchanged"
-    },
     "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._find_similar_pattern": {
       "file_path": "src/heretek_swarm/collective/emergent_detection.py",
       "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._find_similar_pattern",
@@ -61867,22 +62202,6 @@
       "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_status",
       "start_line": 1198,
       "end_line": 1209,
-      "type": "METHOD",
-      "status": "unchanged"
-    },
-    "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_emergence_statistics": {
-      "file_path": "src/heretek_swarm/collective/emergent_detection.py",
-      "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_emergence_statistics",
-      "start_line": 1211,
-      "end_line": 1229,
-      "type": "METHOD",
-      "status": "unchanged"
-    },
-    "src/heretek_swarm/collective/emergent_detection.py|src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.calculate_emergence_metrics": {
-      "file_path": "src/heretek_swarm/collective/emergent_detection.py",
-      "qualified_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.calculate_emergence_metrics",
-      "start_line": 1231,
-      "end_line": 1254,
       "type": "METHOD",
       "status": "unchanged"
     },
@@ -102453,6 +102772,342 @@
       "end_line": 198,
       "type": "FUNCTION",
       "status": "modified"
+    },
+    "src/heretek_swarm/collective/evolution_engine.py|src.heretek_swarm.collective.evolution_engine.EvolutionEngine": {
+      "file_path": "src/heretek_swarm/collective/evolution_engine.py",
+      "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine",
+      "start_line": 25,
+      "end_line": 457,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/collective/evolution_engine.py|src.heretek_swarm.collective.evolution_engine.EvolutionEngine.__init__": {
+      "file_path": "src/heretek_swarm/collective/evolution_engine.py",
+      "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine.__init__",
+      "start_line": 35,
+      "end_line": 63,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/collective/evolution_engine.py|src.heretek_swarm.collective.evolution_engine.EvolutionEngine.register_capability_emerged_callback": {
+      "file_path": "src/heretek_swarm/collective/evolution_engine.py",
+      "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine.register_capability_emerged_callback",
+      "start_line": 65,
+      "end_line": 66,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/collective/evolution_engine.py|src.heretek_swarm.collective.evolution_engine.EvolutionEngine.register_capability_stabilized_callback": {
+      "file_path": "src/heretek_swarm/collective/evolution_engine.py",
+      "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine.register_capability_stabilized_callback",
+      "start_line": 68,
+      "end_line": 69,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/collective/evolution_engine.py|src.heretek_swarm.collective.evolution_engine.EvolutionEngine.register_phase_changed_callback": {
+      "file_path": "src/heretek_swarm/collective/evolution_engine.py",
+      "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine.register_phase_changed_callback",
+      "start_line": 71,
+      "end_line": 72,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/collective/evolution_engine.py|src.heretek_swarm.collective.evolution_engine.EvolutionEngine.record_capability_gain": {
+      "file_path": "src/heretek_swarm/collective/evolution_engine.py",
+      "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine.record_capability_gain",
+      "start_line": 74,
+      "end_line": 125,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/collective/evolution_engine.py|src.heretek_swarm.collective.evolution_engine.EvolutionEngine.detect_evolution": {
+      "file_path": "src/heretek_swarm/collective/evolution_engine.py",
+      "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine.detect_evolution",
+      "start_line": 127,
+      "end_line": 158,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/collective/evolution_engine.py|src.heretek_swarm.collective.evolution_engine.EvolutionEngine.assess_fitness": {
+      "file_path": "src/heretek_swarm/collective/evolution_engine.py",
+      "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine.assess_fitness",
+      "start_line": 160,
+      "end_line": 204,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/collective/evolution_engine.py|src.heretek_swarm.collective.evolution_engine.EvolutionEngine.get_evolution_metrics": {
+      "file_path": "src/heretek_swarm/collective/evolution_engine.py",
+      "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine.get_evolution_metrics",
+      "start_line": 206,
+      "end_line": 208,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/collective/evolution_engine.py|src.heretek_swarm.collective.evolution_engine.EvolutionEngine.get_capability_records": {
+      "file_path": "src/heretek_swarm/collective/evolution_engine.py",
+      "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine.get_capability_records",
+      "start_line": 210,
+      "end_line": 227,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/collective/evolution_engine.py|src.heretek_swarm.collective.evolution_engine.EvolutionEngine.get_agent_capability_history": {
+      "file_path": "src/heretek_swarm/collective/evolution_engine.py",
+      "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine.get_agent_capability_history",
+      "start_line": 229,
+      "end_line": 230,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/collective/evolution_engine.py|src.heretek_swarm.collective.evolution_engine.EvolutionEngine._update_agent_capabilities": {
+      "file_path": "src/heretek_swarm/collective/evolution_engine.py",
+      "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine._update_agent_capabilities",
+      "start_line": 232,
+      "end_line": 239,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/collective/evolution_engine.py|src.heretek_swarm.collective.evolution_engine.EvolutionEngine._get_latest_snapshot": {
+      "file_path": "src/heretek_swarm/collective/evolution_engine.py",
+      "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine._get_latest_snapshot",
+      "start_line": 241,
+      "end_line": 243,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/collective/evolution_engine.py|src.heretek_swarm.collective.evolution_engine.EvolutionEngine._create_agent_snapshot": {
+      "file_path": "src/heretek_swarm/collective/evolution_engine.py",
+      "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine._create_agent_snapshot",
+      "start_line": 245,
+      "end_line": 281,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/collective/evolution_engine.py|src.heretek_swarm.collective.evolution_engine.EvolutionEngine._update_evolution_metrics": {
+      "file_path": "src/heretek_swarm/collective/evolution_engine.py",
+      "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine._update_evolution_metrics",
+      "start_line": 283,
+      "end_line": 342,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/collective/evolution_engine.py|src.heretek_swarm.collective.evolution_engine.EvolutionEngine._calculate_variance": {
+      "file_path": "src/heretek_swarm/collective/evolution_engine.py",
+      "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine._calculate_variance",
+      "start_line": 344,
+      "end_line": 348,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/collective/evolution_engine.py|src.heretek_swarm.collective.evolution_engine.EvolutionEngine._calculate_adaptability_index": {
+      "file_path": "src/heretek_swarm/collective/evolution_engine.py",
+      "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine._calculate_adaptability_index",
+      "start_line": 350,
+      "end_line": 373,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/collective/evolution_engine.py|src.heretek_swarm.collective.evolution_engine.EvolutionEngine._determine_evolution_phase": {
+      "file_path": "src/heretek_swarm/collective/evolution_engine.py",
+      "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine._determine_evolution_phase",
+      "start_line": 375,
+      "end_line": 399,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/collective/evolution_engine.py|src.heretek_swarm.collective.evolution_engine.EvolutionEngine._calculate_selection_fidelity": {
+      "file_path": "src/heretek_swarm/collective/evolution_engine.py",
+      "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine._calculate_selection_fidelity",
+      "start_line": 401,
+      "end_line": 413,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/collective/evolution_engine.py|src.heretek_swarm.collective.evolution_engine.EvolutionEngine._call_capability_emerged_callbacks": {
+      "file_path": "src/heretek_swarm/collective/evolution_engine.py",
+      "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine._call_capability_emerged_callbacks",
+      "start_line": 415,
+      "end_line": 423,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/collective/evolution_engine.py|src.heretek_swarm.collective.evolution_engine.EvolutionEngine._call_capability_stabilized_callbacks": {
+      "file_path": "src/heretek_swarm/collective/evolution_engine.py",
+      "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine._call_capability_stabilized_callbacks",
+      "start_line": 425,
+      "end_line": 433,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/collective/evolution_engine.py|src.heretek_swarm.collective.evolution_engine.EvolutionEngine._call_phase_changed_callbacks": {
+      "file_path": "src/heretek_swarm/collective/evolution_engine.py",
+      "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine._call_phase_changed_callbacks",
+      "start_line": 435,
+      "end_line": 447,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/collective/evolution_engine.py|src.heretek_swarm.collective.evolution_engine.EvolutionEngine.get_status": {
+      "file_path": "src/heretek_swarm/collective/evolution_engine.py",
+      "qualified_name": "src.heretek_swarm.collective.evolution_engine.EvolutionEngine.get_status",
+      "start_line": 449,
+      "end_line": 457,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/collective/emergent_detection_types.py|src.heretek_swarm.collective.emergent_detection_types.EmergentPatternClass": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection_types.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.EmergentPatternClass",
+      "start_line": 19,
+      "end_line": 29,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/collective/emergent_detection_types.py|src.heretek_swarm.collective.emergent_detection_types.EmergenceLevel": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection_types.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.EmergenceLevel",
+      "start_line": 32,
+      "end_line": 38,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/collective/emergent_detection_types.py|src.heretek_swarm.collective.emergent_detection_types.EvolutionPhase": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection_types.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.EvolutionPhase",
+      "start_line": 41,
+      "end_line": 50,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/collective/emergent_detection_types.py|src.heretek_swarm.collective.emergent_detection_types.CapabilityRecord": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection_types.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.CapabilityRecord",
+      "start_line": 54,
+      "end_line": 98,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/collective/emergent_detection_types.py|src.heretek_swarm.collective.emergent_detection_types.CapabilityRecord.to_dict": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection_types.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.CapabilityRecord.to_dict",
+      "start_line": 79,
+      "end_line": 98,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/collective/emergent_detection_types.py|src.heretek_swarm.collective.emergent_detection_types.EvolutionMetrics": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection_types.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.EvolutionMetrics",
+      "start_line": 102,
+      "end_line": 151,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/collective/emergent_detection_types.py|src.heretek_swarm.collective.emergent_detection_types.EvolutionMetrics.to_dict": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection_types.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.EvolutionMetrics.to_dict",
+      "start_line": 130,
+      "end_line": 151,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/collective/emergent_detection_types.py|src.heretek_swarm.collective.emergent_detection_types.AgentCapabilitySnapshot": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection_types.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.AgentCapabilitySnapshot",
+      "start_line": 155,
+      "end_line": 183,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/collective/emergent_detection_types.py|src.heretek_swarm.collective.emergent_detection_types.AgentCapabilitySnapshot.to_dict": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection_types.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.AgentCapabilitySnapshot.to_dict",
+      "start_line": 170,
+      "end_line": 183,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/collective/emergent_detection_types.py|src.heretek_swarm.collective.emergent_detection_types.AgentBehaviorSnapshot": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection_types.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.AgentBehaviorSnapshot",
+      "start_line": 187,
+      "end_line": 209,
+      "type": "CLASS",
+      "status": "modified"
+    },
+    "src/heretek_swarm/collective/emergent_detection_types.py|src.heretek_swarm.collective.emergent_detection_types.AgentBehaviorSnapshot.to_dict": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection_types.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.AgentBehaviorSnapshot.to_dict",
+      "start_line": 199,
+      "end_line": 209,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/collective/emergent_detection_types.py|src.heretek_swarm.collective.emergent_detection_types.CollectiveBehavior": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection_types.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.CollectiveBehavior",
+      "start_line": 213,
+      "end_line": 237,
+      "type": "CLASS",
+      "status": "modified"
+    },
+    "src/heretek_swarm/collective/emergent_detection_types.py|src.heretek_swarm.collective.emergent_detection_types.CollectiveBehavior.to_dict": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection_types.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.CollectiveBehavior.to_dict",
+      "start_line": 226,
+      "end_line": 237,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/collective/emergent_detection_types.py|src.heretek_swarm.collective.emergent_detection_types.EmergentPattern": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection_types.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.EmergentPattern",
+      "start_line": 243,
+      "end_line": 291,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/collective/emergent_detection_types.py|src.heretek_swarm.collective.emergent_detection_types.EmergentPattern.to_dict": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection_types.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.EmergentPattern.to_dict",
+      "start_line": 261,
+      "end_line": 274,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/collective/emergent_detection_types.py|src.heretek_swarm.collective.emergent_detection_types.EmergentPattern.to_extracted_pattern": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection_types.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.EmergentPattern.to_extracted_pattern",
+      "start_line": 276,
+      "end_line": 291,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/collective/emergent_detection_types.py|src.heretek_swarm.collective.emergent_detection_types.EmergenceDetectionConfig": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection_types.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.EmergenceDetectionConfig",
+      "start_line": 318,
+      "end_line": 337,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/collective/emergent_detection_types.py|src.heretek_swarm.collective.emergent_detection_types.DetectionEvent": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection_types.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.DetectionEvent",
+      "start_line": 323,
+      "end_line": 347,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/collective/emergent_detection_types.py|src.heretek_swarm.collective.emergent_detection_types.DetectionEvent.to_dict": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection_types.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.DetectionEvent.to_dict",
+      "start_line": 336,
+      "end_line": 347,
+      "type": "METHOD",
+      "status": "added"
     }
   },
   "components": [
@@ -104394,13 +105049,20 @@
           "file_status": "modified",
           "methods": [
             "src.heretek_swarm.collective.emergent_detection.EmergentPatternClass",
+            "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector",
             "src.heretek_swarm.collective.emergent_detection.EmergenceLevel",
             "src.heretek_swarm.collective.emergent_detection.EvolutionPhase",
             "src.heretek_swarm.collective.emergent_detection.CapabilityRecord",
             "src.heretek_swarm.collective.emergent_detection.CapabilityRecord.to_dict",
             "src.heretek_swarm.collective.emergent_detection.EvolutionMetrics",
             "src.heretek_swarm.collective.emergent_detection.EvolutionMetrics.to_dict",
+            "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_patterns_by_impact",
+            "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_harmful_patterns",
             "src.heretek_swarm.collective.emergent_detection.AgentCapabilitySnapshot",
+            "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_beneficial_patterns",
+            "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_collective_behaviors",
+            "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_detection_history",
+            "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._get_snapshot_windows",
             "src.heretek_swarm.collective.emergent_detection.AgentCapabilitySnapshot.to_dict",
             "src.heretek_swarm.collective.emergent_detection.EvolutionEngine",
             "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.__init__",
@@ -104408,8 +105070,11 @@
             "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.register_capability_stabilized_callback",
             "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.register_phase_changed_callback",
             "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.record_capability_gain",
+            "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._validate_and_store_pattern",
             "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.detect_evolution",
             "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.assess_fitness",
+            "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_emergence_statistics",
+            "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.calculate_emergence_metrics",
             "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.get_evolution_metrics",
             "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.get_capability_records",
             "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.get_agent_capability_history",
@@ -104435,7 +105100,6 @@
             "src.heretek_swarm.collective.emergent_detection.DetectionEvent",
             "src.heretek_swarm.collective.emergent_detection.DetectionEvent.to_dict",
             "src.heretek_swarm.collective.emergent_detection.EmergenceDetectionConfig",
-            "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector",
             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.__init__",
             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.evolution_engine",
             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.set_evolution_engine",
@@ -104446,12 +105110,7 @@
             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.record_collective_behavior",
             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.analyze_for_emergence",
             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_emergent_patterns",
-            "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_detection_history",
             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_evolution_metrics",
-            "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_patterns_by_impact",
-            "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_harmful_patterns",
-            "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_beneficial_patterns",
-            "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_collective_behaviors",
             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._detect_coordination_patterns",
             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._detect_optimization_patterns",
             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._detect_innovation_patterns",
@@ -104465,12 +105124,9 @@
             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._get_individual_baseline",
             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._measure_collective_capability",
             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._calculate_temporal_span",
-            "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._validate_and_store_pattern",
             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._find_similar_pattern",
             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._call_detection_callbacks",
             "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_status",
-            "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_emergence_statistics",
-            "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.calculate_emergence_metrics",
             "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer",
             "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.__init__",
             "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.analyze_emergence_trends",
@@ -108904,13 +109560,20 @@
               "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternClass",
+                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector",
                 "src.heretek_swarm.collective.emergent_detection.EmergenceLevel",
                 "src.heretek_swarm.collective.emergent_detection.EvolutionPhase",
                 "src.heretek_swarm.collective.emergent_detection.CapabilityRecord",
                 "src.heretek_swarm.collective.emergent_detection.CapabilityRecord.to_dict",
                 "src.heretek_swarm.collective.emergent_detection.EvolutionMetrics",
                 "src.heretek_swarm.collective.emergent_detection.EvolutionMetrics.to_dict",
+                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_patterns_by_impact",
+                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_harmful_patterns",
                 "src.heretek_swarm.collective.emergent_detection.AgentCapabilitySnapshot",
+                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_beneficial_patterns",
+                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_collective_behaviors",
+                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_detection_history",
+                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._get_snapshot_windows",
                 "src.heretek_swarm.collective.emergent_detection.AgentCapabilitySnapshot.to_dict",
                 "src.heretek_swarm.collective.emergent_detection.EvolutionEngine",
                 "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.__init__",
@@ -108918,8 +109581,11 @@
                 "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.register_capability_stabilized_callback",
                 "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.register_phase_changed_callback",
                 "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.record_capability_gain",
+                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._validate_and_store_pattern",
                 "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.detect_evolution",
                 "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.assess_fitness",
+                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_emergence_statistics",
+                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.calculate_emergence_metrics",
                 "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.get_evolution_metrics",
                 "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.get_capability_records",
                 "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.get_agent_capability_history",
@@ -108945,7 +109611,6 @@
                 "src.heretek_swarm.collective.emergent_detection.DetectionEvent",
                 "src.heretek_swarm.collective.emergent_detection.DetectionEvent.to_dict",
                 "src.heretek_swarm.collective.emergent_detection.EmergenceDetectionConfig",
-                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.__init__",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.evolution_engine",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.set_evolution_engine",
@@ -108956,12 +109621,7 @@
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.record_collective_behavior",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.analyze_for_emergence",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_emergent_patterns",
-                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_detection_history",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_evolution_metrics",
-                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_patterns_by_impact",
-                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_harmful_patterns",
-                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_beneficial_patterns",
-                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_collective_behaviors",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._detect_coordination_patterns",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._detect_optimization_patterns",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._detect_innovation_patterns",
@@ -108975,12 +109635,9 @@
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._get_individual_baseline",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._measure_collective_capability",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._calculate_temporal_span",
-                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._validate_and_store_pattern",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._find_similar_pattern",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._call_detection_callbacks",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_status",
-                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_emergence_statistics",
-                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.calculate_emergence_metrics",
                 "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer",
                 "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.__init__",
                 "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.analyze_emergence_trends",
@@ -113194,13 +113851,20 @@
                   "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternClass",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector",
                     "src.heretek_swarm.collective.emergent_detection.EmergenceLevel",
                     "src.heretek_swarm.collective.emergent_detection.EvolutionPhase",
                     "src.heretek_swarm.collective.emergent_detection.CapabilityRecord",
                     "src.heretek_swarm.collective.emergent_detection.CapabilityRecord.to_dict",
                     "src.heretek_swarm.collective.emergent_detection.EvolutionMetrics",
                     "src.heretek_swarm.collective.emergent_detection.EvolutionMetrics.to_dict",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_patterns_by_impact",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_harmful_patterns",
                     "src.heretek_swarm.collective.emergent_detection.AgentCapabilitySnapshot",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_beneficial_patterns",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_collective_behaviors",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_detection_history",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._get_snapshot_windows",
                     "src.heretek_swarm.collective.emergent_detection.AgentCapabilitySnapshot.to_dict",
                     "src.heretek_swarm.collective.emergent_detection.EvolutionEngine",
                     "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.__init__",
@@ -113208,8 +113872,11 @@
                     "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.register_capability_stabilized_callback",
                     "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.register_phase_changed_callback",
                     "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.record_capability_gain",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._validate_and_store_pattern",
                     "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.detect_evolution",
                     "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.assess_fitness",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_emergence_statistics",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.calculate_emergence_metrics",
                     "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.get_evolution_metrics",
                     "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.get_capability_records",
                     "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.get_agent_capability_history",
@@ -113235,7 +113902,6 @@
                     "src.heretek_swarm.collective.emergent_detection.DetectionEvent",
                     "src.heretek_swarm.collective.emergent_detection.DetectionEvent.to_dict",
                     "src.heretek_swarm.collective.emergent_detection.EmergenceDetectionConfig",
-                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.__init__",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.evolution_engine",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.set_evolution_engine",
@@ -113246,12 +113912,7 @@
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.record_collective_behavior",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.analyze_for_emergence",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_emergent_patterns",
-                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_detection_history",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_evolution_metrics",
-                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_patterns_by_impact",
-                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_harmful_patterns",
-                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_beneficial_patterns",
-                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_collective_behaviors",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._detect_coordination_patterns",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._detect_optimization_patterns",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._detect_innovation_patterns",
@@ -113265,12 +113926,9 @@
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._get_individual_baseline",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._measure_collective_capability",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._calculate_temporal_span",
-                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._validate_and_store_pattern",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._find_similar_pattern",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._call_detection_callbacks",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_status",
-                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_emergence_statistics",
-                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.calculate_emergence_metrics",
                     "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer",
                     "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.__init__",
                     "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.analyze_emergence_trends",
@@ -114594,13 +115252,20 @@
                   "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternClass",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector",
                     "src.heretek_swarm.collective.emergent_detection.EmergenceLevel",
                     "src.heretek_swarm.collective.emergent_detection.EvolutionPhase",
                     "src.heretek_swarm.collective.emergent_detection.CapabilityRecord",
                     "src.heretek_swarm.collective.emergent_detection.CapabilityRecord.to_dict",
                     "src.heretek_swarm.collective.emergent_detection.EvolutionMetrics",
                     "src.heretek_swarm.collective.emergent_detection.EvolutionMetrics.to_dict",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_patterns_by_impact",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_harmful_patterns",
                     "src.heretek_swarm.collective.emergent_detection.AgentCapabilitySnapshot",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_beneficial_patterns",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_collective_behaviors",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_detection_history",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._get_snapshot_windows",
                     "src.heretek_swarm.collective.emergent_detection.AgentCapabilitySnapshot.to_dict",
                     "src.heretek_swarm.collective.emergent_detection.EvolutionEngine",
                     "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.__init__",
@@ -114608,8 +115273,11 @@
                     "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.register_capability_stabilized_callback",
                     "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.register_phase_changed_callback",
                     "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.record_capability_gain",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._validate_and_store_pattern",
                     "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.detect_evolution",
                     "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.assess_fitness",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_emergence_statistics",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.calculate_emergence_metrics",
                     "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.get_evolution_metrics",
                     "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.get_capability_records",
                     "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.get_agent_capability_history",
@@ -114635,7 +115303,6 @@
                     "src.heretek_swarm.collective.emergent_detection.DetectionEvent",
                     "src.heretek_swarm.collective.emergent_detection.DetectionEvent.to_dict",
                     "src.heretek_swarm.collective.emergent_detection.EmergenceDetectionConfig",
-                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.__init__",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.evolution_engine",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.set_evolution_engine",
@@ -114646,12 +115313,7 @@
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.record_collective_behavior",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.analyze_for_emergence",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_emergent_patterns",
-                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_detection_history",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_evolution_metrics",
-                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_patterns_by_impact",
-                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_harmful_patterns",
-                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_beneficial_patterns",
-                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_collective_behaviors",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._detect_coordination_patterns",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._detect_optimization_patterns",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._detect_innovation_patterns",
@@ -114665,12 +115327,9 @@
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._get_individual_baseline",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._measure_collective_capability",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._calculate_temporal_span",
-                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._validate_and_store_pattern",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._find_similar_pattern",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._call_detection_callbacks",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_status",
-                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_emergence_statistics",
-                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.calculate_emergence_metrics",
                     "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer",
                     "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.__init__",
                     "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.analyze_emergence_trends",
@@ -125732,13 +126391,20 @@
               "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternClass",
+                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector",
                 "src.heretek_swarm.collective.emergent_detection.EmergenceLevel",
                 "src.heretek_swarm.collective.emergent_detection.EvolutionPhase",
                 "src.heretek_swarm.collective.emergent_detection.CapabilityRecord",
                 "src.heretek_swarm.collective.emergent_detection.CapabilityRecord.to_dict",
                 "src.heretek_swarm.collective.emergent_detection.EvolutionMetrics",
                 "src.heretek_swarm.collective.emergent_detection.EvolutionMetrics.to_dict",
+                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_patterns_by_impact",
+                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_harmful_patterns",
                 "src.heretek_swarm.collective.emergent_detection.AgentCapabilitySnapshot",
+                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_beneficial_patterns",
+                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_collective_behaviors",
+                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_detection_history",
+                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._get_snapshot_windows",
                 "src.heretek_swarm.collective.emergent_detection.AgentCapabilitySnapshot.to_dict",
                 "src.heretek_swarm.collective.emergent_detection.EvolutionEngine",
                 "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.__init__",
@@ -125746,8 +126412,11 @@
                 "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.register_capability_stabilized_callback",
                 "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.register_phase_changed_callback",
                 "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.record_capability_gain",
+                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._validate_and_store_pattern",
                 "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.detect_evolution",
                 "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.assess_fitness",
+                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_emergence_statistics",
+                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.calculate_emergence_metrics",
                 "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.get_evolution_metrics",
                 "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.get_capability_records",
                 "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.get_agent_capability_history",
@@ -125773,7 +126442,6 @@
                 "src.heretek_swarm.collective.emergent_detection.DetectionEvent",
                 "src.heretek_swarm.collective.emergent_detection.DetectionEvent.to_dict",
                 "src.heretek_swarm.collective.emergent_detection.EmergenceDetectionConfig",
-                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.__init__",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.evolution_engine",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.set_evolution_engine",
@@ -125784,12 +126452,7 @@
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.record_collective_behavior",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.analyze_for_emergence",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_emergent_patterns",
-                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_detection_history",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_evolution_metrics",
-                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_patterns_by_impact",
-                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_harmful_patterns",
-                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_beneficial_patterns",
-                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_collective_behaviors",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._detect_coordination_patterns",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._detect_optimization_patterns",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._detect_innovation_patterns",
@@ -125803,12 +126466,9 @@
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._get_individual_baseline",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._measure_collective_capability",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._calculate_temporal_span",
-                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._validate_and_store_pattern",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._find_similar_pattern",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._call_detection_callbacks",
                 "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_status",
-                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_emergence_statistics",
-                "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.calculate_emergence_metrics",
                 "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer",
                 "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.__init__",
                 "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.analyze_emergence_trends",
@@ -128439,13 +129099,20 @@
                   "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternClass",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector",
                     "src.heretek_swarm.collective.emergent_detection.EmergenceLevel",
                     "src.heretek_swarm.collective.emergent_detection.EvolutionPhase",
                     "src.heretek_swarm.collective.emergent_detection.CapabilityRecord",
                     "src.heretek_swarm.collective.emergent_detection.CapabilityRecord.to_dict",
                     "src.heretek_swarm.collective.emergent_detection.EvolutionMetrics",
                     "src.heretek_swarm.collective.emergent_detection.EvolutionMetrics.to_dict",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_patterns_by_impact",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_harmful_patterns",
                     "src.heretek_swarm.collective.emergent_detection.AgentCapabilitySnapshot",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_beneficial_patterns",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_collective_behaviors",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_detection_history",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._get_snapshot_windows",
                     "src.heretek_swarm.collective.emergent_detection.AgentCapabilitySnapshot.to_dict",
                     "src.heretek_swarm.collective.emergent_detection.EvolutionEngine",
                     "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.__init__",
@@ -128453,8 +129120,11 @@
                     "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.register_capability_stabilized_callback",
                     "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.register_phase_changed_callback",
                     "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.record_capability_gain",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._validate_and_store_pattern",
                     "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.detect_evolution",
                     "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.assess_fitness",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_emergence_statistics",
+                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.calculate_emergence_metrics",
                     "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.get_evolution_metrics",
                     "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.get_capability_records",
                     "src.heretek_swarm.collective.emergent_detection.EvolutionEngine.get_agent_capability_history",
@@ -128480,7 +129150,6 @@
                     "src.heretek_swarm.collective.emergent_detection.DetectionEvent",
                     "src.heretek_swarm.collective.emergent_detection.DetectionEvent.to_dict",
                     "src.heretek_swarm.collective.emergent_detection.EmergenceDetectionConfig",
-                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.__init__",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.evolution_engine",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.set_evolution_engine",
@@ -128491,12 +129160,7 @@
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.record_collective_behavior",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.analyze_for_emergence",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_emergent_patterns",
-                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_detection_history",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_evolution_metrics",
-                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_patterns_by_impact",
-                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_harmful_patterns",
-                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_beneficial_patterns",
-                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_collective_behaviors",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._detect_coordination_patterns",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._detect_optimization_patterns",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._detect_innovation_patterns",
@@ -128510,12 +129174,9 @@
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._get_individual_baseline",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._measure_collective_capability",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._calculate_temporal_span",
-                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._validate_and_store_pattern",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._find_similar_pattern",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector._call_detection_callbacks",
                     "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_status",
-                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.get_emergence_statistics",
-                    "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector.calculate_emergence_metrics",
                     "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer",
                     "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.__init__",
                     "src.heretek_swarm.collective.emergent_detection.EmergenceAnalyzer.analyze_emergence_trends",
