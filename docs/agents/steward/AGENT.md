@@ -1,3 +1,9 @@
+---
+name: steward
+description: Central coordination hub of the Heretek Swarm collective
+type: agent
+---
+
 # Steward Agent
 
 **Tier 1 (Core Triad) | Orchestrator**

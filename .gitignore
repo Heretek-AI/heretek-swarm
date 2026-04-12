@@ -126,3 +126,5 @@ plans/OVERNIGHT_LOOP.md
 .claude-flow/*
 .mcp.json
 .actor_states/
+node_modules/*
+node_modules/.bin/*

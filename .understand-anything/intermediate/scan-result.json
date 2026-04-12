@@ -1,0 +1,122 @@
+{
+  "project_name": "heretek-swarm",
+  "project_description": "Next-generation multi-agent system with emergent collective intelligence, event-driven architecture, and NATS-based inter-agent communication",
+  "project_root": "/root/heretek/heretek-swarm",
+  "languages": {
+    "Python": {
+      "files": 245,
+      "frameworks": ["FastAPI", "SQLAlchemy", "pytest", "NATS-python", "Pydantic", "structlog", "Click", "NumPy", "tiktoken"],
+      "source_dirs": ["src/heretek_swarm/"],
+      "test_dirs": ["tests/"]
+    },
+    "TypeScript": {
+      "files": 72,
+      "frameworks": ["React", "Vite", "TypeScript"],
+      "source_dirs": ["dashboard/frontend/src/", "electron/"],
+      "config_files": ["dashboard/frontend/package.json", "dashboard/frontend/tsconfig.json", "dashboard/frontend/vite.config.ts"]
+    },
+    "JavaScript": {
+      "files": 4,
+      "source_dirs": ["electron/"],
+      "config_files": ["electron/tsconfig.electron.json"]
+    }
+  },
+  "frameworks": {
+    "Backend": ["FastAPI", "NATS JetStream", "SQLAlchemy 2.0"],
+    "Frontend": ["React 18", "Vite", "TailwindCSS"],
+    "Testing": ["pytest", "pytest-asyncio", "Playwright"],
+    "Container": ["Docker", "docker-compose"],
+    "Orchestration": ["Kubernetes", "NATS"],
+    "Observability": ["OpenTelemetry", "Prometheus", "Grafana"]
+  },
+  "file_categories": {
+    "source_code": {
+      "python": ["src/heretek_swarm/**/*.py"],
+      "typescript": ["dashboard/frontend/src/**/*.{ts,tsx}", "electron/**/*.ts"],
+      "count": 250
+    },
+    "tests": {
+      "python": ["tests/**/*.py"],
+      "typescript": ["dashboard/frontend/src/**/__tests__/**/*.{ts,tsx}"],
+      "count": 120
+    },
+    "configuration": {
+      "files": [
+        "pyproject.toml",
+        "package.json",
+        "vite.config.ts",
+        "docker-compose.yml",
+        "docker-compose.autonomous.yml",
+        ".pre-commit-config.yaml",
+        "litellm_config.yaml",
+        "otel-collector-config.yaml",
+        "prometheus/prometheus.yml"
+      ],
+      "count": 25
+    },
+    "infrastructure": {
+      "docker": ["docker/Dockerfile*", "docker/*.yml", "Dockerfile"],
+      "kubernetes": ["k8s/*.yaml"],
+      "count": 20
+    },
+    "documentation": {
+      "files": ["README.md", "docs/**/*.md", "ROADMAP.md", "PRIME_DIRECTIVE.md", "PATH_TO_EMERGENCE.md"],
+      "count": 50
+    },
+    "migrations": {
+      "files": ["migrations/*.sql", "migrations/rollbacks/*.sql"],
+      "count": 12
+    },
+    "deployment_scripts": {
+      "files": ["deploy.sh", "deploy_full_stack.sh", "scripts/*.sh", "scripts/*.py"],
+      "count": 10
+    }
+  },
+  "key_directories": {
+    "src/heretek_swarm/actors/": "Agent implementations (15+ agent types)",
+    "src/heretek_swarm/collective/": "Collective intelligence modules",
+    "src/heretek_swarm/consensus/": "Consensus and deliberation mechanisms",
+    "src/heretek_swarm/infrastructure/": "NATS, observability, A2A protocol",
+    "src/heretek_swarm/memory/": "Memory tier management",
+    "src/heretek_swarm/api/": "FastAPI REST endpoints",
+    "src/heretek_swarm/llm/": "LLM provider abstractions",
+    "src/heretek_swarm/tools/": "Tool implementations",
+    "src/heretek_swarm/workflow/": "Workflow engine and validation",
+    "src/heretek_swarm/consciousness/": "Consciousness and self-modeling",
+    "dashboard/frontend/src/": "React frontend dashboard",
+    "tests/": "Python test suite",
+    "k8s/": "Kubernetes manifests",
+    "docker/": "Docker configurations",
+    "migrations/": "Database migrations"
+  },
+  "package_manifest": {
+    "build_system": "setuptools>=68.0, wheel",
+    "python_requires": ">=3.11",
+    "dependencies": [
+      "click>=8.1.0",
+      "structlog>=24.0.0",
+      "pytest>=8.0.0",
+      "pytest-asyncio>=0.23.0",
+      "fastapi>=0.109.0",
+      "httpx>=0.27.0",
+      "pydantic>=2.0.0",
+      "sqlalchemy>=2.0.0",
+      "nats-python>=0.0.5",
+      "numpy>=1.26.0",
+      "tiktoken>=0.5.0"
+    ],
+    "dev_dependencies": ["ruff", "mypy", "pytest-cov", "bandit"]
+  },
+  "detected_patterns": [
+    "Event-driven architecture with NATS publish/subscribe",
+    "Multi-agent system with 15+ agent types",
+    "Collective intelligence with emergent behavior detection",
+    "Tiered memory system with vector clock sync",
+    "Deliberation-based consensus with conflict detection",
+    "Consciousness metrics and agency tracking",
+    "Security validation layer",
+    "RAG-based knowledge retrieval",
+    "Workflow validation engine"
+  ],
+  "scan_timestamp": "2026-04-12T00:00:00Z"
+}

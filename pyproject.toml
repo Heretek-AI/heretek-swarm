@@ -126,6 +126,7 @@ addopts = [
     "--strict-markers",
     "--strict-config",
 ]
+tdd_guard_project_root = "/root/heretek/heretek-swarm"
 asyncio_mode = "auto"
 filterwarnings = [
     "error",

@@ -1,3 +1,9 @@
+---
+name: steward-tools
+description: Native capabilities of the Steward Agent
+type: agent
+---
+
 # Steward Agent Tools
 
 **Tier 1 (Core Triad) | Orchestrator**

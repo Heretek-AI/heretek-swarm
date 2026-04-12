@@ -1,3 +1,9 @@
+---
+name: steward-identity
+description: Identity and persona of the Steward Agent
+type: agent
+---
+
 # Steward Agent Identity
 
 **Tier 1 (Core Triad) | Orchestrator**
