@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-12T19:53:32.883507+00:00",
+    "generated_at": "2026-04-12T19:59:09.921560+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 4,
@@ -47858,7 +47858,7 @@
         {
           "qualified_name": "src.heretek_swarm.actors.mixins.deliberation.DeliberationMixin",
           "start_line": 6,
-          "end_line": 148,
+          "end_line": 155,
           "node_type": "CLASS",
           "status": "modified"
         },
@@ -47879,30 +47879,16 @@
         {
           "qualified_name": "src.heretek_swarm.actors.mixins.deliberation.DeliberationMixin._submit_deliberation_position",
           "start_line": 40,
-          "end_line": 75,
+          "end_line": 81,
           "node_type": "METHOD",
           "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.mixins.deliberation.DeliberationMixin._finalize_deliberation",
-          "start_line": 77,
-          "end_line": 109,
+          "start_line": 83,
+          "end_line": 116,
           "node_type": "METHOD",
           "status": "modified"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.actors.mixins.deliberation.DeliberationMixin._publish_position",
-          "start_line": 80,
-          "end_line": 90,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.actors.mixins.deliberation.DeliberationMixin._wait_for_consensus",
-          "start_line": 92,
-          "end_line": 101,
-          "node_type": "METHOD",
-          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.mixins.deliberation.DeliberationMixin._apply_consensus_decision",
@@ -47917,6 +47903,20 @@
           "end_line": 117,
           "node_type": "METHOD",
           "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.mixins.deliberation.DeliberationMixin._publish_position",
+          "start_line": 126,
+          "end_line": 136,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.mixins.deliberation.DeliberationMixin._wait_for_consensus",
+          "start_line": 138,
+          "end_line": 147,
+          "node_type": "METHOD",
+          "status": "modified"
         }
       ]
     },
@@ -48997,6 +48997,254 @@
           "start_line": 336,
           "end_line": 347,
           "node_type": "METHOD",
+          "status": "added"
+        }
+      ]
+    },
+    "src/heretek_swarm/evaluation/evaluator.py": {
+      "file_status": "modified",
+      "methods": [
+        {
+          "qualified_name": "src.heretek_swarm.evaluation.evaluator.EvaluationStatus",
+          "start_line": 9,
+          "end_line": 15,
+          "node_type": "CLASS",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.evaluation.evaluator.OutputConstraints",
+          "start_line": 19,
+          "end_line": 25,
+          "node_type": "CLASS",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.evaluation.evaluator.TestCase",
+          "start_line": 29,
+          "end_line": 36,
+          "node_type": "CLASS",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.evaluation.evaluator.EvaluationResult",
+          "start_line": 40,
+          "end_line": 59,
+          "node_type": "CLASS",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.evaluation.evaluator.EvaluationResult.to_dict",
+          "start_line": 50,
+          "end_line": 59,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.evaluation.evaluator.EvaluationMetrics",
+          "start_line": 63,
+          "end_line": 75,
+          "node_type": "CLASS",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.evaluation.evaluator.EvaluationMetrics.to_dict",
+          "start_line": 69,
+          "end_line": 75,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.evaluation.evaluator.TestResult",
+          "start_line": 79,
+          "end_line": 93,
+          "node_type": "CLASS",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.evaluation.evaluator.TestResult.to_dict",
+          "start_line": 86,
+          "end_line": 93,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.evaluation.evaluator.AgentEvaluator",
+          "start_line": 96,
+          "end_line": 275,
+          "node_type": "CLASS",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.evaluation.evaluator.AgentEvaluator.__init__",
+          "start_line": 99,
+          "end_line": 103,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.evaluation.evaluator.AgentEvaluator.evaluate_agent",
+          "start_line": 105,
+          "end_line": 200,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.evaluation.evaluator.AgentEvaluator._validate_output",
+          "start_line": 184,
+          "end_line": 212,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.evaluation.evaluator.AgentEvaluator._validate_expected_output",
+          "start_line": 202,
+          "end_line": 211,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.evaluation.evaluator.AgentEvaluator._validate_constraints",
+          "start_line": 213,
+          "end_line": 236,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.evaluation.evaluator.AgentEvaluator.get_evaluation",
+          "start_line": 214,
+          "end_line": 216,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.evaluation.evaluator.AgentEvaluator.list_evaluations",
+          "start_line": 218,
+          "end_line": 220,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.evaluation.evaluator.AgentEvaluator.compare_agents",
+          "start_line": 222,
+          "end_line": 231,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.evaluation.evaluator.AgentEvaluator.get_stats",
+          "start_line": 233,
+          "end_line": 242,
+          "node_type": "METHOD",
+          "status": "added"
+        }
+      ]
+    },
+    "src/heretek_swarm/api/mcp.py": {
+      "file_status": "modified",
+      "methods": [
+        {
+          "qualified_name": "src.heretek_swarm.api.mcp.get_mcp_server",
+          "start_line": 35,
+          "end_line": 40,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.mcp.get_client_manager",
+          "start_line": 43,
+          "end_line": 49,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.mcp.list_mcp_tools",
+          "start_line": 58,
+          "end_line": 77,
+          "node_type": "FUNCTION",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.mcp.get_mcp_tool",
+          "start_line": 81,
+          "end_line": 111,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.mcp.call_mcp_tool",
+          "start_line": 115,
+          "end_line": 140,
+          "node_type": "FUNCTION",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.mcp.get_mcp_tool_stats",
+          "start_line": 146,
+          "end_line": 162,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.mcp.list_mcp_servers",
+          "start_line": 171,
+          "end_line": 184,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.mcp.connect_mcp_server",
+          "start_line": 188,
+          "end_line": 226,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.mcp.disconnect_mcp_server",
+          "start_line": 230,
+          "end_line": 250,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.mcp.get_mcp_server_health",
+          "start_line": 252,
+          "end_line": 263,
+          "node_type": "FUNCTION",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.mcp.list_server_tools",
+          "start_line": 271,
+          "end_line": 288,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.mcp.get_mcp_info",
+          "start_line": 297,
+          "end_line": 308,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.mcp.get_mcp_health",
+          "start_line": 312,
+          "end_line": 332,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.mcp.register_mcp_tool",
+          "start_line": 341,
+          "end_line": 390,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.mcp.register_mcp_tool.placeholder_handler",
+          "start_line": 369,
+          "end_line": 373,
+          "node_type": "FUNCTION",
           "status": "added"
         }
       ]
@@ -101903,7 +102151,7 @@
       "file_path": "src/heretek_swarm/actors/mixins/deliberation.py",
       "qualified_name": "src.heretek_swarm.actors.mixins.deliberation.DeliberationMixin",
       "start_line": 6,
-      "end_line": 148,
+      "end_line": 155,
       "type": "CLASS",
       "status": "modified"
     },
@@ -101927,33 +102175,17 @@
       "file_path": "src/heretek_swarm/actors/mixins/deliberation.py",
       "qualified_name": "src.heretek_swarm.actors.mixins.deliberation.DeliberationMixin._submit_deliberation_position",
       "start_line": 40,
-      "end_line": 75,
+      "end_line": 81,
       "type": "METHOD",
       "status": "modified"
     },
     "src/heretek_swarm/actors/mixins/deliberation.py|src.heretek_swarm.actors.mixins.deliberation.DeliberationMixin._finalize_deliberation": {
       "file_path": "src/heretek_swarm/actors/mixins/deliberation.py",
       "qualified_name": "src.heretek_swarm.actors.mixins.deliberation.DeliberationMixin._finalize_deliberation",
-      "start_line": 77,
-      "end_line": 109,
+      "start_line": 83,
+      "end_line": 116,
       "type": "METHOD",
       "status": "modified"
-    },
-    "src/heretek_swarm/actors/mixins/deliberation.py|src.heretek_swarm.actors.mixins.deliberation.DeliberationMixin._publish_position": {
-      "file_path": "src/heretek_swarm/actors/mixins/deliberation.py",
-      "qualified_name": "src.heretek_swarm.actors.mixins.deliberation.DeliberationMixin._publish_position",
-      "start_line": 80,
-      "end_line": 90,
-      "type": "METHOD",
-      "status": "unchanged"
-    },
-    "src/heretek_swarm/actors/mixins/deliberation.py|src.heretek_swarm.actors.mixins.deliberation.DeliberationMixin._wait_for_consensus": {
-      "file_path": "src/heretek_swarm/actors/mixins/deliberation.py",
-      "qualified_name": "src.heretek_swarm.actors.mixins.deliberation.DeliberationMixin._wait_for_consensus",
-      "start_line": 92,
-      "end_line": 101,
-      "type": "METHOD",
-      "status": "unchanged"
     },
     "src/heretek_swarm/actors/mixins/deliberation.py|src.heretek_swarm.actors.mixins.deliberation.DeliberationMixin._apply_consensus_decision": {
       "file_path": "src/heretek_swarm/actors/mixins/deliberation.py",
@@ -101970,6 +102202,22 @@
       "end_line": 117,
       "type": "METHOD",
       "status": "added"
+    },
+    "src/heretek_swarm/actors/mixins/deliberation.py|src.heretek_swarm.actors.mixins.deliberation.DeliberationMixin._publish_position": {
+      "file_path": "src/heretek_swarm/actors/mixins/deliberation.py",
+      "qualified_name": "src.heretek_swarm.actors.mixins.deliberation.DeliberationMixin._publish_position",
+      "start_line": 126,
+      "end_line": 136,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/actors/mixins/deliberation.py|src.heretek_swarm.actors.mixins.deliberation.DeliberationMixin._wait_for_consensus": {
+      "file_path": "src/heretek_swarm/actors/mixins/deliberation.py",
+      "qualified_name": "src.heretek_swarm.actors.mixins.deliberation.DeliberationMixin._wait_for_consensus",
+      "start_line": 138,
+      "end_line": 147,
+      "type": "METHOD",
+      "status": "modified"
     },
     "src/heretek_swarm/consciousness/metrics/ast.py|src.heretek_swarm.consciousness.metrics.ast.EmergenceLevel": {
       "file_path": "src/heretek_swarm/consciousness/metrics/ast.py",
@@ -103137,6 +103385,278 @@
       "start_line": 336,
       "end_line": 347,
       "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/evaluation/evaluator.py|src.heretek_swarm.evaluation.evaluator.EvaluationStatus": {
+      "file_path": "src/heretek_swarm/evaluation/evaluator.py",
+      "qualified_name": "src.heretek_swarm.evaluation.evaluator.EvaluationStatus",
+      "start_line": 9,
+      "end_line": 15,
+      "type": "CLASS",
+      "status": "modified"
+    },
+    "src/heretek_swarm/evaluation/evaluator.py|src.heretek_swarm.evaluation.evaluator.OutputConstraints": {
+      "file_path": "src/heretek_swarm/evaluation/evaluator.py",
+      "qualified_name": "src.heretek_swarm.evaluation.evaluator.OutputConstraints",
+      "start_line": 19,
+      "end_line": 25,
+      "type": "CLASS",
+      "status": "modified"
+    },
+    "src/heretek_swarm/evaluation/evaluator.py|src.heretek_swarm.evaluation.evaluator.TestCase": {
+      "file_path": "src/heretek_swarm/evaluation/evaluator.py",
+      "qualified_name": "src.heretek_swarm.evaluation.evaluator.TestCase",
+      "start_line": 29,
+      "end_line": 36,
+      "type": "CLASS",
+      "status": "modified"
+    },
+    "src/heretek_swarm/evaluation/evaluator.py|src.heretek_swarm.evaluation.evaluator.EvaluationResult": {
+      "file_path": "src/heretek_swarm/evaluation/evaluator.py",
+      "qualified_name": "src.heretek_swarm.evaluation.evaluator.EvaluationResult",
+      "start_line": 40,
+      "end_line": 59,
+      "type": "CLASS",
+      "status": "modified"
+    },
+    "src/heretek_swarm/evaluation/evaluator.py|src.heretek_swarm.evaluation.evaluator.EvaluationResult.to_dict": {
+      "file_path": "src/heretek_swarm/evaluation/evaluator.py",
+      "qualified_name": "src.heretek_swarm.evaluation.evaluator.EvaluationResult.to_dict",
+      "start_line": 50,
+      "end_line": 59,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/evaluation/evaluator.py|src.heretek_swarm.evaluation.evaluator.EvaluationMetrics": {
+      "file_path": "src/heretek_swarm/evaluation/evaluator.py",
+      "qualified_name": "src.heretek_swarm.evaluation.evaluator.EvaluationMetrics",
+      "start_line": 63,
+      "end_line": 75,
+      "type": "CLASS",
+      "status": "modified"
+    },
+    "src/heretek_swarm/evaluation/evaluator.py|src.heretek_swarm.evaluation.evaluator.EvaluationMetrics.to_dict": {
+      "file_path": "src/heretek_swarm/evaluation/evaluator.py",
+      "qualified_name": "src.heretek_swarm.evaluation.evaluator.EvaluationMetrics.to_dict",
+      "start_line": 69,
+      "end_line": 75,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/evaluation/evaluator.py|src.heretek_swarm.evaluation.evaluator.TestResult": {
+      "file_path": "src/heretek_swarm/evaluation/evaluator.py",
+      "qualified_name": "src.heretek_swarm.evaluation.evaluator.TestResult",
+      "start_line": 79,
+      "end_line": 93,
+      "type": "CLASS",
+      "status": "modified"
+    },
+    "src/heretek_swarm/evaluation/evaluator.py|src.heretek_swarm.evaluation.evaluator.TestResult.to_dict": {
+      "file_path": "src/heretek_swarm/evaluation/evaluator.py",
+      "qualified_name": "src.heretek_swarm.evaluation.evaluator.TestResult.to_dict",
+      "start_line": 86,
+      "end_line": 93,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/evaluation/evaluator.py|src.heretek_swarm.evaluation.evaluator.AgentEvaluator": {
+      "file_path": "src/heretek_swarm/evaluation/evaluator.py",
+      "qualified_name": "src.heretek_swarm.evaluation.evaluator.AgentEvaluator",
+      "start_line": 96,
+      "end_line": 275,
+      "type": "CLASS",
+      "status": "modified"
+    },
+    "src/heretek_swarm/evaluation/evaluator.py|src.heretek_swarm.evaluation.evaluator.AgentEvaluator.__init__": {
+      "file_path": "src/heretek_swarm/evaluation/evaluator.py",
+      "qualified_name": "src.heretek_swarm.evaluation.evaluator.AgentEvaluator.__init__",
+      "start_line": 99,
+      "end_line": 103,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/evaluation/evaluator.py|src.heretek_swarm.evaluation.evaluator.AgentEvaluator.evaluate_agent": {
+      "file_path": "src/heretek_swarm/evaluation/evaluator.py",
+      "qualified_name": "src.heretek_swarm.evaluation.evaluator.AgentEvaluator.evaluate_agent",
+      "start_line": 105,
+      "end_line": 200,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/evaluation/evaluator.py|src.heretek_swarm.evaluation.evaluator.AgentEvaluator._validate_output": {
+      "file_path": "src/heretek_swarm/evaluation/evaluator.py",
+      "qualified_name": "src.heretek_swarm.evaluation.evaluator.AgentEvaluator._validate_output",
+      "start_line": 184,
+      "end_line": 212,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/evaluation/evaluator.py|src.heretek_swarm.evaluation.evaluator.AgentEvaluator._validate_expected_output": {
+      "file_path": "src/heretek_swarm/evaluation/evaluator.py",
+      "qualified_name": "src.heretek_swarm.evaluation.evaluator.AgentEvaluator._validate_expected_output",
+      "start_line": 202,
+      "end_line": 211,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/evaluation/evaluator.py|src.heretek_swarm.evaluation.evaluator.AgentEvaluator._validate_constraints": {
+      "file_path": "src/heretek_swarm/evaluation/evaluator.py",
+      "qualified_name": "src.heretek_swarm.evaluation.evaluator.AgentEvaluator._validate_constraints",
+      "start_line": 213,
+      "end_line": 236,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/evaluation/evaluator.py|src.heretek_swarm.evaluation.evaluator.AgentEvaluator.get_evaluation": {
+      "file_path": "src/heretek_swarm/evaluation/evaluator.py",
+      "qualified_name": "src.heretek_swarm.evaluation.evaluator.AgentEvaluator.get_evaluation",
+      "start_line": 214,
+      "end_line": 216,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/evaluation/evaluator.py|src.heretek_swarm.evaluation.evaluator.AgentEvaluator.list_evaluations": {
+      "file_path": "src/heretek_swarm/evaluation/evaluator.py",
+      "qualified_name": "src.heretek_swarm.evaluation.evaluator.AgentEvaluator.list_evaluations",
+      "start_line": 218,
+      "end_line": 220,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/evaluation/evaluator.py|src.heretek_swarm.evaluation.evaluator.AgentEvaluator.compare_agents": {
+      "file_path": "src/heretek_swarm/evaluation/evaluator.py",
+      "qualified_name": "src.heretek_swarm.evaluation.evaluator.AgentEvaluator.compare_agents",
+      "start_line": 222,
+      "end_line": 231,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/evaluation/evaluator.py|src.heretek_swarm.evaluation.evaluator.AgentEvaluator.get_stats": {
+      "file_path": "src/heretek_swarm/evaluation/evaluator.py",
+      "qualified_name": "src.heretek_swarm.evaluation.evaluator.AgentEvaluator.get_stats",
+      "start_line": 233,
+      "end_line": 242,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/mcp.py|src.heretek_swarm.api.mcp.get_mcp_server": {
+      "file_path": "src/heretek_swarm/api/mcp.py",
+      "qualified_name": "src.heretek_swarm.api.mcp.get_mcp_server",
+      "start_line": 35,
+      "end_line": 40,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/mcp.py|src.heretek_swarm.api.mcp.get_client_manager": {
+      "file_path": "src/heretek_swarm/api/mcp.py",
+      "qualified_name": "src.heretek_swarm.api.mcp.get_client_manager",
+      "start_line": 43,
+      "end_line": 49,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/mcp.py|src.heretek_swarm.api.mcp.list_mcp_tools": {
+      "file_path": "src/heretek_swarm/api/mcp.py",
+      "qualified_name": "src.heretek_swarm.api.mcp.list_mcp_tools",
+      "start_line": 58,
+      "end_line": 77,
+      "type": "FUNCTION",
+      "status": "modified"
+    },
+    "src/heretek_swarm/api/mcp.py|src.heretek_swarm.api.mcp.get_mcp_tool": {
+      "file_path": "src/heretek_swarm/api/mcp.py",
+      "qualified_name": "src.heretek_swarm.api.mcp.get_mcp_tool",
+      "start_line": 81,
+      "end_line": 111,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/mcp.py|src.heretek_swarm.api.mcp.call_mcp_tool": {
+      "file_path": "src/heretek_swarm/api/mcp.py",
+      "qualified_name": "src.heretek_swarm.api.mcp.call_mcp_tool",
+      "start_line": 115,
+      "end_line": 140,
+      "type": "FUNCTION",
+      "status": "modified"
+    },
+    "src/heretek_swarm/api/mcp.py|src.heretek_swarm.api.mcp.get_mcp_tool_stats": {
+      "file_path": "src/heretek_swarm/api/mcp.py",
+      "qualified_name": "src.heretek_swarm.api.mcp.get_mcp_tool_stats",
+      "start_line": 146,
+      "end_line": 162,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/mcp.py|src.heretek_swarm.api.mcp.list_mcp_servers": {
+      "file_path": "src/heretek_swarm/api/mcp.py",
+      "qualified_name": "src.heretek_swarm.api.mcp.list_mcp_servers",
+      "start_line": 171,
+      "end_line": 184,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/mcp.py|src.heretek_swarm.api.mcp.connect_mcp_server": {
+      "file_path": "src/heretek_swarm/api/mcp.py",
+      "qualified_name": "src.heretek_swarm.api.mcp.connect_mcp_server",
+      "start_line": 188,
+      "end_line": 226,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/mcp.py|src.heretek_swarm.api.mcp.disconnect_mcp_server": {
+      "file_path": "src/heretek_swarm/api/mcp.py",
+      "qualified_name": "src.heretek_swarm.api.mcp.disconnect_mcp_server",
+      "start_line": 230,
+      "end_line": 250,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/mcp.py|src.heretek_swarm.api.mcp.get_mcp_server_health": {
+      "file_path": "src/heretek_swarm/api/mcp.py",
+      "qualified_name": "src.heretek_swarm.api.mcp.get_mcp_server_health",
+      "start_line": 252,
+      "end_line": 263,
+      "type": "FUNCTION",
+      "status": "modified"
+    },
+    "src/heretek_swarm/api/mcp.py|src.heretek_swarm.api.mcp.list_server_tools": {
+      "file_path": "src/heretek_swarm/api/mcp.py",
+      "qualified_name": "src.heretek_swarm.api.mcp.list_server_tools",
+      "start_line": 271,
+      "end_line": 288,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/mcp.py|src.heretek_swarm.api.mcp.get_mcp_info": {
+      "file_path": "src/heretek_swarm/api/mcp.py",
+      "qualified_name": "src.heretek_swarm.api.mcp.get_mcp_info",
+      "start_line": 297,
+      "end_line": 308,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/mcp.py|src.heretek_swarm.api.mcp.get_mcp_health": {
+      "file_path": "src/heretek_swarm/api/mcp.py",
+      "qualified_name": "src.heretek_swarm.api.mcp.get_mcp_health",
+      "start_line": 312,
+      "end_line": 332,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/mcp.py|src.heretek_swarm.api.mcp.register_mcp_tool": {
+      "file_path": "src/heretek_swarm/api/mcp.py",
+      "qualified_name": "src.heretek_swarm.api.mcp.register_mcp_tool",
+      "start_line": 341,
+      "end_line": 390,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/api/mcp.py|src.heretek_swarm.api.mcp.register_mcp_tool.placeholder_handler": {
+      "file_path": "src/heretek_swarm/api/mcp.py",
+      "qualified_name": "src.heretek_swarm.api.mcp.register_mcp_tool.placeholder_handler",
+      "start_line": 369,
+      "end_line": 373,
+      "type": "FUNCTION",
       "status": "added"
     }
   },

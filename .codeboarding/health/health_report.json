@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-12T19:53:33.256368+00:00",
-  "overall_score": 0.9929012751413172,
+  "timestamp": "2026-04-12T19:59:10.269533+00:00",
+  "overall_score": 0.992770767613039,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -982,8 +982,8 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 34,
-      "findings_count": 34,
+      "total_entities_checked": 38,
+      "findings_count": 38,
       "warning_count": 1,
       "score": 0.0,
       "finding_groups": [
@@ -997,6 +997,20 @@
               "file_path": "src/heretek_swarm/actors/mixins/deliberation.py",
               "line_start": 24,
               "line_end": 24,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"rationale\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/mixins/deliberation.py",
+              "line_start": 44,
+              "line_end": 44,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"deliberation_id\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/mixins/deliberation.py",
+              "line_start": 85,
+              "line_end": 85,
               "metric_value": 0.0
             },
             {
@@ -1221,6 +1235,20 @@
               "file_path": "src/heretek_swarm/api/main.py",
               "line_start": 740,
               "line_end": 740,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"arguments\" is not accessed",
+              "file_path": "src/heretek_swarm/api/mcp.py",
+              "line_start": 366,
+              "line_end": 366,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"context\" is not accessed",
+              "file_path": "src/heretek_swarm/api/mcp.py",
+              "line_start": 367,
+              "line_end": 367,
               "metric_value": 0.0
             }
           ]

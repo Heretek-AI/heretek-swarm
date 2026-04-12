@@ -39,59 +39,65 @@ class DeliberationMixin:
 
     async def _submit_deliberation_position(
         self,
+        deliberation_id: str,
         position: Dict[str, Any],
-        consensus_round: str,
+        rationale: str = "",
         timeout: float = 30.0
     ) -> Optional[Dict[str, Any]]:
         """Submit position to consensus deliberation.
 
         Args:
+            deliberation_id: The deliberation ID to submit to
             position: The position/proposal to submit
-            consensus_round: Current consensus round identifier
+            rationale: The rationale for this position
             timeout: Timeout in seconds for deliberation
 
         Returns:
             Consensus result if reached, None if timeout
         """
+        # Validate we're in the right deliberation
+        if self._deliberation_id != deliberation_id:
+            return False
+            
         try:
-            await self._publish_position(position, consensus_round)
+            await self._publish_position(position, deliberation_id)
             result = await asyncio.wait_for(
-                self._wait_for_consensus(consensus_round),
+                self._wait_for_consensus(deliberation_id),
                 timeout=timeout
             )
             self._deliberation_position = position
             return result
         except asyncio.TimeoutError:
             self.logger.warning(
-                f"Consensus timeout for round {consensus_round}",
-                extra={"consensus_round": consensus_round}
+                f"Consensus timeout for round {deliberation_id}",
+                extra={"deliberation_id": deliberation_id}
             )
             return None
         except Exception as e:
             self.logger.error(
                 f"Error submitting deliberation position: {e}",
-                extra={"consensus_round": consensus_round}
+                extra={"deliberation_id": deliberation_id}
             )
             return None
 
     async def _finalize_deliberation(
         self,
-        consensus_result: Dict[str, Any],
+        deliberation_id: str,
         binding: bool = True
     ) -> Dict[str, Any]:
         """Finalize deliberation and apply consensus.
 
         Args:
-            consensus_result: The consensus result from deliberation
+            deliberation_id: The deliberation ID to finalize
             binding: Whether consensus is binding on this agent
 
         Returns:
             Finalized decision with metadata
         """
         finalized = {
-            "decision": consensus_result.get("decision"),
-            "confidence": consensus_result.get("confidence", 0.0),
-            "participation_rate": consensus_result.get("participation_rate", 0.0),
+            "decision": None,
+            "confidence": 0.0,
+            "participation_rate": 0.0,
             "binding": binding,
             "timestamp": asyncio.get_event_loop().time(),
             "success": True,
@@ -106,6 +112,7 @@ class DeliberationMixin:
         )
 
         self._deliberation_active = False
+        self._deliberation_id = None
         return finalized
 
     def _get_deliberation_status(self) -> Dict[str, Any]:
@@ -119,23 +126,23 @@ class DeliberationMixin:
     async def _publish_position(
         self,
         position: Dict[str, Any],
-        consensus_round: str
+        deliberation_id: str
     ) -> None:
         """Publish position to consensus channel."""
         if hasattr(self, '_consensus_publisher'):
             await self._consensus_publisher.publish(
-                channel=f"consensus:{consensus_round}",
+                channel=f"consensus:{deliberation_id}",
                 message=position
             )
 
     async def _wait_for_consensus(
         self,
-        consensus_round: str
+        deliberation_id: str
     ) -> Dict[str, Any]:
         """Wait for consensus result."""
         if hasattr(self, '_consensus_subscriber'):
             return await self._consensus_subscriber.subscribe(
-                channel=f"consensus:{consensus_round}"
+                channel=f"consensus:{deliberation_id}"
             )
         return {"decision": None, "confidence": 0.0}
 

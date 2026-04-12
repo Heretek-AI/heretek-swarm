@@ -20,7 +20,6 @@ import structlog
 from fastapi import APIRouter, HTTPException
 
 from heretek_swarm.mcp.client import MCPClientManager
-from heretek_swarm.mcp.registry import MCPToolRegistry
 from heretek_swarm.mcp.server import MCPServer, get_registry
 
 logger = structlog.get_logger("api.mcp")
@@ -74,7 +73,7 @@ async def list_mcp_tools(
     return {
         "tools": registry.list_tool_summaries(),
         "total": len(tools),
-        "categories": list(set(t.category for t in tools)),
+        "categories": list({t.category for t in tools}),
     }
 
 
@@ -134,13 +133,11 @@ async def call_mcp_tool(
     if arguments is None:
         arguments = {}
 
-    result = await registry.invoke(
+    return await registry.invoke(
         name=name,
         arguments=arguments,
         context=context,
     )
-
-    return result
 
 
 @router.get("/tools/{tool_name}/stats")
@@ -263,9 +260,7 @@ async def get_mcp_server_health(server_id: str) -> dict[str, Any]:
         Health status
     """
     manager = get_client_manager()
-    health = await manager.get_server_health(server_id)
-
-    return health
+    return await manager.get_server_health(server_id)
 
 
 @router.get("/servers/{server_id}/tools")

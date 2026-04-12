@@ -6,7 +6,7 @@ Validates MCP server endpoints and functionality.
 
 import pytest
 
-from heretek_swarm.mcp.registry import MCPToolMetadata, MCPToolRegistry, ToolProviderType
+from heretek_swarm.mcp.registry import MCPToolRegistry
 from heretek_swarm.mcp.server import MCPServer, get_registry, set_registry
 
 
@@ -158,7 +158,7 @@ class TestMCPServerIntegration:
         """Test tool invocation through server registry."""
         await server.start()
 
-        result = server.registry.invoke_sync("add", {"a": 5, "b": 3})
+        result = await server.registry.invoke("add", {"a": 5, "b": 3})
 
         assert result["success"] is True
         assert result["result"]["result"] == 8
