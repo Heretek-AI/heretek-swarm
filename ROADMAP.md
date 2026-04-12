@@ -1,7 +1,7 @@
 # ROADMAP.md — The Collective: From Chaos to Emergence
 **Project:** Heretek Swarm  
 **Phase:** Gap Analysis & Strategic Roadmap  
-**Status:** P0 Blockers Identified → Strategic Pivot Required  
+**Status:** Phases 0-5 In Progress — Deployment & Scaling Active  
 **Date:** 2026-04-11  
 **Version:** 1.0.0  
 
