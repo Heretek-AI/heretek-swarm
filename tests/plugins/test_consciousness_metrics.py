@@ -8,15 +8,10 @@ Tests for:
 - Collective consciousness metrics
 """
 
-import pytest
-from datetime import datetime, timezone
 
 from heretek_swarm.plugins.consciousness_metrics import (
-    ConsciousnessMetricsCalculator,
-    CausalAnalysis,
-    TemporalMetrics,
-    CollectiveMetrics,
     AgentConsciousnessData,
+    ConsciousnessMetricsCalculator,
     IntegrationLevel,
 )
 
@@ -28,7 +23,7 @@ class TestCausalAnalysis:
         """Empty matrix should return zero Phi."""
         calc = ConsciousnessMetricsCalculator()
         result = calc.calculate_phi([])
-        
+
         assert result.cause_info == 0.0
         assert result.effect_info == 0.0
         assert result.integrated_info == 0.0
@@ -57,7 +52,7 @@ class TestCausalAnalysis:
             [0.8, 0.8, 0.5],
         ]
         result = calc.calculate_phi(matrix)
-        
+
         assert result.cause_info > 0
         assert result.effect_info > 0
         assert result.integrated_info > 0
@@ -74,7 +69,7 @@ class TestCausalAnalysis:
             [0.0, 0.0, 0.5],
         ]
         result = calc.calculate_phi(matrix)
-        
+
         # Self-connections don't count, but diagonal is counted in normalization
         # 3 self-connections / 6 possible = 0.5
         assert result.causal_density >= 0.0  # May have some density from self-connections
@@ -88,7 +83,7 @@ class TestCausalAnalysis:
             [80.0, 80.0, 5.0],
         ]
         result = calc.calculate_phi(matrix)
-        
+
         # Results should be in valid range after normalization
         assert 0 <= result.cause_info <= 1
         assert 0 <= result.effect_info <= 1
@@ -104,7 +99,7 @@ class TestTemporalMetrics:
         """Initial metrics should have defaults."""
         calc = ConsciousnessMetricsCalculator()
         result = calc.update_temporal_metrics("agent-1", 0.5)
-        
+
         assert result.average_phi == 0.5
         assert result.max_phi == 0.5
         assert result.min_phi == 0.5
@@ -114,13 +109,13 @@ class TestTemporalMetrics:
     def test_multiple_updates(self):
         """Multiple updates should calculate correct statistics."""
         calc = ConsciousnessMetricsCalculator()
-        
+
         calc.update_temporal_metrics("agent-1", 0.3)
         calc.update_temporal_metrics("agent-1", 0.5)
         calc.update_temporal_metrics("agent-1", 0.7)
-        
+
         result = calc.update_temporal_metrics("agent-1", 0.5)
-        
+
         assert result.average_phi == 0.5
         assert result.max_phi == 0.7
         assert result.min_phi == 0.3
@@ -129,44 +124,44 @@ class TestTemporalMetrics:
     def test_trend_detection_rising(self):
         """Should detect rising trend."""
         calc = ConsciousnessMetricsCalculator()
-        
+
         # First half: low values
         for i in range(5):
             calc.update_temporal_metrics("agent-1", 0.2)
-        
+
         # Second half: high values
         for i in range(5):
             calc.update_temporal_metrics("agent-1", 0.8)
-        
+
         result = calc.update_temporal_metrics("agent-1", 0.8)
-        
+
         assert result.trend == "rising"
 
     def test_trend_detection_falling(self):
         """Should detect falling trend."""
         calc = ConsciousnessMetricsCalculator()
-        
+
         # First half: high values
         for i in range(5):
             calc.update_temporal_metrics("agent-1", 0.8)
-        
+
         # Second half: low values
         for i in range(5):
             calc.update_temporal_metrics("agent-1", 0.2)
-        
+
         result = calc.update_temporal_metrics("agent-1", 0.2)
-        
+
         assert result.trend == "falling"
 
     def test_trend_detection_stable(self):
         """Should detect stable trend."""
         calc = ConsciousnessMetricsCalculator()
-        
+
         for i in range(10):
             calc.update_temporal_metrics("agent-1", 0.5)
-        
+
         result = calc.update_temporal_metrics("agent-1", 0.5)
-        
+
         assert result.trend == "stable"
 
 
@@ -177,7 +172,7 @@ class TestCollectiveMetrics:
         """Empty agent list should return default metrics."""
         calc = ConsciousnessMetricsCalculator()
         result = calc.calculate_collective_metrics([])
-        
+
         assert result.collective_phi == 0.0
         assert result.agent_count == 0
         assert result.active_connections == 0
@@ -190,7 +185,7 @@ class TestCollectiveMetrics:
             phi_score=0.5,
         )
         result = calc.calculate_collective_metrics([agent])
-        
+
         assert result.collective_phi == 0.5
         assert result.agent_count == 1
         assert result.synchronization == 0.0  # Can't sync with self
@@ -204,7 +199,7 @@ class TestCollectiveMetrics:
             AgentConsciousnessData(agent_id="agent-3", phi_score=0.4),
         ]
         result = calc.calculate_collective_metrics(agents)
-        
+
         assert result.collective_phi == 1.5
         assert result.agent_count == 3
         assert result.synchronization > 0  # Some synchronization
@@ -212,7 +207,7 @@ class TestCollectiveMetrics:
     def test_synchronization_calculation(self):
         """Synchronization should be higher for similar Phi values."""
         calc = ConsciousnessMetricsCalculator()
-        
+
         # Similar Phi values
         similar_agents = [
             AgentConsciousnessData(agent_id="agent-1", phi_score=0.5),
@@ -220,7 +215,7 @@ class TestCollectiveMetrics:
             AgentConsciousnessData(agent_id="agent-3", phi_score=0.49),
         ]
         similar_result = calc.calculate_collective_metrics(similar_agents)
-        
+
         # Different Phi values
         different_agents = [
             AgentConsciousnessData(agent_id="agent-1", phi_score=0.1),
@@ -228,7 +223,7 @@ class TestCollectiveMetrics:
             AgentConsciousnessData(agent_id="agent-3", phi_score=0.9),
         ]
         different_result = calc.calculate_collective_metrics(different_agents)
-        
+
         assert similar_result.synchronization > different_result.synchronization
 
     def test_connection_counting(self):
@@ -244,7 +239,7 @@ class TestCollectiveMetrics:
             [0.0, 0.6, 0.0],
         ]
         result = calc.calculate_collective_metrics(agents, connection_matrix)
-        
+
         # Connection matrix is 3x3 but we only have 2 agents
         # The method counts all non-zero cells in the matrix
         assert result.active_connections == 4  # 4 non-zero connections
@@ -257,14 +252,14 @@ class TestConsciousnessState:
         """Low Phi should result in unconscious state."""
         calc = ConsciousnessMetricsCalculator()
         state = calc.get_consciousness_state(phi=0.1, differentiation=0.5)
-        
+
         assert state == "unconscious"
 
     def test_unconscious_low_differentiation(self):
         """Low differentiation should result in unconscious state."""
         calc = ConsciousnessMetricsCalculator()
         state = calc.get_consciousness_state(phi=0.5, differentiation=0.1)
-        
+
         assert state == "unconscious"
 
     def test_minimal_consciousness(self):
@@ -278,7 +273,7 @@ class TestConsciousnessState:
         calc = ConsciousnessMetricsCalculator(integration_threshold=0.1, differentiation_threshold=0.1)
         # composite = (0.15 + 0.15) / 2 = 0.15 -> minimal-consciousness (< 0.2)
         state = calc.get_consciousness_state(phi=0.15, differentiation=0.15)
-        
+
         assert state == "minimal-consciousness"
 
     def test_conscious_state(self):
@@ -287,7 +282,7 @@ class TestConsciousnessState:
         # Both must be >= threshold (0.3), and composite in [0.2, 0.4) -> conscious
         # composite = (0.35 + 0.35) / 2 = 0.35 -> conscious
         state = calc.get_consciousness_state(phi=0.35, differentiation=0.35)
-        
+
         assert state == "conscious"
 
     def test_heightened_consciousness(self):
@@ -295,14 +290,14 @@ class TestConsciousnessState:
         calc = ConsciousnessMetricsCalculator(integration_threshold=0.2, differentiation_threshold=0.2)
         # Composite = (0.6 + 0.6) / 2 = 0.6 -> heightened-consciousness (0.4-0.7)
         state = calc.get_consciousness_state(phi=0.6, differentiation=0.6)
-        
+
         assert state == "heightened-consciousness"
 
     def test_hyper_consciousness(self):
         """Very high values should result in hyper-consciousness."""
         calc = ConsciousnessMetricsCalculator()
         state = calc.get_consciousness_state(phi=1.0, differentiation=1.0)
-        
+
         assert state == "hyper-consciousness"
 
 
@@ -320,7 +315,7 @@ class TestIntegrationLevel:
             [0.0, 0.0, 0.0],
         ]
         level = calc._determine_integration_level(matrix)
-        
+
         assert level == IntegrationLevel.DISCONNECTED
 
     def test_weakly_integrated(self):
@@ -335,7 +330,7 @@ class TestIntegrationLevel:
             [0.0, 0.0, 0.0],
         ]
         level = calc._determine_integration_level(matrix)
-        
+
         assert level == IntegrationLevel.WEAKLY_INTEGRATED
 
     def test_moderately_integrated(self):
@@ -348,7 +343,7 @@ class TestIntegrationLevel:
             [0.0, 0.0, 0.0],
         ]
         level = calc._determine_integration_level(matrix)
-        
+
         assert level == IntegrationLevel.MODERATELY_INTEGRATED
 
     def test_highly_integrated(self):
@@ -361,7 +356,7 @@ class TestIntegrationLevel:
             [0.0, 0.0, 0.0],
         ]
         level = calc._determine_integration_level(matrix)
-        
+
         assert level == IntegrationLevel.HIGHLY_INTEGRATED
 
     def test_maximally_integrated(self):
@@ -373,7 +368,7 @@ class TestIntegrationLevel:
             [0.9, 0.9, 0.5],
         ]
         level = calc._determine_integration_level(matrix)
-        
+
         assert level == IntegrationLevel.MAXIMALLY_INTEGRATED
 
 
@@ -386,7 +381,7 @@ class TestEdgeCases:
         n = 20
         matrix = [[0.5 if i != j else 0.3 for j in range(n)] for i in range(n)]
         result = calc.calculate_phi(matrix)
-        
+
         assert result.causal_density > 0
         assert result.integrated_info > 0
 
@@ -395,7 +390,7 @@ class TestEdgeCases:
         calc = ConsciousnessMetricsCalculator()
         matrix = [[0.0, 0.0], [0.0, 0.0]]
         result = calc.calculate_phi(matrix)
-        
+
         assert result.cause_info == 0.0
         assert result.effect_info == 0.0
 
@@ -403,8 +398,8 @@ class TestEdgeCases:
         """Should trim history to max limit."""
         calc = ConsciousnessMetricsCalculator()
         calc._max_history = 100
-        
+
         for i in range(150):
             calc.update_temporal_metrics("agent-1", 0.5)
-        
+
         assert len(calc._temporal_data["agent-1"]) == 100

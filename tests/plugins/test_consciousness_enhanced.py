@@ -8,16 +8,12 @@ Tests IIT and FEP integration:
 """
 
 import pytest
-import numpy as np
 
 from src.heretek_swarm.plugins.consciousness_enhanced import (
     ConsciousnessState,
-    FEPMetrics,
-    IITConnectivity,
-    ConsciousnessMetrics,
-    IITCalculator,
-    FEPTracker,
     EnhancedConsciousnessPlugin,
+    FEPTracker,
+    IITCalculator,
 )
 
 
