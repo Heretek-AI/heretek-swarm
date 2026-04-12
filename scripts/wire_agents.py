@@ -24,8 +24,8 @@ Agents to wire:
 16. prism.py
 """
 
-import re
 import json
+import re
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -277,10 +277,10 @@ def wire_agent_file(filepath: Path) -> bool:
     if not filepath.exists():
         print(f"File not found: {filepath}")
         return False
-    
+
     content = filepath.read_text()
     original_content = content
-    
+
     # 1. Add imports after existing imports
     if "Session 44: Collective Learning Integration" not in content:
         # Find the last import line
@@ -289,11 +289,11 @@ def wire_agent_file(filepath: Path) -> bool:
         for i, line in enumerate(lines):
             if line.startswith('from ') or line.startswith('import '):
                 insert_idx = i + 1
-        
+
         lines.insert(insert_idx, SESSION_44_IMPORTS)
         content = '\n'.join(lines)
         print(f"  Added imports to {filepath.name}")
-    
+
     # 2. Add __init__ parameters
     if "pattern_extractor: Optional[PatternExtractor]" not in content:
         # Find __init__ method and add parameters
@@ -310,11 +310,11 @@ def wire_agent_file(filepath: Path) -> bool:
                 elif content[i] == ')':
                     paren_count -= 1
                 i += 1
-            
+
             # Insert before closing parenthesis
             content = content[:i-1] + SESSION_44_INIT_PARAMS + content[i-1:]
             print(f"  Added __init__ parameters to {filepath.name}")
-    
+
     # 3. Add __init__ body
     if "Session 44: Collective Learning Integration" in content and "self.pattern_extractor = pattern_extractor" not in content:
         # Find logger.info call after __init__ body starts and add before it
@@ -324,32 +324,32 @@ def wire_agent_file(filepath: Path) -> bool:
             insert_pos = match.start()
             content = content[:insert_pos] + SESSION_44_INIT_BODY + "\n\n        " + content[insert_pos:]
             print(f"  Added __init__ body to {filepath.name}")
-    
+
     # 4. Add integration methods at end of class (before last method)
     if "Session 44: Collective Learning Integration Methods" not in content:
         # Find the last method in the class and add after it
         # Look for the last async def or def pattern
         method_pattern = r'(    async def|    def)'
         matches = list(re.finditer(method_pattern, content))
-        
+
         if matches:
             # Find a good insertion point - look for _send_error or similar utility method
             insert_pos = matches[-1].start()
-            
+
             # Try to find a better insertion point
             for match in reversed(matches):
                 if '_send_error' in content[match.start():match.start()+200]:
                     insert_pos = match.start()
                     break
-            
+
             content = content[:insert_pos] + SESSION_44_METHODS + "\n" + content[insert_pos:]
             print(f"  Added integration methods to {filepath.name}")
-    
+
     # Write the modified content
     if content != original_content:
         filepath.write_text(content)
         return True
-    
+
     return False
 
 
@@ -357,7 +357,7 @@ def main():
     """Main entry point."""
     print("Agent Wiring Script")
     print("=" * 50)
-    
+
     agents_to_wire = [
         "chronos.py",
         "coder.py",
@@ -376,18 +376,18 @@ def main():
         "perceiver_plus.py",
         "prism.py",
     ]
-    
+
     wired_count = 0
     for agent_file in agents_to_wire:
         filepath = ACTORS_DIR / agent_file
         print(f"\nWiring {agent_file}...")
-        
+
         if wire_agent_file(filepath):
             wired_count += 1
             print(f"  ✓ {agent_file} wired successfully")
         else:
             print(f"  - {agent_file} already wired or no changes needed")
-    
+
     print("\n" + "=" * 50)
     print(f"Agent wiring complete: {wired_count}/{len(agents_to_wire)} agents modified")
 
@@ -408,42 +408,42 @@ def discover_agents(actors_dir: Optional[Path] = None) -> List[Dict[str, Any]]:
     """
     if actors_dir is None:
         actors_dir = ACTORS_DIR
-    
+
     if not actors_dir.exists():
         print(f"Actors directory does not exist: {actors_dir}")
         return []
-    
+
     discovered = []
-    
+
     for actor_file in actors_dir.glob("*.py"):
         if actor_file.name.startswith("_"):
             continue
-        
+
         try:
             # Extract class name from file name
             class_name = "".join(part.capitalize() for part in actor_file.stem.split("_"))
-            
+
             # Read file to extract docstring and metadata
             content = actor_file.read_text()
-            
+
             # Extract docstring (first string after class definition)
             docstring = ""
             docstring_match = re.search(rf'class {class_name}.*?:\s*"""([^"]+)"""', content, re.DOTALL)
             if docstring_match:
                 docstring = docstring_match.group(1).strip().split("\n")[0]
-            
+
             # Extract topics if defined
             topics = []
             topics_match = re.search(r'topics\s*=\s*\[([^\]]+)\]', content)
             if topics_match:
                 topics = [t.strip().strip('"\'') for t in topics_match.group(1).split(",")]
-            
+
             # Extract capabilities if defined
             capabilities = []
             capabilities_match = re.search(r'capabilities\s*=\s*\[([^\]]+)\]', content)
             if capabilities_match:
                 capabilities = [c.strip().strip('"\'') for c in capabilities_match.group(1).split(",")]
-            
+
             discovered.append({
                 "type_name": class_name,
                 "module_path": f"heretek_swarm.actors.{actor_file.stem}",
@@ -452,10 +452,10 @@ def discover_agents(actors_dir: Optional[Path] = None) -> List[Dict[str, Any]]:
                 "topics": topics,
                 "capabilities": capabilities,
             })
-            
+
         except Exception as e:
             print(f"Failed to discover agent from {actor_file.name}: {e}")
-    
+
     print(f"Discovered {len(discovered)} agent types")
     return discovered
 
@@ -472,11 +472,11 @@ def get_agent_metadata(agent_type: str, actors_dir: Optional[Path] = None) -> Op
         Agent metadata dictionary or None if not found
     """
     agents = discover_agents(actors_dir)
-    
+
     for agent in agents:
         if agent["type_name"] == agent_type:
             return agent
-    
+
     return None
 
 
@@ -504,13 +504,13 @@ def deploy_agent(
     if not metadata:
         print(f"Unknown agent type: {agent_type}")
         return None
-    
+
     # Generate deployment configuration
     import uuid
     instance_id = config.get("instance_id") if config else None
     if instance_id is None:
         instance_id = f"{agent_type.lower()}_{uuid.uuid4().hex[:8]}"
-    
+
     deployment_config = {
         "instance_id": instance_id,
         "agent_type": agent_type,
@@ -526,7 +526,7 @@ def deploy_agent(
             **(config or {})
         }
     }
-    
+
     print(f"Prepared deployment config for {agent_type} as {instance_id}")
     return deployment_config
 
@@ -539,17 +539,17 @@ def get_deployed_agents_config() -> Dict[str, Dict[str, Any]]:
         Dictionary mapping instance IDs to configurations
     """
     characters_dir = Path(__file__).parent.parent / "src" / "heretek_swarm" / "runtime" / "characters"
-    
+
     if not characters_dir.exists():
         return {}
-    
+
     deployed = {}
-    
+
     for char_file in characters_dir.glob("*.json"):
         try:
             with open(char_file, 'r') as f:
                 character = json.load(f)
-            
+
             instance_id = char_file.stem
             deployed[instance_id] = {
                 "name": character.get("name"),
@@ -557,10 +557,10 @@ def get_deployed_agents_config() -> Dict[str, Dict[str, Any]]:
                 "style": character.get("style"),
                 "config_file": str(char_file),
             }
-            
+
         except Exception as e:
             print(f"Failed to load character from {char_file.name}: {e}")
-    
+
     return deployed
 
 
@@ -579,11 +579,11 @@ def export_agent_config(agent_type: str, output_path: Optional[Path] = None) -> 
     if not metadata:
         print(f"Unknown agent type: {agent_type}")
         return None
-    
+
     if output_path is None:
         characters_dir = Path(__file__).parent.parent / "src" / "heretek_swarm" / "runtime" / "characters"
         output_path = characters_dir / f"{agent_type.lower()}.json"
-    
+
     config = {
         "name": agent_type,
         "bio": metadata.get("description", ""),
@@ -594,12 +594,12 @@ def export_agent_config(agent_type: str, output_path: Optional[Path] = None) -> 
         "capabilities": metadata.get("capabilities", []),
         "topics": metadata.get("topics", []),
     }
-    
+
     output_path.parent.mkdir(parents=True, exist_ok=True)
-    
+
     with open(output_path, 'w') as f:
         json.dump(config, f, indent=2)
-    
+
     print(f"Exported agent config to {output_path}")
     return output_path
 
@@ -609,7 +609,7 @@ if __name__ == "__main__":
     print("\n" + "=" * 50)
     print("Agent Discovery Demo")
     print("=" * 50)
-    
+
     agents = discover_agents()
     for agent in agents[:5]:  # Show first 5
         print(f"\n{agent['type_name']}:")

@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-11T22:03:32.706599+00:00",
+    "generated_at": "2026-04-11T23:49:36.521080+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 4,
@@ -17,7 +17,7 @@
   "description": "The heretek-swarm architecture is a decentralized multi-agent system that coordinates autonomous agents (Actors) via a NATS JetStream event mesh and a consensus-based governance protocol (MAKER). Agents use a multi-tiered memory stack (Redis/Postgres/Qdrant) for ephemeral and persistent state, while security guardrails and adversarial detection protect interactions. Observability captures message lineage and LLM execution traces, and a React dashboard enables visual workflow building, deployment, and real-time telemetry. The main flow: users design workflows in the dashboard, trigger deployments and execution commands to the Swarm Core, which coordinates agents, invokes external tools via MCP, persists state to the Memory & State Mesh, enforces security, and emits telemetry consumed by the Observability layer and dashboard.",
   "files": {
     "migrations/scripts/setup_qdrant_collections.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "migrations.scripts.setup_qdrant_collections.get_qdrant_url",
@@ -57,14 +57,14 @@
       ]
     },
     "scripts/check_latency_baseline.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "scripts.check_latency_baseline.check_latency_baseline",
           "start_line": 17,
           "end_line": 88,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         }
       ]
     },
@@ -85,137 +85,137 @@
       "methods": [
         {
           "qualified_name": "scripts.run_migrations.get_migration_files",
-          "start_line": 31,
-          "end_line": 39,
+          "start_line": 33,
+          "end_line": 41,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "scripts.run_migrations.parse_migration_header",
-          "start_line": 42,
-          "end_line": 54,
+          "start_line": 44,
+          "end_line": 56,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "scripts.run_migrations.execute_migration",
-          "start_line": 57,
-          "end_line": 116,
+          "start_line": 59,
+          "end_line": 118,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "scripts.run_migrations.check_migration_status",
-          "start_line": 119,
-          "end_line": 188,
+          "start_line": 121,
+          "end_line": 190,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "scripts.run_migrations.create_migrations_table",
-          "start_line": 191,
-          "end_line": 216,
+          "start_line": 193,
+          "end_line": 218,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "scripts.run_migrations.main",
-          "start_line": 219,
-          "end_line": 270,
+          "start_line": 221,
+          "end_line": 272,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         }
       ]
     },
     "scripts/wire_agents.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "scripts.wire_agents.wire_agent_file",
           "start_line": 275,
           "end_line": 353,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "scripts.wire_agents.main",
           "start_line": 356,
           "end_line": 392,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "scripts.wire_agents.discover_agents",
           "start_line": 399,
           "end_line": 460,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "scripts.wire_agents.get_agent_metadata",
           "start_line": 463,
           "end_line": 480,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "scripts.wire_agents.deploy_agent",
           "start_line": 483,
           "end_line": 531,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "scripts.wire_agents.get_deployed_agents_config",
           "start_line": 534,
           "end_line": 564,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "scripts.wire_agents.export_agent_config",
           "start_line": 567,
           "end_line": 604,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         }
       ]
     },
     "scripts/wire_agents_session44.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "scripts.wire_agents_session44.wire_agent_file",
           "start_line": 273,
           "end_line": 351,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "scripts.wire_agents_session44.main",
           "start_line": 354,
           "end_line": 390,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         }
       ]
     },
     "serverless/handler.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "serverless.handler.initialize_dependencies",
-          "start_line": 61,
-          "end_line": 88,
+          "start_line": 62,
+          "end_line": 89,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "serverless.handler.APIResponse",
-          "start_line": 100,
-          "end_line": 116,
+          "start_line": 101,
+          "end_line": 117,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "serverless.handler.APIResponse.to_dict",
@@ -226,10 +226,10 @@
         },
         {
           "qualified_name": "serverless.handler.api_handler",
-          "start_line": 119,
-          "end_line": 190,
+          "start_line": 120,
+          "end_line": 191,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "serverless.handler.health_check",
@@ -240,24 +240,24 @@
         },
         {
           "qualified_name": "serverless.handler.readiness_check",
-          "start_line": 211,
-          "end_line": 243,
+          "start_line": 212,
+          "end_line": 244,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "serverless.handler.handle_agents_api",
-          "start_line": 250,
-          "end_line": 272,
+          "start_line": 251,
+          "end_line": 273,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "serverless.handler.handle_profiling_api",
-          "start_line": 275,
-          "end_line": 345,
+          "start_line": 276,
+          "end_line": 346,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "serverless.handler.handle_rag_api",
@@ -296,94 +296,94 @@
         },
         {
           "qualified_name": "serverless.handler.async_processor",
-          "start_line": 407,
-          "end_line": 461,
+          "start_line": 408,
+          "end_line": 462,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "serverless.handler.process_agent_deploy",
-          "start_line": 464,
-          "end_line": 469,
+          "start_line": 465,
+          "end_line": 470,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "serverless.handler.process_rag_ingest",
-          "start_line": 473,
-          "end_line": 478,
+          "start_line": 474,
+          "end_line": 479,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "serverless.handler.process_workflow_execute",
-          "start_line": 482,
-          "end_line": 487,
+          "start_line": 483,
+          "end_line": 488,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "serverless.handler.process_consensus_vote",
-          "start_line": 491,
-          "end_line": 496,
+          "start_line": 492,
+          "end_line": 497,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "serverless.handler.swarm_health_check",
-          "start_line": 504,
-          "end_line": 528,
+          "start_line": 505,
+          "end_line": 529,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "serverless.handler.agent_state_cleanup",
-          "start_line": 531,
-          "end_line": 553,
+          "start_line": 532,
+          "end_line": 554,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "serverless.handler.rag_index_optimize",
-          "start_line": 556,
-          "end_line": 581,
+          "start_line": 557,
+          "end_line": 582,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "serverless.handler.behavior_profile_analyzer",
-          "start_line": 584,
-          "end_line": 620,
+          "start_line": 585,
+          "end_line": 621,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "serverless.handler.get_profiler",
-          "start_line": 627,
-          "end_line": 640,
+          "start_line": 628,
+          "end_line": 641,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "serverless.handler.verify_auth",
-          "start_line": 643,
-          "end_line": 659,
+          "start_line": 644,
+          "end_line": 660,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "serverless.handler.parse_body",
-          "start_line": 662,
-          "end_line": 677,
+          "start_line": 663,
+          "end_line": 678,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "serverless.handler.main",
-          "start_line": 684,
-          "end_line": 720,
+          "start_line": 685,
+          "end_line": 721,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         }
       ]
     },
@@ -2748,7 +2748,7 @@
         {
           "qualified_name": "src.heretek_swarm.actors.empath.EmpathAgent",
           "start_line": 42,
-          "end_line": 1010,
+          "end_line": 1043,
           "node_type": "CLASS",
           "status": "modified"
         },
@@ -2782,10 +2782,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.actors.empath.EmpathAgent._handle_analyze_sentiment",
-          "start_line": 223,
-          "end_line": 283,
+          "start_line": 229,
+          "end_line": 289,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.empath.EmpathAgent._analyze_sentiment_llm",
@@ -2817,8 +2817,8 @@
         },
         {
           "qualified_name": "src.heretek_swarm.actors.empath.EmpathAgent._update_agent_mood",
-          "start_line": 422,
-          "end_line": 438,
+          "start_line": 430,
+          "end_line": 455,
           "node_type": "METHOD",
           "status": "modified"
         },
@@ -2838,10 +2838,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.actors.empath.EmpathAgent._handle_track_emotion",
-          "start_line": 477,
-          "end_line": 516,
+          "start_line": 505,
+          "end_line": 547,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.empath.EmpathAgent._handle_detect_conflict",
@@ -4900,7 +4900,7 @@
         {
           "qualified_name": "src.heretek_swarm.actors.metis.MetisAgent",
           "start_line": 37,
-          "end_line": 951,
+          "end_line": 1005,
           "node_type": "CLASS",
           "status": "modified"
         },
@@ -4928,42 +4928,42 @@
         {
           "qualified_name": "src.heretek_swarm.actors.metis.MetisAgent._handle_create_strategic_plan",
           "start_line": 180,
-          "end_line": 252,
+          "end_line": 263,
           "node_type": "METHOD",
           "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.metis.MetisAgent._handle_allocate_resources",
-          "start_line": 254,
-          "end_line": 306,
+          "start_line": 265,
+          "end_line": 328,
           "node_type": "METHOD",
           "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.metis.MetisAgent._handle_assess_risks",
-          "start_line": 308,
-          "end_line": 352,
+          "start_line": 330,
+          "end_line": 380,
           "node_type": "METHOD",
           "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.metis.MetisAgent._handle_analyze_scenarios",
-          "start_line": 354,
-          "end_line": 399,
+          "start_line": 382,
+          "end_line": 433,
           "node_type": "METHOD",
           "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.metis.MetisAgent._handle_set_strategic_objective",
-          "start_line": 401,
-          "end_line": 447,
+          "start_line": 435,
+          "end_line": 492,
           "node_type": "METHOD",
           "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.metis.MetisAgent._handle_get_plan_status",
-          "start_line": 449,
-          "end_line": 505,
+          "start_line": 494,
+          "end_line": 559,
           "node_type": "METHOD",
           "status": "modified"
         },
@@ -6011,8 +6011,8 @@
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent",
-          "start_line": 150,
-          "end_line": 1413,
+          "start_line": 147,
+          "end_line": 1411,
           "node_type": "CLASS",
           "status": "modified"
         },
@@ -6200,59 +6200,115 @@
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor",
-          "start_line": 1268,
-          "end_line": 1302,
+          "start_line": 1263,
+          "end_line": 1297,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "added"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor",
-          "start_line": 1270,
-          "end_line": 1300,
+          "start_line": 1265,
+          "end_line": 1295,
           "node_type": "CLASS",
-          "status": "modified"
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.prism._prism_agent_actor",
+          "start_line": 1265,
+          "end_line": 1299,
+          "node_type": "FUNCTION",
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor.__init__",
-          "start_line": 1272,
-          "end_line": 1277,
+          "start_line": 1266,
+          "end_line": 1271,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.prism._prism_agent_actor.PrismAgentActor",
+          "start_line": 1267,
+          "end_line": 1297,
+          "node_type": "CLASS",
+          "status": "deleted"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.prism._prism_agent_actor.PrismAgentActor.__init__",
+          "start_line": 1268,
+          "end_line": 1273,
+          "node_type": "METHOD",
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor.act",
-          "start_line": 1278,
-          "end_line": 1290,
+          "start_line": 1273,
+          "end_line": 1285,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.prism._prism_agent_actor.PrismAgentActor.act",
+          "start_line": 1275,
+          "end_line": 1287,
+          "node_type": "METHOD",
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor.get_state",
-          "start_line": 1292,
-          "end_line": 1300,
+          "start_line": 1287,
+          "end_line": 1295,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.prism._prism_agent_actor.PrismAgentActor.get_state",
+          "start_line": 1289,
+          "end_line": 1297,
+          "node_type": "METHOD",
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent.run_phi_training_episode",
-          "start_line": 1304,
-          "end_line": 1339,
+          "start_line": 1299,
+          "end_line": 1334,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.prism.run_phi_training_episode",
+          "start_line": 1301,
+          "end_line": 1336,
+          "node_type": "FUNCTION",
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent.get_phi_training_status",
-          "start_line": 1341,
-          "end_line": 1348,
+          "start_line": 1336,
+          "end_line": 1343,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.prism.get_phi_training_status",
+          "start_line": 1338,
+          "end_line": 1345,
+          "node_type": "FUNCTION",
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent._generate_reframes",
-          "start_line": 1351,
-          "end_line": 1413,
+          "start_line": 1346,
+          "end_line": 1408,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.prism._generate_reframes",
+          "start_line": 1348,
+          "end_line": 1410,
+          "node_type": "FUNCTION",
+          "status": "deleted"
         }
       ]
     },
@@ -46289,7 +46345,92 @@
     },
     "src/heretek_swarm/tools/examples.py": {
       "file_status": "modified",
-      "methods": []
+      "methods": [
+        {
+          "qualified_name": "src.heretek_swarm.tools.examples.HealthCheckTool",
+          "start_line": 12,
+          "end_line": 32,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.tools.examples.HealthCheckTool.__init__",
+          "start_line": 15,
+          "end_line": 24,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.tools.examples.HealthCheckTool.execute",
+          "start_line": 26,
+          "end_line": 32,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.tools.examples.MemorySearchTool",
+          "start_line": 35,
+          "end_line": 56,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.tools.examples.MemorySearchTool.__init__",
+          "start_line": 38,
+          "end_line": 47,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.tools.examples.MemorySearchTool.execute",
+          "start_line": 49,
+          "end_line": 56,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.tools.examples.ConsensusVoteTool",
+          "start_line": 59,
+          "end_line": 79,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.tools.examples.ConsensusVoteTool.__init__",
+          "start_line": 62,
+          "end_line": 71,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.tools.examples.ConsensusVoteTool.execute",
+          "start_line": 73,
+          "end_line": 79,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.tools.examples.LegacyWrapperTool",
+          "start_line": 82,
+          "end_line": 109,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.tools.examples.LegacyWrapperTool.__init__",
+          "start_line": 85,
+          "end_line": 95,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.tools.examples.LegacyWrapperTool.execute",
+          "start_line": 97,
+          "end_line": 109,
+          "node_type": "METHOD",
+          "status": "added"
+        }
+      ]
     },
     "src/heretek_swarm/utils/__init__.py": {
       "file_status": "modified",
@@ -46334,6 +46475,177 @@
     "temp_self_model_part1.py": {
       "file_status": "deleted",
       "methods": []
+    },
+    "src/heretek_swarm/tools/base.py": {
+      "file_status": "modified",
+      "methods": [
+        {
+          "qualified_name": "src.heretek_swarm.tools.base.ToolStatus",
+          "start_line": 13,
+          "end_line": 19,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.tools.base.ToolMetadata",
+          "start_line": 23,
+          "end_line": 29,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.tools.base.ToolContext",
+          "start_line": 33,
+          "end_line": 38,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.tools.base.ToolExecutionResult",
+          "start_line": 42,
+          "end_line": 50,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.tools.base.ToolExecutionError",
+          "start_line": 53,
+          "end_line": 55,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.tools.base.BaseTool",
+          "start_line": 58,
+          "end_line": 72,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.tools.base.BaseTool.__init__",
+          "start_line": 61,
+          "end_line": 64,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.tools.base.BaseTool.execute",
+          "start_line": 66,
+          "end_line": 68,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.tools.base.BaseTool.validate",
+          "start_line": 70,
+          "end_line": 72,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.tools.base.SimpleTool",
+          "start_line": 75,
+          "end_line": 99,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.tools.base.SimpleTool.__init__",
+          "start_line": 78,
+          "end_line": 80,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.tools.base.SimpleTool.execute",
+          "start_line": 82,
+          "end_line": 99,
+          "node_type": "METHOD",
+          "status": "added"
+        }
+      ]
+    },
+    "src/heretek_swarm/tools/registry.py": {
+      "file_status": "modified",
+      "methods": [
+        {
+          "qualified_name": "src.heretek_swarm.tools.registry.ToolRegistryConfig",
+          "start_line": 15,
+          "end_line": 19,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.tools.registry.ToolRegistryEntry",
+          "start_line": 23,
+          "end_line": 28,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.tools.registry.ToolRegistry",
+          "start_line": 31,
+          "end_line": 71,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.tools.registry.ToolRegistry.__init__",
+          "start_line": 34,
+          "end_line": 37,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.tools.registry.ToolRegistry.register",
+          "start_line": 39,
+          "end_line": 45,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.tools.registry.ToolRegistry.unregister",
+          "start_line": 47,
+          "end_line": 55,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.tools.registry.ToolRegistry.get",
+          "start_line": 57,
+          "end_line": 60,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.tools.registry.ToolRegistry.list_tools",
+          "start_line": 62,
+          "end_line": 66,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.tools.registry.ToolRegistry.get_metadata",
+          "start_line": 68,
+          "end_line": 71,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.tools.registry.get_registry",
+          "start_line": 78,
+          "end_line": 83,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.tools.registry.initialize_registry",
+          "start_line": 86,
+          "end_line": 90,
+          "node_type": "FUNCTION",
+          "status": "added"
+        }
+      ]
     }
   },
   "methods_index": {
@@ -46383,7 +46695,7 @@
       "start_line": 17,
       "end_line": 88,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "scripts/run_migration.py|scripts.run_migration.run_migration": {
       "file_path": "scripts/run_migration.py",
@@ -46396,50 +46708,50 @@
     "scripts/run_migrations.py|scripts.run_migrations.get_migration_files": {
       "file_path": "scripts/run_migrations.py",
       "qualified_name": "scripts.run_migrations.get_migration_files",
-      "start_line": 31,
-      "end_line": 39,
+      "start_line": 33,
+      "end_line": 41,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "scripts/run_migrations.py|scripts.run_migrations.parse_migration_header": {
       "file_path": "scripts/run_migrations.py",
       "qualified_name": "scripts.run_migrations.parse_migration_header",
-      "start_line": 42,
-      "end_line": 54,
+      "start_line": 44,
+      "end_line": 56,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "scripts/run_migrations.py|scripts.run_migrations.execute_migration": {
       "file_path": "scripts/run_migrations.py",
       "qualified_name": "scripts.run_migrations.execute_migration",
-      "start_line": 57,
-      "end_line": 116,
+      "start_line": 59,
+      "end_line": 118,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "scripts/run_migrations.py|scripts.run_migrations.check_migration_status": {
       "file_path": "scripts/run_migrations.py",
       "qualified_name": "scripts.run_migrations.check_migration_status",
-      "start_line": 119,
-      "end_line": 188,
+      "start_line": 121,
+      "end_line": 190,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "scripts/run_migrations.py|scripts.run_migrations.create_migrations_table": {
       "file_path": "scripts/run_migrations.py",
       "qualified_name": "scripts.run_migrations.create_migrations_table",
-      "start_line": 191,
-      "end_line": 216,
+      "start_line": 193,
+      "end_line": 218,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "scripts/run_migrations.py|scripts.run_migrations.main": {
       "file_path": "scripts/run_migrations.py",
       "qualified_name": "scripts.run_migrations.main",
-      "start_line": 219,
-      "end_line": 270,
+      "start_line": 221,
+      "end_line": 272,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "scripts/wire_agents.py|scripts.wire_agents.wire_agent_file": {
       "file_path": "scripts/wire_agents.py",
@@ -46447,7 +46759,7 @@
       "start_line": 275,
       "end_line": 353,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "scripts/wire_agents.py|scripts.wire_agents.main": {
       "file_path": "scripts/wire_agents.py",
@@ -46455,7 +46767,7 @@
       "start_line": 356,
       "end_line": 392,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "scripts/wire_agents.py|scripts.wire_agents.discover_agents": {
       "file_path": "scripts/wire_agents.py",
@@ -46463,7 +46775,7 @@
       "start_line": 399,
       "end_line": 460,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "scripts/wire_agents.py|scripts.wire_agents.get_agent_metadata": {
       "file_path": "scripts/wire_agents.py",
@@ -46471,7 +46783,7 @@
       "start_line": 463,
       "end_line": 480,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "scripts/wire_agents.py|scripts.wire_agents.deploy_agent": {
       "file_path": "scripts/wire_agents.py",
@@ -46479,7 +46791,7 @@
       "start_line": 483,
       "end_line": 531,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "scripts/wire_agents.py|scripts.wire_agents.get_deployed_agents_config": {
       "file_path": "scripts/wire_agents.py",
@@ -46487,7 +46799,7 @@
       "start_line": 534,
       "end_line": 564,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "scripts/wire_agents.py|scripts.wire_agents.export_agent_config": {
       "file_path": "scripts/wire_agents.py",
@@ -46495,7 +46807,7 @@
       "start_line": 567,
       "end_line": 604,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "scripts/wire_agents_session44.py|scripts.wire_agents_session44.wire_agent_file": {
       "file_path": "scripts/wire_agents_session44.py",
@@ -46503,7 +46815,7 @@
       "start_line": 273,
       "end_line": 351,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "scripts/wire_agents_session44.py|scripts.wire_agents_session44.main": {
       "file_path": "scripts/wire_agents_session44.py",
@@ -46511,23 +46823,23 @@
       "start_line": 354,
       "end_line": 390,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "serverless/handler.py|serverless.handler.initialize_dependencies": {
       "file_path": "serverless/handler.py",
       "qualified_name": "serverless.handler.initialize_dependencies",
-      "start_line": 61,
-      "end_line": 88,
+      "start_line": 62,
+      "end_line": 89,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "serverless/handler.py|serverless.handler.APIResponse": {
       "file_path": "serverless/handler.py",
       "qualified_name": "serverless.handler.APIResponse",
-      "start_line": 100,
-      "end_line": 116,
+      "start_line": 101,
+      "end_line": 117,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "serverless/handler.py|serverless.handler.APIResponse.to_dict": {
       "file_path": "serverless/handler.py",
@@ -46540,10 +46852,10 @@
     "serverless/handler.py|serverless.handler.api_handler": {
       "file_path": "serverless/handler.py",
       "qualified_name": "serverless.handler.api_handler",
-      "start_line": 119,
-      "end_line": 190,
+      "start_line": 120,
+      "end_line": 191,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "serverless/handler.py|serverless.handler.health_check": {
       "file_path": "serverless/handler.py",
@@ -46556,26 +46868,26 @@
     "serverless/handler.py|serverless.handler.readiness_check": {
       "file_path": "serverless/handler.py",
       "qualified_name": "serverless.handler.readiness_check",
-      "start_line": 211,
-      "end_line": 243,
+      "start_line": 212,
+      "end_line": 244,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "serverless/handler.py|serverless.handler.handle_agents_api": {
       "file_path": "serverless/handler.py",
       "qualified_name": "serverless.handler.handle_agents_api",
-      "start_line": 250,
-      "end_line": 272,
+      "start_line": 251,
+      "end_line": 273,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "serverless/handler.py|serverless.handler.handle_profiling_api": {
       "file_path": "serverless/handler.py",
       "qualified_name": "serverless.handler.handle_profiling_api",
-      "start_line": 275,
-      "end_line": 345,
+      "start_line": 276,
+      "end_line": 346,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "serverless/handler.py|serverless.handler.handle_rag_api": {
       "file_path": "serverless/handler.py",
@@ -46620,106 +46932,106 @@
     "serverless/handler.py|serverless.handler.async_processor": {
       "file_path": "serverless/handler.py",
       "qualified_name": "serverless.handler.async_processor",
-      "start_line": 407,
-      "end_line": 461,
+      "start_line": 408,
+      "end_line": 462,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "serverless/handler.py|serverless.handler.process_agent_deploy": {
       "file_path": "serverless/handler.py",
       "qualified_name": "serverless.handler.process_agent_deploy",
-      "start_line": 464,
-      "end_line": 469,
+      "start_line": 465,
+      "end_line": 470,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "serverless/handler.py|serverless.handler.process_rag_ingest": {
       "file_path": "serverless/handler.py",
       "qualified_name": "serverless.handler.process_rag_ingest",
-      "start_line": 473,
-      "end_line": 478,
+      "start_line": 474,
+      "end_line": 479,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "serverless/handler.py|serverless.handler.process_workflow_execute": {
       "file_path": "serverless/handler.py",
       "qualified_name": "serverless.handler.process_workflow_execute",
-      "start_line": 482,
-      "end_line": 487,
+      "start_line": 483,
+      "end_line": 488,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "serverless/handler.py|serverless.handler.process_consensus_vote": {
       "file_path": "serverless/handler.py",
       "qualified_name": "serverless.handler.process_consensus_vote",
-      "start_line": 491,
-      "end_line": 496,
+      "start_line": 492,
+      "end_line": 497,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "serverless/handler.py|serverless.handler.swarm_health_check": {
       "file_path": "serverless/handler.py",
       "qualified_name": "serverless.handler.swarm_health_check",
-      "start_line": 504,
-      "end_line": 528,
+      "start_line": 505,
+      "end_line": 529,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "serverless/handler.py|serverless.handler.agent_state_cleanup": {
       "file_path": "serverless/handler.py",
       "qualified_name": "serverless.handler.agent_state_cleanup",
-      "start_line": 531,
-      "end_line": 553,
+      "start_line": 532,
+      "end_line": 554,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "serverless/handler.py|serverless.handler.rag_index_optimize": {
       "file_path": "serverless/handler.py",
       "qualified_name": "serverless.handler.rag_index_optimize",
-      "start_line": 556,
-      "end_line": 581,
+      "start_line": 557,
+      "end_line": 582,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "serverless/handler.py|serverless.handler.behavior_profile_analyzer": {
       "file_path": "serverless/handler.py",
       "qualified_name": "serverless.handler.behavior_profile_analyzer",
-      "start_line": 584,
-      "end_line": 620,
+      "start_line": 585,
+      "end_line": 621,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "serverless/handler.py|serverless.handler.get_profiler": {
       "file_path": "serverless/handler.py",
       "qualified_name": "serverless.handler.get_profiler",
-      "start_line": 627,
-      "end_line": 640,
+      "start_line": 628,
+      "end_line": 641,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "serverless/handler.py|serverless.handler.verify_auth": {
       "file_path": "serverless/handler.py",
       "qualified_name": "serverless.handler.verify_auth",
-      "start_line": 643,
-      "end_line": 659,
+      "start_line": 644,
+      "end_line": 660,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "serverless/handler.py|serverless.handler.parse_body": {
       "file_path": "serverless/handler.py",
       "qualified_name": "serverless.handler.parse_body",
-      "start_line": 662,
-      "end_line": 677,
+      "start_line": 663,
+      "end_line": 678,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "serverless/handler.py|serverless.handler.main": {
       "file_path": "serverless/handler.py",
       "qualified_name": "serverless.handler.main",
-      "start_line": 684,
-      "end_line": 720,
+      "start_line": 685,
+      "end_line": 721,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/evaluation/evaluator.py|src.evaluation.evaluator.EvaluationStatus": {
       "file_path": "src/evaluation/evaluator.py",
@@ -49365,7 +49677,7 @@
       "file_path": "src/heretek_swarm/actors/empath.py",
       "qualified_name": "src.heretek_swarm.actors.empath.EmpathAgent",
       "start_line": 42,
-      "end_line": 1010,
+      "end_line": 1043,
       "type": "CLASS",
       "status": "modified"
     },
@@ -49404,10 +49716,10 @@
     "src/heretek_swarm/actors/empath.py|src.heretek_swarm.actors.empath.EmpathAgent._handle_analyze_sentiment": {
       "file_path": "src/heretek_swarm/actors/empath.py",
       "qualified_name": "src.heretek_swarm.actors.empath.EmpathAgent._handle_analyze_sentiment",
-      "start_line": 223,
-      "end_line": 283,
+      "start_line": 229,
+      "end_line": 289,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/empath.py|src.heretek_swarm.actors.empath.EmpathAgent._analyze_sentiment_llm": {
       "file_path": "src/heretek_swarm/actors/empath.py",
@@ -49444,8 +49756,8 @@
     "src/heretek_swarm/actors/empath.py|src.heretek_swarm.actors.empath.EmpathAgent._update_agent_mood": {
       "file_path": "src/heretek_swarm/actors/empath.py",
       "qualified_name": "src.heretek_swarm.actors.empath.EmpathAgent._update_agent_mood",
-      "start_line": 422,
-      "end_line": 438,
+      "start_line": 430,
+      "end_line": 455,
       "type": "METHOD",
       "status": "modified"
     },
@@ -49468,10 +49780,10 @@
     "src/heretek_swarm/actors/empath.py|src.heretek_swarm.actors.empath.EmpathAgent._handle_track_emotion": {
       "file_path": "src/heretek_swarm/actors/empath.py",
       "qualified_name": "src.heretek_swarm.actors.empath.EmpathAgent._handle_track_emotion",
-      "start_line": 477,
-      "end_line": 516,
+      "start_line": 505,
+      "end_line": 547,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/empath.py|src.heretek_swarm.actors.empath.EmpathAgent._handle_detect_conflict": {
       "file_path": "src/heretek_swarm/actors/empath.py",
@@ -51773,7 +52085,7 @@
       "file_path": "src/heretek_swarm/actors/metis.py",
       "qualified_name": "src.heretek_swarm.actors.metis.MetisAgent",
       "start_line": 37,
-      "end_line": 951,
+      "end_line": 1005,
       "type": "CLASS",
       "status": "modified"
     },
@@ -51805,47 +52117,47 @@
       "file_path": "src/heretek_swarm/actors/metis.py",
       "qualified_name": "src.heretek_swarm.actors.metis.MetisAgent._handle_create_strategic_plan",
       "start_line": 180,
-      "end_line": 252,
+      "end_line": 263,
       "type": "METHOD",
       "status": "modified"
     },
     "src/heretek_swarm/actors/metis.py|src.heretek_swarm.actors.metis.MetisAgent._handle_allocate_resources": {
       "file_path": "src/heretek_swarm/actors/metis.py",
       "qualified_name": "src.heretek_swarm.actors.metis.MetisAgent._handle_allocate_resources",
-      "start_line": 254,
-      "end_line": 306,
+      "start_line": 265,
+      "end_line": 328,
       "type": "METHOD",
       "status": "modified"
     },
     "src/heretek_swarm/actors/metis.py|src.heretek_swarm.actors.metis.MetisAgent._handle_assess_risks": {
       "file_path": "src/heretek_swarm/actors/metis.py",
       "qualified_name": "src.heretek_swarm.actors.metis.MetisAgent._handle_assess_risks",
-      "start_line": 308,
-      "end_line": 352,
+      "start_line": 330,
+      "end_line": 380,
       "type": "METHOD",
       "status": "modified"
     },
     "src/heretek_swarm/actors/metis.py|src.heretek_swarm.actors.metis.MetisAgent._handle_analyze_scenarios": {
       "file_path": "src/heretek_swarm/actors/metis.py",
       "qualified_name": "src.heretek_swarm.actors.metis.MetisAgent._handle_analyze_scenarios",
-      "start_line": 354,
-      "end_line": 399,
+      "start_line": 382,
+      "end_line": 433,
       "type": "METHOD",
       "status": "modified"
     },
     "src/heretek_swarm/actors/metis.py|src.heretek_swarm.actors.metis.MetisAgent._handle_set_strategic_objective": {
       "file_path": "src/heretek_swarm/actors/metis.py",
       "qualified_name": "src.heretek_swarm.actors.metis.MetisAgent._handle_set_strategic_objective",
-      "start_line": 401,
-      "end_line": 447,
+      "start_line": 435,
+      "end_line": 492,
       "type": "METHOD",
       "status": "modified"
     },
     "src/heretek_swarm/actors/metis.py|src.heretek_swarm.actors.metis.MetisAgent._handle_get_plan_status": {
       "file_path": "src/heretek_swarm/actors/metis.py",
       "qualified_name": "src.heretek_swarm.actors.metis.MetisAgent._handle_get_plan_status",
-      "start_line": 449,
-      "end_line": 505,
+      "start_line": 494,
+      "end_line": 559,
       "type": "METHOD",
       "status": "modified"
     },
@@ -53020,8 +53332,8 @@
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PrismAgent": {
       "file_path": "src/heretek_swarm/actors/prism.py",
       "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent",
-      "start_line": 150,
-      "end_line": 1413,
+      "start_line": 147,
+      "end_line": 1411,
       "type": "CLASS",
       "status": "modified"
     },
@@ -53236,66 +53548,130 @@
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor": {
       "file_path": "src/heretek_swarm/actors/prism.py",
       "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor",
-      "start_line": 1268,
-      "end_line": 1302,
+      "start_line": 1263,
+      "end_line": 1297,
       "type": "METHOD",
-      "status": "modified"
+      "status": "added"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor": {
       "file_path": "src/heretek_swarm/actors/prism.py",
       "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor",
-      "start_line": 1270,
-      "end_line": 1300,
+      "start_line": 1265,
+      "end_line": 1295,
       "type": "CLASS",
-      "status": "modified"
+      "status": "added"
+    },
+    "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism._prism_agent_actor": {
+      "file_path": "src/heretek_swarm/actors/prism.py",
+      "qualified_name": "src.heretek_swarm.actors.prism._prism_agent_actor",
+      "start_line": 1265,
+      "end_line": 1299,
+      "type": "FUNCTION",
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor.__init__": {
       "file_path": "src/heretek_swarm/actors/prism.py",
       "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor.__init__",
-      "start_line": 1272,
-      "end_line": 1277,
+      "start_line": 1266,
+      "end_line": 1271,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "added"
+    },
+    "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism._prism_agent_actor.PrismAgentActor": {
+      "file_path": "src/heretek_swarm/actors/prism.py",
+      "qualified_name": "src.heretek_swarm.actors.prism._prism_agent_actor.PrismAgentActor",
+      "start_line": 1267,
+      "end_line": 1297,
+      "type": "CLASS",
+      "status": "deleted"
+    },
+    "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism._prism_agent_actor.PrismAgentActor.__init__": {
+      "file_path": "src/heretek_swarm/actors/prism.py",
+      "qualified_name": "src.heretek_swarm.actors.prism._prism_agent_actor.PrismAgentActor.__init__",
+      "start_line": 1268,
+      "end_line": 1273,
+      "type": "METHOD",
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor.act": {
       "file_path": "src/heretek_swarm/actors/prism.py",
       "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor.act",
-      "start_line": 1278,
-      "end_line": 1290,
+      "start_line": 1273,
+      "end_line": 1285,
       "type": "METHOD",
-      "status": "modified"
+      "status": "added"
+    },
+    "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism._prism_agent_actor.PrismAgentActor.act": {
+      "file_path": "src/heretek_swarm/actors/prism.py",
+      "qualified_name": "src.heretek_swarm.actors.prism._prism_agent_actor.PrismAgentActor.act",
+      "start_line": 1275,
+      "end_line": 1287,
+      "type": "METHOD",
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor.get_state": {
       "file_path": "src/heretek_swarm/actors/prism.py",
       "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor.get_state",
-      "start_line": 1292,
-      "end_line": 1300,
+      "start_line": 1287,
+      "end_line": 1295,
       "type": "METHOD",
-      "status": "modified"
+      "status": "added"
+    },
+    "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism._prism_agent_actor.PrismAgentActor.get_state": {
+      "file_path": "src/heretek_swarm/actors/prism.py",
+      "qualified_name": "src.heretek_swarm.actors.prism._prism_agent_actor.PrismAgentActor.get_state",
+      "start_line": 1289,
+      "end_line": 1297,
+      "type": "METHOD",
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PrismAgent.run_phi_training_episode": {
       "file_path": "src/heretek_swarm/actors/prism.py",
       "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent.run_phi_training_episode",
-      "start_line": 1304,
-      "end_line": 1339,
+      "start_line": 1299,
+      "end_line": 1334,
       "type": "METHOD",
-      "status": "modified"
+      "status": "added"
+    },
+    "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.run_phi_training_episode": {
+      "file_path": "src/heretek_swarm/actors/prism.py",
+      "qualified_name": "src.heretek_swarm.actors.prism.run_phi_training_episode",
+      "start_line": 1301,
+      "end_line": 1336,
+      "type": "FUNCTION",
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PrismAgent.get_phi_training_status": {
       "file_path": "src/heretek_swarm/actors/prism.py",
       "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent.get_phi_training_status",
-      "start_line": 1341,
-      "end_line": 1348,
+      "start_line": 1336,
+      "end_line": 1343,
       "type": "METHOD",
-      "status": "modified"
+      "status": "added"
+    },
+    "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.get_phi_training_status": {
+      "file_path": "src/heretek_swarm/actors/prism.py",
+      "qualified_name": "src.heretek_swarm.actors.prism.get_phi_training_status",
+      "start_line": 1338,
+      "end_line": 1345,
+      "type": "FUNCTION",
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PrismAgent._generate_reframes": {
       "file_path": "src/heretek_swarm/actors/prism.py",
       "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent._generate_reframes",
-      "start_line": 1351,
-      "end_line": 1413,
+      "start_line": 1346,
+      "end_line": 1408,
       "type": "METHOD",
-      "status": "modified"
+      "status": "added"
+    },
+    "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism._generate_reframes": {
+      "file_path": "src/heretek_swarm/actors/prism.py",
+      "qualified_name": "src.heretek_swarm.actors.prism._generate_reframes",
+      "start_line": 1348,
+      "end_line": 1410,
+      "type": "FUNCTION",
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/profiling.py|src.heretek_swarm.actors.profiling.ActionType": {
       "file_path": "src/heretek_swarm/actors/profiling.py",
@@ -97600,6 +97976,286 @@
       "end_line": 461,
       "type": "METHOD",
       "status": "modified"
+    },
+    "src/heretek_swarm/tools/examples.py|src.heretek_swarm.tools.examples.HealthCheckTool": {
+      "file_path": "src/heretek_swarm/tools/examples.py",
+      "qualified_name": "src.heretek_swarm.tools.examples.HealthCheckTool",
+      "start_line": 12,
+      "end_line": 32,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/tools/examples.py|src.heretek_swarm.tools.examples.HealthCheckTool.__init__": {
+      "file_path": "src/heretek_swarm/tools/examples.py",
+      "qualified_name": "src.heretek_swarm.tools.examples.HealthCheckTool.__init__",
+      "start_line": 15,
+      "end_line": 24,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/tools/examples.py|src.heretek_swarm.tools.examples.HealthCheckTool.execute": {
+      "file_path": "src/heretek_swarm/tools/examples.py",
+      "qualified_name": "src.heretek_swarm.tools.examples.HealthCheckTool.execute",
+      "start_line": 26,
+      "end_line": 32,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/tools/examples.py|src.heretek_swarm.tools.examples.MemorySearchTool": {
+      "file_path": "src/heretek_swarm/tools/examples.py",
+      "qualified_name": "src.heretek_swarm.tools.examples.MemorySearchTool",
+      "start_line": 35,
+      "end_line": 56,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/tools/examples.py|src.heretek_swarm.tools.examples.MemorySearchTool.__init__": {
+      "file_path": "src/heretek_swarm/tools/examples.py",
+      "qualified_name": "src.heretek_swarm.tools.examples.MemorySearchTool.__init__",
+      "start_line": 38,
+      "end_line": 47,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/tools/examples.py|src.heretek_swarm.tools.examples.MemorySearchTool.execute": {
+      "file_path": "src/heretek_swarm/tools/examples.py",
+      "qualified_name": "src.heretek_swarm.tools.examples.MemorySearchTool.execute",
+      "start_line": 49,
+      "end_line": 56,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/tools/examples.py|src.heretek_swarm.tools.examples.ConsensusVoteTool": {
+      "file_path": "src/heretek_swarm/tools/examples.py",
+      "qualified_name": "src.heretek_swarm.tools.examples.ConsensusVoteTool",
+      "start_line": 59,
+      "end_line": 79,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/tools/examples.py|src.heretek_swarm.tools.examples.ConsensusVoteTool.__init__": {
+      "file_path": "src/heretek_swarm/tools/examples.py",
+      "qualified_name": "src.heretek_swarm.tools.examples.ConsensusVoteTool.__init__",
+      "start_line": 62,
+      "end_line": 71,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/tools/examples.py|src.heretek_swarm.tools.examples.ConsensusVoteTool.execute": {
+      "file_path": "src/heretek_swarm/tools/examples.py",
+      "qualified_name": "src.heretek_swarm.tools.examples.ConsensusVoteTool.execute",
+      "start_line": 73,
+      "end_line": 79,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/tools/examples.py|src.heretek_swarm.tools.examples.LegacyWrapperTool": {
+      "file_path": "src/heretek_swarm/tools/examples.py",
+      "qualified_name": "src.heretek_swarm.tools.examples.LegacyWrapperTool",
+      "start_line": 82,
+      "end_line": 109,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/tools/examples.py|src.heretek_swarm.tools.examples.LegacyWrapperTool.__init__": {
+      "file_path": "src/heretek_swarm/tools/examples.py",
+      "qualified_name": "src.heretek_swarm.tools.examples.LegacyWrapperTool.__init__",
+      "start_line": 85,
+      "end_line": 95,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/tools/examples.py|src.heretek_swarm.tools.examples.LegacyWrapperTool.execute": {
+      "file_path": "src/heretek_swarm/tools/examples.py",
+      "qualified_name": "src.heretek_swarm.tools.examples.LegacyWrapperTool.execute",
+      "start_line": 97,
+      "end_line": 109,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/tools/base.py|src.heretek_swarm.tools.base.ToolStatus": {
+      "file_path": "src/heretek_swarm/tools/base.py",
+      "qualified_name": "src.heretek_swarm.tools.base.ToolStatus",
+      "start_line": 13,
+      "end_line": 19,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/tools/base.py|src.heretek_swarm.tools.base.ToolMetadata": {
+      "file_path": "src/heretek_swarm/tools/base.py",
+      "qualified_name": "src.heretek_swarm.tools.base.ToolMetadata",
+      "start_line": 23,
+      "end_line": 29,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/tools/base.py|src.heretek_swarm.tools.base.ToolContext": {
+      "file_path": "src/heretek_swarm/tools/base.py",
+      "qualified_name": "src.heretek_swarm.tools.base.ToolContext",
+      "start_line": 33,
+      "end_line": 38,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/tools/base.py|src.heretek_swarm.tools.base.ToolExecutionResult": {
+      "file_path": "src/heretek_swarm/tools/base.py",
+      "qualified_name": "src.heretek_swarm.tools.base.ToolExecutionResult",
+      "start_line": 42,
+      "end_line": 50,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/tools/base.py|src.heretek_swarm.tools.base.ToolExecutionError": {
+      "file_path": "src/heretek_swarm/tools/base.py",
+      "qualified_name": "src.heretek_swarm.tools.base.ToolExecutionError",
+      "start_line": 53,
+      "end_line": 55,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/tools/base.py|src.heretek_swarm.tools.base.BaseTool": {
+      "file_path": "src/heretek_swarm/tools/base.py",
+      "qualified_name": "src.heretek_swarm.tools.base.BaseTool",
+      "start_line": 58,
+      "end_line": 72,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/tools/base.py|src.heretek_swarm.tools.base.BaseTool.__init__": {
+      "file_path": "src/heretek_swarm/tools/base.py",
+      "qualified_name": "src.heretek_swarm.tools.base.BaseTool.__init__",
+      "start_line": 61,
+      "end_line": 64,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/tools/base.py|src.heretek_swarm.tools.base.BaseTool.execute": {
+      "file_path": "src/heretek_swarm/tools/base.py",
+      "qualified_name": "src.heretek_swarm.tools.base.BaseTool.execute",
+      "start_line": 66,
+      "end_line": 68,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/tools/base.py|src.heretek_swarm.tools.base.BaseTool.validate": {
+      "file_path": "src/heretek_swarm/tools/base.py",
+      "qualified_name": "src.heretek_swarm.tools.base.BaseTool.validate",
+      "start_line": 70,
+      "end_line": 72,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/tools/base.py|src.heretek_swarm.tools.base.SimpleTool": {
+      "file_path": "src/heretek_swarm/tools/base.py",
+      "qualified_name": "src.heretek_swarm.tools.base.SimpleTool",
+      "start_line": 75,
+      "end_line": 99,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/tools/base.py|src.heretek_swarm.tools.base.SimpleTool.__init__": {
+      "file_path": "src/heretek_swarm/tools/base.py",
+      "qualified_name": "src.heretek_swarm.tools.base.SimpleTool.__init__",
+      "start_line": 78,
+      "end_line": 80,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/tools/base.py|src.heretek_swarm.tools.base.SimpleTool.execute": {
+      "file_path": "src/heretek_swarm/tools/base.py",
+      "qualified_name": "src.heretek_swarm.tools.base.SimpleTool.execute",
+      "start_line": 82,
+      "end_line": 99,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/tools/registry.py|src.heretek_swarm.tools.registry.ToolRegistryConfig": {
+      "file_path": "src/heretek_swarm/tools/registry.py",
+      "qualified_name": "src.heretek_swarm.tools.registry.ToolRegistryConfig",
+      "start_line": 15,
+      "end_line": 19,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/tools/registry.py|src.heretek_swarm.tools.registry.ToolRegistryEntry": {
+      "file_path": "src/heretek_swarm/tools/registry.py",
+      "qualified_name": "src.heretek_swarm.tools.registry.ToolRegistryEntry",
+      "start_line": 23,
+      "end_line": 28,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/tools/registry.py|src.heretek_swarm.tools.registry.ToolRegistry": {
+      "file_path": "src/heretek_swarm/tools/registry.py",
+      "qualified_name": "src.heretek_swarm.tools.registry.ToolRegistry",
+      "start_line": 31,
+      "end_line": 71,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/tools/registry.py|src.heretek_swarm.tools.registry.ToolRegistry.__init__": {
+      "file_path": "src/heretek_swarm/tools/registry.py",
+      "qualified_name": "src.heretek_swarm.tools.registry.ToolRegistry.__init__",
+      "start_line": 34,
+      "end_line": 37,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/tools/registry.py|src.heretek_swarm.tools.registry.ToolRegistry.register": {
+      "file_path": "src/heretek_swarm/tools/registry.py",
+      "qualified_name": "src.heretek_swarm.tools.registry.ToolRegistry.register",
+      "start_line": 39,
+      "end_line": 45,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/tools/registry.py|src.heretek_swarm.tools.registry.ToolRegistry.unregister": {
+      "file_path": "src/heretek_swarm/tools/registry.py",
+      "qualified_name": "src.heretek_swarm.tools.registry.ToolRegistry.unregister",
+      "start_line": 47,
+      "end_line": 55,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/tools/registry.py|src.heretek_swarm.tools.registry.ToolRegistry.get": {
+      "file_path": "src/heretek_swarm/tools/registry.py",
+      "qualified_name": "src.heretek_swarm.tools.registry.ToolRegistry.get",
+      "start_line": 57,
+      "end_line": 60,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/tools/registry.py|src.heretek_swarm.tools.registry.ToolRegistry.list_tools": {
+      "file_path": "src/heretek_swarm/tools/registry.py",
+      "qualified_name": "src.heretek_swarm.tools.registry.ToolRegistry.list_tools",
+      "start_line": 62,
+      "end_line": 66,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/tools/registry.py|src.heretek_swarm.tools.registry.ToolRegistry.get_metadata": {
+      "file_path": "src/heretek_swarm/tools/registry.py",
+      "qualified_name": "src.heretek_swarm.tools.registry.ToolRegistry.get_metadata",
+      "start_line": 68,
+      "end_line": 71,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/tools/registry.py|src.heretek_swarm.tools.registry.get_registry": {
+      "file_path": "src/heretek_swarm/tools/registry.py",
+      "qualified_name": "src.heretek_swarm.tools.registry.get_registry",
+      "start_line": 78,
+      "end_line": 83,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/tools/registry.py|src.heretek_swarm.tools.registry.initialize_registry": {
+      "file_path": "src/heretek_swarm/tools/registry.py",
+      "qualified_name": "src.heretek_swarm.tools.registry.initialize_registry",
+      "start_line": 86,
+      "end_line": 90,
+      "type": "FUNCTION",
+      "status": "added"
     }
   },
   "components": [
@@ -97641,7 +98297,7 @@
       "file_methods": [
         {
           "file_path": "migrations/scripts/setup_qdrant_collections.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "migrations.scripts.setup_qdrant_collections.get_qdrant_url",
             "migrations.scripts.setup_qdrant_collections.get_api_key",
@@ -97652,7 +98308,7 @@
         },
         {
           "file_path": "scripts/check_latency_baseline.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "scripts.check_latency_baseline.check_latency_baseline"
           ]
@@ -97678,7 +98334,7 @@
         },
         {
           "file_path": "scripts/wire_agents.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "scripts.wire_agents.wire_agent_file",
             "scripts.wire_agents.main",
@@ -97691,7 +98347,7 @@
         },
         {
           "file_path": "scripts/wire_agents_session44.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "scripts.wire_agents_session44.wire_agent_file",
             "scripts.wire_agents_session44.main"
@@ -97699,7 +98355,7 @@
         },
         {
           "file_path": "serverless/handler.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "serverless.handler.initialize_dependencies",
             "serverless.handler.APIResponse",
@@ -98681,12 +99337,20 @@
             "src.heretek_swarm.actors.prism.PrismAgent.get_learning_status",
             "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor",
             "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor",
+            "src.heretek_swarm.actors.prism._prism_agent_actor",
             "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor.__init__",
+            "src.heretek_swarm.actors.prism._prism_agent_actor.PrismAgentActor",
+            "src.heretek_swarm.actors.prism._prism_agent_actor.PrismAgentActor.__init__",
             "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor.act",
+            "src.heretek_swarm.actors.prism._prism_agent_actor.PrismAgentActor.act",
             "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor.get_state",
+            "src.heretek_swarm.actors.prism._prism_agent_actor.PrismAgentActor.get_state",
             "src.heretek_swarm.actors.prism.PrismAgent.run_phi_training_episode",
+            "src.heretek_swarm.actors.prism.run_phi_training_episode",
             "src.heretek_swarm.actors.prism.PrismAgent.get_phi_training_status",
-            "src.heretek_swarm.actors.prism.PrismAgent._generate_reframes"
+            "src.heretek_swarm.actors.prism.get_phi_training_status",
+            "src.heretek_swarm.actors.prism.PrismAgent._generate_reframes",
+            "src.heretek_swarm.actors.prism._generate_reframes"
           ]
         },
         {
@@ -103176,7 +103840,7 @@
           "file_methods": [
             {
               "file_path": "migrations/scripts/setup_qdrant_collections.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "migrations.scripts.setup_qdrant_collections.get_qdrant_url",
                 "migrations.scripts.setup_qdrant_collections.get_api_key",
@@ -103187,7 +103851,7 @@
             },
             {
               "file_path": "scripts/check_latency_baseline.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "scripts.check_latency_baseline.check_latency_baseline"
               ]
@@ -103213,7 +103877,7 @@
             },
             {
               "file_path": "scripts/wire_agents.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "scripts.wire_agents.wire_agent_file",
                 "scripts.wire_agents.main",
@@ -103226,7 +103890,7 @@
             },
             {
               "file_path": "scripts/wire_agents_session44.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "scripts.wire_agents_session44.wire_agent_file",
                 "scripts.wire_agents_session44.main"
@@ -103234,7 +103898,7 @@
             },
             {
               "file_path": "serverless/handler.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "serverless.handler.initialize_dependencies",
                 "serverless.handler.APIResponse",
@@ -105960,7 +106624,7 @@
               "file_methods": [
                 {
                   "file_path": "scripts/check_latency_baseline.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "scripts.check_latency_baseline.check_latency_baseline"
                   ]
@@ -105974,7 +106638,7 @@
                 },
                 {
                   "file_path": "scripts/wire_agents.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "scripts.wire_agents.wire_agent_file",
                     "scripts.wire_agents.main",
@@ -105987,7 +106651,7 @@
                 },
                 {
                   "file_path": "scripts/wire_agents_session44.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "scripts.wire_agents_session44.wire_agent_file",
                     "scripts.wire_agents_session44.main"
@@ -107802,7 +108466,7 @@
               "file_methods": [
                 {
                   "file_path": "migrations/scripts/setup_qdrant_collections.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "migrations.scripts.setup_qdrant_collections.get_qdrant_url",
                     "migrations.scripts.setup_qdrant_collections.get_api_key",
@@ -107825,7 +108489,7 @@
                 },
                 {
                   "file_path": "serverless/handler.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "serverless.handler.initialize_dependencies",
                     "serverless.handler.APIResponse",
@@ -111287,12 +111951,20 @@
                 "src.heretek_swarm.actors.prism.PrismAgent.get_learning_status",
                 "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor",
                 "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor",
+                "src.heretek_swarm.actors.prism._prism_agent_actor",
                 "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor.__init__",
+                "src.heretek_swarm.actors.prism._prism_agent_actor.PrismAgentActor",
+                "src.heretek_swarm.actors.prism._prism_agent_actor.PrismAgentActor.__init__",
                 "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor.act",
+                "src.heretek_swarm.actors.prism._prism_agent_actor.PrismAgentActor.act",
                 "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor.get_state",
+                "src.heretek_swarm.actors.prism._prism_agent_actor.PrismAgentActor.get_state",
                 "src.heretek_swarm.actors.prism.PrismAgent.run_phi_training_episode",
+                "src.heretek_swarm.actors.prism.run_phi_training_episode",
                 "src.heretek_swarm.actors.prism.PrismAgent.get_phi_training_status",
-                "src.heretek_swarm.actors.prism.PrismAgent._generate_reframes"
+                "src.heretek_swarm.actors.prism.get_phi_training_status",
+                "src.heretek_swarm.actors.prism.PrismAgent._generate_reframes",
+                "src.heretek_swarm.actors.prism._generate_reframes"
               ]
             },
             {
@@ -114589,12 +115261,20 @@
                     "src.heretek_swarm.actors.prism.PrismAgent.get_learning_status",
                     "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor",
                     "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor",
+                    "src.heretek_swarm.actors.prism._prism_agent_actor",
                     "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor.__init__",
+                    "src.heretek_swarm.actors.prism._prism_agent_actor.PrismAgentActor",
+                    "src.heretek_swarm.actors.prism._prism_agent_actor.PrismAgentActor.__init__",
                     "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor.act",
+                    "src.heretek_swarm.actors.prism._prism_agent_actor.PrismAgentActor.act",
                     "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor.get_state",
+                    "src.heretek_swarm.actors.prism._prism_agent_actor.PrismAgentActor.get_state",
                     "src.heretek_swarm.actors.prism.PrismAgent.run_phi_training_episode",
+                    "src.heretek_swarm.actors.prism.run_phi_training_episode",
                     "src.heretek_swarm.actors.prism.PrismAgent.get_phi_training_status",
-                    "src.heretek_swarm.actors.prism.PrismAgent._generate_reframes"
+                    "src.heretek_swarm.actors.prism.get_phi_training_status",
+                    "src.heretek_swarm.actors.prism.PrismAgent._generate_reframes",
+                    "src.heretek_swarm.actors.prism._generate_reframes"
                   ]
                 },
                 {
@@ -115871,12 +116551,20 @@
                         "src.heretek_swarm.actors.prism.PrismAgent.get_learning_status",
                         "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor",
                         "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor",
+                        "src.heretek_swarm.actors.prism._prism_agent_actor",
                         "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor.__init__",
+                        "src.heretek_swarm.actors.prism._prism_agent_actor.PrismAgentActor",
+                        "src.heretek_swarm.actors.prism._prism_agent_actor.PrismAgentActor.__init__",
                         "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor.act",
+                        "src.heretek_swarm.actors.prism._prism_agent_actor.PrismAgentActor.act",
                         "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor.get_state",
+                        "src.heretek_swarm.actors.prism._prism_agent_actor.PrismAgentActor.get_state",
                         "src.heretek_swarm.actors.prism.PrismAgent.run_phi_training_episode",
+                        "src.heretek_swarm.actors.prism.run_phi_training_episode",
                         "src.heretek_swarm.actors.prism.PrismAgent.get_phi_training_status",
-                        "src.heretek_swarm.actors.prism.PrismAgent._generate_reframes"
+                        "src.heretek_swarm.actors.prism.get_phi_training_status",
+                        "src.heretek_swarm.actors.prism.PrismAgent._generate_reframes",
+                        "src.heretek_swarm.actors.prism._generate_reframes"
                       ]
                     },
                     {
@@ -120798,12 +121486,20 @@
                 "src.heretek_swarm.actors.prism.PrismAgent.get_learning_status",
                 "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor",
                 "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor",
+                "src.heretek_swarm.actors.prism._prism_agent_actor",
                 "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor.__init__",
+                "src.heretek_swarm.actors.prism._prism_agent_actor.PrismAgentActor",
+                "src.heretek_swarm.actors.prism._prism_agent_actor.PrismAgentActor.__init__",
                 "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor.act",
+                "src.heretek_swarm.actors.prism._prism_agent_actor.PrismAgentActor.act",
                 "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor.get_state",
+                "src.heretek_swarm.actors.prism._prism_agent_actor.PrismAgentActor.get_state",
                 "src.heretek_swarm.actors.prism.PrismAgent.run_phi_training_episode",
+                "src.heretek_swarm.actors.prism.run_phi_training_episode",
                 "src.heretek_swarm.actors.prism.PrismAgent.get_phi_training_status",
-                "src.heretek_swarm.actors.prism.PrismAgent._generate_reframes"
+                "src.heretek_swarm.actors.prism.get_phi_training_status",
+                "src.heretek_swarm.actors.prism.PrismAgent._generate_reframes",
+                "src.heretek_swarm.actors.prism._generate_reframes"
               ]
             },
             {
@@ -122455,12 +123151,20 @@
                     "src.heretek_swarm.actors.prism.PrismAgent.get_learning_status",
                     "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor",
                     "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor",
+                    "src.heretek_swarm.actors.prism._prism_agent_actor",
                     "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor.__init__",
+                    "src.heretek_swarm.actors.prism._prism_agent_actor.PrismAgentActor",
+                    "src.heretek_swarm.actors.prism._prism_agent_actor.PrismAgentActor.__init__",
                     "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor.act",
+                    "src.heretek_swarm.actors.prism._prism_agent_actor.PrismAgentActor.act",
                     "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor.get_state",
+                    "src.heretek_swarm.actors.prism._prism_agent_actor.PrismAgentActor.get_state",
                     "src.heretek_swarm.actors.prism.PrismAgent.run_phi_training_episode",
+                    "src.heretek_swarm.actors.prism.run_phi_training_episode",
                     "src.heretek_swarm.actors.prism.PrismAgent.get_phi_training_status",
-                    "src.heretek_swarm.actors.prism.PrismAgent._generate_reframes"
+                    "src.heretek_swarm.actors.prism.get_phi_training_status",
+                    "src.heretek_swarm.actors.prism.PrismAgent._generate_reframes",
+                    "src.heretek_swarm.actors.prism._generate_reframes"
                   ]
                 },
                 {
@@ -123575,12 +124279,20 @@
                     "src.heretek_swarm.actors.prism.PrismAgent.get_learning_status",
                     "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor",
                     "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor",
+                    "src.heretek_swarm.actors.prism._prism_agent_actor",
                     "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor.__init__",
+                    "src.heretek_swarm.actors.prism._prism_agent_actor.PrismAgentActor",
+                    "src.heretek_swarm.actors.prism._prism_agent_actor.PrismAgentActor.__init__",
                     "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor.act",
+                    "src.heretek_swarm.actors.prism._prism_agent_actor.PrismAgentActor.act",
                     "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor.get_state",
+                    "src.heretek_swarm.actors.prism._prism_agent_actor.PrismAgentActor.get_state",
                     "src.heretek_swarm.actors.prism.PrismAgent.run_phi_training_episode",
+                    "src.heretek_swarm.actors.prism.run_phi_training_episode",
                     "src.heretek_swarm.actors.prism.PrismAgent.get_phi_training_status",
-                    "src.heretek_swarm.actors.prism.PrismAgent._generate_reframes"
+                    "src.heretek_swarm.actors.prism.get_phi_training_status",
+                    "src.heretek_swarm.actors.prism.PrismAgent._generate_reframes",
+                    "src.heretek_swarm.actors.prism._generate_reframes"
                   ]
                 },
                 {
@@ -124501,12 +125213,20 @@
                     "src.heretek_swarm.actors.prism.PrismAgent.get_learning_status",
                     "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor",
                     "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor",
+                    "src.heretek_swarm.actors.prism._prism_agent_actor",
                     "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor.__init__",
+                    "src.heretek_swarm.actors.prism._prism_agent_actor.PrismAgentActor",
+                    "src.heretek_swarm.actors.prism._prism_agent_actor.PrismAgentActor.__init__",
                     "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor.act",
+                    "src.heretek_swarm.actors.prism._prism_agent_actor.PrismAgentActor.act",
                     "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor.PrismAgentActor.get_state",
+                    "src.heretek_swarm.actors.prism._prism_agent_actor.PrismAgentActor.get_state",
                     "src.heretek_swarm.actors.prism.PrismAgent.run_phi_training_episode",
+                    "src.heretek_swarm.actors.prism.run_phi_training_episode",
                     "src.heretek_swarm.actors.prism.PrismAgent.get_phi_training_status",
-                    "src.heretek_swarm.actors.prism.PrismAgent._generate_reframes"
+                    "src.heretek_swarm.actors.prism.get_phi_training_status",
+                    "src.heretek_swarm.actors.prism.PrismAgent._generate_reframes",
+                    "src.heretek_swarm.actors.prism._generate_reframes"
                   ]
                 }
               ],

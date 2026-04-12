@@ -11,15 +11,15 @@ from typing import Optional
 try:
     from qdrant_client import QdrantClient
     from qdrant_client.models import (
-        Distance,
-        VectorParams,
         CollectionConfig,
-        OptimizersConfigDiff,
+        Distance,
         HnswConfigDiff,
-        WalConfigDiff,
+        OptimizersConfigDiff,
         QuantizationConfigDiff,
         ScalarQuantization,
         ScalarType,
+        VectorParams,
+        WalConfigDiff,
     )
 except ImportError:
     print("ERROR: qdrant-client not installed. Install with: pip install qdrant-client")

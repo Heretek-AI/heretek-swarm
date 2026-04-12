@@ -275,10 +275,10 @@ def wire_agent_file(filepath: Path) -> bool:
     if not filepath.exists():
         print(f"File not found: {filepath}")
         return False
-    
+
     content = filepath.read_text()
     original_content = content
-    
+
     # 1. Add imports after existing imports
     if "Session 44: Collective Learning Integration" not in content:
         # Find the last import line
@@ -287,11 +287,11 @@ def wire_agent_file(filepath: Path) -> bool:
         for i, line in enumerate(lines):
             if line.startswith('from ') or line.startswith('import '):
                 insert_idx = i + 1
-        
+
         lines.insert(insert_idx, SESSION_44_IMPORTS)
         content = '\n'.join(lines)
         print(f"  Added imports to {filepath.name}")
-    
+
     # 2. Add __init__ parameters
     if "pattern_extractor: Optional[PatternExtractor]" not in content:
         # Find __init__ method and add parameters
@@ -308,11 +308,11 @@ def wire_agent_file(filepath: Path) -> bool:
                 elif content[i] == ')':
                     paren_count -= 1
                 i += 1
-            
+
             # Insert before closing parenthesis
             content = content[:i-1] + SESSION_44_INIT_PARAMS + content[i-1:]
             print(f"  Added __init__ parameters to {filepath.name}")
-    
+
     # 3. Add __init__ body
     if "Session 44: Collective Learning Integration" in content and "self.pattern_extractor = pattern_extractor" not in content:
         # Find logger.info call after __init__ body starts and add before it
@@ -322,32 +322,32 @@ def wire_agent_file(filepath: Path) -> bool:
             insert_pos = match.start()
             content = content[:insert_pos] + SESSION_44_INIT_BODY + "\n\n        " + content[insert_pos:]
             print(f"  Added __init__ body to {filepath.name}")
-    
+
     # 4. Add integration methods at end of class (before last method)
     if "Session 44: Collective Learning Integration Methods" not in content:
         # Find the last method in the class and add after it
         # Look for the last async def or def pattern
         method_pattern = r'(    async def|    def)'
         matches = list(re.finditer(method_pattern, content))
-        
+
         if matches:
             # Find a good insertion point - look for _send_error or similar utility method
             insert_pos = matches[-1].start()
-            
+
             # Try to find a better insertion point
             for match in reversed(matches):
                 if '_send_error' in content[match.start():match.start()+200]:
                     insert_pos = match.start()
                     break
-            
+
             content = content[:insert_pos] + SESSION_44_METHODS + "\n" + content[insert_pos:]
             print(f"  Added integration methods to {filepath.name}")
-    
+
     # Write the modified content
     if content != original_content:
         filepath.write_text(content)
         return True
-    
+
     return False
 
 
@@ -371,21 +371,21 @@ def main():
         "perceiver_plus.py",
         "prism.py",
     ]
-    
+
     print("Session 44: Agent Wiring Script")
     print("=" * 50)
-    
+
     wired_count = 0
     for agent_file in agents_to_wire:
         filepath = ACTORS_DIR / agent_file
         print(f"\nWiring {agent_file}...")
-        
+
         if wire_agent_file(filepath):
             wired_count += 1
             print(f"  ✓ {agent_file} wired successfully")
         else:
             print(f"  - {agent_file} already wired or no changes needed")
-    
+
     print("\n" + "=" * 50)
     print(f"Session 44 wiring complete: {wired_count}/{len(agents_to_wire)} agents modified")
 

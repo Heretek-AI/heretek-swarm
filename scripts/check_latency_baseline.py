@@ -25,21 +25,21 @@ def check_latency_baseline(benchmark_file: Path, baseline_ms: float) -> int:
     if not benchmark_file.exists():
         print(f"❌ Benchmark file not found: {benchmark_file}")
         return 1
-    
+
     with open(benchmark_file) as f:
         results = json.load(f)
-    
+
     failures = []
     passes = []
-    
+
     benchmarks = results.get("benchmarks", [])
-    
+
     for bench in benchmarks:
         name = bench.get("name", "unknown")
         # Convert to milliseconds (benchmarks usually in seconds)
         mean_time_s = bench.get("stats", {}).get("mean", 0)
         mean_time_ms = mean_time_s * 1000
-        
+
         if mean_time_ms > baseline_ms:
             failures.append({
                 "name": name,
@@ -53,7 +53,7 @@ def check_latency_baseline(benchmark_file: Path, baseline_ms: float) -> int:
                 "name": name,
                 "mean_ms": mean_time_ms,
             })
-    
+
     # Print report
     print("\n" + "=" * 60)
     print("LATENCY BASELINE CHECK REPORT")
@@ -63,27 +63,27 @@ def check_latency_baseline(benchmark_file: Path, baseline_ms: float) -> int:
     print(f"Passed: {len(passes)}")
     print(f"Failed: {len(failures)}")
     print("=" * 60)
-    
+
     if passes:
         print("\n✅ PASSING BENCHMARKS:")
         for p in passes:
             print(f"  • {p['name']}: {p['mean_ms']:.2f}ms")
-    
+
     if failures:
         print("\n🚨 FAILING BENCHMARKS - FLAG FOR REFACTORING:")
         for f in failures:
             print(f"  ❌ {f['name']}")
             print(f"     Mean: {f['mean_ms']:.2f}ms")
             print(f"     Overage: +{f['overage_ms']:.2f}ms ({f['overage_pct']:.1f}% over baseline)")
-    
+
     print("\n" + "=" * 60)
-    
+
     if failures:
         print("❌ LATENCY BASELINE CHECK FAILED")
         print(f"   {len(failures)} module(s) exceed {baseline_ms}ms baseline")
         print("   FLAG FOR REFACTORING per Phase Directives")
         return 1
-    
+
     print("✅ ALL BENCHMARKS WITHIN LATENCY BASELINE")
     return 0
 
@@ -94,8 +94,8 @@ if __name__ == "__main__":
         print("  benchmark-file: Path to pytest-benchmark JSON output")
         print("  baseline-ms: Latency baseline in milliseconds (default: 100)")
         sys.exit(1)
-    
+
     benchmark_path = Path(sys.argv[1])
     baseline = float(sys.argv[2]) if len(sys.argv) > 2 else 100.0
-    
+
     sys.exit(check_latency_baseline(benchmark_path, baseline))
