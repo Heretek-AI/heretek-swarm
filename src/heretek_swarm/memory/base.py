@@ -44,17 +44,23 @@ class MemoryEntry:
 
     Attributes:
         id: Unique identifier
+        agent_id: Agent that created this memory
         content: Memory content
+        content_type: MIME type of content
         metadata: Additional metadata
         created_at: Creation timestamp
         expires_at: Expiration timestamp (for ephemeral memory)
         lineage: Parent message/memory IDs for provenance
         embedding: Optional vector embedding
+        tags: Classification tags
+        importance_score: Relevance score (0-1)
     """
 
     content: Any
     metadata: dict[str, Any] = field(default_factory=dict)
     id: str = field(default_factory=lambda: str(uuid.uuid4()))
+    agent_id: str | None = None
+    content_type: str = "text/plain"
     created_at: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
     memory_type: Any = None
     tier: Any = None
@@ -63,6 +69,8 @@ class MemoryEntry:
     expires_at: str | None = None
     lineage: list[str] = field(default_factory=list)
     embedding: list[float] | None = None
+    tags: list[str] = field(default_factory=list)
+    importance_score: float = 0.5
 
     def __post_init__(self) -> None:
         # types are defined in this module

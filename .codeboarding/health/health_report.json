@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-12T19:59:10.269533+00:00",
-  "overall_score": 0.992770767613039,
+  "timestamp": "2026-04-12T20:17:34.153203+00:00",
+  "overall_score": 0.992672909479218,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -982,8 +982,8 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 38,
-      "findings_count": 38,
+      "total_entities_checked": 41,
+      "findings_count": 41,
       "warning_count": 1,
       "score": 0.0,
       "finding_groups": [
@@ -1249,6 +1249,27 @@
               "file_path": "src/heretek_swarm/api/mcp.py",
               "line_start": 367,
               "line_end": 367,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"ttl\" is not accessed",
+              "file_path": "src/heretek_swarm/memory/base.py",
+              "line_start": 464,
+              "line_end": 464,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"content\" is not accessed",
+              "file_path": "src/heretek_swarm/memory/base.py",
+              "line_start": 764,
+              "line_end": 764,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"query\" is not accessed",
+              "file_path": "src/heretek_swarm/memory/base.py",
+              "line_start": 768,
+              "line_end": 768,
               "metric_value": 0.0
             }
           ]

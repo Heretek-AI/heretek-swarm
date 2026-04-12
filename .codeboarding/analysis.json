@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-12T19:59:09.921560+00:00",
+    "generated_at": "2026-04-12T20:17:33.755280+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 4,
@@ -22156,7 +22156,7 @@
       ]
     },
     "src/heretek_swarm/memory/base.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.memory.base.MemoryTier",
@@ -22175,9 +22175,9 @@
         {
           "qualified_name": "src.heretek_swarm.memory.base.MemoryEntry",
           "start_line": 41,
-          "end_line": 77,
+          "end_line": 85,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.memory.base.MemoryEntry.__post_init__",
@@ -22500,6 +22500,34 @@
           "end_line": 746,
           "node_type": "METHOD",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.memory.base.DualTierMemorySystem",
+          "start_line": 757,
+          "end_line": 770,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.memory.base.DualTierMemorySystem.__init__",
+          "start_line": 760,
+          "end_line": 762,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.memory.base.DualTierMemorySystem.store",
+          "start_line": 764,
+          "end_line": 766,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.memory.base.DualTierMemorySystem.query",
+          "start_line": 768,
+          "end_line": 770,
+          "node_type": "METHOD",
+          "status": "added"
         }
       ]
     },
@@ -73951,9 +73979,9 @@
       "file_path": "src/heretek_swarm/memory/base.py",
       "qualified_name": "src.heretek_swarm.memory.base.MemoryEntry",
       "start_line": 41,
-      "end_line": 77,
+      "end_line": 85,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/memory/base.py|src.heretek_swarm.memory.base.MemoryEntry.__post_init__": {
       "file_path": "src/heretek_swarm/memory/base.py",
@@ -74322,6 +74350,38 @@
       "end_line": 746,
       "type": "METHOD",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/memory/base.py|src.heretek_swarm.memory.base.DualTierMemorySystem": {
+      "file_path": "src/heretek_swarm/memory/base.py",
+      "qualified_name": "src.heretek_swarm.memory.base.DualTierMemorySystem",
+      "start_line": 757,
+      "end_line": 770,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/memory/base.py|src.heretek_swarm.memory.base.DualTierMemorySystem.__init__": {
+      "file_path": "src/heretek_swarm/memory/base.py",
+      "qualified_name": "src.heretek_swarm.memory.base.DualTierMemorySystem.__init__",
+      "start_line": 760,
+      "end_line": 762,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/memory/base.py|src.heretek_swarm.memory.base.DualTierMemorySystem.store": {
+      "file_path": "src/heretek_swarm/memory/base.py",
+      "qualified_name": "src.heretek_swarm.memory.base.DualTierMemorySystem.store",
+      "start_line": 764,
+      "end_line": 766,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/memory/base.py|src.heretek_swarm.memory.base.DualTierMemorySystem.query": {
+      "file_path": "src/heretek_swarm/memory/base.py",
+      "qualified_name": "src.heretek_swarm.memory.base.DualTierMemorySystem.query",
+      "start_line": 768,
+      "end_line": 770,
+      "type": "METHOD",
+      "status": "added"
     },
     "src/heretek_swarm/memory/compression.py|src.heretek_swarm.memory.compression.CompressionAlgorithm": {
       "file_path": "src/heretek_swarm/memory/compression.py",
@@ -107437,7 +107497,7 @@
         },
         {
           "file_path": "src/heretek_swarm/memory/base.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.memory.base.MemoryTier",
             "src.heretek_swarm.memory.base.MemoryType",
@@ -107487,7 +107547,11 @@
             "src.heretek_swarm.memory.base.DualTierMemory.retrieve",
             "src.heretek_swarm.memory.base.DualTierMemory.query",
             "src.heretek_swarm.memory.base.DualTierMemory.close",
-            "src.heretek_swarm.memory.base.DualTierMemory.get_statistics"
+            "src.heretek_swarm.memory.base.DualTierMemory.get_statistics",
+            "src.heretek_swarm.memory.base.DualTierMemorySystem",
+            "src.heretek_swarm.memory.base.DualTierMemorySystem.__init__",
+            "src.heretek_swarm.memory.base.DualTierMemorySystem.store",
+            "src.heretek_swarm.memory.base.DualTierMemorySystem.query"
           ]
         },
         {
@@ -110839,7 +110903,7 @@
             },
             {
               "file_path": "src/heretek_swarm/memory/base.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.memory.base.MemoryTier",
                 "src.heretek_swarm.memory.base.MemoryType",
@@ -110889,7 +110953,11 @@
                 "src.heretek_swarm.memory.base.DualTierMemory.retrieve",
                 "src.heretek_swarm.memory.base.DualTierMemory.query",
                 "src.heretek_swarm.memory.base.DualTierMemory.close",
-                "src.heretek_swarm.memory.base.DualTierMemory.get_statistics"
+                "src.heretek_swarm.memory.base.DualTierMemory.get_statistics",
+                "src.heretek_swarm.memory.base.DualTierMemorySystem",
+                "src.heretek_swarm.memory.base.DualTierMemorySystem.__init__",
+                "src.heretek_swarm.memory.base.DualTierMemorySystem.store",
+                "src.heretek_swarm.memory.base.DualTierMemorySystem.query"
               ]
             },
             {
@@ -112575,7 +112643,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/memory/base.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.memory.base.MemoryTier",
                     "src.heretek_swarm.memory.base.MemoryType",
@@ -112625,7 +112693,11 @@
                     "src.heretek_swarm.memory.base.DualTierMemory.retrieve",
                     "src.heretek_swarm.memory.base.DualTierMemory.query",
                     "src.heretek_swarm.memory.base.DualTierMemory.close",
-                    "src.heretek_swarm.memory.base.DualTierMemory.get_statistics"
+                    "src.heretek_swarm.memory.base.DualTierMemory.get_statistics",
+                    "src.heretek_swarm.memory.base.DualTierMemorySystem",
+                    "src.heretek_swarm.memory.base.DualTierMemorySystem.__init__",
+                    "src.heretek_swarm.memory.base.DualTierMemorySystem.store",
+                    "src.heretek_swarm.memory.base.DualTierMemorySystem.query"
                   ]
                 },
                 {
@@ -113409,7 +113481,7 @@
               "file_methods": [
                 {
                   "file_path": "src/heretek_swarm/memory/base.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.memory.base.MemoryTier",
                     "src.heretek_swarm.memory.base.MemoryType",
@@ -113459,7 +113531,11 @@
                     "src.heretek_swarm.memory.base.DualTierMemory.retrieve",
                     "src.heretek_swarm.memory.base.DualTierMemory.query",
                     "src.heretek_swarm.memory.base.DualTierMemory.close",
-                    "src.heretek_swarm.memory.base.DualTierMemory.get_statistics"
+                    "src.heretek_swarm.memory.base.DualTierMemory.get_statistics",
+                    "src.heretek_swarm.memory.base.DualTierMemorySystem",
+                    "src.heretek_swarm.memory.base.DualTierMemorySystem.__init__",
+                    "src.heretek_swarm.memory.base.DualTierMemorySystem.store",
+                    "src.heretek_swarm.memory.base.DualTierMemorySystem.query"
                   ]
                 },
                 {
@@ -118349,7 +118425,7 @@
             },
             {
               "file_path": "src/heretek_swarm/memory/base.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.memory.base.MemoryTier",
                 "src.heretek_swarm.memory.base.MemoryType",
@@ -118399,7 +118475,11 @@
                 "src.heretek_swarm.memory.base.DualTierMemory.retrieve",
                 "src.heretek_swarm.memory.base.DualTierMemory.query",
                 "src.heretek_swarm.memory.base.DualTierMemory.close",
-                "src.heretek_swarm.memory.base.DualTierMemory.get_statistics"
+                "src.heretek_swarm.memory.base.DualTierMemory.get_statistics",
+                "src.heretek_swarm.memory.base.DualTierMemorySystem",
+                "src.heretek_swarm.memory.base.DualTierMemorySystem.__init__",
+                "src.heretek_swarm.memory.base.DualTierMemorySystem.store",
+                "src.heretek_swarm.memory.base.DualTierMemorySystem.query"
               ]
             },
             {
@@ -124556,7 +124636,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/memory/base.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.memory.base.MemoryTier",
                     "src.heretek_swarm.memory.base.MemoryType",
@@ -124606,7 +124686,11 @@
                     "src.heretek_swarm.memory.base.DualTierMemory.retrieve",
                     "src.heretek_swarm.memory.base.DualTierMemory.query",
                     "src.heretek_swarm.memory.base.DualTierMemory.close",
-                    "src.heretek_swarm.memory.base.DualTierMemory.get_statistics"
+                    "src.heretek_swarm.memory.base.DualTierMemory.get_statistics",
+                    "src.heretek_swarm.memory.base.DualTierMemorySystem",
+                    "src.heretek_swarm.memory.base.DualTierMemorySystem.__init__",
+                    "src.heretek_swarm.memory.base.DualTierMemorySystem.store",
+                    "src.heretek_swarm.memory.base.DualTierMemorySystem.query"
                   ]
                 },
                 {
@@ -124801,7 +124885,7 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/memory/base.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.memory.base.MemoryTier",
                         "src.heretek_swarm.memory.base.MemoryType",
@@ -124851,7 +124935,11 @@
                         "src.heretek_swarm.memory.base.DualTierMemory.retrieve",
                         "src.heretek_swarm.memory.base.DualTierMemory.query",
                         "src.heretek_swarm.memory.base.DualTierMemory.close",
-                        "src.heretek_swarm.memory.base.DualTierMemory.get_statistics"
+                        "src.heretek_swarm.memory.base.DualTierMemory.get_statistics",
+                        "src.heretek_swarm.memory.base.DualTierMemorySystem",
+                        "src.heretek_swarm.memory.base.DualTierMemorySystem.__init__",
+                        "src.heretek_swarm.memory.base.DualTierMemorySystem.store",
+                        "src.heretek_swarm.memory.base.DualTierMemorySystem.query"
                       ]
                     }
                   ],
