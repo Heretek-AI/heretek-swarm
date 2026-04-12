@@ -8,22 +8,22 @@ Features API key encryption using Fernet symmetric encryption.
 
 from __future__ import annotations
 
-import base64
 import os
 from datetime import UTC, datetime, timedelta
 from typing import TYPE_CHECKING, Any, TypeVar
+from uuid import UUID
 
 import structlog
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
+from .encryption import ApiKeyEncryptor
 from .models import (
     AgentConfig,
     AgentConfigCreate,
     AgentConfigUpdate,
     ConfigAuditLog,
     ConfigCacheEntry,
-    ConfigType,
     ConfigurationExport,
     ConfigurationImport,
     EmbeddingProvider,
@@ -38,17 +38,6 @@ from .models import (
     UserConfigurationCreate,
     UserConfigurationUpdate,
 )
-
-if TYPE_CHECKING:
-    from uuid import UUID
-
-# Fernet encryption for API keys
-try:
-    from cryptography.fernet import Fernet
-    CRYPTOGRAPHY_AVAILABLE = True
-except ImportError:
-    CRYPTOGRAPHY_AVAILABLE = False
-    Fernet = None
 
 logger = structlog.get_logger("config.service")
 
@@ -98,41 +87,11 @@ class ConfigurationService:
         self._cache: dict[str, ConfigCacheEntry] = {}
         self._cache_ttl = timedelta(minutes=5)
 
-        # Initialize Fernet encryption for API keys
-        self._fernet: Fernet | None = None
-        self._encryption_key = os.environ.get("CONFIG_ENCRYPTION_KEY")
-        if self._encryption_key:
-            self._initialize_encryption()
-        else:
-            logger.warning("CONFIG_ENCRYPTION_KEY not set - API keys will not be encrypted")
+        # Encryption for API keys using ApiKeyEncryptor
+        self._encryptor = ApiKeyEncryptor(os.environ.get("CONFIG_ENCRYPTION_KEY"))
+        self._fernet = self._encryptor._fernet
 
         logger.info("ConfigurationService initialized", database_url=self.database_url)
-
-    def _initialize_encryption(self) -> None:
-        """
-        Initialize Fernet encryption for API keys.
-
-        The encryption key should be a 32-byte URL-safe base64-encoded key.
-        Generate with: Fernet.generate_key().decode()
-        """
-        if not CRYPTOGRAPHY_AVAILABLE:
-            logger.error("cryptography package not installed - encryption disabled")
-            return
-
-        try:
-            # Handle both raw keys and URL-safe base64 encoded keys
-            if len(self._encryption_key) == 44 and self._encryption_key.endswith("="):
-                # Already base64 encoded
-                key = self._encryption_key.encode()
-            else:
-                # Raw key - encode it
-                key = base64.urlsafe_b64encode(self._encryption_key.encode().ljust(32))
-
-            self._fernet = Fernet(key)
-            logger.info("API key encryption initialized")
-        except Exception as e:
-            logger.error("Failed to initialize encryption", error=str(e))
-            self._fernet = None
 
     def encrypt_api_key(self, api_key: str) -> str:
         """
@@ -147,16 +106,7 @@ class ConfigurationService:
         Raises:
             ValueError: If encryption is not configured
         """
-        if not self._fernet:
-            # Return as-is if encryption not configured (backward compatibility)
-            return api_key
-
-        try:
-            encrypted = self._fernet.encrypt(api_key.encode())
-            return encrypted.decode()
-        except Exception as e:
-            logger.error("Failed to encrypt API key", error=str(e))
-            raise ValueError(f"Encryption failed: {e}")
+        return self._encryptor.encrypt(api_key)
 
     def decrypt_api_key(self, encrypted_key: str) -> str:
         """
@@ -171,16 +121,7 @@ class ConfigurationService:
         Raises:
             ValueError: If decryption fails or encryption not configured
         """
-        if not self._fernet:
-            # Return as-is if encryption not configured (backward compatibility)
-            return encrypted_key
-
-        try:
-            decrypted = self._fernet.decrypt(encrypted_key.encode())
-            return decrypted.decode()
-        except Exception as e:
-            logger.error("Failed to decrypt API key", error=str(e))
-            raise ValueError(f"Decryption failed: {e}")
+        return self._encryptor.decrypt(encrypted_key)
 
     async def initialize(self) -> None:
         """Initialize the service and warm up the cache."""

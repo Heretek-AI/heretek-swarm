@@ -18,6 +18,7 @@ Usage:
     )
 """
 
+from .cache import ConfigCache
 from .loader import (
     ConfigLoader,
     get_config,
@@ -34,6 +35,8 @@ from .service import (
 )
 
 __all__ = [
+    # Cache
+    "ConfigCache",
     # Loader
     "ConfigLoader",
     # Service
