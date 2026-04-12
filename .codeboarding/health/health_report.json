@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-12T03:18:33.968656+00:00",
-  "overall_score": 0.9940119760479041,
+  "timestamp": "2026-04-12T03:23:30.345870+00:00",
+  "overall_score": 0.9938805381047923,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -982,11 +982,89 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 0,
-      "findings_count": 0,
-      "warning_count": 0,
-      "score": 1.0,
-      "finding_groups": []
+      "total_entities_checked": 9,
+      "findings_count": 9,
+      "warning_count": 3,
+      "score": 0.55,
+      "finding_groups": [
+        {
+          "severity": "info",
+          "threshold": 0,
+          "description": "Variables declared but never used",
+          "entities": [
+            {
+              "entity_name": "[unused_variable] \"plan_id\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/metis.py",
+              "line_start": 568,
+              "line_end": 568,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"response\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/metis.py",
+              "line_start": 640,
+              "line_end": 640,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"PatternType\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/empath.py",
+              "line_start": 26,
+              "line_end": 26,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"Position\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/empath.py",
+              "line_start": 32,
+              "line_end": 32,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"AccessTier\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/empath.py",
+              "line_start": 35,
+              "line_end": 35,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"source_agent\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/empath.py",
+              "line_start": 293,
+              "line_end": 293,
+              "metric_value": 0.0
+            }
+          ]
+        },
+        {
+          "severity": "warning",
+          "threshold": 0,
+          "description": "Unused import statements that should be removed",
+          "entities": [
+            {
+              "entity_name": "[unused_import] Import \"PatternType\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/empath.py",
+              "line_start": 26,
+              "line_end": 26,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"Position\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/empath.py",
+              "line_start": 32,
+              "line_end": 32,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"AccessTier\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/empath.py",
+              "line_start": 35,
+              "line_end": 35,
+              "metric_value": 0.0
+            }
+          ]
+        }
+      ]
     },
     {
       "check_name": "function_size",
@@ -1392,6 +1470,12 @@
       "composite_risk_score": 80.0
     },
     {
+      "file_path": "src/heretek_swarm/actors/empath.py",
+      "total_findings": 8,
+      "warning_findings": 4,
+      "composite_risk_score": 70.0
+    },
+    {
       "file_path": "src/heretek_swarm/collective/learning.py",
       "total_findings": 4,
       "warning_findings": 4,
@@ -1446,6 +1530,12 @@
       "composite_risk_score": 45.0
     },
     {
+      "file_path": "src/heretek_swarm/actors/metis.py",
+      "total_findings": 3,
+      "warning_findings": 1,
+      "composite_risk_score": 35.0
+    },
+    {
       "file_path": "src/heretek_swarm/actors/handoff.py",
       "total_findings": 2,
       "warning_findings": 2,
@@ -1477,18 +1567,6 @@
     },
     {
       "file_path": "src/heretek_swarm/rag/hybrid_retriever.py",
-      "total_findings": 2,
-      "warning_findings": 2,
-      "composite_risk_score": 30.0
-    },
-    {
-      "file_path": "src/heretek_swarm/workflow/engine.py",
-      "total_findings": 2,
-      "warning_findings": 2,
-      "composite_risk_score": 30.0
-    },
-    {
-      "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
       "total_findings": 2,
       "warning_findings": 2,
       "composite_risk_score": 30.0
