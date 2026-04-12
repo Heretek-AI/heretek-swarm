@@ -11,16 +11,15 @@ Related to: P0-2 - Remove Dangerous eval() in workflow/engine.py
 Location: src/heretek_swarm/workflow/engine.py:800 (formerly line 561)
 """
 
-import pytest
 from datetime import datetime, timezone
 
+import pytest
+
 from heretek_swarm.workflow.engine import (
-    WorkflowEngine,
-    WorkflowContext,
-    WorkflowState,
-    WorkflowNode,
-    WorkflowEdge,
     SafeExpressionEvaluator,
+    WorkflowContext,
+    WorkflowEngine,
+    WorkflowState,
 )
 
 
@@ -30,7 +29,7 @@ class TestSafeExpressionEvaluator:
     def test_safe_literal_evaluation(self):
         """Test that literal values can be evaluated safely."""
         evaluator = SafeExpressionEvaluator()
-        
+
         # Test basic literals
         assert evaluator.validate_and_eval("123") == 123
         assert evaluator.validate_and_eval("3.14") == 3.14
@@ -47,7 +46,7 @@ class TestSafeExpressionEvaluator:
             "x": "hello",
             "y": "world"
         })
-        
+
         # Test comparison operators
         assert evaluator.validate_and_eval("a < b") is True
         assert evaluator.validate_and_eval("a > b") is False
@@ -64,7 +63,7 @@ class TestSafeExpressionEvaluator:
             "x": 10,
             "y": 20
         })
-        
+
         # Test boolean operators
         assert evaluator.validate_and_eval("a and not b") is True
         assert evaluator.validate_and_eval("a or b") is True
@@ -78,7 +77,7 @@ class TestSafeExpressionEvaluator:
             "value": 3,
             "data": {"key": "value"}
         })
-        
+
         assert evaluator.validate_and_eval("value in items") is True
         assert evaluator.validate_and_eval("10 in items") is False
         assert evaluator.validate_and_eval("'key' in data") is True
@@ -89,7 +88,7 @@ class TestSafeExpressionEvaluator:
             "items": [1, 2, 3, 4, 5],
             "data": {"key": "value", "num": 42}
         })
-        
+
         assert evaluator.validate_and_eval("items[0]") == 1
         assert evaluator.validate_and_eval("items[2]") == 3
         assert evaluator.validate_and_eval("data['key']") == "value"
@@ -102,7 +101,7 @@ class TestObjectIntrospectionAttacks:
     def test_block_dunder_class_access(self):
         """Test that __class__ access is blocked."""
         evaluator = SafeExpressionEvaluator({"value": "test"})
-        
+
         # This should raise ValueError - unsafe node type (attribute access)
         with pytest.raises(ValueError, match="Unsafe node type"):
             evaluator.validate_and_eval("value.__class__")
@@ -110,14 +109,14 @@ class TestObjectIntrospectionAttacks:
     def test_block_dunder_mro_access(self):
         """Test that __mro__ access is blocked."""
         evaluator = SafeExpressionEvaluator({"value": "test"})
-        
+
         with pytest.raises(ValueError, match="Unsafe node type"):
             evaluator.validate_and_eval("value.__class__.__mro__")
 
     def test_block_subclasses_access(self):
         """Test that __subclasses__() access is blocked."""
         evaluator = SafeExpressionEvaluator({"value": "test"})
-        
+
         # Attribute access is blocked
         with pytest.raises(ValueError, match="Unsafe node type"):
             evaluator.validate_and_eval("value.__class__.__mro__[1].__subclasses__()")
@@ -125,7 +124,7 @@ class TestObjectIntrospectionAttacks:
     def test_block_getattr_access(self):
         """Test that getattr() calls are blocked."""
         evaluator = SafeExpressionEvaluator({"value": "test"})
-        
+
         # Function calls are blocked
         with pytest.raises(ValueError, match="Unsafe node type"):
             evaluator.validate_and_eval("getattr(value, '__class__')")
@@ -133,21 +132,21 @@ class TestObjectIntrospectionAttacks:
     def test_block_exec_call(self):
         """Test that exec() calls are blocked."""
         evaluator = SafeExpressionEvaluator({"cmd": "print('hello')"})
-        
+
         with pytest.raises(ValueError, match="Unsafe node type"):
             evaluator.validate_and_eval("exec(cmd)")
 
     def test_block_eval_call(self):
         """Test that eval() calls are blocked."""
         evaluator = SafeExpressionEvaluator({"expr": "1+1"})
-        
+
         with pytest.raises(ValueError, match="Unsafe node type"):
             evaluator.validate_and_eval("eval(expr)")
 
     def test_block_import_attempts(self):
         """Test that import attempts are blocked."""
         evaluator = SafeExpressionEvaluator({})
-        
+
         # Import statements should fail at parse time (not expression)
         # or be blocked as unsafe nodes
         with pytest.raises(ValueError):
@@ -156,7 +155,7 @@ class TestObjectIntrospectionAttacks:
     def test_block_builtin_access(self):
         """Test that __builtins__ access is blocked."""
         evaluator = SafeExpressionEvaluator({})
-        
+
         # __builtins__ should be blocked because it's not in allowed variables
         with pytest.raises(ValueError, match="not in the allowed variables"):
             evaluator.validate_and_eval("__builtins__")
@@ -164,21 +163,21 @@ class TestObjectIntrospectionAttacks:
     def test_block_globals_access(self):
         """Test that globals() access is blocked."""
         evaluator = SafeExpressionEvaluator({})
-        
+
         with pytest.raises(ValueError, match="Unsafe node type"):
             evaluator.validate_and_eval("globals()")
 
     def test_block_locals_access(self):
         """Test that locals() access is blocked."""
         evaluator = SafeExpressionEvaluator({})
-        
+
         with pytest.raises(ValueError, match="Unsafe node type"):
             evaluator.validate_and_eval("locals()")
 
     def test_block_attr_chain_attack(self):
         """Test that attribute chain attacks are blocked."""
         evaluator = SafeExpressionEvaluator({"s": ""})
-        
+
         # Classic Python sandbox escape attempt
         with pytest.raises(ValueError, match="Unsafe node type"):
             evaluator.validate_and_eval("s.__class__.__mro__[2].__subclasses__()")
@@ -186,7 +185,7 @@ class TestObjectIntrospectionAttacks:
     def test_block_system_call_via_os(self):
         """Test that os.system calls are blocked."""
         evaluator = SafeExpressionEvaluator({})
-        
+
         with pytest.raises(ValueError):
             evaluator.validate_and_eval("__import__('os').system('id')")
 
@@ -200,14 +199,14 @@ class TestVariableValidation:
             "allowed_var": 42,
             "another_var": "hello"
         })
-        
+
         assert evaluator.validate_and_eval("allowed_var") == 42
         assert evaluator.validate_and_eval("another_var") == "hello"
 
     def test_blocked_undefined_variable(self):
         """Test that undefined variables are blocked."""
         evaluator = SafeExpressionEvaluator({"allowed": 1})
-        
+
         # Undefined variable should raise ValueError
         with pytest.raises(ValueError, match="not in the allowed variables"):
             evaluator.validate_and_eval("undefined_var")
@@ -215,7 +214,7 @@ class TestVariableValidation:
     def test_blocked_dunder_variable(self):
         """Test that dunder variables are blocked."""
         evaluator = SafeExpressionEvaluator({})
-        
+
         with pytest.raises(ValueError, match="not in the allowed variables"):
             evaluator.validate_and_eval("__import__")
 
@@ -227,7 +226,7 @@ class TestVariableValidation:
             "is_active": True,
             "permissions": ["read", "write", "delete"]
         })
-        
+
         # Complex but safe expression
         result = evaluator.validate_and_eval(
             "user_role == 'admin' and is_active and 'delete' in permissions"
@@ -241,7 +240,7 @@ class TestWorkflowEngineConditionEvaluation:
     def test_workflow_condition_with_safe_vars(self):
         """Test workflow condition evaluation with safe variables."""
         engine = WorkflowEngine()
-        
+
         # Create a mock context with variables
         context = WorkflowContext(
             workflow_id="test-wf",
@@ -255,7 +254,7 @@ class TestWorkflowEngineConditionEvaluation:
             "is_valid": True,
             "threshold": 50
         }
-        
+
         # Test various condition expressions
         assert engine._evaluate_condition("score > threshold", context) is True
         assert engine._evaluate_condition("score < 100", context) is True
@@ -266,7 +265,7 @@ class TestWorkflowEngineConditionEvaluation:
     def test_workflow_condition_blocks_injection(self):
         """Test that workflow condition blocks injection attempts."""
         engine = WorkflowEngine()
-        
+
         context = WorkflowContext(
             workflow_id="test-wf",
             execution_id="test-exec",
@@ -274,20 +273,20 @@ class TestWorkflowEngineConditionEvaluation:
             state=WorkflowState.RUNNING
         )
         context.variables = {"value": "test"}
-        
+
         # These malicious conditions should fail safely and return False
         # rather than executing arbitrary code
         assert engine._evaluate_condition("value.__class__", context) is False
         assert engine._evaluate_condition("__import__('os')", context) is False
         assert engine._evaluate_condition("globals()", context) is False
-        
+
         # The condition should fail safely, not raise an exception
         # (the engine catches exceptions and returns False)
 
     def test_workflow_condition_with_bracket_syntax(self):
         """Test workflow condition with {var} bracket syntax (legacy support)."""
         engine = WorkflowEngine()
-        
+
         context = WorkflowContext(
             workflow_id="test-wf",
             execution_id="test-exec",
@@ -298,7 +297,7 @@ class TestWorkflowEngineConditionEvaluation:
             "status": "completed",
             "count": 10
         }
-        
+
         # Note: The new SafeExpressionEvaluator uses direct variable names
         # The old {var} syntax is no longer needed since variables are
         # passed directly to the evaluator
@@ -309,7 +308,7 @@ class TestWorkflowEngineConditionEvaluation:
     def test_workflow_condition_error_handling(self):
         """Test that condition evaluation errors are handled gracefully."""
         engine = WorkflowEngine()
-        
+
         context = WorkflowContext(
             workflow_id="test-wf",
             execution_id="test-exec",
@@ -317,7 +316,7 @@ class TestWorkflowEngineConditionEvaluation:
             state=WorkflowState.RUNNING
         )
         context.variables = {}
-        
+
         # Invalid expressions should return False, not crash
         assert engine._evaluate_condition("invalid syntax here", context) is False
         assert engine._evaluate_condition("", context) is False
@@ -330,15 +329,16 @@ class TestRegressionPrevention:
     def test_no_dangerous_eval_in_module(self):
         """Verify that dangerous eval patterns are not present in the code."""
         import inspect
+
         import heretek_swarm.workflow.engine as engine_module
-        
+
         source = inspect.getsource(engine_module)
-        
+
         # Check for dangerous eval patterns
         # The pattern eval(expr, {"__builtins__": {}}) should NOT exist
         assert 'eval(expr, {"__builtins__": {}})' not in source
         assert "eval(expr, {'__builtins__': {}})" not in source
-        
+
         # Safe usage with SafeExpressionEvaluator is OK
         # The source should contain SafeExpressionEvaluator usage
         assert "SafeExpressionEvaluator" in source
@@ -346,11 +346,11 @@ class TestRegressionPrevention:
     def test_safe_evaluator_has_comprehensive_validation(self):
         """Verify SafeExpressionEvaluator has proper AST validation."""
         evaluator = SafeExpressionEvaluator()
-        
+
         # Verify the evaluator has the safe node types defined
         assert hasattr(evaluator, "SAFE_NODE_TYPES")
         assert len(evaluator.SAFE_NODE_TYPES) > 0
-        
+
         # Verify unsafe node types are NOT in the safe list
         # ast.Call should not be in safe types (function calls)
         assert ast.Call not in evaluator.SAFE_NODE_TYPES

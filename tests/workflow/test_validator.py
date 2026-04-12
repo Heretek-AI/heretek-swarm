@@ -11,15 +11,16 @@ Tests for the workflow validator module covering:
 """
 
 import pytest
+
 from heretek_swarm.workflow.validator import (
-    WorkflowValidator,
-    ValidationError,
-    ValidationResult,
-    ErrorCodes,
-    validate_workflow,
-    validate_workflow_strict,
     REGISTERED_AGENT_TYPES,
     REGISTERED_NODE_TYPES,
+    ErrorCodes,
+    ValidationError,
+    ValidationResult,
+    WorkflowValidator,
+    validate_workflow,
+    validate_workflow_strict,
 )
 
 
@@ -39,10 +40,10 @@ class TestWorkflowValidator:
                 {"id": "edge1", "source": "node1", "target": "node2"},
             ],
         }
-        
+
         validator = WorkflowValidator()
         result = validator.validate(workflow)
-        
+
         assert result.valid is True
         assert len(result.errors) == 0
 
@@ -60,10 +61,10 @@ class TestWorkflowValidator:
                 {"id": "edge1", "source": "node1", "target": "node2"},
             ],
         }
-        
+
         validator = WorkflowValidator()
         result = validator.validate(workflow)
-        
+
         assert result.valid is False
         assert any(e.code == ErrorCodes.DISCONNECTED_NODE for e in result.errors)
 
@@ -83,10 +84,10 @@ class TestWorkflowValidator:
                 {"id": "edge3", "source": "node3", "target": "node1"},  # Creates cycle
             ],
         }
-        
+
         validator = WorkflowValidator(allow_cycles=False)
         result = validator.validate(workflow)
-        
+
         assert result.valid is False
         assert any(e.code == ErrorCodes.CIRCULAR_DEPENDENCY for e in result.errors)
 
@@ -104,10 +105,10 @@ class TestWorkflowValidator:
                 {"id": "edge2", "source": "node2", "target": "node1"},  # Creates cycle
             ],
         }
-        
+
         validator = WorkflowValidator(allow_cycles=True)
         result = validator.validate(workflow)
-        
+
         # Should not have circular dependency error
         assert not any(e.code == ErrorCodes.CIRCULAR_DEPENDENCY for e in result.errors)
 
@@ -121,10 +122,10 @@ class TestWorkflowValidator:
             ],
             "edges": [],
         }
-        
+
         validator = WorkflowValidator()
         result = validator.validate(workflow)
-        
+
         assert result.valid is False
         assert any(e.code == ErrorCodes.INVALID_AGENT_TYPE for e in result.errors)
 
@@ -139,10 +140,10 @@ class TestWorkflowValidator:
                 ],
                 "edges": [],
             }
-            
+
             validator = WorkflowValidator()
             result = validator.validate(workflow)
-            
+
             # Should not have invalid agent type error
             assert not any(e.code == ErrorCodes.INVALID_AGENT_TYPE for e in result.errors)
 
@@ -156,10 +157,10 @@ class TestWorkflowValidator:
             ],
             "edges": [],
         }
-        
+
         validator = WorkflowValidator()
         result = validator.validate(workflow)
-        
+
         assert result.valid is False
         assert any(e.code == ErrorCodes.INVALID_NODE_TYPE for e in result.errors)
 
@@ -174,10 +175,10 @@ class TestWorkflowValidator:
                 ],
                 "edges": [],
             }
-            
+
             validator = WorkflowValidator()
             result = validator.validate(workflow)
-            
+
             # Should not have invalid node type error
             assert not any(e.code == ErrorCodes.INVALID_NODE_TYPE for e in result.errors)
 
@@ -193,10 +194,10 @@ class TestWorkflowValidator:
                 {"id": "edge1", "source": "node1", "target": "nonexistent"},
             ],
         }
-        
+
         validator = WorkflowValidator()
         result = validator.validate(workflow)
-        
+
         assert result.valid is False
         assert any(e.code == ErrorCodes.INVALID_EDGE_CONNECTION for e in result.errors)
 
@@ -211,10 +212,10 @@ class TestWorkflowValidator:
             ],
             "edges": [],
         }
-        
+
         validator = WorkflowValidator()
         result = validator.validate(workflow)
-        
+
         assert result.valid is False
         assert any(e.code == ErrorCodes.DUPLICATE_NODE_ID for e in result.errors)
 
@@ -233,10 +234,10 @@ class TestWorkflowValidator:
                 {"id": "edge1", "source": "node2", "target": "node3"},  # Duplicate
             ],
         }
-        
+
         validator = WorkflowValidator()
         result = validator.validate(workflow)
-        
+
         assert result.valid is False
         assert any(e.code == ErrorCodes.DUPLICATE_EDGE_ID for e in result.errors)
 
@@ -252,10 +253,10 @@ class TestWorkflowValidator:
                 {"id": "edge1", "source": "node1", "target": "node1"},  # Self-loop
             ],
         }
-        
+
         validator = WorkflowValidator()
         result = validator.validate(workflow)
-        
+
         assert result.valid is False
         assert any(e.code == ErrorCodes.INVALID_EDGE_CONNECTION for e in result.errors)
         assert "Self-loop" in str(result.errors[0].message)
@@ -270,10 +271,10 @@ class TestWorkflowValidator:
             ],
             "edges": [],
         }
-        
+
         validator = WorkflowValidator()
         result = validator.validate(workflow)
-        
+
         assert result.valid is False
         assert any(e.code == ErrorCodes.MISSING_REQUIRED_INPUT for e in result.errors)
 
@@ -288,10 +289,10 @@ class TestWorkflowValidator:
             ],
             "edges": [],
         }
-        
+
         validator = WorkflowValidator()
         result = validator.validate(workflow)
-        
+
         # Resource conflicts are warnings, not errors
         assert any(w.code == ErrorCodes.RESOURCE_CONFLICT for w in result.warnings)
 
@@ -309,10 +310,10 @@ class TestWorkflowValidator:
                 {"id": "edge2", "source": "node2", "target": "node1"},  # Cycle - no start
             ],
         }
-        
+
         validator = WorkflowValidator()
         result = validator.validate(workflow)
-        
+
         assert result.valid is False
         assert any(e.code == ErrorCodes.INVALID_START_NODE for e in result.errors)
 
@@ -321,22 +322,22 @@ class TestWorkflowValidator:
         # Create a node with too many incoming connections
         nodes = [{"id": f"node{i}", "type": "agent"} for i in range(15)]
         nodes.append({"id": "target", "type": "tool"})
-        
+
         edges = [
             {"id": f"edge{i}", "source": f"node{i}", "target": "target"}
             for i in range(15)
         ]
-        
+
         workflow = {
             "id": "test-workflow",
             "name": "Test Workflow",
             "nodes": nodes,
             "edges": edges,
         }
-        
+
         validator = WorkflowValidator(max_in_degree=10)
         result = validator.validate(workflow)
-        
+
         assert result.valid is False
         assert any("maximum input connections" in e.message.lower() for e in result.errors)
 
@@ -348,17 +349,17 @@ class TestWorkflowValidator:
             {"id": f"edge{i}", "source": f"node{i}", "target": f"node{i+1}"}
             for i in range(59)
         ]
-        
+
         workflow = {
             "id": "test-workflow",
             "name": "Test Workflow",
             "nodes": nodes,
             "edges": edges,
         }
-        
+
         validator = WorkflowValidator()
         result = validator.validate(workflow)
-        
+
         # Should have info about complex graph
         assert any(i.code == ErrorCodes.COMPLEX_GRAPH for i in result.info)
 
@@ -378,9 +379,9 @@ class TestWorkflowValidator:
             warnings=[],
             info=[]
         )
-        
+
         result_dict = result.to_dict()
-        
+
         assert result_dict["valid"] is False
         assert len(result_dict["errors"]) == 1
         assert result_dict["errors"][0]["code"] == ErrorCodes.DISCONNECTED_NODE
@@ -393,11 +394,11 @@ class TestWorkflowValidator:
             "nodes": [{"id": "n1", "type": "invalid"}],
             "edges": []
         }
-        
+
         # Test validate_workflow
         result = validate_workflow(workflow)
         assert isinstance(result, ValidationResult)
-        
+
         # Test validate_workflow_strict
         result = validate_workflow_strict(workflow)
         assert isinstance(result, ValidationResult)
@@ -422,7 +423,7 @@ class TestErrorCodes:
             "DEAD_END_NODE",
             "INVALID_START_NODE",
         ]
-        
+
         for code in expected_codes:
             assert hasattr(ErrorCodes, code)
             assert getattr(ErrorCodes, code) == code
