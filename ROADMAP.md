@@ -807,7 +807,7 @@ class LearningMixin:
 
 ---
 
-## PHASE 5: DEPLOYMENT & SCALING (ONGOING)
+## PHASE 5: DEPLOYMENT & SCALING (IN PROGRESS)
 **Duration:** Continuous  
 **Goal:** Easy installation, deployment, and updates  
 **Priority:** P2 (UX improvements)
@@ -834,27 +834,50 @@ heretek-swarm deploy --production --scale 23
 heretek-swarm update --version latest
 ```
 
-### pyproject.toml Extras
+### pyproject.toml Extras (Implemented)
 
 ```toml
 [project.optional-dependencies]
+core = [
+    "swarms>=5.0.0",
+    "pydantic>=2.0.0",
+    "structlog>=24.1.0",
+    "tenacity>=8.2.0",
+    "circuitbreaker>=2.0.0",
+    "click>=8.1.0",
+]
 agents = [
-    "heretek-swarm[core]",
-    # Agent-specific dependencies
+    "starlette>=0.27.0",
+    "uvicorn>=0.25.0",
+    "websockets>=12.0",
+    "fastapi>=0.109.0",
+    "httpx>=0.25.0",
+    "mem0ai>=1.0.0",
+    "redis>=5.0.0",
+    "qdrant-client>=1.7.0",
+    "opentelemetry-api>=1.22.0",
+    "opentelemetry-sdk>=1.22.0",
+    "opentelemetry-exporter-otlp>=1.22.0",
 ]
 full = [
-    "heretek-swarm[agents]",
-    "nats-server",
-    "qdrant-client",
-    "opentelemetry-*",
+    "nats-server>=3.0.0",
+    "opentelemetry-instrumentation-fastapi>=0.53b0",
+    "opentelemetry-instrumentation-httpx>=0.53b0",
 ]
 dev = [
-    "heretek-swarm[full]",
-    "pytest",
-    "ruff",
-    "mypy",
+    "pytest>=8.0.0",
+    "pytest-asyncio>=0.23.0",
+    "ruff>=0.3.0",
+    "mypy>=1.9.0",
+    "types-requests>=2.31.0",
+    "types-redis>=4.6.0",
 ]
 ```
+
+### Completed Items
+- [x] CLI entry point (src/cli.py) with deploy, update, status commands
+- [x] pyproject.toml optional-dependencies structure (core, agents, full, dev)
+- [x] click dependency added for CLI framework
 
 ---
 
@@ -875,7 +898,7 @@ dev = [
 | Phase 3 | Consciousness metrics | IIT/AST | IIT/AST implemented |
 | Phase 4 | Agent count | 23 | ~18 (blocked) |
 | Phase 4 | Emergence detection | Working | Partial |
-| Phase 5 | Installation time | <5 min | Manual |
+| Phase 5 | Installation time | <5 min | CLI available |
 
 ---
 
