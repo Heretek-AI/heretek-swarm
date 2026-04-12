@@ -2,7 +2,7 @@
 **Project:** Heretek Swarm  
 **Phase:** Phase 1: Foundation  
 **Date:** 2026-04-11  
-**Version:** 1.44.0
+**Version:** 2.0.0
 
 ---
 

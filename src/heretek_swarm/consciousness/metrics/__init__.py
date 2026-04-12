@@ -21,26 +21,26 @@ Usage:
     metrics = measure_adaptive_metrics(agent_state)
 """
 
-from heretek_swarm.consciousness.metrics.iit import (
-    ConsciousnessMetrics,
-    measure_phi,
-    measure_phi_for_system,
-    PhiResult,
-)
 from heretek_swarm.consciousness.metrics.ast import (
     AdaptiveMetrics,
-    measure_adaptive_metrics,
     EmergenceLevel,
+    measure_adaptive_metrics,
+)
+from heretek_swarm.consciousness.metrics.iit import (
+    ConsciousnessMetrics,
+    PhiResult,
+    measure_phi,
+    measure_phi_for_system,
 )
 
 __all__ = [
-    # IIT (Integrated Information Theory)
-    "ConsciousnessMetrics",
-    "measure_phi",
-    "measure_phi_for_system",
-    "PhiResult",
     # AST (Adaptive Systems Theory)
     "AdaptiveMetrics",
-    "measure_adaptive_metrics",
+    # IIT (Integrated Information Theory)
+    "ConsciousnessMetrics",
     "EmergenceLevel",
+    "PhiResult",
+    "measure_adaptive_metrics",
+    "measure_phi",
+    "measure_phi_for_system",
 ]

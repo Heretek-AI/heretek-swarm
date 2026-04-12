@@ -17,7 +17,7 @@ from heretek_swarm.infrastructure.nats.subscriber import NATSSubscriber
 
 __all__ = [
     "NATSClient",
-    "get_nats_client",
     "NATSPublisher",
     "NATSSubscriber",
+    "get_nats_client",
 ]

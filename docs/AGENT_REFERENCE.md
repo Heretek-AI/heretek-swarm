@@ -1,6 +1,6 @@
 # Agent Reference
 
-**Version:** 1.31.0
+**Version:** 2.0.0
 **Session:** 44 (2026-04-06)
 **Health Score:** 100/100
 **Agents:** 23/23 Implemented

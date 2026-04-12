@@ -7,12 +7,9 @@ Provides in-memory caching for configuration data with TTL support.
 from __future__ import annotations
 
 from datetime import UTC, datetime, timedelta
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 from heretek_swarm.config.models import ConfigCacheEntry
-
-if TYPE_CHECKING:
-    from sqlalchemy import AsyncSession, select
 
 logger = __import__("structlog").get_logger("config.cache")
 

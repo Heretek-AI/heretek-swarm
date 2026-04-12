@@ -11,7 +11,6 @@ from __future__ import annotations
 import os
 from datetime import UTC, datetime, timedelta
 from typing import TYPE_CHECKING, Any, TypeVar
-from uuid import UUID
 
 import structlog
 from sqlalchemy import delete, select
@@ -38,6 +37,9 @@ from .models import (
     UserConfigurationCreate,
     UserConfigurationUpdate,
 )
+
+if TYPE_CHECKING:
+    from uuid import UUID
 
 logger = structlog.get_logger("config.service")
 

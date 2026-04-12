@@ -52,7 +52,6 @@ class ToolExecutionResult:
 
 class ToolExecutionError(Exception):
     """Error during tool execution."""
-    pass
 
 
 class BaseTool:

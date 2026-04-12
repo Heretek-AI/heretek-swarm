@@ -183,7 +183,7 @@ class MetisAgent(AgentActor):
             validated = self._validate_message_content("create_strategic_plan", message.content)
             if validated:
                 # validated is either a dict or Pydantic model - handle both cases
-                if hasattr(validated, 'content'):
+                if hasattr(validated, "content"):
                     objective = validated.content.get("objective")
                     horizon_days = validated.content.get("horizon_days", self.planning_horizon_days)
                     constraints = validated.content.get("constraints", [])
@@ -268,7 +268,7 @@ class MetisAgent(AgentActor):
             validated = self._validate_message_content("allocate_resources", message.content)
             if validated:
                 # validated is either a dict or Pydantic model - handle both cases
-                if hasattr(validated, 'content'):
+                if hasattr(validated, "content"):
                     plan_id = validated.content.get("plan_id")
                     resources = validated.content.get("resources", {})
                     priorities = validated.content.get("priorities", {})
@@ -333,7 +333,7 @@ class MetisAgent(AgentActor):
             validated = self._validate_message_content("assess_risks", message.content)
             if validated:
                 # validated is either a dict or Pydantic model - handle both cases
-                if hasattr(validated, 'content'):
+                if hasattr(validated, "content"):
                     plan_id = validated.content.get("plan_id")
                     domain = validated.content.get("domain", "general")
                 else:
@@ -385,7 +385,7 @@ class MetisAgent(AgentActor):
             validated = self._validate_message_content("analyze_scenarios", message.content)
             if validated:
                 # validated is either a dict or Pydantic model - handle both cases
-                if hasattr(validated, 'content'):
+                if hasattr(validated, "content"):
                     base_scenario = validated.content.get("base_scenario", {})
                     variables = validated.content.get("variables", [])
                 else:
@@ -438,7 +438,7 @@ class MetisAgent(AgentActor):
             validated = self._validate_message_content("set_strategic_objective", message.content)
             if validated:
                 # validated is either a dict or Pydantic model - handle both cases
-                if hasattr(validated, 'content'):
+                if hasattr(validated, "content"):
                     objective = validated.content.get("objective")
                     priority = validated.content.get("priority", "medium")
                     metrics = validated.content.get("metrics", [])
@@ -497,7 +497,7 @@ class MetisAgent(AgentActor):
             validated = self._validate_message_content("get_plan_status", message.content)
             if validated:
                 # validated is either a dict or Pydantic model - handle both cases
-                if hasattr(validated, 'content'):
+                if hasattr(validated, "content"):
                     plan_id = validated.content.get("plan_id")
                 else:
                     # Fallback for dict (when validator not registered)

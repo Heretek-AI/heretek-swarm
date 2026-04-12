@@ -1,6 +1,6 @@
 # Heretek Swarm - Autonomous Workflow Guide
 
-**Version:** 1.1.0
+**Version:** 2.0.0
 **Date:** 2026-04-06
 **Status:** Implementation Complete
 
@@ -581,6 +581,6 @@ print(tools.get_registry().list_tools())
 
 ---
 
-**Document Version:** 1.0.0  
+**Document Version:** 2.0.0  
 **Last Updated:** 2026-04-06  
 **Status:** Implementation Complete

@@ -38,7 +38,7 @@ class DeliberationMixin:
         self._deliberation_active: bool = False
         self._deliberation_id: str | None = None
         self._deliberation_position: dict[str, Any] | None = None
-        self._consensus: "MakerConsensus | None" = None
+        self._consensus: MakerConsensus | None = None
 
     async def _initiate_deliberation(
         self,

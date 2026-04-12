@@ -245,7 +245,7 @@ class EmpathAgent(AgentActor):
         try:
             # Zero-Trust input validation
             validated = self._validate_message_content("analyze_sentiment", message.content)
-            content = validated.model_dump() if hasattr(validated, 'model_dump') else (validated if validated else message.content)
+            content = validated.model_dump() if hasattr(validated, "model_dump") else (validated if validated else message.content)
 
             text = content.get("text", "")
             source_agent = content.get("source_agent", "unknown")

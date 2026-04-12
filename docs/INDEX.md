@@ -1,6 +1,6 @@
 # Heretek Swarm Documentation Index
 
-**Version:** 1.36.0  
+**Version:** 2.0.0  
 **Date:** 2026-04-10  
 **Health Score:** 98/100  
 **Phase:** Phase 1 Complete - Phase 2 Ready  

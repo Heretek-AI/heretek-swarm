@@ -1,6 +1,6 @@
 # Core Actors System
 
-**Version:** 1.11.0  
+**Version:** 2.0.0  
 **Session:** 21 (2026-04-06)
 
 The Actor Model implementation forms the foundation of the Heretek Swarm architecture, providing async message passing, state management, and lifecycle coordination for all 23 agents.

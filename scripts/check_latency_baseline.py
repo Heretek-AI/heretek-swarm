@@ -17,13 +17,12 @@ from pathlib import Path
 def check_latency_baseline(benchmark_file: Path, baseline_ms: float) -> int:
     """
     Check benchmark results against latency baseline.
-    
+
     Returns:
         0 if all benchmarks pass
         1 if any benchmark exceeds baseline (flag for refactoring)
     """
     if not benchmark_file.exists():
-        print(f"❌ Benchmark file not found: {benchmark_file}")
         return 1
 
     with open(benchmark_file) as f:
@@ -55,44 +54,24 @@ def check_latency_baseline(benchmark_file: Path, baseline_ms: float) -> int:
             })
 
     # Print report
-    print("\n" + "=" * 60)
-    print("LATENCY BASELINE CHECK REPORT")
-    print("=" * 60)
-    print(f"Baseline threshold: {baseline_ms}ms")
-    print(f"Total benchmarks: {len(benchmarks)}")
-    print(f"Passed: {len(passes)}")
-    print(f"Failed: {len(failures)}")
-    print("=" * 60)
 
     if passes:
-        print("\n✅ PASSING BENCHMARKS:")
-        for p in passes:
-            print(f"  • {p['name']}: {p['mean_ms']:.2f}ms")
+        for _p in passes:
+            pass
 
     if failures:
-        print("\n🚨 FAILING BENCHMARKS - FLAG FOR REFACTORING:")
         for f in failures:
-            print(f"  ❌ {f['name']}")
-            print(f"     Mean: {f['mean_ms']:.2f}ms")
-            print(f"     Overage: +{f['overage_ms']:.2f}ms ({f['overage_pct']:.1f}% over baseline)")
+            pass
 
-    print("\n" + "=" * 60)
 
     if failures:
-        print("❌ LATENCY BASELINE CHECK FAILED")
-        print(f"   {len(failures)} module(s) exceed {baseline_ms}ms baseline")
-        print("   FLAG FOR REFACTORING per Phase Directives")
         return 1
 
-    print("✅ ALL BENCHMARKS WITHIN LATENCY BASELINE")
     return 0
 
 
 if __name__ == "__main__":
     if len(sys.argv) < 2:
-        print("Usage: python check_latency_baseline.py <benchmark-file> [baseline-ms]")
-        print("  benchmark-file: Path to pytest-benchmark JSON output")
-        print("  baseline-ms: Latency baseline in milliseconds (default: 100)")
         sys.exit(1)
 
     benchmark_path = Path(sys.argv[1])

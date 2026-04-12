@@ -54,7 +54,7 @@ class Metric:
     points: list[MetricPoint] = field(default_factory=list)
     labels: dict[str, str] = field(default_factory=dict)
 
-    def record(self, value: float | int, labels: dict[str, str] | None = None) -> None:
+    def record(self, value: float, labels: dict[str, str] | None = None) -> None:
         """Record a measurement."""
         self.value = value
         point = MetricPoint(
@@ -67,7 +67,7 @@ class Metric:
         if len(self.points) > 1000:
             self.points = self.points[-1000:]
 
-    def increment(self, amount: float | int = 1, labels: dict[str, str] | None = None) -> None:
+    def increment(self, amount: float = 1, labels: dict[str, str] | None = None) -> None:
         """Increment a counter."""
         if self.metric_type != MetricType.COUNTER:
             logger.warning("increment_on_non_counter", metric_name=self.name)
@@ -125,7 +125,7 @@ def get_meter(service_name: str | None = None) -> "Meter":
 
 def record_metric(
     name: str,
-    value: float | int,
+    value: float,
     metric_type: MetricType = MetricType.GAUGE,
     labels: dict[str, str] | None = None,
 ) -> None:
@@ -200,7 +200,7 @@ class Meter:
     def record(
         self,
         name: str,
-        value: float | int,
+        value: float,
         metric_type: MetricType = MetricType.GAUGE,
         labels: dict[str, str] | None = None,
     ) -> None:
@@ -245,7 +245,7 @@ class _Counter:
     def value(self) -> float | int:
         return self._metric.value
 
-    def add(self, amount: float | int = 1, labels: dict[str, str] | None = None) -> None:
+    def add(self, amount: float = 1, labels: dict[str, str] | None = None) -> None:
         """Add to the counter."""
         self._metric.record(self._metric.value + amount, labels)
 
@@ -268,7 +268,7 @@ class _Gauge:
     def value(self) -> float | int:
         return self._metric.value
 
-    def set(self, value: float | int, labels: dict[str, str] | None = None) -> None:
+    def set(self, value: float, labels: dict[str, str] | None = None) -> None:
         """Set the gauge value."""
         self._metric.record(value, labels)
 
@@ -426,12 +426,12 @@ class MetricsCollector:
 
 
 __all__ = [
+    "Meter",
     "Metric",
     "MetricPoint",
     "MetricType",
     "MetricsCollector",
     "MetricsConfig",
-    "Meter",
     "get_meter",
     "init_metrics",
     "record_metric",

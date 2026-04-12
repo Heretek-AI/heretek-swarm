@@ -13,9 +13,8 @@ Methods:
 Version: 1.44.0
 """
 
-import asyncio
-from datetime import datetime, timezone
-from enum import Enum
+from datetime import UTC, datetime
+from enum import StrEnum
 from typing import Any
 
 import structlog
@@ -23,7 +22,7 @@ import structlog
 logger = structlog.get_logger("LearningMixin")
 
 
-class LearningState(str, Enum):
+class LearningState(StrEnum):
     """Learning state for an actor."""
 
     IDLE = "idle"
@@ -94,7 +93,7 @@ class LearningMixin:
             "signal_type": signal_type,
             "magnitude": magnitude,
             "context": context or {},
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
 
         self._learning_signals.append(signal)
@@ -201,10 +200,9 @@ class LearningMixin:
 
         if last > first + 0.05:
             return "improving"
-        elif last < first - 0.05:
+        if last < first - 0.05:
             return "declining"
-        else:
-            return "stable"
+        return "stable"
 
     def _get_convergence_status(self) -> str:
         """
@@ -215,9 +213,9 @@ class LearningMixin:
         """
         if self._learning_state == LearningState.CONVERGED:
             return "converged"
-        elif self._learning_state == LearningState.DIVERGENT:
+        if self._learning_state == LearningState.DIVERGENT:
             return "diverging"
-        elif len(self._performance_history) >= 10:
+        if len(self._performance_history) >= 10:
             # Check if recent performance is stable
             recent = self._performance_history[-10:]
             variance = sum((x - sum(recent)/len(recent))**2 for x in recent) / len(recent)

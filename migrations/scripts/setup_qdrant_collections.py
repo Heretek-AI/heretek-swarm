@@ -4,9 +4,9 @@ Qdrant Collection Setup Script
 Initializes vector collections for RAG and memory systems.
 """
 
+import contextlib
 import os
 import sys
-from typing import Optional
 
 try:
     from qdrant_client import QdrantClient
@@ -22,7 +22,6 @@ try:
         WalConfigDiff,
     )
 except ImportError:
-    print("ERROR: qdrant-client not installed. Install with: pip install qdrant-client")
     sys.exit(1)
 
 
@@ -31,7 +30,7 @@ def get_qdrant_url() -> str:
     return os.environ.get("QDRANT_URL", "http://localhost:6333")
 
 
-def get_api_key() -> Optional[str]:
+def get_api_key() -> str | None:
     """Get Qdrant API key from environment."""
     return os.environ.get("QDRANT_API_KEY")
 
@@ -50,7 +49,6 @@ def create_collection_if_not_exists(
         existing = [c.name for c in collections]
 
         if collection_name in existing:
-            print(f"✓ Collection '{collection_name}' already exists")
             return False
 
         # Create collection with optimized settings
@@ -83,17 +81,15 @@ def create_collection_if_not_exists(
             ),
         )
 
-        print(f"✓ Created collection '{collection_name}' (size={vector_size}, distance={distance})")
         return True
 
-    except Exception as e:
-        print(f"✗ Error creating collection '{collection_name}': {e}")
+    except Exception:
         return False
 
 
 def setup_collections() -> dict:
     """Set up all Qdrant collections for Heretek Swarm.
-    
+
     Session 45 additions:
     - heretek_patterns: Collective learning pattern vectors
     - heretek_consensus: Consensus deliberation embeddings
@@ -143,12 +139,9 @@ def setup_collections() -> dict:
     url = get_qdrant_url()
     api_key = get_api_key()
 
-    print(f"Connecting to Qdrant at {url}...")
     try:
         client = QdrantClient(url=url, api_key=api_key)
-        print("✓ Connected to Qdrant")
     except Exception as e:
-        print(f"✗ Failed to connect to Qdrant: {e}")
         return {"success": False, "error": str(e)}
 
     # Create collections
@@ -171,7 +164,6 @@ def setup_collections() -> dict:
             results["failed"].append({"name": name, "error": str(e)})
 
     # Create payload indexes for efficient filtering
-    print("\nCreating payload indexes...")
 
     indexes_to_create = [
         # Original indexes (Session 1-44)
@@ -204,15 +196,12 @@ def setup_collections() -> dict:
     ]
 
     for collection, field in indexes_to_create:
-        try:
+        with contextlib.suppress(Exception):
             client.create_payload_index(
                 collection_name=collection,
                 field_name=field,
                 field_schema="keyword",
             )
-            print(f"✓ Created index on {collection}.{field}")
-        except Exception as e:
-            print(f"✗ Error creating index on {collection}.{field}: {e}")
 
     return {
         "success": True,
@@ -224,33 +213,17 @@ def setup_collections() -> dict:
 
 def main():
     """Main entry point."""
-    print("=" * 60)
-    print("Heretek Swarm - Qdrant Collection Setup")
-    print("=" * 60)
-    print()
 
     results = setup_collections()
 
-    print()
-    print("=" * 60)
-    print("Summary:")
-    print(f"  Created: {len(results.get('created', []))}")
-    print(f"  Existing: {len(results.get('existing', []))}")
-    print(f"  Failed: {len(results.get('failed', []))}")
-    print()
-    print("Collections:")
-    for name in collections.keys():
-        status = "✓" if name in results.get("created", []) or name in results.get("existing", []) else "✗"
-        print(f"  {status} {name}")
-    print("=" * 60)
+    for name in collections:
+        "✓" if name in results.get("created", []) or name in results.get("existing", []) else "✗"
 
     if results.get("failed"):
-        print("\nFailed collections:")
-        for item in results["failed"]:
-            print(f"  - {item['name']}: {item['error']}")
+        for _item in results["failed"]:
+            pass
         sys.exit(1)
 
-    print("\n✓ Qdrant collection setup complete!")
     return 0
 
 

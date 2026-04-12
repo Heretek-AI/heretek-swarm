@@ -33,7 +33,7 @@ from heretek_swarm.actors.mixins.pattern import PatternMixin
 
 __all__ = [
     "DeliberationMixin",
-    "PatternMixin",
-    "MemoryMixin",
     "LearningMixin",
+    "MemoryMixin",
+    "PatternMixin",
 ]

@@ -1357,7 +1357,7 @@ class ArbiterAgent(AgentActor):
         self,
         resource: str | None,  # noqa: ARG002 — part of public API signature
         competing_agents: list[str],
-        priority_override: dict[str, int],  # noqa: ARG002 — part of public API signature
+        priority_override: dict[str, int],
     ) -> dict[str, Any]:
         """Resolve contention over a resource."""
         if not competing_agents:

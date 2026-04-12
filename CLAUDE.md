@@ -7,7 +7,7 @@ This file provides guidance to Claw Code (clawcode.dev) when working with code i
 - Frameworks/tooling markers: React, Vite.
 
 ## Verification
-- Run the Python project checks declared in `pyproject.toml` (for example: `pytest`, `ruff check`, and `mypy` when configured).
+- Run the Python project checks from `pyproject.toml`: `pytest tests/` for tests, `ruff check src tests` for linting, and `mypy src` for type checking.
 - Run the JavaScript/TypeScript checks from `package.json` before shipping changes (`npm test`, `npm run lint`, `npm run build`, or the repo equivalent).
 - `src/` and `tests/` are both present; update both surfaces together when behavior changes.
 

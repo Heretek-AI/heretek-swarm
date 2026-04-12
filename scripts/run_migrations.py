@@ -129,7 +129,7 @@ def check_migration_status() -> None:
         # Check if migrations table exists
         cursor.execute("""
             SELECT EXISTS (
-                SELECT FROM information_schema.tables 
+                SELECT FROM information_schema.tables
                 WHERE table_name = 'schema_migrations'
             );
         """)
@@ -148,7 +148,7 @@ def check_migration_status() -> None:
         # Check if swarm_memories table exists
         cursor.execute("""
             SELECT EXISTS (
-                SELECT FROM information_schema.tables 
+                SELECT FROM information_schema.tables
                 WHERE table_name = 'swarm_memories'
             );
         """)
@@ -158,8 +158,8 @@ def check_migration_status() -> None:
             logger.info("\nswarm_memories table exists")
             # Show table structure
             cursor.execute("""
-                SELECT column_name, data_type, is_nullable 
-                FROM information_schema.columns 
+                SELECT column_name, data_type, is_nullable
+                FROM information_schema.columns
                 WHERE table_name = 'swarm_memories'
                 ORDER BY ordinal_position
             """)
@@ -170,13 +170,13 @@ def check_migration_status() -> None:
 
             # Show indexes
             cursor.execute("""
-                SELECT indexname, indexdef 
-                FROM pg_indexes 
+                SELECT indexname, indexdef
+                FROM pg_indexes
                 WHERE tablename = 'swarm_memories'
             """)
             indexes = cursor.fetchall()
             logger.info("  Indexes:")
-            for idx_name, idx_def in indexes:
+            for idx_name, _idx_def in indexes:
                 logger.info(f"    - {idx_name}")
         else:
             logger.info("\nswarm_memories table does not exist yet")
@@ -221,8 +221,8 @@ def create_migrations_table() -> bool:
 def main():
     parser = argparse.ArgumentParser(description="Run database migrations")
     parser.add_argument(
-        "--status", 
-        action="store_true", 
+        "--status",
+        action="store_true",
         help="Check migration status"
     )
     parser.add_argument(
@@ -265,7 +265,7 @@ def main():
             failed_count += 1
             logger.error(f"Migration {mf.name} failed")
 
-    logger.info(f"\nMigration Summary:")
+    logger.info("\nMigration Summary:")
     logger.info(f"  Succeeded: {success_count}")
     logger.info(f"  Failed: {failed_count}")
 

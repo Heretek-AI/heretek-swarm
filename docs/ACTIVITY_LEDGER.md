@@ -1,7 +1,7 @@
 # Activity Ledger
 ## Heretek Swarm - Session Execution Record
 
-**Version:** 1.3.0
+**Version:** 2.0.0
 **Created:** 2026-04-06
 **Status:** Active
 **Classification:** Internal Development

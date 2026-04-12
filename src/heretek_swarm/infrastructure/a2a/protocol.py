@@ -6,9 +6,9 @@ Supports task delegation, consensus messages, capability discovery, and streamin
 """
 
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import UTC, datetime
 from enum import Enum
-from typing import Any
+from typing import Any, ClassVar
 from uuid import uuid4
 
 import structlog
@@ -91,7 +91,7 @@ class A2AMessage:
     result: Any = None
     error: dict[str, Any] | None = None
     priority: MessagePriority = MessagePriority.NORMAL
-    timestamp: str = field(default_factory=lambda: datetime.utcnow().isoformat())
+    timestamp: str = field(default_factory=lambda: datetime.now(tz=UTC).isoformat())
     correlation_id: str | None = None
     trace_id: str | None = None
 
@@ -129,7 +129,7 @@ class A2AMessage:
             result=data.get("result"),
             error=data.get("error"),
             priority=MessagePriority(data.get("priority", 1)),
-            timestamp=data.get("timestamp", datetime.utcnow().isoformat()),
+            timestamp=data.get("timestamp", datetime.now(tz=UTC).isoformat()),
             correlation_id=data.get("correlation_id"),
             trace_id=data.get("trace_id"),
         )
@@ -244,7 +244,7 @@ class A2AProtocol:
     - Error handling
     """
 
-    SUPPORTED_METHODS = {
+    SUPPORTED_METHODS: ClassVar[set[str]] = {
         method.value for method in A2AMessageType
     }
 
@@ -298,9 +298,8 @@ class A2AProtocol:
             A2AMessageType.TASK_PROPOSE,
             A2AMessageType.DELEGATE,
             A2AMessageType.CONSENSUS_PROPOSE,
-        }:
-            if not message.params:
-                return False, "Missing required params"
+        } and not message.params:
+            return False, "Missing required params"
 
         return True, None
 
@@ -386,8 +385,8 @@ class A2AProtocol:
 
     def _version_at_least(self, version: str, min_version: str) -> bool:
         """Check if version meets minimum requirement."""
-        v1_parts = [int(x) for x in version.split('.')]
-        v2_parts = [int(x) for x in min_version.split('.')]
+        v1_parts = [int(x) for x in version.split(".")]
+        v2_parts = [int(x) for x in min_version.split(".")]
 
         for i in range(max(len(v1_parts), len(v2_parts))):
             v1 = v1_parts[i] if i < len(v1_parts) else 0
@@ -417,9 +416,9 @@ __all__ = [
     "A2AProtocol",
     "AgentCapability",
     "MessagePriority",
+    "create_consensus_message",
+    "create_delegation_message",
     "create_task_request",
     "create_task_response",
-    "create_delegation_message",
-    "create_consensus_message",
     "get_protocol",
 ]

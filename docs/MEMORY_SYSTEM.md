@@ -1,6 +1,6 @@
 # Memory System
 
-**Version:** 1.11.0  
+**Version:** 2.0.0  
 **Session:** 21 (2026-04-06)
 
 Dual-tier memory architecture with PostgreSQL, Redis, and Qdrant vector storage using mem0 integration.

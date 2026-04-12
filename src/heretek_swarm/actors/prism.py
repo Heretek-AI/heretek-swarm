@@ -27,7 +27,7 @@ from heretek_swarm.consciousness.phi_training import (
     DecisionCoherenceTrainingScenario,
     PhiTrainingEnvironment,
     TrainingScenario,
-)  # noqa: F401
+)
 
 # Session 44: Consensus Integration
 from heretek_swarm.consensus.swarm_deliberation import Position, SwarmDeliberationEngine

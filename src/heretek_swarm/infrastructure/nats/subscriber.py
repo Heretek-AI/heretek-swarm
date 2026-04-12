@@ -4,16 +4,19 @@ NATS Subscriber for Heretek Swarm.
 Provides subscription management for event-driven communication.
 """
 
+from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
-from typing import Any, Callable
+from typing import TYPE_CHECKING, Any
 
 import structlog
-from pynats import NATSClient
 
 from heretek_swarm.infrastructure.nats.client import get_nats_client
 from heretek_swarm.infrastructure.nats.publisher import EventPriority, SwarmEvent
+
+if TYPE_CHECKING:
+    from pynats import NATSClient
 
 logger = structlog.get_logger(__name__)
 
@@ -153,20 +156,20 @@ class NATSSubscriber:
 
         try:
             # Parse message into SwarmEvent
-            data = msg.data if hasattr(msg, 'data') else msg
+            data = msg.data if hasattr(msg, "data") else msg
             if isinstance(data, bytes):
                 import json
-                data = json.loads(data.decode('utf-8'))
+                data = json.loads(data.decode("utf-8"))
 
             event = SwarmEvent(
-                event_type=data.get('event_type', 'unknown'),
-                source_agent=data.get('source_agent', 'unknown'),
-                target_agent=data.get('target_agent'),
-                payload=data.get('payload', {}),
-                priority=EventPriority(data.get('priority', 'normal')),
-                timestamp=data.get('timestamp', datetime.utcnow().isoformat()),
-                correlation_id=data.get('correlation_id'),
-                trace_id=data.get('trace_id'),
+                event_type=data.get("event_type", "unknown"),
+                source_agent=data.get("source_agent", "unknown"),
+                target_agent=data.get("target_agent"),
+                payload=data.get("payload", {}),
+                priority=EventPriority(data.get("priority", "normal")),
+                timestamp=data.get("timestamp", datetime.utcnow().isoformat()),
+                correlation_id=data.get("correlation_id"),
+                trace_id=data.get("trace_id"),
             )
 
             # Apply filters

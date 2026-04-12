@@ -18,28 +18,50 @@ from heretek_swarm.infrastructure.otel.metrics import (
     record_metric,
 )
 from heretek_swarm.infrastructure.otel.tracing import (
+    SpanAttributes,
+    SpanKind,
+    SpanNames,
+    SpanStatus,
+    TraceState,
     TracingConfig,
     create_span,
+    create_tracing_config,
+    get_current_span,
+    get_trace_context,
     get_tracer,
     init_tracing,
+    set_span_attribute,
+    set_span_attributes,
+    span_context,
     with_span,
 )
 
 __all__ = [
-    # Tracing
-    "TracingConfig",
-    "get_tracer",
-    "init_tracing",
-    "create_span",
-    "with_span",
-    # Metrics
-    "MetricsConfig",
-    "get_meter",
-    "init_metrics",
-    "record_metric",
-    "MetricsCollector",
     # Logging
     "LoggingConfig",
-    "init_logging",
+    "MetricsCollector",
+    # Metrics
+    "MetricsConfig",
+    # Tracing
+    "SpanAttributes",
+    "SpanKind",
+    "SpanNames",
+    "SpanStatus",
+    "TraceState",
+    "TracingConfig",
+    "create_span",
+    "create_tracing_config",
+    "get_current_span",
     "get_log_config",
+    "get_meter",
+    "get_trace_context",
+    "get_tracer",
+    "init_logging",
+    "init_metrics",
+    "init_tracing",
+    "record_metric",
+    "set_span_attribute",
+    "set_span_attributes",
+    "span_context",
+    "with_span",
 ]

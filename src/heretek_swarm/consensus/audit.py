@@ -48,18 +48,18 @@ ConsensusAuditTrail.export_all_audits = AuditQueryMixin.export_all_audits
 AuditQueryMixin._get_trail = lambda self: self
 
 __all__ = [
+    "ArgumentRecord",
     # Re-exported from audit_models
     "AuditEvent",
     "AuditEventType",
-    "ArgumentRecord",
+    # Re-exported from audit_query
+    "AuditQueryMixin",
+    # Re-exported from audit_trail
+    "ConsensusAuditTrail",
     "DecisionAudit",
     "DecisionOutcome",
     "DecisionRecord",
     "DeliberationRoundRecord",
     "QueryResult",
     "VoteRecord",
-    # Re-exported from audit_trail
-    "ConsensusAuditTrail",
-    # Re-exported from audit_query
-    "AuditQueryMixin",
 ]

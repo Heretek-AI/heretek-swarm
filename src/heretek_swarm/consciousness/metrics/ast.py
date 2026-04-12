@@ -111,14 +111,13 @@ def _classify_emergence(score: float) -> EmergenceLevel:
     """Classify emergence level based on score."""
     if score < 0.1:
         return EmergenceLevel.NONE
-    elif score < 0.3:
+    if score < 0.3:
         return EmergenceLevel.WEAK
-    elif score < 0.5:
+    if score < 0.5:
         return EmergenceLevel.MODERATE
-    elif score < 0.7:
+    if score < 0.7:
         return EmergenceLevel.STRONG
-    else:
-        return EmergenceLevel.CRITICAL
+    return EmergenceLevel.CRITICAL
 
 
 def measure_complexity(
@@ -183,7 +182,7 @@ def measure_emergence(
 
     # Simplified emergence based on:
     # 1. Number of agents with unique states
-    unique_states = len(set(str(s) for s in micro_states))
+    unique_states = len({str(s) for s in micro_states})
     state_variety = unique_states / len(micro_states) if micro_states else 0.0
 
     # 2. Difference between micro and macro descriptions

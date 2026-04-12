@@ -14,8 +14,7 @@ Version: 1.44.0
 """
 
 import asyncio
-from datetime import datetime, timezone
-from enum import Enum
+from enum import StrEnum
 from typing import Any
 
 import structlog
@@ -23,7 +22,7 @@ import structlog
 logger = structlog.get_logger("MemoryMixin")
 
 
-class AccessTier(str, Enum):
+class AccessTier(StrEnum):
     """Memory access tiers based on frequency and recency."""
 
     HOT = "hot"      # Frequently accessed, recent
@@ -116,7 +115,7 @@ class MemoryMixin:
         frequency_score = min(1.0, access_count / hot_threshold)
 
         # Combined score
-        combined_score = (recency_score + frequency_score) / 2
+        (recency_score + frequency_score) / 2
 
         if access_count >= hot_threshold and recency_score > 0.7:
             tier = AccessTier.HOT
@@ -163,8 +162,8 @@ class MemoryMixin:
 
         try:
             # Simple relevance: match by tags or keywords
-            context_tags = context.get("tags", [])
-            context_keywords = context.get("keywords", [])
+            context.get("tags", [])
+            context.get("keywords", [])
 
             for memory_key, tier in self._memory_tier_cache.items():
                 if tier == AccessTier.HOT or tier == AccessTier.WARM:

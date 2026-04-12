@@ -1,6 +1,6 @@
 # Heretek Swarm Autonomous Workflow Design
 
-**Version:** 1.0.0  
+**Version:** 2.0.0  
 **Date:** 2026-04-06  
 **Author:** Multi (AI Assistant)  
 **Tracking ID:** GLM5

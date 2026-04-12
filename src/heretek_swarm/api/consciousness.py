@@ -19,24 +19,21 @@ from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends, HTTPException, Query
 
-from ..collective.agency_tracking import (
-    AgencyMetricsTracker,
-    create_sample_metrics,
-)
+from src.heretek_swarm.collective.agency_tracking import AgencyMetricsTracker, create_sample_metrics
 
 # Import agency metrics
-from ..consciousness.agency_metrics import (
+from src.heretek_swarm.consciousness.agency_metrics import (
     ActionOrigin,
     AgencyMetricsCalculator,
     DecisionPoint,
     ResourceControl,
 )
-from ..gateway.auth import verify_auth
-from ..plugins.consciousness_enhanced import (
+from src.heretek_swarm.gateway.auth import verify_auth
+from src.heretek_swarm.plugins.consciousness_enhanced import (
     ConsciousnessState,
     EnhancedConsciousnessPlugin,
 )
-from ..plugins.manager import plugin_manager
+from src.heretek_swarm.plugins.manager import plugin_manager
 
 router = APIRouter(prefix="/api/consciousness", tags=["consciousness"])
 
@@ -264,7 +261,7 @@ async def record_agency_metrics(
     - collective_success: Success rate of collective actions
     """
     tracker = get_agency_tracker()
-    calculator = AgencyMetricsCalculator()
+    AgencyMetricsCalculator()
 
     agent_id = payload.get("agent_id")
     if not agent_id:
@@ -705,7 +702,7 @@ async def get_network_visualization(
 
     # Build nodes
     nodes = []
-    for agent_id in connectivity.keys():
+    for agent_id in connectivity:
         phi = iit_calculator.get_average_phi()
         state = plugin._agent_states.get(agent_id, ConsciousnessState.DORMANT)
         nodes.append({

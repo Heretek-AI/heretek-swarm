@@ -1,6 +1,6 @@
 # Remediation Backlog — Post-Overnight-Loop Code Review
 
-**Version:** 1.44.0
+**Version:** 2.0.0
 **Date:** 2026-04-11
 **Status:** Active
 **Auditor:** Multi-Faceted Code Review (Post-Overnight-Loop)

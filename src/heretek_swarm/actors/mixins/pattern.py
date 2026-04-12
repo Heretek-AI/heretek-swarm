@@ -19,7 +19,7 @@ from typing import TYPE_CHECKING, Any
 import structlog
 
 if TYPE_CHECKING:
-    from heretek_swarm.collective.learning import ExtractedPattern, PatternType
+    from heretek_swarm.collective.learning import PatternType
 
 logger = structlog.get_logger("PatternMixin")
 
@@ -62,7 +62,7 @@ class PatternMixin:
         """
         pattern_id = f"pattern_{self.agent_id}_{asyncio.get_event_loop().time():.0f}"
 
-        pattern_record = {
+        {
             "pattern_id": pattern_id,
             "pattern_type": pattern_type.value if hasattr(pattern_type, "value") else pattern_type,
             "pattern_data": pattern_data,

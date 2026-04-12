@@ -10,7 +10,7 @@ This module provides Lambda function handlers for the Heretek Swarm system:
 Usage:
     # Deploy with Serverless Framework
     serverless deploy
-    
+
     # Test locally
     serverless offline
 """
@@ -20,14 +20,14 @@ import logging
 import os
 import time
 from dataclasses import dataclass
-from datetime import datetime, timezone
-from typing import Any, Dict
+from datetime import UTC, datetime
+from typing import Any
 
 import structlog
 
 # Configure logging for Lambda
 logging.basicConfig(
-    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s',
+    format="%(asctime)s - %(name)s - %(levelname)s - %(message)s",
     level=logging.INFO,
 )
 logger = logging.getLogger(__name__)
@@ -62,7 +62,7 @@ _profiler = None
 def initialize_dependencies() -> None:
     """
     Initialize expensive dependencies during cold start.
-    
+
     This function is called once per container initialization
     to reuse connections across multiple invocations.
     """
@@ -101,10 +101,10 @@ initialize_dependencies()
 class APIResponse:
     """Standardized API Gateway response."""
     status_code: int
-    body: Dict[str, Any]
-    headers: Dict[str, str] = None
+    body: dict[str, Any]
+    headers: dict[str, str] = None
 
-    def to_dict(self) -> Dict[str, Any]:
+    def to_dict(self) -> dict[str, Any]:
         """Convert to API Gateway response format."""
         return {
             "statusCode": self.status_code,
@@ -117,16 +117,16 @@ class APIResponse:
         }
 
 
-def api_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
+def api_handler(event: dict[str, Any], context: Any) -> dict[str, Any]:
     """
     Main API Gateway handler for Heretek Swarm.
-    
+
     Routes requests to appropriate handlers based on path and method.
-    
+
     Args:
         event: API Gateway event
         context: Lambda context
-        
+
     Returns:
         API Gateway response
     """
@@ -146,30 +146,29 @@ def api_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         method = event.get("httpMethod", "GET")
 
         # Health check endpoints
-        if path == "/health" or path == "/{proxy+}" and method == "GET" and event.get("pathParameters", {}).get("proxy") == "health":
+        if path == "/health" or (path == "/{proxy+}" and method == "GET" and event.get("pathParameters", {}).get("proxy") == "health"):
             return health_check(event, context)
 
-        if path == "/ready" or path == "/{proxy+}" and method == "GET" and event.get("pathParameters", {}).get("proxy") == "ready":
+        if path == "/ready" or (path == "/{proxy+}" and method == "GET" and event.get("pathParameters", {}).get("proxy") == "ready"):
             return readiness_check(event, context)
 
         # Route to appropriate handler
         if path.startswith("/api/agents"):
             return handle_agents_api(event, context)
-        elif path.startswith("/api/rag"):
+        if path.startswith("/api/rag"):
             return handle_rag_api(event, context)
-        elif path.startswith("/api/workflows"):
+        if path.startswith("/api/workflows"):
             return handle_workflows_api(event, context)
-        elif path.startswith("/api/consensus"):
+        if path.startswith("/api/consensus"):
             return handle_consensus_api(event, context)
-        elif path.startswith("/api/observability"):
+        if path.startswith("/api/observability"):
             return handle_observability_api(event, context)
-        elif path.startswith("/api/config"):
+        if path.startswith("/api/config"):
             return handle_config_api(event, context)
-        else:
-            return APIResponse(
-                status_code=404,
-                body={"error": "Not found", "path": path},
-            ).to_dict()
+        return APIResponse(
+            status_code=404,
+            body={"error": "Not found", "path": path},
+        ).to_dict()
 
     except Exception as e:
         log.exception(
@@ -191,10 +190,10 @@ def api_handler(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         )
 
 
-def health_check(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
+def health_check(event: dict[str, Any], context: Any) -> dict[str, Any]:
     """
     Health check endpoint.
-    
+
     Returns basic health status.
     """
     return APIResponse(
@@ -204,15 +203,15 @@ def health_check(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
             "service": "heretek-swarm",
             "stage": os.environ.get("STAGE", "unknown"),
             "region": os.environ.get("REGION", "unknown"),
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         },
     ).to_dict()
 
 
-def readiness_check(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
+def readiness_check(event: dict[str, Any], context: Any) -> dict[str, Any]:
     """
     Readiness check endpoint.
-    
+
     Verifies all dependencies are available.
     """
     checks = {
@@ -239,7 +238,7 @@ def readiness_check(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
         body={
             "status": "ready" if all_healthy else "not_ready",
             "checks": checks,
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         },
     ).to_dict()
 
@@ -248,7 +247,7 @@ def readiness_check(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
 # API Route Handlers
 # =============================================================================
 
-def handle_agents_api(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
+def handle_agents_api(event: dict[str, Any], context: Any) -> dict[str, Any]:
     """Handle /api/agents routes."""
     path = event.get("path", "")
     method = event.get("httpMethod", "GET")
@@ -273,7 +272,7 @@ def handle_agents_api(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     ).to_dict()
 
 
-def handle_profiling_api(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
+def handle_profiling_api(event: dict[str, Any], context: Any) -> dict[str, Any]:
     """Handle behavior profiling API endpoints."""
     path = event.get("path", "")
     method = event.get("httpMethod", "GET")
@@ -303,7 +302,7 @@ def handle_profiling_api(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 body=metrics.to_dict() if metrics else {},
             ).to_dict()
 
-        elif "/profile" in path and instance_id:
+        if "/profile" in path and instance_id:
             agent_type = instance_id.split("-")[0] if instance_id else "unknown"
             profile = profiler.get_profile(agent_type)
             return APIResponse(
@@ -311,28 +310,28 @@ def handle_profiling_api(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
                 body=profile.to_dict() if profile else {},
             ).to_dict()
 
-        elif "/anomalies" in path and instance_id:
+        if "/anomalies" in path and instance_id:
             anomalies = profiler.detect_anomalies(instance_id)
             return APIResponse(
                 status_code=200,
                 body=[a.to_dict() for a in anomalies],
             ).to_dict()
 
-        elif "/alerts" in path:
+        if "/alerts" in path:
             alerts = profiler.get_alerts()
             return APIResponse(
                 status_code=200,
                 body=[a.to_dict() for a in alerts],
             ).to_dict()
 
-        elif "/stats" in path:
+        if "/stats" in path:
             stats = profiler.get_stats()
             return APIResponse(
                 status_code=200,
                 body=stats,
             ).to_dict()
 
-        elif "/prometheus" in path:
+        if "/prometheus" in path:
             metrics = profiler.export_prometheus_metrics()
             return {
                 "statusCode": 200,
@@ -346,7 +345,7 @@ def handle_profiling_api(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     ).to_dict()
 
 
-def handle_rag_api(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
+def handle_rag_api(event: dict[str, Any], context: Any) -> dict[str, Any]:
     """Handle /api/rag routes."""
     return APIResponse(
         status_code=200,
@@ -357,7 +356,7 @@ def handle_rag_api(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     ).to_dict()
 
 
-def handle_workflows_api(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
+def handle_workflows_api(event: dict[str, Any], context: Any) -> dict[str, Any]:
     """Handle /api/workflows routes."""
     return APIResponse(
         status_code=200,
@@ -368,7 +367,7 @@ def handle_workflows_api(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     ).to_dict()
 
 
-def handle_consensus_api(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
+def handle_consensus_api(event: dict[str, Any], context: Any) -> dict[str, Any]:
     """Handle /api/consensus routes."""
     return APIResponse(
         status_code=200,
@@ -379,7 +378,7 @@ def handle_consensus_api(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     ).to_dict()
 
 
-def handle_observability_api(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
+def handle_observability_api(event: dict[str, Any], context: Any) -> dict[str, Any]:
     """Handle /api/observability routes."""
     return APIResponse(
         status_code=200,
@@ -390,7 +389,7 @@ def handle_observability_api(event: Dict[str, Any], context: Any) -> Dict[str, A
     ).to_dict()
 
 
-def handle_config_api(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
+def handle_config_api(event: dict[str, Any], context: Any) -> dict[str, Any]:
     """Handle /api/config routes."""
     return APIResponse(
         status_code=200,
@@ -405,14 +404,14 @@ def handle_config_api(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
 # SQS Event Handler
 # =============================================================================
 
-def async_processor(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
+def async_processor(event: dict[str, Any], context: Any) -> dict[str, Any]:
     """
     Process async tasks from SQS queue.
-    
+
     Args:
         event: SQS event with records
         context: Lambda context
-        
+
     Returns:
         Processing result
     """
@@ -462,7 +461,7 @@ def async_processor(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     }
 
 
-def process_agent_deploy(message_body: Dict[str, Any]) -> None:
+def process_agent_deploy(message_body: dict[str, Any]) -> None:
     """Process agent deployment task."""
     agent_type = message_body.get("agent_type")
     _config = message_body.get("config", {})
@@ -471,7 +470,7 @@ def process_agent_deploy(message_body: Dict[str, Any]) -> None:
     # Implementation would deploy agent using runtime registry
 
 
-def process_rag_ingest(message_body: Dict[str, Any]) -> None:
+def process_rag_ingest(message_body: dict[str, Any]) -> None:
     """Process RAG document ingestion task."""
     document_id = message_body.get("document_id")
     source = message_body.get("source")
@@ -480,7 +479,7 @@ def process_rag_ingest(message_body: Dict[str, Any]) -> None:
     # Implementation would ingest document into RAG system
 
 
-def process_workflow_execute(message_body: Dict[str, Any]) -> None:
+def process_workflow_execute(message_body: dict[str, Any]) -> None:
     """Process workflow execution task."""
     workflow_id = message_body.get("workflow_id")
     steps = message_body.get("steps", [])
@@ -489,7 +488,7 @@ def process_workflow_execute(message_body: Dict[str, Any]) -> None:
     # Implementation would execute workflow steps
 
 
-def process_consensus_vote(message_body: Dict[str, Any]) -> None:
+def process_consensus_vote(message_body: dict[str, Any]) -> None:
     """Process consensus voting task."""
     proposal_id = message_body.get("proposal_id")
     voters = message_body.get("voters", [])
@@ -502,16 +501,16 @@ def process_consensus_vote(message_body: Dict[str, Any]) -> None:
 # EventBridge Scheduled Handlers
 # =============================================================================
 
-def swarm_health_check(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
+def swarm_health_check(event: dict[str, Any], context: Any) -> dict[str, Any]:
     """
     Scheduled health check for swarm agents.
-    
+
     Checks all deployed agents and reports their status.
     """
     log.info("swarm_health_check_started")
 
     results = {
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "agents_checked": 0,
         "healthy": 0,
         "unhealthy": 0,
@@ -529,16 +528,16 @@ def swarm_health_check(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     }
 
 
-def agent_state_cleanup(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
+def agent_state_cleanup(event: dict[str, Any], context: Any) -> dict[str, Any]:
     """
     Cleanup expired agent states.
-    
+
     Removes agent states that have exceeded their TTL.
     """
     log.info("agent_state_cleanup_started")
 
     results = {
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "states_scanned": 0,
         "states_deleted": 0,
     }
@@ -554,16 +553,16 @@ def agent_state_cleanup(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     }
 
 
-def rag_index_optimize(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
+def rag_index_optimize(event: dict[str, Any], context: Any) -> dict[str, Any]:
     """
     Optimize RAG vector indexes.
-    
+
     Performs index optimization for better query performance.
     """
     log.info("rag_index_optimize_started")
 
     results = {
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "indexes_optimized": 0,
         "optimization_time_ms": 0,
     }
@@ -582,10 +581,10 @@ def rag_index_optimize(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
     }
 
 
-def behavior_profile_analyzer(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
+def behavior_profile_analyzer(event: dict[str, Any], context: Any) -> dict[str, Any]:
     """
     Analyze agent behavior profiles and detect anomalies.
-    
+
     Runs periodic analysis on all agent behavior profiles.
     """
     log.info("behavior_profile_analyzer_started")
@@ -593,7 +592,7 @@ def behavior_profile_analyzer(event: Dict[str, Any], context: Any) -> Dict[str, 
     profiler = get_profiler()
 
     results = {
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
         "profiles_analyzed": 0,
         "anomalies_detected": 0,
         "alerts_generated": 0,
@@ -605,7 +604,7 @@ def behavior_profile_analyzer(event: Dict[str, Any], context: Any) -> Dict[str, 
         results["profiles_analyzed"] = len(profiles)
 
         # Detect anomalies for each agent type
-        for agent_type, profile in profiles.items():
+        for agent_type in profiles:
             anomalies = profiler.detect_anomalies(f"{agent_type}-analysis")
             results["anomalies_detected"] += len(anomalies)
 
@@ -641,10 +640,10 @@ def get_profiler():
     return _profiler
 
 
-def verify_auth(event: Dict[str, Any]) -> bool:
+def verify_auth(event: dict[str, Any]) -> bool:
     """
     Verify API authentication.
-    
+
     Checks for valid API key in headers.
     """
     headers = event.get("headers", {})
@@ -660,7 +659,7 @@ def verify_auth(event: Dict[str, Any]) -> bool:
     return api_key == expected_key
 
 
-def parse_body(event: Dict[str, Any]) -> Dict[str, Any]:
+def parse_body(event: dict[str, Any]) -> dict[str, Any]:
     """Parse request body."""
     body = event.get("body")
 
@@ -682,40 +681,38 @@ def parse_body(event: Dict[str, Any]) -> Dict[str, Any]:
 # Main Entry Point
 # =============================================================================
 
-def main(event: Dict[str, Any], context: Any) -> Dict[str, Any]:
+def main(event: dict[str, Any], context: Any) -> dict[str, Any]:
     """
     Main entry point for Lambda.
-    
+
     Routes to appropriate handler based on event source.
     """
     # Determine event source
     if "httpMethod" in event or "requestContext" in event:
         # API Gateway
         return api_handler(event, context)
-    elif "Records" in event:
+    if "Records" in event:
         # SQS
         return async_processor(event, context)
-    elif "source" in event:
+    if "source" in event:
         # EventBridge - route based on detail
         detail = event.get("detail", {})
         action = detail.get("action", "unknown")
 
         if action == "health_check":
             return swarm_health_check(event, context)
-        elif action == "cleanup_states":
+        if action == "cleanup_states":
             return agent_state_cleanup(event, context)
-        elif action == "optimize_index":
+        if action == "optimize_index":
             return rag_index_optimize(event, context)
-        elif action == "analyze_profiles":
+        if action == "analyze_profiles":
             return behavior_profile_analyzer(event, context)
-        else:
-            return {
-                "statusCode": 200,
-                "body": json.dumps({"message": "EventBridge event received", "action": action}),
-            }
-    else:
-        # Unknown event type
         return {
-            "statusCode": 400,
-            "body": json.dumps({"error": "Unknown event type"}),
+            "statusCode": 200,
+            "body": json.dumps({"message": "EventBridge event received", "action": action}),
         }
+    # Unknown event type
+    return {
+        "statusCode": 400,
+        "body": json.dumps({"error": "Unknown event type"}),
+    }

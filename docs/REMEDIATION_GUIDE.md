@@ -2,7 +2,7 @@
 
 **Heretek Swarm - Developer Guide for Fixing the System**
 
-**Version:** 1.35.0  
+**Version:** 2.0.0  
 **Date:** 2026-04-07  
 **Audit Reference:** Zero-Trust Audit Phase 5 Master Report  
 **System Health Score:** 38/100

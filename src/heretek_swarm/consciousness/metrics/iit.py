@@ -128,16 +128,15 @@ def _classify_consciousness(phi: float) -> str:
     """
     if phi < 0.1:
         return "none"
-    elif phi < 0.3:
+    if phi < 0.3:
         return "minimal"
-    elif phi < 0.5:
+    if phi < 0.5:
         return "basic"
-    elif phi < 0.7:
+    if phi < 0.7:
         return "perceptual"
-    elif phi < 0.9:
+    if phi < 0.9:
         return "cognitive"
-    else:
-        return "complex"
+    return "complex"
 
 
 def _normalize_phi(phi: float, max_phi: float = 1.0) -> float:
@@ -291,17 +290,16 @@ def update_agent_metrics(agent_id: str, phi: float, autonomy: float = 0.0) -> Co
             existing.phi_history = existing.phi_history[-100:]
 
         return existing
-    else:
-        metrics = ConsciousnessMetrics(
-            agent_id=agent_id,
-            phi=phi,
-            phi_normalized=phi_normalized,
-            consciousness_level=consciousness_level,
-            autonomy_score=autonomy,
-            phi_history=[phi],
-        )
-        _agent_metrics_registry[agent_id] = metrics
-        return metrics
+    metrics = ConsciousnessMetrics(
+        agent_id=agent_id,
+        phi=phi,
+        phi_normalized=phi_normalized,
+        consciousness_level=consciousness_level,
+        autonomy_score=autonomy,
+        phi_history=[phi],
+    )
+    _agent_metrics_registry[agent_id] = metrics
+    return metrics
 
 
 def get_all_metrics() -> dict[str, ConsciousnessMetrics]:

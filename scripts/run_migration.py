@@ -27,7 +27,6 @@ async def run_migration():
     if database_url.startswith("postgresql+asyncpg://"):
         database_url = database_url.replace("postgresql+asyncpg://", "postgresql://")
 
-    print(f"Connecting to database: {database_url.split('@')[1] if '@' in database_url else 'localhost'}")
 
     try:
         import asyncpg
@@ -37,29 +36,25 @@ async def run_migration():
 
         # Read migration file
         migration_path = Path(__file__).parent.parent / "migrations" / "001_create_swarm_memories.sql"
-        with open(migration_path, 'r') as f:
+        with open(migration_path) as f:
             migration_sql = f.read()
 
-        print(f"Reading migration from: {migration_path}")
 
         # Execute migration
         await conn.execute(migration_sql)
 
-        print("✅ Migration completed successfully!")
-        print("✅ swarm_memories table created")
 
         # Verify table exists
         result = await conn.fetchval("""
             SELECT EXISTS (
-                SELECT FROM information_schema.tables 
+                SELECT FROM information_schema.tables
                 WHERE table_name = 'swarm_memories'
             )
         """)
 
         if result:
-            print("✅ Table verification passed")
+            pass
         else:
-            print("❌ Table verification failed")
             return False
 
         # Close connection
@@ -68,10 +63,8 @@ async def run_migration():
         return True
 
     except ImportError:
-        print("❌ asyncpg not installed. Install with: pip install asyncpg")
         return False
-    except Exception as e:
-        print(f"❌ Migration failed: {e}")
+    except Exception:
         import traceback
         traceback.print_exc()
         return False

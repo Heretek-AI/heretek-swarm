@@ -1,6 +1,6 @@
 # Heretek Swarm API Reference
 
-**Version:** 1.11.0  
+**Version:** 2.0.0  
 **Session:** 21 (2026-04-06)
 
 > **Note:** This API reference has been split into separate, focused documents for better organization. Please use the links below to navigate to specific sections.

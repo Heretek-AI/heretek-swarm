@@ -1,6 +1,6 @@
 # Heretek Swarm Autonomous Workflow Design
 
-**Version:** 1.0.0  
+**Version:** 2.0.0  
 **Date:** 2026-04-06  
 **Author:** Multi (AI Assistant)  
 **Tracking ID:** QWEN  
@@ -1225,7 +1225,7 @@ WantedBy=multi-user.target
 
 ---
 
-**Document Version:** 1.0.0  
+**Document Version:** 2.0.0  
 **Tracking ID:** QWEN  
 **Generated:** 2026-04-06  
 **Next Review:** After implementation of P0 items
