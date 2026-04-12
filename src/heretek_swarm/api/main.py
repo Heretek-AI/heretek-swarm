@@ -46,6 +46,7 @@ from heretek_swarm.api import (
     rag,
     websockets,
     workflows,
+    wizard,
 )
 from heretek_swarm.api.rate_limiting import setup_rate_limiting
 from heretek_swarm.config.loader import (
@@ -217,6 +218,7 @@ app.include_router(consciousness.router)
 app.include_router(emergent_intelligence.router)
 app.include_router(agents_management.router)
 app.include_router(configuration.router)
+app.include_router(wizard.router)
 app.include_router(metrics.router)
 app.include_router(collective_evolution.router)
 

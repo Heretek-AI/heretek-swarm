@@ -1,6 +1,6 @@
 """DeliberationMixin for consensus-based decision making."""
-from typing import Any, Dict, Optional
 import asyncio
+from typing import Any, Dict, Optional
 
 
 class DeliberationMixin:
@@ -8,6 +8,34 @@ class DeliberationMixin:
 
     Extracted from 21 actor files to remove ~735 lines of duplication.
     """
+
+    _deliberation_active: bool = False
+    _deliberation_id: Optional[str] = None
+    _deliberation_position: Optional[Dict[str, Any]] = None
+
+    @property
+    def is_deliberating(self) -> bool:
+        """Check if currently in deliberation."""
+        return self._deliberation_active
+
+    async def _initiate_deliberation(
+        self,
+        topic: str,
+        options: list[str],
+    ) -> str:
+        """Initiate a new deliberation.
+        
+        Args:
+            topic: The topic to deliberate
+            options: List of options to choose from
+            
+        Returns:
+            deliberation_id: Unique ID for this deliberation
+        """
+        self._deliberation_active = True
+        self._deliberation_id = f"delib_{hash(topic) % 1000000}"
+        self._deliberation_position = None
+        return self._deliberation_id
 
     async def _submit_deliberation_position(
         self,
@@ -31,6 +59,7 @@ class DeliberationMixin:
                 self._wait_for_consensus(consensus_round),
                 timeout=timeout
             )
+            self._deliberation_position = position
             return result
         except asyncio.TimeoutError:
             self.logger.warning(
@@ -65,6 +94,7 @@ class DeliberationMixin:
             "participation_rate": consensus_result.get("participation_rate", 0.0),
             "binding": binding,
             "timestamp": asyncio.get_event_loop().time(),
+            "success": True,
         }
 
         if binding:
@@ -75,7 +105,16 @@ class DeliberationMixin:
             data=finalized
         )
 
+        self._deliberation_active = False
         return finalized
+
+    def _get_deliberation_status(self) -> Dict[str, Any]:
+        """Get current deliberation status."""
+        return {
+            "active": self._deliberation_active,
+            "deliberation_id": self._deliberation_id,
+            "position": self._deliberation_position,
+        }
 
     async def _publish_position(
         self,

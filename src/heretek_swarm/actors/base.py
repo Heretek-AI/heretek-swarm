@@ -895,7 +895,7 @@ class AgentActor:
                 elif not hasattr(db_pool, "acquire"):
                     # Generic async execute interface
                     await db_pool.execute(
-                        f"INSERT INTO agent_states (agent_id, agent_type, state) VALUES ('{self.agent_id}', '{self.actor_type}', 'state_data')",
+                        "INSERT INTO agent_states (agent_id, agent_type, state) VALUES (%s, %s, %s)",
                         (self.agent_id, self.actor_type, json.dumps(state_data)),
                     )
                 else:

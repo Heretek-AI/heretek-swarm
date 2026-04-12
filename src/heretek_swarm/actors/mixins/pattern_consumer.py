@@ -1,6 +1,6 @@
 """PatternConsumerMixin for collective learning patterns."""
-from typing import Any, Dict, List, Optional
 import asyncio
+from typing import Any, Dict, List, Optional
 
 
 class PatternConsumerMixin:

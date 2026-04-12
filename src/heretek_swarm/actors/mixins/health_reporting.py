@@ -1,6 +1,6 @@
 """HealthReportingMixin for agent health and error reporting."""
-from typing import Any, Dict, List, Optional
 import asyncio
+from typing import Any, Dict, List, Optional
 
 
 class HealthReportingMixin:

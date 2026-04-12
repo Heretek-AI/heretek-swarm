@@ -1,0 +1,212 @@
+/**
+ * Wizard API Client
+ *
+ * API client functions for the Configuration Wizard endpoints.
+ * Provides typed access to wizard configuration, provider validation, etc.
+ */
+
+// =============================================================================
+// Types
+// =============================================================================
+
+export interface Provider {
+  id: string;
+  name: string;
+  type: string;
+  icon: string;
+  description: string;
+  default_model: string;
+  supports_streaming: boolean;
+  supports_function_calling: boolean;
+  supports_vision: boolean;
+  requires_api_key: boolean;
+  api_key_label: string;
+  api_key_env_var: string;
+  base_url: string;
+  color: string;
+}
+
+export interface AgentTier {
+  id: string;
+  name: string;
+  description: string;
+  agent_count: number;
+  agents: string[];
+  memory_enabled: boolean;
+  consciousness_enabled: boolean;
+}
+
+export interface ConfigStatus {
+  wizard_completed: boolean;
+  wizard_state: {
+    providers_configured: string[];
+    config: Record<string, unknown>;
+  };
+  database_configured: {
+    providers: Array<{
+      id: string;
+      name: string;
+      type: string;
+      is_enabled: boolean;
+      is_default: boolean;
+    }>;
+    total_providers: number;
+  };
+  system_config: {
+    database: boolean;
+    redis: boolean;
+    qdrant: boolean;
+  };
+  needs_setup: {
+    providers: boolean;
+    agents: boolean;
+    api_keys: boolean;
+  };
+}
+
+export interface ValidationResult {
+  valid: boolean;
+  error?: string;
+  provider_id?: string;
+  message?: string;
+  available_models?: string[];
+}
+
+export interface ProviderConfig {
+  provider_id: string;
+  api_key?: string;
+  model?: string;
+  base_url?: string;
+  is_default?: boolean;
+  extra_config?: Record<string, unknown>;
+}
+
+export interface WizardConfig {
+  providers: ProviderConfig[];
+  tier: string;
+  preferences?: {
+    streaming?: boolean;
+    function_calling?: boolean;
+    vision?: boolean;
+  };
+}
+
+export interface SubmitResult {
+  success: boolean;
+  providers_created: Array<{
+    id: string;
+    name: string;
+    type: string;
+    model: string;
+  }>;
+  config: {
+    tier?: string;
+    agent_count?: number;
+  };
+  errors: string[];
+}
+
+// =============================================================================
+// API Functions
+// =============================================================================
+
+const API_URL = localStorage.getItem('swarm_api_host') || import.meta.env.VITE_API_URL || '';
+
+async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
+  const apiKey = localStorage.getItem('swarm_api_key');
+
+  const headers: Record<string, string> = {
+    'Content-Type': 'application/json',
+  };
+
+  if (apiKey) {
+    headers['Authorization'] = `Bearer ${apiKey}`;
+  }
+
+  const response = await fetch(`${API_URL}${url}`, {
+    ...options,
+    headers: {
+      ...headers,
+      ...options?.headers,
+    },
+  });
+
+  if (!response.ok) {
+    const errorData = await response.json().catch(() => ({}));
+    throw new Error(errorData.detail || errorData.error || `HTTP ${response.status}`);
+  }
+
+  return response.json();
+}
+
+/**
+ * Get list of available providers
+ */
+export async function getProviders(): Promise<{ providers: Provider[]; total: number }> {
+  return fetchJson<{ providers: Provider[]; total: number }>('/api/wizard/providers');
+}
+
+/**
+ * Get a specific provider
+ */
+export async function getProvider(providerId: string): Promise<Provider> {
+  return fetchJson<Provider>(`/api/wizard/providers/${providerId}`);
+}
+
+/**
+ * Get list of available agent tiers
+ */
+export async function getTiers(): Promise<{ tiers: AgentTier[]; total: number }> {
+  return fetchJson<{ tiers: AgentTier[]; total: number }>('/api/wizard/tiers');
+}
+
+/**
+ * Get a specific tier
+ */
+export async function getTier(tierId: string): Promise<AgentTier> {
+  return fetchJson<AgentTier>(`/api/wizard/tiers/${tierId}`);
+}
+
+/**
+ * Get current configuration status
+ */
+export async function getConfigStatus(): Promise<ConfigStatus> {
+  return fetchJson<ConfigStatus>('/api/wizard/config');
+}
+
+/**
+ * Validate provider credentials
+ */
+export async function validateCredentials(
+  providerId: string,
+  apiKey?: string,
+  baseUrl?: string
+): Promise<ValidationResult> {
+  const params = new URLSearchParams();
+  if (apiKey) params.append('api_key', apiKey);
+  if (baseUrl) params.append('base_url', baseUrl);
+
+  return fetchJson<ValidationResult>(
+    `/api/wizard/validate/${providerId}?${params.toString()}`,
+    { method: 'POST' }
+  );
+}
+
+/**
+ * Submit wizard configuration
+ */
+export async function submitConfig(config: WizardConfig): Promise<SubmitResult> {
+  return fetchJson<SubmitResult>('/api/wizard/config', {
+    method: 'POST',
+    body: JSON.stringify(config),
+  });
+}
+
+/**
+ * Reset wizard state
+ */
+export async function resetWizard(): Promise<{ success: boolean; message: string }> {
+  return fetchJson<{ success: boolean; message: string }>('/api/wizard/reset', {
+    method: 'POST',
+  });
+}

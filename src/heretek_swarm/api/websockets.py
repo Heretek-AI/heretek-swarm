@@ -203,7 +203,7 @@ class ConnectionManager:
                 try:
                     await websocket.send_json(data)
                 except Exception as e:
-                    logger.debug("workflow_broadcast_disconnect", workflow_id=workflow_id, error=str(e))
+                    logger.debug("execution_broadcast_disconnect", execution_id=execution_id, error=str(e))
                     disconnected.add(websocket)
             # Clean up disconnected
             for ws in disconnected:
@@ -288,7 +288,7 @@ class ConnectionManager:
                         "metrics": data,
                     })
                 except Exception as e:
-                    logger.debug("workflow_broadcast_disconnect", workflow_id=workflow_id, error=str(e))
+                    logger.debug("agent_metrics_broadcast_disconnect", agent_id=agent_id, error=str(e))
                     disconnected.add(websocket)
             for ws in disconnected:
                 self.metrics_listeners[agent_id].discard(ws)
@@ -417,7 +417,7 @@ async def execution_websocket(
             try:
                 # Wait for messages from client (e.g., pause, cancel)
                 data = await asyncio.wait_for(websocket.receive_text(), timeout=30.0)
-                _message = json.loads(data)
+                message = json.loads(data)
 
                 # Handle client commands
                 if message.get("command") == "cancel":
@@ -615,7 +615,7 @@ async def agent_events_websocket(
             try:
                 # Wait for client messages
                 data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
-                _message = json.loads(data)
+                message = json.loads(data)
 
                 # Handle subscription/unsubscription to event types
                 if message.get("action") == "subscribe":
@@ -692,7 +692,7 @@ async def agent_status_websocket(
         while True:
             try:
                 data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
-                _message = json.loads(data)
+                message = json.loads(data)
 
                 # Handle subscription/unsubscription
                 action = message.get("action")
@@ -792,7 +792,7 @@ async def workflow_progress_websocket(
         while True:
             try:
                 data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
-                _message = json.loads(data)
+                message = json.loads(data)
 
                 # Handle subscription/unsubscription
                 action = message.get("action")
@@ -888,7 +888,7 @@ async def agent_metrics_websocket(
         while True:
             try:
                 data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
-                _message = json.loads(data)
+                message = json.loads(data)
 
                 # Handle subscription/unsubscription
                 action = message.get("action")
@@ -983,7 +983,7 @@ async def dashboard_websocket(
             try:
                 # Wait for client messages (heartbeat, subscriptions)
                 data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
-                _message = json.loads(data)
+                message = json.loads(data)
 
                 # Handle client requests
                 if message.get("action") == "ping":
@@ -1073,7 +1073,7 @@ async def observability_websocket(
             try:
                 # Wait for client messages (heartbeat, subscriptions)
                 data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
-                _message = json.loads(data)
+                message = json.loads(data)
 
                 # Handle client requests
                 if message.get("action") == "ping":
@@ -1149,7 +1149,7 @@ async def all_agents_websocket(
         while True:
             try:
                 data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
-                _message = json.loads(data)
+                message = json.loads(data)
 
             except TimeoutError:
                 await websocket.send_json({

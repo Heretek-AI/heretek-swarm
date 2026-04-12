@@ -15,7 +15,7 @@ Features:
 
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
-from typing import Any, Dict, List
+from typing import Any, Dict
 
 # Import cycle detector and phi training for metrics integration
 try:

@@ -24,8 +24,8 @@ from heretek_swarm.memory.access_patterns import (
 
 # Core type definitions (from base module - local, not legacy src/)
 from heretek_swarm.memory.base import (
-    DualTierMemorySystem,
     DualTierMemory,
+    DualTierMemorySystem,
     EphemeralMemory,
     MemoryEntry,
     MemoryQuery,
@@ -34,7 +34,6 @@ from heretek_swarm.memory.base import (
     MemoryType,
 )
 from heretek_swarm.memory.base import (
-    DualTierMemorySystem,
     PersistentMemory as BasePersistentMemory,
 )
 from heretek_swarm.memory.compression import (

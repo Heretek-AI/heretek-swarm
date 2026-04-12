@@ -424,3 +424,120 @@ class ImportResult(BaseModel):
     error_count: dict[str, int] = Field(default_factory=dict)
     errors: list[str] = Field(default_factory=list)
     warnings: list[str] = Field(default_factory=list)
+
+
+# =============================================================================
+# MCP (Model Context Protocol) Configuration Models
+# =============================================================================
+
+
+class MCPProviderType(StrEnum):
+    """MCP provider types."""
+    LOCAL = "local"
+    EXTERNAL = "external"
+
+
+class MCPProvider(BaseModel):
+    """MCP provider configuration."""
+    id: UUID = Field(default_factory=uuid4)
+    provider_name: str = Field(..., min_length=1, max_length=100)
+    provider_type: MCPProviderType
+    base_url: str | None = Field(None, min_length=1, max_length=500)
+    auth_token_hint: str | None = None
+    is_enabled: bool = Field(default=True)
+    is_default: bool = Field(default=False)
+    health_status: HealthStatus = Field(default=HealthStatus.UNKNOWN)
+    last_health_check: datetime | None = None
+    health_check_error: str | None = None
+    timeout_seconds: float = Field(default=30.0)
+    max_retries: int = Field(default=3)
+    extra_config: dict[str, Any] = Field(default_factory=dict)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+    class Config:
+        use_enum_values = True
+        json_encoders = {
+            UUID: str,
+            datetime: lambda v: v.isoformat(),
+        }
+
+
+class MCPProviderCreate(BaseModel):
+    """Model for creating a new MCP provider."""
+    provider_name: str = Field(..., min_length=1, max_length=100)
+    provider_type: MCPProviderType
+    base_url: str | None = Field(None, min_length=1, max_length=500)
+    auth_token: str | None = None
+    auth_token_hint: str | None = None
+    is_enabled: bool = Field(default=True)
+    is_default: bool = Field(default=False)
+    timeout_seconds: float = Field(default=30.0)
+    max_retries: int = Field(default=3)
+    extra_config: dict[str, Any] | None = None
+
+
+class MCPProviderUpdate(BaseModel):
+    """Model for updating an MCP provider."""
+    base_url: str | None = None
+    auth_token: str | None = None
+    auth_token_hint: str | None = None
+    is_enabled: bool | None = None
+    is_default: bool | None = None
+    timeout_seconds: float | None = None
+    max_retries: int | None = None
+    extra_config: dict[str, Any] | None = None
+
+
+class MCPProviderTestResponse(BaseModel):
+    """Response model for MCP provider connectivity test."""
+    success: bool
+    provider_name: str
+    tools_count: int | None = None
+    latency_ms: float
+    error: str | None = None
+
+
+class MCPConfig(BaseModel):
+    """MCP server configuration."""
+    id: UUID = Field(default_factory=uuid4)
+    config_name: str = Field(..., min_length=1, max_length=255)
+    enabled: bool = Field(default=True)
+    host: str = Field(default="0.0.0.0")
+    port: int = Field(default=8080)
+    providers: list[MCPProvider] = Field(default_factory=list)
+    auto_connect: bool = Field(default=False)
+    proxy_external_tools: bool = Field(default=True)
+    extra_config: dict[str, Any] = Field(default_factory=dict)
+    created_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+    updated_at: datetime = Field(default_factory=lambda: datetime.now(UTC))
+
+    class Config:
+        use_enum_values = True
+        json_encoders = {
+            UUID: str,
+            datetime: lambda v: v.isoformat(),
+        }
+
+
+class MCPConfigCreate(BaseModel):
+    """Model for creating MCP server configuration."""
+    config_name: str = Field(..., min_length=1, max_length=255)
+    enabled: bool = Field(default=True)
+    host: str = Field(default="0.0.0.0")
+    port: int = Field(default=8080)
+    providers: list[MCPProviderCreate] | None = None
+    auto_connect: bool = Field(default=False)
+    proxy_external_tools: bool = Field(default=True)
+    extra_config: dict[str, Any] | None = None
+
+
+class MCPConfigUpdate(BaseModel):
+    """Model for updating MCP server configuration."""
+    enabled: bool | None = None
+    host: str | None = None
+    port: int | None = None
+    providers: list[MCPProviderCreate] | None = None
+    auto_connect: bool | None = None
+    proxy_external_tools: bool | None = None
+    extra_config: dict[str, Any] | None = None

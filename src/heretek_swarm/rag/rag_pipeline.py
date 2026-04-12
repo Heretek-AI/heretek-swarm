@@ -1,8 +1,9 @@
 """RAG Pipeline stub for compatibility."""
 from dataclasses import dataclass, field
-from typing import List, Dict, Any, Optional
+from typing import Any, Dict, List, Optional
+
 from heretek_swarm.rag.document_processor import DocumentProcessor, ProcessingConfig
-from heretek_swarm.rag.hybrid_retriever import HybridRetriever, HybridRetrieverConfig
+from heretek_swarm.rag.hybrid_retriever import HybridRetrieverConfig
 
 
 @dataclass
