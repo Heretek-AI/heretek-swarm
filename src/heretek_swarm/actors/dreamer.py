@@ -22,16 +22,8 @@ from typing import Any
 import structlog
 
 from heretek_swarm.actors.base import ActorMessage, AgentActor
+from heretek_swarm.actors.mixins import DeliberationMixin, LearningMixin, MemoryMixin, PatternMixin
 from heretek_swarm.actors.validation import validate_message
-
-# Session 44: Collective Learning Integration
-from heretek_swarm.collective.learning import PatternExtractor, PatternType
-
-# Session 44: Consensus Integration
-from heretek_swarm.consensus.swarm_deliberation import Position, SwarmDeliberationEngine
-
-# Session 44: Memory Optimization Integration
-from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer, AccessTier
 
 # Session 44: Zero-Trust Validation
 from heretek_swarm.security.zero_trust import ZeroTrustValidator
@@ -117,7 +109,7 @@ class InnovationReport:
     opportunities: list[str]
 
 
-class DreamerAgent(AgentActor):
+class DreamerAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor):
     """
     Creative Solution Generation & Divergent Thinking Agent.
 
@@ -125,12 +117,23 @@ class DreamerAgent(AgentActor):
     providing the Collective with innovative approaches to complex problems.
     """
 
-    def __init__(self, agent_id: str | None = None, config: dict[str, Any] | None = None):
+    def __init__(
+        self,
+        agent_id: str = "dreamer",
+        name: str = "Dreamer",
+        description: str = "Creative Solution Generation Specialist",
+        swarms_agent=None,
+        pattern_extractor=None,
+        deliberation_engine=None,
+        access_analyzer=None,
+        zero_trust_validator=None,
+        **kwargs,
+    ):
         super().__init__(
             agent_id=agent_id,
-            name="Dreamer",
-            description="Creative Solution Generation Specialist",
-            config=config or {}
+            name=name,
+            description=description,
+            **kwargs,
         )
 
         # Idea storage
@@ -152,22 +155,19 @@ class DreamerAgent(AgentActor):
         self._inspiration_cache: list[dict[str, Any]] = []
         self.max_inspiration = self._config.get("max_inspiration", 100)
 
-
         # Session 44: Collective Learning Integration
-        self.pattern_extractor = pattern_extractor or PatternExtractor(min_support=3, min_confidence=0.6)
+        self.pattern_extractor = pattern_extractor
 
         # Session 44: Consensus Integration
-        self.deliberation_engine = deliberation_engine or SwarmDeliberationEngine(
-            max_rounds=5, consensus_threshold=0.75, min_participants=2
-        )
+        self.deliberation_engine = deliberation_engine
 
         # Session 44: Memory Optimization Integration
-        self.access_analyzer = access_analyzer or AccessPatternAnalyzer()
+        self.access_analyzer = access_analyzer
 
         # Session 44: Zero-Trust Validation
         self.zero_trust_validator = zero_trust_validator or ZeroTrustValidator()
 
-        # Session 44: Integration state
+        # Session 44: Integration state (required by mixins)
         self._active_deliberations: dict[str, str] = {}
         self._pattern_emitted: set[str] = set()
 

@@ -1,13 +1,25 @@
 """Routing control endpoints."""
 
+from typing import Any
+
 import structlog
 from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel
 
 from heretek_swarm.gateway.auth import verify_auth
 from heretek_swarm.gateway.content_router import ContentRouter, get_content_router
 
 logger = structlog.get_logger()
 router = APIRouter()
+
+
+class RoutingStatsResponse(BaseModel):
+    """Response model for routing statistics."""
+    total_rules: int
+    enabled_rules: int
+    disabled_rules: int
+    messages_routed: int
+    routing_errors: int
 
 
 async def delete_routing_rule(
@@ -35,7 +47,7 @@ async def delete_routing_rule(
 @router.post("/routing/rules/{rule_id}/enable")
 async def enable_routing_rule(
     rule_id: str,
-    router: ContentRouter = Depends(get_router_instance),
+    router: ContentRouter = Depends(get_content_router),
     authenticated: str = Depends(verify_auth),
 ) -> dict[str, str]:
     """Enable a routing rule."""
@@ -48,7 +60,7 @@ async def enable_routing_rule(
 @router.post("/routing/rules/{rule_id}/disable")
 async def disable_routing_rule(
     rule_id: str,
-    router: ContentRouter = Depends(get_router_instance),
+    router: ContentRouter = Depends(get_content_router),
     authenticated: str = Depends(verify_auth),
 ) -> dict[str, str]:
     """Disable a routing rule."""
@@ -60,7 +72,7 @@ async def disable_routing_rule(
 
 @router.get("/routing/stats")
 async def get_routing_stats(
-    router: ContentRouter = Depends(get_router_instance),
+    router: ContentRouter = Depends(get_content_router),
     authenticated: str = Depends(verify_auth),
 ) -> RoutingStatsResponse:
     """
@@ -81,7 +93,7 @@ async def evaluate_routing(
     subject: str,
     payload: dict[str, Any],
     correlation_id: str | None = None,
-    router: ContentRouter = Depends(get_router_instance),
+    router: ContentRouter = Depends(get_content_router),
     authenticated: str = Depends(verify_auth),
 ) -> dict[str, Any]:
     """

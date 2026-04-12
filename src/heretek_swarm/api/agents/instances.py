@@ -6,7 +6,7 @@ from typing import Any
 
 import structlog
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from heretek_swarm.channels.registry import ChannelRegistry, get_channel_registry
 from heretek_swarm.gateway.auth import verify_auth

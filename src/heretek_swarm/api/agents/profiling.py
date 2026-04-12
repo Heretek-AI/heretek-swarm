@@ -4,12 +4,19 @@ from typing import Any
 
 import structlog
 from fastapi import APIRouter, Depends, HTTPException
-from pydantic import BaseModel
+from pydantic import BaseModel, Field
 
 from heretek_swarm.gateway.auth import verify_auth
+from heretek_swarm.runtime.registry_enhanced import EnhancedAgentRegistry, get_enhanced_registry
 
 logger = structlog.get_logger()
 router = APIRouter()
+
+
+def get_registry() -> EnhancedAgentRegistry:
+    """Dependency to get the enhanced agent registry."""
+    return get_enhanced_registry()
+
 
 PROFILING_AVAILABLE = True
 
@@ -78,7 +85,7 @@ class AnomalyResponse(BaseModel):
     anomalyType: str
     severity: str
     description: str
-    metrics: dict[str, Any] = field(default_factory=dict)
+    metrics: dict[str, Any] = Field(default_factory=dict)
     expectedValue: float = 0.0
     actualValue: float = 0.0
 

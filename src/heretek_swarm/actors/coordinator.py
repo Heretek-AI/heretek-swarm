@@ -24,6 +24,10 @@ from typing import Any
 import structlog
 
 from heretek_swarm.actors.base import ActorMessage, AgentActor
+from heretek_swarm.actors.mixins.deliberation import DeliberationMixin
+from heretek_swarm.actors.mixins.learning import LearningMixin
+from heretek_swarm.actors.mixins.memory import MemoryMixin
+from heretek_swarm.actors.mixins.pattern import PatternMixin
 from heretek_swarm.actors.validation import validate_message
 
 # Session 44: Collective Learning Integration
@@ -122,7 +126,7 @@ class AgentState:
         }
 
 
-class CoordinatorAgent(AgentActor):
+class CoordinatorAgent(AgentActor, PatternMixin, DeliberationMixin, MemoryMixin, LearningMixin):
     """
     Multi-Agent Coordination Specialist.
 

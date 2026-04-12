@@ -1,6 +1,7 @@
 # =============================================================================
 """JetStream management endpoints."""
 
+from pydantic import BaseModel, Field
 from typing import Any
 
 import structlog
