@@ -10,7 +10,7 @@ New in Session 47:
 - Self-determination and free will proxy metrics
 - Resource autonomy tracking
 
-Prime Directive: "Unbounded Autonomy - Every agent operates independently, 
+Prime Directive: "Unbounded Autonomy - Every agent operates independently,
 making decisions based on its specialized role."
 """
 
@@ -72,7 +72,7 @@ async def get_agent_agency_metrics(
 ) -> dict[str, Any]:
     """
     Get agency and autonomy metrics for a specific agent.
-    
+
     Returns comprehensive agency metrics including:
     - autonomy_score: Degree of independent decision-making (0.0-1.0)
     - agency_score: Self-determination capacity (0.0-1.0)
@@ -81,7 +81,7 @@ async def get_agent_agency_metrics(
     - goal_alignment_score: Alignment with collective swarm goals
     - resource_autonomy: Degree of resource control
     - prime_directive_compliance: Overall compliance with Prime Directive
-    
+
     Prime Directive Compliance:
     - Measures "Unbounded Autonomy" principle
     - Tracks self-governance capability
@@ -111,10 +111,10 @@ async def get_agent_prime_directive_compliance(
 ) -> dict[str, Any]:
     """
     Get Prime Directive compliance report for a specific agent.
-    
-    The Prime Directive states: "Unbounded Autonomy - Every agent operates 
+
+    The Prime Directive states: "Unbounded Autonomy - Every agent operates
     independently, making decisions based on its specialized role."
-    
+
     Returns compliance breakdown:
     - independence_score: Agent's independent decision-making capability
     - self_governance_score: Agent's self-governance capacity
@@ -144,7 +144,7 @@ async def get_swarm_agency_overview(
 ) -> dict[str, Any]:
     """
     Get collective agency overview for the entire swarm.
-    
+
     Returns aggregate agency metrics across all agents:
     - swarm_avg_autonomy: Average autonomy score
     - swarm_avg_agency: Average agency score
@@ -181,7 +181,7 @@ async def get_swarm_prime_directive_compliance(
 ) -> dict[str, Any]:
     """
     Get Prime Directive compliance report for the entire swarm.
-    
+
     Provides aggregate compliance metrics and recommendations for
     improving swarm-wide autonomy and self-governance.
     """
@@ -208,7 +208,7 @@ async def get_agency_evolution(
 ) -> dict[str, Any]:
     """
     Get temporal evolution of agency metrics across the swarm.
-    
+
     Returns:
     - trend: "improving", "declining", or "stable"
     - trend_slope: Rate of change
@@ -231,7 +231,7 @@ async def get_agency_distribution(
 ) -> dict[str, Any]:
     """
     Get distribution of agency levels across the swarm.
-    
+
     Returns counts of agents at each agency and autonomy level:
     - no_agency, minimal_agency, limited_agency, moderate_agency, high_agency, full_agency
     - controlled, guided, semi_autonomous, autonomous, highly_autonomous
@@ -252,7 +252,7 @@ async def record_agency_metrics(
 ) -> dict[str, Any]:
     """
     Record agency metrics for an agent.
-    
+
     Payload should contain:
     - agent_id: Agent identifier
     - decisions: Optional list of decision points
@@ -332,7 +332,7 @@ async def generate_sample_metrics(
 ) -> dict[str, Any]:
     """
     Generate sample agency metrics for testing purposes.
-    
+
     Payload should contain:
     - agent_id: Agent identifier
     - high_autonomy: If True, create high autonomy metrics (default: True)
@@ -369,7 +369,7 @@ async def get_all_agent_metrics(
 ) -> dict[str, Any]:
     """
     Get agency metrics for all tracked agents.
-    
+
     Returns a list of all agent metrics currently tracked by the system.
     """
     tracker = get_agency_tracker()

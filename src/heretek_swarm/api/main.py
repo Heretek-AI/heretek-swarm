@@ -31,8 +31,6 @@ log_level = os.getenv("LOG_LEVEL", "INFO").upper()
 json_output = os.getenv("LOG_FORMAT", "json").lower() == "json"
 setup_logging(log_level=log_level, json_output=json_output)
 
-from heretek_swarm.memory.persistent import PersistentMemory as PersistentMemoryStore
-
 from heretek_swarm.actors.supervisor import ActorSupervisor
 from heretek_swarm.api import (
     agents_management,
@@ -60,6 +58,7 @@ from heretek_swarm.config.service import (
     shutdown_config_service,
 )
 from heretek_swarm.gateway.auth import verify_auth
+from heretek_swarm.memory.persistent import PersistentMemory as PersistentMemoryStore
 from heretek_swarm.observability.tracing import setup_telemetry_middleware
 
 # Import mem0 backend

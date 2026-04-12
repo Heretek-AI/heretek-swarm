@@ -6,7 +6,13 @@ Provides example tool implementations for testing and reference.
 
 from typing import Any
 
-from heretek_swarm.tools.base import BaseTool, SimpleTool, ToolContext, ToolExecutionResult, ToolMetadata, ToolStatus
+from heretek_swarm.tools.base import (
+    BaseTool,
+    ToolContext,
+    ToolExecutionResult,
+    ToolMetadata,
+    ToolStatus,
+)
 
 
 class HealthCheckTool(BaseTool):

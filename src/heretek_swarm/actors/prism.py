@@ -20,6 +20,9 @@ import structlog
 from swarms import Agent
 
 from heretek_swarm.actors.base import ActorMessage, AgentActor
+
+# Session 44: Collective Learning Integration
+from heretek_swarm.collective.learning import PatternExtractor, PatternType
 from heretek_swarm.consciousness.phi_training import (
     DecisionCoherenceTrainingScenario,
     PhiTrainingEnvironment,
@@ -34,9 +37,6 @@ from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer, AccessTi
 
 # Session 44: Zero-Trust Validation
 from heretek_swarm.security.zero_trust import ZeroTrustValidator
-
-# Session 44: Collective Learning Integration
-from heretek_swarm.collective.learning import PatternExtractor, PatternType
 
 logger = structlog.get_logger("PrismAgent")
 

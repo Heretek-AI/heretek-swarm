@@ -6,9 +6,8 @@ Central registry for managing and discovering tools.
 
 from dataclasses import dataclass, field
 from datetime import datetime
-from typing import Any
 
-from heretek_swarm.tools.base import BaseTool, ToolMetadata, ToolStatus
+from heretek_swarm.tools.base import BaseTool, ToolMetadata
 
 
 @dataclass
