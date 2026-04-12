@@ -386,7 +386,7 @@ async def execution_websocket(
             await websocket.close()
         except Exception as e:
             pass
-        logger.warning("websocket_execution_auth_failed", exc_info=True, execution_id=execution_id, error=error, exc_info=True)
+        logger.warning("websocket_execution_auth_failed", execution_id=execution_id, error=error)
         return
 
     await manager.connect_execution(websocket, execution_id)
@@ -509,7 +509,7 @@ async def a2a_websocket(
             await websocket.close()
         except Exception as e:
             pass
-        logger.warning("websocket_a2a_auth_failed", exc_info=True, error=error, exc_info=True)
+        logger.warning("websocket_a2a_auth_failed", error=error)
         return
 
     await manager.connect_a2a(websocket)
@@ -602,7 +602,7 @@ async def agent_events_websocket(
             await websocket.close()
         except Exception as e:
             pass
-        logger.warning("websocket_agent_events_auth_failed", exc_info=True, agent_id=agent_id, error=error, exc_info=True)
+        logger.warning("websocket_agent_events_auth_failed", agent_id=agent_id, error=error)
         return
 
     await websocket.accept()
@@ -680,7 +680,7 @@ async def agent_status_websocket(
             await websocket.close()
         except Exception as e:
             pass
-        logger.warning("websocket_agent_status_auth_failed", exc_info=True, error=error, exc_info=True)
+        logger.warning("websocket_agent_status_auth_failed", error=error)
         return
 
     await websocket.accept()
@@ -780,7 +780,7 @@ async def workflow_progress_websocket(
             await websocket.close()
         except Exception as e:
             pass
-        logger.warning("websocket_workflow_progress_auth_failed", exc_info=True, error=error, exc_info=True)
+        logger.warning("websocket_workflow_progress_auth_failed", error=error)
         return
 
     await websocket.accept()
@@ -876,7 +876,7 @@ async def agent_metrics_websocket(
             await websocket.close()
         except Exception as e:
             pass
-        logger.warning("websocket_agent_metrics_auth_failed", exc_info=True, error=error, exc_info=True)
+        logger.warning("websocket_agent_metrics_auth_failed", error=error)
         return
 
     await websocket.accept()
@@ -963,7 +963,7 @@ async def dashboard_websocket(
             await websocket.close()
         except Exception as e:
             pass
-        logger.warning("websocket_dashboard_auth_failed", exc_info=True, error=error, exc_info=True)
+        logger.warning("websocket_dashboard_auth_failed", error=error)
         return
 
     await manager.connect_dashboard(websocket)
@@ -1060,7 +1060,7 @@ async def observability_websocket(
             await websocket.close()
         except Exception as e:
             pass
-        logger.warning("websocket_observability_auth_failed", exc_info=True, error=error, exc_info=True)
+        logger.warning("websocket_observability_auth_failed", error=error)
         return
 
     await manager.connect_observability(websocket)
@@ -1135,7 +1135,7 @@ async def all_agents_websocket(
             await websocket.close()
         except Exception as e:
             pass
-        logger.warning("websocket_all_agents_auth_failed", exc_info=True, error=error, exc_info=True)
+        logger.warning("websocket_all_agents_auth_failed", error=error)
         return
 
     await websocket.accept()
