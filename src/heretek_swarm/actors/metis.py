@@ -182,9 +182,20 @@ class MetisAgent(AgentActor):
         try:
             validated = self._validate_message_content("create_strategic_plan", message.content)
             if validated:
-                objective = validated.content.get("objective")
-                horizon_days = validated.content.get("horizon_days", self.planning_horizon_days)
-                constraints = validated.content.get("constraints", [])
+                # validated is either a dict or Pydantic model - handle both cases
+                if hasattr(validated, 'content'):
+                    objective = validated.content.get("objective")
+                    horizon_days = validated.content.get("horizon_days", self.planning_horizon_days)
+                    constraints = validated.content.get("constraints", [])
+                else:
+                    # Fallback for dict (when validator not registered)
+                    objective = validated.get("objective")
+                    horizon_days = validated.get("horizon_days", self.planning_horizon_days)
+                    constraints = validated.get("constraints", [])
+
+                if not objective:
+                    logger.error(f"[{self.agent_id}] Missing objective for strategic plan")
+                    return
             else:
                 # Fallback for unknown message types
                 objective = message.content.get("objective")
@@ -256,9 +267,20 @@ class MetisAgent(AgentActor):
         try:
             validated = self._validate_message_content("allocate_resources", message.content)
             if validated:
-                plan_id = validated.content.get("plan_id")
-                resources = validated.content.get("resources", {})
-                priorities = validated.content.get("priorities", {})
+                # validated is either a dict or Pydantic model - handle both cases
+                if hasattr(validated, 'content'):
+                    plan_id = validated.content.get("plan_id")
+                    resources = validated.content.get("resources", {})
+                    priorities = validated.content.get("priorities", {})
+                else:
+                    # Fallback for dict (when validator not registered)
+                    plan_id = validated.get("plan_id")
+                    resources = validated.get("resources", {})
+                    priorities = validated.get("priorities", {})
+
+                if not plan_id:
+                    logger.error(f"[{self.agent_id}] Missing plan_id for resource allocation")
+                    return
             else:
                 # Fallback
                 plan_id = message.content.get("plan_id")
@@ -310,8 +332,14 @@ class MetisAgent(AgentActor):
         try:
             validated = self._validate_message_content("assess_risks", message.content)
             if validated:
-                plan_id = validated.content.get("plan_id")
-                domain = validated.content.get("domain", "general")
+                # validated is either a dict or Pydantic model - handle both cases
+                if hasattr(validated, 'content'):
+                    plan_id = validated.content.get("plan_id")
+                    domain = validated.content.get("domain", "general")
+                else:
+                    # Fallback for dict (when validator not registered)
+                    plan_id = validated.get("plan_id")
+                    domain = validated.get("domain", "general")
             else:
                 # Fallback
                 plan_id = message.content.get("plan_id")
@@ -356,8 +384,14 @@ class MetisAgent(AgentActor):
         try:
             validated = self._validate_message_content("analyze_scenarios", message.content)
             if validated:
-                base_scenario = validated.content.get("base_scenario", {})
-                variables = validated.content.get("variables", [])
+                # validated is either a dict or Pydantic model - handle both cases
+                if hasattr(validated, 'content'):
+                    base_scenario = validated.content.get("base_scenario", {})
+                    variables = validated.content.get("variables", [])
+                else:
+                    # Fallback for dict (when validator not registered)
+                    base_scenario = validated.get("base_scenario", {})
+                    variables = validated.get("variables", [])
             else:
                 # Fallback
                 base_scenario = message.content.get("base_scenario", {})
@@ -403,9 +437,20 @@ class MetisAgent(AgentActor):
         try:
             validated = self._validate_message_content("set_strategic_objective", message.content)
             if validated:
-                objective = validated.content.get("objective")
-                priority = validated.content.get("priority", "medium")
-                metrics = validated.content.get("metrics", [])
+                # validated is either a dict or Pydantic model - handle both cases
+                if hasattr(validated, 'content'):
+                    objective = validated.content.get("objective")
+                    priority = validated.content.get("priority", "medium")
+                    metrics = validated.content.get("metrics", [])
+                else:
+                    # Fallback for dict (when validator not registered)
+                    objective = validated.get("objective")
+                    priority = validated.get("priority", "medium")
+                    metrics = validated.get("metrics", [])
+
+                if not objective:
+                    logger.error(f"[{self.agent_id}] Missing objective")
+                    return
             else:
                 # Fallback
                 objective = message.content.get("objective")
@@ -451,7 +496,16 @@ class MetisAgent(AgentActor):
         try:
             validated = self._validate_message_content("get_plan_status", message.content)
             if validated:
-                plan_id = validated.content.get("plan_id")
+                # validated is either a dict or Pydantic model - handle both cases
+                if hasattr(validated, 'content'):
+                    plan_id = validated.content.get("plan_id")
+                else:
+                    # Fallback for dict (when validator not registered)
+                    plan_id = validated.get("plan_id")
+
+                if not plan_id:
+                    logger.error(f"[{self.agent_id}] Missing plan_id for status request")
+                    return
             else:
                 # Fallback
                 plan_id = message.content.get("plan_id")

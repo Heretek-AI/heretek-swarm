@@ -245,7 +245,7 @@ class EmpathAgent(AgentActor):
         try:
             # Zero-Trust input validation
             validated = self._validate_message_content("analyze_sentiment", message.content)
-            content = validated.model_dump() if validated else message.content
+            content = validated.model_dump() if hasattr(validated, 'model_dump') else (validated if validated else message.content)
 
             text = content.get("text", "")
             source_agent = content.get("source_agent", "unknown")
@@ -432,14 +432,16 @@ Provide your analysis in this exact JSON format:
         if agent_id not in self.agent_moods:
             self.agent_moods[agent_id] = []
 
+        # Get emotions from sentiment_result
+        emotions_list = sentiment_result.get("emotions", [])
+        if "emotion" in sentiment_result and not emotions_list:
+            emotions_list = [sentiment_result["emotion"]]
+
         mood_entry = {
             "timestamp": datetime.now(UTC).isoformat(),
             "sentiment": sentiment_result.get("sentiment", "neutral"),
             "intensity": sentiment_result.get("intensity", sentiment_result.get("arousal", 0.5)),
-            "emotions": sentiment_result.get(
-                "emotions",
-                [sentiment_result["emotion"]] if "emotion" in sentiment_result else ["neutral"],
-            ),
+            "emotions": emotions_list if emotions_list else ["neutral"],
         }
 
         self.agent_moods[agent_id].append(mood_entry)
@@ -448,8 +450,9 @@ Provide your analysis in this exact JSON format:
         if len(self.agent_moods[agent_id]) > self.max_mood_history:
             self.agent_moods[agent_id] = self.agent_moods[agent_id][-self.max_mood_history:]
 
-        # Update _agent_emotions with latest data
-        self._agent_emotions[agent_id] = {**sentiment_result, **mood_entry}
+        # Preserve existing fields in _agent_emotions while updating with new data
+        existing = self._agent_emotions.get(agent_id, {})
+        self._agent_emotions[agent_id] = {**existing, **mood_entry, **sentiment_result}
 
     def _check_stress_indicators(
         self, agent_id: str, sentiment_result: dict[str, Any] | None = None
@@ -528,7 +531,10 @@ Provide your analysis in this exact JSON format:
                 {
                     "sentiment": "neutral",
                     "intensity": intensity,
+                    "emotion": emotion,  # Include singular emotion for compatibility
                     "emotions": [emotion],
+                    "valence": 0.5,  # Default valence
+                    "arousal": intensity,  # Use intensity as arousal
                     "stress_indicators": False,
                     "conflict_potential": False,
                 },
