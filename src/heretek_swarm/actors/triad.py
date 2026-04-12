@@ -18,11 +18,12 @@ import structlog
 from swarms import Agent
 
 from heretek_swarm.actors.base import ActorMessage, AgentActor
+from heretek_swarm.actors.mixins import DeliberationMixin, LearningMixin, MemoryMixin, PatternMixin
 
 logger = structlog.get_logger("TriadAgents")
 
 
-class StewardAgent(AgentActor):
+class StewardAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor):
     """
     Steward Agent - Overall coordination and governance.
 
@@ -322,7 +323,7 @@ class StewardAgent(AgentActor):
         return self.governance_policies.get(policy_id)
 
 
-class AlphaAgent(AgentActor):
+class AlphaAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor):
     """
     Alpha Agent - Primary decision maker and analyst.
 
@@ -583,7 +584,7 @@ class AlphaAgent(AgentActor):
         }
 
 
-class BetaAgent(AgentActor):
+class BetaAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor):
     """
     Beta Agent - Secondary analyst and validator.
 
@@ -862,7 +863,7 @@ class BetaAgent(AgentActor):
         }
 
 
-class CharlieAgent(AgentActor):
+class CharlieAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor):
     """
     Charlie Agent - Tertiary perspective and challenger.
 
