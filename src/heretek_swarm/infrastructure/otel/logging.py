@@ -6,10 +6,8 @@ Integrates structlog with trace context for unified observability.
 """
 
 from dataclasses import dataclass
-from datetime import datetime
 from enum import Enum
 from typing import Any
-from uuid import uuid4
 
 import structlog
 
@@ -43,16 +41,16 @@ _log_config: LoggingConfig | None = None
 def init_logging(config: LoggingConfig | None = None) -> LoggingConfig:
     """
     Initialize structured logging with OpenTelemetry context.
-    
+
     Args:
         config: Logging configuration
-        
+
     Returns:
         The logging configuration
     """
     global _log_config
     _log_config = config or LoggingConfig()
-    
+
     # Configure structlog processors
     processors = [
         structlog.contextvars.merge_contextvars,
@@ -66,15 +64,15 @@ def init_logging(config: LoggingConfig | None = None) -> LoggingConfig:
         structlog.processors.StackInfoRenderer(),
         structlog.processors.format_exc_info,
     ]
-    
+
     if _log_config.include_trace_context:
         processors.append(_add_trace_context)
-    
+
     if _log_config.format == "json":
         processors.append(structlog.processors.JSONRenderer())
     else:
         processors.append(structlog.dev.ConsoleRenderer())
-    
+
     structlog.configure(
         processors=processors,
         wrapper_class=structlog.stdlib.BoundLogger,
@@ -82,14 +80,14 @@ def init_logging(config: LoggingConfig | None = None) -> LoggingConfig:
         logger_factory=structlog.PrintLoggerFactory(),
         cache_logger_on_first_use=True,
     )
-    
+
     logger.info(
         "logging_initialized",
         service_name=_log_config.service_name,
         log_level=_log_config.log_level,
         format=_log_config.format,
     )
-    
+
     return _log_config
 
 
@@ -107,7 +105,7 @@ def _add_trace_context(
     # Try to get active span context
     try:
         from opentelemetry import trace
-        
+
         span = trace.get_current_span()
         if span and span.get_span_context().is_valid:
             ctx = span.get_span_context()
@@ -115,25 +113,25 @@ def _add_trace_context(
             event_dict["span_id"] = ctx.span_id
     except ImportError:
         pass
-    
+
     # Add service name
     if _log_config:
         event_dict["service"] = _log_config.service_name
-    
+
     # Add custom enrich fields
     if _log_config and _log_config.enrich_fields:
         event_dict.update(_log_config.enrich_fields)
-    
+
     return event_dict
 
 
 def get_logger(name: str | None = None) -> structlog.BoundLogger:
     """
     Get a logger instance.
-    
+
     Args:
         name: Logger name (e.g., "heretek-swarm.agent")
-        
+
     Returns:
         Configured structlog logger
     """
@@ -145,17 +143,17 @@ def get_logger(name: str | None = None) -> structlog.BoundLogger:
 class StructuredLogger:
     """
     Structured logger wrapper for consistent logging patterns.
-    
+
     Provides helper methods for common logging patterns:
     - Agent lifecycle events
     - Task lifecycle events
     - Consensus events
     - Consciousness metric events
     """
-    
+
     def __init__(self, name: str):
         self._logger = structlog.get_logger(name)
-    
+
     def agent_started(self, agent_id: str, agent_type: str, **kwargs: Any) -> None:
         """Log agent startup."""
         self._logger.info(
@@ -164,7 +162,7 @@ class StructuredLogger:
             agent_type=agent_type,
             **kwargs,
         )
-    
+
     def agent_stopped(
         self,
         agent_id: str,
@@ -178,7 +176,7 @@ class StructuredLogger:
             reason=reason,
             **kwargs,
         )
-    
+
     def task_submitted(
         self,
         task_id: str,
@@ -194,7 +192,7 @@ class StructuredLogger:
             task_type=task_type,
             **kwargs,
         )
-    
+
     def task_completed(
         self,
         task_id: str,
@@ -210,7 +208,7 @@ class StructuredLogger:
             duration_ms=duration_ms,
             **kwargs,
         )
-    
+
     def task_failed(
         self,
         task_id: str,
@@ -226,7 +224,7 @@ class StructuredLogger:
             error=error,
             **kwargs,
         )
-    
+
     def consensus_started(
         self,
         topic: str,
@@ -240,7 +238,7 @@ class StructuredLogger:
             proposer=proposer,
             **kwargs,
         )
-    
+
     def consensus_decided(
         self,
         topic: str,
@@ -256,7 +254,7 @@ class StructuredLogger:
             participants=participants,
             **kwargs,
         )
-    
+
     def consciousness_measured(
         self,
         agent_id: str,

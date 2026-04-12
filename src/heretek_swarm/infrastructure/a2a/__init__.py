@@ -11,10 +11,10 @@ from heretek_swarm.infrastructure.a2a.protocol import (
     A2AProtocol,
     AgentCapability,
     MessagePriority,
+    create_consensus_message,
+    create_delegation_message,
     create_task_request,
     create_task_response,
-    create_delegation_message,
-    create_consensus_message,
 )
 
 __all__ = [

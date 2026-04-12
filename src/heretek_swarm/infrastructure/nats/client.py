@@ -4,7 +4,6 @@ NATS Client for Heretek Swarm.
 Provides async NATS connection management.
 """
 
-import asyncio
 from dataclasses import dataclass, field
 from datetime import datetime
 from enum import Enum
@@ -40,7 +39,7 @@ class NATSConfig:
 class NATSClient:
     """
     Async NATS client wrapper.
-    
+
     Provides connection management and topic subscription
     for the Heretek Swarm event mesh.
     """
@@ -48,18 +47,18 @@ class NATSClient:
     _connection: Any = field(default=None, repr=False)
     _state: ConnectionState = field(default=ConnectionState.DISCONNECTED)
     _subscriptions: dict[str, Any] = field(default_factory=dict)
-    
+
     async def connect(self) -> bool:
         """
         Establish NATS connection.
-        
+
         Returns:
             True if connection successful
         """
         try:
             self._state = ConnectionState.CONNECTING
             logger.info("nats_connecting", url=self.config.url)
-            
+
             # Try to import nats library
             try:
                 import nats
@@ -67,23 +66,23 @@ class NATSClient:
                 logger.warning("nats_not_installed", url="https://github.com/nats-io/nats.py")
                 self._state = ConnectionState.FAILED
                 return False
-            
+
             self._connection = await nats.connect(
                 self.config.url,
                 name=self.config.name,
                 max_reconnect_attempts=self.config.max_reconnect_attempts,
                 reconnect_time_step=self.config.reconnect_time_step,
             )
-            
+
             self._state = ConnectionState.CONNECTED
             logger.info("nats_connected", url=self.config.url)
             return True
-            
+
         except Exception as e:
             logger.error("nats_connection_failed", error=str(e))
             self._state = ConnectionState.FAILED
             return False
-    
+
     async def disconnect(self) -> None:
         """Close NATS connection."""
         if self._connection:
@@ -95,37 +94,37 @@ class NATSClient:
             finally:
                 self._connection = None
                 self._state = ConnectionState.DISCONNECTED
-    
+
     async def publish(self, subject: str, payload: bytes | str | dict) -> bool:
         """
         Publish message to NATS subject.
-        
+
         Args:
             subject: NATS subject/topic
             payload: Message payload
-            
+
         Returns:
             True if published successfully
         """
         if self._state != ConnectionState.CONNECTED:
             logger.warning("nats_not_connected", state=self._state.value)
             return False
-        
+
         try:
             if isinstance(payload, dict):
                 import json
                 payload = json.dumps(payload).encode()
             elif isinstance(payload, str):
                 payload = payload.encode()
-            
+
             await self._connection.publish(subject, payload)
             logger.debug("nats_published", subject=subject)
             return True
-            
+
         except Exception as e:
             logger.error("nats_publish_failed", subject=subject, error=str(e))
             return False
-    
+
     async def subscribe(
         self,
         subject: str,
@@ -134,19 +133,19 @@ class NATSClient:
     ) -> str | None:
         """
         Subscribe to NATS subject.
-        
+
         Args:
             subject: Subject pattern to subscribe to
             callback: Async callback for messages
             queue: Optional queue group
-            
+
         Returns:
             Subscription ID or None
         """
         if self._state != ConnectionState.CONNECTED:
             logger.warning("nats_not_connected", state=self._state.value)
             return None
-        
+
         try:
             sub = await self._connection.subscribe(
                 subject,
@@ -157,11 +156,11 @@ class NATSClient:
             self._subscriptions[sub_id] = sub
             logger.info("nats_subscribed", subject=subject, queue=queue)
             return sub_id
-            
+
         except Exception as e:
             logger.error("nats_subscribe_failed", subject=subject, error=str(e))
             return None
-    
+
     async def unsubscribe(self, sub_id: str) -> bool:
         """Unsubscribe from a subject."""
         if sub_id in self._subscriptions:
@@ -172,12 +171,12 @@ class NATSClient:
             except Exception as e:
                 logger.warning("nats_unsubscribe_error", sub_id=sub_id, error=str(e))
         return False
-    
+
     @property
     def is_connected(self) -> bool:
         """Check if client is connected."""
         return self._state == ConnectionState.CONNECTED
-    
+
     @property
     def state(self) -> ConnectionState:
         """Get current connection state."""

@@ -12,7 +12,7 @@ from typing import Any, Callable
 import structlog
 from pynats import NATSClient
 
-from heretek_swarm.infrastructure.nats.client import get_nats_client, NATSConfig
+from heretek_swarm.infrastructure.nats.client import get_nats_client
 from heretek_swarm.infrastructure.nats.publisher import EventPriority, SwarmEvent
 
 logger = structlog.get_logger(__name__)
@@ -53,7 +53,7 @@ class Subscription:
 class NATSSubscriber:
     """
     Manages NATS subscriptions for event-driven communication.
-    
+
     Handles:
     - Topic subscriptions with queue groups
     - Message filtering by metadata
@@ -85,7 +85,7 @@ class NATSSubscriber:
     ) -> str:
         """
         Subscribe to a NATS subject.
-        
+
         Args:
             subject: Subject pattern to subscribe to
             callback: Async function to call with each event
@@ -94,7 +94,7 @@ class NATSSubscriber:
             ack_mode: Acknowledgement mode
             filter_metadata: Filter by metadata key-value pairs
             priority_filter: Only receive events at or above this priority
-            
+
         Returns:
             Subscription ID for later management
         """
@@ -124,14 +124,14 @@ class NATSSubscriber:
                 def wrapped_callback(msg):
                     """Wrapper that converts NATS message to SwarmEvent and calls callback."""
                     self._handle_message(sub_id, msg)
-                
+
                 self._client.subscribe(
                     subject=subject,
                     queue=queue,
                     callback=wrapped_callback,
                 )
                 subscription.state = SubscriptionState.ACTIVE
-                
+
                 logger.info(
                     "subscription_created",
                     subscription_id=sub_id,
@@ -212,10 +212,10 @@ class NATSSubscriber:
     async def unsubscribe(self, subscription_id: str) -> bool:
         """
         Unsubscribe from a subject.
-        
+
         Args:
             subscription_id: Subscription to cancel
-            
+
         Returns:
             True if subscription was found and removed
         """

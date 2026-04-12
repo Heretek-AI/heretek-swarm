@@ -36,7 +36,7 @@ class SwarmEvent:
     timestamp: str = field(default_factory=lambda: datetime.utcnow().isoformat())
     correlation_id: str | None = None
     trace_id: str | None = None
-    
+
     def to_dict(self) -> dict:
         """Convert to dictionary."""
         return {
@@ -49,7 +49,7 @@ class SwarmEvent:
             "correlation_id": self.correlation_id,
             "trace_id": self.trace_id,
         }
-    
+
     def to_json(self) -> str:
         """Convert to JSON string."""
         return json.dumps(self.to_dict())
@@ -59,7 +59,7 @@ class SwarmEvent:
 class NATSPublisher:
     """
     Structured event publisher for NATS.
-    
+
     Publishes events to standardized swarm topics:
     - agents.{agent_id}.messages
     - agents.{agent_id}.events
@@ -69,46 +69,46 @@ class NATSPublisher:
     """
     client: NATSClient = field(default=None)
     _default_source: str = "heretek-swarm"
-    
+
     async def initialize(self, source: str = "heretek-swarm") -> None:
         """Initialize publisher with NATS client."""
         self._default_source = source
         self.client = await get_nats_client()
         if not self.client.is_connected:
             await self.client.connect()
-    
+
     def _get_topic(self, target: str | None, event_type: str) -> str:
         """Determine NATS topic from event type."""
         if target:
             if event_type == "message":
                 return f"agents.{target}.messages"
             return f"agents.{target}.events"
-        
+
         if event_type.startswith("consensus"):
             return f"consensus.{event_type.split('.', 1)[1]}"
-        
+
         if event_type.startswith("consciousness"):
             return f"consciousness.{event_type.split('.', 1)[1]}"
-        
+
         return f"swarm.{event_type}"
-    
+
     async def publish_event(self, event: SwarmEvent) -> bool:
         """
         Publish a swarm event.
-        
+
         Args:
             event: The event to publish
-            
+
         Returns:
             True if published successfully
         """
         if not self.client:
             logger.warning("publisher_not_initialized")
             return False
-        
+
         topic = self._get_topic(event.target_agent, event.event_type)
         return await self.client.publish(topic, event.to_json())
-    
+
     async def send_message(
         self,
         source: str,
@@ -127,7 +127,7 @@ class NATSPublisher:
             },
         )
         return await self.publish_event(event)
-    
+
     async def emit_agent_event(
         self,
         agent_id: str,
@@ -141,7 +141,7 @@ class NATSPublisher:
             payload=data,
         )
         return await self.publish_event(event)
-    
+
     async def emit_consensus_event(
         self,
         topic: str,
@@ -154,7 +154,7 @@ class NATSPublisher:
             payload=data,
         )
         return await self.publish_event(event)
-    
+
     async def emit_consciousness_metric(
         self,
         metric_type: str,

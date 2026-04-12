@@ -6,6 +6,7 @@ Enforces >80% test coverage and <100ms message latency baseline.
 """
 
 import asyncio
+import sys
 import time
 import uuid
 from collections.abc import AsyncGenerator, Generator
@@ -16,6 +17,18 @@ from unittest.mock import AsyncMock, MagicMock
 import pytest
 import pytest_asyncio
 from pydantic import BaseModel
+
+# =============================================================================
+# PRE-COLLECTION FIXTURES
+# These run before test collection to set up module-level mocks
+# =============================================================================
+
+def pytest_configure(config: pytest.Config) -> None:
+    """Configure pytest before test collection."""
+    # Mock pynats module to avoid import errors for NATS dependencies
+    if 'pynats' not in sys.modules:
+        mock_pynats = MagicMock()
+        sys.modules['pynats'] = mock_pynats
 
 # ============== CONFIGURATION ==============
 
@@ -247,6 +260,36 @@ def assert_latency_baseline():
             f"baseline of {MESSAGE_LATENCY_BASELINE_MS}ms - FLAG FOR REFACTORING"
         )
     return _assert
+
+
+# ============== INFRASTRUCTURE MOCKS ==============
+
+@pytest.fixture(autouse=True)
+def mock_nats_module():
+    """Mock NATS module to avoid pynats dependency issues."""
+    import sys
+    from unittest.mock import MagicMock
+
+    # Create mock NATS classes
+    mock_nats_client = MagicMock()
+    mock_nats_publisher = MagicMock()
+    mock_nats_subscriber = MagicMock()
+
+    # Create mock module
+    mock_module = MagicMock()
+    mock_module.NATSClient = mock_nats_client
+    mock_module.NATSPublisher = mock_nats_publisher
+    mock_module.NATSSubscriber = mock_nats_subscriber
+    mock_module.get_nats_client = MagicMock(return_value=mock_nats_client)
+
+    # Also mock any submodules
+    sys.modules['pynats'] = MagicMock()
+
+    yield
+
+    # Cleanup
+    if 'pynats' in sys.modules:
+        del sys.modules['pynats']
 
 
 # ============== ASYNC FIXTURES ==============

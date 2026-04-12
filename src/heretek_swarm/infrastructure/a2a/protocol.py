@@ -22,29 +22,29 @@ class A2AMessageType(Enum):
     REQUEST = "request"
     RESPONSE = "response"
     ERROR = "error"
-    
+
     # Task messages
     TASK_PROPOSE = "task/propose"
     TASK_ACCEPT = "task/accept"
     TASK_REJECT = "task/reject"
     TASK_COMPLETE = "task/complete"
     TASK_PROGRESS = "task/progress"
-    
+
     # Delegation messages
     DELEGATE = "delegate"
     DELEGATION_ACCEPT = "delegate/accept"
     DELEGATION_REJECT = "delegate/reject"
     DELEGATION_COMPLETE = "delegate/complete"
-    
+
     # Consensus messages
     CONSENSUS_PROPOSE = "consensus/propose"
     CONSENSUS_VOTE = "consensus/vote"
     CONSENSUS_COMMIT = "consensus/commit"
-    
+
     # Capability discovery
     CAPABILITY_QUERY = "capability/query"
     CAPABILITY_ANNOUNCE = "capability/announce"
-    
+
     # Streaming
     STREAM_START = "stream/start"
     STREAM_CHUNK = "stream/chunk"
@@ -75,7 +75,7 @@ class AgentCapability:
 class A2AMessage:
     """
     A2A message structure (JSON-RPC 2.0 + extensions).
-    
+
     Fields:
         jsonrpc: JSON-RPC version (always "2.0")
         id: Message correlation ID
@@ -94,7 +94,7 @@ class A2AMessage:
     timestamp: str = field(default_factory=lambda: datetime.utcnow().isoformat())
     correlation_id: str | None = None
     trace_id: str | None = None
-    
+
     def to_dict(self) -> dict[str, Any]:
         """Convert to dictionary for serialization."""
         msg = {
@@ -104,7 +104,7 @@ class A2AMessage:
             "priority": self.priority.value,
             "timestamp": self.timestamp,
         }
-        
+
         if self.params:
             msg["params"] = self.params
         if self.result is not None:
@@ -115,9 +115,9 @@ class A2AMessage:
             msg["correlation_id"] = self.correlation_id
         if self.trace_id:
             msg["trace_id"] = self.trace_id
-            
+
         return msg
-    
+
     @classmethod
     def from_dict(cls, data: dict[str, Any]) -> "A2AMessage":
         """Parse from dictionary."""
@@ -236,23 +236,23 @@ def create_consensus_message(
 class A2AProtocol:
     """
     A2A Protocol handler for agent communication.
-    
+
     Handles:
     - Message validation and routing
     - Capability negotiation
     - Protocol compliance checking
     - Error handling
     """
-    
+
     SUPPORTED_METHODS = {
         method.value for method in A2AMessageType
     }
-    
+
     def __init__(self):
         self._registered_agents: dict[str, list[AgentCapability]] = {}
         self._message_history: list[A2AMessage] = []
         self._max_history = 1000
-    
+
     def register_agent(
         self,
         agent_id: str,
@@ -265,7 +265,7 @@ class A2AProtocol:
             agent_id=agent_id,
             capability_count=len(capabilities),
         )
-    
+
     def unregister_agent(self, agent_id: str) -> bool:
         """Unregister an agent."""
         if agent_id in self._registered_agents:
@@ -273,26 +273,26 @@ class A2AProtocol:
             logger.info("agent_unregistered", agent_id=agent_id)
             return True
         return False
-    
+
     def get_agent_capabilities(self, agent_id: str) -> list[AgentCapability] | None:
         """Get capabilities for an agent."""
         return self._registered_agents.get(agent_id)
-    
+
     def validate_message(self, message: A2AMessage) -> tuple[bool, str | None]:
         """
         Validate an A2A message.
-        
+
         Returns:
             Tuple of (is_valid, error_message)
         """
         # Check JSON-RPC version
         if message.jsonrpc != "2.0":
             return False, f"Invalid JSON-RPC version: {message.jsonrpc}"
-        
+
         # Check method is supported
         if message.method.value not in self.SUPPORTED_METHODS:
             return False, f"Unsupported method: {message.method.value}"
-        
+
         # Check required params for request messages
         if message.method in {
             A2AMessageType.TASK_PROPOSE,
@@ -301,16 +301,16 @@ class A2AProtocol:
         }:
             if not message.params:
                 return False, "Missing required params"
-        
+
         return True, None
-    
+
     def route_message(
         self,
         message: A2AMessage,
     ) -> str | None:
         """
         Determine routing for a message based on target and type.
-        
+
         Returns:
             Target agent ID or None for broadcast
         """
@@ -319,23 +319,23 @@ class A2AProtocol:
             A2AMessageType.CONSENSUS_PROPOSE,
         }:
             return None  # Broadcast
-        
+
         # Check for explicit target
         target = message.params.get("target_agent")
         if target:
             return target
-        
+
         return None
-    
+
     def process_message(self, message: A2AMessage) -> A2AMessage | None:
         """
         Process an incoming message and generate response.
-        
+
         Returns:
             Response message or None
         """
         is_valid, error = self.validate_message(message)
-        
+
         if not is_valid:
             return A2AMessage(
                 method=A2AMessageType.ERROR,
@@ -347,12 +347,12 @@ class A2AProtocol:
                 },
                 correlation_id=message.id,
             )
-        
+
         # Store in history
         self._message_history.append(message)
         if len(self._message_history) > self._max_history:
             self._message_history = self._message_history[-self._max_history:]
-        
+
         # Log message
         logger.debug(
             "a2a_message_processed",
@@ -360,9 +360,9 @@ class A2AProtocol:
             id=message.id,
             priority=message.priority.name,
         )
-        
+
         return None  # Actual processing done by agents
-    
+
     def get_capable_agents(
         self,
         capability_name: str,
@@ -370,7 +370,7 @@ class A2AProtocol:
     ) -> list[str]:
         """Find agents with a specific capability."""
         capable = []
-        
+
         for agent_id, capabilities in self._registered_agents.items():
             for cap in capabilities:
                 if cap.name == capability_name:
@@ -381,14 +381,14 @@ class A2AProtocol:
                     else:
                         capable.append(agent_id)
                         break
-        
+
         return capable
-    
+
     def _version_at_least(self, version: str, min_version: str) -> bool:
         """Check if version meets minimum requirement."""
         v1_parts = [int(x) for x in version.split('.')]
         v2_parts = [int(x) for x in min_version.split('.')]
-        
+
         for i in range(max(len(v1_parts), len(v2_parts))):
             v1 = v1_parts[i] if i < len(v1_parts) else 0
             v2 = v2_parts[i] if i < len(v2_parts) else 0
