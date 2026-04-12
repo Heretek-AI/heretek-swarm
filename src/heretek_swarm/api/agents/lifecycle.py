@@ -7,7 +7,11 @@ import structlog
 from fastapi import APIRouter, Depends, HTTPException
 
 from heretek_swarm.gateway.auth import verify_auth
-from heretek_swarm.runtime.registry_enhanced import AgentLifecycleState, EnhancedAgentRegistry, get_enhanced_registry
+from heretek_swarm.runtime.registry_enhanced import (
+    AgentLifecycleState,
+    EnhancedAgentRegistry,
+    get_enhanced_registry,
+)
 
 logger = structlog.get_logger()
 router = APIRouter()

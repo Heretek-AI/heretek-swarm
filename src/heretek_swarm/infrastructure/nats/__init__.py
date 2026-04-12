@@ -12,17 +12,17 @@ Topics:
 """
 
 from heretek_swarm.infrastructure.nats.client import NATSClient, get_nats_client
-from heretek_swarm.infrastructure.nats.publisher import NATSPublisher
-from heretek_swarm.infrastructure.nats.subscriber import NATSSubscriber
 from heretek_swarm.infrastructure.nats.discovery import (
-    AgentRegistry,
     AgentInfo,
+    AgentRegistry,
     AgentStatus,
     HeartbeatMessage,
     PresenceAnnouncement,
     get_discovery_registry,
     shutdown_discovery_registry,
 )
+from heretek_swarm.infrastructure.nats.publisher import NATSPublisher
+from heretek_swarm.infrastructure.nats.subscriber import NATSSubscriber
 
 __all__ = [
     "NATSClient",

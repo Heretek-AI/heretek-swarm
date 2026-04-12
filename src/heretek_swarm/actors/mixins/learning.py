@@ -8,8 +8,6 @@ collective learning, consensus, and memory optimization.
 from enum import Enum
 from typing import Any
 
-from heretek_swarm.actors.base import AgentActor
-
 
 class LearningState(Enum):
     """Learning state enumeration for adaptive learning."""

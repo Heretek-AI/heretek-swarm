@@ -10,9 +10,9 @@ import os
 from uuid import uuid4
 
 import pytest
-from memory.base import MemoryEntry, MemoryQuery, MemoryTier, MemoryType
+from heretek_swarm.memory.base import MemoryEntry, MemoryQuery, MemoryTier, MemoryType
 
-from memory import MEM0_AVAILABLE, Mem0Backend, Mem0Config
+from heretek_swarm.memory import MEM0_AVAILABLE, Mem0Backend, Mem0Config
 
 
 @pytest.fixture

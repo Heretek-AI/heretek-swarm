@@ -17,7 +17,15 @@ Submodules:
 import structlog
 from fastapi import APIRouter
 
-from heretek_swarm.api.agents import core, instances, jetstream, lifecycle, profiling, routing_control, routing_rules
+from heretek_swarm.api.agents import (
+    core,
+    instances,
+    jetstream,
+    lifecycle,
+    profiling,
+    routing_control,
+    routing_rules,
+)
 
 logger = structlog.get_logger()
 

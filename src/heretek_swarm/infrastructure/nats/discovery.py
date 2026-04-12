@@ -6,8 +6,6 @@ Uses heartbeat mechanism to track agent liveness.
 """
 
 import asyncio
-import json
-import uuid
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
 from enum import Enum

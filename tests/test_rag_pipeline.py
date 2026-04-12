@@ -11,15 +11,15 @@ Tests for:
 from unittest.mock import AsyncMock
 
 import pytest
-from rag.document_processor import (
+from heretek_swarm.rag.document_processor import (
     ChunkStrategy,
     DocumentProcessor,
     DocumentType,
     ProcessedDocument,
     ProcessingConfig,
 )
-from rag.rag_pipeline import RAGConfig, RAGPipeline
-from rag.retriever import (
+from heretek_swarm.rag.rag_pipeline import RAGConfig, RAGPipeline
+from heretek_swarm.rag.retriever import (
     HybridRetriever,
     RetrievalConfig,
     SearchResult,

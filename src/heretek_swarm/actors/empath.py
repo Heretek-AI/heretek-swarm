@@ -20,7 +20,6 @@ from swarms import Agent
 
 from heretek_swarm.actors.base import ActorMessage, AgentActor
 from heretek_swarm.actors.mixins import DeliberationMixin, LearningMixin, MemoryMixin, PatternMixin
-from heretek_swarm.actors.validation import validate_message as validate_message_schema
 
 # Session 44: Zero-Trust Validation
 from heretek_swarm.security.zero_trust import ZeroTrustValidator

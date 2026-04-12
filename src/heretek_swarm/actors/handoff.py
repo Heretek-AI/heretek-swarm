@@ -20,16 +20,13 @@ from typing import Any
 import structlog
 
 from heretek_swarm.actors.base import ActorMessage
-from heretek_swarm.actors.mixins import PatternMixin, DeliberationMixin, MemoryMixin, LearningMixin
+from heretek_swarm.actors.mixins import DeliberationMixin, LearningMixin, MemoryMixin, PatternMixin
 
 # Session 44: Collective Learning Integration
-from heretek_swarm.collective.learning import PatternType
 
 # Session 44: Consensus Integration
-from heretek_swarm.consensus.swarm_deliberation import Position
 
 # Session 44: Memory Optimization Integration
-from heretek_swarm.memory.access_patterns import AccessTier
 
 # Session 44: Zero-Trust Validation
 

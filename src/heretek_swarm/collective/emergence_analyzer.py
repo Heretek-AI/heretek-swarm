@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Any
 import structlog
 
 if TYPE_CHECKING:
-    from .emergent_detection import EmergentPattern, EmergentPatternDetector
+    from .emergent_detection import EmergentPatternDetector
 
 logger = structlog.get_logger(__name__)
 

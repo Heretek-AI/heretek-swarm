@@ -28,7 +28,6 @@ from heretek_swarm.actors.mixins import (
 )
 
 # Session 44: Collective Learning Integration
-from heretek_swarm.collective.learning import PatternExtractor, PatternType
 from heretek_swarm.consciousness.phi_training import (
     DecisionCoherenceTrainingScenario,
     PhiTrainingEnvironment,
@@ -36,13 +35,10 @@ from heretek_swarm.consciousness.phi_training import (
 )
 
 # Session 44: Consensus Integration
-from heretek_swarm.consensus.swarm_deliberation import Position, SwarmDeliberationEngine
 
 # Session 44: Memory Optimization Integration
-from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer, AccessTier
 
 # Session 44: Zero-Trust Validation
-from heretek_swarm.security.zero_trust import ZeroTrustValidator
 
 logger = structlog.get_logger("PrismAgent")
 

@@ -10,7 +10,7 @@ from datetime import datetime
 from typing import Any
 
 import pytest
-from evaluation.evaluator import (
+from heretek_swarm.evaluation.evaluator import (
     AgentEvaluator,
     EvaluationStatus,
     OutputConstraints,

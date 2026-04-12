@@ -2,7 +2,6 @@
 """Agent instances endpoints."""
 
 from enum import StrEnum
-from typing import Any
 
 import structlog
 from fastapi import APIRouter, Depends, HTTPException

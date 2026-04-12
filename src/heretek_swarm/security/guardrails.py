@@ -8,7 +8,7 @@ Reference: PraisonAI guardrails pattern
 import re
 from dataclasses import dataclass, field
 from enum import StrEnum
-from typing import Any
+from typing import Any, Dict, List
 
 import structlog
 

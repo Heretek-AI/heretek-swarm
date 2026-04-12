@@ -35,16 +35,9 @@ from heretek_swarm.actors.mixins.pattern import PatternMixin
 from heretek_swarm.actors.validation import validate_message
 
 # Session 44: Collective Learning Integration
-from heretek_swarm.collective.learning import PatternExtractor, PatternType
-
 # Session 44: Consensus Integration
-from heretek_swarm.consensus.swarm_deliberation import Position, SwarmDeliberationEngine
-
 # Session 44: Memory Optimization Integration
-from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer, AccessTier
-
 # Session 44: Zero-Trust Validation
-from heretek_swarm.security.zero_trust import ZeroTrustValidator
 from heretek_swarm.validation import (
     LLMOutputValidator,
 )

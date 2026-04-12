@@ -23,7 +23,6 @@ Zero-Trust Principles:
 import asyncio
 from collections import defaultdict
 from collections.abc import Callable
-from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
 from typing import Any
 
@@ -32,11 +31,11 @@ import structlog
 from .emergent_detection_types import (
     AgentBehaviorSnapshot,
     CollectiveBehavior,
+    DetectionEvent,
     EmergenceDetectionConfig,
     EmergenceLevel,
     EmergentPattern,
     EmergentPatternClass,
-    DetectionEvent,
 )
 from .emergent_detection_utils import (
     calculate_confidence,
@@ -46,11 +45,9 @@ from .emergent_detection_utils import (
     calculate_temporal_span,
     calculate_window_metrics,
     classify_emergence_level,
-    generate_recommended_action,
     measure_collective_capability,
 )
 from .evolution_engine import EvolutionEngine
-from .learning import ExtractedPattern, PatternMetadata, PatternSource, PatternType
 
 logger = structlog.get_logger(__name__)
 

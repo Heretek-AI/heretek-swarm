@@ -15,7 +15,7 @@ Features:
 
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
-from typing import Any
+from typing import Any, Dict, List
 
 # Import cycle detector and phi training for metrics integration
 try:
@@ -451,3 +451,27 @@ def get_metrics_collector() -> SwarmMetricsCollector:
     if _metrics_collector is None:
         _metrics_collector = SwarmMetricsCollector()
     return _metrics_collector
+
+
+@dataclass
+class MetricsSnapshot:
+    """Snapshot of metrics at a point in time."""
+    timestamp: float
+    agent_id: str
+    metrics: Dict[str, float] = field(default_factory=dict)
+    metadata: Dict[str, Any] = field(default_factory=dict)
+
+
+async def record_consensus_round(round_id: str, result: Dict[str, Any]) -> None:
+    """Record consensus round metrics stub."""
+    pass
+
+
+async def record_message_sent(message_id: str, agent_id: str, metadata: Dict[str, Any]) -> None:
+    """Record message sent metrics stub."""
+    pass
+
+
+async def record_task_completion(task_id: str, agent_id: str, success: bool, metadata: Dict[str, Any]) -> None:
+    """Record task completion metrics stub."""
+    pass

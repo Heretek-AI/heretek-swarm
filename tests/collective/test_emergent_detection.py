@@ -4,6 +4,7 @@ from unittest.mock import AsyncMock, Mock
 
 import pytest
 
+from heretek_swarm.collective.emergence_analyzer import EmergenceAnalyzer
 from heretek_swarm.collective.emergent_detection import (
     AgentBehaviorSnapshot,
     CollectiveBehavior,
@@ -14,7 +15,6 @@ from heretek_swarm.collective.emergent_detection import (
     EmergentPatternClass,
     EmergentPatternDetector,
 )
-from heretek_swarm.collective.emergence_analyzer import EmergenceAnalyzer
 
 
 class TestAgentBehaviorSnapshot:

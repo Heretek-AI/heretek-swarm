@@ -1,11 +1,11 @@
 # =============================================================================
 """JetStream management endpoints."""
 
-from pydantic import BaseModel, Field
 from typing import Any
 
 import structlog
 from fastapi import APIRouter, Depends, HTTPException
+from pydantic import BaseModel, Field
 
 from heretek_swarm.gateway.auth import verify_auth
 

@@ -21,11 +21,11 @@ from heretek_swarm.collective.adaptive_learning import (
     LearningRateStrategy,
     MutationType,
 )
-from heretek_swarm.collective.evolution_engine import EvolutionEngine
 from heretek_swarm.collective.emergent_detection_types import (
     EvolutionMetrics,
     EvolutionPhase,
 )
+from heretek_swarm.collective.evolution_engine import EvolutionEngine
 
 # =============================================================================
 # EvolutionEngine Tests

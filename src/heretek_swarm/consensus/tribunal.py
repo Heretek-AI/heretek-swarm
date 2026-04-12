@@ -36,13 +36,11 @@ import hashlib
 import json
 import uuid
 from dataclasses import dataclass, field
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime
 from enum import Enum
 from typing import Any
 
 import structlog
-
-from .audit_models import DecisionOutcome
 
 logger = structlog.get_logger("Tribunal")
 

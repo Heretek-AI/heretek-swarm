@@ -9,7 +9,7 @@ from uuid import uuid4
 
 import pytest
 
-from memory import (
+from heretek_swarm.memory import (
     MEM0_AVAILABLE,
     Mem0Backend,
     Mem0Config,

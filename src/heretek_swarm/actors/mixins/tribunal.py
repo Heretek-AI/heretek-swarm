@@ -11,7 +11,6 @@ import structlog
 
 if TYPE_CHECKING:
     from heretek_swarm.consensus.tribunal import (
-        CaseStatus,
         EvidenceType,
         RulingType,
         Tribunal,

@@ -5,11 +5,9 @@ Provides methods for tracking memory access patterns,
 determining memory tiers, and prefetching relevant memories.
 """
 
-from typing import Any
 
 import structlog
 
-from heretek_swarm.actors.base import AgentActor
 from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer, AccessTier
 
 logger = structlog.get_logger("MemoryMixin")

@@ -10,7 +10,6 @@ from typing import Any
 
 import structlog
 
-from heretek_swarm.actors.base import AgentActor
 from heretek_swarm.collective.learning import PatternExtractor, PatternType
 
 logger = structlog.get_logger("PatternMixin")

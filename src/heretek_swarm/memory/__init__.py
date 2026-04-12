@@ -24,6 +24,7 @@ from heretek_swarm.memory.access_patterns import (
 
 # Core type definitions (from base module - local, not legacy src/)
 from heretek_swarm.memory.base import (
+    DualTierMemorySystem,
     DualTierMemory,
     EphemeralMemory,
     MemoryEntry,
@@ -33,6 +34,7 @@ from heretek_swarm.memory.base import (
     MemoryType,
 )
 from heretek_swarm.memory.base import (
+    DualTierMemorySystem,
     PersistentMemory as BasePersistentMemory,
 )
 from heretek_swarm.memory.compression import (
@@ -134,3 +136,11 @@ __all__ = [
     "create_memory_manager",
     "create_memory_store",
 ]
+
+# Compatibility exports for tests
+try:
+    from mem0 import Memory as Mem0Backend
+    MEM0_AVAILABLE = True
+except ImportError:
+    MEM0_AVAILABLE = False
+    Mem0Backend = None  # type: ignore

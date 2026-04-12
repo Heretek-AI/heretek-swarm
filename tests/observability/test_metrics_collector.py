@@ -14,7 +14,7 @@ import asyncio
 
 import pytest
 
-from src.observability.metrics import (
+from heretek_swarm.observability.metrics import (
     AgentMetrics,
     ConsciousnessMetricsData,
     MetricsSnapshot,

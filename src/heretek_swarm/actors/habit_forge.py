@@ -39,7 +39,7 @@ from heretek_swarm.consciousness.phi_training import (
 from heretek_swarm.consensus.swarm_deliberation import Position, SwarmDeliberationEngine
 
 # Session 44: Memory Optimization Integration
-from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer, AccessTier
+from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer
 
 # Session 44: Zero-Trust Validation
 from heretek_swarm.security.zero_trust import ZeroTrustValidator

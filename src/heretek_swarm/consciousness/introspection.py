@@ -16,7 +16,7 @@ import math
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import Enum
-from typing import Any
+from typing import Any, Dict, List
 
 import structlog
 

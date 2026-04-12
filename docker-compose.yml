@@ -129,6 +129,7 @@ services:
       - litellm
 
 volumes:
+  nats_data:
   postgres_data:
   redis_data:
   qdrant_data:
@@ -136,3 +137,31 @@ volumes:
 networks:
   default:
     name: heretek-swarm
+
+  # =============================================================================
+  # NATS Event Mesh with JetStream
+  # =============================================================================
+  nats:
+    image: nats:2.10-alpine
+    ports:
+      - "4222:4222"   # Client port
+      - "8222:8222"   # Monitoring port
+      - "6222:6222"   # Cluster port
+    environment:
+      - NATS_JETSTREAM=enabled
+    command:
+      - -js
+      - -m
+      - "8222"
+      - -sd
+      - /data/jetstream
+    volumes:
+      - nats_data:/data
+    restart: unless-stopped
+    healthcheck:
+      test: ["CMD", "wget", "-q", "--spider", "http://localhost:8222/healthz"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+      start_period: 5s
+

@@ -22,13 +22,13 @@ from typing import Any
 import structlog
 from pydantic import ValidationError
 
+from heretek_swarm.actors.base import ActorMessage, AgentActor
 from heretek_swarm.actors.mixins import (
     DeliberationMixin,
     LearningMixin,
     MemoryMixin,
     PatternMixin,
 )
-from heretek_swarm.actors.base import ActorMessage, AgentActor
 from heretek_swarm.actors.validation import validate_message
 
 # Session 44: Collective Learning Integration

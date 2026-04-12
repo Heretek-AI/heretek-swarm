@@ -25,7 +25,6 @@ from swarms import Agent
 from heretek_swarm.actors.base import ActorMessage, AgentActor
 from heretek_swarm.actors.mixins import DeliberationMixin, LearningMixin, MemoryMixin, PatternMixin
 from heretek_swarm.actors.validation import validate_message
-from heretek_swarm.collective.learning import PatternExtractor, PatternType
 
 logger = structlog.get_logger("ExplorerAgent")
 
