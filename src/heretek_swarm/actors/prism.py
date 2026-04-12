@@ -20,17 +20,11 @@ import structlog
 from swarms import Agent
 
 from heretek_swarm.actors.base import ActorMessage, AgentActor
-
-# Session 44: Collective Learning Integration
-from heretek_swarm.collective.learning import PatternExtractor, PatternType
-
-# Phi Training Integration
 from heretek_swarm.consciousness.phi_training import (
-    AgentActor,
     DecisionCoherenceTrainingScenario,
     PhiTrainingEnvironment,
     TrainingScenario,
-)
+)  # noqa: F401
 
 # Session 44: Consensus Integration
 from heretek_swarm.consensus.swarm_deliberation import Position, SwarmDeliberationEngine
@@ -40,6 +34,9 @@ from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer, AccessTi
 
 # Session 44: Zero-Trust Validation
 from heretek_swarm.security.zero_trust import ZeroTrustValidator
+
+# Session 44: Collective Learning Integration
+from heretek_swarm.collective.learning import PatternExtractor, PatternType
 
 logger = structlog.get_logger("PrismAgent")
 
@@ -1261,9 +1258,10 @@ Respond in JSON:
             "phi_training": self.get_phi_training_status(),
         }
 
-    # =========================================================================
-    # Phi Training Integration Methods
-    # =========================================================================
+# =========================================================================
+# Session 44: Collective Learning Integration
+# Phi Training Integration Methods
+# =========================================================================
 
     def _prism_agent_actor(self) -> AgentActor:
         """Create an AgentActor wrapper for Prism for Phi training."""

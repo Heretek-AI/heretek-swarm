@@ -21,12 +21,16 @@ from heretek_swarm.memory.access_patterns import (
     AccessTier,
     MemoryAccessProfile,
 )
+
+# Core type definitions (from base module - local, not legacy src/)
 from heretek_swarm.memory.base import (
     DualTierMemory,
     EphemeralMemory,
     MemoryEntry,
     MemoryQuery,
     MemorySystem,
+    MemoryTier,
+    MemoryType,
 )
 from heretek_swarm.memory.base import (
     PersistentMemory as BasePersistentMemory,
@@ -60,12 +64,6 @@ from heretek_swarm.memory.prefetcher import (
     PreFetchResult,
     PreFetchStrategy,
 )
-# Core type definitions (from base module - local, not legacy src/)
-from heretek_swarm.memory.base import (
-    MemoryTier,
-    MemoryType,
-)
-
 from heretek_swarm.memory.tiering import (
     MemoryTier,
     MemoryTieringSystem,

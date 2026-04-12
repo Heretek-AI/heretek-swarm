@@ -37,6 +37,7 @@ class MemoryType(StrEnum):
     PROCEDURAL = "procedural"  # Skills and procedures
     WORKING = "working"        # Current task context
 
+@dataclass
 class MemoryEntry:
     """
     A single memory entry.

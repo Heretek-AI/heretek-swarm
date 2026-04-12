@@ -5,7 +5,7 @@ Re-exports tools from src/tools for heretek_swarm namespace compatibility.
 This module provides backward compatibility for imports referencing heretek_swarm.tools.
 """
 
-from tools.base import (
+from heretek_swarm.tools.base import (
     BaseTool,
     SimpleTool,
     ToolContext,
@@ -14,12 +14,12 @@ from tools.base import (
     ToolMetadata,
     ToolStatus,
 )
-from tools.examples import (
+from heretek_swarm.tools.examples import (
     ConsensusVoteTool,
     HealthCheckTool,
     MemorySearchTool,
 )
-from tools.registry import (
+from heretek_swarm.tools.registry import (
     ToolRegistry,
     ToolRegistryConfig,
     ToolRegistryEntry,
