@@ -74,10 +74,43 @@ Phase V:   Emergent Intelligence & Measurement
 - Mem0Backend wrapper class created
 
 **Remaining Issues:**
-- Empath Agent: `validate_message` NameError (line ~213)
-- State tests: 4 API mismatches
+- State tests: 4 API mismatches (FIXED: Empath NameError)
 - RAG tests: External dependencies (Qdrant, OpenAI)
 - NATS→Actor bridge: Not wired
+
+---
+
+## ENVIRONMENT CONFIGURATION
+
+### Environment File (`.env`)
+
+API credentials and configuration are stored in `.env` at the project root.
+**DO NOT hardcode API keys in code or documentation.** Always read from `.env`:
+
+```bash
+# Load environment variables before running commands
+export $(cat .env | grep -v '^#' | xargs)
+```
+
+### Available Configuration
+
+| Variable | Description | Source |
+|----------|-------------|--------|
+| `OPENAI_BASE_URL` | LLM API endpoint | `.env` |
+| `OPENAI_API_KEY` | LLM API key | `.env` |
+| `LLM_MODEL` | Model identifier (e.g., `MiniMax-M2.7`) | `.env` |
+| `LEMONADE_API` | Embedding server URL | `.env` |
+| `LEMONADE_API_KEY` | Embedding server key | `.env` |
+| `EMBEDDING_MODEL` | Embedding model name | `.env` |
+
+### Docker Access
+
+Docker commands can be run without password (passwordless sudo configured):
+```bash
+docker ps                    # List running containers
+docker exec -it <id> /bin/bash  # Shell into container
+docker logs <id>             # View container logs
+```
 
 ---
 
