@@ -13,12 +13,21 @@ from typing import Any
 import structlog
 from fastapi import APIRouter, Depends, HTTPException
 
-from evaluation.evaluator import (
-    EvaluationMetric,
-    TestCase,
-    get_evaluator,
-)
 from heretek_swarm.gateway.auth import verify_auth
+
+# Stub imports - evaluation module is Phase 1 infrastructure
+try:
+    from heretek_swarm.evaluation.evaluator import (
+        EvaluationMetric,
+        TestCase,
+        get_evaluator,
+    )
+    EVALUATION_AVAILABLE = True
+except ImportError:
+    EVALUATION_AVAILABLE = False
+    EvaluationMetric = None
+    TestCase = None
+    get_evaluator = None
 
 logger = structlog.get_logger(__name__)
 

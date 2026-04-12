@@ -12,17 +12,25 @@ from typing import Any
 
 import structlog
 from fastapi import APIRouter, Depends, HTTPException, UploadFile
-from rag.document_processor import ProcessingConfig
-from rag.rag_pipeline import RAGPipeline
 
 from heretek_swarm.gateway.auth import verify_auth
+
+# Stub imports - rag module is Phase 1 infrastructure
+try:
+    from rag.document_processor import ProcessingConfig
+    from rag.rag_pipeline import RAGPipeline
+    RAG_AVAILABLE = True
+except ImportError:
+    RAG_AVAILABLE = False
+    ProcessingConfig = None
+    RAGPipeline = None
 
 logger = structlog.get_logger(__name__)
 
 router = APIRouter(prefix="/api/rag", tags=["rag"])
 
 # Global RAG pipeline instance
-_rag_pipeline: RAGPipeline | None = None
+_rag_pipeline: "RAGPipeline | None" = None  # type: ignore
 
 # =============================================================================
 # Lifecycle Management
