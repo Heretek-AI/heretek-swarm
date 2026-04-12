@@ -21,16 +21,6 @@ from swarms import Agent
 from heretek_swarm.actors.base import ActorMessage, AgentActor
 from heretek_swarm.actors.mixins import DeliberationMixin, LearningMixin, MemoryMixin, PatternMixin
 from heretek_swarm.actors.validation import validate_message as validate_message_schema
-from heretek_swarm.collective.learning import PatternExtractor
-
-# Alias for use in handlers
-validate_message = validate_message_schema
-
-# Session 44: Consensus Integration
-from heretek_swarm.consensus.swarm_deliberation import SwarmDeliberationEngine
-
-# Session 44: Memory Optimization Integration
-from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer
 
 # Session 44: Zero-Trust Validation
 from heretek_swarm.security.zero_trust import ZeroTrustValidator
@@ -67,9 +57,9 @@ class EmpathAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, A
         sentiment_threshold: float = 0.7,
         stress_threshold: float = 0.8,
         max_mood_history: int = 100,
-        pattern_extractor: PatternExtractor | None = None,
-        deliberation_engine: SwarmDeliberationEngine | None = None,
-        access_analyzer: AccessPatternAnalyzer | None = None,
+        _pattern_extractor: Any | None = None,
+        _deliberation_engine: Any | None = None,
+        _access_analyzer: Any | None = None,
         zero_trust_validator: ZeroTrustValidator | None = None,
         **kwargs,
     ) -> None:
@@ -134,17 +124,9 @@ class EmpathAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, A
         self._conflict_history: list[dict[str, Any]] = self.conflict_log
         self._collective_mood: dict[str, float] = self.collective_mood
 
-
-        # Session 44: Collective Learning Integration
-        self.pattern_extractor = pattern_extractor or PatternExtractor(min_support=3, min_confidence=0.6)
-
-        # Session 44: Consensus Integration
-        self.deliberation_engine = deliberation_engine or SwarmDeliberationEngine(
-            max_rounds=5, consensus_threshold=0.75, min_participants=2
-        )
-
-        # Session 44: Memory Optimization Integration
-        self.access_analyzer = access_analyzer or AccessPatternAnalyzer()
+        # Session 44: Collective Learning Integration (provided by LearningMixin)
+        # Session 44: Consensus Integration (provided by DeliberationMixin)
+        # Session 44: Memory Optimization Integration (provided by MemoryMixin)
 
         # Session 44: Zero-Trust Validation
         self.zero_trust_validator = zero_trust_validator or ZeroTrustValidator()
