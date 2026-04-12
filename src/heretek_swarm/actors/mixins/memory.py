@@ -15,7 +15,7 @@ from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer, AccessTi
 logger = structlog.get_logger("MemoryMixin")
 
 
-class MemoryMixin(AgentActor):
+class MemoryMixin:
     """
     Mixin providing memory optimization methods.
 

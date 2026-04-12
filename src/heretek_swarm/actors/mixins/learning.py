@@ -5,12 +5,24 @@ Provides a single method for reporting the overall status of
 collective learning, consensus, and memory optimization.
 """
 
+from enum import Enum
 from typing import Any
 
 from heretek_swarm.actors.base import AgentActor
 
 
-class LearningMixin(AgentActor):
+class LearningState(Enum):
+    """Learning state enumeration for adaptive learning."""
+
+    IDLE = "idle"
+    LEARNING = "learning"
+    CONVERGED = "converged"
+    STAGNANT = "stagnant"
+    DIVERGENT = "divergent"
+    UNKNOWN = "unknown"
+
+
+class LearningMixin:
     """
     Mixin providing collective learning status reporting.
 

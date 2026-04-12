@@ -8,13 +8,13 @@ from heretek_swarm.collective.emergent_detection import (
     AgentBehaviorSnapshot,
     CollectiveBehavior,
     DetectionEvent,
-    EmergenceAnalyzer,
     EmergenceDetectionConfig,
     EmergenceLevel,
     EmergentPattern,
     EmergentPatternClass,
     EmergentPatternDetector,
 )
+from heretek_swarm.collective.emergence_analyzer import EmergenceAnalyzer
 
 
 class TestAgentBehaviorSnapshot:

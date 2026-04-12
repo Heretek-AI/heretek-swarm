@@ -263,3 +263,28 @@ async def update_routing_rule(
 
 
 @router.delete("/routing/rules/{rule_id}")
+async def delete_routing_rule(
+    rule_id: str,
+    router: ContentRouter = Depends(get_router_instance),
+    authenticated: str = Depends(verify_auth),
+) -> dict[str, str]:
+    """
+    Delete a routing rule.
+
+    Args:
+        rule_id: Rule identifier
+
+    Returns:
+        Confirmation message
+    """
+    try:
+        if router.remove_rule(rule_id):
+            logger.info("routing_rule_deleted", rule_id=rule_id)
+            return {"message": f"Rule {rule_id} deleted successfully"}
+        else:
+            raise HTTPException(404, f"Rule {rule_id} not found")
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.error(f"Failed to delete routing rule: {e}", exc_info=True)
+        raise HTTPException(500, f"Failed to delete routing rule: {e!s}")

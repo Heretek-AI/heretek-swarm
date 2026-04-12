@@ -1,8 +1,6 @@
-"""Utility functions for emergent detection."""
-
 from __future__ import annotations
 
-from datetime import UTC, datetime, timedelta
+from datetime import UTC, datetime
 from typing import TYPE_CHECKING
 
 if TYPE_CHECKING:
@@ -26,6 +24,40 @@ def calculate_window_metrics(window: list[AgentBehaviorSnapshot]) -> dict[str, f
         "unique_agents": len({s.agent_id for s in window}),
         "total_interactions": sum(s.interaction_count for s in window),
     }
+
+
+def analyze_temporal_windows(
+    agent_snapshots: dict[str, list[AgentBehaviorSnapshot]],
+    window_size_seconds: float,
+) -> list[list[AgentBehaviorSnapshot]]:
+    """Divide agent snapshots into temporal windows."""
+    all_snapshots = []
+    for snapshots in agent_snapshots.values():
+        all_snapshots.extend(snapshots)
+
+    if not all_snapshots:
+        return []
+
+    sorted_snapshots = sorted(all_snapshots, key=lambda s: datetime.fromisoformat(s.timestamp))
+
+    windows = []
+    current_window = []
+    window_start = datetime.fromisoformat(sorted_snapshots[0].timestamp)
+
+    for snapshot in sorted_snapshots:
+        snapshot_time = datetime.fromisoformat(snapshot.timestamp)
+
+        if (snapshot_time - window_start).total_seconds() <= window_size_seconds:
+            current_window.append(snapshot)
+        else:
+            windows.append(current_window)
+            current_window = [snapshot]
+            window_start = snapshot_time
+
+    if current_window:
+        windows.append(current_window)
+
+    return windows
 
 
 def calculate_shift_score(

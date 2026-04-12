@@ -24,19 +24,8 @@ from typing import Any
 import structlog
 
 from heretek_swarm.actors.base import ActorMessage, AgentActor
+from heretek_swarm.actors.mixins import DeliberationMixin, LearningMixin, MemoryMixin, PatternMixin
 from heretek_swarm.actors.validation import validate_message
-
-# Session 44: Collective Learning Integration
-from heretek_swarm.collective.learning import PatternExtractor, PatternType
-
-# Session 44: Consensus Integration
-from heretek_swarm.consensus.swarm_deliberation import Position, SwarmDeliberationEngine
-
-# Session 44: Memory Optimization Integration
-from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer, AccessTier
-
-# Session 44: Zero-Trust Validation
-from heretek_swarm.security.zero_trust import ZeroTrustValidator
 
 logger = structlog.get_logger(__name__)
 
@@ -139,7 +128,7 @@ class ChangeNotification:
         }
 
 
-class CatalystAgent(AgentActor):
+class CatalystAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor):
     """
     Change Management Specialist.
 
@@ -193,31 +182,10 @@ class CatalystAgent(AgentActor):
         self._history: list[dict[str, Any]] = []
         self._max_history: int = self._config.get("max_history", 1000)
 
-        # Session 44: Collective Learning Integration
-        self.pattern_extractor = pattern_extractor or PatternExtractor(min_support=3, min_confidence=0.6)
-
-        # Session 44: Consensus Integration
-        self.deliberation_engine = deliberation_engine or SwarmDeliberationEngine(
-            max_rounds=5, consensus_threshold=0.75, min_participants=2
-        )
-
-        # Session 44: Memory Optimization Integration
-        self.access_analyzer = access_analyzer or AccessPatternAnalyzer()
-
-        # Session 44: Zero-Trust Validation
-        self.zero_trust_validator = zero_trust_validator or ZeroTrustValidator()
-
-        # Session 44: Integration state
-        self._active_deliberations: dict[str, str] = {}  # change_id -> deliberation_id
-        self._pattern_emitted_changes: set[str] = set()
-
         logger.info(
             "catalyst_initialized",
             agent_id=self.agent_id,
             max_changes=self._max_changes,
-            collective_learning_enabled=self.pattern_extractor is not None,
-            consensus_enabled=self.deliberation_engine is not None,
-            memory_optimization_enabled=self.access_analyzer is not None,
         )
 
     async def _validate_message(self, message: ActorMessage) -> dict[str, Any]:

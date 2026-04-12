@@ -16,7 +16,7 @@ from heretek_swarm.collective.learning import PatternExtractor, PatternType
 logger = structlog.get_logger("PatternMixin")
 
 
-class PatternMixin(AgentActor):
+class PatternMixin:
     """
     Mixin providing collective pattern learning methods.
 

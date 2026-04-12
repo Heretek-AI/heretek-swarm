@@ -75,13 +75,13 @@ from .distributed_learning import (
     SyncMessage,
     SyncOperation,
 )
+from .emergence_analyzer import EmergenceAnalyzer
 from .emergent_detection import (
     AgentBehaviorSnapshot,
     AgentCapabilitySnapshot,
     CapabilityRecord,
     CollectiveBehavior,
     DetectionEvent,
-    EmergenceAnalyzer,
     EmergenceDetectionConfig,
     EmergenceLevel,
     EmergentPattern,

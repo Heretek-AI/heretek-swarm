@@ -1,0 +1,314 @@
+"""Emergent detection type definitions."""
+
+from __future__ import annotations
+
+import uuid
+from dataclasses import dataclass, field
+from datetime import UTC, datetime
+from enum import StrEnum
+from typing import Any
+
+from heretek_swarm.collective.learning import (
+    ExtractedPattern,
+    PatternMetadata,
+    PatternSource,
+    PatternType,
+)
+
+
+class EmergentPatternClass(StrEnum):
+    """Classification of emergent patterns."""
+
+    COORDINATION = "coordination"
+    OPTIMIZATION = "optimization"
+    INNOVATION = "innovation"
+    SELF_ORGANIZATION = "self_organization"
+    ADAPTATION = "adaptation"
+    PHASE_TRANSITION = "phase_transition"
+    CASCADE = "cascade"
+    RESONANCE = "resonance"
+
+
+class EmergenceLevel(StrEnum):
+    """Levels of emergence strength."""
+
+    WEAK = "weak"
+    MODERATE = "moderate"
+    STRONG = "strong"
+    CRITICAL = "critical"
+
+
+class EvolutionPhase(StrEnum):
+    """Phases of evolutionary development."""
+
+    INITIALIZATION = "initialization"
+    EXPLORATION = "exploration"
+    SELECTION = "selection"
+    CONSOLIDATION = "consolidation"
+    EMERGENCE = "emergence"
+    MATURATION = "maturation"
+    EQUILIBRIUM = "equilibrium"
+
+
+@dataclass
+class CapabilityRecord:
+    """Record of a capability gained by an agent or the swarm."""
+
+    capability_id: str = field(default_factory=lambda: str(uuid.uuid4()))
+    capability_type: str = ""
+    capability_name: str = ""
+    description: str = ""
+
+    origin_agent_id: str | None = None
+    contributing_agents: list[str] = field(default_factory=list)
+
+    development_time_seconds: float = 0.0
+    evolution_rate: float = 0.0
+
+    fitness_contribution: float = 0.0
+    selection_pressure: float = 0.0
+
+    first_observed: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
+    last_reinforced: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
+    stabilization_time: str | None = None
+    is_stabilized: bool = False
+    is_inherited: bool = False
+    inheritance_count: int = 0
+    metadata: dict[str, Any] = field(default_factory=dict)
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "capability_id": self.capability_id,
+            "capability_type": self.capability_type,
+            "capability_name": self.capability_name,
+            "description": self.description,
+            "origin_agent_id": self.origin_agent_id,
+            "contributing_agents": self.contributing_agents,
+            "development_time_seconds": self.development_time_seconds,
+            "evolution_rate": self.evolution_rate,
+            "fitness_contribution": self.fitness_contribution,
+            "selection_pressure": self.selection_pressure,
+            "first_observed": self.first_observed,
+            "last_reinforced": self.last_reinforced,
+            "stabilization_time": self.stabilization_time,
+            "is_stabilized": self.is_stabilized,
+            "is_inherited": self.is_inherited,
+            "inheritance_count": self.inheritance_count,
+            "metadata": self.metadata,
+        }
+
+
+@dataclass
+class EvolutionMetrics:
+    """Metrics tracking the evolution of the swarm."""
+
+    evolution_rate: float = 0.0
+    capabilities_per_generation: float = 0.0
+    capability_diversity: float = 0.0
+
+    fitness_landscape: float = 0.0
+    fitness_variance: float = 0.0
+    fitness_trend: float = 0.0
+
+    adaptability_index: float = 0.0
+    adaptation_latency: float = 0.0
+    selection_fidelity: float = 0.0
+
+    total_capabilities: int = 0
+    stabilized_capabilities: int = 0
+    inherited_capabilities: int = 0
+    active_capabilities: int = 0
+
+    current_phase: EvolutionPhase = EvolutionPhase.INITIALIZATION
+    generations: int = 0
+    generation_time_seconds: float = 0.0
+
+    avg_fitness: float = 0.0
+    max_fitness: float = 0.0
+    min_fitness: float = 0.0
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "evolution_rate": self.evolution_rate,
+            "capabilities_per_generation": self.capabilities_per_generation,
+            "capability_diversity": self.capability_diversity,
+            "fitness_landscape": self.fitness_landscape,
+            "fitness_variance": self.fitness_variance,
+            "fitness_trend": self.fitness_trend,
+            "adaptability_index": self.adaptability_index,
+            "adaptation_latency": self.adaptation_latency,
+            "selection_fidelity": self.selection_fidelity,
+            "total_capabilities": self.total_capabilities,
+            "stabilized_capabilities": self.stabilized_capabilities,
+            "inherited_capabilities": self.inherited_capabilities,
+            "active_capabilities": self.active_capabilities,
+            "current_phase": self.current_phase.value,
+            "generations": self.generations,
+            "generation_time_seconds": self.generation_time_seconds,
+            "avg_fitness": self.avg_fitness,
+            "max_fitness": self.max_fitness,
+            "min_fitness": self.min_fitness,
+        }
+
+
+@dataclass
+class AgentCapabilitySnapshot:
+    """Snapshot of agent capabilities at a point in time."""
+
+    agent_id: str
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
+    capability_levels: dict[str, float] = field(default_factory=dict)
+    fitness_score: float = 0.0
+    fitness_history: list[float] = field(default_factory=list)
+    behavior_diversity: float = 0.0
+    behavior_innovation: float = 0.0
+    success_rate: float = 0.0
+    adaptation_count: int = 0
+    active_capabilities: list[str] = field(default_factory=list)
+    newly_acquired: list[str] = field(default_factory=list)
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "agent_id": self.agent_id,
+            "timestamp": self.timestamp,
+            "capability_levels": self.capability_levels,
+            "fitness_score": self.fitness_score,
+            "fitness_history": self.fitness_history,
+            "behavior_diversity": self.behavior_diversity,
+            "behavior_innovation": self.behavior_innovation,
+            "success_rate": self.success_rate,
+            "adaptation_count": self.adaptation_count,
+            "active_capabilities": self.active_capabilities,
+            "newly_acquired": self.newly_acquired,
+        }
+
+
+@dataclass
+class AgentBehaviorSnapshot:
+    """Snapshot of agent behavior at a point in time."""
+
+    agent_id: str
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
+    behavior_type: str = ""
+    behavior_data: dict[str, Any] = field(default_factory=dict)
+
+    interaction_count: int = 0
+    success_rate: float = 0.0
+    coherence: float = 0.0
+    convergent_strategies: list[str] = field(default_factory=list)
+    strategy_diversity: float = 0.0
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "agent_id": self.agent_id,
+            "timestamp": self.timestamp,
+            "behavior_type": self.behavior_type,
+            "behavior_data": self.behavior_data,
+            "interaction_count": self.interaction_count,
+            "success_rate": self.success_rate,
+            "coherence": self.coherence,
+            "convergent_strategies": self.convergent_strategies,
+            "strategy_diversity": self.strategy_diversity,
+        }
+
+
+@dataclass
+class CollectiveBehavior:
+    """Record of a collective behavior observed in the swarm."""
+
+    behavior_id: str = field(default_factory=lambda: str(uuid.uuid4()))
+    behavior_type: str = ""
+    involved_agents: list[str] = field(default_factory=list)
+
+    coherence: float = 0.0
+    convergent_strategies: list[str] = field(default_factory=list)
+    start_time: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
+    end_time: str | None = None
+    metadata: dict[str, Any] = field(default_factory=dict)
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "behavior_id": self.behavior_id,
+            "behavior_type": self.behavior_type,
+            "involved_agents": self.involved_agents,
+            "coherence": self.coherence,
+            "convergent_strategies": self.convergent_strategies,
+            "start_time": self.start_time,
+            "end_time": self.end_time,
+            "metadata": self.metadata,
+        }
+
+
+@dataclass
+class EmergentPattern:
+    """An emergent pattern detected in swarm behavior."""
+
+    pattern_id: str = field(default_factory=lambda: str(uuid.uuid4()))
+    pattern_class: EmergentPatternClass = EmergentPatternClass.COORDINATION
+    emergence_level: EmergenceLevel = EmergenceLevel.WEAK
+
+    impact_score: float = 0.0
+    involved_agents: list[str] = field(default_factory=list)
+    confidence: float = 0.0
+
+    description: str = ""
+    evidence: dict[str, Any] = field(default_factory=dict)
+
+    detected_at: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
+    validated: bool = False
+    accepted: bool = False
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "pattern_id": self.pattern_id,
+            "pattern_class": self.pattern_class.value,
+            "emergence_level": self.emergence_level.value,
+            "impact_score": self.impact_score,
+            "involved_agents": self.involved_agents,
+            "confidence": self.confidence,
+            "description": self.description,
+            "evidence": self.evidence,
+            "detected_at": self.detected_at,
+            "validated": self.validated,
+            "accepted": self.accepted,
+        }
+
+    def to_extracted_pattern(self) -> ExtractedPattern:
+        """Convert to collective learning ExtractedPattern."""
+        return ExtractedPattern(
+            pattern_id=self.pattern_id,
+            pattern_type=PatternType(self.pattern_class.value),
+            content={
+                "description": self.description,
+                "evidence": self.evidence,
+            },
+            confidence=self.confidence,
+            source=PatternSource.EMERGENT,
+            metadata=PatternMetadata(
+                agent_ids=self.involved_agents,
+                impact_score=self.impact_score,
+            ),
+        )
+
+
+@dataclass
+class DetectionEvent:
+    """Record of an emergence detection event."""
+
+    event_id: str = field(default_factory=lambda: str(uuid.uuid4()))
+    pattern_id: str = ""
+    event_type: str = ""
+    agents_involved: list[str] = field(default_factory=list)
+
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
+    details: dict[str, Any] = field(default_factory=dict)
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "event_id": self.event_id,
+            "pattern_id": self.pattern_id,
+            "event_type": self.event_type,
+            "agents_involved": self.agents_involved,
+            "timestamp": self.timestamp,
+            "details": self.details,
+        }

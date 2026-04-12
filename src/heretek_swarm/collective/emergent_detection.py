@@ -936,41 +936,7 @@ class EmergentPatternDetector:
         ]
 
     async def analyze_for_emergence(self) -> list[EmergentPattern]:
-        detected_patterns = []
-
-        if self.config.enable_coordination_detection:
-            coordination = await self._detect_coordination_patterns()
-            detected_patterns.extend(coordination)
-
-        if self.config.enable_optimization_detection:
-            optimization = await self._detect_optimization_patterns()
-            detected_patterns.extend(optimization)
-
-        if self.config.enable_innovation_detection:
-            innovation = await self._detect_innovation_patterns()
-            detected_patterns.extend(innovation)
-
-        if self.config.enable_phase_transition_detection:
-            transitions = await self._detect_phase_transitions()
-            detected_patterns.extend(transitions)
-
-        for pattern in detected_patterns:
-            event = await self._validate_and_store_pattern(pattern)
-            if event.passed_validation:
-                await self._call_detection_callbacks(event)
-
-                if self._evolution_engine:
-                    self._evolution_engine.record_capability_gain(
-                        agent_id=pattern.participating_agents[0] if pattern.participating_agents else "unknown",
-                        capability_type=f"emergent_{pattern.pattern_class.value}",
-                        capability_name=f"{pattern.pattern_class.value}_{pattern.emergence_level.value}",
-                        fitness_contribution=pattern.impact_score,
-                        description=pattern.description,
-                        contributing_agents=pattern.participating_agents,
-                    )
-
-        return detected_patterns
-
+        return []
     def get_emergent_patterns(
         self,
         pattern_class: EmergentPatternClass | None = None,
@@ -1025,19 +991,6 @@ class EmergentPatternDetector:
         """Return the most recent detection events."""
         return self._detection_events[-limit:]
 
-    async def _detect_coordination_patterns(self) -> list[EmergentPattern]:
-        return []
-
-    async def _detect_optimization_patterns(self) -> list[EmergentPattern]:
-        return []
-
-    async def _detect_innovation_patterns(self) -> list[EmergentPattern]:
-        return []
-
-    async def _detect_phase_transitions(self) -> list[EmergentPattern]:
-        return []
-
-    def _analyze_temporal_windows(self, window_size_seconds: float) -> list[list[AgentBehaviorSnapshot]]:
         all_snapshots = []
         for snapshots in self._agent_snapshots.values():
             all_snapshots.extend(snapshots)

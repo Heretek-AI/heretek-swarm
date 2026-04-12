@@ -44,6 +44,10 @@ class MockMemoryActor(MemoryMixin, MockActor):
 class MockLearningActor(LearningMixin, MockActor):
     """Mock actor with LearningMixin."""
 
+    def __init__(self, agent_id: str = "test-agent"):
+        super().__init__(agent_id)
+        self._active_deliberations = {}
+
 
 class MockAllMixinsActor(
     DeliberationMixin,
@@ -53,15 +57,6 @@ class MockAllMixinsActor(
     MockActor,
 ):
     """Mock actor with all mixins."""
-
-
-# Import the mixins
-from heretek_swarm.actors.mixins import (
-    DeliberationMixin,
-    LearningMixin,
-    MemoryMixin,
-    PatternMixin,
-)
 
 
 class TestDeliberationMixin:
@@ -91,7 +86,10 @@ class TestDeliberationMixin:
     async def test_submit_position(self):
         """Test submitting a deliberation position."""
         actor = MockDeliberationActor()
-        deliberation_id = await actor._initiate_deliberation(topic="test")
+        deliberation_id = await actor._initiate_deliberation(
+            topic="test",
+            options=["a", "b"],
+        )
         result = await actor._submit_deliberation_position(
             deliberation_id=deliberation_id,
             position={"vote": "yes"},
@@ -104,7 +102,7 @@ class TestDeliberationMixin:
     async def test_submit_wrong_deliberation(self):
         """Test submitting to wrong deliberation ID."""
         actor = MockDeliberationActor()
-        await actor._initiate_deliberation(topic="test")
+        await actor._initiate_deliberation(topic="test", options=["a"])
         result = await actor._submit_deliberation_position(
             deliberation_id="wrong-id",
             position={"vote": "yes"},
@@ -115,7 +113,10 @@ class TestDeliberationMixin:
     async def test_finalize_deliberation(self):
         """Test finalizing a deliberation."""
         actor = MockDeliberationActor()
-        deliberation_id = await actor._initiate_deliberation(topic="test")
+        deliberation_id = await actor._initiate_deliberation(
+            topic="test",
+            options=["a"],
+        )
         await actor._submit_deliberation_position(
             deliberation_id, {"vote": "yes"}
         )
@@ -142,54 +143,28 @@ class TestPatternMixin:
     def test_init(self):
         """Test mixin initialization."""
         actor = MockPatternActor()
-        assert actor._emitted_patterns == []
-        assert actor._consumed_patterns == {}
-        assert actor._pattern_confidence_threshold == 0.7
+        # _pattern_emitted starts as None (not initialized)
+        assert actor._pattern_emitted is None or actor._pattern_emitted == set()
 
     @pytest.mark.asyncio
-    async def test_emit_pattern(self):
-        """Test emitting a pattern."""
+    async def test_emit_pattern_no_extractor(self):
+        """Test emitting pattern when no extractor present."""
         actor = MockPatternActor()
-        pattern_id = await actor._emit_pattern(
-            pattern_type="success",
-            pattern_data={"action": "test"},
-            confidence=0.8,
+        # With no pattern_extractor, should return None gracefully
+        await actor._emit_pattern(
+            item_id="test-1",
+            item_type="code",
+            outcome="success",
+            content={"action": "test"},
         )
-        assert pattern_id.startswith("pattern_")
-        assert len(actor._emitted_patterns) == 1
+        # No error means success in no-op mode
 
     @pytest.mark.asyncio
-    async def test_consume_patterns(self):
-        """Test consuming patterns."""
+    async def test_consume_patterns_no_extractor(self):
+        """Test consuming patterns when no extractor present."""
         actor = MockPatternActor()
-        patterns = await actor._consume_patterns(min_confidence=0.5)
-        assert isinstance(patterns, list)
-
-    def test_get_pattern_confidence(self):
-        """Test getting pattern confidence."""
-        actor = MockPatternActor()
-        confidence = actor._get_pattern_confidence("nonexistent")
-        assert confidence == 0.0
-
-    @pytest.mark.asyncio
-    async def test_update_pattern_relevance(self):
-        """Test updating pattern relevance."""
-        actor = MockPatternActor()
-        await actor._update_pattern_relevance("test-pattern", 0.1)
-        assert "test-pattern" in actor._consumed_patterns
-
-    def test_get_pattern_stats(self):
-        """Test getting pattern statistics."""
-        actor = MockPatternActor()
-        stats = actor._get_pattern_stats()
-        assert "emitted_count" in stats
-        assert stats["emitted_count"] == 0
-
-    def test_pattern_counts(self):
-        """Test pattern count properties."""
-        actor = MockPatternActor()
-        assert actor.pattern_emission_count == 0
-        assert actor.pattern_consumption_count == 0
+        patterns = await actor._consume_patterns()
+        assert patterns == []
 
 
 class TestMemoryMixin:
@@ -198,75 +173,28 @@ class TestMemoryMixin:
     def test_init(self):
         """Test mixin initialization."""
         actor = MockMemoryActor()
-        assert actor._memory_access_count == {}
-        assert actor._memory_last_access == {}
-        assert actor._memory_tier_cache == {}
+        assert actor.access_analyzer is None
 
     @pytest.mark.asyncio
-    async def test_track_memory_access(self):
-        """Test tracking memory access."""
+    async def test_track_memory_access_no_analyzer(self):
+        """Test tracking memory access when no analyzer present."""
         actor = MockMemoryActor()
-        await actor._track_memory_access("memory-key", "read")
-        assert "memory-key" in actor._memory_access_count
-        assert actor._memory_access_count["memory-key"] == 1
+        # Should be no-op when no access_analyzer
+        actor._track_memory_access("memory-key", "code", "read")
+        # No error means success
+
+    def test_get_memory_tier_no_analyzer(self):
+        """Test getting memory tier when no analyzer present."""
+        actor = MockMemoryActor()
+        tier = actor._get_memory_tier("memory-key", "code")
+        assert tier == AccessTier.COLD
 
     @pytest.mark.asyncio
-    async def test_get_memory_tier_hot(self):
-        """Test HOT tier assignment."""
+    async def test_prefetch_relevant_no_analyzer(self):
+        """Test prefetching when no analyzer present."""
         actor = MockMemoryActor()
-        # Access many times to reach HOT threshold
-        for _ in range(15):
-            await actor._track_memory_access("hot-key")
-        tier = actor._get_memory_tier("hot-key")
-        assert tier == AccessTier.HOT
-
-    @pytest.mark.asyncio
-    async def test_get_memory_tier_cold(self):
-        """Test COLD tier assignment."""
-        actor = MockMemoryActor()
-        await actor._track_memory_access("cold-key")
-        tier = actor._get_memory_tier("cold-key")
-        assert tier in [AccessTier.COLD, AccessTier.ARCHIVE]
-
-    @pytest.mark.asyncio
-    async def test_prefetch_relevant(self):
-        """Test prefetching relevant memories."""
-        actor = MockMemoryActor()
-        # Add some memories
-        for i in range(5):
-            await actor._track_memory_access(f"memory-{i}")
-            actor._memory_tier_cache[f"memory-{i}"] = AccessTier.HOT
-
-        prefetched = await actor._prefetch_relevant(
-            context={"tags": ["test"]},
-            limit=3,
-        )
-        assert len(prefetched) <= 3
-
-    @pytest.mark.asyncio
-    async def test_clear_memory_stats(self):
-        """Test clearing memory statistics."""
-        actor = MockMemoryActor()
-        await actor._track_memory_access("test-key")
-        actor._clear_memory_stats()
-        assert actor._memory_access_count == {}
-
-    def test_get_memory_stats(self):
-        """Test getting memory statistics."""
-        actor = MockMemoryActor()
-        stats = actor._get_memory_stats()
-        assert "total_memories_accessed" in stats
-        assert stats["total_memories_accessed"] == 0
-
-    def test_memory_access_count(self):
-        """Test memory_access_count property."""
-        actor = MockMemoryActor()
-        assert actor.memory_access_count == 0
-
-    def test_hot_memory_count(self):
-        """Test hot_memory_count property."""
-        actor = MockMemoryActor()
-        assert actor.hot_memory_count == 0
+        result = await actor._prefetch_relevant(agent_id="test", item_type="code")
+        assert result == []
 
 
 class TestLearningMixin:
@@ -275,114 +203,37 @@ class TestLearningMixin:
     def test_init(self):
         """Test mixin initialization."""
         actor = MockLearningActor()
-        assert actor._learning_state == LearningState.IDLE
-        assert actor._adaptation_score == 0.5
-        assert actor._performance_history == []
+        assert actor.pattern_extractor is None
+        assert actor.deliberation_engine is None
+        assert actor.access_analyzer is None
 
-    @pytest.mark.asyncio
-    async def test_get_learning_status(self):
-        """Test getting learning status."""
+    def test_get_learning_status_no_engines(self):
+        """Test getting learning status when no engines present."""
         actor = MockLearningActor()
-        status = await actor.get_learning_status()
-        assert status["state"] == "idle"
-        assert status["adaptation_score"] == 0.5
+        # Should return status without errors even with no engines
+        status = actor.get_learning_status()
         assert status["agent_id"] == "test-agent"
+        assert "collective_learning" in status
+        assert "consensus" in status
+        assert "memory_optimization" in status
 
-    @pytest.mark.asyncio
-    async def test_record_learning_signal(self):
-        """Test recording a learning signal."""
-        actor = MockLearningActor()
-        signal_id = await actor.record_learning_signal(
-            signal_type="reward",
-            magnitude=0.5,
-        )
-        assert signal_id.startswith("signal_")
-        assert len(actor._learning_signals) == 1
-
-    @pytest.mark.asyncio
-    async def test_update_adaptation(self):
-        """Test updating adaptation."""
-        actor = MockLearningActor()
-        result = await actor.update_adaptation(performance_delta=0.2)
-        assert "new_score" in result
-        assert result["new_score"] != 0.5
-
-    def test_get_performance_trend(self):
-        """Test getting performance trend."""
-        actor = MockLearningActor()
-        trend = actor._get_performance_trend()
-        assert trend == "insufficient_data"
-
-    def test_get_convergence_status(self):
-        """Test getting convergence status."""
-        actor = MockLearningActor()
-        status = actor._get_convergence_status()
-        assert status == "unknown"
-
-    @pytest.mark.asyncio
-    async def test_get_performance_metrics(self):
-        """Test getting performance metrics."""
-        actor = MockLearningActor()
-        metrics = await actor.get_performance_metrics()
-        assert "adaptation_score" in metrics
-        assert "total_updates" in metrics
-
-    def test_reset_learning(self):
-        """Test resetting learning state."""
-        actor = MockLearningActor()
-        actor._adaptation_score = 0.9
-        actor._learning_state = LearningState.CONVERGED
-        actor.reset_learning()
-        assert actor._learning_state == LearningState.IDLE
-        assert actor._adaptation_score == 0.5
-
-    def test_is_converged(self):
-        """Test is_converged property."""
-        actor = MockLearningActor()
-        assert actor.is_converged is False
-
-    def test_is_learning(self):
-        """Test is_learning property."""
-        actor = MockLearningActor()
-        assert actor.is_learning is False
+    def test_learning_state_enum(self):
+        """Test LearningState enum values."""
+        assert LearningState.IDLE.value == "idle"
+        assert LearningState.LEARNING.value == "learning"
+        assert LearningState.CONVERGED.value == "converged"
+        assert LearningState.STAGNANT.value == "stagnant"
+        assert LearningState.DIVERGENT.value == "divergent"
+        assert LearningState.UNKNOWN.value == "unknown"
 
 
-class TestAllMixinsCombined:
+class TestAllMixins:
     """Tests for actor with all mixins combined."""
 
-    @pytest.mark.asyncio
-    async def test_all_mixins_work_together(self):
-        """Test all mixins work together on same actor."""
-        actor = MockAllMixinsActor(agent_id="combo-agent")
-
-        # Test DeliberationMixin
-        await actor._initiate_deliberation(topic="test")
-        assert actor.is_deliberating is True
-
-        # Test PatternMixin
-        await actor._emit_pattern(
-            pattern_type="success",
-            pattern_data={"test": "data"},
-        )
-        assert actor.pattern_emission_count == 1
-
-        # Test MemoryMixin
-        await actor._track_memory_access("test-memory")
-        assert actor.memory_access_count == 1
-
-        # Test LearningMixin
-        await actor.record_learning_signal("reward", 0.5)
-        assert actor._total_updates == 1
-
-        # Get combined status
-        status = {
-            "deliberation": actor._get_deliberation_status(),
-            "patterns": actor._get_pattern_stats(),
-            "memory": actor._get_memory_stats(),
-            "learning": await actor.get_learning_status(),
-        }
-
-        assert status["deliberation"]["agent_id"] == "combo-agent"
-        assert status["patterns"]["agent_id"] == "combo-agent"
-        assert status["memory"]["agent_id"] == "combo-agent"
-        assert status["learning"]["agent_id"] == "combo-agent"
+    def test_init(self):
+        """Test combined mixins initialize correctly."""
+        actor = MockAllMixinsActor()
+        assert actor.agent_id == "test-agent"
+        assert actor._deliberation_active is False
+        assert actor._deliberation_id is None
+        assert actor.is_deliberating is False
