@@ -8,10 +8,13 @@ Reference: mem0ai library for unified memory management
 """
 
 import os
+import time
 from dataclasses import dataclass, field
 from typing import Any
 
 import structlog
+
+from heretek_swarm.memory.base import MemoryEntry, MemoryQuery
 
 logger = structlog.get_logger("PersistentMemory")
 
@@ -46,6 +49,10 @@ class Mem0Config:
 
     def to_dict(self) -> dict[str, Any]:
         """Convert config to mem0 format."""
+        return self.get_mem0_config()
+
+    def get_mem0_config(self) -> dict[str, Any]:
+        """Convert config to mem0 format (alias for to_dict)."""
         return {
             "vector_store": {
                 "provider": self.vector_store_provider,
@@ -413,3 +420,199 @@ async def create_memory_store(
     memory = PersistentMemory(config=config, user_id=user_id)
     await memory.initialize()
     return memory
+
+
+@dataclass
+class MemoryResult:
+    """Result wrapper for memory queries."""
+    total_count: int = 0
+    entries: list[MemoryEntry] = field(default_factory=list)
+
+
+class Mem0Backend:
+    """
+    Wrapper for mem0 Memory providing unified API for tests.
+
+    This class wraps mem0.Memory to provide a compatible interface
+    with the Heretek Swarm memory system.
+    """
+
+    def __init__(self, config: Mem0Config | None = None) -> None:
+        """
+        Initialize the mem0 backend.
+
+        Args:
+            config: Mem0 configuration
+        """
+        self.config = config or Mem0Config()
+        self._memory = None
+        self._initialized = False
+        self._user_id = "default"
+        self._latency_stats: list[float] = []
+
+    async def initialize(self) -> None:
+        """Initialize the mem0 memory instance."""
+        if self._initialized:
+            return
+
+        try:
+            from mem0 import Memory
+
+            self._memory = Memory.from_config(self.config.get_mem0_config())
+            self._initialized = True
+
+            logger.info(
+                "mem0_backend_initialized",
+                provider=self.config.vector_store_provider,
+            )
+
+        except ImportError:
+            logger.error("mem0 package not installed")
+            raise
+        except Exception as e:
+            logger.error("mem0_init_failed", error=str(e))
+            raise
+
+    async def shutdown(self) -> None:
+        """Shutdown the mem0 backend."""
+        self._initialized = False
+        self._memory = None
+        logger.info("mem0_backend_shutdown")
+
+    async def store(self, entry: MemoryEntry) -> str:
+        """
+        Store a memory entry.
+
+        Args:
+            entry: MemoryEntry to store
+
+        Returns:
+            Memory ID if successful
+        """
+        if not self._initialized:
+            await self.initialize()
+
+        start = time.perf_counter()
+        try:
+            result = self._memory.add(
+                entry.content if isinstance(entry.content, str) else str(entry.content),
+                user_id=self._user_id,
+                metadata={
+                    "agent_id": entry.agent_id,
+                    "memory_type": str(entry.memory_type) if entry.memory_type else None,
+                    "tags": entry.tags,
+                },
+            )
+            memory_id = result.get("id", "")
+            self._latency_stats.append(time.perf_counter() - start)
+            return memory_id
+        except Exception as e:
+            logger.error("mem0_store_failed", error=str(e))
+            return ""
+
+    async def search(self, query: MemoryQuery) -> MemoryResult:
+        """
+        Search memories.
+
+        Args:
+            query: MemoryQuery with query_text, agent_ids, limit
+
+        Returns:
+            MemoryResult with entries and total_count
+        """
+        if not self._initialized:
+            await self.initialize()
+
+        start = time.perf_counter()
+        try:
+            results = self._memory.search(
+                query=query.query_text or "",
+                user_id=self._user_id,
+                limit=query.limit,
+            )
+            self._latency_stats.append(time.perf_counter() - start)
+
+            entries = []
+            for r in results:
+                entries.append(MemoryEntry(
+                    id=r.get("id", ""),
+                    content=r.get("content", ""),
+                    metadata=r.get("metadata", {}),
+                    agent_id=r.get("metadata", {}).get("agent_id"),
+                    memory_type=r.get("metadata", {}).get("memory_type"),
+                    tags=r.get("metadata", {}).get("tags", []),
+                ))
+
+            return MemoryResult(total_count=len(entries), entries=entries)
+
+        except Exception as e:
+            logger.error("mem0_search_failed", error=str(e))
+            return MemoryResult()
+
+    async def get_all(self, agent_id: str) -> list[MemoryEntry]:
+        """
+        Get all memories for an agent.
+
+        Args:
+            agent_id: Agent identifier
+
+        Returns:
+            List of MemoryEntry objects
+        """
+        if not self._initialized:
+            await self.initialize()
+
+        try:
+            results = self._memory.get_all(user_id=self._user_id)
+            entries = []
+            for r in results:
+                if r.get("metadata", {}).get("agent_id") == agent_id:
+                    entries.append(MemoryEntry(
+                        id=r.get("id", ""),
+                        content=r.get("content", ""),
+                        metadata=r.get("metadata", {}),
+                        agent_id=agent_id,
+                    ))
+            return entries
+        except Exception as e:
+            logger.error("mem0_get_all_failed", error=str(e))
+            return []
+
+    async def delete(self, memory_id: str) -> bool:
+        """
+        Delete a memory entry.
+
+        Args:
+            memory_id: Memory identifier
+
+        Returns:
+            True if deleted
+        """
+        if not self._initialized:
+            await self.initialize()
+
+        try:
+            self._memory.delete(memory_id)
+            return True
+        except Exception as e:
+            logger.error("mem0_delete_failed", error=str(e))
+            return False
+
+    def get_latency_stats(self) -> dict[str, float]:
+        """
+        Get latency statistics.
+
+        Returns:
+            Dict with p50, p95, p99, avg
+        """
+        if not self._latency_stats:
+            return {"p50": 0.0, "p95": 0.0, "p99": 0.0, "avg": 0.0}
+
+        sorted_stats = sorted(self._latency_stats)
+        n = len(sorted_stats)
+        return {
+            "p50": sorted_stats[int(n * 0.5)] if n > 0 else 0.0,
+            "p95": sorted_stats[int(n * 0.95)] if n > 0 else 0.0,
+            "p99": sorted_stats[int(n * 0.99)] if n > 0 else 0.0,
+            "avg": sum(sorted_stats) / n if n > 0 else 0.0,
+        }

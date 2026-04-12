@@ -138,7 +138,8 @@ __all__ = [
 
 # Compatibility exports for tests
 try:
-    from mem0 import Memory as Mem0Backend
+    # Import our Mem0Backend wrapper from persistent.py
+    from heretek_swarm.memory.persistent import Mem0Backend
     MEM0_AVAILABLE = True
 except ImportError:
     MEM0_AVAILABLE = False
