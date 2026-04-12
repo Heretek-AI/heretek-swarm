@@ -23,6 +23,7 @@ from heretek_swarm.actors.mixins import DeliberationMixin, LearningMixin, Memory
 
 # Session 44: Zero-Trust Validation
 from heretek_swarm.security.zero_trust import ZeroTrustValidator
+from heretek_swarm.validation import validate_message
 
 logger = structlog.get_logger("EmpathAgent")
 
@@ -241,7 +242,7 @@ class EmpathAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, A
         try:
             # Zero-Trust input validation
             validated = self._validate_message_content("analyze_sentiment", message.content)
-            content = validated.model_dump() if hasattr(validated, "model_dump") else (validated if validated else message.content)
+            content = validated.content if hasattr(validated, 'content') else (validated.to_dict().get('content') if hasattr(validated, 'to_dict') else message.content)
 
             text = content.get("text", "")
             source_agent = content.get("source_agent", "unknown")
