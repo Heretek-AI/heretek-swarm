@@ -1,8 +1,8 @@
 # Heretek Swarm Agents
 
-**Version:** 2.0.0  
-**Date:** 2026-04-10  
-**Status:** Production-Ready
+**Version:** 2.1.0
+**Date:** 2026-04-12
+**Status:** Phase 2 - Architecture Refactor in Progress
 
 Reference documentation for all 23 agents in the Heretek Swarm collective.
 
@@ -11,20 +11,24 @@ Reference documentation for all 23 agents in the Heretek Swarm collective.
 ## Table of Contents
 
 1. [Agent Overview](#agent-overview)
-2. [Tier 1: Core Triad](#tier-1-core-triad)
-3. [Tier 2: Support Agents](#tier-2-support-agents)
-4. [Tier 3: Exploration Agents](#tier-3-exploration-agents)
-5. [Tier 4: Safety & Security](#tier-4-safety--security)
-6. [Tier 5: Coordination Agents](#tier-5-coordination-agents)
-7. [Tier 6: Enhancement Agents](#tier-6-enhancement-agents)
-8. [Agent Factory](#agent-factory)
+2. [Mixin Architecture](#mixin-architecture)
+3. [Tier 1: Core Triad](#tier-1-core-triad)
+4. [Tier 2: Support Agents](#tier-2-support-agents)
+5. [Tier 3: Exploration Agents](#tier-3-exploration-agents)
+6. [Tier 4: Safety & Security](#tier-4-safety--security)
+7. [Tier 5: Coordination Agents](#tier-5-coordination-agents)
+8. [Tier 6: Enhancement Agents](#tier-6-enhancement-agents)
+9. [Agent Factory](#agent-factory)
 
 ---
 
 ## Agent Overview
 
-All 23 agents are implemented in [`src/heretek_swarm/actors/`](../src/heretek_swarm/actors/). Each agent inherits from the [`AgentActor`](../src/heretek_swarm/actors/base.py) base class which provides:
+All 23 agents are implemented in [`src/heretek_swarm/actors/`](../src/heretek_swarm/actors/). Each agent inherits from the [`AgentActor`](../src/heretek_swarm/actors/base.py) base class and uses **mixin composition** for shared behaviors.
 
+### Agent Base Features
+
+The base `AgentActor` provides:
 - Async message handling
 - State management with PostgreSQL persistence
 - Health monitoring
@@ -58,6 +62,40 @@ All 23 agents are implemented in [`src/heretek_swarm/actors/`](../src/heretek_sw
 | Prism | [`prism.py`](src/heretek_swarm/actors/prism.py) | 6 | Multi-Perspective |
 | Habit-Forge | [`habit_forge.py`](src/heretek_swarm/actors/habit_forge.py) | 6 | Behavior Optimization |
 | Perceiver+ | [`perceiver_plus.py`](src/heretek_swarm/actors/perceiver_plus.py) | 6 | Advanced Analytics |
+
+---
+
+## Mixin Architecture
+
+Phase 2 introduces **mixin composition** to replace copy-paste inheritance. Mixins are in [`src/heretek_swarm/actors/mixins/`](../src/heretek_swarm/actors/mixins/):
+
+### Available Mixins
+
+| Mixin | Purpose | Key Methods |
+|------|---------|-------------|
+| `DeliberationMixin` | Swarm deliberation consensus | `_submit_deliberation_position`, `_finalize_deliberation`, `_initiate_deliberation` |
+| `PatternMixin` | Pattern emission/consumption | `_emit_pattern`, `_consume_patterns` |
+| `MemoryMixin` | Memory access tracking | `_track_memory_access`, `_get_memory_tier`, `_prefetch_relevant` |
+| `LearningMixin` | Collective learning status | `get_learning_status`, `mutate_capabilities` |
+
+### Import Pattern
+
+```python
+from heretek_swarm.actors.base import AgentActor
+from heretek_swarm.actors.mixins import (
+    DeliberationMixin,
+    PatternMixin,
+    MemoryMixin,
+    LearningMixin,
+)
+
+class MyAgent(AgentActor, DeliberationMixin, MemoryMixin):
+    """Agent using mixin composition for shared behaviors."""
+    
+    async def some_method(self):
+        # Uses DeliberationMixin._submit_deliberation_position()
+        ...
+```
 
 ---
 

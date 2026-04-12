@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-12T02:54:39.052962+00:00",
+    "generated_at": "2026-04-12T03:18:33.570701+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 4,
@@ -7664,448 +7664,448 @@
       ]
     },
     "src/heretek_swarm/api/agents_management.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.get_registry",
           "start_line": 75,
           "end_line": 77,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.list_available_agents",
           "start_line": 86,
           "end_line": 119,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.get_agent_type_metadata",
           "start_line": 123,
           "end_line": 147,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.deploy_agent",
           "start_line": 156,
           "end_line": 201,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.remove_agent",
           "start_line": 205,
           "end_line": 234,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.start_agent",
           "start_line": 243,
           "end_line": 273,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.stop_agent",
           "start_line": 277,
           "end_line": 307,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.suspend_agent",
           "start_line": 311,
           "end_line": 341,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.resume_agent",
           "start_line": 345,
           "end_line": 375,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.update_agent_config",
           "start_line": 384,
           "end_line": 416,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.list_agent_instances",
           "start_line": 425,
           "end_line": 457,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.get_agent_instance",
           "start_line": 461,
           "end_line": 503,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.get_agent_logs",
           "start_line": 507,
           "end_line": 559,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.get_registry_stats",
           "start_line": 568,
           "end_line": 581,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.ChannelType",
           "start_line": 588,
           "end_line": 593,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.ChannelDirection",
           "start_line": 596,
           "end_line": 600,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.ChannelSubscriptionCreate",
           "start_line": 603,
           "end_line": 609,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.ChannelSubscriptionResponse",
           "start_line": 612,
           "end_line": 619,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.ChannelSubscriptionsListResponse",
           "start_line": 622,
           "end_line": 626,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.get_channel_registry_instance",
           "start_line": 633,
           "end_line": 635,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.get_agent_channels",
           "start_line": 639,
           "end_line": 684,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.add_agent_channel_subscription",
           "start_line": 688,
           "end_line": 736,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.remove_agent_channel_subscription",
           "start_line": 740,
           "end_line": 780,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.RoutingRuleCreate",
           "start_line": 787,
           "end_line": 797,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.RoutingRuleResponse",
           "start_line": 800,
           "end_line": 810,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.RoutingRulesListResponse",
           "start_line": 813,
           "end_line": 817,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.RoutingStatsResponse",
           "start_line": 820,
           "end_line": 828,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.get_router_instance",
           "start_line": 831,
           "end_line": 833,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.list_routing_rules",
           "start_line": 837,
           "end_line": 862,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.get_routing_rule",
           "start_line": 866,
           "end_line": 898,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.create_routing_rule",
           "start_line": 902,
           "end_line": 968,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.update_routing_rule",
           "start_line": 972,
           "end_line": 1032,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.delete_routing_rule",
           "start_line": 1036,
           "end_line": 1055,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.enable_routing_rule",
           "start_line": 1059,
           "end_line": 1068,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.disable_routing_rule",
           "start_line": 1072,
           "end_line": 1081,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.get_routing_stats",
           "start_line": 1085,
           "end_line": 1099,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.evaluate_routing",
           "start_line": 1103,
           "end_line": 1143,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.get_profiler_instance",
           "start_line": 1150,
           "end_line": 1154,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.ProfilingMetricsResponse",
           "start_line": 1157,
           "end_line": 1175,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.ProfilingProfileResponse",
           "start_line": 1178,
           "end_line": 1188,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.AnomalyResponse",
           "start_line": 1191,
           "end_line": 1200,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.AlertResponse",
           "start_line": 1203,
           "end_line": 1211,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.ProfilingStatsResponse",
           "start_line": 1214,
           "end_line": 1222,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.get_agent_profiling_metrics",
           "start_line": 1226,
           "end_line": 1273,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.get_agent_profiling_profile",
           "start_line": 1277,
           "end_line": 1322,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.detect_agent_anomalies",
           "start_line": 1326,
           "end_line": 1364,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.get_profiling_alerts",
           "start_line": 1368,
           "end_line": 1421,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.acknowledge_profiling_alert",
           "start_line": 1425,
           "end_line": 1447,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.get_profiling_stats",
           "start_line": 1451,
           "end_line": 1474,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.get_profiling_prometheus_metrics",
           "start_line": 1478,
           "end_line": 1490,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.record_agent_activity",
           "start_line": 1494,
           "end_line": 1540,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.get_jetstream_manager",
           "start_line": 1547,
           "end_line": 1553,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.JetStreamConfigCreate",
           "start_line": 1556,
           "end_line": 1566,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.JetStreamConsumerCreate",
           "start_line": 1569,
           "end_line": 1575,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.StreamInfoResponse",
           "start_line": 1578,
           "end_line": 1590,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.StreamListResponse",
           "start_line": 1593,
           "end_line": 1596,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.list_jetstream_streams",
           "start_line": 1600,
           "end_line": 1637,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.get_jetstream_stream",
           "start_line": 1641,
           "end_line": 1678,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.create_jetstream_stream",
           "start_line": 1682,
           "end_line": 1735,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.delete_jetstream_stream",
           "start_line": 1739,
           "end_line": 1766,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.replay_stream_messages",
           "start_line": 1770,
           "end_line": 1805,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.get_jetstream_stats",
           "start_line": 1809,
           "end_line": 1826,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.agents_management.initialize_jetstream",
           "start_line": 1830,
           "end_line": 1859,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         }
       ]
     },
@@ -47746,17 +47746,17 @@
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.config.cache.ConfigCache",
-          "start_line": 20,
-          "end_line": 201,
+          "start_line": 18,
+          "end_line": 208,
           "node_type": "CLASS",
-          "status": "added"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.config.cache.ConfigCache.__init__",
-          "start_line": 31,
-          "end_line": 39,
+          "start_line": 29,
+          "end_line": 38,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.config.cache.ConfigCache.ttl",
@@ -47774,45 +47774,45 @@
         },
         {
           "qualified_name": "src.heretek_swarm.config.cache.ConfigCache.invalidate",
-          "start_line": 55,
+          "start_line": 54,
           "end_line": 66,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.config.cache.ConfigCache.set",
           "start_line": 68,
-          "end_line": 90,
+          "end_line": 91,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.config.cache.ConfigCache.get",
-          "start_line": 92,
-          "end_line": 116,
+          "start_line": 93,
+          "end_line": 120,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.config.cache.ConfigCache.warm",
-          "start_line": 118,
-          "end_line": 168,
+          "start_line": 122,
+          "end_line": 173,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.config.cache.ConfigCache.clear",
-          "start_line": 170,
-          "end_line": 180,
+          "start_line": 175,
+          "end_line": 186,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.config.cache.ConfigCache.get_stats",
-          "start_line": 182,
-          "end_line": 201,
+          "start_line": 188,
+          "end_line": 208,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "modified"
         }
       ]
     },
@@ -56603,7 +56603,7 @@
       "start_line": 75,
       "end_line": 77,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.list_available_agents": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56611,7 +56611,7 @@
       "start_line": 86,
       "end_line": 119,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.get_agent_type_metadata": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56619,7 +56619,7 @@
       "start_line": 123,
       "end_line": 147,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.deploy_agent": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56627,7 +56627,7 @@
       "start_line": 156,
       "end_line": 201,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.remove_agent": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56635,7 +56635,7 @@
       "start_line": 205,
       "end_line": 234,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.start_agent": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56643,7 +56643,7 @@
       "start_line": 243,
       "end_line": 273,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.stop_agent": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56651,7 +56651,7 @@
       "start_line": 277,
       "end_line": 307,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.suspend_agent": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56659,7 +56659,7 @@
       "start_line": 311,
       "end_line": 341,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.resume_agent": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56667,7 +56667,7 @@
       "start_line": 345,
       "end_line": 375,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.update_agent_config": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56675,7 +56675,7 @@
       "start_line": 384,
       "end_line": 416,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.list_agent_instances": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56683,7 +56683,7 @@
       "start_line": 425,
       "end_line": 457,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.get_agent_instance": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56691,7 +56691,7 @@
       "start_line": 461,
       "end_line": 503,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.get_agent_logs": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56699,7 +56699,7 @@
       "start_line": 507,
       "end_line": 559,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.get_registry_stats": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56707,7 +56707,7 @@
       "start_line": 568,
       "end_line": 581,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.ChannelType": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56715,7 +56715,7 @@
       "start_line": 588,
       "end_line": 593,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.ChannelDirection": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56723,7 +56723,7 @@
       "start_line": 596,
       "end_line": 600,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.ChannelSubscriptionCreate": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56731,7 +56731,7 @@
       "start_line": 603,
       "end_line": 609,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.ChannelSubscriptionResponse": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56739,7 +56739,7 @@
       "start_line": 612,
       "end_line": 619,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.ChannelSubscriptionsListResponse": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56747,7 +56747,7 @@
       "start_line": 622,
       "end_line": 626,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.get_channel_registry_instance": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56755,7 +56755,7 @@
       "start_line": 633,
       "end_line": 635,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.get_agent_channels": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56763,7 +56763,7 @@
       "start_line": 639,
       "end_line": 684,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.add_agent_channel_subscription": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56771,7 +56771,7 @@
       "start_line": 688,
       "end_line": 736,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.remove_agent_channel_subscription": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56779,7 +56779,7 @@
       "start_line": 740,
       "end_line": 780,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.RoutingRuleCreate": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56787,7 +56787,7 @@
       "start_line": 787,
       "end_line": 797,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.RoutingRuleResponse": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56795,7 +56795,7 @@
       "start_line": 800,
       "end_line": 810,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.RoutingRulesListResponse": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56803,7 +56803,7 @@
       "start_line": 813,
       "end_line": 817,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.RoutingStatsResponse": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56811,7 +56811,7 @@
       "start_line": 820,
       "end_line": 828,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.get_router_instance": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56819,7 +56819,7 @@
       "start_line": 831,
       "end_line": 833,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.list_routing_rules": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56827,7 +56827,7 @@
       "start_line": 837,
       "end_line": 862,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.get_routing_rule": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56835,7 +56835,7 @@
       "start_line": 866,
       "end_line": 898,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.create_routing_rule": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56843,7 +56843,7 @@
       "start_line": 902,
       "end_line": 968,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.update_routing_rule": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56851,7 +56851,7 @@
       "start_line": 972,
       "end_line": 1032,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.delete_routing_rule": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56859,7 +56859,7 @@
       "start_line": 1036,
       "end_line": 1055,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.enable_routing_rule": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56867,7 +56867,7 @@
       "start_line": 1059,
       "end_line": 1068,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.disable_routing_rule": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56875,7 +56875,7 @@
       "start_line": 1072,
       "end_line": 1081,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.get_routing_stats": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56883,7 +56883,7 @@
       "start_line": 1085,
       "end_line": 1099,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.evaluate_routing": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56891,7 +56891,7 @@
       "start_line": 1103,
       "end_line": 1143,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.get_profiler_instance": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56899,7 +56899,7 @@
       "start_line": 1150,
       "end_line": 1154,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.ProfilingMetricsResponse": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56907,7 +56907,7 @@
       "start_line": 1157,
       "end_line": 1175,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.ProfilingProfileResponse": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56915,7 +56915,7 @@
       "start_line": 1178,
       "end_line": 1188,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.AnomalyResponse": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56923,7 +56923,7 @@
       "start_line": 1191,
       "end_line": 1200,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.AlertResponse": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56931,7 +56931,7 @@
       "start_line": 1203,
       "end_line": 1211,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.ProfilingStatsResponse": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56939,7 +56939,7 @@
       "start_line": 1214,
       "end_line": 1222,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.get_agent_profiling_metrics": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56947,7 +56947,7 @@
       "start_line": 1226,
       "end_line": 1273,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.get_agent_profiling_profile": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56955,7 +56955,7 @@
       "start_line": 1277,
       "end_line": 1322,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.detect_agent_anomalies": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56963,7 +56963,7 @@
       "start_line": 1326,
       "end_line": 1364,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.get_profiling_alerts": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56971,7 +56971,7 @@
       "start_line": 1368,
       "end_line": 1421,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.acknowledge_profiling_alert": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56979,7 +56979,7 @@
       "start_line": 1425,
       "end_line": 1447,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.get_profiling_stats": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56987,7 +56987,7 @@
       "start_line": 1451,
       "end_line": 1474,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.get_profiling_prometheus_metrics": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -56995,7 +56995,7 @@
       "start_line": 1478,
       "end_line": 1490,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.record_agent_activity": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -57003,7 +57003,7 @@
       "start_line": 1494,
       "end_line": 1540,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.get_jetstream_manager": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -57011,7 +57011,7 @@
       "start_line": 1547,
       "end_line": 1553,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.JetStreamConfigCreate": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -57019,7 +57019,7 @@
       "start_line": 1556,
       "end_line": 1566,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.JetStreamConsumerCreate": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -57027,7 +57027,7 @@
       "start_line": 1569,
       "end_line": 1575,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.StreamInfoResponse": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -57035,7 +57035,7 @@
       "start_line": 1578,
       "end_line": 1590,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.StreamListResponse": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -57043,7 +57043,7 @@
       "start_line": 1593,
       "end_line": 1596,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.list_jetstream_streams": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -57051,7 +57051,7 @@
       "start_line": 1600,
       "end_line": 1637,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.get_jetstream_stream": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -57059,7 +57059,7 @@
       "start_line": 1641,
       "end_line": 1678,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.create_jetstream_stream": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -57067,7 +57067,7 @@
       "start_line": 1682,
       "end_line": 1735,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.delete_jetstream_stream": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -57075,7 +57075,7 @@
       "start_line": 1739,
       "end_line": 1766,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.replay_stream_messages": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -57083,7 +57083,7 @@
       "start_line": 1770,
       "end_line": 1805,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.get_jetstream_stats": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -57091,7 +57091,7 @@
       "start_line": 1809,
       "end_line": 1826,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/agents_management.py|src.heretek_swarm.api.agents_management.initialize_jetstream": {
       "file_path": "src/heretek_swarm/api/agents_management.py",
@@ -57099,7 +57099,7 @@
       "start_line": 1830,
       "end_line": 1859,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/configuration.py|src.heretek_swarm.api.configuration._get_llm_provider_factory": {
       "file_path": "src/heretek_swarm/api/configuration.py",
@@ -100856,18 +100856,18 @@
     "src/heretek_swarm/config/cache.py|src.heretek_swarm.config.cache.ConfigCache": {
       "file_path": "src/heretek_swarm/config/cache.py",
       "qualified_name": "src.heretek_swarm.config.cache.ConfigCache",
-      "start_line": 20,
-      "end_line": 201,
+      "start_line": 18,
+      "end_line": 208,
       "type": "CLASS",
-      "status": "added"
+      "status": "modified"
     },
     "src/heretek_swarm/config/cache.py|src.heretek_swarm.config.cache.ConfigCache.__init__": {
       "file_path": "src/heretek_swarm/config/cache.py",
       "qualified_name": "src.heretek_swarm.config.cache.ConfigCache.__init__",
-      "start_line": 31,
-      "end_line": 39,
+      "start_line": 29,
+      "end_line": 38,
       "type": "METHOD",
-      "status": "added"
+      "status": "modified"
     },
     "src/heretek_swarm/config/cache.py|src.heretek_swarm.config.cache.ConfigCache.ttl": {
       "file_path": "src/heretek_swarm/config/cache.py",
@@ -100888,50 +100888,50 @@
     "src/heretek_swarm/config/cache.py|src.heretek_swarm.config.cache.ConfigCache.invalidate": {
       "file_path": "src/heretek_swarm/config/cache.py",
       "qualified_name": "src.heretek_swarm.config.cache.ConfigCache.invalidate",
-      "start_line": 55,
+      "start_line": 54,
       "end_line": 66,
       "type": "METHOD",
-      "status": "added"
+      "status": "modified"
     },
     "src/heretek_swarm/config/cache.py|src.heretek_swarm.config.cache.ConfigCache.set": {
       "file_path": "src/heretek_swarm/config/cache.py",
       "qualified_name": "src.heretek_swarm.config.cache.ConfigCache.set",
       "start_line": 68,
-      "end_line": 90,
+      "end_line": 91,
       "type": "METHOD",
-      "status": "added"
+      "status": "modified"
     },
     "src/heretek_swarm/config/cache.py|src.heretek_swarm.config.cache.ConfigCache.get": {
       "file_path": "src/heretek_swarm/config/cache.py",
       "qualified_name": "src.heretek_swarm.config.cache.ConfigCache.get",
-      "start_line": 92,
-      "end_line": 116,
+      "start_line": 93,
+      "end_line": 120,
       "type": "METHOD",
-      "status": "added"
+      "status": "modified"
     },
     "src/heretek_swarm/config/cache.py|src.heretek_swarm.config.cache.ConfigCache.warm": {
       "file_path": "src/heretek_swarm/config/cache.py",
       "qualified_name": "src.heretek_swarm.config.cache.ConfigCache.warm",
-      "start_line": 118,
-      "end_line": 168,
+      "start_line": 122,
+      "end_line": 173,
       "type": "METHOD",
-      "status": "added"
+      "status": "modified"
     },
     "src/heretek_swarm/config/cache.py|src.heretek_swarm.config.cache.ConfigCache.clear": {
       "file_path": "src/heretek_swarm/config/cache.py",
       "qualified_name": "src.heretek_swarm.config.cache.ConfigCache.clear",
-      "start_line": 170,
-      "end_line": 180,
+      "start_line": 175,
+      "end_line": 186,
       "type": "METHOD",
-      "status": "added"
+      "status": "modified"
     },
     "src/heretek_swarm/config/cache.py|src.heretek_swarm.config.cache.ConfigCache.get_stats": {
       "file_path": "src/heretek_swarm/config/cache.py",
       "qualified_name": "src.heretek_swarm.config.cache.ConfigCache.get_stats",
-      "start_line": 182,
-      "end_line": 201,
+      "start_line": 188,
+      "end_line": 208,
       "type": "METHOD",
-      "status": "added"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/mixins/deliberation.py|src.heretek_swarm.actors.mixins.deliberation.DeliberationMixin": {
       "file_path": "src/heretek_swarm/actors/mixins/deliberation.py",
@@ -102517,7 +102517,7 @@
         },
         {
           "file_path": "src/heretek_swarm/api/agents_management.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.api.agents_management.get_registry",
             "src.heretek_swarm.api.agents_management.list_available_agents",
@@ -107113,7 +107113,7 @@
             },
             {
               "file_path": "src/heretek_swarm/api/agents_management.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.api.agents_management.get_registry",
                 "src.heretek_swarm.api.agents_management.list_available_agents",
@@ -111473,7 +111473,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/api/agents_management.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.api.agents_management.get_registry",
                     "src.heretek_swarm.api.agents_management.list_available_agents",

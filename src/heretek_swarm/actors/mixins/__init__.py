@@ -1,29 +1,11 @@
 """
-Actors Mixins Package
+Mixins package for shared actor behaviors.
 
-Provides shared behavior mixins for actor classes. These mixins extract
-common functionality that was previously duplicated across all actor classes.
-
-Mixins:
-    DeliberationMixin: Methods for deliberation and consensus participation
-    PatternMixin: Pattern emission and consumption methods
-    MemoryMixin: Memory access and tier management
-    LearningMixin: Learning status and adaptation methods
-
-Usage:
-    ```python
-    from heretek_swarm.actors.mixins import (
-        DeliberationMixin,
-        PatternMixin,
-        MemoryMixin,
-        LearningMixin,
-    )
-
-    class MyAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin):
-        pass
-    ```
-
-Version: 1.44.0
+Provides extracted mixin classes for common actor functionalities:
+- DeliberationMixin: Swarm deliberation consensus methods
+- PatternMixin: Collective pattern emission/consumption
+- MemoryMixin: Memory access tracking and tier management
+- LearningMixin: Collective learning status reporting
 """
 
 from heretek_swarm.actors.mixins.deliberation import DeliberationMixin
@@ -33,7 +15,7 @@ from heretek_swarm.actors.mixins.pattern import PatternMixin
 
 __all__ = [
     "DeliberationMixin",
-    "LearningMixin",
-    "MemoryMixin",
     "PatternMixin",
+    "MemoryMixin",
+    "LearningMixin",
 ]

@@ -1,234 +1,106 @@
 """
-MemoryMixin - Memory access and tier management methods.
+MemoryMixin - Memory access tracking and tier management.
 
-This mixin provides methods for memory access patterns, tier management,
-and prefetching functionality.
-
-Methods:
-    _track_memory_access: Track memory access for optimization
-    _get_memory_tier: Get appropriate memory tier for access
-    _prefetch_relevant: Prefetch relevant memories
-    _get_memory_stats: Get memory usage statistics
-
-Version: 1.44.0
+Provides methods for tracking memory access patterns,
+determining memory tiers, and prefetching relevant memories.
 """
 
-import asyncio
-from enum import StrEnum
 from typing import Any
 
 import structlog
 
+from heretek_swarm.actors.base import AgentActor
+from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer, AccessTier
+
 logger = structlog.get_logger("MemoryMixin")
 
 
-class AccessTier(StrEnum):
-    """Memory access tiers based on frequency and recency."""
-
-    HOT = "hot"      # Frequently accessed, recent
-    WARM = "warm"    # Moderately accessed
-    COLD = "cold"    # Rarely accessed
-    ARCHIVE = "archive"  # Historical/archived data
-
-
-class MemoryMixin:
+class MemoryMixin(AgentActor):
     """
-    Mixin providing memory access and tier management methods.
+    Mixin providing memory optimization methods.
 
-    Actors with this mixin can track memory access patterns,
-    manage memory tiers, and prefetch relevant memories.
+    Requires the host actor to have:
+        - access_analyzer: AccessPatternAnalyzer | None
+
+    Methods:
+        _track_memory_access: Record a memory access event
+        _get_memory_tier: Get tier classification for an item
+        _prefetch_relevant: Prefetch items an agent likely needs
     """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        """Initialize memory state."""
-        super().__init__(*args, **kwargs)
-        self._memory_access_count: dict[str, int] = {}
-        self._memory_last_access: dict[str, float] = {}
-        self._memory_tier_cache: dict[str, AccessTier] = {}
-        self._prefetch_queue: asyncio.Queue[dict[str, Any]] | None = None
-        self._prefetch_in_progress: bool = False
+    access_analyzer: AccessPatternAnalyzer | None = None
 
-    async def _track_memory_access(
+    def _track_memory_access(
         self,
-        memory_key: str,
+        item_id: str,
+        item_type: str,
         access_type: str = "read",
     ) -> None:
         """
-        Track memory access for optimization.
+        Track a memory access pattern.
 
         Args:
-            memory_key: The memory being accessed
-            access_type: Type of access (read, write, delete)
+            item_id: Unique identifier for the item
+            item_type: Type of item (e.g., "code", "decision")
+            access_type: Type of access ("read" or "write")
         """
-        current_time = asyncio.get_event_loop().time()
+        if not self.access_analyzer:
+            return
 
-        # Increment access count
-        self._memory_access_count[memory_key] = (
-            self._memory_access_count.get(memory_key, 0) + 1
-        )
-
-        # Update last access time
-        self._memory_last_access[memory_key] = current_time
-
-        # Invalidate tier cache
-        if memory_key in self._memory_tier_cache:
-            del self._memory_tier_cache[memory_key]
-
-        logger.debug(
-            "memory_access_tracked",
-            memory_key=memory_key,
+        memory_id = f"{item_type}_{item_id}"
+        self.access_analyzer.record_access(
+            memory_id=memory_id,
             access_type=access_type,
-            access_count=self._memory_access_count[memory_key],
             agent_id=self.agent_id,
         )
 
-    def _get_memory_tier(
-        self,
-        memory_key: str,
-        hot_threshold: int = 10,
-        warm_threshold: int = 3,
-    ) -> AccessTier:
+    def _get_memory_tier(self, item_id: str, item_type: str) -> AccessTier:
         """
-        Get appropriate memory tier based on access patterns.
+        Get memory tier classification for an item.
 
         Args:
-            memory_key: The memory to tier
-            hot_threshold: Access count for HOT tier
-            warm_threshold: Access count for WARM tier
+            item_id: Unique identifier for the item
+            item_type: Type of item
 
         Returns:
-            Appropriate access tier
+            AccessTier classification (HOT, WARM, COLD)
         """
-        # Check cache first
-        if memory_key in self._memory_tier_cache:
-            return self._memory_tier_cache[memory_key]
+        if not self.access_analyzer:
+            return AccessTier.COLD
 
-        access_count = self._memory_access_count.get(memory_key, 0)
-        last_access = self._memory_last_access.get(memory_key, 0)
-        current_time = asyncio.get_event_loop().time()
-
-        # Calculate recency score (0.0 - 1.0)
-        time_since_access = current_time - last_access
-        recency_score = max(0.0, 1.0 - (time_since_access / 3600))  # Decay over 1 hour
-
-        # Calculate frequency score (0.0 - 1.0)
-        frequency_score = min(1.0, access_count / hot_threshold)
-
-        # Combined score
-        (recency_score + frequency_score) / 2
-
-        if access_count >= hot_threshold and recency_score > 0.7:
-            tier = AccessTier.HOT
-        elif access_count >= warm_threshold:
-            tier = AccessTier.WARM
-        elif access_count > 0:
-            tier = AccessTier.COLD
-        else:
-            tier = AccessTier.ARCHIVE
-
-        self._memory_tier_cache[memory_key] = tier
-
-        logger.debug(
-            "memory_tier_assigned",
-            memory_key=memory_key,
-            tier=tier.value,
-            access_count=access_count,
-            recency_score=recency_score,
-            agent_id=self.agent_id,
-        )
-
-        return tier
+        memory_id = f"{item_type}_{item_id}"
+        profile = self.access_analyzer.get_profile(memory_id)
+        return profile.tier if profile else AccessTier.COLD
 
     async def _prefetch_relevant(
         self,
-        context: dict[str, Any],
-        limit: int = 5,
-    ) -> list[dict[str, Any]]:
+        agent_id: str,
+        item_type: str,
+    ) -> list[str]:
         """
-        Prefetch relevant memories based on context.
+        Prefetch items an agent is likely to need.
 
         Args:
-            context: Current context for relevance matching
-            limit: Maximum number of memories to prefetch
+            agent_id: The agent to prefetch for
+            item_type: Type of items to prefetch
 
         Returns:
-            List of prefetched memory entries
+            List of item IDs predicted to be relevant
         """
-        if self._prefetch_in_progress:
+        if not self.access_analyzer:
             return []
 
-        self._prefetch_in_progress = True
-        prefetched: list[dict[str, Any]] = []
-
         try:
-            # Simple relevance: match by tags or keywords
-            context.get("tags", [])
-            context.get("keywords", [])
-
-            for memory_key, tier in self._memory_tier_cache.items():
-                if tier == AccessTier.HOT or tier == AccessTier.WARM:
-                    prefetched.append({
-                        "memory_key": memory_key,
-                        "tier": tier.value,
-                        "access_count": self._memory_access_count.get(memory_key, 0),
-                    })
-
-                if len(prefetched) >= limit:
-                    break
-
-            logger.info(
-                "memories_prefetched",
-                count=len(prefetched),
-                agent_id=self.agent_id,
+            predicted_memories = self.access_analyzer.predict_agent_access(agent_id)
+            return [
+                mem.replace(f"{item_type}_", "")
+                for mem in predicted_memories
+                if mem.startswith(f"{item_type}_")
+            ]
+        except Exception as e:
+            logger.warning(
+                "failed_to_prefetch",
+                agent_id=agent_id,
+                error=str(e),
             )
-
-        finally:
-            self._prefetch_in_progress = False
-
-        return prefetched
-
-    def _get_memory_stats(self) -> dict[str, Any]:
-        """
-        Get memory usage statistics.
-
-        Returns:
-            Statistics about memory access patterns
-        """
-        total_accesses = sum(self._memory_access_count.values())
-        tier_counts = {tier.value: 0 for tier in AccessTier}
-
-        for memory_key in self._memory_access_count:
-            tier = self._get_memory_tier(memory_key)
-            tier_counts[tier.value] += 1
-
-        return {
-            "total_memories_accessed": len(self._memory_access_count),
-            "total_accesses": total_accesses,
-            "tier_distribution": tier_counts,
-            "avg_accesses_per_memory": (
-                total_accesses / len(self._memory_access_count)
-                if self._memory_access_count else 0.0
-            ),
-            "prefetch_in_progress": self._prefetch_in_progress,
-            "agent_id": self.agent_id,
-        }
-
-    def _clear_memory_stats(self) -> None:
-        """Clear memory access statistics."""
-        self._memory_access_count.clear()
-        self._memory_last_access.clear()
-        self._memory_tier_cache.clear()
-        logger.info("memory_stats_cleared", agent_id=self.agent_id)
-
-    @property
-    def memory_access_count(self) -> int:
-        """Get total number of memory accesses."""
-        return sum(self._memory_access_count.values())
-
-    @property
-    def hot_memory_count(self) -> int:
-        """Get count of memories in HOT tier."""
-        return sum(
-            1 for key in self._memory_access_count
-            if self._get_memory_tier(key) == AccessTier.HOT
-        )
+            return []

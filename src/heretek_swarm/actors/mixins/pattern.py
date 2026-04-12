@@ -1,181 +1,107 @@
 """
-PatternMixin - Pattern emission and consumption methods.
+PatternMixin - Collective pattern emission and consumption.
 
-This mixin provides methods for emitting and consuming patterns
-in the collective learning system.
-
-Methods:
-    _emit_pattern: Emit a pattern to the pattern library
-    _consume_patterns: Consume relevant patterns from the library
-    _get_pattern_confidence: Get confidence score for a pattern
-    _update_pattern_relevance: Update pattern relevance scores
-
-Version: 1.44.0
+Provides methods for emitting patterns to collective learning
+and consuming patterns from other agents.
 """
 
-import asyncio
-from typing import TYPE_CHECKING, Any
+from datetime import UTC, datetime
+from typing import Any
 
 import structlog
 
-if TYPE_CHECKING:
-    from heretek_swarm.collective.learning import PatternType
+from heretek_swarm.actors.base import AgentActor
+from heretek_swarm.collective.learning import PatternExtractor, PatternType
 
 logger = structlog.get_logger("PatternMixin")
 
 
-class PatternMixin:
+class PatternMixin(AgentActor):
     """
-    Mixin providing pattern emission and consumption methods.
+    Mixin providing collective pattern learning methods.
 
-    Actors with this mixin can emit patterns to the collective
-    pattern library and consume relevant patterns.
+    Requires the host actor to have:
+        - pattern_extractor: PatternExtractor | None
+        - _pattern_emitted: set[str]
+
+    Methods:
+        _emit_pattern: Emit a pattern to collective learning
+        _consume_patterns: Consume patterns from collective learning
     """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        """Initialize pattern state."""
-        super().__init__(*args, **kwargs)
-        self._emitted_patterns: list[str] = []
-        self._consumed_patterns: dict[str, float] = {}
-        self._pattern_confidence_threshold: float = 0.7
+    pattern_extractor: PatternExtractor | None = None
+    _pattern_emitted: set[str] = None
 
     async def _emit_pattern(
         self,
-        pattern_type: "PatternType",
-        pattern_data: dict[str, Any],
-        confidence: float = 0.5,
-        context: dict[str, Any] | None = None,
-        tags: list[str] | None = None,
-    ) -> str:
+        item_id: str,
+        item_type: str,
+        outcome: str,
+        content: dict[str, Any],
+    ) -> None:
         """
-        Emit a pattern to the collective pattern library.
+        Emit a pattern for collective learning.
 
         Args:
-            pattern_type: Type of pattern being emitted
-            pattern_data: The pattern data
-            confidence: Confidence score (0.0-1.0)
-            context: Optional context for the pattern
-            tags: Optional tags for categorization
-
-        Returns:
-            pattern_id: Unique identifier for the emitted pattern
+            item_id: Unique identifier for the item
+            item_type: Type of item (e.g., "code", "decision")
+            outcome: Outcome of the pattern (e.g., "success", "failure")
+            content: Pattern content/metadata
         """
-        pattern_id = f"pattern_{self.agent_id}_{asyncio.get_event_loop().time():.0f}"
+        if not self.pattern_extractor:
+            return
 
-        {
-            "pattern_id": pattern_id,
-            "pattern_type": pattern_type.value if hasattr(pattern_type, "value") else pattern_type,
-            "pattern_data": pattern_data,
-            "confidence": confidence,
-            "context": context or {},
-            "tags": tags or [],
-            "emitted_by": self.agent_id,
-            "emitted_at": asyncio.get_event_loop().time(),
-        }
+        if item_id in self._pattern_emitted:
+            return
 
-        self._emitted_patterns.append(pattern_id)
+        try:
+            await self.pattern_extractor.analyze_message(
+                message_id=f"{item_type}_{item_id}",
+                sender=self.agent_id,
+                recipient="broadcast",
+                message_type=f"{item_type}_completion",
+                content=content,
+                timestamp=datetime.now(UTC).isoformat(),
+            )
 
-        logger.info(
-            "pattern_emitted",
-            pattern_id=pattern_id,
-            pattern_type=pattern_type,
-            confidence=confidence,
-            agent_id=self.agent_id,
-        )
-
-        return pattern_id
+            self._pattern_emitted.add(item_id)
+            logger.info(
+                f"{item_type}_pattern_emitted",
+                item_id=item_id,
+                outcome=outcome,
+            )
+        except Exception as e:
+            logger.warning("failed_to_emit_pattern", item_id=item_id, error=str(e))
 
     async def _consume_patterns(
         self,
-        pattern_type: "PatternType | None" = None,
-        min_confidence: float | None = None,
-        limit: int = 10,
+        pattern_types: list[PatternType] | None = None,
     ) -> list[dict[str, Any]]:
         """
-        Consume relevant patterns from the pattern library.
+        Consume patterns from collective learning.
 
         Args:
-            pattern_type: Optional filter by pattern type
-            min_confidence: Minimum confidence threshold
-            limit: Maximum number of patterns to return
+            pattern_types: Filter by specific pattern types
 
         Returns:
-            List of relevant patterns
+            List of validated pattern dictionaries
         """
-        threshold = min_confidence or self._pattern_confidence_threshold
+        if not self.pattern_extractor:
+            return []
 
-        consumed: list[dict[str, Any]] = []
-        for pattern_id, confidence in self._consumed_patterns.items():
-            if confidence >= threshold:
-                consumed.append({
-                    "pattern_id": pattern_id,
-                    "confidence": confidence,
-                    "relevance": self._consumed_patterns.get(pattern_id, 0.0),
-                })
-
-        consumed.sort(key=lambda x: x["relevance"], reverse=True)
-        return consumed[:limit]
-
-    def _get_pattern_confidence(self, pattern_id: str) -> float:
-        """
-        Get confidence score for a pattern.
-
-        Args:
-            pattern_id: The pattern to check
-
-        Returns:
-            Confidence score (0.0-1.0)
-        """
-        return self._consumed_patterns.get(pattern_id, 0.0)
-
-    async def _update_pattern_relevance(
-        self,
-        pattern_id: str,
-        relevance_delta: float,
-    ) -> None:
-        """
-        Update pattern relevance score.
-
-        Args:
-            pattern_id: The pattern to update
-            relevance_delta: Change in relevance (-1.0 to 1.0)
-        """
-        current = self._consumed_patterns.get(pattern_id, 0.5)
-        new_relevance = max(0.0, min(1.0, current + relevance_delta))
-        self._consumed_patterns[pattern_id] = new_relevance
-
-        logger.debug(
-            "pattern_relevance_updated",
-            pattern_id=pattern_id,
-            old_relevance=current,
-            new_relevance=new_relevance,
-            agent_id=self.agent_id,
-        )
-
-    def _get_pattern_stats(self) -> dict[str, Any]:
-        """
-        Get pattern emission and consumption statistics.
-
-        Returns:
-            Statistics about pattern activity
-        """
-        return {
-            "emitted_count": len(self._emitted_patterns),
-            "consumed_count": len(self._consumed_patterns),
-            "avg_consumed_confidence": (
-                sum(self._consumed_patterns.values()) / len(self._consumed_patterns)
-                if self._consumed_patterns else 0.0
-            ),
-            "confidence_threshold": self._pattern_confidence_threshold,
-            "agent_id": self.agent_id,
-        }
-
-    @property
-    def pattern_emission_count(self) -> int:
-        """Get number of patterns emitted by this actor."""
-        return len(self._emitted_patterns)
-
-    @property
-    def pattern_consumption_count(self) -> int:
-        """Get number of patterns consumed by this actor."""
-        return len(self._consumed_patterns)
+        try:
+            patterns = await self.pattern_extractor.extract_patterns(
+                time_window_hours=24,
+                pattern_types=pattern_types or [
+                    PatternType.SUCCESS,
+                    PatternType.DECISION,
+                ],
+            )
+            return [
+                p.to_dict()
+                for p in patterns
+                if p.metadata.confidence >= 0.7
+            ]
+        except Exception as e:
+            logger.warning("failed_to_consume_patterns", error=str(e))
+            return []

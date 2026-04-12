@@ -11,7 +11,7 @@ import pytest
 import pytest_asyncio
 
 from heretek_swarm.actors.base import ActorMessage, ActorState
-from heretek_swarm.actors.triad import StewardAgent
+from heretek_swarm.actors.steward import StewardAgent
 
 pytestmark = pytest.mark.integration
 

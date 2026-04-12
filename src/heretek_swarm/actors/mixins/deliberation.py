@@ -1,174 +1,169 @@
 """
-DeliberationMixin - Shared deliberation methods for actors.
+DeliberationMixin - Swarm deliberation consensus methods.
 
-This mixin provides methods for participating in deliberation and consensus
-processes, extracting common functionality from actor classes.
-
-Methods:
-    _submit_deliberation_position: Submit a position to the deliberation
-    _finalize_deliberation: Finalize deliberation participation
-    _initiate_deliberation: Initiate a new deliberation
-    _get_deliberation_status: Get current deliberation status
-
-Version: 1.44.0
+Provides methods for initiating, participating in, and finalizing
+swarm deliberations for collective decision-making.
 """
 
-import asyncio
-from typing import TYPE_CHECKING, Any
+from typing import Any
 
 import structlog
 
-if TYPE_CHECKING:
-    from heretek_swarm.consensus.maker import MakerConsensus
+from heretek_swarm.actors.base import AgentActor
+from heretek_swarm.consensus.swarm_deliberation import (
+    Position,
+    SwarmDeliberationEngine,
+)
 
 logger = structlog.get_logger("DeliberationMixin")
 
 
-class DeliberationMixin:
+class DeliberationMixin(AgentActor):
     """
-    Mixin providing deliberation and consensus participation methods.
+    Mixin providing swarm deliberation consensus methods.
 
-    Actors with this mixin can participate in deliberation processes,
-    submit positions, and finalize their participation in consensus.
+    Requires the host actor to have:
+        - deliberation_engine: SwarmDeliberationEngine | None
+        - access_analyzer: AccessPatternAnalyzer | None
+        - _active_deliberations: dict[str, str]
+
+    Methods:
+        _initiate_deliberation: Start a new deliberation session
+        _submit_deliberation_position: Submit an agent's position
+        _finalize_deliberation: Complete and apply deliberation results
     """
 
-    def __init__(self, *args: Any, **kwargs: Any) -> None:
-        """Initialize deliberation state."""
-        super().__init__(*args, **kwargs)
-        self._deliberation_active: bool = False
-        self._deliberation_id: str | None = None
-        self._deliberation_position: dict[str, Any] | None = None
-        self._consensus: MakerConsensus | None = None
+    deliberation_engine: SwarmDeliberationEngine | None = None
+    access_analyzer: Any = None
+    _active_deliberations: dict[str, str] = None
 
     async def _initiate_deliberation(
         self,
-        topic: str,
-        options: list[str] | None = None,
-        timeout: float = 60.0,
-    ) -> str:
+        item_id: str,
+        proposal: str,
+        participating_agents: list[str],
+        domain: str = "general",
+    ) -> str | None:
         """
-        Initiate a new deliberation.
+        Initiate swarm deliberation.
 
         Args:
-            topic: The deliberation topic
-            options: Optional list of decision options
-            timeout: Maximum deliberation duration in seconds
+            item_id: Unique identifier for the deliberation subject
+            proposal: The proposal being deliberated
+            participating_agents: List of agent IDs participating
+            domain: Domain context for the deliberation
 
         Returns:
-            deliberation_id: Unique identifier for the deliberation
+            deliberation_id if successful, None otherwise
         """
-        deliberation_id = f"delib_{self.agent_id}_{asyncio.get_event_loop().time():.0f}"
-        self._deliberation_id = deliberation_id
-        self._deliberation_active = True
+        if not self.deliberation_engine:
+            return None
 
-        logger.info(
-            "deliberation_initiated",
-            deliberation_id=deliberation_id,
-            topic=topic,
-            agent_id=self.agent_id,
-        )
+        try:
+            deliberation_id = f"delib_{item_id}"
+            self.deliberation_engine.start_deliberation(
+                deliberation_id=deliberation_id,
+                proposal=proposal[:200],
+                participants=participating_agents,
+                domain=domain,
+            )
+            self._active_deliberations[item_id] = deliberation_id
 
-        return deliberation_id
+            logger.info(
+                "deliberation_initiated",
+                deliberation_id=deliberation_id,
+                item_id=item_id,
+            )
+            return deliberation_id
+        except Exception as e:
+            logger.error(
+                "failed_to_initiate_deliberation",
+                item_id=item_id,
+                error=str(e),
+            )
+            return None
 
     async def _submit_deliberation_position(
         self,
-        deliberation_id: str,
-        position: dict[str, Any],
-        rationale: str | None = None,
+        item_id: str,
+        agent_id: str,
+        position: Position,
+        confidence: float,
+        argument: str,
     ) -> bool:
         """
-        Submit a position to a deliberation.
+        Submit agent position in an active deliberation.
 
         Args:
-            deliberation_id: The deliberation to submit to
-            position: The position/stance being submitted
-            rationale: Optional explanation for the position
+            item_id: The deliberation item identifier
+            agent_id: ID of the agent submitting position
+            position: The position being submitted
+            confidence: Confidence level (0-1)
+            argument: Supporting argument for the position
 
         Returns:
-            True if submission was successful
+            True if submission succeeded
         """
-        if deliberation_id != self._deliberation_id:
-            logger.warning(
-                "deliberation_mismatch",
-                expected=self._deliberation_id,
-                received=deliberation_id,
+        if not self.deliberation_engine:
+            return False
+
+        deliberation_id = self._active_deliberations.get(item_id)
+        if not deliberation_id:
+            return False
+
+        try:
+            success = self.deliberation_engine.submit_position(
+                deliberation_id=deliberation_id,
+                agent_id=agent_id,
+                position=position,
+                confidence=confidence,
+                argument=argument,
+            )
+
+            if success and self.access_analyzer:
+                self.access_analyzer.record_access(
+                    memory_id=f"delib_{deliberation_id}_{agent_id}",
+                    access_type="write",
+                    agent_id=agent_id,
+                )
+
+            return success
+        except Exception as e:
+            logger.error(
+                "failed_to_submit_deliberation_position",
+                error=str(e),
             )
             return False
 
-        self._deliberation_position = {
-            "position": position,
-            "rationale": rationale,
-            "submitted_at": asyncio.get_event_loop().time(),
-        }
-
-        logger.info(
-            "deliberation_position_submitted",
-            deliberation_id=deliberation_id,
-            agent_id=self.agent_id,
-            rationale=rationale,
-        )
-
-        return True
-
-    async def _finalize_deliberation(
-        self,
-        deliberation_id: str,
-        outcome: str | None = None,
-    ) -> dict[str, Any]:
+    async def _finalize_deliberation(self, item_id: str) -> Any | None:
         """
-        Finalize participation in a deliberation.
+        Finalize deliberation and apply results.
 
         Args:
-            deliberation_id: The deliberation to finalize
-            outcome: Optional outcome if known
+            item_id: The deliberation item identifier
 
         Returns:
-            Finalization result with summary
+            Deliberation result if successful
         """
-        if deliberation_id != self._deliberation_id:
-            logger.warning(
-                "deliberation_finalize_mismatch",
-                expected=self._deliberation_id,
-                received=deliberation_id,
+        if not self.deliberation_engine:
+            return None
+
+        deliberation_id = self._active_deliberations.get(item_id)
+        if not deliberation_id:
+            return None
+
+        try:
+            result = self.deliberation_engine.finalize_deliberation(deliberation_id)
+
+            if result:
+                self.deliberation_engine.cleanup_deliberation(deliberation_id)
+                del self._active_deliberations[item_id]
+                logger.info("deliberation_finalized", deliberation_id=deliberation_id)
+
+            return result
+        except Exception as e:
+            logger.error(
+                "failed_to_finalize_deliberation",
+                error=str(e),
             )
-            return {"success": False, "error": "deliberation_id mismatch"}
-
-        result = {
-            "success": True,
-            "deliberation_id": deliberation_id,
-            "agent_id": self.agent_id,
-            "position": self._deliberation_position,
-            "outcome": outcome,
-        }
-
-        self._deliberation_active = False
-        self._deliberation_id = None
-        self._deliberation_position = None
-
-        logger.info(
-            "deliberation_finalized",
-            deliberation_id=deliberation_id,
-            agent_id=self.agent_id,
-            outcome=outcome,
-        )
-
-        return result
-
-    def _get_deliberation_status(self) -> dict[str, Any]:
-        """
-        Get current deliberation status.
-
-        Returns:
-            Status information about active deliberation
-        """
-        return {
-            "active": self._deliberation_active,
-            "deliberation_id": self._deliberation_id,
-            "position_submitted": self._deliberation_position is not None,
-            "agent_id": self.agent_id,
-        }
-
-    @property
-    def is_deliberating(self) -> bool:
-        """Check if agent is currently in a deliberation."""
-        return self._deliberation_active
+            return None
