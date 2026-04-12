@@ -410,19 +410,18 @@ class TestConcurrentMigration:
 
         # Run migrations concurrently
         async def run_concurrent():
-            results = await asyncio.gather(
+            return await asyncio.gather(
                 migrate_to_warm(),
                 migrate_to_cold(),
                 return_exceptions=True,
             )
-            return results
 
         results = asyncio.run(run_concurrent())
 
         # At least one should complete (the other may fail due to race condition)
         # This is expected behavior - concurrent migrations need external locking
-        completed = [r for r in results if isinstance(r, MemoryTieringSystem)]
-        failed = [r for r in results if isinstance(r, Exception)]
+        [r for r in results if isinstance(r, MemoryTieringSystem)]
+        [r for r in results if isinstance(r, Exception)]
 
         # Memory should end up in exactly one tier
         total_count = 0
@@ -464,8 +463,7 @@ class TestConcurrentMigration:
                 target = MemoryTier.L2_WARM if i % 2 == 0 else MemoryTier.L3_COLD
                 tasks.append(migrate_memory(mem, target))
 
-            results = await asyncio.gather(*tasks)
-            return results
+            return await asyncio.gather(*tasks)
 
         results = asyncio.run(run_concurrent())
 
@@ -572,7 +570,7 @@ class TestMigrationHistory:
                 reason="Test history",
             )
 
-        record = asyncio.run(migrate())
+        asyncio.run(migrate())
 
         # Get history
         history = tiering.get_migration_history(limit=10)

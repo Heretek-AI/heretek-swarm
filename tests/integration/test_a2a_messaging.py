@@ -33,19 +33,16 @@ class TestA2AMessaging:
         # received = await receiver.receive_message(timeout=5.0)
         #
         # assert received.message_id == message.message_id
-        pass
 
     @pytest.mark.asyncio
     async def test_broadcast_message(self) -> None:
         """Test broadcast message to multiple agents."""
         # TODO: Implement broadcast testing
-        pass
 
     @pytest.mark.asyncio
     async def test_message_correlation_chain(self) -> None:
         """Test message correlation ID propagation through agent chain."""
         # TODO: Test correlation ID flows through multiple hops
-        pass
 
     @pytest.mark.asyncio
     @pytest.mark.latency
@@ -73,19 +70,16 @@ class TestA2AMessaging:
     async def test_message_ordering(self) -> None:
         """Test message ordering is preserved."""
         # TODO: Test FIFO message ordering
-        pass
 
     @pytest.mark.asyncio
     async def test_message_acknowledgment(self) -> None:
         """Test message acknowledgment mechanism."""
         # TODO: Test ACK/NACK handling
-        pass
 
     @pytest.mark.asyncio
     async def test_dead_letter_queue(self) -> None:
         """Test failed messages go to dead letter queue."""
         # TODO: Test DLQ behavior for failed deliveries
-        pass
 
 
 @pytest.mark.integration
@@ -97,25 +91,21 @@ class TestA2AConsensus:
     async def test_triad_deliberation_flow(self) -> None:
         """Test triad deliberation message flow."""
         # TODO: Test Alpha -> Beta -> Charlie message flow
-        pass
 
     @pytest.mark.asyncio
     async def test_maker_consensus(self) -> None:
         """Test MAKER consensus protocol."""
         # TODO: Test first-to-ahead-by-k voting
-        pass
 
     @pytest.mark.asyncio
     async def test_byzantine_fault_tolerance(self) -> None:
         """Test BFT handling in consensus."""
         # TODO: Test consensus with Byzantine (malicious) agents
-        pass
 
     @pytest.mark.asyncio
     async def test_reputation_weighted_voting(self) -> None:
         """Test reputation-weighted decision making."""
         # TODO: Test that higher reputation agents have more weight
-        pass
 
 
 @pytest.mark.integration
@@ -127,16 +117,13 @@ class TestA2AResilience:
     async def test_message_retry_on_failure(self) -> None:
         """Test automatic message retry on transient failures."""
         # TODO: Test retry mechanism
-        pass
 
     @pytest.mark.asyncio
     async def test_circuit_breaker_activation(self) -> None:
         """Test circuit breaker activates on repeated failures."""
         # TODO: Test circuit breaker pattern
-        pass
 
     @pytest.mark.asyncio
     async def test_graceful_degradation(self) -> None:
         """Test graceful degradation when agents are unavailable."""
         # TODO: Test system continues with reduced capacity
-        pass

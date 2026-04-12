@@ -256,9 +256,9 @@ class TestConsensusSecurity:
             ]
 
             # Use run_consensus instead of reach_consensus (API may vary)
-            if hasattr(consensus, 'run_consensus'):
+            if hasattr(consensus, "run_consensus"):
                 result = consensus.run_consensus("test-3", votes, threshold=0.7)
-            elif hasattr(consensus, 'reach_consensus'):
+            elif hasattr(consensus, "reach_consensus"):
                 result = consensus.reach_consensus("test-3", votes, threshold=0.7)
             else:
                 pytest.skip("Unknown MAKERConsensus API")
@@ -282,7 +282,7 @@ class TestRateLimiting:
         # Note: This is an async test, so we need to use asyncio.run
         async def check_rate_limit():
             for i in range(15):
-                allowed, remaining, reset_in = await limiter.is_allowed(
+                allowed, _remaining, reset_in = await limiter.is_allowed(
                     key="127.0.0.1:/api/agents",
                     limit=10,
                     window_seconds=60,

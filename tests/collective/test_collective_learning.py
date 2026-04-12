@@ -16,8 +16,8 @@ Zero-Trust Verification:
 import asyncio
 import json
 import uuid
-from datetime import datetime, timezone
-from typing import Any, Dict
+from datetime import UTC, datetime
+from typing import Any
 from unittest.mock import AsyncMock
 
 import pytest
@@ -80,7 +80,7 @@ def sample_pattern() -> ExtractedPattern:
             "success_rate": 0.85,
         },
         context={"task_id": "task_123"},
-        outcomes=[{"outcome": "success", "timestamp": datetime.now(timezone.utc).isoformat()}],
+        outcomes=[{"outcome": "success", "timestamp": datetime.now(UTC).isoformat()}],
         preconditions=["task_requires_specialization"],
         postconditions=["task_completed_successfully"],
         applicability_conditions=["similar_task_type"],
@@ -88,7 +88,7 @@ def sample_pattern() -> ExtractedPattern:
 
 
 @pytest.fixture
-def sample_message() -> Dict[str, Any]:
+def sample_message() -> dict[str, Any]:
     """Create a sample message for testing."""
     return {
         "message_id": str(uuid.uuid4()),
@@ -100,7 +100,7 @@ def sample_message() -> Dict[str, Any]:
             "task_type": "analysis",
             "priority": 0.8,
         },
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
     }
 
 
@@ -571,7 +571,7 @@ class TestDistributedLearningEngine:
             metadata=PatternMetadata(
                 pattern_id="test",
                 confidence=0.5,
-                last_observed=datetime.now(timezone.utc).isoformat(),
+                last_observed=datetime.now(UTC).isoformat(),
             ),
             pattern_data={},
         )
@@ -580,7 +580,7 @@ class TestDistributedLearningEngine:
             metadata=PatternMetadata(
                 pattern_id="test",
                 confidence=0.8,
-                last_observed=datetime.now(timezone.utc).isoformat(),
+                last_observed=datetime.now(UTC).isoformat(),
             ),
             pattern_data={},
         )
@@ -711,7 +711,7 @@ class TestPatternLibrary:
     async def test_cleanup_expired(self, pattern_library, sample_pattern):
         """Test cleanup of expired patterns."""
         # Store with very short TTL
-        entry = await pattern_library.store_pattern(
+        await pattern_library.store_pattern(
             pattern=sample_pattern,
             ttl_days=0,  # Expired immediately
         )

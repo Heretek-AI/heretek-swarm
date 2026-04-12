@@ -12,7 +12,7 @@ Tests cover:
 """
 
 import json
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import pytest
 
@@ -49,7 +49,7 @@ class TestAuditEvent:
         event = AuditEvent(
             event_id="evt-001",
             event_type=AuditEventType.VOTE_SUBMITTED,
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
             consensus_id="consensus-1",
             agent_id="agent-1",
             data={"vote": "yes", "confidence": 0.8},
@@ -889,7 +889,7 @@ class TestAuditTrailIntegration:
         )
 
         # Create comprehensive audit
-        audit = audit_trail.create_decision_audit(
+        audit_trail.create_decision_audit(
             decision_id="decision-001",
             consensus_id="consensus-1",
             final_decision="approve",

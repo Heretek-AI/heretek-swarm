@@ -6,6 +6,6 @@ import sys
 from unittest.mock import MagicMock
 
 # Mock pynats to avoid import errors for NATS dependencies
-if 'pynats' not in sys.modules:
+if "pynats" not in sys.modules:
     mock_pynats = MagicMock()
-    sys.modules['pynats'] = mock_pynats
+    sys.modules["pynats"] = mock_pynats

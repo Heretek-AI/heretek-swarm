@@ -9,7 +9,7 @@ Tests state persistence and recovery for actors:
 """
 
 import asyncio
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import pytest
 
@@ -43,7 +43,7 @@ class TestActor(AgentActor):
 
     async def initialize(self) -> None:
         """Initialize actor with custom state."""
-        self.update_state("initialized_at", datetime.now(timezone.utc).isoformat())
+        self.update_state("initialized_at", datetime.now(UTC).isoformat())
         self.update_state("custom_data", {"counter": 0})
 
     async def cleanup(self) -> None:
@@ -58,19 +58,18 @@ async def state_repository():
     """Create state repository for tests."""
     repo = StateRepository(db_pool=None)  # In-memory for tests
     await repo.initialize()
-    yield repo
+    return repo
 
 
 @pytest.fixture
 async def test_actor(state_repository):
     """Create test actor with state repository."""
-    actor = TestActor(
+    return TestActor(
         agent_id="test-actor-1",
         name="Test Actor",
         state_repository=state_repository,
         load_state_on_init=True,
     )
-    yield actor
 
 
 # Test Cases
@@ -382,7 +381,7 @@ class TestActorMessageProcessing:
                 sender="test-sender",
                 message_type="test",
                 content={"message_id": i, "data": f"message-{i}"},
-                timestamp=datetime.now(timezone.utc).isoformat(),
+                timestamp=datetime.now(UTC).isoformat(),
             )
             await actor.put_message(message)
 

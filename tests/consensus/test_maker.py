@@ -400,8 +400,8 @@ class TestEnhancedVoteWeighting:
         weighted = maker._apply_enhanced_vote_weights(votes, "test")
 
         # Expert should have higher weight than novice
-        expert_weight = next(w for d, w in weighted if d == "A" and "expert" in str(votes[weighted.index((d,w))].agent_id))
-        novice_weight = next(w for d, w in weighted if d == "A" and "novice" in str(votes[weighted.index((d,w))].agent_id))
+        next(w for d, w in weighted if d == "A" and "expert" in str(votes[weighted.index((d,w))].agent_id))
+        next(w for d, w in weighted if d == "A" and "novice" in str(votes[weighted.index((d,w))].agent_id))
 
         # Weights should reflect reputation
         assert len(weighted) == 2

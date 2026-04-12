@@ -11,7 +11,7 @@ Tests the persistence mechanisms for:
 import json
 import os
 import tempfile
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import pytest
 
@@ -80,7 +80,7 @@ class TestExpertiseProfilePersistence:
         self.profiler.record_outcome("agent-1", "testing", was_correct=True, confidence=0.9)
 
         # Create temp file
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
             temp_path = f.name
 
         try:
@@ -88,7 +88,7 @@ class TestExpertiseProfilePersistence:
             self.profiler.save_to_file(temp_path)
 
             # Verify file exists and is valid JSON
-            with open(temp_path, 'r') as f:
+            with open(temp_path) as f:
                 data = json.load(f)
             assert "profiles" in data
 
@@ -246,7 +246,7 @@ class TestCompleteStatePersistence:
         self.consensus.record_decision_outcome("test-consensus", "agent-1", was_correct=True)
 
         # Create temp file
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
             temp_path = f.name
 
         try:
@@ -254,7 +254,7 @@ class TestCompleteStatePersistence:
             self.consensus.save_state(temp_path)
 
             # Verify file is valid JSON with expected structure
-            with open(temp_path, 'r') as f:
+            with open(temp_path) as f:
                 state = json.load(f)
 
             assert "expertise_profiler" in state
@@ -295,7 +295,7 @@ class TestCompleteStatePersistence:
         self.consensus.compute_consensus("test-consensus")
 
         # Create temp file
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
             temp_path = f.name
 
         try:
@@ -328,7 +328,7 @@ class TestCompleteStatePersistence:
 
     def test_load_invalid_json(self):
         """Test load_state handles invalid JSON gracefully."""
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
             f.write("not valid json {")
             temp_path = f.name
 
@@ -455,7 +455,7 @@ class TestIntegrationPersistenceWithWeighting:
         profiler = AgentExpertiseProfiler()
         profiler.register_agent("expert", domains=["testing"], initial_expertise=0.95)
 
-        with tempfile.NamedTemporaryFile(mode='w', suffix='.json', delete=False) as f:
+        with tempfile.NamedTemporaryFile(mode="w", suffix=".json", delete=False) as f:
             temp_path = f.name
 
         try:
@@ -472,7 +472,7 @@ class TestIntegrationPersistenceWithWeighting:
                 agent_id="expert",
                 decision="approve",
                 confidence=0.8,
-                timestamp=datetime.now(timezone.utc).isoformat(),
+                timestamp=datetime.now(UTC).isoformat(),
             )
             enhanced_vote = EnhancedVote(vote=vote)
 
@@ -512,7 +512,7 @@ class TestIntegrationPersistenceWithWeighting:
             agent_id="agent-1",
             decision="approve",
             confidence=0.7,
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
         enhanced_vote = EnhancedVote(vote=vote)
 

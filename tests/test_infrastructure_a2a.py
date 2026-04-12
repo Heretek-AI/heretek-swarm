@@ -4,9 +4,6 @@ Tests for A2A (Agent-to-Agent) Protocol Infrastructure.
 Validates the A2A protocol implementation for structured inter-agent communication.
 """
 
-import pytest
-from datetime import datetime
-from uuid import uuid4
 
 # Import directly from protocol to avoid NATS dependency issues
 from heretek_swarm.infrastructure.a2a.protocol import (
@@ -15,12 +12,11 @@ from heretek_swarm.infrastructure.a2a.protocol import (
     A2AProtocol,
     AgentCapability,
     MessagePriority,
+    create_consensus_message,
+    create_delegation_message,
     create_task_request,
     create_task_response,
-    create_delegation_message,
-    create_consensus_message,
 )
-
 
 # =============================================================================
 # A2AMessageType Tests
@@ -472,7 +468,7 @@ class TestA2AProtocol:
         msg = A2AMessage(
             method=A2AMessageType.REQUEST,  # Use valid method type but with invalid params
         )
-        is_valid, error = protocol.validate_message(msg)
+        is_valid, _error = protocol.validate_message(msg)
         # This should fail validation due to missing required params for TASK_PROPOSE
         # Note: We need to check the actual validate_message implementation logic
         assert isinstance(is_valid, bool)

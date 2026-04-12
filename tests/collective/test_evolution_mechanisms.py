@@ -537,7 +537,7 @@ class TestEvolutionIntegration:
             await controller.record_update("agent_1", success=True)
 
         # Evolve behaviors
-        result = await controller.evolve_behaviors("agent_1")
+        await controller.evolve_behaviors("agent_1")
 
         # Check evolution metrics
         metrics = engine.get_evolution_metrics()

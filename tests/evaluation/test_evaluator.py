@@ -7,7 +7,7 @@ output validation, and quality metrics calculation.
 
 import asyncio
 from datetime import datetime
-from typing import Any, Dict
+from typing import Any
 
 import pytest
 from evaluation.evaluator import (
@@ -21,11 +21,11 @@ from evaluation.evaluator import (
 class MockAgent:
     """Mock agent for testing."""
 
-    def __init__(self, responses: Dict[str, Any] = None):
+    def __init__(self, responses: dict[str, Any] | None = None):
         self.responses = responses or {}
         self.call_count = 0
 
-    async def execute(self, input_data: Dict[str, Any]) -> Any:
+    async def execute(self, input_data: dict[str, Any]) -> Any:
         """Execute agent with mock response."""
         self.call_count += 1
         query = input_data.get("query", "")
@@ -35,7 +35,7 @@ class MockAgent:
 class SlowAgent:
     """Mock agent that times out."""
 
-    async def execute(self, input_data: Dict[str, Any]) -> Any:
+    async def execute(self, input_data: dict[str, Any]) -> Any:
         """Execute agent with delay."""
         await asyncio.sleep(35)  # Exceeds default timeout
         return {"result": "timeout"}
@@ -44,7 +44,7 @@ class SlowAgent:
 class FailingAgent:
     """Mock agent that fails."""
 
-    async def execute(self, input_data: Dict[str, Any]) -> Any:
+    async def execute(self, input_data: dict[str, Any]) -> Any:
         """Execute agent with error."""
         raise ValueError("Agent failed")
 
@@ -258,7 +258,7 @@ class TestAgentEvaluator:
     @pytest.mark.asyncio
     async def test_sequential_execution(self, evaluator, mock_agent, test_cases):
         """Test sequential test execution."""
-        evaluator_sequential = AgentEvaluator(timeout=10, parallel=False)
+        AgentEvaluator(timeout=10, parallel=False)
         result = await evaluator.evaluate_agent(
             agent_id="test-agent",
             agent=mock_agent,
@@ -328,7 +328,7 @@ class TestAgentEvaluator:
     @pytest.mark.asyncio
     async def test_get_evaluation(self, evaluator, mock_agent, test_cases):
         """Test getting evaluation by ID."""
-        result = await evaluator.evaluate_agent(
+        await evaluator.evaluate_agent(
             agent_id="test-agent",
             agent=mock_agent,
             test_cases=test_cases,

@@ -10,7 +10,7 @@ Validates PostgreSQL-backed state persistence with:
 """
 
 import asyncio
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from uuid import UUID, uuid4
 
 import pytest
@@ -44,7 +44,7 @@ async def repository():
         retry_delay=0.01,
     )
     await repo.initialize()
-    yield repo
+    return repo
 
 
 @pytest.fixture
@@ -113,8 +113,8 @@ class TestAgentStateRecord:
             "agent_type": "TestAgent",
             "state": sample_state,
             "version": 2,
-            "created_at": datetime.now(timezone.utc).isoformat(),
-            "updated_at": datetime.now(timezone.utc).isoformat(),
+            "created_at": datetime.now(UTC).isoformat(),
+            "updated_at": datetime.now(UTC).isoformat(),
             "is_active": True,
         }
 

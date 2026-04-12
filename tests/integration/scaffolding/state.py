@@ -193,7 +193,7 @@ class MockStateManager:
         if self._latency_simulator > 0:
             await asyncio.sleep(self._latency_simulator / 1000)
 
-        elapsed_ms = (time.perf_counter() - start_time) * 1000
+        (time.perf_counter() - start_time) * 1000
         return True
 
     async def rollback_to_last(self, agent_id: str) -> bool:
@@ -270,7 +270,6 @@ class StateRollbackScenario:
 
     async def setup(self) -> None:
         """Set up the scenario."""
-        pass
 
     async def teardown(self) -> None:
         """Tear down the scenario."""
@@ -347,7 +346,7 @@ class MultiStepRollbackScenario(StateRollbackScenario):
             )
 
         # Get current state
-        current_state = await self.state_manager.get_state(agent_id)
+        await self.state_manager.get_state(agent_id)
 
         # Rollback to step 2
         start_time = time.perf_counter()

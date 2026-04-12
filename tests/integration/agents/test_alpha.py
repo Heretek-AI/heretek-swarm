@@ -23,8 +23,8 @@ class TestAlphaAgentIntegration:
     @pytest_asyncio.fixture
     async def alpha_agent(self, mock_nats, mock_llm):
         """Create AlphaAgent with mock dependencies."""
-        with patch('heretek_swarm.actors.stubs.get_nats_event_mesh', return_value=mock_nats):
-            with patch('heretek_swarm.actors.stubs.get_llm_provider', return_value=mock_llm):
+        with patch("heretek_swarm.actors.stubs.get_nats_event_mesh", return_value=mock_nats):
+            with patch("heretek_swarm.actors.stubs.get_llm_provider", return_value=mock_llm):
                 agent = AlphaAgent(agent_id="alpha-test-001")
                 yield agent
                 if agent.state != ActorState.TERMINATED:

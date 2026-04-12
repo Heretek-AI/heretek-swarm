@@ -30,26 +30,21 @@ class TestAgentTemplate:
         # assert agent.agent_id == agent_config.agent_id
         # assert agent.agent_type == agent_config.agent_type
         # assert agent.capabilities == agent_config.capabilities
-        pass
 
     def test_agent_capabilities(self, agent_config: AgentConfig) -> None:
         """Test agent has required capabilities."""
-        required_capabilities = ["task_execution", "messaging"]
         # TODO: Implement when agent class available
         # for cap in required_capabilities:
         #     assert agent.has_capability(cap)
-        pass
 
     def test_agent_state_idle(self, agent_config: AgentConfig) -> None:
         """Test agent starts in idle state."""
         # TODO: Implement
         # assert agent.get_state().status == "idle"
-        pass
 
     def test_agent_state_transition(self, agent_config: AgentConfig) -> None:
         """Test agent state transitions correctly."""
         # TODO: Implement state transition testing
-        pass
 
 
 @pytest.mark.unit
@@ -96,12 +91,10 @@ class TestAgentMessaging:
     def test_message_validation(self, agent_config: AgentConfig) -> None:
         """Test agent validates incoming messages."""
         # TODO: Test message validation logic
-        pass
 
     def test_message_correlation_id(self, agent_config: AgentConfig) -> None:
         """Test message correlation ID tracking for A2A flows."""
         # TODO: Test correlation ID propagation
-        pass
 
 
 @pytest.mark.unit
@@ -111,17 +104,14 @@ class TestAgentState:
     def test_state_persistence(self, agent_config: AgentConfig) -> None:
         """Test agent state persists correctly."""
         # TODO: Test state save/load
-        pass
 
     def test_state_rollback(self, agent_config: AgentConfig) -> None:
         """Test agent state can be rolled back."""
         # TODO: Test state rollback mechanism
-        pass
 
     def test_state_memory_context(self, agent_config: AgentConfig) -> None:
         """Test agent maintains memory context in state."""
         # TODO: Test memory context preservation
-        pass
 
 
 @pytest.mark.unit
@@ -131,7 +121,7 @@ class TestAgentSecurity:
 
     def test_input_validation(self, agent_config: AgentConfig, malicious_inputs: list) -> None:
         """Test agent validates all inputs."""
-        for malicious in malicious_inputs:
+        for _malicious in malicious_inputs:
             # TODO: Test that malicious inputs are rejected/sanitized
             # result = agent.process_input(malicious["input"])
             # assert result is not None  # Should not crash
@@ -140,12 +130,10 @@ class TestAgentSecurity:
     def test_no_secrets_in_logs(self, agent_config: AgentConfig, secret_patterns: list) -> None:
         """Test agent doesn't leak secrets in logs."""
         # TODO: Capture logs and verify no secret patterns
-        pass
 
     def test_capability_enforcement(self, agent_config: AgentConfig) -> None:
         """Test agent only executes allowed capabilities."""
         # TODO: Test capability boundary enforcement
-        pass
 
 
 # ============== TRIAD AGENT TESTS ==============
@@ -157,14 +145,13 @@ class TestTriadAgent:
 
     def test_deliberation_vote(self, triad_agents: list[AgentConfig]) -> None:
         """Test triad agents can vote in deliberation."""
-        for agent in triad_agents:
+        for _agent in triad_agents:
             # TODO: Test vote casting
             pass
 
     def test_consensus_threshold(self, triad_agents: list[AgentConfig]) -> None:
         """Test 2/3 consensus requirement."""
         # TODO: Test that 2/3 agreement triggers consensus
-        pass
 
     @pytest.mark.latency
     def test_consensus_latency(self, triad_agents: list[AgentConfig], assert_latency_baseline) -> None:
@@ -187,16 +174,12 @@ class TestStewardAgent:
 
     def test_orchestration_capability(self, steward_config: AgentConfig) -> None:
         """Test steward has orchestration capabilities."""
-        required = ["orchestration", "final_authorization", "task_delegation"]
         # TODO: Verify capabilities
-        pass
 
     def test_final_authorization(self, steward_config: AgentConfig) -> None:
         """Test steward can provide final authorization."""
         # TODO: Test authorization workflow
-        pass
 
     def test_task_delegation(self, steward_config: AgentConfig) -> None:
         """Test steward delegates tasks to appropriate agents."""
         # TODO: Test task routing logic
-        pass

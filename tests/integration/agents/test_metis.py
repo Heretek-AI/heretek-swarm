@@ -22,9 +22,9 @@ class TestMetisAgentIntegration:
     @pytest_asyncio.fixture
     async def metis_agent(self, mock_nats, mock_llm, mock_db):
         """Create MetisAgent with mock dependencies."""
-        with patch('heretek_swarm.actors.stubs.get_nats_event_mesh', return_value=mock_nats):
-            with patch('heretek_swarm.actors.stubs.get_llm_provider', return_value=mock_llm):
-                with patch('heretek_swarm.actors.stubs.get_db_pool', return_value=mock_db):
+        with patch("heretek_swarm.actors.stubs.get_nats_event_mesh", return_value=mock_nats):
+            with patch("heretek_swarm.actors.stubs.get_llm_provider", return_value=mock_llm):
+                with patch("heretek_swarm.actors.stubs.get_db_pool", return_value=mock_db):
                     agent = MetisAgent(agent_id="metis-test-001")
                     yield agent
                     if agent.state != ActorState.TERMINATED:
@@ -372,7 +372,7 @@ class TestMetisAgentIntegration:
         }
 
         # Save state
-        with patch('heretek_swarm.actors.stubs.get_db_pool', return_value=mock_db):
+        with patch("heretek_swarm.actors.stubs.get_db_pool", return_value=mock_db):
             await spawned_metis.save_state()
 
         # Verify state saved

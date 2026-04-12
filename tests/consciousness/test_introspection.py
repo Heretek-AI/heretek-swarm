@@ -159,7 +159,7 @@ class TestUpdateBeliefFromOutcome:
 
     def test_update_with_positive_outcome(self, introspection_with_belief):
         """Test belief update with positive outcome."""
-        belief_id = list(introspection_with_belief.self_model.beliefs.keys())[0]
+        belief_id = next(iter(introspection_with_belief.self_model.beliefs.keys()))
         old_belief = introspection_with_belief.self_model.beliefs[belief_id]
         old_confidence = old_belief.confidence
 
@@ -176,7 +176,7 @@ class TestUpdateBeliefFromOutcome:
 
     def test_update_with_negative_outcome(self, introspection_with_belief):
         """Test belief update with negative outcome."""
-        belief_id = list(introspection_with_belief.self_model.beliefs.keys())[0]
+        belief_id = next(iter(introspection_with_belief.self_model.beliefs.keys()))
         old_belief = introspection_with_belief.self_model.beliefs[belief_id]
         old_confidence = old_belief.confidence
 
@@ -203,7 +203,7 @@ class TestUpdateBeliefFromOutcome:
 
     def test_evolution_record_created(self, introspection_with_belief):
         """Test that evolution record is created on update."""
-        belief_id = list(introspection_with_belief.self_model.beliefs.keys())[0]
+        belief_id = next(iter(introspection_with_belief.self_model.beliefs.keys()))
 
         outcome = {"success": True}
         evidence = {"source": "test", "strength": 0.5}
@@ -224,7 +224,7 @@ class TestUpdateBeliefFromOutcome:
             ],
         )
         introspection = IntrospectionModule(self_model)
-        belief_id = list(introspection.self_model.beliefs.keys())[0]
+        belief_id = next(iter(introspection.self_model.beliefs.keys()))
 
         # Multiple positive updates should not exceed max
         for _ in range(20):
@@ -255,7 +255,7 @@ class TestEvolveGoals:
 
     def test_evolve_with_completed_tasks(self, introspection_with_goals):
         """Test goal evolution with completed tasks."""
-        goal_id = list(introspection_with_goals.self_model.goals.keys())[0]
+        goal_id = next(iter(introspection_with_goals.self_model.goals.keys()))
 
         current_state = {
             "completed_tasks": [goal_id],
@@ -264,7 +264,7 @@ class TestEvolveGoals:
             "constraints": [],
         }
 
-        result = introspection_with_goals.evolve_goals(current_state)
+        introspection_with_goals.evolve_goals(current_state)
 
         # Goal progress should increase when in completed_tasks
         goal = introspection_with_goals.self_model.goals[goal_id]
@@ -272,7 +272,7 @@ class TestEvolveGoals:
 
     def test_evolve_goal_completion(self, introspection_with_goals):
         """Test goal completion when progress reaches 1.0."""
-        goal_id = list(introspection_with_goals.self_model.goals.keys())[0]
+        goal_id = next(iter(introspection_with_goals.self_model.goals.keys()))
         introspection_with_goals.self_model.goals[goal_id].progress = 0.95
 
         current_state = {
@@ -291,7 +291,7 @@ class TestEvolveGoals:
 
     def test_evolve_with_constraints(self, introspection_with_goals):
         """Test goal evolution with constraints."""
-        goal_id = list(introspection_with_goals.self_model.goals.keys())[0]
+        goal_id = next(iter(introspection_with_goals.self_model.goals.keys()))
         goal = introspection_with_goals.self_model.goals[goal_id]
         goal.description = "Complete task A with resource X"
 
@@ -310,7 +310,7 @@ class TestEvolveGoals:
 
     def test_evolve_with_high_resources(self, introspection_with_goals):
         """Test goal evolution with high resource availability."""
-        goal_id = list(introspection_with_goals.self_model.goals.keys())[0]
+        goal_id = next(iter(introspection_with_goals.self_model.goals.keys()))
         goal = introspection_with_goals.self_model.goals[goal_id]
         goal.priority = 0.5  # Start with moderate priority
 
@@ -321,7 +321,7 @@ class TestEvolveGoals:
             "constraints": [],
         }
 
-        result = introspection_with_goals.evolve_goals(current_state)
+        introspection_with_goals.evolve_goals(current_state)
 
         assert goal.priority > 0.5
 
@@ -427,7 +427,7 @@ class TestTrackGoalProgress:
 
     def test_track_positive_progress(self, introspection_with_goal):
         """Test tracking positive progress."""
-        goal_id = list(introspection_with_goal.self_model.goals.keys())[0]
+        goal_id = next(iter(introspection_with_goal.self_model.goals.keys()))
 
         outcome = {"success": True, "progress_delta": 0.2}
 
@@ -439,7 +439,7 @@ class TestTrackGoalProgress:
 
     def test_track_negative_progress(self, introspection_with_goal):
         """Test tracking negative progress."""
-        goal_id = list(introspection_with_goal.self_model.goals.keys())[0]
+        goal_id = next(iter(introspection_with_goal.self_model.goals.keys()))
 
         outcome = {"success": False, "progress_delta": -0.1}
 
@@ -452,12 +452,12 @@ class TestTrackGoalProgress:
 
     def test_track_completion(self, introspection_with_goal):
         """Test tracking goal completion."""
-        goal_id = list(introspection_with_goal.self_model.goals.keys())[0]
+        goal_id = next(iter(introspection_with_goal.self_model.goals.keys()))
         introspection_with_goal.self_model.goals[goal_id].progress = 0.9
 
         outcome = {"completion": True}
 
-        result = introspection_with_goal.track_goal_progress(goal_id, outcome)
+        introspection_with_goal.track_goal_progress(goal_id, outcome)
 
         goal = introspection_with_goal.self_model.goals[goal_id]
         assert goal.status == GoalStatus.COMPLETED
@@ -465,11 +465,11 @@ class TestTrackGoalProgress:
 
     def test_track_with_blockers(self, introspection_with_goal):
         """Test tracking with new blockers."""
-        goal_id = list(introspection_with_goal.self_model.goals.keys())[0]
+        goal_id = next(iter(introspection_with_goal.self_model.goals.keys()))
 
         outcome = {"blockers": ["resource_unavailable", "dependency_missing"]}
 
-        result = introspection_with_goal.track_goal_progress(goal_id, outcome)
+        introspection_with_goal.track_goal_progress(goal_id, outcome)
 
         goal = introspection_with_goal.self_model.goals[goal_id]
         assert goal.status == GoalStatus.BLOCKED
@@ -505,7 +505,7 @@ class TestGetIntrospectionReport:
         introspection = IntrospectionModule(self_model)
 
         # Add some evolution history
-        belief_id = list(introspection.self_model.beliefs.keys())[0]
+        belief_id = next(iter(introspection.self_model.beliefs.keys()))
         introspection.update_belief_from_outcome(
             belief_id,
             {"success": True},
@@ -585,8 +585,8 @@ class TestConfidenceDecay:
 
     def test_decay_applied(self, introspection_with_beliefs):
         """Test that decay is applied to beliefs."""
-        belief_id = list(introspection_with_beliefs.self_model.beliefs.keys())[0]
-        old_confidence = introspection_with_beliefs.self_model.beliefs[belief_id].confidence
+        belief_id = next(iter(introspection_with_beliefs.self_model.beliefs.keys()))
+        introspection_with_beliefs.self_model.beliefs[belief_id].confidence
 
         changes = introspection_with_beliefs.apply_confidence_decay(days_elapsed=10)
 
@@ -598,7 +598,7 @@ class TestConfidenceDecay:
         """Test that confidence decays toward neutral (0.5)."""
         # Set up beliefs with high and low confidence
         self_model = introspection_with_beliefs.self_model
-        high_conf_belief = list(self_model.beliefs.values())[0]
+        high_conf_belief = next(iter(self_model.beliefs.values()))
         high_conf_belief.confidence = 0.9
 
         changes = introspection_with_beliefs.apply_confidence_decay(days_elapsed=30)
@@ -635,7 +635,7 @@ class TestBeliefEvolutionHistory:
 
     def test_get_belief_evolution_history(self, introspection):
         """Test retrieving belief evolution history."""
-        belief_id = list(introspection.self_model.beliefs.keys())[0]
+        belief_id = next(iter(introspection.self_model.beliefs.keys()))
 
         # Make several updates
         for i in range(5):
@@ -677,10 +677,10 @@ class TestGoalEvolutionHistory:
 
     def test_get_goal_evolution_history(self, introspection):
         """Test retrieving goal evolution history."""
-        goal_id = list(introspection.self_model.goals.keys())[0]
+        goal_id = next(iter(introspection.self_model.goals.keys()))
 
         # Make several updates
-        for i in range(3):
+        for _i in range(3):
             introspection.track_goal_progress(
                 goal_id,
                 {"success": True, "progress_delta": 0.1}
@@ -712,7 +712,7 @@ class TestConflictResolutionStrategies:
         introspection = IntrospectionModule(self_model)
 
         # Add evidence to first belief
-        belief_id = list(introspection.self_model.beliefs.keys())[0]
+        belief_id = next(iter(introspection.self_model.beliefs.keys()))
         introspection.self_model.beliefs[belief_id].supporting_evidence = ["e1", "e2", "e3", "e4", "e5"]
 
         return introspection
@@ -798,7 +798,7 @@ class TestEdgeCases:
             initial_beliefs=[{"state": "Test", "confidence": 0.5}],
         )
         introspection = IntrospectionModule(self_model)
-        belief_id = list(introspection.self_model.beliefs.keys())[0]
+        belief_id = next(iter(introspection.self_model.beliefs.keys()))
 
         # Create more than MAX_EVOLUTION_HISTORY records
         for i in range(IntrospectionModule.MAX_EVOLUTION_HISTORY + 100):
@@ -838,7 +838,7 @@ class TestIntegration:
         assert reflection["total_beliefs"] == 2
 
         # Update belief from positive outcome
-        belief_id = list(self_model.beliefs.keys())[0]
+        belief_id = next(iter(self_model.beliefs.keys()))
         introspection.update_belief_from_outcome(
             belief_id,
             {"success": True, "actual_value": "fast response"},
@@ -846,14 +846,14 @@ class TestIntegration:
         )
 
         # Track goal progress
-        goal_id = list(self_model.goals.keys())[0]
+        goal_id = next(iter(self_model.goals.keys()))
         introspection.track_goal_progress(
             goal_id,
             {"success": True, "progress_delta": 0.3}
         )
 
         # Evolve goals based on state
-        evolution = introspection.evolve_goals({
+        introspection.evolve_goals({
             "completed_tasks": [],
             "achievements": ["API response time improved"],
             "resources": {"cpu": 0.8, "memory": 0.7},
@@ -861,7 +861,7 @@ class TestIntegration:
         })
 
         # Detect conflicts
-        conflicts = introspection.detect_conflicting_beliefs()
+        introspection.detect_conflicting_beliefs()
 
         # Get introspection report
         report = introspection.get_introspection_report()
@@ -897,7 +897,7 @@ class TestIntegration:
         assert "0.8" in conflict.resolution_suggestion or "0.5" in conflict.resolution_suggestion
 
         # Update lower confidence belief with positive evidence
-        belief_id = [b.belief_id for b in self_model.beliefs.values() if b.confidence == 0.5][0]
+        belief_id = next(b.belief_id for b in self_model.beliefs.values() if b.confidence == 0.5)
         introspection.update_belief_from_outcome(
             belief_id,
             {"success": True},

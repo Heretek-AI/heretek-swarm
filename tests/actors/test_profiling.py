@@ -10,7 +10,7 @@ Tests for:
 - Prometheus metrics export
 """
 
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 import pytest
 
@@ -62,7 +62,7 @@ def profiler(profiling_config):
 @pytest.fixture
 def sample_activities():
     """Create sample activity records."""
-    now = datetime.now(timezone.utc)
+    now = datetime.now(UTC)
 
     return [
         ActivityRecord(
@@ -151,7 +151,7 @@ class TestActivityRecording:
         config = ProfilingConfig(activity_buffer_size=100)
         small_profiler = BehaviorProfiler(config)
 
-        for i in range(150):
+        for _i in range(150):
             small_profiler.record_activity(
                 agent_id="test-agent",
                 action=ActionType.MESSAGE_SENT,
@@ -228,10 +228,10 @@ class TestMetricsComputation:
 
     def test_compute_metrics_task_success_rate(self, profiler):
         """Test task success rate calculation."""
-        now = datetime.now(timezone.utc)
+        datetime.now(UTC)
 
         # Add completed and failed tasks
-        for i in range(8):
+        for _i in range(8):
             profiler.record_activity(
                 agent_id="test-agent",
                 action=ActionType.TASK_COMPLETED,
@@ -239,7 +239,7 @@ class TestMetricsComputation:
                 success=True,
             )
 
-        for i in range(2):
+        for _i in range(2):
             profiler.record_activity(
                 agent_id="test-agent",
                 action=ActionType.TASK_FAILED,
@@ -257,14 +257,14 @@ class TestMetricsComputation:
     def test_compute_metrics_error_rate(self, profiler):
         """Test error rate calculation."""
         # Add activities with errors
-        for i in range(8):
+        for _i in range(8):
             profiler.record_activity(
                 agent_id="test-agent",
                 action=ActionType.MESSAGE_SENT,
                 success=True,
             )
 
-        for i in range(2):
+        for _i in range(2):
             profiler.record_activity(
                 agent_id="test-agent",
                 action=ActionType.ERROR_OCCURRED,
@@ -375,8 +375,8 @@ class TestBehaviorProfile:
         # Normal metrics
         normal_metrics = BehaviorMetrics(
             agent_id="test-agent-1",
-            window_start=datetime.now(timezone.utc) - timedelta(minutes=5),
-            window_end=datetime.now(timezone.utc),
+            window_start=datetime.now(UTC) - timedelta(minutes=5),
+            window_end=datetime.now(UTC),
             actions_per_minute=11.0,  # Within 1 std
             error_rate=0.06,  # Within 1 std
         )
@@ -389,8 +389,8 @@ class TestBehaviorProfile:
         # Anomalous metrics
         anomalous_metrics = BehaviorMetrics(
             agent_id="test-agent-1",
-            window_start=datetime.now(timezone.utc) - timedelta(minutes=5),
-            window_end=datetime.now(timezone.utc),
+            window_start=datetime.now(UTC) - timedelta(minutes=5),
+            window_end=datetime.now(UTC),
             actions_per_minute=20.0,  # 5 stds away
             error_rate=0.20,  # Way above normal
         )
@@ -439,7 +439,7 @@ class TestAnomalyDetection:
     def test_detect_anomalies_frequency_spike(self, profiler):
         """Test detecting activity frequency spike."""
         # Establish baseline with normal activity
-        for i in range(10):
+        for _i in range(10):
             profiler.record_activity(
                 agent_id="test-agent",
                 action=ActionType.MESSAGE_SENT,
@@ -447,7 +447,7 @@ class TestAnomalyDetection:
         profiler.update_profile("test-agent", "test-agent")
 
         # Add spike of activities
-        for i in range(100):
+        for _i in range(100):
             profiler.record_activity(
                 agent_id="test-agent",
                 action=ActionType.MESSAGE_SENT,
@@ -465,14 +465,14 @@ class TestAnomalyDetection:
         low_threshold_profiler = BehaviorProfiler(config)
 
         # Add activities with high error rate
-        for i in range(5):
+        for _i in range(5):
             low_threshold_profiler.record_activity(
                 agent_id="test-agent",
                 action=ActionType.MESSAGE_SENT,
                 success=True,
             )
 
-        for i in range(5):
+        for _i in range(5):
             low_threshold_profiler.record_activity(
                 agent_id="test-agent",
                 action=ActionType.ERROR_OCCURRED,
@@ -491,14 +491,14 @@ class TestAnomalyDetection:
         low_threshold_profiler = BehaviorProfiler(config)
 
         # Add tasks with high failure rate
-        for i in range(3):
+        for _i in range(3):
             low_threshold_profiler.record_activity(
                 agent_id="test-agent",
                 action=ActionType.TASK_COMPLETED,
                 duration_ms=100.0,
             )
 
-        for i in range(7):
+        for _i in range(7):
             low_threshold_profiler.record_activity(
                 agent_id="test-agent",
                 action=ActionType.TASK_FAILED,
@@ -517,7 +517,7 @@ class TestAnomalyDetection:
         config = ProfilingConfig(error_rate_threshold=0.1)
         low_threshold_profiler = BehaviorProfiler(config)
 
-        for i in range(50):
+        for _i in range(50):
             low_threshold_profiler.record_activity(
                 agent_id="test-agent",
                 action=ActionType.ERROR_OCCURRED,
@@ -553,7 +553,7 @@ class TestAlertManagement:
         alert_profiler = BehaviorProfiler(config)
 
         # Generate high error rate
-        for i in range(20):
+        for _i in range(20):
             alert_profiler.record_activity(
                 agent_id="test-agent",
                 action=ActionType.ERROR_OCCURRED,
@@ -578,7 +578,7 @@ class TestAlertManagement:
 
         # Generate anomalies multiple times
         for _ in range(3):
-            for i in range(20):
+            for _i in range(20):
                 cooldown_profiler.record_activity(
                     agent_id="test-agent",
                     action=ActionType.ERROR_OCCURRED,
@@ -599,7 +599,7 @@ class TestAlertManagement:
         )
         alert_profiler = BehaviorProfiler(config)
 
-        for i in range(20):
+        for _i in range(20):
             alert_profiler.record_activity(
                 agent_id="test-agent",
                 action=ActionType.ERROR_OCCURRED,
@@ -624,7 +624,7 @@ class TestAlertManagement:
         alert_profiler = BehaviorProfiler(config)
 
         # Generate some alerts
-        for i in range(20):
+        for _i in range(20):
             alert_profiler.record_activity(
                 agent_id="test-agent",
                 action=ActionType.ERROR_OCCURRED,
@@ -647,7 +647,7 @@ class TestAlertManagement:
 
         # Generate alerts for multiple agents
         for agent in ["agent-1", "agent-2", "agent-3"]:
-            for i in range(20):
+            for _i in range(20):
                 alert_profiler.record_activity(
                     agent_id=agent,
                     action=ActionType.ERROR_OCCURRED,
@@ -672,7 +672,7 @@ class TestPrometheusMetricsExport:
     def test_export_prometheus_metrics(self, profiler):
         """Test exporting Prometheus metrics."""
         # Add some activities
-        for i in range(10):
+        for _i in range(10):
             profiler.record_activity(
                 agent_id="test-agent",
                 action=ActionType.MESSAGE_SENT,
@@ -722,7 +722,7 @@ class TestProfilerStatistics:
     def test_get_stats(self, profiler):
         """Test getting profiler statistics."""
         # Add some activities
-        for i in range(10):
+        for _i in range(10):
             profiler.record_activity(
                 agent_id="test-agent",
                 action=ActionType.MESSAGE_SENT,
@@ -742,7 +742,7 @@ class TestProfilerStatistics:
         initial_stats = profiler.get_stats()
 
         # Perform various operations
-        for i in range(5):
+        for _i in range(5):
             profiler.record_activity(
                 agent_id="test-agent",
                 action=ActionType.MESSAGE_SENT,
@@ -810,13 +810,13 @@ class TestIntegration:
         assert metrics.total_actions > 0
 
         # Update profile
-        profile = profiler.update_profile("test-agent", agent_id)
+        profiler.update_profile("test-agent", agent_id)
 
         # Detect anomalies
-        anomalies = profiler.detect_anomalies(agent_id)
+        profiler.detect_anomalies(agent_id)
 
         # Get alerts
-        alerts = profiler.get_alerts()
+        profiler.get_alerts()
 
         # Export metrics
         prometheus_metrics = profiler.export_prometheus_metrics()

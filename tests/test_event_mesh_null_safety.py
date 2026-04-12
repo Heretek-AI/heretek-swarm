@@ -21,8 +21,8 @@ class MockWebSocket:
 
     def __init__(self, should_fail=False, disconnecting=False):
         self.should_fail = should_fail
-        self.client_state = type('obj', (object,), {
-            'disconnecting': disconnecting
+        self.client_state = type("obj", (object,), {
+            "disconnecting": disconnecting
         })()
         self.sent_messages = []
         self.closed = False

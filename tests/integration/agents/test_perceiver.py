@@ -22,9 +22,9 @@ class TestPerceiverAgentIntegration:
     @pytest_asyncio.fixture
     async def perceiver_agent(self, mock_nats, mock_llm, mock_db):
         """Create PerceiverAgent with mock dependencies."""
-        with patch('heretek_swarm.actors.stubs.get_nats_event_mesh', return_value=mock_nats):
-            with patch('heretek_swarm.actors.stubs.get_llm_provider', return_value=mock_llm):
-                with patch('heretek_swarm.actors.stubs.get_db_pool', return_value=mock_db):
+        with patch("heretek_swarm.actors.stubs.get_nats_event_mesh", return_value=mock_nats):
+            with patch("heretek_swarm.actors.stubs.get_llm_provider", return_value=mock_llm):
+                with patch("heretek_swarm.actors.stubs.get_db_pool", return_value=mock_db):
                     agent = PerceiverAgent(agent_id="perceiver-test-001")
                     yield agent
                     if agent.state != ActorState.TERMINATED:
@@ -388,7 +388,7 @@ class TestPerceiverAgentIntegration:
         spawned_perceiver.total_features_extracted = 10
 
         # Save state
-        with patch('heretek_swarm.actors.stubs.get_db_pool', return_value=mock_db):
+        with patch("heretek_swarm.actors.stubs.get_db_pool", return_value=mock_db):
             await spawned_perceiver.save_state()
 
         # Verify state saved

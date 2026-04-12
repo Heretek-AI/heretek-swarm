@@ -105,9 +105,9 @@ class TestHistorianAgentIntegration:
     @pytest_asyncio.fixture
     async def historian_agent(self, mock_nats, mock_llm, mock_db):
         """Create HistorianAgent with mock dependencies."""
-        with patch('heretek_swarm.actors.stubs.get_nats_event_mesh', return_value=mock_nats):
-            with patch('heretek_swarm.actors.stubs.get_llm_provider', return_value=mock_llm):
-                with patch('heretek_swarm.actors.stubs.get_db_pool', return_value=mock_db):
+        with patch("heretek_swarm.actors.stubs.get_nats_event_mesh", return_value=mock_nats):
+            with patch("heretek_swarm.actors.stubs.get_llm_provider", return_value=mock_llm):
+                with patch("heretek_swarm.actors.stubs.get_db_pool", return_value=mock_db):
                     agent = HistorianAgent(agent_id="historian-test-001")
                     yield agent
                     if agent.state != ActorState.TERMINATED:
@@ -259,7 +259,7 @@ class TestHistorianAgentIntegration:
 
         assert result is not None
         # store_memory returns a MemoryEntry object
-        assert hasattr(result, 'id')
+        assert hasattr(result, "id")
 
     @pytest.mark.asyncio
     async def test_retrieve_context(self, spawned_historian, sample_memory):
@@ -409,7 +409,7 @@ class TestHistorianAgentIntegration:
         )
 
         # Save state
-        with patch('heretek_swarm.actors.stubs.get_db_pool', return_value=mock_db):
+        with patch("heretek_swarm.actors.stubs.get_db_pool", return_value=mock_db):
             await spawned_historian.save_state()
 
         # Verify state saved

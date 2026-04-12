@@ -220,7 +220,7 @@ class TestDenseRetrievalStrategy:
             vector_store=mock_vector_store,
         )
 
-        results = await strategy.retrieve(
+        await strategy.retrieve(
             "test query",
             top_k=3,
             filters={"category": "test"},

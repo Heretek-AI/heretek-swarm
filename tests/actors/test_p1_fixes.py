@@ -37,7 +37,7 @@ class TestActorSupervisorInitialize:
     async def test_initialize_method_exists(self):
         """Test that initialize() method exists and is callable."""
         supervisor = ActorSupervisor()
-        assert hasattr(supervisor, 'initialize')
+        assert hasattr(supervisor, "initialize")
         assert callable(supervisor.initialize)
 
     @pytest.mark.asyncio
@@ -99,7 +99,7 @@ class TestDatetimeHandling:
     def test_iso_timestamp_parsing(self):
         """Test that ISO format timestamps can be parsed."""
         timestamp_str = datetime.utcnow().isoformat()
-        parsed = datetime.fromisoformat(timestamp_str.replace('Z', '+00:00'))
+        parsed = datetime.fromisoformat(timestamp_str.replace("Z", "+00:00"))
         assert isinstance(parsed, datetime)
 
     def test_datetime_subtraction(self):
@@ -121,7 +121,7 @@ class TestDatetimeHandling:
 
         # The fix: parse ISO format timestamp
         try:
-            last_activity_dt = datetime.fromisoformat(timestamp_str.replace('Z', '+00:00'))
+            last_activity_dt = datetime.fromisoformat(timestamp_str.replace("Z", "+00:00"))
             idle_time = datetime.utcnow() - last_activity_dt
 
             # Should be approximately 2 hours (7200 seconds)
@@ -163,7 +163,6 @@ class TestExceptionHandling:
         await actor.spawn()
 
         # Mock cleanup to raise exception
-        original_cleanup = actor.cleanup
         async def failing_cleanup():
             raise RuntimeError("Cleanup failed")
         actor.cleanup = failing_cleanup
@@ -183,8 +182,8 @@ class TestExceptionHandling:
         # Verify the method signature includes timeout parameter
         import inspect
         sig = inspect.signature(actor.run_with_llm)
-        assert 'timeout' in sig.parameters
-        assert sig.parameters['timeout'].default == 60  # Default timeout is 60 seconds
+        assert "timeout" in sig.parameters
+        assert sig.parameters["timeout"].default == 60  # Default timeout is 60 seconds
 
         # Mock swarms_agent to return immediately
         def quick_run(*args, **kwargs):

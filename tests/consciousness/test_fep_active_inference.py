@@ -18,7 +18,7 @@ Author: Heretek Swarm Collective
 Date: 2026-04-07
 """
 
-from typing import Any, Dict
+from typing import Any
 
 import pytest
 
@@ -45,7 +45,7 @@ class TestFreeEnergyCalculator:
         return FreeEnergyCalculator(strict_validation=True)
 
     @pytest.fixture
-    def sample_observations(self) -> Dict[str, Any]:
+    def sample_observations(self) -> dict[str, Any]:
         """Sample observations for testing."""
         return {
             "state": "high_reward",
@@ -54,7 +54,7 @@ class TestFreeEnergyCalculator:
         }
 
     @pytest.fixture
-    def sample_generative_model(self) -> Dict[str, Any]:
+    def sample_generative_model(self) -> dict[str, Any]:
         """Sample generative model for testing."""
         return {
             "likelihood": {
@@ -269,7 +269,7 @@ class TestActiveInferenceAgent:
         return ActiveInferenceAgent(agent_id="test-agent-001")
 
     @pytest.fixture
-    def sample_observations(self) -> Dict[str, Any]:
+    def sample_observations(self) -> dict[str, Any]:
         """Sample observations for testing."""
         return {
             "state": "high_reward",

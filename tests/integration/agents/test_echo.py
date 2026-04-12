@@ -22,9 +22,9 @@ class TestEchoActorIntegration:
     @pytest_asyncio.fixture
     async def echo_actor(self, mock_nats, mock_llm, mock_db):
         """Create EchoActor with mock dependencies."""
-        with patch('heretek_swarm.actors.stubs.get_nats_event_mesh', return_value=mock_nats):
-            with patch('heretek_swarm.actors.stubs.get_llm_provider', return_value=mock_llm):
-                with patch('heretek_swarm.actors.stubs.get_db_pool', return_value=mock_db):
+        with patch("heretek_swarm.actors.stubs.get_nats_event_mesh", return_value=mock_nats):
+            with patch("heretek_swarm.actors.stubs.get_llm_provider", return_value=mock_llm):
+                with patch("heretek_swarm.actors.stubs.get_db_pool", return_value=mock_db):
                     actor = EchoActor(agent_id="echo-test-001")
                     yield actor
                     if actor.state != ActorState.TERMINATED:
@@ -313,7 +313,7 @@ class TestEchoActorIntegration:
     async def test_concurrent_broadcasts(self, spawned_echo, mock_nats):
         """Test handling multiple concurrent broadcasts."""
         # Simulate multiple broadcasts
-        for i in range(5):
+        for _i in range(5):
             spawned_echo._stats["messages_sent"] += 1
 
         # Verify statistics
@@ -367,7 +367,7 @@ class TestEchoActorIntegration:
         }
 
         # Save state
-        with patch('heretek_swarm.actors.stubs.get_db_pool', return_value=mock_db):
+        with patch("heretek_swarm.actors.stubs.get_db_pool", return_value=mock_db):
             await spawned_echo.save_state()
 
         # Verify state saved

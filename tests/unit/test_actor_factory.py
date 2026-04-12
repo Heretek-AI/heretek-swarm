@@ -121,7 +121,7 @@ class TestActorFactory:
     def test_get_actor_info(self, factory):
         """Test retrieving actor configuration."""
         factory.register_actor_class("mock-actor", MockAgentActor)
-        actor = factory.create_actor("mock-actor", agent_id="test-instance")
+        factory.create_actor("mock-actor", agent_id="test-instance")
 
         config = factory.get_actor_info("test-instance")
 
@@ -211,7 +211,7 @@ class TestActorSupervisorRestart:
     @pytest.mark.asyncio
     async def test_spawn_actor_stores_config(self, supervisor):
         """Test that spawn_actor stores actor configuration."""
-        actor = await supervisor.spawn_actor(
+        await supervisor.spawn_actor(
             MockAgentActor,
             "test-actor",
             name="Test Actor",
@@ -229,7 +229,7 @@ class TestActorSupervisorRestart:
     @pytest.mark.asyncio
     async def test_spawn_actor_with_type(self, supervisor):
         """Test spawn_actor with explicit actor_type."""
-        actor = await supervisor.spawn_actor(
+        await supervisor.spawn_actor(
             MockAgentActor,
             "test-actor",
             actor_type="CustomType",
@@ -254,8 +254,7 @@ class TestActorSupervisorRestart:
         actor.state = ActorState.ERROR
 
         # Get initial config
-        initial_config = supervisor.actor_configs["test-actor"]
-        initial_initialized = actor.initialized
+        supervisor.actor_configs["test-actor"]
 
         # Attempt restart
         await supervisor._attempt_restart("test-actor")
@@ -385,7 +384,7 @@ class TestBackwardCompatibility:
     @pytest.mark.asyncio
     async def test_spawn_without_actor_type(self, supervisor):
         """Test spawning actor without explicit actor_type (backward compat)."""
-        actor = await supervisor.spawn_actor(
+        await supervisor.spawn_actor(
             MockAgentActor,
             "test-actor",
             name="Test"
@@ -398,7 +397,7 @@ class TestBackwardCompatibility:
     @pytest.mark.asyncio
     async def test_spawn_with_additional_kwargs(self, supervisor):
         """Test spawning with various kwargs."""
-        actor = await supervisor.spawn_actor(
+        await supervisor.spawn_actor(
             MockAgentActor,
             "test-actor",
             name="Test",

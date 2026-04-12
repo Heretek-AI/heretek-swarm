@@ -10,7 +10,8 @@ Tests cover:
 """
 
 import asyncio
-from datetime import datetime, timezone
+import contextlib
+from datetime import UTC, datetime
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -95,7 +96,7 @@ class TestTimeTravelRequest:
 
     def test_create_time_travel_request(self):
         """Test creating a time travel request."""
-        target_time = datetime(2024, 1, 1, 12, 0, 0, tzinfo=timezone.utc)
+        target_time = datetime(2024, 1, 1, 12, 0, 0, tzinfo=UTC)
 
         request = TimeTravelRequest.create(
             entity_id="agent-1",
@@ -116,7 +117,7 @@ class TestTimeTravelRequest:
 
     def test_request_to_dict(self):
         """Test request serialization."""
-        target_time = datetime(2024, 1, 1, 12, 0, 0, tzinfo=timezone.utc)
+        target_time = datetime(2024, 1, 1, 12, 0, 0, tzinfo=UTC)
 
         request = TimeTravelRequest.create(
             entity_id="agent-1",
@@ -169,8 +170,8 @@ class TestMessageReplayManager:
     @pytest.mark.asyncio
     async def test_create_replay_job_with_time_range(self, replay_manager):
         """Test creating a replay job with time range."""
-        start_time = datetime(2024, 1, 1, 0, 0, 0, tzinfo=timezone.utc)
-        end_time = datetime(2024, 1, 2, 0, 0, 0, tzinfo=timezone.utc)
+        start_time = datetime(2024, 1, 1, 0, 0, 0, tzinfo=UTC)
+        end_time = datetime(2024, 1, 2, 0, 0, 0, tzinfo=UTC)
 
         job = await replay_manager.create_replay_job(
             stream_name="AGENT_EVENTS",
@@ -328,7 +329,7 @@ class TestMessageReplayManager:
     @pytest.mark.asyncio
     async def test_create_time_travel_request(self, replay_manager):
         """Test creating a time travel request."""
-        target_time = datetime(2024, 1, 1, 12, 0, 0, tzinfo=timezone.utc)
+        target_time = datetime(2024, 1, 1, 12, 0, 0, tzinfo=UTC)
 
         request = await replay_manager.create_time_travel_request(
             entity_id="agent-1",
@@ -349,7 +350,7 @@ class TestMessageReplayManager:
     @pytest.mark.asyncio
     async def test_execute_time_travel_without_event_store(self, replay_manager):
         """Test time travel execution without event store."""
-        target_time = datetime(2024, 1, 1, 12, 0, 0, tzinfo=timezone.utc)
+        target_time = datetime(2024, 1, 1, 12, 0, 0, tzinfo=UTC)
 
         request = await replay_manager.create_time_travel_request(
             entity_id="agent-1",
@@ -458,10 +459,8 @@ class TestReplayExecution:
         assert job.status in (ReplayStatus.CANCELLED, ReplayStatus.COMPLETED)
 
         task.cancel()
-        try:
+        with contextlib.suppress(asyncio.CancelledError):
             await task
-        except asyncio.CancelledError:
-            pass
 
     @pytest.mark.asyncio
     async def test_execute_replay_job_not_found(self):
@@ -501,24 +500,24 @@ class TestReplayWithMockedEventStore:
         mock_snapshot = MagicMock()
         mock_snapshot.state = {"initial": "value", "state": "stopped"}
         mock_snapshot.version = 5
-        mock_snapshot.created_at = datetime(2024, 1, 1, 10, 0, 0, tzinfo=timezone.utc)
+        mock_snapshot.created_at = datetime(2024, 1, 1, 10, 0, 0, tzinfo=UTC)
 
         # Mock events after snapshot
         mock_events = [
             MagicMock(
                 event_type="agent.state.changed",
                 payload={"new_state": "starting"},
-                timestamp=datetime(2024, 1, 1, 11, 0, 0, tzinfo=timezone.utc),
+                timestamp=datetime(2024, 1, 1, 11, 0, 0, tzinfo=UTC),
             ),
             MagicMock(
                 event_type="agent.state.changed",
                 payload={"new_state": "running"},
-                timestamp=datetime(2024, 1, 1, 12, 0, 0, tzinfo=timezone.utc),
+                timestamp=datetime(2024, 1, 1, 12, 0, 0, tzinfo=UTC),
             ),
             MagicMock(
                 event_type="agent.state.changed",
                 payload={"new_state": "processing"},
-                timestamp=datetime(2024, 1, 1, 13, 0, 0, tzinfo=timezone.utc),
+                timestamp=datetime(2024, 1, 1, 13, 0, 0, tzinfo=UTC),
             ),
         ]
 
@@ -532,7 +531,7 @@ class TestReplayWithMockedEventStore:
             zero_trust_enabled=False,
         )
 
-        target_time = datetime(2024, 1, 1, 12, 30, 0, tzinfo=timezone.utc)
+        target_time = datetime(2024, 1, 1, 12, 30, 0, tzinfo=UTC)
 
         request = await manager.create_time_travel_request(
             entity_id="agent-1",
@@ -572,7 +571,7 @@ class TestSingletonFunctions:
     @pytest.mark.asyncio
     async def test_setup_replay_manager(self):
         """Test setup_replay_manager function."""
-        with patch('heretek_swarm.gateway.message_replay._replay_manager', None):
+        with patch("heretek_swarm.gateway.message_replay._replay_manager", None):
             mock_js = AsyncMock()
             mock_es = AsyncMock()
 

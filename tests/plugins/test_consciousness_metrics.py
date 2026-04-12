@@ -126,11 +126,11 @@ class TestTemporalMetrics:
         calc = ConsciousnessMetricsCalculator()
 
         # First half: low values
-        for i in range(5):
+        for _i in range(5):
             calc.update_temporal_metrics("agent-1", 0.2)
 
         # Second half: high values
-        for i in range(5):
+        for _i in range(5):
             calc.update_temporal_metrics("agent-1", 0.8)
 
         result = calc.update_temporal_metrics("agent-1", 0.8)
@@ -142,11 +142,11 @@ class TestTemporalMetrics:
         calc = ConsciousnessMetricsCalculator()
 
         # First half: high values
-        for i in range(5):
+        for _i in range(5):
             calc.update_temporal_metrics("agent-1", 0.8)
 
         # Second half: low values
-        for i in range(5):
+        for _i in range(5):
             calc.update_temporal_metrics("agent-1", 0.2)
 
         result = calc.update_temporal_metrics("agent-1", 0.2)
@@ -157,7 +157,7 @@ class TestTemporalMetrics:
         """Should detect stable trend."""
         calc = ConsciousnessMetricsCalculator()
 
-        for i in range(10):
+        for _i in range(10):
             calc.update_temporal_metrics("agent-1", 0.5)
 
         result = calc.update_temporal_metrics("agent-1", 0.5)
@@ -399,7 +399,7 @@ class TestEdgeCases:
         calc = ConsciousnessMetricsCalculator()
         calc._max_history = 100
 
-        for i in range(150):
+        for _i in range(150):
             calc.update_temporal_metrics("agent-1", 0.5)
 
         assert len(calc._temporal_data["agent-1"]) == 100

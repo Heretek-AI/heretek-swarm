@@ -11,7 +11,7 @@ Related to: P0-2 - Remove Dangerous eval() in workflow/engine.py
 Location: src/heretek_swarm/workflow/engine.py:800 (formerly line 561)
 """
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import pytest
 
@@ -245,7 +245,7 @@ class TestWorkflowEngineConditionEvaluation:
         context = WorkflowContext(
             workflow_id="test-wf",
             execution_id="test-exec",
-            start_time=datetime.now(timezone.utc),
+            start_time=datetime.now(UTC),
             state=WorkflowState.RUNNING
         )
         context.variables = {
@@ -269,7 +269,7 @@ class TestWorkflowEngineConditionEvaluation:
         context = WorkflowContext(
             workflow_id="test-wf",
             execution_id="test-exec",
-            start_time=datetime.now(timezone.utc),
+            start_time=datetime.now(UTC),
             state=WorkflowState.RUNNING
         )
         context.variables = {"value": "test"}
@@ -290,7 +290,7 @@ class TestWorkflowEngineConditionEvaluation:
         context = WorkflowContext(
             workflow_id="test-wf",
             execution_id="test-exec",
-            start_time=datetime.now(timezone.utc),
+            start_time=datetime.now(UTC),
             state=WorkflowState.RUNNING
         )
         context.variables = {
@@ -312,7 +312,7 @@ class TestWorkflowEngineConditionEvaluation:
         context = WorkflowContext(
             workflow_id="test-wf",
             execution_id="test-exec",
-            start_time=datetime.now(timezone.utc),
+            start_time=datetime.now(UTC),
             state=WorkflowState.RUNNING
         )
         context.variables = {}

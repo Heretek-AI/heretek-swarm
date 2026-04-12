@@ -375,7 +375,7 @@ class TestRealTimeMetricsStream:
 
     def test_stream_initialization(self, stream):
         """Test stream initialization."""
-        assert stream._running == False
+        assert not stream._running
         assert stream._snapshot is None
 
     def test_get_metrics_snapshot(self, stream, collector):
@@ -432,7 +432,7 @@ class TestRealTimeMetricsStream:
         stream._running = True
         stream.stop_streaming()
 
-        assert stream._running == False
+        assert not stream._running
 
     @pytest.mark.asyncio
     async def test_stream_metrics(self, stream, collector):
@@ -463,7 +463,7 @@ class TestRealTimeMetricsStream:
 
         async def collect():
             count = 0
-            async for metrics in stream.stream_metrics(interval_seconds=0.1):
+            async for _metrics in stream.stream_metrics(interval_seconds=0.1):
                 count += 1
                 if count > 5:
                     stream.stop_streaming()
@@ -557,7 +557,7 @@ class TestMetricsIntegration:
 
         # Collect metrics
         swarm = collector.collect_swarm_metrics()
-        consciousness = collector.collect_consciousness_metrics()
+        collector.collect_consciousness_metrics()
         health = collector.calculate_health_score()
 
         # Verify

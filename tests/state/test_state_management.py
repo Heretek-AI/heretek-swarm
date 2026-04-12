@@ -60,8 +60,7 @@ def state_config(snapshot_config):
 @pytest.fixture
 async def lineage_tracker(lineage_config):
     """Create lineage tracker"""
-    tracker = LineageTracker(lineage_config)
-    yield tracker
+    return LineageTracker(lineage_config)
 
 
 @pytest.fixture
@@ -628,10 +627,10 @@ class TestIntegration:
     async def test_full_workflow(self, state_manager):
         """Test complete workflow"""
         # 1. Register agents
-        agent1 = await state_manager.register_agent(
+        await state_manager.register_agent(
             "agent-1", "coordinator"
         )
-        agent2 = await state_manager.register_agent(
+        await state_manager.register_agent(
             "agent-2", "worker"
         )
 
@@ -659,7 +658,7 @@ class TestIntegration:
         )
 
         # 4. Create snapshot
-        snapshot = await state_manager.create_snapshot(
+        await state_manager.create_snapshot(
             trigger="checkpoint",
             description="After analysis"
         )

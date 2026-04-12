@@ -12,8 +12,7 @@ This module provides comprehensive tests for the Metis agent including:
 - Zero-trust validation tests
 """
 
-from datetime import datetime, timezone
-from typing import List
+from datetime import UTC, datetime
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
@@ -108,7 +107,7 @@ def sample_objective() -> str:
 
 
 @pytest.fixture
-def sample_constraints() -> List[str]:
+def sample_constraints() -> list[str]:
     """Sample constraints for testing."""
     return ["Budget limit of $100k", "Timeline of 6 months", "No additional headcount"]
 
@@ -342,7 +341,7 @@ class TestMessageHandling:
                 "constraints": ["Constraint 1"],
                 "reply_to": "reply-topic",
             },
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         metis_agent.send = AsyncMock(return_value="msg-123")
@@ -370,7 +369,7 @@ class TestMessageHandling:
             content={
                 "reply_to": "reply-topic",
             },
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         metis_agent.send = AsyncMock(return_value="msg-123")
@@ -398,7 +397,7 @@ class TestMessageHandling:
                 "priorities": {"budget": 0.8},
                 "reply_to": "reply-topic",
             },
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         metis_agent.send = AsyncMock(return_value="msg-123")
@@ -426,7 +425,7 @@ class TestMessageHandling:
                 "resources": {},
                 "reply_to": "reply-topic",
             },
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         metis_agent.send = AsyncMock(return_value="msg-123")
@@ -450,7 +449,7 @@ class TestMessageHandling:
                 "domain": "technical",
                 "reply_to": "reply-topic",
             },
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         metis_agent.send = AsyncMock(return_value="msg-123")
@@ -478,7 +477,7 @@ class TestMessageHandling:
                 "variables": ["var1", "var2"],
                 "reply_to": "reply-topic",
             },
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         metis_agent.send = AsyncMock(return_value="msg-123")
@@ -507,7 +506,7 @@ class TestMessageHandling:
                 "metrics": ["metric1", "metric2"],
                 "reply_to": "reply-topic",
             },
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         metis_agent.send = AsyncMock(return_value="msg-123")
@@ -530,7 +529,7 @@ class TestMessageHandling:
                 "priority": "high",
                 "reply_to": "reply-topic",
             },
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         metis_agent.send = AsyncMock(return_value="msg-123")
@@ -551,7 +550,7 @@ class TestMessageHandling:
             "objective": "Test objective",
             "status": "active",
             "phases": [{"phase": 1, "name": "Initiation"}],
-            "created_at": datetime.now(timezone.utc).isoformat(),
+            "created_at": datetime.now(UTC).isoformat(),
             "horizon_days": 90,
         }
 
@@ -562,7 +561,7 @@ class TestMessageHandling:
                 "plan_id": "plan-123",
                 "reply_to": "reply-topic",
             },
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         metis_agent.send = AsyncMock(return_value="msg-123")
@@ -586,7 +585,7 @@ class TestMessageHandling:
                 "plan_id": "non-existent",
                 "reply_to": "reply-topic",
             },
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         metis_agent.send = AsyncMock(return_value="msg-123")
@@ -612,7 +611,7 @@ class TestProcessMessage:
             sender="test",
             message_type="get_plan_status",
             content={"reply_to": "reply"},
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         metis_agent.send = AsyncMock(return_value="msg-123")
@@ -630,7 +629,7 @@ class TestProcessMessage:
             sender="test",
             message_type="unknown_type",
             content={},
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         await metis_agent.process_message(message)
@@ -649,7 +648,7 @@ class TestProcessMessage:
             sender="test",
             message_type="failing",
             content={"reply_to": "reply"},
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         metis_agent.send = AsyncMock(return_value="msg-123")

@@ -22,7 +22,7 @@ from unittest.mock import Mock, patch
 
 import pytest
 
-sys.path.insert(0, 'serverless')
+sys.path.insert(0, "serverless")
 
 
 # =============================================================================
@@ -160,7 +160,7 @@ class TestServerlessConfiguration:
         """Test that serverless.yml is valid YAML."""
         import yaml
 
-        with open("serverless/serverless.yml", "r") as f:
+        with open("serverless/serverless.yml") as f:
             config = yaml.safe_load(f)
 
         assert config is not None
@@ -173,7 +173,7 @@ class TestServerlessConfiguration:
         """Test service name configuration."""
         import yaml
 
-        with open("serverless/serverless.yml", "r") as f:
+        with open("serverless/serverless.yml") as f:
             config = yaml.safe_load(f)
 
         assert config["service"] == "heretek-swarm"
@@ -182,7 +182,7 @@ class TestServerlessConfiguration:
         """Test runtime configuration."""
         import yaml
 
-        with open("serverless/serverless.yml", "r") as f:
+        with open("serverless/serverless.yml") as f:
             config = yaml.safe_load(f)
 
         provider = config["provider"]
@@ -194,7 +194,7 @@ class TestServerlessConfiguration:
         """Test that required functions are defined."""
         import yaml
 
-        with open("serverless/serverless.yml", "r") as f:
+        with open("serverless/serverless.yml") as f:
             config = yaml.safe_load(f)
 
         functions = config["functions"]
@@ -214,7 +214,7 @@ class TestServerlessConfiguration:
         """Test that DynamoDB tables are defined."""
         import yaml
 
-        with open("serverless/serverless.yml", "r") as f:
+        with open("serverless/serverless.yml") as f:
             config = yaml.safe_load(f)
 
         resources = config["resources"]["Resources"]
@@ -233,7 +233,7 @@ class TestServerlessConfiguration:
         """Test IAM permissions configuration."""
         import yaml
 
-        with open("serverless/serverless.yml", "r") as f:
+        with open("serverless/serverless.yml") as f:
             config = yaml.safe_load(f)
 
         iam_statements = config["provider"]["iam"]["role"]["statements"]
@@ -400,8 +400,8 @@ class TestColdStartOptimization:
 
         # Global variables should be initialized
         # (may be None if not configured)
-        assert _db_connection is None or hasattr(_db_connection, 'execute')
-        assert _redis_connection is None or hasattr(_redis_connection, 'get')
+        assert _db_connection is None or hasattr(_db_connection, "execute")
+        assert _redis_connection is None or hasattr(_redis_connection, "get")
 
 
 # =============================================================================
@@ -576,7 +576,7 @@ class TestResourceCreation:
         """Test DynamoDB table properties."""
         import yaml
 
-        with open("serverless/serverless.yml", "r") as f:
+        with open("serverless/serverless.yml") as f:
             config = yaml.safe_load(f)
 
         tables = config["resources"]["Resources"]
@@ -590,7 +590,7 @@ class TestResourceCreation:
         """Test SQS queue properties."""
         import yaml
 
-        with open("serverless/serverless.yml", "r") as f:
+        with open("serverless/serverless.yml") as f:
             config = yaml.safe_load(f)
 
         queues = config["resources"]["Resources"]
@@ -603,7 +603,7 @@ class TestResourceCreation:
         """Test S3 bucket properties."""
         import yaml
 
-        with open("serverless/serverless.yml", "r") as f:
+        with open("serverless/serverless.yml") as f:
             config = yaml.safe_load(f)
 
         buckets = config["resources"]["Resources"]
@@ -617,7 +617,7 @@ class TestResourceCreation:
         """Test EventBridge bus properties."""
         import yaml
 
-        with open("serverless/serverless.yml", "r") as f:
+        with open("serverless/serverless.yml") as f:
             config = yaml.safe_load(f)
 
         buses = config["resources"]["Resources"]
@@ -637,7 +637,7 @@ class TestOutputs:
         """Test that outputs are defined."""
         import yaml
 
-        with open("serverless/serverless.yml", "r") as f:
+        with open("serverless/serverless.yml") as f:
             config = yaml.safe_load(f)
 
         outputs = config["outputs"]

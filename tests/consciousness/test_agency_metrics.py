@@ -654,7 +654,7 @@ class TestPrimeDirectiveCompliance:
             individual_vs_collective_ratio=0.3,
         )
 
-        compliance, details, recommendations = calculator.calculate_prime_directive_compliance(
+        compliance, _details, recommendations = calculator.calculate_prime_directive_compliance(
             metrics, []
         )
 
@@ -674,7 +674,7 @@ class TestPrimeDirectiveCompliance:
             individual_vs_collective_ratio=0.1,
         )
 
-        compliance, details, recommendations = calculator.calculate_prime_directive_compliance(
+        compliance, _details, recommendations = calculator.calculate_prime_directive_compliance(
             metrics, []
         )
 

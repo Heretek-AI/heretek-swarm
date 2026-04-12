@@ -39,13 +39,12 @@ def client():
 @pytest.fixture
 def consciousness_plugin():
     """Create consciousness plugin instance for testing."""
-    plugin = EnhancedConsciousnessPlugin(
+    return EnhancedConsciousnessPlugin(
         gwt_threshold=0.7,
         iit_phi_threshold=0.5,
         ast_threshold=0.6,
         fep_threshold=0.4,
     )
-    return plugin
 
 
 @pytest.fixture
@@ -160,7 +159,7 @@ class TestFEPTracker:
 
     def test_get_average_free_energy(self, fep_tracker):
         """Test getting average free energy."""
-        for i in range(5):
+        for _i in range(5):
             fep_tracker.record_prediction("agent-1", {"action": "respond"})
             fep_tracker.record_outcome("agent-1", {"action": "respond"})
 
@@ -215,7 +214,7 @@ class TestConsciousnessPlugin:
     def test_calculate_consciousness_metrics(self, consciousness_plugin):
         """Test comprehensive consciousness metrics calculation."""
         # Create some interactions
-        for i in range(3):
+        for _i in range(3):
             consciousness_plugin.record_interaction("agent-1", "agent-2")
             consciousness_plugin.record_prediction("agent-1", {"action": "respond"})
             consciousness_plugin.record_outcome("agent-1", {"action": "respond"})

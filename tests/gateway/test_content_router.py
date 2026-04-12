@@ -36,11 +36,10 @@ def content_router():
 
     reset_content_router()
     # Use a fresh registry for each test to avoid metric registration conflicts
-    router = ContentRouter(
+    return ContentRouter(
         rate_limit_per_second=10000,  # High limit for tests
         metrics_registry=CollectorRegistry()
     )
-    return router
 
 
 @pytest.fixture
@@ -838,8 +837,8 @@ class TestRateLimiting:
         )
 
         # Hit rate limit (no rules, so NO_MATCH)
-        decision1 = router.route("test", {"value": 1})
-        decision2 = router.route("test", {"value": 2})
+        router.route("test", {"value": 1})
+        router.route("test", {"value": 2})
 
         # Third request should be rate limited
         decision3 = router.route("test", {"value": 3})

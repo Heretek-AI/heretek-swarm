@@ -9,7 +9,7 @@ Tests cover:
 - Fallback to in-memory storage
 """
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from unittest.mock import patch
 
 import pytest
@@ -451,7 +451,7 @@ class TestJetStreamManagerIntegration:
             await manager.publish(
                 stream_name="INTEGRATION_TEST",
                 subject=f"integration.event.{i}",
-                data={"event_id": i, "timestamp": datetime.now(timezone.utc).isoformat()},
+                data={"event_id": i, "timestamp": datetime.now(UTC).isoformat()},
             )
 
         # Get stream info (in fallback mode, state is tracked differently)
@@ -488,7 +488,7 @@ class TestSingletonFunctions:
     @pytest.mark.asyncio
     async def test_setup_jetstream(self):
         """Test setup_jetstream function."""
-        with patch('heretek_swarm.gateway.jetstream_manager._manager', None):
+        with patch("heretek_swarm.gateway.jetstream_manager._manager", None):
             manager = await setup_jetstream(
                 servers=["nats://localhost:4222"],
                 create_default_streams=False,

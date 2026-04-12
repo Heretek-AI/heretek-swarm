@@ -11,40 +11,38 @@ Tests for the configuration management system including:
 
 from __future__ import annotations
 
-import pytest
-from datetime import datetime, timedelta, UTC
+from datetime import UTC, datetime, timedelta
 from uuid import uuid4
+
+import pytest
 
 # Import models for testing
 from heretek_swarm.config.models import (
-    ConfigType,
-    HealthStatus,
-    LLMProviderType,
-    EmbeddingProviderType,
-    UserConfiguration,
-    UserConfigurationCreate,
-    UserConfigurationUpdate,
-    LLMProvider,
-    LLMProviderCreate,
-    LLMProviderUpdate,
-    LLMProviderTestRequest,
-    LLMProviderTestResponse,
-    EmbeddingProvider,
-    EmbeddingProviderCreate,
-    EmbeddingProviderUpdate,
-    EmbeddingProviderTestRequest,
-    EmbeddingProviderTestResponse,
     AgentConfig,
     AgentConfigCreate,
     AgentConfigUpdate,
     ConfigAuditLog,
     ConfigCacheEntry,
+    ConfigType,
     ConfigurationExport,
     ConfigurationImport,
+    EmbeddingProvider,
+    EmbeddingProviderTestRequest,
+    EmbeddingProviderTestResponse,
+    EmbeddingProviderType,
+    HealthStatus,
     ImportOptions,
     ImportResult,
+    LLMProvider,
+    LLMProviderCreate,
+    LLMProviderTestRequest,
+    LLMProviderTestResponse,
+    LLMProviderType,
+    LLMProviderUpdate,
+    UserConfiguration,
+    UserConfigurationCreate,
+    UserConfigurationUpdate,
 )
-
 
 # =============================================================================
 # Model Tests - ConfigType
@@ -780,7 +778,7 @@ class TestModelEdgeCases:
         """Test UUID fields serialize correctly."""
         config = UserConfiguration(config_key="uuid.test", config_value="uuid_value")
         # Use json mode for proper string serialization
-        data = config.model_dump(mode='json')
+        data = config.model_dump(mode="json")
         assert isinstance(data["id"], str)
         assert isinstance(data["created_at"], str)
         assert isinstance(data["updated_at"], str)

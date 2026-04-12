@@ -10,7 +10,7 @@ Reference: EXPANSION_ROADMAP.md S-1 Horizontal Scaling
 """
 
 import asyncio
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 import pytest
 
@@ -233,7 +233,7 @@ class TestAgentPoolManager:
         """Should respect cooldown periods."""
 
         # Set last scaling time
-        pool_manager.last_scaling_time["cpu_high"] = datetime.now(timezone.utc)
+        pool_manager.last_scaling_time["cpu_high"] = datetime.now(UTC)
 
         # Check cooldown (should be active)
         assert not pool_manager._cooldown_expired("cpu_high", ScalingAction.SCALE_UP)

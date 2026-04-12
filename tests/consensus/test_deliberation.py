@@ -258,7 +258,7 @@ class TestDeliberationEngine:
             participants=["agent-1", "agent-2"],
         )
 
-        argument_id = engine.submit_argument(
+        engine.submit_argument(
             deliberation_id=deliberation_id,
             agent_id="agent-1",
             position=Position.FOR,

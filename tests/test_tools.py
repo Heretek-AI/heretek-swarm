@@ -26,22 +26,18 @@ class TestToolTemplate:
         # TODO: Replace with actual tool class
         # tool = Tool.from_config(config)
         # assert tool is not None
-        pass
 
     def test_tool_input_validation(self) -> None:
         """Test tool validates input parameters."""
         # TODO: Test input validation
-        pass
 
     def test_tool_output_format(self) -> None:
         """Test tool returns expected output format."""
         # TODO: Test output schema validation
-        pass
 
     def test_tool_error_handling(self) -> None:
         """Test tool handles errors gracefully."""
         # TODO: Test error cases
-        pass
 
     @pytest.mark.latency
     def test_tool_execution_latency(self, assert_latency_baseline) -> None:
@@ -63,19 +59,17 @@ class TestToolSecurity:
 
     def test_tool_input_sanitization(self, malicious_inputs: list) -> None:
         """Test tool sanitizes malicious inputs."""
-        for malicious in malicious_inputs:
+        for _malicious in malicious_inputs:
             # TODO: Test input sanitization
             pass
 
     def test_tool_no_secrets_leak(self, secret_patterns: list) -> None:
         """Test tool doesn't leak secrets."""
         # TODO: Verify no secrets in output/logs
-        pass
 
     def test_tool_authorization(self) -> None:
         """Test tool respects authorization boundaries."""
         # TODO: Test authorization checks
-        pass
 
 
 # ============== SKILL CATEGORIES ==============
@@ -87,11 +81,9 @@ class TestCommunicationTools:
 
     def test_message_formatting(self) -> None:
         """Test message formatting tools."""
-        pass
 
     def test_protocol_adapters(self) -> None:
         """Test protocol adapter tools."""
-        pass
 
 
 @pytest.mark.unit
@@ -100,15 +92,12 @@ class TestMemoryTools:
 
     def test_memory_storage(self) -> None:
         """Test memory storage tools."""
-        pass
 
     def test_memory_retrieval(self) -> None:
         """Test memory retrieval tools."""
-        pass
 
     def test_vector_search(self) -> None:
         """Test vector search tools."""
-        pass
 
 
 @pytest.mark.unit
@@ -117,11 +106,9 @@ class TestAnalysisTools:
 
     def test_text_analysis(self) -> None:
         """Test text analysis tools."""
-        pass
 
     def test_data_aggregation(self) -> None:
         """Test data aggregation tools."""
-        pass
 
 
 @pytest.mark.unit
@@ -130,8 +117,6 @@ class TestOrchestrationTools:
 
     def test_workflow_tools(self) -> None:
         """Test workflow management tools."""
-        pass
 
     def test_scheduling_tools(self) -> None:
         """Test scheduling tools."""
-        pass

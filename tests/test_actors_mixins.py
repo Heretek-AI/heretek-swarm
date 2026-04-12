@@ -10,17 +10,16 @@ Tests all four mixins:
 Version: 1.44.0
 """
 
-import asyncio
 import pytest
 
 from heretek_swarm.actors.mixins import (
     DeliberationMixin,
-    PatternMixin,
-    MemoryMixin,
     LearningMixin,
+    MemoryMixin,
+    PatternMixin,
 )
-from heretek_swarm.actors.mixins.memory import AccessTier
 from heretek_swarm.actors.mixins.learning import LearningState
+from heretek_swarm.actors.mixins.memory import AccessTier
 
 
 class MockActor:
@@ -32,22 +31,18 @@ class MockActor:
 
 class MockDeliberationActor(DeliberationMixin, MockActor):
     """Mock actor with DeliberationMixin."""
-    pass
 
 
 class MockPatternActor(PatternMixin, MockActor):
     """Mock actor with PatternMixin."""
-    pass
 
 
 class MockMemoryActor(MemoryMixin, MockActor):
     """Mock actor with MemoryMixin."""
-    pass
 
 
 class MockLearningActor(LearningMixin, MockActor):
     """Mock actor with LearningMixin."""
-    pass
 
 
 class MockAllMixinsActor(
@@ -58,7 +53,6 @@ class MockAllMixinsActor(
     MockActor,
 ):
     """Mock actor with all mixins."""
-    pass
 
 
 # Import the mixins
@@ -362,11 +356,11 @@ class TestAllMixinsCombined:
         actor = MockAllMixinsActor(agent_id="combo-agent")
 
         # Test DeliberationMixin
-        deliberation_id = await actor._initiate_deliberation(topic="test")
+        await actor._initiate_deliberation(topic="test")
         assert actor.is_deliberating is True
 
         # Test PatternMixin
-        pattern_id = await actor._emit_pattern(
+        await actor._emit_pattern(
             pattern_type="success",
             pattern_data={"test": "data"},
         )

@@ -8,7 +8,7 @@ Tests the calculate_vote_weight() method and related functionality:
 - Historical accuracy tracking
 """
 
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 
 from heretek_swarm.consensus.maker import Vote
 from heretek_swarm.consensus.maker_enhanced import (
@@ -99,7 +99,7 @@ class TestCalculateVoteWeight:
             agent_id="agent-1",
             decision="approve",
             confidence=0.5,
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
         enhanced_vote = EnhancedVote(vote=vote)
 
@@ -118,13 +118,13 @@ class TestCalculateVoteWeight:
             agent_id="agent-1",
             decision="approve",
             confidence=0.3,
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
         vote_high = Vote(
             agent_id="agent-2",
             decision="approve",
             confidence=0.9,
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         enhanced_vote_low = EnhancedVote(vote=vote_low)
@@ -158,13 +158,13 @@ class TestCalculateVoteWeight:
             agent_id="expert-agent",
             decision="approve",
             confidence=0.8,
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
         vote_novice = Vote(
             agent_id="novice-agent",
             decision="approve",
             confidence=0.8,
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         enhanced_vote_expert = EnhancedVote(vote=vote_expert)
@@ -191,7 +191,7 @@ class TestCalculateVoteWeight:
             agent_id="agent-1",
             decision="approve",
             confidence=0.8,
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         chain = ReasoningChain(
@@ -231,7 +231,7 @@ class TestCalculateVoteWeight:
             agent_id="agent-2",
             decision="approve",
             confidence=0.8,
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
         enhanced_vote_no_reasoning = EnhancedVote(vote=vote_no_reasoning)
 
@@ -261,13 +261,13 @@ class TestCalculateVoteWeight:
             agent_id="agent-1",
             decision="approve",
             confidence=0.7,
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
         vote_2 = Vote(
             agent_id="agent-2",
             decision="approve",
             confidence=0.7,
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         enhanced_vote_1 = EnhancedVote(vote=vote_1)
@@ -302,7 +302,7 @@ class TestCalculateVoteWeight:
             agent_id="ideal-agent",
             decision="approve",
             confidence=0.9,
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         chain = ReasoningChain(
@@ -383,7 +383,7 @@ class TestEvidenceQualityExtraction:
             agent_id="agent-1",
             decision="approve",
             confidence=0.85,
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
         enhanced_vote = EnhancedVote(vote=vote, reasoning_chain=chain)
 
@@ -405,7 +405,7 @@ class TestEvidenceQualityExtraction:
             agent_id="agent-1",
             decision="approve",
             confidence=0.85,
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
         enhanced_vote = EnhancedVote(vote=vote, reasoning_chain=chain)
 
@@ -420,7 +420,7 @@ class TestEvidenceQualityExtraction:
             agent_id="agent-1",
             decision="approve",
             confidence=0.85,
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         # Pre-populate with high quality evidence
@@ -586,7 +586,7 @@ class TestWeightNormalization:
             agent_id="agent-1",
             decision="approve",
             confidence=0.0,
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
         enhanced_vote = EnhancedVote(vote=vote)
 
@@ -611,7 +611,7 @@ class TestWeightNormalization:
             agent_id="agent-1",
             decision="approve",
             confidence=1.0,
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         chain = ReasoningChain(
@@ -674,13 +674,13 @@ class TestIntegrationWithConsensus:
             agent_id="expert",
             decision="approve",
             confidence=0.8,
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
         novice_vote = Vote(
             agent_id="novice",
             decision="approve",
             confidence=0.8,
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         # Calculate weights

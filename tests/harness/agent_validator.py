@@ -9,7 +9,7 @@ import asyncio
 import time
 from abc import ABC, abstractmethod
 from dataclasses import dataclass, field
-from typing import Any, Generic, TypeVar
+from typing import Any, Generic, Self, TypeVar
 
 import pytest
 
@@ -121,22 +121,18 @@ class AgentValidator(ABC):
     @abstractmethod
     async def validate_initialization(self, agent: Any) -> ValidationResult[bool]:
         """Validate agent initializes correctly."""
-        pass
 
     @abstractmethod
     async def validate_capabilities(self, agent: Any, required: list[str]) -> ValidationResult[bool]:
         """Validate agent has required capabilities."""
-        pass
 
     @abstractmethod
     async def validate_messaging(self, agent: Any) -> ValidationResult[LatencyMetrics]:
         """Validate agent messaging and capture latency metrics."""
-        pass
 
     @abstractmethod
     async def validate_task_execution(self, agent: Any) -> ValidationResult[LatencyMetrics]:
         """Validate agent task execution and capture latency metrics."""
-        pass
 
     def _measure_latency(self, operation: str) -> "_LatencyContext":
         """Create a latency measurement context."""
@@ -156,7 +152,7 @@ class _LatencyContext:
         self._start: float = 0.0
         self._elapsed_ms: float = 0.0
 
-    def __enter__(self) -> "_LatencyContext":
+    def __enter__(self) -> Self:
         self._start = time.perf_counter()
         return self
 

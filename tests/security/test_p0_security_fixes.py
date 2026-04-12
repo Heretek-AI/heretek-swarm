@@ -120,7 +120,7 @@ class TestCVE2026HERETEK002_PathTraversal:
     async def test_read_file_allowed_path(self):
         """Test that reading from allowed paths works."""
         # Create a temp file in allowed directory
-        with tempfile.NamedTemporaryFile(mode='w', delete=False, suffix='.txt') as f:
+        with tempfile.NamedTemporaryFile(mode="w", delete=False, suffix=".txt") as f:
             f.write("test content")
             temp_path = f.name
 
@@ -146,7 +146,7 @@ class TestCVE2026HERETEK002_PathTraversal:
             assert result["success"] is True
 
             # Verify content was written
-            with open(temp_path, 'r') as f:
+            with open(temp_path) as f:
                 content = f.read()
             assert content == "test content"
         finally:
@@ -180,7 +180,7 @@ class TestCVE2026HERETEK003_A2AAuthentication:
         """Test that invalid tokens are rejected."""
         manager = AuthTokenManager()
 
-        is_valid, agent_id, error = manager.validate_token("invalid_token")
+        is_valid, _agent_id, error = manager.validate_token("invalid_token")
 
         assert is_valid is False
         assert error == "Invalid token"
@@ -191,7 +191,7 @@ class TestCVE2026HERETEK003_A2AAuthentication:
         token = manager.generate_token("agent-123")
 
         # Token belongs to agent-123, but connection tries to use agent-456
-        is_valid, agent_id, error = manager.validate_token(token)
+        is_valid, agent_id, _error = manager.validate_token(token)
         assert is_valid is True
         assert agent_id == "agent-123"
 
@@ -209,7 +209,7 @@ class TestCVE2026HERETEK003_A2AAuthentication:
         import time
         time.sleep(0.1)
 
-        is_valid, agent_id, error = manager.validate_token(token)
+        is_valid, _agent_id, error = manager.validate_token(token)
 
         assert is_valid is False
         assert error == "Token expired"
@@ -224,7 +224,7 @@ class TestCVE2026HERETEK003_A2AAuthentication:
         assert revoked is True
 
         # Token should now be invalid
-        is_valid, agent_id, error = manager.validate_token(token)
+        is_valid, _agent_id, _error = manager.validate_token(token)
         assert is_valid is False
 
 
@@ -254,7 +254,7 @@ class TestCVE2026HERETEK004_WebSocketAuthentication:
         """Test that missing tokens are rejected."""
         manager = WebSocketAuthManager()
 
-        is_valid, user_id, error = manager.validate_token("")
+        is_valid, _user_id, error = manager.validate_token("")
 
         assert is_valid is False
         assert error == "Token required"
@@ -268,7 +268,7 @@ class TestCVE2026HERETEK004_WebSocketAuthentication:
         user_id = "test-user"
 
         # First 5 requests should be allowed
-        for i in range(5):
+        for _i in range(5):
             assert manager.check_rate_limit(user_id) is True
 
         # 6th request should be blocked
@@ -279,7 +279,7 @@ class TestCVE2026HERETEK004_WebSocketAuthentication:
         """Test that WebSocket authentication fails without token."""
         mock_websocket = AsyncMock()
 
-        is_authenticated, user_id, error = await authenticate_websocket(mock_websocket, None)
+        is_authenticated, _user_id, error = await authenticate_websocket(mock_websocket, None)
 
         assert is_authenticated is False
         assert error == "Token required"
@@ -313,7 +313,7 @@ class TestCVE2026HERETEK005_ConsensusAuthentication:
 
         # Agent with vote permission
         token = manager.generate_token("agent-123", permissions=["vote"])
-        is_valid, agent_id, _ = manager.validate_token(token)
+        is_valid, _agent_id, _ = manager.validate_token(token)
         assert is_valid is True
 
         assert manager.check_permission("agent-123", "vote") is True
@@ -322,7 +322,7 @@ class TestCVE2026HERETEK005_ConsensusAuthentication:
     def test_consensus_default_permissions(self):
         """Test that default permissions include vote, create, view."""
         manager = ConsensusAuthManager()
-        token = manager.generate_token("agent-123")
+        manager.generate_token("agent-123")
 
         assert manager.check_permission("agent-123", "vote") is True
         assert manager.check_permission("agent-123", "create") is True
@@ -336,7 +336,7 @@ class TestCVE2026HERETEK005_ConsensusAuthentication:
         revoked = manager.revoke_token(token)
         assert revoked is True
 
-        is_valid, agent_id, error = manager.validate_token(token)
+        is_valid, _agent_id, _error = manager.validate_token(token)
         assert is_valid is False
 
 
@@ -397,11 +397,11 @@ class TestDatetimeDeprecations:
         from heretek_swarm.runtime import tools as runtime_tools
 
         # Verify timezone is available in modules
-        assert hasattr(actors_base.datetime, 'now')
-        assert hasattr(runtime_tools.datetime, 'now')
-        assert hasattr(a2a_server.datetime, 'now')
-        assert hasattr(websockets.datetime, 'now')
-        assert hasattr(consensus.datetime, 'now')
+        assert hasattr(actors_base.datetime, "now")
+        assert hasattr(runtime_tools.datetime, "now")
+        assert hasattr(a2a_server.datetime, "now")
+        assert hasattr(websockets.datetime, "now")
+        assert hasattr(consensus.datetime, "now")
 
     def test_actor_base_uses_timezone_aware_datetime(self):
         """Test that actor base uses timezone-aware datetimes."""
@@ -457,7 +457,7 @@ class TestActorMessageDelivery:
         actor1.update_state("_actor_registry", mock_registry)
 
         # Send message
-        message_id = await actor1.send_to_actor(
+        await actor1.send_to_actor(
             target_actor_id="actor-2",
             message_type="test",
             content={"data": "test"}
@@ -508,7 +508,7 @@ class TestStatePersistence:
         assert os.path.exists(state_file)
 
         # Verify content
-        with open(state_file, 'r') as f:
+        with open(state_file) as f:
             saved_state = json.load(f)
 
         assert saved_state["internal_state"]["test_key"] == "test_value"

@@ -192,7 +192,7 @@ class TestUnifiedKnowledgeAccess:
     @pytest.mark.asyncio
     async def test_query_with_filters(self, knowledge_access, mock_memory_system):
         """Test querying with filters."""
-        result = await knowledge_access.query(
+        await knowledge_access.query(
             query="Proposal",
             sources=["memory"],
             filters={"agent_id": "alpha", "memory_limit": 10},
@@ -325,8 +325,8 @@ class TestMMRReranking:
         # Should not crash with out-of-bounds values
         result_0 = knowledge_access._mmr_rerank(entries, diversity_lambda=0.0, limit=5)
         result_1 = knowledge_access._mmr_rerank(entries, diversity_lambda=1.0, limit=5)
-        result_neg = knowledge_access._mmr_rerank(entries, diversity_lambda=-0.5, limit=5)
-        result_high = knowledge_access._mmr_rerank(entries, diversity_lambda=1.5, limit=5)
+        knowledge_access._mmr_rerank(entries, diversity_lambda=-0.5, limit=5)
+        knowledge_access._mmr_rerank(entries, diversity_lambda=1.5, limit=5)
 
         assert len(result_0) == 1
         assert len(result_1) == 1

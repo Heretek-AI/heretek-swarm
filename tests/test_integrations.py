@@ -77,7 +77,7 @@ class TestDiscordBot:
 
     def test_register_commands(self, discord_bot):
         """Test command registration."""
-        assert hasattr(discord_bot, '_bot')
+        assert hasattr(discord_bot, "_bot")
         discord_bot._register_commands()
 
         # Check that commands are registered

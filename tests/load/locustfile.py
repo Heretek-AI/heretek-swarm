@@ -289,7 +289,6 @@ class WebSocketUser(HttpUser):
         """Test WebSocket connection and message reception"""
         # Note: Locust WebSocket support requires locust-websocket package
         # This is a placeholder for WebSocket testing
-        pass
 
 
 # =============================================================================
@@ -300,14 +299,12 @@ class WebSocketUser(HttpUser):
 def on_request(request_type, name, response_time, response_length, exception, **kwargs):
     """Log slow requests"""
     if response_time > 1000:  # > 1 second
-        print(f"SLOW REQUEST: {name} took {response_time}ms")
+        pass
 
 
 @events.test_start.add_listener
 def on_test_start(environment, **kwargs):
     """Called when load test starts"""
-    print(f"Load test starting - Target host: {environment.host}")
-    print(f"Performance targets: p95 < 100ms, p99 < 500ms")
 
 
 @events.test_stop.add_listener
@@ -315,39 +312,24 @@ def on_test_stop(environment, **kwargs):
     """Called when load test stops"""
     stats = environment.stats
 
-    print("\n" + "=" * 60)
-    print("LOAD TEST RESULTS")
-    print("=" * 60)
 
     # Overall statistics
     total_requests = stats.total.num_requests
     total_failures = stats.total.num_failures
-    failure_rate = (total_failures / total_requests * 100) if total_requests > 0 else 0
+    (total_failures / total_requests * 100) if total_requests > 0 else 0
 
-    print(f"Total Requests: {total_requests}")
-    print(f"Total Failures: {total_failures}")
-    print(f"Failure Rate: {failure_rate:.2f}%")
 
     # Latency percentiles
-    print(f"\nLatency Percentiles:")
-    print(f"  p50:  {stats.total.get_response_time_percentile(0.5):.2f}ms")
-    print(f"  p95:  {stats.total.get_response_time_percentile(0.95):.2f}ms")
-    print(f"  p99:  {stats.total.get_response_time_percentile(0.99):.2f}ms")
-    print(f"  Avg:  {stats.total.avg_response_time:.2f}ms")
 
     # Performance assessment
     p95 = stats.total.get_response_time_percentile(0.95)
     p99 = stats.total.get_response_time_percentile(0.99)
 
-    print(f"\nPerformance Assessment:")
-    if p95 < 100 and p99 < 500:
-        print("  ✅ PASS - All latency targets met")
-    elif p95 < 200 and p99 < 1000:
-        print("  ⚠️  WARNING - Latency targets exceeded but acceptable")
+    if (p95 < 100 and p99 < 500) or (p95 < 200 and p99 < 1000):
+        pass
     else:
-        print("  ❌ FAIL - Latency targets significantly exceeded")
+        pass
 
-    print("=" * 60 + "\n")
 
 
 # =============================================================================

@@ -232,13 +232,6 @@ class TestAgentLoad:
         assert metrics.error_rate < 0.01  # <1% error rate
         assert metrics.avg_latency_ms < LATENCY_BASELINE_MS
 
-        print(f"\n📊 Load Test Results (100 agents):")
-        print(f"   Messages: {metrics.messages_sent}")
-        print(f"   Msg/sec: {metrics.messages_per_second:.2f}")
-        print(f"   Avg latency: {metrics.avg_latency_ms:.2f}ms")
-        print(f"   Max latency: {metrics.max_latency_ms:.2f}ms")
-        print(f"   P95 latency: {metrics.p95_latency_ms:.2f}ms")
-        print(f"   Error rate: {metrics.error_rate:.2%}")
 
     @pytest.mark.asyncio
     async def test_500_concurrent_agents(self) -> None:
@@ -256,12 +249,6 @@ class TestAgentLoad:
         assert metrics.total_agents == 500
         assert metrics.error_rate < 0.02  # <2% error rate at scale
 
-        print(f"\n📊 Load Test Results (500 agents):")
-        print(f"   Messages: {metrics.messages_sent}")
-        print(f"   Msg/sec: {metrics.messages_per_second:.2f}")
-        print(f"   Avg latency: {metrics.avg_latency_ms:.2f}ms")
-        print(f"   Max latency: {metrics.max_latency_ms:.2f}ms")
-        print(f"   Error rate: {metrics.error_rate:.2%}")
 
     @pytest.mark.asyncio
     @pytest.mark.skipif(
@@ -290,17 +277,10 @@ class TestAgentLoad:
         assert metrics.total_agents >= CONCURRENT_AGENT_TARGET
         assert metrics.error_rate < 0.05  # <5% error rate acceptable at max scale
 
-        print(f"\n📊 Load Test Results ({CONCURRENT_AGENT_TARGET} agents):")
-        print(f"   Messages: {metrics.messages_sent}")
-        print(f"   Msg/sec: {metrics.messages_per_second:.2f}")
-        print(f"   Avg latency: {metrics.avg_latency_ms:.2f}ms")
-        print(f"   P95 latency: {metrics.p95_latency_ms:.2f}ms")
-        print(f"   Error rate: {metrics.error_rate:.2%}")
 
         # Flag if latency baseline exceeded
         if metrics.p95_latency_ms > LATENCY_BASELINE_MS:
-            print(f"\n⚠️  P95 latency {metrics.p95_latency_ms:.2f}ms exceeds baseline {LATENCY_BASELINE_MS}ms")
-            print("   FLAG FOR REFACTORING per Phase Directives")
+            pass
 
     @pytest.mark.asyncio
     async def test_burst_load(self) -> None:
@@ -316,10 +296,6 @@ class TestAgentLoad:
 
         await pool.cleanup()
 
-        print(f"\n📊 Burst Load Results (200 agents x 1 msg):")
-        print(f"   Messages: {metrics.messages_sent}")
-        print(f"   Duration: {metrics.duration_seconds:.2f}s")
-        print(f"   Max latency: {metrics.max_latency_ms:.2f}ms")
 
         # System should handle burst without complete failure
         assert metrics.messages_failed < metrics.messages_sent * 0.1  # <10% failures

@@ -11,7 +11,7 @@ Tests cover:
 """
 
 import asyncio
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 from unittest.mock import patch
 
 import pytest
@@ -131,7 +131,7 @@ class TestSnapshot:
             aggregate_type="Agent",
             state={"state": "running", "config": {"key": "value"}},
             version=10,
-            created_at=datetime.now(timezone.utc),
+            created_at=datetime.now(UTC),
             metadata={"reason": "periodic"},
         )
 
@@ -148,7 +148,7 @@ class TestSnapshot:
             aggregate_type="Agent",
             state={"state": "running"},
             version=10,
-            created_at=datetime.now(timezone.utc),
+            created_at=datetime.now(UTC),
         )
 
         data = snapshot.to_dict()
@@ -306,7 +306,7 @@ class TestEventStore:
         """Test retrieving events by time range."""
         await event_store.initialize()
 
-        now = datetime.now(timezone.utc)
+        now = datetime.now(UTC)
 
         # Append events with different timestamps
         for i in range(5):
@@ -605,7 +605,7 @@ class TestSingletonFunctions:
     @pytest.mark.asyncio
     async def test_setup_event_store(self):
         """Test setup_event_store function."""
-        with patch('heretek_swarm.state.event_store._store', None):
+        with patch("heretek_swarm.state.event_store._store", None):
             store = await setup_event_store(
                 db_pool=None,
                 snapshot_interval=50,

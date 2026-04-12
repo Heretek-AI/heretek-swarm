@@ -11,8 +11,7 @@ This module provides comprehensive tests for the Empath agent including:
 - Zero-trust validation tests
 """
 
-import asyncio
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
@@ -259,7 +258,7 @@ class TestSentimentAnalysis:
         self, empath_agent: EmpathAgent, mock_swarms_agent: MagicMock
     ) -> None:
         """Test LLM sentiment analysis timeout fallback."""
-        mock_swarms_agent.llm = AsyncMock(side_effect=asyncio.TimeoutError())
+        mock_swarms_agent.llm = AsyncMock(side_effect=TimeoutError())
         empath_agent.swarms_agent = mock_swarms_agent
 
         result = await empath_agent._analyze_sentiment_llm(
@@ -337,7 +336,7 @@ class TestMoodTracking:
         }
 
         # Add multiple mood entries
-        for i in range(5):
+        for _i in range(5):
             empath_agent._update_agent_mood("agent-1", sentiment_result)
 
         assert len(empath_agent.agent_moods["agent-1"]) == 5
@@ -355,7 +354,7 @@ class TestMoodTracking:
         }
 
         # Add more entries than max_mood_history
-        for i in range(empath_agent.max_mood_history + 10):
+        for _i in range(empath_agent.max_mood_history + 10):
             empath_agent._update_agent_mood("agent-1", sentiment_result)
 
         assert len(empath_agent.agent_moods["agent-1"]) <= empath_agent.max_mood_history
@@ -432,7 +431,7 @@ class TestMessageHandling:
                 "source_agent": "agent-1",
                 "reply_to": "reply-topic",
             },
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         empath_agent.send = AsyncMock(return_value="msg-123")
@@ -467,7 +466,7 @@ class TestMessageHandling:
                 "source_agent": "agent-1",
                 "reply_to": "reply-topic",
             },
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         empath_agent.send = AsyncMock(return_value="msg-123")
@@ -491,7 +490,7 @@ class TestMessageHandling:
                 "intensity": 0.8,
                 "reply_to": "reply-topic",
             },
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         empath_agent.send = AsyncMock(return_value="msg-123")
@@ -511,7 +510,7 @@ class TestMessageHandling:
             content={
                 "reply_to": "reply-topic",
             },
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         empath_agent.send = AsyncMock(return_value="msg-123")
@@ -534,7 +533,7 @@ class TestMessageHandling:
                 "context": "Disagreement about approach",
                 "reply_to": "reply-topic",
             },
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         empath_agent.send = AsyncMock(return_value="msg-123")
@@ -557,7 +556,7 @@ class TestMessageHandling:
                 "agents": ["agent-1"],
                 "reply_to": "reply-topic",
             },
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         empath_agent.send = AsyncMock(return_value="msg-123")
@@ -586,7 +585,7 @@ class TestMessageHandling:
                 "agent_id": "agent-1",
                 "reply_to": "reply-topic",
             },
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         empath_agent.send = AsyncMock(return_value="msg-123")
@@ -608,7 +607,7 @@ class TestMessageHandling:
             content={
                 "reply_to": "reply-topic",
             },
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         empath_agent.send = AsyncMock(return_value="msg-123")
@@ -633,7 +632,7 @@ class TestMessageHandling:
                 "proposed_resolution": "Compromise on approach",
                 "reply_to": "reply-topic",
             },
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         empath_agent.send = AsyncMock(return_value="msg-123")
@@ -660,7 +659,7 @@ class TestMessageHandling:
             content={
                 "reply_to": "reply-topic",
             },
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         empath_agent.send = AsyncMock(return_value="msg-123")
@@ -837,7 +836,7 @@ class TestProcessMessage:
             sender="test",
             message_type="get_collective_mood",
             content={"reply_to": "reply"},
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         empath_agent.send = AsyncMock(return_value="msg-123")
@@ -855,7 +854,7 @@ class TestProcessMessage:
             sender="test",
             message_type="unknown_type",
             content={},
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         await empath_agent.process_message(message)
@@ -874,7 +873,7 @@ class TestProcessMessage:
             sender="test",
             message_type="failing",
             content={"reply_to": "reply"},
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         empath_agent.send = AsyncMock(return_value="msg-123")
@@ -930,7 +929,7 @@ class TestErrorHandling:
             sender="test",
             message_type="analyze_sentiment",
             content={"reply_to": "reply"},
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         empath_agent.send = AsyncMock(return_value="msg-123")
@@ -952,7 +951,7 @@ class TestErrorHandling:
                 "agents": ["agent-1", "agent-2"],
                 "reply_to": "reply",
             },
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         empath_agent.send = AsyncMock(return_value="msg-123")

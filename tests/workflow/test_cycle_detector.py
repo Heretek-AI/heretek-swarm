@@ -375,7 +375,7 @@ class TestIntegration:
 
         # Simulate workflow execution
         phases = ["plan", "analyze", "execute", "validate", "report"]
-        for i, phase in enumerate(phases):
+        for _i, phase in enumerate(phases):
             detector.record_node_execution(workflow_id, phase, state={"phase": phase})
 
             # Check for cycles

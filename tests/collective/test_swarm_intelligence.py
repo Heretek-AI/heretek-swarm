@@ -10,7 +10,6 @@ Tests cover:
 """
 
 import asyncio
-from typing import Dict
 
 import pytest
 
@@ -87,7 +86,7 @@ class TestParticle:
         assert particle.position["option_a"] == 0.5
         assert particle.velocity["option_a"] == 0.01
         assert particle.agent_id == "agent-1"
-        assert particle.best_value == float('-inf')
+        assert particle.best_value == float("-inf")
 
     def test_particle_default_values(self):
         """Test particle default values."""
@@ -97,7 +96,7 @@ class TestParticle:
         assert particle.position == {}
         assert particle.velocity == {}
         assert particle.best_position == {}
-        assert particle.best_value == float('-inf')
+        assert particle.best_value == float("-inf")
 
 
 class TestPheromoneTrail:
@@ -244,7 +243,7 @@ class TestSwarmIntelligenceEngine:
         participants = ["agent-1", "agent-2"]
         decision_space = {"x": 0.5, "y": 0.5}
 
-        def fitness_function(position: Dict[str, float]) -> float:
+        def fitness_function(position: dict[str, float]) -> float:
             # Maximize x + y
             return position.get("x", 0) + position.get("y", 0)
 
@@ -430,10 +429,10 @@ class TestEmergenceDetection:
         )
 
         # Check for emergence indicators (may be empty list)
-        assert hasattr(result, 'emergence_indicators') or True
+        assert hasattr(result, "emergence_indicators") or True
 
         # Quality metrics should be present if result has them
-        if hasattr(result, 'quality_metrics'):
+        if hasattr(result, "quality_metrics"):
             assert isinstance(result.quality_metrics, dict) or True
 
 

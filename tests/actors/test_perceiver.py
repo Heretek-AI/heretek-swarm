@@ -11,8 +11,8 @@ This module provides comprehensive tests for the Perceiver agent including:
 - Zero-trust validation tests
 """
 
-from datetime import datetime, timezone
-from typing import Any, Dict
+from datetime import UTC, datetime
+from typing import Any
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -102,13 +102,13 @@ def sample_image_data() -> str:
 
 
 @pytest.fixture
-def sample_sensor_data() -> Dict[str, Any]:
+def sample_sensor_data() -> dict[str, Any]:
     """Sample sensor data for testing."""
     return {
         "temperature": 25.5,
         "humidity": 60.0,
         "pressure": 1013.25,
-        "timestamp": datetime.now(timezone.utc).isoformat(),
+        "timestamp": datetime.now(UTC).isoformat(),
     }
 
 
@@ -417,7 +417,7 @@ class TestFeatureExtraction:
 
     @pytest.mark.asyncio
     async def test_extract_sensor_features(
-        self, perceiver_agent: PerceiverAgent, sample_sensor_data: Dict[str, Any]
+        self, perceiver_agent: PerceiverAgent, sample_sensor_data: dict[str, Any]
     ) -> None:
         """Test sensor data feature extraction."""
         features = perceiver_agent._extract_sensor_features(sample_sensor_data)
@@ -565,7 +565,7 @@ class TestMessageHandling:
                 "modality": "text",
                 "reply_to": "test-reply-topic",
             },
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         # Mock the send method
@@ -592,7 +592,7 @@ class TestMessageHandling:
             content={
                 "reply_to": "test-reply-topic",
             },
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         perceiver_agent.send = AsyncMock(return_value="msg-123")
@@ -618,7 +618,7 @@ class TestMessageHandling:
                 "input_data": large_input,
                 "reply_to": "test-reply-topic",
             },
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         perceiver_agent.send = AsyncMock(return_value="msg-123")
@@ -642,7 +642,7 @@ class TestMessageHandling:
             "modality": "text",
             "features": {"word_count": 50},
             "metadata": {},
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
 
         message = ActorMessage(
@@ -652,7 +652,7 @@ class TestMessageHandling:
                 "input_id": input_id,
                 "reply_to": "test-reply-topic",
             },
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         perceiver_agent.send = AsyncMock(return_value="msg-123")
@@ -675,7 +675,7 @@ class TestMessageHandling:
                 "input_id": "non-existent",
                 "reply_to": "test-reply-topic",
             },
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         perceiver_agent.send = AsyncMock(return_value="msg-123")
@@ -698,7 +698,7 @@ class TestMessageHandling:
                 "format_hint": "json",
                 "reply_to": "test-reply-topic",
             },
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         perceiver_agent.send = AsyncMock(return_value="msg-123")
@@ -719,7 +719,7 @@ class TestMessageHandling:
         perceiver_agent.feature_cache[input_id] = {
             "modality": "text",
             "features": {"word_count": 100},
-            "timestamp": datetime.now(timezone.utc).isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
         }
 
         message = ActorMessage(
@@ -729,7 +729,7 @@ class TestMessageHandling:
                 "input_id": input_id,
                 "reply_to": "test-reply-topic",
             },
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         perceiver_agent.send = AsyncMock(return_value="msg-123")
@@ -756,7 +756,7 @@ class TestMessageHandling:
             content={
                 "reply_to": "test-reply-topic",
             },
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         perceiver_agent.send = AsyncMock(return_value="msg-123")
@@ -778,7 +778,7 @@ class TestMessageHandling:
             perceiver_agent.feature_cache[f"input-{i}"] = {
                 "modality": "text",
                 "features": {},
-                "timestamp": datetime.now(timezone.utc).isoformat(),
+                "timestamp": datetime.now(UTC).isoformat(),
             }
 
         message = ActorMessage(
@@ -788,7 +788,7 @@ class TestMessageHandling:
                 "input_ids": ["input-0", "input-1", "input-2"],
                 "reply_to": "test-reply-topic",
             },
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         perceiver_agent.send = AsyncMock(return_value="msg-123")
@@ -812,7 +812,7 @@ class TestMessageHandling:
                 "input_ids": ["only-one"],
                 "reply_to": "test-reply-topic",
             },
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         perceiver_agent.send = AsyncMock(return_value="msg-123")
@@ -837,7 +837,7 @@ class TestProcessMessage:
             sender="test",
             message_type="get_processing_stats",
             content={"reply_to": "reply"},
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         perceiver_agent.send = AsyncMock(return_value="msg-123")
@@ -856,7 +856,7 @@ class TestProcessMessage:
             sender="test",
             message_type="unknown_type",
             content={},
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         # Should log warning but not raise
@@ -877,7 +877,7 @@ class TestProcessMessage:
             sender="test",
             message_type="failing",
             content={"reply_to": "reply"},
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         perceiver_agent.send = AsyncMock(return_value="msg-123")
@@ -945,7 +945,7 @@ class TestZeroTrustValidation:
                 "input_data": "valid input",
                 "reply_to": "reply-topic",
             },
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         perceiver_agent.send = AsyncMock(return_value="msg-123")

@@ -8,7 +8,7 @@ End-to-end tests for the tier migration system:
 """
 
 import asyncio
-from datetime import datetime, timedelta, timezone
+from datetime import UTC, datetime, timedelta
 
 from src.heretek_swarm.memory.tiering import (
     MemoryTier,
@@ -149,7 +149,7 @@ class TestEndToEndTierMigration:
         )
 
         # Manually set old access time to trigger demotion
-        old_time = (datetime.now(timezone.utc) - timedelta(hours=72)).isoformat()
+        old_time = (datetime.now(UTC) - timedelta(hours=72)).isoformat()
         memory.last_accessed = old_time
         memory.access_count = 1
 
@@ -157,7 +157,7 @@ class TestEndToEndTierMigration:
         async def evaluate():
             return await tiering._evaluate_and_migrate()
 
-        migrated_count = asyncio.run(evaluate())
+        asyncio.run(evaluate())
 
         # Should have migrated based on recency policy
         warm_memories = tiering.get_memories_by_tier(MemoryTier.L2_WARM)
@@ -378,7 +378,7 @@ class TestAccessPatternTracking:
         # Set very old access time to trigger demotion (hot_to_warm threshold is 0.3)
         # Need recency score below 0.3, which requires age > ~48 hours
         # Use 10 days to be safe - this will trigger both hot->warm and warm->cold
-        old_time = (datetime.now(timezone.utc) - timedelta(days=10)).isoformat()
+        old_time = (datetime.now(UTC) - timedelta(days=10)).isoformat()
         memory.last_accessed = old_time
 
         # Evaluate policies
@@ -449,7 +449,7 @@ class TestAccessPatternTracking:
 
             return record, accessed
 
-        record, accessed = asyncio.run(run_concurrent())
+        record, _accessed = asyncio.run(run_concurrent())
 
         # Migration should complete
         assert record.status == TierMigrationStatus.COMPLETED

@@ -76,7 +76,7 @@ class TestAccessPatternAnalyzer:
         analyzer = AccessPatternAnalyzer()
 
         # Record multiple accesses
-        for i in range(10):
+        for _i in range(10):
             analyzer.record_access(
                 memory_id="test_memory_2",
                 access_type="read",
@@ -679,7 +679,7 @@ class TestMemoryTieringSystem:
             target_tier=MemoryTier.L2_WARM,
         )
 
-        memory = tiering.get_memory("test")
+        tiering.get_memory("test")
 
         # Note: Actual migration requires async execution
         # This test verifies the structure is correct
@@ -947,14 +947,14 @@ class TestZeroTrustCompliance:
             (tiering, "MemoryTieringSystem"),
         ]
 
-        for module, main_class in modules:
+        for module, _main_class in modules:
             source = inspect.getsource(module)
 
             # Check for docstrings
             assert '"""' in source, f"Missing docstrings in {module.__name__}"
 
             # Check for class docstrings
-            lines = source.split('\n')
+            lines = source.split("\n")
             docstring_count = sum(1 for line in lines if '"""' in line)
             assert docstring_count >= 10, f"Insufficient documentation in {module.__name__}"
 

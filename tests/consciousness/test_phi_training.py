@@ -394,7 +394,7 @@ class TestStepExecution:
             max_steps=10,
         )
 
-        result = await env._execute_step(agents, scenario, step=0)
+        await env._execute_step(agents, scenario, step=0)
 
         # Agents should have message history
         for agent in agents:

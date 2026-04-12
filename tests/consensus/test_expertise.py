@@ -256,7 +256,7 @@ class TestAgentExpertiseProfiler:
         profiler.register_agent(agent_id="agent-1", domains=["test"])
 
         # Record multiple correct outcomes
-        for i in range(5):
+        for _i in range(5):
             profiler.record_outcome(
                 agent_id="agent-1",
                 domain="test",
@@ -383,7 +383,7 @@ class TestAgentExpertiseProfiler:
         profiler.register_agent(agent_id="agent-1", domains=["test"])
 
         # Record some outcomes
-        for i in range(10):
+        for _i in range(10):
             profiler.record_outcome(
                 agent_id="agent-1",
                 domain="test",
@@ -417,7 +417,7 @@ class TestAgentExpertiseProfiler:
         profiler.register_agent(agent_id="agent-1", domains=["test"])
 
         # Record some outcomes
-        for i in range(5):
+        for _i in range(5):
             profiler.record_outcome(
                 agent_id="agent-1",
                 domain="test",
@@ -434,7 +434,7 @@ class TestAgentExpertiseProfiler:
         profiler.register_agent(agent_id="agent-1", domains=["test"])
 
         # Record some outcomes
-        for i in range(10):
+        for _i in range(10):
             profiler.record_outcome(
                 agent_id="agent-1",
                 domain="test",
@@ -454,7 +454,7 @@ class TestAgentExpertiseProfiler:
         profiler.register_agent(agent_id="agent-1", domains=["test"])
 
         # Record some outcomes
-        for i in range(5):
+        for _i in range(5):
             profiler.record_outcome(
                 agent_id="agent-1",
                 domain="test",
@@ -550,7 +550,7 @@ class TestExpertiseIntegration:
         profiler.register_agent("agent-1", ["test"])
 
         # Record outcomes with high confidence that are correct
-        for i in range(10):
+        for _i in range(10):
             profiler.record_outcome(
                 agent_id="agent-1",
                 domain="test",
@@ -575,7 +575,7 @@ class TestExpertiseIntegration:
         )
 
         # Build expertise in domain-a
-        for i in range(20):
+        for _i in range(20):
             profiler.record_outcome(
                 agent_id="multi-agent",
                 domain="domain-a",

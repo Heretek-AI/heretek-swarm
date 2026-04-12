@@ -22,8 +22,8 @@ class TestStewardAgentIntegration:
     @pytest_asyncio.fixture
     async def steward_agent(self, mock_nats, mock_llm):
         """Create StewardAgent with mock dependencies."""
-        with patch('heretek_swarm.actors.stubs.get_nats_event_mesh', return_value=mock_nats):
-            with patch('heretek_swarm.actors.stubs.get_llm_provider', return_value=mock_llm):
+        with patch("heretek_swarm.actors.stubs.get_nats_event_mesh", return_value=mock_nats):
+            with patch("heretek_swarm.actors.stubs.get_llm_provider", return_value=mock_llm):
                 agent = StewardAgent(agent_id="steward-test-001")
                 yield agent
                 if agent.state != ActorState.TERMINATED:
@@ -237,7 +237,7 @@ class TestStewardAgentIntegration:
         }
 
         # Save state
-        with patch('heretek_swarm.actors.stubs.get_db_pool', return_value=mock_db):
+        with patch("heretek_swarm.actors.stubs.get_db_pool", return_value=mock_db):
             await spawned_steward.save_state()
 
         # Verify state saved

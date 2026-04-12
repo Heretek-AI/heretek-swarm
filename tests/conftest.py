@@ -26,9 +26,9 @@ from pydantic import BaseModel
 def pytest_configure(config: pytest.Config) -> None:
     """Configure pytest before test collection."""
     # Mock pynats module to avoid import errors for NATS dependencies
-    if 'pynats' not in sys.modules:
+    if "pynats" not in sys.modules:
         mock_pynats = MagicMock()
-        sys.modules['pynats'] = mock_pynats
+        sys.modules["pynats"] = mock_pynats
 
 # ============== CONFIGURATION ==============
 
@@ -283,13 +283,13 @@ def mock_nats_module():
     mock_module.get_nats_client = MagicMock(return_value=mock_nats_client)
 
     # Also mock any submodules
-    sys.modules['pynats'] = MagicMock()
+    sys.modules["pynats"] = MagicMock()
 
     yield
 
     # Cleanup
-    if 'pynats' in sys.modules:
-        del sys.modules['pynats']
+    if "pynats" in sys.modules:
+        del sys.modules["pynats"]
 
 
 # ============== ASYNC FIXTURES ==============
@@ -344,5 +344,5 @@ def secret_patterns() -> list[str]:
 @pytest.fixture(autouse=True)
 def reset_mock_state():
     """Reset mock state between tests."""
-    yield
+    return
     # Cleanup happens automatically after yield

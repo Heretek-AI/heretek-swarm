@@ -10,7 +10,7 @@ This module tests the foundational actor implementation with:
 """
 
 import asyncio
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from unittest.mock import AsyncMock, MagicMock
 
 import pytest
@@ -442,7 +442,7 @@ class TestHealthAndStatus:
             sender="system",
             message_type="health_check",
             content={},
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         await test_actor.put_message(msg)
@@ -479,7 +479,7 @@ class TestSuspendResume:
             sender="system",
             message_type="suspend",
             content={},
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
 
         await test_actor.put_message(msg)
@@ -506,7 +506,7 @@ class TestSuspendResume:
             sender="system",
             message_type="resume",
             content={},
-            timestamp=datetime.now(timezone.utc).isoformat(),
+            timestamp=datetime.now(UTC).isoformat(),
         )
         await test_actor.put_message(resume_msg)
         await asyncio.sleep(0.1)
