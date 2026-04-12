@@ -87,7 +87,7 @@ Phase V:   Emergent Intelligence & Measurement
 API credentials and configuration are stored in `.env` at the project root.
 **DO NOT hardcode API keys in code or documentation.** Always read from `.env`:
 
-```bash
+```bash 
 # Load environment variables before running commands
 export $(cat .env | grep -v '^#' | xargs)
 ```

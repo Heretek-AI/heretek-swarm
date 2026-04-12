@@ -488,8 +488,8 @@ class TestSnapshotManager:
         )
 
         assert diff is not None
-        assert "agent-2" in diff.added_agents
-        assert "agent-1" in diff.modified_agents
+        assert "agent-2" in diff["added"]
+        assert "agent-1" in diff["changed"]
 
 
 class TestStateManager:
@@ -514,14 +514,13 @@ class TestStateManager:
 
         updated = await state_manager.update_agent_state(
             agent_id="agent-1",
-            updates={"state": "active"},
-            working_memory_updates={"task": "analysis"},
-            context_updates={"priority": "high"}
+            working_memory={"task": "analysis"},
+            context={"priority": "high"}
         )
 
         assert updated is not None
-        assert updated.working_memory["task"] == "analysis"
-        assert updated.context["priority"] == "high"
+        assert updated.working_memory.get("task") == "analysis"
+        assert updated.context.get("priority") == "high"
 
     @pytest.mark.asyncio
     async def test_start_conversation(self, state_manager):

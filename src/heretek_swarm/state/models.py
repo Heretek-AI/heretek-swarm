@@ -24,6 +24,7 @@ class StateStatus(Enum):
     IDLE = "idle"
     SUSPENDED = "suspended"
     TERMINATED = "terminated"
+    COMPLETED = "completed"
 
 
 class TransitionType(Enum):
@@ -641,3 +642,20 @@ class StateManager:
                 setattr(state, key, value)
         state.touch()
         return state
+
+    async def get_active_agents(self) -> list[AgentState]:
+        """Get all active agents."""
+        return [s for s in self._states.values() if s.status == StateStatus.ACTIVE]
+
+    @property
+    def lineage(self) -> LineageTracker:
+        """Get the lineage tracker for message ancestry."""
+        return self._lineage_tracker
+
+    async def complete_conversation(self, conversation_id: UUID) -> ConversationState | None:
+        """Complete a conversation."""
+        conv = self._conversations.get(conversation_id)
+        if not conv:
+            return None
+        conv.status = StateStatus.COMPLETED
+        return conv

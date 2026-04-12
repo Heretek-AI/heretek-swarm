@@ -216,9 +216,18 @@ class MCPToolRegistry:
         Returns:
             Tool invocation result
         """
-        return asyncio.get_event_loop().run_until_complete(
-            self.invoke(name, arguments, context)
-        )
+        try:
+            loop = asyncio.get_event_loop()
+            if loop.is_running():
+                # If loop is already running, create a new task
+                import concurrent.futures
+                with concurrent.futures.ThreadPoolExecutor() as pool:
+                    future = pool.submit(asyncio.run, self.invoke(name, arguments, context))
+                    return future.result()
+            return loop.run_until_complete(self.invoke(name, arguments, context))
+        except RuntimeError:
+            # No event loop in current thread, create new one
+            return asyncio.run(self.invoke(name, arguments, context))
 
     async def invoke(
         self,
