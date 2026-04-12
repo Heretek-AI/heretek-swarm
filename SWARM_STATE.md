@@ -38,13 +38,13 @@
 | MCP Tests | 42 PASSING ✅ | 42 | Full MCP integration working |
 | Core API Tests | PASSING ✅ | ~200 | websockets.py fixed |
 | Memory Tests | PASSING ✅ | 8 | Mem0Config/Mem0Backend fixes applied |
-| State Tests | 22 PASSING, 5 FAILING ⚠️ | 27 | Legacy models created in models.py |
+| State Tests | 23 PASSING, 4 FAILING ⚠️ | 27 | Legacy models created in models.py |
 | RAG Tests | FAILING ⚠️ | ~30 | External Qdrant/OpenAI deps |
 | Observability | MIXED ⚠️ | ~40 | Import/config issues |
 | Tools | FAILING ⚠️ | ~21 | Various |
 | Serverless | FAILING ⚠️ | ~11 | AWS config issues |
 
-**Total: 2,443 passed, 91 failed, 29 skipped, 41 errors**
+**Total: 2,444 passed, 90 failed, 29 skipped, 41 errors**
 
 ### Root Cause Analysis
 
@@ -52,10 +52,14 @@
    - `get_mem0_config()` missing → Added as alias to `to_dict()`
    - `Mem0Backend` was raw mem0.Memory alias → Created proper wrapper class
 
-2. **State Tests (27 failing → 5 failing):** Legacy module imports broken - MOSTLY FIXED
+2. **State Tests (27 failing → 4 failing):** Legacy module imports broken - MOSTLY FIXED
    - `heretek_swarm/state/__init__.py` imported from non-existent `src/state/`
    - Created `models.py` with all legacy state classes (MessageLineage, AgentState, ConversationState, etc.)
-   - Remaining 5 failures are test API mismatches (e.g., KeyError: 'task' in update_agent_state)
+   - Remaining 4 failures are test API mismatches:
+     - `test_compute_diff`: test expects `diff.added_agents` but we return `diff["added"]` dict
+     - `test_update_agent_state`: KeyError 'task' - working_memory not being set correctly  
+     - `test_rollback_to_snapshot`: agent states not being restored properly
+     - `test_full_workflow`: compound failure from above issues
 
 3. **RAG Tests (~30 failing):** External service dependencies
    - Tests require Qdrant, OpenAI API keys, etc.
@@ -135,14 +139,14 @@ dashboard/frontend/src/
 | Phase 1: Deep Audit | ✅ COMPLETE |
 | Phase 2: Scouting | ✅ COMPLETE (state module fixed) |
 | Phase 3: Forge | ✅ COMPLETE (models.py created) |
-| Phase 4: Validation | 🟡 IN PROGRESS (22/27 state tests passing) |
+| Phase 4: Validation | 🟡 IN PROGRESS (23/27 state tests passing, 4 test API mismatches) |
 | Phase 5: Documentation | 🟡 IN PROGRESS |
 
 ---
 
 ## NEXT IMMEDIATE ACTIONS
 
-1. **Fix state module imports** - The `src/state/` directory doesn't exist; `heretek_swarm/state/__init__.py` needs to be fixed to not import from non-existent legacy modules
+1. **Fix remaining 4 state test API mismatches** - test_compute_diff (diff.added_agents), test_update_agent_state (working_memory), test_rollback_to_snapshot (state restore), test_full_workflow (compound)
 2. **Mark integration tests appropriately** - Memory, RAG tests that need external services should be marked `@pytest.mark.integration`
 3. **Continue Phase 2** - Scout for solutions to bridge NATS → actor communication
 
@@ -151,7 +155,7 @@ dashboard/frontend/src/
 ## OBJECTIVE FOR NEXT SESSION
 
 **Phase 2 & 3 Execution:**
-1. Fix state module import errors (legacy path resolution)
+1. Fix remaining 4 state test API mismatches OR mark tests appropriately
 2. Research MCP server bridge options for NATS → actor communication
 3. Implement fixes for remaining critical test failures
 

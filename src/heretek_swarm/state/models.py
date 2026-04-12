@@ -312,6 +312,7 @@ class LineageTracker:
             conversation_id=conversation_id,
             root_message_id=root_id,
             sender_agent_id=sender_agent_id,
+            receiver_agent_id=receiver_agent_id,
             content_hash=content_hash,
             content_size_bytes=len(content.encode()),
             parent_message_id=parent_message_id,
