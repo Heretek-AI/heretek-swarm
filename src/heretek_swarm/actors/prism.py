@@ -20,6 +20,12 @@ import structlog
 from swarms import Agent
 
 from heretek_swarm.actors.base import ActorMessage, AgentActor
+from heretek_swarm.actors.mixins import (
+    DeliberationMixin,
+    LearningMixin,
+    MemoryMixin,
+    PatternMixin,
+)
 
 # Session 44: Collective Learning Integration
 from heretek_swarm.collective.learning import PatternExtractor, PatternType
@@ -144,7 +150,7 @@ class BiasDetection:
         }
 
 
-class PrismAgent(AgentActor):
+class PrismAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor):
     """
     Prism Agent - Multi-Perspective Analysis Specialist.
 
@@ -207,6 +213,10 @@ class PrismAgent(AgentActor):
                 "viewpoint-synthesis",
             ],
             swarms_agent=swarms_agent,
+            pattern_extractor=pattern_extractor,
+            deliberation_engine=deliberation_engine,
+            access_analyzer=access_analyzer,
+            zero_trust_validator=zero_trust_validator,
             **kwargs,
         )
 
@@ -227,20 +237,6 @@ class PrismAgent(AgentActor):
         self.available_frameworks: list[AnalyticalFramework] = list(AnalyticalFramework)
         self.available_biases: list[BiasType] = list(BiasType)
 
-
-        # Session 44: Collective Learning Integration
-        self.pattern_extractor = pattern_extractor or PatternExtractor(min_support=3, min_confidence=0.6)
-
-        # Session 44: Consensus Integration
-        self.deliberation_engine = deliberation_engine or SwarmDeliberationEngine(
-            max_rounds=5, consensus_threshold=0.75, min_participants=2
-        )
-
-        # Session 44: Memory Optimization Integration
-        self.access_analyzer = access_analyzer or AccessPatternAnalyzer()
-
-        # Session 44: Zero-Trust Validation
-        self.zero_trust_validator = zero_trust_validator or ZeroTrustValidator()
 
         # Session 44: Integration state
         self._active_deliberations: dict[str, str] = {}
@@ -1224,39 +1220,15 @@ Respond in JSON:
         profile = self.access_analyzer.get_profile(memory_id)
         return profile.tier if profile else AccessTier.COLD
 
-    async def _prefetch_relevant(self, agent_id: str, item_type: str) -> list[str]:
-        """Prefetch items an agent is likely to need."""
-        if not self.access_analyzer:
-            return []
-
-        try:
-            predicted_memories = self.access_analyzer.predict_agent_access(agent_id)
-            return [
-                mem.replace(f"{item_type}_", "")
-                for mem in predicted_memories
-                if mem.startswith(f"{item_type}_")
-            ]
-        except Exception as e:
-            logger.warning("failed_to_prefetch", agent_id=agent_id, error=str(e))
-            return []
+    # =========================================================================
+    # Session 44: Memory Optimization Integration (specialized override)
+    # =========================================================================
 
     def get_learning_status(self) -> dict[str, Any]:
-        """Get collective learning and memory optimization status."""
-        return {
-            "agent_id": self.agent_id,
-            "collective_learning": {
-                "patterns_extracted": len(self.pattern_extractor._validated_patterns) if self.pattern_extractor else 0,
-                "message_cache_size": len(self.pattern_extractor._message_cache) if self.pattern_extractor else 0,
-            },
-            "consensus": {
-                "active_deliberations": len(self._active_deliberations),
-                "deliberation_engine_stats": self.deliberation_engine.get_statistics() if self.deliberation_engine else {},
-            },
-            "memory_optimization": {
-                "access_statistics": self.access_analyzer.get_statistics().to_dict() if self.access_analyzer else {},
-            },
-            "phi_training": self.get_phi_training_status(),
-        }
+        """Get collective learning and memory optimization status with phi_training."""
+        base_status = super().get_learning_status()
+        base_status["phi_training"] = self.get_phi_training_status()
+        return base_status
 
 # =========================================================================
 # Session 44: Collective Learning Integration
