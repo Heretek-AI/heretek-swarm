@@ -274,7 +274,9 @@ services:
       - mem0
 
   mem0:
-    image: mem0/mem0-api-server:latest
+    build:
+      context: ./mem0_server
+      dockerfile: Dockerfile
     container_name: heretek-mem0
     ports:
       - "8888:8000"
