@@ -1,0 +1,182 @@
+# Heretek Swarm Serverless Mock Configuration
+# Test fixture for serverless deployment tests
+#
+# This mock simulates the serverless.yml structure for testing
+# without requiring AWS credentials or the actual deployment files.
+
+service: heretek-swarm-test
+
+frameworkVersion: '3'
+
+provider:
+  name: aws
+  runtime: python3.11
+  stage: test
+  region: us-east-1
+  memorySize: 1024
+  timeout: 30
+  logRetentionInDays: 30
+
+  environment:
+    STAGE: test
+    REGION: us-east-1
+    SERVICE_NAME: heretek-swarm-test
+    DATABASE_URL: postgresql://test:test@localhost:5432/test
+    REDIS_URL: redis://localhost:6379
+    QDRANT_HOST: localhost
+    QDRANT_PORT: "6333"
+    NATS_SERVERS: nats://localhost:4222
+    API_KEY: test-api-key
+    SECRET_KEY: test-secret-key
+    OPENAI_API_KEY: sk-test-key
+    LOG_LEVEL: INFO
+    ENABLE_TRACING: "true"
+    ENABLE_METRICS: "true"
+    RAG_ENABLED: "true"
+
+  iam:
+    role:
+      statements:
+        - Effect: Allow
+          Action:
+            - dynamodb:GetItem
+            - dynamodb:PutItem
+            - dynamodb:UpdateItem
+            - dynamodb:DeleteItem
+            - dynamodb:Query
+            - dynamodb:Scan
+          Resource:
+            - Fn::GetAtt: AgentStateTable.Arn
+            - Fn::GetAtt: WorkflowStateTable.Arn
+
+        - Effect: Allow
+          Action:
+            - ssm:GetParameter
+            - ssm:GetParameters
+          Resource:
+            - Fn::Sub: arn:aws:ssm:${AWS::Region}:${AWS::AccountId}:parameter/heretek-swarm/*
+
+        - Effect: Allow
+          Action:
+            - logs:CreateLogGroup
+            - logs:CreateLogStream
+            - logs:PutLogEvents
+          Resource:
+            - Fn::Sub: arn:aws:logs:${AWS::Region}:${AWS::AccountId}:log-group:/aws/lambda/${self:service}-*:*
+
+functions:
+  api:
+    handler: handler.api_handler
+    description: Main API handler
+    memorySize: 1024
+    timeout: 30
+    events:
+      - http:
+          path: /health
+          method: GET
+          cors: true
+      - http:
+          path: /ready
+          method: GET
+          cors: true
+    reservedConcurrency: 100
+    environment:
+      FUNCTION_NAME: api-handler
+      LOG_LEVEL: INFO
+
+  async_processor:
+    handler: handler.async_processor
+    description: Async task processor
+    memorySize: 512
+    timeout: 300
+    environment:
+      FUNCTION_NAME: async-processor
+
+  swarm_health_check:
+    handler: handler.swarm_health_check
+    description: Scheduled health check
+    memorySize: 256
+    timeout: 60
+    environment:
+      FUNCTION_NAME: swarm-health-check
+
+  agent_state_cleanup:
+    handler: handler.agent_state_cleanup
+    description: Cleanup expired states
+    memorySize: 256
+    timeout: 300
+    environment:
+      FUNCTION_NAME: agent-state-cleanup
+
+  behavior_profile_analyzer:
+    handler: handler.behavior_profile_analyzer
+    description: Analyze agent behavior
+    memorySize: 512
+    timeout: 300
+    environment:
+      FUNCTION_NAME: behavior-profile-analyzer
+
+resources:
+  Resources:
+    AgentStateTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: heretek-swarm-test-agent-state
+        AttributeDefinitions:
+          - AttributeName: agent_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: agent_id
+            KeyType: HASH
+        BillingMode: PAY_PER_REQUEST
+
+    WorkflowStateTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: heretek-swarm-test-workflow-state
+        AttributeDefinitions:
+          - AttributeName: workflow_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: workflow_id
+            KeyType: HASH
+
+    KnowledgeTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: heretek-swarm-test-knowledge
+        AttributeDefinitions:
+          - AttributeName: entity_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: entity_id
+            KeyType: HASH
+
+    AgentProfilesTable:
+      Type: AWS::DynamoDB::Table
+      Properties:
+        TableName: heretek-swarm-test-agent-profiles
+        AttributeDefinitions:
+          - AttributeName: profile_id
+            AttributeType: S
+        KeySchema:
+          - AttributeName: profile_id
+            KeyType: HASH
+
+plugins:
+  - serverless-python-requirements
+  - serverless-offline
+
+custom:
+  pythonRequirements:
+    dockerizePip: true
+    slim: true
+  offline:
+    httpPort: 8000
+    lambdaPort: 8001
+
+package:
+  individually: false
+  patterns:
+    - '!**/__pycache__'
+    - '!**/*.pyc'

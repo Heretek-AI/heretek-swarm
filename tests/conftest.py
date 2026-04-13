@@ -284,7 +284,9 @@ def mock_nats_module():
 
     yield
 
-    # Cleanup
+    # Cleanup: close any lingering sockets from NATS mocks
+    import gc
+    gc.collect()  # Force garbage collection to trigger __del__ on unclosed sockets
     if "pynats" in sys.modules:
         del sys.modules["pynats"]
 
@@ -334,6 +336,74 @@ def secret_patterns() -> list[str]:
         "secret",
         "api_key",
     ]
+
+
+# ============== SERVERLESS MOCKS ==============
+
+@pytest.fixture
+def serverless_fixture_path():
+    """Path to the test fixtures serverless.yaml mock."""
+    import os
+    return os.path.join(os.path.dirname(__file__), "fixtures", "serverless.yaml")
+
+
+@pytest.fixture
+def mock_aws_env_vars():
+    """Mock AWS environment variables for serverless testing."""
+    env_vars = {
+        "AWS_REGION": "us-east-1",
+        "AWS_ACCESS_KEY_ID": "testing",
+        "AWS_SECRET_ACCESS_KEY": "testing",
+        "AWS_SESSION_TOKEN": "testing",
+        "STAGE": "test",
+        "REGION": "us-east-1",
+        "SERVICE_NAME": "heretek-swarm-test",
+        "DATABASE_URL": "postgresql://test:test@localhost:5432/test",
+        "REDIS_URL": "redis://localhost:6379",
+        "QDRANT_HOST": "localhost",
+        "QDRANT_PORT": "6333",
+        "NATS_SERVERS": "nats://localhost:4222",
+        "API_KEY": "test-api-key",
+        "SECRET_KEY": "test-secret-key",
+        "OPENAI_API_KEY": "sk-test-key",
+        "LOG_LEVEL": "INFO",
+        "ENABLE_TRACING": "true",
+        "ENABLE_METRICS": "true",
+        "RAG_ENABLED": "true",
+    }
+    with patch.dict(os.environ, env_vars):
+        yield env_vars
+
+
+@pytest.fixture
+def mock_serverless_config(serverless_fixture_path):
+    """Load serverless config from test fixtures."""
+    import yaml
+    with open(serverless_fixture_path) as f:
+        return yaml.safe_load(f)
+
+
+@pytest.fixture(autouse=True)
+def mock_handler_imports():
+    """Mock handler module imports to prevent serverless dependency errors."""
+    import sys
+    from unittest.mock import MagicMock
+
+    # Mock boto3 and botocore to avoid AWS SDK errors
+    if "boto3" not in sys.modules:
+        mock_boto3 = MagicMock()
+        sys.modules["boto3"] = mock_boto3
+
+    if "botocore" not in sys.modules:
+        mock_botocore = MagicMock()
+        sys.modules["botocore"] = mock_botocore
+
+    yield
+
+    # Cleanup
+    for mod in ["boto3", "botocore"]:
+        if mod in sys.modules:
+            del sys.modules[mod]
 
 
 # ============== CLEANUP ==============

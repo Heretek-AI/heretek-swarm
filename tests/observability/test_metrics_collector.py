@@ -522,29 +522,23 @@ class TestMetricsSnapshot:
 class TestConvenienceFunctions:
     """Test module-level convenience functions."""
 
-    def test_record_message_sent(self):
+    @pytest.mark.asyncio
+    async def test_record_message_sent(self):
         """Test record_message_sent function."""
-        import asyncio
         # Should not raise - call with correct signature
-        asyncio.get_event_loop().run_until_complete(
-            record_message_sent("task-1", "coordinator", {"type": "test"})
-        )
+        await record_message_sent("task-1", "coordinator", {"type": "test"})
 
-    def test_record_task_completion(self):
+    @pytest.mark.asyncio
+    async def test_record_task_completion(self):
         """Test record_task_completion function."""
-        import asyncio
         # Should not raise - call with correct signature
-        asyncio.get_event_loop().run_until_complete(
-            record_task_completion("task-1", "coordinator", True, {"duration": 0.5})
-        )
+        await record_task_completion("task-1", "coordinator", True, {"duration": 0.5})
 
-    def test_record_consensus_round(self):
+    @pytest.mark.asyncio
+    async def test_record_consensus_round(self):
         """Test record_consensus_round function."""
-        import asyncio
         # Should not raise - call with correct signature
-        asyncio.get_event_loop().run_until_complete(
-            record_consensus_round("round-1", {"decision": "approved", "confidence": 0.9})
-        )
+        await record_consensus_round("round-1", {"decision": "approved", "confidence": 0.9})
 
 
 class TestMetricsIntegration:
