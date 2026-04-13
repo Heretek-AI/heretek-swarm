@@ -16,6 +16,14 @@ import structlog
 from sqlalchemy import delete, select
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
+from .db_models import (
+    AgentConfig as AgentConfigORM,
+    ConfigAuditLog as ConfigAuditLogORM,
+    ConfigCache as ConfigCacheORM,
+    EmbeddingProvider as EmbeddingProviderORM,
+    LLMProvider as LLMProviderORM,
+    UserConfiguration as UserConfigurationORM,
+)
 from .encryption import ApiKeyEncryptor
 from .models import (
     AgentConfig,
@@ -145,8 +153,8 @@ class ConfigurationService:
             async with self._session_factory() as session:
                 # Cache system configurations
                 result = await session.execute(
-                    select(UserConfiguration).where(
-                        UserConfiguration.category.in_(["system", "rate_limiting"])
+                    select(UserConfigurationORM).where(
+                        UserConfigurationORM.category.in_(["system", "rate_limiting"])
                     )
                 )
                 configs = result.scalars().all()
@@ -202,6 +210,90 @@ class ConfigurationService:
         entry.last_accessed_at = datetime.now(UTC)
         return entry.cache_value.get("value")
 
+    def _orm_to_pydantic(self, orm_obj: Any) -> Any:
+        """Convert SQLAlchemy ORM object to Pydantic model for public API."""
+        if orm_obj is None:
+            return None
+
+        # Map ORM class to Pydantic class
+        if isinstance(orm_obj, UserConfigurationORM):
+            return UserConfiguration(
+                id=orm_obj.id,
+                config_key=orm_obj.config_key,
+                config_value=orm_obj.config_value,
+                config_type=orm_obj.config_type,
+                description=orm_obj.description,
+                category=orm_obj.category,
+                is_sensitive=orm_obj.is_sensitive,
+                is_editable=orm_obj.is_editable,
+                validation_schema=orm_obj.validation_schema,
+                created_at=orm_obj.created_at,
+                updated_at=orm_obj.updated_at,
+                updated_by=orm_obj.updated_by,
+            )
+        elif isinstance(orm_obj, LLMProviderORM):
+            return LLMProvider(
+                id=orm_obj.id,
+                provider_name=orm_obj.provider_name,
+                provider_type=orm_obj.provider_type,
+                base_url=orm_obj.base_url,
+                api_key=orm_obj.api_key_encrypted,  # May need decryption
+                api_key_hint=orm_obj.api_key_hint,
+                default_model=orm_obj.default_model,
+                available_models=orm_obj.available_models or [],
+                model_aliases=orm_obj.model_aliases or {},
+                supports_streaming=orm_obj.supports_streaming,
+                supports_function_calling=orm_obj.supports_function_calling,
+                supports_vision=orm_obj.supports_vision,
+                max_tokens=orm_obj.max_tokens,
+                max_context_length=orm_obj.max_context_length,
+                rate_limit_requests_per_minute=orm_obj.rate_limit_requests_per_minute,
+                rate_limit_tokens_per_minute=orm_obj.rate_limit_tokens_per_minute,
+                is_enabled=orm_obj.is_enabled,
+                is_default=orm_obj.is_default,
+                priority=orm_obj.priority,
+                extra_config=orm_obj.extra_config or {},
+            )
+        elif isinstance(orm_obj, EmbeddingProviderORM):
+            return EmbeddingProvider(
+                id=orm_obj.id,
+                provider_name=orm_obj.provider_name,
+                provider_type=orm_obj.provider_type,
+                base_url=orm_obj.base_url,
+                api_key=orm_obj.api_key_encrypted,  # May need decryption
+                api_key_hint=orm_obj.api_key_hint,
+                model_name=orm_obj.default_model,
+                dimensions=orm_obj.embedding_dimensions,
+                available_models=orm_obj.available_models or [],
+                is_enabled=orm_obj.is_enabled,
+                is_default=orm_obj.is_default,
+                priority=orm_obj.priority,
+                extra_config=orm_obj.extra_config or {},
+            )
+        elif isinstance(orm_obj, AgentConfigORM):
+            return AgentConfig(
+                id=orm_obj.id,
+                agent_type=orm_obj.agent_type,
+                agent_id=orm_obj.agent_id,
+                config_name=orm_obj.config_name,
+                config_data=orm_obj.config_data or {},
+                llm_provider_id=orm_obj.llm_provider_id,
+                embedding_provider_id=orm_obj.embedding_provider_id,
+                is_active=orm_obj.is_active,
+                is_default_for_type=orm_obj.is_default_for_type,
+                description=orm_obj.description,
+                tags=orm_obj.tags or [],
+                created_at=orm_obj.created_at,
+                updated_at=orm_obj.updated_at,
+                created_by=orm_obj.created_by,
+                updated_by=orm_obj.updated_by,
+            )
+        else:
+            # For unknown types, try to return as-is or convert via dict
+            if hasattr(orm_obj, "__dict__"):
+                return orm_obj.__dict__
+            return orm_obj
+
     # =========================================================================
     # User Configuration CRUD
     # =========================================================================
@@ -224,14 +316,14 @@ class ConfigurationService:
 
         async with self._session_factory() as session:
             result = await session.execute(
-                select(UserConfiguration).where(
-                    UserConfiguration.config_key == config_key
+                select(UserConfigurationORM).where(
+                    UserConfigurationORM.config_key == config_key
                 )
             )
             config = result.scalar_one_or_none()
 
             if config:
-                self._set_cache("config", config_key, config.model_dump())
+                self._set_cache("config", config_key, self._orm_to_pydantic(config))
 
             return config
 
@@ -271,15 +363,16 @@ class ConfigurationService:
             List of configurations
         """
         async with self._session_factory() as session:
-            query = select(UserConfiguration)
+            query = select(UserConfigurationORM)
 
             if category:
-                query = query.where(UserConfiguration.category == category)
+                query = query.where(UserConfigurationORM.category == category)
 
-            query = query.order_by(UserConfiguration.config_key).offset(offset).limit(limit)
+            query = query.order_by(UserConfigurationORM.config_key).offset(offset).limit(limit)
 
             result = await session.execute(query)
-            return list(result.scalars().all())
+            orm_results = result.scalars().all()
+            return [self._orm_to_pydantic(r) for r in orm_results]
 
     async def create_config(
         self,
@@ -327,7 +420,7 @@ class ConfigurationService:
                 new_config.id,
                 "create",
                 None,
-                new_config.model_dump(),
+                new_self._orm_to_pydantic(config),
                 changed_by,
             )
 
@@ -356,8 +449,8 @@ class ConfigurationService:
         """
         async with self._session_factory() as session:
             result = await session.execute(
-                select(UserConfiguration).where(
-                    UserConfiguration.config_key == config_key
+                select(UserConfigurationORM).where(
+                    UserConfigurationORM.config_key == config_key
                 )
             )
             config = result.scalar_one_or_none()
@@ -368,7 +461,7 @@ class ConfigurationService:
             if not config.is_editable:
                 raise ValueError(f"Configuration {config_key} is not editable")
 
-            old_value = config.model_dump()
+            old_value = self._orm_to_pydantic(config)
 
             update_data = update.model_dump(exclude_unset=True)
             for field, value in update_data.items():
@@ -395,7 +488,7 @@ class ConfigurationService:
                 config.id,
                 "update",
                 old_value,
-                config.model_dump(),
+                self._orm_to_pydantic(config),
                 changed_by,
             )
 
@@ -422,8 +515,8 @@ class ConfigurationService:
         """
         async with self._session_factory() as session:
             result = await session.execute(
-                select(UserConfiguration).where(
-                    UserConfiguration.config_key == config_key
+                select(UserConfigurationORM).where(
+                    UserConfigurationORM.config_key == config_key
                 )
             )
             config = result.scalar_one_or_none()
@@ -434,11 +527,11 @@ class ConfigurationService:
             if not config.is_editable:
                 raise ValueError(f"Configuration {config_key} is not deletable")
 
-            old_value = config.model_dump()
+            old_value = self._orm_to_pydantic(config)
 
             await session.execute(
-                delete(UserConfiguration).where(
-                    UserConfiguration.config_key == config_key
+                delete(UserConfigurationORM).where(
+                    UserConfigurationORM.config_key == config_key
                 )
             )
             await session.commit()
@@ -468,7 +561,7 @@ class ConfigurationService:
         """Get an LLM provider by ID."""
         async with self._session_factory() as session:
             result = await session.execute(
-                select(LLMProvider).where(LLMProvider.id == provider_id)
+                select(LLMProviderORM).where(LLMProviderORM.id == provider_id)
             )
             return result.scalar_one_or_none()
 
@@ -479,8 +572,8 @@ class ConfigurationService:
         """Get an LLM provider by name."""
         async with self._session_factory() as session:
             result = await session.execute(
-                select(LLMProvider).where(
-                    LLMProvider.provider_name == provider_name
+                select(LLMProviderORM).where(
+                    LLMProviderORM.provider_name == provider_name
                 )
             )
             return result.scalar_one_or_none()
@@ -503,27 +596,28 @@ class ConfigurationService:
             List of LLM providers
         """
         async with self._session_factory() as session:
-            query = select(LLMProvider).order_by(
-                LLMProvider.priority,
-                LLMProvider.provider_name,
+            query = select(LLMProviderORM).order_by(
+                LLMProviderORM.priority,
+                LLMProviderORM.provider_name,
             )
 
             if provider_type:
-                query = query.where(LLMProvider.provider_type == provider_type)
+                query = query.where(LLMProviderORM.provider_type == provider_type)
 
             if enabled_only and not include_disabled:
-                query = query.where(LLMProvider.is_enabled)
+                query = query.where(LLMProviderORM.is_enabled)
 
             result = await session.execute(query)
-            return list(result.scalars().all())
+            orm_providers = result.scalars().all()
+            return [self._orm_to_pydantic(p) for p in orm_providers]
 
     async def get_default_llm_provider(self) -> LLMProvider | None:
         """Get the default LLM provider."""
         async with self._session_factory() as session:
             result = await session.execute(
-                select(LLMProvider).where(
-                    LLMProvider.is_default,
-                    LLMProvider.is_enabled,
+                select(LLMProviderORM).where(
+                    LLMProviderORM.is_default,
+                    LLMProviderORM.is_enabled,
                 )
             )
             return result.scalar_one_or_none()
@@ -580,10 +674,10 @@ class ConfigurationService:
             # If setting as default, unset other defaults of same type
             if provider.is_default:
                 await session.execute(
-                    select(LLMProvider).update()
+                    select(LLMProviderORM).update()
                     .where(
-                        LLMProvider.provider_type == provider.provider_type,
-                        LLMProvider.is_default,
+                        LLMProviderORM.provider_type == provider.provider_type,
+                        LLMProviderORM.is_default,
                     )
                     .values(is_default=False)
                 )
@@ -595,7 +689,7 @@ class ConfigurationService:
             if hasattr(provider, "api_key") and provider.api_key:
                 extra_config["api_key"] = self.encrypt_api_key(provider.api_key)
 
-            new_provider = LLMProvider(
+            new_provider = LLMProviderORM(
                 provider_name=provider.provider_name,
                 provider_type=provider.provider_type,
                 base_url=provider.base_url,
@@ -627,7 +721,7 @@ class ConfigurationService:
                 new_provider.id,
                 "create",
                 None,
-                new_provider.model_dump(),
+                new_self._orm_to_pydantic(provider),
                 changed_by,
             )
 
@@ -643,14 +737,14 @@ class ConfigurationService:
         """Update an LLM provider."""
         async with self._session_factory() as session:
             result = await session.execute(
-                select(LLMProvider).where(LLMProvider.id == provider_id)
+                select(LLMProviderORM).where(LLMProviderORM.id == provider_id)
             )
             provider = result.scalar_one_or_none()
 
             if not provider:
                 return None
 
-            old_value = provider.model_dump()
+            old_value = self._orm_to_pydantic(provider)
 
             update_data = update.model_dump(exclude_unset=True)
             for field, value in update_data.items():
@@ -660,11 +754,11 @@ class ConfigurationService:
             # If setting as default, unset other defaults of same type
             if update.is_default:
                 await session.execute(
-                    select(LLMProvider).update()
+                    select(LLMProviderORM).update()
                     .where(
-                        LLMProvider.provider_type == provider.provider_type,
-                        LLMProvider.id != provider_id,
-                        LLMProvider.is_default,
+                        LLMProviderORM.provider_type == provider.provider_type,
+                        LLMProviderORM.id != provider_id,
+                        LLMProviderORM.is_default,
                     )
                     .values(is_default=False)
                 )
@@ -681,7 +775,7 @@ class ConfigurationService:
                 provider.id,
                 "update",
                 old_value,
-                provider.model_dump(),
+                self._orm_to_pydantic(provider),
                 changed_by,
             )
 
@@ -696,17 +790,17 @@ class ConfigurationService:
         """Delete an LLM provider."""
         async with self._session_factory() as session:
             result = await session.execute(
-                select(LLMProvider).where(LLMProvider.id == provider_id)
+                select(LLMProviderORM).where(LLMProviderORM.id == provider_id)
             )
             provider = result.scalar_one_or_none()
 
             if not provider:
                 return False
 
-            old_value = provider.model_dump()
+            old_value = self._orm_to_pydantic(provider)
 
             await session.execute(
-                delete(LLMProvider).where(LLMProvider.id == provider_id)
+                delete(LLMProvider).where(LLMProviderORM.id == provider_id)
             )
             await session.commit()
 
@@ -749,8 +843,8 @@ class ConfigurationService:
         """Get an embedding provider by ID."""
         async with self._session_factory() as session:
             result = await session.execute(
-                select(EmbeddingProvider).where(
-                    EmbeddingProvider.id == provider_id
+                select(EmbeddingProviderORM).where(
+                    EmbeddingProviderORM.id == provider_id
                 )
             )
             return result.scalar_one_or_none()
@@ -762,8 +856,8 @@ class ConfigurationService:
         """Get an embedding provider by name."""
         async with self._session_factory() as session:
             result = await session.execute(
-                select(EmbeddingProvider).where(
-                    EmbeddingProvider.provider_name == provider_name
+                select(EmbeddingProviderORM).where(
+                    EmbeddingProviderORM.provider_name == provider_name
                 )
             )
             return result.scalar_one_or_none()
@@ -775,19 +869,20 @@ class ConfigurationService:
     ) -> list[EmbeddingProvider]:
         """List embedding providers with optional filtering."""
         async with self._session_factory() as session:
-            query = select(EmbeddingProvider).order_by(
-                EmbeddingProvider.priority,
-                EmbeddingProvider.provider_name,
+            query = select(EmbeddingProviderORM).order_by(
+                EmbeddingProviderORM.priority,
+                EmbeddingProviderORM.provider_name,
             )
 
             if provider_type:
-                query = query.where(EmbeddingProvider.provider_type == provider_type)
+                query = query.where(EmbeddingProviderORM.provider_type == provider_type)
 
             if enabled_only:
-                query = query.where(EmbeddingProvider.is_enabled)
+                query = query.where(EmbeddingProviderORM.is_enabled)
 
             result = await session.execute(query)
-            return list(result.scalars().all())
+            orm_results = result.scalars().all()
+            return [self._orm_to_pydantic(r) for r in orm_results]
 
     async def get_default_embedding_provider(
         self,
@@ -795,9 +890,9 @@ class ConfigurationService:
         """Get the default embedding provider."""
         async with self._session_factory() as session:
             result = await session.execute(
-                select(EmbeddingProvider).where(
-                    EmbeddingProvider.is_default,
-                    EmbeddingProvider.is_enabled,
+                select(EmbeddingProviderORM).where(
+                    EmbeddingProviderORM.is_default,
+                    EmbeddingProviderORM.is_enabled,
                 )
             )
             return result.scalar_one_or_none()
@@ -814,8 +909,8 @@ class ConfigurationService:
                 await session.execute(
                     select(EmbeddingProvider).update()
                     .where(
-                        EmbeddingProvider.provider_type == provider.provider_type,
-                        EmbeddingProvider.is_default,
+                        EmbeddingProviderORM.provider_type == provider.provider_type,
+                        EmbeddingProviderORM.is_default,
                     )
                     .values(is_default=False)
                 )
@@ -855,7 +950,7 @@ class ConfigurationService:
                 new_provider.id,
                 "create",
                 None,
-                new_provider.model_dump(),
+                new_self._orm_to_pydantic(provider),
                 changed_by,
             )
 
@@ -871,8 +966,8 @@ class ConfigurationService:
         """Update an embedding provider."""
         async with self._session_factory() as session:
             result = await session.execute(
-                select(EmbeddingProvider).where(
-                    EmbeddingProvider.id == provider_id
+                select(EmbeddingProviderORM).where(
+                    EmbeddingProviderORM.id == provider_id
                 )
             )
             provider = result.scalar_one_or_none()
@@ -880,7 +975,7 @@ class ConfigurationService:
             if not provider:
                 return None
 
-            old_value = provider.model_dump()
+            old_value = self._orm_to_pydantic(provider)
 
             update_data = update.model_dump(exclude_unset=True)
             for field, value in update_data.items():
@@ -892,9 +987,9 @@ class ConfigurationService:
                 await session.execute(
                     select(EmbeddingProvider).update()
                     .where(
-                        EmbeddingProvider.provider_type == provider.provider_type,
-                        EmbeddingProvider.id != provider_id,
-                        EmbeddingProvider.is_default,
+                        EmbeddingProviderORM.provider_type == provider.provider_type,
+                        EmbeddingProviderORM.id != provider_id,
+                        EmbeddingProviderORM.is_default,
                     )
                     .values(is_default=False)
                 )
@@ -911,7 +1006,7 @@ class ConfigurationService:
                 provider.id,
                 "update",
                 old_value,
-                provider.model_dump(),
+                self._orm_to_pydantic(provider),
                 changed_by,
             )
 
@@ -926,8 +1021,8 @@ class ConfigurationService:
         """Delete an embedding provider."""
         async with self._session_factory() as session:
             result = await session.execute(
-                select(EmbeddingProvider).where(
-                    EmbeddingProvider.id == provider_id
+                select(EmbeddingProviderORM).where(
+                    EmbeddingProviderORM.id == provider_id
                 )
             )
             provider = result.scalar_one_or_none()
@@ -935,11 +1030,11 @@ class ConfigurationService:
             if not provider:
                 return False
 
-            old_value = provider.model_dump()
+            old_value = self._orm_to_pydantic(provider)
 
             await session.execute(
                 delete(EmbeddingProvider).where(
-                    EmbeddingProvider.id == provider_id
+                    EmbeddingProviderORM.id == provider_id
                 )
             )
             await session.commit()
@@ -1023,7 +1118,8 @@ class ConfigurationService:
                 query = query.where(AgentConfig.is_active)
 
             result = await session.execute(query)
-            return list(result.scalars().all())
+            orm_results = result.scalars().all()
+            return [self._orm_to_pydantic(r) for r in orm_results]
 
     async def create_agent_config(
         self,
@@ -1068,7 +1164,7 @@ class ConfigurationService:
                 new_config.id,
                 "create",
                 None,
-                new_config.model_dump(),
+                new_self._orm_to_pydantic(config),
                 changed_by,
             )
 
@@ -1091,7 +1187,7 @@ class ConfigurationService:
             if not config:
                 return None
 
-            old_value = config.model_dump()
+            old_value = self._orm_to_pydantic(config)
 
             update_data = update.model_dump(exclude_unset=True)
             for field, value in update_data.items():
@@ -1123,7 +1219,7 @@ class ConfigurationService:
                 config.id,
                 "update",
                 old_value,
-                config.model_dump(),
+                self._orm_to_pydantic(config),
                 changed_by,
             )
 
@@ -1145,7 +1241,7 @@ class ConfigurationService:
             if not config:
                 return False
 
-            old_value = config.model_dump()
+            old_value = self._orm_to_pydantic(config)
 
             await session.execute(
                 delete(AgentConfig).where(AgentConfig.id == config_id)
@@ -1222,7 +1318,8 @@ class ConfigurationService:
                 query = query.where(ConfigAuditLog.entity_id == entity_id)
 
             result = await session.execute(query)
-            return list(result.scalars().all())
+            orm_results = result.scalars().all()
+            return [self._orm_to_pydantic(r) for r in orm_results]
 
     # =========================================================================
     # Import/Export
@@ -1236,17 +1333,17 @@ class ConfigurationService:
         async with self._session_factory() as session:
             # Get all configurations
             user_configs_result = await session.execute(
-                select(UserConfiguration)
+                select(UserConfigurationORM)
             )
             user_configs = list(user_configs_result.scalars().all())
 
             llm_providers_result = await session.execute(
-                select(LLMProvider)
+                select(LLMProviderORM)
             )
             llm_providers = list(llm_providers_result.scalars().all())
 
             embedding_providers_result = await session.execute(
-                select(EmbeddingProvider)
+                select(EmbeddingProviderORM)
             )
             embedding_providers = list(embedding_providers_result.scalars().all())
 

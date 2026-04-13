@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-13T15:25:06.219680+00:00",
-  "overall_score": 0.9925098554533509,
+  "timestamp": "2026-04-13T15:47:20.383566+00:00",
+  "overall_score": 0.9923794507949021,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -982,9 +982,9 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 46,
-      "findings_count": 46,
-      "warning_count": 1,
+      "total_entities_checked": 50,
+      "findings_count": 50,
+      "warning_count": 3,
       "score": 0.0,
       "finding_groups": [
         {
@@ -1224,6 +1224,20 @@
               "metric_value": 0.0
             },
             {
+              "entity_name": "[unused_variable] \"ConfigAuditLogORM\" is not accessed",
+              "file_path": "src/heretek_swarm/config/service.py",
+              "line_start": 21,
+              "line_end": 21,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"ConfigCacheORM\" is not accessed",
+              "file_path": "src/heretek_swarm/config/service.py",
+              "line_start": 22,
+              "line_end": 22,
+              "metric_value": 0.0
+            },
+            {
               "entity_name": "[unused_variable] \"app\" is not accessed",
               "file_path": "src/heretek_swarm/api/main.py",
               "line_start": 85,
@@ -1319,6 +1333,20 @@
               "file_path": "src/heretek_swarm/actors/base.py",
               "line_start": 25,
               "line_end": 25,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"ConfigAuditLogORM\" is not accessed",
+              "file_path": "src/heretek_swarm/config/service.py",
+              "line_start": 21,
+              "line_end": 21,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"ConfigCacheORM\" is not accessed",
+              "file_path": "src/heretek_swarm/config/service.py",
+              "line_start": 22,
+              "line_end": 22,
               "metric_value": 0.0
             }
           ]
@@ -1729,6 +1757,12 @@
       "composite_risk_score": 80.0
     },
     {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "total_findings": 6,
+      "warning_findings": 4,
+      "composite_risk_score": 70.0
+    },
+    {
       "file_path": "src/heretek_swarm/actors/catalyst.py",
       "total_findings": 7,
       "warning_findings": 3,
@@ -1820,12 +1854,6 @@
     },
     {
       "file_path": "src/heretek_swarm/workflow/validator.py",
-      "total_findings": 2,
-      "warning_findings": 2,
-      "composite_risk_score": 30.0
-    },
-    {
-      "file_path": "src/heretek_swarm/collective/knowledge_transform.py",
       "total_findings": 2,
       "warning_findings": 2,
       "composite_risk_score": 30.0

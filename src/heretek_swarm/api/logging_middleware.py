@@ -14,11 +14,14 @@ from starlette.responses import Response
 
 from heretek_swarm.logging.config import (
     clear_context,
+    get_logger,
     log_api_request,
     set_agent_id,
     set_request_id,
     set_trace_id,
 )
+
+logger = get_logger(__name__)
 
 
 class LoggingMiddleware(BaseHTTPMiddleware):
