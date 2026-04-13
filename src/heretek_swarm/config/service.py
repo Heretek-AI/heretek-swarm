@@ -11,6 +11,7 @@ from __future__ import annotations
 import os
 from datetime import UTC, datetime, timedelta
 from typing import TYPE_CHECKING, Any, TypeVar
+from uuid import uuid4
 
 import structlog
 from sqlalchemy import delete, select, update
@@ -31,16 +32,19 @@ from .models import (
     AgentConfigUpdate,
     ConfigAuditLog,
     ConfigCacheEntry,
+    ConfigType,
     ConfigurationExport,
     ConfigurationImport,
     EmbeddingProvider,
     EmbeddingProviderCreate,
     EmbeddingProviderUpdate,
+    EmbeddingProviderType,
     ImportOptions,
     ImportResult,
     LLMProvider,
     LLMProviderCreate,
     LLMProviderUpdate,
+    LLMProviderType,
     UserConfiguration,
     UserConfigurationCreate,
     UserConfigurationUpdate,
@@ -163,7 +167,7 @@ class ConfigurationService:
                     cache_key = f"config:{config.config_key}"
                     self._cache[cache_key] = ConfigCacheEntry(
                         cache_key=cache_key,
-                        cache_value={"value": config.config_value, "type": config.config_type.value},
+                        cache_value={"value": config.config_value, "type": config.config_type},
                         expires_at=datetime.now(UTC) + self._cache_ttl,
                     )
         except Exception as e:
@@ -194,7 +198,7 @@ class ConfigurationService:
             expires_at=datetime.now(UTC) + (ttl or self._cache_ttl),
         )
 
-    def _get_cache(self, entity_type: str, key: str) -> Any | None:
+    def _get_cache(self, entity_type: str, key: str) -> dict[str, Any] | None:
         """Get a cached value if available and not expired."""
         cache_key = self._get_cache_key(entity_type, key)
         entry = self._cache.get(cache_key)
@@ -208,7 +212,7 @@ class ConfigurationService:
 
         entry.access_count += 1
         entry.last_accessed_at = datetime.now(UTC)
-        return entry.cache_value.get("value")
+        return entry.cache_value
 
     def _orm_to_pydantic(self, orm_obj: Any) -> Any:
         """Convert SQLAlchemy ORM object to Pydantic model for public API."""
@@ -312,7 +316,21 @@ class ConfigurationService:
         cached = self._get_cache("config", config_key)
         if cached is not None:
             logger.debug("Cache hit for config", key=config_key)
-            return UserConfiguration(**cached)
+            # Convert cached type string back to ConfigType enum if needed
+            cached_type = cached.get("type", "string")
+            if isinstance(cached_type, str):
+                cached_type = ConfigType(cached_type)
+            return UserConfiguration(
+                id=cached.get("id", uuid4()),
+                config_key=config_key,
+                config_value=cached.get("value"),
+                config_type=cached_type,
+                description=cached.get("description"),
+                category=cached.get("category", "general"),
+                is_sensitive=cached.get("is_sensitive", False),
+                is_editable=cached.get("is_editable", True),
+                validation_schema=cached.get("validation_schema"),
+            )
 
         async with self._session_factory() as session:
             result = await session.execute(

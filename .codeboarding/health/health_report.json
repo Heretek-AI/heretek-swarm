@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-13T16:00:16.794749+00:00",
-  "overall_score": 0.9915326550705612,
+  "timestamp": "2026-04-13T16:31:15.790972+00:00",
+  "overall_score": 0.9913049184631033,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -1226,15 +1226,15 @@
             {
               "entity_name": "[unused_variable] \"ConfigAuditLogORM\" is not accessed",
               "file_path": "src/heretek_swarm/config/service.py",
-              "line_start": 21,
-              "line_end": 21,
+              "line_start": 22,
+              "line_end": 22,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"ConfigCacheORM\" is not accessed",
               "file_path": "src/heretek_swarm/config/service.py",
-              "line_start": 22,
-              "line_end": 22,
+              "line_start": 23,
+              "line_end": 23,
               "metric_value": 0.0
             },
             {
@@ -1338,15 +1338,15 @@
             {
               "entity_name": "[unused_import] Import \"ConfigAuditLogORM\" is not accessed",
               "file_path": "src/heretek_swarm/config/service.py",
-              "line_start": 21,
-              "line_end": 21,
+              "line_start": 22,
+              "line_end": 22,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_import] Import \"ConfigCacheORM\" is not accessed",
               "file_path": "src/heretek_swarm/config/service.py",
-              "line_start": 22,
-              "line_end": 22,
+              "line_start": 23,
+              "line_end": 23,
               "metric_value": 0.0
             }
           ]
@@ -1730,8 +1730,8 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "TypeScript",
       "check_type": "standard",
-      "total_entities_checked": 26,
-      "findings_count": 26,
+      "total_entities_checked": 33,
+      "findings_count": 33,
       "warning_count": 0,
       "score": 0.0,
       "finding_groups": [
@@ -1899,6 +1899,55 @@
               "file_path": "dashboard/frontend/src/App.tsx",
               "line_start": 175,
               "line_end": 175,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'useMemo' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+              "line_start": 12,
+              "line_end": 12,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'currentStep' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+              "line_start": 107,
+              "line_end": 107,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'setStep' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+              "line_start": 1001,
+              "line_end": 1001,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'apiKey' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/utils/setupValidation.ts",
+              "line_start": 147,
+              "line_end": 147,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'useCallback' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+              "line_start": 14,
+              "line_end": 14,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'connections' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+              "line_start": 240,
+              "line_end": 240,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'messageId' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+              "line_start": 354,
+              "line_end": 354,
               "metric_value": 0.0
             }
           ]

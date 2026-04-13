@@ -65,7 +65,11 @@ export interface SetupState {
   // Agent health results
   agentHealth: AgentHealthResult[];
   isCheckingAgents: boolean;
-  
+
+  // Provider info from backend
+  llmProviders: LLMProviderInfo[];
+  embeddingProviders: EmbeddingProviderInfo[];
+
   // Actions
   setStep: (step: WizardStep) => void;
   nextStep: () => void;
@@ -82,6 +86,26 @@ export interface SetupState {
   completeSetup: () => void;
   resetSetup: () => void;
   setRerunning: (rerunning: boolean) => void;
+  setProviders: (llm: LLMProviderInfo[], embedding: EmbeddingProviderInfo[]) => void;
+}
+
+// Provider info types
+export interface LLMProviderInfo {
+  provider_name: string;
+  provider_type: string;
+  base_url: string;
+  default_model: string;
+  is_default: boolean;
+  is_enabled: boolean;
+}
+
+export interface EmbeddingProviderInfo {
+  provider_name: string;
+  provider_type: string;
+  base_url: string;
+  default_model: string;
+  is_default: boolean;
+  is_enabled: boolean;
 }
 
 // Step order for navigation
@@ -120,7 +144,10 @@ export const useSetupStore = create<SetupState>()(
       
       agentHealth: [],
       isCheckingAgents: false,
-      
+
+      llmProviders: [],
+      embeddingProviders: [],
+
       // Actions
       setStep: (step: WizardStep) => {
         set({ currentStep: step });
@@ -232,6 +259,10 @@ export const useSetupStore = create<SetupState>()(
       
       setRerunning: (rerunning: boolean) => {
         set({ isRerunning: rerunning });
+      },
+
+      setProviders: (llm: LLMProviderInfo[], embedding: EmbeddingProviderInfo[]) => {
+        set({ llmProviders: llm, embeddingProviders: embedding });
       },
     }),
     {

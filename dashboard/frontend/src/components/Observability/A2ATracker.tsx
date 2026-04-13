@@ -93,7 +93,7 @@ function generateRandomMessage(): A2AMessage {
     subject: MESSAGE_SUBJECTS[Math.floor(Math.random() * MESSAGE_SUBJECTS.length)],
     type: ['task', 'response', 'broadcast', 'heartbeat', 'consensus'][Math.floor(Math.random() * 5)] as A2AMessage['type'],
     payload: {
-      task sample: Math.random() },
+      taskSample: Math.random(),
     },
     latencyMs: Math.floor(Math.random() * 500) + 10,
     status: ['sent', 'delivered', 'failed', 'pending'][Math.floor(Math.random() * 4)] as A2AMessage['status'],

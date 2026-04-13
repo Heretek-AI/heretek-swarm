@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-13T16:00:16.441428+00:00",
+    "generated_at": "2026-04-13T16:31:15.360400+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 4,
@@ -14251,17 +14251,17 @@
       "file_status": "modified",
       "methods": [
         {
-          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService",
-          "start_line": 57,
-          "end_line": 1661,
-          "node_type": "CLASS",
-          "status": "modified"
-        },
-        {
           "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.__init__",
           "start_line": 60,
           "end_line": 94,
           "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService",
+          "start_line": 61,
+          "end_line": 1679,
+          "node_type": "CLASS",
           "status": "modified"
         },
         {
@@ -14287,8 +14287,8 @@
         },
         {
           "qualified_name": "src.heretek_swarm.config.service.ConfigurationService._warm_cache",
-          "start_line": 150,
-          "end_line": 170,
+          "start_line": 154,
+          "end_line": 174,
           "node_type": "METHOD",
           "status": "modified"
         },
@@ -14305,6 +14305,13 @@
           "end_line": 193,
           "node_type": "METHOD",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService._get_cache",
+          "start_line": 201,
+          "end_line": 215,
+          "node_type": "METHOD",
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.config.service.ConfigurationService._orm_to_pydantic",
@@ -14335,13 +14342,6 @@
           "status": "unchanged"
         },
         {
-          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService._get_cache",
-          "start_line": 246,
-          "end_line": 260,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
           "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.get_config_value",
           "start_line": 295,
           "end_line": 311,
@@ -14350,8 +14350,8 @@
         },
         {
           "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.get_config",
-          "start_line": 301,
-          "end_line": 328,
+          "start_line": 305,
+          "end_line": 346,
           "node_type": "METHOD",
           "status": "modified"
         },
@@ -39395,7 +39395,7 @@
       ]
     },
     "dashboard/frontend/src/components/Setup/SetupWizard.tsx": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizardProps",
@@ -39409,14 +39409,28 @@
           "start_line": 17,
           "end_line": 22,
           "node_type": "INTERFACE",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.EmbeddingConfig",
           "start_line": 24,
           "end_line": 29,
           "node_type": "INTERFACE",
-          "status": "unchanged"
+          "status": "deleted"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.StatusIndicatorProps",
+          "start_line": 35,
+          "end_line": 38,
+          "node_type": "INTERFACE",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.LoadingSpinner",
+          "start_line": 47,
+          "end_line": 55,
+          "node_type": "FUNCTION",
+          "status": "added"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard",
@@ -39424,6 +39438,13 @@
           "end_line": 162,
           "node_type": "FUNCTION",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.StatusIndicator",
+          "start_line": 62,
+          "end_line": 71,
+          "node_type": "FUNCTION",
+          "status": "added"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.useEffect() callback",
@@ -39437,91 +39458,105 @@
           "start_line": 73,
           "end_line": 83,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange.useCallback() callback",
           "start_line": 73,
           "end_line": 83,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange.useCallback() callback.provider",
           "start_line": 74,
           "end_line": 74,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange.useCallback() callback.provider.LLM_PROVIDERS.find() callback",
           "start_line": 74,
           "end_line": 74,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange.useCallback() callback.setLlmConfig() callback",
           "start_line": 76,
           "end_line": 81,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange",
           "start_line": 85,
           "end_line": 95,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange.useCallback() callback",
           "start_line": 85,
           "end_line": 95,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange.useCallback() callback.provider",
           "start_line": 86,
           "end_line": 86,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange.useCallback() callback.provider.EMBEDDING_PROVIDERS.find() callback",
           "start_line": 86,
           "end_line": 86,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange.useCallback() callback.setEmbeddingConfig() callback",
           "start_line": 88,
           "end_line": 93,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleTestConnection",
           "start_line": 97,
           "end_line": 139,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleTestConnection.useCallback() callback",
           "start_line": 97,
           "end_line": 139,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "deleted"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.StepProgress",
+          "start_line": 107,
+          "end_line": 123,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.WizardNav",
+          "start_line": 133,
+          "end_line": 159,
+          "node_type": "FUNCTION",
+          "status": "added"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleComplete",
           "start_line": 141,
           "end_line": 148,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleComplete.useCallback() callback",
@@ -39531,18 +39566,46 @@
           "status": "unchanged"
         },
         {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.InfoCard",
+          "start_line": 178,
+          "end_line": 190,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
           "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard..map() callback",
           "start_line": 187,
           "end_line": 188,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "deleted"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.ResultCard",
+          "start_line": 195,
+          "end_line": 226,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.ResultCard.result",
+          "start_line": 212,
+          "end_line": 212,
+          "node_type": "METHOD",
+          "status": "added"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.setLlmConfig() callback",
           "start_line": 220,
           "end_line": 220,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "deleted"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.AgentHealthCard",
+          "start_line": 231,
+          "end_line": 242,
+          "node_type": "FUNCTION",
+          "status": "added"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.<unknown>..map() callback",
@@ -39552,11 +39615,39 @@
           "status": "unchanged"
         },
         {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.WelcomeStep",
+          "start_line": 274,
+          "end_line": 326,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
           "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.setEmbeddingConfig() callback",
           "start_line": 294,
           "end_line": 294,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "deleted"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.ApiEndpointStep",
+          "start_line": 331,
+          "end_line": 409,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.ApiEndpointStep.useEffect() callback",
+          "start_line": 347,
+          "end_line": 363,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.ApiEndpointStep.useEffect() callback.timer.setTimeout() callback",
+          "start_line": 348,
+          "end_line": 360,
+          "node_type": "FUNCTION",
+          "status": "added"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.renderStep",
@@ -39564,6 +39655,160 @@
           "end_line": 404,
           "node_type": "METHOD",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.<unknown>.setLocalValue",
+          "start_line": 433,
+          "end_line": 433,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.onChange",
+          "start_line": 434,
+          "end_line": 434,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.ApiKeyStep",
+          "start_line": 467,
+          "end_line": 564,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.ApiKeyStep.useEffect() callback",
+          "start_line": 489,
+          "end_line": 496,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.ApiKeyStep.useEffect() callback.timer.setTimeout() callback",
+          "start_line": 490,
+          "end_line": 493,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.isTesting",
+          "start_line": 586,
+          "end_line": 587,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.DatabaseTestStep",
+          "start_line": 634,
+          "end_line": 724,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.DatabaseTestStep.runTests.useCallback() callback",
+          "start_line": 651,
+          "end_line": 669,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.DatabaseTestStep.useEffect() callback",
+          "start_line": 672,
+          "end_line": 676,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.DatabaseTestStep.isTesting",
+          "start_line": 717,
+          "end_line": 718,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.allPassed",
+          "start_line": 736,
+          "end_line": 737,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.AgentHealthStep",
+          "start_line": 778,
+          "end_line": 837,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.AgentHealthStep.checkHealth.useCallback() callback",
+          "start_line": 793,
+          "end_line": 806,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.AgentHealthStep.useEffect() callback",
+          "start_line": 809,
+          "end_line": 811,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.AgentHealthStep.onlineCount.agents.filter() callback",
+          "start_line": 813,
+          "end_line": 813,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.AgentHealthStep.isLoading",
+          "start_line": 833,
+          "end_line": 834,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.agents.map() callback",
+          "start_line": 887,
+          "end_line": 888,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.isLoading",
+          "start_line": 900,
+          "end_line": 901,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.CompleteStep",
+          "start_line": 924,
+          "end_line": 987,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.CompleteStep.useEffect() callback",
+          "start_line": 927,
+          "end_line": 934,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.CompleteStep.useEffect() callback.timer.setTimeout() callback",
+          "start_line": 929,
+          "end_line": 929,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleFinish.useCallback() callback",
+          "start_line": 1028,
+          "end_line": 1030,
+          "node_type": "FUNCTION",
+          "status": "added"
         }
       ]
     },
@@ -49587,6 +49832,870 @@
           "status": "added"
         }
       ]
+    },
+    "dashboard/frontend/src/stores/setupStore.ts": {
+      "file_status": "modified",
+      "methods": [
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.ConnectionTestResult",
+          "start_line": 26,
+          "end_line": 31,
+          "node_type": "INTERFACE",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.AgentHealthResult",
+          "start_line": 33,
+          "end_line": 40,
+          "node_type": "INTERFACE",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.SetupConfig",
+          "start_line": 42,
+          "end_line": 46,
+          "node_type": "INTERFACE",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.SetupState",
+          "start_line": 48,
+          "end_line": 90,
+          "node_type": "INTERFACE",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.LLMProviderInfo",
+          "start_line": 93,
+          "end_line": 100,
+          "node_type": "INTERFACE",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.EmbeddingProviderInfo",
+          "start_line": 102,
+          "end_line": 109,
+          "node_type": "INTERFACE",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback",
+          "start_line": 127,
+          "end_line": 267,
+          "node_type": "FUNCTION",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setStep",
+          "start_line": 149,
+          "end_line": 151,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.nextStep",
+          "start_line": 153,
+          "end_line": 159,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.prevStep",
+          "start_line": 161,
+          "end_line": 167,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setConfig",
+          "start_line": 169,
+          "end_line": 173,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setConfig.set() callback",
+          "start_line": 170,
+          "end_line": 172,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setApiConnection",
+          "start_line": 175,
+          "end_line": 177,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setWsConnection",
+          "start_line": 179,
+          "end_line": 181,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setAgentHealth",
+          "start_line": 183,
+          "end_line": 185,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setIsCheckingAgents",
+          "start_line": 187,
+          "end_line": 189,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setIsValidating",
+          "start_line": 191,
+          "end_line": 193,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setValidationError",
+          "start_line": 195,
+          "end_line": 199,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setValidationError.set() callback",
+          "start_line": 196,
+          "end_line": 198,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.clearValidationError",
+          "start_line": 201,
+          "end_line": 206,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.clearValidationError.set() callback",
+          "start_line": 202,
+          "end_line": 205,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.clearValidationErrors",
+          "start_line": 208,
+          "end_line": 210,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.completeSetup",
+          "start_line": 212,
+          "end_line": 230,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.resetSetup",
+          "start_line": 232,
+          "end_line": 255,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setRerunning",
+          "start_line": 257,
+          "end_line": 259,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.partialize",
+          "start_line": 263,
+          "end_line": 267,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setProviders",
+          "start_line": 264,
+          "end_line": 266,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useCurrentStep.useSetupStore() callback",
+          "start_line": 276,
+          "end_line": 276,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useIsConfigured.useSetupStore() callback",
+          "start_line": 277,
+          "end_line": 277,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useConfig.useSetupStore() callback",
+          "start_line": 278,
+          "end_line": 278,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useApiConnection.useSetupStore() callback",
+          "start_line": 279,
+          "end_line": 279,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useWsConnection.useSetupStore() callback",
+          "start_line": 280,
+          "end_line": 280,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useAgentHealth.useSetupStore() callback",
+          "start_line": 281,
+          "end_line": 281,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useIsCheckingAgents.useSetupStore() callback",
+          "start_line": 282,
+          "end_line": 282,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useValidationErrors.useSetupStore() callback",
+          "start_line": 283,
+          "end_line": 283,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useIsValidating.useSetupStore() callback",
+          "start_line": 284,
+          "end_line": 284,
+          "node_type": "FUNCTION",
+          "status": "added"
+        }
+      ]
+    },
+    "dashboard/frontend/src/utils/setupValidation.ts": {
+      "file_status": "modified",
+      "methods": [
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.ValidationResult",
+          "start_line": 14,
+          "end_line": 18,
+          "node_type": "INTERFACE",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.isValidUrl",
+          "start_line": 27,
+          "end_line": 34,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.normalizeUrl",
+          "start_line": 39,
+          "end_line": 51,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.deriveWsUrl",
+          "start_line": 56,
+          "end_line": 59,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.testApiHealth",
+          "start_line": 68,
+          "end_line": 142,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.testApiHealth.timeoutId.setTimeout() callback",
+          "start_line": 81,
+          "end_line": 81,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.testWebSocket",
+          "start_line": 147,
+          "end_line": 200,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.testWebSocket.<function>",
+          "start_line": 150,
+          "end_line": 199,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.testWebSocket.<function>.timeoutId.setTimeout() callback",
+          "start_line": 156,
+          "end_line": 166,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.testWebSocket.<function>.onopen",
+          "start_line": 168,
+          "end_line": 178,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.testWebSocket.<function>.onerror",
+          "start_line": 180,
+          "end_line": 189,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.testApiKey",
+          "start_line": 205,
+          "end_line": 273,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.testApiKey.timeoutId.setTimeout() callback",
+          "start_line": 210,
+          "end_line": 210,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.checkAgentHealth",
+          "start_line": 282,
+          "end_line": 342,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.checkAgentHealth.timeoutId.setTimeout() callback",
+          "start_line": 293,
+          "end_line": 293,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.checkAgentHealth.instances.map() callback",
+          "start_line": 324,
+          "end_line": 333,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.mapAgentStatus",
+          "start_line": 347,
+          "end_line": 360,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.testDatabaseConnection",
+          "start_line": 370,
+          "end_line": 452,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.testDatabaseConnection.timeoutId.setTimeout() callback",
+          "start_line": 383,
+          "end_line": 383,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.validateApiHost",
+          "start_line": 457,
+          "end_line": 485,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.validateApiKey",
+          "start_line": 490,
+          "end_line": 508,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.createDebouncedValidation",
+          "start_line": 517,
+          "end_line": 535,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.createDebouncedValidation.<function>",
+          "start_line": 523,
+          "end_line": 534,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.createDebouncedValidation.<function>.<function>",
+          "start_line": 524,
+          "end_line": 533,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.createDebouncedValidation.<function>.<function>.setTimeout() callback",
+          "start_line": 529,
+          "end_line": 532,
+          "node_type": "FUNCTION",
+          "status": "added"
+        }
+      ]
+    },
+    "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx": {
+      "file_status": "modified",
+      "methods": [
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.AgentNodeData",
+          "start_line": 35,
+          "end_line": 47,
+          "node_type": "INTERFACE",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.WorkflowTemplate",
+          "start_line": 56,
+          "end_line": 65,
+          "node_type": "INTERFACE",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasProps",
+          "start_line": 174,
+          "end_line": 179,
+          "node_type": "INTERFACE",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner",
+          "start_line": 181,
+          "end_line": 361,
+          "node_type": "FUNCTION",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.useEffect() callback",
+          "start_line": 194,
+          "end_line": 203,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.onNodeClick.useCallback() callback",
+          "start_line": 206,
+          "end_line": 208,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.onConnect.useCallback() callback",
+          "start_line": 210,
+          "end_line": 220,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.onConnect.useCallback() callback.setEdges() callback",
+          "start_line": 211,
+          "end_line": 218,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.onDragOver.useCallback() callback",
+          "start_line": 222,
+          "end_line": 225,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.onDrop.useCallback() callback",
+          "start_line": 227,
+          "end_line": 250,
+          "node_type": "FUNCTION",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.onDrop.useCallback() callback.setNodes() callback",
+          "start_line": 249,
+          "end_line": 249,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.handleSave.useCallback() callback",
+          "start_line": 252,
+          "end_line": 268,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.handleSave.useCallback() callback.updated.savedWorkflows.filter() callback",
+          "start_line": 263,
+          "end_line": 263,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.handleLoad.useCallback() callback",
+          "start_line": 270,
+          "end_line": 275,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.handleDeleteWorkflow.useCallback() callback",
+          "start_line": 277,
+          "end_line": 281,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.handleDeleteWorkflow.useCallback() callback.updated.savedWorkflows.filter() callback",
+          "start_line": 278,
+          "end_line": 278,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.handleExport.useCallback() callback",
+          "start_line": 283,
+          "end_line": 292,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.handleImport.useCallback() callback",
+          "start_line": 294,
+          "end_line": 311,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.handleImport.useCallback() callback.onload",
+          "start_line": 298,
+          "end_line": 309,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.addTriad.useCallback() callback",
+          "start_line": 313,
+          "end_line": 333,
+          "node_type": "FUNCTION",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.addTriad.useCallback() callback.newNodes.triad.agents.map() callback",
+          "start_line": 315,
+          "end_line": 331,
+          "node_type": "FUNCTION",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.addTriad.useCallback() callback.setNodes() callback",
+          "start_line": 330,
+          "end_line": 330,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.updateNodeModel.useCallback() callback",
+          "start_line": 335,
+          "end_line": 345,
+          "node_type": "FUNCTION",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.updateNodeModel.useCallback() callback.setNodes() callback",
+          "start_line": 336,
+          "end_line": 344,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.updateNodeModel.useCallback() callback.setNodes() callback.nds.map() callback",
+          "start_line": 336,
+          "end_line": 344,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.map() callback",
+          "start_line": 346,
+          "end_line": 348,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.<unknown>..agents.map() callback",
+          "start_line": 354,
+          "end_line": 354,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.['Code Execution', 'Web Browser', 'File System', 'API Call']..map() callback",
+          "start_line": 392,
+          "end_line": 393,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.<unknown>..map() callback",
+          "start_line": 533,
+          "end_line": 534,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.map() callback",
+          "start_line": 588,
+          "end_line": 589,
+          "node_type": "FUNCTION",
+          "status": "added"
+        }
+      ]
+    },
+    "dashboard/frontend/src/components/Observability/A2ATracker.tsx": {
+      "file_status": "modified",
+      "methods": [
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2AMessage",
+          "start_line": 17,
+          "end_line": 27,
+          "node_type": "INTERFACE",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.AgentActivity",
+          "start_line": 29,
+          "end_line": 40,
+          "node_type": "INTERFACE",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.WorkflowStats",
+          "start_line": 42,
+          "end_line": 47,
+          "node_type": "INTERFACE",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.ResourceStats",
+          "start_line": 49,
+          "end_line": 54,
+          "node_type": "INTERFACE",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATrackerProps",
+          "start_line": 56,
+          "end_line": 60,
+          "node_type": "INTERFACE",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.generateRandomMessage",
+          "start_line": 81,
+          "end_line": 101,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity",
+          "start_line": 103,
+          "end_line": 116,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity.AGENT_IDS.map() callback",
+          "start_line": 104,
+          "end_line": 115,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline.filteredMessages.messages.filter() callback",
+          "start_line": 121,
+          "end_line": 121,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline.yet",
+          "start_line": 147,
+          "end_line": 147,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.getStatusIcon",
+          "start_line": 158,
+          "end_line": 158,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.AgentActivityList.<unknown>..map() callback",
+          "start_line": 192,
+          "end_line": 194,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.useEffect() callback",
+          "start_line": 242,
+          "end_line": 249,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.useEffect() callback.forEach() callback",
+          "start_line": 244,
+          "end_line": 247,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.topConnections.sort() callback",
+          "start_line": 252,
+          "end_line": 252,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.yet",
+          "start_line": 258,
+          "end_line": 258,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.topConnections.map(\"h-full bg-purple-500 rounded-full\") callback",
+          "start_line": 260,
+          "end_line": 261,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker",
+          "start_line": 332,
+          "end_line": 420,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback",
+          "start_line": 357,
+          "end_line": 404,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.connectTimeout.setTimeout() callback",
+          "start_line": 359,
+          "end_line": 361,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback",
+          "start_line": 369,
+          "end_line": 375,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback.setMessages() callback",
+          "start_line": 371,
+          "end_line": 374,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.activityInterval.setInterval() callback",
+          "start_line": 378,
+          "end_line": 380,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.statsInterval.setInterval() callback",
+          "start_line": 383,
+          "end_line": 396,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.internalMonologue.messages.filter() callback",
+          "start_line": 408,
+          "end_line": 408,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.<unknown>..filter() callback",
+          "start_line": 429,
+          "end_line": 429,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.map() callback",
+          "start_line": 436,
+          "end_line": 438,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.<unknown>..reduce() callback",
+          "start_line": 526,
+          "end_line": 526,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.<unknown>.messages.reduce() callback",
+          "start_line": 533,
+          "end_line": 533,
+          "node_type": "FUNCTION",
+          "status": "added"
+        }
+      ]
+    },
+    "dashboard/frontend/src/hooks/useDockerDetection.ts": {
+      "file_status": "deleted",
+      "methods": []
     }
   },
   "methods_index": {
@@ -65494,20 +66603,20 @@
       "type": "CLASS",
       "status": "unchanged"
     },
-    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService": {
-      "file_path": "src/heretek_swarm/config/service.py",
-      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService",
-      "start_line": 57,
-      "end_line": 1661,
-      "type": "CLASS",
-      "status": "modified"
-    },
     "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.__init__": {
       "file_path": "src/heretek_swarm/config/service.py",
       "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.__init__",
       "start_line": 60,
       "end_line": 94,
       "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService",
+      "start_line": 61,
+      "end_line": 1679,
+      "type": "CLASS",
       "status": "modified"
     },
     "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.encrypt_api_key": {
@@ -65537,8 +66646,8 @@
     "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService._warm_cache": {
       "file_path": "src/heretek_swarm/config/service.py",
       "qualified_name": "src.heretek_swarm.config.service.ConfigurationService._warm_cache",
-      "start_line": 150,
-      "end_line": 170,
+      "start_line": 154,
+      "end_line": 174,
       "type": "METHOD",
       "status": "modified"
     },
@@ -65557,6 +66666,14 @@
       "end_line": 193,
       "type": "METHOD",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService._get_cache": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService._get_cache",
+      "start_line": 201,
+      "end_line": 215,
+      "type": "METHOD",
+      "status": "modified"
     },
     "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService._orm_to_pydantic": {
       "file_path": "src/heretek_swarm/config/service.py",
@@ -65590,14 +66707,6 @@
       "type": "METHOD",
       "status": "unchanged"
     },
-    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService._get_cache": {
-      "file_path": "src/heretek_swarm/config/service.py",
-      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService._get_cache",
-      "start_line": 246,
-      "end_line": 260,
-      "type": "METHOD",
-      "status": "unchanged"
-    },
     "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.get_config_value": {
       "file_path": "src/heretek_swarm/config/service.py",
       "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.get_config_value",
@@ -65609,8 +66718,8 @@
     "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.get_config": {
       "file_path": "src/heretek_swarm/config/service.py",
       "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.get_config",
-      "start_line": 301,
-      "end_line": 328,
+      "start_line": 305,
+      "end_line": 346,
       "type": "METHOD",
       "status": "modified"
     },
@@ -93380,7 +94489,7 @@
       "start_line": 17,
       "end_line": 22,
       "type": "INTERFACE",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.EmbeddingConfig": {
       "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
@@ -93388,7 +94497,23 @@
       "start_line": 24,
       "end_line": 29,
       "type": "INTERFACE",
-      "status": "unchanged"
+      "status": "deleted"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.StatusIndicatorProps": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.StatusIndicatorProps",
+      "start_line": 35,
+      "end_line": 38,
+      "type": "INTERFACE",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.LoadingSpinner": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.LoadingSpinner",
+      "start_line": 47,
+      "end_line": 55,
+      "type": "FUNCTION",
+      "status": "added"
     },
     "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard": {
       "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
@@ -93397,6 +94522,14 @@
       "end_line": 162,
       "type": "FUNCTION",
       "status": "unchanged"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.StatusIndicator": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.StatusIndicator",
+      "start_line": 62,
+      "end_line": 71,
+      "type": "FUNCTION",
+      "status": "added"
     },
     "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.useEffect() callback": {
       "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
@@ -93412,7 +94545,7 @@
       "start_line": 73,
       "end_line": 83,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
@@ -93420,7 +94553,7 @@
       "start_line": 73,
       "end_line": 83,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange.useCallback() callback.provider": {
       "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
@@ -93428,7 +94561,7 @@
       "start_line": 74,
       "end_line": 74,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange.useCallback() callback.provider.LLM_PROVIDERS.find() callback": {
       "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
@@ -93436,7 +94569,7 @@
       "start_line": 74,
       "end_line": 74,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange.useCallback() callback.setLlmConfig() callback": {
       "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
@@ -93444,7 +94577,7 @@
       "start_line": 76,
       "end_line": 81,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange": {
       "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
@@ -93452,7 +94585,7 @@
       "start_line": 85,
       "end_line": 95,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
@@ -93460,7 +94593,7 @@
       "start_line": 85,
       "end_line": 95,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange.useCallback() callback.provider": {
       "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
@@ -93468,7 +94601,7 @@
       "start_line": 86,
       "end_line": 86,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange.useCallback() callback.provider.EMBEDDING_PROVIDERS.find() callback": {
       "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
@@ -93476,7 +94609,7 @@
       "start_line": 86,
       "end_line": 86,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange.useCallback() callback.setEmbeddingConfig() callback": {
       "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
@@ -93484,7 +94617,7 @@
       "start_line": 88,
       "end_line": 93,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleTestConnection": {
       "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
@@ -93492,7 +94625,7 @@
       "start_line": 97,
       "end_line": 139,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleTestConnection.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
@@ -93500,7 +94633,23 @@
       "start_line": 97,
       "end_line": 139,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "deleted"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.StepProgress": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.StepProgress",
+      "start_line": 107,
+      "end_line": 123,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.WizardNav": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.WizardNav",
+      "start_line": 133,
+      "end_line": 159,
+      "type": "FUNCTION",
+      "status": "added"
     },
     "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleComplete": {
       "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
@@ -93508,7 +94657,7 @@
       "start_line": 141,
       "end_line": 148,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleComplete.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
@@ -93518,13 +94667,37 @@
       "type": "FUNCTION",
       "status": "unchanged"
     },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.InfoCard": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.InfoCard",
+      "start_line": 178,
+      "end_line": 190,
+      "type": "FUNCTION",
+      "status": "added"
+    },
     "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard..map() callback": {
       "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
       "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard..map() callback",
       "start_line": 187,
       "end_line": 188,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "deleted"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.ResultCard": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.ResultCard",
+      "start_line": 195,
+      "end_line": 226,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.ResultCard.result": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.ResultCard.result",
+      "start_line": 212,
+      "end_line": 212,
+      "type": "METHOD",
+      "status": "added"
     },
     "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.setLlmConfig() callback": {
       "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
@@ -93532,7 +94705,15 @@
       "start_line": 220,
       "end_line": 220,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "deleted"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.AgentHealthCard": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.AgentHealthCard",
+      "start_line": 231,
+      "end_line": 242,
+      "type": "FUNCTION",
+      "status": "added"
     },
     "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.<unknown>..map() callback": {
       "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
@@ -93542,13 +94723,45 @@
       "type": "FUNCTION",
       "status": "unchanged"
     },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.WelcomeStep": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.WelcomeStep",
+      "start_line": 274,
+      "end_line": 326,
+      "type": "FUNCTION",
+      "status": "added"
+    },
     "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.setEmbeddingConfig() callback": {
       "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
       "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.setEmbeddingConfig() callback",
       "start_line": 294,
       "end_line": 294,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "deleted"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.ApiEndpointStep": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.ApiEndpointStep",
+      "start_line": 331,
+      "end_line": 409,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.ApiEndpointStep.useEffect() callback": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.ApiEndpointStep.useEffect() callback",
+      "start_line": 347,
+      "end_line": 363,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.ApiEndpointStep.useEffect() callback.timer.setTimeout() callback": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.ApiEndpointStep.useEffect() callback.timer.setTimeout() callback",
+      "start_line": 348,
+      "end_line": 360,
+      "type": "FUNCTION",
+      "status": "added"
     },
     "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.renderStep": {
       "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
@@ -93557,6 +94770,182 @@
       "end_line": 404,
       "type": "METHOD",
       "status": "unchanged"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.<unknown>.setLocalValue": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.<unknown>.setLocalValue",
+      "start_line": 433,
+      "end_line": 433,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.onChange": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.onChange",
+      "start_line": 434,
+      "end_line": 434,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.ApiKeyStep": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.ApiKeyStep",
+      "start_line": 467,
+      "end_line": 564,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.ApiKeyStep.useEffect() callback": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.ApiKeyStep.useEffect() callback",
+      "start_line": 489,
+      "end_line": 496,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.ApiKeyStep.useEffect() callback.timer.setTimeout() callback": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.ApiKeyStep.useEffect() callback.timer.setTimeout() callback",
+      "start_line": 490,
+      "end_line": 493,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.isTesting": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.isTesting",
+      "start_line": 586,
+      "end_line": 587,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.DatabaseTestStep": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.DatabaseTestStep",
+      "start_line": 634,
+      "end_line": 724,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.DatabaseTestStep.runTests.useCallback() callback": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.DatabaseTestStep.runTests.useCallback() callback",
+      "start_line": 651,
+      "end_line": 669,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.DatabaseTestStep.useEffect() callback": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.DatabaseTestStep.useEffect() callback",
+      "start_line": 672,
+      "end_line": 676,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.DatabaseTestStep.isTesting": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.DatabaseTestStep.isTesting",
+      "start_line": 717,
+      "end_line": 718,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.allPassed": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.allPassed",
+      "start_line": 736,
+      "end_line": 737,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.AgentHealthStep": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.AgentHealthStep",
+      "start_line": 778,
+      "end_line": 837,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.AgentHealthStep.checkHealth.useCallback() callback": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.AgentHealthStep.checkHealth.useCallback() callback",
+      "start_line": 793,
+      "end_line": 806,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.AgentHealthStep.useEffect() callback": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.AgentHealthStep.useEffect() callback",
+      "start_line": 809,
+      "end_line": 811,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.AgentHealthStep.onlineCount.agents.filter() callback": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.AgentHealthStep.onlineCount.agents.filter() callback",
+      "start_line": 813,
+      "end_line": 813,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.AgentHealthStep.isLoading": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.AgentHealthStep.isLoading",
+      "start_line": 833,
+      "end_line": 834,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.agents.map() callback": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.agents.map() callback",
+      "start_line": 887,
+      "end_line": 888,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.isLoading": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.isLoading",
+      "start_line": 900,
+      "end_line": 901,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.CompleteStep": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.CompleteStep",
+      "start_line": 924,
+      "end_line": 987,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.CompleteStep.useEffect() callback": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.CompleteStep.useEffect() callback",
+      "start_line": 927,
+      "end_line": 934,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.CompleteStep.useEffect() callback.timer.setTimeout() callback": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.CompleteStep.useEffect() callback.timer.setTimeout() callback",
+      "start_line": 929,
+      "end_line": 929,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Setup/SetupWizard.tsx|dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleFinish.useCallback() callback": {
+      "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleFinish.useCallback() callback",
+      "start_line": 1028,
+      "end_line": 1030,
+      "type": "FUNCTION",
+      "status": "added"
     },
     "dashboard/frontend/src/components/SwarmHealthDashboard.tsx|dashboard.frontend.src.components.SwarmHealthDashboard.SwarmMetrics": {
       "file_path": "dashboard/frontend/src/components/SwarmHealthDashboard.tsx",
@@ -104373,6 +105762,966 @@
       "end_line": 299,
       "type": "FUNCTION",
       "status": "added"
+    },
+    "dashboard/frontend/src/stores/setupStore.ts|dashboard.frontend.src.stores.setupStore.ConnectionTestResult": {
+      "file_path": "dashboard/frontend/src/stores/setupStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.setupStore.ConnectionTestResult",
+      "start_line": 26,
+      "end_line": 31,
+      "type": "INTERFACE",
+      "status": "added"
+    },
+    "dashboard/frontend/src/stores/setupStore.ts|dashboard.frontend.src.stores.setupStore.AgentHealthResult": {
+      "file_path": "dashboard/frontend/src/stores/setupStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.setupStore.AgentHealthResult",
+      "start_line": 33,
+      "end_line": 40,
+      "type": "INTERFACE",
+      "status": "added"
+    },
+    "dashboard/frontend/src/stores/setupStore.ts|dashboard.frontend.src.stores.setupStore.SetupConfig": {
+      "file_path": "dashboard/frontend/src/stores/setupStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.setupStore.SetupConfig",
+      "start_line": 42,
+      "end_line": 46,
+      "type": "INTERFACE",
+      "status": "added"
+    },
+    "dashboard/frontend/src/stores/setupStore.ts|dashboard.frontend.src.stores.setupStore.SetupState": {
+      "file_path": "dashboard/frontend/src/stores/setupStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.setupStore.SetupState",
+      "start_line": 48,
+      "end_line": 90,
+      "type": "INTERFACE",
+      "status": "modified"
+    },
+    "dashboard/frontend/src/stores/setupStore.ts|dashboard.frontend.src.stores.setupStore.LLMProviderInfo": {
+      "file_path": "dashboard/frontend/src/stores/setupStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.setupStore.LLMProviderInfo",
+      "start_line": 93,
+      "end_line": 100,
+      "type": "INTERFACE",
+      "status": "added"
+    },
+    "dashboard/frontend/src/stores/setupStore.ts|dashboard.frontend.src.stores.setupStore.EmbeddingProviderInfo": {
+      "file_path": "dashboard/frontend/src/stores/setupStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.setupStore.EmbeddingProviderInfo",
+      "start_line": 102,
+      "end_line": 109,
+      "type": "INTERFACE",
+      "status": "modified"
+    },
+    "dashboard/frontend/src/stores/setupStore.ts|dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback": {
+      "file_path": "dashboard/frontend/src/stores/setupStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback",
+      "start_line": 127,
+      "end_line": 267,
+      "type": "FUNCTION",
+      "status": "modified"
+    },
+    "dashboard/frontend/src/stores/setupStore.ts|dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setStep": {
+      "file_path": "dashboard/frontend/src/stores/setupStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setStep",
+      "start_line": 149,
+      "end_line": 151,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "dashboard/frontend/src/stores/setupStore.ts|dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.nextStep": {
+      "file_path": "dashboard/frontend/src/stores/setupStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.nextStep",
+      "start_line": 153,
+      "end_line": 159,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "dashboard/frontend/src/stores/setupStore.ts|dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.prevStep": {
+      "file_path": "dashboard/frontend/src/stores/setupStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.prevStep",
+      "start_line": 161,
+      "end_line": 167,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "dashboard/frontend/src/stores/setupStore.ts|dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setConfig": {
+      "file_path": "dashboard/frontend/src/stores/setupStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setConfig",
+      "start_line": 169,
+      "end_line": 173,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "dashboard/frontend/src/stores/setupStore.ts|dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setConfig.set() callback": {
+      "file_path": "dashboard/frontend/src/stores/setupStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setConfig.set() callback",
+      "start_line": 170,
+      "end_line": 172,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/stores/setupStore.ts|dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setApiConnection": {
+      "file_path": "dashboard/frontend/src/stores/setupStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setApiConnection",
+      "start_line": 175,
+      "end_line": 177,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "dashboard/frontend/src/stores/setupStore.ts|dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setWsConnection": {
+      "file_path": "dashboard/frontend/src/stores/setupStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setWsConnection",
+      "start_line": 179,
+      "end_line": 181,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "dashboard/frontend/src/stores/setupStore.ts|dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setAgentHealth": {
+      "file_path": "dashboard/frontend/src/stores/setupStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setAgentHealth",
+      "start_line": 183,
+      "end_line": 185,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "dashboard/frontend/src/stores/setupStore.ts|dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setIsCheckingAgents": {
+      "file_path": "dashboard/frontend/src/stores/setupStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setIsCheckingAgents",
+      "start_line": 187,
+      "end_line": 189,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "dashboard/frontend/src/stores/setupStore.ts|dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setIsValidating": {
+      "file_path": "dashboard/frontend/src/stores/setupStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setIsValidating",
+      "start_line": 191,
+      "end_line": 193,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "dashboard/frontend/src/stores/setupStore.ts|dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setValidationError": {
+      "file_path": "dashboard/frontend/src/stores/setupStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setValidationError",
+      "start_line": 195,
+      "end_line": 199,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "dashboard/frontend/src/stores/setupStore.ts|dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setValidationError.set() callback": {
+      "file_path": "dashboard/frontend/src/stores/setupStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setValidationError.set() callback",
+      "start_line": 196,
+      "end_line": 198,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/stores/setupStore.ts|dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.clearValidationError": {
+      "file_path": "dashboard/frontend/src/stores/setupStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.clearValidationError",
+      "start_line": 201,
+      "end_line": 206,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "dashboard/frontend/src/stores/setupStore.ts|dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.clearValidationError.set() callback": {
+      "file_path": "dashboard/frontend/src/stores/setupStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.clearValidationError.set() callback",
+      "start_line": 202,
+      "end_line": 205,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/stores/setupStore.ts|dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.clearValidationErrors": {
+      "file_path": "dashboard/frontend/src/stores/setupStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.clearValidationErrors",
+      "start_line": 208,
+      "end_line": 210,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "dashboard/frontend/src/stores/setupStore.ts|dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.completeSetup": {
+      "file_path": "dashboard/frontend/src/stores/setupStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.completeSetup",
+      "start_line": 212,
+      "end_line": 230,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "dashboard/frontend/src/stores/setupStore.ts|dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.resetSetup": {
+      "file_path": "dashboard/frontend/src/stores/setupStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.resetSetup",
+      "start_line": 232,
+      "end_line": 255,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "dashboard/frontend/src/stores/setupStore.ts|dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setRerunning": {
+      "file_path": "dashboard/frontend/src/stores/setupStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setRerunning",
+      "start_line": 257,
+      "end_line": 259,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "dashboard/frontend/src/stores/setupStore.ts|dashboard.frontend.src.stores.setupStore.useSetupStore.partialize": {
+      "file_path": "dashboard/frontend/src/stores/setupStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.partialize",
+      "start_line": 263,
+      "end_line": 267,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "dashboard/frontend/src/stores/setupStore.ts|dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setProviders": {
+      "file_path": "dashboard/frontend/src/stores/setupStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setProviders",
+      "start_line": 264,
+      "end_line": 266,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "dashboard/frontend/src/stores/setupStore.ts|dashboard.frontend.src.stores.setupStore.useCurrentStep.useSetupStore() callback": {
+      "file_path": "dashboard/frontend/src/stores/setupStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.setupStore.useCurrentStep.useSetupStore() callback",
+      "start_line": 276,
+      "end_line": 276,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/stores/setupStore.ts|dashboard.frontend.src.stores.setupStore.useIsConfigured.useSetupStore() callback": {
+      "file_path": "dashboard/frontend/src/stores/setupStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.setupStore.useIsConfigured.useSetupStore() callback",
+      "start_line": 277,
+      "end_line": 277,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/stores/setupStore.ts|dashboard.frontend.src.stores.setupStore.useConfig.useSetupStore() callback": {
+      "file_path": "dashboard/frontend/src/stores/setupStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.setupStore.useConfig.useSetupStore() callback",
+      "start_line": 278,
+      "end_line": 278,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/stores/setupStore.ts|dashboard.frontend.src.stores.setupStore.useApiConnection.useSetupStore() callback": {
+      "file_path": "dashboard/frontend/src/stores/setupStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.setupStore.useApiConnection.useSetupStore() callback",
+      "start_line": 279,
+      "end_line": 279,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/stores/setupStore.ts|dashboard.frontend.src.stores.setupStore.useWsConnection.useSetupStore() callback": {
+      "file_path": "dashboard/frontend/src/stores/setupStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.setupStore.useWsConnection.useSetupStore() callback",
+      "start_line": 280,
+      "end_line": 280,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/stores/setupStore.ts|dashboard.frontend.src.stores.setupStore.useAgentHealth.useSetupStore() callback": {
+      "file_path": "dashboard/frontend/src/stores/setupStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.setupStore.useAgentHealth.useSetupStore() callback",
+      "start_line": 281,
+      "end_line": 281,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/stores/setupStore.ts|dashboard.frontend.src.stores.setupStore.useIsCheckingAgents.useSetupStore() callback": {
+      "file_path": "dashboard/frontend/src/stores/setupStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.setupStore.useIsCheckingAgents.useSetupStore() callback",
+      "start_line": 282,
+      "end_line": 282,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/stores/setupStore.ts|dashboard.frontend.src.stores.setupStore.useValidationErrors.useSetupStore() callback": {
+      "file_path": "dashboard/frontend/src/stores/setupStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.setupStore.useValidationErrors.useSetupStore() callback",
+      "start_line": 283,
+      "end_line": 283,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/stores/setupStore.ts|dashboard.frontend.src.stores.setupStore.useIsValidating.useSetupStore() callback": {
+      "file_path": "dashboard/frontend/src/stores/setupStore.ts",
+      "qualified_name": "dashboard.frontend.src.stores.setupStore.useIsValidating.useSetupStore() callback",
+      "start_line": 284,
+      "end_line": 284,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/utils/setupValidation.ts|dashboard.frontend.src.utils.setupValidation.ValidationResult": {
+      "file_path": "dashboard/frontend/src/utils/setupValidation.ts",
+      "qualified_name": "dashboard.frontend.src.utils.setupValidation.ValidationResult",
+      "start_line": 14,
+      "end_line": 18,
+      "type": "INTERFACE",
+      "status": "added"
+    },
+    "dashboard/frontend/src/utils/setupValidation.ts|dashboard.frontend.src.utils.setupValidation.isValidUrl": {
+      "file_path": "dashboard/frontend/src/utils/setupValidation.ts",
+      "qualified_name": "dashboard.frontend.src.utils.setupValidation.isValidUrl",
+      "start_line": 27,
+      "end_line": 34,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/utils/setupValidation.ts|dashboard.frontend.src.utils.setupValidation.normalizeUrl": {
+      "file_path": "dashboard/frontend/src/utils/setupValidation.ts",
+      "qualified_name": "dashboard.frontend.src.utils.setupValidation.normalizeUrl",
+      "start_line": 39,
+      "end_line": 51,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/utils/setupValidation.ts|dashboard.frontend.src.utils.setupValidation.deriveWsUrl": {
+      "file_path": "dashboard/frontend/src/utils/setupValidation.ts",
+      "qualified_name": "dashboard.frontend.src.utils.setupValidation.deriveWsUrl",
+      "start_line": 56,
+      "end_line": 59,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/utils/setupValidation.ts|dashboard.frontend.src.utils.setupValidation.testApiHealth": {
+      "file_path": "dashboard/frontend/src/utils/setupValidation.ts",
+      "qualified_name": "dashboard.frontend.src.utils.setupValidation.testApiHealth",
+      "start_line": 68,
+      "end_line": 142,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/utils/setupValidation.ts|dashboard.frontend.src.utils.setupValidation.testApiHealth.timeoutId.setTimeout() callback": {
+      "file_path": "dashboard/frontend/src/utils/setupValidation.ts",
+      "qualified_name": "dashboard.frontend.src.utils.setupValidation.testApiHealth.timeoutId.setTimeout() callback",
+      "start_line": 81,
+      "end_line": 81,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/utils/setupValidation.ts|dashboard.frontend.src.utils.setupValidation.testWebSocket": {
+      "file_path": "dashboard/frontend/src/utils/setupValidation.ts",
+      "qualified_name": "dashboard.frontend.src.utils.setupValidation.testWebSocket",
+      "start_line": 147,
+      "end_line": 200,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/utils/setupValidation.ts|dashboard.frontend.src.utils.setupValidation.testWebSocket.<function>": {
+      "file_path": "dashboard/frontend/src/utils/setupValidation.ts",
+      "qualified_name": "dashboard.frontend.src.utils.setupValidation.testWebSocket.<function>",
+      "start_line": 150,
+      "end_line": 199,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/utils/setupValidation.ts|dashboard.frontend.src.utils.setupValidation.testWebSocket.<function>.timeoutId.setTimeout() callback": {
+      "file_path": "dashboard/frontend/src/utils/setupValidation.ts",
+      "qualified_name": "dashboard.frontend.src.utils.setupValidation.testWebSocket.<function>.timeoutId.setTimeout() callback",
+      "start_line": 156,
+      "end_line": 166,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/utils/setupValidation.ts|dashboard.frontend.src.utils.setupValidation.testWebSocket.<function>.onopen": {
+      "file_path": "dashboard/frontend/src/utils/setupValidation.ts",
+      "qualified_name": "dashboard.frontend.src.utils.setupValidation.testWebSocket.<function>.onopen",
+      "start_line": 168,
+      "end_line": 178,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/utils/setupValidation.ts|dashboard.frontend.src.utils.setupValidation.testWebSocket.<function>.onerror": {
+      "file_path": "dashboard/frontend/src/utils/setupValidation.ts",
+      "qualified_name": "dashboard.frontend.src.utils.setupValidation.testWebSocket.<function>.onerror",
+      "start_line": 180,
+      "end_line": 189,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/utils/setupValidation.ts|dashboard.frontend.src.utils.setupValidation.testApiKey": {
+      "file_path": "dashboard/frontend/src/utils/setupValidation.ts",
+      "qualified_name": "dashboard.frontend.src.utils.setupValidation.testApiKey",
+      "start_line": 205,
+      "end_line": 273,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/utils/setupValidation.ts|dashboard.frontend.src.utils.setupValidation.testApiKey.timeoutId.setTimeout() callback": {
+      "file_path": "dashboard/frontend/src/utils/setupValidation.ts",
+      "qualified_name": "dashboard.frontend.src.utils.setupValidation.testApiKey.timeoutId.setTimeout() callback",
+      "start_line": 210,
+      "end_line": 210,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/utils/setupValidation.ts|dashboard.frontend.src.utils.setupValidation.checkAgentHealth": {
+      "file_path": "dashboard/frontend/src/utils/setupValidation.ts",
+      "qualified_name": "dashboard.frontend.src.utils.setupValidation.checkAgentHealth",
+      "start_line": 282,
+      "end_line": 342,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/utils/setupValidation.ts|dashboard.frontend.src.utils.setupValidation.checkAgentHealth.timeoutId.setTimeout() callback": {
+      "file_path": "dashboard/frontend/src/utils/setupValidation.ts",
+      "qualified_name": "dashboard.frontend.src.utils.setupValidation.checkAgentHealth.timeoutId.setTimeout() callback",
+      "start_line": 293,
+      "end_line": 293,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/utils/setupValidation.ts|dashboard.frontend.src.utils.setupValidation.checkAgentHealth.instances.map() callback": {
+      "file_path": "dashboard/frontend/src/utils/setupValidation.ts",
+      "qualified_name": "dashboard.frontend.src.utils.setupValidation.checkAgentHealth.instances.map() callback",
+      "start_line": 324,
+      "end_line": 333,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/utils/setupValidation.ts|dashboard.frontend.src.utils.setupValidation.mapAgentStatus": {
+      "file_path": "dashboard/frontend/src/utils/setupValidation.ts",
+      "qualified_name": "dashboard.frontend.src.utils.setupValidation.mapAgentStatus",
+      "start_line": 347,
+      "end_line": 360,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/utils/setupValidation.ts|dashboard.frontend.src.utils.setupValidation.testDatabaseConnection": {
+      "file_path": "dashboard/frontend/src/utils/setupValidation.ts",
+      "qualified_name": "dashboard.frontend.src.utils.setupValidation.testDatabaseConnection",
+      "start_line": 370,
+      "end_line": 452,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/utils/setupValidation.ts|dashboard.frontend.src.utils.setupValidation.testDatabaseConnection.timeoutId.setTimeout() callback": {
+      "file_path": "dashboard/frontend/src/utils/setupValidation.ts",
+      "qualified_name": "dashboard.frontend.src.utils.setupValidation.testDatabaseConnection.timeoutId.setTimeout() callback",
+      "start_line": 383,
+      "end_line": 383,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/utils/setupValidation.ts|dashboard.frontend.src.utils.setupValidation.validateApiHost": {
+      "file_path": "dashboard/frontend/src/utils/setupValidation.ts",
+      "qualified_name": "dashboard.frontend.src.utils.setupValidation.validateApiHost",
+      "start_line": 457,
+      "end_line": 485,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/utils/setupValidation.ts|dashboard.frontend.src.utils.setupValidation.validateApiKey": {
+      "file_path": "dashboard/frontend/src/utils/setupValidation.ts",
+      "qualified_name": "dashboard.frontend.src.utils.setupValidation.validateApiKey",
+      "start_line": 490,
+      "end_line": 508,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/utils/setupValidation.ts|dashboard.frontend.src.utils.setupValidation.createDebouncedValidation": {
+      "file_path": "dashboard/frontend/src/utils/setupValidation.ts",
+      "qualified_name": "dashboard.frontend.src.utils.setupValidation.createDebouncedValidation",
+      "start_line": 517,
+      "end_line": 535,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/utils/setupValidation.ts|dashboard.frontend.src.utils.setupValidation.createDebouncedValidation.<function>": {
+      "file_path": "dashboard/frontend/src/utils/setupValidation.ts",
+      "qualified_name": "dashboard.frontend.src.utils.setupValidation.createDebouncedValidation.<function>",
+      "start_line": 523,
+      "end_line": 534,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/utils/setupValidation.ts|dashboard.frontend.src.utils.setupValidation.createDebouncedValidation.<function>.<function>": {
+      "file_path": "dashboard/frontend/src/utils/setupValidation.ts",
+      "qualified_name": "dashboard.frontend.src.utils.setupValidation.createDebouncedValidation.<function>.<function>",
+      "start_line": 524,
+      "end_line": 533,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/utils/setupValidation.ts|dashboard.frontend.src.utils.setupValidation.createDebouncedValidation.<function>.<function>.setTimeout() callback": {
+      "file_path": "dashboard/frontend/src/utils/setupValidation.ts",
+      "qualified_name": "dashboard.frontend.src.utils.setupValidation.createDebouncedValidation.<function>.<function>.setTimeout() callback",
+      "start_line": 529,
+      "end_line": 532,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx|dashboard.frontend.src.components.Canvas.FlowCanvas.AgentNodeData": {
+      "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.AgentNodeData",
+      "start_line": 35,
+      "end_line": 47,
+      "type": "INTERFACE",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx|dashboard.frontend.src.components.Canvas.FlowCanvas.WorkflowTemplate": {
+      "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.WorkflowTemplate",
+      "start_line": 56,
+      "end_line": 65,
+      "type": "INTERFACE",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx|dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasProps": {
+      "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasProps",
+      "start_line": 174,
+      "end_line": 179,
+      "type": "INTERFACE",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx|dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner": {
+      "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner",
+      "start_line": 181,
+      "end_line": 361,
+      "type": "FUNCTION",
+      "status": "modified"
+    },
+    "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx|dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.useEffect() callback": {
+      "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.useEffect() callback",
+      "start_line": 194,
+      "end_line": 203,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx|dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.onNodeClick.useCallback() callback": {
+      "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.onNodeClick.useCallback() callback",
+      "start_line": 206,
+      "end_line": 208,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx|dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.onConnect.useCallback() callback": {
+      "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.onConnect.useCallback() callback",
+      "start_line": 210,
+      "end_line": 220,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx|dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.onConnect.useCallback() callback.setEdges() callback": {
+      "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.onConnect.useCallback() callback.setEdges() callback",
+      "start_line": 211,
+      "end_line": 218,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx|dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.onDragOver.useCallback() callback": {
+      "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.onDragOver.useCallback() callback",
+      "start_line": 222,
+      "end_line": 225,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx|dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.onDrop.useCallback() callback": {
+      "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.onDrop.useCallback() callback",
+      "start_line": 227,
+      "end_line": 250,
+      "type": "FUNCTION",
+      "status": "modified"
+    },
+    "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx|dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.onDrop.useCallback() callback.setNodes() callback": {
+      "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.onDrop.useCallback() callback.setNodes() callback",
+      "start_line": 249,
+      "end_line": 249,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx|dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.handleSave.useCallback() callback": {
+      "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.handleSave.useCallback() callback",
+      "start_line": 252,
+      "end_line": 268,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx|dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.handleSave.useCallback() callback.updated.savedWorkflows.filter() callback": {
+      "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.handleSave.useCallback() callback.updated.savedWorkflows.filter() callback",
+      "start_line": 263,
+      "end_line": 263,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx|dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.handleLoad.useCallback() callback": {
+      "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.handleLoad.useCallback() callback",
+      "start_line": 270,
+      "end_line": 275,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx|dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.handleDeleteWorkflow.useCallback() callback": {
+      "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.handleDeleteWorkflow.useCallback() callback",
+      "start_line": 277,
+      "end_line": 281,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx|dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.handleDeleteWorkflow.useCallback() callback.updated.savedWorkflows.filter() callback": {
+      "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.handleDeleteWorkflow.useCallback() callback.updated.savedWorkflows.filter() callback",
+      "start_line": 278,
+      "end_line": 278,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx|dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.handleExport.useCallback() callback": {
+      "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.handleExport.useCallback() callback",
+      "start_line": 283,
+      "end_line": 292,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx|dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.handleImport.useCallback() callback": {
+      "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.handleImport.useCallback() callback",
+      "start_line": 294,
+      "end_line": 311,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx|dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.handleImport.useCallback() callback.onload": {
+      "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.handleImport.useCallback() callback.onload",
+      "start_line": 298,
+      "end_line": 309,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx|dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.addTriad.useCallback() callback": {
+      "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.addTriad.useCallback() callback",
+      "start_line": 313,
+      "end_line": 333,
+      "type": "FUNCTION",
+      "status": "modified"
+    },
+    "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx|dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.addTriad.useCallback() callback.newNodes.triad.agents.map() callback": {
+      "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.addTriad.useCallback() callback.newNodes.triad.agents.map() callback",
+      "start_line": 315,
+      "end_line": 331,
+      "type": "FUNCTION",
+      "status": "modified"
+    },
+    "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx|dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.addTriad.useCallback() callback.setNodes() callback": {
+      "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.addTriad.useCallback() callback.setNodes() callback",
+      "start_line": 330,
+      "end_line": 330,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx|dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.updateNodeModel.useCallback() callback": {
+      "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.updateNodeModel.useCallback() callback",
+      "start_line": 335,
+      "end_line": 345,
+      "type": "FUNCTION",
+      "status": "modified"
+    },
+    "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx|dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.updateNodeModel.useCallback() callback.setNodes() callback": {
+      "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.updateNodeModel.useCallback() callback.setNodes() callback",
+      "start_line": 336,
+      "end_line": 344,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx|dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.updateNodeModel.useCallback() callback.setNodes() callback.nds.map() callback": {
+      "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.updateNodeModel.useCallback() callback.setNodes() callback.nds.map() callback",
+      "start_line": 336,
+      "end_line": 344,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx|dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.map() callback": {
+      "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.map() callback",
+      "start_line": 346,
+      "end_line": 348,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx|dashboard.frontend.src.components.Canvas.FlowCanvas.<unknown>..agents.map() callback": {
+      "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.<unknown>..agents.map() callback",
+      "start_line": 354,
+      "end_line": 354,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx|dashboard.frontend.src.components.Canvas.FlowCanvas.['Code Execution', 'Web Browser', 'File System', 'API Call']..map() callback": {
+      "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.['Code Execution', 'Web Browser', 'File System', 'API Call']..map() callback",
+      "start_line": 392,
+      "end_line": 393,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx|dashboard.frontend.src.components.Canvas.FlowCanvas.<unknown>..map() callback": {
+      "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.<unknown>..map() callback",
+      "start_line": 533,
+      "end_line": 534,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx|dashboard.frontend.src.components.Canvas.FlowCanvas.map() callback": {
+      "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.map() callback",
+      "start_line": 588,
+      "end_line": 589,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.A2AMessage": {
+      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2AMessage",
+      "start_line": 17,
+      "end_line": 27,
+      "type": "INTERFACE",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.AgentActivity": {
+      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.AgentActivity",
+      "start_line": 29,
+      "end_line": 40,
+      "type": "INTERFACE",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.WorkflowStats": {
+      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.WorkflowStats",
+      "start_line": 42,
+      "end_line": 47,
+      "type": "INTERFACE",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.ResourceStats": {
+      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.ResourceStats",
+      "start_line": 49,
+      "end_line": 54,
+      "type": "INTERFACE",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.A2ATrackerProps": {
+      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATrackerProps",
+      "start_line": 56,
+      "end_line": 60,
+      "type": "INTERFACE",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.generateRandomMessage": {
+      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.generateRandomMessage",
+      "start_line": 81,
+      "end_line": 101,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity": {
+      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity",
+      "start_line": 103,
+      "end_line": 116,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity.AGENT_IDS.map() callback": {
+      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity.AGENT_IDS.map() callback",
+      "start_line": 104,
+      "end_line": 115,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline.filteredMessages.messages.filter() callback": {
+      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline.filteredMessages.messages.filter() callback",
+      "start_line": 121,
+      "end_line": 121,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline.yet": {
+      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline.yet",
+      "start_line": 147,
+      "end_line": 147,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.getStatusIcon": {
+      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.getStatusIcon",
+      "start_line": 158,
+      "end_line": 158,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.AgentActivityList.<unknown>..map() callback": {
+      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.AgentActivityList.<unknown>..map() callback",
+      "start_line": 192,
+      "end_line": 194,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.useEffect() callback": {
+      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.useEffect() callback",
+      "start_line": 242,
+      "end_line": 249,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.useEffect() callback.forEach() callback": {
+      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.useEffect() callback.forEach() callback",
+      "start_line": 244,
+      "end_line": 247,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.topConnections.sort() callback": {
+      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.topConnections.sort() callback",
+      "start_line": 252,
+      "end_line": 252,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.yet": {
+      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.yet",
+      "start_line": 258,
+      "end_line": 258,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.topConnections.map(\"h-full bg-purple-500 rounded-full\") callback": {
+      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.topConnections.map(\"h-full bg-purple-500 rounded-full\") callback",
+      "start_line": 260,
+      "end_line": 261,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker": {
+      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker",
+      "start_line": 332,
+      "end_line": 420,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback": {
+      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback",
+      "start_line": 357,
+      "end_line": 404,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.connectTimeout.setTimeout() callback": {
+      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.connectTimeout.setTimeout() callback",
+      "start_line": 359,
+      "end_line": 361,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback": {
+      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback",
+      "start_line": 369,
+      "end_line": 375,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback.setMessages() callback": {
+      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback.setMessages() callback",
+      "start_line": 371,
+      "end_line": 374,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.activityInterval.setInterval() callback": {
+      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.activityInterval.setInterval() callback",
+      "start_line": 378,
+      "end_line": 380,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.statsInterval.setInterval() callback": {
+      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.statsInterval.setInterval() callback",
+      "start_line": 383,
+      "end_line": 396,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.internalMonologue.messages.filter() callback": {
+      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.internalMonologue.messages.filter() callback",
+      "start_line": 408,
+      "end_line": 408,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.<unknown>..filter() callback": {
+      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.<unknown>..filter() callback",
+      "start_line": 429,
+      "end_line": 429,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.map() callback": {
+      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.map() callback",
+      "start_line": 436,
+      "end_line": 438,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.<unknown>..reduce() callback": {
+      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.<unknown>..reduce() callback",
+      "start_line": 526,
+      "end_line": 526,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/components/Observability/A2ATracker.tsx|dashboard.frontend.src.components.Observability.A2ATracker.<unknown>.messages.reduce() callback": {
+      "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+      "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.<unknown>.messages.reduce() callback",
+      "start_line": 533,
+      "end_line": 533,
+      "type": "FUNCTION",
+      "status": "added"
     }
   },
   "components": [
@@ -106766,19 +109115,19 @@
           "file_path": "src/heretek_swarm/config/service.py",
           "file_status": "modified",
           "methods": [
-            "src.heretek_swarm.config.service.ConfigurationService",
             "src.heretek_swarm.config.service.ConfigurationService.__init__",
+            "src.heretek_swarm.config.service.ConfigurationService",
             "src.heretek_swarm.config.service.ConfigurationService.encrypt_api_key",
             "src.heretek_swarm.config.service.ConfigurationService.decrypt_api_key",
             "src.heretek_swarm.config.service.ConfigurationService._initialize_encryption",
             "src.heretek_swarm.config.service.ConfigurationService._warm_cache",
             "src.heretek_swarm.config.service.ConfigurationService.initialize",
             "src.heretek_swarm.config.service.ConfigurationService.shutdown",
+            "src.heretek_swarm.config.service.ConfigurationService._get_cache",
             "src.heretek_swarm.config.service.ConfigurationService._orm_to_pydantic",
             "src.heretek_swarm.config.service.ConfigurationService._get_cache_key",
             "src.heretek_swarm.config.service.ConfigurationService._invalidate_cache",
             "src.heretek_swarm.config.service.ConfigurationService._set_cache",
-            "src.heretek_swarm.config.service.ConfigurationService._get_cache",
             "src.heretek_swarm.config.service.ConfigurationService.get_config_value",
             "src.heretek_swarm.config.service.ConfigurationService.get_config",
             "src.heretek_swarm.config.service.ConfigurationService.list_configs",
@@ -111069,19 +113418,19 @@
               "file_path": "src/heretek_swarm/config/service.py",
               "file_status": "modified",
               "methods": [
-                "src.heretek_swarm.config.service.ConfigurationService",
                 "src.heretek_swarm.config.service.ConfigurationService.__init__",
+                "src.heretek_swarm.config.service.ConfigurationService",
                 "src.heretek_swarm.config.service.ConfigurationService.encrypt_api_key",
                 "src.heretek_swarm.config.service.ConfigurationService.decrypt_api_key",
                 "src.heretek_swarm.config.service.ConfigurationService._initialize_encryption",
                 "src.heretek_swarm.config.service.ConfigurationService._warm_cache",
                 "src.heretek_swarm.config.service.ConfigurationService.initialize",
                 "src.heretek_swarm.config.service.ConfigurationService.shutdown",
+                "src.heretek_swarm.config.service.ConfigurationService._get_cache",
                 "src.heretek_swarm.config.service.ConfigurationService._orm_to_pydantic",
                 "src.heretek_swarm.config.service.ConfigurationService._get_cache_key",
                 "src.heretek_swarm.config.service.ConfigurationService._invalidate_cache",
                 "src.heretek_swarm.config.service.ConfigurationService._set_cache",
-                "src.heretek_swarm.config.service.ConfigurationService._get_cache",
                 "src.heretek_swarm.config.service.ConfigurationService.get_config_value",
                 "src.heretek_swarm.config.service.ConfigurationService.get_config",
                 "src.heretek_swarm.config.service.ConfigurationService.list_configs",
@@ -115374,19 +117723,19 @@
                   "file_path": "src/heretek_swarm/config/service.py",
                   "file_status": "modified",
                   "methods": [
-                    "src.heretek_swarm.config.service.ConfigurationService",
                     "src.heretek_swarm.config.service.ConfigurationService.__init__",
+                    "src.heretek_swarm.config.service.ConfigurationService",
                     "src.heretek_swarm.config.service.ConfigurationService.encrypt_api_key",
                     "src.heretek_swarm.config.service.ConfigurationService.decrypt_api_key",
                     "src.heretek_swarm.config.service.ConfigurationService._initialize_encryption",
                     "src.heretek_swarm.config.service.ConfigurationService._warm_cache",
                     "src.heretek_swarm.config.service.ConfigurationService.initialize",
                     "src.heretek_swarm.config.service.ConfigurationService.shutdown",
+                    "src.heretek_swarm.config.service.ConfigurationService._get_cache",
                     "src.heretek_swarm.config.service.ConfigurationService._orm_to_pydantic",
                     "src.heretek_swarm.config.service.ConfigurationService._get_cache_key",
                     "src.heretek_swarm.config.service.ConfigurationService._invalidate_cache",
                     "src.heretek_swarm.config.service.ConfigurationService._set_cache",
-                    "src.heretek_swarm.config.service.ConfigurationService._get_cache",
                     "src.heretek_swarm.config.service.ConfigurationService.get_config_value",
                     "src.heretek_swarm.config.service.ConfigurationService.get_config",
                     "src.heretek_swarm.config.service.ConfigurationService.list_configs",
@@ -147410,32 +149759,49 @@
         },
         {
           "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizardProps",
-            "dashboard.frontend.src.components.Setup.SetupWizard.LLMConfig",
-            "dashboard.frontend.src.components.Setup.SetupWizard.EmbeddingConfig",
+            "dashboard.frontend.src.components.Setup.SetupWizard.StatusIndicatorProps",
+            "dashboard.frontend.src.components.Setup.SetupWizard.LoadingSpinner",
             "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard",
+            "dashboard.frontend.src.components.Setup.SetupWizard.StatusIndicator",
             "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.useEffect() callback",
-            "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange",
-            "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange.useCallback() callback",
-            "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange.useCallback() callback.provider",
-            "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange.useCallback() callback.provider.LLM_PROVIDERS.find() callback",
-            "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange.useCallback() callback.setLlmConfig() callback",
-            "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange",
-            "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange.useCallback() callback",
-            "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange.useCallback() callback.provider",
-            "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange.useCallback() callback.provider.EMBEDDING_PROVIDERS.find() callback",
-            "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange.useCallback() callback.setEmbeddingConfig() callback",
-            "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleTestConnection",
-            "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleTestConnection.useCallback() callback",
-            "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleComplete",
+            "dashboard.frontend.src.components.Setup.SetupWizard.StepProgress",
+            "dashboard.frontend.src.components.Setup.SetupWizard.WizardNav",
             "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleComplete.useCallback() callback",
-            "dashboard.frontend.src.components.Setup.SetupWizard..map() callback",
-            "dashboard.frontend.src.components.Setup.SetupWizard.setLlmConfig() callback",
+            "dashboard.frontend.src.components.Setup.SetupWizard.InfoCard",
+            "dashboard.frontend.src.components.Setup.SetupWizard.ResultCard",
+            "dashboard.frontend.src.components.Setup.SetupWizard.ResultCard.result",
+            "dashboard.frontend.src.components.Setup.SetupWizard.AgentHealthCard",
             "dashboard.frontend.src.components.Setup.SetupWizard.<unknown>..map() callback",
-            "dashboard.frontend.src.components.Setup.SetupWizard.setEmbeddingConfig() callback",
-            "dashboard.frontend.src.components.Setup.SetupWizard.renderStep"
+            "dashboard.frontend.src.components.Setup.SetupWizard.WelcomeStep",
+            "dashboard.frontend.src.components.Setup.SetupWizard.ApiEndpointStep",
+            "dashboard.frontend.src.components.Setup.SetupWizard.ApiEndpointStep.useEffect() callback",
+            "dashboard.frontend.src.components.Setup.SetupWizard.ApiEndpointStep.useEffect() callback.timer.setTimeout() callback",
+            "dashboard.frontend.src.components.Setup.SetupWizard.renderStep",
+            "dashboard.frontend.src.components.Setup.SetupWizard.<unknown>.setLocalValue",
+            "dashboard.frontend.src.components.Setup.SetupWizard.onChange",
+            "dashboard.frontend.src.components.Setup.SetupWizard.ApiKeyStep",
+            "dashboard.frontend.src.components.Setup.SetupWizard.ApiKeyStep.useEffect() callback",
+            "dashboard.frontend.src.components.Setup.SetupWizard.ApiKeyStep.useEffect() callback.timer.setTimeout() callback",
+            "dashboard.frontend.src.components.Setup.SetupWizard.isTesting",
+            "dashboard.frontend.src.components.Setup.SetupWizard.DatabaseTestStep",
+            "dashboard.frontend.src.components.Setup.SetupWizard.DatabaseTestStep.runTests.useCallback() callback",
+            "dashboard.frontend.src.components.Setup.SetupWizard.DatabaseTestStep.useEffect() callback",
+            "dashboard.frontend.src.components.Setup.SetupWizard.DatabaseTestStep.isTesting",
+            "dashboard.frontend.src.components.Setup.SetupWizard.allPassed",
+            "dashboard.frontend.src.components.Setup.SetupWizard.AgentHealthStep",
+            "dashboard.frontend.src.components.Setup.SetupWizard.AgentHealthStep.checkHealth.useCallback() callback",
+            "dashboard.frontend.src.components.Setup.SetupWizard.AgentHealthStep.useEffect() callback",
+            "dashboard.frontend.src.components.Setup.SetupWizard.AgentHealthStep.onlineCount.agents.filter() callback",
+            "dashboard.frontend.src.components.Setup.SetupWizard.AgentHealthStep.isLoading",
+            "dashboard.frontend.src.components.Setup.SetupWizard.agents.map() callback",
+            "dashboard.frontend.src.components.Setup.SetupWizard.isLoading",
+            "dashboard.frontend.src.components.Setup.SetupWizard.CompleteStep",
+            "dashboard.frontend.src.components.Setup.SetupWizard.CompleteStep.useEffect() callback",
+            "dashboard.frontend.src.components.Setup.SetupWizard.CompleteStep.useEffect() callback.timer.setTimeout() callback",
+            "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleFinish.useCallback() callback"
           ]
         },
         {
@@ -149002,32 +151368,49 @@
             },
             {
               "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizardProps",
-                "dashboard.frontend.src.components.Setup.SetupWizard.LLMConfig",
-                "dashboard.frontend.src.components.Setup.SetupWizard.EmbeddingConfig",
+                "dashboard.frontend.src.components.Setup.SetupWizard.StatusIndicatorProps",
+                "dashboard.frontend.src.components.Setup.SetupWizard.LoadingSpinner",
                 "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard",
+                "dashboard.frontend.src.components.Setup.SetupWizard.StatusIndicator",
                 "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.useEffect() callback",
-                "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange",
-                "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange.useCallback() callback",
-                "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange.useCallback() callback.provider",
-                "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange.useCallback() callback.provider.LLM_PROVIDERS.find() callback",
-                "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange.useCallback() callback.setLlmConfig() callback",
-                "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange",
-                "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange.useCallback() callback",
-                "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange.useCallback() callback.provider",
-                "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange.useCallback() callback.provider.EMBEDDING_PROVIDERS.find() callback",
-                "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange.useCallback() callback.setEmbeddingConfig() callback",
-                "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleTestConnection",
-                "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleTestConnection.useCallback() callback",
-                "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleComplete",
+                "dashboard.frontend.src.components.Setup.SetupWizard.StepProgress",
+                "dashboard.frontend.src.components.Setup.SetupWizard.WizardNav",
                 "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleComplete.useCallback() callback",
-                "dashboard.frontend.src.components.Setup.SetupWizard..map() callback",
-                "dashboard.frontend.src.components.Setup.SetupWizard.setLlmConfig() callback",
+                "dashboard.frontend.src.components.Setup.SetupWizard.InfoCard",
+                "dashboard.frontend.src.components.Setup.SetupWizard.ResultCard",
+                "dashboard.frontend.src.components.Setup.SetupWizard.ResultCard.result",
+                "dashboard.frontend.src.components.Setup.SetupWizard.AgentHealthCard",
                 "dashboard.frontend.src.components.Setup.SetupWizard.<unknown>..map() callback",
-                "dashboard.frontend.src.components.Setup.SetupWizard.setEmbeddingConfig() callback",
-                "dashboard.frontend.src.components.Setup.SetupWizard.renderStep"
+                "dashboard.frontend.src.components.Setup.SetupWizard.WelcomeStep",
+                "dashboard.frontend.src.components.Setup.SetupWizard.ApiEndpointStep",
+                "dashboard.frontend.src.components.Setup.SetupWizard.ApiEndpointStep.useEffect() callback",
+                "dashboard.frontend.src.components.Setup.SetupWizard.ApiEndpointStep.useEffect() callback.timer.setTimeout() callback",
+                "dashboard.frontend.src.components.Setup.SetupWizard.renderStep",
+                "dashboard.frontend.src.components.Setup.SetupWizard.<unknown>.setLocalValue",
+                "dashboard.frontend.src.components.Setup.SetupWizard.onChange",
+                "dashboard.frontend.src.components.Setup.SetupWizard.ApiKeyStep",
+                "dashboard.frontend.src.components.Setup.SetupWizard.ApiKeyStep.useEffect() callback",
+                "dashboard.frontend.src.components.Setup.SetupWizard.ApiKeyStep.useEffect() callback.timer.setTimeout() callback",
+                "dashboard.frontend.src.components.Setup.SetupWizard.isTesting",
+                "dashboard.frontend.src.components.Setup.SetupWizard.DatabaseTestStep",
+                "dashboard.frontend.src.components.Setup.SetupWizard.DatabaseTestStep.runTests.useCallback() callback",
+                "dashboard.frontend.src.components.Setup.SetupWizard.DatabaseTestStep.useEffect() callback",
+                "dashboard.frontend.src.components.Setup.SetupWizard.DatabaseTestStep.isTesting",
+                "dashboard.frontend.src.components.Setup.SetupWizard.allPassed",
+                "dashboard.frontend.src.components.Setup.SetupWizard.AgentHealthStep",
+                "dashboard.frontend.src.components.Setup.SetupWizard.AgentHealthStep.checkHealth.useCallback() callback",
+                "dashboard.frontend.src.components.Setup.SetupWizard.AgentHealthStep.useEffect() callback",
+                "dashboard.frontend.src.components.Setup.SetupWizard.AgentHealthStep.onlineCount.agents.filter() callback",
+                "dashboard.frontend.src.components.Setup.SetupWizard.AgentHealthStep.isLoading",
+                "dashboard.frontend.src.components.Setup.SetupWizard.agents.map() callback",
+                "dashboard.frontend.src.components.Setup.SetupWizard.isLoading",
+                "dashboard.frontend.src.components.Setup.SetupWizard.CompleteStep",
+                "dashboard.frontend.src.components.Setup.SetupWizard.CompleteStep.useEffect() callback",
+                "dashboard.frontend.src.components.Setup.SetupWizard.CompleteStep.useEffect() callback.timer.setTimeout() callback",
+                "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleFinish.useCallback() callback"
               ]
             },
             {
@@ -151125,32 +153508,49 @@
                 },
                 {
                   "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizardProps",
-                    "dashboard.frontend.src.components.Setup.SetupWizard.LLMConfig",
-                    "dashboard.frontend.src.components.Setup.SetupWizard.EmbeddingConfig",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.StatusIndicatorProps",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.LoadingSpinner",
                     "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.StatusIndicator",
                     "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.useEffect() callback",
-                    "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange",
-                    "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange.useCallback() callback",
-                    "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange.useCallback() callback.provider",
-                    "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange.useCallback() callback.provider.LLM_PROVIDERS.find() callback",
-                    "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange.useCallback() callback.setLlmConfig() callback",
-                    "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange",
-                    "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange.useCallback() callback",
-                    "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange.useCallback() callback.provider",
-                    "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange.useCallback() callback.provider.EMBEDDING_PROVIDERS.find() callback",
-                    "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange.useCallback() callback.setEmbeddingConfig() callback",
-                    "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleTestConnection",
-                    "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleTestConnection.useCallback() callback",
-                    "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleComplete",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.StepProgress",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.WizardNav",
                     "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleComplete.useCallback() callback",
-                    "dashboard.frontend.src.components.Setup.SetupWizard..map() callback",
-                    "dashboard.frontend.src.components.Setup.SetupWizard.setLlmConfig() callback",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.InfoCard",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.ResultCard",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.ResultCard.result",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.AgentHealthCard",
                     "dashboard.frontend.src.components.Setup.SetupWizard.<unknown>..map() callback",
-                    "dashboard.frontend.src.components.Setup.SetupWizard.setEmbeddingConfig() callback",
-                    "dashboard.frontend.src.components.Setup.SetupWizard.renderStep"
+                    "dashboard.frontend.src.components.Setup.SetupWizard.WelcomeStep",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.ApiEndpointStep",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.ApiEndpointStep.useEffect() callback",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.ApiEndpointStep.useEffect() callback.timer.setTimeout() callback",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.renderStep",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.<unknown>.setLocalValue",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.onChange",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.ApiKeyStep",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.ApiKeyStep.useEffect() callback",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.ApiKeyStep.useEffect() callback.timer.setTimeout() callback",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.isTesting",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.DatabaseTestStep",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.DatabaseTestStep.runTests.useCallback() callback",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.DatabaseTestStep.useEffect() callback",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.DatabaseTestStep.isTesting",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.allPassed",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.AgentHealthStep",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.AgentHealthStep.checkHealth.useCallback() callback",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.AgentHealthStep.useEffect() callback",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.AgentHealthStep.onlineCount.agents.filter() callback",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.AgentHealthStep.isLoading",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.agents.map() callback",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.isLoading",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.CompleteStep",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.CompleteStep.useEffect() callback",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.CompleteStep.useEffect() callback.timer.setTimeout() callback",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleFinish.useCallback() callback"
                   ]
                 },
                 {
@@ -152544,31 +154944,13 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizardProps",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.LLMConfig",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.EmbeddingConfig",
                         "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard",
                         "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.useEffect() callback",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange.useCallback() callback",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange.useCallback() callback.provider",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange.useCallback() callback.provider.LLM_PROVIDERS.find() callback",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange.useCallback() callback.setLlmConfig() callback",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange.useCallback() callback",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange.useCallback() callback.provider",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange.useCallback() callback.provider.EMBEDDING_PROVIDERS.find() callback",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange.useCallback() callback.setEmbeddingConfig() callback",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleTestConnection",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleTestConnection.useCallback() callback",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleComplete",
                         "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleComplete.useCallback() callback",
-                        "dashboard.frontend.src.components.Setup.SetupWizard..map() callback",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.setLlmConfig() callback",
                         "dashboard.frontend.src.components.Setup.SetupWizard.<unknown>..map() callback",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.setEmbeddingConfig() callback",
                         "dashboard.frontend.src.components.Setup.SetupWizard.renderStep"
                       ]
                     },
@@ -153648,31 +156030,13 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizardProps",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.LLMConfig",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.EmbeddingConfig",
                         "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard",
                         "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.useEffect() callback",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange.useCallback() callback",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange.useCallback() callback.provider",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange.useCallback() callback.provider.LLM_PROVIDERS.find() callback",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange.useCallback() callback.setLlmConfig() callback",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange.useCallback() callback",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange.useCallback() callback.provider",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange.useCallback() callback.provider.EMBEDDING_PROVIDERS.find() callback",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange.useCallback() callback.setEmbeddingConfig() callback",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleTestConnection",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleTestConnection.useCallback() callback",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleComplete",
                         "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleComplete.useCallback() callback",
-                        "dashboard.frontend.src.components.Setup.SetupWizard..map() callback",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.setLlmConfig() callback",
                         "dashboard.frontend.src.components.Setup.SetupWizard.<unknown>..map() callback",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.setEmbeddingConfig() callback",
                         "dashboard.frontend.src.components.Setup.SetupWizard.renderStep"
                       ]
                     },
@@ -155221,32 +157585,49 @@
                 },
                 {
                   "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizardProps",
-                    "dashboard.frontend.src.components.Setup.SetupWizard.LLMConfig",
-                    "dashboard.frontend.src.components.Setup.SetupWizard.EmbeddingConfig",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.StatusIndicatorProps",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.LoadingSpinner",
                     "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.StatusIndicator",
                     "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.useEffect() callback",
-                    "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange",
-                    "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange.useCallback() callback",
-                    "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange.useCallback() callback.provider",
-                    "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange.useCallback() callback.provider.LLM_PROVIDERS.find() callback",
-                    "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange.useCallback() callback.setLlmConfig() callback",
-                    "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange",
-                    "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange.useCallback() callback",
-                    "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange.useCallback() callback.provider",
-                    "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange.useCallback() callback.provider.EMBEDDING_PROVIDERS.find() callback",
-                    "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange.useCallback() callback.setEmbeddingConfig() callback",
-                    "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleTestConnection",
-                    "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleTestConnection.useCallback() callback",
-                    "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleComplete",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.StepProgress",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.WizardNav",
                     "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleComplete.useCallback() callback",
-                    "dashboard.frontend.src.components.Setup.SetupWizard..map() callback",
-                    "dashboard.frontend.src.components.Setup.SetupWizard.setLlmConfig() callback",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.InfoCard",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.ResultCard",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.ResultCard.result",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.AgentHealthCard",
                     "dashboard.frontend.src.components.Setup.SetupWizard.<unknown>..map() callback",
-                    "dashboard.frontend.src.components.Setup.SetupWizard.setEmbeddingConfig() callback",
-                    "dashboard.frontend.src.components.Setup.SetupWizard.renderStep"
+                    "dashboard.frontend.src.components.Setup.SetupWizard.WelcomeStep",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.ApiEndpointStep",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.ApiEndpointStep.useEffect() callback",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.ApiEndpointStep.useEffect() callback.timer.setTimeout() callback",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.renderStep",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.<unknown>.setLocalValue",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.onChange",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.ApiKeyStep",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.ApiKeyStep.useEffect() callback",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.ApiKeyStep.useEffect() callback.timer.setTimeout() callback",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.isTesting",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.DatabaseTestStep",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.DatabaseTestStep.runTests.useCallback() callback",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.DatabaseTestStep.useEffect() callback",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.DatabaseTestStep.isTesting",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.allPassed",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.AgentHealthStep",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.AgentHealthStep.checkHealth.useCallback() callback",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.AgentHealthStep.useEffect() callback",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.AgentHealthStep.onlineCount.agents.filter() callback",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.AgentHealthStep.isLoading",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.agents.map() callback",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.isLoading",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.CompleteStep",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.CompleteStep.useEffect() callback",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.CompleteStep.useEffect() callback.timer.setTimeout() callback",
+                    "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleFinish.useCallback() callback"
                   ]
                 }
               ],
@@ -155452,31 +157833,13 @@
                   "file_methods": [
                     {
                       "file_path": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizardProps",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.LLMConfig",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.EmbeddingConfig",
                         "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard",
                         "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.useEffect() callback",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange.useCallback() callback",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange.useCallback() callback.provider",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange.useCallback() callback.provider.LLM_PROVIDERS.find() callback",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleLLMProviderChange.useCallback() callback.setLlmConfig() callback",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange.useCallback() callback",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange.useCallback() callback.provider",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange.useCallback() callback.provider.EMBEDDING_PROVIDERS.find() callback",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleEmbeddingProviderChange.useCallback() callback.setEmbeddingConfig() callback",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleTestConnection",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleTestConnection.useCallback() callback",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleComplete",
                         "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard.handleComplete.useCallback() callback",
-                        "dashboard.frontend.src.components.Setup.SetupWizard..map() callback",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.setLlmConfig() callback",
                         "dashboard.frontend.src.components.Setup.SetupWizard.<unknown>..map() callback",
-                        "dashboard.frontend.src.components.Setup.SetupWizard.setEmbeddingConfig() callback",
                         "dashboard.frontend.src.components.Setup.SetupWizard.renderStep"
                       ]
                     }
