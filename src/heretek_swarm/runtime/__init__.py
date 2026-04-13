@@ -9,13 +9,9 @@ import json
 # New class-based character system
 from dataclasses import dataclass, field
 from pathlib import Path
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 from .agent_runtime import AgentContext, AgentRuntime, AgentState
-from .autonomous_runtime import (
-    AutonomousRuntime,
-    RuntimeState,
-)
 
 # Support both old dictionary-based and new class-based character systems
 from .characters import CHARACTERS, get_character

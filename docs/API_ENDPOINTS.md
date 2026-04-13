@@ -1,6 +1,6 @@
 # Heretek Swarm API Endpoints
 
-**Version:** 0.1.0  
+**Version:** 2.0.0  
 **Date:** 2026-04-07  
 **Status:** Production-Ready
 
@@ -33,7 +33,7 @@ FastAPI application with all endpoint routers.
 app = FastAPI(
     title="Heretek Swarm API",
     description="Multi-agent swarm orchestration with A2A protocol communication",
-    version="0.1.0",
+    version="2.0.0",
     docs_url="/docs",
     redoc_url="/redoc",
 )

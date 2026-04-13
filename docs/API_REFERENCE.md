@@ -33,15 +33,15 @@ For the main documentation index with quick navigation, see [INDEX.md](./INDEX.m
 **File:** [`src/heretek_swarm/api/main.py`](../src/heretek_swarm/api/main.py)
 
 ```python
-app = FastAPI(title="Heretek Swarm API", version="0.1.0")
+app = FastAPI(title="Heretek Swarm API", version="2.0.0")
 
 # Include routers
 app.include_router(workflows.router, prefix="/api/workflows")
-app.include_router(consciousness.router, prefix="/api/consciousness")
 app.include_router(observability.router, prefix="/api/observability")
 app.include_router(plugins.router, prefix="/api/plugins")
-app.include_router(evaluation.router, prefix="/api/evaluation")
-app.include_router(rag.router, prefix="/api/rag")
+app.include_router(autonomous.router, prefix="/api/autonomous")
+app.include_router(agents_management.router, prefix="/api/agents")
+app.include_router(consensus.router, prefix="/api/consensus")
 ```
 
 ### Health Endpoints

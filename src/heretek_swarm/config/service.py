@@ -19,8 +19,6 @@ from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_asyn
 
 from .db_models import (
     AgentConfig as AgentConfigORM,
-    ConfigAuditLog as ConfigAuditLogORM,
-    ConfigCache as ConfigCacheORM,
     EmbeddingProvider as EmbeddingProviderORM,
     LLMProvider as LLMProviderORM,
     UserConfiguration as UserConfigurationORM,

@@ -7,10 +7,8 @@ interfaces expected by tests and legacy code.
 These are compatibility shims that wrap the actual repository implementations.
 """
 
-import asyncio
 import hashlib
 import json
-from collections.abc import Callable
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import Enum
@@ -425,11 +423,33 @@ class SnapshotManager:
         self._system_snapshots: list[StateSnapshot] = []
 
     async def initialize(self) -> None:
-        """Initialize the snapshot manager."""
+        """Initialize the snapshot manager.
+
+        This is a stub/placeholder method.
+
+        What needs to be implemented:
+        - Initialize underlying storage (database, file system, etc.)
+        - Set up snapshot cleanup scheduled task
+        - Restore any pending snapshots from previous sessions
+
+        Returns:
+            None
+        """
         pass
 
     async def shutdown(self) -> None:
-        """Shutdown the snapshot manager."""
+        """Shutdown the snapshot manager.
+
+        This is a stub/placeholder method.
+
+        What needs to be implemented:
+        - Gracefully close underlying storage connections
+        - Flush any pending snapshots to disk
+        - Cancel any scheduled cleanup tasks
+
+        Returns:
+            None
+        """
         pass
 
     async def create_snapshot(
@@ -531,11 +551,33 @@ class StateManager:
         self._snapshot_manager = SnapshotManager(self.config.snapshots)
 
     async def initialize(self) -> None:
-        """Initialize the state manager."""
+        """Initialize the state manager.
+
+        This is a stub/placeholder method.
+
+        What needs to be implemented:
+        - Initialize underlying state storage (database, memory, etc.)
+        - Register any persisted agent states
+        - Set up state change event handlers
+
+        Returns:
+            None
+        """
         pass
 
     async def shutdown(self) -> None:
-        """Shutdown the state manager."""
+        """Shutdown the state manager.
+
+        This is a stub/placeholder method.
+
+        What needs to be implemented:
+        - Persist any pending agent states
+        - Close underlying storage connections
+        - Cancel any pending operations gracefully
+
+        Returns:
+            None
+        """
         pass
 
     async def register_agent(self, agent_id: str, agent_type: str = "worker") -> AgentState:
