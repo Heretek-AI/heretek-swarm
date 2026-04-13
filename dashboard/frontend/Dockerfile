@@ -21,7 +21,7 @@ COPY . .
 
 # Build application - skip strict type checking for deployment
 # VITE_API_HOST is passed as build argument and becomes available at build time
-RUN npm run build || (echo "Build failed, retrying without type checking" && npm run build:skip-type-check || echo "Build failed completely")
+RUN npm run build:skip-type-check
 
 # =============================================================================
 # Stage 2: Production

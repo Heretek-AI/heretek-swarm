@@ -89,6 +89,22 @@ function StatusIndicator({ status, label }: StatusIndicatorProps) {
       ),
       textClass: 'text-red-400',
     },
+    valid: {
+      icon: (
+        <svg className="w-5 h-5 text-green-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M5 13l4 4L19 7" />
+        </svg>
+      ),
+      textClass: 'text-green-400',
+    },
+    invalid: {
+      icon: (
+        <svg className="w-5 h-5 text-red-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <path strokeLinecap="round" strokeLinejoin="round" strokeWidth="2" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      ),
+      textClass: 'text-red-400',
+    },
   };
   
   const config = statusConfig[status];
