@@ -899,6 +899,14 @@ class StateSynchronizer:
             "redis_connected": self._redis is not None,
         }
 
+    async def close(self):
+        """Close Redis connection."""
+        if self._redis:
+            try:
+                await self._redis.aclose()
+            except Exception as e:
+                logger.warning("state_synchronizer_close_error", error=str(e))
+
 
 # =============================================================================
 # Horizontal Scaling Orchestrator
@@ -950,6 +958,9 @@ class HorizontalScaling:
             self._evaluation_task.cancel()
             with contextlib.suppress(asyncio.CancelledError):
                 await self._evaluation_task
+
+        # Close state synchronizer to clean up Redis connections
+        await self.state_sync.close()
 
         logger.info("horizontal_scaling_stopped")
 

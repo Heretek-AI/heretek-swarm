@@ -21,8 +21,58 @@ import sys
 from unittest.mock import Mock, patch
 
 import pytest
+import yaml
 
 sys.path.insert(0, "serverless")
+
+
+# =============================================================================
+# YAML Helpers for CloudFormation Intrinsic Functions
+# =============================================================================
+
+def _construct_cf_sub(self, node):
+    """Construct CloudFormation !Sub intrinsic function."""
+    if isinstance(node, yaml.ScalarNode):
+        return {"Fn::Sub": self.construct_scalar(node)}
+    elif isinstance(node, yaml.SequenceNode):
+        return {"Fn::Sub": self.construct_sequence(node)}
+    elif isinstance(node, yaml.MappingNode):
+        return {"Fn::Sub": self.construct_mapping(node)}
+    return {"Fn::Sub": str(node)}
+
+
+def _construct_cf_ref(self, node):
+    """Construct CloudFormation !Ref intrinsic function."""
+    return {"Ref": self.construct_scalar(node)}
+
+
+def _construct_cf_getatt(self, node):
+    """Construct CloudFormation !GetAtt intrinsic function."""
+    if isinstance(node, yaml.SequenceNode):
+        return {"Fn::GetAtt": self.construct_sequence(node)}
+    return {"Fn::GetAtt": self.construct_scalar(node)}
+
+
+def _construct_cf_if(self, node):
+    """Construct CloudFormation !If intrinsic function."""
+    return {"Fn::If": self.construct_sequence(node)}
+
+
+def load_serverless_yaml(stream):
+    """Load serverless.yml with CloudFormation intrinsic function support.
+
+    Serverless YAML files use CloudFormation intrinsic functions like !Sub, !Ref,
+    !GetAtt, and !If which standard YAML parsers don't understand.
+    """
+    loader = yaml.SafeLoader
+
+    # Add CloudFormation intrinsic function constructors
+    loader.add_constructor("!Sub", _construct_cf_sub)
+    loader.add_constructor("!Ref", _construct_cf_ref)
+    loader.add_constructor("!GetAtt", _construct_cf_getatt)
+    loader.add_constructor("!If", _construct_cf_if)
+
+    return yaml.load(stream, Loader=loader)
 
 
 # =============================================================================
@@ -161,7 +211,7 @@ class TestServerlessConfiguration:
         import yaml
 
         with open("serverless/serverless.yml") as f:
-            config = yaml.safe_load(f)
+            config = load_serverless_yaml(f)
 
         assert config is not None
         assert "service" in config
@@ -174,7 +224,7 @@ class TestServerlessConfiguration:
         import yaml
 
         with open("serverless/serverless.yml") as f:
-            config = yaml.safe_load(f)
+            config = load_serverless_yaml(f)
 
         assert config["service"] == "heretek-swarm"
 
@@ -183,7 +233,7 @@ class TestServerlessConfiguration:
         import yaml
 
         with open("serverless/serverless.yml") as f:
-            config = yaml.safe_load(f)
+            config = load_serverless_yaml(f)
 
         provider = config["provider"]
         assert provider["runtime"] == "python3.11"
@@ -195,7 +245,7 @@ class TestServerlessConfiguration:
         import yaml
 
         with open("serverless/serverless.yml") as f:
-            config = yaml.safe_load(f)
+            config = load_serverless_yaml(f)
 
         functions = config["functions"]
 
@@ -215,7 +265,7 @@ class TestServerlessConfiguration:
         import yaml
 
         with open("serverless/serverless.yml") as f:
-            config = yaml.safe_load(f)
+            config = load_serverless_yaml(f)
 
         resources = config["resources"]["Resources"]
 
@@ -234,7 +284,7 @@ class TestServerlessConfiguration:
         import yaml
 
         with open("serverless/serverless.yml") as f:
-            config = yaml.safe_load(f)
+            config = load_serverless_yaml(f)
 
         iam_statements = config["provider"]["iam"]["role"]["statements"]
 
@@ -577,7 +627,7 @@ class TestResourceCreation:
         import yaml
 
         with open("serverless/serverless.yml") as f:
-            config = yaml.safe_load(f)
+            config = load_serverless_yaml(f)
 
         tables = config["resources"]["Resources"]
 
@@ -591,7 +641,7 @@ class TestResourceCreation:
         import yaml
 
         with open("serverless/serverless.yml") as f:
-            config = yaml.safe_load(f)
+            config = load_serverless_yaml(f)
 
         queues = config["resources"]["Resources"]
 
@@ -604,7 +654,7 @@ class TestResourceCreation:
         import yaml
 
         with open("serverless/serverless.yml") as f:
-            config = yaml.safe_load(f)
+            config = load_serverless_yaml(f)
 
         buckets = config["resources"]["Resources"]
 
@@ -618,7 +668,7 @@ class TestResourceCreation:
         import yaml
 
         with open("serverless/serverless.yml") as f:
-            config = yaml.safe_load(f)
+            config = load_serverless_yaml(f)
 
         buses = config["resources"]["Resources"]
 
@@ -638,7 +688,7 @@ class TestOutputs:
         import yaml
 
         with open("serverless/serverless.yml") as f:
-            config = yaml.safe_load(f)
+            config = load_serverless_yaml(f)
 
         outputs = config["outputs"]
 

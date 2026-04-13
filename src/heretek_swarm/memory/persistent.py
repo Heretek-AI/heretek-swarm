@@ -33,7 +33,7 @@ class Mem0Config:
 
     # LLM provider
     llm_provider: str = "openai"
-    llm_model: str = field(default_factory=lambda: os.getenv("LLM_MODEL", "gpt-4o-mini"))
+    llm_model: str = field(default_factory=lambda: os.getenv("LLM_MODEL", "gpt-4o"))
     openai_api_key: str | None = field(default_factory=lambda: os.getenv("OPENAI_API_KEY"))
 
     # Embedder configuration
@@ -525,10 +525,21 @@ class Mem0Backend:
 
         start = time.perf_counter()
         try:
+            # Handle query - mem0 requires a query, so we use a wildcard when only filtering
+            query_text = query.query_text if query.query_text else "*"
+
+            # Build filters dict - mem0 uses "agent_id" at top level for filtering
+            filters = {}
+            if query.filters:
+                # Extract agent_id from filters if present
+                if "agent_id" in query.filters:
+                    filters["agent_id"] = query.filters["agent_id"]
+
             results = self._memory.search(
-                query=query.query_text or "",
+                query=query_text,
                 user_id=self._user_id,
                 limit=query.limit,
+                filters=filters if filters else None,
             )
             self._latency_stats.append(time.perf_counter() - start)
 
@@ -566,6 +577,12 @@ class Mem0Backend:
             results = self._memory.get_all(user_id=self._user_id)
             entries = []
             for r in results:
+                # Handle both dict and string returns - mem0 may return either
+                if isinstance(r, str):
+                    # If string, treat it as the memory id/content
+                    continue
+                if not isinstance(r, dict):
+                    continue
                 if r.get("metadata", {}).get("agent_id") == agent_id:
                     entries.append(MemoryEntry(
                         id=r.get("id", ""),
@@ -598,21 +615,41 @@ class Mem0Backend:
             logger.error("mem0_delete_failed", error=str(e))
             return False
 
+    async def store_batch(self, entries: list[MemoryEntry]) -> list[str]:
+        """
+        Store multiple memory entries.
+
+        Args:
+            entries: List of MemoryEntry objects
+
+        Returns:
+            List of memory IDs
+        """
+        if not self._initialized:
+            await self.initialize()
+
+        memory_ids = []
+        for entry in entries:
+            memory_id = await self.store(entry)
+            memory_ids.append(memory_id)
+        return memory_ids
+
     def get_latency_stats(self) -> dict[str, float]:
         """
         Get latency statistics.
 
         Returns:
-            Dict with p50, p95, p99, avg
+            Dict with p50, p95, p99, avg in milliseconds
         """
         if not self._latency_stats:
             return {"p50": 0.0, "p95": 0.0, "p99": 0.0, "avg": 0.0}
 
         sorted_stats = sorted(self._latency_stats)
         n = len(sorted_stats)
+        # Convert from seconds to milliseconds
         return {
-            "p50": sorted_stats[int(n * 0.5)] if n > 0 else 0.0,
-            "p95": sorted_stats[int(n * 0.95)] if n > 0 else 0.0,
-            "p99": sorted_stats[int(n * 0.99)] if n > 0 else 0.0,
-            "avg": sum(sorted_stats) / n if n > 0 else 0.0,
+            "p50": (sorted_stats[int(n * 0.5)] * 1000) if n > 0 else 0.0,
+            "p95": (sorted_stats[int(n * 0.95)] * 1000) if n > 0 else 0.0,
+            "p99": (sorted_stats[int(n * 0.99)] * 1000) if n > 0 else 0.0,
+            "avg": (sum(sorted_stats) / n * 1000) if n > 0 else 0.0,
         }

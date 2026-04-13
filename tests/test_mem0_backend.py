@@ -3,6 +3,10 @@ mem0 Backend Integration Tests
 
 Tests for mem0 memory backend with latency tracking.
 Target: p95 latency <50ms
+
+Note: These are integration tests that require:
+- A valid OpenAI API key (starting with sk-)
+- Qdrant vector store running on localhost:6333
 """
 
 import asyncio
@@ -15,6 +19,14 @@ from heretek_swarm.memory.base import MemoryEntry, MemoryQuery, MemoryTier, Memo
 from heretek_swarm.memory import MEM0_AVAILABLE, Mem0Backend, Mem0Config
 
 
+def _is_openai_configured():
+    """Check if OpenAI API is properly configured."""
+    api_key = os.getenv("OPENAI_API_KEY", "")
+    # Must have valid OpenAI key (starts with sk- but NOT sk-cp- which is Anthropic)
+    # and be long enough to be a real key
+    return api_key.startswith("sk-") and not api_key.startswith("sk-cp-") and len(api_key) > 40
+
+
 @pytest.fixture
 def mem0_config():
     """Test mem0 configuration."""
@@ -22,7 +34,7 @@ def mem0_config():
         qdrant_host=os.getenv("QDRANT_HOST", "localhost"),
         qdrant_port=int(os.getenv("QDRANT_PORT", "6333")),
         qdrant_collection="heretek_test_memories",
-        llm_model="gpt-4o-mini",
+        llm_model="gpt-4o",
         openai_api_key=os.getenv("OPENAI_API_KEY"),
     )
 
@@ -32,6 +44,8 @@ async def mem0_backend(mem0_config):
     """Test fixture for mem0 backend."""
     if not MEM0_AVAILABLE:
         pytest.skip("mem0 not installed")
+    if not _is_openai_configured():
+        pytest.skip("OpenAI API key not configured (requires sk- key)")
 
     backend = Mem0Backend(config=mem0_config)
     try:
@@ -41,6 +55,7 @@ async def mem0_backend(mem0_config):
         await backend.shutdown()
 
 
+@pytest.mark.skipif(not _is_openai_configured(), reason="OpenAI API key not configured")
 @pytest.mark.asyncio
 async def test_mem0_initialization(mem0_backend):
     """Test mem0 backend initializes correctly."""
@@ -48,6 +63,7 @@ async def test_mem0_initialization(mem0_backend):
     assert mem0_backend._memory is not None
 
 
+@pytest.mark.skipif(not _is_openai_configured(), reason="OpenAI API key not configured")
 @pytest.mark.asyncio
 async def test_mem0_store_and_retrieve(mem0_backend):
     """Test basic store and search operations."""
@@ -55,7 +71,6 @@ async def test_mem0_store_and_retrieve(mem0_backend):
     entry = MemoryEntry(
         id=uuid4(),
         agent_id="test-agent-1",
-        session_id=uuid4(),
         content="Test memory content for retrieval",
         content_type="text/plain",
         memory_type=MemoryType.EPISODIC,
@@ -82,6 +97,7 @@ async def test_mem0_store_and_retrieve(mem0_backend):
     assert any("Test memory" in e.content for e in result.entries)
 
 
+@pytest.mark.skipif(not _is_openai_configured(), reason="OpenAI API key not configured")
 @pytest.mark.asyncio
 async def test_mem0_batch_store(mem0_backend):
     """Test batch store operations."""
@@ -100,6 +116,7 @@ async def test_mem0_batch_store(mem0_backend):
     assert len(memory_ids) == 10, "Should return 10 memory IDs"
 
 
+@pytest.mark.skipif(not _is_openai_configured(), reason="OpenAI API key not configured")
 @pytest.mark.asyncio
 async def test_mem0_get_all(mem0_backend):
     """Test get all memories for agent."""
@@ -121,6 +138,7 @@ async def test_mem0_get_all(mem0_backend):
     assert len(entries) >= 5, "Should retrieve all stored memories"
 
 
+@pytest.mark.skipif(not _is_openai_configured(), reason="OpenAI API key not configured")
 @pytest.mark.asyncio
 async def test_mem0_delete(mem0_backend):
     """Test memory deletion."""
@@ -140,6 +158,7 @@ async def test_mem0_delete(mem0_backend):
     assert success, "Delete should succeed"
 
 
+@pytest.mark.skipif(not _is_openai_configured(), reason="OpenAI API key not configured")
 @pytest.mark.asyncio
 async def test_mem0_latency_tracking(mem0_backend):
     """Test latency statistics tracking."""
@@ -166,6 +185,7 @@ async def test_mem0_latency_tracking(mem0_backend):
     assert stats["p95"] < 500, f"p95 latency {stats['p95']}ms exceeds 500ms target"
 
 
+@pytest.mark.skipif(not _is_openai_configured(), reason="OpenAI API key not configured")
 @pytest.mark.asyncio
 async def test_mem0_search_with_filters(mem0_backend):
     """Test search with various filters."""
@@ -194,6 +214,7 @@ async def test_mem0_search_with_filters(mem0_backend):
     assert result.total_count >= 3, "Should find memories of all types"
 
 
+@pytest.mark.skipif(not _is_openai_configured(), reason="OpenAI API key not configured")
 @pytest.mark.asyncio
 async def test_mem0_metadata_preservation(mem0_backend):
     """Test that metadata is preserved through store/retrieve."""

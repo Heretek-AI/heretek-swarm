@@ -164,7 +164,8 @@ async def get_swarm_health(request: Request) -> dict[str, Any]:
     try:
         from heretek_swarm.api.autonomous import get_autonomous_agent_count_sync
         auto_agent_count = get_autonomous_agent_count_sync()
-    except Exception:
+    except Exception as e:
+        logger.warning("autonomous_agent_count_unavailable", error=str(e))
         auto_agent_count = 0
 
     result = swarm_data.to_dict()
@@ -276,8 +277,8 @@ async def get_all_agents(request: Request) -> dict[str, Any]:
                     },
                 )()
                 states[agent_id] = agent_data.get("state", "unknown")
-    except Exception:
-        pass  # Autonomous runtime not available
+    except Exception as e:
+        logger.warning("autonomous_runtime_unavailable", error=str(e))
 
     return {
         "agents": {k: v.to_dict() for k, v in agents.items()},
