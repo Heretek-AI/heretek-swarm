@@ -169,3 +169,28 @@ def __init__(self, ephemeral_config=None, persistent_config=None):
 **Fix Needed:** Either:
 1. Change `main_loop.py` to use `DualTierMemorySystem` instead of `DualTierMemory`, OR
 2. Update `DualTierMemory.__init__()` to accept `ephemeral_config` and `persistent_config` kwargs
+
+---
+
+## Issue #12: Mem0 Container Unhealthy (curl not found)
+
+**Date:** 2026-04-13
+**Symptom:** Container marked unhealthy with `curl not found` error in healthcheck logs
+**Root Cause:** Docker healthcheck used `curl` command but mem0 Docker image doesn't include curl
+**Fix Applied:**
+```yaml
+# Before (in docker-compose.yml):
+healthcheck:
+  test: ["CMD-SHELL", "curl -f http://localhost:8000/docs || exit 1"]
+
+# After:
+healthcheck:
+  test: ["CMD-SHELL", "python3 -c \"import urllib.request; urllib.request.urlopen('http://localhost:8000/docs')\""]
+```
+
+**Verification:**
+```bash
+docker compose up -d mem0
+sleep 35
+docker ps  # heretek-mem0 now shows (healthy)
+```

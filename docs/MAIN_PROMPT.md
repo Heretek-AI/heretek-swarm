@@ -376,6 +376,7 @@ curl -s http://localhost:8888/openapi.json | python3 -c "import sys,json; d=json
 | Mem0 pg_hba.conf | `password authentication failed` | Add `host all all 172.28.0.0/16 trust` to pg_hba.conf |
 | Mem0 history dir | `unable to open database file` | Dockerfile: `RUN mkdir -p /app/history` |
 | Mem0 neo4j | Connection errors on startup | Set `graph_store.provider = "none"` in main.py |
+| Mem0 healthcheck | `curl not found` in container | Use Python urllib instead of curl |
 | API healthcheck | `curl not found` in container | Use Python urllib instead of curl |
 | Dockerfile.autonomous | `"/config": not found` | Remove `COPY config/ ./config/` line |
 | prometheus-client | `ModuleNotFoundError` | Add `prometheus-client>=0.19.0` to pyproject.toml dependencies |
