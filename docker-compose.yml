@@ -59,7 +59,7 @@ services:
     networks:
       - default
     healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
+      test: ["CMD-SHELL", "python3 -c 'import urllib.request; urllib.request.urlopen(\"http://localhost:8000/api/health\")'"]
       interval: 30s
       timeout: 10s
       retries: 3
@@ -284,8 +284,13 @@ services:
       - path: .env
         required: true
     environment:
-      # Database
-      - DATABASE_URL=postgresql+asyncpg://mem0:${MEM0_POSTGRES_PASSWORD}@mem0-postgres:5432/mem0
+      # Database - match main.py env var names
+      - POSTGRES_HOST=mem0-postgres
+      - POSTGRES_PORT=5432
+      - POSTGRES_DB=mem0
+      - POSTGRES_USER=mem0
+      - POSTGRES_PASSWORD=${MEM0_POSTGRES_PASSWORD}
+      - POSTGRES_COLLECTION_NAME=heretek_swarm_memories
       # Vector store - Qdrant
       - QDRANT_HOST=qdrant
       - QDRANT_PORT=6333
@@ -310,7 +315,7 @@ services:
     networks:
       - default
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:8000/health || exit 1"]
+      test: ["CMD-SHELL", "curl -f http://localhost:8000/docs || exit 1"]
       interval: 30s
       timeout: 10s
       retries: 3
