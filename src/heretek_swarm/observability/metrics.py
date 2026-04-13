@@ -34,21 +34,27 @@ except ImportError:
 class AgentMetrics:
     """Metrics for an individual agent."""
     agent_id: str
+    agent_type: str = "worker"
     tasks_completed: int = 0
     tasks_failed: int = 0
     avg_task_duration_ms: float = 0.0
+    avg_task_duration_seconds: float = 0.0
+    success_rate: float = 0.0
     messages_sent: int = 0
     messages_received: int = 0
     error_count: int = 0
-    health_score: float = 100.0
+    health_score: float = 0.0
     last_activity: datetime | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
             "agent_id": self.agent_id,
+            "agent_type": self.agent_type,
             "tasks_completed": self.tasks_completed,
             "tasks_failed": self.tasks_failed,
             "avg_task_duration_ms": self.avg_task_duration_ms,
+            "avg_task_duration_seconds": self.avg_task_duration_seconds,
+            "success_rate": self.success_rate,
             "messages_sent": self.messages_sent,
             "messages_received": self.messages_received,
             "error_count": self.error_count,
@@ -89,6 +95,7 @@ class SwarmMetricsData:
 @dataclass
 class ConsciousnessMetricsData:
     """Consciousness metrics (IIT Phi and FEP)."""
+    phi_score: float = 0.0
     phi_avg: float = 0.0
     phi_max: float = 0.0
     phi_min: float = 0.0
@@ -102,6 +109,7 @@ class ConsciousnessMetricsData:
 
     def to_dict(self) -> dict[str, Any]:
         return {
+            "phi_score": self.phi_score,
             "phi_avg": self.phi_avg,
             "phi_max": self.phi_max,
             "phi_min": self.phi_min,
@@ -128,9 +136,14 @@ class SwarmMetricsCollector:
 
     def __init__(self):
         self._agent_metrics: dict[str, AgentMetrics] = {}
+        self._agent_states: dict[str, str] = {}
         self._message_latencies: list[float] = []
         self._task_durations: list[float] = []
+        self._swarm_metrics_history: list[SwarmMetricsData] = []
+        self._consciousness_metrics_history: list[ConsciousnessMetricsData] = []
         self._start_time = datetime.now(UTC)
+        self._consciousness_callback: callable | None = None
+        self._agent_state_callback: callable | None = None
 
     def record_agent_activity(
         self,
@@ -154,9 +167,15 @@ class SwarmMetricsCollector:
             if task_duration_ms > 0:
                 self._task_durations.append(task_duration_ms)
                 metrics.avg_task_duration_ms = sum(self._task_durations) / len(self._task_durations)
+                metrics.avg_task_duration_seconds = metrics.avg_task_duration_ms / 1000.0
 
         if task_failed:
             metrics.tasks_failed += 1
+
+        # Update success rate
+        total = metrics.tasks_completed + metrics.tasks_failed
+        if total > 0:
+            metrics.success_rate = metrics.tasks_completed / total
 
         if message_sent:
             metrics.messages_sent += 1
@@ -169,6 +188,49 @@ class SwarmMetricsCollector:
 
         # Update health score
         self._update_health_score(metrics)
+
+    def record_agent_error(self, agent_id: str, error_type: str = "general") -> None:
+        """Record an error for an agent.
+
+        Args:
+            agent_id: The agent ID to record error for
+            error_type: Type of error that occurred
+        """
+        self.record_agent_activity(agent_id, error=True)
+
+    def update_agent_state(self, agent_id: str, state: str) -> None:
+        """Update agent state (alias for backward compatibility)."""
+        if agent_id not in self._agent_metrics:
+            self._agent_metrics[agent_id] = AgentMetrics(agent_id=agent_id)
+        self._agent_metrics[agent_id].last_activity = datetime.now(UTC)
+        self._agent_states[agent_id] = state
+
+    def record_agent_task(
+        self,
+        agent_id: str,
+        duration_seconds: float,
+        success: bool,
+        agent_type: str = "worker",
+    ) -> None:
+        """Record agent task completion."""
+        task_completed = success
+        task_failed = not success
+        self.record_agent_activity(
+            agent_id,
+            task_completed=task_completed,
+            task_failed=task_failed,
+            task_duration_ms=duration_seconds * 1000,
+            error=task_failed,  # Task failure counts as an error
+        )
+
+    def record_agent_message(self, agent_id: str, sent: bool, latency_seconds: float = 0.0) -> None:
+        """Record agent message sent or received."""
+        if sent:
+            self.record_agent_activity(agent_id, message_sent=True)
+        else:
+            self.record_agent_activity(agent_id, message_received=True)
+        if latency_seconds > 0:
+            self.record_message_latency(latency_seconds * 1000)
 
     def _update_health_score(self, metrics: AgentMetrics) -> None:
         """Calculate agent health score based on various factors."""
@@ -201,6 +263,10 @@ class SwarmMetricsCollector:
 
     def collect_swarm_metrics(self) -> SwarmMetricsData:
         """Collect aggregate swarm metrics."""
+        # Call state callback if registered
+        if self._agent_state_callback:
+            self._agent_state_callback()
+
         total_agents = len(self._agent_metrics)
         active_agents = sum(
             1 for m in self._agent_metrics.values()
@@ -233,6 +299,63 @@ class SwarmMetricsCollector:
             health_score=health_score,
         )
 
+    def get_agent_metrics_history(self, limit: int = 10) -> list[SwarmMetricsData]:
+        """Get history of agent metrics."""
+        return self._swarm_metrics_history[-limit:] if self._swarm_metrics_history else []
+
+    def get_consciousness_metrics_history(self, limit: int = 10) -> list[ConsciousnessMetricsData]:
+        """Get history of consciousness metrics."""
+        return self._consciousness_metrics_history[-limit:] if self._consciousness_metrics_history else []
+
+    def register_consciousness_callback(self, callback: callable) -> None:
+        """Register a consciousness metrics callback."""
+        self._consciousness_callback = callback
+
+    def register_agent_state_callback(self, callback: callable) -> None:
+        """Register an agent state callback."""
+        self._agent_state_callback = callback
+
+    def _calculate_agent_health(self, metrics: AgentMetrics) -> float:
+        """Calculate health score for an agent."""
+        score = 100.0
+        score -= min(metrics.error_count * 5, 30)
+        total = metrics.tasks_completed + metrics.tasks_failed
+        if total > 0:
+            score -= (metrics.tasks_failed / total) * 20
+        return max(0, min(100, score))
+
+    def _determine_integration_level(self, phi_scores: dict[str, float]) -> str:
+        """Determine integration level from phi scores."""
+        values = list(phi_scores.values()) if phi_scores else [0]
+        avg = sum(values) / len(values)
+        if avg >= 0.9:
+            return "very_high"
+        elif avg >= 0.75:
+            return "high"
+        elif avg >= 0.5:
+            return "moderate"
+        elif avg >= 0.25:
+            return "low"
+        else:
+            return "minimal"
+
+    def _determine_differentiation_level(self, phi_scores: dict[str, float]) -> str:
+        """Determine differentiation level from phi variance."""
+        values = list(phi_scores.values()) if phi_scores else [0]
+        if len(values) < 2:
+            return "minimal"
+        mean = sum(values) / len(values)
+        variance = sum((x - mean) ** 2 for x in values) / len(values)
+        std_dev = variance ** 0.5
+        if std_dev > 0.3:
+            return "high"
+        elif std_dev > 0.2:
+            return "moderate"
+        elif std_dev > 0.1:
+            return "low"
+        else:
+            return "minimal"
+
     def collect_agent_metrics(self, agent_id: str) -> AgentMetrics:
         """Get metrics for a specific agent."""
         return self._agent_metrics.get(agent_id, AgentMetrics(agent_id=agent_id))
@@ -245,23 +368,27 @@ class SwarmMetricsCollector:
         """Get current states of all agents."""
         states = {}
         now = datetime.now(UTC)
-        for agent_id, metrics in self._agent_metrics.items():
-            if metrics.last_activity:
-                inactive_seconds = (now - metrics.last_activity).total_seconds()
-                if inactive_seconds < 60:
-                    states[agent_id] = "active"
-                elif inactive_seconds < 300:
-                    states[agent_id] = "idle"
-                else:
-                    states[agent_id] = "inactive"
+        for agent_id in self._agent_metrics:
+            if agent_id in self._agent_states:
+                states[agent_id] = self._agent_states[agent_id]
             else:
-                states[agent_id] = "unknown"
+                metrics = self._agent_metrics[agent_id]
+                if metrics.last_activity:
+                    inactive_seconds = (now - metrics.last_activity).total_seconds()
+                    if inactive_seconds < 60:
+                        states[agent_id] = "active"
+                    elif inactive_seconds < 300:
+                        states[agent_id] = "idle"
+                    else:
+                        states[agent_id] = "inactive"
+                else:
+                    states[agent_id] = "unknown"
         return states
 
     def calculate_health_score(self) -> float:
         """Calculate overall swarm health score."""
         if not self._agent_metrics:
-            return 100.0
+            return 0.0
 
         avg_health = sum(m.health_score for m in self._agent_metrics.values()) / len(self._agent_metrics)
 
@@ -279,6 +406,10 @@ class SwarmMetricsCollector:
         Note: This is a placeholder implementation. In production,
         this would integrate with the IIT Phi and FEP calculators.
         """
+        # Call consciousness callback if registered
+        if self._consciousness_callback:
+            self._consciousness_callback()
+
         agent_phi_scores = {}
         agent_fep_scores = {}
 
@@ -321,11 +452,26 @@ class RealTimeMetricsStream:
         self._collector = collector
         self._snapshot_interval = 5  # seconds
         self._last_snapshot: SwarmMetricsData | None = None
+        self._running: bool = False
+        self._snapshot: MetricsSnapshot | None = None
 
-    def get_metrics_snapshot(self) -> SwarmMetricsData:
+    def stop_streaming(self) -> None:
+        """Stop the metrics streaming."""
+        self._running = False
+
+    def get_metrics_snapshot(self) -> "MetricsSnapshot":
         """Get current metrics snapshot."""
-        self._last_snapshot = self._collector.collect_swarm_metrics()
-        return self._last_snapshot
+        swarm = self._collector.collect_swarm_metrics()
+        consciousness = self._collector.collect_consciousness_metrics()
+        agents = self._collector.get_all_agent_metrics()
+        health = self._collector.calculate_health_score()
+        self._snapshot = MetricsSnapshot(
+            swarm_metrics=swarm,
+            consciousness_metrics=consciousness,
+            agent_metrics=agents,
+            health_score=health,
+        )
+        return self._snapshot
 
     def export_prometheus_format(self) -> str:
         """
@@ -456,10 +602,22 @@ def get_metrics_collector() -> SwarmMetricsCollector:
 @dataclass
 class MetricsSnapshot:
     """Snapshot of metrics at a point in time."""
-    timestamp: float
-    agent_id: str
-    metrics: Dict[str, float] = field(default_factory=dict)
+    swarm_metrics: SwarmMetricsData = field(default_factory=lambda: SwarmMetricsData())
+    consciousness_metrics: ConsciousnessMetricsData = field(default_factory=lambda: ConsciousnessMetricsData())
+    agent_metrics: Dict[str, AgentMetrics] = field(default_factory=dict)
+    health_score: float = 0.0
+    timestamp: float = field(default_factory=lambda: __import__('time').time())
     metadata: Dict[str, Any] = field(default_factory=dict)
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "swarm_metrics": self.swarm_metrics.to_dict(),
+            "consciousness_metrics": self.consciousness_metrics.to_dict(),
+            "agent_metrics": {k: v.to_dict() for k, v in self.agent_metrics.items()},
+            "health_score": self.health_score,
+            "timestamp": self.timestamp,
+            "metadata": self.metadata,
+        }
 
 
 async def record_consensus_round(round_id: str, result: Dict[str, Any]) -> None:

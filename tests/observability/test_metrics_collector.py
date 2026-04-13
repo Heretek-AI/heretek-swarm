@@ -72,13 +72,13 @@ class TestSwarmMetricsData:
             total_agents=5,
             active_agents=3,
             idle_agents=2,
-            overall_health_score=75.0,
+            health_score=75.0,
         )
 
         assert metrics.total_agents == 5
         assert metrics.active_agents == 3
         assert metrics.idle_agents == 2
-        assert metrics.overall_health_score == 75.0
+        assert metrics.health_score == 75.0
 
     def test_swarm_metrics_to_dict(self):
         """Test SwarmMetricsData serialization."""
@@ -525,18 +525,27 @@ class TestConvenienceFunctions:
 
     def test_record_message_sent(self):
         """Test record_message_sent function."""
-        # Should not raise
-        record_message_sent("task", "coordinator")
+        import asyncio
+        # Should not raise - call with correct signature
+        asyncio.get_event_loop().run_until_complete(
+            record_message_sent("task-1", "coordinator", {"type": "test"})
+        )
 
     def test_record_task_completion(self):
         """Test record_task_completion function."""
-        # Should not raise
-        record_task_completion("coordinator", 0.5)
+        import asyncio
+        # Should not raise - call with correct signature
+        asyncio.get_event_loop().run_until_complete(
+            record_task_completion("task-1", "coordinator", True, {"duration": 0.5})
+        )
 
     def test_record_consensus_round(self):
         """Test record_consensus_round function."""
-        # Should not raise
-        record_consensus_round("approved", 1.5)
+        import asyncio
+        # Should not raise - call with correct signature
+        asyncio.get_event_loop().run_until_complete(
+            record_consensus_round("round-1", {"decision": "approved", "confidence": 0.9})
+        )
 
 
 class TestMetricsIntegration:
