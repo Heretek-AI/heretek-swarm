@@ -103,6 +103,14 @@ async def lifespan(app: FastAPI):
             logger.info("Configuration loaded from database")
         else:
             logger.info("Configuration falling back to environment variables")
+
+        # Migrate LLM and Embedding providers from .env to database
+        try:
+            migration_result = await config_service.migrate_from_env()
+            if migration_result["migrated"]:
+                logger.info("provider_migration_complete", migrated=migration_result["migrated"])
+        except Exception as e:
+            logger.warning("provider_migration_skipped", reason=str(e))
     except Exception as e:
         logger.warning("ConfigurationService not available", error=str(e))
         logger.info("Using environment variables for configuration")

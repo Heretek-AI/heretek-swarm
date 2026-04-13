@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-13T15:02:12.591368+00:00",
+    "generated_at": "2026-04-13T15:25:05.861019+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 4,
@@ -8982,14 +8982,14 @@
       ]
     },
     "src/heretek_swarm/api/main.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.api.main.lifespan",
           "start_line": 85,
-          "end_line": 172,
+          "end_line": 180,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.api.main.check_gateway",
@@ -14252,8 +14252,8 @@
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.config.service.ConfigurationService",
-          "start_line": 47,
-          "end_line": 1503,
+          "start_line": 49,
+          "end_line": 1564,
           "node_type": "CLASS",
           "status": "modified"
         },
@@ -14573,16 +14573,16 @@
           "status": "unchanged"
         },
         {
+          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.migrate_from_env",
+          "start_line": 1423,
+          "end_line": 1564,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
           "qualified_name": "src.heretek_swarm.config.service.ConfigurationService._validate_config_value",
           "start_line": 1425,
           "end_line": 1474,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.migrate_from_env",
-          "start_line": 1480,
-          "end_line": 1562,
           "node_type": "METHOD",
           "status": "unchanged"
         },
@@ -59566,9 +59566,9 @@
       "file_path": "src/heretek_swarm/api/main.py",
       "qualified_name": "src.heretek_swarm.api.main.lifespan",
       "start_line": 85,
-      "end_line": 172,
+      "end_line": 180,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/api/main.py|src.heretek_swarm.api.main.check_gateway": {
       "file_path": "src/heretek_swarm/api/main.py",
@@ -65469,8 +65469,8 @@
     "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService": {
       "file_path": "src/heretek_swarm/config/service.py",
       "qualified_name": "src.heretek_swarm.config.service.ConfigurationService",
-      "start_line": 47,
-      "end_line": 1503,
+      "start_line": 49,
+      "end_line": 1564,
       "type": "CLASS",
       "status": "modified"
     },
@@ -65834,19 +65834,19 @@
       "type": "METHOD",
       "status": "unchanged"
     },
+    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.migrate_from_env": {
+      "file_path": "src/heretek_swarm/config/service.py",
+      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.migrate_from_env",
+      "start_line": 1423,
+      "end_line": 1564,
+      "type": "METHOD",
+      "status": "modified"
+    },
     "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService._validate_config_value": {
       "file_path": "src/heretek_swarm/config/service.py",
       "qualified_name": "src.heretek_swarm.config.service.ConfigurationService._validate_config_value",
       "start_line": 1425,
       "end_line": 1474,
-      "type": "METHOD",
-      "status": "unchanged"
-    },
-    "src/heretek_swarm/config/service.py|src.heretek_swarm.config.service.ConfigurationService.migrate_from_env": {
-      "file_path": "src/heretek_swarm/config/service.py",
-      "qualified_name": "src.heretek_swarm.config.service.ConfigurationService.migrate_from_env",
-      "start_line": 1480,
-      "end_line": 1562,
       "type": "METHOD",
       "status": "unchanged"
     },
@@ -105846,7 +105846,7 @@
         },
         {
           "file_path": "src/heretek_swarm/api/main.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.api.main.lifespan",
             "src.heretek_swarm.api.main.check_gateway",
@@ -106752,8 +106752,8 @@
             "src.heretek_swarm.config.service.ConfigurationService.get_audit_log",
             "src.heretek_swarm.config.service.ConfigurationService.export_configurations",
             "src.heretek_swarm.config.service.ConfigurationService.import_configurations",
-            "src.heretek_swarm.config.service.ConfigurationService._validate_config_value",
             "src.heretek_swarm.config.service.ConfigurationService.migrate_from_env",
+            "src.heretek_swarm.config.service.ConfigurationService._validate_config_value",
             "src.heretek_swarm.config.service.get_config_service",
             "src.heretek_swarm.config.service.initialize_config_service",
             "src.heretek_swarm.config.service.shutdown_config_service"
@@ -110404,7 +110404,7 @@
             },
             {
               "file_path": "src/heretek_swarm/api/main.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.api.main.lifespan",
                 "src.heretek_swarm.api.main.check_gateway",
@@ -111054,8 +111054,8 @@
                 "src.heretek_swarm.config.service.ConfigurationService.get_audit_log",
                 "src.heretek_swarm.config.service.ConfigurationService.export_configurations",
                 "src.heretek_swarm.config.service.ConfigurationService.import_configurations",
-                "src.heretek_swarm.config.service.ConfigurationService._validate_config_value",
                 "src.heretek_swarm.config.service.ConfigurationService.migrate_from_env",
+                "src.heretek_swarm.config.service.ConfigurationService._validate_config_value",
                 "src.heretek_swarm.config.service.get_config_service",
                 "src.heretek_swarm.config.service.initialize_config_service",
                 "src.heretek_swarm.config.service.shutdown_config_service"
@@ -112894,7 +112894,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/api/main.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.api.main.lifespan",
                     "src.heretek_swarm.api.main.check_gateway",
@@ -114774,7 +114774,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/api/main.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.api.main.lifespan",
                     "src.heretek_swarm.api.main.check_gateway",
@@ -115358,8 +115358,8 @@
                     "src.heretek_swarm.config.service.ConfigurationService.get_audit_log",
                     "src.heretek_swarm.config.service.ConfigurationService.export_configurations",
                     "src.heretek_swarm.config.service.ConfigurationService.import_configurations",
-                    "src.heretek_swarm.config.service.ConfigurationService._validate_config_value",
                     "src.heretek_swarm.config.service.ConfigurationService.migrate_from_env",
+                    "src.heretek_swarm.config.service.ConfigurationService._validate_config_value",
                     "src.heretek_swarm.config.service.get_config_service",
                     "src.heretek_swarm.config.service.initialize_config_service",
                     "src.heretek_swarm.config.service.shutdown_config_service"

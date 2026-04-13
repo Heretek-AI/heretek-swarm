@@ -1439,8 +1439,8 @@ class ConfigurationService:
             "errors": [],
         }
 
-        # Define environment variable mappings
-        env_mappings = [
+        # Define environment variable mappings for configs
+        config_mappings = [
             # Rate limiting
             ("RATE_LIMIT_ENABLED", "rate_limit.enabled", ConfigType.BOOLEAN),
             # Memory
@@ -1453,7 +1453,7 @@ class ConfigurationService:
             ("CONSENSUS_CONFIDENCE_THRESHOLD", "consensus.confidence_threshold", ConfigType.FLOAT),
         ]
 
-        for env_var, config_key, config_type in env_mappings:
+        for env_var, config_key, config_type in config_mappings:
             env_value = os.environ.get(env_var)
 
             if env_value is None:
@@ -1500,6 +1500,65 @@ class ConfigurationService:
                 migration_result["errors"].append(
                     f"Error migrating {env_var}: {e}"
                 )
+
+        # Migrate LLM providers from environment variables
+        llm_env_vars = {
+            "OPENAI_API_KEY": os.environ.get("OPENAI_API_KEY"),
+            "OPENAI_BASE_URL": os.environ.get("OPENAI_BASE_URL"),
+            "LLM_MODEL": os.environ.get("LLM_MODEL"),
+        }
+
+        if any(llm_env_vars.values()):
+            try:
+                existing_llm = await self.get_llm_provider_by_name("openai_compatible")
+                if existing_llm is None:
+                    llm_provider = LLMProviderCreate(
+                        provider_name="openai_compatible",
+                        provider_type=LLMProviderType.OPENAI_COMPATIBLE,
+                        base_url=os.environ.get("OPENAI_BASE_URL", "https://api.minimax.io/v1"),
+                        api_key=os.environ.get("OPENAI_API_KEY"),
+                        default_model=os.environ.get("LLM_MODEL", "MiniMax-M2.7"),
+                        is_default=True,
+                        is_enabled=True,
+                        priority=1,
+                    )
+                    await self.create_llm_provider(llm_provider, changed_by)
+                    migration_result["migrated"].append("LLM provider from OPENAI_* env vars")
+                    logger.info("migrated_llm_provider_from_env")
+                else:
+                    migration_result["skipped"].append("LLM provider already exists")
+            except Exception as e:
+                migration_result["errors"].append(f"Error migrating LLM provider: {e}")
+
+        # Migrate Embedding providers from environment variables
+        embedding_env_vars = {
+            "EMBEDDING_API_KEY": os.environ.get("EMBEDDING_API_KEY"),
+            "EMBEDDING_BASE_URL": os.environ.get("EMBEDDING_BASE_URL"),
+            "EMBEDDER_MODEL": os.environ.get("EMBEDDER_MODEL"),
+        }
+
+        if any(embedding_env_vars.values()):
+            try:
+                existing_embedding = await self.get_embedding_provider_by_name("openai_compatible")
+                if existing_embedding is None:
+                    embedding_provider = EmbeddingProviderCreate(
+                        provider_name="openai_compatible",
+                        provider_type=EmbeddingProviderType.OPENAI_COMPATIBLE,
+                        base_url=os.environ.get("EMBEDDING_BASE_URL", "http://127.0.0.1:13305/api/v1"),
+                        api_key=os.environ.get("EMBEDDING_API_KEY"),
+                        model_name=os.environ.get("EMBEDDER_MODEL", "nomic-embed-text-v2-moe-GGUF"),
+                        dimensions=int(os.environ.get("EMBEDDING_DIMENSIONS", "768")),
+                        is_default=True,
+                        is_enabled=True,
+                        priority=1,
+                    )
+                    await self.create_embedding_provider(embedding_provider, changed_by)
+                    migration_result["migrated"].append("Embedding provider from EMBEDDING_* env vars")
+                    logger.info("migrated_embedding_provider_from_env")
+                else:
+                    migration_result["skipped"].append("Embedding provider already exists")
+            except Exception as e:
+                migration_result["errors"].append(f"Error migrating Embedding provider: {e}")
 
         logger.info("Environment migration complete", result=migration_result)
         return migration_result
