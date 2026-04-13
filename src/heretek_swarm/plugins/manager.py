@@ -138,6 +138,9 @@ class PluginRuntime:
             plugins_dir = Path(__file__).parent / "plugins"
 
         self.plugins_dir = Path(plugins_dir)
+        self.plugins = {}
+        self.message_handlers = {}
+        self._running = False
         logger.info("plugin_runtime_initialized", plugins_dir=str(self.plugins_dir))
 
     async def discover_plugins(self) -> list[Plugin]:

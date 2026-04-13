@@ -36,13 +36,13 @@ const tabs: TabConfig[] = [
 
 export function SettingsPage({ onRerunSetup }: SettingsPageProps) {
   const [activeTab, setActiveTab] = useState<string>('llm');
-  const [apiKey, setApiKey] = useState(localStorage.getItem('swarm_api_key') || '');
+  const [apiKey, setApiKey] = useState(localStorage.getItem('api_key') || '');
   const [apiUrl, setApiUrl] = useState(localStorage.getItem('swarm_api_host') || '');
   const [showResetConfirm, setShowResetConfirm] = useState(false);
   const toast = useToast();
 
   const handleSaveApiKey = useCallback(() => {
-    localStorage.setItem('swarm_api_key', apiKey);
+    localStorage.setItem('api_key', apiKey);
     toast.success('API Key Saved', 'Your API key has been stored locally');
   }, [apiKey, toast]);
 
@@ -55,7 +55,7 @@ export function SettingsPage({ onRerunSetup }: SettingsPageProps) {
   }, [apiUrl, toast]);
 
   const handleClearApiKey = useCallback(() => {
-    localStorage.removeItem('swarm_api_key');
+    localStorage.removeItem('api_key');
     setApiKey('');
     toast.info('API Key Cleared', 'Your API key has been removed');
   }, [toast]);
@@ -63,7 +63,7 @@ export function SettingsPage({ onRerunSetup }: SettingsPageProps) {
   const handleResetConfiguration = useCallback(() => {
     // Clear all configuration
     localStorage.removeItem('swarm_api_host');
-    localStorage.removeItem('swarm_api_key');
+    localStorage.removeItem('api_key');
     localStorage.removeItem('swarm_ws_host');
     localStorage.removeItem('swarm_configured');
     toast.info('Configuration Reset', 'Setup wizard will run on next load');

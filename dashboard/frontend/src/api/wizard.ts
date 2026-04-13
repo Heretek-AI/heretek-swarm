@@ -113,7 +113,7 @@ export interface SubmitResult {
 const API_URL = localStorage.getItem('swarm_api_host') || import.meta.env.VITE_API_URL || '';
 
 async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
-  const apiKey = localStorage.getItem('swarm_api_key');
+  const apiKey = localStorage.getItem('api_key');
 
   const headers: Record<string, string> = {
     'Content-Type': 'application/json',

@@ -101,7 +101,7 @@ function DashboardContent() {
         if (!config.apiHost) {
           useSetupStore.getState().setConfig({
             apiHost: storedApiHost,
-            apiKey: localStorage.getItem('swarm_api_key') || '',
+            apiKey: localStorage.getItem('api_key') || '',
             wsHost: localStorage.getItem('swarm_ws_host') || '',
           });
         }

@@ -1124,16 +1124,16 @@ class ConfigurationService:
     ) -> list[AgentConfig]:
         """List agent configurations with optional filtering."""
         async with self._session_factory() as session:
-            query = select(AgentConfig).order_by(
-                AgentConfig.agent_type,
-                AgentConfig.config_name,
+            query = select(AgentConfigORM).order_by(
+                AgentConfigORM.agent_type,
+                AgentConfigORM.config_name,
             )
 
             if agent_type:
-                query = query.where(AgentConfig.agent_type == agent_type)
+                query = query.where(AgentConfigORM.agent_type == agent_type)
 
             if active_only:
-                query = query.where(AgentConfig.is_active)
+                query = query.where(AgentConfigORM.is_active)
 
             result = await session.execute(query)
             orm_results = result.scalars().all()
