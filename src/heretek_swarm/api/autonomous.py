@@ -91,7 +91,7 @@ async def register_autonomous_agents(
     return {"status": "ok", "agents": str(update.total_agents)}
 
 
-@router.get("/agents", response_model=AutonomousAgentsResponse)
+@router.get("/agents")
 async def get_autonomous_agents() -> AutonomousAgentsResponse:
     """
     Get current autonomous agent statuses.

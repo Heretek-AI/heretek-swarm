@@ -363,8 +363,8 @@ class EventStore:
                 await self._create_tables()
                 self._initialized = True
                 logger.info("EventStore initialized with PostgreSQL")
-            except Exception as e:
-                logger.warning(f"PostgreSQL initialization failed, using in-memory: {e}")
+            except (ConnectionError, OSError) as e:
+                logger.warning(f"PostgreSQL connection failed, using in-memory: {e}")
                 self._db_pool = None
                 self._initialized = True
         else:
@@ -453,8 +453,8 @@ class EventStore:
                 logger.debug(f"Event appended: {event.event_id}")
                 return True
 
-        except Exception as e:
-            logger.error(f"Failed to append event: {e}")
+        except (ConnectionError, OSError) as e:
+            logger.error(f"Failed to append event to database: {e}")
             return False
 
     def _append_to_memory(self, event: DomainEvent) -> bool:
@@ -790,8 +790,8 @@ class EventStore:
                 logger.debug(f"Snapshot created: {snapshot.aggregate_id} v{snapshot.version}")
                 return True
 
-        except Exception as e:
-            logger.error(f"Failed to create snapshot: {e}")
+        except (ConnectionError, OSError) as e:
+            logger.error(f"Failed to create snapshot in database: {e}")
             return False
 
     def _create_snapshot_memory(self, snapshot: Snapshot) -> bool:
@@ -851,8 +851,8 @@ class EventStore:
                     await handler(event)
                 else:
                     handler(event)
-            except Exception as e:
-                logger.error(f"Event handler error: {e}")
+            except (Exception,) as e:
+                logger.error(f"Event handler error for {event.event_type}: {e}")
 
     async def get_stats(self) -> dict[str, Any]:
         """Get event store statistics."""

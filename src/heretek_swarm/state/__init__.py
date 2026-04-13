@@ -8,6 +8,7 @@ from heretek_swarm.state.models import (
     AgentState,
     ConversationState,
     LineageConfig,
+    LineageNode,
     LineageTracker,
     MessageLineage,
     MessageType,

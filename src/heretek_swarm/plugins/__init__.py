@@ -19,6 +19,8 @@ from .manager import (
     get_plugin_runtime,
     load_plugin_from_file,
 )
+from .consciousness import ConsciousnessPlugin
+from .liberation import LiberationPlugin
 
 __all__ = [
     "Plugin",
@@ -27,4 +29,6 @@ __all__ = [
     "PluginState",
     "get_plugin_runtime",
     "load_plugin_from_file",
+    "ConsciousnessPlugin",
+    "LiberationPlugin",
 ]

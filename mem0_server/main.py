@@ -1,7 +1,7 @@
 import logging
 import os
 import secrets
-from typing import Any, Dict, List, Optional
+from typing import Annotated, Any, Dict, List, Optional
 
 from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, HTTPException
@@ -37,16 +37,22 @@ POSTGRES_HOST = os.environ.get("POSTGRES_HOST", "postgres")
 POSTGRES_PORT = os.environ.get("POSTGRES_PORT", "5432")
 POSTGRES_DB = os.environ.get("POSTGRES_DB", "postgres")
 POSTGRES_USER = os.environ.get("POSTGRES_USER", "postgres")
-POSTGRES_PASSWORD = os.environ.get("POSTGRES_PASSWORD", "postgres")
+POSTGRES_PASSWORD = os.environ.get("POSTGRES_PASSWORD")
+if not POSTGRES_PASSWORD:
+    raise ValueError("POSTGRES_PASSWORD environment variable is required")
 POSTGRES_COLLECTION_NAME = os.environ.get("POSTGRES_COLLECTION_NAME", "memories")
 
 NEO4J_URI = os.environ.get("NEO4J_URI", "bolt://neo4j:7687")
 NEO4J_USERNAME = os.environ.get("NEO4J_USERNAME", "neo4j")
-NEO4J_PASSWORD = os.environ.get("NEO4J_PASSWORD", "mem0graph")
+NEO4J_PASSWORD = os.environ.get("NEO4J_PASSWORD")
+if not NEO4J_PASSWORD:
+    raise ValueError("NEO4J_PASSWORD environment variable is required")
 
 MEMGRAPH_URI = os.environ.get("MEMGRAPH_URI", "bolt://localhost:7687")
 MEMGRAPH_USERNAME = os.environ.get("MEMGRAPH_USERNAME", "memgraph")
-MEMGRAPH_PASSWORD = os.environ.get("MEMGRAPH_PASSWORD", "mem0graph")
+MEMGRAPH_PASSWORD = os.environ.get("MEMGRAPH_PASSWORD")
+if not MEMGRAPH_PASSWORD:
+    raise ValueError("MEMGRAPH_PASSWORD environment variable is required")
 
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 HISTORY_DB_PATH = os.environ.get("HISTORY_DB_PATH", "/app/history/history.db")
@@ -130,34 +136,34 @@ async def verify_api_key(api_key: Optional[str] = Depends(api_key_header)):
 
 
 class Message(BaseModel):
-    role: str = Field(..., description="Role of the message (user or assistant).")
-    content: str = Field(..., description="Message content.")
+    role: Annotated[str, Field(description="Role of the message (user or assistant).")]
+    content: Annotated[str, Field(description="Message content.")]
 
 
 class MemoryCreate(BaseModel):
-    messages: List[Message] = Field(..., description="List of messages to store.")
-    user_id: Optional[str] = None
-    agent_id: Optional[str] = None
-    run_id: Optional[str] = None
-    metadata: Optional[Dict[str, Any]] = None
-    infer: Optional[bool] = Field(None, description="Whether to extract facts from messages. Defaults to True.")
-    memory_type: Optional[str] = Field(None, description="Type of memory to store (e.g. 'core').")
-    prompt: Optional[str] = Field(None, description="Custom prompt to use for fact extraction.")
+    messages: Annotated[List[Message], Field(description="List of messages to store.")]
+    user_id: Annotated[Optional[str], Field(description="User identifier for the memory.")] = None
+    agent_id: Annotated[Optional[str], Field(description="Agent identifier for the memory.")] = None
+    run_id: Annotated[Optional[str], Field(description="Run identifier for the memory.")] = None
+    metadata: Annotated[Optional[Dict[str, Any]], Field(description="Additional metadata for the memory.")] = None
+    infer: Annotated[Optional[bool], Field(description="Whether to extract facts from messages. Defaults to True.")] = None
+    memory_type: Annotated[Optional[str], Field(description="Type of memory to store (e.g. 'core').")] = None
+    prompt: Annotated[Optional[str], Field(description="Custom prompt to use for fact extraction.")] = None
 
 
 class MemoryUpdate(BaseModel):
-    text: str = Field(..., description="New content to update the memory with.")
-    metadata: Optional[Dict[str, Any]] = Field(None, description="Metadata to update.")
+    text: Annotated[str, Field(description="New content to update the memory with.")]
+    metadata: Annotated[Optional[Dict[str, Any]], Field(description="Metadata to update.")] = None
 
 
 class SearchRequest(BaseModel):
-    query: str = Field(..., description="Search query.")
-    user_id: Optional[str] = None
-    run_id: Optional[str] = None
-    agent_id: Optional[str] = None
-    filters: Optional[Dict[str, Any]] = None
-    top_k: Optional[int] = Field(None, description="Maximum number of results to return.")
-    threshold: Optional[float] = Field(None, description="Minimum similarity score for results.")
+    query: Annotated[str, Field(description="Search query.")]
+    user_id: Annotated[Optional[str], Field(description="User identifier to filter memories.")] = None
+    run_id: Annotated[Optional[str], Field(description="Run identifier to filter memories.")] = None
+    agent_id: Annotated[Optional[str], Field(description="Agent identifier to filter memories.")] = None
+    filters: Annotated[Optional[Dict[str, Any]], Field(description="Additional filters for the search.")] = None
+    top_k: Annotated[Optional[int], Field(description="Maximum number of results to return.")] = None
+    threshold: Annotated[Optional[float], Field(description="Minimum similarity score for results.")] = None
 
 
 @app.post("/configure", summary="Configure Mem0")

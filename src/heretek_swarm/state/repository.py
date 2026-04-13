@@ -268,8 +268,8 @@ class StateRepository:
                 await self._create_checkpoint_table()
                 self._initialized = True
                 logger.info("State repository initialized with PostgreSQL")
-            except Exception as e:
-                logger.warning(f"PostgreSQL initialization failed, using in-memory: {e}")
+            except (ConnectionError, OSError) as e:
+                logger.warning(f"PostgreSQL connection failed, using in-memory: {e}")
                 self._db_pool = None
                 self._initialized = True
         else:
@@ -377,7 +377,7 @@ class StateRepository:
                             f"Max retries ({self._max_retries}) exceeded for agent {record.agent_id}"
                         )
 
-            except Exception as e:
+            except (ConnectionError, OSError, TimeoutError) as e:
                 last_error = e
                 attempt += 1
                 if attempt < self._max_retries:
@@ -439,7 +439,7 @@ class StateRepository:
                         updated_at=row["updated_at"],
                         is_active=row["is_active"],
                     )
-        except Exception as e:
+        except (ConnectionError, OSError) as e:
             logger.error(f"Database load failed: {e}")
 
         return None
@@ -472,7 +472,7 @@ class StateRepository:
                     deleted = result != "DELETE 0"
                     logger.debug(f"State {'deleted' if deleted else 'not found'} for {agent_id}")
                     return deleted
-            except Exception as e:
+            except (ConnectionError, OSError) as e:
                 logger.error(f"Database delete failed: {e}")
 
         # Memory fallback
@@ -508,7 +508,7 @@ class StateRepository:
                         )
                         for row in rows
                     ]
-            except Exception as e:
+            except (ConnectionError, OSError) as e:
                 logger.error(f"Database list failed: {e}")
 
         # Memory fallback
@@ -566,7 +566,7 @@ class StateRepository:
                         extra={"version": version},
                     )
                     return checkpoint
-            except Exception as e:
+            except (ConnectionError, OSError) as e:
                 logger.error(f"Database checkpoint failed: {e}")
 
         # Memory fallback
@@ -605,7 +605,7 @@ class StateRepository:
                             created_at=row["created_at"],
                             metadata=row["metadata"],
                         )
-            except Exception as e:
+            except (ConnectionError, OSError) as e:
                 logger.error(f"Database checkpoint get failed: {e}")
 
         # Memory fallback
@@ -650,7 +650,7 @@ class StateRepository:
                         )
                         for row in rows
                     ]
-            except Exception as e:
+            except (ConnectionError, OSError) as e:
                 logger.error(f"Database checkpoints list failed: {e}")
 
         # Memory fallback
