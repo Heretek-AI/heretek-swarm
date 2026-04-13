@@ -11,7 +11,7 @@
     "preview": "vite preview"
   },
   "dependencies": {
-    "@xyflow/react": "^12.0.0",
+    "@xyflow/react": "^12.10.2",
     "axios": "^1.6.0",
     "pino": "^8.21.0",
     "pino-pretty": "^10.3.1",

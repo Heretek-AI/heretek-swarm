@@ -482,42 +482,56 @@ function ApiKeyStep({
   const [isTesting, setIsTesting] = useState(false);
   const [testResult, setTestResult] = useState<ConnectionTestResult | null>(null);
   const [validationStatus, setValidationStatus] = useState<'pending' | 'valid' | 'invalid'>('pending');
-  
+
+  const { setProviders } = useSetupStore();
+
   // Debounced validation
   useEffect(() => {
     const timer = setTimeout(() => {
       const result = validateApiKey(localValue);
       setValidationStatus(result.isValid ? 'valid' : localValue.trim() ? 'invalid' : 'pending');
     }, 300);
-    
+
     return () => clearTimeout(timer);
   }, [localValue]);
-  
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setLocalValue(e.target.value);
     onChange(e.target.value);
     setTestResult(null);
   };
-  
+
   const handleTestKey = async () => {
     if (!localValue.trim() || !apiHost) return;
-    
+
     setIsTesting(true);
     setTestResult(null);
-    
+
     try {
       const result = await testApiKey(apiHost, localValue);
       setTestResult(result);
+
+      // If test succeeded, fetch provider info from backend
+      if (result.success) {
+        try {
+          const { listLLMProviders, listEmbeddingProviders } = await import('../../api/configuration');
+          const llmProviders = await listLLMProviders();
+          const embeddingProviders = await listEmbeddingProviders();
+          setProviders(llmProviders, embeddingProviders);
+        } catch (providerErr) {
+          console.warn('Failed to fetch provider info:', providerErr);
+        }
+      }
     } catch {
       setTestResult({
         success: false,
         error: 'Failed to test API key',
       });
     }
-    
+
     setIsTesting(false);
   };
-  
+
   const handleNext = () => {
     onNext();
   };
