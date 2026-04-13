@@ -1,0 +1,1799 @@
+{
+  "repository_name": "heretek-swarm",
+  "timestamp": "2026-04-13T16:53:56.758354+00:00",
+  "overall_score": 0.992672909479218,
+  "check_summaries": [
+    {
+      "check_name": "function_size",
+      "description": "Checks that functions/methods do not exceed line count thresholds",
+      "language": "Python",
+      "check_type": "standard",
+      "total_entities_checked": 6793,
+      "findings_count": 6,
+      "warning_count": 6,
+      "score": 0.9991167378183424,
+      "finding_groups": [
+        {
+          "severity": "warning",
+          "threshold": 150,
+          "description": "Functions exceeding 150.0 lines",
+          "entities": [
+            {
+              "entity_name": "src.heretek_swarm.orchestration.heavyswarm.HeavySwarmWorkflow.execute",
+              "file_path": "src/heretek_swarm/orchestration/heavyswarm.py",
+              "line_start": 223,
+              "line_end": 378,
+              "metric_value": 155
+            },
+            {
+              "entity_name": "src.heretek_swarm.orchestration.heavyswarm.execute",
+              "file_path": "src/heretek_swarm/orchestration/heavyswarm.py",
+              "line_start": 223,
+              "line_end": 378,
+              "metric_value": 155
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.handoff.AgentHandoff.execute_handoff",
+              "file_path": "src/heretek_swarm/actors/handoff.py",
+              "line_start": 135,
+              "line_end": 288,
+              "metric_value": 153
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.handoff.execute_handoff",
+              "file_path": "src/heretek_swarm/actors/handoff.py",
+              "line_start": 135,
+              "line_end": 288,
+              "metric_value": 153
+            },
+            {
+              "entity_name": "src.heretek_swarm.memory.tiering.MemoryTieringSystem._migrate_memory",
+              "file_path": "src/heretek_swarm/memory/tiering.py",
+              "line_start": 664,
+              "line_end": 815,
+              "metric_value": 151
+            },
+            {
+              "entity_name": "src.heretek_swarm.memory.tiering._migrate_memory",
+              "file_path": "src/heretek_swarm/memory/tiering.py",
+              "line_start": 664,
+              "line_end": 815,
+              "metric_value": 151
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "check_name": "fan_out",
+      "description": "Checks efferent coupling: how many other functions each function calls",
+      "language": "Python",
+      "check_type": "standard",
+      "total_entities_checked": 6793,
+      "findings_count": 17,
+      "warning_count": 17,
+      "score": 0.9974974238186368,
+      "finding_groups": [
+        {
+          "severity": "warning",
+          "threshold": 10,
+          "description": "Functions calling more than 10.0 other functions",
+          "entities": [
+            {
+              "entity_name": "src.heretek_swarm.actors.arbiter.ArbiterAgent.__init__",
+              "file_path": "src/heretek_swarm/actors/arbiter.py",
+              "line_start": 146,
+              "line_end": 232,
+              "metric_value": 15
+            },
+            {
+              "entity_name": "src.heretek_swarm.workflow.validator.WorkflowValidator.validate",
+              "file_path": "src/heretek_swarm/workflow/validator.py",
+              "line_start": 169,
+              "line_end": 204,
+              "metric_value": 14
+            },
+            {
+              "entity_name": "serverless.handler.handle_profiling_api",
+              "file_path": "serverless/handler.py",
+              "line_start": 275,
+              "line_end": 345,
+              "metric_value": 13
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.arbiter.ArbiterAgent._register_handlers",
+              "file_path": "src/heretek_swarm/actors/arbiter.py",
+              "line_start": 278,
+              "line_end": 294,
+              "metric_value": 13
+            },
+            {
+              "entity_name": "src.heretek_swarm.api.main.lifespan",
+              "file_path": "src/heretek_swarm/api/main.py",
+              "line_start": 56,
+              "line_end": 142,
+              "metric_value": 13
+            },
+            {
+              "entity_name": "src.heretek_swarm.collective.knowledge_transform.KnowledgeTransformer._register_default_rules",
+              "file_path": "src/heretek_swarm/collective/knowledge_transform.py",
+              "line_start": 144,
+              "line_end": 179,
+              "metric_value": 13
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._register_handlers",
+              "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
+              "line_start": 234,
+              "line_end": 249,
+              "metric_value": 12
+            },
+            {
+              "entity_name": "src.heretek_swarm.api.observability.websocket_metrics",
+              "file_path": "src/heretek_swarm/api/observability.py",
+              "line_start": 386,
+              "line_end": 456,
+              "metric_value": 12
+            },
+            {
+              "entity_name": "src.heretek_swarm.rag.hybrid_retriever.HybridRetriever.retrieve",
+              "file_path": "src/heretek_swarm/rag/hybrid_retriever.py",
+              "line_start": 598,
+              "line_end": 709,
+              "metric_value": 12
+            },
+            {
+              "entity_name": "src.heretek_swarm.workflow.engine.WorkflowEngine.execute_workflow",
+              "file_path": "src/heretek_swarm/workflow/engine.py",
+              "line_start": 654,
+              "line_end": 778,
+              "metric_value": 12
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent.initialize",
+              "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
+              "line_start": 288,
+              "line_end": 309,
+              "metric_value": 11
+            },
+            {
+              "entity_name": "src.heretek_swarm.collective.agent_adaptation.PatternBasedAgentAdaptor.apply_pattern",
+              "file_path": "src/heretek_swarm/collective/agent_adaptation.py",
+              "line_start": 319,
+              "line_end": 417,
+              "metric_value": 11
+            },
+            {
+              "entity_name": "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine.run_flocking",
+              "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
+              "line_start": 966,
+              "line_end": 1027,
+              "metric_value": 11
+            },
+            {
+              "entity_name": "src.heretek_swarm.consciousness.fep_active_inference.FreeEnergyCalculator.perform_active_inference",
+              "file_path": "src/heretek_swarm/consciousness/fep_active_inference.py",
+              "line_start": 444,
+              "line_end": 521,
+              "metric_value": 11
+            },
+            {
+              "entity_name": "src.heretek_swarm.runtime.main_loop.AutonomousSwarm.initialize",
+              "file_path": "src/heretek_swarm/runtime/main_loop.py",
+              "line_start": 103,
+              "line_end": 170,
+              "metric_value": 11
+            },
+            {
+              "entity_name": "serverless.handler.api_handler",
+              "file_path": "serverless/handler.py",
+              "line_start": 119,
+              "line_end": 190,
+              "metric_value": 10
+            },
+            {
+              "entity_name": "src.heretek_swarm.consciousness.phi_training.PhiTrainingEnvironment.run_episode",
+              "file_path": "src/heretek_swarm/consciousness/phi_training.py",
+              "line_start": 279,
+              "line_end": 401,
+              "metric_value": 10
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "check_name": "fan_in",
+      "description": "Checks afferent coupling: how many other functions call each function",
+      "language": "Python",
+      "check_type": "standard",
+      "total_entities_checked": 6793,
+      "findings_count": 41,
+      "warning_count": 41,
+      "score": 0.9939643750920065,
+      "finding_groups": [
+        {
+          "severity": "warning",
+          "threshold": 10,
+          "description": "Functions called by more than 10.0 other functions",
+          "entities": [
+            {
+              "entity_name": "src.heretek_swarm.gateway.auth.verify_auth",
+              "file_path": "src/heretek_swarm/gateway/auth.py",
+              "line_start": 67,
+              "line_end": 107,
+              "metric_value": 123
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.base.AgentActor.send",
+              "file_path": "src/heretek_swarm/actors/base.py",
+              "line_start": 402,
+              "line_end": 496,
+              "metric_value": 107
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.validation.validate_message",
+              "file_path": "src/heretek_swarm/actors/validation.py",
+              "line_start": 526,
+              "line_end": 546,
+              "metric_value": 41
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.base.AgentActor.run_with_llm",
+              "file_path": "src/heretek_swarm/actors/base.py",
+              "line_start": 1444,
+              "line_end": 1477,
+              "metric_value": 35
+            },
+            {
+              "entity_name": "src.heretek_swarm.memory.access_patterns.AccessPatternAnalyzer.record_access",
+              "file_path": "src/heretek_swarm/memory/access_patterns.py",
+              "line_start": 305,
+              "line_end": 379,
+              "metric_value": 35
+            },
+            {
+              "entity_name": "src.heretek_swarm.api.configuration.get_service",
+              "file_path": "src/heretek_swarm/api/configuration.py",
+              "line_start": 77,
+              "line_end": 79,
+              "metric_value": 30
+            },
+            {
+              "entity_name": "src.heretek_swarm.collective.learning.ExtractedPattern.to_dict",
+              "file_path": "src/heretek_swarm/collective/learning.py",
+              "line_start": 92,
+              "line_end": 111,
+              "metric_value": 23
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.base.AgentActor.__init__",
+              "file_path": "src/heretek_swarm/actors/base.py",
+              "line_start": 167,
+              "line_end": 250,
+              "metric_value": 21
+            },
+            {
+              "entity_name": "src.heretek_swarm.api.agents_management.get_registry",
+              "file_path": "src/heretek_swarm/api/agents_management.py",
+              "line_start": 76,
+              "line_end": 78,
+              "metric_value": 20
+            },
+            {
+              "entity_name": "src.heretek_swarm.memory.access_patterns.AccessPatternAnalyzer.get_statistics",
+              "file_path": "src/heretek_swarm/memory/access_patterns.py",
+              "line_start": 668,
+              "line_end": 707,
+              "metric_value": 20
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.base.AgentActor._validate_message_content",
+              "file_path": "src/heretek_swarm/actors/base.py",
+              "line_start": 260,
+              "line_end": 285,
+              "metric_value": 19
+            },
+            {
+              "entity_name": "src.heretek_swarm.collective.learning.PatternExtractor.analyze_message",
+              "file_path": "src/heretek_swarm/collective/learning.py",
+              "line_start": 217,
+              "line_end": 284,
+              "metric_value": 18
+            },
+            {
+              "entity_name": "src.heretek_swarm.collective.learning.PatternExtractor.extract_patterns",
+              "file_path": "src/heretek_swarm/collective/learning.py",
+              "line_start": 286,
+              "line_end": 358,
+              "metric_value": 18
+            },
+            {
+              "entity_name": "src.heretek_swarm.consensus.swarm_deliberation.SwarmDeliberationEngine.finalize_deliberation",
+              "file_path": "src/heretek_swarm/consensus/swarm_deliberation.py",
+              "line_start": 700,
+              "line_end": 783,
+              "metric_value": 18
+            },
+            {
+              "entity_name": "src.heretek_swarm.memory.access_patterns.AccessStatistics.to_dict",
+              "file_path": "src/heretek_swarm/memory/access_patterns.py",
+              "line_start": 103,
+              "line_end": 125,
+              "metric_value": 18
+            },
+            {
+              "entity_name": "src.heretek_swarm.consensus.swarm_deliberation.SwarmDeliberationEngine.start_deliberation",
+              "file_path": "src/heretek_swarm/consensus/swarm_deliberation.py",
+              "line_start": 257,
+              "line_end": 300,
+              "metric_value": 17
+            },
+            {
+              "entity_name": "src.heretek_swarm.consensus.swarm_deliberation.SwarmDeliberationEngine.submit_position",
+              "file_path": "src/heretek_swarm/consensus/swarm_deliberation.py",
+              "line_start": 302,
+              "line_end": 380,
+              "metric_value": 17
+            },
+            {
+              "entity_name": "src.heretek_swarm.consensus.swarm_deliberation.SwarmDeliberationEngine.cleanup_deliberation",
+              "file_path": "src/heretek_swarm/consensus/swarm_deliberation.py",
+              "line_start": 873,
+              "line_end": 889,
+              "metric_value": 17
+            },
+            {
+              "entity_name": "src.heretek_swarm.consensus.swarm_deliberation.SwarmDeliberationEngine.get_statistics",
+              "file_path": "src/heretek_swarm/consensus/swarm_deliberation.py",
+              "line_start": 891,
+              "line_end": 910,
+              "metric_value": 17
+            },
+            {
+              "entity_name": "src.heretek_swarm.memory.access_patterns.AccessPatternAnalyzer.get_profile",
+              "file_path": "src/heretek_swarm/memory/access_patterns.py",
+              "line_start": 648,
+              "line_end": 650,
+              "metric_value": 17
+            },
+            {
+              "entity_name": "src.heretek_swarm.memory.access_patterns.AccessPatternAnalyzer.predict_agent_access",
+              "file_path": "src/heretek_swarm/memory/access_patterns.py",
+              "line_start": 834,
+              "line_end": 864,
+              "metric_value": 17
+            },
+            {
+              "entity_name": "src.heretek_swarm.runtime.registry_enhanced.EnhancedAgentRegistry.get_instance",
+              "file_path": "src/heretek_swarm/runtime/registry_enhanced.py",
+              "line_start": 528,
+              "line_end": 538,
+              "metric_value": 15
+            },
+            {
+              "entity_name": "src.heretek_swarm.validation.llm_output.LLMOutputValidator.validate_text",
+              "file_path": "src/heretek_swarm/validation/llm_output.py",
+              "line_start": 375,
+              "line_end": 429,
+              "metric_value": 15
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.base.AgentActor.get_status",
+              "file_path": "src/heretek_swarm/actors/base.py",
+              "line_start": 1114,
+              "line_end": 1131,
+              "metric_value": 14
+            },
+            {
+              "entity_name": "src.heretek_swarm.api.consciousness.get_consciousness_plugin",
+              "file_path": "src/heretek_swarm/api/consciousness.py",
+              "line_start": 26,
+              "line_end": 31,
+              "metric_value": 13
+            },
+            {
+              "entity_name": "src.heretek_swarm.api.consensus.get_authenticated_agent",
+              "file_path": "src/heretek_swarm/api/consensus.py",
+              "line_start": 113,
+              "line_end": 139,
+              "metric_value": 13
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.base.AgentActor.register_handler",
+              "file_path": "src/heretek_swarm/actors/base.py",
+              "line_start": 287,
+              "line_end": 298,
+              "metric_value": 12
+            },
+            {
+              "entity_name": "src.heretek_swarm.api.emergent_intelligence.get_metrics_instance",
+              "file_path": "src/heretek_swarm/api/emergent_intelligence.py",
+              "line_start": 44,
+              "line_end": 49,
+              "metric_value": 12
+            },
+            {
+              "entity_name": "src.heretek_swarm.config.service.ConfigurationService._log_change",
+              "file_path": "src/heretek_swarm/config/service.py",
+              "line_start": 1231,
+              "line_end": 1262,
+              "metric_value": 12
+            },
+            {
+              "entity_name": "src.heretek_swarm.llm.providers.base.LLMProviderBase._get_model",
+              "file_path": "src/heretek_swarm/llm/providers/base.py",
+              "line_start": 330,
+              "line_end": 336,
+              "metric_value": 12
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.nexus.NexusAgent._send_error",
+              "file_path": "src/heretek_swarm/actors/nexus.py",
+              "line_start": 1151,
+              "line_end": 1165,
+              "metric_value": 11
+            },
+            {
+              "entity_name": "src.memory.persistent.PersistentMemoryStore.connect",
+              "file_path": "src/memory/persistent.py",
+              "line_start": 132,
+              "line_end": 170,
+              "metric_value": 11
+            },
+            {
+              "entity_name": "serverless.handler.APIResponse.to_dict",
+              "file_path": "serverless/handler.py",
+              "line_start": 106,
+              "line_end": 116,
+              "metric_value": 10
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.catalyst.CatalystAgent._validate_message",
+              "file_path": "src/heretek_swarm/actors/catalyst.py",
+              "line_start": 224,
+              "line_end": 232,
+              "metric_value": 10
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.catalyst.CatalystAgent._send_error",
+              "file_path": "src/heretek_swarm/actors/catalyst.py",
+              "line_start": 1119,
+              "line_end": 1133,
+              "metric_value": 10
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.chronos.ChronosAgent._validate_message",
+              "file_path": "src/heretek_swarm/actors/chronos.py",
+              "line_start": 255,
+              "line_end": 263,
+              "metric_value": 10
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.chronos.ChronosAgent._send_error",
+              "file_path": "src/heretek_swarm/actors/chronos.py",
+              "line_start": 1191,
+              "line_end": 1205,
+              "metric_value": 10
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.coordinator.CoordinatorAgent._send_error",
+              "file_path": "src/heretek_swarm/actors/coordinator.py",
+              "line_start": 1113,
+              "line_end": 1127,
+              "metric_value": 10
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.nexus.NexusAgent._validate_message",
+              "file_path": "src/heretek_swarm/actors/nexus.py",
+              "line_start": 270,
+              "line_end": 279,
+              "metric_value": 10
+            },
+            {
+              "entity_name": "src.heretek_swarm.api.observability.get_replay_manager",
+              "file_path": "src/heretek_swarm/api/observability.py",
+              "line_start": 891,
+              "line_end": 910,
+              "metric_value": 10
+            },
+            {
+              "entity_name": "src.heretek_swarm.security.zero_trust.AuditLogger.log",
+              "file_path": "src/heretek_swarm/security/zero_trust.py",
+              "line_start": 753,
+              "line_end": 840,
+              "metric_value": 10
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "check_name": "god_class",
+      "description": "Detects classes with too many methods, too much code, or too many outgoing dependencies",
+      "language": "Python",
+      "check_type": "standard",
+      "total_entities_checked": 314,
+      "findings_count": 81,
+      "warning_count": 81,
+      "score": 0.7420382165605095,
+      "finding_groups": [
+        {
+          "severity": "warning",
+          "threshold": 25,
+          "description": "Classes exceeding god class criteria (methods, LOC, or fan-out)",
+          "entities": [
+            {
+              "entity_name": "src.heretek_swarm.actors.arbiter.ArbiterAgent",
+              "file_path": "src/heretek_swarm/actors/arbiter.py",
+              "metric_value": 1675.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.config.service.ConfigurationService",
+              "file_path": "src/heretek_swarm/config/service.py",
+              "metric_value": 1491.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent",
+              "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
+              "metric_value": 1345.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.base.AgentActor",
+              "file_path": "src/heretek_swarm/actors/base.py",
+              "metric_value": 1319.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.prism.PrismAgent",
+              "file_path": "src/heretek_swarm/actors/prism.py",
+              "metric_value": 1243.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.collective.swarm_intelligence.SwarmIntelligenceEngine",
+              "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
+              "metric_value": 1207.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.habit_forge.HabitForgeAgent",
+              "file_path": "src/heretek_swarm/actors/habit_forge.py",
+              "metric_value": 1142.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent",
+              "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
+              "metric_value": 1123.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.consensus.audit.ConsensusAuditTrail",
+              "file_path": "src/heretek_swarm/consensus/audit.py",
+              "metric_value": 1094.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.consensus.maker_enhanced.EnhancedMAKERConsensus",
+              "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
+              "metric_value": 1043.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.chronos.ChronosAgent",
+              "file_path": "src/heretek_swarm/actors/chronos.py",
+              "metric_value": 1041.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.perceiver.PerceiverAgent",
+              "file_path": "src/heretek_swarm/actors/perceiver.py",
+              "metric_value": 1018.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.examiner.ExaminerAgent",
+              "file_path": "src/heretek_swarm/actors/examiner.py",
+              "metric_value": 1015.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.historian.HistorianAgent",
+              "file_path": "src/heretek_swarm/actors/historian.py",
+              "metric_value": 1013.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.collective.emergent_detection.EmergentPatternDetector",
+              "file_path": "src/heretek_swarm/collective/emergent_detection.py",
+              "metric_value": 990.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.coordinator.CoordinatorAgent",
+              "file_path": "src/heretek_swarm/actors/coordinator.py",
+              "metric_value": 989.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.nexus.NexusAgent",
+              "file_path": "src/heretek_swarm/actors/nexus.py",
+              "metric_value": 984.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.catalyst.CatalystAgent",
+              "file_path": "src/heretek_swarm/actors/catalyst.py",
+              "metric_value": 977.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.coder.CoderAgent",
+              "file_path": "src/heretek_swarm/actors/coder.py",
+              "metric_value": 972.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.dreamer.DreamerAgent",
+              "file_path": "src/heretek_swarm/actors/dreamer.py",
+              "metric_value": 970.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.orchestration.heavyswarm.HeavySwarmWorkflow",
+              "file_path": "src/heretek_swarm/orchestration/heavyswarm.py",
+              "metric_value": 954.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.empath.EmpathAgent",
+              "file_path": "src/heretek_swarm/actors/empath.py",
+              "metric_value": 949.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.explorer.ExplorerAgent",
+              "file_path": "src/heretek_swarm/actors/explorer.py",
+              "metric_value": 942.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.collective.agent_adaptation.PatternBasedAgentAdaptor",
+              "file_path": "src/heretek_swarm/collective/agent_adaptation.py",
+              "metric_value": 925.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.collective.society.AgentSociety",
+              "file_path": "src/heretek_swarm/collective/society.py",
+              "metric_value": 909.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.collective.learning.PatternExtractor",
+              "file_path": "src/heretek_swarm/collective/learning.py",
+              "metric_value": 898.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.metis.MetisAgent",
+              "file_path": "src/heretek_swarm/actors/metis.py",
+              "metric_value": 897.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.memory.tiering.MemoryTieringSystem",
+              "file_path": "src/heretek_swarm/memory/tiering.py",
+              "metric_value": 826.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.echo.EchoActor",
+              "file_path": "src/heretek_swarm/actors/echo.py",
+              "metric_value": 816.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.consciousness.iit_phi.PhiCalculator",
+              "file_path": "src/heretek_swarm/consciousness/iit_phi.py",
+              "metric_value": 806.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.collective.knowledge_transform.KnowledgeTransformer",
+              "file_path": "src/heretek_swarm/collective/knowledge_transform.py",
+              "metric_value": 805.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.collective.distributed_learning.DistributedLearningEngine",
+              "file_path": "src/heretek_swarm/collective/distributed_learning.py",
+              "metric_value": 793.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.collective.metrics.CollectiveIntelligenceMetrics",
+              "file_path": "src/heretek_swarm/collective/metrics.py",
+              "metric_value": 788.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.plugins.consciousness.ConsciousnessPlugin",
+              "file_path": "src/heretek_swarm/plugins/consciousness.py",
+              "metric_value": 770.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.gateway.jetstream_manager.JetStreamManager",
+              "file_path": "src/heretek_swarm/gateway/jetstream_manager.py",
+              "metric_value": 759.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.consensus.expertise.AgentExpertiseProfiler",
+              "file_path": "src/heretek_swarm/consensus/expertise.py",
+              "metric_value": 757.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.consensus.swarm_deliberation.SwarmDeliberationEngine",
+              "file_path": "src/heretek_swarm/consensus/swarm_deliberation.py",
+              "metric_value": 753.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.sentinel.SentinelAgent",
+              "file_path": "src/heretek_swarm/actors/sentinel.py",
+              "metric_value": 745.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.collective.adaptive_learning.AdaptiveLearningRateController",
+              "file_path": "src/heretek_swarm/collective/adaptive_learning.py",
+              "metric_value": 725.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.collective.pattern_library.PatternLibrary",
+              "file_path": "src/heretek_swarm/collective/pattern_library.py",
+              "metric_value": 667.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh",
+              "file_path": "src/heretek_swarm/gateway/nats_event_mesh.py",
+              "metric_value": 659.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.integrations.crewai.CrewAIAdapter",
+              "file_path": "src/heretek_swarm/integrations/crewai.py",
+              "metric_value": 655.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.integrations.autogen.AutoGenAdapter",
+              "file_path": "src/heretek_swarm/integrations/autogen.py",
+              "metric_value": 654.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.integrations.openai_assistants.OpenAIAssistantsAdapter",
+              "file_path": "src/heretek_swarm/integrations/openai_assistants.py",
+              "metric_value": 647.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.workflow.engine.WorkflowEngine",
+              "file_path": "src/heretek_swarm/workflow/engine.py",
+              "metric_value": 637.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime",
+              "file_path": "src/heretek_swarm/runtime/autonomous_runtime.py",
+              "metric_value": 632.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.consensus.deliberation.DeliberationEngine",
+              "file_path": "src/heretek_swarm/consensus/deliberation.py",
+              "metric_value": 626.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.consciousness.fep_active_inference.FreeEnergyCalculator",
+              "file_path": "src/heretek_swarm/consciousness/fep_active_inference.py",
+              "metric_value": 619.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.integrations.manager.IntegrationManager",
+              "file_path": "src/heretek_swarm/integrations/manager.py",
+              "metric_value": 613.0
+            },
+            {
+              "entity_name": "src.state.manager.StateManager",
+              "file_path": "src/state/manager.py",
+              "metric_value": 610.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.memory.access_patterns.AccessPatternAnalyzer",
+              "file_path": "src/heretek_swarm/memory/access_patterns.py",
+              "metric_value": 599.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.integrations.langgraph.LangGraphAdapter",
+              "file_path": "src/heretek_swarm/integrations/langgraph.py",
+              "metric_value": 598.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.integrations.slack_bot.SlackBot",
+              "file_path": "src/heretek_swarm/integrations/slack_bot.py",
+              "metric_value": 597.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.rag.hybrid_retriever.HybridRetriever",
+              "file_path": "src/heretek_swarm/rag/hybrid_retriever.py",
+              "metric_value": 574.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.state.event_store.EventStore",
+              "file_path": "src/heretek_swarm/state/event_store.py",
+              "metric_value": 558.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.plugins.consciousness_metrics.ConsciousnessMetricsCalculator",
+              "file_path": "src/heretek_swarm/plugins/consciousness_metrics.py",
+              "metric_value": 533.0
+            },
+            {
+              "entity_name": "src.memory.persistent.PersistentMemoryStore",
+              "file_path": "src/memory/persistent.py",
+              "metric_value": 532.0
+            },
+            {
+              "entity_name": "src.memory.unified.DualTierMemorySystem",
+              "file_path": "src/memory/unified.py",
+              "metric_value": 524.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.consciousness.phi_training.PhiTrainingEnvironment",
+              "file_path": "src/heretek_swarm/consciousness/phi_training.py",
+              "metric_value": 511.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.runtime.registry_enhanced.EnhancedAgentRegistry",
+              "file_path": "src/heretek_swarm/runtime/registry_enhanced.py",
+              "metric_value": 511.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.consensus.raft_election.RaftElection",
+              "file_path": "src/heretek_swarm/consensus/raft_election.py",
+              "metric_value": 506.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol",
+              "file_path": "src/heretek_swarm/gateway/a2a_protocol.py",
+              "metric_value": 499.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.runtime.main_loop.AutonomousSwarm",
+              "file_path": "src/heretek_swarm/runtime/main_loop.py",
+              "metric_value": 492.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.state.repository.StateRepository",
+              "file_path": "src/heretek_swarm/state/repository.py",
+              "metric_value": 484.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.supervisor.ActorSupervisor",
+              "file_path": "src/heretek_swarm/actors/supervisor.py",
+              "metric_value": 479.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.integrations.anthropic.AnthropicAdapter",
+              "file_path": "src/heretek_swarm/integrations/anthropic.py",
+              "metric_value": 479.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.consciousness.fep_active_inference.ActiveInferenceAgent",
+              "file_path": "src/heretek_swarm/consciousness/fep_active_inference.py",
+              "metric_value": 477.0
+            },
+            {
+              "entity_name": "src.rag.document_processor.DocumentProcessor",
+              "file_path": "src/rag/document_processor.py",
+              "metric_value": 477.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.knowledge.unified_access.UnifiedKnowledgeAccess",
+              "file_path": "src/heretek_swarm/knowledge/unified_access.py",
+              "metric_value": 470.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.plugins.liberation.LiberationShield",
+              "file_path": "src/heretek_swarm/plugins/liberation.py",
+              "metric_value": 468.0
+            },
+            {
+              "entity_name": "src.tools.registry.ToolRegistry",
+              "file_path": "src/tools/registry.py",
+              "metric_value": 466.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.consensus.maker.MAKERConsensus",
+              "file_path": "src/heretek_swarm/consensus/maker.py",
+              "metric_value": 465.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.workflow.validator.WorkflowValidator",
+              "file_path": "src/heretek_swarm/workflow/validator.py",
+              "metric_value": 461.0
+            },
+            {
+              "entity_name": "src.state.snapshots.SnapshotManager",
+              "file_path": "src/state/snapshots.py",
+              "metric_value": 444.0
+            },
+            {
+              "entity_name": "src.state.lineage.LineageTracker",
+              "file_path": "src/state/lineage.py",
+              "metric_value": 441.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.profiling.BehaviorProfiler",
+              "file_path": "src/heretek_swarm/actors/profiling.py",
+              "metric_value": 439.0
+            },
+            {
+              "entity_name": "src.memory.ephemeral.EphemeralMemoryStore",
+              "file_path": "src/memory/ephemeral.py",
+              "metric_value": 435.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.gateway.message_replay.MessageReplayManager",
+              "file_path": "src/heretek_swarm/gateway/message_replay.py",
+              "metric_value": 428.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.workflow.cycle_detector.WorkflowCycleDetector",
+              "file_path": "src/heretek_swarm/workflow/cycle_detector.py",
+              "metric_value": 422.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.config.loader.ConfigLoader",
+              "file_path": "src/heretek_swarm/config/loader.py",
+              "metric_value": 404.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.memory.prefetcher.IntelligentPrefetcher",
+              "file_path": "src/heretek_swarm/memory/prefetcher.py",
+              "metric_value": 31.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "check_name": "circular_dependencies",
+      "description": "Detects circular dependencies between packages",
+      "language": "Python",
+      "check_type": "circular_dependencies",
+      "cycles": [
+        "src.heretek_swarm.actors -> src.heretek_swarm.collective -> src.heretek_swarm.actors"
+      ],
+      "packages_checked": 36,
+      "packages_in_cycles": 2
+    },
+    {
+      "check_name": "package_instability",
+      "description": "Computes Martin's instability metric (I = Ce / (Ca + Ce)) per package",
+      "language": "Python",
+      "check_type": "standard",
+      "total_entities_checked": 25,
+      "findings_count": 1,
+      "warning_count": 1,
+      "score": 0.96,
+      "finding_groups": [
+        {
+          "severity": "warning",
+          "threshold": 0.8,
+          "description": "Packages with instability >= 0.8 that are depended on by others",
+          "entities": [
+            {
+              "entity_name": "src.heretek_swarm.runtime",
+              "metric_value": 0.8
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "check_name": "component_cohesion",
+      "description": "Measures internal vs external edge ratio per component/cluster",
+      "language": "Python",
+      "check_type": "standard",
+      "total_entities_checked": 272,
+      "findings_count": 0,
+      "warning_count": 0,
+      "score": 1.0,
+      "finding_groups": []
+    },
+    {
+      "check_name": "unused_code_diagnostics",
+      "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
+      "language": "Python",
+      "check_type": "standard",
+      "total_entities_checked": 0,
+      "findings_count": 0,
+      "warning_count": 0,
+      "score": 1.0,
+      "finding_groups": []
+    },
+    {
+      "check_name": "function_size",
+      "description": "Checks that functions/methods do not exceed line count thresholds",
+      "language": "TypeScript",
+      "check_type": "standard",
+      "total_entities_checked": 2354,
+      "findings_count": 32,
+      "warning_count": 32,
+      "score": 0.9864061172472387,
+      "finding_groups": [
+        {
+          "severity": "warning",
+          "threshold": 150,
+          "description": "Functions exceeding 150.0 lines",
+          "entities": [
+            {
+              "entity_name": "dashboard.frontend.src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder",
+              "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
+              "line_start": 56,
+              "line_end": 615,
+              "metric_value": 559
+            },
+            {
+              "entity_name": "src.components.WorkflowBuilder.WorkflowBuilder.WorkflowBuilder",
+              "file_path": "dashboard/frontend/src/components/WorkflowBuilder/WorkflowBuilder.tsx",
+              "line_start": 56,
+              "line_end": 615,
+              "metric_value": 559
+            },
+            {
+              "entity_name": "dashboard.frontend.src.components.Canvas.EnhancedCanvas.EnhancedCanvas",
+              "file_path": "dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx",
+              "line_start": 174,
+              "line_end": 453,
+              "metric_value": 279
+            },
+            {
+              "entity_name": "src.components.Canvas.EnhancedCanvas.EnhancedCanvas",
+              "file_path": "dashboard/frontend/src/components/Canvas/EnhancedCanvas.tsx",
+              "line_start": 174,
+              "line_end": 453,
+              "metric_value": 279
+            },
+            {
+              "entity_name": "dashboard.frontend.src.components.Consciousness.ConsciousnessDashboard.ConsciousnessDashboard",
+              "file_path": "dashboard/frontend/src/components/Consciousness/ConsciousnessDashboard.tsx",
+              "line_start": 22,
+              "line_end": 253,
+              "metric_value": 231
+            },
+            {
+              "entity_name": "src.components.Consciousness.ConsciousnessDashboard.ConsciousnessDashboard",
+              "file_path": "dashboard/frontend/src/components/Consciousness/ConsciousnessDashboard.tsx",
+              "line_start": 22,
+              "line_end": 253,
+              "metric_value": 231
+            },
+            {
+              "entity_name": "dashboard.frontend.src.components.SwarmHealthDashboard.SwarmHealthDashboard",
+              "file_path": "dashboard/frontend/src/components/SwarmHealthDashboard.tsx",
+              "line_start": 64,
+              "line_end": 275,
+              "metric_value": 211
+            },
+            {
+              "entity_name": "src.components.SwarmHealthDashboard.SwarmHealthDashboard",
+              "file_path": "dashboard/frontend/src/components/SwarmHealthDashboard.tsx",
+              "line_start": 64,
+              "line_end": 275,
+              "metric_value": 211
+            },
+            {
+              "entity_name": "dashboard.frontend.src.components.Agents.AgentsPage.AgentsPage",
+              "file_path": "dashboard/frontend/src/components/Agents/AgentsPage.tsx",
+              "line_start": 47,
+              "line_end": 254,
+              "metric_value": 207
+            },
+            {
+              "entity_name": "src.components.Agents.AgentsPage.AgentsPage",
+              "file_path": "dashboard/frontend/src/components/Agents/AgentsPage.tsx",
+              "line_start": 47,
+              "line_end": 254,
+              "metric_value": 207
+            },
+            {
+              "entity_name": "dashboard.frontend.src.components.Home.HomePage.HomePage",
+              "file_path": "dashboard/frontend/src/components/Home/HomePage.tsx",
+              "line_start": 62,
+              "line_end": 257,
+              "metric_value": 195
+            },
+            {
+              "entity_name": "src.components.Home.HomePage.HomePage",
+              "file_path": "dashboard/frontend/src/components/Home/HomePage.tsx",
+              "line_start": 62,
+              "line_end": 257,
+              "metric_value": 195
+            },
+            {
+              "entity_name": "dashboard.frontend.src.components.Dashboard.Dashboard.Dashboard",
+              "file_path": "dashboard/frontend/src/components/Dashboard/Dashboard.tsx",
+              "line_start": 72,
+              "line_end": 263,
+              "metric_value": 191
+            },
+            {
+              "entity_name": "src.components.Dashboard.Dashboard.Dashboard",
+              "file_path": "dashboard/frontend/src/components/Dashboard/Dashboard.tsx",
+              "line_start": 72,
+              "line_end": 263,
+              "metric_value": 191
+            },
+            {
+              "entity_name": "dashboard.frontend.src.hooks.useNodeGrouping.useNodeGrouping",
+              "file_path": "dashboard/frontend/src/hooks/useNodeGrouping.ts",
+              "line_start": 277,
+              "line_end": 462,
+              "metric_value": 185
+            },
+            {
+              "entity_name": "src.hooks.useNodeGrouping.useNodeGrouping",
+              "file_path": "dashboard/frontend/src/hooks/useNodeGrouping.ts",
+              "line_start": 277,
+              "line_end": 462,
+              "metric_value": 185
+            },
+            {
+              "entity_name": "dashboard.frontend.src.components.Settings.EmbeddingProvidersSection.EmbeddingProvidersSection",
+              "file_path": "dashboard/frontend/src/components/Settings/EmbeddingProvidersSection.tsx",
+              "line_start": 47,
+              "line_end": 228,
+              "metric_value": 181
+            },
+            {
+              "entity_name": "src.components.Settings.EmbeddingProvidersSection.EmbeddingProvidersSection",
+              "file_path": "dashboard/frontend/src/components/Settings/EmbeddingProvidersSection.tsx",
+              "line_start": 47,
+              "line_end": 228,
+              "metric_value": 181
+            },
+            {
+              "entity_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection",
+              "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
+              "line_start": 48,
+              "line_end": 224,
+              "metric_value": 176
+            },
+            {
+              "entity_name": "src.components.Settings.LLMProvidersSection.LLMProvidersSection",
+              "file_path": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
+              "line_start": 48,
+              "line_end": 224,
+              "metric_value": 176
+            },
+            {
+              "entity_name": "dashboard.frontend.src.hooks.useAgentHandles.useAgentHandles",
+              "file_path": "dashboard/frontend/src/hooks/useAgentHandles.ts",
+              "line_start": 116,
+              "line_end": 284,
+              "metric_value": 168
+            },
+            {
+              "entity_name": "src.hooks.useAgentHandles.useAgentHandles",
+              "file_path": "dashboard/frontend/src/hooks/useAgentHandles.ts",
+              "line_start": 116,
+              "line_end": 284,
+              "metric_value": 168
+            },
+            {
+              "entity_name": "dashboard.frontend.src.components.Dashboard.UnifiedDashboard.UnifiedDashboard",
+              "file_path": "dashboard/frontend/src/components/Dashboard/UnifiedDashboard.tsx",
+              "line_start": 63,
+              "line_end": 228,
+              "metric_value": 165
+            },
+            {
+              "entity_name": "src.components.Dashboard.UnifiedDashboard.UnifiedDashboard",
+              "file_path": "dashboard/frontend/src/components/Dashboard/UnifiedDashboard.tsx",
+              "line_start": 63,
+              "line_end": 228,
+              "metric_value": 165
+            },
+            {
+              "entity_name": "dashboard.frontend.src.hooks.useRealTimeAgentUpdates.useRealTimeAgentUpdates",
+              "file_path": "dashboard/frontend/src/hooks/useRealTimeAgentUpdates.ts",
+              "line_start": 186,
+              "line_end": 349,
+              "metric_value": 163
+            },
+            {
+              "entity_name": "src.hooks.useRealTimeAgentUpdates.useRealTimeAgentUpdates",
+              "file_path": "dashboard/frontend/src/hooks/useRealTimeAgentUpdates.ts",
+              "line_start": 186,
+              "line_end": 349,
+              "metric_value": 163
+            },
+            {
+              "entity_name": "dashboard.frontend.src.components.Consciousness.ConsciousnessPage.ConsciousnessPage",
+              "file_path": "dashboard/frontend/src/components/Consciousness/ConsciousnessPage.tsx",
+              "line_start": 45,
+              "line_end": 206,
+              "metric_value": 161
+            },
+            {
+              "entity_name": "src.components.Consciousness.ConsciousnessPage.ConsciousnessPage",
+              "file_path": "dashboard/frontend/src/components/Consciousness/ConsciousnessPage.tsx",
+              "line_start": 45,
+              "line_end": 206,
+              "metric_value": 161
+            },
+            {
+              "entity_name": "dashboard.frontend.src.components.AgentMetricsGrid.AgentMetricsGrid",
+              "file_path": "dashboard/frontend/src/components/AgentMetricsGrid.tsx",
+              "line_start": 42,
+              "line_end": 202,
+              "metric_value": 160
+            },
+            {
+              "entity_name": "src.components.AgentMetricsGrid.AgentMetricsGrid",
+              "file_path": "dashboard/frontend/src/components/AgentMetricsGrid.tsx",
+              "line_start": 42,
+              "line_end": 202,
+              "metric_value": 160
+            },
+            {
+              "entity_name": "dashboard.frontend.src.components.ConsciousnessMetricsPanel.ConsciousnessMetricsPanel",
+              "file_path": "dashboard/frontend/src/components/ConsciousnessMetricsPanel.tsx",
+              "line_start": 45,
+              "line_end": 201,
+              "metric_value": 156
+            },
+            {
+              "entity_name": "src.components.ConsciousnessMetricsPanel.ConsciousnessMetricsPanel",
+              "file_path": "dashboard/frontend/src/components/ConsciousnessMetricsPanel.tsx",
+              "line_start": 45,
+              "line_end": 201,
+              "metric_value": 156
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "check_name": "fan_out",
+      "description": "Checks efferent coupling: how many other functions each function calls",
+      "language": "TypeScript",
+      "check_type": "standard",
+      "total_entities_checked": 3470,
+      "findings_count": 0,
+      "warning_count": 0,
+      "score": 1.0,
+      "finding_groups": []
+    },
+    {
+      "check_name": "fan_in",
+      "description": "Checks afferent coupling: how many other functions call each function",
+      "language": "TypeScript",
+      "check_type": "standard",
+      "total_entities_checked": 3470,
+      "findings_count": 2,
+      "warning_count": 2,
+      "score": 0.9994236311239193,
+      "finding_groups": [
+        {
+          "severity": "warning",
+          "threshold": 10,
+          "description": "Functions called by more than 10.0 other functions",
+          "entities": [
+            {
+              "entity_name": "dashboard.frontend.src.components.UI.Toast.useToast",
+              "file_path": "dashboard/frontend/src/components/UI/Toast.tsx",
+              "line_start": 36,
+              "line_end": 42,
+              "metric_value": 11
+            },
+            {
+              "entity_name": "src.components.UI.Toast.useToast",
+              "file_path": "dashboard/frontend/src/components/UI/Toast.tsx",
+              "line_start": 36,
+              "line_end": 42,
+              "metric_value": 11
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "check_name": "god_class",
+      "description": "Detects classes with too many methods, too much code, or too many outgoing dependencies",
+      "language": "TypeScript",
+      "check_type": "standard",
+      "total_entities_checked": 36,
+      "findings_count": 2,
+      "warning_count": 2,
+      "score": 0.9444444444444444,
+      "finding_groups": [
+        {
+          "severity": "warning",
+          "threshold": 25,
+          "description": "Classes exceeding god class criteria (methods, LOC, or fan-out)",
+          "entities": [
+            {
+              "entity_name": "dashboard.frontend.src.api.configuration.configurationApi",
+              "file_path": "dashboard/frontend/src/api/configuration.ts",
+              "metric_value": 27.0
+            },
+            {
+              "entity_name": "src.api.configuration.configurationApi",
+              "file_path": "dashboard/frontend/src/api/configuration.ts",
+              "metric_value": 27.0
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "check_name": "circular_dependencies",
+      "description": "Detects circular dependencies between packages",
+      "language": "TypeScript",
+      "check_type": "circular_dependencies",
+      "cycles": [
+        "src.components.Agents -> src.api -> src.components.Agents",
+        "src.components.Agents -> src.api -> src.components.UI -> src.components.Agents",
+        "src.components.Agents -> src.api -> src.components.UI -> src.components.Settings -> src.components.Agents",
+        "src.components.Agents -> src.components.Settings -> src.api -> src.components.Agents",
+        "src.components.Agents -> src.components.Settings -> src.api -> src.components.UI -> src.components.Agents",
+        "src.components.Agents -> src.components.Settings -> src.components.Agents",
+        "src.components.Agents -> src.components.Settings -> src.components.UI -> src.components.Agents",
+        "src.components.Agents -> src.components.UI -> src.components.Agents",
+        "src.components.Agents -> src.components.UI -> src.components.Settings -> src.api -> src.components.Agents",
+        "src.components.Agents -> src.components.UI -> src.components.Settings -> src.components.Agents",
+        "src.components.UI -> src.components.Settings -> src.api -> src.components.UI",
+        "src.components.UI -> src.components.Settings -> src.components.UI",
+        "dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api",
+        "dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api",
+        "dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api",
+        "dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api",
+        "dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api",
+        "dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api",
+        "dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api",
+        "dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings",
+        "dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings",
+        "dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings",
+        "dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings",
+        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents"
+      ],
+      "packages_checked": 46,
+      "packages_in_cycles": 8
+    },
+    {
+      "check_name": "package_instability",
+      "description": "Computes Martin's instability metric (I = Ce / (Ca + Ce)) per package",
+      "language": "TypeScript",
+      "check_type": "standard",
+      "total_entities_checked": 30,
+      "findings_count": 0,
+      "warning_count": 0,
+      "score": 1.0,
+      "finding_groups": []
+    },
+    {
+      "check_name": "component_cohesion",
+      "description": "Measures internal vs external edge ratio per component/cluster",
+      "language": "TypeScript",
+      "check_type": "standard",
+      "total_entities_checked": 44,
+      "findings_count": 0,
+      "warning_count": 0,
+      "score": 1.0,
+      "finding_groups": []
+    },
+    {
+      "check_name": "unused_code_diagnostics",
+      "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
+      "language": "TypeScript",
+      "check_type": "standard",
+      "total_entities_checked": 41,
+      "findings_count": 41,
+      "warning_count": 0,
+      "score": 0.0,
+      "finding_groups": [
+        {
+          "severity": "info",
+          "threshold": 0,
+          "description": "Variables declared but never used",
+          "entities": [
+            {
+              "entity_name": "[unused_variable] 'ReactFlow' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 9,
+              "line_end": 9,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'Background' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 10,
+              "line_end": 10,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'Controls' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 12,
+              "line_end": 12,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'MiniMap' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 14,
+              "line_end": 14,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'ReactFlowProvider' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 16,
+              "line_end": 16,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'agentInfo' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 108,
+              "line_end": 108,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'getStatusColor' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 110,
+              "line_end": 110,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Left side of comma operator is unused and has no side effects.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 124,
+              "line_end": 124,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Left side of comma operator is unused and has no side effects.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 153,
+              "line_end": 153,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Left side of comma operator is unused and has no side effects.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 154,
+              "line_end": 154,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'onNodesChange' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 182,
+              "line_end": 182,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'onEdgesChange' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 183,
+              "line_end": 183,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'selectedNode' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 184,
+              "line_end": 184,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'showSaveModal' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 186,
+              "line_end": 186,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'showLoadModal' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 187,
+              "line_end": 187,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'llmRoutingOpen' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 189,
+              "line_end": 189,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'reactFlowWrapper' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 190,
+              "line_end": 190,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'onNodeClick' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 206,
+              "line_end": 206,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'onConnect' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 210,
+              "line_end": 210,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'onDragOver' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 222,
+              "line_end": 222,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'onDrop' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 227,
+              "line_end": 227,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'handleSave' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 252,
+              "line_end": 252,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'handleLoad' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 270,
+              "line_end": 270,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'handleDeleteWorkflow' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 277,
+              "line_end": 277,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'handleExport' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 283,
+              "line_end": 283,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'handleImport' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 294,
+              "line_end": 294,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'updateNodeModel' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 335,
+              "line_end": 335,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'triad' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 355,
+              "line_end": 355,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'info' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 378,
+              "line_end": 378,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Left side of comma operator is unused and has no side effects.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 401,
+              "line_end": 401,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Left side of comma operator is unused and has no side effects.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 425,
+              "line_end": 425,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Left side of comma operator is unused and has no side effects.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 427,
+              "line_end": 427,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Left side of comma operator is unused and has no side effects.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 428,
+              "line_end": 428,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Left side of comma operator is unused and has no side effects.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 429,
+              "line_end": 429,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'info' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 597,
+              "line_end": 597,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Left side of comma operator is unused and has no side effects.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 621,
+              "line_end": 621,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Unused label.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 123,
+              "line_end": 123,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Unused label.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 135,
+              "line_end": 135,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Unused label.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 360,
+              "line_end": 360,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Unused label.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 430,
+              "line_end": 430,
+              "metric_value": 0.0
+            }
+          ]
+        },
+        {
+          "severity": "info",
+          "threshold": 0,
+          "description": "Code that cannot be reached during execution",
+          "entities": [
+            {
+              "entity_name": "[unreachable_code] Unreachable code detected.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 347,
+              "line_end": 358,
+              "metric_value": 0.0
+            }
+          ]
+        }
+      ]
+    }
+  ],
+  "file_summaries": [
+    {
+      "file_path": "src/heretek_swarm/actors/base.py",
+      "total_findings": 7,
+      "warning_findings": 7,
+      "composite_risk_score": 85.0
+    },
+    {
+      "file_path": "src/heretek_swarm/memory/access_patterns.py",
+      "total_findings": 6,
+      "warning_findings": 6,
+      "composite_risk_score": 80.0
+    },
+    {
+      "file_path": "src/heretek_swarm/consensus/swarm_deliberation.py",
+      "total_findings": 6,
+      "warning_findings": 6,
+      "composite_risk_score": 80.0
+    },
+    {
+      "file_path": "src/heretek_swarm/collective/learning.py",
+      "total_findings": 4,
+      "warning_findings": 4,
+      "composite_risk_score": 60.0
+    },
+    {
+      "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+      "total_findings": 41,
+      "warning_findings": 0,
+      "composite_risk_score": 50.0
+    },
+    {
+      "file_path": "src/heretek_swarm/orchestration/heavyswarm.py",
+      "total_findings": 3,
+      "warning_findings": 3,
+      "composite_risk_score": 45.0
+    },
+    {
+      "file_path": "src/heretek_swarm/memory/tiering.py",
+      "total_findings": 3,
+      "warning_findings": 3,
+      "composite_risk_score": 45.0
+    },
+    {
+      "file_path": "src/heretek_swarm/actors/arbiter.py",
+      "total_findings": 3,
+      "warning_findings": 3,
+      "composite_risk_score": 45.0
+    },
+    {
+      "file_path": "serverless/handler.py",
+      "total_findings": 3,
+      "warning_findings": 3,
+      "composite_risk_score": 45.0
+    },
+    {
+      "file_path": "src/heretek_swarm/consciousness/fep_active_inference.py",
+      "total_findings": 3,
+      "warning_findings": 3,
+      "composite_risk_score": 45.0
+    },
+    {
+      "file_path": "src/heretek_swarm/actors/nexus.py",
+      "total_findings": 3,
+      "warning_findings": 3,
+      "composite_risk_score": 45.0
+    },
+    {
+      "file_path": "src/heretek_swarm/actors/catalyst.py",
+      "total_findings": 3,
+      "warning_findings": 3,
+      "composite_risk_score": 45.0
+    },
+    {
+      "file_path": "src/heretek_swarm/actors/chronos.py",
+      "total_findings": 3,
+      "warning_findings": 3,
+      "composite_risk_score": 45.0
+    },
+    {
+      "file_path": "src/heretek_swarm/actors/handoff.py",
+      "total_findings": 2,
+      "warning_findings": 2,
+      "composite_risk_score": 30.0
+    },
+    {
+      "file_path": "src/heretek_swarm/workflow/validator.py",
+      "total_findings": 2,
+      "warning_findings": 2,
+      "composite_risk_score": 30.0
+    },
+    {
+      "file_path": "src/heretek_swarm/collective/knowledge_transform.py",
+      "total_findings": 2,
+      "warning_findings": 2,
+      "composite_risk_score": 30.0
+    },
+    {
+      "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
+      "total_findings": 2,
+      "warning_findings": 2,
+      "composite_risk_score": 30.0
+    },
+    {
+      "file_path": "src/heretek_swarm/api/observability.py",
+      "total_findings": 2,
+      "warning_findings": 2,
+      "composite_risk_score": 30.0
+    },
+    {
+      "file_path": "src/heretek_swarm/rag/hybrid_retriever.py",
+      "total_findings": 2,
+      "warning_findings": 2,
+      "composite_risk_score": 30.0
+    },
+    {
+      "file_path": "src/heretek_swarm/workflow/engine.py",
+      "total_findings": 2,
+      "warning_findings": 2,
+      "composite_risk_score": 30.0
+    }
+  ]
+}
