@@ -10,6 +10,7 @@ Provides REST API for:
 - Validating workflows
 """
 
+import uuid
 from typing import Any
 
 import structlog
@@ -22,9 +23,6 @@ from heretek_swarm.workflow.validator import WorkflowValidator
 logger = structlog.get_logger(__name__)
 
 router = APIRouter(prefix="/api/workflows", tags=["workflows"])
-
-# In-memory storage for workflows (in production, use database)
-_workflows: dict[str, Workflow] = {}
 
 
 @router.post("", status_code=201)
@@ -48,7 +46,7 @@ async def create_workflow(
     workflow = await engine.load_workflow(workflow_definition)
 
     # Store workflow
-    _workflows[workflow.id] = workflow
+    engine.workflows[workflow.id] = workflow
 
     logger.info("workflow_created", workflow_id=workflow.id, name=workflow.name)
 
@@ -183,7 +181,7 @@ async def delete_workflow(
         raise HTTPException(status_code=404, detail="Workflow not found")
 
     # Remove from storage
-    del _workflows[workflow_id]
+    del engine.workflows[workflow_id]
 
     logger.info("workflow_deleted", workflow_id=workflow_id)
 
@@ -207,7 +205,7 @@ async def get_workflow_status(
     """
     engine = get_workflow_engine()
 
-    execution_id = f"exec_{workflow_id}_{workflow_id}"
+    execution_id = f"exec_{workflow_id}_{uuid.uuid4().hex[:8]}"
 
     context = engine.active_executions.get(execution_id)
 
@@ -247,7 +245,7 @@ async def cancel_workflow(
     """
     engine = get_workflow_engine()
 
-    execution_id = f"exec_{workflow_id}_{workflow_id}"
+    execution_id = f"exec_{workflow_id}_{uuid.uuid4().hex[:8]}"
 
     success = await engine.cancel_workflow(execution_id)
 

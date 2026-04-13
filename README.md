@@ -287,6 +287,104 @@ The React-based dashboard provides:
 
 ---
 
+## 🔌 System Wiring Diagram
+
+```
+┌─────────────────────────────────────────────────────────────────────────────────┐
+│                              HERETEK SWARM ARCHITECTURE                           │
+└─────────────────────────────────────────────────────────────────────────────────┘
+
+  ┌──────────────────────────────────────────────────────────────────────────────┐
+  │                           EXTERNAL CLIENTS                                   │
+  │                    (Browser / API Consumers)                                 │
+  └──────────────────────────────────────────────────────────────────────────────┘
+                                        │
+                                        ▼
+  ┌──────────────────────────────────────────────────────────────────────────────┐
+  │                        FRONTEND DASHBOARD (:3000→:80)                        │
+  │  ┌─────────────┐  ┌──────────────┐  ┌─────────────┐  ┌─────────────────┐   │
+  │  │SetupWizard │  │ FlowCanvas   │  │ Consciousness│  │  SettingsPage  │   │
+  │  │ (api_key)  │  │(WorkflowMgr)│  │ Dashboard   │  │ (LLM providers)│   │
+  │  └─────────────┘  └──────────────┘  └─────────────┘  └─────────────────┘   │
+  │         │                │                │                  │                │
+  │         └────────────────┼────────────────┼──────────────────┘                │
+  │                          │                │                                  │
+  │                          ▼                ▼                                  │
+  │                   ┌─────────────────────────────┐                           │
+  │                   │     Zustand Stores        │                           │
+  │                   │  setupStore | configStore│                           │
+  │                   └─────────────────────────────┘                           │
+  └──────────────────────────────────────────────────────────────────────────────┘
+                                        │
+                                        │ HTTP/REST + WebSocket
+                                        ▼
+  ┌──────────────────────────────────────────────────────────────────────────────┐
+  │                         FASTAPI BACKEND (:8000)                             │
+  │  ┌─────────────┐  ┌──────────────┐  ┌─────────────┐  ┌─────────────────┐   │
+  │  │/api/agents │  │/api/workflows│  │/api/conscious│  │/api/config    │   │
+  │  │  (CRUD)    │  │ (CRUD+exec)  │  │   (metrics) │  │ (providers)   │   │
+  │  └─────────────┘  └──────────────┘  └─────────────┘  └─────────────────┘   │
+  │         │                │                │                  │                │
+  │         └────────────────┼────────────────┼──────────────────┘                │
+  │                          │                │                                  │
+  │                          ▼                ▼                                  │
+  │                   ┌─────────────────────────────────┐                    │
+  │                   │     NATS Event Mesh (:4222)      │                    │
+  │                   │  (Actors communicate via A2A)    │                    │
+  │                   └─────────────────────────────────┘                    │
+  │                                    │                                       │
+  │         ┌───────────────────────────┼───────────────────────────┐           │
+  │         │                           │                           │           │
+  │         ▼                           ▼                           ▼           │
+  │  ┌─────────────┐          ┌─────────────┐          ┌─────────────┐      │
+  │  │  23 AGENTS │          │   STATE    │          │  CONSENSUS  │      │
+  │  │ (perceiver │◄────────►│  MANAGER   │◄────────►│  TRIBUNAL   │      │
+  │  │  steward   │          │ (PostgreSQL│          │  (voting)   │      │
+  │  │  coder...) │          │  + Redis)  │          │             │      │
+  │  └─────────────┘          └─────────────┘          └─────────────┘      │
+  │         │                                                                │
+  │         ▼                                                                │
+  │  ┌─────────────────────────────────────────────────────────────────┐    │
+  │  │                     MEMORY SYSTEM (Mem0)                         │    │
+  │  │  ┌───────────┐  ┌───────────┐  ┌───────────┐  ┌───────────────┐ │    │
+  │  │  │Episodic   │  │Semantic   │  │Working   │  │Procedural    │ │    │
+  │  │  │(PostgreSQL│  │(Qdrant)  │  │(Redis)   │  │(File-based)  │ │    │
+  │  │  │ :5432)    │  │ :6333     │  │ :6379    │  │              │ │    │
+  │  │  └───────────┘  └───────────┘  └───────────┘  └───────────────┘ │    │
+  │  └─────────────────────────────────────────────────────────────────┘    │
+  └──────────────────────────────────────────────────────────────────────────────┘
+
+  EXTERNAL SERVICES (Docker Compose):
+  ┌─────────────┐  ┌───────────┐  ┌───────────┐  ┌─────────────────┐
+  │PostgreSQL  │  │   Redis   │  │  Qdrant   │  │  NATS (:4222)  │
+  │  :5432     │  │   :6379   │  │  :6333    │  │                │
+  │ (mem0+state│  │  (cache)  │  │ (vectors)│  │  (event mesh) │
+  └─────────────┘  └───────────┘  └───────────┘  └─────────────────┘
+```
+
+### Data Flow Summary
+
+| Path | Flow | Storage |
+|------|------|---------|
+| **Frontend → API** | HTTP REST / WebSocket | - |
+| **API → NATS** | Publish/Subscribe events | - |
+| **NATS → Agents** | A2A message routing | - |
+| **Agent State** | Actor → StateManager | PostgreSQL |
+| **Agent Memory** | Mem0 tiering | PostgreSQL + Qdrant + Redis |
+| **Workflow Executions** | engine.execute_workflow() | engine.active_executions (memory) |
+| **Consciousness Metrics** | GWT broadcast | Redis pub/sub |
+
+### Key Configuration Keys (Frontend ↔ Backend)
+
+| Key | Storage | Used By | Purpose |
+|-----|---------|---------|---------|
+| `api_key` | localStorage | All API clients | Authentication |
+| `api_url` | localStorage | App.tsx | Backend URL (default: `/api`) |
+| `llm_provider` | localStorage | SettingsPage | Active LLM provider |
+| `active_workflow_id` | Zustand store | Canvas components | Current workflow |
+
+---
+
 ## 📊 Security Architecture
 
 ### Zero-Trust Implementation

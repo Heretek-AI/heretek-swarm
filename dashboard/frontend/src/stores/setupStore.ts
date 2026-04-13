@@ -231,7 +231,7 @@ export const useSetupStore = create<SetupState>()(
         // Clear all setup-related localStorage
         localStorage.removeItem('swarm_api_host');
         localStorage.removeItem('swarm_ws_host');
-        localStorage.removeItem('swarm_api_key');
+        localStorage.removeItem('api_key');
         localStorage.removeItem('swarm_configured');
         
         set({

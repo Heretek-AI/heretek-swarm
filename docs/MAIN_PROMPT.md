@@ -57,7 +57,7 @@ Phase IV:  Self-Sustaining DevOps (Autopoiesis)
 Phase V:   Emergent Intelligence & Measurement
 ```
 
-## Current State (As of 2026-04-12)
+## Current State (As of 2026-04-13)
 
 | Metric | Value |
 |--------|-------|
@@ -72,11 +72,18 @@ Phase V:   Emergent Intelligence & Measurement
 - S110: Silent exception swallowing
 - Mem0Config missing `get_mem0_config()`
 - Mem0Backend wrapper class created
+- **Frontend API key storage inconsistency** - `EnhancedCanvas.tsx`, `setupStore.ts`, `wizard.ts` now use consistent `api_key` localStorage key
+- **Backend workflow storage inconsistency** - `workflows.py` now stores/retrieves from `engine.workflows` consistently (NOT module-level `_workflows` dict)
+- **Backend malformed execution_id** - `workflows.py` now generates unique IDs with `uuid.uuid4().hex[:8]`
 
-**Remaining Issues:**
-- State tests: 4 API mismatches (FIXED: Empath NameError)
-- RAG tests: External dependencies (Qdrant, OpenAI)
+**P0 Issues Remaining:**
+- State tests: 4 API mismatches
+- RAG module: Stub with no fallback (runtime crash if `rag` package missing)
 - NATS→Actor bridge: Not wired
+- Silent exception swallowing in `observability.py`
+- Encryption silently disabled if cryptography package missing
+
+**See `docs/CODEBASE_AUDIT.md` for full audit report (score: 65/100)**
 
 ---
 
@@ -292,11 +299,18 @@ pytest --cov=src --cov-report=term-missing
 
 ## Priority Order
 
-1. **FIX: Empath NameError** - `src/heretek_swarm/actors/empath.py`
-2. **FIX: State test APIs** - `src/heretek_swarm/state/models.py`
-3. **WIRE: NATS to Actors** - `src/heretek_swarm/infrastructure/nats/actor_bridge.py`
-4. **IMPL: Steward heartbeat** - `src/heretek_swarm/actors/steward.py`
-5. **IMPL: Global Workspace** - `src/heretek_swarm/collective/global_workspace.py`
+1. **FIX: State test APIs** - `src/heretek_swarm/state/models.py`
+2. **WIRE: NATS to Actors** - `src/heretek_swarm/infrastructure/nats/actor_bridge.py`
+3. **IMPL: Steward heartbeat** - `src/heretek_swarm/actors/steward.py`
+4. **IMPL: Global Workspace** - `src/heretek_swarm/collective/global_workspace.py`
+5. **FIX: Silent exception swallowing** - `src/heretek_swarm/api/observability.py`
+6. **FIX: RAG module stub** - Add fallback or implement properly
+
+## COMPLETED (2026-04-13)
+
+1. **FIX: Frontend API key storage inconsistency** - `EnhancedCanvas.tsx`, `setupStore.ts`, `wizard.ts`
+2. **FIX: Backend workflow storage inconsistency** - `workflows.py` now uses `engine.workflows` consistently
+3. **FIX: Backend malformed execution_id** - `workflows.py` now uses `uuid.uuid4().hex[:8]` for uniqueness
 
 ---
 
@@ -304,10 +318,10 @@ pytest --cov=src --cov-report=term-missing
 
 When you receive this prompt:
 
-1. **READ** `PRIME_DIRECTIVE.md`, `PATH_TO_EMERGENCE.md`, `SWARM_STATE.md`
+1. **READ** `PRIME_DIRECTIVE.md`, `CODEBASE_AUDIT.md`, `SWARM_STATE.md`
 2. **RUN** test suite to understand current state: `pytest tests/ -x -q --tb=short`
-3. **FIX** the Empath NameError first
-4. **FIX** the 4 state test API mismatches
+3. **FIX** the state test API mismatches (see CODEBASE_AUDIT.md)
+4. **FIX** silent exception swallowing in `observability.py`
 5. **UPDATE** this document with completion status
 6. **REPORT** next immediate actions
 
