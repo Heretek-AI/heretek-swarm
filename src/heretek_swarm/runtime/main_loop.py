@@ -18,6 +18,7 @@ Based on architecture from:
 
 import asyncio
 import contextlib
+import os
 from datetime import UTC, datetime
 from typing import Any
 
@@ -299,14 +300,14 @@ class AutonomousSwarm:
                 nats_subject = self.channel_registry.get_nats_subject(channel_name)
 
                 # Create subscription handler
-                async def create_handler(aid: str, ch_name: str):
-                    async def handler(message: dict[str, Any]):
-                        await self._handle_channel_message(aid, ch_name, message)
-                    return handler
+                async def create_callback(aid: str, ch_name: str):
+                    async def callback(mesh, subject, data):
+                        await self._handle_channel_message(aid, ch_name, data)
+                    return callback
 
                 await self.event_mesh.subscribe(
                     subject=nats_subject,
-                    handler=await create_handler(agent_id, channel_name),
+                    callback=await create_callback(agent_id, channel_name),
                 )
 
             logger.debug(
@@ -428,7 +429,7 @@ class AutonomousSwarm:
                     "timestamp": datetime.now(UTC).isoformat(),
                     "active_actors": len(self.supervisor.actors),
                     "mailbox_sizes": {
-                        agent_id: actor.mailbox_size
+                        agent_id: getattr(actor, 'mailbox', asyncio.Queue()).qsize()
                         for agent_id, actor in self.supervisor.actors.items()
                     },
                     "system_status": "healthy",

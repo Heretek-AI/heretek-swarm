@@ -192,6 +192,8 @@ class ChronosAgent(AgentActor, PatternMixin, DeliberationMixin, MemoryMixin, Lea
             config=config or {},
         )
 
+        self._config: dict[str, Any] = {}
+
         # Task scheduling
         self._tasks: dict[str, ScheduledTask] = {}
         self._task_queue: list[tuple[datetime, str]] = []  # (scheduled_at, task_id)

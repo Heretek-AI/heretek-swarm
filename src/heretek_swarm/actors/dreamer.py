@@ -136,6 +136,8 @@ class DreamerAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, 
             **kwargs,
         )
 
+        self._config: dict[str, Any] = {}
+
         # Idea storage
         self._ideas: dict[str, CreativeIdea] = {}
         self._idea_counter = 0

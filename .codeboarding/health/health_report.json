@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-13T14:00:49.579248+00:00",
-  "overall_score": 0.9932603478318046,
+  "timestamp": "2026-04-13T14:28:48.808706+00:00",
+  "overall_score": 0.9929012751413172,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -982,8 +982,8 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 23,
-      "findings_count": 23,
+      "total_entities_checked": 34,
+      "findings_count": 34,
       "warning_count": 1,
       "score": 0.0,
       "finding_groups": [
@@ -995,8 +995,15 @@
             {
               "entity_name": "[unused_variable] \"topics\" is not accessed",
               "file_path": "src/heretek_swarm/runtime/main_loop.py",
-              "line_start": 248,
-              "line_end": 248,
+              "line_start": 249,
+              "line_end": 249,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"mesh\" is not accessed",
+              "file_path": "src/heretek_swarm/runtime/main_loop.py",
+              "line_start": 304,
+              "line_end": 304,
               "metric_value": 0.0
             },
             {
@@ -1079,50 +1086,50 @@
             {
               "entity_name": "[unused_variable] \"content\" is not accessed",
               "file_path": "src/heretek_swarm/memory/base.py",
-              "line_start": 783,
-              "line_end": 783,
+              "line_start": 817,
+              "line_end": 817,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"query\" is not accessed",
               "file_path": "src/heretek_swarm/memory/base.py",
-              "line_start": 787,
-              "line_end": 787,
+              "line_start": 821,
+              "line_end": 821,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"target_type\" is not accessed",
               "file_path": "src/heretek_swarm/actors/examiner.py",
-              "line_start": 803,
-              "line_end": 803,
+              "line_start": 804,
+              "line_end": 804,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"target\" is not accessed",
               "file_path": "src/heretek_swarm/actors/examiner.py",
-              "line_start": 828,
-              "line_end": 828,
+              "line_start": 829,
+              "line_end": 829,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"target\" is not accessed",
               "file_path": "src/heretek_swarm/actors/examiner.py",
-              "line_start": 833,
-              "line_end": 833,
+              "line_start": 834,
+              "line_end": 834,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"target\" is not accessed",
               "file_path": "src/heretek_swarm/actors/examiner.py",
-              "line_start": 838,
-              "line_end": 838,
+              "line_start": 839,
+              "line_end": 839,
               "metric_value": 0.0
             },
             {
               "entity_name": "[unused_variable] \"target\" is not accessed",
               "file_path": "src/heretek_swarm/actors/examiner.py",
-              "line_start": 843,
-              "line_end": 843,
+              "line_start": 844,
+              "line_end": 844,
               "metric_value": 0.0
             },
             {
@@ -1144,6 +1151,76 @@
               "file_path": "src/heretek_swarm/actors/base.py",
               "line_start": 1401,
               "line_end": 1401,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"swarms_agent\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/dreamer.py",
+              "line_start": 125,
+              "line_end": 125,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"context\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/dreamer.py",
+              "line_start": 718,
+              "line_end": 718,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"context\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/dreamer.py",
+              "line_start": 747,
+              "line_end": 747,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"context\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/dreamer.py",
+              "line_start": 777,
+              "line_end": 777,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"context\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/dreamer.py",
+              "line_start": 796,
+              "line_end": 796,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"pattern_extractor\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/catalyst.py",
+              "line_start": 160,
+              "line_end": 160,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"deliberation_engine\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/catalyst.py",
+              "line_start": 161,
+              "line_end": 161,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"access_analyzer\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/catalyst.py",
+              "line_start": 162,
+              "line_end": 162,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"zero_trust_validator\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/catalyst.py",
+              "line_start": 163,
+              "line_end": 163,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"issue\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/prism.py",
+              "line_start": 483,
+              "line_end": 483,
               "metric_value": 0.0
             }
           ]
@@ -1568,6 +1645,12 @@
       "composite_risk_score": 80.0
     },
     {
+      "file_path": "src/heretek_swarm/actors/catalyst.py",
+      "total_findings": 7,
+      "warning_findings": 3,
+      "composite_risk_score": 65.0
+    },
+    {
       "file_path": "src/heretek_swarm/collective/learning.py",
       "total_findings": 4,
       "warning_findings": 4,
@@ -1578,6 +1661,18 @@
       "total_findings": 6,
       "warning_findings": 1,
       "composite_risk_score": 55.0
+    },
+    {
+      "file_path": "src/heretek_swarm/actors/dreamer.py",
+      "total_findings": 6,
+      "warning_findings": 1,
+      "composite_risk_score": 55.0
+    },
+    {
+      "file_path": "src/heretek_swarm/runtime/main_loop.py",
+      "total_findings": 4,
+      "warning_findings": 2,
+      "composite_risk_score": 50.0
     },
     {
       "file_path": "mem0_server/main.py",
@@ -1622,22 +1717,10 @@
       "composite_risk_score": 45.0
     },
     {
-      "file_path": "src/heretek_swarm/actors/catalyst.py",
-      "total_findings": 3,
-      "warning_findings": 3,
-      "composite_risk_score": 45.0
-    },
-    {
       "file_path": "src/heretek_swarm/actors/chronos.py",
       "total_findings": 3,
       "warning_findings": 3,
       "composite_risk_score": 45.0
-    },
-    {
-      "file_path": "src/heretek_swarm/runtime/main_loop.py",
-      "total_findings": 3,
-      "warning_findings": 2,
-      "composite_risk_score": 40.0
     },
     {
       "file_path": "src/heretek_swarm/actors/handoff.py",
@@ -1659,12 +1742,6 @@
     },
     {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
-      "total_findings": 2,
-      "warning_findings": 2,
-      "composite_risk_score": 30.0
-    },
-    {
-      "file_path": "src/heretek_swarm/api/observability.py",
       "total_findings": 2,
       "warning_findings": 2,
       "composite_risk_score": 30.0

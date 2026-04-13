@@ -139,12 +139,8 @@ services:
       - swarm_logs:/var/log/heretek-swarm
     networks:
       - default
-    healthcheck:
-      test: ["CMD", "curl", "-f", "http://localhost:8000/api/health"]
-      interval: 30s
-      timeout: 10s
-      retries: 3
-      start_period: 60s
+    # No healthcheck - the running process itself indicates health
+    # Autonomous runtime is a long-running loop, not a HTTP service
     profiles:
       - autonomous
 

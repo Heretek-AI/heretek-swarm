@@ -167,6 +167,8 @@ class CatalystAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
             config=config or {},
         )
 
+        self._config: dict[str, Any] = {}
+
         # Change management
         self._changes: dict[str, ChangeRequest] = {}
         self._max_changes: int = self._config.get("max_changes", 500)

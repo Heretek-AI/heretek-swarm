@@ -209,6 +209,10 @@ class PerceiverPlusAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningM
         max_analyses: int = 100,
         confidence_threshold: float = 0.7,
         significance_level: float = 0.05,
+        pattern_extractor=None,
+        deliberation_engine=None,
+        access_analyzer=None,
+        zero_trust_validator=None,
         **kwargs,
     ) -> None:
         """
@@ -222,6 +226,10 @@ class PerceiverPlusAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningM
             max_analyses: Maximum analyses to store
             confidence_threshold: Minimum confidence for reporting
             significance_level: Statistical significance threshold
+            pattern_extractor: Optional pattern extractor
+            deliberation_engine: Optional deliberation engine
+            access_analyzer: Optional access analyzer
+            zero_trust_validator: Optional zero trust validator
             **kwargs: Additional arguments
         """
         super().__init__(
@@ -277,10 +285,12 @@ class PerceiverPlusAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningM
     async def initialize(self) -> None:
         """Initialize the Perceiver+ agent."""
         # Initialize unified knowledge access layer
-        if self.memory_system or self.rag_pipeline:
+        memory_system = getattr(self, 'memory_system', None)
+        rag_pipeline = getattr(self, 'rag_pipeline', None)
+        if memory_system or rag_pipeline:
             self.knowledge_access = UnifiedKnowledgeAccess(
-                memory_system=self.memory_system,
-                rag_pipeline=self.rag_pipeline,
+                memory_system=memory_system,
+                rag_pipeline=rag_pipeline,
             )
             logger.info(f"[{self.agent_id}] Unified knowledge access initialized")
 

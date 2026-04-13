@@ -175,6 +175,7 @@ class ExaminerAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
             access_analyzer=access_analyzer,
             zero_trust_validator=zero_trust_validator,
         )
+        self._config: dict[str, Any] = {}
 
         # Test execution state
         self._test_suites: dict[str, TestSuite] = {}

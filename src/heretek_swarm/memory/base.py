@@ -772,6 +772,40 @@ class DualTierMemory:
             + persistent_stats["persistent_total"],
         }
 
+    async def run_maintenance(self) -> dict[str, Any]:
+        """
+        Run maintenance tasks on both memory tiers.
+
+        Cleans up expired entries from ephemeral memory.
+
+        Returns:
+            Maintenance statistics
+        """
+        if not self._initialized:
+            await self.initialize()
+
+        maintenance_stats = {
+            "ephemeral_evicted": 0,
+            "persistent_vacuumed": False,
+        }
+
+        # Evict expired entries from ephemeral
+        ephemeral_storage = getattr(self.ephemeral, "_storage", {})
+        expired_ids = [
+            mid for mid, entry in ephemeral_storage.items()
+            if self.ephemeral._is_expired(entry)
+        ]
+        for mid in expired_ids:
+            await self.ephemeral.delete(mid)
+            maintenance_stats["ephemeral_evicted"] += 1
+
+        logger.debug(
+            "memory_maintenance_completed",
+            evicted=maintenance_stats["ephemeral_evicted"],
+        )
+
+        return maintenance_stats
+
 
 class DualTierMemorySystem:
     """Dual-tier memory system stub for test compatibility."""

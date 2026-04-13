@@ -193,6 +193,8 @@ class NexusAgent(AgentActor, PatternMixin, DeliberationMixin, MemoryMixin, Learn
             config=config or {},
         )
 
+        self._config: dict[str, Any] = {}
+
         # Connection management
         self._connections: dict[str, ExternalConnection] = {}
         self._max_connections: int = self._config.get("max_connections", 50)

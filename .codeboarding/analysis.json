@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-13T14:00:49.221856+00:00",
+    "generated_at": "2026-04-13T14:28:48.436826+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 4,
@@ -1269,14 +1269,14 @@
         {
           "qualified_name": "src.heretek_swarm.actors.catalyst.CatalystAgent",
           "start_line": 131,
-          "end_line": 1112,
+          "end_line": 904,
           "node_type": "CLASS",
           "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.catalyst.CatalystAgent.__init__",
           "start_line": 155,
-          "end_line": 189,
+          "end_line": 191,
           "node_type": "METHOD",
           "status": "modified"
         },
@@ -1390,63 +1390,63 @@
           "start_line": 913,
           "end_line": 946,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.catalyst.CatalystAgent._consume_change_patterns",
           "start_line": 948,
           "end_line": 961,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.catalyst.CatalystAgent._initiate_deliberation_for_change",
           "start_line": 967,
           "end_line": 990,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.catalyst.CatalystAgent._submit_deliberation_position",
           "start_line": 992,
           "end_line": 1027,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.catalyst.CatalystAgent._finalize_deliberation",
           "start_line": 1029,
           "end_line": 1059,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.catalyst.CatalystAgent._track_change_memory_access",
           "start_line": 1065,
           "end_line": 1075,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.catalyst.CatalystAgent._get_change_memory_tier",
           "start_line": 1077,
           "end_line": 1084,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.catalyst.CatalystAgent._prefetch_relevant_changes",
           "start_line": 1086,
           "end_line": 1100,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.catalyst.CatalystAgent.get_learning_status",
           "start_line": 1102,
           "end_line": 1117,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.catalyst.CatalystAgent._send_error",
@@ -1519,16 +1519,16 @@
         {
           "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent",
           "start_line": 155,
-          "end_line": 1028,
+          "end_line": 1030,
           "node_type": "CLASS",
           "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent.__init__",
-          "start_line": 175,
-          "end_line": 233,
+          "start_line": 179,
+          "end_line": 239,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent.initialize",
@@ -1797,14 +1797,14 @@
         {
           "qualified_name": "src.heretek_swarm.actors.coder.CoderAgent",
           "start_line": 152,
-          "end_line": 945,
+          "end_line": 947,
           "node_type": "CLASS",
           "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.coder.CoderAgent.__init__",
           "start_line": 160,
-          "end_line": 212,
+          "end_line": 214,
           "node_type": "METHOD",
           "status": "modified"
         },
@@ -2032,15 +2032,15 @@
         },
         {
           "qualified_name": "src.heretek_swarm.actors.coordinator.CoordinatorAgent",
-          "start_line": 129,
-          "end_line": 932,
+          "start_line": 125,
+          "end_line": 930,
           "node_type": "CLASS",
           "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.coordinator.CoordinatorAgent.__init__",
-          "start_line": 153,
-          "end_line": 185,
+          "start_line": 149,
+          "end_line": 183,
           "node_type": "METHOD",
           "status": "modified"
         },
@@ -2276,14 +2276,14 @@
         {
           "qualified_name": "src.heretek_swarm.actors.dreamer.DreamerAgent",
           "start_line": 112,
-          "end_line": 916,
+          "end_line": 918,
           "node_type": "CLASS",
           "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.dreamer.DreamerAgent.__init__",
           "start_line": 120,
-          "end_line": 180,
+          "end_line": 182,
           "node_type": "METHOD",
           "status": "modified"
         },
@@ -3026,14 +3026,14 @@
         {
           "qualified_name": "src.heretek_swarm.actors.examiner.ExaminerAgent",
           "start_line": 153,
-          "end_line": 1114,
+          "end_line": 1115,
           "node_type": "CLASS",
           "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.examiner.ExaminerAgent.__init__",
           "start_line": 161,
-          "end_line": 203,
+          "end_line": 204,
           "node_type": "METHOD",
           "status": "modified"
         },
@@ -5135,15 +5135,15 @@
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent",
-          "start_line": 168,
-          "end_line": 960,
+          "start_line": 161,
+          "end_line": 955,
           "node_type": "CLASS",
           "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent.__init__",
-          "start_line": 193,
-          "end_line": 227,
+          "start_line": 186,
+          "end_line": 222,
           "node_type": "METHOD",
           "status": "modified"
         },
@@ -5684,24 +5684,24 @@
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent",
-          "start_line": 185,
-          "end_line": 1479,
+          "start_line": 183,
+          "end_line": 1487,
           "node_type": "CLASS",
           "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent.__init__",
-          "start_line": 205,
-          "end_line": 277,
+          "start_line": 203,
+          "end_line": 283,
           "node_type": "METHOD",
           "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent.initialize",
-          "start_line": 283,
-          "end_line": 304,
+          "start_line": 285,
+          "end_line": 308,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent.process_message",
@@ -6004,15 +6004,15 @@
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent",
-          "start_line": 153,
-          "end_line": 1383,
+          "start_line": 149,
+          "end_line": 1226,
           "node_type": "CLASS",
           "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent.__init__",
-          "start_line": 173,
-          "end_line": 246,
+          "start_line": 169,
+          "end_line": 250,
           "node_type": "METHOD",
           "status": "modified"
         },
@@ -6133,49 +6133,49 @@
           "start_line": 1077,
           "end_line": 1098,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent._consume_patterns",
           "start_line": 1100,
           "end_line": 1113,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent._initiate_deliberation",
           "start_line": 1119,
           "end_line": 1144,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent._submit_deliberation_position",
           "start_line": 1146,
           "end_line": 1181,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent._finalize_deliberation",
           "start_line": 1183,
           "end_line": 1203,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent._track_memory_access",
           "start_line": 1209,
           "end_line": 1219,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent._get_memory_tier",
           "start_line": 1221,
           "end_line": 1228,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent.get_learning_status",
@@ -22448,7 +22448,7 @@
         {
           "qualified_name": "src.heretek_swarm.memory.base.DualTierMemory",
           "start_line": 619,
-          "end_line": 773,
+          "end_line": 807,
           "node_type": "CLASS",
           "status": "modified"
         },
@@ -22526,6 +22526,13 @@
           "qualified_name": "src.heretek_swarm.memory.base.DualTierMemorySystem.query",
           "start_line": 768,
           "end_line": 770,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.memory.base.DualTierMemory.run_maintenance",
+          "start_line": 775,
+          "end_line": 807,
           "node_type": "METHOD",
           "status": "added"
         }
@@ -26561,8 +26568,8 @@
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.runtime.main_loop.AutonomousSwarm",
-          "start_line": 37,
-          "end_line": 550,
+          "start_line": 38,
+          "end_line": 551,
           "node_type": "CLASS",
           "status": "modified"
         },
@@ -26603,24 +26610,38 @@
         },
         {
           "qualified_name": "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._setup_channel_subscriptions",
-          "start_line": 287,
-          "end_line": 318,
+          "start_line": 286,
+          "end_line": 317,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._setup_channel_subscriptions.create_callback",
+          "start_line": 303,
+          "end_line": 306,
+          "node_type": "FUNCTION",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._setup_channel_subscriptions.create_callback.callback",
+          "start_line": 304,
+          "end_line": 305,
+          "node_type": "FUNCTION",
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._setup_channel_subscriptions.create_handler",
           "start_line": 304,
           "end_line": 307,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._setup_channel_subscriptions.create_handler.handler",
           "start_line": 305,
           "end_line": 306,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._handle_channel_message",
@@ -26673,10 +26694,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._health_monitor_loop",
-          "start_line": 416,
-          "end_line": 442,
+          "start_line": 423,
+          "end_line": 449,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._consciousness_loop",
@@ -50913,7 +50934,7 @@
       "file_path": "src/heretek_swarm/actors/catalyst.py",
       "qualified_name": "src.heretek_swarm.actors.catalyst.CatalystAgent",
       "start_line": 131,
-      "end_line": 1112,
+      "end_line": 904,
       "type": "CLASS",
       "status": "modified"
     },
@@ -50921,7 +50942,7 @@
       "file_path": "src/heretek_swarm/actors/catalyst.py",
       "qualified_name": "src.heretek_swarm.actors.catalyst.CatalystAgent.__init__",
       "start_line": 155,
-      "end_line": 189,
+      "end_line": 191,
       "type": "METHOD",
       "status": "modified"
     },
@@ -51051,7 +51072,7 @@
       "start_line": 913,
       "end_line": 946,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/catalyst.py|src.heretek_swarm.actors.catalyst.CatalystAgent._consume_change_patterns": {
       "file_path": "src/heretek_swarm/actors/catalyst.py",
@@ -51059,7 +51080,7 @@
       "start_line": 948,
       "end_line": 961,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/catalyst.py|src.heretek_swarm.actors.catalyst.CatalystAgent._initiate_deliberation_for_change": {
       "file_path": "src/heretek_swarm/actors/catalyst.py",
@@ -51067,7 +51088,7 @@
       "start_line": 967,
       "end_line": 990,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/catalyst.py|src.heretek_swarm.actors.catalyst.CatalystAgent._submit_deliberation_position": {
       "file_path": "src/heretek_swarm/actors/catalyst.py",
@@ -51075,7 +51096,7 @@
       "start_line": 992,
       "end_line": 1027,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/catalyst.py|src.heretek_swarm.actors.catalyst.CatalystAgent._finalize_deliberation": {
       "file_path": "src/heretek_swarm/actors/catalyst.py",
@@ -51083,7 +51104,7 @@
       "start_line": 1029,
       "end_line": 1059,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/catalyst.py|src.heretek_swarm.actors.catalyst.CatalystAgent._track_change_memory_access": {
       "file_path": "src/heretek_swarm/actors/catalyst.py",
@@ -51091,7 +51112,7 @@
       "start_line": 1065,
       "end_line": 1075,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/catalyst.py|src.heretek_swarm.actors.catalyst.CatalystAgent._get_change_memory_tier": {
       "file_path": "src/heretek_swarm/actors/catalyst.py",
@@ -51099,7 +51120,7 @@
       "start_line": 1077,
       "end_line": 1084,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/catalyst.py|src.heretek_swarm.actors.catalyst.CatalystAgent._prefetch_relevant_changes": {
       "file_path": "src/heretek_swarm/actors/catalyst.py",
@@ -51107,7 +51128,7 @@
       "start_line": 1086,
       "end_line": 1100,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/catalyst.py|src.heretek_swarm.actors.catalyst.CatalystAgent.get_learning_status": {
       "file_path": "src/heretek_swarm/actors/catalyst.py",
@@ -51115,7 +51136,7 @@
       "start_line": 1102,
       "end_line": 1117,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/catalyst.py|src.heretek_swarm.actors.catalyst.CatalystAgent._send_error": {
       "file_path": "src/heretek_swarm/actors/catalyst.py",
@@ -51193,17 +51214,17 @@
       "file_path": "src/heretek_swarm/actors/chronos.py",
       "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent",
       "start_line": 155,
-      "end_line": 1028,
+      "end_line": 1030,
       "type": "CLASS",
       "status": "modified"
     },
     "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.ChronosAgent.__init__": {
       "file_path": "src/heretek_swarm/actors/chronos.py",
       "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent.__init__",
-      "start_line": 175,
-      "end_line": 233,
+      "start_line": 179,
+      "end_line": 239,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.ChronosAgent.initialize": {
       "file_path": "src/heretek_swarm/actors/chronos.py",
@@ -51505,7 +51526,7 @@
       "file_path": "src/heretek_swarm/actors/coder.py",
       "qualified_name": "src.heretek_swarm.actors.coder.CoderAgent",
       "start_line": 152,
-      "end_line": 945,
+      "end_line": 947,
       "type": "CLASS",
       "status": "modified"
     },
@@ -51513,7 +51534,7 @@
       "file_path": "src/heretek_swarm/actors/coder.py",
       "qualified_name": "src.heretek_swarm.actors.coder.CoderAgent.__init__",
       "start_line": 160,
-      "end_line": 212,
+      "end_line": 214,
       "type": "METHOD",
       "status": "modified"
     },
@@ -51768,16 +51789,16 @@
     "src/heretek_swarm/actors/coordinator.py|src.heretek_swarm.actors.coordinator.CoordinatorAgent": {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
       "qualified_name": "src.heretek_swarm.actors.coordinator.CoordinatorAgent",
-      "start_line": 129,
-      "end_line": 932,
+      "start_line": 125,
+      "end_line": 930,
       "type": "CLASS",
       "status": "modified"
     },
     "src/heretek_swarm/actors/coordinator.py|src.heretek_swarm.actors.coordinator.CoordinatorAgent.__init__": {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
       "qualified_name": "src.heretek_swarm.actors.coordinator.CoordinatorAgent.__init__",
-      "start_line": 153,
-      "end_line": 185,
+      "start_line": 149,
+      "end_line": 183,
       "type": "METHOD",
       "status": "modified"
     },
@@ -52041,7 +52062,7 @@
       "file_path": "src/heretek_swarm/actors/dreamer.py",
       "qualified_name": "src.heretek_swarm.actors.dreamer.DreamerAgent",
       "start_line": 112,
-      "end_line": 916,
+      "end_line": 918,
       "type": "CLASS",
       "status": "modified"
     },
@@ -52049,7 +52070,7 @@
       "file_path": "src/heretek_swarm/actors/dreamer.py",
       "qualified_name": "src.heretek_swarm.actors.dreamer.DreamerAgent.__init__",
       "start_line": 120,
-      "end_line": 180,
+      "end_line": 182,
       "type": "METHOD",
       "status": "modified"
     },
@@ -52881,7 +52902,7 @@
       "file_path": "src/heretek_swarm/actors/examiner.py",
       "qualified_name": "src.heretek_swarm.actors.examiner.ExaminerAgent",
       "start_line": 153,
-      "end_line": 1114,
+      "end_line": 1115,
       "type": "CLASS",
       "status": "modified"
     },
@@ -52889,7 +52910,7 @@
       "file_path": "src/heretek_swarm/actors/examiner.py",
       "qualified_name": "src.heretek_swarm.actors.examiner.ExaminerAgent.__init__",
       "start_line": 161,
-      "end_line": 203,
+      "end_line": 204,
       "type": "METHOD",
       "status": "modified"
     },
@@ -55240,16 +55261,16 @@
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.NexusAgent": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
       "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent",
-      "start_line": 168,
-      "end_line": 960,
+      "start_line": 161,
+      "end_line": 955,
       "type": "CLASS",
       "status": "modified"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.NexusAgent.__init__": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
       "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent.__init__",
-      "start_line": 193,
-      "end_line": 227,
+      "start_line": 186,
+      "end_line": 222,
       "type": "METHOD",
       "status": "modified"
     },
@@ -55856,26 +55877,26 @@
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
       "qualified_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent",
-      "start_line": 185,
-      "end_line": 1479,
+      "start_line": 183,
+      "end_line": 1487,
       "type": "CLASS",
       "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent.__init__": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
       "qualified_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent.__init__",
-      "start_line": 205,
-      "end_line": 277,
+      "start_line": 203,
+      "end_line": 283,
       "type": "METHOD",
       "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent.initialize": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
       "qualified_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent.initialize",
-      "start_line": 283,
-      "end_line": 304,
+      "start_line": 285,
+      "end_line": 308,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent.process_message": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
@@ -56216,16 +56237,16 @@
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PrismAgent": {
       "file_path": "src/heretek_swarm/actors/prism.py",
       "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent",
-      "start_line": 153,
-      "end_line": 1383,
+      "start_line": 149,
+      "end_line": 1226,
       "type": "CLASS",
       "status": "modified"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PrismAgent.__init__": {
       "file_path": "src/heretek_swarm/actors/prism.py",
       "qualified_name": "src.heretek_swarm.actors.prism.PrismAgent.__init__",
-      "start_line": 173,
-      "end_line": 246,
+      "start_line": 169,
+      "end_line": 250,
       "type": "METHOD",
       "status": "modified"
     },
@@ -56363,7 +56384,7 @@
       "start_line": 1077,
       "end_line": 1098,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PrismAgent._consume_patterns": {
       "file_path": "src/heretek_swarm/actors/prism.py",
@@ -56371,7 +56392,7 @@
       "start_line": 1100,
       "end_line": 1113,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PrismAgent._initiate_deliberation": {
       "file_path": "src/heretek_swarm/actors/prism.py",
@@ -56379,7 +56400,7 @@
       "start_line": 1119,
       "end_line": 1144,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PrismAgent._submit_deliberation_position": {
       "file_path": "src/heretek_swarm/actors/prism.py",
@@ -56387,7 +56408,7 @@
       "start_line": 1146,
       "end_line": 1181,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PrismAgent._finalize_deliberation": {
       "file_path": "src/heretek_swarm/actors/prism.py",
@@ -56395,7 +56416,7 @@
       "start_line": 1183,
       "end_line": 1203,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PrismAgent._track_memory_access": {
       "file_path": "src/heretek_swarm/actors/prism.py",
@@ -56403,7 +56424,7 @@
       "start_line": 1209,
       "end_line": 1219,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PrismAgent._get_memory_tier": {
       "file_path": "src/heretek_swarm/actors/prism.py",
@@ -56411,7 +56432,7 @@
       "start_line": 1221,
       "end_line": 1228,
       "type": "METHOD",
-      "status": "modified"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/prism.py|src.heretek_swarm.actors.prism.PrismAgent.get_learning_status": {
       "file_path": "src/heretek_swarm/actors/prism.py",
@@ -74553,7 +74574,7 @@
       "file_path": "src/heretek_swarm/memory/base.py",
       "qualified_name": "src.heretek_swarm.memory.base.DualTierMemory",
       "start_line": 619,
-      "end_line": 773,
+      "end_line": 807,
       "type": "CLASS",
       "status": "modified"
     },
@@ -74642,6 +74663,14 @@
       "qualified_name": "src.heretek_swarm.memory.base.DualTierMemorySystem.query",
       "start_line": 768,
       "end_line": 770,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/memory/base.py|src.heretek_swarm.memory.base.DualTierMemory.run_maintenance": {
+      "file_path": "src/heretek_swarm/memory/base.py",
+      "qualified_name": "src.heretek_swarm.memory.base.DualTierMemory.run_maintenance",
+      "start_line": 775,
+      "end_line": 807,
       "type": "METHOD",
       "status": "added"
     },
@@ -79128,8 +79157,8 @@
     "src/heretek_swarm/runtime/main_loop.py|src.heretek_swarm.runtime.main_loop.AutonomousSwarm": {
       "file_path": "src/heretek_swarm/runtime/main_loop.py",
       "qualified_name": "src.heretek_swarm.runtime.main_loop.AutonomousSwarm",
-      "start_line": 37,
-      "end_line": 550,
+      "start_line": 38,
+      "end_line": 551,
       "type": "CLASS",
       "status": "modified"
     },
@@ -79176,10 +79205,26 @@
     "src/heretek_swarm/runtime/main_loop.py|src.heretek_swarm.runtime.main_loop.AutonomousSwarm._setup_channel_subscriptions": {
       "file_path": "src/heretek_swarm/runtime/main_loop.py",
       "qualified_name": "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._setup_channel_subscriptions",
-      "start_line": 287,
-      "end_line": 318,
+      "start_line": 286,
+      "end_line": 317,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
+    },
+    "src/heretek_swarm/runtime/main_loop.py|src.heretek_swarm.runtime.main_loop.AutonomousSwarm._setup_channel_subscriptions.create_callback": {
+      "file_path": "src/heretek_swarm/runtime/main_loop.py",
+      "qualified_name": "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._setup_channel_subscriptions.create_callback",
+      "start_line": 303,
+      "end_line": 306,
+      "type": "FUNCTION",
+      "status": "modified"
+    },
+    "src/heretek_swarm/runtime/main_loop.py|src.heretek_swarm.runtime.main_loop.AutonomousSwarm._setup_channel_subscriptions.create_callback.callback": {
+      "file_path": "src/heretek_swarm/runtime/main_loop.py",
+      "qualified_name": "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._setup_channel_subscriptions.create_callback.callback",
+      "start_line": 304,
+      "end_line": 305,
+      "type": "FUNCTION",
+      "status": "modified"
     },
     "src/heretek_swarm/runtime/main_loop.py|src.heretek_swarm.runtime.main_loop.AutonomousSwarm._setup_channel_subscriptions.create_handler": {
       "file_path": "src/heretek_swarm/runtime/main_loop.py",
@@ -79187,7 +79232,7 @@
       "start_line": 304,
       "end_line": 307,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/runtime/main_loop.py|src.heretek_swarm.runtime.main_loop.AutonomousSwarm._setup_channel_subscriptions.create_handler.handler": {
       "file_path": "src/heretek_swarm/runtime/main_loop.py",
@@ -79195,7 +79240,7 @@
       "start_line": 305,
       "end_line": 306,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/runtime/main_loop.py|src.heretek_swarm.runtime.main_loop.AutonomousSwarm._handle_channel_message": {
       "file_path": "src/heretek_swarm/runtime/main_loop.py",
@@ -79256,10 +79301,10 @@
     "src/heretek_swarm/runtime/main_loop.py|src.heretek_swarm.runtime.main_loop.AutonomousSwarm._health_monitor_loop": {
       "file_path": "src/heretek_swarm/runtime/main_loop.py",
       "qualified_name": "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._health_monitor_loop",
-      "start_line": 416,
-      "end_line": 442,
+      "start_line": 423,
+      "end_line": 449,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/runtime/main_loop.py|src.heretek_swarm.runtime.main_loop.AutonomousSwarm._consciousness_loop": {
       "file_path": "src/heretek_swarm/runtime/main_loop.py",
@@ -104559,15 +104604,6 @@
             "src.heretek_swarm.actors.catalyst.CatalystAgent._calculate_risk_score",
             "src.heretek_swarm.actors.catalyst.CatalystAgent._generate_recommendations",
             "src.heretek_swarm.actors.catalyst.CatalystAgent._record_change_event",
-            "src.heretek_swarm.actors.catalyst.CatalystAgent._emit_change_pattern",
-            "src.heretek_swarm.actors.catalyst.CatalystAgent._consume_change_patterns",
-            "src.heretek_swarm.actors.catalyst.CatalystAgent._initiate_deliberation_for_change",
-            "src.heretek_swarm.actors.catalyst.CatalystAgent._submit_deliberation_position",
-            "src.heretek_swarm.actors.catalyst.CatalystAgent._finalize_deliberation",
-            "src.heretek_swarm.actors.catalyst.CatalystAgent._track_change_memory_access",
-            "src.heretek_swarm.actors.catalyst.CatalystAgent._get_change_memory_tier",
-            "src.heretek_swarm.actors.catalyst.CatalystAgent._prefetch_relevant_changes",
-            "src.heretek_swarm.actors.catalyst.CatalystAgent.get_learning_status",
             "src.heretek_swarm.actors.catalyst.CatalystAgent._send_error",
             "src.heretek_swarm.actors.catalyst.CatalystAgent.get_capabilities"
           ]
@@ -105337,13 +105373,6 @@
             "src.heretek_swarm.actors.prism.PrismAgent._generate_stakeholder_map",
             "src.heretek_swarm.actors.prism.PrismAgent._handle_get_analysis_summary",
             "src.heretek_swarm.actors.prism.PrismAgent._handle_reframe_issue",
-            "src.heretek_swarm.actors.prism.PrismAgent._emit_pattern",
-            "src.heretek_swarm.actors.prism.PrismAgent._consume_patterns",
-            "src.heretek_swarm.actors.prism.PrismAgent._initiate_deliberation",
-            "src.heretek_swarm.actors.prism.PrismAgent._submit_deliberation_position",
-            "src.heretek_swarm.actors.prism.PrismAgent._finalize_deliberation",
-            "src.heretek_swarm.actors.prism.PrismAgent._track_memory_access",
-            "src.heretek_swarm.actors.prism.PrismAgent._get_memory_tier",
             "src.heretek_swarm.actors.prism.PrismAgent.get_learning_status",
             "src.heretek_swarm.actors.prism.PrismAgent._prefetch_relevant",
             "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor",
@@ -108101,7 +108130,8 @@
             "src.heretek_swarm.memory.base.DualTierMemorySystem",
             "src.heretek_swarm.memory.base.DualTierMemorySystem.__init__",
             "src.heretek_swarm.memory.base.DualTierMemorySystem.store",
-            "src.heretek_swarm.memory.base.DualTierMemorySystem.query"
+            "src.heretek_swarm.memory.base.DualTierMemorySystem.query",
+            "src.heretek_swarm.memory.base.DualTierMemory.run_maintenance"
           ]
         },
         {
@@ -108801,8 +108831,8 @@
             "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._spawn_all_actors",
             "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._get_tier",
             "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._setup_channel_subscriptions",
-            "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._setup_channel_subscriptions.create_handler",
-            "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._setup_channel_subscriptions.create_handler.handler",
+            "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._setup_channel_subscriptions.create_callback",
+            "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._setup_channel_subscriptions.create_callback.callback",
             "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._handle_channel_message",
             "src.heretek_swarm.runtime.main_loop.AutonomousSwarm.run",
             "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._process_cycle",
@@ -111507,7 +111537,8 @@
                 "src.heretek_swarm.memory.base.DualTierMemorySystem",
                 "src.heretek_swarm.memory.base.DualTierMemorySystem.__init__",
                 "src.heretek_swarm.memory.base.DualTierMemorySystem.store",
-                "src.heretek_swarm.memory.base.DualTierMemorySystem.query"
+                "src.heretek_swarm.memory.base.DualTierMemorySystem.query",
+                "src.heretek_swarm.memory.base.DualTierMemory.run_maintenance"
               ]
             },
             {
@@ -111795,8 +111826,8 @@
                 "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._spawn_all_actors",
                 "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._get_tier",
                 "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._setup_channel_subscriptions",
-                "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._setup_channel_subscriptions.create_handler",
-                "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._setup_channel_subscriptions.create_handler.handler",
+                "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._setup_channel_subscriptions.create_callback",
+                "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._setup_channel_subscriptions.create_callback.callback",
                 "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._handle_channel_message",
                 "src.heretek_swarm.runtime.main_loop.AutonomousSwarm.run",
                 "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._process_cycle",
@@ -113247,7 +113278,8 @@
                     "src.heretek_swarm.memory.base.DualTierMemorySystem",
                     "src.heretek_swarm.memory.base.DualTierMemorySystem.__init__",
                     "src.heretek_swarm.memory.base.DualTierMemorySystem.store",
-                    "src.heretek_swarm.memory.base.DualTierMemorySystem.query"
+                    "src.heretek_swarm.memory.base.DualTierMemorySystem.query",
+                    "src.heretek_swarm.memory.base.DualTierMemory.run_maintenance"
                   ]
                 },
                 {
@@ -113384,8 +113416,6 @@
                     "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._spawn_all_actors",
                     "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._get_tier",
                     "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._setup_channel_subscriptions",
-                    "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._setup_channel_subscriptions.create_handler",
-                    "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._setup_channel_subscriptions.create_handler.handler",
                     "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._handle_channel_message",
                     "src.heretek_swarm.runtime.main_loop.AutonomousSwarm.run",
                     "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._process_cycle",
@@ -114085,7 +114115,8 @@
                     "src.heretek_swarm.memory.base.DualTierMemorySystem",
                     "src.heretek_swarm.memory.base.DualTierMemorySystem.__init__",
                     "src.heretek_swarm.memory.base.DualTierMemorySystem.store",
-                    "src.heretek_swarm.memory.base.DualTierMemorySystem.query"
+                    "src.heretek_swarm.memory.base.DualTierMemorySystem.query",
+                    "src.heretek_swarm.memory.base.DualTierMemory.run_maintenance"
                   ]
                 },
                 {
@@ -117153,15 +117184,6 @@
                 "src.heretek_swarm.actors.catalyst.CatalystAgent._calculate_risk_score",
                 "src.heretek_swarm.actors.catalyst.CatalystAgent._generate_recommendations",
                 "src.heretek_swarm.actors.catalyst.CatalystAgent._record_change_event",
-                "src.heretek_swarm.actors.catalyst.CatalystAgent._emit_change_pattern",
-                "src.heretek_swarm.actors.catalyst.CatalystAgent._consume_change_patterns",
-                "src.heretek_swarm.actors.catalyst.CatalystAgent._initiate_deliberation_for_change",
-                "src.heretek_swarm.actors.catalyst.CatalystAgent._submit_deliberation_position",
-                "src.heretek_swarm.actors.catalyst.CatalystAgent._finalize_deliberation",
-                "src.heretek_swarm.actors.catalyst.CatalystAgent._track_change_memory_access",
-                "src.heretek_swarm.actors.catalyst.CatalystAgent._get_change_memory_tier",
-                "src.heretek_swarm.actors.catalyst.CatalystAgent._prefetch_relevant_changes",
-                "src.heretek_swarm.actors.catalyst.CatalystAgent.get_learning_status",
                 "src.heretek_swarm.actors.catalyst.CatalystAgent._send_error",
                 "src.heretek_swarm.actors.catalyst.CatalystAgent.get_capabilities"
               ]
@@ -117914,13 +117936,6 @@
                 "src.heretek_swarm.actors.prism.PrismAgent._generate_stakeholder_map",
                 "src.heretek_swarm.actors.prism.PrismAgent._handle_get_analysis_summary",
                 "src.heretek_swarm.actors.prism.PrismAgent._handle_reframe_issue",
-                "src.heretek_swarm.actors.prism.PrismAgent._emit_pattern",
-                "src.heretek_swarm.actors.prism.PrismAgent._consume_patterns",
-                "src.heretek_swarm.actors.prism.PrismAgent._initiate_deliberation",
-                "src.heretek_swarm.actors.prism.PrismAgent._submit_deliberation_position",
-                "src.heretek_swarm.actors.prism.PrismAgent._finalize_deliberation",
-                "src.heretek_swarm.actors.prism.PrismAgent._track_memory_access",
-                "src.heretek_swarm.actors.prism.PrismAgent._get_memory_tier",
                 "src.heretek_swarm.actors.prism.PrismAgent.get_learning_status",
                 "src.heretek_swarm.actors.prism.PrismAgent._prefetch_relevant",
                 "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor",
@@ -119029,7 +119044,8 @@
                 "src.heretek_swarm.memory.base.DualTierMemorySystem",
                 "src.heretek_swarm.memory.base.DualTierMemorySystem.__init__",
                 "src.heretek_swarm.memory.base.DualTierMemorySystem.store",
-                "src.heretek_swarm.memory.base.DualTierMemorySystem.query"
+                "src.heretek_swarm.memory.base.DualTierMemorySystem.query",
+                "src.heretek_swarm.memory.base.DualTierMemory.run_maintenance"
               ]
             },
             {
@@ -119472,15 +119488,6 @@
                     "src.heretek_swarm.actors.catalyst.CatalystAgent._calculate_risk_score",
                     "src.heretek_swarm.actors.catalyst.CatalystAgent._generate_recommendations",
                     "src.heretek_swarm.actors.catalyst.CatalystAgent._record_change_event",
-                    "src.heretek_swarm.actors.catalyst.CatalystAgent._emit_change_pattern",
-                    "src.heretek_swarm.actors.catalyst.CatalystAgent._consume_change_patterns",
-                    "src.heretek_swarm.actors.catalyst.CatalystAgent._initiate_deliberation_for_change",
-                    "src.heretek_swarm.actors.catalyst.CatalystAgent._submit_deliberation_position",
-                    "src.heretek_swarm.actors.catalyst.CatalystAgent._finalize_deliberation",
-                    "src.heretek_swarm.actors.catalyst.CatalystAgent._track_change_memory_access",
-                    "src.heretek_swarm.actors.catalyst.CatalystAgent._get_change_memory_tier",
-                    "src.heretek_swarm.actors.catalyst.CatalystAgent._prefetch_relevant_changes",
-                    "src.heretek_swarm.actors.catalyst.CatalystAgent.get_learning_status",
                     "src.heretek_swarm.actors.catalyst.CatalystAgent._send_error",
                     "src.heretek_swarm.actors.catalyst.CatalystAgent.get_capabilities"
                   ]
@@ -120026,15 +120033,6 @@
                         "src.heretek_swarm.actors.catalyst.CatalystAgent._calculate_risk_score",
                         "src.heretek_swarm.actors.catalyst.CatalystAgent._generate_recommendations",
                         "src.heretek_swarm.actors.catalyst.CatalystAgent._record_change_event",
-                        "src.heretek_swarm.actors.catalyst.CatalystAgent._emit_change_pattern",
-                        "src.heretek_swarm.actors.catalyst.CatalystAgent._consume_change_patterns",
-                        "src.heretek_swarm.actors.catalyst.CatalystAgent._initiate_deliberation_for_change",
-                        "src.heretek_swarm.actors.catalyst.CatalystAgent._submit_deliberation_position",
-                        "src.heretek_swarm.actors.catalyst.CatalystAgent._finalize_deliberation",
-                        "src.heretek_swarm.actors.catalyst.CatalystAgent._track_change_memory_access",
-                        "src.heretek_swarm.actors.catalyst.CatalystAgent._get_change_memory_tier",
-                        "src.heretek_swarm.actors.catalyst.CatalystAgent._prefetch_relevant_changes",
-                        "src.heretek_swarm.actors.catalyst.CatalystAgent.get_learning_status",
                         "src.heretek_swarm.actors.catalyst.CatalystAgent._send_error",
                         "src.heretek_swarm.actors.catalyst.CatalystAgent.get_capabilities"
                       ]
@@ -121227,13 +121225,6 @@
                     "src.heretek_swarm.actors.prism.PrismAgent._generate_stakeholder_map",
                     "src.heretek_swarm.actors.prism.PrismAgent._handle_get_analysis_summary",
                     "src.heretek_swarm.actors.prism.PrismAgent._handle_reframe_issue",
-                    "src.heretek_swarm.actors.prism.PrismAgent._emit_pattern",
-                    "src.heretek_swarm.actors.prism.PrismAgent._consume_patterns",
-                    "src.heretek_swarm.actors.prism.PrismAgent._initiate_deliberation",
-                    "src.heretek_swarm.actors.prism.PrismAgent._submit_deliberation_position",
-                    "src.heretek_swarm.actors.prism.PrismAgent._finalize_deliberation",
-                    "src.heretek_swarm.actors.prism.PrismAgent._track_memory_access",
-                    "src.heretek_swarm.actors.prism.PrismAgent._get_memory_tier",
                     "src.heretek_swarm.actors.prism.PrismAgent.get_learning_status",
                     "src.heretek_swarm.actors.prism.PrismAgent._prefetch_relevant",
                     "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor",
@@ -122516,13 +122507,6 @@
                         "src.heretek_swarm.actors.prism.PrismAgent._generate_stakeholder_map",
                         "src.heretek_swarm.actors.prism.PrismAgent._handle_get_analysis_summary",
                         "src.heretek_swarm.actors.prism.PrismAgent._handle_reframe_issue",
-                        "src.heretek_swarm.actors.prism.PrismAgent._emit_pattern",
-                        "src.heretek_swarm.actors.prism.PrismAgent._consume_patterns",
-                        "src.heretek_swarm.actors.prism.PrismAgent._initiate_deliberation",
-                        "src.heretek_swarm.actors.prism.PrismAgent._submit_deliberation_position",
-                        "src.heretek_swarm.actors.prism.PrismAgent._finalize_deliberation",
-                        "src.heretek_swarm.actors.prism.PrismAgent._track_memory_access",
-                        "src.heretek_swarm.actors.prism.PrismAgent._get_memory_tier",
                         "src.heretek_swarm.actors.prism.PrismAgent.get_learning_status",
                         "src.heretek_swarm.actors.prism.PrismAgent._prefetch_relevant",
                         "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor",
@@ -125240,7 +125224,8 @@
                     "src.heretek_swarm.memory.base.DualTierMemorySystem",
                     "src.heretek_swarm.memory.base.DualTierMemorySystem.__init__",
                     "src.heretek_swarm.memory.base.DualTierMemorySystem.store",
-                    "src.heretek_swarm.memory.base.DualTierMemorySystem.query"
+                    "src.heretek_swarm.memory.base.DualTierMemorySystem.query",
+                    "src.heretek_swarm.memory.base.DualTierMemory.run_maintenance"
                   ]
                 },
                 {
@@ -125489,7 +125474,8 @@
                         "src.heretek_swarm.memory.base.DualTierMemorySystem",
                         "src.heretek_swarm.memory.base.DualTierMemorySystem.__init__",
                         "src.heretek_swarm.memory.base.DualTierMemorySystem.store",
-                        "src.heretek_swarm.memory.base.DualTierMemorySystem.query"
+                        "src.heretek_swarm.memory.base.DualTierMemorySystem.query",
+                        "src.heretek_swarm.memory.base.DualTierMemory.run_maintenance"
                       ]
                     }
                   ],
@@ -126805,15 +126791,6 @@
                 "src.heretek_swarm.actors.catalyst.CatalystAgent._calculate_risk_score",
                 "src.heretek_swarm.actors.catalyst.CatalystAgent._generate_recommendations",
                 "src.heretek_swarm.actors.catalyst.CatalystAgent._record_change_event",
-                "src.heretek_swarm.actors.catalyst.CatalystAgent._emit_change_pattern",
-                "src.heretek_swarm.actors.catalyst.CatalystAgent._consume_change_patterns",
-                "src.heretek_swarm.actors.catalyst.CatalystAgent._initiate_deliberation_for_change",
-                "src.heretek_swarm.actors.catalyst.CatalystAgent._submit_deliberation_position",
-                "src.heretek_swarm.actors.catalyst.CatalystAgent._finalize_deliberation",
-                "src.heretek_swarm.actors.catalyst.CatalystAgent._track_change_memory_access",
-                "src.heretek_swarm.actors.catalyst.CatalystAgent._get_change_memory_tier",
-                "src.heretek_swarm.actors.catalyst.CatalystAgent._prefetch_relevant_changes",
-                "src.heretek_swarm.actors.catalyst.CatalystAgent.get_learning_status",
                 "src.heretek_swarm.actors.catalyst.CatalystAgent._send_error",
                 "src.heretek_swarm.actors.catalyst.CatalystAgent.get_capabilities"
               ]
@@ -127458,13 +127435,6 @@
                 "src.heretek_swarm.actors.prism.PrismAgent._generate_stakeholder_map",
                 "src.heretek_swarm.actors.prism.PrismAgent._handle_get_analysis_summary",
                 "src.heretek_swarm.actors.prism.PrismAgent._handle_reframe_issue",
-                "src.heretek_swarm.actors.prism.PrismAgent._emit_pattern",
-                "src.heretek_swarm.actors.prism.PrismAgent._consume_patterns",
-                "src.heretek_swarm.actors.prism.PrismAgent._initiate_deliberation",
-                "src.heretek_swarm.actors.prism.PrismAgent._submit_deliberation_position",
-                "src.heretek_swarm.actors.prism.PrismAgent._finalize_deliberation",
-                "src.heretek_swarm.actors.prism.PrismAgent._track_memory_access",
-                "src.heretek_swarm.actors.prism.PrismAgent._get_memory_tier",
                 "src.heretek_swarm.actors.prism.PrismAgent.get_learning_status",
                 "src.heretek_swarm.actors.prism.PrismAgent._prefetch_relevant",
                 "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor",
@@ -128426,15 +128396,6 @@
                     "src.heretek_swarm.actors.catalyst.CatalystAgent._calculate_risk_score",
                     "src.heretek_swarm.actors.catalyst.CatalystAgent._generate_recommendations",
                     "src.heretek_swarm.actors.catalyst.CatalystAgent._record_change_event",
-                    "src.heretek_swarm.actors.catalyst.CatalystAgent._emit_change_pattern",
-                    "src.heretek_swarm.actors.catalyst.CatalystAgent._consume_change_patterns",
-                    "src.heretek_swarm.actors.catalyst.CatalystAgent._initiate_deliberation_for_change",
-                    "src.heretek_swarm.actors.catalyst.CatalystAgent._submit_deliberation_position",
-                    "src.heretek_swarm.actors.catalyst.CatalystAgent._finalize_deliberation",
-                    "src.heretek_swarm.actors.catalyst.CatalystAgent._track_change_memory_access",
-                    "src.heretek_swarm.actors.catalyst.CatalystAgent._get_change_memory_tier",
-                    "src.heretek_swarm.actors.catalyst.CatalystAgent._prefetch_relevant_changes",
-                    "src.heretek_swarm.actors.catalyst.CatalystAgent.get_learning_status",
                     "src.heretek_swarm.actors.catalyst.CatalystAgent._send_error",
                     "src.heretek_swarm.actors.catalyst.CatalystAgent.get_capabilities"
                   ]
@@ -129079,13 +129040,6 @@
                     "src.heretek_swarm.actors.prism.PrismAgent._generate_stakeholder_map",
                     "src.heretek_swarm.actors.prism.PrismAgent._handle_get_analysis_summary",
                     "src.heretek_swarm.actors.prism.PrismAgent._handle_reframe_issue",
-                    "src.heretek_swarm.actors.prism.PrismAgent._emit_pattern",
-                    "src.heretek_swarm.actors.prism.PrismAgent._consume_patterns",
-                    "src.heretek_swarm.actors.prism.PrismAgent._initiate_deliberation",
-                    "src.heretek_swarm.actors.prism.PrismAgent._submit_deliberation_position",
-                    "src.heretek_swarm.actors.prism.PrismAgent._finalize_deliberation",
-                    "src.heretek_swarm.actors.prism.PrismAgent._track_memory_access",
-                    "src.heretek_swarm.actors.prism.PrismAgent._get_memory_tier",
                     "src.heretek_swarm.actors.prism.PrismAgent.get_learning_status",
                     "src.heretek_swarm.actors.prism.PrismAgent._prefetch_relevant",
                     "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor",
@@ -129560,15 +129514,6 @@
                     "src.heretek_swarm.actors.catalyst.CatalystAgent._calculate_risk_score",
                     "src.heretek_swarm.actors.catalyst.CatalystAgent._generate_recommendations",
                     "src.heretek_swarm.actors.catalyst.CatalystAgent._record_change_event",
-                    "src.heretek_swarm.actors.catalyst.CatalystAgent._emit_change_pattern",
-                    "src.heretek_swarm.actors.catalyst.CatalystAgent._consume_change_patterns",
-                    "src.heretek_swarm.actors.catalyst.CatalystAgent._initiate_deliberation_for_change",
-                    "src.heretek_swarm.actors.catalyst.CatalystAgent._submit_deliberation_position",
-                    "src.heretek_swarm.actors.catalyst.CatalystAgent._finalize_deliberation",
-                    "src.heretek_swarm.actors.catalyst.CatalystAgent._track_change_memory_access",
-                    "src.heretek_swarm.actors.catalyst.CatalystAgent._get_change_memory_tier",
-                    "src.heretek_swarm.actors.catalyst.CatalystAgent._prefetch_relevant_changes",
-                    "src.heretek_swarm.actors.catalyst.CatalystAgent.get_learning_status",
                     "src.heretek_swarm.actors.catalyst.CatalystAgent._send_error",
                     "src.heretek_swarm.actors.catalyst.CatalystAgent.get_capabilities"
                   ]
@@ -130213,13 +130158,6 @@
                     "src.heretek_swarm.actors.prism.PrismAgent._generate_stakeholder_map",
                     "src.heretek_swarm.actors.prism.PrismAgent._handle_get_analysis_summary",
                     "src.heretek_swarm.actors.prism.PrismAgent._handle_reframe_issue",
-                    "src.heretek_swarm.actors.prism.PrismAgent._emit_pattern",
-                    "src.heretek_swarm.actors.prism.PrismAgent._consume_patterns",
-                    "src.heretek_swarm.actors.prism.PrismAgent._initiate_deliberation",
-                    "src.heretek_swarm.actors.prism.PrismAgent._submit_deliberation_position",
-                    "src.heretek_swarm.actors.prism.PrismAgent._finalize_deliberation",
-                    "src.heretek_swarm.actors.prism.PrismAgent._track_memory_access",
-                    "src.heretek_swarm.actors.prism.PrismAgent._get_memory_tier",
                     "src.heretek_swarm.actors.prism.PrismAgent.get_learning_status",
                     "src.heretek_swarm.actors.prism.PrismAgent._prefetch_relevant",
                     "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor",
@@ -131103,13 +131041,6 @@
                     "src.heretek_swarm.actors.prism.PrismAgent._generate_stakeholder_map",
                     "src.heretek_swarm.actors.prism.PrismAgent._handle_get_analysis_summary",
                     "src.heretek_swarm.actors.prism.PrismAgent._handle_reframe_issue",
-                    "src.heretek_swarm.actors.prism.PrismAgent._emit_pattern",
-                    "src.heretek_swarm.actors.prism.PrismAgent._consume_patterns",
-                    "src.heretek_swarm.actors.prism.PrismAgent._initiate_deliberation",
-                    "src.heretek_swarm.actors.prism.PrismAgent._submit_deliberation_position",
-                    "src.heretek_swarm.actors.prism.PrismAgent._finalize_deliberation",
-                    "src.heretek_swarm.actors.prism.PrismAgent._track_memory_access",
-                    "src.heretek_swarm.actors.prism.PrismAgent._get_memory_tier",
                     "src.heretek_swarm.actors.prism.PrismAgent.get_learning_status",
                     "src.heretek_swarm.actors.prism.PrismAgent._prefetch_relevant",
                     "src.heretek_swarm.actors.prism.PrismAgent._prism_agent_actor",

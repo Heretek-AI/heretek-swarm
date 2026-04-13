@@ -156,6 +156,8 @@ class CoordinatorAgent(AgentActor, PatternMixin, DeliberationMixin, MemoryMixin,
             config=config or {},
         )
 
+        self._config: dict[str, Any] = {}
+
         # Task tracking
         self._tasks: dict[str, CoordinatedTask] = {}
         self._task_queues: dict[str, list[str]] = {}  # workflow_id -> task_ids

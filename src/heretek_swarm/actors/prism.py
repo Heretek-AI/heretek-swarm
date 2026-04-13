@@ -175,6 +175,10 @@ class PrismAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
         max_perspectives: int = 12,
         max_bias_history: int = 100,
         confidence_threshold: float = 0.6,
+        pattern_extractor=None,
+        deliberation_engine=None,
+        access_analyzer=None,
+        zero_trust_validator=None,
         **kwargs,
     ) -> None:
         """
@@ -188,6 +192,10 @@ class PrismAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
             max_perspectives: Maximum perspectives to generate per issue
             max_bias_history: Maximum bias detections to track
             confidence_threshold: Minimum confidence for perspective recommendations
+            pattern_extractor: Optional pattern extractor
+            deliberation_engine: Optional deliberation engine
+            access_analyzer: Optional access analyzer
+            zero_trust_validator: Optional zero trust validator
             **kwargs: Additional arguments
         """
         super().__init__(

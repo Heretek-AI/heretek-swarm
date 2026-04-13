@@ -177,6 +177,8 @@ class CoderAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
             zero_trust_validator=zero_trust_validator,
         )
 
+        self._config: dict[str, Any] = {}
+
         # Code storage
         self._code_snippets: dict[str, CodeSnippet] = {}
         self._snippet_counter = 0

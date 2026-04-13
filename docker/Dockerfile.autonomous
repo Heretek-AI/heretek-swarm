@@ -45,14 +45,11 @@ RUN chown -R heretek:heretek /app
 USER heretek
 
 # Expose ports
-# 8000 - API Gateway
 # 18789 - A2A Protocol Server
 # 18790 - MCP Server
-EXPOSE 8000 18789 18790
+EXPOSE 18789 18790
 
-# Health check
-HEALTHCHECK --interval=30s --timeout=10s --start-period=60s --retries=3 \
-    CMD curl -f http://localhost:8000/api/health || exit 1
+# No healthcheck - autonomous runtime is a long-running loop, not HTTP service
 
 # Run autonomous entry point
 ENTRYPOINT ["/usr/local/bin/docker-entrypoint.sh"]
