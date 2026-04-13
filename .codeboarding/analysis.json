@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-13T14:28:48.436826+00:00",
+    "generated_at": "2026-04-13T15:02:12.591368+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 4,
@@ -26736,10 +26736,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.runtime.main_loop.main",
-          "start_line": 551,
-          "end_line": 577,
+          "start_line": 558,
+          "end_line": 588,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         }
       ]
     },
@@ -79349,10 +79349,10 @@
     "src/heretek_swarm/runtime/main_loop.py|src.heretek_swarm.runtime.main_loop.main": {
       "file_path": "src/heretek_swarm/runtime/main_loop.py",
       "qualified_name": "src.heretek_swarm.runtime.main_loop.main",
-      "start_line": 551,
-      "end_line": 577,
+      "start_line": 558,
+      "end_line": 588,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/runtime/registry.py|src.heretek_swarm.runtime.registry.AgentRole": {
       "file_path": "src/heretek_swarm/runtime/registry.py",

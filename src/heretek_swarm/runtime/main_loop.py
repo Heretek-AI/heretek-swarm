@@ -557,6 +557,10 @@ class AutonomousSwarm:
 
 async def main():
     """Main entry point for autonomous operation."""
+    # Configure logging first, before any loggers are instantiated
+    from heretek_swarm.logging.config import setup_logging
+    setup_logging(json_output=False, include_caller_info=False)
+
     config = {
         "nats_servers": ["nats://localhost:4222"],
         "health_check_interval": 30,
