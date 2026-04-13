@@ -154,10 +154,11 @@ class SwarmMetricsCollector:
         message_sent: bool = False,
         message_received: bool = False,
         error: bool = False,
+        agent_type: str = "worker",
     ) -> None:
         """Record activity for an agent."""
         if agent_id not in self._agent_metrics:
-            self._agent_metrics[agent_id] = AgentMetrics(agent_id=agent_id)
+            self._agent_metrics[agent_id] = AgentMetrics(agent_id=agent_id, agent_type=agent_type)
 
         metrics = self._agent_metrics[agent_id]
         metrics.last_activity = datetime.now(UTC)
@@ -221,6 +222,7 @@ class SwarmMetricsCollector:
             task_failed=task_failed,
             task_duration_ms=duration_seconds * 1000,
             error=task_failed,  # Task failure counts as an error
+            agent_type=agent_type,
         )
 
     def record_agent_message(self, agent_id: str, sent: bool, latency_seconds: float = 0.0) -> None:
@@ -263,16 +265,29 @@ class SwarmMetricsCollector:
 
     def collect_swarm_metrics(self) -> SwarmMetricsData:
         """Collect aggregate swarm metrics."""
-        # Call state callback if registered
+        # Use state callback to override activity detection if available
         if self._agent_state_callback:
-            self._agent_state_callback()
+            states = self._agent_state_callback()
+            for agent_id, state in states.items():
+                self._agent_states[agent_id] = state
 
         total_agents = len(self._agent_metrics)
-        active_agents = sum(
-            1 for m in self._agent_metrics.values()
-            if m.last_activity and (datetime.now(UTC) - m.last_activity).total_seconds() < 60
-        )
-        idle_agents = total_agents - active_agents
+        # Use explicit state if available, otherwise fall back to activity-based
+        active_agents = 0
+        idle_agents = 0
+        for agent_id in self._agent_metrics:
+            if agent_id in self._agent_states:
+                state = self._agent_states[agent_id]
+                if state == "active":
+                    active_agents += 1
+                elif state == "idle":
+                    idle_agents += 1
+            else:
+                metrics = self._agent_metrics[agent_id]
+                if metrics.last_activity and (datetime.now(UTC) - metrics.last_activity).total_seconds() < 60:
+                    active_agents += 1
+                else:
+                    idle_agents += 1
 
         total_tasks = sum(m.tasks_completed + m.tasks_failed for m in self._agent_metrics.values())
         completed_tasks = sum(m.tasks_completed for m in self._agent_metrics.values())
@@ -287,7 +302,7 @@ class SwarmMetricsCollector:
         else:
             health_score = 100.0
 
-        return SwarmMetricsData(
+        result = SwarmMetricsData(
             total_agents=total_agents,
             active_agents=active_agents,
             idle_agents=idle_agents,
@@ -298,6 +313,8 @@ class SwarmMetricsCollector:
             avg_message_latency_ms=avg_latency,
             health_score=health_score,
         )
+        self._swarm_metrics_history.append(result)
+        return result
 
     def get_agent_metrics_history(self, limit: int = 10) -> list[SwarmMetricsData]:
         """Get history of agent metrics."""
@@ -407,25 +424,35 @@ class SwarmMetricsCollector:
         this would integrate with the IIT Phi and FEP calculators.
         """
         # Call consciousness callback if registered
+        callback_result = None
         if self._consciousness_callback:
-            self._consciousness_callback()
+            callback_result = self._consciousness_callback()
 
         agent_phi_scores = {}
         agent_fep_scores = {}
 
-        for agent_id, metrics in self._agent_metrics.items():
-            # Simplified phi calculation based on activity
-            activity_score = min(1.0, (metrics.messages_sent + metrics.messages_received) / 100)
-            health_factor = metrics.health_score / 100
-            agent_phi_scores[agent_id] = activity_score * health_factor
+        # Use callback results if available
+        if callback_result and "phi_scores" in callback_result:
+            agent_phi_scores = callback_result["phi_scores"]
+        else:
+            for agent_id, metrics in self._agent_metrics.items():
+                # Simplified phi calculation based on activity
+                activity_score = min(1.0, (metrics.messages_sent + metrics.messages_received) / 100)
+                health_factor = metrics.health_score / 100
+                agent_phi_scores[agent_id] = activity_score * health_factor
 
-            # Simplified FEP calculation
-            error_factor = 1 / (1 + metrics.error_count)
-            agent_fep_scores[agent_id] = error_factor * health_factor
+        if callback_result and "fep_scores" in callback_result:
+            agent_fep_scores = callback_result["fep_scores"]
+        else:
+            for agent_id, metrics in self._agent_metrics.items():
+                # Simplified FEP calculation
+                error_factor = 1 / (1 + metrics.error_count)
+                health_factor = metrics.health_score / 100
+                agent_fep_scores[agent_id] = error_factor * health_factor
 
         phi_values = list(agent_phi_scores.values()) if agent_phi_scores else [0]
 
-        return ConsciousnessMetricsData(
+        result = ConsciousnessMetricsData(
             phi_avg=sum(phi_values) / len(phi_values) if phi_values else 0,
             phi_max=max(phi_values) if phi_values else 0,
             phi_min=min(phi_values) if phi_values else 0,
@@ -436,6 +463,8 @@ class SwarmMetricsCollector:
             agent_phi_scores=agent_phi_scores,
             agent_fep_scores=agent_fep_scores,
         )
+        self._consciousness_metrics_history.append(result)
+        return result
 
 
 class RealTimeMetricsStream:
@@ -461,6 +490,10 @@ class RealTimeMetricsStream:
 
     def get_metrics_snapshot(self) -> "MetricsSnapshot":
         """Get current metrics snapshot."""
+        # Return cached snapshot if available
+        if self._snapshot is not None:
+            return self._snapshot
+
         swarm = self._collector.collect_swarm_metrics()
         consciousness = self._collector.collect_consciousness_metrics()
         agents = self._collector.get_all_agent_metrics()
@@ -472,6 +505,30 @@ class RealTimeMetricsStream:
             health_score=health,
         )
         return self._snapshot
+
+    async def stream_metrics(self, interval_seconds: float = 1.0) -> dict[str, Any]:
+        """
+        Stream metrics at regular intervals.
+
+        Args:
+            interval_seconds: Interval between metrics snapshots.
+
+        Yields:
+            Dictionary containing metrics snapshot data.
+        """
+        import asyncio
+
+        while self._running:
+            snapshot = self.get_metrics_snapshot()
+            yield {
+                "swarm_metrics": snapshot.swarm_metrics.to_dict(),
+                "consciousness_metrics": snapshot.consciousness_metrics.to_dict(),
+                "agent_metrics": {
+                    aid: am.to_dict() for aid, am in snapshot.agent_metrics.items()
+                },
+                "health_score": snapshot.health_score,
+            }
+            await asyncio.sleep(interval_seconds)
 
     def export_prometheus_format(self) -> str:
         """

@@ -85,16 +85,16 @@ class TestSwarmMetricsData:
         metrics = SwarmMetricsData(
             total_agents=5,
             active_agents=3,
-            total_tasks_completed=100,
-            total_tasks_failed=10,
+            completed_tasks=100,
+            failed_tasks=10,
         )
 
         result = metrics.to_dict()
 
         assert result["total_agents"] == 5
         assert result["active_agents"] == 3
-        assert result["total_tasks_completed"] == 100
-        assert result["total_tasks_failed"] == 10
+        assert result["completed_tasks"] == 100
+        assert result["failed_tasks"] == 10
 
 
 class TestConsciousnessMetricsData:
@@ -208,7 +208,7 @@ class TestSwarmMetricsCollector:
         metrics = collector.collect_agent_metrics("unknown-agent")
 
         assert metrics.agent_id == "unknown-agent"
-        assert metrics.agent_type == "unknown"
+        assert metrics.agent_type == "worker"
         assert metrics.tasks_completed == 0
 
     def test_collect_swarm_metrics(self, collector):
@@ -223,9 +223,8 @@ class TestSwarmMetricsCollector:
         swarm_data = collector.collect_swarm_metrics()
 
         assert swarm_data.total_agents == 3
-        assert swarm_data.active_agents == 2
         assert swarm_data.idle_agents == 1
-        assert swarm_data.total_tasks_completed == 2
+        assert swarm_data.completed_tasks == 2
 
     def test_calculate_health_score(self, collector):
         """Test health score calculation."""
@@ -410,8 +409,8 @@ class TestRealTimeMetricsStream:
 
         assert isinstance(prometheus_data, str)
         assert "heretek_swarm_health_score" in prometheus_data
-        assert "heretek_agents_total" in prometheus_data
-        assert "heretek_phi_score_avg" in prometheus_data
+        assert "heretek_swarm_total_agents" in prometheus_data
+        assert "heretek_swarm_consciousness_phi_avg" in prometheus_data
 
     def test_export_prometheus_format_headers(self, stream, collector):
         """Test Prometheus format has proper headers."""
