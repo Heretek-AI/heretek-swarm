@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-13T12:19:28.182632+00:00",
-  "overall_score": 0.9940119760479041,
+  "timestamp": "2026-04-13T13:33:44.477800+00:00",
+  "overall_score": 0.993849493487699,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -982,11 +982,89 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 0,
-      "findings_count": 0,
+      "total_entities_checked": 10,
+      "findings_count": 10,
       "warning_count": 0,
-      "score": 1.0,
-      "finding_groups": []
+      "score": 0.5,
+      "finding_groups": [
+        {
+          "severity": "info",
+          "threshold": 0,
+          "description": "Variables declared but never used",
+          "entities": [
+            {
+              "entity_name": "[unused_variable] \"_api_key\" is not accessed",
+              "file_path": "mem0_server/main.py",
+              "line_start": 164,
+              "line_end": 164,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_api_key\" is not accessed",
+              "file_path": "mem0_server/main.py",
+              "line_start": 172,
+              "line_end": 172,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_api_key\" is not accessed",
+              "file_path": "mem0_server/main.py",
+              "line_start": 191,
+              "line_end": 191,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_api_key\" is not accessed",
+              "file_path": "mem0_server/main.py",
+              "line_start": 207,
+              "line_end": 207,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_api_key\" is not accessed",
+              "file_path": "mem0_server/main.py",
+              "line_start": 217,
+              "line_end": 217,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_api_key\" is not accessed",
+              "file_path": "mem0_server/main.py",
+              "line_start": 228,
+              "line_end": 228,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_api_key\" is not accessed",
+              "file_path": "mem0_server/main.py",
+              "line_start": 246,
+              "line_end": 246,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_api_key\" is not accessed",
+              "file_path": "mem0_server/main.py",
+              "line_start": 256,
+              "line_end": 256,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_api_key\" is not accessed",
+              "file_path": "mem0_server/main.py",
+              "line_start": 271,
+              "line_end": 271,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"_api_key\" is not accessed",
+              "file_path": "mem0_server/main.py",
+              "line_start": 288,
+              "line_end": 288,
+              "metric_value": 0.0
+            }
+          ]
+        }
+      ]
     },
     {
       "check_name": "function_size",
@@ -1310,30 +1388,30 @@
       "language": "TypeScript",
       "check_type": "circular_dependencies",
       "cycles": [
-        "src.components.UI -> src.components.Agents -> src.api -> src.components.UI",
-        "src.components.UI -> src.components.Agents -> src.components.Settings -> src.api -> src.components.UI",
-        "src.components.UI -> src.components.Agents -> src.components.Settings -> src.components.UI",
-        "src.components.UI -> src.components.Agents -> src.components.UI",
-        "src.components.UI -> src.components.Settings -> src.api -> src.components.Agents -> src.components.UI",
-        "src.components.UI -> src.components.Settings -> src.api -> src.components.UI",
-        "src.components.UI -> src.components.Settings -> src.components.Agents -> src.api -> src.components.UI",
-        "src.components.UI -> src.components.Settings -> src.components.Agents -> src.components.UI",
-        "src.components.UI -> src.components.Settings -> src.components.UI",
         "src.components.Settings -> src.api -> src.components.Agents -> src.components.Settings",
+        "src.components.Settings -> src.api -> src.components.Agents -> src.components.UI -> src.components.Settings",
+        "src.components.Settings -> src.api -> src.components.UI -> src.components.Agents -> src.components.Settings",
+        "src.components.Settings -> src.api -> src.components.UI -> src.components.Settings",
+        "src.components.Settings -> src.components.Agents -> src.api -> src.components.UI -> src.components.Settings",
         "src.components.Settings -> src.components.Agents -> src.components.Settings",
+        "src.components.Settings -> src.components.Agents -> src.components.UI -> src.components.Settings",
+        "src.components.Settings -> src.components.UI -> src.components.Agents -> src.components.Settings",
+        "src.components.Settings -> src.components.UI -> src.components.Settings",
+        "src.components.UI -> src.components.Agents -> src.api -> src.components.UI",
+        "src.components.UI -> src.components.Agents -> src.components.UI",
         "src.components.Agents -> src.api -> src.components.Agents",
+        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI",
+        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI",
+        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI",
+        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI",
+        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI",
+        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI",
+        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI",
+        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI",
+        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI",
         "dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api",
         "dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api",
-        "dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api",
-        "dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api",
-        "dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api",
-        "dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api",
-        "dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api",
-        "dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings",
-        "dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings",
-        "dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings",
-        "dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings",
-        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI"
+        "dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings"
       ],
       "packages_checked": 46,
       "packages_in_cycles": 8
@@ -1396,6 +1474,12 @@
       "total_findings": 4,
       "warning_findings": 4,
       "composite_risk_score": 60.0
+    },
+    {
+      "file_path": "mem0_server/main.py",
+      "total_findings": 10,
+      "warning_findings": 0,
+      "composite_risk_score": 50.0
     },
     {
       "file_path": "src/heretek_swarm/orchestration/heavyswarm.py",
@@ -1483,12 +1567,6 @@
     },
     {
       "file_path": "src/heretek_swarm/workflow/engine.py",
-      "total_findings": 2,
-      "warning_findings": 2,
-      "composite_risk_score": 30.0
-    },
-    {
-      "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
       "total_findings": 2,
       "warning_findings": 2,
       "composite_risk_score": 30.0

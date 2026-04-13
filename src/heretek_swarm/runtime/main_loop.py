@@ -332,7 +332,15 @@ class AutonomousSwarm:
                 return
 
             # Route message to actor mailbox
-            await actor.send_message(message)
+            from heretek_swarm.actors.base import ActorMessage
+            actor_message = ActorMessage(
+                sender="channel",
+                message_type=message.get("type", "default"),
+                content=message.get("content", {}),
+                timestamp=message.get("timestamp", ""),
+                metadata=message.get("metadata", {}),
+            )
+            await actor.put_message(actor_message)
 
             # Record delivery
             self.channel_registry.record_message(channel_name, delivered=True)

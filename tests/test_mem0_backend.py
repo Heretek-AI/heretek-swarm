@@ -73,7 +73,7 @@ async def test_mem0_store_and_retrieve(mem0_backend):
     # Search
     query = MemoryQuery(
         query_text="test memory",
-        agent_ids=["test-agent-1"],
+        filters={"agent_id": "test-agent-1"},
         limit=10,
     )
     result = await mem0_backend.search(query)
@@ -186,7 +186,7 @@ async def test_mem0_search_with_filters(mem0_backend):
     # Search with agent filter
     query = MemoryQuery(
         query_text="memory type",
-        agent_ids=["test-agent-filter"],
+        filters={"agent_id": "test-agent-filter"},
         limit=10,
     )
     result = await mem0_backend.search(query)

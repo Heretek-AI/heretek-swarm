@@ -51,6 +51,30 @@ MEMGRAPH_PASSWORD = os.environ.get("MEMGRAPH_PASSWORD", "mem0graph")
 OPENAI_API_KEY = os.environ.get("OPENAI_API_KEY")
 HISTORY_DB_PATH = os.environ.get("HISTORY_DB_PATH", "/app/history/history.db")
 
+# LLM Configuration from environment
+LLM_PROVIDER = os.environ.get("MEM0_LLM_PROVIDER", "openai")
+LLM_BASE_URL = os.environ.get("MEM0_LLM_BASE_URL", None)
+LLM_MODEL = os.environ.get("MEM0_LLM_MODEL", "gpt-4.1-nano-2025-04-14")
+LLM_API_KEY = os.environ.get("MEM0_LLM_API_KEY", OPENAI_API_KEY)
+
+# Embedder Configuration from environment
+# NOTE: Mem0 uses "openai" provider but with custom base_url for openai_compatible endpoints
+EMBEDDER_PROVIDER = "openai"  # Always use openai provider name for Mem0
+EMBEDDER_BASE_URL = os.environ.get("EMBEDDING_BASE_URL", None) or os.environ.get("OPENAI_EMBEDDING_URL", None)
+EMBEDDER_API_KEY = os.environ.get("EMBEDDING_API_KEY", OPENAI_API_KEY)
+EMBEDDER_MODEL = os.environ.get("EMBEDDER_MODEL", "text-embedding-3-small")
+
+# Build LLM config - use openai_base_url for custom endpoints
+llm_config: Dict[str, Any] = {"api_key": LLM_API_KEY, "temperature": 0.2, "model": LLM_MODEL}
+if LLM_BASE_URL:
+    llm_config["openai_base_url"] = LLM_BASE_URL
+
+# Build embedder config - use openai_compatible endpoint via openai provider
+# Use openai_base_url parameter for custom endpoints
+embedder_config: Dict[str, Any] = {"api_key": EMBEDDER_API_KEY, "model": EMBEDDER_MODEL}
+if EMBEDDER_BASE_URL:
+    embedder_config["openai_base_url"] = EMBEDDER_BASE_URL
+
 DEFAULT_CONFIG = {
     "version": "v1.1",
     "vector_store": {
@@ -65,8 +89,8 @@ DEFAULT_CONFIG = {
         },
     },
     "graph_store": {"provider": "none"},
-    "llm": {"provider": "openai", "config": {"api_key": OPENAI_API_KEY, "temperature": 0.2, "model": "gpt-4.1-nano-2025-04-14"}},
-    "embedder": {"provider": "openai", "config": {"api_key": OPENAI_API_KEY, "model": "text-embedding-3-small"}},
+    "llm": {"provider": LLM_PROVIDER, "config": llm_config},
+    "embedder": {"provider": EMBEDDER_PROVIDER, "config": embedder_config},
     "history_db_path": HISTORY_DB_PATH,
 }
 
