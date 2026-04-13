@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-12T20:17:33.755280+00:00",
+    "generated_at": "2026-04-13T12:19:27.827603+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 4,
@@ -49274,6 +49274,151 @@
           "end_line": 373,
           "node_type": "FUNCTION",
           "status": "added"
+        }
+      ]
+    },
+    "src/heretek_swarm/rag/document_processor.py": {
+      "file_status": "modified",
+      "methods": [
+        {
+          "qualified_name": "src.heretek_swarm.rag.document_processor.DocumentType",
+          "start_line": 10,
+          "end_line": 18,
+          "node_type": "CLASS",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.rag.document_processor.ChunkStrategy",
+          "start_line": 21,
+          "end_line": 28,
+          "node_type": "CLASS",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.rag.document_processor.ProcessingConfig",
+          "start_line": 32,
+          "end_line": 39,
+          "node_type": "CLASS",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.rag.document_processor.ProcessedDocument",
+          "start_line": 43,
+          "end_line": 49,
+          "node_type": "CLASS",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.rag.document_processor.DocumentProcessor",
+          "start_line": 52,
+          "end_line": 292,
+          "node_type": "CLASS",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.rag.document_processor.DocumentProcessor.detect_type",
+          "start_line": 58,
+          "end_line": 72,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.rag.document_processor.DocumentProcessor.generate_id",
+          "start_line": 74,
+          "end_line": 77,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.rag.document_processor.DocumentProcessor._generate_id",
+          "start_line": 76,
+          "end_line": 79,
+          "node_type": "METHOD",
+          "status": "deleted"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.rag.document_processor.DocumentProcessor._extract_metadata",
+          "start_line": 79,
+          "end_line": 98,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.rag.document_processor.DocumentProcessor._extract_keywords",
+          "start_line": 100,
+          "end_line": 105,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.rag.document_processor.DocumentProcessor._clean_content",
+          "start_line": 107,
+          "end_line": 113,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.rag.document_processor.DocumentProcessor._chunk_fixed_size",
+          "start_line": 115,
+          "end_line": 148,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.rag.document_processor.DocumentProcessor._chunk_recursive",
+          "start_line": 150,
+          "end_line": 208,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.rag.document_processor.DocumentProcessor._chunk",
+          "start_line": 210,
+          "end_line": 216,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.rag.document_processor.DocumentProcessor.__init__",
+          "start_line": 212,
+          "end_line": 213,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.rag.document_processor.DocumentProcessor._fixed_chunk",
+          "start_line": 218,
+          "end_line": 227,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.rag.document_processor.DocumentProcessor._recursive_chunk",
+          "start_line": 223,
+          "end_line": 238,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.rag.document_processor.DocumentProcessor.process",
+          "start_line": 227,
+          "end_line": 235,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.rag.document_processor.DocumentProcessor.process_content",
+          "start_line": 240,
+          "end_line": 265,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.rag.document_processor.DocumentProcessor.process_content_async",
+          "start_line": 267,
+          "end_line": 274,
+          "node_type": "METHOD",
+          "status": "deleted"
         }
       ]
     }
@@ -103718,6 +103863,166 @@
       "end_line": 373,
       "type": "FUNCTION",
       "status": "added"
+    },
+    "src/heretek_swarm/rag/document_processor.py|src.heretek_swarm.rag.document_processor.DocumentType": {
+      "file_path": "src/heretek_swarm/rag/document_processor.py",
+      "qualified_name": "src.heretek_swarm.rag.document_processor.DocumentType",
+      "start_line": 10,
+      "end_line": 18,
+      "type": "CLASS",
+      "status": "modified"
+    },
+    "src/heretek_swarm/rag/document_processor.py|src.heretek_swarm.rag.document_processor.ChunkStrategy": {
+      "file_path": "src/heretek_swarm/rag/document_processor.py",
+      "qualified_name": "src.heretek_swarm.rag.document_processor.ChunkStrategy",
+      "start_line": 21,
+      "end_line": 28,
+      "type": "CLASS",
+      "status": "modified"
+    },
+    "src/heretek_swarm/rag/document_processor.py|src.heretek_swarm.rag.document_processor.ProcessingConfig": {
+      "file_path": "src/heretek_swarm/rag/document_processor.py",
+      "qualified_name": "src.heretek_swarm.rag.document_processor.ProcessingConfig",
+      "start_line": 32,
+      "end_line": 39,
+      "type": "CLASS",
+      "status": "modified"
+    },
+    "src/heretek_swarm/rag/document_processor.py|src.heretek_swarm.rag.document_processor.ProcessedDocument": {
+      "file_path": "src/heretek_swarm/rag/document_processor.py",
+      "qualified_name": "src.heretek_swarm.rag.document_processor.ProcessedDocument",
+      "start_line": 43,
+      "end_line": 49,
+      "type": "CLASS",
+      "status": "modified"
+    },
+    "src/heretek_swarm/rag/document_processor.py|src.heretek_swarm.rag.document_processor.DocumentProcessor": {
+      "file_path": "src/heretek_swarm/rag/document_processor.py",
+      "qualified_name": "src.heretek_swarm.rag.document_processor.DocumentProcessor",
+      "start_line": 52,
+      "end_line": 292,
+      "type": "CLASS",
+      "status": "modified"
+    },
+    "src/heretek_swarm/rag/document_processor.py|src.heretek_swarm.rag.document_processor.DocumentProcessor.detect_type": {
+      "file_path": "src/heretek_swarm/rag/document_processor.py",
+      "qualified_name": "src.heretek_swarm.rag.document_processor.DocumentProcessor.detect_type",
+      "start_line": 58,
+      "end_line": 72,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/rag/document_processor.py|src.heretek_swarm.rag.document_processor.DocumentProcessor.generate_id": {
+      "file_path": "src/heretek_swarm/rag/document_processor.py",
+      "qualified_name": "src.heretek_swarm.rag.document_processor.DocumentProcessor.generate_id",
+      "start_line": 74,
+      "end_line": 77,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/rag/document_processor.py|src.heretek_swarm.rag.document_processor.DocumentProcessor._generate_id": {
+      "file_path": "src/heretek_swarm/rag/document_processor.py",
+      "qualified_name": "src.heretek_swarm.rag.document_processor.DocumentProcessor._generate_id",
+      "start_line": 76,
+      "end_line": 79,
+      "type": "METHOD",
+      "status": "deleted"
+    },
+    "src/heretek_swarm/rag/document_processor.py|src.heretek_swarm.rag.document_processor.DocumentProcessor._extract_metadata": {
+      "file_path": "src/heretek_swarm/rag/document_processor.py",
+      "qualified_name": "src.heretek_swarm.rag.document_processor.DocumentProcessor._extract_metadata",
+      "start_line": 79,
+      "end_line": 98,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/rag/document_processor.py|src.heretek_swarm.rag.document_processor.DocumentProcessor._extract_keywords": {
+      "file_path": "src/heretek_swarm/rag/document_processor.py",
+      "qualified_name": "src.heretek_swarm.rag.document_processor.DocumentProcessor._extract_keywords",
+      "start_line": 100,
+      "end_line": 105,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/rag/document_processor.py|src.heretek_swarm.rag.document_processor.DocumentProcessor._clean_content": {
+      "file_path": "src/heretek_swarm/rag/document_processor.py",
+      "qualified_name": "src.heretek_swarm.rag.document_processor.DocumentProcessor._clean_content",
+      "start_line": 107,
+      "end_line": 113,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/rag/document_processor.py|src.heretek_swarm.rag.document_processor.DocumentProcessor._chunk_fixed_size": {
+      "file_path": "src/heretek_swarm/rag/document_processor.py",
+      "qualified_name": "src.heretek_swarm.rag.document_processor.DocumentProcessor._chunk_fixed_size",
+      "start_line": 115,
+      "end_line": 148,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/rag/document_processor.py|src.heretek_swarm.rag.document_processor.DocumentProcessor._chunk_recursive": {
+      "file_path": "src/heretek_swarm/rag/document_processor.py",
+      "qualified_name": "src.heretek_swarm.rag.document_processor.DocumentProcessor._chunk_recursive",
+      "start_line": 150,
+      "end_line": 208,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/rag/document_processor.py|src.heretek_swarm.rag.document_processor.DocumentProcessor._chunk": {
+      "file_path": "src/heretek_swarm/rag/document_processor.py",
+      "qualified_name": "src.heretek_swarm.rag.document_processor.DocumentProcessor._chunk",
+      "start_line": 210,
+      "end_line": 216,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/rag/document_processor.py|src.heretek_swarm.rag.document_processor.DocumentProcessor.__init__": {
+      "file_path": "src/heretek_swarm/rag/document_processor.py",
+      "qualified_name": "src.heretek_swarm.rag.document_processor.DocumentProcessor.__init__",
+      "start_line": 212,
+      "end_line": 213,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/rag/document_processor.py|src.heretek_swarm.rag.document_processor.DocumentProcessor._fixed_chunk": {
+      "file_path": "src/heretek_swarm/rag/document_processor.py",
+      "qualified_name": "src.heretek_swarm.rag.document_processor.DocumentProcessor._fixed_chunk",
+      "start_line": 218,
+      "end_line": 227,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/rag/document_processor.py|src.heretek_swarm.rag.document_processor.DocumentProcessor._recursive_chunk": {
+      "file_path": "src/heretek_swarm/rag/document_processor.py",
+      "qualified_name": "src.heretek_swarm.rag.document_processor.DocumentProcessor._recursive_chunk",
+      "start_line": 223,
+      "end_line": 238,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/rag/document_processor.py|src.heretek_swarm.rag.document_processor.DocumentProcessor.process": {
+      "file_path": "src/heretek_swarm/rag/document_processor.py",
+      "qualified_name": "src.heretek_swarm.rag.document_processor.DocumentProcessor.process",
+      "start_line": 227,
+      "end_line": 235,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/rag/document_processor.py|src.heretek_swarm.rag.document_processor.DocumentProcessor.process_content": {
+      "file_path": "src/heretek_swarm/rag/document_processor.py",
+      "qualified_name": "src.heretek_swarm.rag.document_processor.DocumentProcessor.process_content",
+      "start_line": 240,
+      "end_line": 265,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/rag/document_processor.py|src.heretek_swarm.rag.document_processor.DocumentProcessor.process_content_async": {
+      "file_path": "src/heretek_swarm/rag/document_processor.py",
+      "qualified_name": "src.heretek_swarm.rag.document_processor.DocumentProcessor.process_content_async",
+      "start_line": 267,
+      "end_line": 274,
+      "type": "METHOD",
+      "status": "deleted"
     }
   },
   "components": [
