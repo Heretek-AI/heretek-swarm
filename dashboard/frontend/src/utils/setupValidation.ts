@@ -446,18 +446,9 @@ export async function testDatabaseConnection(apiUrl: string, apiKey?: string): P
       success: false,
       latency,
       error: error instanceof Error ? error.message : 'Failed to test database connection',
-      details: 'Could not connect to API to check database status', 'redis', 'postgres', 'qdrant', 'database', 'api'];
-  const results: string[] = [];
-  
-  for (const service of services) {
-    if (data[service]) {
-      const status = data[service].status || data[service];
-      const icon = status === 'healthy' || status === true ? '✓' : '✗';
-      results.push(`${service}: ${icon}`);
-    }
+      details: 'Could not connect to API to check database status',
+    };
   }
-  
-  return results.length > 0 ? results.join(' | ') : 'All services operational';
 }
 
 /**
