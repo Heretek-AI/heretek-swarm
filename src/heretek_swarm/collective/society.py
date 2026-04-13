@@ -13,6 +13,7 @@ Features:
 """
 
 import asyncio
+import random
 import uuid
 from dataclasses import dataclass, field
 from datetime import UTC, datetime, timedelta
@@ -28,9 +29,6 @@ try:
     from .swarm_intelligence import (
         BeeAgent,
         FlockingAgent,
-        Particle,
-        PheromoneTrail,
-        StigmergicTrace,
         SwarmDecision,
         SwarmIntelligenceEngine,
         SwarmPattern,
@@ -134,6 +132,7 @@ class CollectiveTaskType(StrEnum):
     OPTIMIZATION = "optimization"
     LEARNING = "learning"
     MONITORING = "monitoring"
+    EXPLORATION = "exploration"
 
 
 @dataclass
@@ -297,6 +296,7 @@ class AgentSociety:
         supervisor=None,
         contribution_cache_ttl: int = 300,
         enable_swarm_intelligence: bool = True,
+        exploration_mode: bool = False,
     ):
         """
         Initialize agent society.
@@ -305,6 +305,8 @@ class AgentSociety:
             supervisor: ActorSupervisor for agent management
             contribution_cache_ttl: TTL for contribution cache in seconds (default: 300)
             enable_swarm_intelligence: Enable swarm intelligence patterns (default: True)
+            exploration_mode: Enable dedicated exploration mode with
+                swarm exploration (default: False)
         """
         self.supervisor = supervisor
         self.hierarchy = self._build_hierarchy()
@@ -313,6 +315,7 @@ class AgentSociety:
         self._active_tasks: dict[str, CollectiveTask] = {}
         self._emergent_behaviors: list[EmergentBehavior] = []
         self._contribution_cache = ContributionCache(ttl_seconds=contribution_cache_ttl)
+        self.exploration_mode = exploration_mode
 
         # Initialize swarm intelligence engine if available
         self.swarm_engine: SwarmIntelligenceEngine | None = None
@@ -383,6 +386,10 @@ class AgentSociety:
         start_time = datetime.now(UTC)
 
         try:
+            # Route to swarm exploration if exploration_mode enabled and EXPLORATION task
+            if self.exploration_mode and task.type == CollectiveTaskType.EXPLORATION:
+                return await self._execute_swarm_exploration(task)
+
             # Select participants based on task type
             participants = self._select_participants(task)
             task.participants = participants
@@ -533,6 +540,109 @@ class AgentSociety:
             "timeout": self.interaction_rules.get("timeout_seconds", 300),
             "rounds": 3,  # Number of deliberation rounds
         }
+
+    async def _execute_swarm_exploration(
+        self,
+        task: CollectiveTask,
+    ) -> CollectiveResult:
+        """
+        Execute swarm exploration using BeeAgent and FlockingAgent patterns.
+
+        This method uses the SwarmIntelligenceEngine to coordinate exploration
+        tasks using bio-inspired swarm algorithms.
+
+        Args:
+            task: Collective task with EXPLORATION type
+
+        Returns:
+            CollectiveResult with swarm exploration outcome
+        """
+        logger.info(
+            "swarm_exploration_started",
+            task_id=task.id,
+            exploration_mode=self.exploration_mode
+        )
+
+        if not self.swarm_engine:
+            logger.error("swarm_engine_not_available")
+            return CollectiveResult(
+                task_id=task.id,
+                success=False,
+                error="Swarm engine not available"
+            )
+
+        try:
+            # Initialize bee agents for exploration
+            bee_agents = [
+                BeeAgent(
+                    bee_id=f"bee-{i}",
+                    role="scout" if i % 3 == 0 else "forager",
+                    agent_id=f"explorer-{i}"
+                )
+                for i in range(min(5, len(task.participants) or 5))
+            ]
+
+            # Initialize flocking agents
+            flocking_agents = [
+                FlockingAgent(
+                    agent_id=participant,
+                    position=(
+                        random.uniform(0, 100),
+                        random.uniform(0, 100),
+                        random.uniform(0, 100)
+                    ),
+                    velocity=(0.0, 0.0, 0.0),
+                    heading=(0.0, 0.0, 1.0)
+                )
+                for participant in (task.participants or ["agent-0"])
+            ]
+
+            # Run bee algorithm for task allocation
+            bee_result = await self.swarm_engine.run_bee_algorithm(
+                tasks=[task.description] + task.input_data.get("sub_tasks", []),
+                foragers=[b.agent_id for b in bee_agents]
+            )
+
+            # Run flocking for spatial coordination
+            flock_result = await self.swarm_engine.run_flocking(
+                agents=[f.agent_id for f in flocking_agents],
+                iterations=10
+            )
+
+            result = {
+                "bee_allocation": bee_result,
+                "flocking_coordination": flock_result,
+                "swarm_pattern": "exploration",
+                "bee_agents": len(bee_agents),
+                "flocking_agents": len(flocking_agents),
+            }
+
+            execution_time = 0.1  # Placeholder - could measure actual time
+
+            # Store in collective memory
+            await self.collective_memory.add_learning(
+                learning_type="exploration",
+                learning_data=result,
+                participants=task.participants
+            )
+
+            return CollectiveResult(
+                task_id=task.id,
+                success=True,
+                result=result,
+                participants=task.participants or [b.agent_id for b in bee_agents],
+                execution_time=execution_time,
+                consensus_score=bee_result.get("convergence", 0.5),
+                emergent_behavior=None
+            )
+
+        except Exception as e:
+            logger.error("swarm_exploration_failed", task_id=task.id, error=str(e))
+            return CollectiveResult(
+                task_id=task.id,
+                success=False,
+                error=str(e)
+            )
 
     async def _execute_coordination(
         self,

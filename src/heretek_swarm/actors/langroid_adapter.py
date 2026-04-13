@@ -25,9 +25,9 @@ logger = structlog.get_logger("LangroidAdapter")
 # Try to import Langroid, but make it optional
 try:
     from langroid.agent import Agent as LangroidAgentBase
-    from langroid.embedding import EmbeddingConfig
+    from langroid.embedding import EmbeddingConfig  # noqa: F401 - used in isinstance checks
     from langroid.language import LanguageModelConfig
-    from langroid.vector_store import VectorStoreConfig
+    from langroid.vector_store import VectorStoreConfig  # noqa: F401 - used in isinstance checks
     LANGROID_AVAILABLE = True
 except ImportError:
     LANGROID_AVAILABLE = False

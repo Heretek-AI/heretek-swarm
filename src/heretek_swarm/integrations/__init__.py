@@ -129,49 +129,13 @@ from .openai_assistants import (
     MessageRole as OpenAIMessageRole,
 )
 
-# Re-export existing integrations if available
-try:
-    from .discord_bot import DiscordBot, get_discord_bot, start_discord_bot, stop_discord_bot
-    DISCORD_AVAILABLE = True
-except ImportError:
-    DISCORD_AVAILABLE = False
-
-try:
-    from .slack_bot import SlackBot, get_slack_bot, start_slack_bot, stop_slack_bot
-    SLACK_AVAILABLE = True
-except ImportError:
-    SLACK_AVAILABLE = False
-
-try:
-    from .telegram_bot import TelegramBot, get_telegram_bot, start_telegram_bot, stop_telegram_bot
-    TELEGRAM_AVAILABLE = True
-except ImportError:
-    TELEGRAM_AVAILABLE = False
-
-try:
-    from .praison_handoffs import (
-        AgentHandoff,
-        HandoffContext,
-        HandoffStatus,
-        create_handoff_sync,
-        handoff_manager,
-    )
-    PRAISON_AVAILABLE = True
-except ImportError:
-    PRAISON_AVAILABLE = False
-
-
 __all__ = [
     "ANTHROPIC_AVAILABLE",
     "AUTOGEN_AVAILABLE",
     "CREWAI_AVAILABLE",
     # Legacy integrations
-    "DISCORD_AVAILABLE",
     "LANGGRAPH_AVAILABLE",
     "OPENAI_AVAILABLE",
-    "PRAISON_AVAILABLE",
-    "SLACK_AVAILABLE",
-    "TELEGRAM_AVAILABLE",
     # Anthropic
     "AnthropicAdapter",
     "AnthropicMessageRole",

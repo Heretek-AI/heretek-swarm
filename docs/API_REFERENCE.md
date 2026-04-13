@@ -33,7 +33,7 @@ For the main documentation index with quick navigation, see [INDEX.md](./INDEX.m
 **File:** [`src/heretek_swarm/api/main.py`](../src/heretek_swarm/api/main.py)
 
 ```python
-app = FastAPI(title="Heretek Swarm API", version="1.11.0")
+app = FastAPI(title="Heretek Swarm API", version="0.1.0")
 
 # Include routers
 app.include_router(workflows.router, prefix="/api/workflows")

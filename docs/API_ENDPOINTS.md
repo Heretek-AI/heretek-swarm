@@ -1,6 +1,6 @@
 # Heretek Swarm API Endpoints
 
-**Version:** 2.0.0  
+**Version:** 0.1.0  
 **Date:** 2026-04-07  
 **Status:** Production-Ready
 
@@ -47,13 +47,19 @@ app = FastAPI(
 | consensus | /api/consensus | [`consensus.py`](src/heretek_swarm/api/consensus.py) |
 | plugins | /api/plugins | [`plugins.py`](src/heretek_swarm/api/plugins.py) |
 | workflows | /api/workflows | [`workflows.py`](src/heretek_swarm/api/workflows.py) |
-| observability | /api/observability | [`observability.py`](src/heretek_swarm/api/observability.py) |
+| observability | /api/v1/observability | [`observability.py`](src/heretek_swarm/api/observability.py) |
 | evaluation | /api/evaluation | [`evaluation.py`](src/heretek_swarm/api/evaluation.py) |
 | rag | /api/rag | [`rag.py`](src/heretek_swarm/api/rag.py) |
 | consciousness | /api/consciousness | [`consciousness.py`](src/heretek_swarm/api/consciousness.py) |
 | emergent_intelligence | /api/v1/emergent-intelligence | [`emergent_intelligence.py`](src/heretek_swarm/api/emergent_intelligence.py) |
 | agents_management | /api/agents | [`agents_management.py`](src/heretek_swarm/api/agents_management.py) |
+| autonomous | /autonomous | [`autonomous.py`](src/heretek_swarm/api/autonomous.py) |
 | configuration | /api/config | [`configuration.py`](src/heretek_swarm/api/configuration.py) |
+| wizard | /api/wizard | [`wizard.py`](src/heretek_swarm/api/wizard.py) |
+| metrics | /metrics | [`metrics.py`](src/heretek_swarm/api/metrics.py) |
+| collective_evolution | /api/collective | [`collective_evolution.py`](src/heretek_swarm/api/collective_evolution.py) |
+| alerts | /api/alerts | [`alerts.py`](src/heretek_swarm/api/alerts.py) |
+| mcp | /api/mcp | [`mcp.py`](src/heretek_swarm/api/mcp.py) |
 
 ---
 

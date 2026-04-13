@@ -146,7 +146,6 @@ export function Dashboard() {
     ws.onopen = () => {
       setConnected(true);
       setError(null);
-      console.log('Dashboard WebSocket connected');
     };
 
     ws.onmessage = (event) => {
@@ -208,7 +207,6 @@ export function Dashboard() {
 
     ws.onclose = () => {
       setConnected(false);
-      console.log('Dashboard WebSocket disconnected');
     };
 
     return () => {

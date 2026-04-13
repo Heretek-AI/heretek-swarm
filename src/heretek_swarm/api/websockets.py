@@ -1149,8 +1149,7 @@ async def all_agents_websocket(
         while True:
             try:
                 data = await asyncio.wait_for(websocket.receive_text(), timeout=60.0)
-                message = json.loads(data)
-
+                _ = json.loads(data)  # Consume but don't use client messages in this handler
             except TimeoutError:
                 await websocket.send_json({
                     "type": "heartbeat",

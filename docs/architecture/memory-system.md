@@ -686,5 +686,5 @@ Default policies include:
 
 - [Actors System](./actors-system.md)
 - [Consensus Mechanism](./consensus-mechanism.md)
-- [HeavySwarm Workflow](./orchestration.md)
-- [State Management](./state.md)
+- [HeavySwarm Workflow](./orchestration-system.md)
+- [State Management](./state-management.md)

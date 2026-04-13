@@ -570,6 +570,6 @@ See [`src/heretek_swarm/consensus/maker.py`](../src/heretek_swarm/consensus/make
 ## See Also
 
 - [Actors System](./actors-system.md)
-- [HeavySwarm Workflow](./orchestration.md)
-- [Memory System](./memory.md)
-- [State Management](./state.md)
+- [HeavySwarm Workflow](./orchestration-system.md)
+- [Memory System](./memory-system.md)
+- [State Management](./state-management.md)

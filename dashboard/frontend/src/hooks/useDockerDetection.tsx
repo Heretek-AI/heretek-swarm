@@ -166,18 +166,17 @@ export function useDockerDetection() {
   const startServices = useCallback(async () => {
     if (typeof window !== 'undefined' && (window as any).heretek) {
       // In Electron, this would trigger the main process
-      console.log('Starting services via Electron...');
     } else {
-      console.log('Start services not available in browser mode');
+      // Not available in browser mode
     }
   }, []);
 
   // Stop services
   const stopServices = useCallback(async () => {
     if (typeof window !== 'undefined' && (window as any).heretek) {
-      console.log('Stopping services via Electron...');
+      // In Electron, this would trigger the main process
     } else {
-      console.log('Stop services not available in browser mode');
+      // Not available in browser mode
     }
   }, []);
 

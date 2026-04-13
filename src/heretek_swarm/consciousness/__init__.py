@@ -34,15 +34,6 @@ from heretek_swarm.consciousness.iit_phi import (
     PhiCalculator,
     PhiResult,
 )
-from heretek_swarm.consciousness.phi_training import (
-    PhiTrainingEnvironment,
-    ScenarioType,
-    TrainingEpisode,
-    TrainingMode,
-    TrainingResult,
-    TrainingScenario,
-)
-
 __all__ = [
     "ActionOrigin",
     "AgencyLevel",

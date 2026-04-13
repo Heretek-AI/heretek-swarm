@@ -23,18 +23,17 @@ import json
 import logging
 import os
 import time
-import uuid
-from dataclasses import asdict, dataclass, field
-from datetime import UTC, datetime, timezone
-from enum import Enum, StrEnum
+from dataclasses import asdict, dataclass
+from datetime import UTC, datetime
+from enum import StrEnum
 from pathlib import Path
-from typing import TYPE_CHECKING, Any, Dict, List, Optional
+from typing import TYPE_CHECKING, Any
 
 import structlog
-from prometheus_client import CONTENT_TYPE_LATEST, CollectorRegistry, generate_latest
+from prometheus_client import CONTENT_TYPE_LATEST, generate_latest
 
 from .prometheus_metrics import PrometheusMetrics
-from .tracing import get_tracer, initialize_tracing, span_context
+from .tracing import initialize_tracing, span_context
 
 if TYPE_CHECKING:
     from collections.abc import Callable

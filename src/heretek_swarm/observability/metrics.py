@@ -21,7 +21,6 @@ from typing import Any, Dict
 try:
     from heretek_swarm.consciousness.phi_training import PhiTrainingEnvironment
     from heretek_swarm.workflow.engine import (
-        export_cycle_detector_prometheus,
         get_cycle_detector_metrics,
     )
     CYCLE_DETECTOR_AVAILABLE = True

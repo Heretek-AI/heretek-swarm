@@ -373,7 +373,7 @@ See [`src/heretek_swarm/actors/triad.py`](../src/heretek_swarm/actors/triad.py) 
 
 ## See Also
 
-- [Consensus Mechanism](./consensus.md)
-- [HeavySwarm Workflow](./orchestration.md)
-- [Memory System](./memory.md)
-- [State Management](./state.md)
+- [Consensus Mechanism](./consensus-mechanism.md)
+- [HeavySwarm Workflow](./orchestration-system.md)
+- [Memory System](./memory-system.md)
+- [State Management](./state-management.md)

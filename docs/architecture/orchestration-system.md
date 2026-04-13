@@ -583,4 +583,4 @@ See [`src/heretek_swarm/orchestration/heavyswarm.py`](../src/heretek_swarm/orche
 - [Actors System](./actors-system.md)
 - [Consensus Mechanism](./consensus-mechanism.md)
 - [Memory System](./memory-system.md)
-- [State Management](./state.md)
+- [State Management](./state-management.md)

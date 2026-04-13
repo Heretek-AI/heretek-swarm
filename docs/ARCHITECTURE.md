@@ -1,6 +1,6 @@
 # Heretek Swarm Architecture
 
-**Version:** 2.1.0  
+**Version:** 0.1.0  
 **Date:** 2026-04-10  
 **Status:** Production-Ready  
 **Health Score:** 100/100

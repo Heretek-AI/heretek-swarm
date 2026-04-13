@@ -206,7 +206,6 @@ def create_span(
     Returns:
         A newly created span (not yet started).
     """
-    tracer = get_tracer()
     span_kind = _span_kind_from_str(kind)
 
     ctx = trace.get_current_context()

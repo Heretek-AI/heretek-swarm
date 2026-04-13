@@ -66,7 +66,6 @@ from heretek_swarm.memory.prefetcher import (
     PreFetchStrategy,
 )
 from heretek_swarm.memory.tiering import (
-    MemoryTier,
     MemoryTieringSystem,
     MigrationPolicy,
     MigrationRecord,

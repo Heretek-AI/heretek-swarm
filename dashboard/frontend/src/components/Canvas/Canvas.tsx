@@ -21,6 +21,8 @@ import {
 import '@xyflow/react/dist/style.css';
 
 import AgentNode, { AgentData } from './AgentNode';
+import { useConsciousnessMetrics, useSwarmHealth } from './useMetrics';
+import MetricsOverlay from './MetricsOverlay';
 
 // Use environment variable or relative path (nginx proxies /api to api:8000)
 const API_URL = import.meta.env.VITE_API_URL || '';
@@ -43,6 +45,23 @@ export function CollectiveCanvas() {
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [showMetrics, setShowMetrics] = useState(false);
+  const [agentsData, setAgentsData] = useState<AgentApiResponse[]>([]);
+
+  // Metrics hooks
+  const { metrics: consciousness, loading: consciousnessLoading } = useConsciousnessMetrics();
+  const swarmHealth = useSwarmHealth(agentsData);
+
+  // Toggle metrics overlay with 'm' key
+  useEffect(() => {
+    const handleKeyDown = (e: KeyboardEvent) => {
+      if (e.key === 'm' || e.key === 'M') {
+        setShowMetrics(prev => !prev);
+      }
+    };
+    window.addEventListener('keydown', handleKeyDown);
+    return () => window.removeEventListener('keydown', handleKeyDown);
+  }, []);
 
   // Fetch agents from API
   const fetchAgents = useCallback(async () => {
@@ -70,6 +89,7 @@ export function CollectiveCanvas() {
       );
       
       setNodes(agentNodes as Node<AgentData>[]);
+      setAgentsData(data.agents);
       setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');
@@ -114,7 +134,7 @@ export function CollectiveCanvas() {
   }
 
   return (
-    <div className="w-full h-screen bg-gray-900">
+    <div className="w-full h-screen bg-gray-900 relative">
       <ReactFlow
         nodes={nodes}
         edges={edges}
@@ -143,6 +163,14 @@ export function CollectiveCanvas() {
           maskColor="rgba(0, 0, 0, 0.5)"
         />
       </ReactFlow>
+      {showMetrics && (
+        <MetricsOverlay
+          consciousness={consciousness}
+          swarmHealth={swarmHealth}
+          metricsLoading={consciousnessLoading}
+          onClose={() => setShowMetrics(false)}
+        />
+      )}
     </div>
   );
 }
