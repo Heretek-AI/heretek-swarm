@@ -30,7 +30,6 @@ COPY pyproject.toml README.md ./
 
 # Copy source code
 COPY src/ ./src/
-COPY config/ ./config/
 COPY migrations/ ./migrations/
 
 # Copy docker entrypoint

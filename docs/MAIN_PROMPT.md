@@ -337,6 +337,77 @@ When completing tasks, respond with:
 
 ---
 
+# DOCKER DEPLOYMENT DEBUG PROTOCOL
+
+## Pre-Run Checklist: Fresh Docker Deployment
+
+**Before each run**, execute the following to ensure a clean deployment:
+
+```bash
+# 1. Tear down existing stack and volumes
+docker compose down -v 2>/dev/null || true
+
+# 2. Remove any conflicting containers
+docker ps -a --format "{{.Names}}" | grep -E "autonomous|mem0" | xargs -r docker rm -f 2>/dev/null || true
+
+# 3. Clean port conflicts (kill local services using docker ports)
+# Port 18789 = A2A, 18790 = MCP
+lsof -ti :18789 -ti :18790 2>/dev/null | xargs -r kill -9 2>/dev/null || true
+
+# 4. Start core services
+docker compose up -d
+
+# 5. Start Mem0 profile
+docker compose up -d mem0 mem0-postgres
+
+# 6. Start autonomous profile (after confirming ports are free)
+docker compose --profile autonomous up -d autonomous
+
+# 7. Verify all services
+docker ps --format "table {{.Names}}\t{{.Status}}"
+curl -s http://localhost:8000/api/health | python3 -c "import sys,json; d=json.load(sys.stdin); print('API:', d.get('status'))"
+curl -s http://localhost:8888/openapi.json | python3 -c "import sys,json; d=json.load(sys.stdin); print('Mem0:', list(d.get('paths',{}).keys())[:3])"
+```
+
+## Known Docker Issues (See `docs/DOCKER_ISSUES.md` for details)
+
+| Issue | Symptom | Fix |
+|-------|---------|-----|
+| Mem0 pg_hba.conf | `password authentication failed` | Add `host all all 172.28.0.0/16 trust` to pg_hba.conf |
+| Mem0 history dir | `unable to open database file` | Dockerfile: `RUN mkdir -p /app/history` |
+| Mem0 neo4j | Connection errors on startup | Set `graph_store.provider = "none"` in main.py |
+| API healthcheck | `curl not found` in container | Use Python urllib instead of curl |
+| Dockerfile.autonomous | `"/config": not found` | Remove `COPY config/ ./config/` line |
+| prometheus-client | `ModuleNotFoundError` | Add `prometheus-client>=0.19.0` to pyproject.toml dependencies |
+| Port 18789 conflict | `address already in use` | Kill local chroma-mcp or other port users |
+
+## Key Files for Docker Debugging
+
+- `docker-compose.yml` - Service definitions and healthchecks
+- `docker/Dockerfile.autonomous` - Autonomous runtime container
+- `mem0_server/Dockerfile` - Mem0 server container
+- `docs/DOCKER_ISSUES.md` - Detailed issue log with fixes
+
+## Verification Commands
+
+```bash
+# Check all containers
+docker ps -a
+
+# View logs
+docker logs heretek-autonomous 2>&1 | tail -50
+docker logs heretek-mem0 2>&1 | tail -30
+
+# Test connectivity between containers
+docker exec heretek-mem0 python3 -c "import psycopg; conn=psycopg.connect(host='mem0-postgres',port=5432,dbname='mem0',user='mem0',password='mem0-secret-change-me'); print('DB OK')"
+
+# Rebuild and restart specific service
+docker compose up -d --build mem0
+docker compose up -d --build autonomous
+```
+
+---
+
 **Document Classification:** EXECUTION PROMPT
 **For Use By:** AI Orchestration Agents
 **Context:** Autonomous Execution of Heretek Swarm Development
