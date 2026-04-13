@@ -7,6 +7,7 @@
 FROM node:20-alpine as build
 
 ARG VITE_API_HOST
+ARG VITE_API_KEY
 
 WORKDIR /app
 

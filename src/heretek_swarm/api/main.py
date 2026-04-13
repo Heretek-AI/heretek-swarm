@@ -34,6 +34,7 @@ setup_logging(log_level=log_level, json_output=json_output)
 from heretek_swarm.actors.supervisor import ActorSupervisor
 from heretek_swarm.api import (
     agents_management,
+    autonomous,
     collective_evolution,
     configuration,
     consciousness,
@@ -225,6 +226,7 @@ app.include_router(rag.router)
 app.include_router(consciousness.router)
 app.include_router(emergent_intelligence.router)
 app.include_router(agents_management.router)
+app.include_router(autonomous.router)
 app.include_router(configuration.router)
 app.include_router(wizard.router)
 app.include_router(metrics.router)

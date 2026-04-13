@@ -321,6 +321,37 @@ export const getRegistryStats = async (): Promise<{
 };
 
 // =============================================================================
+// Autonomous Runtime Agents
+// =============================================================================
+
+export interface AutonomousAgentStatus {
+  agent_id: string;
+  agent_type: string;
+  state: string;
+  message_count: number;
+  error_count: number;
+  mailbox_size: number;
+  last_activity: string | null;
+  uptime_seconds: number;
+}
+
+export interface AutonomousAgentsResponse {
+  agents: AutonomousAgentStatus[];
+  total: number;
+  last_update: string | null;
+  healthy: boolean;
+}
+
+/**
+ * Fetch agents running in the autonomous runtime.
+ * This queries the autonomous runtime's registered agents, not the API server's supervisor.
+ */
+export const getAutonomousAgents = async (): Promise<AutonomousAgentsResponse> => {
+  const response = await api.get('/api/autonomous/agents');
+  return response.data;
+};
+
+// =============================================================================
 // Execute workflow (existing)
 // =============================================================================
 

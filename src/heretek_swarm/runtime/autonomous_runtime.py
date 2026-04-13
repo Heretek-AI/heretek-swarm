@@ -117,6 +117,7 @@ class AutonomousRuntime:
             self._scaling_loop(),
             self._state_persistence_loop(),
             self._metrics_collection_loop(),
+            self._report_agents_loop(),
         ]
 
         if self.config.consciousness_plugin_enabled:
@@ -509,6 +510,66 @@ class AutonomousRuntime:
         ).total_seconds()
 
         logger.info(f"Collected metrics for {len(agent_metrics)} agents")
+
+    async def _report_agents_loop(self) -> None:
+        """Report agent statuses to the API server periodically."""
+        import os as _os
+
+        api_host = self.config.api_host or _os.getenv("HERETEK_API_HOST", "heretek-api")
+        api_port = self.config.api_port or 8000
+        report_interval = 30  # seconds
+
+        while self._running and not self._shutdown_event.is_set():
+            try:
+                await self._report_agents_to_api(api_host, api_port)
+            except Exception as e:
+                logger.warning(f"Failed to report agents to API: {e}")
+
+            await asyncio.sleep(report_interval)
+
+    async def _report_agents_to_api(self, api_host: str, api_port: int) -> None:
+        """Send current agent statuses to the API server."""
+        import httpx
+
+        if not self.supervisor:
+            return
+
+        agents = []
+        for agent_id, actor in self.supervisor.actors.items():
+            try:
+                status = actor.get_status()
+                agents.append({
+                    "agent_id": agent_id,
+                    "agent_type": getattr(actor, "actor_type", "unknown"),
+                    "state": status.state.value if status else "unknown",
+                    "message_count": status.message_count if status else 0,
+                    "error_count": status.error_count if status else 0,
+                    "mailbox_size": status.mailbox_size if status else 0,
+                    "last_activity": status.last_activity if status else None,
+                    "uptime_seconds": status.uptime_seconds if status else 0.0,
+                })
+            except Exception as e:
+                logger.debug(f"Failed to get status for agent {agent_id}: {e}")
+
+        payload = {
+            "runtime_id": "autonomous",
+            "agents": agents,
+            "total_agents": len(agents),
+            "uptime_seconds": (
+                datetime.now(UTC) - self.state.start_time
+            ).total_seconds(),
+        }
+
+        try:
+            async with httpx.AsyncClient(timeout=10.0) as client:
+                await client.post(
+                    f"http://{api_host}:{api_port}/api/autonomous/agents",
+                    json=payload,
+                )
+        except httpx.ConnectError:
+            logger.debug(f"API not available at {api_host}:{api_port}, skipping report")
+        except Exception as e:
+            logger.warning(f"Failed to report agents to API: {e}")
 
     async def _consciousness_metrics_loop(self) -> None:
         """Consciousness metrics collection loop."""

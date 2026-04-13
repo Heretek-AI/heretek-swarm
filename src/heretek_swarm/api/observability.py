@@ -160,8 +160,19 @@ async def get_swarm_health(request: Request) -> dict[str, Any]:
     collector = get_metrics_collector()
     swarm_data = collector.collect_swarm_metrics()
 
+    # Include autonomous runtime agents in total_agents count
+    try:
+        from heretek_swarm.api.autonomous import get_autonomous_agent_count_sync
+        auto_agent_count = get_autonomous_agent_count_sync()
+    except Exception:
+        auto_agent_count = 0
+
+    result = swarm_data.to_dict()
+    result["total_agents"] = result.get("total_agents", 0) + auto_agent_count
+    result["active_agents"] = result.get("active_agents", 0) + auto_agent_count
+
     return {
-        **swarm_data.to_dict(),
+        **result,
         "health_score": collector.calculate_health_score(),
     }
 
@@ -237,6 +248,36 @@ async def get_all_agents(request: Request) -> dict[str, Any]:
     collector = get_metrics_collector()
     agents = collector.get_all_agent_metrics()
     states = collector.get_agent_states()
+
+    # Include autonomous runtime agents if available
+    try:
+        from heretek_swarm.api import autonomous as autonomous_module
+        auto_agents = autonomous_module._autonomous_agents
+        # Convert autonomous agents to agent metrics format
+        for agent_id, agent_data in auto_agents.items():
+            if agent_id not in agents:
+                agents[agent_id] = type(
+                    "AutoAgentMetrics",
+                    (),
+                    {
+                        "to_dict": lambda self, a=agent_data: {
+                            "agent_id": a["agent_id"],
+                            "agent_type": a["agent_type"],
+                            "tasks_completed": 0,
+                            "tasks_failed": a.get("error_count", 0),
+                            "avg_task_duration_seconds": 0.0,
+                            "messages_sent": a.get("message_count", 0),
+                            "messages_received": 0,
+                            "error_count": a.get("error_count", 0),
+                            "success_rate": 1.0 if a.get("error_count", 0) == 0 else 0.0,
+                            "health_score": 100.0 if a.get("state") == "running" else 50.0,
+                            "last_activity": a.get("last_activity"),
+                        },
+                    },
+                )()
+                states[agent_id] = agent_data.get("state", "unknown")
+    except Exception:
+        pass  # Autonomous runtime not available
 
     return {
         "agents": {k: v.to_dict() for k, v in agents.items()},

@@ -77,26 +77,23 @@ function DashboardContent() {
 
       if (!storedConfigured || !storedApiHost) {
         // Not configured or no stored API host - check env vars
-        if (envApiKey || envApiHost) {
-          // Pre-populate from environment variables
-          const apiHostToUse = envApiHost || (typeof window !== 'undefined' && window.location.host) || window.location.hostname;
-          const apiKeyToUse = envApiKey || '';
-
-          // Store in localStorage for persistence
-          if (envApiHost) localStorage.setItem('swarm_api_host', envApiHost);
-          if (envApiKey) localStorage.setItem('swarm_api_key', envApiKey);
+        // Only auto-skip wizard if BOTH host AND key are set via env
+        // Having only envApiHost means the user still needs to enter the key interactively
+        if (envApiKey && envApiHost) {
+          // Both env vars present — pre-populate and skip wizard
+          localStorage.setItem('swarm_api_host', envApiHost);
+          localStorage.setItem('api_key', envApiKey);
           localStorage.setItem('swarm_configured', 'true');
 
-          // Also update the store
           useSetupStore.getState().setConfig({
-            apiHost: envApiHost || window.location.hostname,
-            apiKey: envApiKey || '',
+            apiHost: envApiHost,
+            apiKey: envApiKey,
             wsHost: '',
           });
 
           setShowSetup(false);
         } else {
-          // No env vars and not configured - show setup
+          // No env vars or missing key — show wizard so user can enter credentials
           setShowSetup(true);
         }
       } else {

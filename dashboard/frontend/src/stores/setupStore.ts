@@ -214,19 +214,14 @@ export const useSetupStore = create<SetupState>()(
       
       completeSetup: () => {
         const { config } = get();
-        
-        // Persist to localStorage
+
+        // Persist to localStorage - use 'api_key' so apiClient can read it
         localStorage.setItem('swarm_api_host', config.apiHost);
         localStorage.setItem('swarm_ws_host', config.wsHost);
-        localStorage.setItem('swarm_api_key', config.apiKey);
+        localStorage.setItem('api_key', config.apiKey); // Must match apiClient's expected key
         localStorage.setItem('swarm_configured', 'true');
-        
-        // Set VITE_ prefixed variables for build-time configuration
-        // These are used by the API client
-        import.meta.env.VITE_API_URL = config.apiHost;
-        import.meta.env.VITE_WS_URL = config.wsHost;
-        
-        set({ 
+
+        set({
           isConfigured: true,
           currentStep: 'complete',
         });
