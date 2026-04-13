@@ -425,7 +425,7 @@ function ApiEndpointStep({
             } rounded-lg focus:ring-2 focus:ring-blue-500 focus:border-transparent transition-colors`}
           />
           <div className="absolute right-3 top-1/2 -translate-y-1/2">
-            <StatusIndicator status={validationStatus === 'pending' ? 'pending' : validationStatus} />
+            <StatusIndicator status={validationStatus === 'pending' ? 'pending' : validationStatus === 'valid' ? 'success' : 'error'} />
           </div>
         </div>
         {validationError && (
@@ -538,7 +538,24 @@ function ApiKeyStep({
           const api = configModule.default || configModule.configurationApi;
           const llmProviders = await api.listLLMProviders();
           const embeddingProviders = await api.listEmbeddingProviders();
-          setProviders(llmProviders, embeddingProviders);
+          // Convert LLMProvider[] to LLMProviderInfo[] for store compatibility
+          const llmProviderInfos = llmProviders.map((p: { provider_name: string; provider_type: string; base_url: string; default_model?: string; is_default: boolean; is_enabled: boolean }) => ({
+            provider_name: p.provider_name,
+            provider_type: p.provider_type,
+            base_url: p.base_url,
+            default_model: p.default_model || '',
+            is_default: p.is_default,
+            is_enabled: p.is_enabled,
+          }));
+          const embeddingProviderInfos = embeddingProviders.map((p: { provider_name: string; provider_type: string; base_url: string; default_model?: string; is_default: boolean; is_enabled: boolean }) => ({
+            provider_name: p.provider_name,
+            provider_type: p.provider_type,
+            base_url: p.base_url,
+            default_model: p.default_model || '',
+            is_default: p.is_default,
+            is_enabled: p.is_enabled,
+          }));
+          setProviders(llmProviderInfos, embeddingProviderInfos);
         } catch (providerErr) {
           console.warn('Failed to fetch provider info:', providerErr);
         }

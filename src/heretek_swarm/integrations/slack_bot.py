@@ -86,25 +86,6 @@ class SlackBot:
         logger.info("slack_bot_initialized")
         return True
 
-    async def start(self) -> None:
-        """Start bot."""
-        if not self._bot:
-            logger.warning("slack_bot_not_initialized")
-            return
-
-        self._running = True
-        await self._bot.start()
-        logger.info("slack_bot_started")
-
-    async def stop(self) -> None:
-        """Stop bot."""
-        if not self._bot:
-            return
-
-        self._running = False
-        await self._bot.stop()
-        logger.info("slack_bot_stopped")
-
     async def send_notification(
         self,
         channel: str,

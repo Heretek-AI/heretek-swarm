@@ -248,7 +248,7 @@ const MessageFlowGraph: React.FC<{ messages: A2AMessage[] }> = ({ messages }) =>
     setConnections(conns);
   }, [messages]);
 
-  const topConnections = Object.entries(connions)
+  const topConnections = Object.entries(connections)
     .sort((a, b) => b[1] - a[1])
     .slice(0, 10);
 
@@ -267,7 +267,7 @@ const MessageFlowGraph: React.FC<{ messages: A2AMessage[] }> = ({ messages }) =>
             <div className="w-24 h-2 bg-gray-700 rounded-full overflow-hidden">
               <div
                 className="h-full bg-purple-500 rounded-full"
-                style={{ width: `${Math.min(100, (count / 10) * 100)}%` }}
+                style={{ width: `${Math.min(100, (Number(count) / 10) * 100)}%` }}
               />
             </div>
             <span className="text-xs text-gray-400 w-8 text-right">{count}</span>
@@ -523,7 +523,7 @@ export function A2ATracker({
           <div>
             <span className="text-gray-500">Total Throughput:</span>
             <span className="ml-2 text-white">
-              {messages.reduce((acc, m) => acc + m.payload ? 100 : 50, 0).toLocaleString()} bytes
+              {messages.reduce((acc, m) => acc + (m.payload && Object.keys(m.payload).length > 0 ? 100 : 50), 0).toLocaleString()} bytes
             </span>
           </div>
           <div>

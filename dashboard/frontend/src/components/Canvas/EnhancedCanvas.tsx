@@ -23,12 +23,11 @@ import ReactFlow, {
   Connection,
   addEdge,
   Panel,
-  Position,
+  XYPosition,
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 
-import { AgentNode, AgentData } from './AgentNode';
-import type { AgentNode as AgentNodeType, TriadNode, HistorianNode, ToolNode, MemoryNode, RAGNode, ConditionNode, LoopNode, HandoffNode, MergeNode, DiscordNode, TelegramNode, WebhookNode } from '../types/reactflow';
+import AgentNode, { AgentData } from './AgentNode';
 
 // Metrics overlay types
 interface SwarmHealthMetrics {
@@ -68,7 +67,7 @@ interface AgentApiResponse {
 
 interface WorkflowNode {
   id: string;
-  type: string;
+  type?: string;
   position: { x: number; y: number };
   data: Record<string, any>;
 }
@@ -297,6 +296,7 @@ export function EnhancedCanvas() {
     } catch (err) {
       setExecutionState({
         status: 'error',
+        progress: 0,
         message: err instanceof Error ? err.message : 'Unknown error',
       });
     } finally {
@@ -306,7 +306,7 @@ export function EnhancedCanvas() {
   }, [currentWorkflow, setExecutionState, setShowExecution]);
 
   // Create node from palette
-  const addNode = useCallback((type: string, position: Position) => {
+  const addNode = useCallback((type: string, position: XYPosition) => {
     const newNode: Node = {
       id: `node-${Date.now()}`,
       type,
@@ -381,22 +381,6 @@ export function EnhancedCanvas() {
       return () => clearInterval(interval);
     }
   }, [showMetrics, fetchMetrics]);
-
-  if (loading) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-gray-900">
-        <div className="text-white text-xl">Loading swarm...</div>
-      </div>
-    );
-  }
-
-  if (error) {
-    return (
-      <div className="flex items-center justify-center h-screen bg-gray-900">
-        <div className="text-red-500 text-xl">Error: {error}</div>
-      </div>
-    );
-  }
 
   // Get health color
   const getHealthColor = (score: number): string => {
@@ -574,7 +558,7 @@ export function EnhancedCanvas() {
                 id: `workflow-${Date.now()}`,
                 name: `Workflow ${savedWorkflows.length + 1}`,
                 description: 'New workflow',
-                nodes,
+                nodes: nodes as WorkflowNode[],
                 edges,
                 createdAt: new Date().toISOString(),
                 updatedAt: new Date().toISOString(),
@@ -638,7 +622,7 @@ export function EnhancedCanvas() {
           onEdgesChange={onEdgesChange}
           onConnect={onConnect}
           onNodeClick={onNodeClick}
-          onNodeDragStop={(event, node) => {
+          onNodeDragStop={(_event, node) => {
             // Update node position
             setNodes((nds) =>
               nds.map((n) =>

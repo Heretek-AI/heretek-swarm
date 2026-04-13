@@ -1,6 +1,6 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-13T19:35:26.327061+00:00",
+  "timestamp": "2026-04-13T20:08:44.024318+00:00",
   "overall_score": 0.992672909479218,
   "check_summaries": [
     {
@@ -1376,6 +1376,69 @@
           "description": "Variables declared but never used",
           "entities": [
             {
+              "entity_name": "[unused_variable] Left side of comma operator is unused and has no side effects.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 124,
+              "line_end": 124,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Left side of comma operator is unused and has no side effects.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 153,
+              "line_end": 153,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Left side of comma operator is unused and has no side effects.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 154,
+              "line_end": 154,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Left side of comma operator is unused and has no side effects.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 401,
+              "line_end": 401,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Left side of comma operator is unused and has no side effects.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 425,
+              "line_end": 425,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Left side of comma operator is unused and has no side effects.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 427,
+              "line_end": 427,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Left side of comma operator is unused and has no side effects.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 428,
+              "line_end": 428,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Left side of comma operator is unused and has no side effects.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 429,
+              "line_end": 429,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] Left side of comma operator is unused and has no side effects.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 621,
+              "line_end": 621,
+              "metric_value": 0.0
+            },
+            {
               "entity_name": "[unused_variable] 'ReactFlow' is declared but its value is never read.",
               "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
               "line_start": 9,
@@ -1425,24 +1488,17 @@
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] Left side of comma operator is unused and has no side effects.",
+              "entity_name": "[unused_variable] Unused label.",
               "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
-              "line_start": 124,
-              "line_end": 124,
+              "line_start": 123,
+              "line_end": 123,
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] Left side of comma operator is unused and has no side effects.",
+              "entity_name": "[unused_variable] Unused label.",
               "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
-              "line_start": 153,
-              "line_end": 153,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] Left side of comma operator is unused and has no side effects.",
-              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
-              "line_start": 154,
-              "line_end": 154,
+              "line_start": 135,
+              "line_end": 135,
               "metric_value": 0.0
             },
             {
@@ -1572,76 +1628,6 @@
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] 'info' is declared but its value is never read.",
-              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
-              "line_start": 378,
-              "line_end": 378,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] Left side of comma operator is unused and has no side effects.",
-              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
-              "line_start": 401,
-              "line_end": 401,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] Left side of comma operator is unused and has no side effects.",
-              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
-              "line_start": 425,
-              "line_end": 425,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] Left side of comma operator is unused and has no side effects.",
-              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
-              "line_start": 427,
-              "line_end": 427,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] Left side of comma operator is unused and has no side effects.",
-              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
-              "line_start": 428,
-              "line_end": 428,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] Left side of comma operator is unused and has no side effects.",
-              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
-              "line_start": 429,
-              "line_end": 429,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] 'info' is declared but its value is never read.",
-              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
-              "line_start": 597,
-              "line_end": 597,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] Left side of comma operator is unused and has no side effects.",
-              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
-              "line_start": 621,
-              "line_end": 621,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] Unused label.",
-              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
-              "line_start": 123,
-              "line_end": 123,
-              "metric_value": 0.0
-            },
-            {
-              "entity_name": "[unused_variable] Unused label.",
-              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
-              "line_start": 135,
-              "line_end": 135,
-              "metric_value": 0.0
-            },
-            {
               "entity_name": "[unused_variable] Unused label.",
               "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
               "line_start": 360,
@@ -1649,10 +1635,24 @@
               "metric_value": 0.0
             },
             {
+              "entity_name": "[unused_variable] 'info' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 378,
+              "line_end": 378,
+              "metric_value": 0.0
+            },
+            {
               "entity_name": "[unused_variable] Unused label.",
               "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
               "line_start": 430,
               "line_end": 430,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'info' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "line_start": 597,
+              "line_end": 597,
               "metric_value": 0.0
             }
           ]

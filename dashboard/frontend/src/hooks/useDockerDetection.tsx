@@ -141,7 +141,7 @@ export function useDockerDetection() {
       })
     );
 
-    setServices(updatedServices);
+    setServices(updatedServices as ServiceStatus[]);
     setServicesLoading(false);
   }, []);
 

@@ -13,7 +13,6 @@
  */
 
 import React, { useEffect, useCallback, useState } from 'react';
-import { useConfigWizardStore } from '../../stores/configWizardStore';
 import {
   getProviders,
   getTiers,
@@ -22,7 +21,8 @@ import {
   submitConfig,
   resetWizard as apiResetWizard,
 } from '../../api/wizard';
-import type { Provider, SelectedProvider } from '../../api/wizard';
+import type { Provider } from '../../api/wizard';
+import { useConfigWizardStore, type SelectedProvider, type WizardStep } from '../../stores/configWizardStore';
 import { useToast } from '../UI/Toast';
 
 // =============================================================================

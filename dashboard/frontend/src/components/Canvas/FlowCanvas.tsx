@@ -25,11 +25,11 @@ import ReactFlow, {
 } from 'reactflow';
 import 'reactflow/dist/style.css';
 
-import { ToolNode } from './ToolNode';
-import { LLMNode } from './LLMNode';
-import { MemoryNode } from './MemoryNode';
-import { DecisionNode } from './DecisionNode';
-import { ConnectorNode } from './ConnectorNode';
+import { ToolNode } from '../WorkflowBuilder/ToolNode';
+import { LLMNode } from '../WorkflowBuilder/LLMNode';
+import { MemoryNode } from '../WorkflowBuilder/MemoryNode';
+import { DecisionNode } from '../WorkflowBuilder/DecisionNode';
+import { ConnectorNode } from '../WorkflowBuilder/ConnectorNode';
 
 // Types
 export interface AgentNodeData {
@@ -319,7 +319,7 @@ function FlowCanvasInner({ initialNodes = [], initialEdges = [], onSave }: FlowC
         type: 'agent',
         position: { x: 300 + index * 250, y: 100 },
         data: {
-          agentType: agentType === 'supervisor' ? (['alpha', 'beta', 'charlie'][index]) : undefined,
+          agentType: undefined,
           llmModel: agentInfo.defaultLlmModel,
           llmProvider: 'openai',
           status: 'idle',

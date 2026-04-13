@@ -24,24 +24,13 @@ from pydantic import BaseModel
 # =============================================================================
 
 def pytest_configure(config: pytest.Config) -> None:
-    """Configure pytest before test collection."""
+    """Configure pytest before test collection and register custom markers."""
     # Mock pynats module to avoid import errors for NATS dependencies
     if "pynats" not in sys.modules:
         mock_pynats = MagicMock()
         sys.modules["pynats"] = mock_pynats
 
-# ============== CONFIGURATION ==============
-
-# Performance baselines per Phase Directives
-MESSAGE_LATENCY_BASELINE_MS = 100  # <100ms message latency requirement
-CONCURRENT_AGENT_TARGET = 1000  # Must support 1,000+ concurrent agents
-COVERAGE_THRESHOLD = 80  # >80% test coverage requirement
-
-
-# ============== TEST MARKERS ==============
-
-def pytest_configure(config: pytest.Config) -> None:
-    """Configure custom pytest markers."""
+    # Register custom pytest markers
     config.addinivalue_line(
         "markers", "unit: Unit tests (fast, isolated, no external dependencies)"
     )
@@ -66,6 +55,14 @@ def pytest_configure(config: pytest.Config) -> None:
     config.addinivalue_line(
         "markers", "security: Security-focused tests (input validation, secrets)"
     )
+
+
+# ============== CONFIGURATION ==============
+
+# Performance baselines per Phase Directives
+MESSAGE_LATENCY_BASELINE_MS = 100  # <100ms message latency requirement
+CONCURRENT_AGENT_TARGET = 1000  # Must support 1,000+ concurrent agents
+COVERAGE_THRESHOLD = 80  # >80% test coverage requirement
 
 
 # ============== MODELS ==============

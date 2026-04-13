@@ -5,7 +5,7 @@
  * Inspired by RagaAI-Catalyst tracing patterns.
  */
 
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface LLMTraceEvent {
   id: string;

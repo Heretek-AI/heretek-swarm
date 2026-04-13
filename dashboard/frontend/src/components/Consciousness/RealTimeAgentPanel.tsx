@@ -1,6 +1,6 @@
 /**
  * RealTimeAgentPanel - Live agent monitoring component
- * 
+ *
  * Displays real-time status of all 23 agents with:
  * - Online/offline status
  * - Current task indicator
@@ -8,9 +8,8 @@
  * - Consciousness score
  */
 
-import React, { useEffect, useState, useCallback } from 'react';
-import { useAgentStatus } from '../hooks/useAgentStatus';
-import { useWebSocket } from '../hooks/useWebSocket';
+import { useAgentStatus } from '../../hooks/useAgentStatus';
+import { useWebSocket } from '../../hooks/useWebSocket';
 
 interface AgentStatus {
   id: string;
@@ -31,7 +30,7 @@ const STATUS_COLORS = {
 };
 
 // Agent tier mapping
-const AGENT_TIERS = {
+const AGENT_TIERS: Record<string, string> = {
   'steward': 'Tier 1 - Core',
   'alpha': 'Tier 1 - Core',
   'beta': 'Tier 1 - Core',
@@ -62,13 +61,23 @@ interface RealTimeAgentPanelProps {
   showConsciousness?: boolean;
 }
 
-export function RealTimeAgentPanel({ 
-  refreshInterval = 5000,
-  showConsciousness = true 
+export function RealTimeAgentPanel({
+  showConsciousness = true
 }: RealTimeAgentPanelProps) {
-  const { agents, loading, error, refetch } = useAgentStatus(refreshInterval);
-  const { connectionStatus } = useWebSocket();
-  
+  const { agentStatuses, connected, error } = useAgentStatus();
+  const { connected: wsConnected } = useWebSocket('agents', {});
+
+  // Convert agentStatuses Record to array for rendering
+  const agents: AgentStatus[] = Object.entries(agentStatuses).map(([id, update]) => ({
+    id,
+    name: id,
+    status: update.status === 'processing' ? 'busy' : update.status === 'active' ? 'idle' : update.status,
+    currentTask: update.currentTask,
+    messagesCount: 0,
+    consciousnessScore: undefined,
+    lastActivity: update.lastHeartbeat,
+  }));
+
   // Group agents by tier
   const agentsByTier = agents.reduce((acc, agent) => {
     const tier = AGENT_TIERS[agent.id] || 'Unknown';
@@ -93,9 +102,9 @@ export function RealTimeAgentPanel({
       <div className="flex justify-between items-center mb-4">
         <h2 className="text-xl font-bold text-white">Agent Status</h2>
         <div className="flex items-center gap-2">
-          <span className={`w-2 h-2 rounded-full ${connectionStatus === 'connected' ? 'bg-green-500' : 'bg-red-500'}`} />
+          <span className={`w-2 h-2 rounded-full ${wsConnected ? 'bg-green-500' : 'bg-red-500'}`} />
           <span className="text-sm text-gray-400">
-            {connectionStatus === 'connected' ? 'Live' : 'Disconnected'}
+            {wsConnected ? 'Live' : 'Disconnected'}
           </span>
         </div>
       </div>
@@ -104,19 +113,19 @@ export function RealTimeAgentPanel({
       <div className="grid grid-cols-4 gap-4 mb-6">
         <div className="bg-slate-800 rounded-lg p-3 text-center">
           <div className="text-2xl font-bold text-green-400">
-            {agents.filter(a => a.status === 'idle').length}
+            {agents.filter((a: AgentStatus) => a.status === 'idle').length}
           </div>
           <div className="text-xs text-gray-400">Idle</div>
         </div>
         <div className="bg-slate-800 rounded-lg p-3 text-center">
           <div className="text-2xl font-bold text-yellow-400">
-            {agents.filter(a => a.status === 'busy').length}
+            {agents.filter((a: AgentStatus) => a.status === 'busy').length}
           </div>
           <div className="text-xs text-gray-400">Busy</div>
         </div>
         <div className="bg-slate-800 rounded-lg p-3 text-center">
           <div className="text-2xl font-bold text-red-400">
-            {agents.filter(a => a.status === 'error').length}
+            {agents.filter((a: AgentStatus) => a.status === 'error').length}
           </div>
           <div className="text-xs text-gray-400">Error</div>
         </div>
@@ -134,8 +143,8 @@ export function RealTimeAgentPanel({
           <div key={tier} className="bg-slate-800 rounded-lg p-3">
             <h3 className="text-sm font-semibold text-gray-300 mb-2">{tier}</h3>
             <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-2">
-              {tierAgents.map(agent => (
-                <div 
+              {(tierAgents as AgentStatus[]).map((agent) => (
+                <div
                   key={agent.id}
                   className="bg-slate-700 rounded p-2 flex flex-col gap-1"
                 >
@@ -151,7 +160,7 @@ export function RealTimeAgentPanel({
                   {showConsciousness && agent.consciousnessScore !== undefined && (
                     <div className="flex items-center gap-1">
                       <div className="flex-1 h-1 bg-slate-600 rounded overflow-hidden">
-                        <div 
+                        <div
                           className="h-full bg-purple-500 transition-all"
                           style={{ width: `${agent.consciousnessScore * 100}%` }}
                         />
@@ -174,12 +183,12 @@ export function RealTimeAgentPanel({
       {/* Error State */}
       {error && (
         <div className="mt-4 p-3 bg-red-900/50 border border-red-500 rounded text-red-200 text-sm">
-          Error fetching agent status: {error}
+          Error fetching agent status: {error.message}
         </div>
       )}
 
       {/* Loading State */}
-      {loading && agents.length === 0 && (
+      {connected && agents.length === 0 && (
         <div className="flex justify-center py-8">
           <div className="animate-spin w-8 h-8 border-2 border-purple-500 border-t-transparent rounded-full" />
         </div>

@@ -6,9 +6,9 @@
  */
 
 import React, { useState, useCallback } from 'react';
-import { FlowCanvas } from '../Canvas/FlowCanvas';
-import { A2ATracker } from '../Observability/A2ATracker';
-import { ModelGarage } from '../Settings/ModelGarage';
+import { FlowCanvas } from './Canvas/FlowCanvas';
+import { A2ATracker } from './Observability/A2ATracker';
+import { ModelGarage } from './Settings/ModelGarage';
 
 type View = 'canvas' | 'tracker' | 'garage' | 'all';
 

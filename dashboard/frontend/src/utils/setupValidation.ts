@@ -103,7 +103,7 @@ export async function testApiHealth(apiUrl: string, apiKey?: string): Promise<Co
     let details = '';
     try {
       const data = await response.json();
-      details = formatHealthDetails(data);
+      details = typeof data === 'object' && data !== null ? JSON.stringify(data).slice(0, 200) : String(data);
     } catch {
       details = 'Health check passed';
     }

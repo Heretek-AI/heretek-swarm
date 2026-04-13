@@ -39,7 +39,7 @@ const nodeTypes = {
 const initialEdges: Edge[] = [];
 
 export function CollectiveCanvas() {
-  const [nodes, setNodes, onNodesChange] = useNodesState([]);
+  const [nodes, setNodes, onNodesChange] = useNodesState<Node<AgentData>>([]);
   const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdges);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -69,7 +69,7 @@ export function CollectiveCanvas() {
         })
       );
       
-      setNodes(agentNodes);
+      setNodes(agentNodes as Node<AgentData>[]);
       setError(null);
     } catch (err) {
       setError(err instanceof Error ? err.message : 'Unknown error');

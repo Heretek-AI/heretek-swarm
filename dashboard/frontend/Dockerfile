@@ -38,9 +38,9 @@ COPY --from=build /app/dist /usr/share/nginx/html
 # Expose port
 EXPOSE 80
 
-# Health check
+# Health check - use 127.0.0.1 instead of localhost (IPv6 vs IPv4 issue)
 HEALTHCHECK --interval=30s --timeout=5s --retries=3 \
-    CMD wget -q --spider http://localhost/ || exit 1
+    CMD wget --spider http://127.0.0.1/ || exit 1
 
 # Start nginx
 CMD ["nginx", "-g", "daemon off;"]
