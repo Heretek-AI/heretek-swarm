@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-13T15:47:19.992374+00:00",
+    "generated_at": "2026-04-13T16:00:16.441428+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 4,
@@ -34119,21 +34119,21 @@
       ]
     },
     "dashboard/frontend/src/App.tsx": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "dashboard.frontend.src.App.DashboardContent",
-          "start_line": 50,
-          "end_line": 141,
+          "start_line": 51,
+          "end_line": 243,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "dashboard.frontend.src.App.useEffect() callback",
           "start_line": 57,
           "end_line": 62,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.App.DashboardContent.useEffect() callback.error",
@@ -34143,11 +34143,18 @@
           "status": "unchanged"
         },
         {
+          "qualified_name": "dashboard.frontend.src.App.DashboardContent.useEffect() callback",
+          "start_line": 69,
+          "end_line": 117,
+          "node_type": "FUNCTION",
+          "status": "modified"
+        },
+        {
           "qualified_name": "dashboard.frontend.src.App.DashboardContent.checkSystemHealth",
           "start_line": 72,
           "end_line": 98,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.App.DashboardContent.checkSystemHealth.useCallback() callback",
@@ -34157,18 +34164,11 @@
           "status": "unchanged"
         },
         {
-          "qualified_name": "dashboard.frontend.src.App.DashboardContent.useEffect() callback",
-          "start_line": 100,
-          "end_line": 104,
-          "node_type": "FUNCTION",
-          "status": "unchanged"
-        },
-        {
           "qualified_name": "dashboard.frontend.src.App.DashboardContent.handleNavClick",
           "start_line": 106,
           "end_line": 108,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.App.DashboardContent.handleNavClick.useCallback() callback",
@@ -34182,14 +34182,14 @@
           "start_line": 140,
           "end_line": 141,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.App.renderView",
           "start_line": 150,
           "end_line": 150,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.App.App",
@@ -34197,6 +34197,27 @@
           "end_line": 167,
           "node_type": "FUNCTION",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.App.DashboardContent.handleSetupComplete.useCallback() callback",
+          "start_line": 175,
+          "end_line": 179,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.App.DashboardContent.handleRerunSetup.useCallback() callback",
+          "start_line": 182,
+          "end_line": 186,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.App.DashboardContent.showSetup",
+          "start_line": 230,
+          "end_line": 240,
+          "node_type": "METHOD",
+          "status": "added"
         }
       ]
     },
@@ -87564,10 +87585,10 @@
     "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.DashboardContent": {
       "file_path": "dashboard/frontend/src/App.tsx",
       "qualified_name": "dashboard.frontend.src.App.DashboardContent",
-      "start_line": 50,
-      "end_line": 141,
+      "start_line": 51,
+      "end_line": 243,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.useEffect() callback": {
       "file_path": "dashboard/frontend/src/App.tsx",
@@ -87575,7 +87596,7 @@
       "start_line": 57,
       "end_line": 62,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.DashboardContent.useEffect() callback.error": {
       "file_path": "dashboard/frontend/src/App.tsx",
@@ -87585,13 +87606,21 @@
       "type": "METHOD",
       "status": "unchanged"
     },
+    "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.DashboardContent.useEffect() callback": {
+      "file_path": "dashboard/frontend/src/App.tsx",
+      "qualified_name": "dashboard.frontend.src.App.DashboardContent.useEffect() callback",
+      "start_line": 69,
+      "end_line": 117,
+      "type": "FUNCTION",
+      "status": "modified"
+    },
     "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.DashboardContent.checkSystemHealth": {
       "file_path": "dashboard/frontend/src/App.tsx",
       "qualified_name": "dashboard.frontend.src.App.DashboardContent.checkSystemHealth",
       "start_line": 72,
       "end_line": 98,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.DashboardContent.checkSystemHealth.useCallback() callback": {
       "file_path": "dashboard/frontend/src/App.tsx",
@@ -87601,21 +87630,13 @@
       "type": "FUNCTION",
       "status": "unchanged"
     },
-    "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.DashboardContent.useEffect() callback": {
-      "file_path": "dashboard/frontend/src/App.tsx",
-      "qualified_name": "dashboard.frontend.src.App.DashboardContent.useEffect() callback",
-      "start_line": 100,
-      "end_line": 104,
-      "type": "FUNCTION",
-      "status": "unchanged"
-    },
     "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.DashboardContent.handleNavClick": {
       "file_path": "dashboard/frontend/src/App.tsx",
       "qualified_name": "dashboard.frontend.src.App.DashboardContent.handleNavClick",
       "start_line": 106,
       "end_line": 108,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.DashboardContent.handleNavClick.useCallback() callback": {
       "file_path": "dashboard/frontend/src/App.tsx",
@@ -87631,7 +87652,7 @@
       "start_line": 140,
       "end_line": 141,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.renderView": {
       "file_path": "dashboard/frontend/src/App.tsx",
@@ -87639,7 +87660,7 @@
       "start_line": 150,
       "end_line": 150,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.App": {
       "file_path": "dashboard/frontend/src/App.tsx",
@@ -87648,6 +87669,30 @@
       "end_line": 167,
       "type": "FUNCTION",
       "status": "unchanged"
+    },
+    "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.DashboardContent.handleSetupComplete.useCallback() callback": {
+      "file_path": "dashboard/frontend/src/App.tsx",
+      "qualified_name": "dashboard.frontend.src.App.DashboardContent.handleSetupComplete.useCallback() callback",
+      "start_line": 175,
+      "end_line": 179,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.DashboardContent.handleRerunSetup.useCallback() callback": {
+      "file_path": "dashboard/frontend/src/App.tsx",
+      "qualified_name": "dashboard.frontend.src.App.DashboardContent.handleRerunSetup.useCallback() callback",
+      "start_line": 182,
+      "end_line": 186,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.DashboardContent.showSetup": {
+      "file_path": "dashboard/frontend/src/App.tsx",
+      "qualified_name": "dashboard.frontend.src.App.DashboardContent.showSetup",
+      "start_line": 230,
+      "end_line": 240,
+      "type": "METHOD",
+      "status": "added"
     },
     "dashboard/frontend/src/api/agents.ts|dashboard.frontend.src.api.agents.api.interceptors.request.use() callback": {
       "file_path": "dashboard/frontend/src/api/agents.ts",
@@ -146389,19 +146434,17 @@
       "file_methods": [
         {
           "file_path": "dashboard/frontend/src/App.tsx",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "dashboard.frontend.src.App.DashboardContent",
-            "dashboard.frontend.src.App.useEffect() callback",
             "dashboard.frontend.src.App.DashboardContent.useEffect() callback.error",
-            "dashboard.frontend.src.App.DashboardContent.checkSystemHealth",
-            "dashboard.frontend.src.App.DashboardContent.checkSystemHealth.useCallback() callback",
             "dashboard.frontend.src.App.DashboardContent.useEffect() callback",
-            "dashboard.frontend.src.App.DashboardContent.handleNavClick",
+            "dashboard.frontend.src.App.DashboardContent.checkSystemHealth.useCallback() callback",
             "dashboard.frontend.src.App.DashboardContent.handleNavClick.useCallback() callback",
-            "dashboard.frontend.src.App.showSetup",
-            "dashboard.frontend.src.App.renderView",
-            "dashboard.frontend.src.App.App"
+            "dashboard.frontend.src.App.App",
+            "dashboard.frontend.src.App.DashboardContent.handleSetupComplete.useCallback() callback",
+            "dashboard.frontend.src.App.DashboardContent.handleRerunSetup.useCallback() callback",
+            "dashboard.frontend.src.App.DashboardContent.showSetup"
           ]
         },
         {
@@ -148205,19 +148248,17 @@
           "file_methods": [
             {
               "file_path": "dashboard/frontend/src/App.tsx",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "dashboard.frontend.src.App.DashboardContent",
-                "dashboard.frontend.src.App.useEffect() callback",
                 "dashboard.frontend.src.App.DashboardContent.useEffect() callback.error",
-                "dashboard.frontend.src.App.DashboardContent.checkSystemHealth",
-                "dashboard.frontend.src.App.DashboardContent.checkSystemHealth.useCallback() callback",
                 "dashboard.frontend.src.App.DashboardContent.useEffect() callback",
-                "dashboard.frontend.src.App.DashboardContent.handleNavClick",
+                "dashboard.frontend.src.App.DashboardContent.checkSystemHealth.useCallback() callback",
                 "dashboard.frontend.src.App.DashboardContent.handleNavClick.useCallback() callback",
-                "dashboard.frontend.src.App.showSetup",
-                "dashboard.frontend.src.App.renderView",
-                "dashboard.frontend.src.App.App"
+                "dashboard.frontend.src.App.App",
+                "dashboard.frontend.src.App.DashboardContent.handleSetupComplete.useCallback() callback",
+                "dashboard.frontend.src.App.DashboardContent.handleRerunSetup.useCallback() callback",
+                "dashboard.frontend.src.App.DashboardContent.showSetup"
               ]
             },
             {
@@ -150405,19 +150446,17 @@
               "file_methods": [
                 {
                   "file_path": "dashboard/frontend/src/App.tsx",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "dashboard.frontend.src.App.DashboardContent",
-                    "dashboard.frontend.src.App.useEffect() callback",
                     "dashboard.frontend.src.App.DashboardContent.useEffect() callback.error",
-                    "dashboard.frontend.src.App.DashboardContent.checkSystemHealth",
-                    "dashboard.frontend.src.App.DashboardContent.checkSystemHealth.useCallback() callback",
                     "dashboard.frontend.src.App.DashboardContent.useEffect() callback",
-                    "dashboard.frontend.src.App.DashboardContent.handleNavClick",
+                    "dashboard.frontend.src.App.DashboardContent.checkSystemHealth.useCallback() callback",
                     "dashboard.frontend.src.App.DashboardContent.handleNavClick.useCallback() callback",
-                    "dashboard.frontend.src.App.showSetup",
-                    "dashboard.frontend.src.App.renderView",
-                    "dashboard.frontend.src.App.App"
+                    "dashboard.frontend.src.App.App",
+                    "dashboard.frontend.src.App.DashboardContent.handleSetupComplete.useCallback() callback",
+                    "dashboard.frontend.src.App.DashboardContent.handleRerunSetup.useCallback() callback",
+                    "dashboard.frontend.src.App.DashboardContent.showSetup"
                   ]
                 },
                 {
@@ -151829,18 +151868,13 @@
                   "file_methods": [
                     {
                       "file_path": "dashboard/frontend/src/App.tsx",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "dashboard.frontend.src.App.DashboardContent",
-                        "dashboard.frontend.src.App.useEffect() callback",
                         "dashboard.frontend.src.App.DashboardContent.useEffect() callback.error",
-                        "dashboard.frontend.src.App.DashboardContent.checkSystemHealth",
-                        "dashboard.frontend.src.App.DashboardContent.checkSystemHealth.useCallback() callback",
                         "dashboard.frontend.src.App.DashboardContent.useEffect() callback",
-                        "dashboard.frontend.src.App.DashboardContent.handleNavClick",
+                        "dashboard.frontend.src.App.DashboardContent.checkSystemHealth.useCallback() callback",
                         "dashboard.frontend.src.App.DashboardContent.handleNavClick.useCallback() callback",
-                        "dashboard.frontend.src.App.showSetup",
-                        "dashboard.frontend.src.App.renderView",
                         "dashboard.frontend.src.App.App"
                       ]
                     },

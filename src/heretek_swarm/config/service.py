@@ -13,7 +13,7 @@ from datetime import UTC, datetime, timedelta
 from typing import TYPE_CHECKING, Any, TypeVar
 
 import structlog
-from sqlalchemy import delete, select
+from sqlalchemy import delete, select, update
 from sqlalchemy.ext.asyncio import AsyncSession, async_sessionmaker, create_async_engine
 
 from .db_models import (
@@ -420,7 +420,7 @@ class ConfigurationService:
                 new_config.id,
                 "create",
                 None,
-                new_self._orm_to_pydantic(config),
+                self._orm_to_pydantic(config),
                 changed_by,
             )
 
@@ -674,7 +674,7 @@ class ConfigurationService:
             # If setting as default, unset other defaults of same type
             if provider.is_default:
                 await session.execute(
-                    select(LLMProviderORM).update()
+                    update(LLMProviderORM)
                     .where(
                         LLMProviderORM.provider_type == provider.provider_type,
                         LLMProviderORM.is_default,
@@ -721,7 +721,7 @@ class ConfigurationService:
                 new_provider.id,
                 "create",
                 None,
-                new_self._orm_to_pydantic(provider),
+                self._orm_to_pydantic(provider),
                 changed_by,
             )
 
@@ -950,7 +950,7 @@ class ConfigurationService:
                 new_provider.id,
                 "create",
                 None,
-                new_self._orm_to_pydantic(provider),
+                self._orm_to_pydantic(provider),
                 changed_by,
             )
 
@@ -1164,7 +1164,7 @@ class ConfigurationService:
                 new_config.id,
                 "create",
                 None,
-                new_self._orm_to_pydantic(config),
+                self._orm_to_pydantic(config),
                 changed_by,
             )
 

@@ -70,10 +70,35 @@ function DashboardContent() {
     const checkConfiguration = () => {
       const storedConfigured = localStorage.getItem('swarm_configured') === 'true';
       const storedApiHost = localStorage.getItem('swarm_api_host');
-      
+
+      // Check for VITE environment variables first (set by docker-compose)
+      const envApiKey = import.meta.env.VITE_API_KEY;
+      const envApiHost = import.meta.env.VITE_API_HOST;
+
       if (!storedConfigured || !storedApiHost) {
-        // Not configured or no stored API host - show setup
-        setShowSetup(true);
+        // Not configured or no stored API host - check env vars
+        if (envApiKey || envApiHost) {
+          // Pre-populate from environment variables
+          const apiHostToUse = envApiHost || (typeof window !== 'undefined' && window.location.host) || window.location.hostname;
+          const apiKeyToUse = envApiKey || '';
+
+          // Store in localStorage for persistence
+          if (envApiHost) localStorage.setItem('swarm_api_host', envApiHost);
+          if (envApiKey) localStorage.setItem('swarm_api_key', envApiKey);
+          localStorage.setItem('swarm_configured', 'true');
+
+          // Also update the store
+          useSetupStore.getState().setConfig({
+            apiHost: envApiHost || window.location.hostname,
+            apiKey: envApiKey || '',
+            wsHost: '',
+          });
+
+          setShowSetup(false);
+        } else {
+          // No env vars and not configured - show setup
+          setShowSetup(true);
+        }
       } else {
         // Restore config from localStorage if not in store
         if (!config.apiHost) {
@@ -87,7 +112,7 @@ function DashboardContent() {
       }
       setIsInitialized(true);
     };
-    
+
     checkConfiguration();
   }, []);
 

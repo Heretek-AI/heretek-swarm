@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-13T15:47:20.383566+00:00",
-  "overall_score": 0.9923794507949021,
+  "timestamp": "2026-04-13T16:00:16.794749+00:00",
+  "overall_score": 0.9915326550705612,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -1730,11 +1730,208 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "TypeScript",
       "check_type": "standard",
-      "total_entities_checked": 0,
-      "findings_count": 0,
+      "total_entities_checked": 26,
+      "findings_count": 26,
       "warning_count": 0,
-      "score": 1.0,
-      "finding_groups": []
+      "score": 0.0,
+      "finding_groups": [
+        {
+          "severity": "critical",
+          "threshold": 0,
+          "description": "Variables declared but never used",
+          "entities": [
+            {
+              "entity_name": "[unused_variable] 'DashboardLayout' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 9,
+              "line_end": 9,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'HomePage' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 10,
+              "line_end": 10,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'AgentsPage' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 11,
+              "line_end": 11,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'ConsciousnessPage' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 12,
+              "line_end": 12,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'SettingsPage' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 13,
+              "line_end": 13,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'LogsPage' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 14,
+              "line_end": 14,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'ToastProvider' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 15,
+              "line_end": 15,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'ErrorBoundary' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 16,
+              "line_end": 16,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'DebugPanel' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 17,
+              "line_end": 17,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'SetupWizard' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 19,
+              "line_end": 19,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'Dashboard' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 24,
+              "line_end": 24,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'CollectiveCanvas' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 25,
+              "line_end": 25,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'WorkflowBuilder' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 26,
+              "line_end": 26,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'Observability' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 27,
+              "line_end": 27,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'ChatInterface' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 28,
+              "line_end": 28,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'navItems' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 42,
+              "line_end": 42,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'systemStatus' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 53,
+              "line_end": 53,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'isConfigured' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 58,
+              "line_end": 58,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'isRerunning' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 59,
+              "line_end": 59,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'apiHostToUse' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 82,
+              "line_end": 82,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'apiKeyToUse' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 83,
+              "line_end": 83,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'handleNavClick' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 170,
+              "line_end": 170,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'handleSetupComplete' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 175,
+              "line_end": 175,
+              "metric_value": 0.0
+            }
+          ]
+        },
+        {
+          "severity": "info",
+          "threshold": 0,
+          "description": "Code that cannot be reached during execution",
+          "entities": [
+            {
+              "entity_name": "[unreachable_code] Unreachable code detected.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 201,
+              "line_end": 201,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unreachable_code] Unreachable code detected.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 220,
+              "line_end": 225,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unreachable_code] Unreachable code detected.",
+              "file_path": "dashboard/frontend/src/App.tsx",
+              "line_start": 253,
+              "line_end": 256,
+              "metric_value": 0.0
+            }
+          ]
+        }
+      ]
     }
   ],
   "file_summaries": [
@@ -1805,6 +2002,12 @@
       "composite_risk_score": 50.0
     },
     {
+      "file_path": "dashboard/frontend/src/App.tsx",
+      "total_findings": 26,
+      "warning_findings": 0,
+      "composite_risk_score": 50.0
+    },
+    {
       "file_path": "src/heretek_swarm/orchestration/heavyswarm.py",
       "total_findings": 3,
       "warning_findings": 3,
@@ -1848,12 +2051,6 @@
     },
     {
       "file_path": "src/heretek_swarm/actors/handoff.py",
-      "total_findings": 2,
-      "warning_findings": 2,
-      "composite_risk_score": 30.0
-    },
-    {
-      "file_path": "src/heretek_swarm/workflow/validator.py",
       "total_findings": 2,
       "warning_findings": 2,
       "composite_risk_score": 30.0
