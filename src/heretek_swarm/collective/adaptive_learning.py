@@ -197,6 +197,7 @@ class AgentLearningState:
 
     fitness_score: float = 0.5
     behavior_pool: dict[str, BehaviorFitness] = field(default_factory=dict)
+    active_behaviors: list[str] = field(default_factory=list)
     capability_levels: dict[str, float] = field(default_factory=dict)
 
     @property
