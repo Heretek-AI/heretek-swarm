@@ -38,16 +38,16 @@ from heretek_swarm.actors.arbiter.core import (
 ArbitrationStrategy = ResolutionStrategy
 
 __all__ = [
-    # Enums
-    "ConflictType",
-    "ConflictSeverity",
-    "ResolutionStrategy",
-    "ResolutionStatus",
+    # Agent class
+    "ArbiterAgent",
+    "ArbitrationReport",
     "ArbitrationStrategy",
     # Dataclasses
     "Conflict",
+    "ConflictSeverity",
+    # Enums
+    "ConflictType",
     "Relationship",
-    "ArbitrationReport",
-    # Agent class
-    "ArbiterAgent",
+    "ResolutionStatus",
+    "ResolutionStrategy",
 ]
