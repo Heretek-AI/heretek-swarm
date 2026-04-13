@@ -149,7 +149,10 @@ export async function testWebSocket(wsUrl: string, apiKey?: string): Promise<Con
   
   return new Promise((resolve) => {
     try {
-      const ws = new WebSocket(`${wsUrl}/ws`);
+      const wsEndpoint = apiKey
+        ? `${wsUrl}/ws/dashboard?token=${encodeURIComponent(apiKey)}`
+        : `${wsUrl}/ws/dashboard`;
+      const ws = new WebSocket(wsEndpoint);
       let hasResponded = false;
       
       // Timeout after 10 seconds
@@ -292,7 +295,7 @@ export async function checkAgentHealth(apiUrl: string, apiKey?: string): Promise
     const controller = new AbortController();
     const timeoutId = setTimeout(() => controller.abort(), 15000);
     
-    const response = await fetch(`${apiUrl}/api/agents/instances`, {
+    const response = await fetch(`${apiUrl}/api/agents`, {
       method: 'GET',
       headers,
       signal: controller.signal,

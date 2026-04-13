@@ -530,9 +530,10 @@ function ApiKeyStep({
       // If test succeeded, fetch provider info from backend
       if (result.success) {
         try {
-          const { listLLMProviders, listEmbeddingProviders } = await import('../../api/configuration');
-          const llmProviders = await listLLMProviders();
-          const embeddingProviders = await listEmbeddingProviders();
+          const configModule = await import('../../api/configuration');
+          const api = configModule.default || configModule.configurationApi;
+          const llmProviders = await api.listLLMProviders();
+          const embeddingProviders = await api.listEmbeddingProviders();
           setProviders(llmProviders, embeddingProviders);
         } catch (providerErr) {
           console.warn('Failed to fetch provider info:', providerErr);
@@ -691,7 +692,8 @@ function DatabaseTestStep({
     }
   }, [apiHost, apiKey, hasRunTests, runTests]);
   
-  const allPassed = apiResult?.success && dbResult?.success;
+  const allPassed = apiResult?.success && wsResult?.success && dbResult?.success;
+  const corePassed = apiResult?.success && dbResult?.success;
   const anyPassed = apiResult?.success || dbResult?.success;
   
   return (
@@ -744,7 +746,7 @@ function DatabaseTestStep({
       {/* Summary */}
       {hasRunTests && (
         <div className={`max-w-lg mx-auto p-4 rounded-lg border ${
-          allPassed ? 'bg-green-500/10 border-green-500/30' :
+          allPassed || corePassed ? 'bg-green-500/10 border-green-500/30' :
           anyPassed ? 'bg-yellow-500/10 border-yellow-500/30' :
           'bg-red-500/10 border-red-500/30'
         }`}>
@@ -755,6 +757,14 @@ function DatabaseTestStep({
                 <div>
                   <div className="font-medium text-green-400">All connections verified</div>
                   <div className="text-sm text-gray-400">Ready to continue</div>
+                </div>
+              </>
+            ) : corePassed ? (
+              <>
+                <span className="text-2xl">✅</span>
+                <div>
+                  <div className="font-medium text-green-400">Core connections verified</div>
+                  <div className="text-sm text-gray-400">API and database ready — WebSocket is optional</div>
                 </div>
               </>
             ) : anyPassed ? (
