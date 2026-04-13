@@ -231,6 +231,11 @@ function FlowCanvasInner({ initialNodes = [], initialEdges = [], onSave }: FlowC
 
     const position = screenToFlowPosition({ x: event.clientX, y: event.clientY });
     const agentInfo = AGENT_REGISTRY[agentType as AgentType];
+    const newNode: Node = {
+      id: `agent-${Date.now()}`,
+      type: 'agentNode',
+      position,
+      data: {
         agentName: agentInfo.name,
         description: agentInfo.description,
         llmModel: agentInfo.defaultLlmModel,
@@ -312,7 +317,9 @@ function FlowCanvasInner({ initialNodes = [], initialEdges = [], onSave }: FlowC
       return {
         id: `${agentType}-${Date.now()}-${index}`,
         type: 'agent',
-        position: { x: 300 + index * 250, y: 100core' ? (['alpha', 'beta', 'charlie'][index]) : undefined,
+        position: { x: 300 + index * 250, y: 100 },
+        data: {
+          agentType: agentType === 'supervisor' ? (['alpha', 'beta', 'charlie'][index]) : undefined,
           llmModel: agentInfo.defaultLlmModel,
           llmProvider: 'openai',
           status: 'idle',
@@ -325,7 +332,14 @@ function FlowCanvasInner({ initialNodes = [], initialEdges = [], onSave }: FlowC
     setNodes((nds) => [...nds, ...newNodes]);
   }, [setNodes]);
 
-  const updateNodeModel = useCallback((nodeId: string, field: string, value [setNodes]);
+  const updateNodeModel = useCallback((nodeId: string, field: string, value: string) => {
+    setNodes((nds) => nds.map((node) => {
+      if (node.id === nodeId) {
+        return { ...node, data: { ...node.data, [field]: value } };
+      }
+      return node;
+    }));
+  }, [setNodes]);
 
   return (
     <div className="flex h-full">
