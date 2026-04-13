@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-13T16:00:16.441428+00:00",
+    "generated_at": "2026-04-13T16:33:02.822558+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 4,
@@ -49587,6 +49587,874 @@
           "status": "added"
         }
       ]
+    },
+    "dashboard/frontend/src/stores/setupStore.ts": {
+      "file_status": "modified",
+      "methods": [
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.ConnectionTestResult",
+          "start_line": 26,
+          "end_line": 31,
+          "node_type": "INTERFACE",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.AgentHealthResult",
+          "start_line": 33,
+          "end_line": 40,
+          "node_type": "INTERFACE",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.SetupConfig",
+          "start_line": 42,
+          "end_line": 46,
+          "node_type": "INTERFACE",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.SetupState",
+          "start_line": 48,
+          "end_line": 90,
+          "node_type": "INTERFACE",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.LLMProviderInfo",
+          "start_line": 93,
+          "end_line": 100,
+          "node_type": "INTERFACE",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.EmbeddingProviderInfo",
+          "start_line": 102,
+          "end_line": 109,
+          "node_type": "INTERFACE",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback",
+          "start_line": 127,
+          "end_line": 267,
+          "node_type": "FUNCTION",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setStep",
+          "start_line": 149,
+          "end_line": 151,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.nextStep",
+          "start_line": 153,
+          "end_line": 159,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.prevStep",
+          "start_line": 161,
+          "end_line": 167,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setConfig",
+          "start_line": 169,
+          "end_line": 173,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setConfig.set() callback",
+          "start_line": 170,
+          "end_line": 172,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setApiConnection",
+          "start_line": 175,
+          "end_line": 177,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setWsConnection",
+          "start_line": 179,
+          "end_line": 181,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setAgentHealth",
+          "start_line": 183,
+          "end_line": 185,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setIsCheckingAgents",
+          "start_line": 187,
+          "end_line": 189,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setIsValidating",
+          "start_line": 191,
+          "end_line": 193,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setValidationError",
+          "start_line": 195,
+          "end_line": 199,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setValidationError.set() callback",
+          "start_line": 196,
+          "end_line": 198,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.clearValidationError",
+          "start_line": 201,
+          "end_line": 206,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.clearValidationError.set() callback",
+          "start_line": 202,
+          "end_line": 205,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.clearValidationErrors",
+          "start_line": 208,
+          "end_line": 210,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.completeSetup",
+          "start_line": 212,
+          "end_line": 230,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.resetSetup",
+          "start_line": 232,
+          "end_line": 255,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setRerunning",
+          "start_line": 257,
+          "end_line": 259,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.partialize",
+          "start_line": 263,
+          "end_line": 267,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useSetupStore.persist() callback.setProviders",
+          "start_line": 264,
+          "end_line": 266,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useCurrentStep.useSetupStore() callback",
+          "start_line": 276,
+          "end_line": 276,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useIsConfigured.useSetupStore() callback",
+          "start_line": 277,
+          "end_line": 277,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useConfig.useSetupStore() callback",
+          "start_line": 278,
+          "end_line": 278,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useApiConnection.useSetupStore() callback",
+          "start_line": 279,
+          "end_line": 279,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useWsConnection.useSetupStore() callback",
+          "start_line": 280,
+          "end_line": 280,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useAgentHealth.useSetupStore() callback",
+          "start_line": 281,
+          "end_line": 281,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useIsCheckingAgents.useSetupStore() callback",
+          "start_line": 282,
+          "end_line": 282,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useValidationErrors.useSetupStore() callback",
+          "start_line": 283,
+          "end_line": 283,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.stores.setupStore.useIsValidating.useSetupStore() callback",
+          "start_line": 284,
+          "end_line": 284,
+          "node_type": "FUNCTION",
+          "status": "added"
+        }
+      ]
+    },
+    "dashboard/frontend/src/utils/setupValidation.ts": {
+      "file_status": "modified",
+      "methods": [
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.ValidationResult",
+          "start_line": 14,
+          "end_line": 18,
+          "node_type": "INTERFACE",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.isValidUrl",
+          "start_line": 27,
+          "end_line": 34,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.normalizeUrl",
+          "start_line": 39,
+          "end_line": 51,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.deriveWsUrl",
+          "start_line": 56,
+          "end_line": 59,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.testApiHealth",
+          "start_line": 68,
+          "end_line": 142,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.testApiHealth.timeoutId.setTimeout() callback",
+          "start_line": 81,
+          "end_line": 81,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.testWebSocket",
+          "start_line": 147,
+          "end_line": 200,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.testWebSocket.<function>",
+          "start_line": 150,
+          "end_line": 199,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.testWebSocket.<function>.timeoutId.setTimeout() callback",
+          "start_line": 156,
+          "end_line": 166,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.testWebSocket.<function>.onopen",
+          "start_line": 168,
+          "end_line": 178,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.testWebSocket.<function>.onerror",
+          "start_line": 180,
+          "end_line": 189,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.testApiKey",
+          "start_line": 205,
+          "end_line": 273,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.testApiKey.timeoutId.setTimeout() callback",
+          "start_line": 210,
+          "end_line": 210,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.checkAgentHealth",
+          "start_line": 282,
+          "end_line": 342,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.checkAgentHealth.timeoutId.setTimeout() callback",
+          "start_line": 293,
+          "end_line": 293,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.checkAgentHealth.instances.map() callback",
+          "start_line": 324,
+          "end_line": 333,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.mapAgentStatus",
+          "start_line": 347,
+          "end_line": 360,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.testDatabaseConnection",
+          "start_line": 370,
+          "end_line": 452,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.testDatabaseConnection.timeoutId.setTimeout() callback",
+          "start_line": 383,
+          "end_line": 383,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.validateApiHost",
+          "start_line": 457,
+          "end_line": 485,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.validateApiKey",
+          "start_line": 490,
+          "end_line": 508,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.createDebouncedValidation",
+          "start_line": 517,
+          "end_line": 535,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.createDebouncedValidation.<function>",
+          "start_line": 523,
+          "end_line": 534,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.createDebouncedValidation.<function>.<function>",
+          "start_line": 524,
+          "end_line": 533,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.utils.setupValidation.createDebouncedValidation.<function>.<function>.setTimeout() callback",
+          "start_line": 529,
+          "end_line": 532,
+          "node_type": "FUNCTION",
+          "status": "added"
+        }
+      ]
+    },
+    "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx": {
+      "file_status": "modified",
+      "methods": [
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.AgentNodeData",
+          "start_line": 35,
+          "end_line": 47,
+          "node_type": "INTERFACE",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.WorkflowTemplate",
+          "start_line": 56,
+          "end_line": 65,
+          "node_type": "INTERFACE",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasProps",
+          "start_line": 174,
+          "end_line": 179,
+          "node_type": "INTERFACE",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner",
+          "start_line": 181,
+          "end_line": 361,
+          "node_type": "FUNCTION",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.useEffect() callback",
+          "start_line": 194,
+          "end_line": 203,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.onNodeClick.useCallback() callback",
+          "start_line": 206,
+          "end_line": 208,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.onConnect.useCallback() callback",
+          "start_line": 210,
+          "end_line": 220,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.onConnect.useCallback() callback.setEdges() callback",
+          "start_line": 211,
+          "end_line": 218,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.onDragOver.useCallback() callback",
+          "start_line": 222,
+          "end_line": 225,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.onDrop.useCallback() callback",
+          "start_line": 227,
+          "end_line": 250,
+          "node_type": "FUNCTION",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.onDrop.useCallback() callback.setNodes() callback",
+          "start_line": 249,
+          "end_line": 249,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.handleSave.useCallback() callback",
+          "start_line": 252,
+          "end_line": 268,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.handleSave.useCallback() callback.updated.savedWorkflows.filter() callback",
+          "start_line": 263,
+          "end_line": 263,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.handleLoad.useCallback() callback",
+          "start_line": 270,
+          "end_line": 275,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.handleDeleteWorkflow.useCallback() callback",
+          "start_line": 277,
+          "end_line": 281,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.handleDeleteWorkflow.useCallback() callback.updated.savedWorkflows.filter() callback",
+          "start_line": 278,
+          "end_line": 278,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.handleExport.useCallback() callback",
+          "start_line": 283,
+          "end_line": 292,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.handleImport.useCallback() callback",
+          "start_line": 294,
+          "end_line": 311,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.handleImport.useCallback() callback.onload",
+          "start_line": 298,
+          "end_line": 309,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.addTriad.useCallback() callback",
+          "start_line": 313,
+          "end_line": 333,
+          "node_type": "FUNCTION",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.addTriad.useCallback() callback.newNodes.triad.agents.map() callback",
+          "start_line": 315,
+          "end_line": 331,
+          "node_type": "FUNCTION",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.addTriad.useCallback() callback.setNodes() callback",
+          "start_line": 330,
+          "end_line": 330,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.updateNodeModel.useCallback() callback",
+          "start_line": 335,
+          "end_line": 345,
+          "node_type": "FUNCTION",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.updateNodeModel.useCallback() callback.setNodes() callback",
+          "start_line": 336,
+          "end_line": 344,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.updateNodeModel.useCallback() callback.setNodes() callback.nds.map() callback",
+          "start_line": 336,
+          "end_line": 344,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.FlowCanvasInner.map() callback",
+          "start_line": 346,
+          "end_line": 348,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.<unknown>..agents.map() callback",
+          "start_line": 354,
+          "end_line": 354,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.['Code Execution', 'Web Browser', 'File System', 'API Call']..map() callback",
+          "start_line": 392,
+          "end_line": 393,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.<unknown>..map() callback",
+          "start_line": 533,
+          "end_line": 534,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas.map() callback",
+          "start_line": 588,
+          "end_line": 589,
+          "node_type": "FUNCTION",
+          "status": "added"
+        }
+      ]
+    },
+    "dashboard/frontend/src/components/Observability/A2ATracker.tsx": {
+      "file_status": "modified",
+      "methods": [
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2AMessage",
+          "start_line": 17,
+          "end_line": 27,
+          "node_type": "INTERFACE",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.AgentActivity",
+          "start_line": 29,
+          "end_line": 40,
+          "node_type": "INTERFACE",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.WorkflowStats",
+          "start_line": 42,
+          "end_line": 47,
+          "node_type": "INTERFACE",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.ResourceStats",
+          "start_line": 49,
+          "end_line": 54,
+          "node_type": "INTERFACE",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATrackerProps",
+          "start_line": 56,
+          "end_line": 60,
+          "node_type": "INTERFACE",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.generateRandomMessage",
+          "start_line": 81,
+          "end_line": 101,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity",
+          "start_line": 103,
+          "end_line": 116,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity.AGENT_IDS.map() callback",
+          "start_line": 104,
+          "end_line": 115,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline.filteredMessages.messages.filter() callback",
+          "start_line": 121,
+          "end_line": 121,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline.yet",
+          "start_line": 147,
+          "end_line": 147,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.getStatusIcon",
+          "start_line": 158,
+          "end_line": 158,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.AgentActivityList.<unknown>..map() callback",
+          "start_line": 192,
+          "end_line": 194,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.useEffect() callback",
+          "start_line": 242,
+          "end_line": 249,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.useEffect() callback.forEach() callback",
+          "start_line": 244,
+          "end_line": 247,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.topConnections.sort() callback",
+          "start_line": 252,
+          "end_line": 252,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.yet",
+          "start_line": 258,
+          "end_line": 258,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.topConnections.map(\"h-full bg-purple-500 rounded-full\") callback",
+          "start_line": 260,
+          "end_line": 261,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker",
+          "start_line": 332,
+          "end_line": 420,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback",
+          "start_line": 357,
+          "end_line": 404,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.connectTimeout.setTimeout() callback",
+          "start_line": 359,
+          "end_line": 361,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback",
+          "start_line": 369,
+          "end_line": 375,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback.setMessages() callback",
+          "start_line": 371,
+          "end_line": 374,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.activityInterval.setInterval() callback",
+          "start_line": 378,
+          "end_line": 380,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.statsInterval.setInterval() callback",
+          "start_line": 383,
+          "end_line": 396,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.internalMonologue.messages.filter() callback",
+          "start_line": 408,
+          "end_line": 408,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.<unknown>..filter() callback",
+          "start_line": 429,
+          "end_line": 429,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.map() callback",
+          "start_line": 436,
+          "end_line": 438,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.<unknown>..reduce() callback",
+          "start_line": 526,
+          "end_line": 526,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.<unknown>.messages.reduce() callback",
+          "start_line": 533,
+          "end_line": 533,
+          "node_type": "FUNCTION",
+          "status": "added"
+        }
+      ]
+    },
+    "dashboard/frontend/src/hooks/useDockerDetection.ts": {
+      "file_status": "deleted",
+      "methods": []
+    },
+    "dashboard/frontend/src/components/Settings/index.ts": {
+      "file_status": "modified",
+      "methods": []
     }
   },
   "methods_index": {
