@@ -28,6 +28,7 @@ from heretek_swarm.channels.registry import ChannelRegistry, GroupRegistry
 from heretek_swarm.consensus.maker import MAKERConsensus
 from heretek_swarm.gateway.nats_event_mesh import NATSEventMesh
 from heretek_swarm.memory.base import DualTierMemory
+from heretek_swarm.rag.rag_pipeline import RAGPipeline
 from heretek_swarm.tools.mcp_tools import CoreMCPTools
 
 logger = structlog.get_logger(__name__)
@@ -118,11 +119,14 @@ class AutonomousSwarm:
         logger.info("memory_system_initialized")
 
         # 3. Initialize RAG pipeline
-        self.rag = RAGPipeline(
-            config=self.config.get("rag", {}),
-            memory_backend=self.memory,
+        from heretek_swarm.rag.rag_pipeline import RAGConfig
+        rag_config_dict = self.config.get("rag", {})
+        rag_cfg = RAGConfig(
+            chunk_size=rag_config_dict.get("chunk_size", 512),
+            chunk_overlap=rag_config_dict.get("chunk_overlap", 50),
+            top_k=rag_config_dict.get("top_k", 5),
         )
-        await self.rag.initialize()
+        self.rag = RAGPipeline(config=rag_cfg)
         logger.info("rag_pipeline_initialized")
 
         # 4. Initialize consensus engine
@@ -130,7 +134,7 @@ class AutonomousSwarm:
         self.consensus = MAKERConsensus(
             ahead_by_k=consensus_config.get("ahead_by_k", 2),
             min_votes=consensus_config.get("min_votes", 3),
-            red_flag_threshold=consensus_config.get("red_flag_threshold", 0.3),
+            confidence_threshold=consensus_config.get("red_flag_threshold", 0.3),
         )
         logger.info("maker_consensus_initialized")
 
@@ -180,7 +184,7 @@ class AutonomousSwarm:
         # Tier 5: Coordination Agents (Integration)
         from heretek_swarm.actors.coordinator import CoordinatorAgent
         from heretek_swarm.actors.dreamer import DreamerAgent
-        from heretek_swarm.actors.echo import EchoAgent
+        from heretek_swarm.actors.echo import EchoActor
         from heretek_swarm.actors.empath import EmpathAgent
         from heretek_swarm.actors.examiner import ExaminerAgent
 
@@ -216,7 +220,7 @@ class AutonomousSwarm:
             (MetisAgent, "metis", ["planning", "strategy", "coordination"]),
             (EmpathAgent, "empath", ["sentiment", "mediation", "perception"]),
             (PerceiverAgent, "perceiver", ["input", "sensory", "perception"]),
-            (EchoAgent, "echo", ["communication", "broadcast", "perception"]),
+            (EchoActor, "echo", ["communication", "broadcast", "perception"]),
 
             # Tier 3: Exploration
             (ExplorerAgent, "explorer", ["discovery", "monitoring", "exploration"]),
@@ -243,13 +247,7 @@ class AutonomousSwarm:
 
         for agent_class, agent_id, topics in actors:
             try:
-                agent = agent_class(
-                    agent_id=agent_id,
-                    name=agent_id.capitalize().replace("-", " "),
-                    topics=topics,
-                    memory=self.memory,
-                )
-                await self.supervisor.spawn_actor_instance(agent, agent_id)
+                await self.supervisor.spawn_actor(agent_class, agent_id)
                 logger.info("actor_spawned", agent_id=agent_id, tier=self._get_tier(agent_id))
             except Exception as e:
                 logger.error("actor_spawn_failed", agent_id=agent_id, error=str(e))

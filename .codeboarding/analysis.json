@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-13T13:33:44.121976+00:00",
+    "generated_at": "2026-04-13T14:00:49.221856+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 4,
@@ -902,7 +902,7 @@
       ]
     },
     "src/heretek_swarm/actors/base.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.actors.base.ActorState",
@@ -928,9 +928,9 @@
         {
           "qualified_name": "src.heretek_swarm.actors.base.AgentActor",
           "start_line": 119,
-          "end_line": 1527,
+          "end_line": 1528,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.base.AgentActor.get_actor_type",
@@ -942,9 +942,9 @@
         {
           "qualified_name": "src.heretek_swarm.actors.base.AgentActor.__init__",
           "start_line": 164,
-          "end_line": 251,
+          "end_line": 252,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.base.AgentActor.is_alive",
@@ -3026,14 +3026,14 @@
         {
           "qualified_name": "src.heretek_swarm.actors.examiner.ExaminerAgent",
           "start_line": 153,
-          "end_line": 1116,
+          "end_line": 1114,
           "node_type": "CLASS",
           "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.examiner.ExaminerAgent.__init__",
           "start_line": 161,
-          "end_line": 205,
+          "end_line": 203,
           "node_type": "METHOD",
           "status": "modified"
         },
@@ -7019,7 +7019,7 @@
       ]
     },
     "src/heretek_swarm/actors/supervisor.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.actors.supervisor.get_supervisor",
@@ -7033,7 +7033,7 @@
           "start_line": 41,
           "end_line": 545,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.supervisor.ActorSupervisor.__init__",
@@ -7054,7 +7054,7 @@
           "start_line": 123,
           "end_line": 195,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.supervisor.ActorSupervisor.terminate_actor",
@@ -22447,17 +22447,17 @@
         },
         {
           "qualified_name": "src.heretek_swarm.memory.base.DualTierMemory",
-          "start_line": 611,
-          "end_line": 746,
+          "start_line": 619,
+          "end_line": 773,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.memory.base.DualTierMemory.__init__",
-          "start_line": 619,
-          "end_line": 633,
+          "start_line": 627,
+          "end_line": 660,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.memory.base.DualTierMemory.initialize",
@@ -26561,8 +26561,8 @@
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.runtime.main_loop.AutonomousSwarm",
-          "start_line": 36,
-          "end_line": 552,
+          "start_line": 37,
+          "end_line": 550,
           "node_type": "CLASS",
           "status": "modified"
         },
@@ -26582,17 +26582,17 @@
         },
         {
           "qualified_name": "src.heretek_swarm.runtime.main_loop.AutonomousSwarm.initialize",
-          "start_line": 103,
-          "end_line": 170,
+          "start_line": 104,
+          "end_line": 174,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._spawn_all_actors",
-          "start_line": 172,
-          "end_line": 256,
+          "start_line": 176,
+          "end_line": 254,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._get_tier",
@@ -50529,9 +50529,9 @@
       "file_path": "src/heretek_swarm/actors/base.py",
       "qualified_name": "src.heretek_swarm.actors.base.AgentActor",
       "start_line": 119,
-      "end_line": 1527,
+      "end_line": 1528,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/base.py|src.heretek_swarm.actors.base.AgentActor.get_actor_type": {
       "file_path": "src/heretek_swarm/actors/base.py",
@@ -50545,9 +50545,9 @@
       "file_path": "src/heretek_swarm/actors/base.py",
       "qualified_name": "src.heretek_swarm.actors.base.AgentActor.__init__",
       "start_line": 164,
-      "end_line": 251,
+      "end_line": 252,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/base.py|src.heretek_swarm.actors.base.AgentActor.is_alive": {
       "file_path": "src/heretek_swarm/actors/base.py",
@@ -52881,7 +52881,7 @@
       "file_path": "src/heretek_swarm/actors/examiner.py",
       "qualified_name": "src.heretek_swarm.actors.examiner.ExaminerAgent",
       "start_line": 153,
-      "end_line": 1116,
+      "end_line": 1114,
       "type": "CLASS",
       "status": "modified"
     },
@@ -52889,7 +52889,7 @@
       "file_path": "src/heretek_swarm/actors/examiner.py",
       "qualified_name": "src.heretek_swarm.actors.examiner.ExaminerAgent.__init__",
       "start_line": 161,
-      "end_line": 205,
+      "end_line": 203,
       "type": "METHOD",
       "status": "modified"
     },
@@ -57363,7 +57363,7 @@
       "start_line": 41,
       "end_line": 545,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/supervisor.py|src.heretek_swarm.actors.supervisor.ActorSupervisor.__init__": {
       "file_path": "src/heretek_swarm/actors/supervisor.py",
@@ -57387,7 +57387,7 @@
       "start_line": 123,
       "end_line": 195,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/supervisor.py|src.heretek_swarm.actors.supervisor.ActorSupervisor.terminate_actor": {
       "file_path": "src/heretek_swarm/actors/supervisor.py",
@@ -74552,18 +74552,18 @@
     "src/heretek_swarm/memory/base.py|src.heretek_swarm.memory.base.DualTierMemory": {
       "file_path": "src/heretek_swarm/memory/base.py",
       "qualified_name": "src.heretek_swarm.memory.base.DualTierMemory",
-      "start_line": 611,
-      "end_line": 746,
+      "start_line": 619,
+      "end_line": 773,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/memory/base.py|src.heretek_swarm.memory.base.DualTierMemory.__init__": {
       "file_path": "src/heretek_swarm/memory/base.py",
       "qualified_name": "src.heretek_swarm.memory.base.DualTierMemory.__init__",
-      "start_line": 619,
-      "end_line": 633,
+      "start_line": 627,
+      "end_line": 660,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/memory/base.py|src.heretek_swarm.memory.base.DualTierMemory.initialize": {
       "file_path": "src/heretek_swarm/memory/base.py",
@@ -79128,8 +79128,8 @@
     "src/heretek_swarm/runtime/main_loop.py|src.heretek_swarm.runtime.main_loop.AutonomousSwarm": {
       "file_path": "src/heretek_swarm/runtime/main_loop.py",
       "qualified_name": "src.heretek_swarm.runtime.main_loop.AutonomousSwarm",
-      "start_line": 36,
-      "end_line": 552,
+      "start_line": 37,
+      "end_line": 550,
       "type": "CLASS",
       "status": "modified"
     },
@@ -79152,18 +79152,18 @@
     "src/heretek_swarm/runtime/main_loop.py|src.heretek_swarm.runtime.main_loop.AutonomousSwarm.initialize": {
       "file_path": "src/heretek_swarm/runtime/main_loop.py",
       "qualified_name": "src.heretek_swarm.runtime.main_loop.AutonomousSwarm.initialize",
-      "start_line": 103,
-      "end_line": 170,
+      "start_line": 104,
+      "end_line": 174,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/runtime/main_loop.py|src.heretek_swarm.runtime.main_loop.AutonomousSwarm._spawn_all_actors": {
       "file_path": "src/heretek_swarm/runtime/main_loop.py",
       "qualified_name": "src.heretek_swarm.runtime.main_loop.AutonomousSwarm._spawn_all_actors",
-      "start_line": 172,
-      "end_line": 256,
+      "start_line": 176,
+      "end_line": 254,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/runtime/main_loop.py|src.heretek_swarm.runtime.main_loop.AutonomousSwarm._get_tier": {
       "file_path": "src/heretek_swarm/runtime/main_loop.py",
@@ -104483,7 +104483,7 @@
         },
         {
           "file_path": "src/heretek_swarm/actors/base.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.actors.base.ActorState",
             "src.heretek_swarm.actors.base.ActorMessage",
@@ -105489,7 +105489,7 @@
         },
         {
           "file_path": "src/heretek_swarm/actors/supervisor.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.actors.supervisor.get_supervisor",
             "src.heretek_swarm.actors.supervisor.ActorSupervisor",
@@ -109927,7 +109927,7 @@
             },
             {
               "file_path": "src/heretek_swarm/actors/base.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.actors.base.ActorState",
                 "src.heretek_swarm.actors.base.ActorMessage",
@@ -110175,7 +110175,7 @@
             },
             {
               "file_path": "src/heretek_swarm/actors/supervisor.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.actors.supervisor.get_supervisor",
                 "src.heretek_swarm.actors.supervisor.ActorSupervisor",
@@ -112632,7 +112632,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/actors/base.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.actors.base.ActorState",
                     "src.heretek_swarm.actors.base.ActorMessage",
@@ -112837,7 +112837,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/actors/supervisor.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.actors.supervisor.get_supervisor",
                     "src.heretek_swarm.actors.supervisor.ActorSupervisor",
@@ -117077,7 +117077,7 @@
             },
             {
               "file_path": "src/heretek_swarm/actors/base.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.actors.base.ActorState",
                 "src.heretek_swarm.actors.base.ActorMessage",
@@ -118014,7 +118014,7 @@
             },
             {
               "file_path": "src/heretek_swarm/actors/supervisor.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.actors.supervisor.get_supervisor",
                 "src.heretek_swarm.actors.supervisor.ActorSupervisor",
@@ -119396,7 +119396,7 @@
               "file_methods": [
                 {
                   "file_path": "src/heretek_swarm/actors/base.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.actors.base.ActorState",
                     "src.heretek_swarm.actors.base.ActorMessage",
@@ -119770,7 +119770,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/actors/supervisor.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.actors.supervisor.get_supervisor",
                     "src.heretek_swarm.actors.supervisor.ActorSupervisor",
@@ -119950,7 +119950,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/actors/base.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.actors.base.ActorState",
                         "src.heretek_swarm.actors.base.ActorMessage",
@@ -120041,7 +120041,7 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/actors/supervisor.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.actors.supervisor.get_supervisor",
                         "src.heretek_swarm.actors.supervisor.ActorSupervisor",

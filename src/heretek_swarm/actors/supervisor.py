@@ -146,8 +146,8 @@ class ActorSupervisor:
             raise ValueError(f"Actor {actor_id} already exists")
 
         try:
-            # Create actor instance
-            actor = actor_class(agent_id=actor_id, **kwargs)
+            # Create actor instance - only pass agent_id, agents handle their own init
+            actor = actor_class(agent_id=actor_id)
 
             # Inject actor registry reference for message delivery
             actor.update_state("_actor_registry", self.actors)

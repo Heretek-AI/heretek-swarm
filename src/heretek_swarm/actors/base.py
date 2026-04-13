@@ -175,6 +175,7 @@ class AgentActor:
         state_repository: StateRepository | None = None,
         load_state_on_init: bool = True,
         persistence_interval: int | None = None,  # P0-1: Continuous persistence
+        **kwargs: Any,  # Accept additional kwargs for forward compatibility
     ) -> None:
         """
         Initialize an actor.

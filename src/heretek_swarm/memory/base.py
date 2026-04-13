@@ -628,16 +628,35 @@ class DualTierMemory:
         self,
         ephemeral: EphemeralMemory | None = None,
         persistent: PersistentMemory | None = None,
+        ephemeral_config: dict[str, Any] | None = None,
+        persistent_config: dict[str, Any] | None = None,
     ) -> None:
         """
         Initialize dual-tier memory.
 
         Args:
-            ephemeral: Ephemeral memory instance
-            persistent: Persistent memory instance
+            ephemeral: Ephemeral memory instance (takes precedence if both ephemer* and config provided)
+            persistent: Persistent memory instance (takes precedence if both persistent and config provided)
+            ephemeral_config: Config dict with keys like ttl_seconds for constructing EphemeralMemory
+            persistent_config: Config dict with keys like connection_string for constructing PersistentMemory
         """
-        self.ephemeral = ephemeral or EphemeralMemory()
-        self.persistent = persistent or PersistentMemory()
+        if ephemeral is not None:
+            self.ephemeral = ephemeral
+        elif ephemeral_config is not None:
+            self.ephemeral = EphemeralMemory(
+                default_ttl=ephemeral_config.get("ttl_seconds", 3600),
+            )
+        else:
+            self.ephemeral = EphemeralMemory()
+
+        if persistent is not None:
+            self.persistent = persistent
+        elif persistent_config is not None:
+            self.persistent = PersistentMemory(
+                connection_string=persistent_config.get("connection_string"),
+            )
+        else:
+            self.persistent = PersistentMemory()
         self._initialized = False
 
     async def initialize(self) -> None:
