@@ -33,17 +33,20 @@ from src.heretek_swarm.plugins.consciousness_enhanced import (
     ConsciousnessState,
     EnhancedConsciousnessPlugin,
 )
-from src.heretek_swarm.plugins.manager import plugin_manager
 
 router = APIRouter(prefix="/api/consciousness", tags=["consciousness"])
 
 
-def get_consciousness_plugin() -> EnhancedConsciousnessPlugin | None:
-    """Get the consciousness plugin instance."""
-    plugin = plugin_manager.get_plugin("consciousness_enhanced")
-    if plugin is None:
-        raise HTTPException(status_code=503, detail="Consciousness plugin not available")
-    return plugin
+# Global consciousness plugin instance
+_consciousness_plugin: EnhancedConsciousnessPlugin | None = None
+
+
+def get_consciousness_plugin() -> EnhancedConsciousnessPlugin:
+    """Get or create the consciousness plugin instance."""
+    global _consciousness_plugin
+    if _consciousness_plugin is None:
+        _consciousness_plugin = EnhancedConsciousnessPlugin()
+    return _consciousness_plugin
 
 
 # Global agency metrics tracker instance

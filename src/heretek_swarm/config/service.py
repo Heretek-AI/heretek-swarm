@@ -581,7 +581,8 @@ class ConfigurationService:
             result = await session.execute(
                 select(LLMProviderORM).where(LLMProviderORM.id == provider_id)
             )
-            return result.scalar_one_or_none()
+            orm_provider = result.scalar_one_or_none()
+            return self._orm_to_pydantic(orm_provider)
 
     async def get_llm_provider_by_name(
         self,
@@ -818,7 +819,7 @@ class ConfigurationService:
             old_value = self._orm_to_pydantic(provider)
 
             await session.execute(
-                delete(LLMProvider).where(LLMProviderORM.id == provider_id)
+                delete(LLMProviderORM).where(LLMProviderORM.id == provider_id)
             )
             await session.commit()
 
