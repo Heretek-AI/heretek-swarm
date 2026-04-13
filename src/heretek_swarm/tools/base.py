@@ -5,7 +5,7 @@ Provides base classes for tool execution in the swarm.
 """
 
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import UTC, datetime
 from enum import Enum
 from typing import Any
 
@@ -46,7 +46,7 @@ class ToolExecutionResult:
     output: Any = None
     error: str | None = None
     execution_time_ms: float = 0.0
-    timestamp: datetime = field(default_factory=datetime.utcnow)
+    timestamp: datetime = field(default_factory=lambda: datetime.now(UTC))
     metadata: dict[str, Any] = field(default_factory=dict)
 
 
@@ -80,21 +80,21 @@ class SimpleTool(BaseTool):
 
     async def execute(self, context: ToolContext, **kwargs) -> ToolExecutionResult:
         """Execute the wrapped function."""
-        start = datetime.utcnow()
+        start = datetime.now(UTC)
         try:
             result = self.func(**kwargs)
             return ToolExecutionResult(
                 tool_name=self.name,
                 status=ToolStatus.SUCCESS,
                 output=result,
-                execution_time_ms=(datetime.utcnow() - start).total_seconds() * 1000,
+                execution_time_ms=(datetime.now(UTC) - start).total_seconds() * 1000,
             )
         except Exception as e:
             return ToolExecutionResult(
                 tool_name=self.name,
                 status=ToolStatus.FAILED,
                 error=str(e),
-                execution_time_ms=(datetime.utcnow() - start).total_seconds() * 1000,
+                execution_time_ms=(datetime.now(UTC) - start).total_seconds() * 1000,
             )
 
 

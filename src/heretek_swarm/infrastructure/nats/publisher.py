@@ -6,7 +6,7 @@ Provides structured event publishing to NATS topics.
 
 import json
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import UTC, datetime
 from enum import Enum
 from typing import Any
 
@@ -33,7 +33,7 @@ class SwarmEvent:
     target_agent: str | None = None
     payload: dict[str, Any] = field(default_factory=dict)
     priority: EventPriority = EventPriority.NORMAL
-    timestamp: str = field(default_factory=lambda: datetime.utcnow().isoformat())
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
     correlation_id: str | None = None
     trace_id: str | None = None
 

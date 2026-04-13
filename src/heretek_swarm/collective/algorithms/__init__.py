@@ -6,9 +6,9 @@ Contains bio-inspired swarm intelligence algorithms:
 - ABC: Artificial Bee Colony
 """
 
-from collective.algorithms.abc import ABC, BeeAgent, SwarmDecision as ABCSwarmDecision
-from collective.algorithms.aco import ACO, PheromoneTrail, SwarmDecision as ACOSwarmDecision
-from collective.algorithms.pso import (
+from heretek_swarm.collective.algorithms.abc import ABC, BeeAgent, SwarmDecision as ABCSwarmDecision
+from heretek_swarm.collective.algorithms.aco import ACO, PheromoneTrail, SwarmDecision as ACOSwarmDecision
+from heretek_swarm.collective.algorithms.pso import (
     PSO,
     Particle,
     SwarmDecision as PSOSwarmDecision,

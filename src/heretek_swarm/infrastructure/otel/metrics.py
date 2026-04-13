@@ -6,7 +6,7 @@ Supports counters, gauges, histograms, and summaries.
 """
 
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import UTC, datetime
 from enum import Enum
 from typing import Any
 
@@ -38,7 +38,7 @@ class MetricsConfig:
 class MetricPoint:
     """A single measurement point."""
     value: float | int  # No default - must be provided
-    timestamp: datetime = field(default_factory=datetime.utcnow)
+    timestamp: datetime = field(default_factory=lambda: datetime.now(UTC))
     labels: dict[str, str] = field(default_factory=dict)
     count: int = 1  # For aggregated metrics
 
@@ -226,7 +226,7 @@ class Meter:
         """Export all metrics."""
         return {
             "service_name": self.config.service_name,
-            "timestamp": datetime.utcnow().isoformat(),
+            "timestamp": datetime.now(UTC).isoformat(),
             "metrics": self.list_metrics(),
         }
 

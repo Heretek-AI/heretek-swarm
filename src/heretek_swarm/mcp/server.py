@@ -121,7 +121,7 @@ router = APIRouter(prefix="/mcp", tags=["mcp"])
 # =============================================================================
 
 
-@router.get("/tools", response_model=ToolListResponse)
+@router.get("/tools")
 async def list_tools(category: str | None = None) -> ToolListResponse:
     """
     List all available MCP tools.
@@ -154,7 +154,7 @@ async def list_tools(category: str | None = None) -> ToolListResponse:
     )
 
 
-@router.get("/tools/{tool_name}", response_model=ToolDetailResponse)
+@router.get("/tools/{tool_name}")
 async def get_tool(tool_name: str) -> ToolDetailResponse:
     """
     Get details for a specific tool.
@@ -187,7 +187,7 @@ async def get_tool(tool_name: str) -> ToolDetailResponse:
     )
 
 
-@router.post("/tools/call", response_model=ToolCallResponse)
+@router.post("/tools/call")
 async def call_tool(request: ToolCallRequest) -> ToolCallResponse:
     """
     Invoke an MCP tool.
@@ -244,7 +244,7 @@ async def get_tool_stats(tool_name: str) -> dict[str, Any]:
 # =============================================================================
 
 
-@router.get("/health", response_model=HealthResponse)
+@router.get("/health")
 async def health_check() -> HealthResponse:
     """
     Check MCP server health.
@@ -269,7 +269,7 @@ async def health_check() -> HealthResponse:
     )
 
 
-@router.get("/info", response_model=ServerInfo)
+@router.get("/info")
 async def get_server_info() -> ServerInfo:
     """
     Get MCP server information.

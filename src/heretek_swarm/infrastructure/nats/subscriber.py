@@ -6,7 +6,7 @@ Provides subscription management for event-driven communication.
 
 from collections.abc import Callable
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import UTC, datetime
 from enum import Enum
 from typing import TYPE_CHECKING, Any
 
@@ -49,7 +49,7 @@ class Subscription:
     state: SubscriptionState = SubscriptionState.PENDING
     message_count: int = 0
     last_message_at: datetime | None = None
-    created_at: datetime = field(default_factory=datetime.utcnow)
+    created_at: datetime = field(default_factory=lambda: datetime.now(UTC))
     callback: Callable[[SwarmEvent], Any] | None = None
 
 
@@ -167,7 +167,7 @@ class NATSSubscriber:
                 target_agent=data.get("target_agent"),
                 payload=data.get("payload", {}),
                 priority=EventPriority(data.get("priority", "normal")),
-                timestamp=data.get("timestamp", datetime.utcnow().isoformat()),
+                timestamp=data.get("timestamp", datetime.now(UTC).isoformat()),
                 correlation_id=data.get("correlation_id"),
                 trace_id=data.get("trace_id"),
             )
@@ -178,7 +178,7 @@ class NATSSubscriber:
 
             # Update metrics
             subscription.message_count += 1
-            subscription.last_message_at = datetime.utcnow()
+            subscription.last_message_at = datetime.now(UTC)
 
             # Call callback
             if subscription.callback:

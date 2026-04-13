@@ -48,9 +48,9 @@ from typing import Any
 
 import structlog
 
-from collective.algorithms.abc import ABC
-from collective.algorithms.aco import ACO
-from collective.algorithms.pso import PSO
+from heretek_swarm.collective.algorithms.abc import ABC, BeeAgent, SwarmDecision as ABCSwarmDecision, SwarmPattern as ABCSwarmPattern
+from heretek_swarm.collective.algorithms.aco import ACO, PheromoneTrail, SwarmDecision as ACOSwarmDecision
+from heretek_swarm.collective.algorithms.pso import PSO, Particle, SwarmDecision as PSOSwarmDecision, SwarmPattern as PSOSwarmPattern
 
 logger = structlog.get_logger("SwarmIntelligenceEngine")
 

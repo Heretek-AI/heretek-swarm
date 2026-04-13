@@ -18,7 +18,7 @@ from heretek_swarm.rag.document_processor import (
     ProcessedDocument,
     ProcessingConfig,
 )
-from heretek_swarm.rag.rag_pipeline import RAGConfig, RAGPipeline
+from heretek_swarm.rag.rag_pipeline import RAGPipeline, RAGPipelineConfig
 from heretek_swarm.rag.retriever import (
     HybridRetriever,
     RetrievalConfig,
@@ -352,7 +352,7 @@ class TestRAGIntegration:
     @pytest.mark.asyncio
     async def test_end_to_end_ingestion_and_query(self):
         """Test full workflow from ingestion to query."""
-        from heretek_swarm.rag.rag_pipeline import RAGConfig, RAGPipeline
+        from heretek_swarm.rag.rag_pipeline import RAGPipeline, RAGPipelineConfig
 
         # Create pipeline with correct config structure
         pipeline = RAGPipeline(

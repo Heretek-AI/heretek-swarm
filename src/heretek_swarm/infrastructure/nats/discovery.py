@@ -7,7 +7,7 @@ Uses heartbeat mechanism to track agent liveness.
 
 import asyncio
 from dataclasses import dataclass, field
-from datetime import datetime, timedelta
+from datetime import UTC, datetime, timedelta
 from enum import Enum
 from typing import Optional
 
@@ -33,8 +33,8 @@ class AgentInfo:
     status: AgentStatus = AgentStatus.ONLINE
     capabilities: list[str] = field(default_factory=list)
     metadata: dict = field(default_factory=dict)
-    last_heartbeat: datetime = field(default_factory=datetime.utcnow)
-    registered_at: datetime = field(default_factory=datetime.utcnow)
+    last_heartbeat: datetime = field(default_factory=lambda: datetime.now(UTC))
+    registered_at: datetime = field(default_factory=lambda: datetime.now(UTC))
 
     def to_dict(self) -> dict:
         return {
@@ -66,7 +66,7 @@ class AgentInfo:
 class HeartbeatMessage:
     """Heartbeat message for agent liveness."""
     agent_id: str
-    timestamp: datetime = field(default_factory=datetime.utcnow)
+    timestamp: datetime = field(default_factory=lambda: datetime.now(UTC))
     status: AgentStatus = AgentStatus.ONLINE
 
     def to_dict(self) -> dict:
@@ -94,7 +94,7 @@ class PresenceAnnouncement:
     capabilities: list[str]
     metadata: dict
     action: str  # "join" or "leave"
-    timestamp: datetime = field(default_factory=datetime.utcnow)
+    timestamp: datetime = field(default_factory=lambda: datetime.now(UTC))
 
     def to_dict(self) -> dict:
         return {
@@ -290,7 +290,7 @@ class AgentRegistry:
                 try:
                     heartbeat = HeartbeatMessage(
                         agent_id=agent_id,
-                        timestamp=datetime.utcnow(),
+                        timestamp=datetime.now(UTC),
                     )
                     await self._nats.publish(self.HEARTBEAT_TOPIC, heartbeat.to_dict())
                     await asyncio.sleep(self.HEARTBEAT_INTERVAL)
@@ -316,7 +316,7 @@ class AgentRegistry:
         """
         heartbeat = HeartbeatMessage(
             agent_id=agent_id,
-            timestamp=datetime.utcnow(),
+            timestamp=datetime.now(UTC),
             status=status,
         )
         await self._nats.publish(self.HEARTBEAT_TOPIC, heartbeat.to_dict())
@@ -351,7 +351,7 @@ class AgentRegistry:
             List of removed agent IDs
         """
         removed = []
-        cutoff = datetime.utcnow() - timedelta(seconds=self.HEARTBEAT_TIMEOUT)
+        cutoff = datetime.now(UTC) - timedelta(seconds=self.HEARTBEAT_TIMEOUT)
 
         async with self._lock:
             stale = [

@@ -5,7 +5,7 @@ Central registry for managing and discovering tools.
 """
 
 from dataclasses import dataclass, field
-from datetime import datetime
+from datetime import UTC, datetime
 
 from heretek_swarm.tools.base import BaseTool, ToolMetadata
 
@@ -22,7 +22,7 @@ class ToolRegistryConfig:
 class ToolRegistryEntry:
     """Entry in the tool registry."""
     tool: BaseTool
-    registered_at: datetime = field(default_factory=datetime.utcnow)
+    registered_at: datetime = field(default_factory=lambda: datetime.now(UTC))
     enabled: bool = True
     usage_count: int = 0
 
