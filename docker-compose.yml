@@ -12,9 +12,6 @@
 #   Optional: autonomous, mem0 (with ollama + postgres for mem0)
 #
 # Environment: All secrets via .env file - never hardcode secrets
-
-version: '3.8'
-
 services:
   # =============================================================================
   # API Server
@@ -30,10 +27,12 @@ services:
       - path: .env
         required: true
     environment:
-      - DATABASE_URL=${DATABASE_URL}
+      - DATABASE_URL=postgresql+asyncpg://heretek:${POSTGRES_PASSWORD}@postgres:5432/heretek_swarm
       - REDIS_URL=redis://redis:6379
       - QDRANT_HOST=qdrant
       - QDRANT_PORT=6333
+      - QDRANT_URL=http://qdrant:6333
+      - NATS_URL=nats://nats:4222
       - NATS_URL=nats://nats:4222
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       - OPENAI_BASE_URL=${OPENAI_BASE_URL}
@@ -107,7 +106,7 @@ services:
         required: true
     environment:
       # Database
-      - DATABASE_URL=postgresql://heretek:${POSTGRES_PASSWORD}@postgres:5432/heretek_swarm
+      - DATABASE_URL=postgresql+asyncpg://heretek:${POSTGRES_PASSWORD}@postgres:5432/heretek_swarm
       # Redis
       - REDIS_URL=redis://redis:6379
       # NATS
@@ -116,7 +115,8 @@ services:
       - QDRANT_URL=http://qdrant:6333
       # API Keys
       - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - ANTHROPIC_API_KEY=${ANTHROPIC_API_KEY}
+      - OPENAI_BASE_URL=${OPENAI_BASE_URL}
+      - LLM_MODEL=${LLM_MODEL}
       # Auth
       - JWT_SECRET=${JWT_SECRET}
       - API_KEY=${API_KEY}
@@ -209,7 +209,7 @@ services:
     networks:
       - default
     healthcheck:
-      test: ["CMD-SHELL", "curl -f http://localhost:6333/readyz || exit 1"]
+      test: ["CMD-SHELL", "bash -c 'echo > /dev/tcp/localhost/6333' || exit 1"]
       interval: 10s
       timeout: 5s
       retries: 3
@@ -283,21 +283,22 @@ services:
         required: true
     environment:
       # Database
-      - DATABASE_URL=postgresql+asyncpg://mem0:${POSTGRES_PASSWORD}@mem0-postgres:5432/mem0
+      - DATABASE_URL=postgresql+asyncpg://mem0:${MEM0_POSTGRES_PASSWORD}@mem0-postgres:5432/mem0
       # Vector store - Qdrant
       - QDRANT_HOST=qdrant
       - QDRANT_PORT=6333
       - QDRANT_COLLECTION_NAME=heretek_swarm_memories
-      # LLM - Ollama or external
+      # LLM - OpenAI-compatible (any endpoint)
       - LLM_PROVIDER=${MEM0_LLM_PROVIDER}
-      - OLLAMA_BASE_URL=http://ollama:11434/v1
+      - LLM_BASE_URL=${MEM0_LLM_BASE_URL}
       - LLM_MODEL=${MEM0_LLM_MODEL}
+      - LLM_API_KEY=${MEM0_LLM_API_KEY}
       - OPENAI_API_KEY=${OPENAI_API_KEY}
       # Embedder - External Lemonade server
       - EMBEDDING_PROVIDER=${EMBEDDING_PROVIDER}
       - OPENAI_EMBEDDING_URL=${EMBEDDING_BASE_URL}
       - OPENAI_EMBEDDING_API_KEY=${EMBEDDING_API_KEY}
-      - EMBEDDING_MODEL=${EMBEDDING_MODEL}
+      - EMBEDDING_MODEL=${EMBEDDER_MODEL}
     depends_on:
       mem0-postgres:
         condition: service_healthy
@@ -372,9 +373,9 @@ services:
       - OPENAI_BASE_URL=${OPENAI_BASE_URL}
       - LLM_MODEL=${LLM_MODEL}
       - EMBEDDING_PROVIDER=openai_compatible
-      - EMBEDDING_BASE_URL=${LEMONADE_API}
-      - EMBEDDING_API_KEY=${LEMONADE_API_KEY}
-      - EMBEDDER_MODEL=${EMBEDDING_MODEL}
+      - EMBEDDING_BASE_URL=${EMBEDDING_BASE_URL}
+      - EMBEDDING_API_KEY=${EMBEDDING_API_KEY}
+      - EMBEDDER_MODEL=${EMBEDDER_MODEL}
       - LITELLM_MASTER_KEY=${LITELLM_MASTER_KEY}
     volumes:
       - ./litellm_config.yaml:/app/config.yaml
