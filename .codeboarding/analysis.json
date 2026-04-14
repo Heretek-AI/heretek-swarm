@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-14T21:08:58.451843+00:00",
+    "generated_at": "2026-04-14T21:09:36.008086+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 5,
@@ -51846,6 +51846,14 @@
           "status": "unchanged"
         }
       ]
+    },
+    ".planning/STATE.md": {
+      "file_status": "modified",
+      "methods": []
+    },
+    ".sisyphus/ralph-loop.local.md": {
+      "file_status": "modified",
+      "methods": []
     }
   },
   "methods_index": {

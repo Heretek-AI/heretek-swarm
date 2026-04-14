@@ -16,11 +16,14 @@ router = APIRouter()
 
 class RoutingRuleCreate(BaseModel):
     """Request model for creating a routing rule."""
+
     id: str = Field(..., description="Unique rule identifier")
     name: str = Field(..., description="Human-readable rule name")
     priority: int = Field(..., description="Rule priority (higher evaluated first)")
     subject_pattern: str = Field(..., description="Wildcard pattern for subject")
-    content_filters: list[dict[str, Any]] = Field(default_factory=list, description="Content filters")
+    content_filters: list[dict[str, Any]] = Field(
+        default_factory=list, description="Content filters"
+    )
     target_channel: str = Field(..., description="Target channel for routed messages")
     target_agents: list[str] = Field(default_factory=list, description="Target agent IDs")
     enabled: bool = Field(default=True, description="Whether rule is active")
@@ -29,6 +32,7 @@ class RoutingRuleCreate(BaseModel):
 
 class RoutingRuleResponse(BaseModel):
     """Response model for routing rule."""
+
     id: str
     name: str
     priority: int
@@ -42,6 +46,7 @@ class RoutingRuleResponse(BaseModel):
 
 class RoutingRulesListResponse(BaseModel):
     """Response model for listing routing rules."""
+
     rules: list[RoutingRuleResponse]
     total: int
     active: int
@@ -49,6 +54,7 @@ class RoutingRulesListResponse(BaseModel):
 
 class RoutingStatsResponse(BaseModel):
     """Response model for routing statistics."""
+
     messages_evaluated: int
     messages_matched: int
     messages_no_match: int
@@ -65,9 +71,9 @@ def get_router_instance() -> ContentRouter:
 
 @router.get("/routing/rules")
 async def list_routing_rules(
-    enabled_only: bool = False,
     router: Annotated[ContentRouter, Depends(get_router_instance)],
     authenticated: Annotated[str, Depends(verify_auth)],
+    enabled_only: bool = False,
 ) -> RoutingRulesListResponse:
     """
     List all routing rules.
@@ -147,11 +153,13 @@ async def create_routing_rule(
         # Convert content filters
         content_filters = []
         for cf in rule_data.content_filters:
-            content_filters.append(ContentFilter(
-                field=cf["field"],
-                operator=FilterOperator(cf["operator"]),
-                value=cf["value"],
-            ))
+            content_filters.append(
+                ContentFilter(
+                    field=cf["field"],
+                    operator=FilterOperator(cf["operator"]),
+                    value=cf["value"],
+                )
+            )
 
         # Create rule
         rule = RoutingRule(
@@ -221,11 +229,13 @@ async def update_routing_rule(
     # Convert content filters
     content_filters = []
     for cf in rule_data.content_filters:
-        content_filters.append(ContentFilter(
-            field=cf["field"],
-            operator=FilterOperator(cf["operator"]),
-            value=cf["value"],
-        ))
+        content_filters.append(
+            ContentFilter(
+                field=cf["field"],
+                operator=FilterOperator(cf["operator"]),
+                value=cf["value"],
+            )
+        )
 
     # Create updated rule
     rule = RoutingRule(
