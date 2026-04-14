@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-14T18:38:02.569931+00:00",
+    "generated_at": "2026-04-14T18:41:07.284864+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 5,
@@ -136570,7 +136570,300 @@
                     }
                   ],
                   "component_id": "2.1.2.1",
-                  "can_expand": true
+                  "can_expand": true,
+                  "components": [
+                    {
+                      "name": "A2A Protocol Gateway",
+                      "description": "Implements the core messaging backbone and protocol compliance for agent-to-agent interactions. It handles WebSocket handshakes, manages the agent registry, and routes messages (Direct, Broadcast, Discovery) over the NATS JetStream event mesh.",
+                      "key_entities": [
+                        {
+                          "qualified_name": "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol",
+                          "reference_file": "src/heretek_swarm/gateway/a2a_protocol.py",
+                          "reference_start_line": 66,
+                          "reference_end_line": 573
+                        }
+                      ],
+                      "source_cluster_ids": [
+                        0
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/gateway/a2a_protocol.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.gateway.a2a_protocol.MessageType",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AMessage",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol.__init__"
+                          ]
+                        }
+                      ],
+                      "component_id": "2.1.2.1.1",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Agent Lifecycle & Interaction Manager",
+                      "description": "Provides the operational interface for managing agent states and human-in-the-loop communication. It translates high-level deployment commands into protocol-level events and facilitates real-time chat interactions with the collective.",
+                      "key_entities": [],
+                      "source_cluster_ids": [
+                        1,
+                        4,
+                        15
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/gateway/a2a_protocol.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._broadcast_discovery",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._route_message",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._get_agent_type"
+                          ]
+                        }
+                      ],
+                      "component_id": "2.1.2.1.2",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Swarm Orchestration Canvas",
+                      "description": "A visual design and execution environment that maps the logical topology of the swarm. It allows users to define agent relationships and workflow flows, which are then enacted by the A2A Protocol Gateway.",
+                      "key_entities": [],
+                      "source_cluster_ids": [
+                        2,
+                        6,
+                        16,
+                        18,
+                        19
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/gateway/a2a_protocol.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol.start_server",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol.start_server.websocket_endpoint",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._handle_connection",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._send_error",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._cleanup_connection"
+                          ]
+                        }
+                      ],
+                      "component_id": "2.1.2.1.3",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Observability & Emergence Engine",
+                      "description": "Aggregates real-time telemetry from the A2A fabric to visualize message flows, latencies, and consciousness metrics (Phi scores). It provides the \"Consciousness Dashboard\" for monitoring emergent properties of the collective.",
+                      "key_entities": [],
+                      "source_cluster_ids": [
+                        8,
+                        10,
+                        11,
+                        12
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/gateway/a2a_protocol.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._handle_discovery",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._handle_status",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._handle_proposal",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._handle_vote"
+                          ]
+                        }
+                      ],
+                      "component_id": "2.1.2.1.4",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "System Configuration & Diagnostics",
+                      "description": "Orchestrates the environment setup, provider credential management, and system-wide health checks. It ensures the underlying infrastructure (LLMs, Databases, NATS) is ready for the A2A fabric to operate.",
+                      "key_entities": [],
+                      "source_cluster_ids": [
+                        3,
+                        5,
+                        7,
+                        13,
+                        17,
+                        20
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/gateway/a2a_protocol.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol.stop_server",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._health_check",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._handle_agent_message",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._handle_decision",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol.get_stats",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._count_agent_types"
+                          ]
+                        }
+                      ],
+                      "component_id": "2.1.2.1.5",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Desktop Integration Layer",
+                      "description": "Bridges the web-based orchestration tools with the local host environment via Electron, managing the lifecycle of Docker containers that host the agents and the NATS backbone.",
+                      "key_entities": [],
+                      "source_cluster_ids": [
+                        9,
+                        14
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/gateway/a2a_protocol.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._handle_handshake",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._log_message"
+                          ]
+                        }
+                      ],
+                      "component_id": "2.1.2.1.6",
+                      "can_expand": true
+                    }
+                  ],
+                  "components_relations": [
+                    {
+                      "relation": "Publishes real-time message metadata and agent status updates for visualization",
+                      "src_name": "A2A Protocol Gateway",
+                      "dst_name": "Observability & Emergence Engine",
+                      "src_id": "2.1.2.1.1",
+                      "dst_id": "2.1.2.1.4",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "Sends deployment and control signals to initiate agent handshakes and protocol registration",
+                      "src_name": "Agent Lifecycle & Interaction Manager",
+                      "dst_name": "A2A Protocol Gateway",
+                      "src_id": "2.1.2.1.2",
+                      "dst_id": "2.1.2.1.1",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "Triggers agent deployment and configuration updates based on visual node placements",
+                      "src_name": "Swarm Orchestration Canvas",
+                      "dst_name": "Agent Lifecycle & Interaction Manager",
+                      "src_id": "2.1.2.1.3",
+                      "dst_id": "2.1.2.1.2",
+                      "edge_count": 1,
+                      "is_static": true
+                    },
+                    {
+                      "relation": "Validates connectivity to the NATS JetStream backbone before allowing agent registration",
+                      "src_name": "System Configuration & Diagnostics",
+                      "dst_name": "A2A Protocol Gateway",
+                      "src_id": "2.1.2.1.5",
+                      "dst_id": "2.1.2.1.1",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "Provides host-level status (Docker/Filesystem) to the setup wizard for environment validation",
+                      "src_name": "Desktop Integration Layer",
+                      "dst_name": "System Configuration & Diagnostics",
+                      "src_id": "2.1.2.1.6",
+                      "dst_id": "2.1.2.1.5",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "Feeds real-time execution metrics back to the canvas nodes for visual progress tracking",
+                      "src_name": "Observability & Emergence Engine",
+                      "dst_name": "Swarm Orchestration Canvas",
+                      "src_id": "2.1.2.1.4",
+                      "dst_id": "2.1.2.1.3",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "calls",
+                      "src_name": "Agent Lifecycle & Interaction Manager",
+                      "dst_name": "Observability & Emergence Engine",
+                      "src_id": "2.1.2.1.2",
+                      "dst_id": "2.1.2.1.4",
+                      "edge_count": 4,
+                      "is_static": true
+                    },
+                    {
+                      "relation": "calls",
+                      "src_name": "Agent Lifecycle & Interaction Manager",
+                      "dst_name": "System Configuration & Diagnostics",
+                      "src_id": "2.1.2.1.2",
+                      "dst_id": "2.1.2.1.5",
+                      "edge_count": 2,
+                      "is_static": true
+                    },
+                    {
+                      "relation": "calls",
+                      "src_name": "Swarm Orchestration Canvas",
+                      "dst_name": "System Configuration & Diagnostics",
+                      "src_id": "2.1.2.1.3",
+                      "dst_id": "2.1.2.1.5",
+                      "edge_count": 1,
+                      "is_static": true
+                    },
+                    {
+                      "relation": "calls",
+                      "src_name": "Swarm Orchestration Canvas",
+                      "dst_name": "Desktop Integration Layer",
+                      "src_id": "2.1.2.1.3",
+                      "dst_id": "2.1.2.1.6",
+                      "edge_count": 1,
+                      "is_static": true
+                    },
+                    {
+                      "relation": "calls",
+                      "src_name": "Observability & Emergence Engine",
+                      "dst_name": "Agent Lifecycle & Interaction Manager",
+                      "src_id": "2.1.2.1.4",
+                      "dst_id": "2.1.2.1.2",
+                      "edge_count": 4,
+                      "is_static": true
+                    },
+                    {
+                      "relation": "calls",
+                      "src_name": "Observability & Emergence Engine",
+                      "dst_name": "Desktop Integration Layer",
+                      "src_id": "2.1.2.1.4",
+                      "dst_id": "2.1.2.1.6",
+                      "edge_count": 4,
+                      "is_static": true
+                    },
+                    {
+                      "relation": "calls",
+                      "src_name": "System Configuration & Diagnostics",
+                      "dst_name": "Agent Lifecycle & Interaction Manager",
+                      "src_id": "2.1.2.1.5",
+                      "dst_id": "2.1.2.1.2",
+                      "edge_count": 2,
+                      "is_static": true
+                    },
+                    {
+                      "relation": "calls",
+                      "src_name": "System Configuration & Diagnostics",
+                      "dst_name": "Desktop Integration Layer",
+                      "src_id": "2.1.2.1.5",
+                      "dst_id": "2.1.2.1.6",
+                      "edge_count": 2,
+                      "is_static": true
+                    },
+                    {
+                      "relation": "calls",
+                      "src_name": "Desktop Integration Layer",
+                      "dst_name": "Agent Lifecycle & Interaction Manager",
+                      "src_id": "2.1.2.1.6",
+                      "dst_id": "2.1.2.1.2",
+                      "edge_count": 1,
+                      "is_static": true
+                    }
+                  ]
                 },
                 {
                   "name": "Temporal & Audit Engine",
@@ -137157,7 +137450,320 @@
                     }
                   ],
                   "component_id": "2.1.2.4",
-                  "can_expand": true
+                  "can_expand": true,
+                  "components": [
+                    {
+                      "name": "Real-time Telemetry Ingestor",
+                      "description": "Manages high-throughput ingestion of event streams from the agent mesh, handling WebSocket lifecycles, throttling incoming updates, and exposing reactive hooks for live dashboard updates.",
+                      "key_entities": [],
+                      "source_cluster_ids": [
+                        2,
+                        13,
+                        16
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/gateway/a2a_protocol.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._health_check",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._send_error",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._cleanup_connection"
+                          ]
+                        }
+                      ],
+                      "component_id": "2.1.2.4.1",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Mesh Visualization & Flow Canvas",
+                      "description": "Provides the interactive React Flow canvas that represents the agent collective, overlaying real-time execution pulses, A2A message flows, and detailed LLM execution traces on nodes and edges.",
+                      "key_entities": [],
+                      "source_cluster_ids": [
+                        6,
+                        8,
+                        10,
+                        18
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/gateway/a2a_protocol.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol.start_server",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._handle_connection",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._handle_discovery",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._handle_proposal"
+                          ]
+                        }
+                      ],
+                      "component_id": "2.1.2.4.2",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Consciousness & Swarm Metrics",
+                      "description": "Tracks emergent properties of the swarm, computing and visualizing stability metrics, Phi (IIT) scores, and Free Energy Principle metrics to monitor collective intelligence and health.",
+                      "key_entities": [],
+                      "source_cluster_ids": [
+                        11,
+                        12
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/gateway/a2a_protocol.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._handle_status",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._handle_vote"
+                          ]
+                        }
+                      ],
+                      "component_id": "2.1.2.4.3",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Observability Config & Setup Orchestrator",
+                      "description": "Manages lifecycle of the observability subsystem including setup wizards, configuration of LLM and embedding providers, and mapping telemetry to agent models and infrastructure.",
+                      "key_entities": [],
+                      "source_cluster_ids": [
+                        3,
+                        5,
+                        17,
+                        19,
+                        20
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/gateway/a2a_protocol.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol.start_server.websocket_endpoint",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol.stop_server",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._handle_agent_message",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol.get_stats",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._count_agent_types"
+                          ]
+                        }
+                      ],
+                      "component_id": "2.1.2.4.4",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Environment & Diagnostics Bridge",
+                      "description": "Links the web dashboard to the local execution environment (Docker/Electron), monitoring NATS JetStream and database health and exposing low-level diagnostics.",
+                      "key_entities": [],
+                      "source_cluster_ids": [
+                        0,
+                        7,
+                        9,
+                        14
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/gateway/a2a_protocol.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.gateway.a2a_protocol.MessageType",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AMessage",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol.__init__",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._handle_handshake",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._handle_decision",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._log_message"
+                          ]
+                        }
+                      ],
+                      "component_id": "2.1.2.4.5",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Dashboard Core & Data Access",
+                      "description": "Core UI framework and REST-based data fetching layer providing shared UI components and the primary API client for historical state and metadata to complement real-time telemetry.",
+                      "key_entities": [],
+                      "source_cluster_ids": [
+                        1,
+                        4,
+                        15
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/gateway/a2a_protocol.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._broadcast_discovery",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._route_message",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._get_agent_type"
+                          ]
+                        }
+                      ],
+                      "component_id": "2.1.2.4.6",
+                      "can_expand": true
+                    }
+                  ],
+                  "components_relations": [
+                    {
+                      "relation": "streams live agent status and message events to",
+                      "src_name": "Real-time Telemetry Ingestor",
+                      "dst_name": "Mesh Visualization & Flow Canvas",
+                      "src_id": "2.1.2.4.1",
+                      "dst_id": "2.1.2.4.2",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "feeds raw telemetry data into metric calculators for",
+                      "src_name": "Real-time Telemetry Ingestor",
+                      "dst_name": "Consciousness & Swarm Metrics",
+                      "src_id": "2.1.2.4.1",
+                      "dst_id": "2.1.2.4.3",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "validates infrastructure health before ingestor establishes connections to",
+                      "src_name": "Environment & Diagnostics Bridge",
+                      "dst_name": "Real-time Telemetry Ingestor",
+                      "src_id": "2.1.2.4.5",
+                      "dst_id": "2.1.2.4.1",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "provides calculated health and consciousness overlays to",
+                      "src_name": "Consciousness & Swarm Metrics",
+                      "dst_name": "Mesh Visualization & Flow Canvas",
+                      "src_id": "2.1.2.4.3",
+                      "dst_id": "2.1.2.4.2",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "supplies node configuration and provider metadata to",
+                      "src_name": "Observability Config & Setup Orchestrator",
+                      "dst_name": "Mesh Visualization & Flow Canvas",
+                      "src_id": "2.1.2.4.4",
+                      "dst_id": "2.1.2.4.2",
+                      "edge_count": 1,
+                      "is_static": true
+                    },
+                    {
+                      "relation": "provides static agent metadata and historical trace data to",
+                      "src_name": "Dashboard Core & Data Access",
+                      "dst_name": "Mesh Visualization & Flow Canvas",
+                      "src_id": "2.1.2.4.6",
+                      "dst_id": "2.1.2.4.2",
+                      "edge_count": 2,
+                      "is_static": true
+                    },
+                    {
+                      "relation": "triggers infrastructure health checks and collection setup during configuration for",
+                      "src_name": "Observability Config & Setup Orchestrator",
+                      "dst_name": "Environment & Diagnostics Bridge",
+                      "src_id": "2.1.2.4.4",
+                      "dst_id": "2.1.2.4.5",
+                      "edge_count": 1,
+                      "is_static": true
+                    },
+                    {
+                      "relation": "calls",
+                      "src_name": "Mesh Visualization & Flow Canvas",
+                      "dst_name": "Real-time Telemetry Ingestor",
+                      "src_id": "2.1.2.4.2",
+                      "dst_id": "2.1.2.4.1",
+                      "edge_count": 3,
+                      "is_static": true
+                    },
+                    {
+                      "relation": "calls",
+                      "src_name": "Mesh Visualization & Flow Canvas",
+                      "dst_name": "Observability Config & Setup Orchestrator",
+                      "src_id": "2.1.2.4.2",
+                      "dst_id": "2.1.2.4.4",
+                      "edge_count": 1,
+                      "is_static": true
+                    },
+                    {
+                      "relation": "calls",
+                      "src_name": "Mesh Visualization & Flow Canvas",
+                      "dst_name": "Environment & Diagnostics Bridge",
+                      "src_id": "2.1.2.4.2",
+                      "dst_id": "2.1.2.4.5",
+                      "edge_count": 3,
+                      "is_static": true
+                    },
+                    {
+                      "relation": "calls",
+                      "src_name": "Mesh Visualization & Flow Canvas",
+                      "dst_name": "Dashboard Core & Data Access",
+                      "src_id": "2.1.2.4.2",
+                      "dst_id": "2.1.2.4.6",
+                      "edge_count": 3,
+                      "is_static": true
+                    },
+                    {
+                      "relation": "calls",
+                      "src_name": "Consciousness & Swarm Metrics",
+                      "dst_name": "Environment & Diagnostics Bridge",
+                      "src_id": "2.1.2.4.3",
+                      "dst_id": "2.1.2.4.5",
+                      "edge_count": 2,
+                      "is_static": true
+                    },
+                    {
+                      "relation": "calls",
+                      "src_name": "Consciousness & Swarm Metrics",
+                      "dst_name": "Dashboard Core & Data Access",
+                      "src_id": "2.1.2.4.3",
+                      "dst_id": "2.1.2.4.6",
+                      "edge_count": 2,
+                      "is_static": true
+                    },
+                    {
+                      "relation": "calls",
+                      "src_name": "Observability Config & Setup Orchestrator",
+                      "dst_name": "Dashboard Core & Data Access",
+                      "src_id": "2.1.2.4.4",
+                      "dst_id": "2.1.2.4.6",
+                      "edge_count": 1,
+                      "is_static": true
+                    },
+                    {
+                      "relation": "calls",
+                      "src_name": "Environment & Diagnostics Bridge",
+                      "dst_name": "Dashboard Core & Data Access",
+                      "src_id": "2.1.2.4.5",
+                      "dst_id": "2.1.2.4.6",
+                      "edge_count": 2,
+                      "is_static": true
+                    },
+                    {
+                      "relation": "calls",
+                      "src_name": "Dashboard Core & Data Access",
+                      "dst_name": "Consciousness & Swarm Metrics",
+                      "src_id": "2.1.2.4.6",
+                      "dst_id": "2.1.2.4.3",
+                      "edge_count": 2,
+                      "is_static": true
+                    },
+                    {
+                      "relation": "calls",
+                      "src_name": "Dashboard Core & Data Access",
+                      "dst_name": "Observability Config & Setup Orchestrator",
+                      "src_id": "2.1.2.4.6",
+                      "dst_id": "2.1.2.4.4",
+                      "edge_count": 1,
+                      "is_static": true
+                    },
+                    {
+                      "relation": "calls",
+                      "src_name": "Dashboard Core & Data Access",
+                      "dst_name": "Environment & Diagnostics Bridge",
+                      "src_id": "2.1.2.4.6",
+                      "dst_id": "2.1.2.4.5",
+                      "edge_count": 1,
+                      "is_static": true
+                    }
+                  ]
                 }
               ],
               "components_relations": [
@@ -144008,7 +144614,164 @@
                     }
                   ],
                   "component_id": "3.2.1.1",
-                  "can_expand": true
+                  "can_expand": true,
+                  "components": [
+                    {
+                      "name": "Orchestration Controller",
+                      "description": "Acts as the primary entry point and lifecycle manager for the validation process. It exposes the public API for the subsystem and coordinates the execution flow, determining which rules are applied based on the validation strictness and workflow context.",
+                      "key_entities": [
+                        {
+                          "qualified_name": "src.heretek_swarm.workflow.validator.validate_workflow",
+                          "reference_file": "src/heretek_swarm/workflow/validator.py",
+                          "reference_start_line": 624,
+                          "reference_end_line": 635
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.workflow.validator.WorkflowValidator.validate",
+                          "reference_file": "src/heretek_swarm/workflow/validator.py",
+                          "reference_start_line": 170,
+                          "reference_end_line": 205
+                        }
+                      ],
+                      "source_cluster_ids": [
+                        2,
+                        3
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/workflow/validator.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.workflow.validator.ValidationResult",
+                            "src.heretek_swarm.workflow.validator.WorkflowValidator",
+                            "src.heretek_swarm.workflow.validator.WorkflowValidator.validate",
+                            "src.heretek_swarm.workflow.validator.WorkflowValidator._validate_duplicate_ids",
+                            "src.heretek_swarm.workflow.validator.WorkflowValidator._validate_disconnected_nodes",
+                            "src.heretek_swarm.workflow.validator.WorkflowValidator._validate_resource_conflicts",
+                            "src.heretek_swarm.workflow.validator.WorkflowValidator._validate_degree_limits",
+                            "src.heretek_swarm.workflow.validator.WorkflowValidator._check_unused_outputs",
+                            "src.heretek_swarm.workflow.validator.validate_workflow",
+                            "src.heretek_swarm.workflow.validator.validate_workflow_strict"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.2.1.1.1",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Rule Execution Engine",
+                      "description": "Implements the core logic for inspecting workflow integrity. It performs deep analysis of the workflow graph, including verifying agent type compatibility, checking edge connectivity constraints, and executing complex topological algorithms like cycle detection to ensure the MAS can execute the workflow without deadlocks.",
+                      "key_entities": [
+                        {
+                          "qualified_name": "src.heretek_swarm.workflow.validator.WorkflowValidator._validate_agent_types",
+                          "reference_file": "src/heretek_swarm/workflow/validator.py",
+                          "reference_start_line": 258,
+                          "reference_end_line": 276
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.workflow.validator.WorkflowValidator._validate_circular_dependencies",
+                          "reference_file": "src/heretek_swarm/workflow/validator.py",
+                          "reference_start_line": 347,
+                          "reference_end_line": 400
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.workflow.validator.WorkflowValidator._validate_edge_connections",
+                          "reference_file": "src/heretek_swarm/workflow/validator.py",
+                          "reference_start_line": 278,
+                          "reference_end_line": 318
+                        }
+                      ],
+                      "source_cluster_ids": [
+                        1,
+                        5
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/workflow/validator.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.workflow.validator.ValidationErrorSeverity",
+                            "src.heretek_swarm.workflow.validator.ValidationError",
+                            "src.heretek_swarm.workflow.validator.ErrorCodes",
+                            "src.heretek_swarm.workflow.validator.WorkflowValidator.__init__",
+                            "src.heretek_swarm.workflow.validator.WorkflowValidator._validate_node_types",
+                            "src.heretek_swarm.workflow.validator.WorkflowValidator._validate_agent_types",
+                            "src.heretek_swarm.workflow.validator.WorkflowValidator._validate_edge_connections",
+                            "src.heretek_swarm.workflow.validator.WorkflowValidator._validate_circular_dependencies",
+                            "src.heretek_swarm.workflow.validator.WorkflowValidator._validate_circular_dependencies.has_cycle",
+                            "src.heretek_swarm.workflow.validator.WorkflowValidator._validate_required_connections",
+                            "src.heretek_swarm.workflow.validator.WorkflowValidator._validate_start_node",
+                            "src.heretek_swarm.workflow.validator.WorkflowValidator._check_orphaned_nodes",
+                            "src.heretek_swarm.workflow.validator.WorkflowValidator._check_graph_complexity"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.2.1.1.2",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Result & Serialization Handler",
+                      "description": "Manages the data structures used to capture validation findings. It is responsible for aggregating errors and warnings from the Rule Engine and transforming these internal states into standardized JSON-compatible formats for consumption by the FastAPI backend and the React frontend.",
+                      "key_entities": [
+                        {
+                          "qualified_name": "src.heretek_swarm.workflow.validator.ValidationResult",
+                          "reference_file": "src/heretek_swarm/workflow/validator.py",
+                          "reference_start_line": 63,
+                          "reference_end_line": 85
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.workflow.validator.ValidationError",
+                          "reference_file": "src/heretek_swarm/workflow/validator.py",
+                          "reference_start_line": 31,
+                          "reference_end_line": 59
+                        }
+                      ],
+                      "source_cluster_ids": [
+                        4
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/workflow/validator.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.workflow.validator.ValidationError.to_dict",
+                            "src.heretek_swarm.workflow.validator.ValidationResult.to_dict"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.2.1.1.3",
+                      "can_expand": true
+                    }
+                  ],
+                  "components_relations": [
+                    {
+                      "relation": "Delegates structural and semantic checks",
+                      "src_name": "Orchestration Controller",
+                      "dst_name": "Rule Execution Engine",
+                      "src_id": "3.2.1.1.1",
+                      "dst_id": "3.2.1.1.2",
+                      "edge_count": 13,
+                      "is_static": true
+                    },
+                    {
+                      "relation": "Populates result container with error details",
+                      "src_name": "Rule Execution Engine",
+                      "dst_name": "Result & Serialization Handler",
+                      "src_id": "3.2.1.1.2",
+                      "dst_id": "3.2.1.1.3",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "Triggers serialization of aggregated results",
+                      "src_name": "Orchestration Controller",
+                      "dst_name": "Result & Serialization Handler",
+                      "src_id": "3.2.1.1.1",
+                      "dst_id": "3.2.1.1.3",
+                      "edge_count": 0,
+                      "is_static": false
+                    }
+                  ]
                 },
                 {
                   "name": "Structural Integrity Engine",
@@ -145276,7 +146039,205 @@
                     }
                   ],
                   "component_id": "3.3.1.1",
-                  "can_expand": true
+                  "can_expand": true,
+                  "components": [
+                    {
+                      "name": "Event Mesh Interface",
+                      "description": "Manages the physical connection to the NATS JetStream backbone: subscribes to subjects, retrieves incoming messages, and maintains the actor's presence via heartbeat signals.",
+                      "key_entities": [],
+                      "source_cluster_ids": [
+                        10,
+                        11,
+                        12
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "dashboard/frontend/src/components/WorkflowBuilder/ValidationPanel.tsx",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "dashboard.frontend.src.components.WorkflowBuilder.ValidationPanel.ValidationError",
+                            "dashboard.frontend.src.components.WorkflowBuilder.ValidationPanel.ValidationResult",
+                            "dashboard.frontend.src.components.WorkflowBuilder.ValidationPanel.ValidationPanelProps",
+                            "dashboard.frontend.src.components.WorkflowBuilder.ValidationPanel.ValidationItemProps",
+                            "dashboard.frontend.src.components.WorkflowBuilder.ValidationPanel.ValidationItem.handleNodeClick",
+                            "dashboard.frontend.src.components.WorkflowBuilder.ValidationPanel.ValidationItem.handleEdgeClick",
+                            "dashboard.frontend.src.components.WorkflowBuilder.ValidationPanel.ValidationItem.handleEdgeClick.useCallback() callback"
+                          ]
+                        },
+                        {
+                          "file_path": "src/heretek_swarm/actors/validation.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.actors.validation.QueryRequest.validate_filters",
+                            "src.heretek_swarm.actors.validation.validate_message"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.3.1.1.1",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Actor Execution Controller",
+                      "description": "Implements the internal mailbox and main execution loop, ensuring sequential processing by pulling messages from an asyncio.Queue and feeding them into the dispatch logic to preserve actor state integrity.",
+                      "key_entities": [],
+                      "source_cluster_ids": [
+                        0,
+                        1,
+                        2
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/actors/validation.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.actors.validation.MessageContent",
+                            "src.heretek_swarm.actors.validation.DeliberationRequest",
+                            "src.heretek_swarm.actors.validation.MemoryStoreRequest",
+                            "src.heretek_swarm.actors.validation.AnalysisRequest",
+                            "src.heretek_swarm.actors.validation.AnalysisRequest.validate_request_id",
+                            "src.heretek_swarm.actors.validation.ValidationRequest",
+                            "src.heretek_swarm.actors.validation.QueryRequest",
+                            "src.heretek_swarm.actors.validation.LineageRequest",
+                            "src.heretek_swarm.actors.validation.HealthCheckRequest",
+                            "src.heretek_swarm.actors.validation.SuspendResumeRequest",
+                            "src.heretek_swarm.actors.validation.TerminateRequest",
+                            "src.heretek_swarm.actors.validation.CollectiveTaskRequest",
+                            "src.heretek_swarm.actors.validation.TaskRequest",
+                            "src.heretek_swarm.actors.validation.DependencyRequest",
+                            "src.heretek_swarm.actors.validation.CoordinationRequest",
+                            "src.heretek_swarm.actors.validation.CoordinationRequest.validate_input_data",
+                            "src.heretek_swarm.actors.validation.CoordinationRequest.validate_protocol"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.3.1.1.2",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Secure Dispatch Orchestrator",
+                      "description": "Primary logic engine that routes messages to their appropriate handlers and enforces Zero-Trust via validation interceptors (schema and permission checks), aborting processing on validation failure.",
+                      "key_entities": [],
+                      "source_cluster_ids": [
+                        3,
+                        4,
+                        5,
+                        6,
+                        7,
+                        8,
+                        9
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/actors/validation.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.actors.validation.MessageContent.validate_sender_id",
+                            "src.heretek_swarm.actors.validation.MessageContent.validate_correlation_id",
+                            "src.heretek_swarm.actors.validation.MessageContent.validate_content",
+                            "src.heretek_swarm.actors.validation.DeliberationRequest.validate_triad_members",
+                            "src.heretek_swarm.actors.validation.MemoryStoreRequest.validate_content",
+                            "src.heretek_swarm.actors.validation.MemoryStoreRequest.validate_metadata",
+                            "src.heretek_swarm.actors.validation.LineageRequest.validate_parent_ids"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.3.1.1.3",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "System Message Handlers",
+                      "description": "Default terminal logic for framework-level messages: handles lifecycle events, health checks, and collective task coordination to keep the agent aligned with swarm standards.",
+                      "key_entities": [],
+                      "source_cluster_ids": [
+                        16,
+                        17,
+                        18
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "dashboard/frontend/src/components/WorkflowBuilder/ValidationPanel.tsx",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "dashboard.frontend.src.components.WorkflowBuilder.ValidationPanel.ValidationPanel.allItems.useMemo() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.ValidationPanel.allItems.warnings.map() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.ValidationPanel.allItems.info.map() callback"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.3.1.1.4",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Outbound Message Router",
+                      "description": "Handles egress communication patterns (direct send, request-response, broadcast), ensuring correct correlation IDs and routing keys for messages leaving the actor.",
+                      "key_entities": [],
+                      "source_cluster_ids": [
+                        13,
+                        14,
+                        15
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "dashboard/frontend/src/components/WorkflowBuilder/ValidationPanel.tsx",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "dashboard.frontend.src.components.WorkflowBuilder.ValidationPanel.ValidationItem.handleNodeClick.useCallback() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.ValidationPanel.ValidationPanel",
+                            "dashboard.frontend.src.components.WorkflowBuilder.ValidationPanel.ValidationPanel.allItems.errors.map() callback"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.3.1.1.5",
+                      "can_expand": true
+                    }
+                  ],
+                  "components_relations": [
+                    {
+                      "relation": "feeds raw messages into",
+                      "src_name": "Event Mesh Interface",
+                      "dst_name": "Actor Execution Controller",
+                      "src_id": "3.3.1.1.1",
+                      "dst_id": "3.3.1.1.2",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "triggers processing of next message in queue",
+                      "src_name": "Actor Execution Controller",
+                      "dst_name": "Secure Dispatch Orchestrator",
+                      "src_id": "3.3.1.1.2",
+                      "dst_id": "3.3.1.1.3",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "routes validated system-level messages to",
+                      "src_name": "Secure Dispatch Orchestrator",
+                      "dst_name": "System Message Handlers",
+                      "src_id": "3.3.1.1.3",
+                      "dst_id": "3.3.1.1.4",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "initiates replies or new messages to",
+                      "src_name": "Secure Dispatch Orchestrator",
+                      "dst_name": "Outbound Message Router",
+                      "src_id": "3.3.1.1.3",
+                      "dst_id": "3.3.1.1.5",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "passes formatted outbound messages to",
+                      "src_name": "Outbound Message Router",
+                      "dst_name": "Event Mesh Interface",
+                      "src_id": "3.3.1.1.5",
+                      "dst_id": "3.3.1.1.1",
+                      "edge_count": 0,
+                      "is_static": false
+                    }
+                  ]
                 },
                 {
                   "name": "Behavioral & Zero-Trust Gate",
