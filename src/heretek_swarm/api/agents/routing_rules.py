@@ -66,8 +66,8 @@ def get_router_instance() -> ContentRouter:
 @router.get("/routing/rules")
 async def list_routing_rules(
     enabled_only: bool = False,
-    router: ContentRouter = Depends(get_router_instance),
-    authenticated: str = Depends(verify_auth),
+    router: Annotated[ContentRouter, Depends(get_router_instance)],
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> RoutingRulesListResponse:
     """
     List all routing rules.
@@ -95,8 +95,8 @@ async def list_routing_rules(
 @router.get("/routing/rules/{rule_id}")
 async def get_routing_rule(
     rule_id: str,
-    router: ContentRouter = Depends(get_router_instance),
-    authenticated: str = Depends(verify_auth),
+    router: Annotated[ContentRouter, Depends(get_router_instance)],
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> RoutingRuleResponse:
     """
     Get a specific routing rule by ID.
@@ -131,8 +131,8 @@ async def get_routing_rule(
 @router.post("/routing/rules")
 async def create_routing_rule(
     rule_data: RoutingRuleCreate,
-    router: ContentRouter = Depends(get_router_instance),
-    authenticated: str = Depends(verify_auth),
+    router: Annotated[ContentRouter, Depends(get_router_instance)],
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> RoutingRuleResponse:
     """
     Create a new routing rule.
@@ -202,8 +202,8 @@ async def create_routing_rule(
 async def update_routing_rule(
     rule_id: str,
     rule_data: RoutingRuleCreate,
-    router: ContentRouter = Depends(get_router_instance),
-    authenticated: str = Depends(verify_auth),
+    router: Annotated[ContentRouter, Depends(get_router_instance)],
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> RoutingRuleResponse:
     """
     Update an existing routing rule.
@@ -265,8 +265,8 @@ async def update_routing_rule(
 @router.delete("/routing/rules/{rule_id}")
 async def delete_routing_rule(
     rule_id: str,
-    router: ContentRouter = Depends(get_router_instance),
-    authenticated: str = Depends(verify_auth),
+    router: Annotated[ContentRouter, Depends(get_router_instance)],
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> dict[str, str]:
     """
     Delete a routing rule.

@@ -115,9 +115,9 @@ class ProfilingStatsResponse(BaseModel):
 @router.get("/{instance_id}/profiling/metrics")
 async def get_agent_profiling_metrics(
     instance_id: str,
-    registry: EnhancedAgentRegistry = Depends(get_registry),
-    profiler: BehaviorProfiler | None = Depends(get_profiler_instance),
-    authenticated: str = Depends(verify_auth),
+    registry: Annotated[EnhancedAgentRegistry, Depends(get_registry)],
+    profiler: Annotated[BehaviorProfiler | None, Depends(get_profiler_instance)],
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> ProfilingMetricsResponse:
     """
     Get behavior profiling metrics for an agent.
@@ -166,9 +166,9 @@ async def get_agent_profiling_metrics(
 @router.get("/{instance_id}/profiling/profile")
 async def get_agent_profiling_profile(
     instance_id: str,
-    registry: EnhancedAgentRegistry = Depends(get_registry),
-    profiler: BehaviorProfiler | None = Depends(get_profiler_instance),
-    authenticated: str = Depends(verify_auth),
+    registry: Annotated[EnhancedAgentRegistry, Depends(get_registry)],
+    profiler: Annotated[BehaviorProfiler | None, Depends(get_profiler_instance)],
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> ProfilingProfileResponse:
     """
     Get behavior profile for an agent's type.
@@ -215,9 +215,9 @@ async def get_agent_profiling_profile(
 @router.get("/{instance_id}/profiling/anomalies")
 async def detect_agent_anomalies(
     instance_id: str,
-    registry: EnhancedAgentRegistry = Depends(get_registry),
-    profiler: BehaviorProfiler | None = Depends(get_profiler_instance),
-    authenticated: str = Depends(verify_auth),
+    registry: Annotated[EnhancedAgentRegistry, Depends(get_registry)],
+    profiler: Annotated[BehaviorProfiler | None, Depends(get_profiler_instance)],
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> list[AnomalyResponse]:
     """
     Detect anomalies in agent behavior.
@@ -258,8 +258,8 @@ async def detect_agent_anomalies(
 async def get_profiling_alerts(
     severity: str | None = None,
     unacknowledged_only: bool = False,
-    profiler: BehaviorProfiler | None = Depends(get_profiler_instance),
-    authenticated: str = Depends(verify_auth),
+    profiler: Annotated[BehaviorProfiler | None, Depends(get_profiler_instance)],
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> list[AlertResponse]:
     """
     Get all profiling alerts.
@@ -315,8 +315,8 @@ async def get_profiling_alerts(
 async def acknowledge_profiling_alert(
     index: int,
     acknowledged_by: str,
-    profiler: BehaviorProfiler | None = Depends(get_profiler_instance),
-    authenticated: str = Depends(verify_auth),
+    profiler: Annotated[BehaviorProfiler | None, Depends(get_profiler_instance)],
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> dict[str, Any]:
     """
     Acknowledge a profiling alert.
@@ -339,8 +339,8 @@ async def acknowledge_profiling_alert(
 
 @router.get("/profiling/stats")
 async def get_profiling_stats(
-    profiler: BehaviorProfiler | None = Depends(get_profiler_instance),
-    authenticated: str = Depends(verify_auth),
+    profiler: Annotated[BehaviorProfiler | None, Depends(get_profiler_instance)],
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> ProfilingStatsResponse:
     """
     Get profiler statistics.
@@ -366,7 +366,7 @@ async def get_profiling_stats(
 
 @router.get("/profiling/prometheus")
 async def get_profiling_prometheus_metrics(
-    profiler: BehaviorProfiler | None = Depends(get_profiler_instance),
+    profiler: Annotated[BehaviorProfiler | None, Depends(get_profiler_instance)],
 ) -> str:
     """
     Get profiling metrics in Prometheus format.
@@ -387,9 +387,9 @@ async def record_agent_activity(
     duration_ms: float = 0.0,
     success: bool = True,
     metadata: dict[str, Any] | None = None,
-    registry: EnhancedAgentRegistry = Depends(get_registry),
-    profiler: BehaviorProfiler | None = Depends(get_profiler_instance),
-    authenticated: str = Depends(verify_auth),
+    registry: Annotated[EnhancedAgentRegistry, Depends(get_registry)],
+    profiler: Annotated[BehaviorProfiler | None, Depends(get_profiler_instance)],
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> dict[str, Any]:
     """
     Record an agent activity for profiling.

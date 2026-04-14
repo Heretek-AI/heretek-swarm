@@ -67,8 +67,8 @@ class StreamListResponse(BaseModel):
 
 @router.get("/jetstream/streams")
 async def list_jetstream_streams(
-    js_manager: Any | None = Depends(get_jetstream_manager),
-    authenticated: str = Depends(verify_auth),
+    js_manager: Annotated[Any | None, Depends(get_jetstream_manager)],
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> StreamListResponse:
     """
     List all JetStream streams.
@@ -109,8 +109,8 @@ async def list_jetstream_streams(
 @router.get("/jetstream/streams/{stream_name}")
 async def get_jetstream_stream(
     stream_name: str,
-    js_manager: Any | None = Depends(get_jetstream_manager),
-    authenticated: str = Depends(verify_auth),
+    js_manager: Annotated[Any | None, Depends(get_jetstream_manager)],
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> StreamInfoResponse:
     """
     Get information about a specific stream.
@@ -150,8 +150,8 @@ async def get_jetstream_stream(
 @router.post("/jetstream/streams")
 async def create_jetstream_stream(
     config_data: JetStreamConfigCreate,
-    js_manager: Any | None = Depends(get_jetstream_manager),
-    authenticated: str = Depends(verify_auth),
+    js_manager: Annotated[Any | None, Depends(get_jetstream_manager)],
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> dict[str, Any]:
     """
     Create a new JetStream.
@@ -207,8 +207,8 @@ async def create_jetstream_stream(
 @router.delete("/jetstream/streams/{stream_name}")
 async def delete_jetstream_stream(
     stream_name: str,
-    js_manager: Any | None = Depends(get_jetstream_manager),
-    authenticated: str = Depends(verify_auth),
+    js_manager: Annotated[Any | None, Depends(get_jetstream_manager)],
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> dict[str, str]:
     """
     Delete a JetStream.
@@ -241,8 +241,8 @@ async def replay_stream_messages(
     start_sequence: int | None = None,
     end_sequence: int | None = None,
     subject_filter: str | None = None,
-    js_manager: Any | None = Depends(get_jetstream_manager),
-    authenticated: str = Depends(verify_auth),
+    js_manager: Annotated[Any | None, Depends(get_jetstream_manager)],
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> dict[str, Any]:
     """
     Replay messages from a stream.
@@ -276,8 +276,8 @@ async def replay_stream_messages(
 
 @router.get("/jetstream/stats")
 async def get_jetstream_stats(
-    js_manager: Any | None = Depends(get_jetstream_manager),
-    authenticated: str = Depends(verify_auth),
+    js_manager: Annotated[Any | None, Depends(get_jetstream_manager)],
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> dict[str, Any]:
     """
     Get JetStream manager statistics.
@@ -298,8 +298,8 @@ async def get_jetstream_stats(
 @router.post("/jetstream/initialize")
 async def initialize_jetstream(
     create_defaults: bool = True,
-    js_manager: Any | None = Depends(get_jetstream_manager),
-    authenticated: str = Depends(verify_auth),
+    js_manager: Annotated[Any | None, Depends(get_jetstream_manager)],
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> dict[str, Any]:
     """
     Initialize JetStream with default streams.
