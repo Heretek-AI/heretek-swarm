@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-14T18:41:07.284864+00:00",
+    "generated_at": "2026-04-14T18:45:23.665142+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 5,
@@ -136911,7 +136911,212 @@
                     }
                   ],
                   "component_id": "2.1.2.2",
-                  "can_expand": true
+                  "can_expand": true,
+                  "components": [
+                    {
+                      "name": "Replay Orchestration Engine",
+                      "description": "Core backend logic that manages the lifecycle of message replays: capturing live streams, defining replay windows, filtering by subject, and safely re-injecting historical events into the event mesh without causing unintended side effects.",
+                      "key_entities": [
+                        {
+                          "qualified_name": "src.heretek_swarm.gateway.message_replay.MessageReplayManager",
+                          "reference_file": "src/heretek_swarm/gateway/message_replay.py",
+                          "reference_start_line": 193,
+                          "reference_end_line": 661
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.gateway.message_replay.MessageReplayManager.create_replay_job",
+                          "reference_file": "src/heretek_swarm/gateway/message_replay.py",
+                          "reference_start_line": 282,
+                          "reference_end_line": 336
+                        }
+                      ],
+                      "source_cluster_ids": [
+                        0
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/gateway/message_replay.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.gateway.message_replay.ReplayStatus",
+                            "src.heretek_swarm.gateway.message_replay.ReplayJob",
+                            "src.heretek_swarm.gateway.message_replay.TimeTravelRequest",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.__init__"
+                          ]
+                        }
+                      ],
+                      "component_id": "2.1.2.2.1",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Temporal Data & Persistence Layer",
+                      "description": "Manages temporal storage, database connectivity, and API access for historical metrics and agent state snapshots; provides clients and access patterns for querying the PostgreSQL/pgvector store and supporting configuration bridging between local Electron config and remote databases.",
+                      "key_entities": [],
+                      "source_cluster_ids": [
+                        3,
+                        4,
+                        5,
+                        7,
+                        9,
+                        11,
+                        12,
+                        14,
+                        20,
+                        21
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/gateway/message_replay.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.active_jobs",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.job_count",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.create_replay_job",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.execute_replay",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.resume_replay",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.cancel_replay",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.get_all_jobs",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.get_stats",
+                            "src.heretek_swarm.gateway.message_replay.get_replay_manager",
+                            "src.heretek_swarm.gateway.message_replay.setup_replay_manager"
+                          ]
+                        }
+                      ],
+                      "component_id": "2.1.2.2.2",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Historical State & Flow Visualizer",
+                      "description": "Frontend visual 'time machine' that reconstructs workflow state at a given timestamp using A2A tracking and an enhanced canvas, allowing developers to step through historical executions and visualize interaction patterns and active nodes over time.",
+                      "key_entities": [],
+                      "source_cluster_ids": [
+                        2,
+                        8,
+                        10,
+                        18,
+                        19
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/gateway/message_replay.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.gateway.message_replay.TimeTravelRequest.to_dict",
+                            "src.heretek_swarm.gateway.message_replay.TimeTravelRequest.create",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager._process_message",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.get_job",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.execute_time_travel"
+                          ]
+                        }
+                      ],
+                      "component_id": "2.1.2.2.3",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Audit Trail & Observability Interface",
+                      "description": "Provides human-readable audit logs, searchable activity feeds, export tools, and UI utilities/metrics overlays that contextualize historical events and support external auditing and validation of agent behavior.",
+                      "key_entities": [],
+                      "source_cluster_ids": [
+                        1,
+                        6,
+                        13,
+                        15,
+                        16,
+                        17
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/gateway/message_replay.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.gateway.message_replay.ReplayJob.to_dict",
+                            "src.heretek_swarm.gateway.message_replay.ReplayJob.create",
+                            "src.heretek_swarm.gateway.message_replay.ReplayJob.progress_percent",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager._fetch_messages",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.pause_replay",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.create_time_travel_request"
+                          ]
+                        }
+                      ],
+                      "component_id": "2.1.2.2.4",
+                      "can_expand": true
+                    }
+                  ],
+                  "components_relations": [
+                    {
+                      "relation": "requests replay jobs",
+                      "src_name": "Historical State & Flow Visualizer",
+                      "dst_name": "Replay Orchestration Engine",
+                      "src_id": "2.1.2.2.3",
+                      "dst_id": "2.1.2.2.1",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "queries persistent store for historical message streams",
+                      "src_name": "Replay Orchestration Engine",
+                      "dst_name": "Temporal Data & Persistence Layer",
+                      "src_id": "2.1.2.2.1",
+                      "dst_id": "2.1.2.2.2",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "fetches chronological logs and time-series metrics",
+                      "src_name": "Audit Trail & Observability Interface",
+                      "dst_name": "Temporal Data & Persistence Layer",
+                      "src_id": "2.1.2.2.4",
+                      "dst_id": "2.1.2.2.2",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "synchronizes visual node state with detailed logs",
+                      "src_name": "Historical State & Flow Visualizer",
+                      "dst_name": "Audit Trail & Observability Interface",
+                      "src_id": "2.1.2.2.3",
+                      "dst_id": "2.1.2.2.4",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "provides configuration and connection strings (NATS/DB) to initialize replay manager",
+                      "src_name": "Temporal Data & Persistence Layer",
+                      "dst_name": "Replay Orchestration Engine",
+                      "src_id": "2.1.2.2.2",
+                      "dst_id": "2.1.2.2.1",
+                      "edge_count": 2,
+                      "is_static": true
+                    },
+                    {
+                      "relation": "calls",
+                      "src_name": "Temporal Data & Persistence Layer",
+                      "dst_name": "Historical State & Flow Visualizer",
+                      "src_id": "2.1.2.2.2",
+                      "dst_id": "2.1.2.2.3",
+                      "edge_count": 1,
+                      "is_static": true
+                    },
+                    {
+                      "relation": "calls",
+                      "src_name": "Temporal Data & Persistence Layer",
+                      "dst_name": "Audit Trail & Observability Interface",
+                      "src_id": "2.1.2.2.2",
+                      "dst_id": "2.1.2.2.4",
+                      "edge_count": 2,
+                      "is_static": true
+                    },
+                    {
+                      "relation": "calls",
+                      "src_name": "Audit Trail & Observability Interface",
+                      "dst_name": "Historical State & Flow Visualizer",
+                      "src_id": "2.1.2.2.4",
+                      "dst_id": "2.1.2.2.3",
+                      "edge_count": 1,
+                      "is_static": true
+                    }
+                  ]
                 },
                 {
                   "name": "Security & Governance Layer",
@@ -144859,7 +145064,264 @@
                     }
                   ],
                   "component_id": "3.2.1.3",
-                  "can_expand": true
+                  "can_expand": true,
+                  "components": [
+                    {
+                      "name": "Validation Orchestrator",
+                      "description": "Manages the high-level execution flow of the validation process, acting as the primary API entry point and coordinating between structural and topological checks.",
+                      "key_entities": [
+                        {
+                          "qualified_name": "src.heretek_swarm.workflow.validator.WorkflowValidator.validate",
+                          "reference_file": "src/heretek_swarm/workflow/validator.py",
+                          "reference_start_line": 170,
+                          "reference_end_line": 205
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.workflow.validator.validate_workflow",
+                          "reference_file": "src/heretek_swarm/workflow/validator.py",
+                          "reference_start_line": 624,
+                          "reference_end_line": 635
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.workflow.validator.WorkflowValidator._validate_disconnected_nodes",
+                          "reference_file": "src/heretek_swarm/workflow/validator.py",
+                          "reference_start_line": 320,
+                          "reference_end_line": 345
+                        }
+                      ],
+                      "source_cluster_ids": [
+                        2,
+                        3
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/workflow/validator.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.workflow.validator.ValidationResult",
+                            "src.heretek_swarm.workflow.validator.WorkflowValidator",
+                            "src.heretek_swarm.workflow.validator.WorkflowValidator.validate",
+                            "src.heretek_swarm.workflow.validator.WorkflowValidator._validate_duplicate_ids",
+                            "src.heretek_swarm.workflow.validator.WorkflowValidator._validate_disconnected_nodes",
+                            "src.heretek_swarm.workflow.validator.WorkflowValidator._validate_resource_conflicts",
+                            "src.heretek_swarm.workflow.validator.WorkflowValidator._validate_degree_limits",
+                            "src.heretek_swarm.workflow.validator.WorkflowValidator._check_unused_outputs",
+                            "src.heretek_swarm.workflow.validator.validate_workflow",
+                            "src.heretek_swarm.workflow.validator.validate_workflow_strict"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.2.1.3.1",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Topological Analysis Engine",
+                      "description": "Conducts graph-theoretic verification to ensure workflows are Directed Acyclic Graphs (DAGs), using traversal algorithms to detect circular dependencies that would cause execution deadlocks.",
+                      "key_entities": [
+                        {
+                          "qualified_name": "src.heretek_swarm.workflow.validator.WorkflowValidator._validate_circular_dependencies",
+                          "reference_file": "src/heretek_swarm/workflow/validator.py",
+                          "reference_start_line": 347,
+                          "reference_end_line": 400
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.workflow.validator.WorkflowValidator._validate_circular_dependencies.has_cycle",
+                          "reference_file": "src/heretek_swarm/workflow/validator.py",
+                          "reference_start_line": 370,
+                          "reference_end_line": 388
+                        }
+                      ],
+                      "source_cluster_ids": [
+                        5
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "dashboard/frontend/src/components/WorkflowBuilder/ValidationPanel.tsx",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "dashboard.frontend.src.components.WorkflowBuilder.ValidationPanel.ValidationError",
+                            "dashboard.frontend.src.components.WorkflowBuilder.ValidationPanel.ValidationResult",
+                            "dashboard.frontend.src.components.WorkflowBuilder.ValidationPanel.ValidationPanelProps",
+                            "dashboard.frontend.src.components.WorkflowBuilder.ValidationPanel.ValidationItemProps",
+                            "dashboard.frontend.src.components.WorkflowBuilder.ValidationPanel.ValidationItem.handleNodeClick",
+                            "dashboard.frontend.src.components.WorkflowBuilder.ValidationPanel.ValidationItem.handleEdgeClick",
+                            "dashboard.frontend.src.components.WorkflowBuilder.ValidationPanel.ValidationItem.handleEdgeClick.useCallback() callback"
+                          ]
+                        },
+                        {
+                          "file_path": "src/heretek_swarm/workflow/validator.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.workflow.validator.WorkflowValidator._validate_circular_dependencies",
+                            "src.heretek_swarm.workflow.validator.WorkflowValidator._validate_circular_dependencies.has_cycle"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.2.1.3.2",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Structural & Semantic Validator",
+                      "description": "Performs granular verification of graph components, ensuring that every node corresponds to a valid agent type and that edges represent valid communication paths within the framework.",
+                      "key_entities": [
+                        {
+                          "qualified_name": "src.heretek_swarm.workflow.validator.WorkflowValidator._validate_node_types",
+                          "reference_file": "src/heretek_swarm/workflow/validator.py",
+                          "reference_start_line": 241,
+                          "reference_end_line": 256
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.workflow.validator.WorkflowValidator._validate_edge_connections",
+                          "reference_file": "src/heretek_swarm/workflow/validator.py",
+                          "reference_start_line": 278,
+                          "reference_end_line": 318
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.workflow.validator.WorkflowValidator._check_graph_complexity",
+                          "reference_file": "src/heretek_swarm/workflow/validator.py",
+                          "reference_start_line": 591,
+                          "reference_end_line": 617
+                        }
+                      ],
+                      "source_cluster_ids": [
+                        1
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/workflow/validator.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.workflow.validator.ValidationErrorSeverity",
+                            "src.heretek_swarm.workflow.validator.ValidationError",
+                            "src.heretek_swarm.workflow.validator.ErrorCodes",
+                            "src.heretek_swarm.workflow.validator.WorkflowValidator.__init__",
+                            "src.heretek_swarm.workflow.validator.WorkflowValidator._validate_node_types",
+                            "src.heretek_swarm.workflow.validator.WorkflowValidator._validate_agent_types",
+                            "src.heretek_swarm.workflow.validator.WorkflowValidator._validate_edge_connections",
+                            "src.heretek_swarm.workflow.validator.WorkflowValidator._validate_required_connections",
+                            "src.heretek_swarm.workflow.validator.WorkflowValidator._validate_start_node",
+                            "src.heretek_swarm.workflow.validator.WorkflowValidator._check_orphaned_nodes",
+                            "src.heretek_swarm.workflow.validator.WorkflowValidator._check_graph_complexity"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.2.1.3.3",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Safety & Reporting Gateway",
+                      "description": "Standardizes validation outcomes into serializable formats and integrates with the Safety Tier (Sentinel/Arbiter) and Event Mesh to ensure workflows meet the collective's operational standards.",
+                      "key_entities": [
+                        {
+                          "qualified_name": "src.heretek_swarm.workflow.validator.ValidationResult",
+                          "reference_file": "src/heretek_swarm/workflow/validator.py",
+                          "reference_start_line": 63,
+                          "reference_end_line": 85
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.workflow.validator.ValidationError",
+                          "reference_file": "src/heretek_swarm/workflow/validator.py",
+                          "reference_start_line": 31,
+                          "reference_end_line": 59
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.workflow.validator.ValidationResult.to_dict",
+                          "reference_file": "src/heretek_swarm/workflow/validator.py",
+                          "reference_start_line": 78,
+                          "reference_end_line": 85
+                        }
+                      ],
+                      "source_cluster_ids": [
+                        4,
+                        6,
+                        7,
+                        8,
+                        9,
+                        10,
+                        11
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "dashboard/frontend/src/components/WorkflowBuilder/ValidationPanel.tsx",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "dashboard.frontend.src.components.WorkflowBuilder.ValidationPanel.ValidationItem.handleNodeClick.useCallback() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.ValidationPanel.ValidationPanel",
+                            "dashboard.frontend.src.components.WorkflowBuilder.ValidationPanel.ValidationPanel.allItems.useMemo() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.ValidationPanel.ValidationPanel.allItems.errors.map() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.ValidationPanel.allItems.warnings.map() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.ValidationPanel.allItems.info.map() callback"
+                          ]
+                        },
+                        {
+                          "file_path": "src/heretek_swarm/workflow/validator.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.workflow.validator.ValidationError.to_dict",
+                            "src.heretek_swarm.workflow.validator.ValidationResult.to_dict"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.2.1.3.4",
+                      "can_expand": true
+                    }
+                  ],
+                  "components_relations": [
+                    {
+                      "relation": "Delegates schema and agent-type verification",
+                      "src_name": "Validation Orchestrator",
+                      "dst_name": "Structural & Semantic Validator",
+                      "src_id": "3.2.1.3.1",
+                      "dst_id": "3.2.1.3.3",
+                      "edge_count": 12,
+                      "is_static": true
+                    },
+                    {
+                      "relation": "Triggers graph-theoretic cycle detection",
+                      "src_name": "Validation Orchestrator",
+                      "dst_name": "Topological Analysis Engine",
+                      "src_id": "3.2.1.3.1",
+                      "dst_id": "3.2.1.3.2",
+                      "edge_count": 1,
+                      "is_static": true
+                    },
+                    {
+                      "relation": "Propagates final validation results to the Safety Tier",
+                      "src_name": "Validation Orchestrator",
+                      "dst_name": "Safety & Reporting Gateway",
+                      "src_id": "3.2.1.3.1",
+                      "dst_id": "3.2.1.3.4",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "Provides error metadata for structural violations",
+                      "src_name": "Structural & Semantic Validator",
+                      "dst_name": "Safety & Reporting Gateway",
+                      "src_id": "3.2.1.3.3",
+                      "dst_id": "3.2.1.3.4",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "Provides error metadata for circular dependencies",
+                      "src_name": "Topological Analysis Engine",
+                      "dst_name": "Safety & Reporting Gateway",
+                      "src_id": "3.2.1.3.2",
+                      "dst_id": "3.2.1.3.4",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "calls",
+                      "src_name": "Topological Analysis Engine",
+                      "dst_name": "Structural & Semantic Validator",
+                      "src_id": "3.2.1.3.2",
+                      "dst_id": "3.2.1.3.3",
+                      "edge_count": 1,
+                      "is_static": true
+                    }
+                  ]
                 },
                 {
                   "name": "External System Context",
@@ -145062,7 +145524,162 @@
                     }
                   ],
                   "component_id": "3.2.2.1",
-                  "can_expand": true
+                  "can_expand": true,
+                  "components": [
+                    {
+                      "name": "Protocol Registry & Orchestration Layer",
+                      "description": "Serves as the structural backbone of the swarm's communication protocol. It maintains the MessageType registry and provides the factory and validation entry points (validate_message) that ensure every NATS event conforms to the AgentMessageBase schema before further processing.",
+                      "key_entities": [
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.MessageType",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 31,
+                          "reference_end_line": 91
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.AgentMessageBase",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 102,
+                          "reference_end_line": 116
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.validate_message",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 500,
+                          "reference_end_line": 540
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.create_actor_message",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 543,
+                          "reference_end_line": 569
+                        }
+                      ],
+                      "source_cluster_ids": [
+                        1
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/validation/agent_messages.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.validation.agent_messages.MessageType",
+                            "src.heretek_swarm.validation.agent_messages.MessagePriority",
+                            "src.heretek_swarm.validation.agent_messages.AgentMessageBase",
+                            "src.heretek_swarm.validation.agent_messages.AgentMessageBase.Config",
+                            "src.heretek_swarm.validation.agent_messages.ActorMessage",
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate",
+                            "src.heretek_swarm.validation.agent_messages.ToolRequest",
+                            "src.heretek_swarm.validation.agent_messages.ToolResponse",
+                            "src.heretek_swarm.validation.agent_messages.CoordinationRequest",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusProposal",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusVote",
+                            "src.heretek_swarm.validation.agent_messages.ErrorMessage",
+                            "src.heretek_swarm.validation.agent_messages.TaskMessage",
+                            "src.heretek_swarm.validation.agent_messages.CodeExecutionRequest",
+                            "src.heretek_swarm.validation.agent_messages.validate_message",
+                            "src.heretek_swarm.validation.agent_messages.create_actor_message",
+                            "src.heretek_swarm.validation.agent_messages.create_state_update",
+                            "src.heretek_swarm.validation.agent_messages.create_tool_request",
+                            "src.heretek_swarm.validation.agent_messages.create_tool_response"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.2.2.1.1",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Domain-Specific Safety Validators",
+                      "description": "Implements the 'Safety Tier' validation gates by providing specialized logic for deep payload inspection. These handlers enforce zero-trust security policies by checking for malicious code, unsafe state transitions, and invalid consensus proposals within specific message types.",
+                      "key_entities": [
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.StateUpdate.validate_state_value_safety",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 178,
+                          "reference_end_line": 196
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.ToolRequest.validate_arguments_safety",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 237,
+                          "reference_end_line": 247
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.ConsensusProposal.validate_text_safety",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 349,
+                          "reference_end_line": 355
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.CodeExecutionRequest.validate_code_safety",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 464,
+                          "reference_end_line": 472
+                        }
+                      ],
+                      "source_cluster_ids": [
+                        2,
+                        3,
+                        4,
+                        5,
+                        6,
+                        7,
+                        8,
+                        9,
+                        10,
+                        11
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/validation/agent_messages.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.validation.agent_messages.ActorMessage.validate_content_safety",
+                            "src.heretek_swarm.validation.agent_messages.ActorMessage.validate_content_safety.check_value",
+                            "src.heretek_swarm.validation.agent_messages.ActorMessage.Config",
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate.validate_state_key",
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate.validate_state_value_safety",
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate.validate_state_value_safety.check_value",
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate.validate_operation",
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate.Config",
+                            "src.heretek_swarm.validation.agent_messages.ToolRequest.validate_tool_name",
+                            "src.heretek_swarm.validation.agent_messages.ToolRequest.validate_arguments_safety",
+                            "src.heretek_swarm.validation.agent_messages.ToolRequest.Config",
+                            "src.heretek_swarm.validation.agent_messages.ToolResponse.validate_error_safety",
+                            "src.heretek_swarm.validation.agent_messages.ToolResponse.Config",
+                            "src.heretek_swarm.validation.agent_messages.CoordinationRequest.validate_description_safety",
+                            "src.heretek_swarm.validation.agent_messages.CoordinationRequest.validate_payload_safety",
+                            "src.heretek_swarm.validation.agent_messages.CoordinationRequest.validate_payload_safety.check_value",
+                            "src.heretek_swarm.validation.agent_messages.CoordinationRequest.Config",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusProposal.validate_text_safety",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusProposal.Config",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusVote.validate_reasoning_safety",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusVote.Config",
+                            "src.heretek_swarm.validation.agent_messages.ErrorMessage.validate_error_safety",
+                            "src.heretek_swarm.validation.agent_messages.ErrorMessage.Config",
+                            "src.heretek_swarm.validation.agent_messages.TaskMessage.validate_task_data_safety",
+                            "src.heretek_swarm.validation.agent_messages.TaskMessage.validate_task_data_safety.check_value",
+                            "src.heretek_swarm.validation.agent_messages.TaskMessage.Config",
+                            "src.heretek_swarm.validation.agent_messages.CodeExecutionRequest.validate_code_safety",
+                            "src.heretek_swarm.validation.agent_messages.CodeExecutionRequest.Config"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.2.2.1.2",
+                      "can_expand": true
+                    }
+                  ],
+                  "components_relations": [
+                    {
+                      "relation": "dispatches payloads for safety inspection after structural validation",
+                      "src_name": "Protocol Registry & Orchestration Layer",
+                      "dst_name": "Domain-Specific Safety Validators",
+                      "src_id": "3.2.2.1.1",
+                      "dst_id": "3.2.2.1.2",
+                      "edge_count": 0,
+                      "is_static": false
+                    }
+                  ]
                 },
                 {
                   "name": "Agent Coordination & Interaction Schemas",
@@ -145111,7 +145728,363 @@
                     }
                   ],
                   "component_id": "3.2.2.2",
-                  "can_expand": true
+                  "can_expand": true,
+                  "components": [
+                    {
+                      "name": "Core Schema Foundation & Metrics",
+                      "description": "Provides the base message structures and the central validation factory for the entire swarm. It defines the fundamental AgentMessageBase from which other schemas inherit and aggregates interaction data into consciousness and health metrics for monitoring.",
+                      "key_entities": [
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.AgentMessageBase",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 102,
+                          "reference_end_line": 116
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.validate_message",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 500,
+                          "reference_end_line": 540
+                        }
+                      ],
+                      "source_cluster_ids": [
+                        1,
+                        11,
+                        12,
+                        15,
+                        24,
+                        25,
+                        31,
+                        36,
+                        38,
+                        39,
+                        46,
+                        53,
+                        56,
+                        60,
+                        65,
+                        66,
+                        67,
+                        75,
+                        85,
+                        86,
+                        87,
+                        90,
+                        92,
+                        93,
+                        94,
+                        95,
+                        96,
+                        107
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/validation/agent_messages.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.validation.agent_messages.MessageType",
+                            "src.heretek_swarm.validation.agent_messages.MessagePriority",
+                            "src.heretek_swarm.validation.agent_messages.AgentMessageBase",
+                            "src.heretek_swarm.validation.agent_messages.AgentMessageBase.Config",
+                            "src.heretek_swarm.validation.agent_messages.ActorMessage",
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate",
+                            "src.heretek_swarm.validation.agent_messages.ToolRequest",
+                            "src.heretek_swarm.validation.agent_messages.ToolResponse",
+                            "src.heretek_swarm.validation.agent_messages.CoordinationRequest",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusProposal",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusVote",
+                            "src.heretek_swarm.validation.agent_messages.ErrorMessage",
+                            "src.heretek_swarm.validation.agent_messages.TaskMessage",
+                            "src.heretek_swarm.validation.agent_messages.CodeExecutionRequest",
+                            "src.heretek_swarm.validation.agent_messages.CodeExecutionRequest.validate_code_safety",
+                            "src.heretek_swarm.validation.agent_messages.CodeExecutionRequest.Config",
+                            "src.heretek_swarm.validation.agent_messages.validate_message",
+                            "src.heretek_swarm.validation.agent_messages.create_actor_message",
+                            "src.heretek_swarm.validation.agent_messages.create_state_update",
+                            "src.heretek_swarm.validation.agent_messages.create_tool_request",
+                            "src.heretek_swarm.validation.agent_messages.create_tool_response"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.2.2.2.1",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Hierarchical Tasking & Workflow Canvas",
+                      "description": "Manages schemas for task assignment, status tracking, and state updates; translates canvas-based workflow configurations into validated TaskMessage sequences that drive collective swarm intent.",
+                      "key_entities": [
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.TaskMessage",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 413,
+                          "reference_end_line": 446
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.StateUpdate",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 157,
+                          "reference_end_line": 207
+                        }
+                      ],
+                      "source_cluster_ids": [
+                        2,
+                        6,
+                        16,
+                        18,
+                        19,
+                        23,
+                        27,
+                        32,
+                        33,
+                        42,
+                        57,
+                        62,
+                        63,
+                        64,
+                        76,
+                        77,
+                        78,
+                        79,
+                        80,
+                        81,
+                        89,
+                        109,
+                        110,
+                        111,
+                        112,
+                        113,
+                        114,
+                        115,
+                        116,
+                        117
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/validation/agent_messages.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate.validate_state_key",
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate.validate_state_value_safety",
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate.validate_state_value_safety.check_value",
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate.validate_operation",
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate.Config",
+                            "src.heretek_swarm.validation.agent_messages.TaskMessage.validate_task_data_safety",
+                            "src.heretek_swarm.validation.agent_messages.TaskMessage.validate_task_data_safety.check_value",
+                            "src.heretek_swarm.validation.agent_messages.TaskMessage.Config"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.2.2.2.2",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Peer Interaction & Consensus Governance",
+                      "description": "Defines protocols for actor-to-actor communication and the MAKER consensus process, implementing safety gates for proposals and voting to ensure resilient deliberation and decision-making.",
+                      "key_entities": [
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.ActorMessage",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 119,
+                          "reference_end_line": 154
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.ConsensusProposal",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 334,
+                          "reference_end_line": 358
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.ConsensusVote",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 361,
+                          "reference_end_line": 385
+                        }
+                      ],
+                      "source_cluster_ids": [
+                        4,
+                        8,
+                        9,
+                        10,
+                        14,
+                        28,
+                        37,
+                        43,
+                        44,
+                        45,
+                        47,
+                        48,
+                        49,
+                        50,
+                        58,
+                        59,
+                        68,
+                        70,
+                        82,
+                        91,
+                        97,
+                        98,
+                        99,
+                        100,
+                        120
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/validation/agent_messages.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.validation.agent_messages.ActorMessage.validate_content_safety",
+                            "src.heretek_swarm.validation.agent_messages.ActorMessage.validate_content_safety.check_value",
+                            "src.heretek_swarm.validation.agent_messages.ActorMessage.Config",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusProposal.validate_text_safety",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusProposal.Config",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusVote.validate_reasoning_safety",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusVote.Config",
+                            "src.heretek_swarm.validation.agent_messages.ErrorMessage.validate_error_safety",
+                            "src.heretek_swarm.validation.agent_messages.ErrorMessage.Config"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.2.2.2.3",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Coordination Protocols & Tool Safety Gates",
+                      "description": "Handles schemas for inter-agent coordination requests and external tool invocations, enforcing granular safety checks on tool arguments and responses to prevent unsafe payload propagation.",
+                      "key_entities": [
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.CoordinationRequest",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 285,
+                          "reference_end_line": 331
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.ToolRequest",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 210,
+                          "reference_end_line": 250
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.ToolResponse",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 253,
+                          "reference_end_line": 282
+                        }
+                      ],
+                      "source_cluster_ids": [
+                        3,
+                        5,
+                        7,
+                        13,
+                        17,
+                        20,
+                        21,
+                        22,
+                        26,
+                        29,
+                        30,
+                        34,
+                        35,
+                        40,
+                        41,
+                        51,
+                        52,
+                        54,
+                        55,
+                        61,
+                        69,
+                        71,
+                        72,
+                        73,
+                        83,
+                        84,
+                        88,
+                        101,
+                        102,
+                        103,
+                        104,
+                        105,
+                        106,
+                        108,
+                        118,
+                        119
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/validation/agent_messages.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.validation.agent_messages.ToolRequest.validate_tool_name",
+                            "src.heretek_swarm.validation.agent_messages.ToolRequest.validate_arguments_safety",
+                            "src.heretek_swarm.validation.agent_messages.ToolRequest.Config",
+                            "src.heretek_swarm.validation.agent_messages.ToolResponse.validate_error_safety",
+                            "src.heretek_swarm.validation.agent_messages.ToolResponse.Config",
+                            "src.heretek_swarm.validation.agent_messages.CoordinationRequest.validate_description_safety",
+                            "src.heretek_swarm.validation.agent_messages.CoordinationRequest.validate_payload_safety",
+                            "src.heretek_swarm.validation.agent_messages.CoordinationRequest.validate_payload_safety.check_value",
+                            "src.heretek_swarm.validation.agent_messages.CoordinationRequest.Config"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.2.2.2.4",
+                      "can_expand": true
+                    }
+                  ],
+                  "components_relations": [
+                    {
+                      "relation": "provides base message structure and global validation logic for",
+                      "src_name": "Core Schema Foundation & Metrics",
+                      "dst_name": "Hierarchical Tasking & Workflow Canvas",
+                      "src_id": "3.2.2.2.1",
+                      "dst_id": "3.2.2.2.2",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "provides base message structure and global validation logic for",
+                      "src_name": "Core Schema Foundation & Metrics",
+                      "dst_name": "Peer Interaction & Consensus Governance",
+                      "src_id": "3.2.2.2.1",
+                      "dst_id": "3.2.2.2.3",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "provides base message structure and global validation logic for",
+                      "src_name": "Core Schema Foundation & Metrics",
+                      "dst_name": "Coordination Protocols & Tool Safety Gates",
+                      "src_id": "3.2.2.2.1",
+                      "dst_id": "3.2.2.2.4",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "decomposes high-level task intents into coordination requests and tool-based sub-tasks",
+                      "src_name": "Hierarchical Tasking & Workflow Canvas",
+                      "dst_name": "Coordination Protocols & Tool Safety Gates",
+                      "src_id": "3.2.2.2.2",
+                      "dst_id": "3.2.2.2.4",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "informs task state transitions and workflow branching based on consensus and peer feedback",
+                      "src_name": "Peer Interaction & Consensus Governance",
+                      "dst_name": "Hierarchical Tasking & Workflow Canvas",
+                      "src_id": "3.2.2.2.3",
+                      "dst_id": "3.2.2.2.2",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "propagates tool execution results and coordination status back to interacting actors",
+                      "src_name": "Coordination Protocols & Tool Safety Gates",
+                      "dst_name": "Peer Interaction & Consensus Governance",
+                      "src_id": "3.2.2.2.4",
+                      "dst_id": "3.2.2.2.3",
+                      "edge_count": 0,
+                      "is_static": false
+                    }
+                  ]
                 },
                 {
                   "name": "Action & Execution Schemas",
@@ -145151,7 +146124,258 @@
                     }
                   ],
                   "component_id": "3.2.2.3",
-                  "can_expand": true
+                  "can_expand": true,
+                  "components": [
+                    {
+                      "name": "Message Validation Gateway",
+                      "description": "Acts as the central entry point and factory for the messaging system. Provides base message structures and primary dispatch logic to route incoming payloads to their specific validation schemas, ensuring all messages conform to the swarm's protocol before processing.",
+                      "key_entities": [
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.validate_message",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 500,
+                          "reference_end_line": 540
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.AgentMessageBase",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 102,
+                          "reference_end_line": 116
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.create_tool_request",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 601,
+                          "reference_end_line": 624
+                        }
+                      ],
+                      "source_cluster_ids": [
+                        1
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/validation/agent_messages.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.validation.agent_messages.MessageType",
+                            "src.heretek_swarm.validation.agent_messages.MessagePriority",
+                            "src.heretek_swarm.validation.agent_messages.AgentMessageBase",
+                            "src.heretek_swarm.validation.agent_messages.AgentMessageBase.Config",
+                            "src.heretek_swarm.validation.agent_messages.ActorMessage",
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate",
+                            "src.heretek_swarm.validation.agent_messages.ToolRequest",
+                            "src.heretek_swarm.validation.agent_messages.ToolResponse",
+                            "src.heretek_swarm.validation.agent_messages.CoordinationRequest",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusProposal",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusVote",
+                            "src.heretek_swarm.validation.agent_messages.ErrorMessage",
+                            "src.heretek_swarm.validation.agent_messages.TaskMessage",
+                            "src.heretek_swarm.validation.agent_messages.CodeExecutionRequest",
+                            "src.heretek_swarm.validation.agent_messages.validate_message",
+                            "src.heretek_swarm.validation.agent_messages.create_actor_message",
+                            "src.heretek_swarm.validation.agent_messages.create_state_update",
+                            "src.heretek_swarm.validation.agent_messages.create_tool_request",
+                            "src.heretek_swarm.validation.agent_messages.create_tool_response"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.2.2.3.1",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Execution & Tool Safety",
+                      "description": "Manages high-risk schemas for agents interacting with the external environment or executing arbitrary logic. Implements strict safety validators for tool arguments and code payloads to prevent sandbox escapes or unauthorized system calls during the Action phase of the agent lifecycle.",
+                      "key_entities": [
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.ToolRequest",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 210,
+                          "reference_end_line": 250
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.CodeExecutionRequest",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 449,
+                          "reference_end_line": 475
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.ToolResponse",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 253,
+                          "reference_end_line": 282
+                        }
+                      ],
+                      "source_cluster_ids": [
+                        5,
+                        7,
+                        11
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/validation/agent_messages.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.validation.agent_messages.ToolRequest.validate_tool_name",
+                            "src.heretek_swarm.validation.agent_messages.ToolRequest.validate_arguments_safety",
+                            "src.heretek_swarm.validation.agent_messages.ToolRequest.Config",
+                            "src.heretek_swarm.validation.agent_messages.ToolResponse.validate_error_safety",
+                            "src.heretek_swarm.validation.agent_messages.ToolResponse.Config",
+                            "src.heretek_swarm.validation.agent_messages.CodeExecutionRequest.validate_code_safety",
+                            "src.heretek_swarm.validation.agent_messages.CodeExecutionRequest.Config"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.2.2.3.2",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Agent Interaction & Workflow",
+                      "description": "Handles schemas for peer-to-peer communication, task delegation, and error reporting. Ensures coordination requests and task assignments between specialized agents follow the expected protocol and contain sanitized payloads to facilitate complex multi-agent workflows.",
+                      "key_entities": [
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.CoordinationRequest",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 285,
+                          "reference_end_line": 331
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.TaskMessage",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 413,
+                          "reference_end_line": 446
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.ActorMessage",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 119,
+                          "reference_end_line": 154
+                        }
+                      ],
+                      "source_cluster_ids": [
+                        3,
+                        4,
+                        6,
+                        10
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/validation/agent_messages.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.validation.agent_messages.ActorMessage.validate_content_safety",
+                            "src.heretek_swarm.validation.agent_messages.ActorMessage.validate_content_safety.check_value",
+                            "src.heretek_swarm.validation.agent_messages.ActorMessage.Config",
+                            "src.heretek_swarm.validation.agent_messages.CoordinationRequest.validate_description_safety",
+                            "src.heretek_swarm.validation.agent_messages.CoordinationRequest.validate_payload_safety",
+                            "src.heretek_swarm.validation.agent_messages.CoordinationRequest.validate_payload_safety.check_value",
+                            "src.heretek_swarm.validation.agent_messages.CoordinationRequest.Config",
+                            "src.heretek_swarm.validation.agent_messages.ErrorMessage.validate_error_safety",
+                            "src.heretek_swarm.validation.agent_messages.ErrorMessage.Config",
+                            "src.heretek_swarm.validation.agent_messages.TaskMessage.validate_task_data_safety",
+                            "src.heretek_swarm.validation.agent_messages.TaskMessage.validate_task_data_safety.check_value",
+                            "src.heretek_swarm.validation.agent_messages.TaskMessage.Config"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.2.2.3.3",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Collective State & Consensus",
+                      "description": "Validates schemas related to the swarm's shared environment and the MAKER consensus protocol. Ensures state updates and deliberation processes (proposals and votes) are structurally sound and safe to apply to persistent state tiers like PostgreSQL/Redis.",
+                      "key_entities": [
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.StateUpdate",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 157,
+                          "reference_end_line": 207
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.ConsensusProposal",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 334,
+                          "reference_end_line": 358
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.ConsensusVote",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 361,
+                          "reference_end_line": 385
+                        }
+                      ],
+                      "source_cluster_ids": [
+                        2,
+                        8,
+                        9
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/validation/agent_messages.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate.validate_state_key",
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate.validate_state_value_safety",
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate.validate_state_value_safety.check_value",
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate.validate_operation",
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate.Config",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusProposal.validate_text_safety",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusProposal.Config",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusVote.validate_reasoning_safety",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusVote.Config"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.2.2.3.4",
+                      "can_expand": true
+                    }
+                  ],
+                  "components_relations": [
+                    {
+                      "relation": "Routes incoming execution-related payloads to specialized safety validators for tool and code sanitization",
+                      "src_name": "Message Validation Gateway",
+                      "dst_name": "Execution & Tool Safety",
+                      "src_id": "3.2.2.3.1",
+                      "dst_id": "3.2.2.3.2",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "Dispatches peer-to-peer and tasking messages to ensure they meet coordination protocol standards",
+                      "src_name": "Message Validation Gateway",
+                      "dst_name": "Agent Interaction & Workflow",
+                      "src_id": "3.2.2.3.1",
+                      "dst_id": "3.2.2.3.3",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "Directs state-related messages to the consensus validation logic to maintain global state integrity",
+                      "src_name": "Message Validation Gateway",
+                      "dst_name": "Collective State & Consensus",
+                      "src_id": "3.2.2.3.1",
+                      "dst_id": "3.2.2.3.4",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "Task assignments and coordination requests often encapsulate or trigger specific tool execution requirements",
+                      "src_name": "Agent Interaction & Workflow",
+                      "dst_name": "Execution & Tool Safety",
+                      "src_id": "3.2.2.3.3",
+                      "dst_id": "3.2.2.3.2",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "Results from external actions or code executions frequently trigger state updates or consensus proposals to reflect environmental changes",
+                      "src_name": "Execution & Tool Safety",
+                      "dst_name": "Collective State & Consensus",
+                      "src_id": "3.2.2.3.2",
+                      "dst_id": "3.2.2.3.4",
+                      "edge_count": 0,
+                      "is_static": false
+                    }
+                  ]
                 },
                 {
                   "name": "Governance & State Schemas",
@@ -145199,7 +146423,303 @@
                     }
                   ],
                   "component_id": "3.2.2.4",
-                  "can_expand": true
+                  "can_expand": true,
+                  "components": [
+                    {
+                      "name": "Message Registry & Factory",
+                      "description": "Central entry point for the messaging system; defines base message types and the dispatcher that validates and routes incoming messages to specialized validators.",
+                      "key_entities": [
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.AgentMessageBase",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 102,
+                          "reference_end_line": 116
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.validate_message",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 500,
+                          "reference_end_line": 540
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.create_actor_message",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 543,
+                          "reference_end_line": 569
+                        }
+                      ],
+                      "source_cluster_ids": [
+                        1
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/validation/agent_messages.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.validation.agent_messages.MessageType",
+                            "src.heretek_swarm.validation.agent_messages.MessagePriority",
+                            "src.heretek_swarm.validation.agent_messages.AgentMessageBase",
+                            "src.heretek_swarm.validation.agent_messages.AgentMessageBase.Config",
+                            "src.heretek_swarm.validation.agent_messages.ActorMessage",
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate",
+                            "src.heretek_swarm.validation.agent_messages.ToolRequest",
+                            "src.heretek_swarm.validation.agent_messages.ToolResponse",
+                            "src.heretek_swarm.validation.agent_messages.CoordinationRequest",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusProposal",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusVote",
+                            "src.heretek_swarm.validation.agent_messages.ErrorMessage",
+                            "src.heretek_swarm.validation.agent_messages.TaskMessage",
+                            "src.heretek_swarm.validation.agent_messages.CodeExecutionRequest",
+                            "src.heretek_swarm.validation.agent_messages.validate_message",
+                            "src.heretek_swarm.validation.agent_messages.create_actor_message",
+                            "src.heretek_swarm.validation.agent_messages.create_state_update",
+                            "src.heretek_swarm.validation.agent_messages.create_tool_request",
+                            "src.heretek_swarm.validation.agent_messages.create_tool_response"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.2.2.4.1",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Consensus Governance (MAKER)",
+                      "description": "Implements MAKER consensus schemas and validation logic to ensure proposals and votes include validated reasoning and adhere to safety constraints, preventing malformed or malicious governance actions.",
+                      "key_entities": [
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.ConsensusProposal",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 334,
+                          "reference_end_line": 358
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.ConsensusVote",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 361,
+                          "reference_end_line": 385
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.ConsensusProposal.validate_text_safety",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 349,
+                          "reference_end_line": 355
+                        }
+                      ],
+                      "source_cluster_ids": [
+                        8,
+                        9
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/validation/agent_messages.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.validation.agent_messages.ConsensusProposal.validate_text_safety",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusProposal.Config",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusVote.validate_reasoning_safety",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusVote.Config"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.2.2.4.2",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "State & Shared Reality",
+                      "description": "Manages schemas maintaining a consistent world-view across the swarm, validating state updates and ensuring safe, logically sound changes to global or agent-specific state keys.",
+                      "key_entities": [
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.StateUpdate",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 157,
+                          "reference_end_line": 207
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.StateUpdate.validate_state_key",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 171,
+                          "reference_end_line": 175
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.StateUpdate.validate_operation",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 199,
+                          "reference_end_line": 204
+                        }
+                      ],
+                      "source_cluster_ids": [
+                        2
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/validation/agent_messages.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate.validate_state_key",
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate.validate_state_value_safety",
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate.validate_state_value_safety.check_value",
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate.validate_operation",
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate.Config"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.2.2.4.3",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Coordination & Tasking",
+                      "description": "Defines schemas for agent-to-agent coordination and task delegation, ensuring requests for assistance and task assignments are properly structured and safe for receiving agents.",
+                      "key_entities": [
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.CoordinationRequest",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 285,
+                          "reference_end_line": 331
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.TaskMessage",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 413,
+                          "reference_end_line": 446
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.ActorMessage",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 119,
+                          "reference_end_line": 154
+                        }
+                      ],
+                      "source_cluster_ids": [
+                        3,
+                        4,
+                        6
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/validation/agent_messages.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.validation.agent_messages.ActorMessage.validate_content_safety",
+                            "src.heretek_swarm.validation.agent_messages.ActorMessage.validate_content_safety.check_value",
+                            "src.heretek_swarm.validation.agent_messages.ActorMessage.Config",
+                            "src.heretek_swarm.validation.agent_messages.CoordinationRequest.validate_description_safety",
+                            "src.heretek_swarm.validation.agent_messages.CoordinationRequest.validate_payload_safety",
+                            "src.heretek_swarm.validation.agent_messages.CoordinationRequest.validate_payload_safety.check_value",
+                            "src.heretek_swarm.validation.agent_messages.CoordinationRequest.Config",
+                            "src.heretek_swarm.validation.agent_messages.TaskMessage.validate_task_data_safety",
+                            "src.heretek_swarm.validation.agent_messages.TaskMessage.validate_task_data_safety.check_value",
+                            "src.heretek_swarm.validation.agent_messages.TaskMessage.Config"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.2.2.4.4",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Operational Safety & Execution",
+                      "description": "Serves as the schema-level safety gate for environmental interactions, validating tool requests, code execution blocks, and error feedback to prevent injection and ensure reliable operations.",
+                      "key_entities": [
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.ToolRequest",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 210,
+                          "reference_end_line": 250
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.CodeExecutionRequest",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 449,
+                          "reference_end_line": 475
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.ErrorMessage",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 388,
+                          "reference_end_line": 410
+                        }
+                      ],
+                      "source_cluster_ids": [
+                        5,
+                        7,
+                        10,
+                        11
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/validation/agent_messages.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.validation.agent_messages.ToolRequest.validate_tool_name",
+                            "src.heretek_swarm.validation.agent_messages.ToolRequest.validate_arguments_safety",
+                            "src.heretek_swarm.validation.agent_messages.ToolRequest.Config",
+                            "src.heretek_swarm.validation.agent_messages.ToolResponse.validate_error_safety",
+                            "src.heretek_swarm.validation.agent_messages.ToolResponse.Config",
+                            "src.heretek_swarm.validation.agent_messages.ErrorMessage.validate_error_safety",
+                            "src.heretek_swarm.validation.agent_messages.ErrorMessage.Config",
+                            "src.heretek_swarm.validation.agent_messages.CodeExecutionRequest.validate_code_safety",
+                            "src.heretek_swarm.validation.agent_messages.CodeExecutionRequest.Config"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.2.2.4.5",
+                      "can_expand": true
+                    }
+                  ],
+                  "components_relations": [
+                    {
+                      "relation": "Dispatches governance-type messages to specialized validators",
+                      "src_name": "Message Registry & Factory",
+                      "dst_name": "Consensus Governance (MAKER)",
+                      "src_id": "3.2.2.4.1",
+                      "dst_id": "3.2.2.4.2",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "Routes state-related messages for deep inspection of state keys and operation safety",
+                      "src_name": "Message Registry & Factory",
+                      "dst_name": "State & Shared Reality",
+                      "src_id": "3.2.2.4.1",
+                      "dst_id": "3.2.2.4.3",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "Dispatches peer-to-peer coordination requests to ensure task schemas are valid",
+                      "src_name": "Message Registry & Factory",
+                      "dst_name": "Coordination & Tasking",
+                      "src_id": "3.2.2.4.1",
+                      "dst_id": "3.2.2.4.4",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "Routes tool and code execution requests through safety-gate validation logic",
+                      "src_name": "Message Registry & Factory",
+                      "dst_name": "Operational Safety & Execution",
+                      "src_id": "3.2.2.4.1",
+                      "dst_id": "3.2.2.4.5",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "Successful consensus outcomes trigger state updates to synchronize shared reality",
+                      "src_name": "Consensus Governance (MAKER)",
+                      "dst_name": "State & Shared Reality",
+                      "src_id": "3.2.2.4.2",
+                      "dst_id": "3.2.2.4.3",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "Task delegation and coordination flows result in generation of tool/code execution requests",
+                      "src_name": "Coordination & Tasking",
+                      "dst_name": "Operational Safety & Execution",
+                      "src_id": "3.2.2.4.4",
+                      "dst_id": "3.2.2.4.5",
+                      "edge_count": 0,
+                      "is_static": false
+                    }
+                  ]
                 },
                 {
                   "name": "System Signaling & Error Schemas",
@@ -145226,7 +146746,171 @@
                     }
                   ],
                   "component_id": "3.2.2.5",
-                  "can_expand": true
+                  "can_expand": true,
+                  "components": [
+                    {
+                      "name": "Protocol Schema Registry",
+                      "description": "Serves as the authoritative source for message structures and types within the swarm. It defines base attributes for all signals (ID, sender, priority) and maintains the mapping of message types to their respective Pydantic models, ensuring a consistent protocol across the mesh.",
+                      "key_entities": [
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.AgentMessageBase",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 102,
+                          "reference_end_line": 116
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.ErrorMessage",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 388,
+                          "reference_end_line": 410
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.MessageType",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 31,
+                          "reference_end_line": 91
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.validate_message",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 500,
+                          "reference_end_line": 540
+                        }
+                      ],
+                      "source_cluster_ids": [
+                        1
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/validation/agent_messages.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.validation.agent_messages.MessageType",
+                            "src.heretek_swarm.validation.agent_messages.MessagePriority",
+                            "src.heretek_swarm.validation.agent_messages.AgentMessageBase",
+                            "src.heretek_swarm.validation.agent_messages.AgentMessageBase.Config",
+                            "src.heretek_swarm.validation.agent_messages.ActorMessage",
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate",
+                            "src.heretek_swarm.validation.agent_messages.ToolRequest",
+                            "src.heretek_swarm.validation.agent_messages.ToolResponse",
+                            "src.heretek_swarm.validation.agent_messages.CoordinationRequest",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusProposal",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusVote",
+                            "src.heretek_swarm.validation.agent_messages.ErrorMessage",
+                            "src.heretek_swarm.validation.agent_messages.TaskMessage",
+                            "src.heretek_swarm.validation.agent_messages.CodeExecutionRequest",
+                            "src.heretek_swarm.validation.agent_messages.validate_message",
+                            "src.heretek_swarm.validation.agent_messages.create_actor_message",
+                            "src.heretek_swarm.validation.agent_messages.create_state_update",
+                            "src.heretek_swarm.validation.agent_messages.create_tool_request",
+                            "src.heretek_swarm.validation.agent_messages.create_tool_response"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.2.2.5.1",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Message Safety Enforcement",
+                      "description": "Implements the zero-trust validation logic for the signaling protocol by performing deep inspection and sanitization of message payloads. It provides specialized safety gates for each message type (errors, code execution requests, state updates, tool requests) to prevent prompt injection and malformed data from corrupting agent logic or the collective swarm state.",
+                      "key_entities": [
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.ErrorMessage.validate_error_safety",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 400,
+                          "reference_end_line": 407
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.CodeExecutionRequest.validate_code_safety",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 464,
+                          "reference_end_line": 472
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.StateUpdate.validate_state_value_safety",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 178,
+                          "reference_end_line": 196
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.ToolRequest.validate_arguments_safety",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 237,
+                          "reference_end_line": 247
+                        }
+                      ],
+                      "source_cluster_ids": [
+                        2,
+                        3,
+                        4,
+                        5,
+                        6,
+                        7,
+                        8,
+                        9,
+                        10,
+                        11
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/validation/agent_messages.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.validation.agent_messages.ActorMessage.validate_content_safety",
+                            "src.heretek_swarm.validation.agent_messages.ActorMessage.validate_content_safety.check_value",
+                            "src.heretek_swarm.validation.agent_messages.ActorMessage.Config",
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate.validate_state_key",
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate.validate_state_value_safety",
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate.validate_state_value_safety.check_value",
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate.validate_operation",
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate.Config",
+                            "src.heretek_swarm.validation.agent_messages.ToolRequest.validate_tool_name",
+                            "src.heretek_swarm.validation.agent_messages.ToolRequest.validate_arguments_safety",
+                            "src.heretek_swarm.validation.agent_messages.ToolRequest.Config",
+                            "src.heretek_swarm.validation.agent_messages.ToolResponse.validate_error_safety",
+                            "src.heretek_swarm.validation.agent_messages.ToolResponse.Config",
+                            "src.heretek_swarm.validation.agent_messages.CoordinationRequest.validate_description_safety",
+                            "src.heretek_swarm.validation.agent_messages.CoordinationRequest.validate_payload_safety",
+                            "src.heretek_swarm.validation.agent_messages.CoordinationRequest.validate_payload_safety.check_value",
+                            "src.heretek_swarm.validation.agent_messages.CoordinationRequest.Config",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusProposal.validate_text_safety",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusProposal.Config",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusVote.validate_reasoning_safety",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusVote.Config",
+                            "src.heretek_swarm.validation.agent_messages.ErrorMessage.validate_error_safety",
+                            "src.heretek_swarm.validation.agent_messages.ErrorMessage.Config",
+                            "src.heretek_swarm.validation.agent_messages.TaskMessage.validate_task_data_safety",
+                            "src.heretek_swarm.validation.agent_messages.TaskMessage.validate_task_data_safety.check_value",
+                            "src.heretek_swarm.validation.agent_messages.TaskMessage.Config",
+                            "src.heretek_swarm.validation.agent_messages.CodeExecutionRequest.validate_code_safety",
+                            "src.heretek_swarm.validation.agent_messages.CodeExecutionRequest.Config"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.2.2.5.2",
+                      "can_expand": true
+                    }
+                  ],
+                  "components_relations": [
+                    {
+                      "relation": "Provides templates and model classes used by",
+                      "src_name": "Protocol Schema Registry",
+                      "dst_name": "Message Safety Enforcement",
+                      "src_id": "3.2.2.5.1",
+                      "dst_id": "3.2.2.5.2",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "Invokes validation entry point to trigger safety checks on ingestion",
+                      "src_name": "Message Safety Enforcement",
+                      "dst_name": "Protocol Schema Registry",
+                      "src_id": "3.2.2.5.2",
+                      "dst_id": "3.2.2.5.1",
+                      "edge_count": 0,
+                      "is_static": false
+                    }
+                  ]
                 }
               ],
               "components_relations": [
@@ -145399,7 +147083,165 @@
                     }
                   ],
                   "component_id": "3.2.3.1",
-                  "can_expand": true
+                  "can_expand": true,
+                  "components": [
+                    {
+                      "name": "Message Dispatcher & Registry",
+                      "description": "Central hub for message identification and initial validation. Defines the core message hierarchy, maps raw payloads to Pydantic models based on MessageType, and provides the primary entry point for the safety middleware and factory logic for message instantiation.",
+                      "key_entities": [
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.validate_message",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 500,
+                          "reference_end_line": 540
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.AgentMessageBase",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 102,
+                          "reference_end_line": 116
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.MessageType",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 31,
+                          "reference_end_line": 91
+                        }
+                      ],
+                      "source_cluster_ids": [
+                        1
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/validation/agent_messages.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.validation.agent_messages.MessageType",
+                            "src.heretek_swarm.validation.agent_messages.MessagePriority",
+                            "src.heretek_swarm.validation.agent_messages.AgentMessageBase",
+                            "src.heretek_swarm.validation.agent_messages.AgentMessageBase.Config",
+                            "src.heretek_swarm.validation.agent_messages.ActorMessage",
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate",
+                            "src.heretek_swarm.validation.agent_messages.ToolRequest",
+                            "src.heretek_swarm.validation.agent_messages.ToolResponse",
+                            "src.heretek_swarm.validation.agent_messages.CoordinationRequest",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusProposal",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusVote",
+                            "src.heretek_swarm.validation.agent_messages.ErrorMessage",
+                            "src.heretek_swarm.validation.agent_messages.TaskMessage",
+                            "src.heretek_swarm.validation.agent_messages.CodeExecutionRequest",
+                            "src.heretek_swarm.validation.agent_messages.validate_message",
+                            "src.heretek_swarm.validation.agent_messages.create_actor_message",
+                            "src.heretek_swarm.validation.agent_messages.create_state_update",
+                            "src.heretek_swarm.validation.agent_messages.create_tool_request",
+                            "src.heretek_swarm.validation.agent_messages.create_tool_response"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.2.3.1.1",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Semantic Safety Handlers",
+                      "description": "A collection of specialized message models that perform deep semantic validation. Each handler inspects specific message types (e.g., tool calls, state updates, coordination requests) using Pydantic validators to enforce safety constraints before the payload reaches agent logic.",
+                      "key_entities": [
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.StateUpdate",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 157,
+                          "reference_end_line": 207
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.ToolRequest",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 210,
+                          "reference_end_line": 250
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.CodeExecutionRequest",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 449,
+                          "reference_end_line": 475
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.CoordinationRequest",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 285,
+                          "reference_end_line": 331
+                        }
+                      ],
+                      "source_cluster_ids": [
+                        2,
+                        3,
+                        4,
+                        5,
+                        6,
+                        7,
+                        8,
+                        9,
+                        10,
+                        11
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/validation/agent_messages.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.validation.agent_messages.ActorMessage.validate_content_safety",
+                            "src.heretek_swarm.validation.agent_messages.ActorMessage.validate_content_safety.check_value",
+                            "src.heretek_swarm.validation.agent_messages.ActorMessage.Config",
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate.validate_state_key",
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate.validate_state_value_safety",
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate.validate_state_value_safety.check_value",
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate.validate_operation",
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate.Config",
+                            "src.heretek_swarm.validation.agent_messages.ToolRequest.validate_tool_name",
+                            "src.heretek_swarm.validation.agent_messages.ToolRequest.validate_arguments_safety",
+                            "src.heretek_swarm.validation.agent_messages.ToolRequest.Config",
+                            "src.heretek_swarm.validation.agent_messages.ToolResponse.validate_error_safety",
+                            "src.heretek_swarm.validation.agent_messages.ToolResponse.Config",
+                            "src.heretek_swarm.validation.agent_messages.CoordinationRequest.validate_description_safety",
+                            "src.heretek_swarm.validation.agent_messages.CoordinationRequest.validate_payload_safety",
+                            "src.heretek_swarm.validation.agent_messages.CoordinationRequest.validate_payload_safety.check_value",
+                            "src.heretek_swarm.validation.agent_messages.CoordinationRequest.Config",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusProposal.validate_text_safety",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusProposal.Config",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusVote.validate_reasoning_safety",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusVote.Config",
+                            "src.heretek_swarm.validation.agent_messages.ErrorMessage.validate_error_safety",
+                            "src.heretek_swarm.validation.agent_messages.ErrorMessage.Config",
+                            "src.heretek_swarm.validation.agent_messages.TaskMessage.validate_task_data_safety",
+                            "src.heretek_swarm.validation.agent_messages.TaskMessage.validate_task_data_safety.check_value",
+                            "src.heretek_swarm.validation.agent_messages.TaskMessage.Config",
+                            "src.heretek_swarm.validation.agent_messages.CodeExecutionRequest.validate_code_safety",
+                            "src.heretek_swarm.validation.agent_messages.CodeExecutionRequest.Config"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.2.3.1.2",
+                      "can_expand": true
+                    }
+                  ],
+                  "components_relations": [
+                    {
+                      "relation": "dispatches to",
+                      "src_name": "Message Dispatcher & Registry",
+                      "dst_name": "Semantic Safety Handlers",
+                      "src_id": "3.2.3.1.1",
+                      "dst_id": "3.2.3.1.2",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "inherits from",
+                      "src_name": "Semantic Safety Handlers",
+                      "dst_name": "Message Dispatcher & Registry",
+                      "src_id": "3.2.3.1.2",
+                      "dst_id": "3.2.3.1.1",
+                      "edge_count": 0,
+                      "is_static": false
+                    }
+                  ]
                 },
                 {
                   "name": "Execution & Tooling Guardrails",
@@ -145436,7 +147278,246 @@
                     }
                   ],
                   "component_id": "3.2.3.2",
-                  "can_expand": true
+                  "can_expand": true,
+                  "components": [
+                    {
+                      "name": "Message Validation Gateway",
+                      "description": "Primary entry point enforcing message schemas and routing messages to appropriate security inspections. Ensures well-formed data to prevent bypass via malformed structures.",
+                      "key_entities": [
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.AgentMessageBase",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 102,
+                          "reference_end_line": 116
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.validate_message",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 500,
+                          "reference_end_line": 540
+                        }
+                      ],
+                      "source_cluster_ids": [
+                        1
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/validation/agent_messages.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.validation.agent_messages.MessageType",
+                            "src.heretek_swarm.validation.agent_messages.MessagePriority",
+                            "src.heretek_swarm.validation.agent_messages.AgentMessageBase",
+                            "src.heretek_swarm.validation.agent_messages.AgentMessageBase.Config",
+                            "src.heretek_swarm.validation.agent_messages.ActorMessage",
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate",
+                            "src.heretek_swarm.validation.agent_messages.ToolRequest",
+                            "src.heretek_swarm.validation.agent_messages.ToolResponse",
+                            "src.heretek_swarm.validation.agent_messages.CoordinationRequest",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusProposal",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusVote",
+                            "src.heretek_swarm.validation.agent_messages.ErrorMessage",
+                            "src.heretek_swarm.validation.agent_messages.TaskMessage",
+                            "src.heretek_swarm.validation.agent_messages.CodeExecutionRequest",
+                            "src.heretek_swarm.validation.agent_messages.validate_message",
+                            "src.heretek_swarm.validation.agent_messages.create_actor_message",
+                            "src.heretek_swarm.validation.agent_messages.create_state_update",
+                            "src.heretek_swarm.validation.agent_messages.create_tool_request",
+                            "src.heretek_swarm.validation.agent_messages.create_tool_response"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.2.3.2.1",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Active Execution Guardrails",
+                      "description": "Performs deep inspection of executable code blocks and tool arguments to detect malicious patterns, unauthorized system calls, or command injection; validates both request and response of operations.",
+                      "key_entities": [
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.CodeExecutionRequest.validate_code_safety",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 464,
+                          "reference_end_line": 472
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.ToolRequest.validate_arguments_safety",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 237,
+                          "reference_end_line": 247
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.ToolResponse.validate_error_safety",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 268,
+                          "reference_end_line": 279
+                        }
+                      ],
+                      "source_cluster_ids": [
+                        5,
+                        7,
+                        11
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/validation/agent_messages.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.validation.agent_messages.ToolRequest.validate_tool_name",
+                            "src.heretek_swarm.validation.agent_messages.ToolRequest.validate_arguments_safety",
+                            "src.heretek_swarm.validation.agent_messages.ToolRequest.Config",
+                            "src.heretek_swarm.validation.agent_messages.ToolResponse.validate_error_safety",
+                            "src.heretek_swarm.validation.agent_messages.ToolResponse.Config",
+                            "src.heretek_swarm.validation.agent_messages.CodeExecutionRequest.validate_code_safety",
+                            "src.heretek_swarm.validation.agent_messages.CodeExecutionRequest.Config"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.2.3.2.2",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "State & Task Integrity Guardrails",
+                      "description": "Protects the internal consistency of the agent collective by validating state updates and task data to prevent state injection and unauthorized task manipulation.",
+                      "key_entities": [
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.StateUpdate.validate_state_value_safety",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 178,
+                          "reference_end_line": 196
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.TaskMessage.validate_task_data_safety",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 424,
+                          "reference_end_line": 443
+                        }
+                      ],
+                      "source_cluster_ids": [
+                        2,
+                        6
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/validation/agent_messages.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate.validate_state_key",
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate.validate_state_value_safety",
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate.validate_state_value_safety.check_value",
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate.validate_operation",
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate.Config",
+                            "src.heretek_swarm.validation.agent_messages.TaskMessage.validate_task_data_safety",
+                            "src.heretek_swarm.validation.agent_messages.TaskMessage.validate_task_data_safety.check_value",
+                            "src.heretek_swarm.validation.agent_messages.TaskMessage.Config"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.2.3.2.3",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Collective Governance Guardrails",
+                      "description": "Secures consensus and inter-agent coordination by inspecting proposals, votes, and coordination payloads for prompt injection or adversarial content that could subvert decision-making.",
+                      "key_entities": [
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.ConsensusProposal.validate_text_safety",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 349,
+                          "reference_end_line": 355
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.ConsensusVote.validate_reasoning_safety",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 373,
+                          "reference_end_line": 382
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.CoordinationRequest.validate_payload_safety",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 309,
+                          "reference_end_line": 328
+                        }
+                      ],
+                      "source_cluster_ids": [
+                        3,
+                        4,
+                        8,
+                        9,
+                        10
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/validation/agent_messages.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.validation.agent_messages.ActorMessage.validate_content_safety",
+                            "src.heretek_swarm.validation.agent_messages.ActorMessage.validate_content_safety.check_value",
+                            "src.heretek_swarm.validation.agent_messages.ActorMessage.Config",
+                            "src.heretek_swarm.validation.agent_messages.CoordinationRequest.validate_description_safety",
+                            "src.heretek_swarm.validation.agent_messages.CoordinationRequest.validate_payload_safety",
+                            "src.heretek_swarm.validation.agent_messages.CoordinationRequest.validate_payload_safety.check_value",
+                            "src.heretek_swarm.validation.agent_messages.CoordinationRequest.Config",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusProposal.validate_text_safety",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusProposal.Config",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusVote.validate_reasoning_safety",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusVote.Config",
+                            "src.heretek_swarm.validation.agent_messages.ErrorMessage.validate_error_safety",
+                            "src.heretek_swarm.validation.agent_messages.ErrorMessage.Config"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.2.3.2.4",
+                      "can_expand": true
+                    }
+                  ],
+                  "components_relations": [
+                    {
+                      "relation": "performs initial schema validation before",
+                      "src_name": "Message Validation Gateway",
+                      "dst_name": "Active Execution Guardrails",
+                      "src_id": "3.2.3.2.1",
+                      "dst_id": "3.2.3.2.2",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "structural validation precedes inspection of",
+                      "src_name": "Message Validation Gateway",
+                      "dst_name": "State & Task Integrity Guardrails",
+                      "src_id": "3.2.3.2.1",
+                      "dst_id": "3.2.3.2.3",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "ensures messages are structurally sound before analyzing",
+                      "src_name": "Message Validation Gateway",
+                      "dst_name": "Collective Governance Guardrails",
+                      "src_id": "3.2.3.2.1",
+                      "dst_id": "3.2.3.2.4",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "routes consensus-decided executions through",
+                      "src_name": "Collective Governance Guardrails",
+                      "dst_name": "Active Execution Guardrails",
+                      "src_id": "3.2.3.2.4",
+                      "dst_id": "3.2.3.2.2",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "validates execution results that trigger state updates in",
+                      "src_name": "Active Execution Guardrails",
+                      "dst_name": "State & Task Integrity Guardrails",
+                      "src_id": "3.2.3.2.2",
+                      "dst_id": "3.2.3.2.3",
+                      "edge_count": 0,
+                      "is_static": false
+                    }
+                  ]
                 },
                 {
                   "name": "State & Task Integrity Guard",
@@ -145476,7 +147557,285 @@
                     }
                   ],
                   "component_id": "3.2.3.3",
-                  "can_expand": true
+                  "can_expand": true,
+                  "components": [
+                    {
+                      "name": "Message Validation Gateway",
+                      "description": "Acts as the central entry point and registry for the validation subsystem. It enforces base schema compliance for all incoming messages and dispatches them to specialized validators based on the message type.",
+                      "key_entities": [
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.AgentMessageBase",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 102,
+                          "reference_end_line": 116
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.validate_message",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 500,
+                          "reference_end_line": 540
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.MessageType",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 31,
+                          "reference_end_line": 91
+                        }
+                      ],
+                      "source_cluster_ids": [
+                        1
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/validation/agent_messages.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.validation.agent_messages.MessageType",
+                            "src.heretek_swarm.validation.agent_messages.MessagePriority",
+                            "src.heretek_swarm.validation.agent_messages.AgentMessageBase",
+                            "src.heretek_swarm.validation.agent_messages.AgentMessageBase.Config",
+                            "src.heretek_swarm.validation.agent_messages.ActorMessage",
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate",
+                            "src.heretek_swarm.validation.agent_messages.ToolRequest",
+                            "src.heretek_swarm.validation.agent_messages.ToolResponse",
+                            "src.heretek_swarm.validation.agent_messages.CoordinationRequest",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusProposal",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusVote",
+                            "src.heretek_swarm.validation.agent_messages.ErrorMessage",
+                            "src.heretek_swarm.validation.agent_messages.TaskMessage",
+                            "src.heretek_swarm.validation.agent_messages.CodeExecutionRequest",
+                            "src.heretek_swarm.validation.agent_messages.validate_message",
+                            "src.heretek_swarm.validation.agent_messages.create_actor_message",
+                            "src.heretek_swarm.validation.agent_messages.create_state_update",
+                            "src.heretek_swarm.validation.agent_messages.create_tool_request",
+                            "src.heretek_swarm.validation.agent_messages.create_tool_response"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.2.3.3.1",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Operational Integrity Guard",
+                      "description": "The functional core of the subsystem, responsible for validating the \"brain\" and \"hands\" of the agents. It performs deep inspection of state updates and task assignments to prevent malicious state poisoning or unauthorized task modifications.",
+                      "key_entities": [
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.StateUpdate.validate_state_value_safety",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 178,
+                          "reference_end_line": 196
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.TaskMessage.validate_task_data_safety",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 424,
+                          "reference_end_line": 443
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.StateUpdate.validate_operation",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 199,
+                          "reference_end_line": 204
+                        }
+                      ],
+                      "source_cluster_ids": [
+                        2,
+                        6
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/validation/agent_messages.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate.validate_state_key",
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate.validate_state_value_safety",
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate.validate_state_value_safety.check_value",
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate.validate_operation",
+                            "src.heretek_swarm.validation.agent_messages.StateUpdate.Config",
+                            "src.heretek_swarm.validation.agent_messages.TaskMessage.validate_task_data_safety",
+                            "src.heretek_swarm.validation.agent_messages.TaskMessage.validate_task_data_safety.check_value",
+                            "src.heretek_swarm.validation.agent_messages.TaskMessage.Config"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.2.3.3.2",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Collective Governance Guard",
+                      "description": "Ensures the integrity of the swarm's decision-making processes. It validates coordination requests, consensus proposals, and votes, checking the \"reasoning\" and \"text\" fields to prevent manipulation of the collective intelligence.",
+                      "key_entities": [
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.CoordinationRequest.validate_payload_safety",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 309,
+                          "reference_end_line": 328
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.ConsensusProposal.validate_text_safety",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 349,
+                          "reference_end_line": 355
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.ConsensusVote.validate_reasoning_safety",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 373,
+                          "reference_end_line": 382
+                        }
+                      ],
+                      "source_cluster_ids": [
+                        3,
+                        8,
+                        9
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/validation/agent_messages.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.validation.agent_messages.CoordinationRequest.validate_description_safety",
+                            "src.heretek_swarm.validation.agent_messages.CoordinationRequest.validate_payload_safety",
+                            "src.heretek_swarm.validation.agent_messages.CoordinationRequest.validate_payload_safety.check_value",
+                            "src.heretek_swarm.validation.agent_messages.CoordinationRequest.Config",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusProposal.validate_text_safety",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusProposal.Config",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusVote.validate_reasoning_safety",
+                            "src.heretek_swarm.validation.agent_messages.ConsensusVote.Config"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.2.3.3.3",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Execution & Action Guard",
+                      "description": "A critical security gate for the swarm's interaction with the host environment. It validates tool names, arguments, and code execution requests to prevent command injection and unsafe code patterns.",
+                      "key_entities": [
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.ToolRequest.validate_arguments_safety",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 237,
+                          "reference_end_line": 247
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.CodeExecutionRequest.validate_code_safety",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 464,
+                          "reference_end_line": 472
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.ToolRequest.validate_tool_name",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 224,
+                          "reference_end_line": 234
+                        }
+                      ],
+                      "source_cluster_ids": [
+                        5,
+                        11
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/validation/agent_messages.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.validation.agent_messages.ToolRequest.validate_tool_name",
+                            "src.heretek_swarm.validation.agent_messages.ToolRequest.validate_arguments_safety",
+                            "src.heretek_swarm.validation.agent_messages.ToolRequest.Config",
+                            "src.heretek_swarm.validation.agent_messages.CodeExecutionRequest.validate_code_safety",
+                            "src.heretek_swarm.validation.agent_messages.CodeExecutionRequest.Config"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.2.3.3.4",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Communication & Feedback Guard",
+                      "description": "Manages the safety of general agent-to-agent communication and feedback loops. It ensures that generic actor messages and error reports do not contain malicious payloads or leak sensitive information.",
+                      "key_entities": [
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.ActorMessage.validate_content_safety",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 130,
+                          "reference_end_line": 151
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.ErrorMessage.validate_error_safety",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 400,
+                          "reference_end_line": 407
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.validation.agent_messages.ToolResponse.validate_error_safety",
+                          "reference_file": "src/heretek_swarm/validation/agent_messages.py",
+                          "reference_start_line": 268,
+                          "reference_end_line": 279
+                        }
+                      ],
+                      "source_cluster_ids": [
+                        4,
+                        7,
+                        10
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/validation/agent_messages.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.validation.agent_messages.ActorMessage.validate_content_safety",
+                            "src.heretek_swarm.validation.agent_messages.ActorMessage.validate_content_safety.check_value",
+                            "src.heretek_swarm.validation.agent_messages.ActorMessage.Config",
+                            "src.heretek_swarm.validation.agent_messages.ToolResponse.validate_error_safety",
+                            "src.heretek_swarm.validation.agent_messages.ToolResponse.Config",
+                            "src.heretek_swarm.validation.agent_messages.ErrorMessage.validate_error_safety",
+                            "src.heretek_swarm.validation.agent_messages.ErrorMessage.Config"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.2.3.3.5",
+                      "can_expand": true
+                    }
+                  ],
+                  "components_relations": [
+                    {
+                      "relation": "Dispatches state updates and task messages for deep recursive value validation.",
+                      "src_name": "Message Validation Gateway",
+                      "dst_name": "Operational Integrity Guard",
+                      "src_id": "3.2.3.3.1",
+                      "dst_id": "3.2.3.3.2",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "Routes consensus and coordination messages to ensure governance integrity.",
+                      "src_name": "Message Validation Gateway",
+                      "dst_name": "Collective Governance Guard",
+                      "src_id": "3.2.3.3.1",
+                      "dst_id": "3.2.3.3.3",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "Forwards tool and code requests for high-risk security inspection.",
+                      "src_name": "Message Validation Gateway",
+                      "dst_name": "Execution & Action Guard",
+                      "src_id": "3.2.3.3.1",
+                      "dst_id": "3.2.3.3.4",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "Routes general messages and error reports for content safety checks.",
+                      "src_name": "Message Validation Gateway",
+                      "dst_name": "Communication & Feedback Guard",
+                      "src_id": "3.2.3.3.1",
+                      "dst_id": "3.2.3.3.5",
+                      "edge_count": 0,
+                      "is_static": false
+                    }
+                  ]
                 },
                 {
                   "name": "Consensus & Coordination Safety",
@@ -146272,7 +148631,150 @@
                     }
                   ],
                   "component_id": "3.3.1.2",
-                  "can_expand": true
+                  "can_expand": true,
+                  "components": [
+                    {
+                      "name": "Zero-Trust Validation Pipeline",
+                      "description": "Central orchestration engine executing a four-layer validation sequence (Input, Context, Output, Audit) that applies static pattern matching and semantic filters to detect injection attacks and manages security check lifecycle.",
+                      "key_entities": [],
+                      "source_cluster_ids": [
+                        0,
+                        1,
+                        2,
+                        3,
+                        4,
+                        15,
+                        16,
+                        17,
+                        18
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "dashboard/frontend/src/components/WorkflowBuilder/ValidationPanel.tsx",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "dashboard.frontend.src.components.WorkflowBuilder.ValidationPanel.ValidationPanel.allItems.useMemo() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.ValidationPanel.ValidationPanel.allItems.errors.map() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.ValidationPanel.allItems.warnings.map() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.ValidationPanel.allItems.info.map() callback"
+                          ]
+                        },
+                        {
+                          "file_path": "src/heretek_swarm/actors/validation.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.actors.validation.MessageContent",
+                            "src.heretek_swarm.actors.validation.DeliberationRequest",
+                            "src.heretek_swarm.actors.validation.DeliberationRequest.validate_triad_members",
+                            "src.heretek_swarm.actors.validation.MemoryStoreRequest",
+                            "src.heretek_swarm.actors.validation.AnalysisRequest",
+                            "src.heretek_swarm.actors.validation.AnalysisRequest.validate_request_id",
+                            "src.heretek_swarm.actors.validation.ValidationRequest",
+                            "src.heretek_swarm.actors.validation.QueryRequest",
+                            "src.heretek_swarm.actors.validation.LineageRequest",
+                            "src.heretek_swarm.actors.validation.LineageRequest.validate_parent_ids",
+                            "src.heretek_swarm.actors.validation.HealthCheckRequest",
+                            "src.heretek_swarm.actors.validation.SuspendResumeRequest",
+                            "src.heretek_swarm.actors.validation.TerminateRequest",
+                            "src.heretek_swarm.actors.validation.CollectiveTaskRequest",
+                            "src.heretek_swarm.actors.validation.TaskRequest",
+                            "src.heretek_swarm.actors.validation.DependencyRequest",
+                            "src.heretek_swarm.actors.validation.CoordinationRequest",
+                            "src.heretek_swarm.actors.validation.CoordinationRequest.validate_input_data",
+                            "src.heretek_swarm.actors.validation.CoordinationRequest.validate_protocol"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.3.1.2.1",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Behavioral & Consciousness Analytics",
+                      "description": "Stateful analysis component that maintains behavioral profiles for agents, ingesting high-dimensional Consciousness Module metrics (FEP and IIT) to detect deviations from baselines and provide behavioral identity verification.",
+                      "key_entities": [],
+                      "source_cluster_ids": [
+                        5,
+                        6,
+                        7,
+                        8,
+                        9
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/actors/validation.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.actors.validation.MessageContent.validate_sender_id",
+                            "src.heretek_swarm.actors.validation.MessageContent.validate_correlation_id",
+                            "src.heretek_swarm.actors.validation.MessageContent.validate_content",
+                            "src.heretek_swarm.actors.validation.MemoryStoreRequest.validate_content",
+                            "src.heretek_swarm.actors.validation.MemoryStoreRequest.validate_metadata"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.3.1.2.2",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Agent Security Interceptor",
+                      "description": "Integration layer that injects security logic into agents via a mixin pattern, wrapping message handlers so all requests and emissions pass through the Zero-Trust Validation Pipeline.",
+                      "key_entities": [],
+                      "source_cluster_ids": [
+                        10,
+                        11,
+                        12,
+                        13,
+                        14
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "dashboard/frontend/src/components/WorkflowBuilder/ValidationPanel.tsx",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "dashboard.frontend.src.components.WorkflowBuilder.ValidationPanel.ValidationError",
+                            "dashboard.frontend.src.components.WorkflowBuilder.ValidationPanel.ValidationResult",
+                            "dashboard.frontend.src.components.WorkflowBuilder.ValidationPanel.ValidationPanelProps",
+                            "dashboard.frontend.src.components.WorkflowBuilder.ValidationPanel.ValidationItemProps",
+                            "dashboard.frontend.src.components.WorkflowBuilder.ValidationPanel.ValidationItem.handleNodeClick",
+                            "dashboard.frontend.src.components.WorkflowBuilder.ValidationPanel.ValidationItem.handleNodeClick.useCallback() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.ValidationPanel.ValidationItem.handleEdgeClick",
+                            "dashboard.frontend.src.components.WorkflowBuilder.ValidationPanel.ValidationItem.handleEdgeClick.useCallback() callback",
+                            "dashboard.frontend.src.components.WorkflowBuilder.ValidationPanel.ValidationPanel"
+                          ]
+                        },
+                        {
+                          "file_path": "src/heretek_swarm/actors/validation.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.actors.validation.QueryRequest.validate_filters",
+                            "src.heretek_swarm.actors.validation.validate_message"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.3.1.2.3",
+                      "can_expand": true
+                    }
+                  ],
+                  "components_relations": [
+                    {
+                      "relation": "forwards all incoming and outgoing agent messages for multi-layer inspection before allowing execution",
+                      "src_name": "Agent Security Interceptor",
+                      "dst_name": "Zero-Trust Validation Pipeline",
+                      "src_id": "3.3.1.2.3",
+                      "dst_id": "3.3.1.2.1",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "queries for behavioral anomaly scores and FEP/IIT metric verification during Context Validation to establish sender legitimacy",
+                      "src_name": "Zero-Trust Validation Pipeline",
+                      "dst_name": "Behavioral & Consciousness Analytics",
+                      "src_id": "3.3.1.2.1",
+                      "dst_id": "3.3.1.2.2",
+                      "edge_count": 0,
+                      "is_static": false
+                    }
+                  ]
                 },
                 {
                   "name": "Safety Guardrail & Consensus System",
