@@ -1,6 +1,6 @@
 """Behavior profiling endpoints."""
 
-from typing import Any
+from typing import Annotated, Any
 
 import structlog
 from fastapi import APIRouter, Depends, HTTPException

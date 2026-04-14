@@ -1,7 +1,7 @@
 # =============================================================================
 """Core agent endpoints."""
 
-from typing import Any
+from typing import Annotated, Any
 
 import structlog
 from fastapi import APIRouter, Depends, HTTPException
@@ -91,10 +91,10 @@ async def get_agent_type_metadata(
 @router.post("/deploy")
 async def deploy_agent(
     agent_type: str,
-    config: dict[str, Any] | None = None,
-    instance_id: str | None = None,
     registry: Annotated[EnhancedAgentRegistry, Depends(get_registry)],
     authenticated: Annotated[str, Depends(verify_auth)],
+    config: dict[str, Any] | None = None,
+    instance_id: str | None = None,
 ):
     """
     Deploy a new agent instance.
