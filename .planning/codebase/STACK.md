@@ -1,142 +1,128 @@
 # Technology Stack
 
-**Analysis Date:** 2026-04-12
+**Analysis Date:** 2026-04-13
 
 ## Languages
 
 **Primary:**
-- Python 3.11+ - Core agent runtime and API backend
-- TypeScript 5.3+ - Dashboard frontend and Electron desktop app
+- Python 3.12+ - Core backend, agents, API services
+- TypeScript 5.3+ - Frontend (React), Electron desktop app
 
 **Secondary:**
-- JavaScript (ES2020) - Frontend components
+- JavaScript - Electron main process
 
 ## Runtime
 
-**Python Environment:**
-- Python 3.11, 3.12
-- Package manager: pip/setuptools
-- Lockfile: `requirements.txt` (when generated)
+**Python:**
+- Version: 3.12+ (from pyproject.toml requires-python)
+- Package Manager: pip/uv
 
-**Node.js Environment:**
-- Node.js runtime for dashboard
-- Package manager: npm
-- Lockfile: `package-lock.json`
+**Node.js:**
+- Version: 20.x (from @types/node ^20.10.0)
+- Package Manager: npm
 
 ## Frameworks
 
-**Python - Agent & API:**
-- **swarms 5.0+** - Multi-agent framework foundation
-- **FastAPI 0.109+** - REST API framework
-- **Starlette 0.27+** - ASGI web toolkit (underlying FastAPI)
-- **uvicorn 0.25+** - ASGI server
-- **websockets 12.0+** - WebSocket support
+**Backend:**
+- FastAPI 0.109+ - HTTP API framework (`src/heretek_swarm/api/`, `mem0_server/main.py`)
+- Starlette 0.27+ - ASGI framework (underlying FastAPI)
+- Uvicorn 0.25+ - ASGI server
 
-**Python - CLI & Configuration:**
-- **click 8.1+** - CLI framework
-- **pydantic 2.0+** - Data validation and settings
+**Agent Framework:**
+- Swarms 5.0+ - Agent orchestration (from requirements.txt)
+- Pydantic 2.0+ - Data validation (base models, agents)
 
-**Python - Desktop/Agent Frameworks:**
-- **autogen** - AutoGen agent framework integration
-- **crewai** - CrewAI agent framework integration
-- **langgraph** - LangGraph workflow integration
+**Frontend:**
+- React 18.2+ - UI framework
+- Vite 5.0+ - Build tool
+- React Router 6.21+ - Routing
 
-**TypeScript - Frontend:**
-- **React 18.2+** - UI framework
-- **Vite 5.0+** - Build tool and dev server
-- **react-router-dom 6.21+** - Client-side routing
-- **Tailwind CSS 3.4+** - Utility-first CSS
-- **Zustand 4.4+** - State management
-- **lucide-react 0.303+** - Icon library
+**Desktop:**
+- Electron 28+ - Desktop app shell
 
-**TypeScript - Desktop:**
-- **Electron 28+** - Desktop application framework
-- **electron-builder 24+** - Electron packaging
+**Testing:**
+- pytest - Python testing framework
+- Vitest - JS/TS testing (implied by Vite ecosystem)
+
+**Styling:**
+- Tailwind CSS 3.4+ - Utility-first CSS
 
 ## Key Dependencies
 
-**Agent Intelligence:**
-- **mem0ai 1.0+** - Long-term memory for agents
-- **opentelemetry-api/sdk 1.22+** - Observability/tracing
-- **opentelemetry-exporter-otlp 1.22+** - OTLP trace export
+**Agent & AI:**
+- `swarms>=5.0.0` - Agent orchestration
+- `mem0ai>=1.0.0` - Memory system
+- `opentelemetry-api>=1.22.0` - Observability tracing
+- `opentelemetry-sdk>=1.22.0` - Observability SDK
 
-**Data & Storage:**
-- **redis 5.0+** - Caching and pub/sub
-- **qdrant-client 1.7+** - Vector database client
-- **httpx 0.25+** - Async HTTP client
+**Web & HTTP:**
+- `httpx>=0.25.0` - Async HTTP client
+- `websockets>=12.0` - WebSocket support
 
-**Reliability:**
-- **structlog 24.1+** - Structured logging
-- **tenacity 8.2+** - Retry logic
-- **circuitbreaker 2.0+** - Circuit breaker pattern
+**Database & Cache:**
+- `redis>=5.0.0` - Caching, session
+- `qdrant-client>=1.7.0` - Vector database (RAG, memory)
+- `asyncpg>=0.29.0` - PostgreSQL async driver
+- `psycopg2-binary>=2.9.0` - PostgreSQL sync driver
 
-**LLM Providers:**
-- **openai** - OpenAI API integration
-- **anthropic** - Anthropic/Claude integration
-- Custom providers: minimax, ollama, llamacpp, lemonade, zai, openai_compatible
+**Validation & Serialization:**
+- `pydantic>=2.0.0` - Data validation
 
-**Testing:**
-- **pytest 8.0+** - Test framework
-- **pytest-asyncio 0.23+** - Async test support
-- **pytest-cov 4.1+** - Coverage reporting
-- **pytest-xdist 3.5+** - Parallel test execution
-- **hypothesis 6.98+** - Property-based testing
-- **faker 24.0+** - Test data generation
+**Logging & Observability:**
+- `structlog>=24.1.0` - Structured logging
+- `prometheus-client>=0.19.0` - Metrics
+- `opentelemetry-exporter-otlp>=1.22.0` - Trace export
 
-**Code Quality:**
-- **ruff 0.2+** - Linter and formatter
-- **mypy 1.8+** - Static type checking
-- **pre-commit 3.6+** - Git hooks
+**Resilience:**
+- `tenacity>=8.2.0` - Retry logic
+- `circuitbreaker>=2.0.0` - Circuit breaker pattern
 
-**TypeScript Build:**
-- **electron-log 5.0+** - Electron logging
-- **electron-store 8.1+** - Electron persistent storage
-- **clsx 2.1+** - Class name utility
-- **tailwind-merge 2.2+** - Tailwind merge utility
+**Web Servers:**
+- `gunicorn>=21.0.0` - WSGI server
+
+**Frontend Libraries:**
+- `lucide-react` - Icons
+- `zustand>=4.4.7` - State management
+- `electron-log>=5.0.3` - Electron logging
+- `electron-store>=8.1.0` - Electron config storage
+
+**CLI:**
+- `click` - CLI framework
+
+**NATS:**
+- `nats-py` - NATS client for event mesh
 
 ## Configuration
 
-**Python Configuration:**
-- `pyproject.toml` - Project metadata and dependencies
-- `[tool.pytest.ini_options]` - Test configuration
-- `[tool.ruff]` - Linter configuration
-- `[tool.mypy]` - Type checker configuration
-- `[tool.coverage]` - Coverage configuration
-
-**TypeScript Configuration:**
-- `tsconfig.json` - TypeScript base config
-- `vite.config.ts` - Vite bundler configuration
-- `tailwind.config.js` - Tailwind CSS configuration
-- `postcss.config.js` - PostCSS configuration
-
 **Environment:**
-- `.env.example` - Template for environment variables
-- Environment variables for API keys, URLs, and feature flags
+- Python: `.env` via `python-dotenv`
+- Node: `package.json` scripts
+
+**Build Tools:**
+- Vite (frontend build)
+- electron-builder (desktop packaging)
+- TypeScript compiler
+
+**Deployment:**
+- Kubernetes (k8s/ directory)
+- Docker (docker-compose implied)
+
+**LLM Routing:**
+- LiteLLM (`litellm_config.yaml`) - Multi-provider LLM proxy
 
 ## Platform Requirements
 
 **Development:**
-- Python 3.11+
-- Node.js 18+
-- npm or yarn
-- Redis server (for local development)
-- PostgreSQL (for persistent storage)
-- Qdrant (for vector storage)
-- NATS server (for message broker)
+- Python 3.12+
+- Node.js 20+
+- NATS server (for event mesh)
 
 **Production:**
-- Linux server (tested on Linux 6.x)
-- Python 3.11+ runtime
-- Node.js 18+ runtime (for dashboard)
-- Redis 5.0+
-- PostgreSQL 14+
-- Qdrant (vector database)
-- NATS server 3.0+
-
-**Desktop App:**
-- macOS, Windows, or Linux
-- Electron 28+
+- Container orchestration (Kubernetes)
+- PostgreSQL database
+- Redis cache
+- Qdrant vector database
 
 ---
 
-*Stack analysis: 2026-04-12*
+*Stack analysis: 2026-04-13*

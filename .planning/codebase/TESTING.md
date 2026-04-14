@@ -1,6 +1,6 @@
 # Testing Patterns
 
-**Analysis Date:** 2026-04-12
+**Analysis Date:** 2026-04-13
 
 ## Test Frameworks
 
@@ -11,7 +11,6 @@
 - pytest-cov for coverage
 - pytest-mock for mocking
 - pytest-timeout for timeout handling
-- pytest-xdist for parallel execution
 
 **Configuration (pyproject.toml):**
 ```toml
@@ -22,15 +21,13 @@ python_files = ["test_*.py", "*_test.py"]
 python_classes = ["Test*"]
 python_functions = ["test_*"]
 asyncio_mode = "auto"
+asyncio_default_fixture_loop_scope = "function"
 ```
 
 ### TypeScript/React
 
-**Framework:** vitest (based on test file patterns)
+**Framework:** vitest (Vite-based)
 - @testing-library/react for component tests
-- @testing-library/jest-dom for assertions
-
-**Configuration:** vite.config.ts
 
 ## Coverage Requirements
 
@@ -41,17 +38,12 @@ asyncio_mode = "auto"
 fail_under = 80
 precision = 2
 show_missing = true
+skip_empty = true
 ```
 
-**Coverage Commands:**
+**View Coverage:**
 ```bash
-# Python - run with coverage
 pytest tests/ --cov=src --cov-report=term-missing
-
-# Frontend - via package.json scripts
-npm test        # Run tests
-npm run build   # Build with type checking
-npm run lint    # Lint check
 ```
 
 ## Test Organization
@@ -61,74 +53,62 @@ npm run lint    # Lint check
 ```
 tests/
 ├── __init__.py
-├── conftest.py              # Shared fixtures
-├── actors/                  # Actor tests
+├── conftest.py                    # Root shared fixtures
+├── actors/                         # Actor tests
 │   ├── test_base_actor.py
+│   ├── test_profiling.py
 │   └── ...
-├── collective/              # Collective intelligence tests
-├── consciousness/           # Consciousness module tests
-├── consensus/               # Consensus mechanism tests
-├── evaluation/              # Evaluator tests
-├── fixtures/                 # Test fixtures
-├── gateway/                  # Gateway tests
-├── infrastructure/           # Infrastructure tests
-├── integration/              # Integration tests
-│   ├── conftest.py
-│   ├── agents/
-│   └── scaffolding/
-├── knowledge/                # Knowledge/RAG tests
-├── load/                     # Load/performance tests
-├── memory/                   # Memory system tests
-├── observability/            # Observability tests
-├── plugins/                  # Plugin tests
-├── rag/                      # RAG pipeline tests
-├── security/                # Security tests
-├── serverless/               # Serverless tests
-├── state/                    # State management tests
-├── tools/                    # Tool tests
-├── unit/                     # Unit tests
-├── validation/              # Validation tests
-└── workflow/                 # Workflow tests
+├── collective/                     # Collective intelligence tests
+├── consciousness/                   # Consciousness module tests
+├── consensus/                       # Consensus mechanism tests
+│   ├── test_maker.py              # MAKER consensus tests
+│   ├── test_deliberation.py
+│   └── ...
+├── fixtures/                        # Test fixtures (serverless.yaml, etc.)
+├── gateway/                         # Gateway tests
+├── integration/                     # Integration tests
+│   ├── conftest.py                # Integration-specific mocks
+│   ├── agents/                    # Agent integration tests
+│   └── scaffolding/               # Mock helpers
+├── memory/                          # Memory system tests
+├── security/                       # Security tests
+├── state/                          # State management tests
+├── validation/                    # Validation tests
+└── workflow/                       # Workflow tests
 ```
 
-### TypeScript Directory Structure
+## Test Markers
 
-```
-dashboard/frontend/src/
-├── hooks/
-│   ├── __tests__/
-│   │   ├── useAgentHandles.test.tsx
-│   │   ├── useRealTimeAgentUpdates.test.tsx
-│   │   └── useNodeGrouping.test.tsx
-│   └── useAgentHandles.ts
-└── ...
-```
-
-## Test Markers (Python)
-
-Markers defined in `conftest.py` and `pyproject.toml`:
+Markers defined in `conftest.py`:
 
 ```python
-@pytest.mark.unit          # Unit tests (fast, isolated)
+@pytest.mark.unit          # Unit tests (fast, isolated, no external deps)
 @pytest.mark.integration   # Integration tests (require external services)
-@pytest.mark.load           # Load/performance tests
-@pytest.mark.slow           # Tests that take >5s
+@pytest.mark.load          # Load/performance tests for scalability
+@pytest.mark.slow          # Tests that take >5 seconds
 @pytest.mark.a2a            # Agent-to-Agent messaging tests
-@pytest.mark.consensus      # Consensus mechanism tests
+@pytest.mark.consensus      # Consensus mechanism tests (MAKER, BFT)
 @pytest.mark.latency        # Latency benchmark tests (<100ms baseline)
 @pytest.mark.security       # Security-focused tests
 ```
 
 **Running by marker:**
 ```bash
-pytest tests/ -m unit          # Only unit tests
-pytest tests/ -m "not slow"    # Exclude slow tests
-pytest tests/ -m "a2a and not load"  # A2A tests excluding load
+pytest tests/ -m unit                    # Only unit tests
+pytest tests/ -m "not slow"             # Exclude slow tests
+pytest tests/ -m "a2a and not load"     # A2A tests excluding load
 ```
 
 ## Test Fixtures
 
-### Python Fixtures (conftest.py)
+### Root conftest.py (`tests/conftest.py`)
+
+**Performance Baselines:**
+```python
+MESSAGE_LATENCY_BASELINE_MS = 100  # <100ms message latency requirement
+CONCURRENT_AGENT_TARGET = 1000     # Must support 1,000+ concurrent agents
+COVERAGE_THRESHOLD = 80            # >80% test coverage requirement
+```
 
 **Agent Fixtures:**
 ```python
@@ -156,6 +136,26 @@ def triad_agents() -> list[AgentConfig]:
     ]
 ```
 
+**Model Fixtures:**
+```python
+class Message(BaseModel):
+    message_id: str
+    sender_id: str
+    receiver_id: str
+    message_type: str
+    payload: dict[str, Any]
+    timestamp: float = field(default_factory=time.time)
+    correlation_id: str | None = None
+    latency_ms: float | None = None
+
+class AgentState(BaseModel):
+    agent_id: str
+    status: str = "idle"
+    current_task: str | None = None
+    memory_context: dict[str, Any] = {}
+    last_heartbeat: float = field(default_factory=time.time)
+```
+
 **Mock Fixtures:**
 ```python
 @pytest.fixture
@@ -164,7 +164,9 @@ def mock_agent() -> MagicMock:
     agent = MagicMock()
     agent.agent_id = f"mock-{uuid.uuid4().hex[:8]}"
     agent.send_message = AsyncMock(return_value={"status": "sent"})
+    agent.receive_message = AsyncMock()
     agent.execute_task = AsyncMock(return_value={"result": "success"})
+    agent.get_state = MagicMock(return_value=AgentState(agent_id=agent.agent_id))
     return agent
 
 @pytest.fixture
@@ -173,7 +175,19 @@ def mock_message_bus() -> MagicMock:
     bus = MagicMock()
     bus.publish = AsyncMock(return_value=True)
     bus.subscribe = AsyncMock(return_value=True)
+    bus.get_message = AsyncMock()
+    bus.acknowledge = AsyncMock(return_value=True)
     return bus
+
+@pytest.fixture
+def mock_memory_store() -> MagicMock:
+    """Create a mock memory store for testing."""
+    store = MagicMock()
+    store.store = AsyncMock(return_value=True)
+    store.retrieve = AsyncMock(return_value={"data": "test"})
+    store.delete = AsyncMock(return_value=True)
+    store.query = AsyncMock(return_value=[])
+    return store
 ```
 
 **Security Fixtures:**
@@ -186,12 +200,14 @@ def malicious_inputs() -> list[dict[str, Any]]:
         {"input": "<script>alert('xss')</script>", "type": "xss"},
         {"input": "${env.SECRET_KEY}", "type": "template_injection"},
         {"input": "../../../etc/passwd", "type": "path_traversal"},
+        {"input": "A" * 1000000, "type": "buffer_overflow"},
+        {"input": {"__proto__": {"admin": True}}, "type": "prototype_pollution"},
     ]
 
 @pytest.fixture
 def secret_patterns() -> list[str]:
     """Patterns that should never appear in logs or outputs."""
-    return ["sk-", "xoxb-", "ghp_", "-----BEGIN", "password", "api_key"]
+    return ["sk-", "xoxb-", "ghp_", "AKIA", "eyJ", "-----BEGIN", "password", "secret", "api_key"]
 ```
 
 **Latency Fixtures:**
@@ -199,157 +215,137 @@ def secret_patterns() -> list[str]:
 @pytest.fixture
 def latency_tracker() -> dict[str, list[float]]:
     """Create a latency tracker for benchmark tests."""
-    return {"message_latency": [], "task_execution": [], "consensus_round": []}
+    return {
+        "message_latency": [],
+        "task_execution": [],
+        "consensus_round": [],
+        "state_rollback": [],
+    }
 
 @pytest.fixture
 def assert_latency_baseline():
     """Assert that latency meets the <100ms baseline requirement."""
     def _assert(latency_ms: float, operation: str = "operation") -> None:
         assert latency_ms < MESSAGE_LATENCY_BASELINE_MS, (
-            f"{operation} latency {latency_ms:.2f}ms exceeds baseline"
+            f"{operation} latency {latency_ms:.2f}ms exceeds "
+            f"baseline of {MESSAGE_LATENCY_BASELINE_MS}ms - FLAG FOR REFACTORING"
         )
     return _assert
 ```
 
-### TypeScript Fixtures
+### Integration conftest.py (`tests/integration/conftest.py`)
 
-**Mock Fetch:**
-```typescript
-const mockFetch: jest.Mock = jest.fn();
-(global as any).fetch = mockFetch;
-```
-
-## Mocking Patterns
-
-### Python Mocking
-
-**Using pytest-mock:**
+**Mock NATS Event Mesh:**
 ```python
-@pytest.fixture
-def mock_agent() -> MagicMock:
-    agent = MagicMock()
-    agent.execute_task = AsyncMock(return_value={"result": "success"})
-    return agent
+class MockNATSEventMesh:
+    """In-memory mock for NATSEventMesh with pub/sub and request-reply patterns."""
 
-async def test_actor_task_execution(mock_agent):
-    mock_agent.execute_task.assert_not_called()
-    result = await mock_agent.execute_task({"task": "test"})
-    mock_agent.execute_task.assert_called_once_with({"task": "test"})
+    async def connect(self) -> bool: ...
+    async def publish(self, subject: str, data: dict[str, Any], reply: str | None = None) -> bool: ...
+    async def subscribe(self, subject_pattern: str, callback: Callable) -> str: ...
+    async def request(self, subject: str, data: dict[str, Any], timeout: int = 5) -> dict[str, Any]: ...
 ```
 
-**Mocking Modules:**
+**Mock LLM Provider:**
 ```python
-def mock_nats_module():
-    """Mock NATS module to avoid pynats dependency issues."""
-    import sys
-    from unittest.mock import MagicMock
-    mock_module = MagicMock()
-    sys.modules["pynats"] = mock_module
-    yield
-    if "pynats" in sys.modules:
-        del sys.modules["pynats"]
+class MockLLMProvider:
+    """Mock LLM provider for deterministic testing."""
+
+    def register_response(self, prompt_pattern: str, response: str) -> None: ...
+    def set_default_response(self, response: str) -> None: ...
+    def set_latency(self, latency_ms: float) -> None: ...
+    async def generate(self, prompt: str, **kwargs) -> str: ...
 ```
 
-### TypeScript Mocking
+**Mock Database:**
+```python
+class MockDatabase:
+    """In-memory mock database for testing."""
 
-**Mocking Fetch:**
-```typescript
-mockFetch.mockResolvedValueOnce({
-  ok: true,
-  json: async () => ({
-    agentId: 'agent-123',
-    subscriptions: mockSubscriptions,
-    total: 2,
-  }),
-});
+    async def connect(self) -> bool: ...
+    async def execute(self, query: str, params: tuple | None = None) -> list[dict[str, Any]]: ...
+    async def create_table(self, table_name: str, schema: dict[str, str]) -> bool: ...
+```
 
-// Assert
-expect(mockFetch).toHaveBeenCalledWith(
-  '/api/agents/agent-123/channels',
-  expect.objectContaining({ method: 'POST' })
-);
+**Fixtures:**
+```python
+@pytest_asyncio.fixture
+async def mock_nats() -> MockNATSEventMesh: ...
+
+@pytest_asyncio.fixture
+async def connected_nats(mock_nats: MockNATSEventMesh) -> MockNATSEventMesh: ...
+
+@pytest_asyncio.fixture
+async def mock_llm() -> MockLLMProvider: ...
+
+@pytest_asyncio.fixture
+async def mock_llm_with_responses(mock_llm: MockLLMProvider) -> MockLLMProvider: ...
+
+@pytest_asyncio.fixture
+async def mock_db() -> MockDatabase: ...
+
+@pytest_asyncio.fixture
+async def initialized_db(mock_db: MockDatabase) -> MockDatabase: ...
 ```
 
 ## Test Patterns
 
-### Python Test Structure
+### Class-Based Tests (preferred)
 
-**Class-based (pytest):**
 ```python
-class TestActorFactory:
-    """Tests for ActorFactory class."""
+class TestMAKERConsensus:
+    """Test MAKERConsensus class."""
 
     @pytest.fixture
-    def factory(self):
-        """Create a fresh factory instance for each test."""
-        return ActorFactory()
+    def basic_maker(self):
+        """Create a basic MAKERConsensus instance."""
+        return MAKERConsensus(ahead_by_k=2, min_votes=3)
 
-    def test_register_actor_class(self, factory):
-        """Test registering an actor class."""
-        factory.register_actor_class("mock-actor", MockAgentActor)
-        assert "mock-actor" in factory.get_registered_types()
+    def test_start_consensus(self, basic_maker):
+        """Test starting a consensus process."""
+        basic_maker.start_consensus("test-decision")
 
-    @pytest.mark.asyncio
-    async def test_spawn_actor_stores_config(self, supervisor):
-        """Test that spawn_actor stores actor configuration."""
-        await supervisor.spawn_actor(MockAgentActor, "test-actor", name="Test")
-        assert "test-actor" in supervisor.actors
+        assert "test-decision" in basic_maker.active_processes
+        assert basic_maker.process_states["test-decision"] == ConsensusState.GATHERING
+
+    def test_add_vote(self, basic_maker):
+        """Test adding a vote."""
+        basic_maker.start_consensus("test")
+        basic_maker.add_vote("test", "agent-1", "approve", 0.85)
+
+        assert len(basic_maker.active_processes["test"]) == 1
 ```
 
-**Function-based (acceptable for simple tests):**
+### Async Tests
+
 ```python
-def test_actor_config_default_capabilities():
-    """Test that capabilities defaults to empty list."""
-    config = ActorConfig(actor_type="mock", class_ref=MockAgentActor, init_kwargs={})
-    assert config.capabilities == []
+@pytest.mark.asyncio
+async def test_actor_spawn_and_terminate(test_actor):
+    """Test actor lifecycle."""
+    await test_actor.spawn()
+    assert test_actor.state == ActorState.ACTIVE
+
+    await test_actor.terminate()
+    assert test_actor.state == ActorState.TERMINATED
 ```
 
-### TypeScript Test Structure
+### Error Handling Tests
 
-**Vitest with Testing Library:**
-```typescript
-describe('getHandleColor', () => {
-  it('should return green for event channel type', () => {
-    expect(getHandleColor('event')).toBe('#10B981');
-  });
-
-  it('should return blue for command channel type', () => {
-    expect(getHandleColor('command')).toBe('#3B82F6');
-  });
-});
-
-describe('useAgentHandles', () => {
-  beforeEach(() => {
-    vi.clearAllMocks();
-  });
-
-  it('should fetch channel subscriptions on mount', async () => {
-    mockFetch.mockResolvedValueOnce({
-      ok: true,
-      json: async () => ({ subscriptions: [], total: 0 }),
-    });
-
-    const { result } = renderHook(() =>
-      useAgentHandles({ agentId: 'agent-123', enabled: true, pollingInterval: 0 })
-    );
-
-    await waitFor(() => {
-      expect(result.current.isLoading).toBe(false);
-    });
-  });
-});
+```python
+def test_init_invalid_mailbox_size():
+    """Test that invalid mailbox size raises error."""
+    with pytest.raises(ValueError, match="max_mailbox_size must be positive"):
+        AgentActor(max_mailbox_size=0)
 ```
 
 ## Running Tests
-
-### Python
 
 ```bash
 # All tests
 pytest tests/
 
 # Specific directory
-pytest tests/unit/
+pytest tests/consensus/
 
 # With coverage
 pytest tests/ --cov=src --cov-report=term-missing
@@ -357,129 +353,31 @@ pytest tests/ --cov=src --cov-report=term-missing
 # Specific marker
 pytest tests/ -m unit
 
-# Async tests
-pytest tests/ -m asyncio
-
 # Parallel execution
 pytest tests/ -n auto
 
-# Watch mode (during development)
-pytest tests/ --watch
+# Verbose output
+pytest tests/ -v
+
+# Stop on first failure
+pytest tests/ -x
 ```
 
-### TypeScript/Frontend
+## CI/CD Commands
 
+From `CLAUDE.md`:
 ```bash
-# Run tests (via package.json)
-npm test
-
-# Build with type checking
-npm run build
-
-# Lint
-npm run lint
-```
-
-## Performance Baselines
-
-From `conftest.py`:
-- **Message Latency:** <100ms baseline
-- **Concurrent Agent Target:** 1,000+ agents
-- **Coverage Threshold:** 80%
-
-```python
-MESSAGE_LATENCY_BASELINE_MS = 100
-CONCURRENT_AGENT_TARGET = 1000
-COVERAGE_THRESHOLD = 80
-```
-
-## Test Data
-
-**Fixtures Location:** `tests/fixtures/`
-
-```python
-# tests/fixtures/test_data.py
-@pytest.fixture
-def sample_agent_state():
-    """Sample agent state for testing."""
-    return {
-        "agent_id": "test-agent",
-        "status": "active",
-        "current_task": "processing",
-        "memory_context": {},
-    }
-```
-
-## CI/CD Testing Pipeline
-
-**Python Commands (from package.json verification):**
-```bash
+# Python verification
 pytest tests/
 ruff check src tests
 mypy src
-```
 
-**Frontend Commands:**
-```bash
+# Frontend verification
 npm test
 npm run lint
 npm run build
 ```
 
-## Common Test Patterns
-
-### Testing Async Code (Python)
-
-```python
-@pytest.mark.asyncio
-async def test_actor_spawn_and_terminate():
-    """Test actor lifecycle."""
-    actor = AgentActor(agent_id="test-actor")
-    await actor.spawn()
-    assert actor.state == ActorState.ACTIVE
-    await actor.terminate()
-    assert actor.state == ActorState.TERMINATED
-```
-
-### Testing Error Handling (Python)
-
-```python
-@pytest.mark.asyncio
-async def test_spawn_invalid_config():
-    """Test that invalid config raises error."""
-    with pytest.raises(ValueError, match="max_mailbox_size must be positive"):
-        AgentActor(agent_id="test", max_mailbox_size=-1)
-```
-
-### Testing React Components (TypeScript)
-
-```typescript
-// Placeholder tests in useAgentHandles.test.tsx
-// Note: Full component tests require @testing-library/react with jsdom
-/*
-import { render, screen } from '@testing-library/react';
-import { DynamicHandles } from '../../components/WorkflowBuilder/DynamicHandles';
-
-describe('DynamicHandles Component', () => {
-  it('should render default handles when no subscriptions', () => {
-    render(<DynamicHandles handles={[]} />);
-    expect(document.querySelectorAll('.react-flow__handle')).toHaveLength(2);
-  });
-});
-*/
-```
-
-## Test Isolation
-
-**Python:**
-- Each test gets fresh fixtures via function scope
-- Mock state cleanup via `autouse=True` fixtures
-- Database/async cleanup handled by fixtures
-
-**TypeScript:**
-- `beforeEach(() => vi.clearAllMocks())` clears mocks between tests
-- Each `renderHook` gets fresh state
-
 ---
 
-*Testing analysis: 2026-04-12*
+*Testing analysis: 2026-04-13*

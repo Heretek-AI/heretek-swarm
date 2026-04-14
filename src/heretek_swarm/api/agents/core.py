@@ -51,8 +51,8 @@ async def list_available_agents(
             "total": len(agent_types),
         }
     except Exception as e:
-        logger.error(f"Failed to list available agents: {e}", exc_info=True)
-        raise HTTPException(500, f"Failed to list available agents: {e!s}")
+        logger.exception("Failed to list available agents: %s", e)
+        raise HTTPException(500, f"Failed to list available agents: {e!s}") from None
 
 
 @router.get("/types/{agent_type}")
@@ -133,8 +133,8 @@ async def deploy_agent(
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Failed to deploy agent: {e}", exc_info=True)
-        raise HTTPException(500, f"Failed to deploy agent: {e!s}")
+        logger.exception("Failed to deploy agent: %s", e)
+        raise HTTPException(500, f"Failed to deploy agent: {e!s}") from None
 
 
 @router.delete("/{instance_id}")
@@ -166,8 +166,8 @@ async def remove_agent(
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Failed to remove agent: {e}", exc_info=True)
-        raise HTTPException(500, f"Failed to remove agent: {e!s}")
+        logger.exception("Failed to remove agent: %s", e)
+        raise HTTPException(500, f"Failed to remove agent: {e!s}") from None
 
 
 # =============================================================================

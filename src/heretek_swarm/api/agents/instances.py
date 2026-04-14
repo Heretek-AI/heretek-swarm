@@ -1,7 +1,9 @@
 # =============================================================================
 """Agent instances endpoints."""
 
+from datetime import UTC, datetime
 from enum import StrEnum
+from typing import Annotated
 
 import structlog
 from fastapi import APIRouter, Depends, HTTPException
@@ -22,9 +24,9 @@ def get_registry() -> EnhancedAgentRegistry:
 
 @router.get("/instances")
 async def list_agent_instances(
-    agent_type: str | None = None,
     registry: Annotated[EnhancedAgentRegistry, Depends(get_registry)],
     authenticated: Annotated[str, Depends(verify_auth)],
+    agent_type: str | None = None,
 ):
     """
     List all deployed agent instances.
@@ -52,8 +54,8 @@ async def list_agent_instances(
             "total": len(instances),
         }
     except Exception as e:
-        logger.error(f"Failed to list instances: {e}", exc_info=True)
-        raise HTTPException(500, f"Failed to list instances: {e!s}")
+        logger.exception("Failed to list instances: %s", e)
+        raise HTTPException(500, f"Failed to list instances: {e!s}") from None
 
 
 @router.get("/{instance_id}")
@@ -86,7 +88,7 @@ async def get_agent_instance(
                 "last_activity": status.last_activity,
             }
         except Exception as e:
-            logger.warning(f"Failed to get actor status: {e}")
+            logger.warning("Failed to get actor status: %s", e)
 
     return {
         "instance_id": instance.instance_id,
@@ -105,9 +107,9 @@ async def get_agent_instance(
 @router.get("/{instance_id}/logs")
 async def get_agent_logs(
     instance_id: str,
-    limit: int = 100,
     registry: Annotated[EnhancedAgentRegistry, Depends(get_registry)],
     authenticated: Annotated[str, Depends(verify_auth)],
+    limit: int = 100,
 ):
     """
     Get agent-specific logs.
@@ -176,8 +178,8 @@ async def get_registry_stats(
     try:
         return registry.get_registry_stats()
     except Exception as e:
-        logger.error(f"Failed to get registry stats: {e}", exc_info=True)
-        raise HTTPException(500, f"Failed to get registry stats: {e!s}")
+        logger.exception("Failed to get registry stats: %s", e)
+        raise HTTPException(500, f"Failed to get registry stats: {e!s}") from None
 
 
 # =============================================================================
@@ -270,7 +272,10 @@ async def get_agent_channels(
                     channelType=ChannelType.EVENT,  # Default type
                     direction=ChannelDirection.BIDIRECTIONAL,  # Default direction
                     description=channel.description,
-                    subscribedAt=channel_registry.get_stats(channel.name).get("created_at", "") if channel_registry.get_stats(channel.name) else "",
+                    subscribedAt=(
+                        channel_registry.get_stats(channel.name).get("created_at", "")
+                        if channel_registry.get_stats(channel.name) else ""
+                    ),
                 ))
 
         return ChannelSubscriptionsListResponse(
@@ -279,8 +284,8 @@ async def get_agent_channels(
             total=len(subscription_list),
         )
     except Exception as e:
-        logger.error(f"Failed to get agent channels: {e}", exc_info=True)
-        raise HTTPException(500, f"Failed to get agent channels: {e!s}")
+        logger.exception("Failed to get agent channels: %s", e)
+        raise HTTPException(500, f"Failed to get agent channels: {e!s}") from None
 
 
 @router.post("/{instance_id}/channels")
@@ -331,8 +336,8 @@ async def add_agent_channel_subscription(
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Failed to add channel subscription: {e}", exc_info=True)
-        raise HTTPException(500, f"Failed to add channel subscription: {e!s}")
+        logger.exception("Failed to add channel subscription: %s", e)
+        raise HTTPException(500, f"Failed to add channel subscription: {e!s}") from None
 
 
 @router.delete("/{instance_id}/channels/{channel_name}")
@@ -375,8 +380,8 @@ async def remove_agent_channel_subscription(
     except HTTPException:
         raise
     except Exception as e:
-        logger.error(f"Failed to remove channel subscription: {e}", exc_info=True)
-        raise HTTPException(500, f"Failed to remove channel subscription: {e!s}")
+        logger.exception("Failed to remove channel subscription: %s", e)
+        raise HTTPException(500, f"Failed to remove channel subscription: {e!s}") from None
 
 
 # =============================================================================

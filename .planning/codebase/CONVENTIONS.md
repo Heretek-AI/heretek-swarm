@@ -1,384 +1,223 @@
 # Coding Conventions
 
-**Analysis Date:** 2026-04-12
+**Analysis Date:** 2026-04-13
 
-## Languages
+## Language and Style
 
-**Primary:**
-- Python 3.11+ - Backend, API, agents, swarm orchestration
-- TypeScript 5.2+ - React frontend dashboard
+**Python:**
+- Version: 3.12+ (from `.nvmrc` and pyproject.toml)
+- Style: PEP 8 with type annotations required on all function signatures
+- Formatter: `ruff format` (black-compatible)
+- Linter: `ruff check`
 
-**Secondary:**
-- JavaScript (ES2020 target) - Minimal, only where TypeScript not available
+**TypeScript/JavaScript:**
+- Framework: React with Vite
+- Style: ESLint + Prettier (configured in project)
 
-## Python Standards
+## Python Conventions
 
-### Style Guide
+### Type Annotations
 
-**Linting:** ruff (configured in `pyproject.toml`)
-- Target: Python 3.11
-- Line length: 100 characters
-- Selects: E, W, F, I, B, C4, UP, ARG, SIM, TCH, PTH, ERA, RUF, ASYNC, S, A, COM, DTZ, T10, EXE, FIX, FA, INT, ISC, ICN, G, INP, PIE, PYI, PT, Q, RSE, RET, SLF, SLOT, TID, T20, PERF
+All function signatures require type annotations:
 
-**Import Organization (isort):**
 ```python
-# Standard library
-import asyncio
-import uuid
-from collections.abc import Callable
-from dataclasses import dataclass, field
-
-# Third-party (pydantic, swarms, etc.)
-import structlog
-from pydantic import ValidationError
-from swarms import Agent
-
-# First-party (local application)
-import heretek_swarm.actors.stubs as _actor_stubs
-from heretek_swarm.actors.validation import validate_message
-from heretek_swarm.state.repository import AgentStateRecord, StateCheckpoint, StateRepository
-```
-
-**Type Checking:** mypy strict mode
-- `disallow_untyped_defs = true`
-- `disallow_incomplete_defs = true`
-- `check_untyped_defs = true`
-- Tests exempt: `tests.*` has `disallow_untyped_defs = false`
-
-### Naming Conventions
-
-| Element | Convention | Example |
-|---------|------------|---------|
-| Modules | snake_case | `agent_actor.py` |
-| Classes | PascalCase | `AgentActor`, `ActorConfig` |
-| Functions | snake_case | `validate_message`, `save_state` |
-| Variables | snake_case | `agent_id`, `message_count` |
-| Constants | UPPER_SNAKE_CASE | `MESSAGE_LATENCY_BASELINE_MS` |
-| Type aliases | PascalCase | `AgentHandle`, `ChannelType` |
-| Private attrs | _leading_underscore | `_state_repository` |
-| Internal vars | _avoid | Use descriptive names |
-
-### Code Patterns
-
-**Dataclasses for DTOs:**
-```python
-from dataclasses import dataclass, field
 from typing import Any
 
+def process_message(message: ActorMessage) -> None:
+    ...
+
+def get_state(key: str, default: str | None = None) -> str | None:
+    ...
+```
+
+### Data Classes
+
+Use dataclasses for structured data with `field()` for defaults:
+
+```python
+from dataclasses import dataclass, field
+from datetime import UTC, datetime
+
 @dataclass
-class ActorMessage:
-    sender: str
-    message_type: str
-    content: dict[str, Any]
+class AgentConfig:
+    agent_id: str
+    agent_type: str
+    capabilities: list[str] = field(default_factory=list)
+    reputation: float = 1.0
+    max_concurrent_tasks: int = 10
+```
+
+### Enums
+
+Use StrEnum for string-based enums:
+
+```python
+from enum import StrEnum
+
+class ConsensusState(StrEnum):
+    GATHERING = "gathering"
+    VOTING = "voting"
+    AGGREGATING = "aggregating"
+    COMPLETED = "completed"
+    FAILED = "failed"
+```
+
+### Immutability
+
+Prefer frozen dataclasses for immutable data:
+
+```python
+@dataclass(frozen=True)
+class Vote:
+    agent_id: str
+    decision: str
+    confidence: float
     timestamp: str
-    correlation_id: str | None = None
-    reply_to: str | None = None
-    recipient: str | None = None
     metadata: dict[str, Any] = field(default_factory=dict)
 ```
 
-**Pydantic for Configuration:**
-```python
-from pydantic import BaseModel, Field
-from datetime import UTC, datetime
-
-class UserConfiguration(BaseModel):
-    id: UUID = Field(default_factory=uuid4)
-    config_key: str = Field(..., min_length=1, max_length=255)
-    config_value: Any
-    is_sensitive: bool = Field(default=False)
-
-    class Config:
-        use_enum_values = True
-```
-
-**Async/Await:**
-```python
-async def spawn(self) -> None:
-    """Spawn the actor and start processing messages."""
-    self._running = True
-    self.state = ActorState.ACTIVE
-    self._processing_task = asyncio.create_task(self._process_mailbox())
-```
-
-**Logging (structlog):**
-```python
-import structlog
-
-structlog.configure(
-    processors=[
-        structlog.stdlib.filter_by_level,
-        structlog.stdlib.add_logger_name,
-        structlog.stdlib.add_log_level,
-        structlog.processors.TimeStamper(fmt="iso"),
-        structlog.processors.StackInfoRenderer(),
-        structlog.processors.format_exc_info,
-        structlog.processors.JSONRenderer(),
-    ],
-)
-
-logger = structlog.get_logger("AgentActor")
-```
-
-**Error Handling:**
-```python
-try:
-    result = await handler(message)
-except Exception as e:
-    logger.error(
-        f"[{self.agent_id}] Error in handler: {e}",
-        exc_info=True,
-    )
-    self.error_count += 1
-```
-
-## TypeScript/React Standards
-
-### Style Guide
-
-**Linting:** eslint with TypeScript plugin
-- Strict mode enabled
-- No unused locals or parameters
-- Module: ESNext
-- JSX: react-jsx
-
-**Formatting:** Project uses Vite build system
-
-### Naming Conventions
+## Naming Conventions
 
 | Element | Convention | Example |
 |---------|------------|---------|
-| Components | PascalCase | `AgentCard.tsx`, `Dashboard.tsx` |
-| Hooks | camelCase + use prefix | `useAgentHandles`, `useWebSocket` |
-| Interfaces/Types | PascalCase | `AgentHandle`, `ChannelSubscription` |
-| Functions | camelCase | `getHandleColor`, `formatUser` |
-| Variables | camelCase | `agentId`, `isLoading` |
-| Constants | UPPER_SNAKE_CASE | `MAX_RETRIES` |
-| Files (components) | PascalCase.tsx | `AgentCard.tsx` |
-| Files (hooks/utils) | camelCase.ts | `useAgentHandles.ts` |
-| CSS/Tailwind | kebab-case | `bg-blue-500`, `flex-row` |
+| Files | snake_case | `test_base_actor.py`, `state_repository.py` |
+| Classes | PascalCase | `AgentActor`, `MAKERConsensus` |
+| Functions/methods | snake_case | `get_state()`, `add_vote()` |
+| Constants | UPPER_SNAKE_CASE | `MESSAGE_LATENCY_BASELINE_MS` |
+| Private methods | _snake_case | `_check_red_flags()` |
+| Module-level vars | UPPER_SNAKE_CASE | `COVERAGE_THRESHOLD = 80` |
 
-### Code Patterns
+## Import Organization
 
-**TypeScript Interfaces for Props:**
-```typescript
-export interface AgentHandle {
-  id: string;
-  type: 'source' | 'target';
-  position: Position;
-  channelName: string;
-  channelType: ChannelType;
-  dataType?: string;
-  description?: string;
-}
+Standard library first, then third-party, then local:
 
-interface UseAgentHandlesResult {
-  handles: AgentHandle[];
-  subscriptions: ChannelSubscription[];
-  isLoading: boolean;
-  error: Error | null;
-  addSubscription: (subscription: Omit<ChannelSubscription, 'subscribedAt'>) => Promise<void>;
-  removeSubscription: (channelName: string) => Promise<void>;
-}
-```
-
-**Custom Hooks:**
-```typescript
-export function useAgentHandles({
-  agentId,
-  enabled = true,
-  pollingInterval = 30000,
-  apiUrl = '',
-}: UseAgentHandlesOptions): UseAgentHandlesResult {
-  const [handles, setHandles] = useState<AgentHandle[]>([]);
-  const [subscriptions, setSubscriptions] = useState<ChannelSubscription[]>([]);
-  // ...
-}
-```
-
-**Async Error Handling:**
-```typescript
-async function fetchSubscriptions() {
-  try {
-    const response = await fetch(`${apiUrl}/api/agents/${agentId}/channels`);
-    if (!response.ok) {
-      throw new Error(`Failed: ${response.statusText}`);
-    }
-    const data = await response.json();
-    setSubscriptions(data.subscriptions || []);
-  } catch (err) {
-    const error = err instanceof Error ? err : new Error('Unknown error');
-    setError(error);
-  }
-}
-```
-
-**State Management (Zustand):**
-```typescript
-// From stores/canvasStore.ts
-import { create } from 'zustand';
-
-interface CanvasState {
-  nodes: Node[];
-  edges: Edge[];
-  addNode: (node: Node) => void;
-}
-
-export const useCanvasStore = create<CanvasState>((set) => ({
-  nodes: [],
-  edges: [],
-  addNode: (node) => set((state) => ({ nodes: [...state.nodes, node] })),
-}));
-```
-
-## Git Workflow
-
-**Branch:** main (default)
-
-**Commit Format:**
-```
-<type>: <description>
-
-<optional body>
-```
-
-Types: feat, fix, refactor, docs, test, chore, perf, ci
-
-**Example:**
-```
-feat: add actor restart mechanism
-
-- Implement _attempt_restart in ActorSupervisor
-- Add restart_counts tracking per actor
-- Handle max_restarts exceeded case
-```
-
-**Pre-commit Checks:**
-```bash
-# Python
-pytest tests/
-ruff check src tests
-mypy src
-
-# TypeScript
-npm run lint
-npm run build
-```
-
-## Documentation Standards
-
-**Docstrings (Python):**
 ```python
-async def spawn(self) -> None:
-    """
-    Spawn the actor and start processing messages.
+# Standard library
+import asyncio
+from dataclasses import dataclass, field
+from typing import Any
 
-    This method:
-    1. Sets actor state to ACTIVE
-    2. Starts mailbox processing loop
-    3. Starts heartbeat loop
-    4. Calls initialize() hook for subclass setup
-    5. Loads state from database if configured
+# Third-party
+import pytest
+import structlog
 
-    Raises:
-        Exception: If spawn fails
-    """
+# Local application
+from heretek_swarm.actors.base import AgentActor
+from heretek_swarm.state.repository import StateRepository
 ```
 
-**TSDoc (TypeScript):**
-```typescript
-/**
- * Hook for managing dynamic agent handles
- *
- * Fetches agent channel subscriptions from API and creates dynamic handles
- * for input/output connections based on channel types.
- *
- * @param agentId - The unique agent identifier
- * @param enabled - Whether to enable fetching
- * @param pollingInterval - Polling interval in milliseconds
- */
-export function useAgentHandles({ agentId, enabled, pollingInterval }: UseAgentHandlesOptions) {
-  // implementation
-}
-```
+## Logging
 
-**Inline Comments:**
+Use `structlog` for structured logging:
+
 ```python
-# P1-10e fix: Add retry logic for message queuing instead of dropping
-for attempt in range(max_retries):
+import structlog
+
+logger = structlog.get_logger(__name__)
+
+logger.info("consensus_started", consensus_id="test-1", agent_count=3)
+logger.warning("unknown_consensus_id", consensus_id="nonexistent")
+```
+
+**Do not use** `print()` statements - use logging instead.
+
+## Error Handling
+
+- Use validation with Pydantic models for message content
+- Raise `ValueError` with descriptive messages for invalid input
+- Log errors with context before raising
+
+```python
+def _validate_message_content(self, message_type: str, content: dict[str, Any]) -> Any:
+    """Validate message content against registered validator."""
+    if message_type not in self._validators:
+        return content  # Unknown types pass through
+
+    validator = self._validators[message_type]
     try:
-        await asyncio.wait_for(self.mailbox.put(message), timeout=5.0)
+        return validator(**content)
+    except Exception as e:
+        raise ValueError(f"Invalid content for {message_type}: {e}")
+```
+
+## Async Code
+
+- Use `async def` for all asynchronous functions
+- Use `pytest-asyncio` for async tests with `@pytest.mark.asyncio`
+- Always handle cleanup in fixtures with yield:
+
+```python
+@pytest_asyncio.fixture
+async def connected_nats(mock_nats: MockNATSEventMesh) -> MockNATSEventMesh:
+    await mock_nats.connect()
+    yield mock_nats
+    await mock_nats.disconnect()
 ```
 
 ## File Organization
 
-**Python:** Organize by feature/domain
-```
-src/heretek_swarm/
-├── actors/           # Agent implementations
-│   ├── base.py      # Base AgentActor class
-│   ├── factory.py   # Actor factory
-│   ├── mixins/      # Reusable behaviors
-│   └── [agent].py   # Individual agents
-├── api/             # FastAPI endpoints
-├── consciousness/   # Consciousness modules
-├── consensus/       # Consensus mechanisms
-└── ...
-```
+- **Source:** `src/heretek_swarm/` with module-based subdirectories
+- **Tests:** `tests/` organized by module/feature, mirror src structure
+- **Max file length:** ~800 lines; split large modules
 
-**TypeScript/React:** Organize by surface area
-```
-dashboard/frontend/src/
-├── components/
-│   ├── Agents/
-│   │   ├── AgentCard.tsx
-│   │   └── index.ts
-│   └── UI/
-├── hooks/
-│   ├── useAgentHandles.ts
-│   └── __tests__/
-├── stores/          # Zustand stores
-├── api/             # API client modules
-└── utils/           # Utilities
-```
+## Class Structure
 
-## Error Handling Patterns
+Base classes use mixin pattern for separation of concerns:
 
-**Python:**
 ```python
-# Always handle exceptions with logging
-try:
-    result = await operation()
-except Exception as e:
-    logger.error(f"Operation failed: {e}", exc_info=True)
-    raise
-
-# Use sentinel values sparingly
-# Prefer explicit error handling
+# src/heretek_swarm/actors/base.py - backward compatibility wrapper
+from heretek_swarm.actors.base.core import AgentActor
+from heretek_swarm.actors.base.message_handling import AgentActorMessageHandling
+from heretek_swarm.actors.base.state_management import AgentActorStateManagement
 ```
 
-**TypeScript:**
-```typescript
-// Always narrow unknown errors
-try {
-  const result = await riskyOperation();
-  return result;
-} catch (error: unknown) {
-  if (error instanceof Error) {
-    setError(error.message);
-  }
-  throw error;
-}
+## Linting Configuration
+
+From `pyproject.toml`:
+
+```toml
+[tool.ruff]
+target-python-version = "3.12"
+line-length = 100
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # Pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "C4",  # flake8-comprehensions
+    "UP",  # pyupgrade
+    "ARG", # flake8-unused-arguments
+    "SIM", # flake8-simplify
+    "TCH", # flake8-type-checking
+    "PTH", # flake8-use-pathlib
+    "ERA", # eradicate
+    "RUF", # Ruff-specific rules
+    "ASYNC", # flake8-async
+]
+ignore = ["ERA", "PTH"]
 ```
 
-## Configuration
+## Type Checking
 
-**Environment Variables:**
-- Python: Use pydantic settings or `os.environ` with validation
-- TypeScript: Use `import.meta.env.VITE_*` for Vite
+mypy configuration in `pyproject.toml`:
 
-**Secrets:** Never hardcode; use environment variables or secret managers
+```toml
+[tool.mypy]
+python_version = "3.12"
+strict = true
+disallow_untyped_defs = true
+disallow_incomplete_defs = true
+check_untyped_defs = true
+warn_return_any = true
+warn_unused_ignores = true
+
+[tool.mypy.tests]
+disallow_untyped_defs = false  # Tests exempt from strict typing
+```
 
 ---
 
-*Convention analysis: 2026-04-12*
+*Convention analysis: 2026-04-13*

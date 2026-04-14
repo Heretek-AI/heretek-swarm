@@ -1,176 +1,216 @@
 # Codebase Structure
 
-**Analysis Date:** 2026-04-12
+**Analysis Date:** 2026-04-13
 
 ## Directory Layout
 
 ```
-/home/john/Projects/heretek-swarm/
-├── src/                          # Python source code
-│   ├── heretek_swarm/            # Main package
-│   └── cli.py                    # CLI entry point
-├── tests/                        # Test suite
-├── dashboard/                    # React frontend
-├── docker/                       # Docker configurations
-├── k8s/                         # Kubernetes manifests
-├── migrations/                   # Database migrations
-├── scripts/                      # Utility scripts
-├── docs/                         # Documentation
-└── [config files]                # pyproject.toml, package.json, etc.
+heretek-swarm/
+├── src/
+│   └── heretek_swarm/
+│       ├── actors/           # Tiered agent system (23 agents)
+│       ├── api/              # FastAPI endpoints
+│       ├── collective/      # Collective intelligence
+│       ├── consensus/       # MAKER consensus protocol
+│       ├── gateway/          # A2A protocol server
+│       ├── infrastructure/  # NATS, OpenTelemetry
+│       ├── memory/           # Memory system
+│       ├── runtime/         # Agent runtime, characters, tools
+│       ├── channels/         # Message channels
+│       ├── config/           # Configuration management
+│       ├── consciousness/   # Consciousness metrics
+│       ├── embeddings/       # Embedding providers
+│       ├── evaluation/      # Evaluation metrics
+│       ├── integrations/    # Third-party integrations
+│       ├── interfaces/      # Interface definitions
+│       ├── knowledge/       # Knowledge management
+│       ├── llm/              # LLM integrations
+│       ├── logging/          # Logging setup
+│       ├── mcp/              # MCP protocol
+│       ├── observability/    # Observability tools
+│       ├── orchestration/    # Workflow orchestration
+│       ├── plugins/          # Plugin system
+│       ├── rag/              # RAG functionality
+│       ├── routing/          # Message routing
+│       ├── security/         # Security utilities
+│       ├── state/            # State management
+│       ├── tools/            # Tool definitions
+│       ├── utils/            # Utilities
+│       ├── validation/       # Validation utilities
+│       └── workflow/         # Workflow definitions
+├── tests/                    # Test suite
+├── docker-compose.yml         # Container orchestration
+├── pyproject.toml           # Project configuration
+└── src/cli.py               # CLI entry point
 ```
 
 ## Directory Purposes
 
-**Source (`src/heretek_swarm/`):**
-- Purpose: Main Python package containing all application code
-- Contains: actors, api, collective, config, consciousness, consensus, memory, security, etc.
-- Key files: `__init__.py`, api/main.py, actors/base.py
+**actors/**
+- Purpose: Multi-agent system implementation
+- Contains: 23 agent implementations organized in tiers, base classes, mixins, factory, supervisor
+- Key files:
+  - `base/core.py` - AgentActor base class
+  - `base/state_management.py` - State mixin
+  - `base/message_handling.py` - Message handling mixin
+  - `factory.py` - ActorFactory for actor registration/creation
+  - `supervisor.py` - ActorSupervisor for lifecycle
+  - `triad.py` - Tier 1 core agents (Steward, Alpha, Beta, Charlie)
+  - `arbiter/` - Safety and validation agents
 
-**Actors (`src/heretek_swarm/actors/`):**
-- Purpose: Agent implementations and base classes
-- Contains: AgentActor base, specialized agents (Alpha, Beta, Coordinator, etc.), mixins, supervisor, factory
-- Key files: `base.py`, `supervisor.py`, `factory.py`
+**api/**
+- Purpose: FastAPI REST/WebSocket API
+- Contains: Agent management, metrics, consensus endpoints, workflows, autonomous operations
+- Key files:
+  - `main.py` - FastAPI application entry
+  - `agents/core.py` - Core agent API types
+  - `agents/instances.py` - Agent instance management
+  - `agents/lifecycle.py` - Agent lifecycle endpoints
+  - `agents/routing_control.py` - Routing management
+  - `agents/routing_rules.py` - Routing rules
+  - `agents/jetstream.py` - JetStream integration
+  - `agents/profiling.py` - Agent profiling
+  - `websocket.py` - WebSocket handling
+  - `autonomous.py` - Autonomous mode endpoints
+  - `rate_limiting.py` - Rate limiting middleware
 
-**API (`src/heretek_swarm/api/`):**
-- Purpose: HTTP/WebSocket gateway and REST endpoints
-- Contains: main.py, websockets.py, agents/, workflows.py, consensus.py, consciousness.py
-- Key files: `main.py` (FastAPI app), `websockets.py`
+**collective/**
+- Purpose: Collective intelligence and emergent behavior
+- Contains: Emergence detection, pattern library, distributed learning, agency tracking, metrics
+- Key files:
+  - `emergence_analyzer.py` - Emergence analysis
+  - `emergent_detection.py` - Pattern detection
+  - `pattern_library.py` - Pattern storage and retrieval
+  - `agent_adaptation.py` - Agent adaptation
+  - `distributed_learning.py` - Cross-agent learning
+  - `agency_tracking.py` - Agency metrics
+  - `metrics.py` - Collective metrics
+  - `society.py` - AgentSociety implementation
 
-**Collective (`src/heretek_swarm/collective/`):**
-- Purpose: Swarm intelligence and emergent behavior
-- Contains: swarm_intelligence.py, emergence_detection.py, adaptive_learning.py, agency_tracking.py
-- Key files: `swarm_intelligence.py`
+**consensus/**
+- Purpose: MAKER consensus protocol implementation
+- Contains: Deliberation, expertise weighting, tribunal, audit trail, Raft election
+- Key files:
+  - `maker.py` - MAKERConsensus main implementation
+  - `deliberation.py` - Deliberation process
+  - `tribunal.py` - Tribunal for disputes
+  - `audit.py`, `audit_trail.py` - Audit logging
+  - `expertise.py` - Expertise weighting
 
-**Memory (`src/heretek_swarm/memory/`):**
-- Purpose: Persistent memory storage
-- Contains: persistent.py, mem0 integration
-- Key files: `persistent.py`
+**gateway/**
+- Purpose: A2A protocol server and routing
+- Contains: A2A server, protocol handler, auth, event mesh, content router
+- Key files:
+  - `a2a_server.py` - Main A2A server
+  - `a2a_protocol.py` - A2A protocol definitions
+  - `auth.py` - Authentication
+  - `event_mesh.py` - Event distribution
+  - `content_router.py` - Message routing
 
-**Security (`src/heretek_swarm/security/`):**
-- Purpose: Authentication, authorization, guardrails
-- Contains: zero_trust.py, guardrails.py, adversarial.py, ddos_protection.py
-- Key files: `zero_trust.py`
+**infrastructure/**
+- Purpose: Low-level infrastructure components
+- Contains: NATS client/consensus/memory_sync, OpenTelemetry
+- Key files:
+  - `nats/client.py` - NATS connection
+  - `nats/consensus.py` - NATS consensus
+  - `nats/memory_sync.py` - Memory synchronization
+  - `a2a/protocol.py` - A2A protocol
+  - `otel/logging.py` - OpenTelemetry setup
 
-**Consciousness (`src/heretek_swarm/consciousness/`):**
-- Purpose: Agent self-modeling and introspection
-- Contains: iit_phi.py, introspection.py, fep_active_inference.py, self_model.py
+**memory/**
+- Purpose: Persistent memory for agents
+- Contains: Memory system base classes
 
-**Consensus (`src/heretek_swarm/consensus/`):**
-- Purpose: Multi-agent deliberation and consensus
-- Contains: deliberation.py, tribunal.py, maker_enhanced.py
+**runtime/**
+- Purpose: Agent execution context
+- Contains: AgentRuntime, AgentContext, Character system, ToolRegistry
+- Key files:
+  - `agent_runtime.py` - Runtime context
+  - `characters.py` - Character definitions
+  - `tools.py` - Tool registry
 
-**Infrastructure (`src/heretek_swarm/infrastructure/`):**
-- Purpose: Cross-cutting infrastructure services
-- Contains: NATS event mesh, database connections
-
-**Logging (`src/heretek_swarm/logging/`):**
-- Purpose: Structured logging configuration
-- Contains: config.py for structlog setup
-
-**Observability (`src/heretek_swarm/observability/`):**
-- Purpose: Metrics and distributed tracing
-- Contains: prometheus_metrics.py, tracing.py
-
-**Gateway (`src/heretek_swarm/gateway/`):**
-- Purpose: Authentication and request gateway
-- Contains: auth.py (Bearer token auth)
-
-**Tests (`tests/`):**
-- Purpose: Test suite organized by type
-- Contains: unit/, integration/, load/, fixtures/, various domain folders
-- Pattern: Tests mirror source structure under `tests/`
-
-**Dashboard (`dashboard/`):**
-- Purpose: React frontend application
-- Contains: frontend/ (Vite + React application)
+**plugins/**
+- Purpose: Extensibility system
+- Contains: Consciousness and liberation plugins
 
 ## Key File Locations
 
 **Entry Points:**
-- `src/cli.py`: CLI application entry point
-- `src/heretek_swarm/api/main.py`: FastAPI application factory
-- `dashboard/frontend/src/main.tsx`: React application entry point
+- `src/cli.py` - CLI commands (deploy, update, status)
+- `src/heretek_swarm/api/main.py` - FastAPI app initialization
 
 **Configuration:**
-- `pyproject.toml`: Python package configuration and dependencies
-- `package.json`: Node.js dependencies and scripts
-- `config.example.json`: Configuration template
-- `.env.example`: Environment variables template
-- `vite.config.ts`: Vite bundler configuration
+- `pyproject.toml` - Python project configuration
+- `src/heretek_swarm/config/` - Configuration loaders
 
-**Actor Base:**
-- `src/heretek_swarm/actors/base.py`: AgentActor base class (1528 lines)
-- `src/heretek_swarm/actors/supervisor.py`: ActorSupervisor for actor management
+**Core Logic:**
+- `src/heretek_swarm/actors/base/core.py` - AgentActor base
+- `src/heretek_swarm/actors/factory.py` - Actor factory
+- `src/heretek_swarm/consensus/maker.py` - MAKER consensus
+- `src/heretek_swarm/gateway/a2a_server.py` - A2A server
 
-**API Routes:**
-- `src/heretek_swarm/api/main.py`: Main FastAPI app with all routers included
-- `src/heretek_swarm/api/websockets.py`: WebSocket handling (44514 bytes)
-- `src/heretek_swarm/api/consensus.py`: Consensus endpoints
-- `src/heretek_swarm/api/consciousness.py`: Consciousness endpoints
-- `src/heretek_swarm/api/wizard.py`: Configuration wizard endpoints
+**Testing:**
+- `tests/` - Test suite (pytest based)
 
 ## Naming Conventions
 
 **Files:**
-- Python: `snake_case.py`
-- TypeScript/React: `PascalCase.tsx` for components, `camelCase.ts` for utilities
-- Config: `kebab-case.extension`
+- Python modules: `snake_case.py`
+- Test files: `test_*.py` or `*_test.py`
+- Mixin modules: `*_mixin.py` (in `mixins/` subdirectory)
 
 **Directories:**
-- Python modules: `snake_case/`
-- TypeScript: `camelCase/` or `kebab-case/`
+- Package directories: `snake_case/`
 
 **Classes:**
-- PascalCase: `AgentActor`, `ActorSupervisor`, `SwarmIntelligenceEngine`
+- PascalCase: `AgentActor`, `ActorFactory`, `MAKERConsensus`
+- Mixins: `*Mixin` suffix: `AgentActorStateManagement`
+
+**Functions:**
+- snake_case: `create_actor()`, `get_factory()`
 
 ## Where to Add New Code
 
 **New Agent:**
-- Implementation: `src/heretek_swarm/actors/[agent_name].py`
-- Tests: `tests/actors/test_[agent_name].py`
-- Register in: `src/heretek_swarm/actors/factory.py`
+- Primary code: `src/heretek_swarm/actors/<agent_name>.py`
+- Tests: `tests/test_<agent_name>.py`
+- Register in `src/heretek_swarm/actors/__init__.py`
 
 **New API Endpoint:**
-- Implementation: `src/heretek_swarm/api/[feature].py`
-- Router registration: `src/heretek_swarm/api/main.py`
-- Tests: `tests/integration/test_[feature].py`
+- Implementation: `src/heretek_swarm/api/<feature>.py`
+- Register routes in `src/heretek_swarm/api/main.py`
 
-**New Collective Algorithm:**
-- Implementation: `src/heretek_swarm/collective/[algorithm].py`
-- Tests: `tests/collective/test_[algorithm].py`
+**New Consensus/Collective Feature:**
+- Consensus: `src/heretek_swarm/consensus/<feature>.py`
+- Collective: `src/heretek_swarm/collective/<feature>.py`
 
-**New Security Component:**
-- Implementation: `src/heretek_swarm/security/[component].py`
-- Tests: `tests/security/test_[component].py`
+**New Infrastructure (NATS/OpenTelemetry):**
+- Location: `src/heretek_swarm/infrastructure/<component>/`
 
-**New Frontend Component:**
-- Implementation: `dashboard/frontend/src/components/[Feature]/`
-- Tests: `dashboard/frontend/src/components/[Feature]/*.test.tsx`
+**New Mixin for AgentActor:**
+- Location: `src/heretek_swarm/actors/base/<feature>.py`
+- Import in `src/heretek_swarm/actors/base/core.py` or `__init__.py`
 
 ## Special Directories
 
-**Node Modules (`node_modules/`):**
-- Purpose: NPM dependencies
-- Generated: Yes
-- Committed: No
+**actors/mixins/**
+- Purpose: Reusable behavior compositions for agents
+- Contains: `pattern.py`, `tribunal.py`, `memory.py`, `learning.py`, `memory_access.py`, `health_reporting.py`, `deliberation.py`
+- Pattern: Mixin classes that add capabilities to AgentActor
 
-**Python Cache (`__pycache__/`):**
-- Purpose: Python bytecode cache
-- Generated: Yes
-- Committed: No
+**collective/**
+- Purpose: Emergent intelligence and collective behavior
+- Generated: No
+- Committed: Yes
 
-**Test Fixtures (`tests/fixtures/`):**
-- Purpose: Shared test data and fixtures
-- Contains: `conftest.py`, factory fixtures
+**infrastructure/a2a/**
+- Purpose: A2A protocol definitions separate from server implementation
+- Contains: `protocol.py` with A2AMessage, A2AMessageType, A2AProtocol
 
-**Docker (`docker/`):**
-- Purpose: Docker-related configurations
-- Contains: Dockerfiles, docker-compose files
-
-**Kubernetes (`k8s/`):**
-- Purpose: K8s deployment manifests
-- Contains: Service, deployment, ingress YAMLs
+**runtime/characters/**
+- Purpose: JSON character definitions for agents
+- Format: JSON files with personality, goals, constraints
 
 ---
 
-*Structure analysis: 2026-04-12*
+*Structure analysis: 2026-04-13*
