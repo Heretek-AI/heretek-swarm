@@ -10,7 +10,8 @@ The Steward is the primary coordinator for the Triad, responsible for:
 - Overseeing resource allocation
 """
 
-from datetime import UTC, datetime
+import asyncio
+from datetime import UTC, datetime, timedelta
 from typing import Any
 
 import structlog
@@ -93,6 +94,11 @@ class StewardAgent(
         self._pattern_emitted: set[str] = set()
         self._active_deliberations: dict[str, str] = {}
 
+        self._agent_heartbeats: dict[str, str] = {}  # agent_id -> last heartbeat ISO timestamp
+        self._heartbeat_timeout: float = 15.0  # seconds before declaring failure
+        self._monitor_task: asyncio.Task | None = None
+        self._failed_agents: set[str] = set()
+
         logger.info(f"[{self.agent_id}] Steward agent initialized")
 
     async def initialize(self) -> None:
@@ -102,6 +108,9 @@ class StewardAgent(
         self.register_handler("request_decision", self._handle_request_decision)
         self.register_handler("report_status", self._handle_report_status)
         self.register_handler("policy_update", self._handle_policy_update)
+        self.register_handler("heartbeat", self._handle_agent_heartbeat)
+
+        self._monitor_task = asyncio.create_task(self._monitor_loop())
 
         logger.info(f"[{self.agent_id}] Steward initialization complete")
 
@@ -134,9 +143,7 @@ class StewardAgent(
                         correlation_id=message.correlation_id,
                     )
         else:
-            logger.warning(
-                f"[{self.agent_id}] Unhandled message type: {message.message_type}"
-            )
+            logger.warning(f"[{self.agent_id}] Unhandled message type: {message.message_type}")
 
     async def _handle_start_deliberation(self, message: ActorMessage) -> None:
         """Handle deliberation start requests with validation."""
@@ -150,18 +157,26 @@ class StewardAgent(
             else:
                 # Fallback to unvalidated access
                 # Support both deliberation_id/topic and session_id/problem field names
-                deliberation_id = message.content.get("deliberation_id") or message.content.get("session_id")
+                deliberation_id = message.content.get("deliberation_id") or message.content.get(
+                    "session_id"
+                )
                 topic = message.content.get("topic") or message.content.get("problem")
                 triad_members = message.content.get("triad_members", [])
 
                 if not deliberation_id or not topic:
                     # Auto-generate if missing
-                    deliberation_id = deliberation_id or f"del_{datetime.now(UTC).strftime('%Y%m%d_%H%M%S')}"
+                    deliberation_id = (
+                        deliberation_id or f"del_{datetime.now(UTC).strftime('%Y%m%d_%H%M%S')}"
+                    )
                     topic = topic or "unspecified"
         except (ValueError, Exception) as e:
             logger.warning(f"[{self.agent_id}] Deliberation validation issue, using fallback: {e}")
             # Fallback: support both deliberation_id/topic and session_id/problem field names
-            deliberation_id = message.content.get("deliberation_id") or message.content.get("session_id") or f"del_{datetime.now(UTC).strftime('%Y%m%d_%H%M%S')}"
+            deliberation_id = (
+                message.content.get("deliberation_id")
+                or message.content.get("session_id")
+                or f"del_{datetime.now(UTC).strftime('%Y%m%d_%H%M%S')}"
+            )
             topic = message.content.get("topic") or message.content.get("problem") or "unspecified"
             triad_members = message.content.get("triad_members", [])
 
@@ -175,9 +190,7 @@ class StewardAgent(
             "votes": {},
         }
 
-        logger.info(
-            f"[{self.agent_id}] Started deliberation {deliberation_id} on topic: {topic}"
-        )
+        logger.info(f"[{self.agent_id}] Started deliberation {deliberation_id} on topic: {topic}")
 
         # Notify triad members
         for member_id in triad_members:
@@ -203,18 +216,17 @@ class StewardAgent(
             phase_progression = {"alpha": "beta", "beta": "charlie", "charlie": "complete"}
             next_phase = phase_progression.get(current_phase, current_phase)
             self._deliberations[session_id]["phase"] = next_phase
-            logger.info(f"[{self.agent_id}] Deliberation {session_id} phase: {current_phase} -> {next_phase}")
+            logger.info(
+                f"[{self.agent_id}] Deliberation {session_id} phase: {current_phase} -> {next_phase}"
+            )
 
-        logger.info(
-            f"[{self.agent_id}] Processing decision request: {request_id}"
-        )
+        logger.info(f"[{self.agent_id}] Processing decision request: {request_id}")
 
         # Make executive decision or delegate to triad
         if self.swarms_agent:
             try:
                 decision = await self.run_with_llm(
-                    prompt=f"Make an executive decision on: {decision_context}",
-                    timeout=60
+                    prompt=f"Make an executive decision on: {decision_context}", timeout=60
                 )
                 await self.send(
                     topic="decisions",
@@ -271,8 +283,7 @@ class StewardAgent(
         """Handle policy update requests."""
         policy_id = message.content.get("policy_id")
         policy_data = message.content.get("policy_data") or {
-            k: v for k, v in message.content.items()
-            if k not in ("policy_id", "reply_to")
+            k: v for k, v in message.content.items() if k not in ("policy_id", "reply_to")
         }
 
         if policy_id:
@@ -341,3 +352,69 @@ class StewardAgent(
     def get_governance_policy(self, policy_id: str) -> dict[str, Any] | None:
         """Get a governance policy."""
         return self.governance_policies.get(policy_id)
+
+    async def _handle_agent_heartbeat(self, message: ActorMessage) -> None:
+        """Store heartbeat timestamps from monitored agents."""
+        agent_id = message.content.get("agent_id")
+        timestamp = message.content.get("timestamp")
+        if agent_id and timestamp:
+            self._agent_heartbeats[agent_id] = timestamp
+
+    def check_agent_health(self, agent_id: str) -> bool:
+        """Check if agent's last heartbeat is within timeout."""
+        if agent_id not in self._agent_heartbeats:
+            return False
+        last_hb = datetime.fromisoformat(self._agent_heartbeats[agent_id])
+        cutoff = datetime.now(UTC) - timedelta(seconds=self._heartbeat_timeout)
+        return last_hb >= cutoff
+
+    def detect_heartbeat_failure(self) -> list[str]:
+        """Return list of agent IDs with stale heartbeats."""
+        cutoff = datetime.now(UTC) - timedelta(seconds=self._heartbeat_timeout)
+        failed = []
+        for agent_id, ts_str in self._agent_heartbeats.items():
+            last_hb = datetime.fromisoformat(ts_str)
+            if last_hb < cutoff:
+                failed.append(agent_id)
+        return sorted(failed)
+
+    async def _monitor_loop(self) -> None:
+        """Periodically check for heartbeat failures."""
+        while self._running:
+            await asyncio.sleep(5.0)
+            if not self._running:
+                break
+            failed = self.detect_heartbeat_failure()
+            for agent_id in failed:
+                await self._handle_agent_failure(agent_id)
+
+    async def _handle_agent_failure(self, agent_id: str) -> None:
+        """Record and log an agent heartbeat failure."""
+        if agent_id in self._failed_agents:
+            return
+        self._failed_agents.add(agent_id)
+        self.error_count += 1
+        logger.warning(f"[{self.agent_id}] Heartbeat failure detected for agent: {agent_id}")
+
+    async def initiate_failover(self, agent_id: str) -> None:
+        """Send failover message via event mesh."""
+        logger.warning(f"[{self.agent_id}] Initiating failover for agent: {agent_id}")
+        await self.send(
+            topic="system.failover",
+            content={
+                "message_type": "failover_request",
+                "failed_agent_id": agent_id,
+                "steward_id": self.agent_id,
+                "timestamp": datetime.now(UTC).isoformat(),
+            },
+        )
+
+    async def _cancel_tasks(self) -> None:
+        """Cancel all running tasks including the heartbeat monitor."""
+        if self._monitor_task and not self._monitor_task.done():
+            self._monitor_task.cancel()
+            try:
+                await self._monitor_task
+            except asyncio.CancelledError:
+                pass
+        await super()._cancel_tasks()

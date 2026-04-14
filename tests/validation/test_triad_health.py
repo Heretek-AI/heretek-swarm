@@ -11,7 +11,7 @@ Validates success criteria from PLAN.md:
 
 import asyncio
 import time
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from unittest.mock import AsyncMock, MagicMock, patch
 
 import pytest
@@ -286,15 +286,7 @@ class TestTask2BaseClassHealthReporting:
 
     @pytest.mark.asyncio
     async def test_heartbeat_failure_detection_gap(self, mock_mesh, mock_llm):
-        """Criterion 2.3: Heartbeat failure detection < 10 seconds.
-
-        GAP ANALYSIS: The current _heartbeat_loop publishes heartbeats but
-        no component monitors for MISSED heartbeats. The StewardAgent does
-        not have heartbeat monitoring or failure detection logic.
-
-        This test documents the gap.
-        """
-        # Check if StewardAgent has heartbeat monitoring methods
+        """Criterion 2.3: Heartbeat failure detection < 10 seconds."""
         steward = _make_actor(StewardAgent, "steward-gap", mock_mesh, mock_llm)
 
         has_failure_detection = (
@@ -303,13 +295,13 @@ class TestTask2BaseClassHealthReporting:
             or hasattr(steward, "monitor_agents")
             or hasattr(steward, "_heartbeat_timeout")
         )
+        assert has_failure_detection
 
-        # This will fail until heartbeat monitoring is implemented
-        if not has_failure_detection:
-            pytest.skip(
-                "GAP: StewardAgent lacks heartbeat failure detection. "
-                "No monitor_agents/check_agent_health/detect_heartbeat_failure method."
-            )
+        assert steward.detect_heartbeat_failure() == []
+
+        old_timestamp = (datetime.now(UTC) - timedelta(seconds=30)).isoformat()
+        steward._agent_heartbeats["test_agent"] = old_timestamp
+        assert steward.detect_heartbeat_failure() == ["test_agent"]
 
     @pytest.mark.asyncio
     async def test_health_reporting_mixin_provides_status(self, mock_mesh, mock_llm):
@@ -356,30 +348,18 @@ class TestTask6StewardMonitoring:
 
     @pytest.mark.asyncio
     async def test_steward_heartbeat_failure_detection_gap(self, mock_mesh, mock_llm):
-        """Criterion 6.2: Detects heartbeat failure < 10 seconds.
-
-        GAP ANALYSIS: No proactive heartbeat monitoring exists in StewardAgent.
-        The Steward can receive status reports but does NOT actively monitor
-        for missed heartbeats or detect failures.
-        """
+        """Criterion 6.2: Detects heartbeat failure < 10 seconds."""
         steward = _make_actor(StewardAgent, "steward-gap2", mock_mesh, mock_llm)
 
-        # No heartbeat timeout tracking
         has_timeout_tracking = hasattr(steward, "_agent_heartbeats") or hasattr(
             steward, "_last_heartbeat_times"
         )
-        if not has_timeout_tracking:
-            pytest.skip(
-                "GAP: StewardAgent has no heartbeat timeout tracking. "
-                "No _agent_heartbeats or _last_heartbeat_times attribute."
-            )
+        assert has_timeout_tracking
+        assert isinstance(steward._agent_heartbeats, dict)
 
     @pytest.mark.asyncio
     async def test_steward_failover_gap(self, mock_mesh, mock_llm):
-        """Criterion 6.3: Initiates failover within 15 seconds.
-
-        GAP ANALYSIS: No failover initiation logic exists in StewardAgent.
-        """
+        """Criterion 6.3: Initiates failover within 15 seconds."""
         steward = _make_actor(StewardAgent, "steward-gap3", mock_mesh, mock_llm)
 
         has_failover = (
@@ -387,11 +367,12 @@ class TestTask6StewardMonitoring:
             or hasattr(steward, "_handle_agent_failure")
             or hasattr(steward, "failover_agent")
         )
-        if not has_failover:
-            pytest.skip(
-                "GAP: StewardAgent has no failover initiation mechanism. "
-                "No initiate_failover/_handle_agent_failure/failover_agent method."
-            )
+        assert has_failover
+
+        initial_errors = steward.error_count
+        await steward._handle_agent_failure("test_agent")
+        assert steward.error_count == initial_errors + 1
+        assert "test_agent" in steward._failed_agents
 
     @pytest.mark.asyncio
     async def test_steward_coordinates_triad_deliberation(self, spawned_steward, mock_mesh):

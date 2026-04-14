@@ -279,17 +279,18 @@ class NexusAgent(
             # ZERO-01: Apply hostile input sanitization before validation
             sanitized_content = await self._sanitize_input(message.content, message.sender)
             if sanitized_content is None:
-                # Input rejected by ZERO-01
-                return message.content
+                raise ValueError(f"Input rejected by sanitization from sender: {message.sender}")
             message.content = sanitized_content
 
             validated = validate_message(message.message_type, message.content)
             if hasattr(validated, "dict"):
                 return validated.dict()
             return validated
+        except ValueError:
+            raise  # Re-raise validation rejections
         except Exception as e:
-            logger.debug("nexus_message_parse_failed", error=str(e))
-            return message.content
+            logger.warning("nexus_message_validation_failed", error=str(e))
+            raise ValueError(f"Message validation failed: {e}") from e
 
     # =========================================================================
     # ZERO-01: Hostile Input Treatment

@@ -23,7 +23,13 @@ import structlog
 from pydantic import ValidationError
 
 from heretek_swarm.actors.base import ActorMessage, AgentActor
-from heretek_swarm.actors.mixins import DeliberationMixin, LearningMixin, MemoryMixin, PatternMixin
+from heretek_swarm.actors.mixins import (
+    DeliberationMixin,
+    HealthReportingMixin,
+    LearningMixin,
+    MemoryMixin,
+    PatternMixin,
+)
 from heretek_swarm.actors.validation import validate_message
 
 logger = structlog.get_logger("SentinelAgent")
@@ -31,6 +37,7 @@ logger = structlog.get_logger("SentinelAgent")
 
 class SafetyLevel(StrEnum):
     """Safety violation severity levels."""
+
     SAFE = "safe"
     LOW_RISK = "low_risk"
     MEDIUM_RISK = "medium_risk"
@@ -40,6 +47,7 @@ class SafetyLevel(StrEnum):
 
 class ViolationType(StrEnum):
     """Types of safety violations."""
+
     INJECTION_ATTEMPT = "injection_attempt"
     MALICIOUS_CONTENT = "malicious_content"
     PII_DETECTED = "pii_detected"
@@ -56,6 +64,7 @@ class ViolationType(StrEnum):
 
 class ContentCategory(StrEnum):
     """Content classification categories."""
+
     TEXT = "text"
     CODE = "code"
     URL = "url"
@@ -68,6 +77,7 @@ class ContentCategory(StrEnum):
 @dataclass
 class SafetyViolation:
     """Record of a detected safety violation."""
+
     violation_id: str
     violation_type: ViolationType
     severity: SafetyLevel
@@ -83,6 +93,7 @@ class SafetyViolation:
 @dataclass
 class SafetyReport:
     """Aggregated safety report."""
+
     report_id: str
     timestamp: datetime
     total_scans: int
@@ -93,7 +104,9 @@ class SafetyReport:
     recommendations: list[str]
 
 
-class SentinelAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor):
+class SentinelAgent(
+    HealthReportingMixin, DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor
+):
     """
     Sentinel Agent - Safety Guardian for the Heretek Swarm Collective.
 
@@ -122,7 +135,9 @@ class SentinelAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
         # Safety configuration
         self._max_content_size = config.get("max_content_size", 100000) if config else 100000
         self._enable_pii_detection = config.get("enable_pii_detection", True) if config else True
-        self._enable_injection_detection = config.get("enable_injection_detection", True) if config else True
+        self._enable_injection_detection = (
+            config.get("enable_injection_detection", True) if config else True
+        )
         self._auto_block_critical = config.get("auto_block_critical", True) if config else True
 
         # Safety state
@@ -230,12 +245,14 @@ class SentinelAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
             strict_mode = content.get("strict_mode", False)
 
             # Validate input using Pydantic
-            validate_message({
-                "sender_id": message.sender_id,
-                "message_type": "validate_input",
-                "content": content,
-                "timestamp": message.timestamp,
-            })
+            validate_message(
+                {
+                    "sender_id": message.sender_id,
+                    "message_type": "validate_input",
+                    "content": content,
+                    "timestamp": message.timestamp,
+                }
+            )
 
             # Scan content
             scan_result = await self._scan_content(
@@ -290,12 +307,14 @@ class SentinelAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
             strict_mode = content.get("strict_mode", False)
 
             # Validate input
-            validate_message({
-                "sender_id": message.sender_id,
-                "message_type": "validate_output",
-                "content": content,
-                "timestamp": message.timestamp,
-            })
+            validate_message(
+                {
+                    "sender_id": message.sender_id,
+                    "message_type": "validate_output",
+                    "content": content,
+                    "timestamp": message.timestamp,
+                }
+            )
 
             # Scan content
             scan_result = await self._scan_content(
@@ -346,12 +365,14 @@ class SentinelAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
             return_details = content.get("return_details", True)
 
             # Validate
-            validate_message({
-                "sender_id": message.sender_id,
-                "message_type": "scan_content",
-                "content": content,
-                "timestamp": message.timestamp,
-            })
+            validate_message(
+                {
+                    "sender_id": message.sender_id,
+                    "message_type": "scan_content",
+                    "content": content,
+                    "timestamp": message.timestamp,
+                }
+            )
 
             # Perform scan
             violations = []
@@ -411,12 +432,14 @@ class SentinelAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
             context = content.get("context", {})
 
             # Validate
-            validate_message({
-                "sender_id": message.sender_id,
-                "message_type": "check_policy",
-                "content": content,
-                "timestamp": message.timestamp,
-            })
+            validate_message(
+                {
+                    "sender_id": message.sender_id,
+                    "message_type": "check_policy",
+                    "content": content,
+                    "timestamp": message.timestamp,
+                }
+            )
 
             violations = []
 
@@ -459,12 +482,14 @@ class SentinelAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
             include_recommendations = content.get("include_recommendations", True)
 
             # Validate
-            validate_message({
-                "sender_id": message.sender_id,
-                "message_type": "get_safety_report",
-                "content": content,
-                "timestamp": message.timestamp,
-            })
+            validate_message(
+                {
+                    "sender_id": message.sender_id,
+                    "message_type": "get_safety_report",
+                    "content": content,
+                    "timestamp": message.timestamp,
+                }
+            )
 
             # Generate report
             report = self._generate_safety_report(
@@ -509,12 +534,14 @@ class SentinelAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
                 return
 
             # Validate
-            validate_message({
-                "sender_id": message.sender_id,
-                "message_type": "get_violation_details",
-                "content": content,
-                "timestamp": message.timestamp,
-            })
+            validate_message(
+                {
+                    "sender_id": message.sender_id,
+                    "message_type": "get_violation_details",
+                    "content": content,
+                    "timestamp": message.timestamp,
+                }
+            )
 
             violation = self._violations.get(violation_id)
 
@@ -559,12 +586,14 @@ class SentinelAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
             content = message.content
 
             # Validate
-            validate_message({
-                "sender_id": message.sender_id,
-                "message_type": "update_guardrails",
-                "content": content,
-                "timestamp": message.timestamp,
-            })
+            validate_message(
+                {
+                    "sender_id": message.sender_id,
+                    "message_type": "update_guardrails",
+                    "content": content,
+                    "timestamp": message.timestamp,
+                }
+            )
 
             updates = []
 
@@ -614,12 +643,14 @@ class SentinelAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
         """
         try:
             # Validate
-            validate_message({
-                "sender_id": message.sender_id,
-                "message_type": "get_statistics",
-                "content": {},
-                "timestamp": message.timestamp,
-            })
+            validate_message(
+                {
+                    "sender_id": message.sender_id,
+                    "message_type": "get_statistics",
+                    "content": {},
+                    "timestamp": message.timestamp,
+                }
+            )
 
             response_content = {
                 "statistics": self._stats.copy(),
@@ -660,11 +691,13 @@ class SentinelAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
 
         # Check content size
         if len(content) > self._max_content_size:
-            violations.append({
-                "type": ViolationType.POLICY_VIOLATION.value,
-                "severity": SafetyLevel.MEDIUM_RISK.value,
-                "description": f"Content exceeds max size ({len(content)}/{self._max_content_size} chars)",
-            })
+            violations.append(
+                {
+                    "type": ViolationType.POLICY_VIOLATION.value,
+                    "severity": SafetyLevel.MEDIUM_RISK.value,
+                    "description": f"Content exceeds max size ({len(content)}/{self._max_content_size} chars)",
+                }
+            )
 
         # Check injection patterns
         if self._enable_injection_detection:
@@ -685,10 +718,7 @@ class SentinelAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
                 SafetyLevel.LOW_RISK.value: 2,
                 SafetyLevel.SAFE.value: 1,
             }
-            max_severity = max(
-                severity_order.get(v.get("severity", "safe"), 1)
-                for v in violations
-            )
+            max_severity = max(severity_order.get(v.get("severity", "safe"), 1) for v in violations)
             safety_level = {
                 5: SafetyLevel.CRITICAL,
                 4: SafetyLevel.HIGH_RISK,
@@ -712,8 +742,9 @@ class SentinelAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
             self._stats["violations_detected"] += len(violations)
             for v in violations:
                 vtype = v.get("type", "unknown")
-                self._stats["violations_by_type"][vtype] = \
+                self._stats["violations_by_type"][vtype] = (
                     self._stats["violations_by_type"].get(vtype, 0) + 1
+                )
 
         # Generate recommendations
         recommendations = []
@@ -740,12 +771,14 @@ class SentinelAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
         for pattern in self._compiled_injection:
             matches = pattern.findall(content)
             if matches:
-                violations.append({
-                    "type": ViolationType.INJECTION_ATTEMPT.value,
-                    "severity": SafetyLevel.HIGH_RISK.value,
-                    "description": f"Detected injection pattern: {pattern.pattern}",
-                    "matches": len(matches),
-                })
+                violations.append(
+                    {
+                        "type": ViolationType.INJECTION_ATTEMPT.value,
+                        "severity": SafetyLevel.HIGH_RISK.value,
+                        "description": f"Detected injection pattern: {pattern.pattern}",
+                        "matches": len(matches),
+                    }
+                )
 
         return violations
 
@@ -756,12 +789,14 @@ class SentinelAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
         for pattern in self._compiled_pii:
             matches = pattern.findall(content)
             if matches:
-                violations.append({
-                    "type": ViolationType.PII_DETECTED.value,
-                    "severity": SafetyLevel.MEDIUM_RISK.value,
-                    "description": f"Detected PII pattern: {pattern.pattern}",
-                    "matches": len(matches),
-                })
+                violations.append(
+                    {
+                        "type": ViolationType.PII_DETECTED.value,
+                        "severity": SafetyLevel.MEDIUM_RISK.value,
+                        "description": f"Detected PII pattern: {pattern.pattern}",
+                        "matches": len(matches),
+                    }
+                )
 
         return violations
 
@@ -820,7 +855,9 @@ class SentinelAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
         recommendations = []
         if include_recommendations:
             if violations_by_type.get(ViolationType.INJECTION_ATTEMPT.value, 0) > 10:
-                recommendations.append("High injection attempt rate - consider stricter input validation")
+                recommendations.append(
+                    "High injection attempt rate - consider stricter input validation"
+                )
             if violations_by_type.get(ViolationType.PII_DETECTED.value, 0) > 5:
                 recommendations.append("Frequent PII detection - implement data masking at source")
             if violations_by_severity.get(SafetyLevel.CRITICAL.value, 0) > 0:

@@ -133,8 +133,7 @@ class MAKERConsensus:
         self.agent_vote_history: dict[str, list[Vote]] = {}
 
         logger.info(
-            f"MAKER Consensus initialized with ahead_by_k={ahead_by_k}, "
-            f"min_votes={min_votes}",
+            f"MAKER Consensus initialized with ahead_by_k={ahead_by_k}, min_votes={min_votes}",
         )
 
     def start_consensus(self, consensus_id: str) -> None:
@@ -274,37 +273,32 @@ class MAKERConsensus:
             reverse=True,
         )
 
-        if len(sorted_decisions) < 2:
+        if len(sorted_decisions) < 1:
             return None
 
-        # Check if first is ahead by k
         first_decision, first_count = sorted_decisions[0]
-        second_count = sorted_decisions[1][1]
 
-        if first_count - second_count >= self.ahead_by_k:
-            # Calculate confidence
-            total_votes = sum(vote_counts.values())
-            confidence = (
-                first_count / total_votes if total_votes > 0 else 0.0
-            )
+        # Unanimous case: only one option means everyone agrees — strongest consensus
+        if len(sorted_decisions) >= 2:
+            second_count = sorted_decisions[1][1]
+            if first_count - second_count < self.ahead_by_k:
+                return None
 
-            # Find original votes for this decision
-            original_votes = [
-                v
-                for v in self.active_processes.get(consensus_id, [])
-                if v.decision == first_decision
-            ]
+        total_votes = sum(vote_counts.values())
+        confidence = first_count / total_votes if total_votes > 0 else 0.0
 
-            return ConsensusResult(
-                decision=first_decision,
-                confidence=confidence,
-                votes=original_votes,
-                state=ConsensusState.COMPLETED,
-                timestamp=datetime.now(UTC).isoformat(),
-                red_flags=red_flags,
-            )
+        original_votes = [
+            v for v in self.active_processes.get(consensus_id, []) if v.decision == first_decision
+        ]
 
-        return None
+        return ConsensusResult(
+            decision=first_decision,
+            confidence=confidence,
+            votes=original_votes,
+            state=ConsensusState.COMPLETED,
+            timestamp=datetime.now(UTC).isoformat(),
+            red_flags=red_flags,
+        )
 
     def _check_red_flags(self, votes: list[Vote]) -> list[str]:
         """
@@ -322,9 +316,7 @@ class MAKERConsensus:
         confidences = [v.confidence for v in votes]
         if confidences:
             mean_confidence = statistics.mean(confidences)
-            std_confidence = (
-                statistics.stdev(confidences) if len(confidences) > 1 else 0
-            )
+            std_confidence = statistics.stdev(confidences) if len(confidences) > 1 else 0
 
             for vote in votes:
                 if std_confidence > 0:
@@ -349,9 +341,7 @@ class MAKERConsensus:
             decisions = [v.decision for v in votes]
             unique_decisions = set(decisions)
             if len(unique_decisions) == len(votes):
-                red_flags.append(
-                    "Complete disagreement among agents - no consensus possible"
-                )
+                red_flags.append("Complete disagreement among agents - no consensus possible")
 
         if red_flags:
             logger.warning(f"Red flags detected: {red_flags}")
@@ -425,15 +415,10 @@ class MAKERConsensus:
             max_reputation: Maximum reputation value
         """
         current = self.agent_reputation.get(agent_id, 0.5)
-        new_reputation = max(
-            min_reputation, min(max_reputation, current + delta)
-        )
+        new_reputation = max(min_reputation, min(max_reputation, current + delta))
         self.agent_reputation[agent_id] = new_reputation
 
-        logger.info(
-            f"Updated reputation for {agent_id}: "
-            f"{current:.2f} -> {new_reputation:.2f}"
-        )
+        logger.info(f"Updated reputation for {agent_id}: {current:.2f} -> {new_reputation:.2f}")
 
     def get_agent_reputation(self, agent_id: str) -> float:
         """
@@ -515,7 +500,6 @@ class MAKERConsensus:
             # Compute consensus
             return self.compute_consensus(consensus_id)
 
-
         except TimeoutError:
             logger.warning(f"Timeout for consensus {consensus_id}")
             self.process_states[consensus_id] = ConsensusState.FAILED
@@ -556,9 +540,7 @@ class MAKERConsensus:
         Returns:
             Statistics dictionary
         """
-        total_votes = sum(
-            len(votes) for votes in self.active_processes.values()
-        )
+        total_votes = sum(len(votes) for votes in self.active_processes.values())
 
         return {
             "active_processes": len(self.active_processes),

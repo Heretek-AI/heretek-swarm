@@ -27,7 +27,13 @@ import structlog
 from pydantic import ValidationError
 
 from heretek_swarm.actors.base import ActorMessage, AgentActor
-from heretek_swarm.actors.mixins import DeliberationMixin, LearningMixin, MemoryMixin, PatternMixin
+from heretek_swarm.actors.mixins import (
+    DeliberationMixin,
+    HealthReportingMixin,
+    LearningMixin,
+    MemoryMixin,
+    PatternMixin,
+)
 from heretek_swarm.actors.validation import validate_message
 
 logger = structlog.get_logger("SentinelPrimeAgent")
@@ -35,6 +41,7 @@ logger = structlog.get_logger("SentinelPrimeAgent")
 
 class ThreatLevel(StrEnum):
     """Threat severity classification."""
+
     INFORMATIONAL = "informational"
     LOW = "low"
     MEDIUM = "medium"
@@ -44,6 +51,7 @@ class ThreatLevel(StrEnum):
 
 class ThreatType(StrEnum):
     """Types of security threats."""
+
     UNAUTHORIZED_ACCESS = "unauthorized_access"
     DATA_EXFILTRATION = "data_exfiltration"
     MALWARE = "malware"
@@ -62,6 +70,7 @@ class ThreatType(StrEnum):
 
 class IncidentStatus(StrEnum):
     """Security incident status."""
+
     DETECTED = "detected"
     INVESTIGATING = "investigating"
     CONTAINED = "contained"
@@ -72,6 +81,7 @@ class IncidentStatus(StrEnum):
 
 class ResponseAction(StrEnum):
     """Automated response actions."""
+
     ALERT = "alert"
     BLOCK = "block"
     ISOLATE = "isolate"
@@ -86,6 +96,7 @@ class ResponseAction(StrEnum):
 @dataclass
 class ThreatIndicator:
     """Individual threat indicator."""
+
     indicator_id: str
     indicator_type: str  # IP, domain, hash, pattern, behavior
     value: str
@@ -99,6 +110,7 @@ class ThreatIndicator:
 @dataclass
 class SecurityIncident:
     """Security incident record."""
+
     incident_id: str
     threat_type: ThreatType
     threat_level: ThreatLevel
@@ -118,6 +130,7 @@ class SecurityIncident:
 @dataclass
 class ThreatReport:
     """Aggregated threat intelligence report."""
+
     report_id: str
     timestamp: datetime
     time_range: str
@@ -130,7 +143,9 @@ class ThreatReport:
     recommendations: list[str]
 
 
-class SentinelPrimeAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor):
+class SentinelPrimeAgent(
+    HealthReportingMixin, DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor
+):
     """
     Sentinel-Prime Agent - Security Commander for the Heretek Swarm Collective.
 
@@ -158,9 +173,15 @@ class SentinelPrimeAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningM
 
         # Security configuration
         self._auto_response_enabled = config.get("auto_response_enabled", True) if config else True
-        self._alert_threshold = config.get("alert_threshold", ThreatLevel.MEDIUM.value) if config else ThreatLevel.MEDIUM.value
+        self._alert_threshold = (
+            config.get("alert_threshold", ThreatLevel.MEDIUM.value)
+            if config
+            else ThreatLevel.MEDIUM.value
+        )
         self._max_incidents = config.get("max_incidents", 5000) if config else 5000
-        self._correlation_window = config.get("correlation_window", 300) if config else 300  # seconds
+        self._correlation_window = (
+            config.get("correlation_window", 300) if config else 300
+        )  # seconds
 
         # Security state
         self._incidents: dict[str, SecurityIncident] = {}
@@ -200,8 +221,7 @@ class SentinelPrimeAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningM
         ]
 
         self._compiled_patterns = [
-            (re.compile(pattern), threat_type)
-            for pattern, threat_type in self._attack_patterns
+            (re.compile(pattern), threat_type) for pattern, threat_type in self._attack_patterns
         ]
 
         logger.info(
@@ -273,12 +293,14 @@ class SentinelPrimeAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningM
             indicators = content.get("indicators", [])
 
             # Validate
-            validate_message({
-                "sender_id": message.sender_id,
-                "message_type": "report_threat",
-                "content": content,
-                "timestamp": message.timestamp,
-            })
+            validate_message(
+                {
+                    "sender_id": message.sender_id,
+                    "message_type": "report_threat",
+                    "content": content,
+                    "timestamp": message.timestamp,
+                }
+            )
 
             # Convert enums
             try:
@@ -399,8 +421,7 @@ class SentinelPrimeAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningM
             if correlate:
                 correlated = self._find_correlated_incidents(incident)
                 analysis_result["correlated_incidents"] = [
-                    {"incident_id": c.incident_id, "correlation_score": 0.8}
-                    for c in correlated[:5]
+                    {"incident_id": c.incident_id, "correlation_score": 0.8} for c in correlated[:5]
                 ]
 
             # Deep analysis
@@ -487,7 +508,8 @@ class SentinelPrimeAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningM
             limit = content.get("limit", 100)
 
             active_incidents = [
-                inc for inc in self._incidents.values()
+                inc
+                for inc in self._incidents.values()
                 if inc.status not in [IncidentStatus.CLOSED, IncidentStatus.REMEDIATED]
             ]
 
@@ -504,7 +526,8 @@ class SentinelPrimeAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningM
                     }
                     min_order = level_order.get(min_level, 0)
                     active_incidents = [
-                        inc for inc in active_incidents
+                        inc
+                        for inc in active_incidents
                         if level_order.get(inc.threat_level, 0) >= min_order
                     ]
                 except ValueError:
@@ -587,7 +610,10 @@ class SentinelPrimeAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningM
 
             # Update incident status
             if executed_actions:
-                if ResponseAction.CONTAINED in executed_actions or ResponseAction.ISOLATE in executed_actions:
+                if (
+                    ResponseAction.CONTAINED in executed_actions
+                    or ResponseAction.ISOLATE in executed_actions
+                ):
                     incident.status = IncidentStatus.CONTAINED
                 elif ResponseAction.REMEDIATED in executed_actions:
                     incident.status = IncidentStatus.REMEDIATED
@@ -744,11 +770,13 @@ class SentinelPrimeAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningM
             incidents_by_type = dict(self._stats["incidents_by_type"])
 
             active_threats = sum(
-                1 for inc in self._incidents.values()
+                1
+                for inc in self._incidents.values()
                 if inc.status in [IncidentStatus.DETECTED, IncidentStatus.INVESTIGATING]
             )
             contained_threats = sum(
-                1 for inc in self._incidents.values()
+                1
+                for inc in self._incidents.values()
                 if inc.status in [IncidentStatus.CONTAINED, IncidentStatus.REMEDIATED]
             )
 
@@ -905,10 +933,13 @@ class SentinelPrimeAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningM
                     "threats_mitigated": self._stats["threats_mitigated"],
                 },
                 "active_state": {
-                    "active_incidents": len([
-                        i for i in self._incidents.values()
-                        if i.status not in [IncidentStatus.CLOSED, IncidentStatus.REMEDIATED]
-                    ]),
+                    "active_incidents": len(
+                        [
+                            i
+                            for i in self._incidents.values()
+                            if i.status not in [IncidentStatus.CLOSED, IncidentStatus.REMEDIATED]
+                        ]
+                    ),
                     "blocked_sources": len(self._blocked_sources),
                     "isolated_actors": len(self._isolated_actors),
                     "tracked_indicators": len(self._threat_indicators),
@@ -1138,9 +1169,9 @@ class SentinelPrimeAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningM
                 correlation_score += 0.2
 
             # Shared indicators
-            shared_indicators = {
-                i.value for i in incident.indicators
-            } & {i.value for i in other.indicators}
+            shared_indicators = {i.value for i in incident.indicators} & {
+                i.value for i in other.indicators
+            }
             correlation_score += len(shared_indicators) * 0.1
 
             if correlation_score > 0.3:
@@ -1158,12 +1189,14 @@ class SentinelPrimeAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningM
         correlated.sort(key=lambda x: x.timestamp)
 
         for related in correlated:
-            chain.append({
-                "incident_id": related.incident_id,
-                "timestamp": related.timestamp.isoformat(),
-                "threat_type": related.threat_type.value,
-                "severity": self._calculate_severity_score(related),
-            })
+            chain.append(
+                {
+                    "incident_id": related.incident_id,
+                    "timestamp": related.timestamp.isoformat(),
+                    "threat_type": related.threat_type.value,
+                    "severity": self._calculate_severity_score(related),
+                }
+            )
 
         return chain
 
@@ -1174,12 +1207,14 @@ class SentinelPrimeAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningM
         for indicator in incident.indicators:
             if indicator.value in self._indicator_cache:
                 cached = self._indicator_cache[indicator.value]
-                matches.append({
-                    "indicator": indicator.value,
-                    "matched_threat": cached.indicator_id,
-                    "confidence": cached.confidence,
-                    "tags": cached.tags,
-                })
+                matches.append(
+                    {
+                        "indicator": indicator.value,
+                        "matched_threat": cached.indicator_id,
+                        "confidence": cached.confidence,
+                        "tags": cached.tags,
+                    }
+                )
 
         return matches
 

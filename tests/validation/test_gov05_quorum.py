@@ -170,8 +170,6 @@ class TestCriterion1ConveningLatency:
 
 
 # ===== CRITERION 2: Quorum (3 of 4) within 3 rounds =====
-# NOTE: MAKERConsensus._first_to_ahead_by_k needs >=2 unique decisions.
-# Unanimous votes return None (sorted_decisions has length 1).
 
 
 class TestCriterion2Quorum:
@@ -228,7 +226,9 @@ class TestCriterion2Quorum:
         c.add_vote("unan", "alpha", "approve", 0.85)
         c.add_vote("unan", "beta", "approve", 0.8)
         r = c.compute_consensus("unan")
-        assert r is None, "GAP: unanimous votes fail _first_to_ahead_by_k (needs >=2 options)"
+        assert r is not None, "Unanimous votes should reach consensus"
+        assert r.decision == "approve"
+        assert r.confidence == 1.0
 
     async def test_steward_deliberation_has_votes_dict(self, mock_nats, mock_llm):
         agent = _spawn(StewardAgent, "s1", mock_nats, mock_llm)

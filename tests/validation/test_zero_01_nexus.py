@@ -765,8 +765,8 @@ class TestFullCoverage:
         # Verify _validate_message calls _sanitize_input
         msg = ActorMessage(
             sender="test_sender",
-            message_type="create_connection",
-            content={"name": "test", "protocol": "rest", "base_url": "https://example.com"},
+            message_type="unknown_type_for_coverage",
+            content={"data": "test"},
             timestamp=datetime.now(UTC).isoformat(),
         )
 
@@ -780,8 +780,8 @@ class TestFullCoverage:
         nexus = _make_nexus()
         msg = ActorMessage(
             sender="test_sender",
-            message_type="get_integration_report",
-            content={},
+            message_type="unknown_type_no_schema",
+            content={"data": "valid content"},
             timestamp=datetime.now(UTC).isoformat(),
         )
 
@@ -791,28 +791,24 @@ class TestFullCoverage:
     @pytest.mark.asyncio
     @pytest.mark.security
     async def test_validate_message_sanitize_on_rejected_input(self) -> None:
-        """_validate_message should handle rejected (None) sanitization results.
+        """_validate_message should raise ValueError when sanitization rejects input.
 
-        NOTE: This test documents a potential gap: when _sanitize_input returns
-        None, _validate_message currently returns the original unsanitized
-        message.content (line 274 of nexus.py). This means handlers would
-        proceed with unsanitized data.
+        After the ZERO-01 fix, _validate_message raises ValueError instead of
+        returning unsanitized content when _sanitize_input returns None.
         """
         nexus = _make_nexus()
 
-        # Create a message with malicious content
+        # Create a message with malicious content that will be rejected by sanitization
         msg = ActorMessage(
             sender="test_sender",
-            message_type="create_connection",
-            content={"name": "test", "payload": "exec('malicious')"},
+            message_type="unknown_type_no_schema",
+            content={"payload": "exec('malicious')"},
             timestamp=datetime.now(UTC).isoformat(),
         )
 
-        # _validate_message should handle this gracefully
-        result = await nexus._validate_message(msg)
-        # The current implementation returns original content when sanitization
-        # returns None — this is documented as a gap
-        assert result is not None  # Current behavior: returns original content
+        # _validate_message should raise ValueError on rejected input
+        with pytest.raises(ValueError, match="rejected by sanitization"):
+            await nexus._validate_message(msg)
 
     @pytest.mark.asyncio
     @pytest.mark.security
@@ -974,42 +970,28 @@ class TestFullSanitizationPipeline:
 
 
 class TestValidateMessageGap:
-    """Document the behavior gap when _sanitize_input returns None.
+    """Verify _validate_message rejects unsanitized input.
 
-    The current implementation of _validate_message (nexus.py line 272-274)
-    returns the original message.content when _sanitize_input returns None.
-    This means rejected inputs could potentially reach handlers.
-
-    This is documented here for awareness. The fix would be to raise an
-    exception or return a safe sentinel instead of the original content.
+    _validate_message must raise ValueError when _sanitize_input returns None
+    or when message validation fails, preventing unsanitized content from
+    reaching handlers.
     """
 
     @pytest.mark.asyncio
     @pytest.mark.security
-    async def test_validate_message_returns_original_on_rejection(self) -> None:
-        """When _sanitize_input returns None, _validate_message returns original content.
-
-        This documents the EXISTING behavior. A stricter implementation would
-        raise an exception or return a safe default.
-        """
+    async def test_validate_message_raises_on_rejection(self) -> None:
+        """When _sanitize_input returns None, _validate_message must raise ValueError."""
         nexus = _make_nexus()
 
-        # Create a message with null byte content that will be rejected by _sanitize_input
-        original_content = {"data": "bad\x00content"}
-        msg = ActorMessage(
-            sender="attacker",
-            message_type="create_connection",
-            content=original_content,
+        malicious_message = ActorMessage(
+            message_type="unknown_type_no_schema",
+            content={"data": "exec('malicious_code()')"},
+            sender="external_attacker",
             timestamp=datetime.now(UTC).isoformat(),
         )
 
-        result = await nexus._validate_message(msg)
-        # Current behavior: returns original content when sanitization fails
-        # This is a KNOWN GAP — the unsanitized content reaches the handler
-        assert result == original_content, (
-            "GAP DETECTED: _validate_message returns unsanitized content "
-            "when _sanitize_input rejects. Handlers will process malicious input."
-        )
+        with pytest.raises(ValueError, match="rejected by sanitization"):
+            await nexus._validate_message(malicious_message)
 
     @pytest.mark.asyncio
     @pytest.mark.security
@@ -1019,7 +1001,7 @@ class TestValidateMessageGap:
 
         msg = ActorMessage(
             sender="  test_sender  ",
-            message_type="get_integration_report",
+            message_type="unknown_type_no_schema",
             content={"  key  ": "  value  "},
             timestamp=datetime.now(UTC).isoformat(),
         )

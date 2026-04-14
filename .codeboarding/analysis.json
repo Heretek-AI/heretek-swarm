@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-14T18:45:23.665142+00:00",
+    "generated_at": "2026-04-14T19:37:14.081896+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 5,
@@ -16215,7 +16215,7 @@
       ]
     },
     "src/heretek_swarm/actors/nexus.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.ConnectionStatus",
@@ -16276,9 +16276,9 @@
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent",
           "start_line": 170,
-          "end_line": 1252,
+          "end_line": 1253,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent.__init__",
@@ -16304,9 +16304,9 @@
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent._validate_message",
           "start_line": 276,
-          "end_line": 292,
+          "end_line": 293,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent._sanitize_input",
@@ -17500,56 +17500,56 @@
       ]
     },
     "src/heretek_swarm/actors/sentinel.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SafetyLevel",
-          "start_line": 32,
-          "end_line": 38,
+          "start_line": 38,
+          "end_line": 45,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.ViolationType",
-          "start_line": 41,
-          "end_line": 54,
+          "start_line": 48,
+          "end_line": 62,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.ContentCategory",
-          "start_line": 57,
-          "end_line": 65,
+          "start_line": 65,
+          "end_line": 74,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SafetyViolation",
-          "start_line": 69,
-          "end_line": 80,
+          "start_line": 78,
+          "end_line": 90,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SafetyReport",
-          "start_line": 84,
-          "end_line": 93,
+          "start_line": 94,
+          "end_line": 104,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent",
-          "start_line": 96,
-          "end_line": 849,
+          "start_line": 107,
+          "end_line": 886,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent.__init__",
-          "start_line": 104,
-          "end_line": 179,
+          "start_line": 117,
+          "end_line": 194,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent.process_message",
@@ -17567,80 +17567,73 @@
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_validate_input",
-          "start_line": 214,
-          "end_line": 272,
+          "start_line": 229,
+          "end_line": 289,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_validate_output",
-          "start_line": 274,
-          "end_line": 330,
+          "start_line": 291,
+          "end_line": 349,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_scan_content",
-          "start_line": 332,
-          "end_line": 395,
+          "start_line": 351,
+          "end_line": 416,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_check_policy",
-          "start_line": 397,
-          "end_line": 445,
+          "start_line": 418,
+          "end_line": 468,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_safety_report",
-          "start_line": 447,
-          "end_line": 493,
+          "start_line": 470,
+          "end_line": 518,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_violation_details",
-          "start_line": 495,
-          "end_line": 544,
+          "start_line": 520,
+          "end_line": 571,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_update_guardrails",
-          "start_line": 546,
-          "end_line": 607,
+          "start_line": 573,
+          "end_line": 636,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_statistics",
-          "start_line": 609,
-          "end_line": 638,
+          "start_line": 638,
+          "end_line": 669,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._scan_content",
-          "start_line": 640,
-          "end_line": 734,
+          "start_line": 671,
+          "end_line": 765,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._check_injection_patterns",
-          "start_line": 736,
-          "end_line": 750,
+          "start_line": 767,
+          "end_line": 783,
           "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._check_pii_patterns",
-          "start_line": 752,
-          "end_line": 766,
-          "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._record_violation",
@@ -17650,11 +17643,18 @@
           "status": "unchanged"
         },
         {
-          "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._generate_safety_report",
-          "start_line": 802,
-          "end_line": 838,
+          "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._check_pii_patterns",
+          "start_line": 785,
+          "end_line": 801,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._generate_safety_report",
+          "start_line": 837,
+          "end_line": 875,
+          "node_type": "METHOD",
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._check_policy_rule",
@@ -17666,70 +17666,70 @@
       ]
     },
     "src/heretek_swarm/actors/sentinel_prime.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.ThreatLevel",
-          "start_line": 36,
-          "end_line": 42,
+          "start_line": 42,
+          "end_line": 49,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.ThreatType",
-          "start_line": 45,
-          "end_line": 60,
+          "start_line": 52,
+          "end_line": 68,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.IncidentStatus",
-          "start_line": 63,
-          "end_line": 70,
+          "start_line": 71,
+          "end_line": 79,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.ResponseAction",
-          "start_line": 73,
-          "end_line": 83,
+          "start_line": 82,
+          "end_line": 93,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.ThreatIndicator",
-          "start_line": 87,
-          "end_line": 96,
+          "start_line": 97,
+          "end_line": 107,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SecurityIncident",
-          "start_line": 100,
-          "end_line": 115,
+          "start_line": 111,
+          "end_line": 127,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.ThreatReport",
-          "start_line": 119,
-          "end_line": 130,
+          "start_line": 131,
+          "end_line": 143,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent",
-          "start_line": 133,
-          "end_line": 1262,
+          "start_line": 146,
+          "end_line": 1297,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent.__init__",
-          "start_line": 141,
-          "end_line": 212,
+          "start_line": 156,
+          "end_line": 232,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent.process_message",
@@ -17747,17 +17747,17 @@
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_report_threat",
-          "start_line": 251,
-          "end_line": 361,
+          "start_line": 271,
+          "end_line": 383,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_analyze_threat",
-          "start_line": 363,
-          "end_line": 422,
+          "start_line": 385,
+          "end_line": 443,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_get_incident_details",
@@ -17768,17 +17768,17 @@
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_get_active_incidents",
-          "start_line": 475,
-          "end_line": 549,
+          "start_line": 496,
+          "end_line": 572,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_respond_to_incident",
-          "start_line": 551,
-          "end_line": 612,
+          "start_line": 574,
+          "end_line": 638,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_add_threat_indicator",
@@ -17796,10 +17796,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_get_threat_report",
-          "start_line": 726,
-          "end_line": 800,
+          "start_line": 752,
+          "end_line": 828,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_block_source",
@@ -17817,10 +17817,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_get_statistics",
-          "start_line": 894,
-          "end_line": 922,
+          "start_line": 922,
+          "end_line": 953,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_update_config",
@@ -17866,24 +17866,17 @@
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._find_correlated_incidents",
-          "start_line": 1114,
-          "end_line": 1150,
+          "start_line": 1145,
+          "end_line": 1181,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._reconstruct_attack_chain",
-          "start_line": 1152,
-          "end_line": 1168,
+          "start_line": 1183,
+          "end_line": 1201,
           "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._match_iocs",
-          "start_line": 1170,
-          "end_line": 1184,
-          "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._map_mitre_techniques",
@@ -17898,6 +17891,13 @@
           "end_line": 1221,
           "node_type": "METHOD",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._match_iocs",
+          "start_line": 1203,
+          "end_line": 1219,
+          "node_type": "METHOD",
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._generate_strategic_recommendations",
@@ -17923,49 +17923,49 @@
       ]
     },
     "src/heretek_swarm/actors/steward.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent",
-          "start_line": 32,
-          "end_line": 343,
+          "start_line": 33,
+          "end_line": 420,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent.__init__",
-          "start_line": 52,
-          "end_line": 96,
+          "start_line": 53,
+          "end_line": 102,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent.initialize",
-          "start_line": 98,
-          "end_line": 106,
+          "start_line": 104,
+          "end_line": 115,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent.process_message",
-          "start_line": 108,
-          "end_line": 139,
+          "start_line": 117,
+          "end_line": 146,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent._handle_start_deliberation",
-          "start_line": 141,
-          "end_line": 192,
+          "start_line": 148,
+          "end_line": 205,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent._handle_request_decision",
-          "start_line": 194,
-          "end_line": 242,
+          "start_line": 207,
+          "end_line": 254,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent._handle_report_status",
@@ -17976,10 +17976,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent._handle_policy_update",
-          "start_line": 270,
-          "end_line": 285,
+          "start_line": 282,
+          "end_line": 296,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent.coordinate_triad",
@@ -18008,6 +18008,55 @@
           "end_line": 343,
           "node_type": "METHOD",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent._handle_agent_heartbeat",
+          "start_line": 356,
+          "end_line": 361,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent.check_agent_health",
+          "start_line": 363,
+          "end_line": 369,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent.detect_heartbeat_failure",
+          "start_line": 371,
+          "end_line": 379,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent._monitor_loop",
+          "start_line": 381,
+          "end_line": 389,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent._handle_agent_failure",
+          "start_line": 391,
+          "end_line": 397,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent.initiate_failover",
+          "start_line": 399,
+          "end_line": 410,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent._cancel_tasks",
+          "start_line": 412,
+          "end_line": 420,
+          "node_type": "METHOD",
+          "status": "added"
         }
       ]
     },
@@ -29337,7 +29386,7 @@
       ]
     },
     "src/heretek_swarm/consensus/maker.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.consensus.maker.ConsensusState",
@@ -29363,16 +29412,16 @@
         {
           "qualified_name": "src.heretek_swarm.consensus.maker.MAKERConsensus",
           "start_line": 77,
-          "end_line": 570,
+          "end_line": 552,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker.MAKERConsensus.__init__",
           "start_line": 106,
-          "end_line": 138,
+          "end_line": 137,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker.MAKERConsensus.start_consensus",
@@ -29397,17 +29446,17 @@
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker.MAKERConsensus._first_to_ahead_by_k",
-          "start_line": 242,
-          "end_line": 307,
+          "start_line": 241,
+          "end_line": 301,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker.MAKERConsensus._check_red_flags",
-          "start_line": 309,
-          "end_line": 359,
+          "start_line": 303,
+          "end_line": 349,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker.MAKERConsensus._apply_reputation_weights",
@@ -29425,10 +29474,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker.MAKERConsensus.update_reputation",
-          "start_line": 411,
-          "end_line": 436,
+          "start_line": 401,
+          "end_line": 421,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker.MAKERConsensus.get_agent_reputation",
@@ -29445,16 +29494,16 @@
           "status": "unchanged"
         },
         {
+          "qualified_name": "src.heretek_swarm.consensus.maker.MAKERConsensus.run_consensus",
+          "start_line": 460,
+          "end_line": 509,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
           "qualified_name": "src.heretek_swarm.consensus.maker.MAKERConsensus.cleanup_process",
           "start_line": 462,
           "end_line": 473,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.consensus.maker.MAKERConsensus.run_consensus",
-          "start_line": 475,
-          "end_line": 525,
           "node_type": "METHOD",
           "status": "unchanged"
         },
@@ -29467,10 +29516,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.maker.MAKERConsensus.get_statistics",
-          "start_line": 552,
-          "end_line": 570,
+          "start_line": 536,
+          "end_line": 552,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         }
       ]
     },
@@ -69692,9 +69741,9 @@
       "file_path": "src/heretek_swarm/actors/nexus.py",
       "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent",
       "start_line": 170,
-      "end_line": 1252,
+      "end_line": 1253,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.NexusAgent.__init__": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -69724,9 +69773,9 @@
       "file_path": "src/heretek_swarm/actors/nexus.py",
       "qualified_name": "src.heretek_swarm.actors.nexus.NexusAgent._validate_message",
       "start_line": 276,
-      "end_line": 292,
+      "end_line": 293,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/nexus.py|src.heretek_swarm.actors.nexus.NexusAgent._sanitize_input": {
       "file_path": "src/heretek_swarm/actors/nexus.py",
@@ -71067,58 +71116,58 @@
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SafetyLevel": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
       "qualified_name": "src.heretek_swarm.actors.sentinel.SafetyLevel",
-      "start_line": 32,
-      "end_line": 38,
+      "start_line": 38,
+      "end_line": 45,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.ViolationType": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
       "qualified_name": "src.heretek_swarm.actors.sentinel.ViolationType",
-      "start_line": 41,
-      "end_line": 54,
+      "start_line": 48,
+      "end_line": 62,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.ContentCategory": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
       "qualified_name": "src.heretek_swarm.actors.sentinel.ContentCategory",
-      "start_line": 57,
-      "end_line": 65,
+      "start_line": 65,
+      "end_line": 74,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SafetyViolation": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
       "qualified_name": "src.heretek_swarm.actors.sentinel.SafetyViolation",
-      "start_line": 69,
-      "end_line": 80,
+      "start_line": 78,
+      "end_line": 90,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SafetyReport": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
       "qualified_name": "src.heretek_swarm.actors.sentinel.SafetyReport",
-      "start_line": 84,
-      "end_line": 93,
+      "start_line": 94,
+      "end_line": 104,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
       "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent",
-      "start_line": 96,
-      "end_line": 849,
+      "start_line": 107,
+      "end_line": 886,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent.__init__": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
       "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent.__init__",
-      "start_line": 104,
-      "end_line": 179,
+      "start_line": 117,
+      "end_line": 194,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent.process_message": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -71139,90 +71188,82 @@
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._handle_validate_input": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
       "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_validate_input",
-      "start_line": 214,
-      "end_line": 272,
+      "start_line": 229,
+      "end_line": 289,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._handle_validate_output": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
       "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_validate_output",
-      "start_line": 274,
-      "end_line": 330,
+      "start_line": 291,
+      "end_line": 349,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._handle_scan_content": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
       "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_scan_content",
-      "start_line": 332,
-      "end_line": 395,
+      "start_line": 351,
+      "end_line": 416,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._handle_check_policy": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
       "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_check_policy",
-      "start_line": 397,
-      "end_line": 445,
+      "start_line": 418,
+      "end_line": 468,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_safety_report": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
       "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_safety_report",
-      "start_line": 447,
-      "end_line": 493,
+      "start_line": 470,
+      "end_line": 518,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_violation_details": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
       "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_violation_details",
-      "start_line": 495,
-      "end_line": 544,
+      "start_line": 520,
+      "end_line": 571,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._handle_update_guardrails": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
       "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_update_guardrails",
-      "start_line": 546,
-      "end_line": 607,
+      "start_line": 573,
+      "end_line": 636,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_statistics": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
       "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_statistics",
-      "start_line": 609,
-      "end_line": 638,
+      "start_line": 638,
+      "end_line": 669,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._scan_content": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
       "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._scan_content",
-      "start_line": 640,
-      "end_line": 734,
+      "start_line": 671,
+      "end_line": 765,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._check_injection_patterns": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
       "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._check_injection_patterns",
-      "start_line": 736,
-      "end_line": 750,
+      "start_line": 767,
+      "end_line": 783,
       "type": "METHOD",
-      "status": "unchanged"
-    },
-    "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._check_pii_patterns": {
-      "file_path": "src/heretek_swarm/actors/sentinel.py",
-      "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._check_pii_patterns",
-      "start_line": 752,
-      "end_line": 766,
-      "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._record_violation": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -71232,13 +71273,21 @@
       "type": "METHOD",
       "status": "unchanged"
     },
+    "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._check_pii_patterns": {
+      "file_path": "src/heretek_swarm/actors/sentinel.py",
+      "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._check_pii_patterns",
+      "start_line": 785,
+      "end_line": 801,
+      "type": "METHOD",
+      "status": "modified"
+    },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._generate_safety_report": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
       "qualified_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._generate_safety_report",
-      "start_line": 802,
-      "end_line": 838,
+      "start_line": 837,
+      "end_line": 875,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel.py|src.heretek_swarm.actors.sentinel.SentinelAgent._check_policy_rule": {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
@@ -71251,74 +71300,74 @@
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.ThreatLevel": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
       "qualified_name": "src.heretek_swarm.actors.sentinel_prime.ThreatLevel",
-      "start_line": 36,
-      "end_line": 42,
+      "start_line": 42,
+      "end_line": 49,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.ThreatType": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
       "qualified_name": "src.heretek_swarm.actors.sentinel_prime.ThreatType",
-      "start_line": 45,
-      "end_line": 60,
+      "start_line": 52,
+      "end_line": 68,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.IncidentStatus": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
       "qualified_name": "src.heretek_swarm.actors.sentinel_prime.IncidentStatus",
-      "start_line": 63,
-      "end_line": 70,
+      "start_line": 71,
+      "end_line": 79,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.ResponseAction": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
       "qualified_name": "src.heretek_swarm.actors.sentinel_prime.ResponseAction",
-      "start_line": 73,
-      "end_line": 83,
+      "start_line": 82,
+      "end_line": 93,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.ThreatIndicator": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
       "qualified_name": "src.heretek_swarm.actors.sentinel_prime.ThreatIndicator",
-      "start_line": 87,
-      "end_line": 96,
+      "start_line": 97,
+      "end_line": 107,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SecurityIncident": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
       "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SecurityIncident",
-      "start_line": 100,
-      "end_line": 115,
+      "start_line": 111,
+      "end_line": 127,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.ThreatReport": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
       "qualified_name": "src.heretek_swarm.actors.sentinel_prime.ThreatReport",
-      "start_line": 119,
-      "end_line": 130,
+      "start_line": 131,
+      "end_line": 143,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
       "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent",
-      "start_line": 133,
-      "end_line": 1262,
+      "start_line": 146,
+      "end_line": 1297,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent.__init__": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
       "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent.__init__",
-      "start_line": 141,
-      "end_line": 212,
+      "start_line": 156,
+      "end_line": 232,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent.process_message": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -71339,18 +71388,18 @@
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_report_threat": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
       "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_report_threat",
-      "start_line": 251,
-      "end_line": 361,
+      "start_line": 271,
+      "end_line": 383,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_analyze_threat": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
       "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_analyze_threat",
-      "start_line": 363,
-      "end_line": 422,
+      "start_line": 385,
+      "end_line": 443,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_get_incident_details": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -71363,18 +71412,18 @@
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_get_active_incidents": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
       "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_get_active_incidents",
-      "start_line": 475,
-      "end_line": 549,
+      "start_line": 496,
+      "end_line": 572,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_respond_to_incident": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
       "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_respond_to_incident",
-      "start_line": 551,
-      "end_line": 612,
+      "start_line": 574,
+      "end_line": 638,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_add_threat_indicator": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -71395,10 +71444,10 @@
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_get_threat_report": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
       "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_get_threat_report",
-      "start_line": 726,
-      "end_line": 800,
+      "start_line": 752,
+      "end_line": 828,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_block_source": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -71419,10 +71468,10 @@
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_get_statistics": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
       "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_get_statistics",
-      "start_line": 894,
-      "end_line": 922,
+      "start_line": 922,
+      "end_line": 953,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._handle_update_config": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -71475,26 +71524,18 @@
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._find_correlated_incidents": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
       "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._find_correlated_incidents",
-      "start_line": 1114,
-      "end_line": 1150,
+      "start_line": 1145,
+      "end_line": 1181,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._reconstruct_attack_chain": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
       "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._reconstruct_attack_chain",
-      "start_line": 1152,
-      "end_line": 1168,
+      "start_line": 1183,
+      "end_line": 1201,
       "type": "METHOD",
-      "status": "unchanged"
-    },
-    "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._match_iocs": {
-      "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
-      "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._match_iocs",
-      "start_line": 1170,
-      "end_line": 1184,
-      "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._map_mitre_techniques": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -71511,6 +71552,14 @@
       "end_line": 1221,
       "type": "METHOD",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._match_iocs": {
+      "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
+      "qualified_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._match_iocs",
+      "start_line": 1203,
+      "end_line": 1219,
+      "type": "METHOD",
+      "status": "modified"
     },
     "src/heretek_swarm/actors/sentinel_prime.py|src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._generate_strategic_recommendations": {
       "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
@@ -71539,50 +71588,50 @@
     "src/heretek_swarm/actors/steward.py|src.heretek_swarm.actors.steward.StewardAgent": {
       "file_path": "src/heretek_swarm/actors/steward.py",
       "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent",
-      "start_line": 32,
-      "end_line": 343,
+      "start_line": 33,
+      "end_line": 420,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/steward.py|src.heretek_swarm.actors.steward.StewardAgent.__init__": {
       "file_path": "src/heretek_swarm/actors/steward.py",
       "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent.__init__",
-      "start_line": 52,
-      "end_line": 96,
+      "start_line": 53,
+      "end_line": 102,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/steward.py|src.heretek_swarm.actors.steward.StewardAgent.initialize": {
       "file_path": "src/heretek_swarm/actors/steward.py",
       "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent.initialize",
-      "start_line": 98,
-      "end_line": 106,
+      "start_line": 104,
+      "end_line": 115,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/steward.py|src.heretek_swarm.actors.steward.StewardAgent.process_message": {
       "file_path": "src/heretek_swarm/actors/steward.py",
       "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent.process_message",
-      "start_line": 108,
-      "end_line": 139,
+      "start_line": 117,
+      "end_line": 146,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/steward.py|src.heretek_swarm.actors.steward.StewardAgent._handle_start_deliberation": {
       "file_path": "src/heretek_swarm/actors/steward.py",
       "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent._handle_start_deliberation",
-      "start_line": 141,
-      "end_line": 192,
+      "start_line": 148,
+      "end_line": 205,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/steward.py|src.heretek_swarm.actors.steward.StewardAgent._handle_request_decision": {
       "file_path": "src/heretek_swarm/actors/steward.py",
       "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent._handle_request_decision",
-      "start_line": 194,
-      "end_line": 242,
+      "start_line": 207,
+      "end_line": 254,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/steward.py|src.heretek_swarm.actors.steward.StewardAgent._handle_report_status": {
       "file_path": "src/heretek_swarm/actors/steward.py",
@@ -71595,10 +71644,10 @@
     "src/heretek_swarm/actors/steward.py|src.heretek_swarm.actors.steward.StewardAgent._handle_policy_update": {
       "file_path": "src/heretek_swarm/actors/steward.py",
       "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent._handle_policy_update",
-      "start_line": 270,
-      "end_line": 285,
+      "start_line": 282,
+      "end_line": 296,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/steward.py|src.heretek_swarm.actors.steward.StewardAgent.coordinate_triad": {
       "file_path": "src/heretek_swarm/actors/steward.py",
@@ -71631,6 +71680,62 @@
       "end_line": 343,
       "type": "METHOD",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/actors/steward.py|src.heretek_swarm.actors.steward.StewardAgent._handle_agent_heartbeat": {
+      "file_path": "src/heretek_swarm/actors/steward.py",
+      "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent._handle_agent_heartbeat",
+      "start_line": 356,
+      "end_line": 361,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/actors/steward.py|src.heretek_swarm.actors.steward.StewardAgent.check_agent_health": {
+      "file_path": "src/heretek_swarm/actors/steward.py",
+      "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent.check_agent_health",
+      "start_line": 363,
+      "end_line": 369,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/actors/steward.py|src.heretek_swarm.actors.steward.StewardAgent.detect_heartbeat_failure": {
+      "file_path": "src/heretek_swarm/actors/steward.py",
+      "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent.detect_heartbeat_failure",
+      "start_line": 371,
+      "end_line": 379,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/actors/steward.py|src.heretek_swarm.actors.steward.StewardAgent._monitor_loop": {
+      "file_path": "src/heretek_swarm/actors/steward.py",
+      "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent._monitor_loop",
+      "start_line": 381,
+      "end_line": 389,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/actors/steward.py|src.heretek_swarm.actors.steward.StewardAgent._handle_agent_failure": {
+      "file_path": "src/heretek_swarm/actors/steward.py",
+      "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent._handle_agent_failure",
+      "start_line": 391,
+      "end_line": 397,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/actors/steward.py|src.heretek_swarm.actors.steward.StewardAgent.initiate_failover": {
+      "file_path": "src/heretek_swarm/actors/steward.py",
+      "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent.initiate_failover",
+      "start_line": 399,
+      "end_line": 410,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/actors/steward.py|src.heretek_swarm.actors.steward.StewardAgent._cancel_tasks": {
+      "file_path": "src/heretek_swarm/actors/steward.py",
+      "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent._cancel_tasks",
+      "start_line": 412,
+      "end_line": 420,
+      "type": "METHOD",
+      "status": "added"
     },
     "src/heretek_swarm/actors/stubs.py|src.heretek_swarm.actors.stubs.get_nats_event_mesh": {
       "file_path": "src/heretek_swarm/actors/stubs.py",
@@ -84220,17 +84325,17 @@
       "file_path": "src/heretek_swarm/consensus/maker.py",
       "qualified_name": "src.heretek_swarm.consensus.maker.MAKERConsensus",
       "start_line": 77,
-      "end_line": 570,
+      "end_line": 552,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/consensus/maker.py|src.heretek_swarm.consensus.maker.MAKERConsensus.__init__": {
       "file_path": "src/heretek_swarm/consensus/maker.py",
       "qualified_name": "src.heretek_swarm.consensus.maker.MAKERConsensus.__init__",
       "start_line": 106,
-      "end_line": 138,
+      "end_line": 137,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/consensus/maker.py|src.heretek_swarm.consensus.maker.MAKERConsensus.start_consensus": {
       "file_path": "src/heretek_swarm/consensus/maker.py",
@@ -84259,18 +84364,18 @@
     "src/heretek_swarm/consensus/maker.py|src.heretek_swarm.consensus.maker.MAKERConsensus._first_to_ahead_by_k": {
       "file_path": "src/heretek_swarm/consensus/maker.py",
       "qualified_name": "src.heretek_swarm.consensus.maker.MAKERConsensus._first_to_ahead_by_k",
-      "start_line": 242,
-      "end_line": 307,
+      "start_line": 241,
+      "end_line": 301,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/consensus/maker.py|src.heretek_swarm.consensus.maker.MAKERConsensus._check_red_flags": {
       "file_path": "src/heretek_swarm/consensus/maker.py",
       "qualified_name": "src.heretek_swarm.consensus.maker.MAKERConsensus._check_red_flags",
-      "start_line": 309,
-      "end_line": 359,
+      "start_line": 303,
+      "end_line": 349,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/consensus/maker.py|src.heretek_swarm.consensus.maker.MAKERConsensus._apply_reputation_weights": {
       "file_path": "src/heretek_swarm/consensus/maker.py",
@@ -84291,10 +84396,10 @@
     "src/heretek_swarm/consensus/maker.py|src.heretek_swarm.consensus.maker.MAKERConsensus.update_reputation": {
       "file_path": "src/heretek_swarm/consensus/maker.py",
       "qualified_name": "src.heretek_swarm.consensus.maker.MAKERConsensus.update_reputation",
-      "start_line": 411,
-      "end_line": 436,
+      "start_line": 401,
+      "end_line": 421,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/consensus/maker.py|src.heretek_swarm.consensus.maker.MAKERConsensus.get_agent_reputation": {
       "file_path": "src/heretek_swarm/consensus/maker.py",
@@ -84312,19 +84417,19 @@
       "type": "METHOD",
       "status": "unchanged"
     },
+    "src/heretek_swarm/consensus/maker.py|src.heretek_swarm.consensus.maker.MAKERConsensus.run_consensus": {
+      "file_path": "src/heretek_swarm/consensus/maker.py",
+      "qualified_name": "src.heretek_swarm.consensus.maker.MAKERConsensus.run_consensus",
+      "start_line": 460,
+      "end_line": 509,
+      "type": "METHOD",
+      "status": "modified"
+    },
     "src/heretek_swarm/consensus/maker.py|src.heretek_swarm.consensus.maker.MAKERConsensus.cleanup_process": {
       "file_path": "src/heretek_swarm/consensus/maker.py",
       "qualified_name": "src.heretek_swarm.consensus.maker.MAKERConsensus.cleanup_process",
       "start_line": 462,
       "end_line": 473,
-      "type": "METHOD",
-      "status": "unchanged"
-    },
-    "src/heretek_swarm/consensus/maker.py|src.heretek_swarm.consensus.maker.MAKERConsensus.run_consensus": {
-      "file_path": "src/heretek_swarm/consensus/maker.py",
-      "qualified_name": "src.heretek_swarm.consensus.maker.MAKERConsensus.run_consensus",
-      "start_line": 475,
-      "end_line": 525,
       "type": "METHOD",
       "status": "unchanged"
     },
@@ -84339,10 +84444,10 @@
     "src/heretek_swarm/consensus/maker.py|src.heretek_swarm.consensus.maker.MAKERConsensus.get_statistics": {
       "file_path": "src/heretek_swarm/consensus/maker.py",
       "qualified_name": "src.heretek_swarm.consensus.maker.MAKERConsensus.get_statistics",
-      "start_line": 552,
-      "end_line": 570,
+      "start_line": 536,
+      "end_line": 552,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/consensus/maker_enhanced.py|src.heretek_swarm.consensus.maker_enhanced.ReasoningChainStatus": {
       "file_path": "src/heretek_swarm/consensus/maker_enhanced.py",
@@ -109146,7 +109251,9 @@
         },
         {
           "qualified_name": "dashboard.frontend.src.stores.canvasStore.useCanvasStore",
-          "reference_file": "dashboard/frontend/src/stores/canvasStore.ts"
+          "reference_file": "dashboard/frontend/src/stores/canvasStore.ts",
+          "reference_start_line": 0,
+          "reference_end_line": 0
         }
       ],
       "source_cluster_ids": [
@@ -112089,7 +112196,7 @@
         },
         {
           "file_path": "src/heretek_swarm/actors/nexus.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.actors.nexus.ConnectionStatus",
             "src.heretek_swarm.actors.nexus.ProtocolType",
@@ -112299,7 +112406,7 @@
         },
         {
           "file_path": "src/heretek_swarm/actors/sentinel.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.actors.sentinel.SafetyLevel",
             "src.heretek_swarm.actors.sentinel.ViolationType",
@@ -112320,15 +112427,15 @@
             "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_statistics",
             "src.heretek_swarm.actors.sentinel.SentinelAgent._scan_content",
             "src.heretek_swarm.actors.sentinel.SentinelAgent._check_injection_patterns",
-            "src.heretek_swarm.actors.sentinel.SentinelAgent._check_pii_patterns",
             "src.heretek_swarm.actors.sentinel.SentinelAgent._record_violation",
+            "src.heretek_swarm.actors.sentinel.SentinelAgent._check_pii_patterns",
             "src.heretek_swarm.actors.sentinel.SentinelAgent._generate_safety_report",
             "src.heretek_swarm.actors.sentinel.SentinelAgent._check_policy_rule"
           ]
         },
         {
           "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.actors.sentinel_prime.ThreatLevel",
             "src.heretek_swarm.actors.sentinel_prime.ThreatType",
@@ -112360,9 +112467,9 @@
             "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._calculate_severity_score",
             "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._find_correlated_incidents",
             "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._reconstruct_attack_chain",
-            "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._match_iocs",
             "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._map_mitre_techniques",
             "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._generate_recommendations",
+            "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._match_iocs",
             "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._generate_strategic_recommendations",
             "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._schedule_unblock",
             "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._schedule_unisolate"
@@ -112370,7 +112477,7 @@
         },
         {
           "file_path": "src/heretek_swarm/actors/steward.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.actors.steward.StewardAgent",
             "src.heretek_swarm.actors.steward.StewardAgent.__init__",
@@ -112383,7 +112490,14 @@
             "src.heretek_swarm.actors.steward.StewardAgent.coordinate_triad",
             "src.heretek_swarm.actors.steward.StewardAgent.get_deliberation_status",
             "src.heretek_swarm.actors.steward.StewardAgent.get_all_deliberation_statuses",
-            "src.heretek_swarm.actors.steward.StewardAgent.get_governance_policy"
+            "src.heretek_swarm.actors.steward.StewardAgent.get_governance_policy",
+            "src.heretek_swarm.actors.steward.StewardAgent._handle_agent_heartbeat",
+            "src.heretek_swarm.actors.steward.StewardAgent.check_agent_health",
+            "src.heretek_swarm.actors.steward.StewardAgent.detect_heartbeat_failure",
+            "src.heretek_swarm.actors.steward.StewardAgent._monitor_loop",
+            "src.heretek_swarm.actors.steward.StewardAgent._handle_agent_failure",
+            "src.heretek_swarm.actors.steward.StewardAgent.initiate_failover",
+            "src.heretek_swarm.actors.steward.StewardAgent._cancel_tasks"
           ]
         },
         {
@@ -114360,7 +114474,7 @@
         },
         {
           "file_path": "src/heretek_swarm/consensus/maker.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.consensus.maker.ConsensusState",
             "src.heretek_swarm.consensus.maker.Vote",
@@ -114377,8 +114491,8 @@
             "src.heretek_swarm.consensus.maker.MAKERConsensus.update_reputation",
             "src.heretek_swarm.consensus.maker.MAKERConsensus.get_agent_reputation",
             "src.heretek_swarm.consensus.maker.MAKERConsensus.get_process_state",
-            "src.heretek_swarm.consensus.maker.MAKERConsensus.cleanup_process",
             "src.heretek_swarm.consensus.maker.MAKERConsensus.run_consensus",
+            "src.heretek_swarm.consensus.maker.MAKERConsensus.cleanup_process",
             "src.heretek_swarm.consensus.maker.MAKERConsensus._collect_agent_vote",
             "src.heretek_swarm.consensus.maker.MAKERConsensus.get_statistics"
           ]
@@ -118456,7 +118570,7 @@
             },
             {
               "file_path": "src/heretek_swarm/actors/nexus.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.actors.nexus.ConnectionStatus",
                 "src.heretek_swarm.actors.nexus.ProtocolType",
@@ -118498,7 +118612,7 @@
             },
             {
               "file_path": "src/heretek_swarm/actors/sentinel.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.actors.sentinel.SafetyLevel",
                 "src.heretek_swarm.actors.sentinel.ViolationType",
@@ -118519,15 +118633,15 @@
                 "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_statistics",
                 "src.heretek_swarm.actors.sentinel.SentinelAgent._scan_content",
                 "src.heretek_swarm.actors.sentinel.SentinelAgent._check_injection_patterns",
-                "src.heretek_swarm.actors.sentinel.SentinelAgent._check_pii_patterns",
                 "src.heretek_swarm.actors.sentinel.SentinelAgent._record_violation",
+                "src.heretek_swarm.actors.sentinel.SentinelAgent._check_pii_patterns",
                 "src.heretek_swarm.actors.sentinel.SentinelAgent._generate_safety_report",
                 "src.heretek_swarm.actors.sentinel.SentinelAgent._check_policy_rule"
               ]
             },
             {
               "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.actors.sentinel_prime.ThreatLevel",
                 "src.heretek_swarm.actors.sentinel_prime.ThreatType",
@@ -118559,9 +118673,9 @@
                 "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._calculate_severity_score",
                 "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._find_correlated_incidents",
                 "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._reconstruct_attack_chain",
-                "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._match_iocs",
                 "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._map_mitre_techniques",
                 "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._generate_recommendations",
+                "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._match_iocs",
                 "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._generate_strategic_recommendations",
                 "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._schedule_unblock",
                 "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._schedule_unisolate"
@@ -118569,7 +118683,7 @@
             },
             {
               "file_path": "src/heretek_swarm/actors/steward.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.actors.steward.StewardAgent",
                 "src.heretek_swarm.actors.steward.StewardAgent.__init__",
@@ -118582,7 +118696,14 @@
                 "src.heretek_swarm.actors.steward.StewardAgent.coordinate_triad",
                 "src.heretek_swarm.actors.steward.StewardAgent.get_deliberation_status",
                 "src.heretek_swarm.actors.steward.StewardAgent.get_all_deliberation_statuses",
-                "src.heretek_swarm.actors.steward.StewardAgent.get_governance_policy"
+                "src.heretek_swarm.actors.steward.StewardAgent.get_governance_policy",
+                "src.heretek_swarm.actors.steward.StewardAgent._handle_agent_heartbeat",
+                "src.heretek_swarm.actors.steward.StewardAgent.check_agent_health",
+                "src.heretek_swarm.actors.steward.StewardAgent.detect_heartbeat_failure",
+                "src.heretek_swarm.actors.steward.StewardAgent._monitor_loop",
+                "src.heretek_swarm.actors.steward.StewardAgent._handle_agent_failure",
+                "src.heretek_swarm.actors.steward.StewardAgent.initiate_failover",
+                "src.heretek_swarm.actors.steward.StewardAgent._cancel_tasks"
               ]
             },
             {
@@ -120144,7 +120265,7 @@
             },
             {
               "file_path": "src/heretek_swarm/consensus/maker.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.consensus.maker.ConsensusState",
                 "src.heretek_swarm.consensus.maker.Vote",
@@ -120161,8 +120282,8 @@
                 "src.heretek_swarm.consensus.maker.MAKERConsensus.update_reputation",
                 "src.heretek_swarm.consensus.maker.MAKERConsensus.get_agent_reputation",
                 "src.heretek_swarm.consensus.maker.MAKERConsensus.get_process_state",
-                "src.heretek_swarm.consensus.maker.MAKERConsensus.cleanup_process",
                 "src.heretek_swarm.consensus.maker.MAKERConsensus.run_consensus",
+                "src.heretek_swarm.consensus.maker.MAKERConsensus.cleanup_process",
                 "src.heretek_swarm.consensus.maker.MAKERConsensus._collect_agent_vote",
                 "src.heretek_swarm.consensus.maker.MAKERConsensus.get_statistics"
               ]
@@ -123312,7 +123433,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/actors/nexus.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.actors.nexus.ConnectionStatus",
                     "src.heretek_swarm.actors.nexus.ProtocolType",
@@ -123354,7 +123475,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/actors/sentinel.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.actors.sentinel.SafetyLevel",
                     "src.heretek_swarm.actors.sentinel.ViolationType",
@@ -123375,15 +123496,15 @@
                     "src.heretek_swarm.actors.sentinel.SentinelAgent._handle_get_statistics",
                     "src.heretek_swarm.actors.sentinel.SentinelAgent._scan_content",
                     "src.heretek_swarm.actors.sentinel.SentinelAgent._check_injection_patterns",
-                    "src.heretek_swarm.actors.sentinel.SentinelAgent._check_pii_patterns",
                     "src.heretek_swarm.actors.sentinel.SentinelAgent._record_violation",
+                    "src.heretek_swarm.actors.sentinel.SentinelAgent._check_pii_patterns",
                     "src.heretek_swarm.actors.sentinel.SentinelAgent._generate_safety_report",
                     "src.heretek_swarm.actors.sentinel.SentinelAgent._check_policy_rule"
                   ]
                 },
                 {
                   "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.actors.sentinel_prime.ThreatLevel",
                     "src.heretek_swarm.actors.sentinel_prime.ThreatType",
@@ -123415,9 +123536,9 @@
                     "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._calculate_severity_score",
                     "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._find_correlated_incidents",
                     "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._reconstruct_attack_chain",
-                    "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._match_iocs",
                     "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._map_mitre_techniques",
                     "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._generate_recommendations",
+                    "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._match_iocs",
                     "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._generate_strategic_recommendations",
                     "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._schedule_unblock",
                     "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._schedule_unisolate"
@@ -123425,7 +123546,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/actors/steward.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.actors.steward.StewardAgent",
                     "src.heretek_swarm.actors.steward.StewardAgent.__init__",
@@ -123438,7 +123559,14 @@
                     "src.heretek_swarm.actors.steward.StewardAgent.coordinate_triad",
                     "src.heretek_swarm.actors.steward.StewardAgent.get_deliberation_status",
                     "src.heretek_swarm.actors.steward.StewardAgent.get_all_deliberation_statuses",
-                    "src.heretek_swarm.actors.steward.StewardAgent.get_governance_policy"
+                    "src.heretek_swarm.actors.steward.StewardAgent.get_governance_policy",
+                    "src.heretek_swarm.actors.steward.StewardAgent._handle_agent_heartbeat",
+                    "src.heretek_swarm.actors.steward.StewardAgent.check_agent_health",
+                    "src.heretek_swarm.actors.steward.StewardAgent.detect_heartbeat_failure",
+                    "src.heretek_swarm.actors.steward.StewardAgent._monitor_loop",
+                    "src.heretek_swarm.actors.steward.StewardAgent._handle_agent_failure",
+                    "src.heretek_swarm.actors.steward.StewardAgent.initiate_failover",
+                    "src.heretek_swarm.actors.steward.StewardAgent._cancel_tasks"
                   ]
                 },
                 {
@@ -125847,7 +125975,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/consensus/maker.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.consensus.maker.ConsensusState",
                     "src.heretek_swarm.consensus.maker.Vote",
@@ -125864,8 +125992,8 @@
                     "src.heretek_swarm.consensus.maker.MAKERConsensus.update_reputation",
                     "src.heretek_swarm.consensus.maker.MAKERConsensus.get_agent_reputation",
                     "src.heretek_swarm.consensus.maker.MAKERConsensus.get_process_state",
-                    "src.heretek_swarm.consensus.maker.MAKERConsensus.cleanup_process",
                     "src.heretek_swarm.consensus.maker.MAKERConsensus.run_consensus",
+                    "src.heretek_swarm.consensus.maker.MAKERConsensus.cleanup_process",
                     "src.heretek_swarm.consensus.maker.MAKERConsensus._collect_agent_vote",
                     "src.heretek_swarm.consensus.maker.MAKERConsensus.get_statistics"
                   ]
@@ -131290,11 +131418,15 @@
           "key_entities": [
             {
               "qualified_name": "dashboard.frontend.src.stores.canvasStore.useCanvasStore",
-              "reference_file": "dashboard/frontend/src/stores/canvasStore.ts"
+              "reference_file": "dashboard/frontend/src/stores/canvasStore.ts",
+              "reference_start_line": 0,
+              "reference_end_line": 0
             },
             {
               "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas",
-              "reference_file": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx"
+              "reference_file": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+              "reference_start_line": 0,
+              "reference_end_line": 0
             }
           ],
           "source_cluster_ids": [
@@ -133306,15 +133438,21 @@
               "key_entities": [
                 {
                   "qualified_name": "dashboard.frontend.src.stores.canvasStore.useCanvasStore",
-                  "reference_file": "dashboard/frontend/src/stores/canvasStore.ts"
+                  "reference_file": "dashboard/frontend/src/stores/canvasStore.ts",
+                  "reference_start_line": 0,
+                  "reference_end_line": 0
                 },
                 {
                   "qualified_name": "dashboard.frontend.src.components.Canvas.FlowCanvas",
-                  "reference_file": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx"
+                  "reference_file": "dashboard/frontend/src/components/Canvas/FlowCanvas.tsx",
+                  "reference_start_line": 0,
+                  "reference_end_line": 0
                 },
                 {
                   "qualified_name": "dashboard.frontend.src.components.Canvas.AgentNode",
-                  "reference_file": "dashboard/frontend/src/components/Canvas/AgentNode.tsx"
+                  "reference_file": "dashboard/frontend/src/components/Canvas/AgentNode.tsx",
+                  "reference_start_line": 0,
+                  "reference_end_line": 0
                 }
               ],
               "source_cluster_ids": [
@@ -133647,15 +133785,21 @@
               "key_entities": [
                 {
                   "qualified_name": "dashboard.frontend.src.hooks.useWebSocket",
-                  "reference_file": "dashboard/frontend/src/hooks/useWebSocket.ts"
+                  "reference_file": "dashboard/frontend/src/hooks/useWebSocket.ts",
+                  "reference_start_line": 0,
+                  "reference_end_line": 0
                 },
                 {
                   "qualified_name": "dashboard.frontend.src.components.Consciousness.ConsciousnessDashboard",
-                  "reference_file": "dashboard/frontend/src/components/Consciousness/ConsciousnessDashboard.tsx"
+                  "reference_file": "dashboard/frontend/src/components/Consciousness/ConsciousnessDashboard.tsx",
+                  "reference_start_line": 0,
+                  "reference_end_line": 0
                 },
                 {
                   "qualified_name": "dashboard.frontend.src.stores.metricsStore.useMetricsStore",
-                  "reference_file": "dashboard/frontend/src/stores/metricsStore.ts"
+                  "reference_file": "dashboard/frontend/src/stores/metricsStore.ts",
+                  "reference_start_line": 0,
+                  "reference_end_line": 0
                 }
               ],
               "source_cluster_ids": [
@@ -133781,15 +133925,21 @@
               "key_entities": [
                 {
                   "qualified_name": "dashboard.frontend.src.api.client.api",
-                  "reference_file": "dashboard/frontend/src/api/client.ts"
+                  "reference_file": "dashboard/frontend/src/api/client.ts",
+                  "reference_start_line": 0,
+                  "reference_end_line": 0
                 },
                 {
                   "qualified_name": "dashboard.frontend.src.components.Agents.AgentsPage",
-                  "reference_file": "dashboard/frontend/src/components/Agents/AgentsPage.tsx"
+                  "reference_file": "dashboard/frontend/src/components/Agents/AgentsPage.tsx",
+                  "reference_start_line": 0,
+                  "reference_end_line": 0
                 },
                 {
                   "qualified_name": "dashboard.frontend.src.components.Settings.ImportExportSection",
-                  "reference_file": "dashboard/frontend/src/components/Settings/ImportExportSection.tsx"
+                  "reference_file": "dashboard/frontend/src/components/Settings/ImportExportSection.tsx",
+                  "reference_start_line": 0,
+                  "reference_end_line": 0
                 }
               ],
               "source_cluster_ids": [
@@ -135590,7 +135740,9 @@
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker",
-          "reference_file": "dashboard/frontend/src/components/Observability/A2ATracker.tsx"
+          "reference_file": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+          "reference_start_line": 0,
+          "reference_end_line": 0
         }
       ],
       "source_cluster_ids": [
@@ -139219,15 +139371,21 @@
               "key_entities": [
                 {
                   "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker",
-                  "reference_file": "dashboard/frontend/src/components/Observability/A2ATracker.tsx"
+                  "reference_file": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+                  "reference_start_line": 0,
+                  "reference_end_line": 0
                 },
                 {
                   "qualified_name": "dashboard.frontend.src.components.Observability.Observability.Observability.fetchData",
-                  "reference_file": "dashboard/frontend/src/components/Observability/Observability.tsx"
+                  "reference_file": "dashboard/frontend/src/components/Observability/Observability.tsx",
+                  "reference_start_line": 0,
+                  "reference_end_line": 0
                 },
                 {
                   "qualified_name": "dashboard.frontend.src.components.Observability.A2AMessageFlow.A2AMessageFlow",
-                  "reference_file": "dashboard/frontend/src/components/Observability/A2AMessageFlow.tsx"
+                  "reference_file": "dashboard/frontend/src/components/Observability/A2AMessageFlow.tsx",
+                  "reference_start_line": 0,
+                  "reference_end_line": 0
                 }
               ],
               "source_cluster_ids": [
@@ -141095,11 +141253,15 @@
           "key_entities": [
             {
               "qualified_name": "dashboard.frontend.src.components.Observability.A2ATracker",
-              "reference_file": "dashboard/frontend/src/components/Observability/A2ATracker.tsx"
+              "reference_file": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+              "reference_start_line": 0,
+              "reference_end_line": 0
             },
             {
               "qualified_name": "dashboard.frontend.src.components.Observability.A2AMessageFlow",
-              "reference_file": "dashboard/frontend/src/components/Observability/A2AMessageFlow.tsx"
+              "reference_file": "dashboard/frontend/src/components/Observability/A2AMessageFlow.tsx",
+              "reference_start_line": 0,
+              "reference_end_line": 0
             }
           ],
           "source_cluster_ids": [
@@ -151793,7 +151955,9 @@
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Consciousness.ConsciousnessDashboard",
-          "reference_file": "dashboard/frontend/src/components/Consciousness/ConsciousnessDashboard.tsx"
+          "reference_file": "dashboard/frontend/src/components/Consciousness/ConsciousnessDashboard.tsx",
+          "reference_start_line": 0,
+          "reference_end_line": 0
         }
       ],
       "source_cluster_ids": [
@@ -154624,11 +154788,15 @@
           "key_entities": [
             {
               "qualified_name": "dashboard.frontend.src.components.Dashboard.UnifiedDashboard.UnifiedDashboard",
-              "reference_file": "dashboard/frontend/src/components/Dashboard/UnifiedDashboard.tsx"
+              "reference_file": "dashboard/frontend/src/components/Dashboard/UnifiedDashboard.tsx",
+              "reference_start_line": 0,
+              "reference_end_line": 0
             },
             {
               "qualified_name": "dashboard.frontend.src.components.ConsciousnessMetricsPanel.ConsciousnessMetricsPanel",
-              "reference_file": "dashboard/frontend/src/components/ConsciousnessMetricsPanel.tsx"
+              "reference_file": "dashboard/frontend/src/components/ConsciousnessMetricsPanel.tsx",
+              "reference_start_line": 0,
+              "reference_end_line": 0
             }
           ],
           "source_cluster_ids": [
@@ -154782,11 +154950,15 @@
               "key_entities": [
                 {
                   "qualified_name": "dashboard.frontend.src.components.Dashboard.UnifiedDashboard.UnifiedDashboard",
-                  "reference_file": "dashboard/frontend/src/components/Dashboard/UnifiedDashboard.tsx"
+                  "reference_file": "dashboard/frontend/src/components/Dashboard/UnifiedDashboard.tsx",
+                  "reference_start_line": 0,
+                  "reference_end_line": 0
                 },
                 {
                   "qualified_name": "dashboard.frontend.src.components.Dashboard.Dashboard",
-                  "reference_file": "dashboard/frontend/src/components/Dashboard/Dashboard.tsx"
+                  "reference_file": "dashboard/frontend/src/components/Dashboard/Dashboard.tsx",
+                  "reference_start_line": 0,
+                  "reference_end_line": 0
                 }
               ],
               "source_cluster_ids": [
@@ -154860,11 +155032,15 @@
                   "key_entities": [
                     {
                       "qualified_name": "dashboard.frontend.src.components.Dashboard.Layout.DashboardLayout",
-                      "reference_file": "dashboard/frontend/src/components/Dashboard/Layout.tsx"
+                      "reference_file": "dashboard/frontend/src/components/Dashboard/Layout.tsx",
+                      "reference_start_line": 0,
+                      "reference_end_line": 0
                     },
                     {
                       "qualified_name": "dashboard.frontend.src.components.Dashboard.Layout.NavItem",
-                      "reference_file": "dashboard/frontend/src/components/Dashboard/Layout.tsx"
+                      "reference_file": "dashboard/frontend/src/components/Dashboard/Layout.tsx",
+                      "reference_start_line": 0,
+                      "reference_end_line": 0
                     }
                   ],
                   "source_cluster_ids": [
@@ -154894,7 +155070,9 @@
                   "key_entities": [
                     {
                       "qualified_name": "dashboard.frontend.src.components.Dashboard.Dashboard.Dashboard",
-                      "reference_file": "dashboard/frontend/src/components/Dashboard/Dashboard.tsx"
+                      "reference_file": "dashboard/frontend/src/components/Dashboard/Dashboard.tsx",
+                      "reference_start_line": 0,
+                      "reference_end_line": 0
                     }
                   ],
                   "source_cluster_ids": [
@@ -154945,7 +155123,9 @@
                   "key_entities": [
                     {
                       "qualified_name": "dashboard.frontend.src.components.Dashboard.UnifiedDashboard.UnifiedDashboard",
-                      "reference_file": "dashboard/frontend/src/components/Dashboard/UnifiedDashboard.tsx"
+                      "reference_file": "dashboard/frontend/src/components/Dashboard/UnifiedDashboard.tsx",
+                      "reference_start_line": 0,
+                      "reference_end_line": 0
                     }
                   ],
                   "source_cluster_ids": [
@@ -155075,7 +155255,9 @@
                   "key_entities": [
                     {
                       "qualified_name": "dashboard.frontend.src.components.Dashboard.UnifiedDashboard",
-                      "reference_file": "dashboard/frontend/src/components/Dashboard/UnifiedDashboard.tsx"
+                      "reference_file": "dashboard/frontend/src/components/Dashboard/UnifiedDashboard.tsx",
+                      "reference_start_line": 0,
+                      "reference_end_line": 0
                     }
                   ],
                   "source_cluster_ids": [
@@ -155208,7 +155390,9 @@
               "key_entities": [
                 {
                   "qualified_name": "dashboard.frontend.src.components.ConsciousnessMetricsPanel.ConsciousnessMetricsPanel",
-                  "reference_file": "dashboard/frontend/src/components/ConsciousnessMetricsPanel.tsx"
+                  "reference_file": "dashboard/frontend/src/components/ConsciousnessMetricsPanel.tsx",
+                  "reference_start_line": 0,
+                  "reference_end_line": 0
                 }
               ],
               "source_cluster_ids": [
@@ -155342,15 +155526,21 @@
                   "key_entities": [
                     {
                       "qualified_name": "dashboard.frontend.src.components.ConsciousnessMetricsPanel.ConsciousnessMetricsPanel",
-                      "reference_file": "dashboard/frontend/src/components/ConsciousnessMetricsPanel.tsx"
+                      "reference_file": "dashboard/frontend/src/components/ConsciousnessMetricsPanel.tsx",
+                      "reference_start_line": 0,
+                      "reference_end_line": 0
                     },
                     {
                       "qualified_name": "dashboard.frontend.src.components.AgentMetricsGrid.AgentMetricsGrid",
-                      "reference_file": "dashboard/frontend/src/components/AgentMetricsGrid.tsx"
+                      "reference_file": "dashboard/frontend/src/components/AgentMetricsGrid.tsx",
+                      "reference_start_line": 0,
+                      "reference_end_line": 0
                     },
                     {
                       "qualified_name": "dashboard.frontend.src.components.SwarmHealthDashboard.SwarmHealthDashboard",
-                      "reference_file": "dashboard/frontend/src/components/SwarmHealthDashboard.tsx"
+                      "reference_file": "dashboard/frontend/src/components/SwarmHealthDashboard.tsx",
+                      "reference_start_line": 0,
+                      "reference_end_line": 0
                     }
                   ],
                   "source_cluster_ids": [
@@ -155490,11 +155680,15 @@
               "key_entities": [
                 {
                   "qualified_name": "dashboard.frontend.src.components.AgentMetricsGrid.AgentMetricsGrid",
-                  "reference_file": "dashboard/frontend/src/components/AgentMetricsGrid.tsx"
+                  "reference_file": "dashboard/frontend/src/components/AgentMetricsGrid.tsx",
+                  "reference_start_line": 0,
+                  "reference_end_line": 0
                 },
                 {
                   "qualified_name": "dashboard.frontend.src.components.SwarmHealthDashboard.SwarmHealthDashboard",
-                  "reference_file": "dashboard/frontend/src/components/SwarmHealthDashboard.tsx"
+                  "reference_file": "dashboard/frontend/src/components/SwarmHealthDashboard.tsx",
+                  "reference_start_line": 0,
+                  "reference_end_line": 0
                 }
               ],
               "source_cluster_ids": [
@@ -155616,11 +155810,15 @@
                   "key_entities": [
                     {
                       "qualified_name": "dashboard.frontend.src.components.AgentMetricsGrid.AgentMetricsGrid",
-                      "reference_file": "dashboard/frontend/src/components/AgentMetricsGrid.tsx"
+                      "reference_file": "dashboard/frontend/src/components/AgentMetricsGrid.tsx",
+                      "reference_start_line": 0,
+                      "reference_end_line": 0
                     },
                     {
                       "qualified_name": "dashboard.frontend.src.components.SwarmHealthDashboard.SwarmHealthDashboard",
-                      "reference_file": "dashboard/frontend/src/components/SwarmHealthDashboard.tsx"
+                      "reference_file": "dashboard/frontend/src/components/SwarmHealthDashboard.tsx",
+                      "reference_start_line": 0,
+                      "reference_end_line": 0
                     }
                   ],
                   "source_cluster_ids": [
@@ -155751,11 +155949,15 @@
           "key_entities": [
             {
               "qualified_name": "dashboard.frontend.src.components.SwarmHealthDashboard.SwarmHealthDashboard",
-              "reference_file": "dashboard/frontend/src/components/SwarmHealthDashboard.tsx"
+              "reference_file": "dashboard/frontend/src/components/SwarmHealthDashboard.tsx",
+              "reference_start_line": 0,
+              "reference_end_line": 0
             },
             {
               "qualified_name": "dashboard.frontend.src.components.UI.PerformanceOverlay.PerformanceOverlay",
-              "reference_file": "dashboard/frontend/src/components/UI/PerformanceOverlay.tsx"
+              "reference_file": "dashboard/frontend/src/components/UI/PerformanceOverlay.tsx",
+              "reference_start_line": 0,
+              "reference_end_line": 0
             }
           ],
           "source_cluster_ids": [
@@ -155874,11 +156076,15 @@
               "key_entities": [
                 {
                   "qualified_name": "dashboard.frontend.src.components.SwarmHealthDashboard.SwarmHealthDashboard",
-                  "reference_file": "dashboard/frontend/src/components/SwarmHealthDashboard.tsx"
+                  "reference_file": "dashboard/frontend/src/components/SwarmHealthDashboard.tsx",
+                  "reference_start_line": 0,
+                  "reference_end_line": 0
                 },
                 {
                   "qualified_name": "dashboard.frontend.src.components.AgentMetricsGrid.AgentMetricsGrid",
-                  "reference_file": "dashboard/frontend/src/components/AgentMetricsGrid.tsx"
+                  "reference_file": "dashboard/frontend/src/components/AgentMetricsGrid.tsx",
+                  "reference_start_line": 0,
+                  "reference_end_line": 0
                 }
               ],
               "source_cluster_ids": [
@@ -155950,7 +156156,9 @@
                   "key_entities": [
                     {
                       "qualified_name": "dashboard.frontend.src.components.SwarmHealthDashboard.SwarmHealthDashboard",
-                      "reference_file": "dashboard/frontend/src/components/SwarmHealthDashboard.tsx"
+                      "reference_file": "dashboard/frontend/src/components/SwarmHealthDashboard.tsx",
+                      "reference_start_line": 0,
+                      "reference_end_line": 0
                     }
                   ],
                   "source_cluster_ids": [
@@ -156009,7 +156217,9 @@
                   "key_entities": [
                     {
                       "qualified_name": "dashboard.frontend.src.components.AgentMetricsGrid.AgentMetricsGrid",
-                      "reference_file": "dashboard/frontend/src/components/AgentMetricsGrid.tsx"
+                      "reference_file": "dashboard/frontend/src/components/AgentMetricsGrid.tsx",
+                      "reference_start_line": 0,
+                      "reference_end_line": 0
                     }
                   ],
                   "source_cluster_ids": [
@@ -156098,7 +156308,9 @@
               "key_entities": [
                 {
                   "qualified_name": "dashboard.frontend.src.components.UI.PerformanceOverlay.PerformanceOverlay",
-                  "reference_file": "dashboard/frontend/src/components/UI/PerformanceOverlay.tsx"
+                  "reference_file": "dashboard/frontend/src/components/UI/PerformanceOverlay.tsx",
+                  "reference_start_line": 0,
+                  "reference_end_line": 0
                 }
               ],
               "source_cluster_ids": [
@@ -156157,11 +156369,15 @@
                   "key_entities": [
                     {
                       "qualified_name": "dashboard.frontend.src.components.UI.PerformanceOverlay.usePerformanceMonitor",
-                      "reference_file": "dashboard/frontend/src/components/UI/PerformanceOverlay.tsx"
+                      "reference_file": "dashboard/frontend/src/components/UI/PerformanceOverlay.tsx",
+                      "reference_start_line": 0,
+                      "reference_end_line": 0
                     },
                     {
                       "qualified_name": "dashboard.frontend.src.components.UI.PerformanceOverlay.PerformanceOverlay.measureFrame",
-                      "reference_file": "dashboard/frontend/src/components/UI/PerformanceOverlay.tsx"
+                      "reference_file": "dashboard/frontend/src/components/UI/PerformanceOverlay.tsx",
+                      "reference_start_line": 0,
+                      "reference_end_line": 0
                     }
                   ],
                   "source_cluster_ids": [
@@ -156195,7 +156411,9 @@
                   "key_entities": [
                     {
                       "qualified_name": "dashboard.frontend.src.components.UI.PerformanceOverlay.PerformanceOverlay",
-                      "reference_file": "dashboard/frontend/src/components/UI/PerformanceOverlay.tsx"
+                      "reference_file": "dashboard/frontend/src/components/UI/PerformanceOverlay.tsx",
+                      "reference_start_line": 0,
+                      "reference_end_line": 0
                     }
                   ],
                   "source_cluster_ids": [
@@ -156242,11 +156460,15 @@
                   "key_entities": [
                     {
                       "qualified_name": "dashboard.frontend.src.components.UI.Toast.ToastProvider",
-                      "reference_file": "dashboard/frontend/src/components/UI/Toast.tsx"
+                      "reference_file": "dashboard/frontend/src/components/UI/Toast.tsx",
+                      "reference_start_line": 0,
+                      "reference_end_line": 0
                     },
                     {
                       "qualified_name": "dashboard.frontend.src.components.UI.Toast.ToastItem",
-                      "reference_file": "dashboard/frontend/src/components/UI/Toast.tsx"
+                      "reference_file": "dashboard/frontend/src/components/UI/Toast.tsx",
+                      "reference_start_line": 0,
+                      "reference_end_line": 0
                     }
                   ],
                   "source_cluster_ids": [
@@ -156675,7 +156897,9 @@
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Setup.ConfigWizard",
-          "reference_file": "dashboard/frontend/src/components/Setup/ConfigWizard.tsx"
+          "reference_file": "dashboard/frontend/src/components/Setup/ConfigWizard.tsx",
+          "reference_start_line": 0,
+          "reference_end_line": 0
         }
       ],
       "source_cluster_ids": [
@@ -156891,7 +157115,9 @@
             },
             {
               "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection",
-              "reference_file": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx"
+              "reference_file": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
+              "reference_start_line": 0,
+              "reference_end_line": 0
             }
           ],
           "source_cluster_ids": [
@@ -157018,15 +157244,21 @@
               "key_entities": [
                 {
                   "qualified_name": "dashboard.frontend.src.components.Settings.LLMProvidersSection.LLMProvidersSection",
-                  "reference_file": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx"
+                  "reference_file": "dashboard/frontend/src/components/Settings/LLMProvidersSection.tsx",
+                  "reference_start_line": 0,
+                  "reference_end_line": 0
                 },
                 {
                   "qualified_name": "dashboard.frontend.src.components.Settings.EmbeddingProvidersSection.EmbeddingProvidersSection",
-                  "reference_file": "dashboard/frontend/src/components/Settings/EmbeddingProvidersSection.tsx"
+                  "reference_file": "dashboard/frontend/src/components/Settings/EmbeddingProvidersSection.tsx",
+                  "reference_start_line": 0,
+                  "reference_end_line": 0
                 },
                 {
                   "qualified_name": "dashboard.frontend.src.components.Settings.DeveloperModeToggle.useDeveloperMode",
-                  "reference_file": "dashboard/frontend/src/components/Settings/DeveloperModeToggle.tsx"
+                  "reference_file": "dashboard/frontend/src/components/Settings/DeveloperModeToggle.tsx",
+                  "reference_start_line": 0,
+                  "reference_end_line": 0
                 }
               ],
               "source_cluster_ids": [
@@ -157215,11 +157447,15 @@
           "key_entities": [
             {
               "qualified_name": "electron.main",
-              "reference_file": "electron/main.ts"
+              "reference_file": "electron/main.ts",
+              "reference_start_line": 0,
+              "reference_end_line": 0
             },
             {
               "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore",
-              "reference_file": "dashboard/frontend/src/stores/configWizardStore.ts"
+              "reference_file": "dashboard/frontend/src/stores/configWizardStore.ts",
+              "reference_start_line": 0,
+              "reference_end_line": 0
             }
           ],
           "source_cluster_ids": [
@@ -157426,15 +157662,21 @@
               "key_entities": [
                 {
                   "qualified_name": "electron.main.setupIpcHandlers",
-                  "reference_file": "electron/main.ts"
+                  "reference_file": "electron/main.ts",
+                  "reference_start_line": 0,
+                  "reference_end_line": 0
                 },
                 {
                   "qualified_name": "electron.preload.heretekAPI",
-                  "reference_file": "electron/preload.ts"
+                  "reference_file": "electron/preload.ts",
+                  "reference_start_line": 0,
+                  "reference_end_line": 0
                 },
                 {
                   "qualified_name": "electron.main.checkDockerStatus",
-                  "reference_file": "electron/main.ts"
+                  "reference_file": "electron/main.ts",
+                  "reference_start_line": 0,
+                  "reference_end_line": 0
                 }
               ],
               "source_cluster_ids": [
@@ -157528,11 +157770,15 @@
               "key_entities": [
                 {
                   "qualified_name": "dashboard.frontend.src.stores.configWizardStore.useConfigWizardStore",
-                  "reference_file": "dashboard/frontend/src/stores/configWizardStore.ts"
+                  "reference_file": "dashboard/frontend/src/stores/configWizardStore.ts",
+                  "reference_start_line": 0,
+                  "reference_end_line": 0
                 },
                 {
                   "qualified_name": "dashboard.frontend.src.stores.configWizardStore.WizardStep",
-                  "reference_file": "dashboard/frontend/src/stores/configWizardStore.ts"
+                  "reference_file": "dashboard/frontend/src/stores/configWizardStore.ts",
+                  "reference_start_line": 0,
+                  "reference_end_line": 0
                 }
               ],
               "source_cluster_ids": [
@@ -157604,15 +157850,21 @@
               "key_entities": [
                 {
                   "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.SetupWizard",
-                  "reference_file": "dashboard/frontend/src/components/Setup/SetupWizard.tsx"
+                  "reference_file": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+                  "reference_start_line": 0,
+                  "reference_end_line": 0
                 },
                 {
                   "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.DatabaseTestStep.runTests",
-                  "reference_file": "dashboard/frontend/src/components/Setup/SetupWizard.tsx"
+                  "reference_file": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+                  "reference_start_line": 0,
+                  "reference_end_line": 0
                 },
                 {
                   "qualified_name": "dashboard.frontend.src.components.Setup.SetupWizard.AgentHealthStep.checkHealth",
-                  "reference_file": "dashboard/frontend/src/components/Setup/SetupWizard.tsx"
+                  "reference_file": "dashboard/frontend/src/components/Setup/SetupWizard.tsx",
+                  "reference_start_line": 0,
+                  "reference_end_line": 0
                 }
               ],
               "source_cluster_ids": [
@@ -157905,11 +158157,15 @@
           "key_entities": [
             {
               "qualified_name": "dashboard.frontend.src.components.UI.DataTable",
-              "reference_file": "dashboard/frontend/src/components/UI/DataTable.tsx"
+              "reference_file": "dashboard/frontend/src/components/UI/DataTable.tsx",
+              "reference_start_line": 0,
+              "reference_end_line": 0
             },
             {
               "qualified_name": "dashboard.frontend.src.components.Settings.DeveloperModeToggle",
-              "reference_file": "dashboard/frontend/src/components/Settings/DeveloperModeToggle.tsx"
+              "reference_file": "dashboard/frontend/src/components/Settings/DeveloperModeToggle.tsx",
+              "reference_start_line": 0,
+              "reference_end_line": 0
             }
           ],
           "source_cluster_ids": [
@@ -157980,15 +158236,21 @@
               "key_entities": [
                 {
                   "qualified_name": "dashboard.frontend.src.components.UI.DataTable",
-                  "reference_file": "dashboard/frontend/src/components/UI/DataTable.tsx"
+                  "reference_file": "dashboard/frontend/src/components/UI/DataTable.tsx",
+                  "reference_start_line": 0,
+                  "reference_end_line": 0
                 },
                 {
                   "qualified_name": "dashboard.frontend.src.components.UI.DataTable.DataTable.processedData",
-                  "reference_file": "dashboard/frontend/src/components/UI/DataTable.tsx"
+                  "reference_file": "dashboard/frontend/src/components/UI/DataTable.tsx",
+                  "reference_start_line": 0,
+                  "reference_end_line": 0
                 },
                 {
                   "qualified_name": "dashboard.frontend.src.components.UI.DataTable.DataTable.handleSort",
-                  "reference_file": "dashboard/frontend/src/components/UI/DataTable.tsx"
+                  "reference_file": "dashboard/frontend/src/components/UI/DataTable.tsx",
+                  "reference_start_line": 0,
+                  "reference_end_line": 0
                 }
               ],
               "source_cluster_ids": [
@@ -158048,15 +158310,21 @@
               "key_entities": [
                 {
                   "qualified_name": "dashboard.frontend.src.components.Settings.DeveloperModeToggle",
-                  "reference_file": "dashboard/frontend/src/components/Settings/DeveloperModeToggle.tsx"
+                  "reference_file": "dashboard/frontend/src/components/Settings/DeveloperModeToggle.tsx",
+                  "reference_start_line": 0,
+                  "reference_end_line": 0
                 },
                 {
                   "qualified_name": "dashboard.frontend.src.components.Settings.DeveloperModeToggle.useDeveloperMode",
-                  "reference_file": "dashboard/frontend/src/components/Settings/DeveloperModeToggle.tsx"
+                  "reference_file": "dashboard/frontend/src/components/Settings/DeveloperModeToggle.tsx",
+                  "reference_start_line": 0,
+                  "reference_end_line": 0
                 },
                 {
                   "qualified_name": "dashboard.frontend.src.vite-env.d.ImportMetaEnv",
-                  "reference_file": "dashboard/frontend/src/vite-env.d.ts"
+                  "reference_file": "dashboard/frontend/src/vite-env.d.ts",
+                  "reference_start_line": 0,
+                  "reference_end_line": 0
                 }
               ],
               "source_cluster_ids": [
