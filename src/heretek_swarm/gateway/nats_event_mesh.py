@@ -31,6 +31,7 @@ logger = structlog.get_logger(__name__)
 try:
     import nats
     from nats.errors import NatsError
+
     NATS_AVAILABLE = True
 except ImportError:
     NATS_AVAILABLE = False
@@ -39,6 +40,7 @@ except ImportError:
 
 class ConnectionState(Enum):
     """NATS connection states."""
+
     DISCONNECTED = "disconnected"
     CONNECTING = "connecting"
     CONNECTED = "connected"
@@ -50,6 +52,7 @@ class ConnectionState(Enum):
 @dataclass
 class Subscription:
     """NATS subscription wrapper."""
+
     subject: str
     callback: Callable[["NATSEventMesh", str, dict[str, Any]], None]
     sid: str
@@ -59,6 +62,7 @@ class Subscription:
 @dataclass
 class NATSMessage:
     """NATS message wrapper."""
+
     subject: str
     data: dict[str, Any]
     reply: str | None = None
@@ -187,6 +191,7 @@ class NATSEventMesh:
         if self._use_fallback and self._fallback_mesh is not None:
             count += self._fallback_mesh.subscription_count
         return count
+
     @property
     def stream_count(self) -> int:
         """Get number of created streams."""
@@ -329,8 +334,12 @@ class NATSEventMesh:
         try:
             import nats.js.api as js_api
 
-            storage_type = js_api.StorageType.FILE if storage == "file" else js_api.StorageType.MEMORY
-            retention_policy = getattr(js_api.RetentionPolicy, retention.upper(), js_api.RetentionPolicy.LIMITS)
+            storage_type = (
+                js_api.StorageType.FILE if storage == "file" else js_api.StorageType.MEMORY
+            )
+            retention_policy = getattr(
+                js_api.RetentionPolicy, retention.upper(), js_api.RetentionPolicy.LIMITS
+            )
 
             config = js_api.StreamConfig(
                 name=name,
@@ -445,7 +454,9 @@ class NATSEventMesh:
         try:
             import nats.js.api as js_api
 
-            deliver = getattr(js_api.DeliverPolicy, deliver_policy.upper(), js_api.DeliverPolicy.ALL)
+            deliver = getattr(
+                js_api.DeliverPolicy, deliver_policy.upper(), js_api.DeliverPolicy.ALL
+            )
             ack = js_api.AckPolicy.EXPLICIT if ack_policy else js_api.AckPolicy.NONE
 
             # Create or bind to durable consumer
@@ -460,12 +471,9 @@ class NATSEventMesh:
             self._consumers[consumer_id] = consumer_info
 
             # Start message processing loop
-            asyncio.create_task(self._process_durable_messages(
-                consumer_info,
-                stream_name,
-                durable_name,
-                callback
-            ))
+            asyncio.create_task(
+                self._process_durable_messages(consumer_info, stream_name, durable_name, callback)
+            )
 
             logger.info(f"Durable consumer '{durable_name}' created on stream '{stream_name}'")
             return consumer_id
@@ -560,12 +568,14 @@ class NATSEventMesh:
                     msgs = await consumer_info.fetch(batch=100, timeout=2.0)
                     for msg in msgs:
                         data = json.loads(msg.data.decode("utf-8"))
-                        messages.append({
-                            "subject": msg.subject,
-                            "data": data,
-                            "sequence": msg.metadata.sequence.stream if msg.metadata else None,
-                            "timestamp": msg.metadata.timestamp if msg.metadata else None,
-                        })
+                        messages.append(
+                            {
+                                "subject": msg.subject,
+                                "data": data,
+                                "sequence": msg.metadata.sequence.stream if msg.metadata else None,
+                                "timestamp": msg.metadata.timestamp if msg.metadata else None,
+                            }
+                        )
                         if callback:
                             await callback(msg.subject, data)
                         await msg.ack()
@@ -780,15 +790,50 @@ class _InMemoryFallback:
         self._sub_counter = 0
         self._pending: dict[str, asyncio.Future] = {}
 
+    @staticmethod
+    def _matches_subject(pattern: str, subject: str) -> bool:
+        """Check if a published subject matches a subscription pattern.
+
+        Supports NATS wildcard tokens:
+        - ``>`` matches one or more tokens at the end (e.g. ``test.>`` matches
+          ``test.a.b.c``)
+        - ``*`` matches exactly one token (e.g. ``events.*`` matches
+          ``events.click`` but NOT ``events.click.button``)
+        """
+        if pattern == subject:
+            return True
+
+        pat_tokens = pattern.split(".")
+        sub_tokens = subject.split(".")
+
+        for i, pat_tok in enumerate(pat_tokens):
+            if pat_tok == ">":
+                # ``>`` must be the last token and consumes everything remaining
+                return i == len(pat_tokens) - 1 and len(sub_tokens) > i
+            if i >= len(sub_tokens):
+                return False
+            if pat_tok == "*":
+                # Matches exactly one token — just continue
+                continue
+            if pat_tok != sub_tokens[i]:
+                return False
+
+        # All pattern tokens consumed — lengths must match exactly
+        return len(pat_tokens) == len(sub_tokens)
+
     @property
     def subscription_count(self) -> int:
         """Get number of active subscriptions."""
         return sum(len(subs) for subs in self._subscriptions.values())
+
     async def publish(self, subject: str, data: dict[str, Any]) -> bool:
         """Publish to in-memory subscribers."""
-        for sub in self._subscriptions.get(subject, []):
-            with contextlib.suppress(Exception):
-                await sub(subject, data)
+        for pattern, subs in self._subscriptions.items():
+            if not self._matches_subject(pattern, subject):
+                continue
+            for sub in subs:
+                with contextlib.suppress(Exception):
+                    await sub(None, subject, data)
         return True
 
     async def subscribe(
@@ -880,6 +925,7 @@ class NATSEventMeshMixin:
 # =============================================================================
 # JetStreamManager Integration
 # =============================================================================
+
 
 class NATSEventMeshWithJetStream(NATSEventMesh):
     """
@@ -1109,7 +1155,8 @@ class NATSEventMeshWithJetStream(NATSEventMesh):
         )
 
         consumer_config = ConsumerConfig(
-            durable_name=durable_name or f"consumer_{stream_name}_{datetime.now(UTC).strftime('%Y%m%d%H%M%S')}",
+            durable_name=durable_name
+            or f"consumer_{stream_name}_{datetime.now(UTC).strftime('%Y%m%d%H%M%S')}",
             stream_name=stream_name,
             deliver_policy=DeliverPolicy.NEW,
             ack_policy=AckPolicy.EXPLICIT,
@@ -1193,6 +1240,7 @@ class NATSEventMeshWithJetStream(NATSEventMesh):
 @dataclass
 class ActorBridgeConfig:
     """Configuration for NATS-to-Actor bridge."""
+
     # NATS subject patterns for actor messages
     actor_inbox_pattern: str = "actors.{agent_id}.inbox"
     actor_outbox_pattern: str = "actors.{agent_id}.outbox"
@@ -1289,7 +1337,9 @@ class NATStoActorBridge:
             # Subscribe to actor's inbox
             inbox_subject = self._get_inbox_subject(agent_id)
 
-            async def message_handler(mesh: NATSEventMesh, subject: str, data: dict[str, Any]) -> None:
+            async def message_handler(
+                mesh: NATSEventMesh, subject: str, data: dict[str, Any]
+            ) -> None:
                 """Handle incoming NATS messages for the actor."""
                 try:
                     # Extract correlation_id for request-reply
@@ -1368,6 +1418,7 @@ class NATStoActorBridge:
         # Add reply subject if expecting response
         if expect_reply:
             import uuid
+
             correlation_id = str(uuid.uuid4())
             message["correlation_id"] = correlation_id
             # Create a future to wait for response

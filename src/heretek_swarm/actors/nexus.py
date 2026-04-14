@@ -54,6 +54,7 @@ logger = structlog.get_logger(__name__)
 
 class ConnectionStatus(Enum):
     """Status of an external connection."""
+
     CONNECTED = "connected"
     DISCONNECTED = "disconnected"
     ERROR = "error"
@@ -63,6 +64,7 @@ class ConnectionStatus(Enum):
 
 class ProtocolType(Enum):
     """Supported external protocols."""
+
     REST = "rest"
     GRAPHQL = "graphql"
     WEBSOCKET = "websocket"
@@ -74,6 +76,7 @@ class ProtocolType(Enum):
 @dataclass
 class ExternalConnection:
     """Configuration for an external service connection."""
+
     connection_id: str
     name: str
     protocol: ProtocolType
@@ -112,6 +115,7 @@ class ExternalConnection:
 @dataclass
 class WebhookConfig:
     """Configuration for a webhook endpoint."""
+
     webhook_id: str
     name: str
     path: str
@@ -141,6 +145,7 @@ class WebhookConfig:
 @dataclass
 class ApiResponse:
     """Standardized API response."""
+
     success: bool
     status_code: int
     data: Any
@@ -162,7 +167,9 @@ class ApiResponse:
         }
 
 
-class NexusAgent(HealthReportingMixin, AgentActor, PatternMixin, DeliberationMixin, MemoryMixin, LearningMixin):
+class NexusAgent(
+    HealthReportingMixin, AgentActor, PatternMixin, DeliberationMixin, MemoryMixin, LearningMixin
+):
     """
     External Integration Specialist.
 
@@ -191,13 +198,13 @@ class NexusAgent(HealthReportingMixin, AgentActor, PatternMixin, DeliberationMix
         self,
         agent_id: str | None = None,
         config: dict[str, Any] | None = None,
-):
+    ):
         super().__init__(
             agent_id=agent_id or f"nexus_{uuid.uuid4().hex[:8]}",
             config=config or {},
         )
 
-        self._config: dict[str, Any] = {}
+        self._config: dict[str, Any] = config or {}
 
         # Connection management
         self._connections: dict[str, ExternalConnection] = {}
@@ -219,7 +226,9 @@ class NexusAgent(HealthReportingMixin, AgentActor, PatternMixin, DeliberationMix
         self.llm_output_validator = LLMOutputValidator(strict_mode=True)
 
         # ZERO-01: Hostile Input Treatment configuration
-        self._max_payload_size: int = self._config.get("max_payload_size", 1024 * 1024)  # 1MB default
+        self._max_payload_size: int = self._config.get(
+            "max_payload_size", 1024 * 1024
+        )  # 1MB default
         self._rate_limit_window: int = self._config.get("rate_limit_window", 60)  # seconds
         self._rate_limit_max: int = self._config.get("rate_limit_max", 100)  # requests per window
         self._request_counts: dict[str, list[datetime]] = {}  # Per-source rate tracking
@@ -268,7 +277,7 @@ class NexusAgent(HealthReportingMixin, AgentActor, PatternMixin, DeliberationMix
         """Validate incoming message content using ZERO-01 hostile input treatment."""
         try:
             # ZERO-01: Apply hostile input sanitization before validation
-            sanitized_content = await self._sanitize_input(message.content, message.sender_id)
+            sanitized_content = await self._sanitize_input(message.content, message.sender)
             if sanitized_content is None:
                 # Input rejected by ZERO-01
                 return message.content
@@ -379,8 +388,7 @@ class NexusAgent(HealthReportingMixin, AgentActor, PatternMixin, DeliberationMix
         # Clean old entries
         if source_id in self._request_counts:
             self._request_counts[source_id] = [
-                ts for ts in self._request_counts[source_id]
-                if ts.timestamp() > window_start
+                ts for ts in self._request_counts[source_id] if ts.timestamp() > window_start
             ]
         else:
             self._request_counts[source_id] = []
@@ -525,8 +533,7 @@ class NexusAgent(HealthReportingMixin, AgentActor, PatternMixin, DeliberationMix
 
         elif isinstance(content, dict):
             return {
-                str(key).strip(): self._recursive_sanitize(value)
-                for key, value in content.items()
+                str(key).strip(): self._recursive_sanitize(value) for key, value in content.items()
             }
 
         elif isinstance(content, list):
@@ -798,10 +805,13 @@ class NexusAgent(HealthReportingMixin, AgentActor, PatternMixin, DeliberationMix
                 headers["Authorization"] = f"Bearer {connection.auth_config['token']}"
             elif connection.auth_type == "basic":
                 import base64
+
                 creds = f"{connection.auth_config.get('username', '')}:{connection.auth_config.get('password', '')}"
                 headers["Authorization"] = f"Basic {base64.b64encode(creds.encode()).decode()}"
             elif connection.auth_type == "api_key":
-                headers[connection.auth_config.get("header", "X-API-Key")] = connection.auth_config.get("key", "")
+                headers[connection.auth_config.get("header", "X-API-Key")] = (
+                    connection.auth_config.get("key", "")
+                )
 
             # Execute request
             start_time = datetime.now(UTC)
@@ -1008,7 +1018,9 @@ class NexusAgent(HealthReportingMixin, AgentActor, PatternMixin, DeliberationMix
                     return
 
             # Calculate expected signature
-            payload_str = json.dumps(payload, sort_keys=True) if isinstance(payload, dict) else str(payload)
+            payload_str = (
+                json.dumps(payload, sort_keys=True) if isinstance(payload, dict) else str(payload)
+            )
             expected_signature = hmac.new(
                 webhook.secret.encode(),
                 f"{payload_str}{timestamp or ''}".encode(),
@@ -1210,8 +1222,7 @@ class NexusAgent(HealthReportingMixin, AgentActor, PatternMixin, DeliberationMix
 
         # Trim log if needed
         if len(self._request_log) > self._max_log_entries:
-            self._request_log = self._request_log[-self._max_log_entries:]
-
+            self._request_log = self._request_log[-self._max_log_entries :]
 
     async def _send_error(
         self,
