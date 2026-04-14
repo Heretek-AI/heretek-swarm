@@ -25,8 +25,8 @@ def get_registry() -> EnhancedAgentRegistry:
 @router.post("/{instance_id}/start")
 async def start_agent(
     instance_id: str,
-    registry: EnhancedAgentRegistry = Depends(get_registry),
-    authenticated: str = Depends(verify_auth),
+    registry: Annotated[EnhancedAgentRegistry, Depends(get_registry)],
+    authenticated: Annotated[str, Depends(verify_auth)],
 ):
     """
     Start a deployed agent instance.
@@ -59,8 +59,8 @@ async def start_agent(
 @router.post("/{instance_id}/stop")
 async def stop_agent(
     instance_id: str,
-    registry: EnhancedAgentRegistry = Depends(get_registry),
-    authenticated: str = Depends(verify_auth),
+    registry: Annotated[EnhancedAgentRegistry, Depends(get_registry)],
+    authenticated: Annotated[str, Depends(verify_auth)],
 ):
     """
     Stop a running agent instance.
@@ -93,8 +93,8 @@ async def stop_agent(
 @router.post("/{instance_id}/suspend")
 async def suspend_agent(
     instance_id: str,
-    registry: EnhancedAgentRegistry = Depends(get_registry),
-    authenticated: str = Depends(verify_auth),
+    registry: Annotated[EnhancedAgentRegistry, Depends(get_registry)],
+    authenticated: Annotated[str, Depends(verify_auth)],
 ):
     """
     Suspend a running agent instance.
@@ -127,8 +127,8 @@ async def suspend_agent(
 @router.post("/{instance_id}/resume")
 async def resume_agent(
     instance_id: str,
-    registry: EnhancedAgentRegistry = Depends(get_registry),
-    authenticated: str = Depends(verify_auth),
+    registry: Annotated[EnhancedAgentRegistry, Depends(get_registry)],
+    authenticated: Annotated[str, Depends(verify_auth)],
 ):
     """
     Resume a suspended agent instance.
@@ -167,8 +167,8 @@ async def resume_agent(
 async def update_agent_config(
     instance_id: str,
     config: dict[str, Any],
-    registry: EnhancedAgentRegistry = Depends(get_registry),
-    authenticated: str = Depends(verify_auth),
+    registry: Annotated[EnhancedAgentRegistry, Depends(get_registry)],
+    authenticated: Annotated[str, Depends(verify_auth)],
 ):
     """
     Update agent configuration.

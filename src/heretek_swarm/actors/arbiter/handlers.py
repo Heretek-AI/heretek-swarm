@@ -222,7 +222,7 @@ async def _handle_request_arbitration(agent: ArbiterAgent, message: ActorMessage
         await agent._send_response(message, response_content)
 
     except ValidationError as ve:
-        logger.warning("Validation error", error=str(ve))
+        logger.warning(VALIDATION_ERROR, error=str(ve))
         await agent._send_error(message, "Invalid arbitration request", str(ve))
     except Exception as e:
         logger.error("Error requesting arbitration", error=str(e), exc_info=True)
@@ -273,7 +273,7 @@ async def _handle_mediate_dispute(agent: ArbiterAgent, message: ActorMessage) ->
         await agent._send_response(message, response_content)
 
     except ValidationError as ve:
-        logger.warning("Validation error", error=str(ve))
+        logger.warning(VALIDATION_ERROR, error=str(ve))
         await agent._send_error(message, "Invalid mediation request", str(ve))
     except Exception as e:
         logger.error("Error mediating dispute", error=str(e), exc_info=True)
@@ -334,7 +334,7 @@ async def _handle_resolve_contention(agent: ArbiterAgent, message: ActorMessage)
         await agent._send_response(message, response_content)
 
     except ValidationError as ve:
-        logger.warning("Validation error", error=str(ve))
+        logger.warning(VALIDATION_ERROR, error=str(ve))
         await agent._send_error(message, "Invalid contention resolution", str(ve))
     except Exception as e:
         logger.error("Error resolving contention", error=str(e), exc_info=True)
@@ -381,7 +381,7 @@ async def _handle_get_conflict_details(agent: ArbiterAgent, message: ActorMessag
         await agent._send_response(message, response_content)
 
     except ValidationError as ve:
-        logger.warning("Validation error", error=str(ve))
+        logger.warning(VALIDATION_ERROR, error=str(ve))
         await agent._send_error(message, "Invalid request", str(ve))
     except Exception as e:
         logger.error("Error getting conflict details", error=str(e), exc_info=True)
@@ -518,7 +518,7 @@ async def _handle_propose_resolution(agent: ArbiterAgent, message: ActorMessage)
         await agent._send_response(message, response_content)
 
     except ValidationError as ve:
-        logger.warning("Validation error", error=str(ve))
+        logger.warning(VALIDATION_ERROR, error=str(ve))
         await agent._send_error(message, "Invalid proposal", str(ve))
     except Exception as e:
         logger.error("Error proposing resolution", error=str(e), exc_info=True)
@@ -581,7 +581,7 @@ async def _handle_accept_resolution(agent: ArbiterAgent, message: ActorMessage) 
         await agent._send_response(message, response_content)
 
     except ValidationError as ve:
-        logger.warning("Validation error", error=str(ve))
+        logger.warning(VALIDATION_ERROR, error=str(ve))
         await agent._send_error(message, "Invalid acceptance", str(ve))
     except Exception as e:
         logger.error("Error accepting resolution", error=str(e), exc_info=True)
@@ -633,7 +633,7 @@ async def _handle_get_relationship_status(agent: ArbiterAgent, message: ActorMes
         await agent._send_response(message, response_content)
 
     except ValidationError as ve:
-        logger.warning("Validation error", error=str(ve))
+        logger.warning(VALIDATION_ERROR, error=str(ve))
         await agent._send_error(message, "Invalid request", str(ve))
     except Exception as e:
         logger.error("Error getting relationship status", error=str(e), exc_info=True)
@@ -754,7 +754,7 @@ async def _handle_update_relationship(agent: ArbiterAgent, message: ActorMessage
         await agent._send_response(message, response_content)
 
     except ValidationError as ve:
-        logger.warning("Validation error", error=str(ve))
+        logger.warning(VALIDATION_ERROR, error=str(ve))
         await agent._send_error(message, "Invalid update", str(ve))
     except Exception as e:
         logger.error("Error updating relationship", error=str(e), exc_info=True)
@@ -885,7 +885,7 @@ async def _handle_register_interaction(agent: ArbiterAgent, message: ActorMessag
         await agent._send_response(message, response_content)
 
     except ValidationError as ve:
-        logger.warning("Validation error", error=str(ve))
+        logger.warning(VALIDATION_ERROR, error=str(ve))
         await agent._send_error(message, "Invalid interaction", str(ve))
     except Exception as e:
         logger.error("Error registering interaction", error=str(e), exc_info=True)

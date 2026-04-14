@@ -24,8 +24,8 @@ class RoutingStatsResponse(BaseModel):
 
 async def delete_routing_rule(
     rule_id: str,
-    router: ContentRouter = Depends(get_content_router),
-    authenticated: str = Depends(verify_auth),
+    router: Annotated[ContentRouter, Depends(get_content_router)],
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> dict[str, str]:
     """
     Delete a routing rule.
@@ -47,8 +47,8 @@ async def delete_routing_rule(
 @router.post("/routing/rules/{rule_id}/enable")
 async def enable_routing_rule(
     rule_id: str,
-    router: ContentRouter = Depends(get_content_router),
-    authenticated: str = Depends(verify_auth),
+    router: Annotated[ContentRouter, Depends(get_content_router)],
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> dict[str, str]:
     """Enable a routing rule."""
     if not router.enable_rule(rule_id):
@@ -60,8 +60,8 @@ async def enable_routing_rule(
 @router.post("/routing/rules/{rule_id}/disable")
 async def disable_routing_rule(
     rule_id: str,
-    router: ContentRouter = Depends(get_content_router),
-    authenticated: str = Depends(verify_auth),
+    router: Annotated[ContentRouter, Depends(get_content_router)],
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> dict[str, str]:
     """Disable a routing rule."""
     if not router.disable_rule(rule_id):
@@ -72,8 +72,8 @@ async def disable_routing_rule(
 
 @router.get("/routing/stats")
 async def get_routing_stats(
-    router: ContentRouter = Depends(get_content_router),
-    authenticated: str = Depends(verify_auth),
+    router: Annotated[ContentRouter, Depends(get_content_router)],
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> RoutingStatsResponse:
     """
     Get routing statistics.
@@ -93,8 +93,8 @@ async def evaluate_routing(
     subject: str,
     payload: dict[str, Any],
     correlation_id: str | None = None,
-    router: ContentRouter = Depends(get_content_router),
-    authenticated: str = Depends(verify_auth),
+    router: Annotated[ContentRouter, Depends(get_content_router)],
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> dict[str, Any]:
     """
     Evaluate routing for a message (test endpoint).

@@ -1,7 +1,7 @@
 import logging
 import os
 import secrets
-from typing import Annotated, Any, Dict, List, Optional
+from typing import Annotated, Any
 
 from dotenv import load_dotenv
 from fastapi import Depends, FastAPI, HTTPException
@@ -71,13 +71,13 @@ EMBEDDER_API_KEY = os.environ.get("EMBEDDING_API_KEY", OPENAI_API_KEY)
 EMBEDDER_MODEL = os.environ.get("EMBEDDER_MODEL", "text-embedding-3-small")
 
 # Build LLM config - use openai_base_url for custom endpoints
-llm_config: Dict[str, Any] = {"api_key": LLM_API_KEY, "temperature": 0.2, "model": LLM_MODEL}
+llm_config: dict[str, Any] = {"api_key": LLM_API_KEY, "temperature": 0.2, "model": LLM_MODEL}
 if LLM_BASE_URL:
     llm_config["openai_base_url"] = LLM_BASE_URL
 
 # Build embedder config - use openai_compatible endpoint via openai provider
 # Use openai_base_url parameter for custom endpoints
-embedder_config: Dict[str, Any] = {"api_key": EMBEDDER_API_KEY, "model": EMBEDDER_MODEL}
+embedder_config: dict[str, Any] = {"api_key": EMBEDDER_API_KEY, "model": EMBEDDER_MODEL}
 if EMBEDDER_BASE_URL:
     embedder_config["openai_base_url"] = EMBEDDER_BASE_URL
 
@@ -117,7 +117,7 @@ app = FastAPI(
 api_key_header = APIKeyHeader(name="X-API-Key", auto_error=False)
 
 
-async def verify_api_key(api_key: Optional[str] = Depends(api_key_header)):
+async def verify_api_key(api_key: str | None = Depends(api_key_header)):
     """Validate the API key when ADMIN_API_KEY is configured. No-op otherwise."""
     if ADMIN_API_KEY:
         if api_key is None:
@@ -141,33 +141,32 @@ class Message(BaseModel):
 
 
 class MemoryCreate(BaseModel):
-    messages: Annotated[List[Message], Field(description="List of messages to store.")]
-    user_id: Annotated[Optional[str], Field(description="User identifier for the memory.")] = None
-    agent_id: Annotated[Optional[str], Field(description="Agent identifier for the memory.")] = None
-    run_id: Annotated[Optional[str], Field(description="Run identifier for the memory.")] = None
-    metadata: Annotated[Optional[Dict[str, Any]], Field(description="Additional metadata for the memory.")] = None
-    infer: Annotated[Optional[bool], Field(description="Whether to extract facts from messages. Defaults to True.")] = None
-    memory_type: Annotated[Optional[str], Field(description="Type of memory to store (e.g. 'core').")] = None
-    prompt: Annotated[Optional[str], Field(description="Custom prompt to use for fact extraction.")] = None
+    messages: Annotated[list[Message], Field(description="List of messages to store.")]
+    user_id: Annotated[str | None, Field(description="User identifier for the memory.")] = None
+    agent_id: Annotated[str | None, Field(description="Agent identifier for the memory.")] = None
+    run_id: Annotated[str | None, Field(description="Run identifier for the memory.")] = None
+    metadata: Annotated[dict[str, Any] | None, Field(description="Additional metadata for the memory.")] = None
+    infer: Annotated[bool | None, Field(description="Whether to extract facts from messages. Defaults to True.")] = None
+    memory_type: Annotated[str | None, Field(description="Type of memory to store (e.g. 'core').")] = None
+    prompt: Annotated[str | None, Field(description="Custom prompt to use for fact extraction.")] = None
 
 
 class MemoryUpdate(BaseModel):
     text: Annotated[str, Field(description="New content to update the memory with.")]
-    metadata: Annotated[Optional[Dict[str, Any]], Field(description="Metadata to update.")] = None
 
 
 class SearchRequest(BaseModel):
     query: Annotated[str, Field(description="Search query.")]
-    user_id: Annotated[Optional[str], Field(description="User identifier to filter memories.")] = None
-    run_id: Annotated[Optional[str], Field(description="Run identifier to filter memories.")] = None
-    agent_id: Annotated[Optional[str], Field(description="Agent identifier to filter memories.")] = None
-    filters: Annotated[Optional[Dict[str, Any]], Field(description="Additional filters for the search.")] = None
-    top_k: Annotated[Optional[int], Field(description="Maximum number of results to return.")] = None
-    threshold: Annotated[Optional[float], Field(description="Minimum similarity score for results.")] = None
+    user_id: Annotated[str | None, Field(description="User identifier to filter memories.")] = None
+    run_id: Annotated[str | None, Field(description="Run identifier to filter memories.")] = None
+    agent_id: Annotated[str | None, Field(description="Agent identifier to filter memories.")] = None
+    filters: Annotated[dict[str, Any] | None, Field(description="Additional filters for the search.")] = None
+    top_k: Annotated[int | None, Field(description="Maximum number of results to return.")] = None
+    threshold: Annotated[float | None, Field(description="Minimum similarity score for results.")] = None
 
 
 @app.post("/configure", summary="Configure Mem0")
-def set_config(config: Dict[str, Any], _api_key: Annotated[Optional[str], Depends(verify_api_key)] = None):
+def set_config(config: dict[str, Any], _api_key: Annotated[str | None, Depends(verify_api_key)] = None):
     """Set memory configuration."""
     global MEMORY_INSTANCE
     MEMORY_INSTANCE = Memory.from_config(config)
@@ -175,7 +174,10 @@ def set_config(config: Dict[str, Any], _api_key: Annotated[Optional[str], Depend
 
 
 @app.post("/memories", summary="Create memories")
-def add_memory(memory_create: MemoryCreate, _api_key: Annotated[Optional[str], Depends(verify_api_key)] = None):
+def add_memory(
+    memory_create: MemoryCreate,
+    _api_key: Annotated[str | None, Depends(verify_api_key)] = None,
+):
     """Store new memories."""
     if not any([memory_create.user_id, memory_create.agent_id, memory_create.run_id]):
         raise HTTPException(status_code=400, detail="At least one identifier (user_id, agent_id, run_id) is required.")
@@ -191,10 +193,10 @@ def add_memory(memory_create: MemoryCreate, _api_key: Annotated[Optional[str], D
 
 @app.get("/memories", summary="Get memories")
 def get_all_memories(
-    user_id: Optional[str] = None,
-    run_id: Optional[str] = None,
-    agent_id: Optional[str] = None,
-    _api_key: Annotated[Optional[str], Depends(verify_api_key)] = None,
+    user_id: str | None = None,
+    run_id: str | None = None,
+    agent_id: str | None = None,
+    _api_key: Annotated[str | None, Depends(verify_api_key)] = None,
 ):
     """Retrieve stored memories."""
     if not any([user_id, run_id, agent_id]):
@@ -210,7 +212,10 @@ def get_all_memories(
 
 
 @app.get("/memories/{memory_id}", summary="Get a memory")
-def get_memory(memory_id: str, _api_key: Annotated[Optional[str], Depends(verify_api_key)] = None):
+def get_memory(
+    memory_id: str,
+    _api_key: Annotated[str | None, Depends(verify_api_key)] = None,
+):
     """Retrieve a specific memory by ID."""
     try:
         return MEMORY_INSTANCE.get(memory_id)
@@ -220,7 +225,10 @@ def get_memory(memory_id: str, _api_key: Annotated[Optional[str], Depends(verify
 
 
 @app.post("/search", summary="Search memories")
-def search_memories(search_req: SearchRequest, _api_key: Annotated[Optional[str], Depends(verify_api_key)] = None):
+def search_memories(
+    search_req: SearchRequest,
+    _api_key: Annotated[str | None, Depends(verify_api_key)] = None,
+):
     """Search for memories based on a query."""
     try:
         params = {k: v for k, v in search_req.model_dump().items() if v is not None and k != "query"}
@@ -231,7 +239,11 @@ def search_memories(search_req: SearchRequest, _api_key: Annotated[Optional[str]
 
 
 @app.put("/memories/{memory_id}", summary="Update a memory")
-def update_memory(memory_id: str, updated_memory: MemoryUpdate, _api_key: Annotated[Optional[str], Depends(verify_api_key)] = None):
+def update_memory(
+    memory_id: str,
+    updated_memory: MemoryUpdate,
+    _api_key: Annotated[str | None, Depends(verify_api_key)] = None,
+):
     """Update an existing memory with new content.
 
     Args:
@@ -249,7 +261,10 @@ def update_memory(memory_id: str, updated_memory: MemoryUpdate, _api_key: Annota
 
 
 @app.get("/memories/{memory_id}/history", summary="Get memory history")
-def memory_history(memory_id: str, _api_key: Annotated[Optional[str], Depends(verify_api_key)] = None):
+def memory_history(
+    memory_id: str,
+    _api_key: Annotated[str | None, Depends(verify_api_key)] = None,
+):
     """Retrieve memory history."""
     try:
         return MEMORY_INSTANCE.history(memory_id=memory_id)
@@ -259,7 +274,10 @@ def memory_history(memory_id: str, _api_key: Annotated[Optional[str], Depends(ve
 
 
 @app.delete("/memories/{memory_id}", summary="Delete a memory")
-def delete_memory(memory_id: str, _api_key: Annotated[Optional[str], Depends(verify_api_key)] = None):
+def delete_memory(
+    memory_id: str,
+    _api_key: Annotated[str | None, Depends(verify_api_key)] = None,
+):
     """Delete a specific memory by ID."""
     try:
         MEMORY_INSTANCE.delete(memory_id=memory_id)
@@ -271,10 +289,10 @@ def delete_memory(memory_id: str, _api_key: Annotated[Optional[str], Depends(ver
 
 @app.delete("/memories", summary="Delete all memories")
 def delete_all_memories(
-    user_id: Optional[str] = None,
-    run_id: Optional[str] = None,
-    agent_id: Optional[str] = None,
-    _api_key: Annotated[Optional[str], Depends(verify_api_key)] = None,
+    user_id: str | None = None,
+    run_id: str | None = None,
+    agent_id: str | None = None,
+    _api_key: Annotated[str | None, Depends(verify_api_key)] = None,
 ):
     """Delete all memories for a given identifier."""
     if not any([user_id, run_id, agent_id]):
@@ -291,7 +309,7 @@ def delete_all_memories(
 
 
 @app.post("/reset", summary="Reset all memories")
-def reset_memory(_api_key: Annotated[Optional[str], Depends(verify_api_key)] = None):
+def reset_memory(_api_key: Annotated[str | None, Depends(verify_api_key)] = None):
     """Completely reset stored memories."""
     try:
         MEMORY_INSTANCE.reset()

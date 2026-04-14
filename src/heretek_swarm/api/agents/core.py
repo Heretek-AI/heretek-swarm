@@ -20,8 +20,8 @@ def get_registry() -> EnhancedAgentRegistry:
 
 @router.get("/available")
 async def list_available_agents(
-    registry: EnhancedAgentRegistry = Depends(get_registry),
-    authenticated: str = Depends(verify_auth),
+    registry: Annotated[EnhancedAgentRegistry, Depends(get_registry)],
+    authenticated: Annotated[str, Depends(verify_auth)],
 ):
     """
     List all available agent types that can be deployed.
@@ -58,8 +58,8 @@ async def list_available_agents(
 @router.get("/types/{agent_type}")
 async def get_agent_type_metadata(
     agent_type: str,
-    registry: EnhancedAgentRegistry = Depends(get_registry),
-    authenticated: str = Depends(verify_auth),
+    registry: Annotated[EnhancedAgentRegistry, Depends(get_registry)],
+    authenticated: Annotated[str, Depends(verify_auth)],
 ):
     """
     Get metadata for a specific agent type.
@@ -93,8 +93,8 @@ async def deploy_agent(
     agent_type: str,
     config: dict[str, Any] | None = None,
     instance_id: str | None = None,
-    registry: EnhancedAgentRegistry = Depends(get_registry),
-    authenticated: str = Depends(verify_auth),
+    registry: Annotated[EnhancedAgentRegistry, Depends(get_registry)],
+    authenticated: Annotated[str, Depends(verify_auth)],
 ):
     """
     Deploy a new agent instance.
@@ -140,8 +140,8 @@ async def deploy_agent(
 @router.delete("/{instance_id}")
 async def remove_agent(
     instance_id: str,
-    registry: EnhancedAgentRegistry = Depends(get_registry),
-    authenticated: str = Depends(verify_auth),
+    registry: Annotated[EnhancedAgentRegistry, Depends(get_registry)],
+    authenticated: Annotated[str, Depends(verify_auth)],
 ):
     """
     Remove an agent instance.

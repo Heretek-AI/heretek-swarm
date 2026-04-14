@@ -23,8 +23,8 @@ def get_registry() -> EnhancedAgentRegistry:
 @router.get("/instances")
 async def list_agent_instances(
     agent_type: str | None = None,
-    registry: EnhancedAgentRegistry = Depends(get_registry),
-    authenticated: str = Depends(verify_auth),
+    registry: Annotated[EnhancedAgentRegistry, Depends(get_registry)],
+    authenticated: Annotated[str, Depends(verify_auth)],
 ):
     """
     List all deployed agent instances.
@@ -59,8 +59,8 @@ async def list_agent_instances(
 @router.get("/{instance_id}")
 async def get_agent_instance(
     instance_id: str,
-    registry: EnhancedAgentRegistry = Depends(get_registry),
-    authenticated: str = Depends(verify_auth),
+    registry: Annotated[EnhancedAgentRegistry, Depends(get_registry)],
+    authenticated: Annotated[str, Depends(verify_auth)],
 ):
     """
     Get details of a specific agent instance.
@@ -106,8 +106,8 @@ async def get_agent_instance(
 async def get_agent_logs(
     instance_id: str,
     limit: int = 100,
-    registry: EnhancedAgentRegistry = Depends(get_registry),
-    authenticated: str = Depends(verify_auth),
+    registry: Annotated[EnhancedAgentRegistry, Depends(get_registry)],
+    authenticated: Annotated[str, Depends(verify_auth)],
 ):
     """
     Get agent-specific logs.
@@ -165,8 +165,8 @@ async def get_agent_logs(
 
 @router.get("/stats")
 async def get_registry_stats(
-    registry: EnhancedAgentRegistry = Depends(get_registry),
-    authenticated: str = Depends(verify_auth),
+    registry: Annotated[EnhancedAgentRegistry, Depends(get_registry)],
+    authenticated: Annotated[str, Depends(verify_auth)],
 ):
     """
     Get registry statistics.
@@ -237,9 +237,9 @@ def get_channel_registry_instance() -> ChannelRegistry:
 @router.get("/{instance_id}/channels")
 async def get_agent_channels(
     instance_id: str,
-    registry: EnhancedAgentRegistry = Depends(get_registry),
-    channel_registry: ChannelRegistry = Depends(get_channel_registry_instance),
-    authenticated: str = Depends(verify_auth),
+    registry: Annotated[EnhancedAgentRegistry, Depends(get_registry)],
+    channel_registry: Annotated[ChannelRegistry, Depends(get_channel_registry_instance)],
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> ChannelSubscriptionsListResponse:
     """
     Get all channel subscriptions for an agent.
@@ -287,9 +287,9 @@ async def get_agent_channels(
 async def add_agent_channel_subscription(
     instance_id: str,
     subscription: ChannelSubscriptionCreate,
-    registry: EnhancedAgentRegistry = Depends(get_registry),
-    channel_registry: ChannelRegistry = Depends(get_channel_registry_instance),
-    authenticated: str = Depends(verify_auth),
+    registry: Annotated[EnhancedAgentRegistry, Depends(get_registry)],
+    channel_registry: Annotated[ChannelRegistry, Depends(get_channel_registry_instance)],
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> ChannelSubscriptionResponse:
     """
     Add a channel subscription for an agent.
@@ -339,9 +339,9 @@ async def add_agent_channel_subscription(
 async def remove_agent_channel_subscription(
     instance_id: str,
     channel_name: str,
-    registry: EnhancedAgentRegistry = Depends(get_registry),
-    channel_registry: ChannelRegistry = Depends(get_channel_registry_instance),
-    authenticated: str = Depends(verify_auth),
+    registry: Annotated[EnhancedAgentRegistry, Depends(get_registry)],
+    channel_registry: Annotated[ChannelRegistry, Depends(get_channel_registry_instance)],
+    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> dict[str, str]:
     """
     Remove a channel subscription from an agent.
