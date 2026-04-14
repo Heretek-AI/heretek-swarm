@@ -17,6 +17,7 @@ def get_jetstream_manager() -> Any | None:
     """Dependency to get the JetStream manager."""
     try:
         from heretek_swarm.gateway.jetstream_manager import get_jetstream_manager as get_js
+
         return get_js()
     except ImportError:
         return None
@@ -24,9 +25,12 @@ def get_jetstream_manager() -> Any | None:
 
 class JetStreamConfigCreate(BaseModel):
     """Request model for creating a JetStream."""
+
     stream_name: str = Field(..., description="Stream name")
     subjects: list[str] = Field(..., description="List of subjects to capture")
-    retention: str = Field(default="limits", description="Retention policy (limits, interest, workqueue)")
+    retention: str = Field(
+        default="limits", description="Retention policy (limits, interest, workqueue)"
+    )
     max_messages: int = Field(default=1000000, description="Maximum messages to retain")
     max_age: str = Field(default="72h", description="Maximum age (e.g., 72h, 7d)")
     storage: str = Field(default="file", description="Storage type (file, memory)")
@@ -37,6 +41,7 @@ class JetStreamConfigCreate(BaseModel):
 
 class JetStreamConsumerCreate(BaseModel):
     """Request model for creating a durable consumer."""
+
     durable_name: str = Field(..., description="Durable consumer name")
     stream_name: str = Field(..., description="Source stream name")
     deliver_policy: str = Field(default="all", description="Delivery policy")
@@ -46,6 +51,7 @@ class JetStreamConsumerCreate(BaseModel):
 
 class StreamInfoResponse(BaseModel):
     """Response model for stream information."""
+
     name: str
     subjects: list[str]
     retention: str
@@ -61,6 +67,7 @@ class StreamInfoResponse(BaseModel):
 
 class StreamListResponse(BaseModel):
     """Response model for listing streams."""
+
     streams: list[StreamInfoResponse]
     total: int
 
@@ -238,11 +245,11 @@ async def delete_jetstream_stream(
 @router.post("/jetstream/streams/{stream_name}/replay")
 async def replay_stream_messages(
     stream_name: str,
+    js_manager: Annotated[Any | None, Depends(get_jetstream_manager)],
+    authenticated: Annotated[str, Depends(verify_auth)],
     start_sequence: int | None = None,
     end_sequence: int | None = None,
     subject_filter: str | None = None,
-    js_manager: Annotated[Any | None, Depends(get_jetstream_manager)],
-    authenticated: Annotated[str, Depends(verify_auth)],
 ) -> dict[str, Any]:
     """
     Replay messages from a stream.
@@ -297,9 +304,9 @@ async def get_jetstream_stats(
 
 @router.post("/jetstream/initialize")
 async def initialize_jetstream(
-    create_defaults: bool = True,
     js_manager: Annotated[Any | None, Depends(get_jetstream_manager)],
     authenticated: Annotated[str, Depends(verify_auth)],
+    create_defaults: bool = True,
 ) -> dict[str, Any]:
     """
     Initialize JetStream with default streams.

@@ -15,6 +15,7 @@ router = APIRouter()
 
 class RoutingStatsResponse(BaseModel):
     """Response model for routing statistics."""
+
     total_rules: int
     enabled_rules: int
     disabled_rules: int
@@ -92,9 +93,9 @@ async def get_routing_stats(
 async def evaluate_routing(
     subject: str,
     payload: dict[str, Any],
-    correlation_id: str | None = None,
     router: Annotated[ContentRouter, Depends(get_content_router)],
     authenticated: Annotated[str, Depends(verify_auth)],
+    correlation_id: str | None = None,
 ) -> dict[str, Any]:
     """
     Evaluate routing for a message (test endpoint).
@@ -121,7 +122,9 @@ async def evaluate_routing(
                 "name": decision.matched_rule.name,
                 "target_channel": decision.matched_rule.target_channel,
                 "target_agents": decision.matched_rule.target_agents,
-            } if decision.matched_rule else None,
+            }
+            if decision.matched_rule
+            else None,
             "correlation_id": decision.correlation_id,
             "evaluation_time_ms": decision.evaluation_time_ms,
             "filters_evaluated": decision.filters_evaluated,

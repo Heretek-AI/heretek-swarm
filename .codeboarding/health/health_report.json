@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-14T20:16:08.818434+00:00",
-  "overall_score": 0.9891459923664122,
+  "timestamp": "2026-04-14T21:08:58.835986+00:00",
+  "overall_score": 0.9875558201845788,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -744,9 +744,9 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 43,
-      "findings_count": 43,
-      "warning_count": 1,
+      "total_entities_checked": 70,
+      "findings_count": 70,
+      "warning_count": 2,
       "score": 0.0,
       "finding_groups": [
         {
@@ -1026,6 +1026,188 @@
               "line_start": 497,
               "line_end": 497,
               "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents/jetstream.py",
+              "line_start": 78,
+              "line_end": 78,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents/jetstream.py",
+              "line_start": 120,
+              "line_end": 120,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents/jetstream.py",
+              "line_start": 161,
+              "line_end": 161,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents/jetstream.py",
+              "line_start": 218,
+              "line_end": 218,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents/jetstream.py",
+              "line_start": 249,
+              "line_end": 249,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents/jetstream.py",
+              "line_start": 287,
+              "line_end": 287,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents/jetstream.py",
+              "line_start": 308,
+              "line_end": 308,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"create_defaults\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents/jetstream.py",
+              "line_start": 309,
+              "line_end": 309,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"ProfilingConfig\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents/profiling.py",
+              "line_start": 28,
+              "line_end": 28,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents/profiling.py",
+              "line_start": 125,
+              "line_end": 125,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents/profiling.py",
+              "line_start": 176,
+              "line_end": 176,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents/profiling.py",
+              "line_start": 225,
+              "line_end": 225,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents/profiling.py",
+              "line_start": 265,
+              "line_end": 265,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents/profiling.py",
+              "line_start": 324,
+              "line_end": 324,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents/profiling.py",
+              "line_start": 348,
+              "line_end": 348,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents/profiling.py",
+              "line_start": 394,
+              "line_end": 394,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents/routing_control.py",
+              "line_start": 29,
+              "line_end": 29,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents/routing_control.py",
+              "line_start": 52,
+              "line_end": 52,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents/routing_control.py",
+              "line_start": 65,
+              "line_end": 65,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents/routing_control.py",
+              "line_start": 77,
+              "line_end": 77,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents/routing_control.py",
+              "line_start": 97,
+              "line_end": 97,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents/routing_rules.py",
+              "line_start": 75,
+              "line_end": 75,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents/routing_rules.py",
+              "line_start": 105,
+              "line_end": 105,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents/routing_rules.py",
+              "line_start": 141,
+              "line_end": 141,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents/routing_rules.py",
+              "line_start": 214,
+              "line_end": 214,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"authenticated\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents/routing_rules.py",
+              "line_start": 279,
+              "line_end": 279,
+              "metric_value": 0.0
             }
           ]
         },
@@ -1067,6 +1249,13 @@
               "file_path": "src/heretek_swarm/actors/nexus.py",
               "line_start": 21,
               "line_end": 21,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"ProfilingConfig\" is not accessed",
+              "file_path": "src/heretek_swarm/api/agents/profiling.py",
+              "line_start": 28,
+              "line_end": 28,
               "metric_value": 0.0
             }
           ]
@@ -1445,6 +1634,30 @@
       "composite_risk_score": 55.0
     },
     {
+      "file_path": "src/heretek_swarm/api/agents/profiling.py",
+      "total_findings": 9,
+      "warning_findings": 1,
+      "composite_risk_score": 55.0
+    },
+    {
+      "file_path": "src/heretek_swarm/api/agents/jetstream.py",
+      "total_findings": 8,
+      "warning_findings": 0,
+      "composite_risk_score": 50.0
+    },
+    {
+      "file_path": "src/heretek_swarm/api/agents/routing_control.py",
+      "total_findings": 5,
+      "warning_findings": 0,
+      "composite_risk_score": 50.0
+    },
+    {
+      "file_path": "src/heretek_swarm/api/agents/routing_rules.py",
+      "total_findings": 5,
+      "warning_findings": 0,
+      "composite_risk_score": 50.0
+    },
+    {
       "file_path": "src/heretek_swarm/consciousness/fep_active_inference.py",
       "total_findings": 3,
       "warning_findings": 3,
@@ -1500,30 +1713,6 @@
     },
     {
       "file_path": "src/heretek_swarm/rag/hybrid_retriever.py",
-      "total_findings": 2,
-      "warning_findings": 2,
-      "composite_risk_score": 30.0
-    },
-    {
-      "file_path": "src/heretek_swarm/workflow/engine.py",
-      "total_findings": 2,
-      "warning_findings": 2,
-      "composite_risk_score": 30.0
-    },
-    {
-      "file_path": "src/heretek_swarm/collective/agent_adaptation.py",
-      "total_findings": 2,
-      "warning_findings": 2,
-      "composite_risk_score": 30.0
-    },
-    {
-      "file_path": "src/heretek_swarm/collective/swarm_intelligence.py",
-      "total_findings": 2,
-      "warning_findings": 2,
-      "composite_risk_score": 30.0
-    },
-    {
-      "file_path": "serverless/handler.py",
       "total_findings": 2,
       "warning_findings": 2,
       "composite_risk_score": 30.0

@@ -46,6 +46,7 @@ def get_profiler_instance() -> "BehaviorProfiler | None":
 
 class ProfilingMetricsResponse(BaseModel):
     """Response model for agent profiling metrics."""
+
     agentId: str
     totalActions: int = 0
     actionsPerMinute: float = 0.0
@@ -67,6 +68,7 @@ class ProfilingMetricsResponse(BaseModel):
 
 class ProfilingProfileResponse(BaseModel):
     """Response model for behavior profile."""
+
     agentType: str
     createdAt: str
     updatedAt: str
@@ -80,6 +82,7 @@ class ProfilingProfileResponse(BaseModel):
 
 class AnomalyResponse(BaseModel):
     """Response model for detected anomaly."""
+
     timestamp: str
     agentId: str
     anomalyType: str
@@ -92,6 +95,7 @@ class AnomalyResponse(BaseModel):
 
 class AlertResponse(BaseModel):
     """Response model for alert."""
+
     timestamp: str
     agentId: str
     anomaly: AnomalyResponse
@@ -103,6 +107,7 @@ class AlertResponse(BaseModel):
 
 class ProfilingStatsResponse(BaseModel):
     """Response model for profiler statistics."""
+
     totalActivitiesRecorded: int
     totalAnomaliesDetected: int
     totalAlertsGenerated: int
@@ -256,10 +261,10 @@ async def detect_agent_anomalies(
 
 @router.get("/profiling/alerts")
 async def get_profiling_alerts(
-    severity: str | None = None,
-    unacknowledged_only: bool = False,
     profiler: Annotated[BehaviorProfiler | None, Depends(get_profiler_instance)],
     authenticated: Annotated[str, Depends(verify_auth)],
+    severity: str | None = None,
+    unacknowledged_only: bool = False,
 ) -> list[AlertResponse]:
     """
     Get all profiling alerts.
@@ -384,12 +389,12 @@ async def get_profiling_prometheus_metrics(
 async def record_agent_activity(
     instance_id: str,
     action: str,
-    duration_ms: float = 0.0,
-    success: bool = True,
-    metadata: dict[str, Any] | None = None,
     registry: Annotated[EnhancedAgentRegistry, Depends(get_registry)],
     profiler: Annotated[BehaviorProfiler | None, Depends(get_profiler_instance)],
     authenticated: Annotated[str, Depends(verify_auth)],
+    duration_ms: float = 0.0,
+    success: bool = True,
+    metadata: dict[str, Any] | None = None,
 ) -> dict[str, Any]:
     """
     Record an agent activity for profiling.
