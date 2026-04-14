@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-14T21:08:58.835986+00:00",
-  "overall_score": 0.9875558201845788,
+  "timestamp": "2026-04-14T21:46:52.074222+00:00",
+  "overall_score": 0.9870268983575339,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -744,9 +744,9 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 70,
-      "findings_count": 70,
-      "warning_count": 2,
+      "total_entities_checked": 79,
+      "findings_count": 79,
+      "warning_count": 3,
       "score": 0.0,
       "finding_groups": [
         {
@@ -1208,6 +1208,62 @@
               "line_start": 279,
               "line_end": 279,
               "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"NatsError\" is not accessed",
+              "file_path": "src/heretek_swarm/gateway/nats_event_mesh.py",
+              "line_start": 33,
+              "line_end": 33,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"stream_name\" is not accessed",
+              "file_path": "src/heretek_swarm/gateway/nats_event_mesh.py",
+              "line_start": 488,
+              "line_end": 488,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"durable_name\" is not accessed",
+              "file_path": "src/heretek_swarm/gateway/nats_event_mesh.py",
+              "line_start": 489,
+              "line_end": 489,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"subject\" is not accessed",
+              "file_path": "src/heretek_swarm/gateway/nats_event_mesh.py",
+              "line_start": 616,
+              "line_end": 616,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"sid\" is not accessed",
+              "file_path": "src/heretek_swarm/gateway/nats_event_mesh.py",
+              "line_start": 854,
+              "line_end": 854,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"timeout\" is not accessed",
+              "file_path": "src/heretek_swarm/gateway/nats_event_mesh.py",
+              "line_start": 862,
+              "line_end": 862,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"args\" is not accessed",
+              "file_path": "src/heretek_swarm/gateway/nats_event_mesh.py",
+              "line_start": 883,
+              "line_end": 883,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"mesh\" is not accessed",
+              "file_path": "src/heretek_swarm/gateway/nats_event_mesh.py",
+              "line_start": 1341,
+              "line_end": 1341,
+              "metric_value": 0.0
             }
           ]
         },
@@ -1256,6 +1312,13 @@
               "file_path": "src/heretek_swarm/api/agents/profiling.py",
               "line_start": 28,
               "line_end": 28,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"NatsError\" is not accessed",
+              "file_path": "src/heretek_swarm/gateway/nats_event_mesh.py",
+              "line_start": 33,
+              "line_end": 33,
               "metric_value": 0.0
             }
           ]
@@ -1610,6 +1673,12 @@
       "composite_risk_score": 65.0
     },
     {
+      "file_path": "src/heretek_swarm/gateway/nats_event_mesh.py",
+      "total_findings": 10,
+      "warning_findings": 2,
+      "composite_risk_score": 60.0
+    },
+    {
       "file_path": "src/heretek_swarm/actors/examiner.py",
       "total_findings": 6,
       "warning_findings": 1,
@@ -1707,12 +1776,6 @@
     },
     {
       "file_path": "src/heretek_swarm/collective/knowledge_transform.py",
-      "total_findings": 2,
-      "warning_findings": 2,
-      "composite_risk_score": 30.0
-    },
-    {
-      "file_path": "src/heretek_swarm/rag/hybrid_retriever.py",
       "total_findings": 2,
       "warning_findings": 2,
       "composite_risk_score": 30.0

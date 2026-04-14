@@ -30,7 +30,7 @@ logger = structlog.get_logger(__name__)
 # Try to import NATS, but make it optional
 try:
     import nats
-    from nats.errors import NatsError
+    from nats.errors import Error as NatsError
 
     NATS_AVAILABLE = True
 except ImportError:
@@ -113,9 +113,9 @@ class NATSEventMesh:
         name: str | None = None,
         fallback: bool = True,
         max_reconnect_attempts: int = 5,
-        reconnect_timewait: float = 1.0,
+        reconnect_time_wait: float = 1.0,
         ping_interval: int = 30,
-        max_outstanding: int = 1000,
+        max_outstanding_pings: int = 1000,
     ) -> None:
         """
         Initialize NATS EventMesh.
@@ -125,17 +125,17 @@ class NATSEventMesh:
             name: Client name
             fallback: Enable fallback to in-memory mesh
             max_reconnect_attempts: Max reconnection attempts
-            reconnect_timewait: Time to wait between reconnect attempts
+            reconnect_time_wait: Time to wait between reconnect attempts
             ping_interval: Ping interval in seconds
-            max_outstanding: Max pending messages
+            max_outstanding_pings: Max outstanding pings
         """
         self.servers = servers or ["nats://localhost:4222"]
         self.client_name = name or "heretek-swarm"
         self.fallback = fallback
         self.max_reconnect_attempts = max_reconnect_attempts
-        self.reconnect_timewait = reconnect_timewait
+        self.reconnect_time_wait = reconnect_time_wait
         self.ping_interval = ping_interval
-        self.max_outstanding = max_outstanding
+        self.max_outstanding_pings = max_outstanding_pings
 
         # Connection state
         self._state = ConnectionState.DISCONNECTED
@@ -251,9 +251,9 @@ class NATSEventMesh:
                     nc = await nats.connect(
                         server,
                         name=self.client_name,
-                        reconnect_timewait=self.reconnect_timewait,
+                        reconnect_time_wait=self.reconnect_time_wait,
                         ping_interval=self.ping_interval,
-                        max_outstanding=self.max_outstanding,
+                        max_outstanding_pings=self.max_outstanding_pings,
                     )
 
                     logger.info(f"Connected to {server}")
@@ -266,7 +266,7 @@ class NATSEventMesh:
                         error=str(e),
                         attempt=attempt + 1,
                     )
-                    await asyncio.sleep(self.reconnect_timewait)
+                    await asyncio.sleep(self.reconnect_time_wait)
 
         raise last_error or Exception("No servers available")
 
@@ -961,9 +961,9 @@ class NATSEventMeshWithJetStream(NATSEventMesh):
         name: str | None = None,
         fallback: bool = True,
         max_reconnect_attempts: int = 5,
-        reconnect_timewait: float = 1.0,
+        reconnect_time_wait: float = 1.0,
         ping_interval: int = 30,
-        max_outstanding: int = 1000,
+        max_outstanding_pings: int = 1000,
         zero_trust_enabled: bool = True,
     ) -> None:
         """
@@ -974,9 +974,9 @@ class NATSEventMeshWithJetStream(NATSEventMesh):
             name: Client name
             fallback: Enable fallback to in-memory mesh
             max_reconnect_attempts: Max reconnection attempts
-            reconnect_timewait: Time to wait between reconnect attempts
+            reconnect_time_wait: Time to wait between reconnect attempts
             ping_interval: Ping interval in seconds
-            max_outstanding: Max pending messages
+            max_outstanding_pings: Max outstanding pings
             zero_trust_enabled: Enable zero-trust security
         """
         super().__init__(
@@ -984,9 +984,9 @@ class NATSEventMeshWithJetStream(NATSEventMesh):
             name=name,
             fallback=fallback,
             max_reconnect_attempts=max_reconnect_attempts,
-            reconnect_timewait=reconnect_timewait,
+            reconnect_time_wait=reconnect_time_wait,
             ping_interval=ping_interval,
-            max_outstanding=max_outstanding,
+            max_outstanding_pings=max_outstanding_pings,
         )
 
         # JetStream manager reference

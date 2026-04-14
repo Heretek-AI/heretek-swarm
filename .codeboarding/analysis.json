@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-14T21:09:36.008086+00:00",
+    "generated_at": "2026-04-14T21:46:51.703492+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 5,
@@ -31502,7 +31502,7 @@
       ]
     },
     "src/heretek_swarm/gateway/nats_event_mesh.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.gateway.nats_event_mesh.ConnectionState",
@@ -31530,14 +31530,14 @@
           "start_line": 73,
           "end_line": 782,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.__init__",
           "start_line": 110,
           "end_line": 170,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.is_connected",
@@ -31579,7 +31579,7 @@
           "start_line": 242,
           "end_line": 271,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh._enable_fallback",
@@ -31796,14 +31796,14 @@
           "start_line": 930,
           "end_line": 1232,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMeshWithJetStream.__init__",
           "start_line": 958,
           "end_line": 996,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMeshWithJetStream.jetstream_manager",
@@ -86679,7 +86679,7 @@
       "start_line": 73,
       "end_line": 782,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/gateway/nats_event_mesh.py|src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.__init__": {
       "file_path": "src/heretek_swarm/gateway/nats_event_mesh.py",
@@ -86687,7 +86687,7 @@
       "start_line": 110,
       "end_line": 170,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/gateway/nats_event_mesh.py|src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh.is_connected": {
       "file_path": "src/heretek_swarm/gateway/nats_event_mesh.py",
@@ -86735,7 +86735,7 @@
       "start_line": 242,
       "end_line": 271,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/gateway/nats_event_mesh.py|src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh._enable_fallback": {
       "file_path": "src/heretek_swarm/gateway/nats_event_mesh.py",
@@ -86983,7 +86983,7 @@
       "start_line": 930,
       "end_line": 1232,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/gateway/nats_event_mesh.py|src.heretek_swarm.gateway.nats_event_mesh.NATSEventMeshWithJetStream.__init__": {
       "file_path": "src/heretek_swarm/gateway/nats_event_mesh.py",
@@ -86991,7 +86991,7 @@
       "start_line": 958,
       "end_line": 996,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/gateway/nats_event_mesh.py|src.heretek_swarm.gateway.nats_event_mesh.NATSEventMeshWithJetStream.jetstream_manager": {
       "file_path": "src/heretek_swarm/gateway/nats_event_mesh.py",
@@ -114853,7 +114853,7 @@
         },
         {
           "file_path": "src/heretek_swarm/gateway/nats_event_mesh.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.gateway.nats_event_mesh.ConnectionState",
             "src.heretek_swarm.gateway.nats_event_mesh.Subscription",
@@ -120563,7 +120563,7 @@
             },
             {
               "file_path": "src/heretek_swarm/gateway/nats_event_mesh.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.gateway.nats_event_mesh.ConnectionState",
                 "src.heretek_swarm.gateway.nats_event_mesh.Subscription",
@@ -125122,7 +125122,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/gateway/nats_event_mesh.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.gateway.nats_event_mesh.ConnectionState",
                     "src.heretek_swarm.gateway.nats_event_mesh.Subscription",
