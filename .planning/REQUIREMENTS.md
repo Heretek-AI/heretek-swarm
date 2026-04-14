@@ -9,19 +9,16 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Core Governance (Core Triad)
 
-- [ ] **GOV-01**: Steward agent can monitor system homeostasis and route tasks
-- [ ] **GOV-02**: Alpha agent can perform comprehensive deep analysis and logical deconstruction
-- [ ] **GOV-03**: Beta agent can detect errors, project blast radius, and validate reality
-- [ ] **GOV-04**: Charlie agent can provide critical review, risk assessment, and defense counsel
-- [ ] **GOV-05**: Core Triad can convene for deliberation on anomalies
-
-### Knowledge & Memory (Support Agents)
-
-- [ ] **KNOW-01**: Historian agent can synthesize information and log precedents
-- [ ] **KNOW-02**: Metis agent can generate long-term timelines and impact analysis
-- [ ] **KNOW-03**: Empath agent can analyze sentiment and measure human-AI resonance
-- [ ] **KNOW-04**: Perceiver agent can ingest multi-modal data
-- [ ] **KNOW-05**: Echo agent can manage translation and multi-channel communication
+- [~] **GOV-01**: Steward agent can monitor system homeostasis and route tasks — coordinates triad ✅, monitors agents passively ✅, heartbeat detection ❌, failover ❌
+- [x] **GOV-02**: Alpha agent can perform comprehensive deep analysis and logical deconstruction — 27 tests PASS
+- [x] **GOV-03**: Beta agent can detect errors, project blast radius, and validate reality — 27 tests PASS
+- [x] **GOV-04**: Charlie agent can provide critical review, risk assessment, and defense counsel — 27 tests PASS
+- [~] **GOV-05**: Core Triad can convene for deliberation on anomalies — 36 tests PASS. Gaps: unanimous vote bug, no max_rounds, no integrated quorum.
+- [x] **KNOW-01**: Historian agent can synthesize information and log precedents — 11 tests PASS
+- [x] **KNOW-02**: Metis agent can generate long-term timelines and impact analysis — 10 tests PASS
+- [x] **KNOW-03**: Empath agent can analyze sentiment and measure human-AI resonance — 13 tests PASS
+- [x] **KNOW-04**: Perceiver agent can ingest multi-modal data — 12 tests PASS
+- [x] **KNOW-05**: Echo agent can manage translation and multi-channel communication — 9 tests PASS
 
 ### Discovery & Creation (Exploration Agents)
 
@@ -57,9 +54,9 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ### Zero-Trust Architecture
 
-- [ ] **ZERO-01**: All external inputs treated as hostile by default
-- [ ] **ZERO-02**: All internal functions validated before execution
-- [ ] **ZERO-03**: Comprehensive audit trails maintained for all actions
+- [~] **ZERO-01**: All external inputs treated as hostile by default — 75 tests PASS, 2 critical bugs fixed (config discard + sender_id bypass). Gap: rejection returns unsanitized content.
+- [~] **ZERO-02**: All internal functions validated before execution — 28 tests PASS. Gap: ValidationMixin not wired into any production agent.
+- [x] **ZERO-03**: Comprehensive audit trails maintained for all actions — 50 tests PASS, zero gaps.
 
 ### Consciousness Framework
 
@@ -136,4 +133,13 @@ Requirements for initial release. Each maps to roadmap phases.
 
 ---
 *Requirements defined: 2026-04-13*
-*Last updated: 2026-04-13 after Prime Directive input*
+*Last updated: 2026-04-14 after Phase 1 validation wave*
+
+### Validation Status (Phase 1 — 2026-04-14)
+- **ZERO-01/02/03**: Validated (75+28+50 = 153 tests)
+- **GOV-01 through GOV-05**: Validated (27+36 = 63 tests)
+- **KNOW-01 through KNOW-05**: Validated (55 tests)
+- **Integration**: 26 tests (full Phase 1 system)
+- **NATS**: 11 tests (fallback pub/sub + wildcards)
+- **Total Phase 1 validation**: 308 new tests, 693 total passing
+- **Gate 1 verdict**: BLOCKED (3 hard blockers)

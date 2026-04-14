@@ -3,7 +3,7 @@
 **Project:** The Collective (23-agent autonomous swarm)
 **Version:** 1.0
 **Created:** 2026-04-13
-**Status:** Planning
+**Status:** Phase 1 Validation Complete — Gate 1 BLOCKED
 
 ---
 
@@ -88,6 +88,20 @@ This roadmap maps 34 v1 requirements across three implementation phases. Each ph
 | External input sanitization at Nexus | 100% coverage before reaching agents |
 | Behavioral baseline drift detection | Anomaly threshold ≥ 3.0 std dev |
 | NATS event mesh uptime | ≥ 99.9% |
+
+#### Gate 1 Assessment Results (2026-04-14)
+
+| Criterion | Threshold | Measured | Status |
+|-----------|-----------|----------|--------|
+| Zero-trust validation latency p95 | < 50ms | < 1ms | ✅ MET |
+| Core Triad convening | ≤ 3 rounds | Structurally verified | ⚠️ PARTIAL (unanimous vote bug) |
+| Heartbeat failure detection | < 10s | Not implemented | ❌ NOT MET |
+| Nexus sanitization coverage | 100% | Rejection bypass gap | ⚠️ PARTIAL |
+| Baseline drift detection | ≥ 3.0σ | Component verified | ✅ MET |
+| NATS mesh uptime | ≥ 99.9% | No stress test | ❌ NOT MET |
+| ≥ 12 agents reporting health | ≥ 12 | 10 | ❌ NOT MET |
+
+**Verdict: BLOCKED** — 3 hard blockers. 693 tests passing, 308 new. Full report: `.planning/phases/01-.../GATE1_ASSESSMENT.md`
 
 ### Risks to Monitor
 
@@ -367,4 +381,5 @@ These must be resolved before or during implementation:
 ---
 
 *Roadmap created: 2026-04-13*
-*Next review: Phase 1 Gate 1 assessment*
+*Gate 1 assessed: 2026-04-14 — BLOCKED (3 hard blockers)*
+*Next action: Remediate blockers, re-run Gate 1*
