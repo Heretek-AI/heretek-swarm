@@ -696,6 +696,17 @@ Please provide your analysis and recommendation for this collective task."""
             logger.error(f"[{self.agent_id}] LLM call failed: {e}", exc_info=True)
             raise
 
+    async def _heartbeat_loop(self) -> None:
+        """Send periodic heartbeats to maintain actor liveness."""
+        while self._running:
+            try:
+                self.last_activity = datetime.now(UTC).isoformat()
+                await asyncio.sleep(self.heartbeat_interval)
+            except asyncio.CancelledError:
+                break
+            except Exception as e:
+                logger.error(f"[{self.agent_id}] Heartbeat loop error: {e}")
+
 
 # Bind message handling methods to AgentActor
 AgentActor.send = AgentActorMessageHandling.send
@@ -714,3 +725,4 @@ AgentActor._handle_collective_task = AgentActorMessageHandling._handle_collectiv
 AgentActor._generate_collective_contribution = AgentActorMessageHandling._generate_collective_contribution
 AgentActor._get_actor_registry = AgentActorMessageHandling._get_actor_registry
 AgentActor.run_with_llm = AgentActorMessageHandling.run_with_llm
+AgentActor._heartbeat_loop = AgentActorMessageHandling._heartbeat_loop

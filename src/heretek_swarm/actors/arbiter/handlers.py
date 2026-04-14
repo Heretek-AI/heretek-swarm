@@ -46,6 +46,11 @@ def register_handlers(agent: ArbiterAgent) -> None:
     }
 
 
+VALIDATION_ERROR = "Validation error"
+MISSING_CONFLICT_ID = "Missing conflict_id"
+CONFLICT_NOT_FOUND = "Conflict not found"
+
+
 async def _handle_report_conflict(agent: ArbiterAgent, message: ActorMessage) -> None:
     """
     Report an inter-agent conflict.
@@ -144,8 +149,8 @@ async def _handle_report_conflict(agent: ArbiterAgent, message: ActorMessage) ->
         await agent._send_response(message, response_content)
 
     except ValidationError as ve:
-        logger.warning("Validation error", error=str(ve))
-        await agent._send_error(message, "Invalid conflict report", str(ve))
+        logger.warning(VALIDATION_ERROR, error=str(ve))
+        await agent._send_error(message, VALIDATION_ERROR, str(ve))
     except Exception as e:
         logger.error("Error reporting conflict", error=str(e), exc_info=True)
         await agent._send_error(message, "Conflict report failed", str(e))
@@ -349,12 +354,12 @@ async def _handle_get_conflict_details(agent: ArbiterAgent, message: ActorMessag
         conflict_id = content.get("conflict_id")
 
         if not conflict_id:
-            await agent._send_error(message, "Missing conflict_id")
+            await agent._send_error(message, MISSING_CONFLICT_ID)
             return
 
         conflict = agent._conflicts.get(conflict_id)
         if not conflict:
-            await agent._send_error(message, "Conflict not found", conflict_id)
+            await agent._send_error(message, CONFLICT_NOT_FOUND, conflict_id)
             return
 
         response_content = {
@@ -484,12 +489,12 @@ async def _handle_propose_resolution(agent: ArbiterAgent, message: ActorMessage)
         rationale = content.get("rationale", "")
 
         if not conflict_id:
-            await agent._send_error(message, "Missing conflict_id")
+            await agent._send_error(message, MISSING_CONFLICT_ID)
             return
 
         conflict = agent._conflicts.get(conflict_id)
         if not conflict:
-            await agent._send_error(message, "Conflict not found", conflict_id)
+            await agent._send_error(message, CONFLICT_NOT_FOUND, conflict_id)
             return
 
         # Add proposed resolution
@@ -537,12 +542,12 @@ async def _handle_accept_resolution(agent: ArbiterAgent, message: ActorMessage) 
         resolution_data = content.get("resolution_data")
 
         if not conflict_id:
-            await agent._send_error(message, "Missing conflict_id")
+            await agent._send_error(message, MISSING_CONFLICT_ID)
             return
 
         conflict = agent._conflicts.get(conflict_id)
         if not conflict:
-            await agent._send_error(message, "Conflict not found", conflict_id)
+            await agent._send_error(message, CONFLICT_NOT_FOUND, conflict_id)
             return
 
         # Select or create resolution

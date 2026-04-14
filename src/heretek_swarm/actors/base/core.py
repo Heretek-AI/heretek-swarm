@@ -254,6 +254,12 @@ class AgentActor:
         """Return True if the actor is in ACTIVE state."""
         return self.state == ActorState.ACTIVE
 
+    async def initialize(self) -> None:
+        """Initialize the actor. Override in subclass for custom setup."""
+
+    async def cleanup(self) -> None:
+        """Cleanup actor resources. Override in subclass for custom teardown."""
+
     def _register_default_handlers(self) -> None:
         """Register default message handlers."""
         self.register_handler("health_check", self._handle_health_check)
@@ -416,3 +422,8 @@ class AgentActor:
             except Exception as e:
                 # P1-10d fix: Log any other exceptions during task cancellation
                 logger.error(f"[{self.agent_id}] Error during task cancellation: {e}", exc_info=True)
+
+
+# Trigger mixin bindings when this module is imported
+from heretek_swarm.actors.base.message_handling import AgentActorMessageHandling  # noqa: F401 - triggers mixin injection
+from heretek_swarm.actors.base.state_management import AgentActorStateManagement  # noqa: F401 - triggers state management bindings
