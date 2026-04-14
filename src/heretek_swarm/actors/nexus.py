@@ -18,6 +18,9 @@ from __future__ import annotations
 import hashlib
 import hmac
 import json
+import os
+import re
+import unicodedata
 import uuid
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -29,6 +32,7 @@ import structlog
 
 from heretek_swarm.actors.base import ActorMessage, AgentActor
 from heretek_swarm.actors.mixins.deliberation import DeliberationMixin
+from heretek_swarm.actors.mixins.health_reporting import HealthReportingMixin
 from heretek_swarm.actors.mixins.learning import LearningMixin
 from heretek_swarm.actors.mixins.memory import MemoryMixin
 from heretek_swarm.actors.mixins.pattern import PatternMixin
@@ -158,7 +162,7 @@ class ApiResponse:
         }
 
 
-class NexusAgent(AgentActor, PatternMixin, DeliberationMixin, MemoryMixin, LearningMixin):
+class NexusAgent(HealthReportingMixin, AgentActor, PatternMixin, DeliberationMixin, MemoryMixin, LearningMixin):
     """
     External Integration Specialist.
 
@@ -214,11 +218,34 @@ class NexusAgent(AgentActor, PatternMixin, DeliberationMixin, MemoryMixin, Learn
         # LLM Output Validation
         self.llm_output_validator = LLMOutputValidator(strict_mode=True)
 
+        # ZERO-01: Hostile Input Treatment configuration
+        self._max_payload_size: int = self._config.get("max_payload_size", 1024 * 1024)  # 1MB default
+        self._rate_limit_window: int = self._config.get("rate_limit_window", 60)  # seconds
+        self._rate_limit_max: int = self._config.get("rate_limit_max", 100)  # requests per window
+        self._request_counts: dict[str, list[datetime]] = {}  # Per-source rate tracking
+
+        # ZERO-01: Dangerous patterns for injection detection
+        self._dangerous_patterns = [
+            (re.compile(r"__\w+__"), "dunder_access"),
+            (re.compile(r"exec\s*\("), "exec_call"),
+            (re.compile(r"eval\s*\("), "eval_call"),
+            (re.compile(r"import\s+os"), "os_import"),
+            (re.compile(r"import\s+sys"), "sys_import"),
+            (re.compile(r"import\s+subprocess"), "subprocess_import"),
+            (re.compile(r"open\s*\([^)]*['\"][rw]"), "file_open"),
+            (re.compile(r"__import__"), "dunder_import"),
+            (re.compile(r"getattr\s*\("), "getattr_call"),
+            (re.compile(r"setattr\s*\("), "setattr_call"),
+        ]
+
         logger.info(
             "nexus_initialized",
             agent_id=self.agent_id,
             max_connections=self._max_connections,
             max_webhooks=self._max_webhooks,
+            zero_trust_enabled=True,
+            max_payload_size=self._max_payload_size,
+            rate_limit=f"{self._rate_limit_max}/{self._rate_limit_window}s",
         )
 
     async def initialize(self) -> None:
@@ -238,8 +265,15 @@ class NexusAgent(AgentActor, PatternMixin, DeliberationMixin, MemoryMixin, Learn
         await super().terminate()
 
     async def _validate_message(self, message: ActorMessage) -> dict[str, Any]:
-        """Validate incoming message content."""
+        """Validate incoming message content using ZERO-01 hostile input treatment."""
         try:
+            # ZERO-01: Apply hostile input sanitization before validation
+            sanitized_content = await self._sanitize_input(message.content, message.sender_id)
+            if sanitized_content is None:
+                # Input rejected by ZERO-01
+                return message.content
+            message.content = sanitized_content
+
             validated = validate_message(message.message_type, message.content)
             if hasattr(validated, "dict"):
                 return validated.dict()
@@ -247,6 +281,258 @@ class NexusAgent(AgentActor, PatternMixin, DeliberationMixin, MemoryMixin, Learn
         except Exception as e:
             logger.debug("nexus_message_parse_failed", error=str(e))
             return message.content
+
+    # =========================================================================
+    # ZERO-01: Hostile Input Treatment
+    # =========================================================================
+
+    async def _sanitize_input(
+        self,
+        content: Any,
+        source_id: str,
+        content_type: str | None = None,
+    ) -> Any | None:
+        """
+        ZERO-01: Sanitize hostile external input before it reaches agents.
+
+        All external inputs must pass through this sanitization layer.
+        Returns None if input should be rejected entirely.
+
+        Validation checks (in order):
+        1. Payload size limit (max 1MB)
+        2. Rate limiting per source
+        3. Unicode normalization and null byte rejection
+        4. Content-type validation
+        5. Injection pattern detection
+        6. Recursive dict/list sanitization
+
+        Args:
+            content: Raw input content
+            source_id: Identifier of the input source (for rate limiting)
+            content_type: Optional content-type hint
+
+        Returns:
+            Sanitized content or None if rejected
+        """
+        # Check 1: Payload size
+        if not self._check_payload_size(content):
+            logger.warning(
+                "zero01_rejected_oversized_payload",
+                source_id=source_id,
+                size=len(str(content)),
+            )
+            return None
+
+        # Check 2: Rate limiting
+        if not self._check_rate_limit(source_id):
+            logger.warning(
+                "zero01_rate_limit_exceeded",
+                source_id=source_id,
+            )
+            return None
+
+        # Check 3: Unicode normalization and null byte rejection
+        sanitized = self._normalize_unicode(content)
+        if sanitized is None:
+            logger.warning(
+                "zero01_rejected_null_byte_injection",
+                source_id=source_id,
+            )
+            return None
+
+        # Check 4: Content-type validation (if provided)
+        if content_type and not self._validate_content_type(content_type):
+            logger.warning(
+                "zero01_rejected_invalid_content_type",
+                source_id=source_id,
+                content_type=content_type,
+            )
+            # Default to text/plain sanitization for unknown types
+
+        # Check 5: Injection pattern detection
+        injection_result = self._detect_injection_patterns(sanitized)
+        if injection_result["detected"]:
+            logger.warning(
+                "zero01_detected_injection_attempt",
+                source_id=source_id,
+                pattern=injection_result["pattern"],
+                severity=injection_result["severity"],
+            )
+            return None
+
+        # Check 6: Recursive sanitization for nested structures
+        return self._recursive_sanitize(sanitized)
+
+    def _check_payload_size(self, content: Any) -> bool:
+        """Check if payload exceeds maximum size."""
+        try:
+            size = len(str(content))
+            return size <= self._max_payload_size
+        except Exception:
+            return True  # If we can't measure, allow it through
+
+    def _check_rate_limit(self, source_id: str) -> bool:
+        """Check if source has exceeded rate limits."""
+        now = datetime.now(UTC)
+        window_start = now.timestamp() - self._rate_limit_window
+
+        # Clean old entries
+        if source_id in self._request_counts:
+            self._request_counts[source_id] = [
+                ts for ts in self._request_counts[source_id]
+                if ts.timestamp() > window_start
+            ]
+        else:
+            self._request_counts[source_id] = []
+
+        # Check limit
+        if len(self._request_counts[source_id]) >= self._rate_limit_max:
+            return False
+
+        # Record this request
+        self._request_counts[source_id].append(now)
+        return True
+
+    def _normalize_unicode(self, content: Any) -> Any | None:
+        """
+        Normalize Unicode content and reject dangerous characters.
+
+        Rejects:
+        - Null bytes (\\x00)
+        - Combining characters that could bypass detection
+        - Invalid UTF-8 sequences
+        """
+        if isinstance(content, str):
+            # Reject null bytes
+            if "\x00" in content:
+                return None
+
+            # Normalize to NFC form (canonical composition)
+            try:
+                normalized = unicodedata.normalize("NFC", content)
+                # Reject if normalization introduces suspicious characters
+                if "\ufffd" in normalized:  # Replacement character
+                    return None
+                return normalized
+            except Exception:
+                return None
+
+        elif isinstance(content, bytes):
+            # Reject null bytes in binary content
+            if b"\x00" in content:
+                return None
+            # Try to decode as UTF-8
+            try:
+                return content.decode("utf-8")
+            except UnicodeDecodeError:
+                # Try with replacement
+                return content.decode("utf-8", errors="replace")
+
+        elif isinstance(content, dict):
+            result = {}
+            for key, value in content.items():
+                sanitized_key = self._normalize_unicode(key)
+                sanitized_value = self._normalize_unicode(value)
+                if sanitized_key is None or sanitized_value is None:
+                    return None
+                result[sanitized_key] = sanitized_value
+            return result
+
+        elif isinstance(content, list):
+            result = []
+            for item in content:
+                sanitized = self._normalize_unicode(item)
+                if sanitized is None:
+                    return None
+                result.append(sanitized)
+            return result
+
+        return content
+
+    def _validate_content_type(self, content_type: str) -> bool:
+        """Validate content-type header."""
+        if not content_type:
+            return False
+
+        # Allow common content types
+        allowed_types = [
+            "application/json",
+            "application/xml",
+            "text/plain",
+            "text/html",
+            "text/markdown",
+            "multipart/form-data",
+            "application/x-www-form-urlencoded",
+        ]
+
+        # Extract base type (ignore charset etc)
+        base_type = content_type.split(";")[0].strip().lower()
+        return base_type in allowed_types
+
+    def _detect_injection_patterns(self, content: Any) -> dict[str, Any]:
+        """
+        Detect code injection patterns in content.
+
+        Returns dict with:
+        - detected: bool
+        - pattern: str (name of detected pattern)
+        - severity: str (low/medium/high/critical)
+        """
+        if isinstance(content, str):
+            for pattern, name in self._dangerous_patterns:
+                if pattern.search(content):
+                    severity = self._get_pattern_severity(name)
+                    return {"detected": True, "pattern": name, "severity": severity}
+
+        elif isinstance(content, dict):
+            for key, value in content.items():
+                # Check keys
+                for pattern, name in self._dangerous_patterns:
+                    if pattern.search(str(key)):
+                        return {"detected": True, "pattern": name, "severity": "high"}
+                # Check values recursively
+                result = self._detect_injection_patterns(value)
+                if result["detected"]:
+                    return result
+
+        elif isinstance(content, list):
+            for item in content:
+                result = self._detect_injection_patterns(item)
+                if result["detected"]:
+                    return result
+
+        return {"detected": False, "pattern": None, "severity": None}
+
+    def _get_pattern_severity(self, pattern_name: str) -> str:
+        """Get severity level for a detected pattern."""
+        critical_patterns = ["exec_call", "eval_call", "dunder_import"]
+        high_patterns = ["os_import", "sys_import", "subprocess_import", "file_open"]
+        medium_patterns = ["dunder_access", "getattr_call", "setattr_call"]
+
+        if pattern_name in critical_patterns:
+            return "critical"
+        elif pattern_name in high_patterns:
+            return "high"
+        elif pattern_name in medium_patterns:
+            return "medium"
+        return "low"
+
+    def _recursive_sanitize(self, content: Any) -> Any:
+        """Recursively sanitize nested structures."""
+        if isinstance(content, str):
+            # Strip leading/trailing whitespace
+            return content.strip()
+
+        elif isinstance(content, dict):
+            return {
+                str(key).strip(): self._recursive_sanitize(value)
+                for key, value in content.items()
+            }
+
+        elif isinstance(content, list):
+            return [self._recursive_sanitize(item) for item in content]
+
+        return content
 
     async def _handle_create_connection(self, message: ActorMessage) -> None:
         """

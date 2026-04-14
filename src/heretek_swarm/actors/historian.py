@@ -21,7 +21,7 @@ import structlog
 from swarms import Agent
 
 from heretek_swarm.actors.base import ActorMessage, AgentActor
-from heretek_swarm.actors.mixins import DeliberationMixin, LearningMixin, MemoryMixin, PatternMixin
+from heretek_swarm.actors.mixins import DeliberationMixin, HealthReportingMixin, LearningMixin, MemoryMixin, PatternMixin
 
 # Session 44: Collective Learning Integration
 from heretek_swarm.collective.learning import PatternExtractor
@@ -158,7 +158,7 @@ class LRUCache:
         }
 
 
-class HistorianAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor):
+class HistorianAgent(HealthReportingMixin,DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor):
     """
     Historian Agent - Memory and context provider.
 

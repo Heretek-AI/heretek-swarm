@@ -11,6 +11,8 @@ from .memory_access import MemoryAccessMixin
 from .pattern import PatternMixin
 from .pattern_consumer import PatternConsumerMixin
 from .tribunal import TribunalMixin
+from .validation import ValidationMixin
+from .audit import AuditMixin
 
 __all__ = [
     "DeliberationMixin",
@@ -21,4 +23,6 @@ __all__ = [
     "PatternMixin",
     "PatternConsumerMixin",
     "TribunalMixin",
+    "ValidationMixin",
+    "AuditMixin",
 ]

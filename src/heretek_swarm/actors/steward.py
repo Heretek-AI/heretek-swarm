@@ -19,6 +19,7 @@ from swarms import Agent
 from heretek_swarm.actors.base import ActorMessage, AgentActor
 from heretek_swarm.actors.mixins import (
     DeliberationMixin,
+    HealthReportingMixin,
     LearningMixin,
     MemoryMixin,
     PatternMixin,
@@ -29,6 +30,7 @@ logger = structlog.get_logger("StewardAgent")
 
 
 class StewardAgent(
+    HealthReportingMixin,
     DeliberationMixin,
     PatternMixin,
     MemoryMixin,

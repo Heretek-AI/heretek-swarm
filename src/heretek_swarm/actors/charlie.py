@@ -17,12 +17,12 @@ import structlog
 from swarms import Agent
 
 from heretek_swarm.actors.base import ActorMessage, AgentActor
-from heretek_swarm.actors.mixins import LearningMixin
+from heretek_swarm.actors.mixins import HealthReportingMixin, LearningMixin
 
 logger = structlog.get_logger("CharlieAgent")
 
 
-class CharlieAgent(LearningMixin, AgentActor):
+class CharlieAgent(HealthReportingMixin, LearningMixin, AgentActor):
     """
     Charlie Agent - Tertiary perspective and challenger.
 

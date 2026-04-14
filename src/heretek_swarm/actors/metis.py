@@ -18,7 +18,7 @@ import structlog
 from swarms import Agent
 
 from heretek_swarm.actors.base import ActorMessage, AgentActor
-from heretek_swarm.actors.mixins import DeliberationMixin, LearningMixin, MemoryMixin, PatternMixin
+from heretek_swarm.actors.mixins import DeliberationMixin, HealthReportingMixin, LearningMixin, MemoryMixin, PatternMixin
 
 # Session 44: Collective Learning Integration
 from heretek_swarm.collective.learning import PatternExtractor
@@ -35,7 +35,7 @@ from heretek_swarm.security.zero_trust import ZeroTrustValidator
 logger = structlog.get_logger("MetisAgent")
 
 
-class MetisAgent(DeliberationMixin, LearningMixin, MemoryMixin, PatternMixin, AgentActor):
+class MetisAgent(HealthReportingMixin,DeliberationMixin, LearningMixin, MemoryMixin, PatternMixin, AgentActor):
     """
     Metis Agent - Strategic Planning Specialist.
 

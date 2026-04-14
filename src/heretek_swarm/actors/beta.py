@@ -17,12 +17,12 @@ import structlog
 from swarms import Agent
 
 from heretek_swarm.actors.base import ActorMessage, AgentActor
-from heretek_swarm.actors.mixins import LearningMixin
+from heretek_swarm.actors.mixins import HealthReportingMixin, LearningMixin
 
 logger = structlog.get_logger("BetaAgent")
 
 
-class BetaAgent(LearningMixin, AgentActor):
+class BetaAgent(HealthReportingMixin, LearningMixin, AgentActor):
     """
     Beta Agent - Secondary analyst and validator.
 

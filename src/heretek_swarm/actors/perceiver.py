@@ -23,7 +23,7 @@ from swarms import Agent
 from heretek_swarm.actors.base import ActorMessage, AgentActor
 
 # Session 44: Collective Learning Integration
-from heretek_swarm.actors.mixins import DeliberationMixin, LearningMixin, MemoryMixin, PatternMixin
+from heretek_swarm.actors.mixins import DeliberationMixin, HealthReportingMixin, LearningMixin, MemoryMixin, PatternMixin
 from heretek_swarm.actors.validation import validate_message
 from heretek_swarm.collective.learning import PatternExtractor
 
@@ -49,7 +49,7 @@ class ModalityType(StrEnum):
     SENSOR = "sensor"
 
 
-class PerceiverAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor):
+class PerceiverAgent(HealthReportingMixin,DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor):
     """
     Perceiver Agent - Multi-Modal Sensory Input Processing Specialist.
 

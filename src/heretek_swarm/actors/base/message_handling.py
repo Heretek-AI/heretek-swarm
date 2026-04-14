@@ -358,9 +358,31 @@ class AgentActorMessageHandling(AgentActor):
         Default implementation routes via registered _message_handlers.
         Subclasses can override for custom routing logic.
 
+        ZERO-02: Pre-execution validation is performed before handler execution.
+
         Args:
             message: Actor message to process
         """
+        # ZERO-02: Pre-execution validation if ValidationMixin is available
+        if hasattr(self, "validate_input"):
+            is_valid, sanitized_content = await self.validate_input(
+                input_data=message.content,
+                operation=f"handle_{message.message_type}",
+                source_id=message.sender,
+            )
+            if not is_valid:
+                logger.warning(
+                    f"[{self.agent_id}] ZERO-02 validation rejected message",
+                    extra={
+                        "message_type": message.message_type,
+                        "sender": message.sender,
+                    },
+                )
+                self.error_count += 1
+                return
+            # Update message content with sanitized version
+            message.content = sanitized_content
+
         handler = self._message_handlers.get(message.message_type)
         if handler:
             try:
@@ -697,10 +719,35 @@ Please provide your analysis and recommendation for this collective task."""
             raise
 
     async def _heartbeat_loop(self) -> None:
-        """Send periodic heartbeats to maintain actor liveness."""
+        """Send periodic heartbeats to maintain actor liveness via NATS."""
         while self._running:
             try:
                 self.last_activity = datetime.now(UTC).isoformat()
+
+                # Publish heartbeat to NATS event mesh for Steward monitoring
+                if self._event_mesh is not None:
+                    heartbeat_data = {
+                        "agent_id": self.agent_id,
+                        "actor_type": getattr(self, "actor_type", "AgentActor"),
+                        "state": self.state.value if hasattr(self, "state") else "active",
+                        "timestamp": self.last_activity,
+                        "error_count": getattr(self, "error_count", 0),
+                        "mailbox_size": self.mailbox.qsize() if hasattr(self, "mailbox") else 0,
+                    }
+                    try:
+                        await self._event_mesh.publish(
+                            f"system.health.heartbeat.{self.agent_id}",
+                            heartbeat_data,
+                        )
+                        logger.debug(
+                            f"[{self.agent_id}] Heartbeat published",
+                            extra={"state": heartbeat_data["state"]},
+                        )
+                    except Exception as e:
+                        logger.warning(
+                            f"[{self.agent_id}] Failed to publish heartbeat: {e}"
+                        )
+
                 await asyncio.sleep(self.heartbeat_interval)
             except asyncio.CancelledError:
                 break

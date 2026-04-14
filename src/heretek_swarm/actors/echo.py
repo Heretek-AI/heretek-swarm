@@ -24,6 +24,7 @@ from heretek_swarm.actors.base import ActorMessage, AgentActor
 # Session 44: Mixin Integration
 from heretek_swarm.actors.mixins import (
     DeliberationMixin,
+    HealthReportingMixin,
     LearningMixin,
     MemoryMixin,
     PatternMixin,
@@ -86,7 +87,7 @@ class TranslationRule:
     priority: int = 0
 
 
-class EchoActor(AgentActor, PatternMixin, DeliberationMixin, MemoryMixin, LearningMixin):
+class EchoActor(HealthReportingMixin, AgentActor, PatternMixin, DeliberationMixin, MemoryMixin, LearningMixin):
     """
     Echo Agent - Communication & Protocol Translation Specialist
 
