@@ -24,6 +24,7 @@ from heretek_swarm.actors.mixins.deliberation import DeliberationMixin
 from heretek_swarm.actors.mixins.learning import LearningMixin
 from heretek_swarm.actors.mixins.memory import MemoryMixin
 from heretek_swarm.actors.mixins.pattern import PatternMixin
+from heretek_swarm.actors.mixins.validation import ValidationMixin
 
 # Session 44: Collective Learning Integration
 from heretek_swarm.collective.learning import PatternExtractor, PatternType
@@ -49,6 +50,7 @@ logger = structlog.get_logger("HabitForgeAgent")
 
 class HabitStage(StrEnum):
     """Stages of habit formation."""
+
     AWARENESS = "awareness"
     INITIATION = "initiation"
     ACQUISITION = "acquisition"
@@ -57,9 +59,9 @@ class HabitStage(StrEnum):
     MAINTENANCE = "maintenance"
 
 
-
 class ReinforcementType(StrEnum):
     """Types of reinforcement strategies."""
+
     POSITIVE = "positive"
     NEGATIVE = "negative"
     SOCIAL = "social"
@@ -101,16 +103,17 @@ class Habit:
     def record_completion(self, context: str | None = None) -> None:
         """Record a habit completion."""
         completion_time = datetime.now(UTC)
-        self.completions.append({
-            "timestamp": completion_time.isoformat(),
-            "context": context,
-        })
+        self.completions.append(
+            {
+                "timestamp": completion_time.isoformat(),
+                "context": context,
+            }
+        )
         self.last_completion = completion_time
 
         # Update streak
         if self.streak_current == 0 or (
-            self.last_completion and
-            completion_time - self.last_completion < timedelta(days=2)
+            self.last_completion and completion_time - self.last_completion < timedelta(days=2)
         ):
             self.streak_current += 1
         else:
@@ -201,7 +204,9 @@ class BehavioralPattern:
         }
 
 
-class HabitForgeAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor):
+class HabitForgeAgent(
+    ValidationMixin, DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor
+):
     """
     Habit-Forge Agent - Behavior Architecture Specialist.
 
@@ -290,7 +295,6 @@ class HabitForgeAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixi
         self.collective_behavior_score: float = 0.5
         self.pattern_evolution: list[dict[str, Any]] = []
 
-
         logger.info(f"[{self.agent_id}] Habit-Forge agent initialized")
 
     async def initialize(self) -> None:
@@ -375,10 +379,7 @@ class HabitForgeAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixi
                 logger.error(f"[{self.agent_id}] Maximum habit limit reached ({self.max_habits})")
                 return
 
-            habit_id = message.content.get(
-                "habit_id",
-                f"habit_{datetime.now(UTC).timestamp()}"
-            )
+            habit_id = message.content.get("habit_id", f"habit_{datetime.now(UTC).timestamp()}")
 
             # Create habit
             habit = Habit(
@@ -614,6 +615,7 @@ Respond in JSON format:
                 )
 
                 import json
+
                 try:
                     start_idx = result.find("[")
                     end_idx = result.rfind("]") + 1
@@ -669,17 +671,21 @@ Respond in JSON format:
         # Create patterns for frequent behaviors
         for action, count in behavior_counts.items():
             if count >= 3:  # Minimum occurrences for pattern
-                pattern_type = PatternType.PRODUCTIVE if "complete" in action.lower() else PatternType.NEUTRAL
-                patterns.append(BehavioralPattern(
-                    pattern_id=f"pattern_{action}_{datetime.now(UTC).timestamp()}",
-                    pattern_type=pattern_type,
-                    description=f"Repeated behavior: {action}",
-                    triggers=["Context-dependent"],
-                    behaviors=[action],
-                    outcomes=[f"Performed {count} times"],
-                    frequency="recurring",
-                    impact_score=min(count / 10, 1.0),
-                ))
+                pattern_type = (
+                    PatternType.PRODUCTIVE if "complete" in action.lower() else PatternType.NEUTRAL
+                )
+                patterns.append(
+                    BehavioralPattern(
+                        pattern_id=f"pattern_{action}_{datetime.now(UTC).timestamp()}",
+                        pattern_type=pattern_type,
+                        description=f"Repeated behavior: {action}",
+                        triggers=["Context-dependent"],
+                        behaviors=[action],
+                        outcomes=[f"Performed {count} times"],
+                        frequency="recurring",
+                        impact_score=min(count / 10, 1.0),
+                    )
+                )
 
         return patterns
 
@@ -884,6 +890,7 @@ Respond in JSON:
                 )
 
                 import json
+
                 try:
                     start_idx = result.find("{")
                     end_idx = result.rfind("}") + 1
@@ -973,9 +980,7 @@ Respond in JSON:
             logger.info(f"[{self.agent_id}] Designing reinforcement strategy")
 
             # Design reinforcement
-            reinforcement = await self._design_reinforcement_strategy(
-                habit_id, behavior
-            )
+            reinforcement = await self._design_reinforcement_strategy(habit_id, behavior)
 
             # Store strategy
             strategy_id = habit_id or f"behavior_{datetime.now(UTC).timestamp()}"
@@ -997,12 +1002,13 @@ Respond in JSON:
         except Exception as e:
             logger.error(f"[{self.agent_id}] Error designing reinforcement: {e}", exc_info=True)
 
-
     # =========================================================================
     # Session 44: Collective Learning Integration Methods
     # =========================================================================
 
-    async def _emit_pattern(self, item_id: str, item_type: str, outcome: str, content: dict[str, Any]) -> None:
+    async def _emit_pattern(
+        self, item_id: str, item_type: str, outcome: str, content: dict[str, Any]
+    ) -> None:
         """Emit pattern for collective learning."""
         if not self.pattern_extractor:
             return
@@ -1025,7 +1031,9 @@ Respond in JSON:
         except Exception as e:
             logger.warning("failed_to_emit_pattern", item_id=item_id, error=str(e))
 
-    async def _consume_patterns(self, pattern_types: list[PatternType] | None = None) -> list[dict[str, Any]]:
+    async def _consume_patterns(
+        self, pattern_types: list[PatternType] | None = None
+    ) -> list[dict[str, Any]]:
         """Consume patterns from collective learning."""
         if not self.pattern_extractor:
             return []
@@ -1146,6 +1154,7 @@ Respond in JSON:
 
     def _habit_forge_agent_actor(self) -> AgentActor:
         """Create an AgentActor wrapper for Habit-Forge for Phi training."""
+
         class HabitForgeAgentActor(AgentActor):
             def __init__(self, habit_forge: "HabitForgeAgent"):
                 super().__init__(
@@ -1228,7 +1237,6 @@ Respond in JSON:
             "phi_optimization_target": "habit_adherence_coordination",
         }
 
-
     async def _design_reinforcement_strategy(
         self,
         habit_id: str | None,
@@ -1248,11 +1256,11 @@ Respond in JSON:
 
         prompt = f"""Design a reinforcement strategy for behavior change:
 
-HABIT: {habit.name if habit else 'N/A'}
-TRIGGER: {habit.trigger if habit else 'N/A'}
-ROUTINE: {habit.routine if habit else 'N/A'}
-REWARD: {habit.reward if habit else 'N/A'}
-ADHERENCE: {habit.adherence_rate if habit else 'N/A'}
+HABIT: {habit.name if habit else "N/A"}
+TRIGGER: {habit.trigger if habit else "N/A"}
+ROUTINE: {habit.routine if habit else "N/A"}
+REWARD: {habit.reward if habit else "N/A"}
+ADHERENCE: {habit.adherence_rate if habit else "N/A"}
 
 BEHAVIOR TO REINFORCE: {behavior}
 
@@ -1280,6 +1288,7 @@ Respond in JSON:
                 )
 
                 import json
+
                 try:
                     start_idx = result.find("{")
                     end_idx = result.rfind("}") + 1

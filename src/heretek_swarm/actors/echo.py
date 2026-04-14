@@ -28,6 +28,7 @@ from heretek_swarm.actors.mixins import (
     LearningMixin,
     MemoryMixin,
     PatternMixin,
+    ValidationMixin,
 )
 
 # Session 44: Zero-Trust Validation
@@ -38,6 +39,7 @@ logger = structlog.get_logger("EchoAgent")
 
 class CommunicationChannel(Enum):
     """Supported communication channels."""
+
     INTERNAL = "internal"
     API = "api"
     WEBSOCKET = "websocket"
@@ -51,6 +53,7 @@ class CommunicationChannel(Enum):
 
 class MessagePriority(Enum):
     """Message priority levels."""
+
     LOW = "low"
     NORMAL = "normal"
     HIGH = "high"
@@ -60,6 +63,7 @@ class MessagePriority(Enum):
 @dataclass
 class CommunicationStyle:
     """Communication style configuration."""
+
     tone: str = "professional"
     formality: float = 0.7
     verbosity: Any = 0.5  # Accept float or string ("concise", "verbose")
@@ -81,13 +85,22 @@ class CommunicationStyle:
 @dataclass
 class TranslationRule:
     """Rule for protocol translation."""
+
     source_format: str
     target_format: str
     transformation: str
     priority: int = 0
 
 
-class EchoActor(HealthReportingMixin, AgentActor, PatternMixin, DeliberationMixin, MemoryMixin, LearningMixin):
+class EchoActor(
+    HealthReportingMixin,
+    ValidationMixin,
+    AgentActor,
+    PatternMixin,
+    DeliberationMixin,
+    MemoryMixin,
+    LearningMixin,
+):
     """
     Echo Agent - Communication & Protocol Translation Specialist
 
@@ -126,38 +139,38 @@ class EchoActor(HealthReportingMixin, AgentActor, PatternMixin, DeliberationMixi
             CommunicationChannel.INTERNAL.value: {
                 "max_length": None,
                 "format": "markdown",
-                "include_metadata": True
+                "include_metadata": True,
             },
             CommunicationChannel.API.value: {
                 "max_length": 4096,
                 "format": "json",
-                "include_metadata": False
+                "include_metadata": False,
             },
             CommunicationChannel.SLACK.value: {
                 "max_length": 4000,
                 "format": "slack_mrkdwn",
-                "include_metadata": False
+                "include_metadata": False,
             },
             CommunicationChannel.DISCORD.value: {
                 "max_length": 2000,
                 "format": "markdown",
-                "include_metadata": False
+                "include_metadata": False,
             },
             CommunicationChannel.TELEGRAM.value: {
                 "max_length": 4096,
                 "format": "html",
-                "include_metadata": False
+                "include_metadata": False,
             },
             CommunicationChannel.EMAIL.value: {
                 "max_length": None,
                 "format": "html",
-                "include_metadata": True
+                "include_metadata": True,
             },
             CommunicationChannel.CONSOLE.value: {
                 "max_length": None,
                 "format": "text",
-                "include_metadata": True
-            }
+                "include_metadata": True,
+            },
         }
 
         # Default communication style
@@ -166,7 +179,7 @@ class EchoActor(HealthReportingMixin, AgentActor, PatternMixin, DeliberationMixi
             formality=0.7,
             verbosity=0.5,
             emoji_usage=False,
-            audience="technical"
+            audience="technical",
         )
 
         # Statistics
@@ -175,7 +188,7 @@ class EchoActor(HealthReportingMixin, AgentActor, PatternMixin, DeliberationMixi
             "messages_translated": 0,
             "messages_sent": 0,
             "channels_used": set(),
-            "errors": 0
+            "errors": 0,
         }
 
         # Session 44: Collective Learning Integration (provided by LearningMixin)
@@ -189,10 +202,11 @@ class EchoActor(HealthReportingMixin, AgentActor, PatternMixin, DeliberationMixi
         self._active_deliberations: dict[str, str] = {}
         self._pattern_emitted: set[str] = set()
 
-
-        logger.info("Echo agent initialized",
-                        agent_id=self.agent_id,
-                        channels=list(self._channel_configs.keys()))
+        logger.info(
+            "Echo agent initialized",
+            agent_id=self.agent_id,
+            channels=list(self._channel_configs.keys()),
+        )
 
     @property
     def active_channels(self) -> set[str]:
@@ -205,7 +219,7 @@ class EchoActor(HealthReportingMixin, AgentActor, PatternMixin, DeliberationMixi
         return {
             **self._stats,
             "channels_used": list(self._stats["channels_used"]),
-            "queue_size": len(self._message_queue)
+            "queue_size": len(self._message_queue),
         }
 
     async def initialize(self) -> None:
@@ -255,10 +269,7 @@ class EchoActor(HealthReportingMixin, AgentActor, PatternMixin, DeliberationMixi
 
             # Format the message
             formatted = await self._format_for_channel(
-                content=content.get("content", ""),
-                channel=channel,
-                style=style,
-                priority=priority
+                content=content.get("content", ""), channel=channel, style=style, priority=priority
             )
 
             self._stats["messages_formatted"] += 1
@@ -267,14 +278,16 @@ class EchoActor(HealthReportingMixin, AgentActor, PatternMixin, DeliberationMixi
                 "status": "success",
                 "formatted_message": formatted,
                 "channel": channel,
-                "style_applied": style.tone
+                "style_applied": style.tone,
             }
 
         except Exception as e:
             self._stats["errors"] += 1
-            logger.error("Failed to format message",
-                            error=str(e),
-                            channel=message.content.get("channel", "unknown"))
+            logger.error(
+                "Failed to format message",
+                error=str(e),
+                channel=message.content.get("channel", "unknown"),
+            )
             return {"status": "error", "error": str(e)}
 
     async def _handle_translate_protocol(self, message: ActorMessage) -> dict[str, Any] | None:
@@ -296,9 +309,7 @@ class EchoActor(HealthReportingMixin, AgentActor, PatternMixin, DeliberationMixi
 
             # Perform translation
             translated = await self._translate_content(
-                content=payload,
-                source_format=source_format,
-                target_format=target_format
+                content=payload, source_format=source_format, target_format=target_format
             )
 
             self._stats["messages_translated"] += 1
@@ -307,15 +318,17 @@ class EchoActor(HealthReportingMixin, AgentActor, PatternMixin, DeliberationMixi
                 "status": "success",
                 "translated_content": translated,
                 "source_format": source_format,
-                "target_format": target_format
+                "target_format": target_format,
             }
 
         except Exception as e:
             self._stats["errors"] += 1
-            logger.error("Failed to translate protocol",
-                            error=str(e),
-                            source=message.content.get("source_format"),
-                            target=message.content.get("target_format"))
+            logger.error(
+                "Failed to translate protocol",
+                error=str(e),
+                source=message.content.get("source_format"),
+                target=message.content.get("target_format"),
+            )
             return {"status": "error", "error": str(e)}
 
     async def _handle_send_to_channel(self, message: ActorMessage) -> dict[str, Any] | None:
@@ -337,16 +350,11 @@ class EchoActor(HealthReportingMixin, AgentActor, PatternMixin, DeliberationMixi
 
             # Validate channel exists
             if channel not in self._channel_configs:
-                return {
-                    "status": "error",
-                    "error": f"Unknown channel: {channel}"
-                }
+                return {"status": "error", "error": f"Unknown channel: {channel}"}
 
             # Simulate sending (in production, integrate with actual channel APIs)
             send_result = await self._send_to_channel_impl(
-                channel=channel,
-                message=message_text,
-                metadata=metadata
+                channel=channel, message=message_text, metadata=metadata
             )
 
             self._stats["channels_used"].add(channel)
@@ -354,14 +362,14 @@ class EchoActor(HealthReportingMixin, AgentActor, PatternMixin, DeliberationMixi
             return {
                 "status": "success" if send_result else "partial",
                 "channel": channel,
-                "delivered": send_result
+                "delivered": send_result,
             }
 
         except Exception as e:
             self._stats["errors"] += 1
-            logger.error("Failed to send to channel",
-                            error=str(e),
-                            channel=message.content.get("channel"))
+            logger.error(
+                "Failed to send to channel", error=str(e), channel=message.content.get("channel")
+            )
             return {"status": "error", "error": str(e)}
 
     async def _handle_set_communication_style(self, message: ActorMessage) -> dict[str, Any] | None:
@@ -391,7 +399,7 @@ class EchoActor(HealthReportingMixin, AgentActor, PatternMixin, DeliberationMixi
                 formality=style_config.get("formality", 0.7),
                 verbosity=style_config.get("verbosity", 0.5),
                 emoji_usage=style_config.get("emoji_usage", False),
-                audience=style_config.get("audience", "technical")
+                audience=style_config.get("audience", "technical"),
             )
 
             self._communication_styles[context] = style
@@ -404,15 +412,17 @@ class EchoActor(HealthReportingMixin, AgentActor, PatternMixin, DeliberationMixi
                     "formality": style.formality,
                     "verbosity": style.verbosity,
                     "emoji_usage": style.emoji_usage,
-                    "audience": style.audience
-                }
+                    "audience": style.audience,
+                },
             }
 
         except Exception as e:
             self._stats["errors"] += 1
-            logger.error("Failed to set communication style",
-                            error=str(e),
-                            context=message.content.get("context"))
+            logger.error(
+                "Failed to set communication style",
+                error=str(e),
+                context=message.content.get("context"),
+            )
             return {"status": "error", "error": str(e)}
 
     async def _handle_get_channel_status(self, message: ActorMessage) -> dict[str, Any] | None:
@@ -434,26 +444,22 @@ class EchoActor(HealthReportingMixin, AgentActor, PatternMixin, DeliberationMixi
                     "status": "success",
                     "channel": channel,
                     "active": channel in self._active_channels,
-                    "config": config
+                    "config": config,
                 }
             # Return all channel statuses
             channel_statuses = {}
             for ch, config in self._channel_configs.items():
-                channel_statuses[ch] = {
-                    "active": ch in self._active_channels,
-                    "config": config
-                }
+                channel_statuses[ch] = {"active": ch in self._active_channels, "config": config}
 
             return {
                 "status": "success",
                 "channels": channel_statuses,
-                "statistics": self.statistics
+                "statistics": self.statistics,
             }
 
         except Exception as e:
             self._stats["errors"] += 1
-            logger.error("Failed to get channel status",
-                            error=str(e))
+            logger.error("Failed to get channel status", error=str(e))
             return {"status": "error", "error": str(e)}
 
     async def _handle_broadcast_message(self, message: ActorMessage) -> dict[str, Any] | None:
@@ -483,21 +489,16 @@ class EchoActor(HealthReportingMixin, AgentActor, PatternMixin, DeliberationMixi
             for channel in channels:
                 try:
                     formatted = await self._format_for_channel(
-                        content=message_content,
-                        channel=channel,
-                        style=style,
-                        priority=priority
+                        content=message_content, channel=channel, style=style, priority=priority
                     )
 
                     send_result = await self._send_to_channel_impl(
-                        channel=channel,
-                        message=formatted,
-                        metadata={"priority": priority}
+                        channel=channel, message=formatted, metadata={"priority": priority}
                     )
 
                     results[channel] = {
                         "status": "success" if send_result else "failed",
-                        "delivered": send_result
+                        "delivered": send_result,
                     }
 
                     if send_result:
@@ -505,10 +506,7 @@ class EchoActor(HealthReportingMixin, AgentActor, PatternMixin, DeliberationMixi
                         self._stats["messages_sent"] += 1
 
                 except Exception as e:
-                    results[channel] = {
-                        "status": "error",
-                        "error": str(e)
-                    }
+                    results[channel] = {"status": "error", "error": str(e)}
                     self._stats["errors"] += 1
 
             self._stats["messages_formatted"] += len(channels)
@@ -517,13 +515,12 @@ class EchoActor(HealthReportingMixin, AgentActor, PatternMixin, DeliberationMixi
                 "status": "success",
                 "results": results,
                 "total_channels": len(channels),
-                "successful": sum(1 for r in results.values() if r.get("status") == "success")
+                "successful": sum(1 for r in results.values() if r.get("status") == "success"),
             }
 
         except Exception as e:
             self._stats["errors"] += 1
-            logger.error("Failed to broadcast message",
-                            error=str(e))
+            logger.error("Failed to broadcast message", error=str(e))
             return {"status": "error", "error": str(e)}
 
     # =========================================================================
@@ -538,7 +535,7 @@ class EchoActor(HealthReportingMixin, AgentActor, PatternMixin, DeliberationMixi
                 formality=style_config.get("formality", 0.7),
                 verbosity=style_config.get("verbosity", 0.5),
                 emoji_usage=style_config.get("emoji_usage", False),
-                audience=style_config.get("audience", "technical")
+                audience=style_config.get("audience", "technical"),
             )
         return self._default_style
 
@@ -547,7 +544,7 @@ class EchoActor(HealthReportingMixin, AgentActor, PatternMixin, DeliberationMixi
         content: Any,
         channel: Any = "internal",
         style: CommunicationStyle | None = None,
-        priority: str = "normal"
+        priority: str = "normal",
     ) -> str:
         """Format content for a specific channel and style."""
         # Normalize channel to string value
@@ -573,7 +570,7 @@ class EchoActor(HealthReportingMixin, AgentActor, PatternMixin, DeliberationMixi
 
         # Truncate if necessary
         if max_length and len(formatted) > max_length:
-            formatted = formatted[:max_length - 3] + "..."
+            formatted = formatted[: max_length - 3] + "..."
 
         return formatted
 
@@ -601,11 +598,10 @@ class EchoActor(HealthReportingMixin, AgentActor, PatternMixin, DeliberationMixi
     def _format_as_json(self, content: str, priority: str) -> str:
         """Format content as JSON."""
         import json
-        return json.dumps({
-            "message": content,
-            "priority": priority,
-            "timestamp": datetime.now(UTC).isoformat()
-        })
+
+        return json.dumps(
+            {"message": content, "priority": priority, "timestamp": datetime.now(UTC).isoformat()}
+        )
 
     def _format_for_slack(self, content: str) -> str:
         """Format content for Slack."""
@@ -661,11 +657,7 @@ class EchoActor(HealthReportingMixin, AgentActor, PatternMixin, DeliberationMixi
 
         if source_format == "internal" and target_format == "api":
             # Convert internal format to API response
-            return {
-                "success": True,
-                "data": content,
-                "timestamp": datetime.now(UTC).isoformat()
-            }
+            return {"success": True, "data": content, "timestamp": datetime.now(UTC).isoformat()}
 
         if source_format == "api" and target_format == "internal":
             # Extract data from API response
@@ -702,18 +694,19 @@ class EchoActor(HealthReportingMixin, AgentActor, PatternMixin, DeliberationMixi
         - WebSocket connections
         """
         # Log the send attempt
-        logger.info("Sending to channel",
-                        channel=channel,
-                        message_length=len(message),
-                        metadata=metadata)
+        logger.info(
+            "Sending to channel", channel=channel, message_length=len(message), metadata=metadata
+        )
 
         # Add to message queue for processing
-        self._message_queue.append({
-            "channel": channel,
-            "message": message,
-            "metadata": metadata,
-            "timestamp": datetime.now(UTC).isoformat()
-        })
+        self._message_queue.append(
+            {
+                "channel": channel,
+                "message": message,
+                "metadata": metadata,
+                "timestamp": datetime.now(UTC).isoformat(),
+            }
+        )
 
         # Keep queue bounded
         if len(self._message_queue) > 1000:
@@ -725,7 +718,6 @@ class EchoActor(HealthReportingMixin, AgentActor, PatternMixin, DeliberationMixi
     # =========================================================================
     # Lifecycle
     # =========================================================================
-
 
     # =========================================================================
     # Session 44: Collective Learning Integration Methods (now provided by PatternMixin)
@@ -747,13 +739,11 @@ class EchoActor(HealthReportingMixin, AgentActor, PatternMixin, DeliberationMixi
     # _track_memory_access, _get_memory_tier, _prefetch_relevant provided by MemoryMixin
     # get_learning_status provided by LearningMixin
 
-
     async def terminate(self) -> None:
         """Terminate the Echo agent."""
         # Process remaining messages
         if self._message_queue:
-            logger.info("Processing remaining messages",
-                            count=len(self._message_queue))
+            logger.info("Processing remaining messages", count=len(self._message_queue))
 
         await super().terminate()
         logger.info("Echo agent terminated", agent_id=self.agent_id)

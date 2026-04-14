@@ -24,7 +24,13 @@ from typing import Any
 import structlog
 
 from heretek_swarm.actors.base import ActorMessage, AgentActor
-from heretek_swarm.actors.mixins import DeliberationMixin, LearningMixin, MemoryMixin, PatternMixin
+from heretek_swarm.actors.mixins import (
+    DeliberationMixin,
+    LearningMixin,
+    MemoryMixin,
+    PatternMixin,
+    ValidationMixin,
+)
 from heretek_swarm.actors.validation import validate_message
 
 logger = structlog.get_logger(__name__)
@@ -32,6 +38,7 @@ logger = structlog.get_logger(__name__)
 
 class ChangeStatus(Enum):
     """Status of a change request."""
+
     PROPOSED = "proposed"
     ANALYZING = "analyzing"
     APPROVED = "approved"
@@ -45,6 +52,7 @@ class ChangeStatus(Enum):
 
 class ChangeType(Enum):
     """Type of change."""
+
     CONFIGURATION = "configuration"
     DEPLOYMENT = "deployment"
     MIGRATION = "migration"
@@ -56,6 +64,7 @@ class ChangeType(Enum):
 
 class ImpactLevel(Enum):
     """Change impact level."""
+
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
@@ -65,6 +74,7 @@ class ImpactLevel(Enum):
 @dataclass
 class ChangeRequest:
     """A change request under management."""
+
     change_id: str
     title: str
     description: str
@@ -108,6 +118,7 @@ class ChangeRequest:
 @dataclass
 class ChangeNotification:
     """A change notification to stakeholders."""
+
     notification_id: str
     change_id: str
     recipients: list[str]
@@ -128,7 +139,9 @@ class ChangeNotification:
         }
 
 
-class CatalystAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor):
+class CatalystAgent(
+    ValidationMixin, DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor
+):
     """
     Change Management Specialist.
 
@@ -447,7 +460,9 @@ class CatalystAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
                 )
                 return
 
-            change.scheduled_at = datetime.fromisoformat(scheduled_at) if scheduled_at else datetime.now(UTC)
+            change.scheduled_at = (
+                datetime.fromisoformat(scheduled_at) if scheduled_at else datetime.now(UTC)
+            )
             change.status = ChangeStatus.SCHEDULED
 
             logger.info(
@@ -547,7 +562,11 @@ class CatalystAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
 
             change = self._changes[change_id]
 
-            if change.status not in (ChangeStatus.COMPLETED, ChangeStatus.IN_PROGRESS, ChangeStatus.FAILED):
+            if change.status not in (
+                ChangeStatus.COMPLETED,
+                ChangeStatus.IN_PROGRESS,
+                ChangeStatus.FAILED,
+            ):
                 await self._send_error(
                     message.sender_id,
                     f"Cannot rollback change in {change.status.value} state",
@@ -850,8 +869,13 @@ class CatalystAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
         if not change.rollback_plan:
             recommendations.append("Document detailed rollback procedure")
 
-        if change.required_approvals < 2 and change.impact_level in (ImpactLevel.HIGH, ImpactLevel.CRITICAL):
-            recommendations.append("Consider requiring additional approvals for high-impact changes")
+        if change.required_approvals < 2 and change.impact_level in (
+            ImpactLevel.HIGH,
+            ImpactLevel.CRITICAL,
+        ):
+            recommendations.append(
+                "Consider requiring additional approvals for high-impact changes"
+            )
 
         return recommendations
 
@@ -874,7 +898,7 @@ class CatalystAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
 
         # Trim history if needed
         if len(self._history) > self._max_history:
-            self._history = self._history[-self._max_history:]
+            self._history = self._history[-self._max_history :]
 
     async def _send_error(
         self,

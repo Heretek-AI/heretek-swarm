@@ -23,7 +23,14 @@ from swarms import Agent
 from heretek_swarm.actors.base import ActorMessage, AgentActor
 
 # Session 44: Collective Learning Integration
-from heretek_swarm.actors.mixins import DeliberationMixin, HealthReportingMixin, LearningMixin, MemoryMixin, PatternMixin
+from heretek_swarm.actors.mixins import (
+    DeliberationMixin,
+    HealthReportingMixin,
+    LearningMixin,
+    MemoryMixin,
+    PatternMixin,
+    ValidationMixin,
+)
 from heretek_swarm.actors.validation import validate_message
 from heretek_swarm.collective.learning import PatternExtractor
 
@@ -41,6 +48,7 @@ logger = structlog.get_logger("PerceiverAgent")
 
 class ModalityType(StrEnum):
     """Supported input modalities."""
+
     TEXT = "text"
     IMAGE = "image"
     AUDIO = "audio"
@@ -49,7 +57,15 @@ class ModalityType(StrEnum):
     SENSOR = "sensor"
 
 
-class PerceiverAgent(HealthReportingMixin,DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor):
+class PerceiverAgent(
+    HealthReportingMixin,
+    ValidationMixin,
+    DeliberationMixin,
+    PatternMixin,
+    MemoryMixin,
+    LearningMixin,
+    AgentActor,
+):
     """
     Perceiver Agent - Multi-Modal Sensory Input Processing Specialist.
 
@@ -127,9 +143,7 @@ class PerceiverAgent(HealthReportingMixin,DeliberationMixin, PatternMixin, Memor
         self.enable_cross_modal = enable_cross_modal
 
         # Processing statistics
-        self.inputs_processed: dict[str, int] = {
-            modality.value: 0 for modality in ModalityType
-        }
+        self.inputs_processed: dict[str, int] = {modality.value: 0 for modality in ModalityType}
         self.total_features_extracted = 0
         self.quality_rejections = 0
 
@@ -147,9 +161,10 @@ class PerceiverAgent(HealthReportingMixin,DeliberationMixin, PatternMixin, Memor
             ModalityType.SENSOR.value: ["json", "csv", "binary"],
         }
 
-
         # Session 44: Collective Learning Integration
-        self.pattern_extractor = pattern_extractor or PatternExtractor(min_support=3, min_confidence=0.6)
+        self.pattern_extractor = pattern_extractor or PatternExtractor(
+            min_support=3, min_confidence=0.6
+        )
 
         # Session 44: Consensus Integration
         self.deliberation_engine = deliberation_engine or SwarmDeliberationEngine(
@@ -165,7 +180,6 @@ class PerceiverAgent(HealthReportingMixin,DeliberationMixin, PatternMixin, Memor
         # Session 44: Integration state
         self._active_deliberations: dict[str, str] = {}
         self._pattern_emitted: Set[str] = set()
-
 
         logger.info(f"[{self.agent_id}] Perceiver agent initialized")
 
@@ -209,9 +223,7 @@ class PerceiverAgent(HealthReportingMixin,DeliberationMixin, PatternMixin, Memor
                         correlation_id=message.correlation_id,
                     )
         else:
-            logger.warning(
-                f"[{self.agent_id}] No handler for message type: {message.message_type}"
-            )
+            logger.warning(f"[{self.agent_id}] No handler for message type: {message.message_type}")
 
     def _validate_message_content(self, message_type: str, content: dict[str, Any]) -> Any:
         """Validate message content using Pydantic models."""
@@ -274,9 +286,7 @@ class PerceiverAgent(HealthReportingMixin,DeliberationMixin, PatternMixin, Memor
             input_id = self._generate_input_id(input_data, modality)
 
             # Extract features based on modality
-            features = await self._extract_modality_features(
-                input_data, modality, format_hint
-            )
+            features = await self._extract_modality_features(input_data, modality, format_hint)
 
             # Assess quality
             quality_score = self._assess_input_quality(input_data, modality, features)
@@ -324,15 +334,14 @@ class PerceiverAgent(HealthReportingMixin,DeliberationMixin, PatternMixin, Memor
                 return len(input_data) <= max_bytes
             if isinstance(input_data, dict):
                 import json
+
                 return len(json.dumps(input_data).encode()) <= max_bytes
             return True  # Assume valid for other types
         except Exception as e:
             logger.debug("perceiver_validation_failed", error=str(e))
             return True  # Fail open on validation errors
 
-    def _detect_modality(
-        self, input_data: Any, format_hint: str | None = None
-    ) -> str:
+    def _detect_modality(self, input_data: Any, format_hint: str | None = None) -> str:
         """Auto-detect input modality."""
         if format_hint:
             format_lower = format_hint.lower()
@@ -384,6 +393,7 @@ class PerceiverAgent(HealthReportingMixin,DeliberationMixin, PatternMixin, Memor
             data_bytes = input_data
         else:
             import json
+
             data_bytes = json.dumps(input_data, sort_keys=True).encode()
 
         hash_digest = hashlib.sha256(data_bytes).hexdigest()[:16]
@@ -439,7 +449,9 @@ class PerceiverAgent(HealthReportingMixin,DeliberationMixin, PatternMixin, Memor
         vocabulary_richness = len(unique_words) / word_count if word_count > 0 else 0
 
         # Detect potential language patterns
-        has_code = any(c in text for c in "{}[]()=;") and ("function" in text or "def " in text or "import " in text)
+        has_code = any(c in text for c in "{}[]()=;") and (
+            "function" in text or "def " in text or "import " in text
+        )
         has_json = text.strip().startswith(("{", "["))
         has_xml = text.strip().startswith("<")
 
@@ -663,8 +675,7 @@ class PerceiverAgent(HealthReportingMixin,DeliberationMixin, PatternMixin, Memor
         if len(self.feature_cache) > self.feature_cache_size:
             # Remove oldest entries
             sorted_keys = sorted(
-                self.feature_cache.keys(),
-                key=lambda k: self.feature_cache[k]["timestamp"]
+                self.feature_cache.keys(), key=lambda k: self.feature_cache[k]["timestamp"]
             )
             for key in sorted_keys[:100]:  # Remove 100 oldest
                 del self.feature_cache[key]
@@ -784,9 +795,7 @@ class PerceiverAgent(HealthReportingMixin,DeliberationMixin, PatternMixin, Memor
                 await self._send_error_response(message, f"Input not found: {input_id}")
                 return
 
-            quality_score = self._assess_input_quality(
-                None, cached["modality"], cached["features"]
-            )
+            quality_score = self._assess_input_quality(None, cached["modality"], cached["features"])
 
             await self.send(
                 topic=content.get("reply_to"),
@@ -852,7 +861,7 @@ class PerceiverAgent(HealthReportingMixin,DeliberationMixin, PatternMixin, Memor
 
             correlations = []
             for i, id1 in enumerate(input_ids):
-                for id2 in input_ids[i+1:]:
+                for id2 in input_ids[i + 1 :]:
                     data1 = self.feature_cache.get(id1)
                     data2 = self.feature_cache.get(id2)
 
@@ -884,12 +893,9 @@ class PerceiverAgent(HealthReportingMixin,DeliberationMixin, PatternMixin, Memor
             logger.error(f"[{self.agent_id}] Correlation analysis failed: {e}", exc_info=True)
             await self._send_error_response(message, f"Correlation failed: {e}")
 
-
     # Session 44: Collective Learning, Consensus Deliberation, and Memory Optimization
     # integration methods now provided by DeliberationMixin, LearningMixin,
     # MemoryMixin, and PatternMixin.
-
-
 
     async def _send_error_response(self, message: ActorMessage, error: str) -> None:
         """Send error response."""

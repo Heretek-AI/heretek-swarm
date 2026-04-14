@@ -12,6 +12,7 @@ The Examiner provides:
 Examiner is the "quality gate" of the Collective, ensuring all outputs
 meet established standards before deployment or delivery.
 """
+
 import asyncio
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -25,6 +26,7 @@ from heretek_swarm.actors.mixins.deliberation import DeliberationMixin
 from heretek_swarm.actors.mixins.learning import LearningMixin
 from heretek_swarm.actors.mixins.memory import MemoryMixin
 from heretek_swarm.actors.mixins.pattern import PatternMixin
+from heretek_swarm.actors.mixins.validation import ValidationMixin
 from heretek_swarm.actors.validation import validate_message as validate_message_schema
 
 # Session 44: Collective Learning Integration
@@ -47,6 +49,7 @@ logger = structlog.get_logger("ExaminerAgent")
 
 class TestType(StrEnum):
     """Types of tests Examiner can execute."""
+
     UNIT = "unit"
     INTEGRATION = "integration"
     END_TO_END = "end_to_end"
@@ -58,6 +61,7 @@ class TestType(StrEnum):
 
 class TestStatus(StrEnum):
     """Test execution status."""
+
     PENDING = "pending"
     RUNNING = "running"
     PASSED = "passed"
@@ -68,6 +72,7 @@ class TestStatus(StrEnum):
 
 class QualityMetric(StrEnum):
     """Quality metrics Examiner tracks."""
+
     CODE_COVERAGE = "code_coverage"
     CYCLOMATIC_COMPLEXITY = "cyclomatic_complexity"
     TECHNICAL_DEBT = "technical_debt"
@@ -79,6 +84,7 @@ class QualityMetric(StrEnum):
 
 class SeverityLevel(StrEnum):
     """Bug/issue severity levels."""
+
     CRITICAL = "critical"
     HIGH = "high"
     MEDIUM = "medium"
@@ -89,6 +95,7 @@ class SeverityLevel(StrEnum):
 @dataclass
 class TestCase:
     """Test case definition and result."""
+
     id: str
     name: str
     test_type: TestType
@@ -105,6 +112,7 @@ class TestCase:
 @dataclass
 class TestSuite:
     """Collection of test cases with aggregate results."""
+
     id: str
     name: str
     test_cases: list[TestCase]
@@ -120,6 +128,7 @@ class TestSuite:
 @dataclass
 class Bug:
     """Detected bug or issue record."""
+
     id: str
     title: str
     description: str
@@ -137,6 +146,7 @@ class Bug:
 @dataclass
 class QualityReport:
     """Comprehensive quality assessment report."""
+
     id: str
     generated_at: datetime
     target: str  # What was examined (code/decision/component)
@@ -150,7 +160,9 @@ class QualityReport:
     passed: bool = True
 
 
-class ExaminerAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor):
+class ExaminerAgent(
+    ValidationMixin, DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor
+):
     """
     Quality Assurance & Testing Specialist Agent.
 
@@ -194,13 +206,10 @@ class ExaminerAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
         self._default_timeout = self._config.get("default_timeout", 60)
         self._coverage_threshold = self._config.get("coverage_threshold", 80.0)
 
-
-
-
         logger.info(
             "ExaminerAgent initialized",
             agent_id=self.agent_id,
-            coverage_threshold=self._coverage_threshold
+            coverage_threshold=self._coverage_threshold,
         )
 
     def get_handlers(self) -> dict[str, callable]:
@@ -235,25 +244,19 @@ class ExaminerAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
             requirements = content.get("requirements", [])
 
             logger.info(
-                "Creating test plan",
-                target=target,
-                test_types=test_types,
-                priority=priority
+                "Creating test plan", target=target, test_types=test_types, priority=priority
             )
 
             # Generate test plan using LLM
             test_plan = await self._generate_test_plan(
-                target=target,
-                test_types=test_types,
-                priority=priority,
-                requirements=requirements
+                target=target, test_types=test_types, priority=priority, requirements=requirements
             )
 
             return {
                 "status": "success",
                 "test_plan": test_plan,
                 "target": target,
-                "estimated_tests": len(test_plan.get("test_cases", []))
+                "estimated_tests": len(test_plan.get("test_cases", [])),
             }
 
         except Exception as e:
@@ -277,17 +280,13 @@ class ExaminerAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
             test_cases = content.get("test_cases", [])
             timeout = content.get("timeout", self._default_timeout)
 
-            logger.info(
-                "Executing tests",
-                test_suite_id=test_suite_id,
-                test_count=len(test_cases)
-            )
+            logger.info("Executing tests", test_suite_id=test_suite_id, test_count=len(test_cases))
 
             # Create test suite
             suite = TestSuite(
                 id=test_suite_id or f"suite_{datetime.now(UTC).timestamp()}",
                 name=content.get("name", "Test Suite"),
-                test_cases=[]
+                test_cases=[],
             )
 
             # Execute each test case
@@ -311,7 +310,7 @@ class ExaminerAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
 
             # Trim history if needed
             if len(self._test_history) > self.max_test_history:
-                self._test_history = self._test_history[-self.max_test_history:]
+                self._test_history = self._test_history[-self.max_test_history :]
 
             return {
                 "status": "success",
@@ -321,7 +320,7 @@ class ExaminerAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
                 "skipped": suite.skipped,
                 "total": suite.total,
                 "execution_time_ms": suite.execution_time_ms,
-                "coverage_percent": suite.coverage_percent
+                "coverage_percent": suite.coverage_percent,
             }
 
         except Exception as e:
@@ -347,18 +346,14 @@ class ExaminerAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
             decision_content = content.get("content", "")
             context = content.get("context", {})
 
-            logger.info(
-                "Validating decision",
-                decision_id=decision_id,
-                decision_type=decision_type
-            )
+            logger.info("Validating decision", decision_id=decision_id, decision_type=decision_type)
 
             # Validate decision using LLM
             validation_result = await self._validate_decision_content(
                 decision_id=decision_id,
                 decision_type=decision_type,
                 content=decision_content,
-                context=context
+                context=context,
             )
 
             return {
@@ -367,7 +362,7 @@ class ExaminerAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
                 "valid": validation_result.get("valid", False),
                 "confidence": validation_result.get("confidence", 0.0),
                 "issues": validation_result.get("issues", []),
-                "recommendations": validation_result.get("recommendations", [])
+                "recommendations": validation_result.get("recommendations", []),
             }
 
         except Exception as e:
@@ -391,17 +386,11 @@ class ExaminerAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
             target_type = content.get("target_type", "code")
             metrics = content.get("metrics", list(QualityMetric))
 
-            logger.info(
-                "Analyzing quality",
-                target_type=target_type,
-                metrics=metrics
-            )
+            logger.info("Analyzing quality", target_type=target_type, metrics=metrics)
 
             # Analyze quality metrics
             quality_results = await self._analyze_quality_metrics(
-                target=target,
-                target_type=target_type,
-                metrics=metrics
+                target=target, target_type=target_type, metrics=metrics
             )
 
             # Calculate overall score
@@ -416,7 +405,7 @@ class ExaminerAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
                 "metrics": {k.value: v for k, v in quality_results.items()},
                 "overall_score": overall_score,
                 "threshold": self._coverage_threshold,
-                "passed": overall_score >= self._coverage_threshold
+                "passed": overall_score >= self._coverage_threshold,
             }
 
         except Exception as e:
@@ -453,7 +442,7 @@ class ExaminerAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
                 expected_behavior=content.get("expected_behavior", ""),
                 actual_behavior=content.get("actual_behavior", ""),
                 detected_at=datetime.now(UTC),
-                metadata=content.get("metadata", {})
+                metadata=content.get("metadata", {}),
             )
 
             # Store bug with LRU eviction
@@ -465,17 +454,14 @@ class ExaminerAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
             self._bugs[bug.id] = bug
 
             logger.info(
-                "Bug reported",
-                bug_id=bug.id,
-                severity=bug.severity.value,
-                component=bug.component
+                "Bug reported", bug_id=bug.id, severity=bug.severity.value, component=bug.component
             )
 
             return {
                 "status": "success",
                 "bug_id": bug.id,
                 "severity": bug.severity.value,
-                "created_at": bug.detected_at.isoformat()
+                "created_at": bug.detected_at.isoformat(),
             }
 
         except Exception as e:
@@ -513,10 +499,7 @@ class ExaminerAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
 
             # Generate summary using LLM
             summary = await self._generate_quality_summary(
-                test_suites=test_suites,
-                bugs=bugs,
-                metrics=metrics,
-                overall_score=overall_score
+                test_suites=test_suites, bugs=bugs, metrics=metrics, overall_score=overall_score
             )
 
             report = QualityReport(
@@ -529,7 +512,7 @@ class ExaminerAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
                 overall_score=overall_score,
                 summary=summary,
                 recommendations=self._generate_recommendations(test_suites, bugs, metrics),
-                passed=overall_score >= self._coverage_threshold
+                passed=overall_score >= self._coverage_threshold,
             )
 
             return {
@@ -544,15 +527,19 @@ class ExaminerAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
                     "test_summary": {
                         "passed": sum(s.passed for s in test_suites),
                         "failed": sum(s.failed for s in test_suites),
-                        "total": sum(s.total for s in test_suites)
-                    } if test_suites else None,
+                        "total": sum(s.total for s in test_suites),
+                    }
+                    if test_suites
+                    else None,
                     "bug_summary": {
                         "critical": len([b for b in bugs if b.severity == SeverityLevel.CRITICAL]),
                         "high": len([b for b in bugs if b.severity == SeverityLevel.HIGH]),
-                        "total": len(bugs)
-                    } if bugs else None,
-                    "recommendations": report.recommendations
-                }
+                        "total": len(bugs),
+                    }
+                    if bugs
+                    else None,
+                    "recommendations": report.recommendations,
+                },
             }
 
         except Exception as e:
@@ -588,8 +575,8 @@ class ExaminerAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
                             "severity": bug.severity.value,
                             "component": bug.component,
                             "status": bug.status,
-                            "detected_at": bug.detected_at.isoformat()
-                        }
+                            "detected_at": bug.detected_at.isoformat(),
+                        },
                     }
                 return {"status": "error", "error": f"Bug {bug_id} not found"}
 
@@ -609,11 +596,11 @@ class ExaminerAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
                         "severity": b.severity.value,
                         "component": b.component,
                         "status": b.status,
-                        "detected_at": b.detected_at.isoformat()
+                        "detected_at": b.detected_at.isoformat(),
                     }
                     for b in filtered_bugs[:50]  # Limit results
                 ],
-                "total": len(filtered_bugs)
+                "total": len(filtered_bugs),
             }
 
         except Exception as e:
@@ -623,17 +610,13 @@ class ExaminerAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
     # Internal helper methods
 
     async def _generate_test_plan(
-        self,
-        target: str,
-        test_types: list[str],
-        priority: str,
-        requirements: list[str]
+        self, target: str, test_types: list[str], priority: str, requirements: list[str]
     ) -> dict[str, Any]:
         """Generate test plan using LLM."""
         try:
             prompt = f"""Generate a comprehensive test plan for: {target}
 
-Test Types Required: {', '.join(test_types)}
+Test Types Required: {", ".join(test_types)}
 Priority: {priority}
 Requirements: {requirements}
 
@@ -646,14 +629,11 @@ Provide a structured test plan with:
 
 Format as JSON with keys: objectives, test_cases, success_criteria, risks"""
 
-            response = await self.run_with_llm(
-                prompt=prompt,
-                timeout=60,
-                temperature=0.3
-            )
+            response = await self.run_with_llm(prompt=prompt, timeout=60, temperature=0.3)
 
             # Try to parse as JSON
             import json
+
             try:
                 return json.loads(response)
             except Exception as e:
@@ -662,7 +642,7 @@ Format as JSON with keys: objectives, test_cases, success_criteria, risks"""
                     "objectives": [response[:500]],
                     "test_cases": [],
                     "success_criteria": ["All tests pass"],
-                    "risks": []
+                    "risks": [],
                 }
 
         except Exception as e:
@@ -671,7 +651,7 @@ Format as JSON with keys: objectives, test_cases, success_criteria, risks"""
                 "objectives": ["Test plan generation failed"],
                 "test_cases": [],
                 "success_criteria": [],
-                "risks": [str(e)]
+                "risks": [str(e)],
             }
 
     async def _execute_test_case(self, test_case: dict[str, Any], timeout: int) -> TestCase:
@@ -685,10 +665,7 @@ Format as JSON with keys: objectives, test_cases, success_criteria, risks"""
 
             # Execute test logic (placeholder for actual test execution)
             # In production, this would integrate with pytest, unittest, etc.
-            result = await asyncio.wait_for(
-                self._run_test_logic(test_case),
-                timeout=timeout
-            )
+            result = await asyncio.wait_for(self._run_test_logic(test_case), timeout=timeout)
 
             return TestCase(
                 id=tc_id,
@@ -700,7 +677,7 @@ Format as JSON with keys: objectives, test_cases, success_criteria, risks"""
                 assertions_passed=result.get("assertions_passed", 0),
                 assertions_total=result.get("assertions_total", 0),
                 coverage_percent=result.get("coverage"),
-                metadata=result.get("metadata", {})
+                metadata=result.get("metadata", {}),
             )
 
         except TimeoutError:
@@ -711,7 +688,7 @@ Format as JSON with keys: objectives, test_cases, success_criteria, risks"""
                 description=test_case.get("description", ""),
                 status=TestStatus.ERROR,
                 execution_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
-                error_message=f"Test timed out after {timeout}s"
+                error_message=f"Test timed out after {timeout}s",
             )
         except Exception as e:
             return TestCase(
@@ -721,7 +698,7 @@ Format as JSON with keys: objectives, test_cases, success_criteria, risks"""
                 description=test_case.get("description", ""),
                 status=TestStatus.ERROR,
                 execution_time_ms=(datetime.now(UTC) - start_time).total_seconds() * 1000,
-                error_message=str(e)
+                error_message=str(e),
             )
 
     async def _run_test_logic(self, test_case: dict[str, Any]) -> dict[str, Any]:
@@ -743,15 +720,11 @@ Format as JSON with keys: objectives, test_cases, success_criteria, risks"""
             "passed": True,
             "assertions_passed": test_case.get("assertions", 1),
             "assertions_total": test_case.get("assertions", 1),
-            "coverage": test_case.get("expected_coverage", 95.0)
+            "coverage": test_case.get("expected_coverage", 95.0),
         }
 
     async def _validate_decision_content(
-        self,
-        decision_id: str,
-        decision_type: str,
-        content: str,
-        context: dict[str, Any]
+        self, decision_id: str, decision_type: str, content: str, context: dict[str, Any]
     ) -> dict[str, Any]:
         """Validate decision content using LLM."""
         try:
@@ -771,13 +744,10 @@ Evaluate for:
 
 Return JSON with keys: valid (bool), confidence (0-1), issues (list), recommendations (list)"""
 
-            response = await self.run_with_llm(
-                prompt=prompt,
-                timeout=60,
-                temperature=0.2
-            )
+            response = await self.run_with_llm(prompt=prompt, timeout=60, temperature=0.2)
 
             import json
+
             try:
                 return json.loads(response)
             except Exception as e:
@@ -786,7 +756,7 @@ Return JSON with keys: valid (bool), confidence (0-1), issues (list), recommenda
                     "valid": True,
                     "confidence": 0.8,
                     "issues": ["Unable to parse detailed validation"],
-                    "recommendations": ["Manual review recommended"]
+                    "recommendations": ["Manual review recommended"],
                 }
 
         except Exception as e:
@@ -795,14 +765,11 @@ Return JSON with keys: valid (bool), confidence (0-1), issues (list), recommenda
                 "valid": False,
                 "confidence": 0.0,
                 "issues": [f"Validation error: {e!s}"],
-                "recommendations": ["Retry validation"]
+                "recommendations": ["Retry validation"],
             }
 
     async def _analyze_quality_metrics(
-        self,
-        target: str,
-        target_type: str,
-        metrics: list[QualityMetric]
+        self, target: str, target_type: str, metrics: list[QualityMetric]
     ) -> dict[QualityMetric, float]:
         """Analyze quality metrics for target."""
         results = {}
@@ -856,6 +823,7 @@ Return a score from 0-100."""
             response = await self.run_with_llm(prompt=prompt, timeout=30)
             # Extract number from response
             import re
+
             match = re.search(r"(\d+(?:\.\d+)?)", response)
             if match:
                 return min(100.0, float(match.group(1)))
@@ -875,7 +843,7 @@ Return a score from 0-100."""
             QualityMetric.SECURITY_VULNERABILITIES: 0.25,
             QualityMetric.PERFORMANCE_SCORE: 0.20,
             QualityMetric.ACCESSIBILITY_SCORE: 0.10,
-            QualityMetric.DOCUMENTATION_COVERAGE: 0.05
+            QualityMetric.DOCUMENTATION_COVERAGE: 0.05,
         }
 
         total = 0.0
@@ -889,10 +857,7 @@ Return a score from 0-100."""
         return (total / total_weight) if total_weight > 0 else 0.0
 
     def _calculate_system_score(
-        self,
-        test_suites: list[TestSuite],
-        bugs: list[Bug],
-        metrics: dict[QualityMetric, float]
+        self, test_suites: list[TestSuite], bugs: list[Bug], metrics: dict[QualityMetric, float]
     ) -> float:
         """Calculate overall system quality score."""
         scores = []
@@ -911,7 +876,7 @@ Return a score from 0-100."""
                 SeverityLevel.HIGH: 5,
                 SeverityLevel.MEDIUM: 2,
                 SeverityLevel.LOW: 1,
-                SeverityLevel.INFO: 0.5
+                SeverityLevel.INFO: 0.5,
             }
             bug_score = sum(severity_weights.get(b.severity, 1) for b in bugs)
             # More bugs = lower score
@@ -927,10 +892,7 @@ Return a score from 0-100."""
         return sum(scores) if scores else 0.0
 
     def _generate_recommendations(
-        self,
-        test_suites: list[TestSuite],
-        bugs: list[Bug],
-        metrics: dict[QualityMetric, float]
+        self, test_suites: list[TestSuite], bugs: list[Bug], metrics: dict[QualityMetric, float]
     ) -> list[str]:
         """Generate quality improvement recommendations."""
         recommendations = []
@@ -943,7 +905,9 @@ Return a score from 0-100."""
 
             avg_coverage = sum(s.coverage_percent or 0 for s in test_suites) / len(test_suites)
             if avg_coverage < self._coverage_threshold:
-                recommendations.append(f"Increase test coverage from {avg_coverage:.1f}% to {self._coverage_threshold}%")
+                recommendations.append(
+                    f"Increase test coverage from {avg_coverage:.1f}% to {self._coverage_threshold}%"
+                )
 
         # Bug recommendations
         critical_bugs = [b for b in bugs if b.severity == SeverityLevel.CRITICAL]
@@ -957,12 +921,13 @@ Return a score from 0-100."""
 
         return recommendations or ["Continue monitoring quality metrics"]
 
-
     # =========================================================================
     # Session 44: Collective Learning Integration Methods
     # =========================================================================
 
-    async def _emit_pattern(self, item_id: str, item_type: str, outcome: str, content: dict[str, Any]) -> None:
+    async def _emit_pattern(
+        self, item_id: str, item_type: str, outcome: str, content: dict[str, Any]
+    ) -> None:
         """Emit pattern for collective learning."""
         if not self.pattern_extractor:
             return
@@ -985,7 +950,9 @@ Return a score from 0-100."""
         except Exception as e:
             logger.warning("failed_to_emit_pattern", item_id=item_id, error=str(e))
 
-    async def _consume_patterns(self, pattern_types: list[PatternType] | None = None) -> list[dict[str, Any]]:
+    async def _consume_patterns(
+        self, pattern_types: list[PatternType] | None = None
+    ) -> list[dict[str, Any]]:
         """Consume patterns from collective learning."""
         if not self.pattern_extractor:
             return []
@@ -1095,7 +1062,7 @@ Return a score from 0-100."""
         test_suites: list[TestSuite],
         bugs: list[Bug],
         metrics: dict[QualityMetric, float],
-        overall_score: float
+        overall_score: float,
     ) -> str:
         """Generate quality summary using LLM."""
         try:

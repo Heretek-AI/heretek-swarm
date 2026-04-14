@@ -29,6 +29,7 @@ from heretek_swarm.actors.mixins import (
     LearningMixin,
     MemoryMixin,
     PatternMixin,
+    ValidationMixin,
 )
 from heretek_swarm.actors.validation import validate_message
 
@@ -105,7 +106,13 @@ class SafetyReport:
 
 
 class SentinelAgent(
-    HealthReportingMixin, DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor
+    HealthReportingMixin,
+    ValidationMixin,
+    DeliberationMixin,
+    PatternMixin,
+    MemoryMixin,
+    LearningMixin,
+    AgentActor,
 ):
     """
     Sentinel Agent - Safety Guardian for the Heretek Swarm Collective.

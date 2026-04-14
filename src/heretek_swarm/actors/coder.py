@@ -26,6 +26,7 @@ from heretek_swarm.actors.mixins.deliberation import DeliberationMixin
 from heretek_swarm.actors.mixins.learning import LearningMixin
 from heretek_swarm.actors.mixins.memory import MemoryMixin
 from heretek_swarm.actors.mixins.pattern import PatternMixin
+from heretek_swarm.actors.mixins.validation import ValidationMixin
 from heretek_swarm.actors.validation import validate_message as validate_message_schema
 from heretek_swarm.validation import (
     LLMOutputValidator,
@@ -41,6 +42,7 @@ logger = structlog.get_logger("CoderAgent")
 
 class CodeLanguage(StrEnum):
     """Supported programming languages."""
+
     PYTHON = "python"
     JAVASCRIPT = "javascript"
     TYPESCRIPT = "typescript"
@@ -57,6 +59,7 @@ class CodeLanguage(StrEnum):
 
 class CodeTask(StrEnum):
     """Types of coding tasks."""
+
     IMPLEMENT = "implement"
     REVIEW = "review"
     REFACTOR = "refactor"
@@ -69,6 +72,7 @@ class CodeTask(StrEnum):
 
 class ReviewSeverity(StrEnum):
     """Code review issue severity."""
+
     CRITICAL = "critical"  # Security vulnerability, crash
     ERROR = "error"  # Bug, incorrect logic
     WARNING = "warning"  # Code smell, potential issue
@@ -79,6 +83,7 @@ class ReviewSeverity(StrEnum):
 @dataclass
 class CodeSnippet:
     """Generated or analyzed code snippet."""
+
     id: str
     language: CodeLanguage
     code: str
@@ -94,6 +99,7 @@ class CodeSnippet:
 @dataclass
 class ReviewIssue:
     """Code review issue."""
+
     id: str
     line_number: int | None
     severity: ReviewSeverity
@@ -106,6 +112,7 @@ class ReviewIssue:
 @dataclass
 class CodeReview:
     """Complete code review result."""
+
     id: str
     code_id: str
     reviewed_at: datetime
@@ -121,6 +128,7 @@ class CodeReview:
 @dataclass
 class DebugSession:
     """Debugging session record."""
+
     id: str
     code: str
     error_message: str
@@ -136,6 +144,7 @@ class DebugSession:
 @dataclass
 class ImplementationTask:
     """Code implementation task."""
+
     id: str
     description: str
     requirements: list[str]
@@ -149,7 +158,9 @@ class ImplementationTask:
     metadata: dict[str, Any] = field(default_factory=dict)
 
 
-class CoderAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor):
+class CoderAgent(
+    ValidationMixin, DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor
+):
     """
     Code Implementation & Debugging Specialist Agent.
 
@@ -202,15 +213,13 @@ class CoderAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
         self._enable_tests = self._config.get("enable_tests", True)
         self._enable_docs = self._config.get("enable_docs", True)
 
-
         # Session 44: LLM Output Validation
         self.llm_output_validator = LLMOutputValidator(strict_mode=True)
-
 
         logger.info(
             "CoderAgent initialized",
             agent_id=self.agent_id,
-            default_language=self._default_language.value
+            default_language=self._default_language.value,
         )
 
     def get_handlers(self) -> dict[str, callable]:
@@ -251,17 +260,11 @@ class CoderAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
             requirements = content.get("requirements", [])
             include_tests = content.get("include_tests", self._enable_tests)
 
-            logger.info(
-                "Generating code",
-                description=description[:100],
-                language=language.value
-            )
+            logger.info("Generating code", description=description[:100], language=language.value)
 
             # Generate code using LLM
             code_result = await self._generate_code_llm(
-                description=description,
-                language=language,
-                requirements=requirements
+                description=description, language=language, requirements=requirements
             )
 
             # Store snippet
@@ -275,7 +278,7 @@ class CoderAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
                 purpose=code_result.get("purpose", ""),
                 dependencies=code_result.get("dependencies", []),
                 complexity_score=code_result.get("complexity", 0.5),
-                metadata=code_result.get("metadata", {})
+                metadata=code_result.get("metadata", {}),
             )
             self._code_snippets[snippet.id] = snippet
 
@@ -283,9 +286,7 @@ class CoderAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
             test_code = None
             if include_tests:
                 test_code = await self._generate_tests_for_code(
-                    code=snippet.code,
-                    language=language,
-                    description=description
+                    code=snippet.code, language=language, description=description
                 )
                 snippet.test_coverage = 0.8  # Estimate
 
@@ -303,7 +304,7 @@ class CoderAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
                 "code": snippet.code,
                 "tests": test_code,
                 "dependencies": snippet.dependencies,
-                "complexity_score": snippet.complexity_score
+                "complexity_score": snippet.complexity_score,
             }
 
         except Exception as e:
@@ -329,21 +330,18 @@ class CoderAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
             code = content.get("code", "")
             if not is_code_safe(code):
                 logger.warning("Unsafe code detected in review request")
-                return {"status": "error", "error": "Unsafe code detected - contains dangerous patterns"}
+                return {
+                    "status": "error",
+                    "error": "Unsafe code detected - contains dangerous patterns",
+                }
             language = CodeLanguage(content.get("language", self._default_language.value))
             focus_areas = content.get("focus_areas", ["security", "bugs", "style"])
 
-            logger.info(
-                "Reviewing code",
-                language=language.value,
-                focus_areas=focus_areas
-            )
+            logger.info("Reviewing code", language=language.value, focus_areas=focus_areas)
 
             # Perform code review
             review_result = await self._review_code_llm(
-                code=code,
-                language=language,
-                focus_areas=focus_areas
+                code=code, language=language, focus_areas=focus_areas
             )
 
             # Parse issues
@@ -356,7 +354,7 @@ class CoderAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
                     category=issue_data.get("category", "style"),
                     message=issue_data.get("message", ""),
                     suggestion=issue_data.get("suggestion"),
-                    code_context=issue_data.get("context")
+                    code_context=issue_data.get("context"),
                 )
                 issues.append(issue)
 
@@ -377,7 +375,7 @@ class CoderAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
                 critical_count=critical_count,
                 error_count=error_count,
                 warning_count=warning_count,
-                recommendations=review_result.get("recommendations", [])
+                recommendations=review_result.get("recommendations", []),
             )
             self._reviews[review.id] = review
 
@@ -396,11 +394,11 @@ class CoderAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
                         "severity": i.severity.value,
                         "category": i.category,
                         "message": i.message,
-                        "suggestion": i.suggestion
+                        "suggestion": i.suggestion,
                     }
                     for i in issues[:20]  # Limit returned issues
                 ],
-                "recommendations": review.recommendations
+                "recommendations": review.recommendations,
             }
 
         except Exception as e:
@@ -437,22 +435,16 @@ class CoderAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
                 code=code,
                 error_message=error_message,
                 symptoms=symptoms,
-                status="investigating"
+                status="investigating",
             )
             self._debug_sessions[session_id] = session
             self._active_debugs.add(session_id)
 
-            logger.info(
-                "Debugging code",
-                session_id=session_id,
-                error=error_message[:100]
-            )
+            logger.info("Debugging code", session_id=session_id, error=error_message[:100])
 
             # Analyze and fix
             debug_result = await self._debug_code_llm(
-                code=code,
-                error_message=error_message,
-                symptoms=symptoms
+                code=code, error_message=error_message, symptoms=symptoms
             )
 
             # Update session
@@ -469,7 +461,7 @@ class CoderAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
                 "root_cause": session.root_cause,
                 "fix": session.fix,
                 "explanation": session.explanation,
-                "status": session.status
+                "status": session.status,
             }
 
         except Exception as e:
@@ -493,23 +485,17 @@ class CoderAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
             language = CodeLanguage(content.get("language", self._default_language.value))
             framework = content.get("framework", "pytest")
 
-            logger.info(
-                "Generating tests",
-                language=language.value,
-                framework=framework
-            )
+            logger.info("Generating tests", language=language.value, framework=framework)
 
             tests = await self._generate_tests_for_code(
-                code=code,
-                language=language,
-                framework=framework
+                code=code, language=language, framework=framework
             )
 
             return {
                 "status": "success",
                 "tests": tests,
                 "framework": framework,
-                "estimated_coverage": 0.85
+                "estimated_coverage": 0.85,
             }
 
         except Exception as e:
@@ -533,23 +519,15 @@ class CoderAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
             doc_type = content.get("doc_type", "api")
             style = content.get("style", "google")
 
-            logger.info(
-                "Generating documentation",
-                doc_type=doc_type,
-                style=style
-            )
+            logger.info("Generating documentation", doc_type=doc_type, style=style)
 
-            docs = await self._generate_docs_llm(
-                code=code,
-                doc_type=doc_type,
-                style=style
-            )
+            docs = await self._generate_docs_llm(code=code, doc_type=doc_type, style=style)
 
             return {
                 "status": "success",
                 "documentation": docs,
                 "doc_type": doc_type,
-                "style": style
+                "style": style,
             }
 
         except Exception as e:
@@ -573,16 +551,10 @@ class CoderAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
             goals = content.get("goals", ["readability"])
             constraints = content.get("constraints", [])
 
-            logger.info(
-                "Refactoring code",
-                goals=goals,
-                constraints=constraints
-            )
+            logger.info("Refactoring code", goals=goals, constraints=constraints)
 
             refactored = await self._refactor_code_llm(
-                code=code,
-                goals=goals,
-                constraints=constraints
+                code=code, goals=goals, constraints=constraints
             )
 
             return {
@@ -590,7 +562,7 @@ class CoderAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
                 "original_code": code[:500],
                 "refactored_code": refactored.get("code", ""),
                 "improvements": refactored.get("improvements", []),
-                "changes_summary": refactored.get("changes", "")
+                "changes_summary": refactored.get("changes", ""),
             }
 
         except Exception as e:
@@ -614,22 +586,16 @@ class CoderAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
             audience = content.get("audience", "intermediate")
             detail_level = content.get("detail_level", "medium")
 
-            logger.info(
-                "Explaining code",
-                audience=audience,
-                detail_level=detail_level
-            )
+            logger.info("Explaining code", audience=audience, detail_level=detail_level)
 
             explanation = await self._explain_code_llm(
-                code=code,
-                audience=audience,
-                detail_level=detail_level
+                code=code, audience=audience, detail_level=detail_level
             )
 
             return {
                 "status": "success",
                 "explanation": explanation,
-                "code_summary": code[:200] if len(code) > 200 else code
+                "code_summary": code[:200] if len(code) > 200 else code,
             }
 
         except Exception as e:
@@ -663,36 +629,28 @@ class CoderAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
                 description=description,
                 requirements=requirements,
                 language=language,
-                status="in_progress"
+                status="in_progress",
             )
             self._tasks[task.id] = task
 
-            logger.info(
-                "Implementing task",
-                task_id=task.id,
-                description=description[:100]
-            )
+            logger.info("Implementing task", task_id=task.id, description=description[:100])
 
             # Generate implementation
             code_result = await self._generate_code_llm(
-                description=description,
-                language=language,
-                requirements=requirements
+                description=description, language=language, requirements=requirements
             )
             task.generated_code = code_result.get("code", "")
 
             # Generate tests
             if include_tests:
                 task.tests = await self._generate_tests_for_code(
-                    code=task.generated_code,
-                    language=language
+                    code=task.generated_code, language=language
                 )
 
             # Generate docs
             if include_docs:
                 task.documentation = await self._generate_docs_llm(
-                    code=task.generated_code,
-                    doc_type="api"
+                    code=task.generated_code, doc_type="api"
                 )
 
             task.status = "completed"
@@ -704,7 +662,7 @@ class CoderAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
                 "code": task.generated_code,
                 "tests": task.tests,
                 "documentation": task.documentation,
-                "completed_at": task.completed_at.isoformat()
+                "completed_at": task.completed_at.isoformat(),
             }
 
         except Exception as e:
@@ -714,10 +672,7 @@ class CoderAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
     # Internal helper methods
 
     async def _generate_code_llm(
-        self,
-        description: str,
-        language: CodeLanguage,
-        requirements: list[str]
+        self, description: str, language: CodeLanguage, requirements: list[str]
     ) -> dict[str, Any]:
         """Generate code using LLM."""
         try:
@@ -739,13 +694,18 @@ Return as JSON with keys: code, dependencies, purpose, complexity"""
             response = await self.run_with_llm(prompt=prompt, timeout=60, temperature=0.3)
 
             import json
+
             try:
                 result = json.loads(response)
                 # Validate generated code for safety
                 code = result.get("code", "")
                 if code and not self.llm_output_validator.is_safe_code(code):
-                    logger.warning("Generated code contains dangerous patterns", code_preview=code[:100])
-                    result["security_warning"] = "Generated code contains potentially dangerous patterns"
+                    logger.warning(
+                        "Generated code contains dangerous patterns", code_preview=code[:100]
+                    )
+                    result["security_warning"] = (
+                        "Generated code contains potentially dangerous patterns"
+                    )
                 return result
             except Exception as e:
                 logger.debug("coder_json_parse_failed_762", error=str(e))
@@ -754,18 +714,14 @@ Return as JSON with keys: code, dependencies, purpose, complexity"""
                     "dependencies": [],
                     "purpose": description[:100],
                     "complexity": 0.5,
-                    "security_warning": "Could not validate generated code"
+                    "security_warning": "Could not validate generated code",
                 }
         except Exception as e:
             logger.error("Code generation failed", error=str(e))
             return {"code": "", "dependencies": [], "purpose": "", "complexity": 0}
 
     async def _generate_tests_for_code(
-        self,
-        code: str,
-        language: CodeLanguage,
-        framework: str = "pytest",
-        description: str = ""
+        self, code: str, language: CodeLanguage, framework: str = "pytest", description: str = ""
     ) -> str:
         """Generate tests for given code."""
         try:
@@ -773,7 +729,7 @@ Return as JSON with keys: code, dependencies, purpose, complexity"""
 
 {code}
 
-{f'Purpose: {description}' if description else ''}
+{f"Purpose: {description}" if description else ""}
 
 Include:
 1. Unit tests for each function
@@ -788,10 +744,7 @@ Return only the test code."""
             return "# Test generation failed"
 
     async def _review_code_llm(
-        self,
-        code: str,
-        language: CodeLanguage,
-        focus_areas: list[str]
+        self, code: str, language: CodeLanguage, focus_areas: list[str]
     ) -> dict[str, Any]:
         """Review code using LLM."""
         try:
@@ -818,6 +771,7 @@ Return as JSON array of issues plus summary, score, recommendations."""
             response = await self.run_with_llm(prompt=prompt, timeout=60, temperature=0.2)
 
             import json
+
             try:
                 return json.loads(response)
             except Exception as e:
@@ -826,17 +780,14 @@ Return as JSON array of issues plus summary, score, recommendations."""
                     "issues": [],
                     "summary": "Review completed",
                     "score": 75.0,
-                    "recommendations": []
+                    "recommendations": [],
                 }
         except Exception as e:
             logger.debug("coder_review_llm_failed", error=str(e))
             return {"issues": [], "summary": "Review failed", "score": 50.0, "recommendations": []}
 
     async def _debug_code_llm(
-        self,
-        code: str,
-        error_message: str,
-        symptoms: list[str]
+        self, code: str, error_message: str, symptoms: list[str]
     ) -> dict[str, Any]:
         """Debug code using LLM."""
         try:
@@ -857,6 +808,7 @@ Return as JSON."""
             response = await self.run_with_llm(prompt=prompt, timeout=60, temperature=0.2)
 
             import json
+
             try:
                 return json.loads(response)
             except Exception as e:
@@ -864,18 +816,13 @@ Return as JSON."""
                 return {
                     "root_cause": "Unable to determine",
                     "fix": None,
-                    "explanation": "Debug analysis failed"
+                    "explanation": "Debug analysis failed",
                 }
         except Exception as e:
             logger.debug("coder_debug_llm_failed", error=str(e))
             return {"root_cause": "", "fix": None, "explanation": ""}
 
-    async def _generate_docs_llm(
-        self,
-        code: str,
-        doc_type: str,
-        style: str
-    ) -> str:
+    async def _generate_docs_llm(self, code: str, doc_type: str, style: str) -> str:
         """Generate documentation using LLM."""
         try:
             prompt = f"""Generate {doc_type} documentation for this code in {style} style:
@@ -890,10 +837,7 @@ Return only the documentation."""
             return "# Documentation generation failed"
 
     async def _refactor_code_llm(
-        self,
-        code: str,
-        goals: list[str],
-        constraints: list[str]
+        self, code: str, goals: list[str], constraints: list[str]
     ) -> dict[str, Any]:
         """Refactor code using LLM."""
         try:
@@ -913,26 +857,17 @@ Return as JSON."""
             response = await self.run_with_llm(prompt=prompt, timeout=60, temperature=0.3)
 
             import json
+
             try:
                 return json.loads(response)
             except Exception as e:
                 logger.debug("coder_refactor_parse_failed_923", error=str(e))
-                return {
-                    "code": code,
-                    "improvements": [],
-                    "changes": "No changes made"
-                }
+                return {"code": code, "improvements": [], "changes": "No changes made"}
         except Exception as e:
             logger.debug("coder_refactor_llm_failed", error=str(e))
             return {"code": code, "improvements": [], "changes": "Refactor failed"}
 
-
-    async def _explain_code_llm(
-        self,
-        code: str,
-        audience: str,
-        detail_level: str
-    ) -> str:
+    async def _explain_code_llm(self, code: str, audience: str, detail_level: str) -> str:
         """Explain code using LLM."""
         try:
             prompt = f"""Explain this code for {audience} audience ({detail_level} detail):

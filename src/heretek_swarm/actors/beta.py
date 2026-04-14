@@ -17,12 +17,12 @@ import structlog
 from swarms import Agent
 
 from heretek_swarm.actors.base import ActorMessage, AgentActor
-from heretek_swarm.actors.mixins import HealthReportingMixin, LearningMixin
+from heretek_swarm.actors.mixins import HealthReportingMixin, LearningMixin, ValidationMixin
 
 logger = structlog.get_logger("BetaAgent")
 
 
-class BetaAgent(HealthReportingMixin, LearningMixin, AgentActor):
+class BetaAgent(HealthReportingMixin, ValidationMixin, LearningMixin, AgentActor):
     """
     Beta Agent - Secondary analyst and validator.
 
@@ -109,18 +109,16 @@ class BetaAgent(HealthReportingMixin, LearningMixin, AgentActor):
                         correlation_id=message.correlation_id,
                     )
         else:
-            logger.warning(
-                f"[{self.agent_id}] Unhandled message type: {message.message_type}"
-            )
+            logger.warning(f"[{self.agent_id}] Unhandled message type: {message.message_type}")
 
     async def _handle_deliberation_request(self, message: ActorMessage) -> None:
         """Handle deliberation requests."""
-        deliberation_id = message.content.get("deliberation_id") or message.content.get("session_id")
+        deliberation_id = message.content.get("deliberation_id") or message.content.get(
+            "session_id"
+        )
         topic = message.content.get("topic") or message.content.get("problem")
 
-        logger.info(
-            f"[{self.agent_id}] Participating in deliberation {deliberation_id}"
-        )
+        logger.info(f"[{self.agent_id}] Participating in deliberation {deliberation_id}")
 
         # Perform independent analysis
         analysis = await self._perform_analysis(topic)
@@ -169,7 +167,7 @@ class BetaAgent(HealthReportingMixin, LearningMixin, AgentActor):
             self._validations[request_id] = record
         # P1-3: Trim history if it exceeds max size
         if len(self.validation_history) > self.max_history_size:
-            self.validation_history = self.validation_history[-self.max_history_size:]
+            self.validation_history = self.validation_history[-self.max_history_size :]
 
         reply_topic = message.content.get("reply_to", "validation")
         await self.send(
@@ -200,7 +198,7 @@ class BetaAgent(HealthReportingMixin, LearningMixin, AgentActor):
             self._error_checks[check_id] = check_record
         # P1-3: Trim history if it exceeds max size
         if len(self.error_detections) > self.max_history_size:
-            self.error_detections = self.error_detections[-self.max_history_size:]
+            self.error_detections = self.error_detections[-self.max_history_size :]
         if errors:
             logger.warning(f"[{self.agent_id}] Detected {len(errors)} errors")
 
@@ -220,8 +218,7 @@ class BetaAgent(HealthReportingMixin, LearningMixin, AgentActor):
         if self.swarms_agent:
             try:
                 analysis_result = await self.run_with_llm(
-                    prompt=f"Provide independent analysis (Beta perspective): {problem}",
-                    timeout=60
+                    prompt=f"Provide independent analysis (Beta perspective): {problem}", timeout=60
                 )
                 return {
                     "decision": analysis_result,
@@ -251,7 +248,7 @@ class BetaAgent(HealthReportingMixin, LearningMixin, AgentActor):
             try:
                 validation_result = await self.run_with_llm(
                     prompt=f"Beta validation of: {decision}. Original: {original_analysis}",
-                    timeout=60
+                    timeout=60,
                 )
                 return {
                     "valid": True,
@@ -276,15 +273,16 @@ class BetaAgent(HealthReportingMixin, LearningMixin, AgentActor):
         if self.swarms_agent:
             try:
                 error_check = await self.run_with_llm(
-                    prompt=f"Check for errors in: {content}",
-                    timeout=60
+                    prompt=f"Check for errors in: {content}", timeout=60
                 )
                 if "error" in error_check.lower():
-                    errors.append({
-                        "type": "logical_error",
-                        "description": error_check,
-                        "severity": "medium",
-                    })
+                    errors.append(
+                        {
+                            "type": "logical_error",
+                            "description": error_check,
+                            "severity": "medium",
+                        }
+                    )
             except Exception as e:
                 logger.error(f"[{self.agent_id}] Error detection error: {e}")
 

@@ -21,7 +21,14 @@ import structlog
 from swarms import Agent
 
 from heretek_swarm.actors.base import ActorMessage, AgentActor
-from heretek_swarm.actors.mixins import DeliberationMixin, HealthReportingMixin, LearningMixin, MemoryMixin, PatternMixin
+from heretek_swarm.actors.mixins import (
+    DeliberationMixin,
+    HealthReportingMixin,
+    LearningMixin,
+    MemoryMixin,
+    PatternMixin,
+    ValidationMixin,
+)
 
 # Session 44: Collective Learning Integration
 from heretek_swarm.collective.learning import PatternExtractor
@@ -128,10 +135,8 @@ class LRUCache:
             Number of entries invalidated
         """
         import fnmatch
-        keys_to_remove = [
-            key for key in self._cache
-            if fnmatch.fnmatch(key, pattern)
-        ]
+
+        keys_to_remove = [key for key in self._cache if fnmatch.fnmatch(key, pattern)]
         for key in keys_to_remove:
             del self._cache[key]
         return len(keys_to_remove)
@@ -158,7 +163,15 @@ class LRUCache:
         }
 
 
-class HistorianAgent(HealthReportingMixin,DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor):
+class HistorianAgent(
+    HealthReportingMixin,
+    ValidationMixin,
+    DeliberationMixin,
+    PatternMixin,
+    MemoryMixin,
+    LearningMixin,
+    AgentActor,
+):
     """
     Historian Agent - Memory and context provider.
 
@@ -228,9 +241,10 @@ class HistorianAgent(HealthReportingMixin,DeliberationMixin, PatternMixin, Memor
         # Unified knowledge access layer
         self.knowledge_access: UnifiedKnowledgeAccess | None = None
 
-
         # Session 44: Collective Learning Integration
-        self.pattern_extractor = pattern_extractor or PatternExtractor(min_support=3, min_confidence=0.6)
+        self.pattern_extractor = pattern_extractor or PatternExtractor(
+            min_support=3, min_confidence=0.6
+        )
 
         # Session 44: Consensus Integration
         self.deliberation_engine = deliberation_engine or SwarmDeliberationEngine(
@@ -246,7 +260,6 @@ class HistorianAgent(HealthReportingMixin,DeliberationMixin, PatternMixin, Memor
         # Session 44: Integration state
         self._active_deliberations: dict[str, str] = {}
         self._pattern_emitted: Set[str] = set()
-
 
         logger.info(f"[{self.agent_id}] Historian agent initialized")
 
@@ -303,9 +316,7 @@ class HistorianAgent(HealthReportingMixin,DeliberationMixin, PatternMixin, Memor
                         correlation_id=message.correlation_id,
                     )
         else:
-            logger.warning(
-                f"[{self.agent_id}] Unhandled message type: {message.message_type}"
-            )
+            logger.warning(f"[{self.agent_id}] Unhandled message type: {message.message_type}")
 
     async def _handle_store_memory(self, message: ActorMessage) -> None:
         """Handle memory storage requests with validation."""
@@ -355,9 +366,21 @@ class HistorianAgent(HealthReportingMixin,DeliberationMixin, PatternMixin, Memor
             validated = self._validate_message_content("retrieve_context", message.content)
             if validated:
                 # Extract topic from filters or use default
-                topic = validated.filters.get("topic") if hasattr(validated, "filters") else message.content.get("topic")
-                filters = validated.filters if hasattr(validated, "filters") else message.content.get("filters", {})
-                window_size = validated.limit if hasattr(validated, "limit") else message.content.get("window_size", self.context_window)
+                topic = (
+                    validated.filters.get("topic")
+                    if hasattr(validated, "filters")
+                    else message.content.get("topic")
+                )
+                filters = (
+                    validated.filters
+                    if hasattr(validated, "filters")
+                    else message.content.get("filters", {})
+                )
+                window_size = (
+                    validated.limit
+                    if hasattr(validated, "limit")
+                    else message.content.get("window_size", self.context_window)
+                )
             else:
                 # Fallback to unvalidated access
                 topic = message.content.get("topic")
@@ -465,7 +488,11 @@ class HistorianAgent(HealthReportingMixin,DeliberationMixin, PatternMixin, Memor
         try:
             validated = self._validate_message_content("pattern_match", message.content)
             if validated:
-                current_situation = validated.query_text if hasattr(validated, "query_text") else message.content.get("situation")
+                current_situation = (
+                    validated.query_text
+                    if hasattr(validated, "query_text")
+                    else message.content.get("situation")
+                )
             else:
                 # Fallback to unvalidated access
                 current_situation = message.content.get("situation")
@@ -734,9 +761,7 @@ class HistorianAgent(HealthReportingMixin,DeliberationMixin, PatternMixin, Memor
             persistent=True,
         )
 
-        logger.debug(
-            f"[{self.agent_id}] Tracked lineage for {decision_id}: {parent_ids}"
-        )
+        logger.debug(f"[{self.agent_id}] Tracked lineage for {decision_id}: {parent_ids}")
 
     async def get_lineage(self, decision_id: str) -> list[str]:
         """
@@ -783,11 +808,13 @@ class HistorianAgent(HealthReportingMixin,DeliberationMixin, PatternMixin, Memor
             # Compute actual similarity using text comparison
             similarity = self._compute_similarity(situation, str(entry.content))
             if similarity >= threshold:
-                matched.append({
-                    "situation": entry.content,
-                    "metadata": entry.metadata,
-                    "similarity": similarity,
-                })
+                matched.append(
+                    {
+                        "situation": entry.content,
+                        "metadata": entry.metadata,
+                        "similarity": similarity,
+                    }
+                )
 
         # Cache results (with automatic LRU eviction)
         self.pattern_cache.set(situation, matched)
@@ -809,13 +836,14 @@ class HistorianAgent(HealthReportingMixin,DeliberationMixin, PatternMixin, Memor
         Returns:
             Similarity score between 0.0 and 1.0
         """
+
         # Simple cosine similarity using character 2-grams
         def get_ngrams(text: str, n: int = 2) -> dict[str, int]:
             """Get character n-grams with frequencies."""
             text = text.lower().strip()
             ngrams = {}
             for i in range(len(text) - n + 1):
-                ngram = text[i:i+n]
+                ngram = text[i : i + n]
                 ngrams[ngram] = ngrams.get(ngram, 0) + 1
             return ngrams
 
@@ -839,7 +867,7 @@ class HistorianAgent(HealthReportingMixin,DeliberationMixin, PatternMixin, Memor
             if mag1 == 0 or mag2 == 0:
                 return 0.0
 
-            return dot_product / (mag1 ** 0.5 * mag2 ** 0.5)
+            return dot_product / (mag1**0.5 * mag2**0.5)
 
         # Get n-grams for both texts
         ngrams1 = get_ngrams(text1)
@@ -862,9 +890,7 @@ class HistorianAgent(HealthReportingMixin,DeliberationMixin, PatternMixin, Memor
         Returns:
             Context dictionary with relevant memories and patterns
         """
-        logger.info(
-            f"[{self.agent_id}] Providing context for deliberation: {deliberation_id}"
-        )
+        logger.info(f"[{self.agent_id}] Providing context for deliberation: {deliberation_id}")
 
         # Retrieve relevant context
         context_entries = await self.retrieve_context(
@@ -987,7 +1013,6 @@ class HistorianAgent(HealthReportingMixin,DeliberationMixin, PatternMixin, Memor
             "context_cache": self.context_cache.get_statistics(),
             "memory_details": memory_stats,
         }
-
 
     # Session 44: Collective Learning, Consensus Deliberation, and Memory Optimization
     # integration methods now provided by DeliberationMixin, LearningMixin, MemoryMixin, and PatternMixin.

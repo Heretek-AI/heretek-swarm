@@ -23,7 +23,13 @@ import structlog
 from swarms import Agent
 
 from heretek_swarm.actors.base import ActorMessage, AgentActor
-from heretek_swarm.actors.mixins import DeliberationMixin, LearningMixin, MemoryMixin, PatternMixin
+from heretek_swarm.actors.mixins import (
+    DeliberationMixin,
+    LearningMixin,
+    MemoryMixin,
+    PatternMixin,
+    ValidationMixin,
+)
 from heretek_swarm.actors.validation import validate_message
 
 logger = structlog.get_logger("ExplorerAgent")
@@ -31,6 +37,7 @@ logger = structlog.get_logger("ExplorerAgent")
 
 class OpportunityType(StrEnum):
     """Types of opportunities Explorer can identify."""
+
     API_INTEGRATION = "api_integration"
     FRAMEWORK = "framework"
     PERFORMANCE_IMPROVEMENT = "performance_improvement"
@@ -41,6 +48,7 @@ class OpportunityType(StrEnum):
 
 class ThreatLevel(StrEnum):
     """Threat severity levels."""
+
     LOW = "low"
     MEDIUM = "medium"
     HIGH = "high"
@@ -49,6 +57,7 @@ class ThreatLevel(StrEnum):
 
 class AnomalyType(StrEnum):
     """Types of anomalies Explorer can detect."""
+
     PERFORMANCE = "performance"
     SECURITY = "security"
     BEHAVIORAL = "behavioral"
@@ -59,6 +68,7 @@ class AnomalyType(StrEnum):
 @dataclass
 class Opportunity:
     """Discovered opportunity record."""
+
     id: str
     type: OpportunityType
     title: str
@@ -75,6 +85,7 @@ class Opportunity:
 @dataclass
 class Anomaly:
     """Detected anomaly record."""
+
     id: str
     type: AnomalyType
     description: str
@@ -90,6 +101,7 @@ class Anomaly:
 @dataclass
 class IntelligenceReport:
     """Consolidated intelligence report."""
+
     id: str
     generated_at: datetime
     opportunities: list[Opportunity]
@@ -100,7 +112,9 @@ class IntelligenceReport:
     time_range_hours: int
 
 
-class ExplorerAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor):
+class ExplorerAgent(
+    ValidationMixin, DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor
+):
     """
     Explorer Agent - Intelligence Gathering Specialist.
 
@@ -193,7 +207,6 @@ class ExplorerAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
         self._active_deliberations: dict[str, str] = {}
         self._pattern_emitted: set[str] = set()
 
-
         logger.info(
             "Explorer agent initialized",
             agent_id=agent_id,
@@ -245,7 +258,9 @@ class ExplorerAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
                 self._last_source_check[source_id] = datetime.now(UTC)
                 self._source_error_counts[source_id] = 0
             except Exception as e:
-                self._source_error_counts[source_id] = self._source_error_counts.get(source_id, 0) + 1
+                self._source_error_counts[source_id] = (
+                    self._source_error_counts.get(source_id, 0) + 1
+                )
                 logger.error(
                     "Source check failed",
                     source_id=source_id,
@@ -438,7 +453,8 @@ class ExplorerAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
 
             # Filter opportunities
             filtered = [
-                opp for opp in self._opportunities.values()
+                opp
+                for opp in self._opportunities.values()
                 if opp.confidence >= min_confidence
                 and (not opp_type or opp.type.value == opp_type)
                 and (not status or opp.status == status)
@@ -509,7 +525,8 @@ class ExplorerAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
 
             # Filter anomalies
             filtered = [
-                anom for anom in self._anomalies.values()
+                anom
+                for anom in self._anomalies.values()
                 if severity_order.get(anom.severity.value, 0) >= min_severity_value
                 and (not anomaly_type or anom.type.value == anomaly_type)
                 and (not status or anom.status == status)
@@ -573,11 +590,13 @@ class ExplorerAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
 
             # Filter by time range
             opportunities = [
-                opp for opp in self._opportunities.values()
+                opp
+                for opp in self._opportunities.values()
                 if include_opportunities and opp.discovered_at >= cutoff
             ]
             anomalies = [
-                anom for anom in self._anomalies.values()
+                anom
+                for anom in self._anomalies.values()
                 if include_anomalies and anom.detected_at >= cutoff
             ]
 
@@ -599,7 +618,9 @@ class ExplorerAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
             # Store in history
             self._intelligence_history.append(report)
             if len(self._intelligence_history) > self._max_intelligence_history:
-                self._intelligence_history = self._intelligence_history[-self._max_intelligence_history:]
+                self._intelligence_history = self._intelligence_history[
+                    -self._max_intelligence_history :
+                ]
 
             # Convert to serializable format
             report_data = {
@@ -735,13 +756,15 @@ class ExplorerAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
                 last_check = self._last_source_check.get(source_id)
                 error_count = self._source_error_counts.get(source_id, 0)
 
-                sources_status.append({
-                    "source_id": source_id,
-                    "type": self._source_configs.get(source_id, {}).get("type", "unknown"),
-                    "last_check": last_check.isoformat() if last_check else None,
-                    "error_count": error_count,
-                    "status": "healthy" if error_count < self._max_source_errors else "error",
-                })
+                sources_status.append(
+                    {
+                        "source_id": source_id,
+                        "type": self._source_configs.get(source_id, {}).get("type", "unknown"),
+                        "last_check": last_check.isoformat() if last_check else None,
+                        "error_count": error_count,
+                        "status": "healthy" if error_count < self._max_source_errors else "error",
+                    }
+                )
 
             status_data = {
                 "monitoring_active": self._monitoring_active,
@@ -772,7 +795,10 @@ class ExplorerAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin,
         try:
             prompt = self._build_summary_prompt(opportunities, anomalies, time_range_hours)
             summary = await self.run_with_llm(prompt, timeout=60)
-            return summary or f"Intelligence report for the past {time_range_hours} hours: {len(opportunities)} opportunities and {len(anomalies)} anomalies identified."
+            return (
+                summary
+                or f"Intelligence report for the past {time_range_hours} hours: {len(opportunities)} opportunities and {len(anomalies)} anomalies identified."
+            )
         except Exception as e:
             logger.error("Failed to generate LLM summary", error=str(e))
             return f"Intelligence report: {len(opportunities)} opportunities, {len(anomalies)} anomalies (summary generation failed)"

@@ -26,6 +26,7 @@ from heretek_swarm.actors.mixins import (
     LearningMixin,
     MemoryMixin,
     PatternMixin,
+    ValidationMixin,
 )
 
 # Session 44: Collective Learning Integration
@@ -44,6 +45,7 @@ logger = structlog.get_logger("PerceiverPlusAgent")
 
 class AnalyticsType(StrEnum):
     """Types of analytics Perceiver+ can perform."""
+
     DESCRIPTIVE = "descriptive"
     DIAGNOSTIC = "diagnostic"
     PREDICTIVE = "predictive"
@@ -56,6 +58,7 @@ class AnalyticsType(StrEnum):
 
 class DataModality(StrEnum):
     """Data modalities for analysis."""
+
     NUMERIC = "numeric"
     CATEGORICAL = "categorical"
     TEXTUAL = "textual"
@@ -66,6 +69,7 @@ class DataModality(StrEnum):
 
 class StatisticalTest(StrEnum):
     """Statistical tests available."""
+
     T_TEST = "t_test"
     CHI_SQUARE = "chi_square"
     ANOVA = "anova"
@@ -173,14 +177,15 @@ class CorrelationMatrix:
             "variables": self.variables,
             "correlations": self.correlations,
             "significant_pairs": [
-                {"var1": p[0], "var2": p[1], "correlation": p[2]}
-                for p in self.significant_pairs
+                {"var1": p[0], "var2": p[1], "correlation": p[2]} for p in self.significant_pairs
             ],
             "timestamp": self.timestamp.isoformat(),
         }
 
 
-class PerceiverPlusAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor):
+class PerceiverPlusAgent(
+    ValidationMixin, DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor
+):
     """
     Perceiver+ Agent - Advanced Analytics Specialist.
 
@@ -274,19 +279,17 @@ class PerceiverPlusAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningM
         self.data_buffers: dict[str, list[float]] = {}
         self.categorical_buffers: dict[str, list[str]] = {}
 
-
         # Session 44: Integration state
         self._active_deliberations: dict[str, str] = {}
         self._pattern_emitted: Set[str] = set()
-
 
         logger.info(f"[{self.agent_id}] Perceiver+ agent initialized")
 
     async def initialize(self) -> None:
         """Initialize the Perceiver+ agent."""
         # Initialize unified knowledge access layer
-        memory_system = getattr(self, 'memory_system', None)
-        rag_pipeline = getattr(self, 'rag_pipeline', None)
+        memory_system = getattr(self, "memory_system", None)
+        rag_pipeline = getattr(self, "rag_pipeline", None)
         if memory_system or rag_pipeline:
             self.knowledge_access = UnifiedKnowledgeAccess(
                 memory_system=memory_system,
@@ -303,7 +306,9 @@ class PerceiverPlusAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningM
         self.register_handler("forecast_values", self._handle_forecast_values)
         self.register_handler("get_analytics_summary", self._handle_get_analytics_summary)
         self.register_handler("signal_processing", self._handle_signal_processing)
-        self.register_handler("knowledge_enhanced_analysis", self._handle_knowledge_enhanced_analysis)
+        self.register_handler(
+            "knowledge_enhanced_analysis", self._handle_knowledge_enhanced_analysis
+        )
 
         logger.info(f"[{self.agent_id}] Perceiver+ initialization complete")
 
@@ -376,8 +381,7 @@ class PerceiverPlusAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningM
 
             data = message.content["data"]
             analysis_id = message.content.get(
-                "analysis_id",
-                f"analysis_{datetime.now(UTC).timestamp()}"
+                "analysis_id", f"analysis_{datetime.now(UTC).timestamp()}"
             )
             analytics_types = message.content.get("analytics_types", ["descriptive"])
 
@@ -478,7 +482,11 @@ class PerceiverPlusAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningM
                 variance = sum((x - mean) ** 2 for x in data) / n if n > 1 else 0
                 std_dev = math.sqrt(variance)
                 sorted_data = sorted(data)
-                median = sorted_data[n // 2] if n % 2 == 1 else (sorted_data[n // 2 - 1] + sorted_data[n // 2]) / 2
+                median = (
+                    sorted_data[n // 2]
+                    if n % 2 == 1
+                    else (sorted_data[n // 2 - 1] + sorted_data[n // 2]) / 2
+                )
                 min_val = min(data)
                 max_val = max(data)
 
@@ -553,6 +561,7 @@ Respond in JSON:
             if self.swarms_agent:
                 result = await self.run_with_llm(prompt=prompt, timeout=60)
                 import json
+
                 start_idx = result.find("{")
                 end_idx = result.rfind("}") + 1
                 if start_idx >= 0 and end_idx > start_idx:
@@ -612,6 +621,7 @@ Respond in JSON:
             if self.swarms_agent:
                 result = await self.run_with_llm(prompt=prompt, timeout=60)
                 import json
+
                 start_idx = result.find("{")
                 end_idx = result.rfind("}") + 1
                 if start_idx >= 0 and end_idx > start_idx:
@@ -746,7 +756,9 @@ Respond in JSON:
                 metrics = {
                     "variables_count": len(variables),
                     "significant_correlations": len(significant_pairs),
-                    "strongest_correlation": max([abs(p[2]) for p in significant_pairs]) if significant_pairs else 0,
+                    "strongest_correlation": max([abs(p[2]) for p in significant_pairs])
+                    if significant_pairs
+                    else 0,
                 }
 
                 confidence = 0.85
@@ -838,7 +850,7 @@ Respond in JSON:
                     findings = [
                         f"Trend direction: {direction}",
                         f"Slope: {slope:.4f} units per time period",
-                        f"R-squared: {r_squared:.4f} ({r_squared*100:.1f}% variance explained)",
+                        f"R-squared: {r_squared:.4f} ({r_squared * 100:.1f}% variance explained)",
                     ]
 
                     metrics = {
@@ -888,17 +900,22 @@ Respond in JSON:
                 anomalies = []
                 for i, value in enumerate(data):
                     if abs(value - mean) > threshold:
-                        anomalies.append({
-                            "index": i,
-                            "value": value,
-                            "deviation": abs(value - mean) / std_dev if std_dev > 0 else 0,
-                        })
+                        anomalies.append(
+                            {
+                                "index": i,
+                                "value": value,
+                                "deviation": abs(value - mean) / std_dev if std_dev > 0 else 0,
+                            }
+                        )
 
                 findings = [
                     f"Analyzed {n} data points",
                     f"Detection threshold: ±{threshold:.4f} from mean ({mean:.4f})",
                     f"Found {len(anomalies)} anomalies",
-                ] + [f"Index {a['index']}: value={a['value']:.4f} ({a['deviation']:.1f}σ)" for a in anomalies[:5]]
+                ] + [
+                    f"Index {a['index']}: value={a['value']:.4f} ({a['deviation']:.1f}σ)"
+                    for a in anomalies[:5]
+                ]
 
                 metrics = {
                     "anomalies_count": len(anomalies),
@@ -921,7 +938,9 @@ Respond in JSON:
             findings=findings,
             metrics=metrics,
             confidence=confidence,
-            recommendations=["Review detected anomalies for data quality issues"] if metrics.get("anomalies_count", 0) > 0 else [],
+            recommendations=["Review detected anomalies for data quality issues"]
+            if metrics.get("anomalies_count", 0) > 0
+            else [],
         )
 
     async def _handle_detect_trends(self, message: ActorMessage) -> None:
@@ -980,7 +999,9 @@ Respond in JSON:
 
             logger.info(f"[{self.agent_id}] Computing correlations")
 
-            result = await self._correlational_analysis(data, f"corr_{datetime.now(UTC).timestamp()}")
+            result = await self._correlational_analysis(
+                data, f"corr_{datetime.now(UTC).timestamp()}"
+            )
 
             response = {
                 "message_type": "correlation_response",
@@ -1043,7 +1064,9 @@ Respond in JSON:
                 return
 
             data = message.content["data"]
-            feature_id = message.content.get("feature_id", f"features_{datetime.now(UTC).timestamp()}")
+            feature_id = message.content.get(
+                "feature_id", f"features_{datetime.now(UTC).timestamp()}"
+            )
 
             logger.info(f"[{self.agent_id}] Extracting features")
 
@@ -1080,13 +1103,15 @@ Respond in JSON:
             n = len(data)
             if n > 0:
                 mean = sum(data) / n
-                features.update({
-                    "count": n,
-                    "mean": mean,
-                    "min": min(data),
-                    "max": max(data),
-                    "sum": sum(data),
-                })
+                features.update(
+                    {
+                        "count": n,
+                        "mean": mean,
+                        "min": min(data),
+                        "max": max(data),
+                        "sum": sum(data),
+                    }
+                )
                 if n > 1:
                     variance = sum((x - mean) ** 2 for x in data) / (n - 1)
                     features["variance"] = variance
@@ -1147,19 +1172,23 @@ Respond in JSON:
                 for i in range(periods):
                     future_x = n + i
                     predicted = slope * future_x + intercept
-                    forecast.append({
-                        "period": i + 1,
-                        "predicted_value": predicted,
-                        "confidence": max(0.5 - (i * 0.05), 0.1),  # Decreasing confidence
-                    })
+                    forecast.append(
+                        {
+                            "period": i + 1,
+                            "predicted_value": predicted,
+                            "confidence": max(0.5 - (i * 0.05), 0.1),  # Decreasing confidence
+                        }
+                    )
             else:
                 # Flat forecast
                 for i in range(periods):
-                    forecast.append({
-                        "period": i + 1,
-                        "predicted_value": y_mean,
-                        "confidence": 0.3,
-                    })
+                    forecast.append(
+                        {
+                            "period": i + 1,
+                            "predicted_value": y_mean,
+                            "confidence": 0.3,
+                        }
+                    )
         else:
             forecast = [{"error": "Insufficient data for forecasting"}]
 
@@ -1178,9 +1207,7 @@ Respond in JSON:
                 "trend_analyses_count": len(self.trend_analyses),
                 "correlation_matrices_count": len(self.correlation_matrices),
                 "feature_cache_count": len(self.feature_cache),
-                "recent_analyses": [
-                    r.to_dict() for r in list(self.analysis_results.values())[-5:]
-                ],
+                "recent_analyses": [r.to_dict() for r in list(self.analysis_results.values())[-5:]],
             }
 
             response = {
@@ -1265,7 +1292,9 @@ Respond in JSON:
                 logger.warning(f"[{self.agent_id}] Knowledge access not initialized")
 
         except Exception as e:
-            logger.error(f"[{self.agent_id}] Error in knowledge enhanced analysis: {e}", exc_info=True)
+            logger.error(
+                f"[{self.agent_id}] Error in knowledge enhanced analysis: {e}", exc_info=True
+            )
 
     async def knowledge_enhanced_query(
         self,
@@ -1333,12 +1362,13 @@ Respond in JSON:
         except Exception as e:
             logger.error(f"[{self.agent_id}] Error processing signal: {e}", exc_info=True)
 
-
     # =========================================================================
     # Session 44: Collective Learning Integration Methods
     # =========================================================================
 
-    async def _emit_pattern(self, item_id: str, item_type: str, outcome: str, content: dict[str, Any]) -> None:
+    async def _emit_pattern(
+        self, item_id: str, item_type: str, outcome: str, content: dict[str, Any]
+    ) -> None:
         """Emit pattern for collective learning."""
         if not self.pattern_extractor:
             return
@@ -1361,7 +1391,9 @@ Respond in JSON:
         except Exception as e:
             logger.warning("failed_to_emit_pattern", item_id=item_id, error=str(e))
 
-    async def _consume_patterns(self, pattern_types: list[PatternType] | None = None) -> list[dict[str, Any]]:
+    async def _consume_patterns(
+        self, pattern_types: list[PatternType] | None = None
+    ) -> list[dict[str, Any]]:
         """Consume patterns from collective learning."""
         if not self.pattern_extractor:
             return []
@@ -1470,18 +1502,17 @@ Respond in JSON:
     # Session 44: Memory Optimization Integration Methods
     # =========================================================================
 
-
     def _process_signal(self, data: list[float], method: str, window: int) -> list[float]:
         """Process signal with specified method."""
         if method == "moving_average":
             result = []
             for i in range(len(data) - window + 1):
-                result.append(sum(data[i:i+window]) / window)
+                result.append(sum(data[i : i + window]) / window)
             return result
         if method == "median_filter":
             result = []
             for i in range(len(data) - window + 1):
-                sorted_window = sorted(data[i:i+window])
+                sorted_window = sorted(data[i : i + window])
                 result.append(sorted_window[window // 2])
             return result
         return data  # No processing

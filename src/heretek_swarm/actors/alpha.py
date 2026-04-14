@@ -17,12 +17,12 @@ import structlog
 from swarms import Agent
 
 from heretek_swarm.actors.base import ActorMessage, AgentActor
-from heretek_swarm.actors.mixins import HealthReportingMixin, LearningMixin
+from heretek_swarm.actors.mixins import HealthReportingMixin, LearningMixin, ValidationMixin
 
 logger = structlog.get_logger("AlphaAgent")
 
 
-class AlphaAgent(HealthReportingMixin, LearningMixin, AgentActor):
+class AlphaAgent(HealthReportingMixin, ValidationMixin, LearningMixin, AgentActor):
     """
     Alpha Agent - Primary decision maker and analyst.
 
@@ -106,18 +106,14 @@ class AlphaAgent(HealthReportingMixin, LearningMixin, AgentActor):
                         correlation_id=message.correlation_id,
                     )
         else:
-            logger.warning(
-                f"[{self.agent_id}] Unhandled message type: {message.message_type}"
-            )
+            logger.warning(f"[{self.agent_id}] Unhandled message type: {message.message_type}")
 
     async def _handle_deliberation_request(self, message: ActorMessage) -> None:
         """Handle deliberation requests from Steward."""
         deliberation_id = message.content.get("deliberation_id")
         topic = message.content.get("topic")
 
-        logger.info(
-            f"[{self.agent_id}] Participating in deliberation {deliberation_id}: {topic}"
-        )
+        logger.info(f"[{self.agent_id}] Participating in deliberation {deliberation_id}: {topic}")
 
         # Perform analysis
         analysis = await self._perform_analysis(topic)
@@ -169,14 +165,16 @@ class AlphaAgent(HealthReportingMixin, LearningMixin, AgentActor):
         )
 
         # P2-1 fix: Use timezone-aware datetime
-        self.analysis_history.append({
-            "request_id": request_id,
-            "analysis": analysis,
-            "timestamp": datetime.now(UTC).isoformat(),
-        })
+        self.analysis_history.append(
+            {
+                "request_id": request_id,
+                "analysis": analysis,
+                "timestamp": datetime.now(UTC).isoformat(),
+            }
+        )
         # P1-3: Trim history if it exceeds max size
         if len(self.analysis_history) > self.max_history_size:
-            self.analysis_history = self.analysis_history[-self.max_history_size:]
+            self.analysis_history = self.analysis_history[-self.max_history_size :]
 
     async def _handle_validation_request(self, message: ActorMessage) -> None:
         """Handle validation requests with validation."""
@@ -190,7 +188,9 @@ class AlphaAgent(HealthReportingMixin, LearningMixin, AgentActor):
                 # Fallback to unvalidated access
                 request_id = message.content.get("request_id")
                 decision_to_validate = message.content.get("decision")
-                _original_analysis = message.content.get("original_analysis")  # Reserved for future use
+                _original_analysis = message.content.get(
+                    "original_analysis"
+                )  # Reserved for future use
         except ValueError as e:
             logger.error(f"[{self.agent_id}] Validation request validation failed: {e}")
             return
@@ -224,7 +224,7 @@ class AlphaAgent(HealthReportingMixin, LearningMixin, AgentActor):
             try:
                 analysis_result = await self.run_with_llm(
                     prompt=f"Analyze this problem and provide a decision with confidence: {problem}",
-                    timeout=60
+                    timeout=60,
                 )
                 return {
                     "decision": analysis_result,
@@ -256,8 +256,7 @@ class AlphaAgent(HealthReportingMixin, LearningMixin, AgentActor):
         if self.swarms_agent:
             try:
                 validation_result = await self.run_with_llm(
-                    prompt=f"Validate this decision: {decision}",
-                    timeout=60
+                    prompt=f"Validate this decision: {decision}", timeout=60
                 )
                 return {
                     "valid": True,

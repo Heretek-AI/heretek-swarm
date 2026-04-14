@@ -30,6 +30,7 @@ from heretek_swarm.actors.mixins.deliberation import DeliberationMixin
 from heretek_swarm.actors.mixins.learning import LearningMixin
 from heretek_swarm.actors.mixins.memory import MemoryMixin
 from heretek_swarm.actors.mixins.pattern import PatternMixin
+from heretek_swarm.actors.mixins.validation import ValidationMixin
 from heretek_swarm.actors.validation import validate_message
 
 # Session 44: Collective Learning Integration
@@ -49,6 +50,7 @@ logger = structlog.get_logger(__name__)
 
 class ScheduleStatus(Enum):
     """Status of a scheduled item."""
+
     PENDING = "pending"
     ACTIVE = "active"
     PAUSED = "paused"
@@ -60,6 +62,7 @@ class ScheduleStatus(Enum):
 
 class RecurrenceType(Enum):
     """Type of recurrence pattern."""
+
     ONCE = "once"
     HOURLY = "hourly"
     DAILY = "daily"
@@ -72,6 +75,7 @@ class RecurrenceType(Enum):
 
 class Priority(Enum):
     """Task priority levels."""
+
     LOW = 1
     NORMAL = 2
     HIGH = 3
@@ -82,6 +86,7 @@ class Priority(Enum):
 @dataclass
 class ScheduledTask:
     """A scheduled task."""
+
     task_id: str
     name: str
     description: str
@@ -128,6 +133,7 @@ class ScheduledTask:
 @dataclass
 class Deadline:
     """A deadline tracking entry."""
+
     deadline_id: str
     name: str
     due_at: datetime
@@ -152,7 +158,9 @@ class Deadline:
         }
 
 
-class ChronosAgent(AgentActor, PatternMixin, DeliberationMixin, MemoryMixin, LearningMixin):
+class ChronosAgent(
+    ValidationMixin, AgentActor, PatternMixin, DeliberationMixin, MemoryMixin, LearningMixin
+):
     """
     Temporal & Scheduling Specialist.
 
@@ -180,13 +188,12 @@ class ChronosAgent(AgentActor, PatternMixin, DeliberationMixin, MemoryMixin, Lea
         self,
         agent_id: str | None = None,
         config: dict[str, Any] | None = None,
-
         # Session 44: Integration components
         pattern_extractor: PatternExtractor | None = None,
         deliberation_engine: SwarmDeliberationEngine | None = None,
         access_analyzer: AccessPatternAnalyzer | None = None,
         zero_trust_validator: ZeroTrustValidator | None = None,
-):
+    ):
         super().__init__(
             agent_id=agent_id or f"chronos_{uuid.uuid4().hex[:8]}",
             config=config or {},
@@ -211,9 +218,10 @@ class ChronosAgent(AgentActor, PatternMixin, DeliberationMixin, MemoryMixin, Lea
         # Calendars
         self._calendars: dict[str, list[str]] = {}  # calendar_id -> task_ids
 
-
         # Session 44: Collective Learning Integration
-        self.pattern_extractor = pattern_extractor or PatternExtractor(min_support=3, min_confidence=0.6)
+        self.pattern_extractor = pattern_extractor or PatternExtractor(
+            min_support=3, min_confidence=0.6
+        )
 
         # Session 44: Consensus Integration
         self.deliberation_engine = deliberation_engine or SwarmDeliberationEngine(
@@ -229,7 +237,6 @@ class ChronosAgent(AgentActor, PatternMixin, DeliberationMixin, MemoryMixin, Lea
         # Session 44: Integration state
         self._active_deliberations: dict[str, str] = {}
         self._pattern_emitted: set[str] = set()
-
 
         logger.info(
             "chronos_initialized",
@@ -470,7 +477,9 @@ class ChronosAgent(AgentActor, PatternMixin, DeliberationMixin, MemoryMixin, Lea
                 return
 
             scheduled_at_str = content.get("scheduled_at")
-            scheduled_at = datetime.fromisoformat(scheduled_at_str) if scheduled_at_str else datetime.now(UTC)
+            scheduled_at = (
+                datetime.fromisoformat(scheduled_at_str) if scheduled_at_str else datetime.now(UTC)
+            )
 
             recurrence_str = content.get("recurrence")
             recurrence = RecurrenceType(recurrence_str) if recurrence_str else RecurrenceType.ONCE
@@ -489,7 +498,9 @@ class ChronosAgent(AgentActor, PatternMixin, DeliberationMixin, MemoryMixin, Lea
                 target_agents=content.get("target_agents", []),
                 action=content.get("action", "scheduled_task"),
                 payload=content.get("payload", {}),
-                deadline=datetime.fromisoformat(content["deadline"]) if content.get("deadline") else None,
+                deadline=datetime.fromisoformat(content["deadline"])
+                if content.get("deadline")
+                else None,
                 max_runs=content.get("max_runs"),
                 metadata=content.get("metadata", {}),
             )
@@ -918,8 +929,7 @@ class ChronosAgent(AgentActor, PatternMixin, DeliberationMixin, MemoryMixin, Lea
 
             # Find tasks in range
             scheduled = [
-                t.to_dict() for t in self._tasks.values()
-                if start <= t.scheduled_at <= end
+                t.to_dict() for t in self._tasks.values() if start <= t.scheduled_at <= end
             ]
 
             scheduled.sort(key=lambda t: t["scheduled_at"])
@@ -961,7 +971,9 @@ class ChronosAgent(AgentActor, PatternMixin, DeliberationMixin, MemoryMixin, Lea
 
             reminder_id = content.get("reminder_id") or f"reminder_{uuid.uuid4().hex[:12]}"
             remind_at_str = content.get("remind_at")
-            remind_at = datetime.fromisoformat(remind_at_str) if remind_at_str else datetime.now(UTC)
+            remind_at = (
+                datetime.fromisoformat(remind_at_str) if remind_at_str else datetime.now(UTC)
+            )
             target_agents = content.get("target_agents", [message.sender_id])
 
             # Create as a scheduled task
@@ -1000,7 +1012,6 @@ class ChronosAgent(AgentActor, PatternMixin, DeliberationMixin, MemoryMixin, Lea
                 f"Failed to register reminder: {e!s}",
                 message.message_type,
             )
-
 
     async def _send_error(
         self,

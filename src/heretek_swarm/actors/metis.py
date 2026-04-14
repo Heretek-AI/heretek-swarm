@@ -18,7 +18,14 @@ import structlog
 from swarms import Agent
 
 from heretek_swarm.actors.base import ActorMessage, AgentActor
-from heretek_swarm.actors.mixins import DeliberationMixin, HealthReportingMixin, LearningMixin, MemoryMixin, PatternMixin
+from heretek_swarm.actors.mixins import (
+    DeliberationMixin,
+    HealthReportingMixin,
+    LearningMixin,
+    MemoryMixin,
+    PatternMixin,
+    ValidationMixin,
+)
 
 # Session 44: Collective Learning Integration
 from heretek_swarm.collective.learning import PatternExtractor
@@ -35,7 +42,15 @@ from heretek_swarm.security.zero_trust import ZeroTrustValidator
 logger = structlog.get_logger("MetisAgent")
 
 
-class MetisAgent(HealthReportingMixin,DeliberationMixin, LearningMixin, MemoryMixin, PatternMixin, AgentActor):
+class MetisAgent(
+    HealthReportingMixin,
+    ValidationMixin,
+    DeliberationMixin,
+    LearningMixin,
+    MemoryMixin,
+    PatternMixin,
+    AgentActor,
+):
     """
     Metis Agent - Strategic Planning Specialist.
 
@@ -111,9 +126,10 @@ class MetisAgent(HealthReportingMixin,DeliberationMixin, LearningMixin, MemoryMi
         self.strategic_objectives: list[dict[str, Any]] = []
         self.scenario_analyses: dict[str, list[dict[str, Any]]] = {}
 
-
         # Session 44: Collective Learning Integration
-        self.pattern_extractor = pattern_extractor or PatternExtractor(min_support=3, min_confidence=0.6)
+        self.pattern_extractor = pattern_extractor or PatternExtractor(
+            min_support=3, min_confidence=0.6
+        )
 
         # Session 44: Consensus Integration
         self.deliberation_engine = deliberation_engine or SwarmDeliberationEngine(
@@ -129,7 +145,6 @@ class MetisAgent(HealthReportingMixin,DeliberationMixin, LearningMixin, MemoryMi
         # Session 44: Integration state
         self._active_deliberations: dict[str, str] = {}
         self._pattern_emitted: Set[str] = set()
-
 
         logger.info(f"[{self.agent_id}] Metis agent initialized")
 
@@ -174,9 +189,7 @@ class MetisAgent(HealthReportingMixin,DeliberationMixin, LearningMixin, MemoryMi
                         correlation_id=message.correlation_id,
                     )
         else:
-            logger.warning(
-                f"[{self.agent_id}] Unhandled message type: {message.message_type}"
-            )
+            logger.warning(f"[{self.agent_id}] Unhandled message type: {message.message_type}")
 
     async def _handle_create_strategic_plan(self, message: ActorMessage) -> None:
         """Handle strategic plan creation requests with validation."""
@@ -431,7 +444,9 @@ class MetisAgent(HealthReportingMixin,DeliberationMixin, LearningMixin, MemoryMi
                 correlation_id=message.correlation_id,
             )
 
-        logger.info(f"[{self.agent_id}] Scenario analysis complete: {len(scenarios)} scenarios generated")
+        logger.info(
+            f"[{self.agent_id}] Scenario analysis complete: {len(scenarios)} scenarios generated"
+        )
 
     async def _handle_set_strategic_objective(self, message: ActorMessage) -> None:
         """Handle strategic objective setting with validation."""
@@ -587,7 +602,7 @@ Strategic Planning Request:
 
 Objective: {objective}
 Planning Horizon: {horizon_days} days
-Constraints: {', '.join(constraints) if constraints else 'None specified'}
+Constraints: {", ".join(constraints) if constraints else "None specified"}
 
 Generate a comprehensive strategic plan including:
 1. Executive Summary
@@ -619,7 +634,6 @@ Format as JSON with keys: summary, phases, resources, risks, metrics
                 "status": "active",
                 "created_at": datetime.now(UTC).isoformat(),
             }
-
 
         except Exception as e:
             logger.error(f"[{self.agent_id}] LLM failed for strategic planning: {e}")
@@ -704,9 +718,9 @@ Format as JSON with keys: summary, phases, resources, risks, metrics
         prompt = f"""
 Risk Assessment Request:
 
-Plan: {plan.get('objective', 'Unknown')}
+Plan: {plan.get("objective", "Unknown")}
 Domain: {domain}
-Phases: {len(plan.get('phases', []))}
+Phases: {len(plan.get("phases", []))}
 
 Identify key risks including:
 1. Risk description
@@ -739,7 +753,6 @@ Format each risk as JSON object.
                 for i in range(3)
             ]
 
-
         except Exception as e:
             logger.error(f"[{self.agent_id}] LLM failed for risk assessment: {e}")
             return []
@@ -764,23 +777,27 @@ Format each risk as JSON object.
         scenarios = []
 
         # Generate base scenario
-        scenarios.append({
-            "scenario_id": "base",
-            "name": "Base Case",
-            "parameters": base_scenario,
-            "probability": 0.5,
-            "outcomes": {},
-        })
+        scenarios.append(
+            {
+                "scenario_id": "base",
+                "name": "Base Case",
+                "parameters": base_scenario,
+                "probability": 0.5,
+                "outcomes": {},
+            }
+        )
 
         # Generate variation scenarios
-        for i, var in enumerate(variables[:max_scenarios - 1]):
-            scenarios.append({
-                "scenario_id": f"var_{i}",
-                "name": f"Variable {var} High",
-                "parameters": {**base_scenario, var: "high"},
-                "probability": 0.25 / (len(variables) or 1),
-                "outcomes": {},
-            })
+        for i, var in enumerate(variables[: max_scenarios - 1]):
+            scenarios.append(
+                {
+                    "scenario_id": f"var_{i}",
+                    "name": f"Variable {var} High",
+                    "parameters": {**base_scenario, var: "high"},
+                    "probability": 0.25 / (len(variables) or 1),
+                    "outcomes": {},
+                }
+            )
 
         return scenarios
 
@@ -799,7 +816,6 @@ Format each risk as JSON object.
             "scenario_analyses": len(self.scenario_analyses),
             "timestamp": datetime.now(UTC).isoformat(),
         }
-
 
     async def cleanup(self) -> None:
         """Clean up Metis resources."""

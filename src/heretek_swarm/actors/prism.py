@@ -25,6 +25,7 @@ from heretek_swarm.actors.mixins import (
     LearningMixin,
     MemoryMixin,
     PatternMixin,
+    ValidationMixin,
 )
 
 # Session 44: Collective Learning Integration
@@ -45,6 +46,7 @@ logger = structlog.get_logger("PrismAgent")
 
 class PerspectiveType(StrEnum):
     """Types of perspectives Prism can generate."""
+
     TECHNICAL = "technical"
     USER = "user"
     BUSINESS = "business"
@@ -59,6 +61,7 @@ class PerspectiveType(StrEnum):
 
 class BiasType(StrEnum):
     """Cognitive biases Prism can detect."""
+
     CONFIRMATION = "confirmation_bias"
     ANCHORING = "anchoring_bias"
     AVAILABILITY = "availability_heuristic"
@@ -73,6 +76,7 @@ class BiasType(StrEnum):
 
 class AnalyticalFramework(StrEnum):
     """Analytical frameworks Prism can apply."""
+
     FIRST_PRINCIPLES = "first_principles"
     SYSTEMS_THINKING = "systems_thinking"
     PRE_MORTEM = "pre_mortem"
@@ -146,7 +150,9 @@ class BiasDetection:
         }
 
 
-class PrismAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor):
+class PrismAgent(
+    ValidationMixin, DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor
+):
     """
     Prism Agent - Multi-Perspective Analysis Specialist.
 
@@ -241,11 +247,9 @@ class PrismAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
         self.available_frameworks: list[AnalyticalFramework] = list(AnalyticalFramework)
         self.available_biases: list[BiasType] = list(BiasType)
 
-
         # Session 44: Integration state
         self._active_deliberations: dict[str, str] = {}
         self._pattern_emitted: Set[str] = set()
-
 
         logger.info(f"[{self.agent_id}] Prism agent initialized")
 
@@ -324,7 +328,9 @@ class PrismAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
                 return
 
             issue = message.content["issue"]
-            analysis_id = message.content.get("analysis_id", f"analysis_{datetime.now(UTC).timestamp()}")
+            analysis_id = message.content.get(
+                "analysis_id", f"analysis_{datetime.now(UTC).timestamp()}"
+            )
             requested_perspectives = message.content.get("perspective_types", None)
 
             logger.info(f"[{self.agent_id}] Generating perspectives for analysis: {analysis_id}")
@@ -361,7 +367,9 @@ class PrismAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
                     sender_id=self.agent_id,
                 )
 
-            logger.info(f"[{self.agent_id}] Generated {len(perspectives)} perspectives for analysis: {analysis_id}")
+            logger.info(
+                f"[{self.agent_id}] Generated {len(perspectives)} perspectives for analysis: {analysis_id}"
+            )
 
         except Exception as e:
             logger.error(f"[{self.agent_id}] Error generating perspectives: {e}", exc_info=True)
@@ -386,11 +394,12 @@ class PrismAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
         # Determine which perspectives to generate
         if perspective_types:
             types_to_use = [
-                PerspectiveType(t) for t in perspective_types
+                PerspectiveType(t)
+                for t in perspective_types
                 if t in [pt.value for pt in PerspectiveType]
             ]
         else:
-            types_to_use = self.available_perspectives[:self.max_perspectives]
+            types_to_use = self.available_perspectives[: self.max_perspectives]
 
         # Generate perspective for each type
         for ptype in types_to_use:
@@ -399,12 +408,14 @@ class PrismAgent(DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, Ag
                 if perspective.confidence >= self.confidence_threshold:
                     perspectives.append(perspective)
             except Exception as e:
-                logger.warning(f"[{self.agent_id}] Failed to generate {ptype.value} perspective: {e}")
+                logger.warning(
+                    f"[{self.agent_id}] Failed to generate {ptype.value} perspective: {e}"
+                )
 
         # Sort by confidence
         perspectives.sort(key=lambda p: p.confidence, reverse=True)
 
-        return perspectives[:self.max_perspectives]
+        return perspectives[: self.max_perspectives]
 
     async def _generate_single_perspective(
         self,
@@ -452,6 +463,7 @@ Respond in JSON format:
 
                 # Parse result (assume JSON in response)
                 import json
+
                 try:
                     # Extract JSON from response
                     start_idx = result.find("{")
@@ -475,7 +487,9 @@ Respond in JSON format:
             return self._heuristic_perspective(issue, perspective_type)
 
         except Exception as e:
-            logger.warning(f"[{self.agent_id}] LLM perspective generation failed, using heuristic: {e}")
+            logger.warning(
+                f"[{self.agent_id}] LLM perspective generation failed, using heuristic: {e}"
+            )
             return self._heuristic_perspective(issue, perspective_type)
 
     def _heuristic_perspective(
@@ -508,8 +522,7 @@ Respond in JSON format:
         }
 
         base_viewpoint = viewpoint_templates.get(
-            perspective_type,
-            f"From a {perspective_type.value} perspective..."
+            perspective_type, f"From a {perspective_type.value} perspective..."
         )
 
         return Perspective(
@@ -530,7 +543,9 @@ Respond in JSON format:
         """
         try:
             # Validate content
-            content = message.content.get("reasoning", "") or message.content.get("deliberation", "")
+            content = message.content.get("reasoning", "") or message.content.get(
+                "deliberation", ""
+            )
             if not content:
                 logger.error(f"[{self.agent_id}] No reasoning content provided for bias detection")
                 return
@@ -547,7 +562,7 @@ Respond in JSON format:
             # Store in history
             self.bias_history.extend(biases)
             if len(self.bias_history) > self.max_bias_history:
-                self.bias_history = self.bias_history[-self.max_bias_history:]
+                self.bias_history = self.bias_history[-self.max_bias_history :]
 
             # Send response
             response = {
@@ -622,6 +637,7 @@ Respond in JSON format:
                 )
 
                 import json
+
                 try:
                     start_idx = result.find("[")
                     end_idx = result.rfind("]") + 1
@@ -633,18 +649,23 @@ Respond in JSON format:
                             bias_type_str = item.get("bias_type", "")
                             bias_type = None
                             for bt in self.available_biases:
-                                if bt.value == bias_type_str or bt.name.lower() == bias_type_str.lower():
+                                if (
+                                    bt.value == bias_type_str
+                                    or bt.name.lower() == bias_type_str.lower()
+                                ):
                                     bias_type = bt
                                     break
 
                             if bias_type:
-                                biases.append(BiasDetection(
-                                    bias_type=bias_type,
-                                    description=item.get("description", ""),
-                                    evidence=item.get("evidence", []),
-                                    severity=item.get("severity", "medium"),
-                                    recommendation=item.get("recommendation"),
-                                ))
+                                biases.append(
+                                    BiasDetection(
+                                        bias_type=bias_type,
+                                        description=item.get("description", ""),
+                                        evidence=item.get("evidence", []),
+                                        severity=item.get("severity", "medium"),
+                                        recommendation=item.get("recommendation"),
+                                    )
+                                )
                 except Exception as e:
                     logger.debug("prism_parse_failed_line651", error=str(e))
 
@@ -671,10 +692,26 @@ Respond in JSON format:
 
         # Simple pattern indicators
         bias_patterns = {
-            BiasType.CONFIRMATION: ["clearly shows", "obviously proves", "as expected", "confirms our"],
+            BiasType.CONFIRMATION: [
+                "clearly shows",
+                "obviously proves",
+                "as expected",
+                "confirms our",
+            ],
             BiasType.ANCHORING: ["initial", "starting with", "base case", "original"],
-            BiasType.SUNK_COST: ["already invested", "we've come so far", "can't stop now", "previous commitment"],
-            BiasType.OVERCONFIDENCE: ["definitely", "certainly", "without doubt", "guaranteed", "always"],
+            BiasType.SUNK_COST: [
+                "already invested",
+                "we've come so far",
+                "can't stop now",
+                "previous commitment",
+            ],
+            BiasType.OVERCONFIDENCE: [
+                "definitely",
+                "certainly",
+                "without doubt",
+                "guaranteed",
+                "always",
+            ],
             BiasType.GROUP_THINK: ["everyone agrees", "consensus is", "we all think", "unanimous"],
         }
 
@@ -682,13 +719,15 @@ Respond in JSON format:
         for bias_type, patterns in bias_patterns.items():
             for pattern in patterns:
                 if pattern in content_lower:
-                    biases.append(BiasDetection(
-                        bias_type=bias_type,
-                        description=f"Potential {bias_type.value} detected based on language patterns",
-                        evidence=[f"Found pattern: '{pattern}'"],
-                        severity="low",
-                        recommendation="Consider alternative viewpoints and seek disconfirming evidence",
-                    ))
+                    biases.append(
+                        BiasDetection(
+                            bias_type=bias_type,
+                            description=f"Potential {bias_type.value} detected based on language patterns",
+                            evidence=[f"Found pattern: '{pattern}'"],
+                            severity="low",
+                            recommendation="Consider alternative viewpoints and seek disconfirming evidence",
+                        )
+                    )
                     break  # One detection per bias type
 
         return biases
@@ -709,7 +748,9 @@ Respond in JSON format:
 
             issue = message.content["issue"]
             framework_str = message.content.get("framework", "first_principles")
-            analysis_id = message.content.get("analysis_id", f"framework_{datetime.now(UTC).timestamp()}")
+            analysis_id = message.content.get(
+                "analysis_id", f"framework_{datetime.now(UTC).timestamp()}"
+            )
 
             # Map framework string to enum
             framework = None
@@ -844,10 +885,7 @@ Respond in JSON:
 }}""",
         }
 
-        prompt = framework_prompts.get(
-            framework,
-            f"Analyze this issue: {issue}"
-        )
+        prompt = framework_prompts.get(framework, f"Analyze this issue: {issue}")
 
         try:
             if self.swarms_agent:
@@ -857,6 +895,7 @@ Respond in JSON:
                 )
 
                 import json
+
                 try:
                     start_idx = result.find("{")
                     end_idx = result.rfind("}") + 1
@@ -968,6 +1007,7 @@ Respond in JSON:
                 )
 
                 import json
+
                 try:
                     start_idx = result.find("{")
                     end_idx = result.rfind("}") + 1
@@ -1066,20 +1106,20 @@ Respond in JSON:
         except Exception as e:
             logger.error(f"[{self.agent_id}] Error reframing issue: {e}", exc_info=True)
 
-
     def get_learning_status(self) -> dict[str, Any]:
         """Get collective learning and memory optimization status with phi_training."""
         base_status = super().get_learning_status()
         base_status["phi_training"] = self.get_phi_training_status()
         return base_status
 
-# =========================================================================
-# Session 44: Collective Learning Integration
-# Phi Training Integration Methods
-# =========================================================================
+    # =========================================================================
+    # Session 44: Collective Learning Integration
+    # Phi Training Integration Methods
+    # =========================================================================
 
     def _prism_agent_actor(self) -> AgentActor:
         """Create an AgentActor wrapper for Prism for Phi training."""
+
         class PrismAgentActor(AgentActor):
             def __init__(self, prism: "PrismAgent"):
                 super().__init__(
@@ -1098,7 +1138,8 @@ Respond in JSON:
                         return {
                             "action": "analyze_perspectives",
                             "perspective_count": len(perspectives),
-                            "avg_confidence": sum(p.confidence for p in perspectives) / len(perspectives),
+                            "avg_confidence": sum(p.confidence for p in perspectives)
+                            / len(perspectives),
                         }
                 return {"action": "monitor"}
 
@@ -1109,7 +1150,8 @@ Respond in JSON:
                     "perspective_cache_size": len(self.prism.perspective_cache),
                     "bias_history_size": len(self.prism.bias_history),
                     "framework_results_size": len(self.prism.framework_results),
-                    "activation": len(self.prism.active_analyses) / max(len(self.prism.available_perspectives), 1),
+                    "activation": len(self.prism.active_analyses)
+                    / max(len(self.prism.available_perspectives), 1),
                 }
 
         return PrismAgentActor(self)
@@ -1160,7 +1202,6 @@ Respond in JSON:
             "phi_optimization_target": "perspective_integration",
         }
 
-
     async def _generate_reframes(self, issue: str) -> list[dict[str, Any]]:
         """
         Generate multiple reframes of an issue.
@@ -1199,6 +1240,7 @@ Respond in JSON:
                 )
 
                 import json
+
                 try:
                     start_idx = result.find("[")
                     end_idx = result.rfind("]") + 1

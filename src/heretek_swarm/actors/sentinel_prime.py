@@ -33,6 +33,7 @@ from heretek_swarm.actors.mixins import (
     LearningMixin,
     MemoryMixin,
     PatternMixin,
+    ValidationMixin,
 )
 from heretek_swarm.actors.validation import validate_message
 
@@ -144,7 +145,13 @@ class ThreatReport:
 
 
 class SentinelPrimeAgent(
-    HealthReportingMixin, DeliberationMixin, PatternMixin, MemoryMixin, LearningMixin, AgentActor
+    HealthReportingMixin,
+    ValidationMixin,
+    DeliberationMixin,
+    PatternMixin,
+    MemoryMixin,
+    LearningMixin,
+    AgentActor,
 ):
     """
     Sentinel-Prime Agent - Security Commander for the Heretek Swarm Collective.

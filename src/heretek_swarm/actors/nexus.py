@@ -36,6 +36,7 @@ from heretek_swarm.actors.mixins.health_reporting import HealthReportingMixin
 from heretek_swarm.actors.mixins.learning import LearningMixin
 from heretek_swarm.actors.mixins.memory import MemoryMixin
 from heretek_swarm.actors.mixins.pattern import PatternMixin
+from heretek_swarm.actors.mixins.validation import ValidationMixin
 from heretek_swarm.actors.validation import validate_message
 
 # Session 44: Collective Learning Integration
@@ -168,7 +169,13 @@ class ApiResponse:
 
 
 class NexusAgent(
-    HealthReportingMixin, AgentActor, PatternMixin, DeliberationMixin, MemoryMixin, LearningMixin
+    HealthReportingMixin,
+    ValidationMixin,
+    AgentActor,
+    PatternMixin,
+    DeliberationMixin,
+    MemoryMixin,
+    LearningMixin,
 ):
     """
     External Integration Specialist.

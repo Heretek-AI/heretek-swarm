@@ -17,12 +17,12 @@ import structlog
 from swarms import Agent
 
 from heretek_swarm.actors.base import ActorMessage, AgentActor
-from heretek_swarm.actors.mixins import HealthReportingMixin, LearningMixin
+from heretek_swarm.actors.mixins import HealthReportingMixin, LearningMixin, ValidationMixin
 
 logger = structlog.get_logger("CharlieAgent")
 
 
-class CharlieAgent(HealthReportingMixin, LearningMixin, AgentActor):
+class CharlieAgent(HealthReportingMixin, ValidationMixin, LearningMixin, AgentActor):
     """
     Charlie Agent - Tertiary perspective and challenger.
 
@@ -109,9 +109,7 @@ class CharlieAgent(HealthReportingMixin, LearningMixin, AgentActor):
                         correlation_id=message.correlation_id,
                     )
         else:
-            logger.warning(
-                f"[{self.agent_id}] Unhandled message type: {message.message_type}"
-            )
+            logger.warning(f"[{self.agent_id}] Unhandled message type: {message.message_type}")
 
     async def _handle_deliberation_request(self, message: ActorMessage) -> None:
         """Handle deliberation requests."""
@@ -119,9 +117,7 @@ class CharlieAgent(HealthReportingMixin, LearningMixin, AgentActor):
         session_id = message.content.get("session_id", deliberation_id)
         topic = message.content.get("topic") or message.content.get("problem")
 
-        logger.info(
-            f"[{self.agent_id}] Participating in deliberation {session_id}"
-        )
+        logger.info(f"[{self.agent_id}] Participating in deliberation {session_id}")
 
         # Perform challenging analysis
         analysis = await self._perform_analysis(topic or "")
@@ -166,7 +162,7 @@ class CharlieAgent(HealthReportingMixin, LearningMixin, AgentActor):
         self._challenges[request_id] = challenge_entry
         # P1-3: Trim history if it exceeds max size
         if len(self.challenges_raised) > self.max_history_size:
-            self.challenges_raised = self.challenges_raised[-self.max_history_size:]
+            self.challenges_raised = self.challenges_raised[-self.max_history_size :]
 
         reply_topic = message.content.get("reply_to", "challenges")
         await self.send(
@@ -199,7 +195,7 @@ class CharlieAgent(HealthReportingMixin, LearningMixin, AgentActor):
         self._risk_assessments[request_id] = assessment_entry
         # P1-3: Trim history if it exceeds max size
         if len(self.risk_assessments) > self.max_history_size:
-            self.risk_assessments = self.risk_assessments[-self.max_history_size:]
+            self.risk_assessments = self.risk_assessments[-self.max_history_size :]
 
         reply_topic = message.content.get("reply_to", "risks")
         await self.send(
@@ -218,7 +214,7 @@ class CharlieAgent(HealthReportingMixin, LearningMixin, AgentActor):
             try:
                 analysis_result = await self.run_with_llm(
                     prompt=f"Analyze with critical perspective (Charlie): {problem}. Identify risks and alternatives.",
-                    timeout=60
+                    timeout=60,
                 )
                 return {
                     "decision": analysis_result,
@@ -250,14 +246,15 @@ class CharlieAgent(HealthReportingMixin, LearningMixin, AgentActor):
         if self.swarms_agent:
             try:
                 challenge_result = await self.run_with_llm(
-                    prompt=f"Challenge this proposition: {proposition}",
-                    timeout=60
+                    prompt=f"Challenge this proposition: {proposition}", timeout=60
                 )
-                challenges.append({
-                    "type": "logical_challenge",
-                    "description": challenge_result,
-                    "severity": "medium",
-                })
+                challenges.append(
+                    {
+                        "type": "logical_challenge",
+                        "description": challenge_result,
+                        "severity": "medium",
+                    }
+                )
             except Exception as e:
                 logger.error(f"[{self.agent_id}] Challenge error: {e}")
 
@@ -268,8 +265,7 @@ class CharlieAgent(HealthReportingMixin, LearningMixin, AgentActor):
         if self.swarms_agent:
             try:
                 risk_result = await self.run_with_llm(
-                    prompt=f"Assess risks: {scenario}",
-                    timeout=60
+                    prompt=f"Assess risks: {scenario}", timeout=60
                 )
                 return {
                     "risks_identified": [risk_result],

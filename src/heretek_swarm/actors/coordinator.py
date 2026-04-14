@@ -28,6 +28,7 @@ from heretek_swarm.actors.mixins.deliberation import DeliberationMixin
 from heretek_swarm.actors.mixins.learning import LearningMixin
 from heretek_swarm.actors.mixins.memory import MemoryMixin
 from heretek_swarm.actors.mixins.pattern import PatternMixin
+from heretek_swarm.actors.mixins.validation import ValidationMixin
 from heretek_swarm.actors.validation import validate_message
 
 # Session 44: Collective Learning Integration
@@ -43,6 +44,7 @@ logger = structlog.get_logger(__name__)
 
 class TaskStatus(Enum):
     """Status of a coordinated task."""
+
     PENDING = "pending"
     READY = "ready"  # Dependencies satisfied
     IN_PROGRESS = "in_progress"
@@ -54,6 +56,7 @@ class TaskStatus(Enum):
 
 class DependencyType(Enum):
     """Type of task dependency."""
+
     SEQUENTIAL = "sequential"  # Must complete before next starts
     PARALLEL = "parallel"  # Can run concurrently
     CONDITIONAL = "conditional"  # Depends on condition being met
@@ -63,6 +66,7 @@ class DependencyType(Enum):
 @dataclass
 class CoordinatedTask:
     """A task under coordination."""
+
     task_id: str
     name: str
     description: str
@@ -101,6 +105,7 @@ class CoordinatedTask:
 @dataclass
 class AgentState:
     """Current state of an agent in the coordination system."""
+
     agent_id: str
     status: str = "idle"  # idle, busy, offline
     current_task: str | None = None
@@ -122,7 +127,9 @@ class AgentState:
         }
 
 
-class CoordinatorAgent(AgentActor, PatternMixin, DeliberationMixin, MemoryMixin, LearningMixin):
+class CoordinatorAgent(
+    ValidationMixin, AgentActor, PatternMixin, DeliberationMixin, MemoryMixin, LearningMixin
+):
     """
     Multi-Agent Coordination Specialist.
 
@@ -150,7 +157,7 @@ class CoordinatorAgent(AgentActor, PatternMixin, DeliberationMixin, MemoryMixin,
         self,
         agent_id: str | None = None,
         config: dict[str, Any] | None = None,
-):
+    ):
         super().__init__(
             agent_id=agent_id or f"coordinator_{uuid.uuid4().hex[:8]}",
             config=config or {},
@@ -601,7 +608,9 @@ class CoordinatorAgent(AgentActor, PatternMixin, DeliberationMixin, MemoryMixin,
             task_ids = content.get("task_ids", list(self._tasks.keys()))
 
             # Build subgraph
-            subgraph = {tid: self._reverse_deps.get(tid, set()) for tid in task_ids if tid in self._tasks}
+            subgraph = {
+                tid: self._reverse_deps.get(tid, set()) for tid in task_ids if tid in self._tasks
+            }
 
             # Topological sort
             sorted_tasks = self._topological_sort(subgraph)
@@ -716,7 +725,11 @@ class CoordinatorAgent(AgentActor, PatternMixin, DeliberationMixin, MemoryMixin,
             for task_id in task_ids:
                 if task_id in self._tasks:
                     task = self._tasks[task_id]
-                    if task.status not in (TaskStatus.COMPLETED, TaskStatus.FAILED, TaskStatus.CANCELLED):
+                    if task.status not in (
+                        TaskStatus.COMPLETED,
+                        TaskStatus.FAILED,
+                        TaskStatus.CANCELLED,
+                    ):
                         task.status = TaskStatus.CANCELLED
                         task.completed_at = datetime.now(UTC)
                         cancelled.append(task_id)
@@ -782,9 +795,7 @@ class CoordinatorAgent(AgentActor, PatternMixin, DeliberationMixin, MemoryMixin,
             # Workflow statistics
             workflow_stats = {
                 "total": len(self._task_queues),
-                "workflows": {
-                    wid: len(tids) for wid, tids in self._task_queues.items()
-                },
+                "workflows": {wid: len(tids) for wid, tids in self._task_queues.items()},
             }
 
             report = {
@@ -822,7 +833,8 @@ class CoordinatorAgent(AgentActor, PatternMixin, DeliberationMixin, MemoryMixin,
                 if task.status == TaskStatus.BLOCKED:
                     # Check if all dependencies are satisfied
                     remaining_deps = [
-                        d for d in task.dependencies
+                        d
+                        for d in task.dependencies
                         if d in self._tasks and self._tasks[d].status != TaskStatus.COMPLETED
                     ]
 
@@ -853,7 +865,9 @@ class CoordinatorAgent(AgentActor, PatternMixin, DeliberationMixin, MemoryMixin,
 
         return result
 
-    def _identify_parallel_groups(self, sorted_tasks: list[str], graph: dict[str, set[str]]) -> list[list[str]]:
+    def _identify_parallel_groups(
+        self, sorted_tasks: list[str], graph: dict[str, set[str]]
+    ) -> list[list[str]]:
         """Identify groups of tasks that can run in parallel."""
         if not sorted_tasks:
             return []
@@ -899,7 +913,6 @@ class CoordinatorAgent(AgentActor, PatternMixin, DeliberationMixin, MemoryMixin,
         if longest_path:
             return max(longest_path.values(), key=len)
         return []
-
 
     async def _send_error(
         self,
