@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-14T18:35:21.488252+00:00",
+    "generated_at": "2026-04-14T18:38:02.569931+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 5,
@@ -136780,7 +136780,349 @@
                     }
                   ],
                   "component_id": "2.1.2.3",
-                  "can_expand": true
+                  "can_expand": true,
+                  "components": [
+                    {
+                      "name": "Sentinel Security Gateway",
+                      "description": "Acts as the zero-trust gatekeeper for the swarm, enforcing A2A protocol handshakes, validating agent identities (tokens/API keys), and ensuring connections comply with security standards before interacting with the event mesh.",
+                      "key_entities": [
+                        {
+                          "qualified_name": "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol",
+                          "reference_file": "src/heretek_swarm/gateway/a2a_protocol.py",
+                          "reference_start_line": 66,
+                          "reference_end_line": 573
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._handle_handshake",
+                          "reference_file": "src/heretek_swarm/gateway/a2a_protocol.py",
+                          "reference_start_line": 212,
+                          "reference_end_line": 279
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol.start_server",
+                          "reference_file": "src/heretek_swarm/gateway/a2a_protocol.py",
+                          "reference_start_line": 113,
+                          "reference_end_line": 144
+                        }
+                      ],
+                      "source_cluster_ids": [
+                        1,
+                        2,
+                        5,
+                        6,
+                        30,
+                        31,
+                        32,
+                        33,
+                        34,
+                        35,
+                        36,
+                        37,
+                        38,
+                        39,
+                        40
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "dashboard/frontend/src/components/Observability/A2AMessageFlow.tsx",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "dashboard.frontend.src.components.Observability.A2AMessageFlow.A2AMessage",
+                            "dashboard.frontend.src.components.Observability.A2AMessageFlow.A2AMessageFlowProps",
+                            "dashboard.frontend.src.components.Observability.A2AMessageFlow.A2AMessageFlow",
+                            "dashboard.frontend.src.components.Observability.A2AMessageFlow.A2AMessageFlow.useEffect() callback",
+                            "dashboard.frontend.src.components.Observability.A2AMessageFlow.A2AMessageFlow.found",
+                            "dashboard.frontend.src.components.Observability.A2AMessageFlow.A2AMessageFlow.messages.map() callback",
+                            "dashboard.frontend.src.components.Observability.A2AMessageFlow.formatTimestamp"
+                          ]
+                        },
+                        {
+                          "file_path": "dashboard/frontend/src/components/Observability/A2ATracker.tsx",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "dashboard.frontend.src.components.Observability.A2ATracker.A2AMessage",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.AgentActivity",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.WorkflowStats",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.ResourceStats",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATrackerProps",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.generateRandomMessage",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.generateAgentActivity.AGENT_IDS.map() callback",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.filteredMessages",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline.filteredMessages.messages.filter() callback",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.MessageTimeline.yet",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.getStatusIcon",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.AgentActivityList.<unknown>..map() callback",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.useEffect() callback",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.useEffect() callback.forEach() callback",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.topConnections",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.topConnections.sort() callback",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.MessageFlowGraph.yet",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.topConnections.map(\"h-full bg-purple-500 rounded-full\") callback",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.connectTimeout",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.connectTimeout.setTimeout() callback",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.messageInterval.setInterval() callback.setMessages() callback",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.activityInterval",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.activityInterval.setInterval() callback",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.statsInterval",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.useEffect() callback.statsInterval.setInterval() callback",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.internalMonologue",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.A2ATracker.internalMonologue.messages.filter() callback",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.<unknown>..filter() callback",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.map() callback",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.<unknown>..reduce() callback",
+                            "dashboard.frontend.src.components.Observability.A2ATracker.<unknown>.messages.reduce() callback"
+                          ]
+                        },
+                        {
+                          "file_path": "dashboard/frontend/src/components/Observability/LLMTrace.tsx",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "dashboard.frontend.src.components.Observability.LLMTrace.LLMTraceEvent",
+                            "dashboard.frontend.src.components.Observability.LLMTrace.LLMTraceProps",
+                            "dashboard.frontend.src.components.Observability.LLMTrace.LLMTrace",
+                            "dashboard.frontend.src.components.Observability.LLMTrace.LLMTrace.useEffect() callback",
+                            "dashboard.frontend.src.components.Observability.LLMTrace.LLMTrace.found",
+                            "dashboard.frontend.src.components.Observability.LLMTrace.LLMTrace.events.map() callback",
+                            "dashboard.frontend.src.components.Observability.LLMTrace.getEventIcon",
+                            "dashboard.frontend.src.components.Observability.LLMTrace.formatTimestamp",
+                            "dashboard.frontend.src.components.Observability.LLMTrace.formatDuration"
+                          ]
+                        },
+                        {
+                          "file_path": "dashboard/frontend/src/components/Observability/Observability.tsx",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "dashboard.frontend.src.components.Observability.Observability.LLMTrace",
+                            "dashboard.frontend.src.components.Observability.Observability.AgentExecution",
+                            "dashboard.frontend.src.components.Observability.Observability.ExecutionStep",
+                            "dashboard.frontend.src.components.Observability.Observability.DecisionNode",
+                            "dashboard.frontend.src.components.Observability.Observability.PerformanceMetric",
+                            "dashboard.frontend.src.components.Observability.Observability.ErrorLog",
+                            "dashboard.frontend.src.components.Observability.Observability.Observability",
+                            "dashboard.frontend.src.components.Observability.Observability.Observability.fetchData",
+                            "dashboard.frontend.src.components.Observability.Observability.Observability.fetchData.useCallback() callback",
+                            "dashboard.frontend.src.components.Observability.Observability.Observability.useEffect() callback",
+                            "dashboard.frontend.src.components.Observability.Observability.Observability.useEffect() callback.onmessage",
+                            "dashboard.frontend.src.components.Observability.Observability.Observability.useEffect() callback.onmessage.setTraces() callback",
+                            "dashboard.frontend.src.components.Observability.Observability.Observability.useEffect() callback.onmessage.setExecutions() callback.prev.map() callback",
+                            "dashboard.frontend.src.components.Observability.Observability.useEffect() callback.onmessage.setExecutions() callback",
+                            "dashboard.frontend.src.components.Observability.Observability.Observability.useEffect() callback.onmessage.setExecutions() callback",
+                            "dashboard.frontend.src.components.Observability.Observability.Observability.useEffect() callback.onmessage.setMetrics() callback.prev.map() callback",
+                            "dashboard.frontend.src.components.Observability.Observability.Observability.useEffect() callback.onmessage.setMetrics() callback",
+                            "dashboard.frontend.src.components.Observability.Observability.Observability.useEffect() callback.onmessage.setErrors() callback",
+                            "dashboard.frontend.src.components.Observability.Observability.Observability.node.children.map() callback",
+                            "dashboard.frontend.src.components.Observability.Observability.setTimeRange",
+                            "dashboard.frontend.src.components.Observability.Observability..map() callback",
+                            "dashboard.frontend.src.components.Observability.Observability.<unknown>..steps.map() callback",
+                            "dashboard.frontend.src.components.Observability.Observability.formatLatency",
+                            "dashboard.frontend.src.components.Observability.Observability.<unknown>..map() callback"
+                          ]
+                        },
+                        {
+                          "file_path": "src/heretek_swarm/gateway/a2a_protocol.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.gateway.a2a_protocol.MessageType",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AMessage",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol.start_server",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol.start_server.websocket_endpoint",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._health_check",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._handle_connection",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._handle_handshake",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._broadcast_discovery",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._send_error",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._cleanup_connection",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol.get_stats",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._count_agent_types"
+                          ]
+                        },
+                        {
+                          "file_path": "src/heretek_swarm/gateway/message_replay.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.gateway.message_replay.get_replay_manager",
+                            "src.heretek_swarm.gateway.message_replay.setup_replay_manager"
+                          ]
+                        }
+                      ],
+                      "component_id": "2.1.2.3.1",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "MAKER Governance Engine",
+                      "description": "Coordinates the swarm's collective decision-making and historical accountability: running the MAKER consensus protocol, managing voting/deliberation via the Arbiter, and providing message replay (Time Travel) capabilities for auditing and dispute resolution.",
+                      "key_entities": [
+                        {
+                          "qualified_name": "src.heretek_swarm.gateway.message_replay.MessageReplayManager",
+                          "reference_file": "src/heretek_swarm/gateway/message_replay.py",
+                          "reference_start_line": 193,
+                          "reference_end_line": 661
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.gateway.message_replay.MessageReplayManager.execute_replay",
+                          "reference_file": "src/heretek_swarm/gateway/message_replay.py",
+                          "reference_start_line": 338,
+                          "reference_end_line": 421
+                        },
+                        {
+                          "qualified_name": "src.heretek_swarm.gateway.message_replay.TimeTravelRequest",
+                          "reference_file": "src/heretek_swarm/gateway/message_replay.py",
+                          "reference_start_line": 134,
+                          "reference_end_line": 190
+                        }
+                      ],
+                      "source_cluster_ids": [
+                        3,
+                        4,
+                        7,
+                        8,
+                        18,
+                        19,
+                        20,
+                        21,
+                        22,
+                        23,
+                        24,
+                        25,
+                        26,
+                        27,
+                        28,
+                        29
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/gateway/a2a_protocol.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol.stop_server",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._route_message"
+                          ]
+                        },
+                        {
+                          "file_path": "src/heretek_swarm/gateway/message_replay.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.gateway.message_replay.ReplayStatus",
+                            "src.heretek_swarm.gateway.message_replay.ReplayJob",
+                            "src.heretek_swarm.gateway.message_replay.ReplayJob.to_dict",
+                            "src.heretek_swarm.gateway.message_replay.ReplayJob.create",
+                            "src.heretek_swarm.gateway.message_replay.ReplayJob.progress_percent",
+                            "src.heretek_swarm.gateway.message_replay.TimeTravelRequest",
+                            "src.heretek_swarm.gateway.message_replay.TimeTravelRequest.to_dict",
+                            "src.heretek_swarm.gateway.message_replay.TimeTravelRequest.create",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.__init__",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.active_jobs",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.job_count",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.create_replay_job",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.execute_replay",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager._fetch_messages",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager._process_message",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.pause_replay",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.resume_replay",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.cancel_replay",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.get_job",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.get_all_jobs",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.create_time_travel_request",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.execute_time_travel",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.get_stats"
+                          ]
+                        }
+                      ],
+                      "component_id": "2.1.2.3.2",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Governance Observability",
+                      "description": "Provides real-time dashboards and visual tools for operators to monitor security and governance health: tracking A2A connections, visualizing LLM execution traces for auditing, and displaying collective intelligence and consciousness metrics.",
+                      "key_entities": [],
+                      "source_cluster_ids": [
+                        9,
+                        10,
+                        11,
+                        12,
+                        13,
+                        14,
+                        15,
+                        16,
+                        17
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/gateway/a2a_protocol.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol.__init__",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._handle_discovery",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._handle_agent_message",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._handle_status",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._handle_proposal",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._handle_vote",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._handle_decision",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._log_message",
+                            "src.heretek_swarm.gateway.a2a_protocol.A2AProtocol._get_agent_type"
+                          ]
+                        }
+                      ],
+                      "component_id": "2.1.2.3.3",
+                      "can_expand": true
+                    }
+                  ],
+                  "components_relations": [
+                    {
+                      "relation": "Validates and authorizes participation",
+                      "src_name": "Sentinel Security Gateway",
+                      "dst_name": "MAKER Governance Engine",
+                      "src_id": "2.1.2.3.1",
+                      "dst_id": "2.1.2.3.2",
+                      "edge_count": 3,
+                      "is_static": true
+                    },
+                    {
+                      "relation": "Broadcasts consensus events and updates",
+                      "src_name": "MAKER Governance Engine",
+                      "dst_name": "Sentinel Security Gateway",
+                      "src_id": "2.1.2.3.2",
+                      "dst_id": "2.1.2.3.1",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "Streams deliberation logs and replay data",
+                      "src_name": "MAKER Governance Engine",
+                      "dst_name": "Governance Observability",
+                      "src_id": "2.1.2.3.2",
+                      "dst_id": "2.1.2.3.3",
+                      "edge_count": 6,
+                      "is_static": true
+                    },
+                    {
+                      "relation": "Monitors connection metrics and alerts on violations",
+                      "src_name": "Governance Observability",
+                      "dst_name": "Sentinel Security Gateway",
+                      "src_id": "2.1.2.3.3",
+                      "dst_id": "2.1.2.3.1",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "calls",
+                      "src_name": "Sentinel Security Gateway",
+                      "dst_name": "Governance Observability",
+                      "src_id": "2.1.2.3.1",
+                      "dst_id": "2.1.2.3.3",
+                      "edge_count": 1,
+                      "is_static": true
+                    }
+                  ]
                 },
                 {
                   "name": "Mesh Observability & Telemetry",
@@ -137207,7 +137549,333 @@
                     }
                   ],
                   "component_id": "2.1.3.2",
-                  "can_expand": true
+                  "can_expand": true,
+                  "components": [
+                    {
+                      "name": "Workflow Design & Agent Configuration",
+                      "description": "Visual builder and detailed configuration panels for defining swarm topologies, agent roles, and LLM/memory parameters.",
+                      "key_entities": [],
+                      "source_cluster_ids": [
+                        2,
+                        6,
+                        16,
+                        18,
+                        19,
+                        22,
+                        23,
+                        27,
+                        32,
+                        33,
+                        42,
+                        57,
+                        58,
+                        61,
+                        62,
+                        63,
+                        64,
+                        76,
+                        77,
+                        78,
+                        79,
+                        80,
+                        81,
+                        89,
+                        90,
+                        109,
+                        110,
+                        111,
+                        112,
+                        113,
+                        114,
+                        115,
+                        116,
+                        117
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/gateway/message_replay.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.gateway.message_replay.ReplayJob.progress_percent",
+                            "src.heretek_swarm.gateway.message_replay.TimeTravelRequest.to_dict",
+                            "src.heretek_swarm.gateway.message_replay.TimeTravelRequest.create",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager._process_message",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.create_time_travel_request"
+                          ]
+                        }
+                      ],
+                      "component_id": "2.1.3.2.1",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Execution Core & Data Services",
+                      "description": "Back-end bridge that persists workflows, manages provider credentials, executes deployment scripts to wire agents into the event mesh, and initializes memory tiers.",
+                      "key_entities": [],
+                      "source_cluster_ids": [
+                        0,
+                        4,
+                        5,
+                        17,
+                        35,
+                        51,
+                        52,
+                        71,
+                        72,
+                        73,
+                        102,
+                        103
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/gateway/message_replay.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.gateway.message_replay.ReplayStatus",
+                            "src.heretek_swarm.gateway.message_replay.ReplayJob",
+                            "src.heretek_swarm.gateway.message_replay.ReplayJob.to_dict",
+                            "src.heretek_swarm.gateway.message_replay.TimeTravelRequest",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.__init__",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.create_replay_job",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.cancel_replay"
+                          ]
+                        }
+                      ],
+                      "component_id": "2.1.3.2.2",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Observability & Emergence Engine",
+                      "description": "Consumes telemetry from the event mesh to compute and visualize higher-order emergence metrics and track A2A message flows for debugging and optimization.",
+                      "key_entities": [],
+                      "source_cluster_ids": [
+                        8,
+                        11,
+                        12,
+                        24,
+                        25,
+                        29,
+                        31,
+                        36,
+                        38,
+                        46,
+                        49,
+                        50,
+                        53,
+                        60,
+                        65,
+                        66,
+                        70,
+                        92,
+                        93,
+                        97,
+                        98,
+                        99,
+                        100
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/gateway/message_replay.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.job_count",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.execute_time_travel",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.get_stats"
+                          ]
+                        }
+                      ],
+                      "component_id": "2.1.3.2.3",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Environment Setup & Native Bridge",
+                      "description": "Manages environment validation and setup (Docker, NATS, DBs), provides a setup wizard, and integrates with the OS via Electron for local persistence and IPC.",
+                      "key_entities": [],
+                      "source_cluster_ids": [
+                        3,
+                        7,
+                        9,
+                        14,
+                        20,
+                        21,
+                        26,
+                        28,
+                        30,
+                        34,
+                        40,
+                        41,
+                        43,
+                        69,
+                        74,
+                        83,
+                        84,
+                        88,
+                        101,
+                        104,
+                        118,
+                        120
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/gateway/message_replay.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.active_jobs",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.execute_replay",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.resume_replay",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.get_all_jobs",
+                            "src.heretek_swarm.gateway.message_replay.get_replay_manager",
+                            "src.heretek_swarm.gateway.message_replay.setup_replay_manager"
+                          ]
+                        }
+                      ],
+                      "component_id": "2.1.3.2.4",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Unified Dashboard Shell",
+                      "description": "Top-level UI container that hosts the orchestration tools, manages global state, navigation, WebSocket connections, and shared UI components.",
+                      "key_entities": [],
+                      "source_cluster_ids": [
+                        1,
+                        10,
+                        13,
+                        15,
+                        37,
+                        39,
+                        44,
+                        45,
+                        47,
+                        48,
+                        54,
+                        55,
+                        56,
+                        59,
+                        67,
+                        68,
+                        75,
+                        82,
+                        85,
+                        86,
+                        87,
+                        91,
+                        94,
+                        95,
+                        96,
+                        105,
+                        106,
+                        107,
+                        108,
+                        119
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/gateway/message_replay.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.gateway.message_replay.ReplayJob.create",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager._fetch_messages",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.pause_replay",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.get_job"
+                          ]
+                        }
+                      ],
+                      "component_id": "2.1.3.2.5",
+                      "can_expand": true
+                    }
+                  ],
+                  "components_relations": [
+                    {
+                      "relation": "Sends validated swarm topologies and agent configurations for persistence and deployment",
+                      "src_name": "Workflow Design & Agent Configuration",
+                      "dst_name": "Execution Core & Data Services",
+                      "src_id": "2.1.3.2.1",
+                      "dst_id": "2.1.3.2.2",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "Validates backend service availability and provides local configuration paths before execution",
+                      "src_name": "Environment Setup & Native Bridge",
+                      "dst_name": "Execution Core & Data Services",
+                      "src_id": "2.1.3.2.4",
+                      "dst_id": "2.1.3.2.2",
+                      "edge_count": 2,
+                      "is_static": true
+                    },
+                    {
+                      "relation": "Supplies historical execution data and context for telemetry analysis",
+                      "src_name": "Execution Core & Data Services",
+                      "dst_name": "Observability & Emergence Engine",
+                      "src_id": "2.1.3.2.2",
+                      "dst_id": "2.1.3.2.3",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "Overlays real-time performance and consciousness metrics onto the visual nodes in the workflow canvas",
+                      "src_name": "Observability & Emergence Engine",
+                      "dst_name": "Workflow Design & Agent Configuration",
+                      "src_id": "2.1.3.2.3",
+                      "dst_id": "2.1.3.2.1",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "Hosts the visual builder and manages the global state transitions between design and execution modes",
+                      "src_name": "Unified Dashboard Shell",
+                      "dst_name": "Workflow Design & Agent Configuration",
+                      "src_id": "2.1.3.2.5",
+                      "dst_id": "2.1.3.2.1",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "Provides the WebSocket backbone and layout slots for real-time telemetry visualizations",
+                      "src_name": "Unified Dashboard Shell",
+                      "dst_name": "Observability & Emergence Engine",
+                      "src_id": "2.1.3.2.5",
+                      "dst_id": "2.1.3.2.3",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "calls",
+                      "src_name": "Execution Core & Data Services",
+                      "dst_name": "Unified Dashboard Shell",
+                      "src_id": "2.1.3.2.2",
+                      "dst_id": "2.1.3.2.5",
+                      "edge_count": 1,
+                      "is_static": true
+                    },
+                    {
+                      "relation": "calls",
+                      "src_name": "Observability & Emergence Engine",
+                      "dst_name": "Environment Setup & Native Bridge",
+                      "src_id": "2.1.3.2.3",
+                      "dst_id": "2.1.3.2.4",
+                      "edge_count": 1,
+                      "is_static": true
+                    },
+                    {
+                      "relation": "calls",
+                      "src_name": "Environment Setup & Native Bridge",
+                      "dst_name": "Workflow Design & Agent Configuration",
+                      "src_id": "2.1.3.2.4",
+                      "dst_id": "2.1.3.2.1",
+                      "edge_count": 1,
+                      "is_static": true
+                    },
+                    {
+                      "relation": "calls",
+                      "src_name": "Environment Setup & Native Bridge",
+                      "dst_name": "Unified Dashboard Shell",
+                      "src_id": "2.1.3.2.4",
+                      "dst_id": "2.1.3.2.5",
+                      "edge_count": 1,
+                      "is_static": true
+                    }
+                  ]
                 },
                 {
                   "name": "Temporal State & Flow Observability",
@@ -137236,7 +137904,216 @@
                     }
                   ],
                   "component_id": "2.1.3.3",
-                  "can_expand": true
+                  "can_expand": true,
+                  "components": [
+                    {
+                      "name": "Swarm Consciousness & Metrics Engine",
+                      "description": "Calculates and visualizes emergent swarm properties (IIT, FEP), producing Phi scores, interaction heatmaps, and time-series metrics for the 'Consciousness' view of the swarm.",
+                      "key_entities": [],
+                      "source_cluster_ids": [
+                        10,
+                        11,
+                        12,
+                        15
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/gateway/message_replay.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.gateway.message_replay.ReplayJob.create",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.job_count",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.get_job",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.get_stats"
+                          ]
+                        }
+                      ],
+                      "component_id": "2.1.3.3.1",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Temporal Flow & Interaction Auditor",
+                      "description": "Tracks and reconstructs agent-to-agent message flows and LLM execution traces for historical auditing and deep-dives into agent reasoning steps.",
+                      "key_entities": [],
+                      "source_cluster_ids": [
+                        8
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/gateway/message_replay.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.execute_time_travel"
+                          ]
+                        }
+                      ],
+                      "component_id": "2.1.3.3.2",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Dynamic Topology & Workflow Canvas",
+                      "description": "An interactive visualization engine that renders the 6-tier agent topology using React Flow, enabling node/edge management and dynamic reconstruction of workflow execution paths.",
+                      "key_entities": [],
+                      "source_cluster_ids": [
+                        2,
+                        6,
+                        16,
+                        18,
+                        19
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/gateway/message_replay.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.gateway.message_replay.ReplayJob.progress_percent",
+                            "src.heretek_swarm.gateway.message_replay.TimeTravelRequest.to_dict",
+                            "src.heretek_swarm.gateway.message_replay.TimeTravelRequest.create",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager._process_message",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.create_time_travel_request"
+                          ]
+                        }
+                      ],
+                      "component_id": "2.1.3.3.3",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Observability Data Backbone",
+                      "description": "Orchestrates data flow between frontend and backend services (FastAPI, NATS, mem0), managing retrieval of agent states, memory persistence, and provider configs for accurate auditing.",
+                      "key_entities": [],
+                      "source_cluster_ids": [
+                        0,
+                        4,
+                        5,
+                        17
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/gateway/message_replay.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.gateway.message_replay.ReplayStatus",
+                            "src.heretek_swarm.gateway.message_replay.ReplayJob",
+                            "src.heretek_swarm.gateway.message_replay.ReplayJob.to_dict",
+                            "src.heretek_swarm.gateway.message_replay.TimeTravelRequest",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.__init__",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.create_replay_job",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.cancel_replay"
+                          ]
+                        }
+                      ],
+                      "component_id": "2.1.3.3.4",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Subsystem Runtime & Integration",
+                      "description": "Manages initialization, lifecycle, and environment integration for the observability suite, including DB setup wizards and Electron desktop integration.",
+                      "key_entities": [],
+                      "source_cluster_ids": [
+                        1,
+                        3,
+                        7,
+                        9,
+                        13,
+                        14,
+                        20,
+                        21
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/gateway/message_replay.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.active_jobs",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.execute_replay",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager._fetch_messages",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.pause_replay",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.resume_replay",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.get_all_jobs",
+                            "src.heretek_swarm.gateway.message_replay.get_replay_manager",
+                            "src.heretek_swarm.gateway.message_replay.setup_replay_manager"
+                          ]
+                        }
+                      ],
+                      "component_id": "2.1.3.3.5",
+                      "can_expand": true
+                    }
+                  ],
+                  "components_relations": [
+                    {
+                      "relation": "provides real-time state",
+                      "src_name": "Observability Data Backbone",
+                      "dst_name": "Swarm Consciousness & Metrics Engine",
+                      "src_id": "2.1.3.3.4",
+                      "dst_id": "2.1.3.3.1",
+                      "edge_count": 1,
+                      "is_static": true
+                    },
+                    {
+                      "relation": "supplies historical logs",
+                      "src_name": "Observability Data Backbone",
+                      "dst_name": "Temporal Flow & Interaction Auditor",
+                      "src_id": "2.1.3.3.4",
+                      "dst_id": "2.1.3.3.2",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "streams swarm configuration",
+                      "src_name": "Observability Data Backbone",
+                      "dst_name": "Dynamic Topology & Workflow Canvas",
+                      "src_id": "2.1.3.3.4",
+                      "dst_id": "2.1.3.3.3",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "passes node/edge context",
+                      "src_name": "Dynamic Topology & Workflow Canvas",
+                      "dst_name": "Temporal Flow & Interaction Auditor",
+                      "src_id": "2.1.3.3.3",
+                      "dst_id": "2.1.3.3.2",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "initializes API clients and DB migrations",
+                      "src_name": "Subsystem Runtime & Integration",
+                      "dst_name": "Observability Data Backbone",
+                      "src_id": "2.1.3.3.5",
+                      "dst_id": "2.1.3.3.4",
+                      "edge_count": 2,
+                      "is_static": true
+                    },
+                    {
+                      "relation": "overlays emergent metrics onto topology",
+                      "src_name": "Swarm Consciousness & Metrics Engine",
+                      "dst_name": "Dynamic Topology & Workflow Canvas",
+                      "src_id": "2.1.3.3.1",
+                      "dst_id": "2.1.3.3.3",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "calls",
+                      "src_name": "Swarm Consciousness & Metrics Engine",
+                      "dst_name": "Subsystem Runtime & Integration",
+                      "src_id": "2.1.3.3.1",
+                      "dst_id": "2.1.3.3.5",
+                      "edge_count": 1,
+                      "is_static": true
+                    },
+                    {
+                      "relation": "calls",
+                      "src_name": "Subsystem Runtime & Integration",
+                      "dst_name": "Dynamic Topology & Workflow Canvas",
+                      "src_id": "2.1.3.3.5",
+                      "dst_id": "2.1.3.3.3",
+                      "edge_count": 1,
+                      "is_static": true
+                    }
+                  ]
                 },
                 {
                   "name": "Infrastructure & Configuration Support",
@@ -137273,7 +138150,181 @@
                     }
                   ],
                   "component_id": "2.1.3.4",
-                  "can_expand": true
+                  "can_expand": true,
+                  "components": [
+                    {
+                      "name": "Configuration & Model Management",
+                      "description": "Manages environment wiring and provider settings, enabling users to define model tiers and validate/persist API credentials for LLM and embedding services.",
+                      "key_entities": [],
+                      "source_cluster_ids": [
+                        3,
+                        5,
+                        17,
+                        20,
+                        21
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/gateway/message_replay.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.gateway.message_replay.ReplayJob.to_dict",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.active_jobs",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.create_replay_job",
+                            "src.heretek_swarm.gateway.message_replay.get_replay_manager",
+                            "src.heretek_swarm.gateway.message_replay.setup_replay_manager"
+                          ]
+                        }
+                      ],
+                      "component_id": "2.1.3.4.1",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "System Infrastructure & State Management",
+                      "description": "Handles server-side persistence and host integration including database migrations, mem0 server logic, and Electron-based Docker monitoring for desktop hosts.",
+                      "key_entities": [],
+                      "source_cluster_ids": [
+                        0,
+                        9,
+                        14
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/gateway/message_replay.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.gateway.message_replay.ReplayStatus",
+                            "src.heretek_swarm.gateway.message_replay.ReplayJob",
+                            "src.heretek_swarm.gateway.message_replay.TimeTravelRequest",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.__init__",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.resume_replay",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.get_all_jobs"
+                          ]
+                        }
+                      ],
+                      "component_id": "2.1.3.4.2",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "UI Framework & API Orchestration",
+                      "description": "Provides shared UI framework and central communication hub, translating backend responses into standardized data for the dashboard and providing API client utilities.",
+                      "key_entities": [],
+                      "source_cluster_ids": [
+                        1,
+                        4,
+                        7,
+                        13,
+                        15
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/gateway/message_replay.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.gateway.message_replay.ReplayJob.create",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.execute_replay",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager._fetch_messages",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.pause_replay",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.cancel_replay"
+                          ]
+                        }
+                      ],
+                      "component_id": "2.1.3.4.3",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Operational Visualization & Mesh",
+                      "description": "Manages the interactive canvas and real-time event mesh integration for workflow visualization and replay-aware observability of emergent metrics.",
+                      "key_entities": [],
+                      "source_cluster_ids": [
+                        2,
+                        6,
+                        8,
+                        10,
+                        11,
+                        12,
+                        16,
+                        18,
+                        19
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/gateway/message_replay.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.gateway.message_replay.ReplayJob.progress_percent",
+                            "src.heretek_swarm.gateway.message_replay.TimeTravelRequest.to_dict",
+                            "src.heretek_swarm.gateway.message_replay.TimeTravelRequest.create",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.job_count",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager._process_message",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.get_job",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.create_time_travel_request",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.execute_time_travel",
+                            "src.heretek_swarm.gateway.message_replay.MessageReplayManager.get_stats"
+                          ]
+                        }
+                      ],
+                      "component_id": "2.1.3.4.4",
+                      "can_expand": true
+                    }
+                  ],
+                  "components_relations": [
+                    {
+                      "relation": "configures and triggers initialization for",
+                      "src_name": "Configuration & Model Management",
+                      "dst_name": "System Infrastructure & State Management",
+                      "src_id": "2.1.3.4.1",
+                      "dst_id": "2.1.3.4.2",
+                      "edge_count": 2,
+                      "is_static": true
+                    },
+                    {
+                      "relation": "manages user-facing setup flow and persists credentials to",
+                      "src_name": "UI Framework & API Orchestration",
+                      "dst_name": "Configuration & Model Management",
+                      "src_id": "2.1.3.4.3",
+                      "dst_id": "2.1.3.4.1",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "provides persistence and host orchestration required by",
+                      "src_name": "System Infrastructure & State Management",
+                      "dst_name": "Operational Visualization & Mesh",
+                      "src_id": "2.1.3.4.2",
+                      "dst_id": "2.1.3.4.4",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "supplies API client and UI components used by",
+                      "src_name": "UI Framework & API Orchestration",
+                      "dst_name": "Operational Visualization & Mesh",
+                      "src_id": "2.1.3.4.3",
+                      "dst_id": "2.1.3.4.4",
+                      "edge_count": 1,
+                      "is_static": true
+                    },
+                    {
+                      "relation": "calls",
+                      "src_name": "Configuration & Model Management",
+                      "dst_name": "UI Framework & API Orchestration",
+                      "src_id": "2.1.3.4.1",
+                      "dst_id": "2.1.3.4.3",
+                      "edge_count": 1,
+                      "is_static": true
+                    },
+                    {
+                      "relation": "calls",
+                      "src_name": "Operational Visualization & Mesh",
+                      "dst_name": "Configuration & Model Management",
+                      "src_id": "2.1.3.4.4",
+                      "dst_id": "2.1.3.4.1",
+                      "edge_count": 1,
+                      "is_static": true
+                    }
+                  ]
                 }
               ],
               "components_relations": [
@@ -144809,7 +145860,290 @@
                     }
                   ],
                   "component_id": "3.3.2.3",
-                  "can_expand": true
+                  "can_expand": true,
+                  "components": [
+                    {
+                      "name": "Visual Design Interface",
+                      "description": "Provides the interactive canvas and UI primitives for building agent workflows. It manages the visual lifecycle of nodes (Agents, Tools, LLMs) and edges, utilizing React Flow to handle drag-and-drop operations and complex node grouping.",
+                      "key_entities": [],
+                      "source_cluster_ids": [
+                        1,
+                        2,
+                        6,
+                        10,
+                        13,
+                        15,
+                        16,
+                        17,
+                        18,
+                        23,
+                        26,
+                        27,
+                        30,
+                        32,
+                        37,
+                        39,
+                        40,
+                        41,
+                        44,
+                        45,
+                        47,
+                        54,
+                        60,
+                        62,
+                        63,
+                        64,
+                        67,
+                        69,
+                        76,
+                        77,
+                        78,
+                        79,
+                        85,
+                        86,
+                        87,
+                        88,
+                        89,
+                        90,
+                        91,
+                        93,
+                        96,
+                        105,
+                        106,
+                        108,
+                        110,
+                        114,
+                        115,
+                        116,
+                        117
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/actors/validation.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.actors.validation.MemoryStoreRequest.validate_metadata",
+                            "src.heretek_swarm.actors.validation.QueryRequest.validate_filters",
+                            "src.heretek_swarm.actors.validation.CoordinationRequest.validate_input_data",
+                            "src.heretek_swarm.actors.validation.CoordinationRequest.validate_protocol"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.3.2.3.1",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Structural Integrity Engine",
+                      "description": "The core logic layer responsible for real-time graph analysis. It enforces the MAS framework's constraints by detecting structural violations and providing immediate feedback to the user through a dedicated validation panel.",
+                      "key_entities": [],
+                      "source_cluster_ids": [
+                        80,
+                        111,
+                        112,
+                        113
+                      ],
+                      "file_methods": [],
+                      "component_id": "3.3.2.3.2",
+                      "can_expand": false
+                    },
+                    {
+                      "name": "Graph State & Schema Manager",
+                      "description": "Acts as the source of truth for the current workflow configuration. It manages the Zustand-based state store for the canvas and handles the detailed parameterization of individual nodes, including LLM model selection and agent persona definitions.",
+                      "key_entities": [],
+                      "source_cluster_ids": [
+                        3,
+                        19,
+                        20,
+                        21,
+                        22,
+                        33,
+                        57,
+                        61,
+                        83,
+                        109,
+                        118
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/actors/validation.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.actors.validation.DeliberationRequest.validate_triad_members"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.3.2.3.3",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Execution Feedback Loop",
+                      "description": "Bridges the visual representation with the live swarm execution. It consumes real-time event streams from the NATS backbone to overlay execution progress, agent status, and consciousness metrics directly onto the workflow graph.",
+                      "key_entities": [],
+                      "source_cluster_ids": [
+                        8,
+                        11,
+                        12,
+                        24,
+                        25,
+                        29,
+                        31,
+                        36,
+                        38,
+                        42,
+                        46,
+                        48,
+                        49,
+                        50,
+                        53,
+                        58,
+                        65,
+                        66,
+                        68,
+                        70,
+                        81,
+                        82,
+                        92,
+                        94,
+                        95,
+                        97,
+                        98,
+                        99,
+                        100
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/actors/validation.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.actors.validation.MessageContent.validate_correlation_id",
+                            "src.heretek_swarm.actors.validation.validate_message"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.3.2.3.4",
+                      "can_expand": true
+                    },
+                    {
+                      "name": "Persistence & Deployment Gateway",
+                      "description": "Handles the communication with the FastAPI backend and the underlying system infrastructure. It is responsible for serializing the validated graph into deployment contracts and ensuring the local environment (Docker, NATS) is ready for swarm initialization.",
+                      "key_entities": [],
+                      "source_cluster_ids": [
+                        0,
+                        4,
+                        5,
+                        7,
+                        9,
+                        14,
+                        28,
+                        34,
+                        35,
+                        43,
+                        51,
+                        52,
+                        55,
+                        56,
+                        59,
+                        71,
+                        72,
+                        73,
+                        74,
+                        75,
+                        84,
+                        101,
+                        102,
+                        103,
+                        104,
+                        107,
+                        119,
+                        120
+                      ],
+                      "file_methods": [
+                        {
+                          "file_path": "src/heretek_swarm/actors/validation.py",
+                          "file_status": "unchanged",
+                          "methods": [
+                            "src.heretek_swarm.actors.validation.MessageContent",
+                            "src.heretek_swarm.actors.validation.MessageContent.validate_sender_id",
+                            "src.heretek_swarm.actors.validation.MessageContent.validate_content",
+                            "src.heretek_swarm.actors.validation.DeliberationRequest",
+                            "src.heretek_swarm.actors.validation.MemoryStoreRequest",
+                            "src.heretek_swarm.actors.validation.MemoryStoreRequest.validate_content",
+                            "src.heretek_swarm.actors.validation.AnalysisRequest",
+                            "src.heretek_swarm.actors.validation.AnalysisRequest.validate_request_id",
+                            "src.heretek_swarm.actors.validation.ValidationRequest",
+                            "src.heretek_swarm.actors.validation.QueryRequest",
+                            "src.heretek_swarm.actors.validation.LineageRequest",
+                            "src.heretek_swarm.actors.validation.LineageRequest.validate_parent_ids",
+                            "src.heretek_swarm.actors.validation.HealthCheckRequest",
+                            "src.heretek_swarm.actors.validation.SuspendResumeRequest",
+                            "src.heretek_swarm.actors.validation.TerminateRequest",
+                            "src.heretek_swarm.actors.validation.CollectiveTaskRequest",
+                            "src.heretek_swarm.actors.validation.TaskRequest",
+                            "src.heretek_swarm.actors.validation.DependencyRequest",
+                            "src.heretek_swarm.actors.validation.CoordinationRequest"
+                          ]
+                        }
+                      ],
+                      "component_id": "3.3.2.3.5",
+                      "can_expand": true
+                    }
+                  ],
+                  "components_relations": [
+                    {
+                      "relation": "synchronizes user-driven canvas changes to",
+                      "src_name": "Visual Design Interface",
+                      "dst_name": "Graph State & Schema Manager",
+                      "src_id": "3.3.2.3.1",
+                      "dst_id": "3.3.2.3.3",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "triggers graph-wide validation logic in",
+                      "src_name": "Graph State & Schema Manager",
+                      "dst_name": "Structural Integrity Engine",
+                      "src_id": "3.3.2.3.3",
+                      "dst_id": "3.3.2.3.2",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "returns validation errors and warnings to",
+                      "src_name": "Structural Integrity Engine",
+                      "dst_name": "Visual Design Interface",
+                      "src_id": "3.3.2.3.2",
+                      "dst_id": "3.3.2.3.1",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "sends the finalized, validated workflow state for serialization and backend persistence to",
+                      "src_name": "Graph State & Schema Manager",
+                      "dst_name": "Persistence & Deployment Gateway",
+                      "src_id": "3.3.2.3.3",
+                      "dst_id": "3.3.2.3.5",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "streams live agent status and interaction metrics to",
+                      "src_name": "Execution Feedback Loop",
+                      "dst_name": "Visual Design Interface",
+                      "src_id": "3.3.2.3.4",
+                      "dst_id": "3.3.2.3.1",
+                      "edge_count": 0,
+                      "is_static": false
+                    },
+                    {
+                      "relation": "hydrates the state store with existing workflow configurations and available model/tool schemas from",
+                      "src_name": "Persistence & Deployment Gateway",
+                      "dst_name": "Graph State & Schema Manager",
+                      "src_id": "3.3.2.3.5",
+                      "dst_id": "3.3.2.3.3",
+                      "edge_count": 0,
+                      "is_static": false
+                    }
+                  ]
                 },
                 {
                   "name": "Pre-flight & Integrity Guard",
