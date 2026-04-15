@@ -643,6 +643,19 @@ class DeliberationEngine:
 
         self.active_deliberations[deliberation_id]["arguments"].append(argument)
 
+        # Track position change if agent already has a position
+        current_positions = self.active_deliberations[deliberation_id].get("positions", {})
+        if agent_id in current_positions:
+            previous_pos = current_positions[agent_id].get("position")
+            if previous_pos is not None and previous_pos != position:
+                self.record_position_change(
+                    deliberation_id=deliberation_id,
+                    agent_id=agent_id,
+                    previous_position=previous_pos,
+                    new_position=position,
+                    reasoning=reasoning[:200] if reasoning else "",
+                )
+
         # Update agent position
         self.active_deliberations[deliberation_id]["positions"][agent_id] = {
             "position": position,

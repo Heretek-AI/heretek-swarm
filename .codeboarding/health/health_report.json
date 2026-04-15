@@ -1,23 +1,37 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-15T00:41:14.928707+00:00",
-  "overall_score": 0.9497197117034665,
+  "timestamp": "2026-04-15T04:56:13.941236+00:00",
+  "overall_score": 0.9487250708293984,
   "check_summaries": [
     {
       "check_name": "function_size",
       "description": "Checks that functions/methods do not exceed line count thresholds",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 4328,
-      "findings_count": 2,
-      "warning_count": 2,
-      "score": 0.9995378927911276,
+      "total_entities_checked": 4485,
+      "findings_count": 4,
+      "warning_count": 4,
+      "score": 0.999108138238573,
       "finding_groups": [
         {
           "severity": "warning",
           "threshold": 150,
           "description": "Functions exceeding 150.0 lines",
           "entities": [
+            {
+              "entity_name": "src.heretek_swarm.security.threat_detection.ExternalThreatDetector.detect_threat",
+              "file_path": "src/heretek_swarm/security/threat_detection.py",
+              "line_start": 267,
+              "line_end": 434,
+              "metric_value": 167
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.sentinel.SentinelAgent.__init__",
+              "file_path": "src/heretek_swarm/actors/sentinel.py",
+              "line_start": 191,
+              "line_end": 355,
+              "metric_value": 164
+            },
             {
               "entity_name": "src.heretek_swarm.orchestration.heavyswarm.HeavySwarmWorkflow.execute",
               "file_path": "src/heretek_swarm/orchestration/heavyswarm.py",
@@ -41,16 +55,30 @@
       "description": "Checks efferent coupling: how many other functions each function calls",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 4328,
-      "findings_count": 11,
-      "warning_count": 11,
-      "score": 0.9974584103512015,
+      "total_entities_checked": 4485,
+      "findings_count": 12,
+      "warning_count": 12,
+      "score": 0.9973244147157191,
       "finding_groups": [
         {
           "severity": "warning",
           "threshold": 10,
           "description": "Functions calling more than 10.0 other functions",
           "entities": [
+            {
+              "entity_name": "src.heretek_swarm.actors.sentinel.SentinelAgent._register_handlers",
+              "file_path": "src/heretek_swarm/actors/sentinel.py",
+              "line_start": 1185,
+              "line_end": 1212,
+              "metric_value": 22
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._register_handlers",
+              "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
+              "line_start": 330,
+              "line_end": 351,
+              "metric_value": 17
+            },
             {
               "entity_name": "src.heretek_swarm.workflow.validator.WorkflowValidator.validate",
               "file_path": "src/heretek_swarm/workflow/validator.py",
@@ -64,13 +92,6 @@
               "line_start": 147,
               "line_end": 182,
               "metric_value": 13
-            },
-            {
-              "entity_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent._register_handlers",
-              "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
-              "line_start": 261,
-              "line_end": 276,
-              "metric_value": 12
             },
             {
               "entity_name": "src.heretek_swarm.rag.hybrid_retriever.HybridRetriever.retrieve",
@@ -137,10 +158,10 @@
       "description": "Checks afferent coupling: how many other functions call each function",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 4328,
+      "total_entities_checked": 4485,
       "findings_count": 19,
       "warning_count": 19,
-      "score": 0.9956099815157117,
+      "score": 0.9957636566332219,
       "finding_groups": [
         {
           "severity": "warning",
@@ -289,10 +310,10 @@
       "description": "Detects classes with too many methods, too much code, or too many outgoing dependencies",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 384,
-      "findings_count": 81,
-      "warning_count": 81,
-      "score": 0.7890625,
+      "total_entities_checked": 394,
+      "findings_count": 86,
+      "warning_count": 86,
+      "score": 0.7817258883248731,
       "finding_groups": [
         {
           "severity": "warning",
@@ -300,14 +321,19 @@
           "description": "Classes exceeding god class criteria (methods, LOC, or fan-out)",
           "entities": [
             {
-              "entity_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent",
-              "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
-              "metric_value": 1310.0
+              "entity_name": "src.heretek_swarm.actors.sentinel.SentinelAgent",
+              "file_path": "src/heretek_swarm/actors/sentinel.py",
+              "metric_value": 2127.0
             },
             {
               "entity_name": "src.heretek_swarm.actors.sentinel_prime.SentinelPrimeAgent",
               "file_path": "src/heretek_swarm/actors/sentinel_prime.py",
-              "metric_value": 1141.0
+              "metric_value": 1534.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent",
+              "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
+              "metric_value": 1310.0
             },
             {
               "entity_name": "src.heretek_swarm.actors.prism.PrismAgent",
@@ -420,11 +446,6 @@
               "metric_value": 776.0
             },
             {
-              "entity_name": "src.heretek_swarm.actors.sentinel.SentinelAgent",
-              "file_path": "src/heretek_swarm/actors/sentinel.py",
-              "metric_value": 769.0
-            },
-            {
               "entity_name": "src.heretek_swarm.plugins.consciousness.ConsciousnessPlugin",
               "file_path": "src/heretek_swarm/plugins/consciousness.py",
               "metric_value": 768.0
@@ -475,6 +496,11 @@
               "metric_value": 693.0
             },
             {
+              "entity_name": "src.heretek_swarm.security.anomaly_detection.BehavioralAnomalyDetector",
+              "file_path": "src/heretek_swarm/security/anomaly_detection.py",
+              "metric_value": 676.0
+            },
+            {
               "entity_name": "src.heretek_swarm.gateway.nats_event_mesh.NATSEventMesh",
               "file_path": "src/heretek_swarm/gateway/nats_event_mesh.py",
               "metric_value": 672.0
@@ -482,6 +508,11 @@
             {
               "entity_name": "src.heretek_swarm.consensus.audit_trail.ConsensusAuditTrail",
               "file_path": "src/heretek_swarm/consensus/audit_trail.py",
+              "metric_value": 669.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.security.behavioral_baseline.BehavioralBaseline",
+              "file_path": "src/heretek_swarm/security/behavioral_baseline.py",
               "metric_value": 669.0
             },
             {
@@ -503,6 +534,11 @@
               "entity_name": "src.heretek_swarm.integrations.openai_assistants.OpenAIAssistantsAdapter",
               "file_path": "src/heretek_swarm/integrations/openai_assistants.py",
               "metric_value": 646.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.consensus.immune.ImmuneResponseBuilding",
+              "file_path": "src/heretek_swarm/consensus/immune.py",
+              "metric_value": 640.0
             },
             {
               "entity_name": "src.heretek_swarm.workflow.engine.WorkflowEngine",
@@ -568,6 +604,11 @@
               "entity_name": "src.heretek_swarm.rag.hybrid_retriever.HybridRetriever",
               "file_path": "src/heretek_swarm/rag/hybrid_retriever.py",
               "metric_value": 570.0
+            },
+            {
+              "entity_name": "src.heretek_swarm.security.threat_detection.ExternalThreatDetector",
+              "file_path": "src/heretek_swarm/security/threat_detection.py",
+              "metric_value": 560.0
             },
             {
               "entity_name": "src.heretek_swarm.state.event_store.EventStore",
@@ -685,6 +726,11 @@
               "metric_value": 422.0
             },
             {
+              "entity_name": "src.heretek_swarm.consensus.immune.ImmuneResponseEngine",
+              "file_path": "src/heretek_swarm/consensus/immune.py",
+              "metric_value": 415.0
+            },
+            {
               "entity_name": "src.heretek_swarm.config.loader.ConfigLoader",
               "file_path": "src/heretek_swarm/config/loader.py",
               "metric_value": 410.0
@@ -722,7 +768,7 @@
       "description": "Computes Martin's instability metric (I = Ce / (Ca + Ce)) per package",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 13,
+      "total_entities_checked": 15,
       "findings_count": 0,
       "warning_count": 0,
       "score": 1.0,
@@ -744,9 +790,9 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 623,
-      "findings_count": 623,
-      "warning_count": 616,
+      "total_entities_checked": 659,
+      "findings_count": 659,
+      "warning_count": 652,
       "score": 0.0,
       "finding_groups": [
         {
@@ -3268,6 +3314,27 @@
               "metric_value": 0.0
             },
             {
+              "entity_name": "[unused_variable] \"total_weight\" is not accessed",
+              "file_path": "src/heretek_swarm/consensus/deliberation.py",
+              "line_start": 1074,
+              "line_end": 1074,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"time\" is not accessed",
+              "file_path": "src/heretek_swarm/consensus/immune.py",
+              "line_start": 28,
+              "line_end": 28,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"pattern_content\" is not accessed",
+              "file_path": "src/heretek_swarm/consensus/immune.py",
+              "line_start": 401,
+              "line_end": 401,
+              "metric_value": 0.0
+            },
+            {
               "entity_name": "[unused_variable] \"consensus_id\" is not accessed",
               "file_path": "src/heretek_swarm/consensus/maker.py",
               "line_start": 382,
@@ -4311,6 +4378,27 @@
               "metric_value": 0.0
             },
             {
+              "entity_name": "[unused_variable] \"time\" is not accessed",
+              "file_path": "src/heretek_swarm/security/behavioral_baseline.py",
+              "line_start": 27,
+              "line_end": 27,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"timedelta\" is not accessed",
+              "file_path": "src/heretek_swarm/security/behavioral_baseline.py",
+              "line_start": 30,
+              "line_end": 30,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"max_baseline_age_days\" is not accessed",
+              "file_path": "src/heretek_swarm/security/behavioral_baseline.py",
+              "line_start": 248,
+              "line_end": 248,
+              "metric_value": 0.0
+            },
+            {
               "entity_name": "[unused_variable] \"_old_time\" is not accessed",
               "file_path": "src/heretek_swarm/security/ddos_protection.py",
               "line_start": 552,
@@ -4336,6 +4424,104 @@
               "file_path": "src/heretek_swarm/security/guardrails.py",
               "line_start": 355,
               "line_end": 355,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"asyncio\" is not accessed",
+              "file_path": "src/heretek_swarm/security/threat_detection.py",
+              "line_start": 21,
+              "line_end": 21,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"time\" is not accessed",
+              "file_path": "src/heretek_swarm/security/threat_detection.py",
+              "line_start": 24,
+              "line_end": 24,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"AdversarialDetectionResult\" is not accessed",
+              "file_path": "src/heretek_swarm/security/threat_detection.py",
+              "line_start": 34,
+              "line_end": 34,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"AdversarialDetector\" is not accessed",
+              "file_path": "src/heretek_swarm/security/threat_detection.py",
+              "line_start": 35,
+              "line_end": 35,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"AttackCategory\" is not accessed",
+              "file_path": "src/heretek_swarm/security/threat_detection.py",
+              "line_start": 36,
+              "line_end": 36,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"DetectionMatch\" is not accessed",
+              "file_path": "src/heretek_swarm/security/threat_detection.py",
+              "line_start": 37,
+              "line_end": 37,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"DDoSDetectionConfig\" is not accessed",
+              "file_path": "src/heretek_swarm/security/threat_detection.py",
+              "line_start": 42,
+              "line_end": 42,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"DDoSDetectionResult\" is not accessed",
+              "file_path": "src/heretek_swarm/security/threat_detection.py",
+              "line_start": 43,
+              "line_end": 43,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"DDoSDetector\" is not accessed",
+              "file_path": "src/heretek_swarm/security/threat_detection.py",
+              "line_start": 44,
+              "line_end": 44,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"DDoSMitigator\" is not accessed",
+              "file_path": "src/heretek_swarm/security/threat_detection.py",
+              "line_start": 45,
+              "line_end": 45,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"MitigationAction\" is not accessed",
+              "file_path": "src/heretek_swarm/security/threat_detection.py",
+              "line_start": 46,
+              "line_end": 46,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"MitigationConfig\" is not accessed",
+              "file_path": "src/heretek_swarm/security/threat_detection.py",
+              "line_start": 47,
+              "line_end": 47,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"RateLimitResult\" is not accessed",
+              "file_path": "src/heretek_swarm/security/threat_detection.py",
+              "line_start": 50,
+              "line_end": 50,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"time_range\" is not accessed",
+              "file_path": "src/heretek_swarm/security/threat_detection.py",
+              "line_start": 703,
+              "line_end": 703,
               "metric_value": 0.0
             },
             {
@@ -4640,6 +4826,13 @@
               "metric_value": 0.0
             },
             {
+              "entity_name": "[unused_import] Import \"time\" is not accessed",
+              "file_path": "src/heretek_swarm/consensus/immune.py",
+              "line_start": 28,
+              "line_end": 28,
+              "metric_value": 0.0
+            },
+            {
               "entity_name": "[unused_import] Import \"ConnectionClosedError\" is not accessed",
               "file_path": "src/heretek_swarm/gateway/jetstream_manager.py",
               "line_start": 37,
@@ -4836,10 +5029,115 @@
               "metric_value": 0.0
             },
             {
+              "entity_name": "[unused_import] Import \"time\" is not accessed",
+              "file_path": "src/heretek_swarm/security/behavioral_baseline.py",
+              "line_start": 27,
+              "line_end": 27,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"timedelta\" is not accessed",
+              "file_path": "src/heretek_swarm/security/behavioral_baseline.py",
+              "line_start": 30,
+              "line_end": 30,
+              "metric_value": 0.0
+            },
+            {
               "entity_name": "[unused_import] Import \"redis.asyncio\" is not accessed",
               "file_path": "src/heretek_swarm/security/ddos_protection.py",
               "line_start": 334,
               "line_end": 334,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"asyncio\" is not accessed",
+              "file_path": "src/heretek_swarm/security/threat_detection.py",
+              "line_start": 21,
+              "line_end": 21,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"time\" is not accessed",
+              "file_path": "src/heretek_swarm/security/threat_detection.py",
+              "line_start": 24,
+              "line_end": 24,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"AdversarialDetectionResult\" is not accessed",
+              "file_path": "src/heretek_swarm/security/threat_detection.py",
+              "line_start": 34,
+              "line_end": 34,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"AdversarialDetector\" is not accessed",
+              "file_path": "src/heretek_swarm/security/threat_detection.py",
+              "line_start": 35,
+              "line_end": 35,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"AttackCategory\" is not accessed",
+              "file_path": "src/heretek_swarm/security/threat_detection.py",
+              "line_start": 36,
+              "line_end": 36,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"DetectionMatch\" is not accessed",
+              "file_path": "src/heretek_swarm/security/threat_detection.py",
+              "line_start": 37,
+              "line_end": 37,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"DDoSDetectionConfig\" is not accessed",
+              "file_path": "src/heretek_swarm/security/threat_detection.py",
+              "line_start": 42,
+              "line_end": 42,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"DDoSDetectionResult\" is not accessed",
+              "file_path": "src/heretek_swarm/security/threat_detection.py",
+              "line_start": 43,
+              "line_end": 43,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"DDoSDetector\" is not accessed",
+              "file_path": "src/heretek_swarm/security/threat_detection.py",
+              "line_start": 44,
+              "line_end": 44,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"DDoSMitigator\" is not accessed",
+              "file_path": "src/heretek_swarm/security/threat_detection.py",
+              "line_start": 45,
+              "line_end": 45,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"MitigationAction\" is not accessed",
+              "file_path": "src/heretek_swarm/security/threat_detection.py",
+              "line_start": 46,
+              "line_end": 46,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"MitigationConfig\" is not accessed",
+              "file_path": "src/heretek_swarm/security/threat_detection.py",
+              "line_start": 47,
+              "line_end": 47,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"RateLimitResult\" is not accessed",
+              "file_path": "src/heretek_swarm/security/threat_detection.py",
+              "line_start": 50,
+              "line_end": 50,
               "metric_value": 0.0
             }
           ]
@@ -5402,40 +5700,40 @@
       "language": "TypeScript",
       "check_type": "circular_dependencies",
       "cycles": [
+        "src.components.Settings -> src.api -> src.components.Agents -> src.components.Settings",
+        "src.components.Settings -> src.api -> src.components.Agents -> src.components.UI -> src.components.Settings",
+        "src.components.Settings -> src.api -> src.components.UI -> src.components.Agents -> src.components.Settings",
+        "src.components.Settings -> src.api -> src.components.UI -> src.components.Settings",
+        "src.components.Settings -> src.api -> src.components.UI -> src.utils -> src.components.Agents -> src.components.Settings",
+        "src.components.Settings -> src.components.Agents -> src.api -> src.components.UI -> src.components.Settings",
+        "src.components.Settings -> src.components.Agents -> src.components.Settings",
+        "src.components.Settings -> src.components.Agents -> src.components.UI -> src.components.Settings",
+        "src.components.Settings -> src.components.UI -> src.components.Agents -> src.components.Settings",
+        "src.components.Settings -> src.components.UI -> src.components.Settings",
+        "src.components.Settings -> src.components.UI -> src.utils -> src.components.Agents -> src.components.Settings",
         "src.utils -> src.components.Agents -> src.api -> src.components.UI -> src.utils",
-        "src.utils -> src.components.Agents -> src.components.Settings -> src.api -> src.components.UI -> src.utils",
-        "src.utils -> src.components.Agents -> src.components.Settings -> src.components.UI -> src.utils",
         "src.utils -> src.components.Agents -> src.components.UI -> src.utils",
         "src.utils -> src.components.UI -> src.utils",
         "src.components.Agents -> src.api -> src.components.Agents",
         "src.components.Agents -> src.api -> src.components.UI -> src.components.Agents",
-        "src.components.Agents -> src.api -> src.components.UI -> src.components.Settings -> src.components.Agents",
-        "src.components.Agents -> src.components.Settings -> src.api -> src.components.Agents",
-        "src.components.Agents -> src.components.Settings -> src.api -> src.components.UI -> src.components.Agents",
-        "src.components.Agents -> src.components.Settings -> src.components.Agents",
-        "src.components.Agents -> src.components.Settings -> src.components.UI -> src.components.Agents",
         "src.components.Agents -> src.components.UI -> src.components.Agents",
-        "src.components.Agents -> src.components.UI -> src.components.Settings -> src.api -> src.components.Agents",
-        "src.components.Agents -> src.components.UI -> src.components.Settings -> src.components.Agents",
-        "src.components.Settings -> src.api -> src.components.UI -> src.components.Settings",
-        "src.components.Settings -> src.components.UI -> src.components.Settings",
-        "dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings",
-        "dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings",
-        "dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings",
-        "dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings",
-        "dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings",
-        "dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings",
+        "dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils",
+        "dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils",
+        "dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils",
+        "dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils",
+        "dashboard.frontend.src.utils -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils",
+        "dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api",
+        "dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api",
+        "dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api",
+        "dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api",
+        "dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api",
+        "dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.api",
+        "dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api",
         "dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings",
         "dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings",
         "dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings",
         "dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Settings",
-        "dashboard.frontend.src.components.Settings -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.Settings",
-        "dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils",
-        "dashboard.frontend.src.utils -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils",
-        "dashboard.frontend.src.utils -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.utils",
-        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api -> dashboard.frontend.src.components.Agents",
-        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.api -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents",
-        "dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents"
+        "dashboard.frontend.src.components.UI -> dashboard.frontend.src.components.Agents -> dashboard.frontend.src.components.UI"
       ],
       "packages_checked": 47,
       "packages_in_cycles": 10
@@ -6317,6 +6615,18 @@
   ],
   "file_summaries": [
     {
+      "file_path": "src/heretek_swarm/security/threat_detection.py",
+      "total_findings": 29,
+      "warning_findings": 29,
+      "composite_risk_score": 100.0
+    },
+    {
+      "file_path": "src/heretek_swarm/actors/sentinel.py",
+      "total_findings": 15,
+      "warning_findings": 15,
+      "composite_risk_score": 100.0
+    },
+    {
       "file_path": "src/heretek_swarm/orchestration/heavyswarm.py",
       "total_findings": 13,
       "warning_findings": 13,
@@ -6371,12 +6681,6 @@
       "composite_risk_score": 100.0
     },
     {
-      "file_path": "src/heretek_swarm/actors/sentinel.py",
-      "total_findings": 13,
-      "warning_findings": 13,
-      "composite_risk_score": 100.0
-    },
-    {
       "file_path": "src/heretek_swarm/gateway/nats_event_mesh.py",
       "total_findings": 10,
       "warning_findings": 10,
@@ -6428,12 +6732,6 @@
       "file_path": "src/heretek_swarm/security/__init__.py",
       "total_findings": 20,
       "warning_findings": 20,
-      "composite_risk_score": 100.0
-    },
-    {
-      "file_path": "src/heretek_swarm/tools/mcp_tools.py",
-      "total_findings": 10,
-      "warning_findings": 10,
       "composite_risk_score": 100.0
     }
   ]
