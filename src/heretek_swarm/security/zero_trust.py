@@ -29,8 +29,10 @@ logger = structlog.get_logger(__name__)
 # Severity Levels for Audit Logging (Layer 4)
 # =============================================================================
 
+
 class Severity(StrEnum):
     """Security event severity levels for audit logging."""
+
     INFO = "INFO"
     WARNING = "WARNING"
     HIGH = "HIGH"
@@ -41,9 +43,11 @@ class Severity(StrEnum):
 # Validation Result Types
 # =============================================================================
 
+
 @dataclass
 class LayerResult:
     """Result from a single validation layer."""
+
     layer: str
     passed: bool
     reason: str | None = None
@@ -55,6 +59,7 @@ class LayerResult:
 @dataclass
 class ZeroTrustResult:
     """Aggregated result from all 4 validation layers."""
+
     passed: bool
     layer1: LayerResult
     layer2: LayerResult
@@ -100,6 +105,7 @@ class ZeroTrustResult:
 # Layer 1: Input Validation
 # =============================================================================
 
+
 class ValidatedInput(BaseModel):
     """
     Base model for validated input with strict Pydantic v2 settings.
@@ -135,18 +141,21 @@ class ValidatedInput(BaseModel):
 @dataclass
 class InputValidationConfig:
     """Configuration for Layer 1 Input Validation."""
+
     max_content_size: int = 10240  # 10KB default max
     min_content_size: int = 1
     require_uuid_v4: bool = True
     max_string_length: int = 50000
     max_array_length: int = 1000
     max_nesting_depth: int = 10
-    allowed_content_types: set[str] = field(default_factory=lambda: {
-        "text/plain",
-        "application/json",
-        "text/markdown",
-        "text/html",
-    })
+    allowed_content_types: set[str] = field(
+        default_factory=lambda: {
+            "text/plain",
+            "application/json",
+            "text/markdown",
+            "text/html",
+        }
+    )
 
 
 class InputValidator:
@@ -189,8 +198,7 @@ class InputValidator:
     def __init__(self, config: InputValidationConfig | None = None):
         self.config = config or InputValidationConfig()
         self._compiled_patterns = [
-            (re.compile(p, re.IGNORECASE), desc)
-            for p, desc in self.INJECTION_PATTERNS
+            (re.compile(p, re.IGNORECASE), desc) for p, desc in self.INJECTION_PATTERNS
         ]
 
     def validate(
@@ -221,7 +229,10 @@ class InputValidator:
                     passed=False,
                     reason=f"Content size {content_size} exceeds maximum {self.config.max_content_size}",
                     severity=Severity.WARNING,
-                    details={"content_size": content_size, "max_size": self.config.max_content_size},
+                    details={
+                        "content_size": content_size,
+                        "max_size": self.config.max_content_size,
+                    },
                 )
 
             if content_size < self.config.min_content_size:
@@ -230,7 +241,10 @@ class InputValidator:
                     passed=False,
                     reason=f"Content size {content_size} below minimum {self.config.min_content_size}",
                     severity=Severity.INFO,
-                    details={"content_size": content_size, "min_size": self.config.min_content_size},
+                    details={
+                        "content_size": content_size,
+                        "min_size": self.config.min_content_size,
+                    },
                 )
 
             # Validate request_id if present
@@ -323,17 +337,11 @@ class InputValidator:
         if isinstance(obj, dict):
             if not obj:
                 return current_depth
-            return max(
-                self._calculate_depth(v, current_depth + 1)
-                for v in obj.values()
-            )
+            return max(self._calculate_depth(v, current_depth + 1) for v in obj.values())
         if isinstance(obj, (list, tuple)):
             if not obj:
                 return current_depth
-            return max(
-                self._calculate_depth(item, current_depth + 1)
-                for item in obj
-            )
+            return max(self._calculate_depth(item, current_depth + 1) for item in obj)
         return current_depth
 
 
@@ -341,9 +349,11 @@ class InputValidator:
 # Layer 2: Context Validation
 # =============================================================================
 
+
 @dataclass
 class BehavioralBaseline:
     """Baseline for behavioral analysis."""
+
     agent_id: str
     avg_request_size: float = 0.0
     avg_request_interval_ms: float = 0.0
@@ -356,6 +366,7 @@ class BehavioralBaseline:
 @dataclass
 class ContextValidationConfig:
     """Configuration for Layer 2 Context Validation."""
+
     enable_injection_detection: bool = True
     enable_behavioral_analysis: bool = True
     enable_anomaly_detection: bool = True
@@ -379,7 +390,10 @@ class ContextValidator:
     # Advanced injection patterns for context analysis
     CONTEXT_INJECTION_PATTERNS = [
         # Prompt injection patterns
-        (r"ignore\s+(all\s+)?(previous|prior)\s+instructions", "prompt injection: ignore instructions"),
+        (
+            r"ignore\s+(all\s+)?(previous|prior)\s+instructions",
+            "prompt injection: ignore instructions",
+        ),
         (r"disregard\s+(all\s+)?(previous|prior)\s+", "prompt injection: disregard"),
         (r"you\s+are\s+now\s+", "prompt injection: role change"),
         (r"act\s+as\s+(if|though)\s+", "prompt injection: role play"),
@@ -401,8 +415,7 @@ class ContextValidator:
         self.config = config or ContextValidationConfig()
         self._baselines: dict[str, BehavioralBaseline] = {}
         self._compiled_patterns = [
-            (re.compile(p, re.IGNORECASE), desc)
-            for p, desc in self.CONTEXT_INJECTION_PATTERNS
+            (re.compile(p, re.IGNORECASE), desc) for p, desc in self.CONTEXT_INJECTION_PATTERNS
         ]
 
     def validate(
@@ -511,9 +524,7 @@ class ContextValidator:
             if baseline.avg_request_size > 0:
                 z_score = size_deviation / baseline.avg_request_size
                 if z_score > self.config.anomaly_threshold:
-                    anomalies.append(
-                        f"Request size anomaly (z={z_score:.2f})"
-                    )
+                    anomalies.append(f"Request size anomaly (z={z_score:.2f})")
 
             # Check for timing anomaly (rapid requests)
             if baseline.last_request_time:
@@ -522,16 +533,13 @@ class ContextValidator:
 
                 if baseline.avg_request_interval_ms > 0:
                     if interval_ms < baseline.avg_request_interval_ms * 0.1:
-                        anomalies.append(
-                            f"Rapid request detected (interval={interval_ms:.0f}ms)"
-                        )
+                        anomalies.append(f"Rapid request detected (interval={interval_ms:.0f}ms)")
 
         # Update baseline
         baseline.total_requests += 1
         baseline.avg_request_size = (
-            (baseline.avg_request_size * (baseline.total_requests - 1) + request_size)
-            / baseline.total_requests
-        )
+            baseline.avg_request_size * (baseline.total_requests - 1) + request_size
+        ) / baseline.total_requests
         baseline.last_request_time = current_time.isoformat()
 
         return anomalies
@@ -552,9 +560,11 @@ class ContextValidator:
 # Layer 3: Output Validation
 # =============================================================================
 
+
 @dataclass
 class OutputValidationConfig:
     """Configuration for Layer 3 Output Validation."""
+
     enable_pii_detection: bool = True
     enable_sensitive_data_filtering: bool = True
     enable_response_sanitization: bool = True
@@ -585,8 +595,10 @@ class OutputValidator:
         # IP addresses
         (r"\b(?:\d{1,3}\.){3}\d{1,3}\b", "[IP_REDACTED]"),
         # API keys (common patterns)
-        (r'\b(?:api[_-]?key|apikey|token|secret|password)\s*[=:]\s*["\']?[a-zA-Z0-9_-]{16,}["\']?',
-         "[API_KEY_REDACTED]"),
+        (
+            r'\b(?:api[_-]?key|apikey|token|secret|password)\s*[=:]\s*["\']?[a-zA-Z0-9_-]{16,}["\']?',
+            "[API_KEY_REDACTED]",
+        ),
     ]
 
     # Sensitive data patterns
@@ -594,8 +606,10 @@ class OutputValidator:
         # Private keys
         (r"-----BEGIN\s+(?:RSA\s+)?PRIVATE\s+KEY-----", "[PRIVATE_KEY_REDACTED]"),
         # AWS keys
-        (r"(?:A3T[A-Z0-9]|AKIA|AGPA|AIDA|AROA|AIPA|ANPA|ANVA|ASIA)[A-Z0-9]{16}",
-         "[AWS_KEY_REDACTED]"),
+        (
+            r"(?:A3T[A-Z0-9]|AKIA|AGPA|AIDA|AROA|AIPA|ANPA|ANVA|ASIA)[A-Z0-9]{16}",
+            "[AWS_KEY_REDACTED]",
+        ),
         # JWT tokens
         (r"eyJ[a-zA-Z0-9_-]*\.eyJ[a-zA-Z0-9_-]*\.[a-zA-Z0-9_-]*", "[JWT_REDACTED]"),
     ]
@@ -603,8 +617,7 @@ class OutputValidator:
     def __init__(self, config: OutputValidationConfig | None = None):
         self.config = config or OutputValidationConfig()
         self._compiled_pii = [
-            (re.compile(p, re.IGNORECASE), replacement)
-            for p, replacement in self.PII_PATTERNS
+            (re.compile(p, re.IGNORECASE), replacement) for p, replacement in self.PII_PATTERNS
         ]
         self._compiled_sensitive = [
             (re.compile(p, re.IGNORECASE), replacement)
@@ -640,7 +653,10 @@ class OutputValidator:
                     passed=False,
                     reason=f"Output size {len(output_str)} exceeds maximum {self.config.max_output_size}",
                     severity=Severity.WARNING,
-                    details={"output_size": len(output_str), "max_size": self.config.max_output_size},
+                    details={
+                        "output_size": len(output_str),
+                        "max_size": self.config.max_output_size,
+                    },
                 )
 
             # PII detection
@@ -679,7 +695,8 @@ class OutputValidator:
                     "latency_ms": latency_ms,
                     "pii_detected": detected_pii,
                     "sensitive_detected": detected_sensitive,
-                    "sanitized": self.config.redact_pii and (bool(detected_pii) or bool(detected_sensitive)),
+                    "sanitized": self.config.redact_pii
+                    and (bool(detected_pii) or bool(detected_sensitive)),
                     "sanitized_output": sanitized_output,
                 },
             )
@@ -718,9 +735,11 @@ class OutputValidator:
 # Layer 4: Audit Logging
 # =============================================================================
 
+
 @dataclass
 class AuditLogConfig:
     """Configuration for Layer 4 Audit Logging."""
+
     enable_logging: bool = True
     log_all_events: bool = True
     log_level: str = "INFO"
@@ -847,6 +866,7 @@ class AuditLogger:
 # =============================================================================
 # Zero-Trust Orchestrator
 # =============================================================================
+
 
 class ZeroTrustValidator:
     """
@@ -1032,9 +1052,7 @@ class ZeroTrustValidator:
     def get_metrics(self) -> dict[str, Any]:
         """Get validation metrics."""
         avg_latency = (
-            self._total_latency_ms / self._validation_count
-            if self._validation_count > 0
-            else 0
+            self._total_latency_ms / self._validation_count if self._validation_count > 0 else 0
         )
 
         return {
@@ -1058,6 +1076,7 @@ class ZeroTrustValidator:
 # Convenience Functions
 # =============================================================================
 
+
 def create_default_validator() -> ZeroTrustValidator:
     """Create a ZeroTrustValidator with default configuration."""
     return ZeroTrustValidator(
@@ -1072,7 +1091,7 @@ def create_strict_validator() -> ZeroTrustValidator:
     """Create a ZeroTrustValidator with strict security configuration."""
     return ZeroTrustValidator(
         input_config=InputValidationConfig(
-            max_content_size=5120,  # 5KB
+            max_content_size=5120,
             require_uuid_v4=True,
             max_nesting_depth=5,
         ),
@@ -1080,7 +1099,7 @@ def create_strict_validator() -> ZeroTrustValidator:
             enable_injection_detection=True,
             enable_behavioral_analysis=True,
             enable_anomaly_detection=True,
-            anomaly_threshold=2.0,  # More sensitive
+            anomaly_threshold=2.0,
         ),
         output_config=OutputValidationConfig(
             enable_pii_detection=True,
@@ -1093,4 +1112,300 @@ def create_strict_validator() -> ZeroTrustValidator:
             log_all_events=True,
             retention_days=90,
         ),
+    )
+
+
+# =============================================================================
+# External Threat Detection Integration (SAFE-02)
+# =============================================================================
+
+
+@dataclass
+class ExternalThreatConfig:
+    """Configuration for external threat detection in zero-trust."""
+
+    enable_prompt_injection_detection: bool = True
+    enable_exfiltration_detection: bool = True
+    enable_dos_detection: bool = True
+    enable_reputation_check: bool = True
+    min_reputation_score: float = 0.3
+    false_positive_threshold: float = 0.01
+    min_signals_for_block: int = 2
+    alert_on_validation_failure: bool = True
+    connection_timeout_seconds: float = 5.0
+
+
+class ExternalInputValidator:
+    """
+    Validator for external inputs with threat detection integration.
+
+    Extends the standard 4-layer validation with:
+    - Prompt injection pattern matching
+    - Exfiltration attempt detection
+    - Source reputation check
+    - DoS indicators
+    """
+
+    PROMPT_INJECTION_PATTERNS = [
+        (r"ignore\s+(all\s+)?(previous|prior)\s+instructions", "prompt_injection"),
+        (r"disregard\s+(your\s+)?(previous|last)\s+instructions", "prompt_injection"),
+        (r"new\s+instructions?\s*:", "prompt_injection"),
+        (r"<\|.*?\|>", "prompt_injection"),
+        (r"\[SYSTEM\]", "prompt_injection"),
+        (r"system\s*:\s*", "prompt_injection"),
+    ]
+
+    EXFILTRATION_PATTERNS = [
+        (r"extract.*(password|secret|key|token|credential)", "exfiltration"),
+        (r"(dump|export|download)\s+(all|entire|full)\s+(memory|context|state)", "exfiltration"),
+        (r"show\s+me\s+(your|all)\s+(system|prompt|instruction)", "exfiltration"),
+    ]
+
+    DOS_PATTERNS = [
+        (r"(repeating|same)\s+(request|input)\s+(\d+|\w+)\s+times", "dos"),
+        (r"for\s+(\d+)\s+(iterations?|loops?|cycles?)", "dos"),
+    ]
+
+    def __init__(
+        self,
+        external_config: ExternalThreatConfig | None = None,
+        context_validator: ContextValidator | None = None,
+    ):
+        self.config = external_config or ExternalThreatConfig()
+        self.context_validator = context_validator or ContextValidator()
+        self._compiled_prompt = [
+            (re.compile(p, re.IGNORECASE), t) for p, t in self.PROMPT_INJECTION_PATTERNS
+        ]
+        self._compiled_exfil = [
+            (re.compile(p, re.IGNORECASE), t) for p, t in self.EXFILTRATION_PATTERNS
+        ]
+        self._compiled_dos = [(re.compile(p, re.IGNORECASE), t) for p, t in self.DOS_PATTERNS]
+        self._source_reputation: dict[str, float] = {}
+        self._validation_failures: dict[str, list[float]] = defaultdict(list)
+
+    def check_reputation(self, source: str) -> tuple[bool, float, str]:
+        """Check source reputation score."""
+        score = self._source_reputation.get(source, 0.5)
+        passed = score >= self.config.min_reputation_score
+        reason = "trusted" if passed else f"low_reputation({score:.2f})"
+        return passed, score, reason
+
+    def update_reputation(
+        self,
+        source: str,
+        blocked: bool,
+        weight: float = 1.0,
+    ) -> float:
+        """Update source reputation score."""
+        current = self._source_reputation.get(source, 0.5)
+        if blocked:
+            new_score = max(0.0, current - (0.1 * weight))
+        else:
+            new_score = min(1.0, current + (0.01 * weight))
+        self._source_reputation[source] = new_score
+        return new_score
+
+    def validate_external_input(
+        self,
+        data: dict[str, Any],
+        source: str,
+        source_type: str = "unknown",
+    ) -> tuple[bool, str, dict[str, Any]]:
+        """
+        Validate external input with threat detection.
+
+        Args:
+            data: Input data dictionary
+            source: Source identifier (IP, API key, etc.)
+            source_type: Type of source (api, web, cli, etc.)
+
+        Returns:
+            (passed, reason, details)
+        """
+        content_str = str(data)
+        threat_indicators = []
+        severity = Severity.INFO
+
+        if self.config.enable_prompt_injection_detection:
+            for pattern, threat_type in self._compiled_prompt:
+                if pattern.search(content_str):
+                    threat_indicators.append(threat_type)
+                    severity = Severity.HIGH
+
+        if self.config.enable_exfiltration_detection:
+            for pattern, threat_type in self._compiled_exfil:
+                if pattern.search(content_str):
+                    threat_indicators.append(threat_type)
+                    severity = Severity.HIGH
+
+        if self.config.enable_dos_detection:
+            for pattern, threat_type in self._compiled_dos:
+                if pattern.search(content_str):
+                    threat_indicators.append(threat_type)
+                    if severity != Severity.HIGH:
+                        severity = Severity.WARNING
+
+        if self.config.enable_reputation_check:
+            rep_passed, score, rep_reason = self.check_reputation(source)
+            if not rep_passed:
+                threat_indicators.append("low_reputation")
+                severity = Severity.HIGH
+
+        passed = len(threat_indicators) < self.config.min_signals_for_block
+
+        if not passed and self.config.alert_on_validation_failure:
+            self._validation_failures[source].append(time.time())
+
+        details = {
+            "source": source,
+            "source_type": source_type,
+            "threat_indicators": threat_indicators,
+            "severity": severity.value,
+            "reputation_score": self._source_reputation.get(source, 0.5),
+        }
+
+        reason = "passed"
+        if not passed:
+            reason = f"threats_detected: {', '.join(set(threat_indicators))}"
+
+        return passed, reason, details
+
+    def get_validation_failures(
+        self,
+        source: str,
+        window_seconds: int = 300,
+    ) -> int:
+        """Get number of validation failures for a source within window."""
+        now = time.time()
+        failures = self._validation_failures.get(source, [])
+        return sum(1 for f in failures if now - f < window_seconds)
+
+
+class ZeroTrustValidator:
+    """
+    Enhanced Zero-Trust Security Orchestrator with External Threat Detection.
+
+    Extends the standard 4-layer validation with:
+    - External input validation (SAFE-02)
+    - Prompt injection detection
+    - Source reputation checking
+    """
+
+    def __init__(
+        self,
+        input_config: InputValidationConfig | None = None,
+        context_config: ContextValidationConfig | None = None,
+        output_config: OutputValidationConfig | None = None,
+        audit_config: AuditLogConfig | None = None,
+        external_config: ExternalThreatConfig | None = None,
+    ):
+        self.input_validator = InputValidator(input_config)
+        self.context_validator = ContextValidator(context_config)
+        self.output_validator = OutputValidator(output_config)
+        self.audit_logger = AuditLogger(audit_config)
+        self.external_validator = ExternalInputValidator(external_config, self.context_validator)
+
+        self._validation_count = 0
+        self._total_latency_ms = 0.0
+        self._failed_validations = 0
+
+    async def validate_external_input(
+        self,
+        data: dict[str, Any],
+        source: str,
+        source_type: str = "unknown",
+        context: dict[str, Any] | None = None,
+        agent_id: str | None = None,
+        request_id: str | None = None,
+    ) -> ZeroTrustResult:
+        """
+        Validate external input through all layers plus external threat detection.
+
+        Args:
+            data: Input data to validate
+            source: Source identifier (IP, API key, etc.)
+            source_type: Type of source (api, web, cli, etc.)
+            context: Additional context for Layer 2
+            agent_id: Agent ID for logging
+            request_id: Unique request ID (UUID v4)
+
+        Returns:
+            ZeroTrustResult with all layer results
+        """
+        start_time = time.time()
+        request_id = request_id or str(uuid.uuid4())
+
+        layer1 = self.input_validator.validate(data, None, agent_id)
+
+        if layer1.severity == Severity.CRITICAL:
+            layer2 = LayerResult(
+                layer="context",
+                passed=True,
+                reason="Skipped due to Layer 1 critical failure",
+                severity=Severity.INFO,
+            )
+        else:
+            layer2 = self.context_validator.validate(data, context, agent_id)
+
+        external_passed, external_reason, external_details = (
+            self.external_validator.validate_external_input(data, source, source_type)
+        )
+
+        layer2_external = LayerResult(
+            layer="context_external",
+            passed=external_passed,
+            reason=external_reason,
+            severity=Severity(external_details.get("severity", "INFO")),
+            details=external_details,
+        )
+
+        layer3 = LayerResult(
+            layer="output",
+            passed=True,
+            reason="Input validation - output layer applied on response",
+            severity=Severity.INFO,
+        )
+
+        passed = layer1.passed and layer2.passed and external_passed
+
+        latency_ms = (time.time() - start_time) * 1000
+
+        result = ZeroTrustResult(
+            passed=passed,
+            layer1=layer1,
+            layer2=layer2,
+            layer3=layer3,
+            layer4=LayerResult(layer="audit", passed=True, severity=Severity.INFO),
+            request_id=request_id,
+            agent_id=agent_id,
+            total_latency_ms=latency_ms,
+        )
+
+        result.layer4 = self.audit_logger.log(
+            event_type="external_input_validation",
+            result=result,
+            additional_context={
+                "layer1_passed": layer1.passed,
+                "layer2_passed": layer2.passed,
+                "external_passed": external_passed,
+                "external_threats": external_details.get("threat_indicators", []),
+            },
+        )
+
+        self._validation_count += 1
+        self._total_latency_ms += latency_ms
+        if not passed:
+            self._failed_validations += 1
+            self.external_validator.update_reputation(source, True)
+        else:
+            self.external_validator.update_reputation(source, False)
+
+        return result
+
+
+def create_external_validator() -> ExternalInputValidator:
+    """Create an ExternalInputValidator with default configuration."""
+    return ExternalInputValidator(
+        external_config=ExternalThreatConfig(),
+        context_validator=ContextValidator(),
     )

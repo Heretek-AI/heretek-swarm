@@ -8,6 +8,8 @@ This package provides comprehensive consensus mechanisms for multi-agent decisio
 - Agent Expertise Profiling for confidence weighting
 - Decision Audit Trail for complete追溯 ability
 - Raft-based leader election
+- Immune Response Building for pattern learning (CONS-02)
+- Behavioral Baseline with quorum updates (CONS-03)
 
 Core Features:
 - First-to-ahead-by-k voting
@@ -17,6 +19,8 @@ Core Features:
 - Confidence-weighted voting based on expertise
 - Dissent tracking and minority report preservation
 - Complete decision provenance tracking
+- Immune system for learning from anomaly responses
+- Quorum-based baseline updates to prevent corruption
 """
 
 from heretek_swarm.consensus.audit import (
@@ -32,6 +36,15 @@ from heretek_swarm.consensus.expertise import (
     AgentExpertiseProfiler,
     DomainExpertise,
     ExpertiseLevel,
+)
+from heretek_swarm.consensus.immune import (
+    ImmunePattern,
+    ImmuneResponse,
+    ImmuneResponseBuilding,
+    ImmuneQuorum,
+    NovelPatternPreservation,
+    PatternClassification,
+    ResponseOutcome,
 )
 from heretek_swarm.consensus.maker import (
     ConsensusResult,
@@ -102,11 +115,18 @@ __all__ = [
     "EnhancedMAKERConsensus",
     "EnhancedVote",
     "ExpertiseLevel",
+    # Immune Response Building (CONS-02)
+    "ImmunePattern",
+    "ImmuneQuorum",
+    "ImmuneResponse",
+    "ImmuneResponseBuilding",
     "LeaderState",
     "LogEntry",
     # Base MAKER
     "MAKERConsensus",
     "MAKERConsensusWithRaft",
+    "NovelPatternPreservation",
+    "PatternClassification",
     "Position",
     "QueryResult",
     # Raft Election
@@ -117,6 +137,7 @@ __all__ = [
     "ReasoningStep",
     "RequestVoteRequest",
     "RequestVoteResponse",
+    "ResponseOutcome",
     "RollbackResult",
     # Swarm Deliberation
     "SwarmDeliberationEngine",

@@ -6,8 +6,12 @@ Provides comprehensive security features:
 - Adversarial detection for prompt injection (SH-2)
 - Rate limiting and DDoS protection (SH-3)
 - Guardrails system for input/output filtering
+- Behavioral anomaly detection for agent monitoring (SAFE-01)
+- Behavioral baseline with quorum-based updates (CONS-02, CONS-03)
 
 Reference: EXPANSION_ROADMAP.md Security Hardening (SH-1, SH-2, SH-3)
+Reference: Phase 2 Plan Task 4 (SAFE-01)
+Reference: Phase 2 Plan Task 2 (CONS-02), Task 3 (CONS-03)
 """
 
 from heretek_swarm.security.adversarial import (
@@ -27,6 +31,27 @@ from heretek_swarm.security.adversarial import (
     # Convenience functions
     create_default_detector,
     create_strict_detector,
+)
+from heretek_swarm.security.anomaly_detection import (
+    AnomalyDetectionConfig,
+    AnomalyDetectionResult,
+    AnomalyResponse,
+    AnomalySeverity,
+    AnomalyType,
+    AgentBehaviorProfile,
+    BehavioralAnomalyDetector,
+    ResponseStatus,
+    create_anomaly_detector,
+)
+from heretek_swarm.security.behavioral_baseline import (
+    BaselineChangeRequest,
+    BaselineChangeType,
+    BaselineMetrics,
+    BaselinePattern,
+    BaselineStatus,
+    BehavioralBaseline,
+    QuorumStatus,
+    create_behavioral_baseline,
 )
 from heretek_swarm.security.ddos_protection import (
     DDoSDetectionConfig,
@@ -91,8 +116,20 @@ __all__ = [
     # Adversarial Detection (SH-2)
     "AdversarialDetector",
     "AttackCategory",
+    "AnomalyDetectionConfig",
+    "AnomalyDetectionResult",
+    "AnomalyResponse",
+    "AnomalySeverity",
+    "AnomalyType",
+    "AgentBehaviorProfile",
     "AuditLogConfig",
     "AuditLogger",
+    "BaselineChangeRequest",
+    "BaselineChangeType",
+    "BaselineMetrics",
+    "BaselinePattern",
+    "BaselineStatus",
+    "BehavioralAnomalyDetector",
     "BehavioralBaseline",
     "BlockedPattern",
     "ContextValidationConfig",
@@ -121,9 +158,11 @@ __all__ = [
     "OutputValidationConfig",
     "OutputValidator",
     "PromptInjectionConfig",
+    "QuorumStatus",
     "RateLimitConfig",
     "RateLimitResult",
     "RateLimiter",
+    "ResponseStatus",
     "Severity",
     "ThreatLevel",
     "TierConfig",
@@ -134,6 +173,8 @@ __all__ = [
     "ZeroTrustResult",
     # Zero-trust (SH-1)
     "ZeroTrustValidator",
+    "create_anomaly_detector",
+    "create_behavioral_baseline",
     "create_default_detector",
     "create_default_protection",
     "create_default_validator",
@@ -141,3 +182,16 @@ __all__ = [
     "create_strict_protection",
     "create_strict_validator",
 ]
+from heretek_swarm.security.threat_detection import (
+    AlertPriority,
+    ContainmentAction,
+    ExternalThreatDetector,
+    ExternalThreatType,
+    ThreatDetectionConfig,
+    ThreatDetectionResult,
+    ThreatIntelligence,
+    ThreatLevel,
+    ThreatSource,
+    create_default_detector as create_default_threat_detector,
+    create_strict_detector as create_strict_threat_detector,
+)
