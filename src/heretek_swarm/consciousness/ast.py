@@ -546,9 +546,6 @@ def create_ast_self_model(
         # Swarm-level metrics
         agent_count = agent_state.get("agent_count", 0)
         components = [f"agent_{i}" for i in range(min(agent_count, 100))]
-        conn_count = min(
-            agent_count * (agent_count - 1) // 2, agent_state.get("inter_agent_connections", 0)
-        )
         connections = [
             (f"agent_{i}", f"agent_{j}")
             for i in range(min(agent_count, 50))

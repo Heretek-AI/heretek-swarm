@@ -719,25 +719,23 @@ Respond in JSON:
         if isinstance(data, dict):
             variables = list(data.keys())
             if len(variables) >= 2:
-                # Calculate correlations
                 correlations = {}
                 significant_pairs = []
 
-                for i, var1 in enumerate(variables):
-                    correlations[var1] = {}
-                    for var2 in variables[i:]:
-                        if var1 == var2:
-                            correlations[var1][var2] = 1.0
-                        else:
-                            corr = self._calculate_correlation(
-                                data.get(var1, []),
-                                data.get(var2, []),
-                            )
-                            correlations[var1][var2] = corr
-                            correlations[var2][var1] = corr
+                for var in variables:
+                    correlations[var] = {}
 
-                            if abs(corr) > 0.5:  # Significant threshold
-                                significant_pairs.append((var1, var2, corr))
+                for i, var1 in enumerate(variables):
+                    for var2 in variables[i + 1 :]:
+                        corr = self._calculate_correlation(
+                            data.get(var1, []),
+                            data.get(var2, []),
+                        )
+                        correlations[var1][var2] = corr
+                        correlations[var2][var1] = corr
+
+                        if abs(corr) > 0.5:
+                            significant_pairs.append((var1, var2, corr))
 
                 # Store correlation matrix
                 matrix = CorrelationMatrix(

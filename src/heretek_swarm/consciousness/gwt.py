@@ -22,11 +22,13 @@ from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import Enum
-from typing import TYPE_CHECKING, Any, Callable
+from typing import TYPE_CHECKING, Any
 
 import structlog
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from heretek_swarm.infrastructure.nats.client import NATSClient
 
 logger = structlog.get_logger(__name__)
@@ -71,13 +73,13 @@ class GWTSalienceMetrics:
         score = self.overall_salience
         if score >= 0.9:
             return SalienceLevel.CRITICAL
-        elif score >= 0.7:
+        if score >= 0.7:
             return SalienceLevel.HIGH
-        elif score >= 0.5:
+        if score >= 0.5:
             return SalienceLevel.ELEVATED
-        elif score >= 0.3:
+        if score >= 0.3:
             return SalienceLevel.NORMAL
-        elif score >= 0.1:
+        if score >= 0.1:
             return SalienceLevel.LOW
         return SalienceLevel.MINIMAL
 
@@ -109,7 +111,7 @@ class GWTContent:
                 "impact": self.salience_metrics.impact,
                 "confidence": self.salience_metrics.confidence,
                 "overall_salience": self.salience_metrics.overall_salience,
-                "salience_level": self.salience_metrics.salience_level.value,
+                "salience_level": self.salience_metrics.salience_level.name.lower(),
             },
             "timestamp": self.timestamp,
             "broadcast_id": self.broadcast_id,
@@ -380,7 +382,7 @@ class GlobalWorkspaceBroadcast:
             )
             return True
 
-        except asyncio.TimeoutError:
+        except TimeoutError:
             logger.error(
                 "gwt_broadcast_timeout",
                 content_id=content.content_id,
@@ -441,7 +443,7 @@ class GlobalWorkspaceBroadcast:
             )
             return True
 
-        except asyncio.TimeoutError:
+        except TimeoutError:
             logger.error(
                 "gwt_deliberation_timeout",
                 deliberation_id=deliberation.deliberation_id,
@@ -659,12 +661,12 @@ class GlobalWorkspaceBroadcast:
         if not limiter:
             return {"can_broadcast": True, "reason": "no limiter created"}
 
-        limiter._refill_tokens()
+        limiter._refill_tokens()  # noqa: SLF001
         return {
             "can_broadcast": limiter.can_broadcast(),
-            "tokens": limiter._tokens,
-            "minute_count": limiter._minute_counter,
-            "burst_used": limiter._burst_used,
+            "tokens": limiter._tokens,  # noqa: SLF001
+            "minute_count": limiter._minute_counter,  # noqa: SLF001
+            "burst_used": limiter._burst_used,  # noqa: SLF001
         }
 
     def get_stats(self) -> dict[str, Any]:
@@ -753,10 +755,10 @@ def create_gwt_content(
 
 
 __all__ = [
+    "AgentRateLimiter",
     "DeliberationBroadcast",
     "GWTConfig",
     "GWTContent",
-    "GlobalWorkspaceBroadcast",
     "GWTSalienceMetrics",
     "GlobalWorkspaceBroadcast",
     "RateLimitConfig",

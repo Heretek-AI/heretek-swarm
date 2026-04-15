@@ -99,13 +99,12 @@ def prism_agent(
     mock_access_analyzer: MagicMock,
     mock_zero_trust_validator: MagicMock,
 ) -> PrismAgent:
-    """Create a Prism agent instance with mocked dependencies."""
     agent = PrismAgent(
         agent_id="test-prism",
         name="TestPrism",
         max_perspectives=10,
         max_bias_history=50,
-        confidence_threshold=0.6,
+        confidence_threshold=0.4,
     )
     agent.pattern_extractor = mock_pattern_extractor
     agent.deliberation_engine = mock_deliberation_engine

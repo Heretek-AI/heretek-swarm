@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-15T19:14:47.274279+00:00",
+    "generated_at": "2026-04-15T19:25:46.095101+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -3808,7 +3808,7 @@
       ]
     },
     "src/heretek_swarm/actors/habit_forge.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.HabitStage",
@@ -3883,9 +3883,9 @@
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.HabitForgeAgent",
           "start_line": 207,
-          "end_line": 1315,
+          "end_line": 1317,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.HabitForgeAgent.__init__",
@@ -3953,16 +3953,16 @@
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.HabitForgeAgent._heuristic_pattern_detection",
           "start_line": 650,
-          "end_line": 690,
+          "end_line": 692,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.HabitForgeAgent._generate_pattern_recommendations",
-          "start_line": 692,
-          "end_line": 730,
+          "start_line": 694,
+          "end_line": 732,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.habit_forge.HabitForgeAgent._handle_get_habit_progress",
@@ -6269,9 +6269,9 @@
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent",
           "start_line": 186,
-          "end_line": 1518,
+          "end_line": 1516,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent.__init__",
@@ -6346,9 +6346,9 @@
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._correlational_analysis",
           "start_line": 709,
-          "end_line": 779,
+          "end_line": 777,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._calculate_correlation",
@@ -53738,6 +53738,641 @@
     "src/heretek_swarm/coordination/__init__.py": {
       "file_status": "unchanged",
       "methods": []
+    },
+    "src/heretek_swarm/consciousness/__init__.py": {
+      "file_status": "modified",
+      "methods": []
+    },
+    "src/heretek_swarm/consciousness/fep.py": {
+      "file_status": "modified",
+      "methods": [
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.fep.FreeEnergyLevel",
+          "start_line": 35,
+          "end_line": 42,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.fep.SurpriseLevel",
+          "start_line": 45,
+          "end_line": 52,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.fep.SurpriseMetrics",
+          "start_line": 56,
+          "end_line": 87,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.fep.SurpriseMetrics.to_dict",
+          "start_line": 78,
+          "end_line": 87,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.fep.ExpectedFreeEnergyMetrics",
+          "start_line": 91,
+          "end_line": 122,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.fep.ExpectedFreeEnergyMetrics.to_dict",
+          "start_line": 113,
+          "end_line": 122,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.fep.ActiveInferenceMetrics",
+          "start_line": 126,
+          "end_line": 157,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.fep.ActiveInferenceMetrics.to_dict",
+          "start_line": 148,
+          "end_line": 157,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.fep.FEPMetrics",
+          "start_line": 161,
+          "end_line": 191,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.fep.FEPMetrics.to_dict",
+          "start_line": 181,
+          "end_line": 191,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.fep.calculate_surprise",
+          "start_line": 194,
+          "end_line": 244,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.fep.calculate_expected_free_energy",
+          "start_line": 247,
+          "end_line": 280,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.fep.calculate_free_energy",
+          "start_line": 283,
+          "end_line": 327,
+          "node_type": "FUNCTION",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.fep.create_fep_metrics",
+          "start_line": 330,
+          "end_line": 422,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.fep.update_fep_metrics",
+          "start_line": 428,
+          "end_line": 430,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.fep.get_fep_metrics",
+          "start_line": 433,
+          "end_line": 435,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.fep.get_all_fep_metrics",
+          "start_line": 438,
+          "end_line": 440,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.fep.FEPTracker",
+          "start_line": 443,
+          "end_line": 547,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.fep.FEPTracker.__init__",
+          "start_line": 451,
+          "end_line": 453,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.fep.FEPTracker.track",
+          "start_line": 455,
+          "end_line": 477,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.fep.FEPTracker.get_history",
+          "start_line": 479,
+          "end_line": 481,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.fep.FEPTracker.get_surprise_trend",
+          "start_line": 483,
+          "end_line": 486,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.fep.FEPTracker.get_free_energy_trend",
+          "start_line": 488,
+          "end_line": 494,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.fep.FEPTracker.get_active_inference_trend",
+          "start_line": 496,
+          "end_line": 502,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.fep.FEPTracker.get_statistics",
+          "start_line": 504,
+          "end_line": 547,
+          "node_type": "METHOD",
+          "status": "added"
+        }
+      ]
+    },
+    "src/heretek_swarm/consciousness/gwt.py": {
+      "file_status": "modified",
+      "methods": [
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.gwt.SalienceLevel",
+          "start_line": 37,
+          "end_line": 45,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.gwt.GWTSalienceMetrics",
+          "start_line": 49,
+          "end_line": 84,
+          "node_type": "CLASS",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.gwt.GWTSalienceMetrics.overall_salience",
+          "start_line": 59,
+          "end_line": 68,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.gwt.GWTSalienceMetrics.salience_level",
+          "start_line": 71,
+          "end_line": 84,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.gwt.GWTContent",
+          "start_line": 88,
+          "end_line": 119,
+          "node_type": "CLASS",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.gwt.GWTContent.to_dict",
+          "start_line": 100,
+          "end_line": 119,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.gwt.DeliberationBroadcast",
+          "start_line": 123,
+          "end_line": 148,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.gwt.DeliberationBroadcast.to_dict",
+          "start_line": 136,
+          "end_line": 148,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.gwt.RateLimitConfig",
+          "start_line": 152,
+          "end_line": 158,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.gwt.AgentRateLimiter",
+          "start_line": 162,
+          "end_line": 212,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.gwt.AgentRateLimiter._refill_tokens",
+          "start_line": 173,
+          "end_line": 186,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.gwt.AgentRateLimiter._use_burst",
+          "start_line": 188,
+          "end_line": 193,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.gwt.AgentRateLimiter.can_broadcast",
+          "start_line": 195,
+          "end_line": 202,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.gwt.AgentRateLimiter.record_broadcast",
+          "start_line": 204,
+          "end_line": 212,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.gwt.GWTConfig",
+          "start_line": 215,
+          "end_line": 234,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.gwt.GWTConfig.__init__",
+          "start_line": 218,
+          "end_line": 234,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast",
+          "start_line": 237,
+          "end_line": 683,
+          "node_type": "CLASS",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast.__init__",
+          "start_line": 251,
+          "end_line": 263,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast._get_subject",
+          "start_line": 265,
+          "end_line": 267,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast._get_rate_limiter",
+          "start_line": 269,
+          "end_line": 276,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast._filter_by_salience",
+          "start_line": 278,
+          "end_line": 282,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast._select_attention_winners",
+          "start_line": 284,
+          "end_line": 301,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast._generate_broadcast_id",
+          "start_line": 303,
+          "end_line": 305,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast.broadcast_content",
+          "start_line": 307,
+          "end_line": 398,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast.broadcast_deliberation_outcome",
+          "start_line": 400,
+          "end_line": 458,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast.subscribe_to_broadcasts",
+          "start_line": 460,
+          "end_line": 532,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast.subscribe_to_broadcasts.handler",
+          "start_line": 493,
+          "end_line": 513,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast.subscribe_to_deliberations",
+          "start_line": 534,
+          "end_line": 590,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast.subscribe_to_deliberations.handler",
+          "start_line": 563,
+          "end_line": 571,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast._deserialize_content",
+          "start_line": 592,
+          "end_line": 614,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast._deserialize_deliberation",
+          "start_line": 616,
+          "end_line": 632,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast.unsubscribe",
+          "start_line": 634,
+          "end_line": 656,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast.get_rate_limit_status",
+          "start_line": 658,
+          "end_line": 670,
+          "node_type": "METHOD",
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast.get_stats",
+          "start_line": 672,
+          "end_line": 683,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.gwt.calculate_salience",
+          "start_line": 686,
+          "end_line": 712,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.gwt.create_gwt_content",
+          "start_line": 715,
+          "end_line": 754,
+          "node_type": "FUNCTION",
+          "status": "added"
+        }
+      ]
+    },
+    "src/heretek_swarm/consciousness/ast.py": {
+      "file_status": "modified",
+      "methods": [
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.ast.EmergenceLevel",
+          "start_line": 34,
+          "end_line": 41,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.ast.SelfOrganizationLevel",
+          "start_line": 44,
+          "end_line": 50,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.ast.ResilienceLevel",
+          "start_line": 53,
+          "end_line": 59,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.ast.ComplexityMetrics",
+          "start_line": 63,
+          "end_line": 94,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.ast.ComplexityMetrics.to_dict",
+          "start_line": 85,
+          "end_line": 94,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.ast.EmergenceScore",
+          "start_line": 98,
+          "end_line": 132,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.ast.EmergenceScore.to_dict",
+          "start_line": 122,
+          "end_line": 132,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.ast.SelfOrganizationMetrics",
+          "start_line": 136,
+          "end_line": 170,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.ast.SelfOrganizationMetrics.to_dict",
+          "start_line": 160,
+          "end_line": 170,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.ast.ResilienceScore",
+          "start_line": 174,
+          "end_line": 211,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.ast.ResilienceScore.to_dict",
+          "start_line": 200,
+          "end_line": 211,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.ast.ASTSelfModel",
+          "start_line": 215,
+          "end_line": 254,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.ast.ASTSelfModel.to_dict",
+          "start_line": 241,
+          "end_line": 254,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.ast.calculate_complexity_metrics",
+          "start_line": 257,
+          "end_line": 303,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.ast.calculate_emergence_score",
+          "start_line": 306,
+          "end_line": 373,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.ast.calculate_self_organization",
+          "start_line": 376,
+          "end_line": 427,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.ast.calculate_resilience_score",
+          "start_line": 430,
+          "end_line": 482,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.ast.create_ast_self_model",
+          "start_line": 485,
+          "end_line": 601,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.ast.update_self_model",
+          "start_line": 609,
+          "end_line": 614,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.ast.get_self_model",
+          "start_line": 617,
+          "end_line": 619,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.ast.get_all_self_models",
+          "start_line": 622,
+          "end_line": 624,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.ast.ASTSelfModelTracker",
+          "start_line": 627,
+          "end_line": 747,
+          "node_type": "CLASS",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.ast.ASTSelfModelTracker.__init__",
+          "start_line": 635,
+          "end_line": 637,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.ast.ASTSelfModelTracker.track",
+          "start_line": 639,
+          "end_line": 670,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.ast.ASTSelfModelTracker.get_history",
+          "start_line": 672,
+          "end_line": 674,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.ast.ASTSelfModelTracker.get_trend",
+          "start_line": 676,
+          "end_line": 710,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consciousness.ast.ASTSelfModelTracker.get_statistics",
+          "start_line": 712,
+          "end_line": 747,
+          "node_type": "METHOD",
+          "status": "added"
+        }
+      ]
     }
   },
   "methods_index": {
@@ -58001,9 +58636,9 @@
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
       "qualified_name": "src.heretek_swarm.actors.habit_forge.HabitForgeAgent",
       "start_line": 207,
-      "end_line": 1315,
+      "end_line": 1317,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/habit_forge.py|src.heretek_swarm.actors.habit_forge.HabitForgeAgent.__init__": {
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
@@ -58081,17 +58716,17 @@
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
       "qualified_name": "src.heretek_swarm.actors.habit_forge.HabitForgeAgent._heuristic_pattern_detection",
       "start_line": 650,
-      "end_line": 690,
+      "end_line": 692,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/habit_forge.py|src.heretek_swarm.actors.habit_forge.HabitForgeAgent._generate_pattern_recommendations": {
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
       "qualified_name": "src.heretek_swarm.actors.habit_forge.HabitForgeAgent._generate_pattern_recommendations",
-      "start_line": 692,
-      "end_line": 730,
+      "start_line": 694,
+      "end_line": 732,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/habit_forge.py|src.heretek_swarm.actors.habit_forge.HabitForgeAgent._handle_get_habit_progress": {
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
@@ -60625,9 +61260,9 @@
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
       "qualified_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent",
       "start_line": 186,
-      "end_line": 1518,
+      "end_line": 1516,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent.__init__": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
@@ -60713,9 +61348,9 @@
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
       "qualified_name": "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._correlational_analysis",
       "start_line": 709,
-      "end_line": 779,
+      "end_line": 777,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/perceiver_plus.py|src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent._calculate_correlation": {
       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
@@ -113228,6 +113863,710 @@
       "end_line": 136,
       "type": "INTERFACE",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/consciousness/fep.py|src.heretek_swarm.consciousness.fep.FreeEnergyLevel": {
+      "file_path": "src/heretek_swarm/consciousness/fep.py",
+      "qualified_name": "src.heretek_swarm.consciousness.fep.FreeEnergyLevel",
+      "start_line": 35,
+      "end_line": 42,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/fep.py|src.heretek_swarm.consciousness.fep.SurpriseLevel": {
+      "file_path": "src/heretek_swarm/consciousness/fep.py",
+      "qualified_name": "src.heretek_swarm.consciousness.fep.SurpriseLevel",
+      "start_line": 45,
+      "end_line": 52,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/fep.py|src.heretek_swarm.consciousness.fep.SurpriseMetrics": {
+      "file_path": "src/heretek_swarm/consciousness/fep.py",
+      "qualified_name": "src.heretek_swarm.consciousness.fep.SurpriseMetrics",
+      "start_line": 56,
+      "end_line": 87,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/fep.py|src.heretek_swarm.consciousness.fep.SurpriseMetrics.to_dict": {
+      "file_path": "src/heretek_swarm/consciousness/fep.py",
+      "qualified_name": "src.heretek_swarm.consciousness.fep.SurpriseMetrics.to_dict",
+      "start_line": 78,
+      "end_line": 87,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/fep.py|src.heretek_swarm.consciousness.fep.ExpectedFreeEnergyMetrics": {
+      "file_path": "src/heretek_swarm/consciousness/fep.py",
+      "qualified_name": "src.heretek_swarm.consciousness.fep.ExpectedFreeEnergyMetrics",
+      "start_line": 91,
+      "end_line": 122,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/fep.py|src.heretek_swarm.consciousness.fep.ExpectedFreeEnergyMetrics.to_dict": {
+      "file_path": "src/heretek_swarm/consciousness/fep.py",
+      "qualified_name": "src.heretek_swarm.consciousness.fep.ExpectedFreeEnergyMetrics.to_dict",
+      "start_line": 113,
+      "end_line": 122,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/fep.py|src.heretek_swarm.consciousness.fep.ActiveInferenceMetrics": {
+      "file_path": "src/heretek_swarm/consciousness/fep.py",
+      "qualified_name": "src.heretek_swarm.consciousness.fep.ActiveInferenceMetrics",
+      "start_line": 126,
+      "end_line": 157,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/fep.py|src.heretek_swarm.consciousness.fep.ActiveInferenceMetrics.to_dict": {
+      "file_path": "src/heretek_swarm/consciousness/fep.py",
+      "qualified_name": "src.heretek_swarm.consciousness.fep.ActiveInferenceMetrics.to_dict",
+      "start_line": 148,
+      "end_line": 157,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/fep.py|src.heretek_swarm.consciousness.fep.FEPMetrics": {
+      "file_path": "src/heretek_swarm/consciousness/fep.py",
+      "qualified_name": "src.heretek_swarm.consciousness.fep.FEPMetrics",
+      "start_line": 161,
+      "end_line": 191,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/fep.py|src.heretek_swarm.consciousness.fep.FEPMetrics.to_dict": {
+      "file_path": "src/heretek_swarm/consciousness/fep.py",
+      "qualified_name": "src.heretek_swarm.consciousness.fep.FEPMetrics.to_dict",
+      "start_line": 181,
+      "end_line": 191,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/fep.py|src.heretek_swarm.consciousness.fep.calculate_surprise": {
+      "file_path": "src/heretek_swarm/consciousness/fep.py",
+      "qualified_name": "src.heretek_swarm.consciousness.fep.calculate_surprise",
+      "start_line": 194,
+      "end_line": 244,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/fep.py|src.heretek_swarm.consciousness.fep.calculate_expected_free_energy": {
+      "file_path": "src/heretek_swarm/consciousness/fep.py",
+      "qualified_name": "src.heretek_swarm.consciousness.fep.calculate_expected_free_energy",
+      "start_line": 247,
+      "end_line": 280,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/fep.py|src.heretek_swarm.consciousness.fep.calculate_free_energy": {
+      "file_path": "src/heretek_swarm/consciousness/fep.py",
+      "qualified_name": "src.heretek_swarm.consciousness.fep.calculate_free_energy",
+      "start_line": 283,
+      "end_line": 327,
+      "type": "FUNCTION",
+      "status": "modified"
+    },
+    "src/heretek_swarm/consciousness/fep.py|src.heretek_swarm.consciousness.fep.create_fep_metrics": {
+      "file_path": "src/heretek_swarm/consciousness/fep.py",
+      "qualified_name": "src.heretek_swarm.consciousness.fep.create_fep_metrics",
+      "start_line": 330,
+      "end_line": 422,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/fep.py|src.heretek_swarm.consciousness.fep.update_fep_metrics": {
+      "file_path": "src/heretek_swarm/consciousness/fep.py",
+      "qualified_name": "src.heretek_swarm.consciousness.fep.update_fep_metrics",
+      "start_line": 428,
+      "end_line": 430,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/fep.py|src.heretek_swarm.consciousness.fep.get_fep_metrics": {
+      "file_path": "src/heretek_swarm/consciousness/fep.py",
+      "qualified_name": "src.heretek_swarm.consciousness.fep.get_fep_metrics",
+      "start_line": 433,
+      "end_line": 435,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/fep.py|src.heretek_swarm.consciousness.fep.get_all_fep_metrics": {
+      "file_path": "src/heretek_swarm/consciousness/fep.py",
+      "qualified_name": "src.heretek_swarm.consciousness.fep.get_all_fep_metrics",
+      "start_line": 438,
+      "end_line": 440,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/fep.py|src.heretek_swarm.consciousness.fep.FEPTracker": {
+      "file_path": "src/heretek_swarm/consciousness/fep.py",
+      "qualified_name": "src.heretek_swarm.consciousness.fep.FEPTracker",
+      "start_line": 443,
+      "end_line": 547,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/fep.py|src.heretek_swarm.consciousness.fep.FEPTracker.__init__": {
+      "file_path": "src/heretek_swarm/consciousness/fep.py",
+      "qualified_name": "src.heretek_swarm.consciousness.fep.FEPTracker.__init__",
+      "start_line": 451,
+      "end_line": 453,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/fep.py|src.heretek_swarm.consciousness.fep.FEPTracker.track": {
+      "file_path": "src/heretek_swarm/consciousness/fep.py",
+      "qualified_name": "src.heretek_swarm.consciousness.fep.FEPTracker.track",
+      "start_line": 455,
+      "end_line": 477,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/fep.py|src.heretek_swarm.consciousness.fep.FEPTracker.get_history": {
+      "file_path": "src/heretek_swarm/consciousness/fep.py",
+      "qualified_name": "src.heretek_swarm.consciousness.fep.FEPTracker.get_history",
+      "start_line": 479,
+      "end_line": 481,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/fep.py|src.heretek_swarm.consciousness.fep.FEPTracker.get_surprise_trend": {
+      "file_path": "src/heretek_swarm/consciousness/fep.py",
+      "qualified_name": "src.heretek_swarm.consciousness.fep.FEPTracker.get_surprise_trend",
+      "start_line": 483,
+      "end_line": 486,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/fep.py|src.heretek_swarm.consciousness.fep.FEPTracker.get_free_energy_trend": {
+      "file_path": "src/heretek_swarm/consciousness/fep.py",
+      "qualified_name": "src.heretek_swarm.consciousness.fep.FEPTracker.get_free_energy_trend",
+      "start_line": 488,
+      "end_line": 494,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/fep.py|src.heretek_swarm.consciousness.fep.FEPTracker.get_active_inference_trend": {
+      "file_path": "src/heretek_swarm/consciousness/fep.py",
+      "qualified_name": "src.heretek_swarm.consciousness.fep.FEPTracker.get_active_inference_trend",
+      "start_line": 496,
+      "end_line": 502,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/fep.py|src.heretek_swarm.consciousness.fep.FEPTracker.get_statistics": {
+      "file_path": "src/heretek_swarm/consciousness/fep.py",
+      "qualified_name": "src.heretek_swarm.consciousness.fep.FEPTracker.get_statistics",
+      "start_line": 504,
+      "end_line": 547,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/gwt.py|src.heretek_swarm.consciousness.gwt.SalienceLevel": {
+      "file_path": "src/heretek_swarm/consciousness/gwt.py",
+      "qualified_name": "src.heretek_swarm.consciousness.gwt.SalienceLevel",
+      "start_line": 37,
+      "end_line": 45,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/gwt.py|src.heretek_swarm.consciousness.gwt.GWTSalienceMetrics": {
+      "file_path": "src/heretek_swarm/consciousness/gwt.py",
+      "qualified_name": "src.heretek_swarm.consciousness.gwt.GWTSalienceMetrics",
+      "start_line": 49,
+      "end_line": 84,
+      "type": "CLASS",
+      "status": "modified"
+    },
+    "src/heretek_swarm/consciousness/gwt.py|src.heretek_swarm.consciousness.gwt.GWTSalienceMetrics.overall_salience": {
+      "file_path": "src/heretek_swarm/consciousness/gwt.py",
+      "qualified_name": "src.heretek_swarm.consciousness.gwt.GWTSalienceMetrics.overall_salience",
+      "start_line": 59,
+      "end_line": 68,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/gwt.py|src.heretek_swarm.consciousness.gwt.GWTSalienceMetrics.salience_level": {
+      "file_path": "src/heretek_swarm/consciousness/gwt.py",
+      "qualified_name": "src.heretek_swarm.consciousness.gwt.GWTSalienceMetrics.salience_level",
+      "start_line": 71,
+      "end_line": 84,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/consciousness/gwt.py|src.heretek_swarm.consciousness.gwt.GWTContent": {
+      "file_path": "src/heretek_swarm/consciousness/gwt.py",
+      "qualified_name": "src.heretek_swarm.consciousness.gwt.GWTContent",
+      "start_line": 88,
+      "end_line": 119,
+      "type": "CLASS",
+      "status": "modified"
+    },
+    "src/heretek_swarm/consciousness/gwt.py|src.heretek_swarm.consciousness.gwt.GWTContent.to_dict": {
+      "file_path": "src/heretek_swarm/consciousness/gwt.py",
+      "qualified_name": "src.heretek_swarm.consciousness.gwt.GWTContent.to_dict",
+      "start_line": 100,
+      "end_line": 119,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/consciousness/gwt.py|src.heretek_swarm.consciousness.gwt.DeliberationBroadcast": {
+      "file_path": "src/heretek_swarm/consciousness/gwt.py",
+      "qualified_name": "src.heretek_swarm.consciousness.gwt.DeliberationBroadcast",
+      "start_line": 123,
+      "end_line": 148,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/gwt.py|src.heretek_swarm.consciousness.gwt.DeliberationBroadcast.to_dict": {
+      "file_path": "src/heretek_swarm/consciousness/gwt.py",
+      "qualified_name": "src.heretek_swarm.consciousness.gwt.DeliberationBroadcast.to_dict",
+      "start_line": 136,
+      "end_line": 148,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/gwt.py|src.heretek_swarm.consciousness.gwt.RateLimitConfig": {
+      "file_path": "src/heretek_swarm/consciousness/gwt.py",
+      "qualified_name": "src.heretek_swarm.consciousness.gwt.RateLimitConfig",
+      "start_line": 152,
+      "end_line": 158,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/gwt.py|src.heretek_swarm.consciousness.gwt.AgentRateLimiter": {
+      "file_path": "src/heretek_swarm/consciousness/gwt.py",
+      "qualified_name": "src.heretek_swarm.consciousness.gwt.AgentRateLimiter",
+      "start_line": 162,
+      "end_line": 212,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/gwt.py|src.heretek_swarm.consciousness.gwt.AgentRateLimiter._refill_tokens": {
+      "file_path": "src/heretek_swarm/consciousness/gwt.py",
+      "qualified_name": "src.heretek_swarm.consciousness.gwt.AgentRateLimiter._refill_tokens",
+      "start_line": 173,
+      "end_line": 186,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/gwt.py|src.heretek_swarm.consciousness.gwt.AgentRateLimiter._use_burst": {
+      "file_path": "src/heretek_swarm/consciousness/gwt.py",
+      "qualified_name": "src.heretek_swarm.consciousness.gwt.AgentRateLimiter._use_burst",
+      "start_line": 188,
+      "end_line": 193,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/gwt.py|src.heretek_swarm.consciousness.gwt.AgentRateLimiter.can_broadcast": {
+      "file_path": "src/heretek_swarm/consciousness/gwt.py",
+      "qualified_name": "src.heretek_swarm.consciousness.gwt.AgentRateLimiter.can_broadcast",
+      "start_line": 195,
+      "end_line": 202,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/gwt.py|src.heretek_swarm.consciousness.gwt.AgentRateLimiter.record_broadcast": {
+      "file_path": "src/heretek_swarm/consciousness/gwt.py",
+      "qualified_name": "src.heretek_swarm.consciousness.gwt.AgentRateLimiter.record_broadcast",
+      "start_line": 204,
+      "end_line": 212,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/gwt.py|src.heretek_swarm.consciousness.gwt.GWTConfig": {
+      "file_path": "src/heretek_swarm/consciousness/gwt.py",
+      "qualified_name": "src.heretek_swarm.consciousness.gwt.GWTConfig",
+      "start_line": 215,
+      "end_line": 234,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/gwt.py|src.heretek_swarm.consciousness.gwt.GWTConfig.__init__": {
+      "file_path": "src/heretek_swarm/consciousness/gwt.py",
+      "qualified_name": "src.heretek_swarm.consciousness.gwt.GWTConfig.__init__",
+      "start_line": 218,
+      "end_line": 234,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/gwt.py|src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast": {
+      "file_path": "src/heretek_swarm/consciousness/gwt.py",
+      "qualified_name": "src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast",
+      "start_line": 237,
+      "end_line": 683,
+      "type": "CLASS",
+      "status": "modified"
+    },
+    "src/heretek_swarm/consciousness/gwt.py|src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast.__init__": {
+      "file_path": "src/heretek_swarm/consciousness/gwt.py",
+      "qualified_name": "src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast.__init__",
+      "start_line": 251,
+      "end_line": 263,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/gwt.py|src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast._get_subject": {
+      "file_path": "src/heretek_swarm/consciousness/gwt.py",
+      "qualified_name": "src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast._get_subject",
+      "start_line": 265,
+      "end_line": 267,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/gwt.py|src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast._get_rate_limiter": {
+      "file_path": "src/heretek_swarm/consciousness/gwt.py",
+      "qualified_name": "src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast._get_rate_limiter",
+      "start_line": 269,
+      "end_line": 276,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/gwt.py|src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast._filter_by_salience": {
+      "file_path": "src/heretek_swarm/consciousness/gwt.py",
+      "qualified_name": "src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast._filter_by_salience",
+      "start_line": 278,
+      "end_line": 282,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/gwt.py|src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast._select_attention_winners": {
+      "file_path": "src/heretek_swarm/consciousness/gwt.py",
+      "qualified_name": "src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast._select_attention_winners",
+      "start_line": 284,
+      "end_line": 301,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/gwt.py|src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast._generate_broadcast_id": {
+      "file_path": "src/heretek_swarm/consciousness/gwt.py",
+      "qualified_name": "src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast._generate_broadcast_id",
+      "start_line": 303,
+      "end_line": 305,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/gwt.py|src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast.broadcast_content": {
+      "file_path": "src/heretek_swarm/consciousness/gwt.py",
+      "qualified_name": "src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast.broadcast_content",
+      "start_line": 307,
+      "end_line": 398,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/consciousness/gwt.py|src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast.broadcast_deliberation_outcome": {
+      "file_path": "src/heretek_swarm/consciousness/gwt.py",
+      "qualified_name": "src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast.broadcast_deliberation_outcome",
+      "start_line": 400,
+      "end_line": 458,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/consciousness/gwt.py|src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast.subscribe_to_broadcasts": {
+      "file_path": "src/heretek_swarm/consciousness/gwt.py",
+      "qualified_name": "src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast.subscribe_to_broadcasts",
+      "start_line": 460,
+      "end_line": 532,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/gwt.py|src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast.subscribe_to_broadcasts.handler": {
+      "file_path": "src/heretek_swarm/consciousness/gwt.py",
+      "qualified_name": "src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast.subscribe_to_broadcasts.handler",
+      "start_line": 493,
+      "end_line": 513,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/gwt.py|src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast.subscribe_to_deliberations": {
+      "file_path": "src/heretek_swarm/consciousness/gwt.py",
+      "qualified_name": "src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast.subscribe_to_deliberations",
+      "start_line": 534,
+      "end_line": 590,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/gwt.py|src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast.subscribe_to_deliberations.handler": {
+      "file_path": "src/heretek_swarm/consciousness/gwt.py",
+      "qualified_name": "src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast.subscribe_to_deliberations.handler",
+      "start_line": 563,
+      "end_line": 571,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/gwt.py|src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast._deserialize_content": {
+      "file_path": "src/heretek_swarm/consciousness/gwt.py",
+      "qualified_name": "src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast._deserialize_content",
+      "start_line": 592,
+      "end_line": 614,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/gwt.py|src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast._deserialize_deliberation": {
+      "file_path": "src/heretek_swarm/consciousness/gwt.py",
+      "qualified_name": "src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast._deserialize_deliberation",
+      "start_line": 616,
+      "end_line": 632,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/gwt.py|src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast.unsubscribe": {
+      "file_path": "src/heretek_swarm/consciousness/gwt.py",
+      "qualified_name": "src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast.unsubscribe",
+      "start_line": 634,
+      "end_line": 656,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/gwt.py|src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast.get_rate_limit_status": {
+      "file_path": "src/heretek_swarm/consciousness/gwt.py",
+      "qualified_name": "src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast.get_rate_limit_status",
+      "start_line": 658,
+      "end_line": 670,
+      "type": "METHOD",
+      "status": "modified"
+    },
+    "src/heretek_swarm/consciousness/gwt.py|src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast.get_stats": {
+      "file_path": "src/heretek_swarm/consciousness/gwt.py",
+      "qualified_name": "src.heretek_swarm.consciousness.gwt.GlobalWorkspaceBroadcast.get_stats",
+      "start_line": 672,
+      "end_line": 683,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/gwt.py|src.heretek_swarm.consciousness.gwt.calculate_salience": {
+      "file_path": "src/heretek_swarm/consciousness/gwt.py",
+      "qualified_name": "src.heretek_swarm.consciousness.gwt.calculate_salience",
+      "start_line": 686,
+      "end_line": 712,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/gwt.py|src.heretek_swarm.consciousness.gwt.create_gwt_content": {
+      "file_path": "src/heretek_swarm/consciousness/gwt.py",
+      "qualified_name": "src.heretek_swarm.consciousness.gwt.create_gwt_content",
+      "start_line": 715,
+      "end_line": 754,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/ast.py|src.heretek_swarm.consciousness.ast.EmergenceLevel": {
+      "file_path": "src/heretek_swarm/consciousness/ast.py",
+      "qualified_name": "src.heretek_swarm.consciousness.ast.EmergenceLevel",
+      "start_line": 34,
+      "end_line": 41,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/ast.py|src.heretek_swarm.consciousness.ast.SelfOrganizationLevel": {
+      "file_path": "src/heretek_swarm/consciousness/ast.py",
+      "qualified_name": "src.heretek_swarm.consciousness.ast.SelfOrganizationLevel",
+      "start_line": 44,
+      "end_line": 50,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/ast.py|src.heretek_swarm.consciousness.ast.ResilienceLevel": {
+      "file_path": "src/heretek_swarm/consciousness/ast.py",
+      "qualified_name": "src.heretek_swarm.consciousness.ast.ResilienceLevel",
+      "start_line": 53,
+      "end_line": 59,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/ast.py|src.heretek_swarm.consciousness.ast.ComplexityMetrics": {
+      "file_path": "src/heretek_swarm/consciousness/ast.py",
+      "qualified_name": "src.heretek_swarm.consciousness.ast.ComplexityMetrics",
+      "start_line": 63,
+      "end_line": 94,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/ast.py|src.heretek_swarm.consciousness.ast.ComplexityMetrics.to_dict": {
+      "file_path": "src/heretek_swarm/consciousness/ast.py",
+      "qualified_name": "src.heretek_swarm.consciousness.ast.ComplexityMetrics.to_dict",
+      "start_line": 85,
+      "end_line": 94,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/ast.py|src.heretek_swarm.consciousness.ast.EmergenceScore": {
+      "file_path": "src/heretek_swarm/consciousness/ast.py",
+      "qualified_name": "src.heretek_swarm.consciousness.ast.EmergenceScore",
+      "start_line": 98,
+      "end_line": 132,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/ast.py|src.heretek_swarm.consciousness.ast.EmergenceScore.to_dict": {
+      "file_path": "src/heretek_swarm/consciousness/ast.py",
+      "qualified_name": "src.heretek_swarm.consciousness.ast.EmergenceScore.to_dict",
+      "start_line": 122,
+      "end_line": 132,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/ast.py|src.heretek_swarm.consciousness.ast.SelfOrganizationMetrics": {
+      "file_path": "src/heretek_swarm/consciousness/ast.py",
+      "qualified_name": "src.heretek_swarm.consciousness.ast.SelfOrganizationMetrics",
+      "start_line": 136,
+      "end_line": 170,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/ast.py|src.heretek_swarm.consciousness.ast.SelfOrganizationMetrics.to_dict": {
+      "file_path": "src/heretek_swarm/consciousness/ast.py",
+      "qualified_name": "src.heretek_swarm.consciousness.ast.SelfOrganizationMetrics.to_dict",
+      "start_line": 160,
+      "end_line": 170,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/ast.py|src.heretek_swarm.consciousness.ast.ResilienceScore": {
+      "file_path": "src/heretek_swarm/consciousness/ast.py",
+      "qualified_name": "src.heretek_swarm.consciousness.ast.ResilienceScore",
+      "start_line": 174,
+      "end_line": 211,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/ast.py|src.heretek_swarm.consciousness.ast.ResilienceScore.to_dict": {
+      "file_path": "src/heretek_swarm/consciousness/ast.py",
+      "qualified_name": "src.heretek_swarm.consciousness.ast.ResilienceScore.to_dict",
+      "start_line": 200,
+      "end_line": 211,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/ast.py|src.heretek_swarm.consciousness.ast.ASTSelfModel": {
+      "file_path": "src/heretek_swarm/consciousness/ast.py",
+      "qualified_name": "src.heretek_swarm.consciousness.ast.ASTSelfModel",
+      "start_line": 215,
+      "end_line": 254,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/ast.py|src.heretek_swarm.consciousness.ast.ASTSelfModel.to_dict": {
+      "file_path": "src/heretek_swarm/consciousness/ast.py",
+      "qualified_name": "src.heretek_swarm.consciousness.ast.ASTSelfModel.to_dict",
+      "start_line": 241,
+      "end_line": 254,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/ast.py|src.heretek_swarm.consciousness.ast.calculate_complexity_metrics": {
+      "file_path": "src/heretek_swarm/consciousness/ast.py",
+      "qualified_name": "src.heretek_swarm.consciousness.ast.calculate_complexity_metrics",
+      "start_line": 257,
+      "end_line": 303,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/ast.py|src.heretek_swarm.consciousness.ast.calculate_emergence_score": {
+      "file_path": "src/heretek_swarm/consciousness/ast.py",
+      "qualified_name": "src.heretek_swarm.consciousness.ast.calculate_emergence_score",
+      "start_line": 306,
+      "end_line": 373,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/ast.py|src.heretek_swarm.consciousness.ast.calculate_self_organization": {
+      "file_path": "src/heretek_swarm/consciousness/ast.py",
+      "qualified_name": "src.heretek_swarm.consciousness.ast.calculate_self_organization",
+      "start_line": 376,
+      "end_line": 427,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/ast.py|src.heretek_swarm.consciousness.ast.calculate_resilience_score": {
+      "file_path": "src/heretek_swarm/consciousness/ast.py",
+      "qualified_name": "src.heretek_swarm.consciousness.ast.calculate_resilience_score",
+      "start_line": 430,
+      "end_line": 482,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/ast.py|src.heretek_swarm.consciousness.ast.create_ast_self_model": {
+      "file_path": "src/heretek_swarm/consciousness/ast.py",
+      "qualified_name": "src.heretek_swarm.consciousness.ast.create_ast_self_model",
+      "start_line": 485,
+      "end_line": 601,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/ast.py|src.heretek_swarm.consciousness.ast.update_self_model": {
+      "file_path": "src/heretek_swarm/consciousness/ast.py",
+      "qualified_name": "src.heretek_swarm.consciousness.ast.update_self_model",
+      "start_line": 609,
+      "end_line": 614,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/ast.py|src.heretek_swarm.consciousness.ast.get_self_model": {
+      "file_path": "src/heretek_swarm/consciousness/ast.py",
+      "qualified_name": "src.heretek_swarm.consciousness.ast.get_self_model",
+      "start_line": 617,
+      "end_line": 619,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/ast.py|src.heretek_swarm.consciousness.ast.get_all_self_models": {
+      "file_path": "src/heretek_swarm/consciousness/ast.py",
+      "qualified_name": "src.heretek_swarm.consciousness.ast.get_all_self_models",
+      "start_line": 622,
+      "end_line": 624,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/ast.py|src.heretek_swarm.consciousness.ast.ASTSelfModelTracker": {
+      "file_path": "src/heretek_swarm/consciousness/ast.py",
+      "qualified_name": "src.heretek_swarm.consciousness.ast.ASTSelfModelTracker",
+      "start_line": 627,
+      "end_line": 747,
+      "type": "CLASS",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/ast.py|src.heretek_swarm.consciousness.ast.ASTSelfModelTracker.__init__": {
+      "file_path": "src/heretek_swarm/consciousness/ast.py",
+      "qualified_name": "src.heretek_swarm.consciousness.ast.ASTSelfModelTracker.__init__",
+      "start_line": 635,
+      "end_line": 637,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/ast.py|src.heretek_swarm.consciousness.ast.ASTSelfModelTracker.track": {
+      "file_path": "src/heretek_swarm/consciousness/ast.py",
+      "qualified_name": "src.heretek_swarm.consciousness.ast.ASTSelfModelTracker.track",
+      "start_line": 639,
+      "end_line": 670,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/ast.py|src.heretek_swarm.consciousness.ast.ASTSelfModelTracker.get_history": {
+      "file_path": "src/heretek_swarm/consciousness/ast.py",
+      "qualified_name": "src.heretek_swarm.consciousness.ast.ASTSelfModelTracker.get_history",
+      "start_line": 672,
+      "end_line": 674,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/ast.py|src.heretek_swarm.consciousness.ast.ASTSelfModelTracker.get_trend": {
+      "file_path": "src/heretek_swarm/consciousness/ast.py",
+      "qualified_name": "src.heretek_swarm.consciousness.ast.ASTSelfModelTracker.get_trend",
+      "start_line": 676,
+      "end_line": 710,
+      "type": "METHOD",
+      "status": "added"
+    },
+    "src/heretek_swarm/consciousness/ast.py|src.heretek_swarm.consciousness.ast.ASTSelfModelTracker.get_statistics": {
+      "file_path": "src/heretek_swarm/consciousness/ast.py",
+      "qualified_name": "src.heretek_swarm.consciousness.ast.ASTSelfModelTracker.get_statistics",
+      "start_line": 712,
+      "end_line": 747,
+      "type": "METHOD",
+      "status": "added"
     }
   },
   "components": [
@@ -113963,7 +115302,7 @@
         },
         {
           "file_path": "src/heretek_swarm/actors/habit_forge.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.actors.habit_forge.HabitStage",
             "src.heretek_swarm.actors.habit_forge.ReinforcementType",
@@ -120785,7 +122124,7 @@
             },
             {
               "file_path": "src/heretek_swarm/actors/habit_forge.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.actors.habit_forge.HabitStage",
                 "src.heretek_swarm.actors.habit_forge.ReinforcementType",
@@ -125059,7 +126398,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/actors/habit_forge.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.actors.habit_forge.HabitStage",
                     "src.heretek_swarm.actors.habit_forge.ReinforcementType",
@@ -127169,7 +128508,7 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/actors/habit_forge.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.actors.habit_forge.HabitStage",
                         "src.heretek_swarm.actors.habit_forge.ReinforcementType",
@@ -127516,7 +128855,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/actors/habit_forge.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.actors.habit_forge.HabitStage",
                             "src.heretek_swarm.actors.habit_forge.ReinforcementType",

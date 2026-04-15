@@ -4,6 +4,7 @@ import pytest
 import time
 
 from heretek_swarm.consciousness.gwt import (
+    AgentRateLimiter,
     GWTConfig,
     GWTContent,
     GlobalWorkspaceBroadcast,
@@ -29,13 +30,13 @@ class TestGWTSalienceMetrics:
     def test_salience_metrics_full(self):
         """Test salience metrics with full values."""
         metrics = GWTSalienceMetrics(
-            novelty=0.9,
-            relevance=0.8,
-            urgency=0.7,
-            impact=0.85,
+            novelty=0.95,
+            relevance=0.95,
+            urgency=0.95,
+            impact=0.95,
             confidence=0.95,
         )
-        assert metrics.overall_salience > 0.8
+        assert metrics.overall_salience > 0.9
         assert metrics.salience_level == SalienceLevel.CRITICAL
 
     def test_salience_level_classification(self):
@@ -141,8 +142,6 @@ class TestRateLimitConfig:
 
 class TestAgentRateLimiter:
     """Test agent rate limiter."""
-
-    from heretek_swarm.consciousness.gwt import AgentRateLimiter
 
     def test_rate_limiter_initial_state(self):
         """Test initial rate limiter state."""

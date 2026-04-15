@@ -26,7 +26,6 @@ from datetime import UTC, datetime
 from enum import Enum
 from typing import Any
 import math
-import uuid
 
 import structlog
 
@@ -319,16 +318,13 @@ def calculate_free_energy(
             entropy -= prob * math.log2(prob + 1e-10)
 
     kl_div = 0.0
-    for key, q_prob in prior.items():
+    for q_prob in prior.values():
         if isinstance(q_prob, (int, float)) and q_prob > 0:
             p_prob = 0.5
             kl_div += q_prob * math.log(q_prob / (p_prob + 1e-10))
 
     free_energy = expected_energy - entropy + kl_div
-    normalized_fe = 1.0 / (1.0 + math.exp(-free_energy + 2.5))
-    normalized_fe = min(1.0, max(0.0, normalized_fe))
-
-    return normalized_fe
+    return min(1.0, max(0.0, 1.0 / (1.0 + math.exp(-free_energy + 2.5))))
 
 
 def create_fep_metrics(

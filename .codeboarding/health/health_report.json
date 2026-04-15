@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-15T19:16:19.796558+00:00",
-  "overall_score": 0.9914634854290028,
+  "timestamp": "2026-04-15T19:25:47.457468+00:00",
+  "overall_score": 0.9914412584165312,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -790,10 +790,10 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 1,
-      "findings_count": 1,
+      "total_entities_checked": 3,
+      "findings_count": 3,
       "warning_count": 0,
-      "score": 0.95,
+      "score": 0.85,
       "finding_groups": [
         {
           "severity": "info",
@@ -805,6 +805,20 @@
               "file_path": "src/heretek_swarm/actors/prism.py",
               "line_start": 497,
               "line_end": 497,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"request_content\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/habit_forge.py",
+              "line_start": 847,
+              "line_end": 847,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"observation\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/habit_forge.py",
+              "line_start": 1168,
+              "line_end": 1168,
               "metric_value": 0.0
             }
           ]
@@ -1177,6 +1191,12 @@
       "composite_risk_score": 45.0
     },
     {
+      "file_path": "src/heretek_swarm/actors/habit_forge.py",
+      "total_findings": 3,
+      "warning_findings": 1,
+      "composite_risk_score": 35.0
+    },
+    {
       "file_path": "src/heretek_swarm/security/threat_detection.py",
       "total_findings": 2,
       "warning_findings": 2,
@@ -1256,12 +1276,6 @@
     },
     {
       "file_path": "src/heretek_swarm/actors/coordinator.py",
-      "total_findings": 2,
-      "warning_findings": 2,
-      "composite_risk_score": 30.0
-    },
-    {
-      "file_path": "src/heretek_swarm/consensus/immune.py",
       "total_findings": 2,
       "warning_findings": 2,
       "composite_risk_score": 30.0

@@ -11,18 +11,19 @@ This module provides both a wrapper class and mixin methods for agent integratio
 
 from __future__ import annotations
 
-from typing import TYPE_CHECKING, Any, Callable
+from typing import TYPE_CHECKING, Any
 
 import structlog
 
 from heretek_swarm.consciousness.gwt import (
-    GWTConfig,
     GlobalWorkspaceBroadcast,
-    calculate_salience,
+    GWTConfig,
     create_gwt_content,
 )
 
 if TYPE_CHECKING:
+    from collections.abc import Callable
+
     from heretek_swarm.consensus.swarm_deliberation import (
         DeliberationResult,
         SwarmDeliberationEngine,
@@ -37,7 +38,7 @@ class GWTSalienceCalculator:
     @staticmethod
     def calculate_deliberation_salience(
         result: DeliberationResult,
-        domain: str | None = None,
+        _domain: str | None = None,
     ) -> dict[str, float]:
         """
         Calculate salience metrics for a deliberation result.
@@ -230,7 +231,7 @@ async def integrate_gwt_with_agent(
     """
     subscriptions = {}
 
-    agent._gwt_broadcast = gwt_broadcast
+    agent._gwt_broadcast = gwt_broadcast  # noqa: SLF001
 
     if subscribe_to_deliberations:
 
@@ -371,7 +372,7 @@ class GWTDeliberationMixin:
 
 __all__ = [
     "DeliberationGWTIntegrator",
-    "GWTSalienceCalculator",
     "GWTDeliberationMixin",
+    "GWTSalienceCalculator",
     "integrate_gwt_with_agent",
 ]

@@ -274,10 +274,10 @@ def calculate_cause_effect_structure(
     """
     mechanism_count = len(connections)
 
-    cause_repertoire_size = len(set(c[0] for c in connections)) if connections else 0
-    effect_repertoire_size = len(set(c[1] for c in connections)) if connections else 0
+    cause_repertoire_size = len({c[0] for c in connections}) if connections else 0
+    effect_repertoire_size = len({c[1] for c in connections}) if connections else 0
 
-    state_diversity = len(set(str(s) for s in states)) if states else 0
+    state_diversity = len({str(s) for s in states}) if states else 0
     information_generated = math.log2(max(1, state_diversity)) / 10.0
 
     return CauseEffectStructure(
@@ -348,7 +348,6 @@ def calculate_integrated_information(
     Returns:
         PhiResult with comprehensive IIT metrics
     """
-    agent_count = system_state.get("agent_count", 0)
     inter_agent_connections = system_state.get("inter_agent_connections", 0)
 
     connections = system_state.get("connections", [])

@@ -672,7 +672,9 @@ Respond in JSON format:
         for action, count in behavior_counts.items():
             if count >= 3:  # Minimum occurrences for pattern
                 pattern_type = (
-                    PatternType.PRODUCTIVE if "complete" in action.lower() else PatternType.NEUTRAL
+                    PatternType.SUCCESS
+                    if "complete" in action.lower()
+                    else PatternType.OPTIMIZATION
                 )
                 patterns.append(
                     BehavioralPattern(
@@ -702,8 +704,8 @@ Respond in JSON format:
         Returns:
             List of recommendations
         """
-        counterproductive = [p for p in patterns if p.pattern_type == PatternType.COUNTERPRODUCTIVE]
-        productive = [p for p in patterns if p.pattern_type == PatternType.PRODUCTIVE]
+        counterproductive = [p for p in patterns if p.pattern_type == PatternType.FAILURE]
+        productive = [p for p in patterns if p.pattern_type == PatternType.SUCCESS]
 
         recommendations = []
 

@@ -107,48 +107,54 @@ class TestPerceiverPlusInitialization:
 
 
 class TestDescriptiveAnalysis:
-    def test_descriptive_analysis_numeric(self) -> None:
+    @pytest.mark.asyncio
+    async def test_descriptive_analysis_numeric(self) -> None:
         agent = PerceiverPlusAgent()
         data = [1.0, 2.0, 3.0, 4.0, 5.0]
-        result = agent._descriptive_analysis(data, "test-1")
+        result = await agent._descriptive_analysis(data, "test-1")
         assert result.analytics_type == AnalyticsType.DESCRIPTIVE
         assert "mean" in result.metrics
         assert result.metrics["mean"] == 3.0
 
-    def test_descriptive_analysis_stats(self) -> None:
+    @pytest.mark.asyncio
+    async def test_descriptive_analysis_stats(self) -> None:
         agent = PerceiverPlusAgent()
         data = [10, 20, 30, 40, 50]
-        result = agent._descriptive_analysis(data, "test-2")
+        result = await agent._descriptive_analysis(data, "test-2")
         assert result.confidence >= 0.9
         assert result.metrics["min"] == 10
         assert result.metrics["max"] == 50
 
-    def test_descriptive_analysis_empty(self) -> None:
+    @pytest.mark.asyncio
+    async def test_descriptive_analysis_empty(self) -> None:
         agent = PerceiverPlusAgent()
-        result = agent._descriptive_analysis([], "test-empty")
+        result = await agent._descriptive_analysis([], "test-empty")
         assert result.confidence == 0.0
 
 
 class TestStatisticalAnalysis:
-    def test_statistical_analysis_numeric(self) -> None:
+    @pytest.mark.asyncio
+    async def test_statistical_analysis_numeric(self) -> None:
         agent = PerceiverPlusAgent()
         data = [1.0, 2.0, 3.0, 4.0, 5.0]
-        result = agent._statistical_analysis(data, "stat-1")
+        result = await agent._statistical_analysis(data, "stat-1")
         assert result.analytics_type == AnalyticsType.STATISTICAL
         assert "sample_size" in result.metrics
         assert result.metrics["sample_size"] == 5
 
-    def test_statistical_analysis_confidence_interval(self) -> None:
+    @pytest.mark.asyncio
+    async def test_statistical_analysis_confidence_interval(self) -> None:
         agent = PerceiverPlusAgent()
         data = [2.0, 4.0, 4.0, 4.0, 5.0, 5.0, 6.0, 6.0, 8.0, 10.0]
-        result = agent._statistical_analysis(data, "stat-2")
+        result = await agent._statistical_analysis(data, "stat-2")
         assert "ci_95_lower" in result.metrics
         assert "ci_95_upper" in result.metrics
         assert result.metrics["ci_95_lower"] < result.metrics["ci_95_upper"]
 
-    def test_statistical_analysis_insufficient_data(self) -> None:
+    @pytest.mark.asyncio
+    async def test_statistical_analysis_insufficient_data(self) -> None:
         agent = PerceiverPlusAgent()
-        result = agent._statistical_analysis([1.0], "stat-small")
+        result = await agent._statistical_analysis([1.0], "stat-small")
         assert result.confidence == 0.0
 
 
@@ -181,44 +187,50 @@ class TestCorrelationalAnalysis:
 
 
 class TestTrendAnalysis:
-    def test_trend_analysis_upward(self) -> None:
+    @pytest.mark.asyncio
+    async def test_trend_analysis_upward(self) -> None:
         agent = PerceiverPlusAgent()
         data = [1.0, 2.0, 3.0, 4.0, 5.0]
-        result = agent._trend_analysis(data, "trend-1")
+        result = await agent._trend_analysis(data, "trend-1")
         assert result.analytics_type == AnalyticsType.TREND
         assert result.metrics["slope"] > 0
 
-    def test_trend_analysis_downward(self) -> None:
+    @pytest.mark.asyncio
+    async def test_trend_analysis_downward(self) -> None:
         agent = PerceiverPlusAgent()
         data = [5.0, 4.0, 3.0, 2.0, 1.0]
-        result = agent._trend_analysis(data, "trend-2")
+        result = await agent._trend_analysis(data, "trend-2")
         assert result.metrics["slope"] < 0
 
-    def test_trend_analysis_r_squared(self) -> None:
+    @pytest.mark.asyncio
+    async def test_trend_analysis_r_squared(self) -> None:
         agent = PerceiverPlusAgent()
         data = [1.0, 2.0, 3.0, 4.0, 5.0]
-        result = agent._trend_analysis(data, "trend-3")
+        result = await agent._trend_analysis(data, "trend-3")
         assert "r_squared" in result.metrics
         assert result.metrics["r_squared"] >= 0
 
 
 class TestAnomalyDetection:
-    def test_anomaly_detection_with_anomalies(self) -> None:
+    @pytest.mark.asyncio
+    async def test_anomaly_detection_with_anomalies(self) -> None:
         agent = PerceiverPlusAgent()
         data = [1.0, 2.0, 3.0, 4.0, 5.0, 100.0]
-        result = agent._anomaly_analysis(data, "anomaly-1")
+        result = await agent._anomaly_analysis(data, "anomaly-1")
         assert result.analytics_type == AnalyticsType.ANOMALY
         assert result.metrics["anomalies_count"] >= 1
 
-    def test_anomaly_detection_no_anomalies(self) -> None:
+    @pytest.mark.asyncio
+    async def test_anomaly_detection_no_anomalies(self) -> None:
         agent = PerceiverPlusAgent()
         data = [1.0, 2.0, 3.0, 4.0, 5.0]
-        result = agent._anomaly_analysis(data, "anomaly-2")
+        result = await agent._anomaly_analysis(data, "anomaly-2")
         assert result.metrics["anomalies_count"] == 0
 
-    def test_anomaly_detection_insufficient_data(self) -> None:
+    @pytest.mark.asyncio
+    async def test_anomaly_detection_insufficient_data(self) -> None:
         agent = PerceiverPlusAgent()
-        result = agent._anomaly_analysis([1.0, 2.0], "anomaly-small")
+        result = await agent._anomaly_analysis([1.0, 2.0], "anomaly-small")
         assert result.confidence == 0.0
 
 
