@@ -323,6 +323,7 @@ class NexusAgent(
     def _register_handlers(self) -> None:
         """Register INTG-02 resilience message handlers."""
         self._message_handlers = {
+            "health_check": self._handle_health_check,
             "create_connection": self._handle_create_connection,
             "update_connection": self._handle_update_connection,
             "delete_connection": self._handle_delete_connection,

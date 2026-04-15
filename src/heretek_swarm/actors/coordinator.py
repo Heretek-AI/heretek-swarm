@@ -17,7 +17,7 @@ from __future__ import annotations
 
 import uuid
 from dataclasses import dataclass, field
-from datetime import UTC, datetime
+from datetime import UTC, datetime, timedelta
 from enum import Enum
 from typing import Any
 
@@ -220,6 +220,7 @@ class CoordinatorAgent(
     def _register_handlers(self) -> None:
         """Register INTG-01 coordination message handlers."""
         self._message_handlers = {
+            "health_check": self._handle_health_check,
             "create_task": self._handle_create_task,
             "update_task": self._handle_update_task,
             "get_task_status": self._handle_get_task_status,

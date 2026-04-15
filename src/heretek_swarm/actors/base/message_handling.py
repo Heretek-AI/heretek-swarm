@@ -73,7 +73,7 @@ class AgentActorMessageHandling(AgentActor):
                         "reply_to": reply_to,
                         "metadata": metadata or {},
                         "timestamp": datetime.now(UTC).isoformat(),
-                    }
+                    },
                 )
                 logger.info(
                     f"[{self.agent_id}] Message {message_id} sent via event mesh to {topic}",
@@ -299,7 +299,7 @@ class AgentActorMessageHandling(AgentActor):
                         f"[{self.agent_id}] Mailbox full, retrying ({attempt + 1}/{max_retries})",
                         extra={"message_type": message.message_type},
                     )
-                    await asyncio.sleep(retry_delay * (2 ** attempt))
+                    await asyncio.sleep(retry_delay * (2**attempt))
                 else:
                     # P1-10e fix: Only drop after all retries exhausted
                     logger.error(
@@ -328,12 +328,15 @@ class AgentActorMessageHandling(AgentActor):
                 await self.process_message(message)
 
                 # P0-1: Auto-persist if interval configured and threshold reached
-                if self._persistence_interval and self._messages_since_persist >= self._persistence_interval:
+                if (
+                    self._persistence_interval
+                    and self._messages_since_persist >= self._persistence_interval
+                ):
                     await self.save_state()
                     self._messages_since_persist = 0
                     logger.debug(
                         f"[{self.agent_id}] State persisted after {self._persistence_interval} messages",
-                        extra={"total_messages": self.message_count}
+                        extra={"total_messages": self.message_count},
                     )
 
                 # Mark as done
@@ -403,9 +406,7 @@ class AgentActorMessageHandling(AgentActor):
                 )
                 self.error_count += 1
         else:
-            logger.warning(
-                f"[{self.agent_id}] No handler for message type: {message.message_type}"
-            )
+            logger.warning(f"[{self.agent_id}] No handler for message type: {message.message_type}")
 
     async def broadcast(
         self,
@@ -423,12 +424,14 @@ class AgentActorMessageHandling(AgentActor):
         event_mesh = self.get_state("_event_mesh")
         if event_mesh is not None:
             try:
-                await event_mesh.broadcast_json({
-                    "type": message_type,
-                    "from": self.agent_id,
-                    "content": content,
-                    "timestamp": datetime.now(UTC).isoformat(),
-                })
+                await event_mesh.broadcast_json(
+                    {
+                        "type": message_type,
+                        "from": self.agent_id,
+                        "content": content,
+                        "timestamp": datetime.now(UTC).isoformat(),
+                    }
+                )
                 logger.info(
                     f"[{self.agent_id}] Broadcast sent via event mesh",
                     extra={"message_type": message_type},
@@ -487,7 +490,7 @@ class AgentActorMessageHandling(AgentActor):
         # P2-7 fix: Validate input before processing
         try:
             validated = self._validate_message_content("health_check", message.content)
-            if validated:
+            if validated and hasattr(validated, "reply_to") and validated.reply_to:
                 reply_topic = validated.reply_to
             else:
                 reply_topic = message.content.get("reply_to", "health")
@@ -581,7 +584,7 @@ class AgentActorMessageHandling(AgentActor):
                 "task_id": task_id,
                 "task_type": task_type,
                 "description": description,
-            }
+            },
         )
 
         # Generate contribution (subclasses should override for custom logic)
@@ -590,7 +593,7 @@ class AgentActorMessageHandling(AgentActor):
             task_type=task_type,
             description=description,
             input_data=input_data,
-            protocol=protocol
+            protocol=protocol,
         )
 
         # Send response if reply_to is provided
@@ -601,7 +604,7 @@ class AgentActorMessageHandling(AgentActor):
                     "message_type": "collective_task_response",
                     "task_id": task_id,
                     "correlation_id": message.correlation_id,
-                    **contribution
+                    **contribution,
                 },
                 correlation_id=message.correlation_id,
             )
@@ -648,9 +651,9 @@ Please provide your analysis and recommendation for this collective task."""
                     "contribution": {
                         "analysis": response,
                         "recommendation": "llm_generated",
-                        "method": "run_with_llm"
+                        "method": "run_with_llm",
                     },
-                    "confidence": 0.75
+                    "confidence": 0.75,
                 }
             except Exception as e:
                 logger.error(f"[{self.agent_id}] LLM contribution error: {e}")
@@ -660,9 +663,9 @@ Please provide your analysis and recommendation for this collective task."""
             "contribution": {
                 "analysis": f"Analysis from {self.name} for task: {description}",
                 "recommendation": f"{self.name}_recommendation",
-                "method": "fallback"
+                "method": "fallback",
             },
-            "confidence": 0.6
+            "confidence": 0.6,
         }
 
     def _get_actor_registry(self) -> dict[str, "AgentActor"] | None:
@@ -676,6 +679,7 @@ Please provide your analysis and recommendation for this collective task."""
         """
         try:
             from heretek_swarm.actors.supervisor import get_supervisor
+
             supervisor = get_supervisor()
             if supervisor and hasattr(supervisor, "actors"):
                 return supervisor.actors
@@ -744,9 +748,7 @@ Please provide your analysis and recommendation for this collective task."""
                             extra={"state": heartbeat_data["state"]},
                         )
                     except Exception as e:
-                        logger.warning(
-                            f"[{self.agent_id}] Failed to publish heartbeat: {e}"
-                        )
+                        logger.warning(f"[{self.agent_id}] Failed to publish heartbeat: {e}")
 
                 await asyncio.sleep(self.heartbeat_interval)
             except asyncio.CancelledError:
@@ -769,7 +771,9 @@ AgentActor._handle_suspend = AgentActorMessageHandling._handle_suspend
 AgentActor._handle_resume = AgentActorMessageHandling._handle_resume
 AgentActor._handle_terminate = AgentActorMessageHandling._handle_terminate
 AgentActor._handle_collective_task = AgentActorMessageHandling._handle_collective_task
-AgentActor._generate_collective_contribution = AgentActorMessageHandling._generate_collective_contribution
+AgentActor._generate_collective_contribution = (
+    AgentActorMessageHandling._generate_collective_contribution
+)
 AgentActor._get_actor_registry = AgentActorMessageHandling._get_actor_registry
 AgentActor.run_with_llm = AgentActorMessageHandling.run_with_llm
 AgentActor._heartbeat_loop = AgentActorMessageHandling._heartbeat_loop

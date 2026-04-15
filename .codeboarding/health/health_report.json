@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-15T19:31:40.056533+00:00",
-  "overall_score": 0.9914412584165312,
+  "timestamp": "2026-04-15T21:16:02.291440+00:00",
+  "overall_score": 0.9909043447995823,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -790,10 +790,10 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 3,
-      "findings_count": 3,
-      "warning_count": 0,
-      "score": 0.85,
+      "total_entities_checked": 14,
+      "findings_count": 14,
+      "warning_count": 3,
+      "score": 0.29999999999999993,
       "finding_groups": [
         {
           "severity": "info",
@@ -819,6 +819,90 @@
               "file_path": "src/heretek_swarm/actors/habit_forge.py",
               "line_start": 1168,
               "line_end": 1168,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"subgraph\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/coordinator.py",
+              "line_start": 1026,
+              "line_end": 1026,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"protocol\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/base/message_handling.py",
+              "line_start": 618,
+              "line_end": 618,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"RateLimitHandler\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/nexus.py",
+              "line_start": 52,
+              "line_end": 52,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"CircuitBreaker\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/nexus.py",
+              "line_start": 53,
+              "line_end": 53,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"FallbackManager\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/nexus.py",
+              "line_start": 54,
+              "line_end": 54,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"connection_id\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/nexus.py",
+              "line_start": 1519,
+              "line_end": 1519,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"method\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/nexus.py",
+              "line_start": 1520,
+              "line_end": 1520,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"success\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/nexus.py",
+              "line_start": 1522,
+              "line_end": 1522,
+              "metric_value": 0.0
+            }
+          ]
+        },
+        {
+          "severity": "warning",
+          "threshold": 0,
+          "description": "Unused import statements that should be removed",
+          "entities": [
+            {
+              "entity_name": "[unused_import] Import \"RateLimitHandler\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/nexus.py",
+              "line_start": 52,
+              "line_end": 52,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"CircuitBreaker\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/nexus.py",
+              "line_start": 53,
+              "line_end": 53,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_import] Import \"FallbackManager\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/nexus.py",
+              "line_start": 54,
+              "line_end": 54,
               "metric_value": 0.0
             }
           ]
@@ -1161,6 +1245,12 @@
   ],
   "file_summaries": [
     {
+      "file_path": "src/heretek_swarm/actors/nexus.py",
+      "total_findings": 12,
+      "warning_findings": 6,
+      "composite_risk_score": 80.0
+    },
+    {
       "file_path": "src/heretek_swarm/actors/sentinel.py",
       "total_findings": 3,
       "warning_findings": 3,
@@ -1168,12 +1258,6 @@
     },
     {
       "file_path": "src/heretek_swarm/consciousness/fep_active_inference.py",
-      "total_findings": 3,
-      "warning_findings": 3,
-      "composite_risk_score": 45.0
-    },
-    {
-      "file_path": "src/heretek_swarm/actors/nexus.py",
       "total_findings": 3,
       "warning_findings": 3,
       "composite_risk_score": 45.0
@@ -1189,6 +1273,12 @@
       "total_findings": 3,
       "warning_findings": 3,
       "composite_risk_score": 45.0
+    },
+    {
+      "file_path": "src/heretek_swarm/actors/coordinator.py",
+      "total_findings": 3,
+      "warning_findings": 2,
+      "composite_risk_score": 40.0
     },
     {
       "file_path": "src/heretek_swarm/actors/habit_forge.py",
@@ -1270,12 +1360,6 @@
     },
     {
       "file_path": "src/heretek_swarm/config/crud.py",
-      "total_findings": 2,
-      "warning_findings": 2,
-      "composite_risk_score": 30.0
-    },
-    {
-      "file_path": "src/heretek_swarm/actors/coordinator.py",
       "total_findings": 2,
       "warning_findings": 2,
       "composite_risk_score": 30.0
