@@ -59,6 +59,7 @@ logger = structlog.get_logger("DeliberationEngine")
 
 class Position(Enum):
     """Position options in deliberation."""
+
     FOR = "for"
     AGAINST = "against"
     NEUTRAL = "neutral"
@@ -66,6 +67,7 @@ class Position(Enum):
 
 class DeliberationOutcome(Enum):
     """Possible deliberation outcomes."""
+
     CONSENSUS = "consensus"
     MAJORITY = "majority"
     DEADLOCK = "deadlock"
@@ -75,6 +77,7 @@ class DeliberationOutcome(Enum):
 
 class ArgumentType(Enum):
     """Types of arguments."""
+
     PRIMARY = "primary"
     SUPPORTING = "supporting"
     COUNTER = "counter"
@@ -83,6 +86,7 @@ class ArgumentType(Enum):
 
 class EvidenceType(Enum):
     """Types of evidence."""
+
     DATA = "data"
     TEST_RESULT = "test_result"
     EXPERT_OPINION = "expert_opinion"
@@ -105,6 +109,7 @@ class Evidence:
         timestamp: Submission timestamp
         submitted_by: Agent who submitted evidence
     """
+
     evidence_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     evidence_type: EvidenceType = EvidenceType.DATA
     content: str = ""
@@ -158,6 +163,7 @@ class Argument:
         rebuttals: IDs of arguments this rebuts
         timestamp: Submission timestamp
     """
+
     argument_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     agent_id: str = ""
     position: Position = Position.NEUTRAL
@@ -189,7 +195,9 @@ class Argument:
             if ref in evidence_dict:
                 evidence_scores.append(evidence_dict[ref].calculate_quality())
 
-        evidence_contribution = sum(evidence_scores) / len(evidence_scores) if evidence_scores else 0.0
+        evidence_contribution = (
+            sum(evidence_scores) / len(evidence_scores) if evidence_scores else 0.0
+        )
 
         # Weight evidence at 40%, confidence at 60%
         strength = 0.6 * base_strength + 0.4 * evidence_contribution
@@ -214,6 +222,7 @@ class CounterArgument:
         confidence: Confidence in counter-argument
         timestamp: Submission timestamp
     """
+
     counter_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     original_argument_id: str = ""
     agent_id: str = ""
@@ -242,7 +251,9 @@ class CounterArgument:
             if ref in evidence_dict:
                 evidence_scores.append(evidence_dict[ref].calculate_quality())
 
-        evidence_contribution = sum(evidence_scores) / len(evidence_scores) if evidence_scores else 0.0
+        evidence_contribution = (
+            sum(evidence_scores) / len(evidence_scores) if evidence_scores else 0.0
+        )
 
         # Weight evidence at 40%, confidence at 60%
         effectiveness = 0.6 * base_effectiveness + 0.4 * evidence_contribution
@@ -270,6 +281,7 @@ class DeliberationRound:
         consensus_score: Current consensus score
         position_changes: Number of position changes
     """
+
     round_id: str = field(default_factory=lambda: str(uuid.uuid4()))
     topic: str = ""
     arguments: list[Argument] = field(default_factory=list)
@@ -285,6 +297,28 @@ class DeliberationRound:
 
 
 @dataclass
+class PositionChange:
+    """
+    Record of a position change during deliberation.
+
+    Attributes:
+        agent_id: Agent who changed position
+        previous_position: Position before change
+        new_position: Position after change
+        round_number: Round when change occurred
+        timestamp: When the change occurred
+        reasoning: Optional reasoning for the change
+    """
+
+    agent_id: str = ""
+    previous_position: Position = Position.NEUTRAL
+    new_position: Position = Position.NEUTRAL
+    round_number: int = 0
+    timestamp: str = field(default_factory=lambda: datetime.now(UTC).isoformat())
+    reasoning: str = ""
+
+
+@dataclass
 class DissentRecord:
     """
     Record of dissenting opinion for minority report.
@@ -297,7 +331,9 @@ class DissentRecord:
         key_arguments: Key arguments supporting dissent
         resolved: Whether dissent was resolved
         resolution_notes: Notes on resolution attempt
+        position_changes: History of position changes for this agent
     """
+
     agent_id: str = ""
     position: Position = Position.NEUTRAL
     confidence: float = 0.0
@@ -305,6 +341,7 @@ class DissentRecord:
     key_arguments: list[str] = field(default_factory=list)
     resolved: bool = False
     resolution_notes: str | None = None
+    position_changes: list[PositionChange] = field(default_factory=list)
 
 
 @dataclass
@@ -320,6 +357,7 @@ class ConsensusConfidence:
         dissent_severity: Severity of dissent
         stability_score: How stable the consensus is
     """
+
     overall_confidence: float = 0.0
     evidence_quality_avg: float = 0.0
     agreement_level: float = 0.0
@@ -327,8 +365,14 @@ class ConsensusConfidence:
     dissent_severity: float = 0.0
     stability_score: float = 0.0
 
-    def calculate(self, for_weight: float, against_weight: float, total_weight: float,
-                  evidence_scores: list[float], dissent_records: list[DissentRecord]) -> None:
+    def calculate(
+        self,
+        for_weight: float,
+        against_weight: float,
+        total_weight: float,
+        evidence_scores: list[float],
+        dissent_records: list[DissentRecord],
+    ) -> None:
         """
         Calculate consensus confidence.
 
@@ -347,24 +391,30 @@ class ConsensusConfidence:
             self.agreement_level = 0.5
 
         # Evidence quality
-        self.evidence_quality_avg = sum(evidence_scores) / len(evidence_scores) if evidence_scores else 0.0
+        self.evidence_quality_avg = (
+            sum(evidence_scores) / len(evidence_scores) if evidence_scores else 0.0
+        )
 
         # Dissent metrics
         self.dissent_count = len(dissent_records)
         if dissent_records:
-            self.dissent_severity = sum(d.confidence for d in dissent_records) / len(dissent_records)
+            self.dissent_severity = sum(d.confidence for d in dissent_records) / len(
+                dissent_records
+            )
         else:
             self.dissent_severity = 0.0
 
         # Stability based on position changes in recent rounds
-        self.stability_score = 1.0 - (self.dissent_severity * 0.3) - ((1 - self.agreement_level) * 0.3)
+        self.stability_score = (
+            1.0 - (self.dissent_severity * 0.3) - ((1 - self.agreement_level) * 0.3)
+        )
 
         # Overall confidence
         self.overall_confidence = (
-            0.35 * self.agreement_level +
-            0.25 * self.evidence_quality_avg +
-            0.20 * self.stability_score +
-            0.20 * (1.0 - self.dissent_severity)
+            0.35 * self.agreement_level
+            + 0.25 * self.evidence_quality_avg
+            + 0.20 * self.stability_score
+            + 0.20 * (1.0 - self.dissent_severity)
         )
 
 
@@ -388,6 +438,7 @@ class DeliberationResult:
         decision_hash: Immutable hash of decision
         timestamp: Result timestamp
     """
+
     deliberation_id: str = ""
     topic: str = ""
     outcome: DeliberationOutcome = DeliberationOutcome.DEADLOCK
@@ -417,6 +468,7 @@ class DeliberationConfig:
         expertise_weight: Weight for expertise in scoring
         dissent_tracking: Enable dissent tracking
     """
+
     max_rounds: int = 5
     consensus_threshold: float = 0.75
     min_participants: int = 3
@@ -470,6 +522,12 @@ class DeliberationEngine:
         # Dissent tracking
         self.dissent_records: dict[str, list[DissentRecord]] = {}
 
+        # Position change tracking
+        self.position_change_history: dict[str, list[PositionChange]] = {}
+
+        # Tiebreaker tracking
+        self._tiebreaker_invocations: dict[str, int] = {}
+
         logger.info(
             f"DeliberationEngine initialized with max_rounds={self.config.max_rounds}, "
             f"consensus_threshold={self.config.consensus_threshold:.2f}"
@@ -518,6 +576,7 @@ class DeliberationEngine:
         self.round_results[deliberation_id] = []
         self.evidence_store[deliberation_id] = {}
         self.dissent_records[deliberation_id] = []
+        self.position_change_history[deliberation_id] = []
 
         logger.info(
             f"Started deliberation {deliberation_id}: '{topic}' "
@@ -643,8 +702,7 @@ class DeliberationEngine:
         self.active_deliberations[deliberation_id]["counter_arguments"].append(counter)
 
         logger.debug(
-            f"Counter-argument submitted in {deliberation_id}: {counter.counter_id} "
-            f"by {agent_id}"
+            f"Counter-argument submitted in {deliberation_id}: {counter.counter_id} by {agent_id}"
         )
 
         return counter.counter_id
@@ -726,7 +784,11 @@ class DeliberationEngine:
         if consensus_score >= self.config.consensus_threshold:
             outcome = DeliberationOutcome.CONSENSUS
         elif current_round >= self.config.max_rounds:
-            outcome = DeliberationOutcome.MAJORITY if consensus_score > 0.5 else DeliberationOutcome.DEADLOCK
+            outcome = (
+                DeliberationOutcome.MAJORITY
+                if consensus_score > 0.5
+                else DeliberationOutcome.DEADLOCK
+            )
         else:
             outcome = DeliberationOutcome.DEADLOCK
 
@@ -806,7 +868,6 @@ class DeliberationEngine:
         # Consensus is higher when one side dominates
         majority_weight = max(for_weight, against_weight)
         return majority_weight / total_weight
-
 
     def _count_position_changes(self, deliberation_id: str) -> int:
         """Count position changes across rounds."""
@@ -892,9 +953,204 @@ class DeliberationEngine:
         dissent_records = self.dissent_records.get(deliberation_id, [])
 
         confidence = ConsensusConfidence()
-        confidence.calculate(for_weight, against_weight, total_weight, evidence_scores, dissent_records)
+        confidence.calculate(
+            for_weight, against_weight, total_weight, evidence_scores, dissent_records
+        )
 
         return confidence
+
+    def record_position_change(
+        self,
+        deliberation_id: str,
+        agent_id: str,
+        previous_position: Position,
+        new_position: Position,
+        round_number: int | None = None,
+        reasoning: str = "",
+    ) -> None:
+        """
+        Record a position change during deliberation.
+
+        Args:
+            deliberation_id: Deliberation identifier
+            agent_id: Agent who changed position
+            previous_position: Position before change
+            new_position: Position after change
+            round_number: Round when change occurred
+            reasoning: Optional reasoning for the change
+        """
+        if deliberation_id not in self.position_change_history:
+            self.position_change_history[deliberation_id] = []
+
+        if round_number is None:
+            round_number = self.current_rounds.get(deliberation_id, 0)
+
+        change = PositionChange(
+            agent_id=agent_id,
+            previous_position=previous_position,
+            new_position=new_position,
+            round_number=round_number,
+            reasoning=reasoning,
+        )
+
+        self.position_change_history[deliberation_id].append(change)
+
+        logger.debug(
+            f"Position change recorded for {agent_id} in {deliberation_id}: "
+            f"{previous_position.value} -> {new_position.value} (round {round_number})"
+        )
+
+    def get_position_change_history(
+        self,
+        deliberation_id: str,
+    ) -> list[PositionChange]:
+        """
+        Get complete position change history for a deliberation.
+
+        Args:
+            deliberation_id: Deliberation identifier
+
+        Returns:
+            List of position changes
+        """
+        return self.position_change_history.get(deliberation_id, [])
+
+    def get_agent_position_changes(
+        self,
+        deliberation_id: str,
+        agent_id: str,
+    ) -> list[PositionChange]:
+        """
+        Get position changes for a specific agent.
+
+        Args:
+            deliberation_id: Deliberation identifier
+            agent_id: Agent to get changes for
+
+        Returns:
+            List of position changes for the agent
+        """
+        history = self.position_change_history.get(deliberation_id, [])
+        return [c for c in history if c.agent_id == agent_id]
+
+    def steward_tiebreaker(
+        self,
+        deliberation_id: str,
+        steward_id: str = "steward",
+        criteria: str = "weighted_confidence",
+    ) -> DeliberationResult | None:
+        """
+        Steward tiebreaker for deadlock situations.
+
+        Called when max_rounds is reached without consensus.
+        The Steward applies configurable criteria to break the tie.
+
+        Args:
+            deliberation_id: Deliberation identifier
+            steward_id: ID of the Steward agent
+            criteria: Tiebreaker criteria (weighted_confidence, first_position,
+                     most_challenges, expert_determination)
+
+        Returns:
+            Final deliberation result or None if deliberation not found
+        """
+        if deliberation_id not in self.active_deliberations:
+            logger.warning(f"Steward tiebreaker: Unknown deliberation {deliberation_id}")
+            return None
+
+        invocation_count = self._tiebreaker_invocations.get(deliberation_id, 0)
+        self._tiebreaker_invocations[deliberation_id] = invocation_count + 1
+
+        logger.info(
+            f"Steward {steward_id} invoking tiebreaker for {deliberation_id} "
+            f"(invocation #{invocation_count + 1}), criteria: {criteria}"
+        )
+
+        data = self.active_deliberations[deliberation_id]
+        positions = data.get("positions", {})
+        arguments = data.get("arguments", [])
+        evidence = data.get("evidence", {})
+
+        for_weight, against_weight, total_weight = self._calculate_position_weights(deliberation_id)
+
+        if criteria == "weighted_confidence":
+            if for_weight > against_weight:
+                final_position = Position.FOR
+            elif against_weight > for_weight:
+                final_position = Position.AGAINST
+            else:
+                final_position = Position.NEUTRAL
+
+        elif criteria == "first_position":
+            sorted_agents = sorted(positions.keys())
+            if sorted_agents:
+                first_agent = sorted_agents[0]
+                final_position = positions[first_agent]["position"]
+            else:
+                final_position = Position.NEUTRAL
+
+        elif criteria == "most_challenges":
+            challenge_counts: dict[str, int] = {}
+            for arg in arguments:
+                challenge_counts[arg.agent_id] = challenge_counts.get(arg.agent_id, 0) + len(
+                    arg.rebuttals
+                )
+            if challenge_counts:
+                final_position = Position.AGAINST
+            else:
+                final_position = Position.NEUTRAL
+
+        else:
+            final_position = Position.NEUTRAL
+
+        consensus_score = self._calculate_consensus_score(deliberation_id)
+
+        if consensus_score >= self.config.consensus_threshold:
+            outcome = DeliberationOutcome.CONSENSUS
+        elif consensus_score > 0.5:
+            outcome = DeliberationOutcome.MAJORITY
+        else:
+            outcome = DeliberationOutcome.DEADLOCK
+
+        confidence = self.calculate_consensus_confidence(deliberation_id)
+
+        dissenting_agents = [d.agent_id for d in self.dissent_records.get(deliberation_id, [])]
+        minority_report = self.dissent_records.get(deliberation_id, [])
+
+        decision_data = {
+            "deliberation_id": deliberation_id,
+            "topic": data["topic"],
+            "final_position": final_position.value,
+            "consensus_score": consensus_score,
+            "tiebreaker": criteria,
+            "steward_id": steward_id,
+            "timestamp": datetime.now(UTC).isoformat(),
+        }
+        decision_hash = hashlib.sha256(str(sorted(decision_data.items())).encode()).hexdigest()
+
+        result = DeliberationResult(
+            deliberation_id=deliberation_id,
+            topic=data["topic"],
+            outcome=outcome,
+            final_position=final_position,
+            consensus_score=consensus_score,
+            confidence=confidence,
+            dissenting_agents=dissenting_agents,
+            minority_report=minority_report,
+            rounds_completed=self.current_rounds[deliberation_id],
+            total_arguments=len(arguments),
+            total_evidence=len(evidence),
+            decision_hash=decision_hash,
+        )
+
+        self.deliberation_states[deliberation_id] = "completed"
+
+        logger.info(
+            f"Tiebreaker result for {deliberation_id}: {final_position.value} "
+            f"(consensus: {consensus_score:.2f}, tiebreaker: {criteria})"
+        )
+
+        return result
 
     def _calculate_position_weights(
         self,
@@ -987,9 +1243,7 @@ class DeliberationEngine:
             "consensus_score": consensus_score,
             "timestamp": datetime.now(UTC).isoformat(),
         }
-        decision_hash = hashlib.sha256(
-            str(sorted(decision_data.items())).encode()
-        ).hexdigest()
+        decision_hash = hashlib.sha256(str(sorted(decision_data.items())).encode()).hexdigest()
 
         result = DeliberationResult(
             deliberation_id=deliberation_id,
@@ -1058,9 +1312,14 @@ class DeliberationEngine:
 
     def cleanup_deliberation(self, deliberation_id: str) -> None:
         """Clean up a completed deliberation."""
-        for store in [self.active_deliberations, self.deliberation_states,
-                      self.current_rounds, self.round_results,
-                      self.evidence_store, self.dissent_records]:
+        for store in [
+            self.active_deliberations,
+            self.deliberation_states,
+            self.current_rounds,
+            self.round_results,
+            self.evidence_store,
+            self.dissent_records,
+        ]:
             if deliberation_id in store:
                 del store[deliberation_id]
 
