@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-15T14:32:22.476066+00:00",
+    "generated_at": "2026-04-15T14:37:56.978531+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -1775,54 +1775,54 @@
       ]
     },
     "src/heretek_swarm/actors/chronos.py": {
-      "file_status": "modified",
+      "file_status": "unchanged",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.actors.chronos.ScheduleStatus",
-          "start_line": 51,
-          "end_line": 60,
+          "start_line": 60,
+          "end_line": 69,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.chronos.RecurrenceType",
-          "start_line": 63,
-          "end_line": 73,
+          "start_line": 72,
+          "end_line": 82,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.chronos.Priority",
-          "start_line": 76,
-          "end_line": 83,
+          "start_line": 85,
+          "end_line": 92,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.chronos.ScheduledTask",
-          "start_line": 87,
-          "end_line": 130,
+          "start_line": 96,
+          "end_line": 139,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.chronos.ScheduledTask.to_dict",
-          "start_line": 109,
-          "end_line": 130,
+          "start_line": 118,
+          "end_line": 139,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.chronos.Deadline",
-          "start_line": 134,
-          "end_line": 158,
+          "start_line": 143,
+          "end_line": 167,
           "node_type": "CLASS",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.chronos.Deadline.to_dict",
-          "start_line": 146,
-          "end_line": 158,
+          "start_line": 155,
+          "end_line": 167,
           "node_type": "METHOD",
           "status": "unchanged"
         },
@@ -1831,26 +1831,12 @@
           "start_line": 170,
           "end_line": 1625,
           "node_type": "CLASS",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent.__init__",
           "start_line": 196,
           "end_line": 267,
-          "node_type": "METHOD",
-          "status": "modified"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent.terminate",
-          "start_line": 255,
-          "end_line": 264,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._validate_message",
-          "start_line": 266,
-          "end_line": 275,
           "node_type": "METHOD",
           "status": "unchanged"
         },
@@ -1859,26 +1845,40 @@
           "start_line": 269,
           "end_line": 286,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent.terminate",
+          "start_line": 288,
+          "end_line": 297,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._validate_message",
+          "start_line": 299,
+          "end_line": 308,
+          "node_type": "METHOD",
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._run_scheduler",
           "start_line": 310,
           "end_line": 357,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._execute_task",
-          "start_line": 313,
-          "end_line": 355,
+          "start_line": 359,
+          "end_line": 401,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._schedule_next_run",
-          "start_line": 357,
-          "end_line": 396,
+          "start_line": 403,
+          "end_line": 442,
           "node_type": "METHOD",
           "status": "unchanged"
         },
@@ -1887,385 +1887,196 @@
           "start_line": 444,
           "end_line": 464,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._send_deadline_warning",
-          "start_line": 467,
-          "end_line": 483,
+          "start_line": 466,
+          "end_line": 482,
           "node_type": "METHOD",
-          "status": "added"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.actors.chronos._send_deadline_warning",
-          "start_line": 467,
-          "end_line": 483,
-          "node_type": "FUNCTION",
-          "status": "deleted"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._handle_schedule_task",
-          "start_line": 485,
-          "end_line": 580,
+          "start_line": 484,
+          "end_line": 579,
           "node_type": "METHOD",
-          "status": "added"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.actors.chronos._handle_schedule_task",
-          "start_line": 485,
-          "end_line": 580,
-          "node_type": "FUNCTION",
-          "status": "deleted"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._handle_cancel_task",
-          "start_line": 582,
-          "end_line": 633,
+          "start_line": 581,
+          "end_line": 632,
           "node_type": "METHOD",
-          "status": "added"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.actors.chronos._handle_cancel_task",
-          "start_line": 582,
-          "end_line": 633,
-          "node_type": "FUNCTION",
-          "status": "deleted"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._handle_pause_task",
-          "start_line": 635,
-          "end_line": 686,
+          "start_line": 634,
+          "end_line": 685,
           "node_type": "METHOD",
-          "status": "added"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.actors.chronos._handle_pause_task",
-          "start_line": 635,
-          "end_line": 686,
-          "node_type": "FUNCTION",
-          "status": "deleted"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._handle_resume_task",
-          "start_line": 688,
-          "end_line": 737,
+          "start_line": 687,
+          "end_line": 736,
           "node_type": "METHOD",
-          "status": "added"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.actors.chronos._handle_resume_task",
-          "start_line": 688,
-          "end_line": 737,
-          "node_type": "FUNCTION",
-          "status": "deleted"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._handle_get_task_status",
-          "start_line": 739,
-          "end_line": 775,
+          "start_line": 738,
+          "end_line": 774,
           "node_type": "METHOD",
-          "status": "added"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.actors.chronos._handle_get_task_status",
-          "start_line": 739,
-          "end_line": 775,
-          "node_type": "FUNCTION",
-          "status": "deleted"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._handle_set_deadline",
-          "start_line": 777,
-          "end_line": 859,
+          "start_line": 776,
+          "end_line": 858,
           "node_type": "METHOD",
-          "status": "added"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.actors.chronos._handle_set_deadline",
-          "start_line": 777,
-          "end_line": 859,
-          "node_type": "FUNCTION",
-          "status": "deleted"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._handle_check_deadline",
-          "start_line": 861,
-          "end_line": 908,
+          "start_line": 860,
+          "end_line": 907,
           "node_type": "METHOD",
-          "status": "added"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.actors.chronos._handle_check_deadline",
-          "start_line": 861,
-          "end_line": 908,
-          "node_type": "FUNCTION",
-          "status": "deleted"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._handle_get_timeline",
-          "start_line": 910,
-          "end_line": 958,
+          "start_line": 909,
+          "end_line": 957,
           "node_type": "METHOD",
-          "status": "added"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.actors.chronos._handle_get_timeline",
-          "start_line": 910,
-          "end_line": 958,
-          "node_type": "FUNCTION",
-          "status": "deleted"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._handle_get_schedule",
-          "start_line": 960,
-          "end_line": 1003,
+          "start_line": 959,
+          "end_line": 1002,
           "node_type": "METHOD",
-          "status": "added"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.actors.chronos._handle_get_schedule",
-          "start_line": 960,
-          "end_line": 1003,
-          "node_type": "FUNCTION",
-          "status": "deleted"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._handle_register_reminder",
-          "start_line": 1005,
-          "end_line": 1060,
+          "start_line": 1004,
+          "end_line": 1059,
           "node_type": "METHOD",
-          "status": "added"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.actors.chronos._handle_register_reminder",
-          "start_line": 1005,
-          "end_line": 1060,
-          "node_type": "FUNCTION",
-          "status": "deleted"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._send_error",
-          "start_line": 1062,
-          "end_line": 1076,
+          "start_line": 1061,
+          "end_line": 1075,
           "node_type": "METHOD",
-          "status": "added"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.actors.chronos._send_error",
-          "start_line": 1062,
-          "end_line": 1076,
-          "node_type": "FUNCTION",
-          "status": "deleted"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._handle_create_context",
-          "start_line": 1080,
-          "end_line": 1160,
+          "start_line": 1079,
+          "end_line": 1159,
           "node_type": "METHOD",
-          "status": "added"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.actors.chronos._handle_create_context",
-          "start_line": 1080,
-          "end_line": 1160,
-          "node_type": "FUNCTION",
-          "status": "deleted"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._handle_update_context",
-          "start_line": 1162,
-          "end_line": 1220,
+          "start_line": 1161,
+          "end_line": 1219,
           "node_type": "METHOD",
-          "status": "added"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.actors.chronos._handle_update_context",
-          "start_line": 1162,
-          "end_line": 1220,
-          "node_type": "FUNCTION",
-          "status": "deleted"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._handle_checkpoint_context",
-          "start_line": 1222,
-          "end_line": 1266,
+          "start_line": 1221,
+          "end_line": 1265,
           "node_type": "METHOD",
-          "status": "added"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.actors.chronos._handle_checkpoint_context",
-          "start_line": 1222,
-          "end_line": 1266,
-          "node_type": "FUNCTION",
-          "status": "deleted"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._handle_get_context_status",
-          "start_line": 1268,
-          "end_line": 1326,
+          "start_line": 1267,
+          "end_line": 1325,
           "node_type": "METHOD",
-          "status": "added"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.actors.chronos._handle_get_context_status",
-          "start_line": 1268,
-          "end_line": 1326,
-          "node_type": "FUNCTION",
-          "status": "deleted"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._handle_get_metrics",
-          "start_line": 1328,
-          "end_line": 1360,
+          "start_line": 1327,
+          "end_line": 1359,
           "node_type": "METHOD",
-          "status": "added"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.actors.chronos._handle_get_metrics",
-          "start_line": 1328,
-          "end_line": 1360,
-          "node_type": "FUNCTION",
-          "status": "deleted"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._handle_anchor_time",
-          "start_line": 1362,
-          "end_line": 1404,
+          "start_line": 1361,
+          "end_line": 1403,
           "node_type": "METHOD",
-          "status": "added"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.actors.chronos._handle_anchor_time",
-          "start_line": 1362,
-          "end_line": 1404,
-          "node_type": "FUNCTION",
-          "status": "deleted"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._handle_get_adaptive_timeout",
-          "start_line": 1406,
-          "end_line": 1460,
+          "start_line": 1405,
+          "end_line": 1459,
           "node_type": "METHOD",
-          "status": "added"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.actors.chronos._handle_get_adaptive_timeout",
-          "start_line": 1406,
-          "end_line": 1460,
-          "node_type": "FUNCTION",
-          "status": "deleted"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._handle_delegate",
-          "start_line": 1462,
-          "end_line": 1510,
+          "start_line": 1461,
+          "end_line": 1509,
           "node_type": "METHOD",
-          "status": "added"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.actors.chronos._handle_delegate",
-          "start_line": 1462,
-          "end_line": 1510,
-          "node_type": "FUNCTION",
-          "status": "deleted"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._check_context_deadlines",
-          "start_line": 1514,
-          "end_line": 1527,
+          "start_line": 1513,
+          "end_line": 1526,
           "node_type": "METHOD",
-          "status": "added"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.actors.chronos._check_context_deadlines",
-          "start_line": 1514,
-          "end_line": 1527,
-          "node_type": "FUNCTION",
-          "status": "deleted"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._update_overload_state",
-          "start_line": 1529,
-          "end_line": 1537,
+          "start_line": 1528,
+          "end_line": 1536,
           "node_type": "METHOD",
-          "status": "added"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.actors.chronos._update_overload_state",
-          "start_line": 1529,
-          "end_line": 1537,
-          "node_type": "FUNCTION",
-          "status": "deleted"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._should_delegate",
-          "start_line": 1539,
-          "end_line": 1545,
+          "start_line": 1538,
+          "end_line": 1544,
           "node_type": "METHOD",
-          "status": "added"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.actors.chronos._should_delegate",
-          "start_line": 1539,
-          "end_line": 1545,
-          "node_type": "FUNCTION",
-          "status": "deleted"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._handle_overload_delegation",
-          "start_line": 1547,
-          "end_line": 1565,
+          "start_line": 1546,
+          "end_line": 1564,
           "node_type": "METHOD",
-          "status": "added"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.actors.chronos._handle_overload_delegation",
-          "start_line": 1547,
-          "end_line": 1565,
-          "node_type": "FUNCTION",
-          "status": "deleted"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._send_context_warning",
-          "start_line": 1567,
-          "end_line": 1582,
+          "start_line": 1566,
+          "end_line": 1581,
           "node_type": "METHOD",
-          "status": "added"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.actors.chronos._send_context_warning",
-          "start_line": 1567,
-          "end_line": 1582,
-          "node_type": "FUNCTION",
-          "status": "deleted"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._handle_context_deadline_miss",
-          "start_line": 1584,
+          "start_line": 1583,
           "end_line": 1599,
           "node_type": "METHOD",
-          "status": "added"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.actors.chronos._handle_context_deadline_miss",
-          "start_line": 1584,
-          "end_line": 1599,
-          "node_type": "FUNCTION",
-          "status": "deleted"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent.get_capabilities",
           "start_line": 1601,
           "end_line": 1625,
           "node_type": "METHOD",
-          "status": "modified"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.actors.chronos.get_capabilities",
-          "start_line": 1601,
-          "end_line": 1625,
-          "node_type": "FUNCTION",
-          "status": "deleted"
+          "status": "unchanged"
         }
       ]
     },
@@ -53918,7 +53729,7 @@
       "methods": []
     },
     "src/heretek_swarm/coordination/__init__.py": {
-      "file_status": "modified",
+      "file_status": "unchanged",
       "methods": []
     }
   },
@@ -55830,56 +55641,56 @@
     "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.ScheduleStatus": {
       "file_path": "src/heretek_swarm/actors/chronos.py",
       "qualified_name": "src.heretek_swarm.actors.chronos.ScheduleStatus",
-      "start_line": 51,
-      "end_line": 60,
+      "start_line": 60,
+      "end_line": 69,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.RecurrenceType": {
       "file_path": "src/heretek_swarm/actors/chronos.py",
       "qualified_name": "src.heretek_swarm.actors.chronos.RecurrenceType",
-      "start_line": 63,
-      "end_line": 73,
+      "start_line": 72,
+      "end_line": 82,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.Priority": {
       "file_path": "src/heretek_swarm/actors/chronos.py",
       "qualified_name": "src.heretek_swarm.actors.chronos.Priority",
-      "start_line": 76,
-      "end_line": 83,
+      "start_line": 85,
+      "end_line": 92,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.ScheduledTask": {
       "file_path": "src/heretek_swarm/actors/chronos.py",
       "qualified_name": "src.heretek_swarm.actors.chronos.ScheduledTask",
-      "start_line": 87,
-      "end_line": 130,
+      "start_line": 96,
+      "end_line": 139,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.ScheduledTask.to_dict": {
       "file_path": "src/heretek_swarm/actors/chronos.py",
       "qualified_name": "src.heretek_swarm.actors.chronos.ScheduledTask.to_dict",
-      "start_line": 109,
-      "end_line": 130,
+      "start_line": 118,
+      "end_line": 139,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.Deadline": {
       "file_path": "src/heretek_swarm/actors/chronos.py",
       "qualified_name": "src.heretek_swarm.actors.chronos.Deadline",
-      "start_line": 134,
-      "end_line": 158,
+      "start_line": 143,
+      "end_line": 167,
       "type": "CLASS",
       "status": "unchanged"
     },
     "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.Deadline.to_dict": {
       "file_path": "src/heretek_swarm/actors/chronos.py",
       "qualified_name": "src.heretek_swarm.actors.chronos.Deadline.to_dict",
-      "start_line": 146,
-      "end_line": 158,
+      "start_line": 155,
+      "end_line": 167,
       "type": "METHOD",
       "status": "unchanged"
     },
@@ -55889,29 +55700,13 @@
       "start_line": 170,
       "end_line": 1625,
       "type": "CLASS",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.ChronosAgent.__init__": {
       "file_path": "src/heretek_swarm/actors/chronos.py",
       "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent.__init__",
       "start_line": 196,
       "end_line": 267,
-      "type": "METHOD",
-      "status": "modified"
-    },
-    "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.ChronosAgent.terminate": {
-      "file_path": "src/heretek_swarm/actors/chronos.py",
-      "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent.terminate",
-      "start_line": 255,
-      "end_line": 264,
-      "type": "METHOD",
-      "status": "unchanged"
-    },
-    "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.ChronosAgent._validate_message": {
-      "file_path": "src/heretek_swarm/actors/chronos.py",
-      "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._validate_message",
-      "start_line": 266,
-      "end_line": 275,
       "type": "METHOD",
       "status": "unchanged"
     },
@@ -55921,7 +55716,23 @@
       "start_line": 269,
       "end_line": 286,
       "type": "METHOD",
-      "status": "modified"
+      "status": "unchanged"
+    },
+    "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.ChronosAgent.terminate": {
+      "file_path": "src/heretek_swarm/actors/chronos.py",
+      "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent.terminate",
+      "start_line": 288,
+      "end_line": 297,
+      "type": "METHOD",
+      "status": "unchanged"
+    },
+    "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.ChronosAgent._validate_message": {
+      "file_path": "src/heretek_swarm/actors/chronos.py",
+      "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._validate_message",
+      "start_line": 299,
+      "end_line": 308,
+      "type": "METHOD",
+      "status": "unchanged"
     },
     "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.ChronosAgent._run_scheduler": {
       "file_path": "src/heretek_swarm/actors/chronos.py",
@@ -55929,21 +55740,21 @@
       "start_line": 310,
       "end_line": 357,
       "type": "METHOD",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.ChronosAgent._execute_task": {
       "file_path": "src/heretek_swarm/actors/chronos.py",
       "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._execute_task",
-      "start_line": 313,
-      "end_line": 355,
+      "start_line": 359,
+      "end_line": 401,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.ChronosAgent._schedule_next_run": {
       "file_path": "src/heretek_swarm/actors/chronos.py",
       "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._schedule_next_run",
-      "start_line": 357,
-      "end_line": 396,
+      "start_line": 403,
+      "end_line": 442,
       "type": "METHOD",
       "status": "unchanged"
     },
@@ -55953,423 +55764,215 @@
       "start_line": 444,
       "end_line": 464,
       "type": "METHOD",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.ChronosAgent._send_deadline_warning": {
       "file_path": "src/heretek_swarm/actors/chronos.py",
       "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._send_deadline_warning",
-      "start_line": 467,
-      "end_line": 483,
+      "start_line": 466,
+      "end_line": 482,
       "type": "METHOD",
-      "status": "added"
-    },
-    "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos._send_deadline_warning": {
-      "file_path": "src/heretek_swarm/actors/chronos.py",
-      "qualified_name": "src.heretek_swarm.actors.chronos._send_deadline_warning",
-      "start_line": 467,
-      "end_line": 483,
-      "type": "FUNCTION",
-      "status": "deleted"
+      "status": "unchanged"
     },
     "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.ChronosAgent._handle_schedule_task": {
       "file_path": "src/heretek_swarm/actors/chronos.py",
       "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._handle_schedule_task",
-      "start_line": 485,
-      "end_line": 580,
+      "start_line": 484,
+      "end_line": 579,
       "type": "METHOD",
-      "status": "added"
-    },
-    "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos._handle_schedule_task": {
-      "file_path": "src/heretek_swarm/actors/chronos.py",
-      "qualified_name": "src.heretek_swarm.actors.chronos._handle_schedule_task",
-      "start_line": 485,
-      "end_line": 580,
-      "type": "FUNCTION",
-      "status": "deleted"
+      "status": "unchanged"
     },
     "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.ChronosAgent._handle_cancel_task": {
       "file_path": "src/heretek_swarm/actors/chronos.py",
       "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._handle_cancel_task",
-      "start_line": 582,
-      "end_line": 633,
+      "start_line": 581,
+      "end_line": 632,
       "type": "METHOD",
-      "status": "added"
-    },
-    "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos._handle_cancel_task": {
-      "file_path": "src/heretek_swarm/actors/chronos.py",
-      "qualified_name": "src.heretek_swarm.actors.chronos._handle_cancel_task",
-      "start_line": 582,
-      "end_line": 633,
-      "type": "FUNCTION",
-      "status": "deleted"
+      "status": "unchanged"
     },
     "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.ChronosAgent._handle_pause_task": {
       "file_path": "src/heretek_swarm/actors/chronos.py",
       "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._handle_pause_task",
-      "start_line": 635,
-      "end_line": 686,
+      "start_line": 634,
+      "end_line": 685,
       "type": "METHOD",
-      "status": "added"
-    },
-    "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos._handle_pause_task": {
-      "file_path": "src/heretek_swarm/actors/chronos.py",
-      "qualified_name": "src.heretek_swarm.actors.chronos._handle_pause_task",
-      "start_line": 635,
-      "end_line": 686,
-      "type": "FUNCTION",
-      "status": "deleted"
+      "status": "unchanged"
     },
     "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.ChronosAgent._handle_resume_task": {
       "file_path": "src/heretek_swarm/actors/chronos.py",
       "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._handle_resume_task",
-      "start_line": 688,
-      "end_line": 737,
+      "start_line": 687,
+      "end_line": 736,
       "type": "METHOD",
-      "status": "added"
-    },
-    "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos._handle_resume_task": {
-      "file_path": "src/heretek_swarm/actors/chronos.py",
-      "qualified_name": "src.heretek_swarm.actors.chronos._handle_resume_task",
-      "start_line": 688,
-      "end_line": 737,
-      "type": "FUNCTION",
-      "status": "deleted"
+      "status": "unchanged"
     },
     "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.ChronosAgent._handle_get_task_status": {
       "file_path": "src/heretek_swarm/actors/chronos.py",
       "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._handle_get_task_status",
-      "start_line": 739,
-      "end_line": 775,
+      "start_line": 738,
+      "end_line": 774,
       "type": "METHOD",
-      "status": "added"
-    },
-    "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos._handle_get_task_status": {
-      "file_path": "src/heretek_swarm/actors/chronos.py",
-      "qualified_name": "src.heretek_swarm.actors.chronos._handle_get_task_status",
-      "start_line": 739,
-      "end_line": 775,
-      "type": "FUNCTION",
-      "status": "deleted"
+      "status": "unchanged"
     },
     "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.ChronosAgent._handle_set_deadline": {
       "file_path": "src/heretek_swarm/actors/chronos.py",
       "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._handle_set_deadline",
-      "start_line": 777,
-      "end_line": 859,
+      "start_line": 776,
+      "end_line": 858,
       "type": "METHOD",
-      "status": "added"
-    },
-    "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos._handle_set_deadline": {
-      "file_path": "src/heretek_swarm/actors/chronos.py",
-      "qualified_name": "src.heretek_swarm.actors.chronos._handle_set_deadline",
-      "start_line": 777,
-      "end_line": 859,
-      "type": "FUNCTION",
-      "status": "deleted"
+      "status": "unchanged"
     },
     "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.ChronosAgent._handle_check_deadline": {
       "file_path": "src/heretek_swarm/actors/chronos.py",
       "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._handle_check_deadline",
-      "start_line": 861,
-      "end_line": 908,
+      "start_line": 860,
+      "end_line": 907,
       "type": "METHOD",
-      "status": "added"
-    },
-    "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos._handle_check_deadline": {
-      "file_path": "src/heretek_swarm/actors/chronos.py",
-      "qualified_name": "src.heretek_swarm.actors.chronos._handle_check_deadline",
-      "start_line": 861,
-      "end_line": 908,
-      "type": "FUNCTION",
-      "status": "deleted"
+      "status": "unchanged"
     },
     "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.ChronosAgent._handle_get_timeline": {
       "file_path": "src/heretek_swarm/actors/chronos.py",
       "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._handle_get_timeline",
-      "start_line": 910,
-      "end_line": 958,
+      "start_line": 909,
+      "end_line": 957,
       "type": "METHOD",
-      "status": "added"
-    },
-    "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos._handle_get_timeline": {
-      "file_path": "src/heretek_swarm/actors/chronos.py",
-      "qualified_name": "src.heretek_swarm.actors.chronos._handle_get_timeline",
-      "start_line": 910,
-      "end_line": 958,
-      "type": "FUNCTION",
-      "status": "deleted"
+      "status": "unchanged"
     },
     "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.ChronosAgent._handle_get_schedule": {
       "file_path": "src/heretek_swarm/actors/chronos.py",
       "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._handle_get_schedule",
-      "start_line": 960,
-      "end_line": 1003,
+      "start_line": 959,
+      "end_line": 1002,
       "type": "METHOD",
-      "status": "added"
-    },
-    "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos._handle_get_schedule": {
-      "file_path": "src/heretek_swarm/actors/chronos.py",
-      "qualified_name": "src.heretek_swarm.actors.chronos._handle_get_schedule",
-      "start_line": 960,
-      "end_line": 1003,
-      "type": "FUNCTION",
-      "status": "deleted"
+      "status": "unchanged"
     },
     "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.ChronosAgent._handle_register_reminder": {
       "file_path": "src/heretek_swarm/actors/chronos.py",
       "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._handle_register_reminder",
-      "start_line": 1005,
-      "end_line": 1060,
+      "start_line": 1004,
+      "end_line": 1059,
       "type": "METHOD",
-      "status": "added"
-    },
-    "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos._handle_register_reminder": {
-      "file_path": "src/heretek_swarm/actors/chronos.py",
-      "qualified_name": "src.heretek_swarm.actors.chronos._handle_register_reminder",
-      "start_line": 1005,
-      "end_line": 1060,
-      "type": "FUNCTION",
-      "status": "deleted"
+      "status": "unchanged"
     },
     "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.ChronosAgent._send_error": {
       "file_path": "src/heretek_swarm/actors/chronos.py",
       "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._send_error",
-      "start_line": 1062,
-      "end_line": 1076,
+      "start_line": 1061,
+      "end_line": 1075,
       "type": "METHOD",
-      "status": "added"
-    },
-    "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos._send_error": {
-      "file_path": "src/heretek_swarm/actors/chronos.py",
-      "qualified_name": "src.heretek_swarm.actors.chronos._send_error",
-      "start_line": 1062,
-      "end_line": 1076,
-      "type": "FUNCTION",
-      "status": "deleted"
+      "status": "unchanged"
     },
     "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.ChronosAgent._handle_create_context": {
       "file_path": "src/heretek_swarm/actors/chronos.py",
       "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._handle_create_context",
-      "start_line": 1080,
-      "end_line": 1160,
+      "start_line": 1079,
+      "end_line": 1159,
       "type": "METHOD",
-      "status": "added"
-    },
-    "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos._handle_create_context": {
-      "file_path": "src/heretek_swarm/actors/chronos.py",
-      "qualified_name": "src.heretek_swarm.actors.chronos._handle_create_context",
-      "start_line": 1080,
-      "end_line": 1160,
-      "type": "FUNCTION",
-      "status": "deleted"
+      "status": "unchanged"
     },
     "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.ChronosAgent._handle_update_context": {
       "file_path": "src/heretek_swarm/actors/chronos.py",
       "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._handle_update_context",
-      "start_line": 1162,
-      "end_line": 1220,
+      "start_line": 1161,
+      "end_line": 1219,
       "type": "METHOD",
-      "status": "added"
-    },
-    "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos._handle_update_context": {
-      "file_path": "src/heretek_swarm/actors/chronos.py",
-      "qualified_name": "src.heretek_swarm.actors.chronos._handle_update_context",
-      "start_line": 1162,
-      "end_line": 1220,
-      "type": "FUNCTION",
-      "status": "deleted"
+      "status": "unchanged"
     },
     "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.ChronosAgent._handle_checkpoint_context": {
       "file_path": "src/heretek_swarm/actors/chronos.py",
       "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._handle_checkpoint_context",
-      "start_line": 1222,
-      "end_line": 1266,
+      "start_line": 1221,
+      "end_line": 1265,
       "type": "METHOD",
-      "status": "added"
-    },
-    "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos._handle_checkpoint_context": {
-      "file_path": "src/heretek_swarm/actors/chronos.py",
-      "qualified_name": "src.heretek_swarm.actors.chronos._handle_checkpoint_context",
-      "start_line": 1222,
-      "end_line": 1266,
-      "type": "FUNCTION",
-      "status": "deleted"
+      "status": "unchanged"
     },
     "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.ChronosAgent._handle_get_context_status": {
       "file_path": "src/heretek_swarm/actors/chronos.py",
       "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._handle_get_context_status",
-      "start_line": 1268,
-      "end_line": 1326,
+      "start_line": 1267,
+      "end_line": 1325,
       "type": "METHOD",
-      "status": "added"
-    },
-    "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos._handle_get_context_status": {
-      "file_path": "src/heretek_swarm/actors/chronos.py",
-      "qualified_name": "src.heretek_swarm.actors.chronos._handle_get_context_status",
-      "start_line": 1268,
-      "end_line": 1326,
-      "type": "FUNCTION",
-      "status": "deleted"
+      "status": "unchanged"
     },
     "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.ChronosAgent._handle_get_metrics": {
       "file_path": "src/heretek_swarm/actors/chronos.py",
       "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._handle_get_metrics",
-      "start_line": 1328,
-      "end_line": 1360,
+      "start_line": 1327,
+      "end_line": 1359,
       "type": "METHOD",
-      "status": "added"
-    },
-    "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos._handle_get_metrics": {
-      "file_path": "src/heretek_swarm/actors/chronos.py",
-      "qualified_name": "src.heretek_swarm.actors.chronos._handle_get_metrics",
-      "start_line": 1328,
-      "end_line": 1360,
-      "type": "FUNCTION",
-      "status": "deleted"
+      "status": "unchanged"
     },
     "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.ChronosAgent._handle_anchor_time": {
       "file_path": "src/heretek_swarm/actors/chronos.py",
       "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._handle_anchor_time",
-      "start_line": 1362,
-      "end_line": 1404,
+      "start_line": 1361,
+      "end_line": 1403,
       "type": "METHOD",
-      "status": "added"
-    },
-    "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos._handle_anchor_time": {
-      "file_path": "src/heretek_swarm/actors/chronos.py",
-      "qualified_name": "src.heretek_swarm.actors.chronos._handle_anchor_time",
-      "start_line": 1362,
-      "end_line": 1404,
-      "type": "FUNCTION",
-      "status": "deleted"
+      "status": "unchanged"
     },
     "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.ChronosAgent._handle_get_adaptive_timeout": {
       "file_path": "src/heretek_swarm/actors/chronos.py",
       "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._handle_get_adaptive_timeout",
-      "start_line": 1406,
-      "end_line": 1460,
+      "start_line": 1405,
+      "end_line": 1459,
       "type": "METHOD",
-      "status": "added"
-    },
-    "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos._handle_get_adaptive_timeout": {
-      "file_path": "src/heretek_swarm/actors/chronos.py",
-      "qualified_name": "src.heretek_swarm.actors.chronos._handle_get_adaptive_timeout",
-      "start_line": 1406,
-      "end_line": 1460,
-      "type": "FUNCTION",
-      "status": "deleted"
+      "status": "unchanged"
     },
     "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.ChronosAgent._handle_delegate": {
       "file_path": "src/heretek_swarm/actors/chronos.py",
       "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._handle_delegate",
-      "start_line": 1462,
-      "end_line": 1510,
+      "start_line": 1461,
+      "end_line": 1509,
       "type": "METHOD",
-      "status": "added"
-    },
-    "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos._handle_delegate": {
-      "file_path": "src/heretek_swarm/actors/chronos.py",
-      "qualified_name": "src.heretek_swarm.actors.chronos._handle_delegate",
-      "start_line": 1462,
-      "end_line": 1510,
-      "type": "FUNCTION",
-      "status": "deleted"
+      "status": "unchanged"
     },
     "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.ChronosAgent._check_context_deadlines": {
       "file_path": "src/heretek_swarm/actors/chronos.py",
       "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._check_context_deadlines",
-      "start_line": 1514,
-      "end_line": 1527,
+      "start_line": 1513,
+      "end_line": 1526,
       "type": "METHOD",
-      "status": "added"
-    },
-    "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos._check_context_deadlines": {
-      "file_path": "src/heretek_swarm/actors/chronos.py",
-      "qualified_name": "src.heretek_swarm.actors.chronos._check_context_deadlines",
-      "start_line": 1514,
-      "end_line": 1527,
-      "type": "FUNCTION",
-      "status": "deleted"
+      "status": "unchanged"
     },
     "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.ChronosAgent._update_overload_state": {
       "file_path": "src/heretek_swarm/actors/chronos.py",
       "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._update_overload_state",
-      "start_line": 1529,
-      "end_line": 1537,
+      "start_line": 1528,
+      "end_line": 1536,
       "type": "METHOD",
-      "status": "added"
-    },
-    "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos._update_overload_state": {
-      "file_path": "src/heretek_swarm/actors/chronos.py",
-      "qualified_name": "src.heretek_swarm.actors.chronos._update_overload_state",
-      "start_line": 1529,
-      "end_line": 1537,
-      "type": "FUNCTION",
-      "status": "deleted"
+      "status": "unchanged"
     },
     "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.ChronosAgent._should_delegate": {
       "file_path": "src/heretek_swarm/actors/chronos.py",
       "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._should_delegate",
-      "start_line": 1539,
-      "end_line": 1545,
+      "start_line": 1538,
+      "end_line": 1544,
       "type": "METHOD",
-      "status": "added"
-    },
-    "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos._should_delegate": {
-      "file_path": "src/heretek_swarm/actors/chronos.py",
-      "qualified_name": "src.heretek_swarm.actors.chronos._should_delegate",
-      "start_line": 1539,
-      "end_line": 1545,
-      "type": "FUNCTION",
-      "status": "deleted"
+      "status": "unchanged"
     },
     "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.ChronosAgent._handle_overload_delegation": {
       "file_path": "src/heretek_swarm/actors/chronos.py",
       "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._handle_overload_delegation",
-      "start_line": 1547,
-      "end_line": 1565,
+      "start_line": 1546,
+      "end_line": 1564,
       "type": "METHOD",
-      "status": "added"
-    },
-    "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos._handle_overload_delegation": {
-      "file_path": "src/heretek_swarm/actors/chronos.py",
-      "qualified_name": "src.heretek_swarm.actors.chronos._handle_overload_delegation",
-      "start_line": 1547,
-      "end_line": 1565,
-      "type": "FUNCTION",
-      "status": "deleted"
+      "status": "unchanged"
     },
     "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.ChronosAgent._send_context_warning": {
       "file_path": "src/heretek_swarm/actors/chronos.py",
       "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._send_context_warning",
-      "start_line": 1567,
-      "end_line": 1582,
+      "start_line": 1566,
+      "end_line": 1581,
       "type": "METHOD",
-      "status": "added"
-    },
-    "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos._send_context_warning": {
-      "file_path": "src/heretek_swarm/actors/chronos.py",
-      "qualified_name": "src.heretek_swarm.actors.chronos._send_context_warning",
-      "start_line": 1567,
-      "end_line": 1582,
-      "type": "FUNCTION",
-      "status": "deleted"
+      "status": "unchanged"
     },
     "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.ChronosAgent._handle_context_deadline_miss": {
       "file_path": "src/heretek_swarm/actors/chronos.py",
       "qualified_name": "src.heretek_swarm.actors.chronos.ChronosAgent._handle_context_deadline_miss",
-      "start_line": 1584,
+      "start_line": 1583,
       "end_line": 1599,
       "type": "METHOD",
-      "status": "added"
-    },
-    "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos._handle_context_deadline_miss": {
-      "file_path": "src/heretek_swarm/actors/chronos.py",
-      "qualified_name": "src.heretek_swarm.actors.chronos._handle_context_deadline_miss",
-      "start_line": 1584,
-      "end_line": 1599,
-      "type": "FUNCTION",
-      "status": "deleted"
+      "status": "unchanged"
     },
     "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.ChronosAgent.get_capabilities": {
       "file_path": "src/heretek_swarm/actors/chronos.py",
@@ -56377,15 +55980,7 @@
       "start_line": 1601,
       "end_line": 1625,
       "type": "METHOD",
-      "status": "modified"
-    },
-    "src/heretek_swarm/actors/chronos.py|src.heretek_swarm.actors.chronos.get_capabilities": {
-      "file_path": "src/heretek_swarm/actors/chronos.py",
-      "qualified_name": "src.heretek_swarm.actors.chronos.get_capabilities",
-      "start_line": 1601,
-      "end_line": 1625,
-      "type": "FUNCTION",
-      "status": "deleted"
+      "status": "unchanged"
     },
     "src/heretek_swarm/actors/coder.py|src.heretek_swarm.actors.coder.CodeLanguage": {
       "file_path": "src/heretek_swarm/actors/coder.py",
@@ -114015,7 +113610,7 @@
         },
         {
           "file_path": "src/heretek_swarm/actors/chronos.py",
-          "file_status": "modified",
+          "file_status": "unchanged",
           "methods": [
             "src.heretek_swarm.actors.chronos.ScheduleStatus",
             "src.heretek_swarm.actors.chronos.RecurrenceType",
@@ -114026,9 +113621,9 @@
             "src.heretek_swarm.actors.chronos.Deadline.to_dict",
             "src.heretek_swarm.actors.chronos.ChronosAgent",
             "src.heretek_swarm.actors.chronos.ChronosAgent.__init__",
+            "src.heretek_swarm.actors.chronos.ChronosAgent.initialize",
             "src.heretek_swarm.actors.chronos.ChronosAgent.terminate",
             "src.heretek_swarm.actors.chronos.ChronosAgent._validate_message",
-            "src.heretek_swarm.actors.chronos.ChronosAgent.initialize",
             "src.heretek_swarm.actors.chronos.ChronosAgent._run_scheduler",
             "src.heretek_swarm.actors.chronos.ChronosAgent._execute_task",
             "src.heretek_swarm.actors.chronos.ChronosAgent._schedule_next_run",
@@ -120836,7 +120431,7 @@
             },
             {
               "file_path": "src/heretek_swarm/actors/chronos.py",
-              "file_status": "modified",
+              "file_status": "unchanged",
               "methods": [
                 "src.heretek_swarm.actors.chronos.ScheduleStatus",
                 "src.heretek_swarm.actors.chronos.RecurrenceType",
@@ -120847,9 +120442,9 @@
                 "src.heretek_swarm.actors.chronos.Deadline.to_dict",
                 "src.heretek_swarm.actors.chronos.ChronosAgent",
                 "src.heretek_swarm.actors.chronos.ChronosAgent.__init__",
+                "src.heretek_swarm.actors.chronos.ChronosAgent.initialize",
                 "src.heretek_swarm.actors.chronos.ChronosAgent.terminate",
                 "src.heretek_swarm.actors.chronos.ChronosAgent._validate_message",
-                "src.heretek_swarm.actors.chronos.ChronosAgent.initialize",
                 "src.heretek_swarm.actors.chronos.ChronosAgent._run_scheduler",
                 "src.heretek_swarm.actors.chronos.ChronosAgent._execute_task",
                 "src.heretek_swarm.actors.chronos.ChronosAgent._schedule_next_run",
@@ -125273,7 +124868,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/actors/chronos.py",
-                  "file_status": "modified",
+                  "file_status": "unchanged",
                   "methods": [
                     "src.heretek_swarm.actors.chronos.ScheduleStatus",
                     "src.heretek_swarm.actors.chronos.RecurrenceType",
@@ -125284,9 +124879,9 @@
                     "src.heretek_swarm.actors.chronos.Deadline.to_dict",
                     "src.heretek_swarm.actors.chronos.ChronosAgent",
                     "src.heretek_swarm.actors.chronos.ChronosAgent.__init__",
+                    "src.heretek_swarm.actors.chronos.ChronosAgent.initialize",
                     "src.heretek_swarm.actors.chronos.ChronosAgent.terminate",
                     "src.heretek_swarm.actors.chronos.ChronosAgent._validate_message",
-                    "src.heretek_swarm.actors.chronos.ChronosAgent.initialize",
                     "src.heretek_swarm.actors.chronos.ChronosAgent._run_scheduler",
                     "src.heretek_swarm.actors.chronos.ChronosAgent._execute_task",
                     "src.heretek_swarm.actors.chronos.ChronosAgent._schedule_next_run",
@@ -126931,7 +126526,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/actors/chronos.py",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "src.heretek_swarm.actors.chronos.ScheduleStatus",
                         "src.heretek_swarm.actors.chronos.RecurrenceType",
@@ -126942,9 +126537,9 @@
                         "src.heretek_swarm.actors.chronos.Deadline.to_dict",
                         "src.heretek_swarm.actors.chronos.ChronosAgent",
                         "src.heretek_swarm.actors.chronos.ChronosAgent.__init__",
+                        "src.heretek_swarm.actors.chronos.ChronosAgent.initialize",
                         "src.heretek_swarm.actors.chronos.ChronosAgent.terminate",
                         "src.heretek_swarm.actors.chronos.ChronosAgent._validate_message",
-                        "src.heretek_swarm.actors.chronos.ChronosAgent.initialize",
                         "src.heretek_swarm.actors.chronos.ChronosAgent._run_scheduler",
                         "src.heretek_swarm.actors.chronos.ChronosAgent._execute_task",
                         "src.heretek_swarm.actors.chronos.ChronosAgent._schedule_next_run",
@@ -127117,7 +126712,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/actors/chronos.py",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "src.heretek_swarm.actors.chronos.ChronosAgent.__init__"
                           ]
@@ -127209,7 +126804,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/actors/chronos.py",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "src.heretek_swarm.actors.chronos.ScheduleStatus",
                             "src.heretek_swarm.actors.chronos.RecurrenceType",
@@ -127219,9 +126814,9 @@
                             "src.heretek_swarm.actors.chronos.Deadline",
                             "src.heretek_swarm.actors.chronos.Deadline.to_dict",
                             "src.heretek_swarm.actors.chronos.ChronosAgent",
+                            "src.heretek_swarm.actors.chronos.ChronosAgent.initialize",
                             "src.heretek_swarm.actors.chronos.ChronosAgent.terminate",
                             "src.heretek_swarm.actors.chronos.ChronosAgent._validate_message",
-                            "src.heretek_swarm.actors.chronos.ChronosAgent.initialize",
                             "src.heretek_swarm.actors.chronos.ChronosAgent._run_scheduler",
                             "src.heretek_swarm.actors.chronos.ChronosAgent._execute_task",
                             "src.heretek_swarm.actors.chronos.ChronosAgent._schedule_next_run",
