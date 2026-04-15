@@ -18,7 +18,6 @@ from __future__ import annotations
 import hashlib
 import hmac
 import json
-import os
 import re
 import unicodedata
 import uuid
@@ -45,6 +44,21 @@ from heretek_swarm.actors.validation import validate_message
 # Session 44: Zero-Trust Validation
 from heretek_swarm.validation import (
     LLMOutputValidator,
+)
+
+# INTG-02: External API Resilience
+from heretek_swarm.gateway.external_api import (
+    ResilientAPIClient,
+    RateLimitHandler,
+    CircuitBreaker,
+    FallbackManager,
+    RetryConfig,
+    RateLimitConfig,
+    CircuitBreakerConfig,
+    FallbackConfig,
+    RetryStrategy,
+    CircuitState,
+    APIRequestMetrics,
 )
 
 if TYPE_CHECKING:
@@ -254,6 +268,25 @@ class NexusAgent(
             (re.compile(r"setattr\s*\("), "setattr_call"),
         ]
 
+        # INTG-02: External API Resilience
+        self._api_client: ResilientAPIClient | None = None
+        self._retry_config = RetryConfig(
+            max_retries=3,
+            initial_delay_ms=100,
+            max_delay_ms=30000,
+        )
+        self._rate_limit_config = RateLimitConfig(
+            requests_per_minute=60,
+            auto_backoff=True,
+        )
+        self._circuit_breaker_config = CircuitBreakerConfig(
+            failure_threshold=5,
+            timeout_seconds=30.0,
+        )
+        self._fallback_config = FallbackConfig(enabled=False)
+        self._api_metrics: list[APIRequestMetrics] = []
+        self._max_metrics_entries: int = 1000
+
         logger.info(
             "nexus_initialized",
             agent_id=self.agent_id,
@@ -265,12 +298,50 @@ class NexusAgent(
         )
 
     async def initialize(self) -> None:
-        """Initialize the Nexus agent."""
+        """Initialize the Nexus agent with resilience support."""
         await super().initialize()
         self._session = aiohttp.ClientSession(
             timeout=aiohttp.ClientTimeout(total=self._config.get("timeout", 30)),
         )
-        logger.info("nexus_http_session_initialized")
+        self._api_client = ResilientAPIClient(
+            session=self._session,
+            retry_config=self._retry_config,
+            rate_limit_config=self._rate_limit_config,
+            circuit_breaker_config=self._circuit_breaker_config,
+            fallback_config=self._fallback_config,
+            timeout_seconds=self._config.get("timeout", 30),
+            zero_trust_enabled=True,
+        )
+        self._register_handlers()
+        logger.info(
+            "nexus_http_session_initialized",
+            retry=self._retry_config.max_retries,
+            rate_limit=self._rate_limit_config.requests_per_minute,
+            circuit_breaker_threshold=self._circuit_breaker_config.failure_threshold,
+        )
+
+    def _register_handlers(self) -> None:
+        """Register INTG-02 resilience message handlers."""
+        self._message_handlers = {
+            "create_connection": self._handle_create_connection,
+            "update_connection": self._handle_update_connection,
+            "delete_connection": self._handle_delete_connection,
+            "get_connection_status": self._handle_get_connection_status,
+            "execute_request": self._handle_execute_request,
+            "register_webhook": self._handle_register_webhook,
+            "unregister_webhook": self._handle_unregister_webhook,
+            "validate_webhook": self._handle_validate_webhook,
+            "get_webhook_status": self._handle_get_webhook_status,
+            "translate_protocol": self._handle_translate_protocol,
+            "get_integration_report": self._handle_get_integration_report,
+            "get_api_metrics": self._handle_get_api_metrics,
+            "configure_retry": self._handle_configure_retry,
+            "configure_rate_limit": self._handle_configure_rate_limit,
+            "configure_circuit_breaker": self._handle_configure_circuit_breaker,
+            "add_fallback_endpoint": self._handle_add_fallback_endpoint,
+            "get_resilience_status": self._handle_get_resilience_status,
+            "reset_circuit_breaker": self._handle_reset_circuit_breaker,
+        }
 
     async def terminate(self) -> None:
         """Terminate the Nexus agent."""
@@ -527,9 +598,9 @@ class NexusAgent(
 
         if pattern_name in critical_patterns:
             return "critical"
-        elif pattern_name in high_patterns:
+        if pattern_name in high_patterns:
             return "high"
-        elif pattern_name in medium_patterns:
+        if pattern_name in medium_patterns:
             return "medium"
         return "low"
 
@@ -539,12 +610,12 @@ class NexusAgent(
             # Strip leading/trailing whitespace
             return content.strip()
 
-        elif isinstance(content, dict):
+        if isinstance(content, dict):
             return {
                 str(key).strip(): self._recursive_sanitize(value) for key, value in content.items()
             }
 
-        elif isinstance(content, list):
+        if isinstance(content, list):
             return [self._recursive_sanitize(item) for item in content]
 
         return content
@@ -1247,6 +1318,220 @@ class NexusAgent(
                 sender_id=self.agent_id,
             ),
         )
+
+    async def _handle_get_api_metrics(self, message: ActorMessage) -> None:
+        """Get API request metrics."""
+        try:
+            content = message.content or {}
+            limit = min(content.get("limit", 100), self._max_metrics_entries)
+            metrics = [m.to_dict() for m in self._api_metrics[-limit:]]
+            summary = self._api_client.get_metrics() if self._api_client else {}
+            await self.send(
+                message.sender_id,
+                ActorMessage(
+                    message_type="api_metrics",
+                    content={"metrics": metrics, "summary": summary},
+                    sender_id=self.agent_id,
+                ),
+            )
+        except Exception as e:
+            logger.error("get_api_metrics_failed", error=str(e))
+            await self._send_error(
+                message.sender_id, f"Failed to get metrics: {e!s}", message.message_type
+            )
+
+    async def _handle_configure_retry(self, message: ActorMessage) -> None:
+        """Configure retry behavior."""
+        try:
+            content = message.content or {}
+            self._retry_config = RetryConfig(
+                max_retries=content.get("max_retries", 3),
+                initial_delay_ms=content.get("initial_delay_ms", 100),
+                max_delay_ms=content.get("max_delay_ms", 30000),
+                strategy=RetryStrategy(content.get("strategy", "exponential")),
+                jitter=content.get("jitter", True),
+            )
+            if self._api_client:
+                self._api_client._retry_config = self._retry_config
+            await self.send(
+                message.sender_id,
+                ActorMessage(
+                    message_type="retry_configured",
+                    content={"configured": True},
+                    sender_id=self.agent_id,
+                ),
+            )
+        except Exception as e:
+            logger.error("configure_retry_failed", error=str(e))
+            await self._send_error(
+                message.sender_id, f"Failed to configure retry: {e!s}", message.message_type
+            )
+
+    async def _handle_configure_rate_limit(self, message: ActorMessage) -> None:
+        """Configure rate limit handling."""
+        try:
+            content = message.content or {}
+            self._rate_limit_config = RateLimitConfig(
+                requests_per_minute=content.get("requests_per_minute", 60),
+                burst_size=content.get("burst_size"),
+                auto_backoff=content.get("auto_backoff", True),
+                backoff_multiplier=content.get("backoff_multiplier", 2.0),
+                max_backoff_ms=content.get("max_backoff_ms", 60000),
+            )
+            if self._api_client:
+                self._api_client._rate_limiter._config = self._rate_limit_config
+            await self.send(
+                message.sender_id,
+                ActorMessage(
+                    message_type="rate_limit_configured",
+                    content={"configured": True},
+                    sender_id=self.agent_id,
+                ),
+            )
+        except Exception as e:
+            logger.error("configure_rate_limit_failed", error=str(e))
+            await self._send_error(
+                message.sender_id, f"Failed to configure rate limit: {e!s}", message.message_type
+            )
+
+    async def _handle_configure_circuit_breaker(self, message: ActorMessage) -> None:
+        """Configure circuit breaker."""
+        try:
+            content = message.content or {}
+            self._circuit_breaker_config = CircuitBreakerConfig(
+                failure_threshold=content.get("failure_threshold", 5),
+                success_threshold=content.get("success_threshold", 2),
+                timeout_seconds=content.get("timeout_seconds", 30.0),
+                excluded_status_codes=content.get("excluded_status_codes", [400, 401, 403, 404]),
+            )
+            if self._api_client:
+                self._api_client._circuit_breaker._config = self._circuit_breaker_config
+            await self.send(
+                message.sender_id,
+                ActorMessage(
+                    message_type="circuit_breaker_configured",
+                    content={"configured": True},
+                    sender_id=self.agent_id,
+                ),
+            )
+        except Exception as e:
+            logger.error("configure_circuit_breaker_failed", error=str(e))
+            await self._send_error(
+                message.sender_id,
+                f"Failed to configure circuit breaker: {e!s}",
+                message.message_type,
+            )
+
+    async def _handle_add_fallback_endpoint(self, message: ActorMessage) -> None:
+        """Add fallback endpoint for a connection."""
+        try:
+            content = message.content or {}
+            connection_id = content.get("connection_id")
+            fallback_url = content.get("fallback_url")
+            if not connection_id or connection_id not in self._connections:
+                await self._send_error(
+                    message.sender_id, f"Connection {connection_id} not found", message.message_type
+                )
+                return
+            if fallback_url:
+                self._connections[connection_id].metadata["fallback_endpoints"] = self._connections[
+                    connection_id
+                ].metadata.get("fallback_endpoints", [])
+                self._connections[connection_id].metadata["fallback_endpoints"].append(fallback_url)
+            await self.send(
+                message.sender_id,
+                ActorMessage(
+                    message_type="fallback_endpoint_added",
+                    content={"connection_id": connection_id},
+                    sender_id=self.agent_id,
+                ),
+            )
+        except Exception as e:
+            logger.error("add_fallback_endpoint_failed", error=str(e))
+            await self._send_error(
+                message.sender_id, f"Failed to add fallback: {e!s}", message.message_type
+            )
+
+    async def _handle_get_resilience_status(self, message: ActorMessage) -> None:
+        """Get resilience component status."""
+        try:
+            circuit_breakers = {}
+            if self._api_client:
+                for endpoint in self._api_client._circuit_breaker._states.keys():
+                    circuit_breakers[endpoint] = self._api_client._circuit_breaker.get_metrics(
+                        endpoint
+                    )
+            rate_limiter_metrics = (
+                self._api_client._rate_limiter.get_metrics() if self._api_client else {}
+            )
+            fallback_health = (
+                self._api_client._fallback_manager.get_health_status() if self._api_client else {}
+            )
+            await self.send(
+                message.sender_id,
+                ActorMessage(
+                    message_type="resilience_status",
+                    content={
+                        "circuit_breakers": circuit_breakers,
+                        "rate_limiter_metrics": rate_limiter_metrics,
+                        "fallback_health": fallback_health,
+                    },
+                    sender_id=self.agent_id,
+                ),
+            )
+        except Exception as e:
+            logger.error("get_resilience_status_failed", error=str(e))
+            await self._send_error(
+                message.sender_id, f"Failed to get resilience status: {e!s}", message.message_type
+            )
+
+    async def _handle_reset_circuit_breaker(self, message: ActorMessage) -> None:
+        """Reset circuit breaker for an endpoint."""
+        try:
+            content = message.content or {}
+            endpoint = content.get("endpoint")
+            if self._api_client:
+                if endpoint:
+                    self._api_client._circuit_breaker._states[endpoint] = CircuitState.CLOSED
+                    self._api_client._circuit_breaker._failure_counts[endpoint] = 0
+                else:
+                    for ep in self._api_client._circuit_breaker._states:
+                        self._api_client._circuit_breaker._states[ep] = CircuitState.CLOSED
+                        self._api_client._circuit_breaker._failure_counts[ep] = 0
+            await self.send(
+                message.sender_id,
+                ActorMessage(
+                    message_type="circuit_breaker_reset",
+                    content={"reset": True},
+                    sender_id=self.agent_id,
+                ),
+            )
+        except Exception as e:
+            logger.error("reset_circuit_breaker_failed", error=str(e))
+            await self._send_error(
+                message.sender_id, f"Failed to reset circuit breaker: {e!s}", message.message_type
+            )
+
+    def _record_api_metrics(
+        self,
+        request_id: str,
+        connection_id: str,
+        method: str,
+        latency_ms: int,
+        success: bool,
+        status_code: int,
+        error: str | None,
+    ) -> None:
+        """Record API request metrics."""
+        metric = APIRequestMetrics(
+            request_id=request_id,
+            latency_ms=latency_ms,
+            status_code=status_code,
+            error=error,
+        )
+        self._api_metrics.append(metric)
+        if len(self._api_metrics) > self._max_metrics_entries:
+            self._api_metrics = self._api_metrics[-self._max_metrics_entries :]
 
     def get_capabilities(self) -> list[str]:
         """Return list of capabilities this agent provides."""

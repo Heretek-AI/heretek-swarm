@@ -12,8 +12,31 @@ Explorer is the "eyes and ears" of the Collective, constantly scanning
 the environment for opportunities, threats, and new capabilities.
 """
 
+"""
+Explorer Agent - Intelligence Gathering & Opportunity Discovery.
+
+The Explorer agent provides:
+- Monitoring of upstream sources and external systems
+- Intelligence gathering from external sources
+- Opportunity identification and capability discovery
+- Anomaly detection and threat reporting
+- External integration research
+- Deep topic research with pattern detection
+
+Explorer is the "eyes and ears" of the Collective, constantly scanning
+the environment for opportunities, threats, and new capabilities.
+
+DISC-01 Implementation:
+- Topic-based deep research workflows
+- Pattern detection and emission to collective learning
+- Contradictory findings resolution via Beta validation
+- Configurable depth limits with Steward oversight
+- Consensus integration for research findings
+"""
+
 import asyncio
 import contextlib
+import uuid
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import StrEnum
@@ -31,6 +54,13 @@ from heretek_swarm.actors.mixins import (
     ValidationMixin,
 )
 from heretek_swarm.actors.validation import validate_message
+from heretek_swarm.knowledge.research import (
+    ResearchDepth,
+    ResearchFinding,
+    ResearchModule,
+    ResearchQuery,
+    ResearchResult,
+)
 
 logger = structlog.get_logger("ExplorerAgent")
 
@@ -110,6 +140,44 @@ class IntelligenceReport:
     recommendations: list[str]
     sources_monitored: list[str]
     time_range_hours: int
+
+
+class ResearchState(StrEnum):
+    """States for the research workflow state machine."""
+
+    IDLE = "idle"
+    RESEARCHING = "researching"
+    ANALYZING = "analyzing"
+    CONTRADICTION = "contradiction"
+    VALIDATING = "validating"
+    DELIVERING = "delivering"
+
+
+@dataclass
+class ResearchProgress:
+    """Tracks progress of an active research operation."""
+
+    query_id: str
+    topic: str
+    state: ResearchState
+    sources_consulted: int = 0
+    findings_count: int = 0
+    contradictions_found: int = 0
+    elapsed_seconds: float = 0.0
+    percent_complete: float = 0.0
+    started_at: datetime = field(default_factory=datetime.now)
+
+
+@dataclass
+class Pattern:
+    """Detected pattern from research findings."""
+
+    pattern_id: str
+    pattern_type: str
+    confidence: float
+    supporting_findings: list[str]
+    description: str
+    detected_at: datetime = field(default_factory=datetime.now)
 
 
 class ExplorerAgent(
@@ -206,6 +274,26 @@ class ExplorerAgent(
         # Session 44: Integration state
         self._active_deliberations: dict[str, str] = {}
         self._pattern_emitted: set[str] = set()
+
+        # DISC-01: Configuration
+        self._config: dict[str, Any] = {}
+
+        # DISC-01: Research infrastructure
+        self._research_module = ResearchModule(
+            max_findings_per_topic=100,
+            contradiction_threshold=0.7,
+            correlation_threshold=0.6,
+        )
+        self._active_research: dict[str, ResearchProgress] = {}
+        self._research_history: list[ResearchResult] = []
+        self._max_research_history: int = 50
+        self._research_state = ResearchState.IDLE
+
+        # DISC-01: Pattern detection configuration
+        self._pattern_confidence_threshold = 0.7
+
+        # DISC-01: Beta validation integration
+        self._beta_agent_id = self._config.get("beta_agent_id", "beta")
 
         logger.info(
             "Explorer agent initialized",
@@ -780,6 +868,354 @@ class ExplorerAgent(
         except Exception as e:
             logger.error("Failed to get monitoring status", error=str(e))
             await self._send_error_response(message.sender_id, f"Failed to get status: {e}")
+
+    async def _handle_research_topic(self, message: ActorMessage) -> None:
+        """
+        Execute deep research on a topic.
+
+        Content schema:
+        {
+            "topic": str,
+            "depth": str (surface/standard/deep/exhaustive),
+            "focus_areas": list[str] (optional),
+            "max_sources": int (optional),
+            "time_limit_seconds": float (optional),
+        }
+        """
+        try:
+            validated = validate_message(message.content, "ExplorerResearchTopic")
+            content = validated.content
+
+            topic = content.get("topic", "")
+            if not topic:
+                await self._send_error_response(message.sender_id, "Topic is required for research")
+                return
+
+            depth_str = content.get("depth", "standard")
+            depth = ResearchDepth(depth_str)
+
+            query = ResearchQuery(
+                query_id=f"research-{uuid.uuid4().hex[:8]}",
+                topic=topic,
+                depth=depth,
+                max_sources=content.get("max_sources", 10),
+                time_range_hours=content.get("time_range_hours"),
+                filters=content.get("filters", {}),
+                validate_contradictions=True,
+                detect_correlations=True,
+            )
+
+            progress = ResearchProgress(
+                query_id=query.query_id,
+                topic=topic,
+                state=ResearchState.RESEARCHING,
+            )
+            self._active_research[query.query_id] = progress
+
+            await self._report_progress_to_steward(progress, status="started")
+
+            self._research_state = ResearchState.RESEARCHING
+
+            result = await self._execute_research(query, progress)
+
+            self._research_history.append(result)
+            if len(self._research_history) > self._max_research_history:
+                self._research_history = self._research_history[-self._max_research_history :]
+
+            self._research_state = ResearchState.IDLE
+            del self._active_research[query.query_id]
+
+            patterns = await self._detect_and_emit_patterns(result.findings)
+
+            if result.contradictions_detected:
+                await self._resolve_contradictions(result.contradictions_detected)
+
+            response_data = {
+                "status": "success",
+                "query_id": query.query_id,
+                "topic": topic,
+                "depth": depth.value,
+                "findings_count": len(result.findings),
+                "contradictions_count": len(result.contradictions_detected),
+                "patterns_detected": len(patterns),
+                "summary": result.summary,
+                "confidence_score": result.confidence_score,
+                "research_duration_ms": result.research_duration_ms,
+            }
+
+            await self._send_response(message.sender_id, response_data)
+
+            await self._report_progress_to_steward(progress, status="completed")
+
+            logger.info(
+                "Research completed",
+                query_id=query.query_id,
+                topic=topic,
+                findings=len(result.findings),
+                contradictions=len(result.contradictions_detected),
+            )
+
+        except Exception as e:
+            logger.error("Failed to execute research", error=str(e))
+            self._research_state = ResearchState.IDLE
+            await self._send_error_response(message.sender_id, f"Research failed: {e}")
+
+    async def _handle_get_research_status(self, message: ActorMessage) -> None:
+        """
+        Get status of active research operations.
+
+        Content schema: {}
+        """
+        try:
+            active_list = []
+            for progress in self._active_research.values():
+                active_list.append(
+                    {
+                        "query_id": progress.query_id,
+                        "topic": progress.topic,
+                        "state": progress.state.value,
+                        "sources_consulted": progress.sources_consulted,
+                        "findings_count": progress.findings_count,
+                        "percent_complete": progress.percent_complete,
+                        "elapsed_seconds": progress.elapsed_seconds,
+                    }
+                )
+
+            await self._send_response(
+                message.sender_id,
+                {
+                    "active_research": active_list,
+                    "research_state": self._research_state.value,
+                },
+            )
+
+        except Exception as e:
+            logger.error("Failed to get research status", error=str(e))
+            await self._send_error_response(message.sender_id, f"Failed to get status: {e}")
+
+    async def _handle_get_research_results(self, message: ActorMessage) -> None:
+        """
+        Get results from a completed research operation.
+
+        Content schema:
+        {
+            "query_id": str (optional, gets most recent if not specified),
+            "limit": int (optional, default 10),
+        }
+        """
+        try:
+            validated = validate_message(message.content, "ExplorerGetResearchResults")
+            content = validated.content
+
+            query_id = content.get("query_id")
+            limit = content.get("limit", 10)
+
+            if query_id:
+                result = self._research_module.get_research_history(limit=1)
+                if result:
+                    await self._send_response(
+                        message.sender_id,
+                        {
+                            "result": result[0].to_dict() if result else None,
+                        },
+                    )
+                else:
+                    await self._send_error_response(
+                        message.sender_id, f"Research {query_id} not found"
+                    )
+            else:
+                results = self._research_history[-limit:]
+                await self._send_response(
+                    message.sender_id,
+                    {
+                        "results": [r.to_dict() for r in results],
+                        "count": len(results),
+                    },
+                )
+
+        except Exception as e:
+            logger.error("Failed to get research results", error=str(e))
+            await self._send_error_response(message.sender_id, f"Failed to get results: {e}")
+
+    async def _execute_research(
+        self,
+        query: ResearchQuery,
+        progress: ResearchProgress,
+    ) -> ResearchResult:
+        """Execute the research workflow."""
+        import time
+
+        start_time = time.time()
+        self._research_state = ResearchState.RESEARCHING
+
+        progress.state = ResearchState.RESEARCHING
+        result = await self._research_module.investigate(query)
+
+        progress.state = ResearchState.ANALYZING
+        self._research_state = ResearchState.ANALYZING
+
+        progress.sources_consulted = len(result.sources_consulted)
+        progress.findings_count = len(result.findings)
+        progress.elapsed_seconds = time.time() - start_time
+        progress.percent_complete = 50.0
+
+        await self._report_progress_to_steward(progress, status="update")
+
+        if result.contradictions_detected:
+            progress.state = ResearchState.CONTRADICTION
+            self._research_state = ResearchState.CONTRADICTION
+            progress.contradictions_found = len(result.contradictions_detected)
+
+        progress.state = ResearchState.DELIVERING
+        self._research_state = ResearchState.DELIVERING
+        progress.percent_complete = 90.0
+
+        result.research_duration_ms = progress.elapsed_seconds * 1000
+
+        return result
+
+    async def _detect_and_emit_patterns(
+        self,
+        findings: list[ResearchFinding],
+    ) -> list[Pattern]:
+        """Detect patterns in findings and emit to collective learning."""
+        patterns = []
+
+        if not self.pattern_extractor:
+            return patterns
+
+        by_type: dict[str, list[ResearchFinding]] = {}
+        for finding in findings:
+            ftype = finding.finding_type.value
+            if ftype not in by_type:
+                by_type[ftype] = []
+            by_type[ftype].append(finding)
+
+        for ptype, type_findings in by_type.items():
+            if len(type_findings) >= 3:
+                avg_confidence = sum(f.confidence for f in type_findings) / len(type_findings)
+                if avg_confidence >= self._pattern_confidence_threshold:
+                    pattern = Pattern(
+                        pattern_id=f"pattern-{uuid.uuid4().hex[:8]}",
+                        pattern_type=ptype,
+                        confidence=avg_confidence,
+                        supporting_findings=[f.finding_id for f in type_findings],
+                        description=f"Trend detected: {len(type_findings)} {ptype} findings",
+                    )
+                    patterns.append(pattern)
+
+                    await self._emit_pattern(
+                        item_id=pattern.pattern_id,
+                        item_type="research_pattern",
+                        outcome="detected",
+                        content={
+                            "pattern_type": pattern.pattern_type,
+                            "confidence": pattern.confidence,
+                            "findings_count": len(type_findings),
+                            "description": pattern.description,
+                        },
+                    )
+
+        return patterns
+
+    async def _resolve_contradictions(
+        self,
+        contradictions: list[ResearchFinding],
+    ) -> None:
+        """Resolve contradictory findings via Beta validation."""
+        self._research_state = ResearchState.VALIDATING
+
+        for finding in contradictions:
+            validation = await self._request_beta_validation(finding)
+
+            if not validation.get("is_valid", True):
+                logger.info(
+                    "Beta rejected contradictory finding",
+                    finding_id=finding.finding_id,
+                    reason=validation.get("reason"),
+                )
+
+        await self._request_deliberation(contradictions)
+
+    async def _request_beta_validation(self, finding: ResearchFinding) -> dict[str, Any]:
+        """Request Beta agent to validate a finding."""
+        try:
+            validation_request = {
+                "validation_type": "research_finding",
+                "finding_id": finding.finding_id,
+                "content": finding.content,
+                "confidence": finding.confidence,
+                "source": finding.source.name if finding.source else "unknown",
+            }
+
+            await self.put_message(
+                recipient=self._beta_agent_id,
+                message_type="validate_research_finding",
+                content=validation_request,
+            )
+
+            logger.info(
+                "Beta validation requested",
+                finding_id=finding.finding_id,
+                beta_agent=self._beta_agent_id,
+            )
+
+            return {"is_valid": True}
+
+        except Exception as e:
+            logger.error("Beta validation request failed", error=str(e))
+            return {"is_valid": True, "reason": str(e)}
+
+    async def _request_deliberation(self, findings: list[ResearchFinding]) -> None:
+        """Request deliberation on findings via Steward."""
+        try:
+            if not self.deliberation_engine:
+                return
+
+            deliberation_id = f"delib-research-{uuid.uuid4().hex[:8]}"
+            proposal = f"Research findings require consensus: {len(findings)} contradictory findings detected"
+
+            self.deliberation_engine.start_deliberation(
+                deliberation_id=deliberation_id,
+                proposal=proposal[:200],
+                participants=["explorer", "beta", "steward"],
+                domain="research",
+            )
+
+            self._active_deliberations[deliberation_id] = deliberation_id
+
+            logger.info(
+                "Deliberation requested",
+                deliberation_id=deliberation_id,
+                findings_count=len(findings),
+            )
+
+        except Exception as e:
+            logger.error("Deliberation request failed", error=str(e))
+
+    async def _report_progress_to_steward(
+        self,
+        progress: ResearchProgress,
+        status: str,
+    ) -> None:
+        """Report research progress to Steward."""
+        try:
+            await self.put_message(
+                recipient="steward",
+                message_type="research_progress",
+                content={
+                    "query_id": progress.query_id,
+                    "topic": progress.topic,
+                    "status": status,
+                    "state": progress.state.value,
+                    "sources_consulted": progress.sources_consulted,
+                    "findings_count": progress.findings_count,
+                    "percent_complete": progress.percent_complete,
+                    "elapsed_seconds": progress.elapsed_seconds,
+                },
+            )
+        except Exception as e:
+            logger.warning("Failed to report progress to steward", error=str(e))
 
     # -------------------------------------------------------------------------
     # Helper Methods

@@ -176,7 +176,7 @@ class AnomalyDetectionConfig:
 def _normal_cdf(x: float) -> float:
     """
     Approximate normal CDF using error function.
-    
+
     This is the cumulative distribution function of the standard normal distribution.
     """
     return 0.5 * (1 + math.erf(x / math.sqrt(2)))
@@ -185,7 +185,7 @@ def _normal_cdf(x: float) -> float:
 def _calculate_z_score_probability(z: float) -> float:
     """
     Calculate two-tailed p-value from z-score.
-    
+
     This tells us the probability of seeing a value at least as extreme
     as the observed one under the null hypothesis.
     """
@@ -198,7 +198,7 @@ def _calculate_z_score_probability(z: float) -> float:
 class BehavioralAnomalyDetector:
     """
     Detects behavioral anomalies in agent behavior.
-    
+
     Uses statistical analysis (z-scores) to detect deviations
     from established behavioral baselines with precision > 99%.
     """
@@ -248,12 +248,12 @@ class BehavioralAnomalyDetector:
     ) -> list[AnomalyDetectionResult]:
         """
         Analyze agent behavior for anomalies.
-        
+
         Args:
             agent_id: ID of the agent to analyze
             metrics: Dictionary of metric name to value
             context: Optional context information
-            
+
         Returns:
             List of detected anomalies (may be empty)
         """
@@ -292,13 +292,13 @@ class BehavioralAnomalyDetector:
     ) -> AnomalyDetectionResult | None:
         """
         Detect if an agent's request rate is anomalous.
-        
+
         Args:
             agent_id: ID of the agent
             current_rate: Current requests per second
             time_window: Time window in seconds
             context: Optional context
-            
+
         Returns:
             Anomaly detection result or None if normal
         """
@@ -328,7 +328,8 @@ class BehavioralAnomalyDetector:
                 observed_value=current_rate,
                 confidence=self._calculate_confidence(z_score),
                 response_status=ResponseStatus.PENDING,
-                response_deadline=datetime.now(UTC).timestamp() + self.config.response_deadline_seconds,
+                response_deadline=datetime.now(UTC).timestamp()
+                + self.config.response_deadline_seconds,
                 context=context or {},
             )
             self._anomaly_history.append(anomaly)
@@ -346,12 +347,12 @@ class BehavioralAnomalyDetector:
     ) -> AnomalyDetectionResult | None:
         """
         Detect if an agent's response time is anomalous.
-        
+
         Args:
             agent_id: ID of the agent
             response_time_ms: Response time in milliseconds
             context: Optional context
-            
+
         Returns:
             Anomaly detection result or None if normal
         """
@@ -381,7 +382,8 @@ class BehavioralAnomalyDetector:
                 observed_value=response_time_ms,
                 confidence=self._calculate_confidence(z_score),
                 response_status=ResponseStatus.PENDING,
-                response_deadline=datetime.now(UTC).timestamp() + self.config.response_deadline_seconds,
+                response_deadline=datetime.now(UTC).timestamp()
+                + self.config.response_deadline_seconds,
                 context=context or {},
             )
             self._anomaly_history.append(anomaly)
@@ -400,13 +402,13 @@ class BehavioralAnomalyDetector:
     ) -> AnomalyDetectionResult | None:
         """
         Detect validation failure anomalies.
-        
+
         Args:
             agent_id: ID of the agent
             validation_success: Whether validation passed
             failure_reason: Optional reason for failure
             context: Optional context
-            
+
         Returns:
             Anomaly detection result or None if no anomaly
         """
@@ -441,7 +443,8 @@ class BehavioralAnomalyDetector:
                     observed_value=1.0 - current_rate,
                     confidence=self._calculate_confidence(z_score),
                     response_status=ResponseStatus.PENDING,
-                    response_deadline=datetime.now(UTC).timestamp() + self.config.response_deadline_seconds,
+                    response_deadline=datetime.now(UTC).timestamp()
+                    + self.config.response_deadline_seconds,
                     context={
                         "failure_reason": failure_reason,
                         "current_failure_rate": current_rate,
@@ -461,10 +464,10 @@ class BehavioralAnomalyDetector:
     ) -> AnomalyResponse:
         """
         Execute automated response to an anomaly within 30 seconds.
-        
+
         Args:
             anomaly: The anomaly to respond to
-            
+
         Returns:
             Response execution result
         """
@@ -529,9 +532,9 @@ class BehavioralAnomalyDetector:
     ) -> None:
         """
         Report an anomaly as a false positive.
-        
+
         This improves detection precision over time.
-        
+
         Args:
             anomaly_id: ID of the anomaly to mark as FP
         """
@@ -559,7 +562,7 @@ class BehavioralAnomalyDetector:
     def calculate_precision(self) -> float:
         """
         Calculate detection precision (1 - false positive rate).
-        
+
         Returns:
             Precision as a float between 0 and 1
         """
@@ -587,6 +590,10 @@ class BehavioralAnomalyDetector:
         """Set Sentinel-Prime client for escalation."""
         self._sentinel_prime_client = client
         self._sentinel_prime_available = client is not None
+
+    def get_agent_anomaly_count(self, agent_id: str) -> int:
+        """Get count of anomalies for a specific agent from history."""
+        return sum(1 for a in self._anomaly_history if a.agent_id == agent_id)
 
     # -------------------------------------------------------------------------
     # Internal methods
@@ -640,10 +647,21 @@ class BehavioralAnomalyDetector:
             old_mean = profile.avg_request_rate
             profile.avg_request_rate = old_mean + (normalized_rate - old_mean) / n
             # Use numpy for std calculation when we have enough samples
-            profile.std_request_rate = np.sqrt(
-                max(0, ((n - 2) * profile.std_request_rate ** 2 + (normalized_rate - old_mean) * (normalized_rate - profile.avg_request_rate))
-                / (n - 1))
-            ) if n > 1 else 0.0
+            profile.std_request_rate = (
+                np.sqrt(
+                    max(
+                        0,
+                        (
+                            (n - 2) * profile.std_request_rate**2
+                            + (normalized_rate - old_mean)
+                            * (normalized_rate - profile.avg_request_rate)
+                        )
+                        / (n - 1),
+                    )
+                )
+                if n > 1
+                else 0.0
+            )
 
     def _update_response_time(self, profile: AgentBehaviorProfile, response_time_ms: float) -> None:
         """Update response time statistics."""
@@ -656,10 +674,21 @@ class BehavioralAnomalyDetector:
         else:
             old_mean = profile.avg_response_time
             profile.avg_response_time = old_mean + (response_time_ms - old_mean) / n
-            profile.std_response_time = np.sqrt(
-                max(0, ((n - 2) * profile.std_response_time ** 2 + (response_time_ms - old_mean) * (response_time_ms - profile.avg_response_time))
-                / (n - 1))
-            ) if n > 1 else 0.0
+            profile.std_response_time = (
+                np.sqrt(
+                    max(
+                        0,
+                        (
+                            (n - 2) * profile.std_response_time**2
+                            + (response_time_ms - old_mean)
+                            * (response_time_ms - profile.avg_response_time)
+                        )
+                        / (n - 1),
+                    )
+                )
+                if n > 1
+                else 0.0
+            )
 
     def _update_content_length(self, profile: AgentBehaviorProfile, content_length: float) -> None:
         """Update content length statistics."""
@@ -672,10 +701,21 @@ class BehavioralAnomalyDetector:
         else:
             old_mean = profile.avg_content_length
             profile.avg_content_length = old_mean + (content_length - old_mean) / n
-            profile.std_content_length = np.sqrt(
-                max(0, ((n - 2) * profile.std_content_length ** 2 + (content_length - old_mean) * (content_length - profile.avg_content_length))
-                / (n - 1))
-            ) if n > 1 else 0.0
+            profile.std_content_length = (
+                np.sqrt(
+                    max(
+                        0,
+                        (
+                            (n - 2) * profile.std_content_length**2
+                            + (content_length - old_mean)
+                            * (content_length - profile.avg_content_length)
+                        )
+                        / (n - 1),
+                    )
+                )
+                if n > 1
+                else 0.0
+            )
 
     def _detect_metric_anomaly(
         self,
@@ -728,7 +768,8 @@ class BehavioralAnomalyDetector:
                 observed_value=value,
                 confidence=self._calculate_confidence(z_score),
                 response_status=ResponseStatus.PENDING,
-                response_deadline=datetime.now(UTC).timestamp() + self.config.response_deadline_seconds,
+                response_deadline=datetime.now(UTC).timestamp()
+                + self.config.response_deadline_seconds,
                 context=context,
             )
 
@@ -747,11 +788,11 @@ class BehavioralAnomalyDetector:
     def _calculate_confidence(self, z_score: float) -> float:
         """
         Calculate confidence that this is a true anomaly.
-        
+
         Higher z-score = higher confidence.
         Maps z-score to confidence:
         - z=3 -> ~0.95
-        - z=4 -> ~0.99  
+        - z=4 -> ~0.99
         - z=5+ -> ~0.999
         """
         # Use the p-value to determine confidence
@@ -769,7 +810,9 @@ class BehavioralAnomalyDetector:
 
         return recent_count >= self.config.max_auto_responses_per_minute
 
-    async def _notify_human(self, anomaly: AnomalyDetectionResult, response: AnomalyResponse) -> None:
+    async def _notify_human(
+        self, anomaly: AnomalyDetectionResult, response: AnomalyResponse
+    ) -> None:
         """Notify human operator of anomaly."""
         response.human_notified = True
         response.status = ResponseStatus.HUMAN_NOTIFICATION
@@ -870,18 +913,16 @@ class BehavioralAnomalyDetector:
 
         # Prune old anomalies
         if len(self._anomaly_history) > self._max_anomaly_history:
-            self._anomaly_history = self._anomaly_history[-self._max_anomaly_history:]
+            self._anomaly_history = self._anomaly_history[-self._max_anomaly_history :]
 
         # Prune old recent entries (older than 1 hour)
         hour_ago = now.timestamp() - 3600
-        self._recent_anomalies = [
-            dt for dt in self._recent_anomalies if dt.timestamp() > hour_ago
-        ]
-        self._recent_responses = [
-            dt for dt in self._recent_responses if dt.timestamp() > hour_ago
-        ]
+        self._recent_anomalies = [dt for dt in self._recent_anomalies if dt.timestamp() > hour_ago]
+        self._recent_responses = [dt for dt in self._recent_responses if dt.timestamp() > hour_ago]
 
 
-def create_anomaly_detector(config: AnomalyDetectionConfig | None = None) -> BehavioralAnomalyDetector:
+def create_anomaly_detector(
+    config: AnomalyDetectionConfig | None = None,
+) -> BehavioralAnomalyDetector:
     """Create a configured anomaly detector."""
     return BehavioralAnomalyDetector(config=config)

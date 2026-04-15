@@ -52,14 +52,13 @@ from heretek_swarm.actors.mixins import (
 from heretek_swarm.actors.validation import validate_message
 from heretek_swarm.security.threat_detection import (
     AlertPriority,
-    ContainmentAction,
-    ExternalThreatDetector,
     ExternalThreatType,
     ThreatDetectionConfig,
     ThreatDetectionResult,
-    ThreatIntelligence,
-    ThreatLevel as ExtThreatLevel,
     create_default_detector,
+)
+from heretek_swarm.security.threat_detection import (
+    ThreatLevel as ExtThreatLevel,
 )
 
 logger = structlog.get_logger("SentinelPrimeAgent")

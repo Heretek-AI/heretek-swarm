@@ -27,7 +27,7 @@ import hashlib
 import re
 import time
 from collections import defaultdict
-from dataclasses import dataclass, field
+from dataclasses import dataclass
 from datetime import UTC, datetime
 from enum import StrEnum
 from typing import Any
@@ -61,7 +61,6 @@ from heretek_swarm.security.anomaly_detection import (
 )
 from heretek_swarm.security.behavioral_baseline import (
     BaselineChangeType,
-    BehavioralBaseline,
     create_behavioral_baseline,
 )
 
@@ -266,9 +265,15 @@ class SentinelAgent(
         # Anomaly detection configuration
         anomaly_config = AnomalyDetectionConfig(
             z_score_threshold=config.get("anomaly_z_score_threshold", 3.0) if config else 3.0,
-            response_deadline_seconds=config.get("anomaly_response_deadline", 30.0) if config else 30.0,
-            max_auto_responses_per_minute=config.get("max_auto_responses_per_minute", 10) if config else 10,
-            sentinel_prime_escalation_threshold=config.get("sentinel_prime_escalation_threshold", 3) if config else 3,
+            response_deadline_seconds=config.get("anomaly_response_deadline", 30.0)
+            if config
+            else 30.0,
+            max_auto_responses_per_minute=config.get("max_auto_responses_per_minute", 10)
+            if config
+            else 10,
+            sentinel_prime_escalation_threshold=config.get("sentinel_prime_escalation_threshold", 3)
+            if config
+            else 3,
         )
 
         # Anomaly detector
@@ -284,14 +289,16 @@ class SentinelAgent(
         self._max_alert_history = 1000
 
         # Agent metrics tracking for anomaly detection
-        self._agent_metrics: dict[str, dict[str, float]] = defaultdict(lambda: {
-            "request_count": 0.0,
-            "total_request_rate": 0.0,
-            "request_rate_samples": 0,
-            "response_times": [],
-            "validation_failures": 0,
-            "validation_successes": 0,
-        })
+        self._agent_metrics: dict[str, dict[str, float]] = defaultdict(
+            lambda: {
+                "request_count": 0.0,
+                "total_request_rate": 0.0,
+                "request_rate_samples": 0,
+                "response_times": [],
+                "validation_failures": 0,
+                "validation_successes": 0,
+            }
+        )
 
         # Rate limiting state
         self._agent_last_request: dict[str, float] = {}
@@ -339,7 +346,9 @@ class SentinelAgent(
 
         # Immune learning configuration
         self._auto_learn_enabled = config.get("auto_learn_enabled", True) if config else True
-        self._preserve_novel_patterns = config.get("preserve_novel_patterns", True) if config else True
+        self._preserve_novel_patterns = (
+            config.get("preserve_novel_patterns", True) if config else True
+        )
 
         logger.info(
             "SentinelAgent initialized",
@@ -370,11 +379,11 @@ class SentinelAgent(
     ) -> None:
         """
         Record the outcome of an anomaly response for immune learning.
-        
+
         This is the core method for CONS-02 immune response building.
         When an anomaly is detected and responded to, this method records
         the outcome so the system can learn from it.
-        
+
         Args:
             anomaly_id: ID of the anomaly
             response_id: ID of the response
@@ -404,8 +413,10 @@ class SentinelAgent(
         # If immunity acquired, check if we should request baseline update
         if immunity_acquired and self._auto_learn_enabled:
             # Check if this is a novel pattern
-            classification, immune_pattern = self._immune_system.check_pattern_immunity(pattern_content)
-            
+            classification, immune_pattern = self._immune_system.check_pattern_immunity(
+                pattern_content
+            )
+
             if immune_pattern:
                 # Request baseline update with quorum
                 await self._request_baseline_update(
@@ -429,11 +440,13 @@ class SentinelAgent(
                     },
                 )
                 self._novel_pattern_queue.append(preservation_id)
-                
+
                 # Prune queue if too large
                 if len(self._novel_pattern_queue) > self._max_novel_pattern_queue:
-                    self._novel_pattern_queue = self._novel_pattern_queue[-self._max_novel_pattern_queue:]
-                    
+                    self._novel_pattern_queue = self._novel_pattern_queue[
+                        -self._max_novel_pattern_queue :
+                    ]
+
                 logger.info(
                     "novel_pattern_preserved_for_review",
                     preservation_id=preservation_id,
@@ -456,20 +469,20 @@ class SentinelAgent(
     ) -> str | None:
         """
         Request quorum approval for adding a pattern to the baseline.
-        
+
         Args:
             pattern_id: ID of the pattern
             pattern_type: Type of pattern
             pattern_content: Pattern content
             confidence: Confidence level
-            
+
         Returns:
             Request ID if created
         """
         # Add pattern to behavioral baseline
         baseline_pattern_id = self._behavioral_baseline.add_baseline_pattern(
             pattern_type=pattern_type,
-            description=f"Immune-learned pattern from anomaly response",
+            description="Immune-learned pattern from anomaly response",
             content=pattern_content,
             confidence=confidence,
             requester_id=self.agent_id,
@@ -500,14 +513,14 @@ class SentinelAgent(
     ) -> bool:
         """
         Report the outcome of a previous anomaly response.
-        
+
         This should be called after the immediate response to an anomaly,
         once the outcome is known (success, failure, false positive, etc.).
-        
+
         Args:
             anomaly_id: ID of the anomaly
             outcome: Outcome of the response
-            
+
         Returns:
             True if outcome was recorded
         """
@@ -516,7 +529,7 @@ class SentinelAgent(
             return False
 
         tracking = self._pending_outcome_tracking[anomaly_id]
-        
+
         await self.record_anomaly_response_outcome(
             anomaly_id=anomaly_id,
             response_id=tracking["response_id"],
@@ -544,10 +557,10 @@ class SentinelAgent(
     ) -> tuple[PatternClassification, float]:
         """
         Check if a pattern is recognized by the immune system.
-        
+
         Args:
             pattern_content: Content of the pattern to check
-            
+
         Returns:
             Tuple of (classification, confidence)
         """
@@ -561,10 +574,10 @@ class SentinelAgent(
     ) -> list[dict[str, Any]]:
         """
         Get novel patterns awaiting human review.
-        
+
         Args:
             limit: Maximum patterns to return
-            
+
         Returns:
             List of novel pattern preservation records
         """
@@ -592,13 +605,13 @@ class SentinelAgent(
     ) -> bool:
         """
         Submit human review of a novel pattern.
-        
+
         Args:
             preservation_id: ID of the preservation record
             reviewer_id: ID of the human reviewer
             disposition: Decision (approve/reject/investigate)
             notes: Optional review notes
-            
+
         Returns:
             True if review was recorded
         """
@@ -627,7 +640,7 @@ class SentinelAgent(
     def get_immune_system_statistics(self) -> dict[str, Any]:
         """
         Get immune response building statistics.
-        
+
         Returns:
             Statistics dictionary
         """
@@ -636,7 +649,7 @@ class SentinelAgent(
     def get_immune_memory_snapshot(self) -> dict[str, dict[str, Any]]:
         """
         Get snapshot of immune memory.
-        
+
         Returns:
             Dictionary of learned patterns
         """
@@ -645,14 +658,16 @@ class SentinelAgent(
     def get_behavioral_baseline_status(self) -> dict[str, Any]:
         """
         Get behavioral baseline status.
-        
+
         Returns:
             Status information
         """
         return {
             "integrity": self._behavioral_baseline.verify_baseline_integrity(),
             "statistics": self._behavioral_baseline.get_statistics(),
-            "approved_patterns": self._behavioral_baseline.get_baseline_patterns(approved_only=True),
+            "approved_patterns": self._behavioral_baseline.get_baseline_patterns(
+                approved_only=True
+            ),
         }
 
     def submit_baseline_vote(
@@ -663,12 +678,12 @@ class SentinelAgent(
     ) -> bool:
         """
         Submit a vote for a baseline change request.
-        
+
         Args:
             request_id: ID of the change request
             agent_id: ID of voting agent
             approve: True to approve, False to reject
-            
+
         Returns:
             True if vote was recorded
         """
@@ -686,14 +701,14 @@ class SentinelAgent(
     ) -> list[AnomalyAlert]:
         """
         Monitor agent behavior and detect anomalies.
-        
+
         This is the primary entry point for SAFE-01 behavioral anomaly detection.
-        
+
         Args:
             agent_id: ID of the agent to monitor
             metrics: Dictionary of metrics (request_rate, response_time_ms, etc.)
             context: Optional context information
-            
+
         Returns:
             List of anomaly alerts (empty if no anomalies detected)
         """
@@ -725,12 +740,12 @@ class SentinelAgent(
     ) -> AnomalyAlert | None:
         """
         Check if an agent's request rate is anomalous.
-        
+
         Args:
             agent_id: ID of the agent
             current_rate: Current requests per time window
             time_window: Time window in seconds
-            
+
         Returns:
             Anomaly alert or None if rate is normal
         """
@@ -753,11 +768,11 @@ class SentinelAgent(
     ) -> AnomalyAlert | None:
         """
         Check if an agent's response time is anomalous.
-        
+
         Args:
             agent_id: ID of the agent
             response_time_ms: Response time in milliseconds
-            
+
         Returns:
             Anomaly alert or None if response time is normal
         """
@@ -780,12 +795,12 @@ class SentinelAgent(
     ) -> AnomalyAlert | None:
         """
         Check if an agent's validation failures indicate an anomaly.
-        
+
         Args:
             agent_id: ID of the agent
             validation_success: Whether validation passed
             failure_reason: Optional reason for failure
-            
+
         Returns:
             Anomaly alert or None if no anomaly
         """
@@ -804,12 +819,12 @@ class SentinelAgent(
     async def report_false_positive(self, anomaly_id: str) -> bool:
         """
         Report an anomaly as a false positive.
-        
+
         This helps improve detection precision over time.
-        
+
         Args:
             anomaly_id: ID of the anomaly to mark as FP
-            
+
         Returns:
             True if the anomaly was found and marked
         """
@@ -837,7 +852,7 @@ class SentinelAgent(
     def set_sentinel_prime_client(self, client: Any) -> None:
         """
         Set Sentinel-Prime client for backup monitoring and escalation.
-        
+
         Args:
             client: Sentinel-Prime agent client
         """
@@ -874,13 +889,13 @@ class SentinelAgent(
     async def _process_anomaly(self, anomaly: AnomalyDetectionResult) -> AnomalyAlert | None:
         """
         Process a detected anomaly and execute automated response.
-        
+
         Implements the 30-second response deadline requirement.
         Also records the response for immune learning.
-        
+
         Args:
             anomaly: The detected anomaly
-            
+
         Returns:
             Anomaly alert with response details
         """
@@ -921,7 +936,10 @@ class SentinelAgent(
             self._anomaly_escalation_count[anomaly.agent_id] += 1
 
             # Check if we need to escalate to Sentinel-Prime
-            if self._anomaly_escalation_count[anomaly.agent_id] >= self._anomaly_detector.config.sentinel_prime_escalation_threshold:
+            if (
+                self._anomaly_escalation_count[anomaly.agent_id]
+                >= self._anomaly_detector.config.sentinel_prime_escalation_threshold
+            ):
                 await self._escalate_to_sentinel_prime(anomaly)
 
         # Update response status in anomaly
@@ -947,14 +965,15 @@ class SentinelAgent(
             timestamp=anomaly.timestamp,
             response_status=response.status,
             response_latency_ms=latency_ms,
-            sentinel_prime_escalated=self._anomaly_escalation_count[anomaly.agent_id] >= self._anomaly_detector.config.sentinel_prime_escalation_threshold,
+            sentinel_prime_escalated=self._anomaly_escalation_count[anomaly.agent_id]
+            >= self._anomaly_detector.config.sentinel_prime_escalation_threshold,
             false_positive=False,
         )
         self._anomaly_alerts.append(alert)
 
         # Prune old alerts
         if len(self._anomaly_alerts) > self._max_alert_history:
-            self._anomaly_alerts = self._anomaly_alerts[-self._max_alert_history:]
+            self._anomaly_alerts = self._anomaly_alerts[-self._max_alert_history :]
 
         # =====================================================================
         # CONS-02: Track for immune learning
@@ -1008,7 +1027,8 @@ class SentinelAgent(
 
         # Check if too many recent responses for this agent
         recent_count = sum(
-            1 for alert in self._anomaly_alerts[-100:]
+            1
+            for alert in self._anomaly_alerts[-100:]
             if alert.agent_id == agent_id and (now - alert.timestamp.timestamp()) < 60
         )
 
@@ -1021,7 +1041,7 @@ class SentinelAgent(
     async def _notify_human(self, anomaly: AnomalyDetectionResult) -> None:
         """
         Notify human operator of an anomaly requiring attention.
-        
+
         This is used when:
         - Response is rate limited
         - Response deadline is exceeded
@@ -1033,7 +1053,9 @@ class SentinelAgent(
             if now < self._human_notification_cooldown[anomaly.agent_id]:
                 return
         else:
-            self._human_notification_cooldown[anomaly.agent_id] = now + self._human_notification_cooldown_seconds
+            self._human_notification_cooldown[anomaly.agent_id] = (
+                now + self._human_notification_cooldown_seconds
+            )
 
         logger.warning(
             "human_notification_required",
@@ -1050,7 +1072,7 @@ class SentinelAgent(
     async def _escalate_to_sentinel_prime(self, anomaly: AnomalyDetectionResult) -> None:
         """
         Escalate anomaly to Sentinel-Prime for backup monitoring.
-        
+
         This is called when an agent has too many anomalies and Sentinel
         itself might be compromised.
         """
@@ -1063,14 +1085,24 @@ class SentinelAgent(
             return
 
         try:
-            # Reset escalation counter after sending
+            await self._sentinel_prime_client.report_threat(
+                threat_type="suspicious_behavior",
+                threat_level=anomaly.severity.value,
+                source=anomaly.agent_id,
+                description=f"Anomaly detected: {anomaly.anomaly_type.value}",
+                evidence={
+                    "anomaly_id": anomaly.anomaly_id,
+                    "z_score": anomaly.z_score,
+                    "trigger_metric": anomaly.trigger_metric,
+                },
+            )
             self._anomaly_escalation_count[anomaly.agent_id] = 0
 
             logger.warning(
                 "escalating_to_sentinel_prime",
                 anomaly_id=anomaly.anomaly_id,
                 agent_id=anomaly.agent_id,
-                escalation_count=self._anomaly_escalation_count[anomaly.agent_id],
+                escalation_count=0,
             )
         except Exception as e:
             logger.error(
@@ -1107,7 +1139,7 @@ class SentinelAgent(
     async def _sentinel_self_monitoring(self) -> None:
         """
         Perform self-health check of Sentinel.
-        
+
         This detects if Sentinel itself might be compromised by checking:
         - Response latency
         - Detection accuracy
@@ -1133,18 +1165,20 @@ class SentinelAgent(
 
             # Notify Sentinel-Prime
             if self._sentinel_prime_available:
-                await self._escalate_to_sentinel_prime(AnomalyDetectionResult(
-                    anomaly_id=self._generate_anomaly_id(),
-                    agent_id=self.agent_id,
-                    anomaly_type=AnomalyType.BEHAVIORAL_DRIFT,
-                    severity=AnomalySeverity.HIGH,
-                    timestamp=datetime.now(UTC),
-                    z_score=3.0,
-                    trigger_metric="sentinel_precision",
-                    expected_value=0.99,
-                    observed_value=precision,
-                    confidence=0.95,
-                ))
+                await self._escalate_to_sentinel_prime(
+                    AnomalyDetectionResult(
+                        anomaly_id=self._generate_anomaly_id(),
+                        agent_id=self.agent_id,
+                        anomaly_type=AnomalyType.BEHAVIORAL_DRIFT,
+                        severity=AnomalySeverity.HIGH,
+                        timestamp=datetime.now(UTC),
+                        z_score=3.0,
+                        trigger_metric="sentinel_precision",
+                        expected_value=0.99,
+                        observed_value=precision,
+                        confidence=0.95,
+                    )
+                )
         else:
             self._sentinel_self_health = "healthy"
 
@@ -1218,7 +1252,7 @@ class SentinelAgent(
     async def _handle_report_response_outcome(self, message: ActorMessage) -> None:
         """
         Handle response outcome report.
-        
+
         Content: {
             "anomaly_id": str,
             "outcome": str (success/failure/partial/escalated/false_positive)
@@ -1252,7 +1286,7 @@ class SentinelAgent(
     async def _handle_check_pattern_immunity(self, message: ActorMessage) -> None:
         """
         Handle pattern immunity check.
-        
+
         Content: {
             "pattern_content": dict
         }
@@ -1281,7 +1315,7 @@ class SentinelAgent(
     async def _handle_get_novel_patterns(self, message: ActorMessage) -> None:
         """
         Handle get novel patterns request.
-        
+
         Content: {
             "limit": int (optional)
         }
@@ -1306,7 +1340,7 @@ class SentinelAgent(
     async def _handle_submit_human_review(self, message: ActorMessage) -> None:
         """
         Handle human review submission.
-        
+
         Content: {
             "preservation_id": str,
             "reviewer_id": str,
@@ -1346,7 +1380,7 @@ class SentinelAgent(
     async def _handle_get_immune_statistics(self, message: ActorMessage) -> None:
         """
         Handle immune statistics request.
-        
+
         Content: {} (empty)
         """
         try:
@@ -1365,7 +1399,7 @@ class SentinelAgent(
     async def _handle_get_baseline_status(self, message: ActorMessage) -> None:
         """
         Handle baseline status request.
-        
+
         Content: {} (empty)
         """
         try:
@@ -1384,7 +1418,7 @@ class SentinelAgent(
     async def _handle_submit_baseline_vote(self, message: ActorMessage) -> None:
         """
         Handle baseline vote submission.
-        
+
         Content: {
             "request_id": str,
             "agent_id": str,
@@ -1421,7 +1455,7 @@ class SentinelAgent(
     async def _handle_monitor_agent(self, message: ActorMessage) -> None:
         """
         Handle agent behavior monitoring request.
-        
+
         Content: {
             "agent_id": str,
             "metrics": dict[str, float],
@@ -1465,7 +1499,7 @@ class SentinelAgent(
     async def _handle_check_agent_rate(self, message: ActorMessage) -> None:
         """
         Handle agent rate check request.
-        
+
         Content: {
             "agent_id": str,
             "current_rate": float,
@@ -1493,7 +1527,9 @@ class SentinelAgent(
                     "anomaly_type": alert.anomaly_type.value,
                     "severity": alert.severity.value,
                     "response_status": alert.response_status.value,
-                } if alert else None,
+                }
+                if alert
+                else None,
             }
 
             await self._send_response(message, response_content)
@@ -1505,7 +1541,7 @@ class SentinelAgent(
     async def _handle_check_agent_response_time(self, message: ActorMessage) -> None:
         """
         Handle agent response time check request.
-        
+
         Content: {
             "agent_id": str,
             "response_time_ms": float
@@ -1531,7 +1567,9 @@ class SentinelAgent(
                     "anomaly_type": alert.anomaly_type.value,
                     "severity": alert.severity.value,
                     "response_status": alert.response_status.value,
-                } if alert else None,
+                }
+                if alert
+                else None,
             }
 
             await self._send_response(message, response_content)
@@ -1543,7 +1581,7 @@ class SentinelAgent(
     async def _handle_check_agent_validation(self, message: ActorMessage) -> None:
         """
         Handle agent validation check request.
-        
+
         Content: {
             "agent_id": str,
             "validation_success": bool,
@@ -1571,7 +1609,9 @@ class SentinelAgent(
                     "anomaly_type": alert.anomaly_type.value,
                     "severity": alert.severity.value,
                     "response_status": alert.response_status.value,
-                } if alert else None,
+                }
+                if alert
+                else None,
             }
 
             await self._send_response(message, response_content)
@@ -1583,7 +1623,7 @@ class SentinelAgent(
     async def _handle_report_false_positive(self, message: ActorMessage) -> None:
         """
         Handle false positive report.
-        
+
         Content: {
             "anomaly_id": str
         }
@@ -1612,7 +1652,7 @@ class SentinelAgent(
     async def _handle_get_anomaly_statistics(self, message: ActorMessage) -> None:
         """
         Handle anomaly statistics request.
-        
+
         Content: {} (empty)
         """
         try:
@@ -1631,7 +1671,7 @@ class SentinelAgent(
     async def _handle_configure_sentinel_prime(self, message: ActorMessage) -> None:
         """
         Handle Sentinel-Prime configuration.
-        
+
         Content: {
             "sentinel_prime_client": object (the Sentinel-Prime agent)
         }

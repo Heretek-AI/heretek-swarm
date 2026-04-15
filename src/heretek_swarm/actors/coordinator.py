@@ -30,14 +30,18 @@ from heretek_swarm.actors.mixins.memory import MemoryMixin
 from heretek_swarm.actors.mixins.pattern import PatternMixin
 from heretek_swarm.actors.mixins.validation import ValidationMixin
 from heretek_swarm.actors.validation import validate_message
+from heretek_swarm.coordination.sync import (
+    TaskSynchronizer,
+)
 
 # Session 44: Collective Learning Integration
-
 # Session 44: Consensus Integration
-
 # Session 44: Memory Optimization Integration
-
 # Session 44: Zero-Trust Validation
+# INTG-01: Task Synchronization Integration
+from heretek_swarm.coordination.task_graph import (
+    TaskGraph,
+)
 
 logger = structlog.get_logger(__name__)
 
@@ -182,12 +186,59 @@ class CoordinatorAgent(
         self._resources: dict[str, int] = {}  # resource_name -> available count
         self._resource_locks: dict[str, set[str]] = {}  # resource_name -> locked by task_ids
 
+        # INTG-01: Task graph and synchronizer
+        self._task_graph: TaskGraph | None = None
+        self._synchronizer: TaskSynchronizer | None = None
+        self._cycle_notification_enabled: bool = True
+        self._deadlock_escalation_enabled: bool = True
+        self._coordination_ratio_history: list[float] = []
+        self._max_coordination_ratio: float = 0.35
+
         logger.info(
             "coordinator_initialized",
             agent_id=self.agent_id,
             max_tasks=self._max_tasks,
             max_agents=self._max_agents,
         )
+
+    async def initialize(self) -> None:
+        """Initialize the Coordinator agent with TaskGraph and TaskSynchronizer."""
+        await super().initialize()
+        self._task_graph = TaskGraph(max_nodes=self._max_tasks)
+        self._synchronizer = TaskSynchronizer(
+            deadlock_timeout=timedelta(seconds=30),
+            max_retries=3,
+            coordination_budget=self._max_coordination_ratio,
+        )
+        self._register_handlers()
+        logger.info(
+            "coordinator_intg01_initialized",
+            task_graph_max_nodes=self._max_tasks,
+            coordination_budget=self._max_coordination_ratio,
+        )
+
+    def _register_handlers(self) -> None:
+        """Register INTG-01 coordination message handlers."""
+        self._message_handlers = {
+            "create_task": self._handle_create_task,
+            "update_task": self._handle_update_task,
+            "get_task_status": self._handle_get_task_status,
+            "get_workflow_status": self._handle_get_workflow_status,
+            "assign_agent": self._handle_assign_agent,
+            "update_agent_state": self._handle_update_agent_state,
+            "resolve_dependencies": self._handle_resolve_dependencies,
+            "start_workflow": self._handle_start_workflow,
+            "cancel_workflow": self._handle_cancel_workflow,
+            "get_coordination_report": self._handle_get_coordination_report,
+            "graph_detect_cycles": self._handle_graph_detect_cycles,
+            "graph_get_metrics": self._handle_graph_get_metrics,
+            "graph_get_topological_order": self._handle_graph_get_topological_order,
+            "sync_register_dependency": self._handle_sync_register_dependency,
+            "sync_release_dependency": self._handle_sync_release_dependency,
+            "sync_detect_deadlock": self._handle_sync_detect_deadlock,
+            "get_coordination_ratio": self._handle_get_coordination_ratio,
+            "get_sync_health": self._handle_get_sync_health,
+        }
 
     async def _validate_message(self, message: ActorMessage) -> dict[str, Any]:
         """Validate incoming message content."""
@@ -929,6 +980,284 @@ class CoordinatorAgent(
                 sender_id=self.agent_id,
             ),
         )
+
+    async def _handle_graph_detect_cycles(self, message: ActorMessage) -> None:
+        """Detect cycles in task dependency graph."""
+        if not self._task_graph:
+            await self._send_error(
+                message.sender_id, "TaskGraph not initialized", message.message_type
+            )
+            return
+        try:
+            result = self._task_graph.detect_cycles()
+            if result["has_cycles"] and self._cycle_notification_enabled:
+                for cycle in result["cycles"]:
+                    await self._notify_steward_of_cycle(cycle)
+            await self.send(
+                message.sender_id,
+                ActorMessage(
+                    message_type="cycle_detection_result",
+                    content={
+                        "has_cycles": result["has_cycles"],
+                        "cycle_count": result["cycle_count"],
+                        "cycles": result["cycles"],
+                    },
+                    sender_id=self.agent_id,
+                ),
+            )
+        except Exception as e:
+            logger.error("graph_detect_cycles_failed", error=str(e))
+            await self._send_error(
+                message.sender_id, f"Failed to detect cycles: {e!s}", message.message_type
+            )
+
+    async def _handle_graph_get_metrics(self, message: ActorMessage) -> None:
+        """Get task graph metrics."""
+        if not self._task_graph:
+            await self._send_error(
+                message.sender_id, "TaskGraph not initialized", message.message_type
+            )
+            return
+        try:
+            content = message.content or {}
+            task_ids = content.get("task_ids")
+            if task_ids:
+                subgraph = {
+                    tid: self._task_graph._reverse_adjacency.get(tid, set())
+                    for tid in task_ids
+                    if tid in self._task_graph._nodes
+                }
+                temp_graph = TaskGraph()
+                for tid in task_ids:
+                    if tid in self._task_graph._nodes:
+                        temp_graph.add_node(tid)
+                for tid in task_ids:
+                    for dep in self._task_graph._reverse_adjacency.get(tid, []):
+                        if dep in task_ids:
+                            temp_graph.add_edge(dep, tid)
+                metrics = temp_graph.get_graph_metrics()
+            else:
+                metrics = self._task_graph.get_graph_metrics()
+            await self.send(
+                message.sender_id,
+                ActorMessage(
+                    message_type="graph_metrics", content=metrics, sender_id=self.agent_id
+                ),
+            )
+        except Exception as e:
+            logger.error("graph_get_metrics_failed", error=str(e))
+            await self._send_error(
+                message.sender_id, f"Failed to get metrics: {e!s}", message.message_type
+            )
+
+    async def _handle_graph_get_topological_order(self, message: ActorMessage) -> None:
+        """Get topological order of tasks."""
+        if not self._task_graph:
+            await self._send_error(
+                message.sender_id, "TaskGraph not initialized", message.message_type
+            )
+            return
+        try:
+            order = self._task_graph.get_topological_order()
+            await self.send(
+                message.sender_id,
+                ActorMessage(
+                    message_type="topological_order",
+                    content={"order": order},
+                    sender_id=self.agent_id,
+                ),
+            )
+        except ValueError as e:
+            await self._send_error(
+                message.sender_id, f"Cannot get topological order: {e}", message.message_type
+            )
+        except Exception as e:
+            logger.error("graph_topological_order_failed", error=str(e))
+            await self._send_error(
+                message.sender_id, f"Failed to get order: {e!s}", message.message_type
+            )
+
+    async def _handle_sync_register_dependency(self, message: ActorMessage) -> None:
+        """Register an agent dependency for tracking."""
+        if not self._synchronizer:
+            await self._send_error(
+                message.sender_id, "TaskSynchronizer not initialized", message.message_type
+            )
+            return
+        try:
+            content = message.content or {}
+            dependency_id = await self._synchronizer.register_dependency(
+                waiting_agent=content.get("waiting_agent", ""),
+                holding_agent=content.get("holding_agent", ""),
+                resource_id=content.get("resource_id", ""),
+            )
+            await self.send(
+                message.sender_id,
+                ActorMessage(
+                    message_type="dependency_registered",
+                    content={"dependency_id": dependency_id},
+                    sender_id=self.agent_id,
+                ),
+            )
+        except Exception as e:
+            logger.error("sync_register_dependency_failed", error=str(e))
+            await self._send_error(
+                message.sender_id, f"Failed to register dependency: {e!s}", message.message_type
+            )
+
+    async def _handle_sync_release_dependency(self, message: ActorMessage) -> None:
+        """Release an agent dependency."""
+        if not self._synchronizer:
+            await self._send_error(
+                message.sender_id, "TaskSynchronizer not initialized", message.message_type
+            )
+            return
+        try:
+            content = message.content or {}
+            released = await self._synchronizer.release_dependency(content.get("dependency_id", ""))
+            await self.send(
+                message.sender_id,
+                ActorMessage(
+                    message_type="dependency_released",
+                    content={"released": released},
+                    sender_id=self.agent_id,
+                ),
+            )
+        except Exception as e:
+            logger.error("sync_release_dependency_failed", error=str(e))
+            await self._send_error(
+                message.sender_id, f"Failed to release dependency: {e!s}", message.message_type
+            )
+
+    async def _handle_sync_detect_deadlock(self, message: ActorMessage) -> None:
+        """Detect deadlocks in agent dependencies."""
+        if not self._synchronizer:
+            await self._send_error(
+                message.sender_id, "TaskSynchronizer not initialized", message.message_type
+            )
+            return
+        try:
+            content = message.content or {}
+            result = await self._synchronizer.detect_deadlock(content.get("agent_id"))
+            if result["has_deadlock"] and self._deadlock_escalation_enabled:
+                await self._escalate_deadlock_to_arbiter(result["deadlock_chain"] or [])
+            await self.send(
+                message.sender_id,
+                ActorMessage(
+                    message_type="deadlock_detection_result",
+                    content=result,
+                    sender_id=self.agent_id,
+                ),
+            )
+        except Exception as e:
+            logger.error("sync_detect_deadlock_failed", error=str(e))
+            await self._send_error(
+                message.sender_id, f"Failed to detect deadlock: {e!s}", message.message_type
+            )
+
+    async def _handle_get_coordination_ratio(self, message: ActorMessage) -> None:
+        """Get current coordination ratio."""
+        if not self._synchronizer:
+            await self._send_error(
+                message.sender_id, "TaskSynchronizer not initialized", message.message_type
+            )
+            return
+        try:
+            ratio = await self._synchronizer.get_coordination_ratio()
+            metrics = self._synchronizer.get_metrics()
+            await self.send(
+                message.sender_id,
+                ActorMessage(
+                    message_type="coordination_ratio",
+                    content={
+                        "coordination_ratio": ratio,
+                        "total_capacity": metrics.total_capacity,
+                        "coordination_used": metrics.coordination_used,
+                        "is_healthy": ratio <= self._max_coordination_ratio,
+                    },
+                    sender_id=self.agent_id,
+                ),
+            )
+        except Exception as e:
+            logger.error("get_coordination_ratio_failed", error=str(e))
+            await self._send_error(
+                message.sender_id, f"Failed to get ratio: {e!s}", message.message_type
+            )
+
+    async def _handle_get_sync_health(self, message: ActorMessage) -> None:
+        """Get synchronization health report."""
+        if not self._synchronizer:
+            await self._send_error(
+                message.sender_id, "TaskSynchronizer not initialized", message.message_type
+            )
+            return
+        try:
+            report = await self._synchronizer.emit_health_report()
+            await self.send(
+                message.sender_id,
+                ActorMessage(
+                    message_type="sync_health_report", content=report, sender_id=self.agent_id
+                ),
+            )
+        except Exception as e:
+            logger.error("get_sync_health_failed", error=str(e))
+            await self._send_error(
+                message.sender_id, f"Failed to get health: {e!s}", message.message_type
+            )
+
+    async def _notify_steward_of_cycle(self, cycle: list[str]) -> None:
+        """Notify Steward when task dependency cycle is detected."""
+        logger.info("cycle_detected_notifying_steward", cycle=cycle, coordinator_id=self.agent_id)
+        await self.send(
+            "steward",
+            ActorMessage(
+                message_type="cycle_detected",
+                content={
+                    "cycle_node_ids": cycle,
+                    "coordinator_id": self.agent_id,
+                    "timestamp": datetime.now(UTC).isoformat(),
+                    "resolution_strategy": "awaiting_steward_guidance",
+                },
+                sender_id=self.agent_id,
+            ),
+        )
+
+    async def _escalate_deadlock_to_arbiter(self, deadlock_chain: list[str]) -> None:
+        """Escalate deadlock to Arbiter when resolution fails."""
+        logger.info(
+            "deadlock_escalating_to_arbiter", chain=deadlock_chain, coordinator_id=self.agent_id
+        )
+        await self.send(
+            "arbiter",
+            ActorMessage(
+                message_type="deadlock_escalation",
+                content={
+                    "deadlock_chain": deadlock_chain,
+                    "coordinator_id": self.agent_id,
+                    "timestamp": datetime.now(UTC).isoformat(),
+                    "context": {"attempts_resolved": 0},
+                },
+                sender_id=self.agent_id,
+            ),
+        )
+
+    async def _update_coordination_ratio(self) -> float:
+        """Update and return current coordination ratio."""
+        if not self._synchronizer:
+            return 0.0
+        metrics = self._synchronizer.get_metrics()
+        sync_cost = metrics.active_sync_operations * 0.01
+        deadlock_cost = metrics.deadlocks_detected * 0.05
+        cycle_cost = metrics.cycles_detected * 0.03
+        ratio = min(1.0, sync_cost + deadlock_cost + cycle_cost)
+        self._coordination_ratio_history.append(ratio)
+        if len(self._coordination_ratio_history) > 100:
+            self._coordination_ratio_history.pop(0)
+        return ratio
+
+    def _is_coordination_healthy(self, ratio: float) -> bool:
+        """Check if coordination ratio is within healthy bounds."""
+        return ratio <= self._max_coordination_ratio
 
     def get_capabilities(self) -> list[str]:
         """Return list of capabilities this agent provides."""

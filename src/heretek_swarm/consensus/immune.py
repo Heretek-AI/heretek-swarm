@@ -25,13 +25,14 @@ Reference: Phase 2 Plan Task 2 (CONS-02)
 """
 
 import hashlib
-import time
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
 from enum import StrEnum
 from typing import Any
 
 import structlog
+
+from heretek_swarm.security.behavioral_baseline import BaselineChangeType
 
 logger = structlog.get_logger("immune_response")
 
@@ -632,10 +633,9 @@ class ImmuneResponseBuilding:
 
         if immune_pattern.approved:
             return (PatternClassification.KNOWN_MALICIOUS, immune_pattern)
-        elif immune_pattern.false_positive_rate > self.max_false_positive_rate:
+        if immune_pattern.false_positive_rate > self.max_false_positive_rate:
             return (PatternClassification.KNOWN_BENIGN, immune_pattern)
-        else:
-            return (PatternClassification.UNCLASSIFIED, immune_pattern)
+        return (PatternClassification.UNCLASSIFIED, immune_pattern)
 
     def preserve_novel_pattern(
         self,
@@ -1220,7 +1220,7 @@ class ImmuneResponseEngine:
     async def request_baseline_change(
         self,
         pattern_id: str,
-        change_type: ChangeAction,
+        change_type: "BaselineChangeType",
     ) -> str | None:
         """
         Request a baseline change through deliberation.
@@ -1288,7 +1288,7 @@ class ImmuneResponseEngine:
         self,
         pattern_key: str,
         responses: list[AnomalyResponse],
-    ) -> SecurityPattern | None:
+    ) -> ImmunePattern | None:
         """Create a new pattern from confirmed responses."""
         if not responses:
             return None
@@ -1296,11 +1296,14 @@ class ImmuneResponseEngine:
         first_response = responses[0]
         correct_count = sum(1 for r in responses if r.was_correct)
 
-        pattern = SecurityPattern(
+        pattern = ImmunePattern(
             pattern_id=f"pattern-{pattern_key}",
-            pattern_type=first_response.anomaly_type,
-            signature=first_response.detection_signature,
+            pattern_hash="",  # Required field
+            pattern_type=first_response.anomaly_type,  # Required field
             description=f"Auto-learned pattern from {correct_count} confirmations",
+            created_at=datetime.now(UTC),
+            updated_at=datetime.now(UTC),
+            evidence_count=correct_count,
             confidence=correct_count / len(responses) if responses else 0.5,
             source="immune_response",
         )

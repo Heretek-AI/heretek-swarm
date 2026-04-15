@@ -39,6 +39,15 @@ from heretek_swarm.collective.learning import PatternExtractor
 # Session 44: Consensus Integration
 from heretek_swarm.consensus.swarm_deliberation import SwarmDeliberationEngine
 
+# INTG-04: Time Perception & Dilation
+from heretek_swarm.coordination.time_dilation import (
+    AnchorSource,
+    ExecutionContext,
+    OverloadDetector,
+    TimeDilationCalculator,
+    TimePerceptionManager,
+)
+
 # Session 44: Memory Optimization Integration
 from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer
 
@@ -238,6 +247,18 @@ class ChronosAgent(
         self._active_deliberations: dict[str, str] = {}
         self._pattern_emitted: set[str] = set()
 
+        # INTG-04: Time perception manager
+        self._time_manager: TimePerceptionManager | None = None
+        self._dilation_calculator: TimeDilationCalculator | None = None
+        self._overload_detector: OverloadDetector | None = None
+        self._execution_contexts: dict[str, ExecutionContext] = {}
+
+        # INTG-04: Configuration
+        self._enable_time_dilation: bool = self._config.get("enable_time_dilation", True)
+        self._anchor_interval_seconds: float = self._config.get("anchor_interval", 300)
+        self._overload_threshold: float = self._config.get("overload_threshold", 0.8)
+        self._max_contexts: int = self._config.get("max_contexts", 500)
+
         logger.info(
             "chronos_initialized",
             agent_id=self.agent_id,
@@ -248,6 +269,18 @@ class ChronosAgent(
     async def initialize(self) -> None:
         """Initialize the Chronos agent."""
         await super().initialize()
+
+        # INTG-04: Initialize time perception components
+        if self._enable_time_dilation:
+            self._time_manager = TimePerceptionManager(
+                max_contexts=self._max_contexts,
+                drift_threshold_seconds=5.0,
+                anchor_interval=timedelta(seconds=self._anchor_interval_seconds),
+            )
+            self._dilation_calculator = TimeDilationCalculator()
+            self._overload_detector = OverloadDetector()
+            self._execution_contexts = {}
+
         self._scheduler_running = True
         self._scheduler_task = asyncio.create_task(self._run_scheduler())
         logger.info("chronos_scheduler_started")
@@ -291,7 +324,6 @@ class ChronosAgent(
                             due_tasks.append(task)
                         else:
                             remaining_queue.append((scheduled_at, task_id))
-                    # Remove tasks that no longer exist
 
                 self._task_queue = remaining_queue
 
@@ -301,6 +333,20 @@ class ChronosAgent(
 
                 # Check deadlines
                 await self._check_deadlines()
+
+                # INTG-04: Periodic anchoring check
+                if self._time_manager and self._enable_time_dilation:
+                    await self._time_manager.check_and_anchor()
+
+                # INTG-04: Check context deadlines and update metrics
+                await self._check_context_deadlines()
+
+                # INTG-04: Update overload state
+                self._update_overload_state()
+
+                # INTG-04: Check if delegation needed
+                if self._should_delegate():
+                    await self._handle_overload_delegation()
 
                 # Sort queue by time
                 self._task_queue.sort(key=lambda x: x[0])
@@ -410,11 +456,10 @@ class ChronosAgent(
                 logger.warning("deadline_missed", deadline_id=deadline.deadline_id)
                 continue
 
-            # Check warning thresholds
-            for threshold in deadline.warning_thresholds:
-                threshold_key = str(threshold)
-                if threshold_key not in deadline.warnings_sent:
-                    if time_remaining <= threshold:
+                # Check warning thresholds
+                for threshold in deadline.warning_thresholds:
+                    threshold_key = str(threshold)
+                    if threshold_key not in deadline.warnings_sent and time_remaining <= threshold:
                         deadline.warnings_sent.add(threshold_key)
                         await self._send_deadline_warning(deadline, threshold)
 
@@ -1029,9 +1074,533 @@ class ChronosAgent(
             ),
         )
 
+    # INTG-04: Time Perception Handlers
+
+    async def _handle_create_context(self, message: ActorMessage) -> None:
+        """
+        Create a long-running execution context.
+
+        Content: {
+            "agent_id": str,
+            "task_id": str,
+            "expected_duration": str | None (ISO8601 timedelta),
+            "deadline": str | None (ISO8601 datetime),
+            "priority": int | None (1-5),
+            "metadata": dict | None,
+        }
+
+        Returns: {
+            "context": ExecutionContext.to_dict(),
+            "context_id": str,
+        }
+        """
+        try:
+            content = await self._validate_message(message)
+
+            if not self._time_manager:
+                await self._send_error(
+                    message.sender_id,
+                    "Time perception not enabled",
+                    message.message_type,
+                )
+                return
+
+            agent_id = content.get("agent_id", message.sender_id)
+            task_id = content.get("task_id", f"task_{uuid.uuid4().hex[:12]}")
+
+            expected_duration = None
+            if content.get("expected_duration"):
+                td_match = content["expected_duration"]
+                if "hour" in td_match:
+                    hours = float(td_match.replace("hour", "").strip())
+                    expected_duration = timedelta(hours=hours)
+                elif "minute" in td_match:
+                    minutes = float(td_match.replace("minute", "").strip())
+                    expected_duration = timedelta(minutes=minutes)
+                elif "second" in td_match:
+                    seconds = float(td_match.replace("second", "").strip())
+                    expected_duration = timedelta(seconds=seconds)
+
+            deadline = None
+            if content.get("deadline"):
+                deadline = datetime.fromisoformat(content["deadline"])
+
+            metadata = content.get("metadata", {})
+            metadata["priority"] = content.get("priority", 2)
+
+            context = self._time_manager.create_context(
+                agent_id=agent_id,
+                task_id=task_id,
+                expected_duration=expected_duration,
+                deadline=deadline,
+                metadata=metadata,
+            )
+
+            self._execution_contexts[context.context_id] = context
+
+            await self.send(
+                message.sender_id,
+                ActorMessage(
+                    message_type="execution_context_created",
+                    content={
+                        "context": context.to_dict(),
+                        "context_id": context.context_id,
+                    },
+                    sender_id=self.agent_id,
+                ),
+            )
+
+        except Exception as e:
+            logger.error("create_context_failed", error=str(e))
+            await self._send_error(
+                message.sender_id,
+                f"Failed to create context: {e!s}",
+                message.message_type,
+            )
+
+    async def _handle_update_context(self, message: ActorMessage) -> None:
+        """
+        Update execution context progress.
+
+        Content: {
+            "context_id": str,
+            "progress_percent": float,
+            "status": str | None,
+            "time_dilation_factor": float | None,
+            "metadata": dict | None,
+        }
+        """
+        try:
+            content = await self._validate_message(message)
+            context_id = content.get("context_id")
+
+            if not context_id or not self._time_manager:
+                await self._send_error(
+                    message.sender_id,
+                    "Invalid context_id",
+                    message.message_type,
+                )
+                return
+
+            updated = self._time_manager.update_context(
+                context_id=context_id,
+                progress_percent=content.get("progress_percent"),
+                status=content.get("status"),
+                time_dilation_factor=content.get("time_dilation_factor"),
+                metadata=content.get("metadata"),
+            )
+
+            if updated:
+                context = self._time_manager.get_context(context_id)
+                if context:
+                    self._execution_contexts[context_id] = context
+
+                await self.send(
+                    message.sender_id,
+                    ActorMessage(
+                        message_type="execution_context_updated",
+                        content={"context_id": context_id, "success": True},
+                        sender_id=self.agent_id,
+                    ),
+                )
+            else:
+                await self._send_error(
+                    message.sender_id,
+                    f"Context {context_id} not found",
+                    message.message_type,
+                )
+
+        except Exception as e:
+            logger.error("update_context_failed", error=str(e))
+            await self._send_error(
+                message.sender_id,
+                f"Failed to update context: {e!s}",
+                message.message_type,
+            )
+
+    async def _handle_checkpoint_context(self, message: ActorMessage) -> None:
+        """
+        Create a checkpoint for context recovery.
+
+        Content: {"context_id": str}
+
+        Returns: Checkpoint data for persistence
+        """
+        try:
+            content = await self._validate_message(message)
+            context_id = content.get("context_id")
+
+            if not context_id or not self._time_manager:
+                await self._send_error(
+                    message.sender_id,
+                    "Invalid context_id",
+                    message.message_type,
+                )
+                return
+
+            checkpoint = self._time_manager.checkpoint_context(context_id)
+
+            if checkpoint:
+                await self.send(
+                    message.sender_id,
+                    ActorMessage(
+                        message_type="context_checkpoint",
+                        content={"checkpoint": checkpoint},
+                        sender_id=self.agent_id,
+                    ),
+                )
+            else:
+                await self._send_error(
+                    message.sender_id,
+                    f"Context {context_id} not found",
+                    message.message_type,
+                )
+
+        except Exception as e:
+            logger.error("checkpoint_context_failed", error=str(e))
+            await self._send_error(
+                message.sender_id,
+                f"Failed to checkpoint context: {e!s}",
+                message.message_type,
+            )
+
+    async def _handle_get_context_status(self, message: ActorMessage) -> None:
+        """
+        Get status of an execution context.
+
+        Content: {"context_id": str}
+
+        Returns: {
+            "context": ExecutionContext.to_dict(),
+            "wallclock_elapsed": str,
+            "subjective_elapsed": str,
+            "time_remaining": str | None,
+            "is_at_risk": bool,
+        }
+        """
+        try:
+            content = await self._validate_message(message)
+            context_id = content.get("context_id")
+
+            if not context_id or not self._time_manager:
+                await self._send_error(
+                    message.sender_id,
+                    "Invalid context_id",
+                    message.message_type,
+                )
+                return
+
+            context = self._time_manager.get_context(context_id)
+
+            if context:
+                await self.send(
+                    message.sender_id,
+                    ActorMessage(
+                        message_type="context_status",
+                        content={
+                            "context": context.to_dict(),
+                            "wallclock_elapsed": str(context.wallclock_elapsed),
+                            "subjective_elapsed": str(context.subjective_elapsed),
+                            "time_remaining": (
+                                str(context.time_remaining) if context.time_remaining else None
+                            ),
+                            "is_at_risk": context.is_at_risk,
+                        },
+                        sender_id=self.agent_id,
+                    ),
+                )
+            else:
+                await self._send_error(
+                    message.sender_id,
+                    f"Context {context_id} not found",
+                    message.message_type,
+                )
+
+        except Exception as e:
+            logger.error("get_context_status_failed", error=str(e))
+            await self._send_error(
+                message.sender_id,
+                f"Failed to get context status: {e!s}",
+                message.message_type,
+            )
+
+    async def _handle_get_metrics(self, message: ActorMessage) -> None:
+        """
+        Get time perception metrics.
+
+        Returns: TimePerceptionMetrics.to_dict()
+        """
+        try:
+            if not self._time_manager:
+                await self._send_error(
+                    message.sender_id,
+                    "Time perception not enabled",
+                    message.message_type,
+                )
+                return
+
+            metrics = self._time_manager.get_perception_metrics()
+
+            await self.send(
+                message.sender_id,
+                ActorMessage(
+                    message_type="time_perception_metrics",
+                    content=metrics.to_dict(),
+                    sender_id=self.agent_id,
+                ),
+            )
+
+        except Exception as e:
+            logger.error("get_metrics_failed", error=str(e))
+            await self._send_error(
+                message.sender_id,
+                f"Failed to get metrics: {e!s}",
+                message.message_type,
+            )
+
+    async def _handle_anchor_time(self, message: ActorMessage) -> None:
+        """
+        Anchor time perception to external source.
+
+        Content: {"source": str}  # system_clock, ntp_server, coordinator
+
+        Returns: Anchoring result
+        """
+        try:
+            content = await self._validate_message(message)
+            source_str = content.get("source", "system_clock")
+
+            try:
+                source = AnchorSource(source_str)
+            except ValueError:
+                source = AnchorSource.SYSTEM_CLOCK
+
+            if not self._time_manager:
+                await self._send_error(
+                    message.sender_id,
+                    "Time perception not enabled",
+                    message.message_type,
+                )
+                return
+
+            result = await self._time_manager.anchor_time(source)
+
+            await self.send(
+                message.sender_id,
+                ActorMessage(
+                    message_type="time_anchored",
+                    content=result,
+                    sender_id=self.agent_id,
+                ),
+            )
+
+        except Exception as e:
+            logger.error("anchor_time_failed", error=str(e))
+            await self._send_error(
+                message.sender_id,
+                f"Failed to anchor time: {e!s}",
+                message.message_type,
+            )
+
+    async def _handle_get_adaptive_timeout(self, message: ActorMessage) -> None:
+        """
+        Get adaptive timeout for an operation.
+
+        Content: {
+            "operation": str,
+            "retry_count": int,
+            "context_id": str | None,
+        }
+
+        Returns: {
+            "timeout_seconds": float,
+            "timeout_recommended": str,
+        }
+        """
+        try:
+            content = await self._validate_message(message)
+            operation = content.get("operation", "default")
+            retry_count = content.get("retry_count", 0)
+            context_id = content.get("context_id")
+
+            if not self._time_manager:
+                await self._send_error(
+                    message.sender_id,
+                    "Time perception not enabled",
+                    message.message_type,
+                )
+                return
+
+            timeout = self._time_manager.calculate_adaptive_timeout(
+                operation=operation,
+                retry_count=retry_count,
+                context_id=context_id,
+            )
+
+            await self.send(
+                message.sender_id,
+                ActorMessage(
+                    message_type="adaptive_timeout",
+                    content={
+                        "timeout_seconds": timeout.total_seconds(),
+                        "timeout_recommended": str(timeout),
+                        "operation": operation,
+                    },
+                    sender_id=self.agent_id,
+                ),
+            )
+
+        except Exception as e:
+            logger.error("get_adaptive_timeout_failed", error=str(e))
+            await self._send_error(
+                message.sender_id,
+                f"Failed to get adaptive timeout: {e!s}",
+                message.message_type,
+            )
+
+    async def _handle_delegate(self, message: ActorMessage) -> None:
+        """
+        Delegate context to Coordinator when overloaded.
+
+        Content: {
+            "context_id": str,
+            "reason": str,
+            "fallback_action": str | None,
+        }
+        """
+        try:
+            content = await self._validate_message(message)
+            context_id = content.get("context_id")
+            reason = content.get("reason", "Chronos overloaded")
+            fallback_action = content.get("fallback_action", "reschedule")
+
+            if not self._time_manager:
+                await self._send_error(
+                    message.sender_id,
+                    "Time perception not enabled",
+                    message.message_type,
+                )
+                return
+
+            result = await self._time_manager.delegate_to_coordinator(
+                context_id=context_id,
+                reason=reason,
+                fallback_action=fallback_action,
+            )
+
+            if result.get("delegated") and context_id in self._execution_contexts:
+                del self._execution_contexts[context_id]
+
+            await self.send(
+                message.sender_id,
+                ActorMessage(
+                    message_type="delegation_result",
+                    content=result,
+                    sender_id=self.agent_id,
+                ),
+            )
+
+        except Exception as e:
+            logger.error("delegate_failed", error=str(e))
+            await self._send_error(
+                message.sender_id,
+                f"Failed to delegate: {e!s}",
+                message.message_type,
+            )
+
+    # INTG-04: Helper Methods
+
+    async def _check_context_deadlines(self) -> None:
+        """Check execution context deadlines and send warnings."""
+        if not self._time_manager:
+            return
+
+        for context in self._execution_contexts.values():
+            if context.status != "running":
+                continue
+
+            if context.is_at_risk:
+                await self._send_context_warning(context)
+
+            if context.time_remaining and context.time_remaining.total_seconds() <= 0:
+                await self._handle_context_deadline_miss(context)
+
+    def _update_overload_state(self) -> None:
+        """Update overload detection based on current load."""
+        if not self._time_manager:
+            return
+
+        active_count = sum(1 for c in self._execution_contexts.values() if c.status == "running")
+        load = active_count / self._max_contexts if self._max_contexts > 0 else 0
+
+        self._time_manager.update_load(load)
+
+    def _should_delegate(self) -> bool:
+        """Check if delegation is needed."""
+        if not self._time_manager:
+            return False
+
+        should_del, _ = self._time_manager.should_delegate()
+        return bool(should_del)
+
+    async def _handle_overload_delegation(self) -> None:
+        """Delegate low-priority contexts to Coordinator."""
+        if not self._time_manager:
+            return
+
+        delegatable = [
+            c
+            for c in self._execution_contexts.values()
+            if c.status == "running" and c.metadata.get("priority", 2) <= 2
+        ]
+
+        if delegatable:
+            context = delegatable[0]
+            await self._time_manager.delegate_to_coordinator(
+                context.context_id,
+                "Chronos overloaded",
+            )
+            if context.context_id in self._execution_contexts:
+                del self._execution_contexts[context.context_id]
+
+    async def _send_context_warning(self, context: ExecutionContext) -> None:
+        """Send warning about at-risk context."""
+        await self.send(
+            context.agent_id,
+            ActorMessage(
+                message_type="context_at_risk",
+                content={
+                    "context_id": context.context_id,
+                    "task_id": context.task_id,
+                    "time_remaining": str(context.time_remaining),
+                    "progress_percent": context.progress_percent,
+                    "deadline": (context.deadline.isoformat() if context.deadline else None),
+                },
+                sender_id=self.agent_id,
+            ),
+        )
+
+    async def _handle_context_deadline_miss(self, context: ExecutionContext) -> None:
+        """Handle a missed deadline for an execution context."""
+        if self._time_manager:
+            self._time_manager.fail_context(context.context_id, "Deadline missed")
+
+        await self.send(
+            context.agent_id,
+            ActorMessage(
+                message_type="context_deadline_missed",
+                content={
+                    "context_id": context.context_id,
+                    "task_id": context.task_id,
+                    "missed_at": datetime.now(UTC).isoformat(),
+                },
+                sender_id=self.agent_id,
+            ),
+        )
+
     def get_capabilities(self) -> list[str]:
         """Return list of capabilities this agent provides."""
-        return [
+        capabilities = [
             "task_scheduling",
             "deadline_management",
             "temporal_coordination",
@@ -1039,3 +1608,18 @@ class ChronosAgent(
             "timeline_tracking",
             "reminder_service",
         ]
+
+        # INTG-04: Add time perception capabilities
+        if self._enable_time_dilation:
+            capabilities.extend(
+                [
+                    "execution_context_tracking",
+                    "time_perception_management",
+                    "adaptive_timeout",
+                    "reality_anchoring",
+                    "overload_detection",
+                    "context_delegation",
+                ]
+            )
+
+        return capabilities

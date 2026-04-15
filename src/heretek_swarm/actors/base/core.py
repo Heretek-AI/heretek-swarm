@@ -425,5 +425,9 @@ class AgentActor:
 
 
 # Trigger mixin bindings when this module is imported
-from heretek_swarm.actors.base.message_handling import AgentActorMessageHandling  # noqa: F401 - triggers mixin injection
-from heretek_swarm.actors.base.state_management import AgentActorStateManagement  # noqa: F401 - triggers state management bindings
+from heretek_swarm.actors.base.message_handling import (
+    AgentActorMessageHandling,  # noqa: F401 - triggers mixin injection
+)
+from heretek_swarm.actors.base.state_management import (
+    AgentActorStateManagement,  # noqa: F401 - triggers state management bindings
+)

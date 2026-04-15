@@ -15,7 +15,7 @@ from typing import Any
 
 import structlog
 
-from heretek_swarm.actors.base.core import AgentActor, ActorState
+from heretek_swarm.actors.base.core import ActorState, AgentActor
 
 logger = structlog.get_logger("AgentActor")
 

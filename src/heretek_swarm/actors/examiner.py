@@ -44,6 +44,19 @@ from heretek_swarm.memory.access_patterns import AccessPatternAnalyzer
 # Session 44: Zero-Trust Validation
 from heretek_swarm.security.zero_trust import ZeroTrustValidator
 
+# DISC-02: Stress Testing Module
+from heretek_swarm.testing.stress_testing import (
+    CapabilityBoundary,
+    GapReporter,
+    IncidentReport,
+    RecoveryManager,
+    SafetyBounds,
+    StressTestConfig,
+    StressTestExecutor,
+    StressTestResult,
+    StressTestType,
+)
+
 logger = structlog.get_logger("ExaminerAgent")
 
 
@@ -206,6 +219,28 @@ class ExaminerAgent(
         self._default_timeout = self._config.get("default_timeout", 60)
         self._coverage_threshold = self._config.get("coverage_threshold", 80.0)
 
+        # DISC-02: Stress testing components
+        self._recovery_manager = RecoveryManager(
+            max_recovery_attempts=self._config.get("max_recovery_attempts", 3),
+            recovery_timeout_seconds=self._config.get("recovery_timeout", 30.0),
+        )
+
+        self._gap_reporter = GapReporter(
+            steward_agent_id=self._config.get("steward_agent_id", "steward"),
+            min_gap_confidence=self._config.get("min_gap_confidence", 0.7),
+        )
+
+        self._stress_executor = StressTestExecutor(
+            recovery_manager=self._recovery_manager,
+            gap_reporter=self._gap_reporter,
+        )
+
+        # DISC-02: Stress test state
+        self._stress_test_results: dict[str, StressTestResult] = {}
+        self._safety_bounds: dict[str, SafetyBounds] = {}
+        self._incident_reports: dict[str, IncidentReport] = {}
+        self._capability_boundaries: dict[str, CapabilityBoundary] = {}
+
         logger.info(
             "ExaminerAgent initialized",
             agent_id=self.agent_id,
@@ -222,6 +257,11 @@ class ExaminerAgent(
             "report_bug": self._handle_report_bug,
             "get_quality_report": self._handle_get_quality_report,
             "get_bug_status": self._handle_get_bug_status,
+            "execute_stress_test": self._handle_execute_stress_test,
+            "get_stress_test_results": self._handle_get_stress_test_results,
+            "report_capability_gap": self._handle_report_capability_gap,
+            "get_safety_bounds": self._handle_get_safety_bounds,
+            "get_incident_reports": self._handle_get_incident_reports,
         }
 
     async def _handle_create_test_plan(self, message: ActorMessage) -> dict[str, Any] | None:
@@ -1080,3 +1120,229 @@ Provide a 2-3 sentence summary of the quality status."""
         except Exception as e:
             logger.debug("examiner_summary_gen_failed_1171", error=str(e))
             return f"Quality score: {overall_score:.1f}/100. {len(bugs)} bugs detected. {sum(s.failed for s in test_suites)} tests failing."
+
+    async def _handle_execute_stress_test(self, message: ActorMessage) -> dict[str, Any] | None:
+        """
+        Execute comprehensive stress test on agent capabilities.
+
+        Content expected:
+        {
+            "target_agent_id": "alpha",
+            "test_types": ["capacity", "boundary", "recovery"],
+            "config": {
+                "max_duration_seconds": 300,
+                "intensity_levels": [0.5, 0.75, 1.0],
+                "recovery_enabled": True
+            }
+        }
+        """
+        try:
+            content = validate_message(message.content, "ExaminerExecuteStressTest")
+            target_agent_id = content.get("target_agent_id")
+
+            test_types_str = content.get("test_types", ["capacity"])
+            test_types = [StressTestType(t) for t in test_types_str]
+
+            config_dict = content.get("config", {})
+            config = StressTestConfig(
+                max_duration_seconds=config_dict.get("max_duration_seconds", 300.0),
+                intensity_levels=config_dict.get("intensity_levels", [0.5, 0.75, 1.0]),
+                recovery_enabled=config_dict.get("recovery_enabled", True),
+            )
+
+            logger.info(
+                "Executing stress test",
+                target_agent_id=target_agent_id,
+                test_types=[t.value for t in test_types],
+            )
+
+            result = await self._stress_executor.execute_stress_test(
+                target_agent_id=target_agent_id,
+                test_types=test_types,
+                config=config,
+            )
+
+            self._stress_test_results[result.test_suite_id] = result
+
+            if result.boundaries_found:
+                for boundary_data in result.boundaries_found:
+                    capability = boundary_data.get("capability", "unknown")
+                    boundary = CapabilityBoundary(
+                        boundary_id=f"boundary-{capability}",
+                        agent_id=target_agent_id,
+                        capability=capability,
+                        boundary_type="stress_test",
+                        measured_value=boundary_data.get("measured_value", 0.0),
+                        threshold_value=1.0,
+                        unit="intensity",
+                        test_conditions={},
+                        confidence=0.8,
+                        safety_margin=0.1,
+                    )
+                    self._capability_boundaries[boundary.boundary_id] = boundary
+
+            return {
+                "status": "success",
+                "test_suite_id": result.test_suite_id,
+                "target_agent_id": result.target_agent_id,
+                "passed": result.passed,
+                "failed": result.failed,
+                "boundaries_found": len(result.boundaries_found),
+                "execution_time_seconds": result.execution_time_seconds,
+            }
+
+        except Exception as e:
+            logger.error("Failed to execute stress test", error=str(e))
+            return {"status": "error", "error": str(e)}
+
+    async def _handle_get_stress_test_results(self, message: ActorMessage) -> dict[str, Any] | None:
+        """Get results of stress test execution."""
+        try:
+            content = validate_message(message.content, "ExaminerGetStressTestResults")
+            test_suite_id = content.get("test_suite_id")
+
+            if test_suite_id:
+                result = self._stress_test_results.get(test_suite_id)
+                if result:
+                    return {
+                        "status": "success",
+                        "result": {
+                            "test_suite_id": result.test_suite_id,
+                            "target_agent_id": result.target_agent_id,
+                            "status": result.status.value,
+                            "passed": result.passed,
+                            "failed": result.failed,
+                            "boundaries_found": result.boundaries_found,
+                            "execution_time_seconds": result.execution_time_seconds,
+                        },
+                    }
+                return {"status": "error", "error": f"Test suite {test_suite_id} not found"}
+
+            all_results = [
+                {
+                    "test_suite_id": r.test_suite_id,
+                    "target_agent_id": r.target_agent_id,
+                    "status": r.status.value,
+                    "passed": r.passed,
+                    "failed": r.failed,
+                }
+                for r in self._stress_test_results.values()
+            ]
+
+            return {
+                "status": "success",
+                "results": all_results,
+                "count": len(all_results),
+            }
+
+        except Exception as e:
+            logger.error("Failed to get stress test results", error=str(e))
+            return {"status": "error", "error": str(e)}
+
+    async def _handle_report_capability_gap(self, message: ActorMessage) -> dict[str, Any] | None:
+        """Report identified capability gap to Steward."""
+        try:
+            content = validate_message(message.content, "ExaminerReportCapabilityGap")
+            agent_id = content.get("agent_id")
+            capability = content.get("capability")
+            severity = content.get("severity", "medium")
+            test_evidence = content.get("test_evidence", [])
+
+            gap = await self._gap_reporter.identify_gap(
+                agent_id=agent_id,
+                capability=capability,
+                test_evidence=test_evidence,
+                severity=severity,
+            )
+
+            await self._gap_reporter.report_to_steward(gap, message_sender=self)
+
+            return {
+                "status": "success",
+                "gap_id": gap.gap_id,
+                "agent_id": gap.agent_id,
+                "capability": gap.capability,
+                "severity": gap.severity,
+                "reported_at": gap.reported_at.isoformat() if gap.reported_at else None,
+            }
+
+        except Exception as e:
+            logger.error("Failed to report capability gap", error=str(e))
+            return {"status": "error", "error": str(e)}
+
+    async def _handle_get_safety_bounds(self, message: ActorMessage) -> dict[str, Any] | None:
+        """Get proven safety bounds for agent."""
+        try:
+            content = validate_message(message.content, "ExaminerGetSafetyBounds")
+            agent_id = content.get("agent_id")
+            bounds_type = content.get("bounds_type", "general")
+
+            safety_proof = await self._stress_executor.generate_safety_proof(
+                agent_id=agent_id,
+                bounds_type=bounds_type,
+            )
+
+            self._safety_bounds[safety_proof.bounds_id] = safety_proof
+
+            return {
+                "status": "success",
+                "bounds_id": safety_proof.bounds_id,
+                "agent_id": safety_proof.agent_id,
+                "bounds_type": safety_proof.bounds_type,
+                "proven_limits": safety_proof.proven_limits,
+                "meets_safety_standard": safety_proof.meets_safety_standard,
+                "confidence": safety_proof.confidence,
+                "notes": safety_proof.notes,
+            }
+
+        except Exception as e:
+            logger.error("Failed to get safety bounds", error=str(e))
+            return {"status": "error", "error": str(e)}
+
+    async def _handle_get_incident_reports(self, message: ActorMessage) -> dict[str, Any] | None:
+        """Get incident reports from stress testing."""
+        try:
+            content = validate_message(message.content, "ExaminerGetIncidentReports")
+            incident_id = content.get("incident_id")
+
+            if incident_id:
+                incident = self._incident_reports.get(incident_id)
+                if incident:
+                    return {
+                        "status": "success",
+                        "incident": {
+                            "incident_id": incident.incident_id,
+                            "agent_id": incident.agent_id,
+                            "incident_type": incident.incident_type,
+                            "severity": incident.severity,
+                            "detected_at": incident.detected_at.isoformat(),
+                            "recovered_at": incident.recovered_at.isoformat()
+                            if incident.recovered_at
+                            else None,
+                            "recovery_successful": incident.recovery_successful,
+                            "escalated": incident.escalated,
+                        },
+                    }
+                return {"status": "error", "error": f"Incident {incident_id} not found"}
+
+            all_incidents = [
+                {
+                    "incident_id": i.incident_id,
+                    "agent_id": i.agent_id,
+                    "incident_type": i.incident_type,
+                    "severity": i.severity,
+                    "recovery_successful": i.recovery_successful,
+                    "escalated": i.escalated,
+                }
+                for i in self._incident_reports.values()
+            ]
+
+            return {
+                "status": "success",
+                "incidents": all_incidents,
+                "count": len(all_incidents),
+            }
+
+        except Exception as e:
+            logger.error("Failed to get incident reports", error=str(e))
+            return {"status": "error", "error": str(e)}

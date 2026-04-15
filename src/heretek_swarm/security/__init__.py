@@ -33,12 +33,12 @@ from heretek_swarm.security.adversarial import (
     create_strict_detector,
 )
 from heretek_swarm.security.anomaly_detection import (
+    AgentBehaviorProfile,
     AnomalyDetectionConfig,
     AnomalyDetectionResult,
     AnomalyResponse,
     AnomalySeverity,
     AnomalyType,
-    AgentBehaviorProfile,
     BehavioralAnomalyDetector,
     ResponseStatus,
     create_anomaly_detector,
@@ -192,6 +192,10 @@ from heretek_swarm.security.threat_detection import (
     ThreatIntelligence,
     ThreatLevel,
     ThreatSource,
+)
+from heretek_swarm.security.threat_detection import (
     create_default_detector as create_default_threat_detector,
+)
+from heretek_swarm.security.threat_detection import (
     create_strict_detector as create_strict_threat_detector,
 )

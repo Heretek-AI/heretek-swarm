@@ -33,6 +33,19 @@ from heretek_swarm.actors.mixins import (
 )
 from heretek_swarm.actors.validation import validate_message
 
+# INTG-03: Paradigm Shift Detection
+from heretek_swarm.coordination.paradigm_detection import (
+    ChangeRequest as PDChangeRequest,
+    ParadigmDetector,
+    ParadigmShift,
+    ShiftType,
+    ShiftMagnitude,
+    ShiftConfidence,
+    ShiftStatus,
+    ShiftIndicator,
+    ChangeType as PDChangeType,
+)
+
 logger = structlog.get_logger(__name__)
 
 
@@ -197,11 +210,50 @@ class CatalystAgent(
         self._history: list[dict[str, Any]] = []
         self._max_history: int = self._config.get("max_history", 1000)
 
+        # INTG-03: Paradigm Shift Detection
+        self._paradigm_detector: ParadigmDetector | None = None
+        self._paradigm_shifts: dict[str, ParadigmShift] = {}
+        self._shift_rate_limiter: dict[str, datetime] = {}
+        self._min_shift_interval_seconds: int = 300
+        self._change_timestamps: list[datetime] = []
+
         logger.info(
             "catalyst_initialized",
             agent_id=self.agent_id,
             max_changes=self._max_changes,
         )
+
+    async def initialize(self) -> None:
+        """Initialize the Catalyst agent with paradigm detection."""
+        await super().initialize()
+        self._paradigm_detector = ParadigmDetector(
+            beta_agent_id="beta",
+            steward_agent_id="steward",
+            indicator_threshold=3,
+            velocity_threshold=2.0,
+        )
+        self._register_handlers()
+        logger.info("catalyst_intg03_initialized")
+
+    def _register_handlers(self) -> None:
+        """Register INTG-03 paradigm detection message handlers."""
+        self._message_handlers = {
+            "propose_change": self._handle_propose_change,
+            "analyze_change": self._handle_analyze_change,
+            "approve_change": self._handle_approve_change,
+            "schedule_change": self._handle_schedule_change,
+            "execute_change": self._handle_execute_change,
+            "request_rollback": self._handle_request_rollback,
+            "execute_rollback": self._handle_execute_rollback,
+            "get_change_status": self._handle_get_change_status,
+            "get_change_history": self._handle_get_change_history,
+            "notify_stakeholders": self._handle_notify_stakeholders,
+            "detect_paradigm_shift": self._handle_detect_paradigm_shift,
+            "get_paradigm_shift_status": self._handle_get_paradigm_shift_status,
+            "validate_paradigm_shift": self._handle_validate_paradigm_shift,
+            "get_shift_velocity": self._handle_get_shift_velocity,
+            "get_cumulative_impact": self._handle_get_cumulative_impact,
+        }
 
     async def _validate_message(self, message: ActorMessage) -> dict[str, Any]:
         """Validate incoming message content."""
@@ -915,6 +967,160 @@ class CatalystAgent(
                 sender_id=self.agent_id,
             ),
         )
+
+    async def _handle_detect_paradigm_shift(self, message: ActorMessage) -> None:
+        """Detect paradigm shift from change patterns."""
+        if not self._paradigm_detector:
+            await self._send_error(
+                message.sender_id, "ParadigmDetector not initialized", message.message_type
+            )
+            return
+        try:
+            content = message.content or {}
+            change_id = content.get("change_id")
+            if change_id and change_id in self._changes:
+                change = self._changes[change_id]
+                pd_change = PDChangeRequest(
+                    change_id=change.change_id,
+                    title=change.title,
+                    description=change.description,
+                    change_type=PDChangeType(change.change_type.value),
+                    requested_by=change.requested_by,
+                    affected_components=change.affected_components,
+                    metadata=change.metadata,
+                )
+                await self._paradigm_detector.record_change(pd_change)
+            velocity = await self._paradigm_detector.analyze_change_velocity()
+            shifts = list(self._paradigm_shifts.values())
+            await self.send(
+                message.sender_id,
+                ActorMessage(
+                    message_type="paradigm_shift_detected",
+                    content={
+                        "shift_detected": len(shifts) > 0,
+                        "shifts": [s.to_dict() for s in shifts],
+                        "velocity": velocity,
+                    },
+                    sender_id=self.agent_id,
+                ),
+            )
+        except Exception as e:
+            logger.error("detect_paradigm_shift_failed", error=str(e))
+            await self._send_error(
+                message.sender_id, f"Failed to detect shift: {e!s}", message.message_type
+            )
+
+    async def _handle_get_paradigm_shift_status(self, message: ActorMessage) -> None:
+        """Get status of paradigm shifts."""
+        if not self._paradigm_detector:
+            await self._send_error(
+                message.sender_id, "ParadigmDetector not initialized", message.message_type
+            )
+            return
+        try:
+            content = message.content or {}
+            shift_id = content.get("shift_id")
+            if shift_id:
+                shifts = (
+                    [self._paradigm_shifts.get(shift_id)]
+                    if shift_id in self._paradigm_shifts
+                    else []
+                )
+            else:
+                shifts = list(self._paradigm_shifts.values())
+            await self.send(
+                message.sender_id,
+                ActorMessage(
+                    message_type="paradigm_shift_status",
+                    content={"shifts": [s.to_dict() for s in shifts if s], "count": len(shifts)},
+                    sender_id=self.agent_id,
+                ),
+            )
+        except Exception as e:
+            logger.error("get_paradigm_shift_status_failed", error=str(e))
+            await self._send_error(
+                message.sender_id, f"Failed to get status: {e!s}", message.message_type
+            )
+
+    async def _handle_validate_paradigm_shift(self, message: ActorMessage) -> None:
+        """Handle Beta validation result for false positive check."""
+        if not self._paradigm_detector:
+            await self._send_error(
+                message.sender_id, "ParadigmDetector not initialized", message.message_type
+            )
+            return
+        try:
+            content = message.content or {}
+            shift_id = content.get("shift_id")
+            is_false_positive = content.get("is_false_positive", False)
+            validation_details = content.get("validation_details")
+            await self._paradigm_detector.handle_validation_result(
+                shift_id, is_false_positive, validation_details
+            )
+            if shift_id in self._paradigm_shifts:
+                self._paradigm_shifts[shift_id].status = (
+                    ShiftStatus.FALSE_POSITIVE if is_false_positive else ShiftStatus.CONFIRMED
+                )
+            await self.send(
+                message.sender_id,
+                ActorMessage(
+                    message_type="paradigm_shift_validated",
+                    content={"shift_id": shift_id},
+                    sender_id=self.agent_id,
+                ),
+            )
+        except Exception as e:
+            logger.error("validate_paradigm_shift_failed", error=str(e))
+            await self._send_error(
+                message.sender_id, f"Failed to validate: {e!s}", message.message_type
+            )
+
+    async def _handle_get_shift_velocity(self, message: ActorMessage) -> None:
+        """Get current change velocity metrics."""
+        if not self._paradigm_detector:
+            await self._send_error(
+                message.sender_id, "ParadigmDetector not initialized", message.message_type
+            )
+            return
+        try:
+            velocity = await self._paradigm_detector.analyze_change_velocity()
+            await self.send(
+                message.sender_id,
+                ActorMessage(
+                    message_type="shift_velocity", content=velocity, sender_id=self.agent_id
+                ),
+            )
+        except Exception as e:
+            logger.error("get_shift_velocity_failed", error=str(e))
+            await self._send_error(
+                message.sender_id, f"Failed to get velocity: {e!s}", message.message_type
+            )
+
+    async def _handle_get_cumulative_impact(self, message: ActorMessage) -> None:
+        """Get cumulative impact for a shift."""
+        if not self._paradigm_detector:
+            await self._send_error(
+                message.sender_id, "ParadigmDetector not initialized", message.message_type
+            )
+            return
+        try:
+            content = message.content or {}
+            shift_id = content.get("shift_id")
+            if not shift_id:
+                await self._send_error(message.sender_id, "shift_id required", message.message_type)
+                return
+            impact = await self._paradigm_detector.get_cumulative_impact(shift_id)
+            await self.send(
+                message.sender_id,
+                ActorMessage(
+                    message_type="cumulative_impact", content=impact, sender_id=self.agent_id
+                ),
+            )
+        except Exception as e:
+            logger.error("get_cumulative_impact_failed", error=str(e))
+            await self._send_error(
+                message.sender_id, f"Failed to get impact: {e!s}", message.message_type
+            )
 
     def get_capabilities(self) -> list[str]:
         """Return list of capabilities this agent provides."""

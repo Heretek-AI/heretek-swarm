@@ -31,6 +31,16 @@ from heretek_swarm.actors.mixins import (
 )
 from heretek_swarm.actors.validation import validate_message
 
+# DISC-03: Novel Connections Module
+from heretek_swarm.creativity.novel_connections import (
+    ConnectionTechnique,
+    HarmfulContentFilter,
+    LateralThinkingMetrics,
+    LateralThinkingMetricsTracker,
+    NovelConnection,
+    NovelConnectionEngine,
+)
+
 # Session 44: Zero-Trust Validation
 from heretek_swarm.security.zero_trust import ZeroTrustValidator
 
@@ -189,6 +199,23 @@ class DreamerAgent(
         self._active_deliberations: dict[str, str] = {}
         self._pattern_emitted: set[str] = set()
 
+        # DISC-03: Novel connection components
+        self._connection_engine = NovelConnectionEngine(
+            llm_provider=None,
+            creativity_temperature=self._creativity_temperature,
+            max_connections_per_session=self._config.get("max_connections", 20),
+        )
+
+        self._content_filter = HarmfulContentFilter(
+            beta_agent_id=self._config.get("beta_agent_id", "beta"),
+        )
+
+        self._metrics_tracker = LateralThinkingMetricsTracker()
+
+        # DISC-03: Novel connection state
+        self._novel_connections: dict[str, NovelConnection] = {}
+        self._connection_counter = 0
+
         logger.info(
             "DreamerAgent initialized",
             agent_id=self.agent_id,
@@ -206,6 +233,9 @@ class DreamerAgent(
             "get_innovation_report": self._handle_get_innovation_report,
             "get_idea_details": self._handle_get_idea_details,
             "combine_ideas": self._handle_combine_ideas,
+            "generate_novel_connections": self._handle_generate_novel_connections,
+            "get_lateral_thinking_metrics": self._handle_get_lateral_thinking_metrics,
+            "track_deliberation_contribution": self._handle_track_deliberation_contribution,
         }
 
     async def _handle_generate_ideas(self, message: ActorMessage) -> dict[str, Any] | None:
@@ -924,3 +954,234 @@ Return as JSON."""
         except Exception as e:
             logger.debug("dreamer_synthesis_llm_failed", error=str(e))
             return {}
+
+    async def _handle_generate_novel_connections(
+        self, message: ActorMessage
+    ) -> dict[str, Any] | None:
+        """
+        Generate novel connections between concepts.
+
+        Content expected:
+        {
+            "concepts": ["concept1", "concept2", ...],
+            "technique": "random_association",
+            "target_count": 5
+        }
+        """
+        try:
+            content = validate_message(message.content, "DreamerNovelConnections")
+            concepts = content.get("concepts", [])
+            technique_str = content.get("technique", ConnectionTechnique.RANDOM_ASSOCIATION.value)
+            technique = ConnectionTechnique(technique_str)
+            target_count = content.get("target_count", 5)
+
+            if len(concepts) < 2:
+                return {"status": "error", "error": "At least 2 concepts required"}
+
+            logger.info(
+                "Generating novel connections",
+                concepts=concepts[:3],
+                technique=technique.value,
+                target_count=target_count,
+            )
+
+            connections = await self._connection_engine.generate_connections(
+                concepts=concepts,
+                technique=technique,
+                target_count=target_count,
+            )
+
+            validated_connections = []
+            rejected_count = 0
+
+            for conn in connections:
+                is_safe, reason = await self._content_filter.validate_connection(conn)
+                if is_safe:
+                    conn.validated = True
+                    validated_connections.append(conn)
+                    self._connection_counter += 1
+                    conn.connection_id = f"conn-{self._connection_counter}"
+                    self._novel_connections[conn.connection_id] = conn
+                else:
+                    conn.validated = False
+                    conn.validation_notes = reason
+                    rejected_count += 1
+
+            session_id = message.correlation_id or f"session-{uuid.uuid4().hex[:8]}"
+            metrics = self._calculate_session_metrics(
+                connections, validated_connections, rejected_count
+            )
+            await self._metrics_tracker.track_session(session_id, metrics)
+
+            if self._metrics_tracker.detect_overreliance():
+                logger.warning("Over-reliance on Dreamer detected - alerting Steward")
+                await self._notify_steward_overreliance()
+
+            return {
+                "status": "success",
+                "connections_generated": len(connections),
+                "validated_count": len(validated_connections),
+                "rejected_count": rejected_count,
+                "connections": [c.to_dict() for c in validated_connections],
+            }
+
+        except Exception as e:
+            logger.error("Failed to generate novel connections", error=str(e))
+            return {"status": "error", "error": str(e)}
+
+    async def _handle_get_lateral_thinking_metrics(
+        self, message: ActorMessage
+    ) -> dict[str, Any] | None:
+        """
+        Get lateral thinking metrics.
+
+        Content expected:
+        {
+            "session_id": "session_123" (optional)
+        }
+        """
+        try:
+            content = validate_message(message.content, "DreamerGetLateralMetrics")
+            session_id = content.get("session_id")
+
+            if session_id:
+                metrics = self._metrics_tracker._session_metrics.get(session_id)
+                if metrics:
+                    return {
+                        "status": "success",
+                        "metrics": {
+                            "session_id": metrics.session_id,
+                            "divergence_score": metrics.divergence_score,
+                            "association_distance_avg": metrics.association_distance_avg,
+                            "insight_rate": metrics.insight_rate,
+                            "breakthrough_count": metrics.breakthrough_count,
+                            "validated_count": metrics.validated_count,
+                            "total_connections": metrics.total_connections,
+                            "creativity_score": metrics.calculate_creativity_score(),
+                        },
+                    }
+                return {"status": "error", "error": f"Session {session_id} not found"}
+
+            all_metrics = [
+                {
+                    "session_id": m.session_id,
+                    "creativity_score": m.calculate_creativity_score(),
+                    "total_connections": m.total_connections,
+                }
+                for m in self._metrics_tracker._session_metrics.values()
+            ]
+
+            return {
+                "status": "success",
+                "metrics": all_metrics,
+                "count": len(all_metrics),
+                "position_change_ratio": self._metrics_tracker.calculate_position_change_ratio(),
+                "dreamer_usage_rate": self._metrics_tracker.calculate_dreamer_usage_rate(),
+            }
+
+        except Exception as e:
+            logger.error("Failed to get lateral thinking metrics", error=str(e))
+            return {"status": "error", "error": str(e)}
+
+    async def _handle_track_deliberation_contribution(
+        self, message: ActorMessage
+    ) -> dict[str, Any] | None:
+        """
+        Track how Dreamer ideas contributed to deliberation outcomes.
+
+        Content expected:
+        {
+            "deliberation_id": "delib_123",
+            "idea_ids": ["idea_1", "idea_2"],
+            "outcome": "accepted"
+        }
+        """
+        try:
+            content = validate_message(message.content, "DreamerDeliberationContribution")
+            deliberation_id = content.get("deliberation_id")
+            idea_ids = content.get("idea_ids", [])
+            outcome = content.get("outcome")
+
+            self._metrics_tracker.record_dreamer_contribution(True)
+
+            if outcome in ["rejected", "modified"]:
+                self._metrics_tracker.record_position_change(True)
+            else:
+                self._metrics_tracker.record_position_change(False)
+
+            logger.info(
+                "Deliberation contribution tracked",
+                deliberation_id=deliberation_id,
+                idea_count=len(idea_ids),
+                outcome=outcome,
+            )
+
+            return {
+                "status": "success",
+                "contribution_recorded": True,
+            }
+
+        except Exception as e:
+            logger.error("Failed to track deliberation contribution", error=str(e))
+            return {"status": "error", "error": str(e)}
+
+    def _calculate_session_metrics(
+        self,
+        connections: list[NovelConnection],
+        validated: list[NovelConnection],
+        rejected: int,
+    ) -> LateralThinkingMetrics:
+        """Calculate metrics for a lateral thinking session."""
+        import uuid
+
+        total = len(connections)
+        breakthrough = sum(1 for c in connections if c.insight_novelty == NoveltyLevel.BREAKTHROUGH)
+        unique_concepts = len(set(c.source_concepts + c.connected_concepts for c in connections))
+
+        novelty_dist = {
+            NoveltyLevel.INCREMENTAL.value: sum(
+                1 for c in connections if c.insight_novelty == NoveltyLevel.INCREMENTAL
+            ),
+            NoveltyLevel.SUBSTANTIAL.value: sum(
+                1 for c in connections if c.insight_novelty == NoveltyLevel.SUBSTANTIAL
+            ),
+            NoveltyLevel.BREAKTHROUGH.value: breakthrough,
+        }
+
+        avg_distance = (
+            sum(c.association_distance for c in connections) / total if total > 0 else 0.0
+        )
+
+        divergence_score = avg_distance
+        insight_rate = total / 5.0
+
+        return LateralThinkingMetrics(
+            metrics_id=f"metrics-{uuid.uuid4().hex[:8]}",
+            session_id=f"session-{uuid.uuid4().hex[:8]}",
+            divergence_score=divergence_score,
+            association_distance_avg=avg_distance,
+            insight_rate=insight_rate,
+            novelty_distribution=novelty_dist,
+            breakthrough_count=breakthrough,
+            validated_count=len(validated),
+            rejected_count=rejected,
+            total_connections=total,
+            unique_concepts_used=unique_concepts,
+            cross_domain_connections=0,
+        )
+
+    async def _notify_steward_overreliance(self) -> None:
+        """Notify Steward of over-reliance on Dreamer."""
+        try:
+            await self.put_message(
+                recipient="steward",
+                message_type="dreamer_overreliance_alert",
+                content={
+                    "position_change_ratio": self._metrics_tracker.calculate_position_change_ratio(),
+                    "dreamer_usage_rate": self._metrics_tracker.calculate_dreamer_usage_rate(),
+                    "threshold_position_change": 0.15,
+                    "threshold_usage_rate": 0.4,
+                },
+            )
+        except Exception as e:
+            logger.warning("Failed to notify steward of over-reliance", error=str(e))

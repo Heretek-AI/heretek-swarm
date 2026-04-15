@@ -9,27 +9,27 @@ Modules:
 """
 
 from .core import (
-    ConflictType,
-    ConflictSeverity,
-    ResolutionStrategy,
-    ResolutionStatus,
-    Conflict,
-    Relationship,
-    ArbitrationReport,
     ArbiterAgent,
+    ArbitrationReport,
+    Conflict,
+    ConflictSeverity,
+    ConflictType,
+    Relationship,
+    ResolutionStatus,
+    ResolutionStrategy,
 )
 
 # Alias for backwards compatibility
 ArbitrationStrategy = ResolutionStrategy
 
 __all__ = [
-    "ConflictType",
-    "ConflictSeverity",
-    "ResolutionStrategy",
-    "ResolutionStatus",
+    "ArbiterAgent",
+    "ArbitrationReport",
     "ArbitrationStrategy",
     "Conflict",
+    "ConflictSeverity",
+    "ConflictType",
     "Relationship",
-    "ArbitrationReport",
-    "ArbiterAgent",
+    "ResolutionStatus",
+    "ResolutionStrategy",
 ]

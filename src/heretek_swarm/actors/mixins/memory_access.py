@@ -1,6 +1,6 @@
 """MemoryAccessMixin for agent memory operations."""
 import asyncio
-from typing import Any, Dict, List, Optional
+from typing import Any
 
 
 class MemoryAccessMixin:
@@ -13,18 +13,18 @@ class MemoryAccessMixin:
         self,
         memory_id: str,
         access_type: str,
-        metadata: Optional[Dict[str, Any]] = None
+        metadata: dict[str, Any] | None = None
     ) -> None:
         """Track memory access for observability."""
         access_record = {
             "memory_id": memory_id,
             "access_type": access_type,
-            "agent_id": getattr(self, 'agent_id', 'unknown'),
+            "agent_id": getattr(self, "agent_id", "unknown"),
             "timestamp": asyncio.get_event_loop().time(),
             "metadata": metadata or {},
         }
         try:
-            if hasattr(self, '_memory_access_logger'):
+            if hasattr(self, "_memory_access_logger"):
                 await self._memory_access_logger.log(access_record)
         except Exception as e:
             self.logger.debug(f"Memory access tracking failed: {e}")
@@ -41,12 +41,12 @@ class MemoryAccessMixin:
     async def _fetch_from_memory(
         self,
         query: str,
-        memory_type: Optional[str] = None,
+        memory_type: str | None = None,
         limit: int = 5
-    ) -> List[Dict[str, Any]]:
+    ) -> list[dict[str, Any]]:
         """Fetch memories matching query."""
         try:
-            if hasattr(self, '_memory_system'):
+            if hasattr(self, "_memory_system"):
                 memories = await self._memory_system.search(
                     query=query,
                     memory_type=memory_type,
@@ -66,11 +66,11 @@ class MemoryAccessMixin:
         self,
         content: str,
         memory_type: str = "episodic",
-        metadata: Optional[Dict[str, Any]] = None
-    ) -> Optional[str]:
+        metadata: dict[str, Any] | None = None
+    ) -> str | None:
         """Store content to memory."""
         try:
-            if hasattr(self, '_memory_system'):
+            if hasattr(self, "_memory_system"):
                 memory_id = await self._memory_system.store(
                     content=content,
                     memory_type=memory_type,

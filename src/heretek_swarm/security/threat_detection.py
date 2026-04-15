@@ -18,10 +18,8 @@ Features:
 Reference: Phase 2 Plan Task 5 (SAFE-02)
 """
 
-import asyncio
 import hashlib
 import re
-import time
 from collections import defaultdict
 from dataclasses import dataclass, field
 from datetime import UTC, datetime
@@ -31,23 +29,16 @@ from typing import Any
 import structlog
 
 from heretek_swarm.security.adversarial import (
-    AdversarialDetectionResult,
-    AdversarialDetector,
-    AttackCategory,
-    DetectionMatch,
     ThreatLevel,
+)
+from heretek_swarm.security.adversarial import (
     create_default_detector as create_adversarial_detector,
 )
 from heretek_swarm.security.ddos_protection import (
-    DDoSDetectionConfig,
-    DDoSDetectionResult,
-    DDoSDetector,
-    DDoSMitigator,
-    MitigationAction,
-    MitigationConfig,
     RateLimitConfig,
     RateLimiter,
-    RateLimitResult,
+)
+from heretek_swarm.security.ddos_protection import (
     create_default_protection as create_ddos_protection,
 )
 
@@ -584,11 +575,11 @@ class ExternalThreatDetector:
 
         if adjusted >= 0.95:
             return ThreatLevel.CRITICAL
-        elif adjusted >= 0.85:
+        if adjusted >= 0.85:
             return ThreatLevel.HIGH
-        elif adjusted >= 0.70:
+        if adjusted >= 0.70:
             return ThreatLevel.MEDIUM
-        elif adjusted >= 0.50:
+        if adjusted >= 0.50:
             return ThreatLevel.LOW
         return ThreatLevel.BENIGN
 
@@ -600,11 +591,11 @@ class ExternalThreatDetector:
         """Calculate alert priority."""
         if level == ThreatLevel.CRITICAL or confidence >= 0.95:
             return AlertPriority.CRITICAL
-        elif level == ThreatLevel.HIGH or confidence >= 0.85:
+        if level == ThreatLevel.HIGH or confidence >= 0.85:
             return AlertPriority.HIGH
-        elif level == ThreatLevel.MEDIUM or confidence >= 0.70:
+        if level == ThreatLevel.MEDIUM or confidence >= 0.70:
             return AlertPriority.MEDIUM
-        elif level == ThreatLevel.LOW:
+        if level == ThreatLevel.LOW:
             return AlertPriority.LOW
         return AlertPriority.INFO
 

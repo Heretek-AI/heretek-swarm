@@ -203,7 +203,7 @@ class ValidationMixin:
         try:
             timeout_sec = timeout_ms / 1000.0
             return await asyncio.wait_for(coro, timeout=timeout_sec)
-        except asyncio.TimeoutError:
+        except TimeoutError:
             return None
         except Exception:
             return None

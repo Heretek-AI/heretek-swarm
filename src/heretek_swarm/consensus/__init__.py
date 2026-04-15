@@ -39,9 +39,9 @@ from heretek_swarm.consensus.expertise import (
 )
 from heretek_swarm.consensus.immune import (
     ImmunePattern,
+    ImmuneQuorum,
     ImmuneResponse,
     ImmuneResponseBuilding,
-    ImmuneQuorum,
     NovelPatternPreservation,
     PatternClassification,
     ResponseOutcome,
