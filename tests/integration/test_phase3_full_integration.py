@@ -653,10 +653,16 @@ class TestGate3SuccessCriteria:
             pattern.statistical_significance = 0.02
             emergence_detector._emergent_patterns.append(pattern)
 
+        # Calculate Swarm Emergence Index from emergence_level
+        level_scores = {"weak": 0.25, "moderate": 0.5, "strong": 0.75, "critical": 1.0}
         patterns = emergence_detector._emergent_patterns
-        avg_impact = sum(p.impact_score for p in patterns) / len(patterns) if patterns else 0.0
+        sei = (
+            sum(level_scores.get(p.emergence_level.value, 0.0) for p in patterns) / len(patterns)
+            if patterns
+            else 0.0
+        )
 
-        assert avg_impact >= 0.0
+        assert sei >= 0.4, f"SEI {sei} below threshold 0.4"
 
     @pytest.mark.asyncio
     async def test_consciousness_threshold_operational(self, gwt_broadcast):
@@ -723,13 +729,19 @@ class TestGate3SuccessCriteria:
             pattern.statistical_significance = 0.02
             emergence_detector._emergent_patterns.append(pattern)
 
+        # Calculate Collective Intelligence Factor from emergence_level
+        level_scores = {"weak": 0.25, "moderate": 0.5, "strong": 0.75, "critical": 1.0}
         patterns = emergence_detector._emergent_patterns
         validated_count = sum(1 for p in patterns if p.is_validated)
         validation_rate = validated_count / len(patterns) if patterns else 0.0
-        avg_impact = sum(p.impact_score for p in patterns) / len(patterns) if patterns else 0.0
-        cif = avg_impact * validation_rate
+        avg_score = (
+            sum(level_scores.get(p.emergence_level.value, 0.0) for p in patterns) / len(patterns)
+            if patterns
+            else 0.0
+        )
+        cif = avg_score * validation_rate
 
-        assert cif >= 0.0
+        assert cif >= 0.6, f"CIF {cif} below threshold 0.6"
 
     @pytest.mark.asyncio
     async def test_pattern_diversity_requirement(self, emergence_detector):
