@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-15T22:02:06.738180+00:00",
+    "generated_at": "2026-04-15T22:12:26.380082+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -40927,21 +40927,21 @@
       ]
     },
     "dashboard/frontend/src/App.tsx": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "dashboard.frontend.src.App.DashboardContent",
           "start_line": 51,
           "end_line": 240,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "dashboard.frontend.src.App.useEffect() callback",
           "start_line": 69,
           "end_line": 114,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.App.DashboardContent.useEffect() callback.error",
@@ -40955,14 +40955,14 @@
           "start_line": 124,
           "end_line": 156,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.App.DashboardContent.checkSystemHealth.useCallback() callback",
           "start_line": 124,
           "end_line": 156,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "dashboard.frontend.src.App.DashboardContent.useEffect() callback",
@@ -40976,7 +40976,7 @@
           "start_line": 167,
           "end_line": 169,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.App.DashboardContent.handleNavClick.useCallback() callback",
@@ -40990,7 +40990,7 @@
           "start_line": 172,
           "end_line": 176,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.App.DashboardContent.handleSetupComplete.useCallback() callback",
@@ -41004,7 +41004,7 @@
           "start_line": 179,
           "end_line": 183,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.App.DashboardContent.handleRerunSetup.useCallback() callback",
@@ -41014,11 +41014,18 @@
           "status": "unchanged"
         },
         {
+          "qualified_name": "dashboard.frontend.src.App.DashboardContent.showSetup",
+          "start_line": 227,
+          "end_line": 237,
+          "node_type": "METHOD",
+          "status": "added"
+        },
+        {
           "qualified_name": "dashboard.frontend.src.App.showSetup",
           "start_line": 227,
           "end_line": 237,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.App.App",
@@ -41030,7 +41037,7 @@
       ]
     },
     "dashboard/frontend/src/api/agents.ts": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "dashboard.frontend.src.api.agents.api.interceptors.request.use() callback",
@@ -41126,7 +41133,7 @@
       ]
     },
     "dashboard/frontend/src/api/client.ts": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "dashboard.frontend.src.api.client.setToastInstance",
@@ -41182,7 +41189,7 @@
           "start_line": 162,
           "end_line": 192,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.client.api.get",
@@ -41521,7 +41528,7 @@
       ]
     },
     "dashboard/frontend/src/api/consciousness.ts": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "dashboard.frontend.src.api.consciousness.api.interceptors.request.use() callback",
@@ -41561,7 +41568,7 @@
       ]
     },
     "dashboard/frontend/src/api/wizard.ts": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "dashboard.frontend.src.api.wizard.Provider",
@@ -41624,7 +41631,7 @@
           "start_line": 135,
           "end_line": 135,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.wizard.fetchJson.errorData.catch() callback",
@@ -43440,7 +43447,7 @@
       ]
     },
     "dashboard/frontend/src/components/Canvas/useMetrics.ts": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.useMetrics.ConsciousnessMetrics",
@@ -43468,7 +43475,7 @@
           "start_line": 27,
           "end_line": 39,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.fetchMetrics.useCallback() callback",
@@ -43503,7 +43510,7 @@
           "start_line": 59,
           "end_line": 59,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.activeAgents.agents.filter() callback",
@@ -43517,7 +43524,7 @@
           "start_line": 60,
           "end_line": 60,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.idleAgents.agents.filter() callback",
@@ -43531,7 +43538,7 @@
           "start_line": 61,
           "end_line": 61,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.errorAgents.agents.filter() callback",
@@ -45281,7 +45288,7 @@
       ]
     },
     "dashboard/frontend/src/components/Home/HomePage.tsx": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "dashboard.frontend.src.components.Home.HomePage.SystemHealth",
@@ -45330,7 +45337,7 @@
           "start_line": 75,
           "end_line": 83,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchHealth.useCallback() callback",
@@ -45344,7 +45351,7 @@
           "start_line": 86,
           "end_line": 105,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchAgents.useCallback() callback",
@@ -45379,7 +45386,7 @@
           "start_line": 108,
           "end_line": 121,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchMemory.useCallback() callback",
@@ -45393,7 +45400,7 @@
           "start_line": 124,
           "end_line": 141,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchConsciousness.useCallback() callback",
@@ -45407,7 +45414,7 @@
           "start_line": 144,
           "end_line": 187,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Home.HomePage.HomePage.generateRecentActivity.useCallback() callback",
@@ -99933,7 +99940,7 @@
       "start_line": 51,
       "end_line": 240,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.useEffect() callback": {
       "file_path": "dashboard/frontend/src/App.tsx",
@@ -99941,7 +99948,7 @@
       "start_line": 69,
       "end_line": 114,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.DashboardContent.useEffect() callback.error": {
       "file_path": "dashboard/frontend/src/App.tsx",
@@ -99957,7 +99964,7 @@
       "start_line": 124,
       "end_line": 156,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.DashboardContent.checkSystemHealth.useCallback() callback": {
       "file_path": "dashboard/frontend/src/App.tsx",
@@ -99965,7 +99972,7 @@
       "start_line": 124,
       "end_line": 156,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.DashboardContent.useEffect() callback": {
       "file_path": "dashboard/frontend/src/App.tsx",
@@ -99981,7 +99988,7 @@
       "start_line": 167,
       "end_line": 169,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.DashboardContent.handleNavClick.useCallback() callback": {
       "file_path": "dashboard/frontend/src/App.tsx",
@@ -99997,7 +100004,7 @@
       "start_line": 172,
       "end_line": 176,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.DashboardContent.handleSetupComplete.useCallback() callback": {
       "file_path": "dashboard/frontend/src/App.tsx",
@@ -100013,7 +100020,7 @@
       "start_line": 179,
       "end_line": 183,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.DashboardContent.handleRerunSetup.useCallback() callback": {
       "file_path": "dashboard/frontend/src/App.tsx",
@@ -100023,13 +100030,21 @@
       "type": "FUNCTION",
       "status": "unchanged"
     },
+    "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.DashboardContent.showSetup": {
+      "file_path": "dashboard/frontend/src/App.tsx",
+      "qualified_name": "dashboard.frontend.src.App.DashboardContent.showSetup",
+      "start_line": 227,
+      "end_line": 237,
+      "type": "METHOD",
+      "status": "added"
+    },
     "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.showSetup": {
       "file_path": "dashboard/frontend/src/App.tsx",
       "qualified_name": "dashboard.frontend.src.App.showSetup",
       "start_line": 227,
       "end_line": 237,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/App.tsx|dashboard.frontend.src.App.App": {
       "file_path": "dashboard/frontend/src/App.tsx",
@@ -100205,7 +100220,7 @@
       "start_line": 162,
       "end_line": 192,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/api/client.ts|dashboard.frontend.src.api.client.api.get": {
       "file_path": "dashboard/frontend/src/api/client.ts",
@@ -100693,7 +100708,7 @@
       "start_line": 135,
       "end_line": 135,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/api/wizard.ts|dashboard.frontend.src.api.wizard.fetchJson.errorData.catch() callback": {
       "file_path": "dashboard/frontend/src/api/wizard.ts",
@@ -102709,7 +102724,7 @@
       "start_line": 27,
       "end_line": 39,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/components/Canvas/useMetrics.ts|dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.fetchMetrics.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
@@ -102749,7 +102764,7 @@
       "start_line": 59,
       "end_line": 59,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/components/Canvas/useMetrics.ts|dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.activeAgents.agents.filter() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
@@ -102765,7 +102780,7 @@
       "start_line": 60,
       "end_line": 60,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/components/Canvas/useMetrics.ts|dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.idleAgents.agents.filter() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
@@ -102781,7 +102796,7 @@
       "start_line": 61,
       "end_line": 61,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/components/Canvas/useMetrics.ts|dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.errorAgents.agents.filter() callback": {
       "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
@@ -104757,7 +104772,7 @@
       "start_line": 75,
       "end_line": 83,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/components/Home/HomePage.tsx|dashboard.frontend.src.components.Home.HomePage.HomePage.fetchHealth.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/Home/HomePage.tsx",
@@ -104773,7 +104788,7 @@
       "start_line": 86,
       "end_line": 105,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/components/Home/HomePage.tsx|dashboard.frontend.src.components.Home.HomePage.HomePage.fetchAgents.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/Home/HomePage.tsx",
@@ -104813,7 +104828,7 @@
       "start_line": 108,
       "end_line": 121,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/components/Home/HomePage.tsx|dashboard.frontend.src.components.Home.HomePage.HomePage.fetchMemory.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/Home/HomePage.tsx",
@@ -104829,7 +104844,7 @@
       "start_line": 124,
       "end_line": 141,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/components/Home/HomePage.tsx|dashboard.frontend.src.components.Home.HomePage.HomePage.fetchConsciousness.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/Home/HomePage.tsx",
@@ -104845,7 +104860,7 @@
       "start_line": 144,
       "end_line": 187,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/components/Home/HomePage.tsx|dashboard.frontend.src.components.Home.HomePage.HomePage.generateRecentActivity.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/Home/HomePage.tsx",
@@ -245986,27 +246001,22 @@
       "file_methods": [
         {
           "file_path": "dashboard/frontend/src/App.tsx",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "dashboard.frontend.src.App.DashboardContent",
-            "dashboard.frontend.src.App.useEffect() callback",
             "dashboard.frontend.src.App.DashboardContent.useEffect() callback.error",
-            "dashboard.frontend.src.App.DashboardContent.checkSystemHealth",
             "dashboard.frontend.src.App.DashboardContent.checkSystemHealth.useCallback() callback",
             "dashboard.frontend.src.App.DashboardContent.useEffect() callback",
-            "dashboard.frontend.src.App.DashboardContent.handleNavClick",
             "dashboard.frontend.src.App.DashboardContent.handleNavClick.useCallback() callback",
-            "dashboard.frontend.src.App.DashboardContent.handleSetupComplete",
             "dashboard.frontend.src.App.DashboardContent.handleSetupComplete.useCallback() callback",
-            "dashboard.frontend.src.App.DashboardContent.handleRerunSetup",
             "dashboard.frontend.src.App.DashboardContent.handleRerunSetup.useCallback() callback",
-            "dashboard.frontend.src.App.showSetup",
+            "dashboard.frontend.src.App.DashboardContent.showSetup",
             "dashboard.frontend.src.App.App"
           ]
         },
         {
           "file_path": "dashboard/frontend/src/api/agents.ts",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "dashboard.frontend.src.api.agents.api.interceptors.request.use() callback",
             "dashboard.frontend.src.api.agents.Agent",
@@ -246025,7 +246035,7 @@
         },
         {
           "file_path": "dashboard/frontend/src/api/client.ts",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "dashboard.frontend.src.api.client.setToastInstance",
             "dashboard.frontend.src.api.client.ApiErrorCode",
@@ -246034,7 +246044,6 @@
             "dashboard.frontend.src.api.client.apiClient.interceptors.request.use() callback",
             "dashboard.frontend.src.api.client.apiClient.interceptors.response.use() callback",
             "dashboard.frontend.src.api.client.withRetry",
-            "dashboard.frontend.src.api.client.api",
             "dashboard.frontend.src.api.client.api.get",
             "dashboard.frontend.src.api.client.api.get.withRetry() callback",
             "dashboard.frontend.src.api.client.api.post",
@@ -246092,7 +246101,7 @@
         },
         {
           "file_path": "dashboard/frontend/src/api/consciousness.ts",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "dashboard.frontend.src.api.consciousness.api.interceptors.request.use() callback",
             "dashboard.frontend.src.api.consciousness.ConsciousnessStatistics",
@@ -246103,7 +246112,7 @@
         },
         {
           "file_path": "dashboard/frontend/src/api/wizard.ts",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "dashboard.frontend.src.api.wizard.Provider",
             "dashboard.frontend.src.api.wizard.AgentTier",
@@ -246113,7 +246122,6 @@
             "dashboard.frontend.src.api.wizard.WizardConfig",
             "dashboard.frontend.src.api.wizard.SubmitResult",
             "dashboard.frontend.src.api.wizard.fetchJson",
-            "dashboard.frontend.src.api.wizard.fetchJson.errorData",
             "dashboard.frontend.src.api.wizard.fetchJson.errorData.catch() callback",
             "dashboard.frontend.src.api.wizard.getProviders",
             "dashboard.frontend.src.api.wizard.getProvider",
@@ -246456,21 +246464,17 @@
         },
         {
           "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "dashboard.frontend.src.components.Canvas.useMetrics.ConsciousnessMetrics",
             "dashboard.frontend.src.components.Canvas.useMetrics.SwarmHealthMetrics",
             "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics",
-            "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.fetchMetrics",
             "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.fetchMetrics.useCallback() callback",
             "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.useEffect() callback",
             "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth",
             "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback",
-            "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.activeAgents",
             "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.activeAgents.agents.filter() callback",
-            "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.idleAgents",
             "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.idleAgents.agents.filter() callback",
-            "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.errorAgents",
             "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.errorAgents.agents.filter() callback",
             "dashboard.frontend.src.components.Canvas.useMetrics.AgentApiResponse"
           ]
@@ -246793,7 +246797,7 @@
         },
         {
           "file_path": "dashboard/frontend/src/components/Home/HomePage.tsx",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "dashboard.frontend.src.components.Home.HomePage.SystemHealth",
             "dashboard.frontend.src.components.Home.HomePage.AgentSummary",
@@ -246801,18 +246805,13 @@
             "dashboard.frontend.src.components.Home.HomePage.RecentActivity",
             "dashboard.frontend.src.components.Home.HomePage.HomePageData",
             "dashboard.frontend.src.components.Home.HomePage.HomePage",
-            "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchHealth",
             "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchHealth.useCallback() callback",
-            "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchAgents",
             "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchAgents.useCallback() callback",
             "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchAgents.useCallback() callback.active.agents.filter() callback",
             "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchAgents.useCallback() callback.inactive.agents.filter() callback",
             "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchAgents.useCallback() callback.error.agents.filter() callback",
-            "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchMemory",
             "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchMemory.useCallback() callback",
-            "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchConsciousness",
             "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchConsciousness.useCallback() callback",
-            "dashboard.frontend.src.components.Home.HomePage.HomePage.generateRecentActivity",
             "dashboard.frontend.src.components.Home.HomePage.HomePage.generateRecentActivity.useCallback() callback",
             "dashboard.frontend.src.components.Home.HomePage.HomePage.generateRecentActivity.useCallback() callback.activities.sort() callback",
             "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchAllData.useCallback() callback",
@@ -248347,21 +248346,17 @@
             },
             {
               "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "dashboard.frontend.src.components.Canvas.useMetrics.ConsciousnessMetrics",
                 "dashboard.frontend.src.components.Canvas.useMetrics.SwarmHealthMetrics",
                 "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics",
-                "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.fetchMetrics",
                 "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.fetchMetrics.useCallback() callback",
                 "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.useEffect() callback",
                 "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth",
                 "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback",
-                "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.activeAgents",
                 "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.activeAgents.agents.filter() callback",
-                "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.idleAgents",
                 "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.idleAgents.agents.filter() callback",
-                "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.errorAgents",
                 "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.errorAgents.agents.filter() callback",
                 "dashboard.frontend.src.components.Canvas.useMetrics.AgentApiResponse"
               ]
@@ -248742,7 +248737,7 @@
                 },
                 {
                   "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "dashboard.frontend.src.components.Canvas.useMetrics.ConsciousnessMetrics",
                     "dashboard.frontend.src.components.Canvas.useMetrics.SwarmHealthMetrics",
@@ -249190,7 +249185,7 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "dashboard.frontend.src.components.Canvas.useMetrics.ConsciousnessMetrics",
                         "dashboard.frontend.src.components.Canvas.useMetrics.SwarmHealthMetrics",
@@ -249533,7 +249528,7 @@
                         },
                         {
                           "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "dashboard.frontend.src.components.Canvas.useMetrics.ConsciousnessMetrics",
                             "dashboard.frontend.src.components.Canvas.useMetrics.SwarmHealthMetrics",
@@ -249872,7 +249867,7 @@
                             },
                             {
                               "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "dashboard.frontend.src.components.Canvas.useMetrics.ConsciousnessMetrics",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.SwarmHealthMetrics",
@@ -250107,14 +250102,10 @@
                           "file_methods": [
                             {
                               "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
-                                "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.fetchMetrics",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.useEffect() callback",
-                                "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback",
-                                "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.activeAgents",
-                                "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.idleAgents",
-                                "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.errorAgents"
+                                "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback"
                               ]
                             }
                           ],
@@ -250625,14 +250616,10 @@
                       "file_methods": [
                         {
                           "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
-                            "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.fetchMetrics",
                             "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.useEffect() callback",
-                            "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback",
-                            "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.activeAgents",
-                            "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.idleAgents",
-                            "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.errorAgents"
+                            "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback"
                           ]
                         }
                       ],
@@ -250685,7 +250672,7 @@
                           "file_methods": [
                             {
                               "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.fetchMetrics.useCallback() callback",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.activeAgents.agents.filter() callback",
@@ -250709,7 +250696,7 @@
                           "file_methods": [
                             {
                               "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.useEffect() callback",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth",
@@ -250766,15 +250753,11 @@
                           "file_methods": [
                             {
                               "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "dashboard.frontend.src.components.Canvas.useMetrics.ConsciousnessMetrics",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.SwarmHealthMetrics",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics",
-                                "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.fetchMetrics",
-                                "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.activeAgents",
-                                "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.idleAgents",
-                                "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.errorAgents",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.AgentApiResponse"
                               ]
                             }
@@ -252766,14 +252749,10 @@
                   "file_methods": [
                     {
                       "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
-                        "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.fetchMetrics",
                         "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.useEffect() callback",
-                        "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback",
-                        "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.activeAgents",
-                        "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.idleAgents",
-                        "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.errorAgents"
+                        "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback"
                       ]
                     }
                   ],
@@ -252795,7 +252774,7 @@
                       "file_methods": [
                         {
                           "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.activeAgents.agents.filter() callback"
                           ]
@@ -252817,7 +252796,7 @@
                           "file_methods": [
                             {
                               "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback"
                               ]
@@ -252850,7 +252829,7 @@
                           "file_methods": [
                             {
                               "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth"
                               ]
@@ -252880,19 +252859,15 @@
                           "file_methods": [
                             {
                               "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "dashboard.frontend.src.components.Canvas.useMetrics.ConsciousnessMetrics",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.SwarmHealthMetrics",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics",
-                                "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.fetchMetrics",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.fetchMetrics.useCallback() callback",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.useEffect() callback",
-                                "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.activeAgents",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.activeAgents.agents.filter() callback",
-                                "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.idleAgents",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.idleAgents.agents.filter() callback",
-                                "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.errorAgents",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.errorAgents.agents.filter() callback",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.AgentApiResponse"
                               ]
@@ -252968,7 +252943,7 @@
                       "file_methods": [
                         {
                           "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.fetchMetrics.useCallback() callback",
                             "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth",
@@ -252993,7 +252968,7 @@
                           "file_methods": [
                             {
                               "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.fetchMetrics.useCallback() callback",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.useEffect() callback",
@@ -253016,16 +252991,12 @@
                           "file_methods": [
                             {
                               "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "dashboard.frontend.src.components.Canvas.useMetrics.ConsciousnessMetrics",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.SwarmHealthMetrics",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics",
-                                "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.fetchMetrics",
-                                "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.activeAgents",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.activeAgents.agents.filter() callback",
-                                "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.idleAgents",
-                                "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.errorAgents",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.AgentApiResponse"
                               ]
                             }
@@ -253044,7 +253015,7 @@
                           "file_methods": [
                             {
                               "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback"
@@ -253144,16 +253115,12 @@
                       "file_methods": [
                         {
                           "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "dashboard.frontend.src.components.Canvas.useMetrics.ConsciousnessMetrics",
                             "dashboard.frontend.src.components.Canvas.useMetrics.SwarmHealthMetrics",
                             "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics",
-                            "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.fetchMetrics",
                             "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.useEffect() callback",
-                            "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.activeAgents",
-                            "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.idleAgents",
-                            "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.errorAgents",
                             "dashboard.frontend.src.components.Canvas.useMetrics.AgentApiResponse"
                           ]
                         }
@@ -253180,15 +253147,11 @@
                           "file_methods": [
                             {
                               "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "dashboard.frontend.src.components.Canvas.useMetrics.ConsciousnessMetrics",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.SwarmHealthMetrics",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics",
-                                "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.fetchMetrics",
-                                "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.activeAgents",
-                                "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.idleAgents",
-                                "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.errorAgents",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.AgentApiResponse"
                               ]
                             }
@@ -253211,7 +253174,7 @@
                           "file_methods": [
                             {
                               "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.fetchMetrics.useCallback() callback",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.idleAgents.agents.filter() callback"
@@ -253237,7 +253200,7 @@
                           "file_methods": [
                             {
                               "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.useEffect() callback",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth",
@@ -253293,7 +253256,7 @@
                       "file_methods": [
                         {
                           "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback",
                             "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.errorAgents.agents.filter() callback"
@@ -253325,19 +253288,15 @@
                           "file_methods": [
                             {
                               "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "dashboard.frontend.src.components.Canvas.useMetrics.ConsciousnessMetrics",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.SwarmHealthMetrics",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics",
-                                "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.fetchMetrics",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.fetchMetrics.useCallback() callback",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.useEffect() callback",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback",
-                                "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.activeAgents",
-                                "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.idleAgents",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.idleAgents.agents.filter() callback",
-                                "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.errorAgents",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.AgentApiResponse"
                               ]
                             }
@@ -253356,7 +253315,7 @@
                           "file_methods": [
                             {
                               "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth"
                               ]
@@ -253376,7 +253335,7 @@
                           "file_methods": [
                             {
                               "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.errorAgents.agents.filter() callback"
                               ]
@@ -253397,7 +253356,7 @@
                           "file_methods": [
                             {
                               "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.activeAgents.agents.filter() callback"
                               ]
@@ -259160,14 +259119,10 @@
                 },
                 {
                   "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
-                    "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.fetchMetrics",
                     "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.useEffect() callback",
-                    "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback",
-                    "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.activeAgents",
-                    "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.idleAgents",
-                    "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.errorAgents"
+                    "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback"
                   ]
                 },
                 {
@@ -260531,21 +260486,17 @@
                   "file_methods": [
                     {
                       "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "dashboard.frontend.src.components.Canvas.useMetrics.ConsciousnessMetrics",
                         "dashboard.frontend.src.components.Canvas.useMetrics.SwarmHealthMetrics",
                         "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics",
-                        "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.fetchMetrics",
                         "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.fetchMetrics.useCallback() callback",
                         "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.useEffect() callback",
                         "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth",
                         "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback",
-                        "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.activeAgents",
                         "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.activeAgents.agents.filter() callback",
-                        "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.idleAgents",
                         "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.idleAgents.agents.filter() callback",
-                        "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.errorAgents",
                         "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.errorAgents.agents.filter() callback",
                         "dashboard.frontend.src.components.Canvas.useMetrics.AgentApiResponse"
                       ]
@@ -260577,7 +260528,7 @@
                       "file_methods": [
                         {
                           "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback",
                             "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.idleAgents.agents.filter() callback"
@@ -260628,7 +260579,7 @@
                           "file_methods": [
                             {
                               "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth"
                               ]
@@ -260659,7 +260610,7 @@
                           "file_methods": [
                             {
                               "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.fetchMetrics.useCallback() callback",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.idleAgents.agents.filter() callback",
@@ -260702,18 +260653,14 @@
                           "file_methods": [
                             {
                               "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "dashboard.frontend.src.components.Canvas.useMetrics.ConsciousnessMetrics",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.SwarmHealthMetrics",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics",
-                                "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.fetchMetrics",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.useEffect() callback",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback",
-                                "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.activeAgents",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.activeAgents.agents.filter() callback",
-                                "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.idleAgents",
-                                "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.errorAgents",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.AgentApiResponse"
                               ]
                             }
@@ -260817,7 +260764,7 @@
                       "file_methods": [
                         {
                           "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.fetchMetrics.useCallback() callback",
                             "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.activeAgents.agents.filter() callback",
@@ -260846,17 +260793,13 @@
                           "file_methods": [
                             {
                               "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "dashboard.frontend.src.components.Canvas.useMetrics.ConsciousnessMetrics",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.SwarmHealthMetrics",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics",
-                                "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.fetchMetrics",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.fetchMetrics.useCallback() callback",
-                                "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.activeAgents",
-                                "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.idleAgents",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.idleAgents.agents.filter() callback",
-                                "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.errorAgents",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.AgentApiResponse"
                               ]
                             }
@@ -260900,7 +260843,7 @@
                           "file_methods": [
                             {
                               "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.errorAgents.agents.filter() callback"
@@ -260921,7 +260864,7 @@
                           "file_methods": [
                             {
                               "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.activeAgents.agents.filter() callback"
                               ]
@@ -260941,7 +260884,7 @@
                           "file_methods": [
                             {
                               "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.useEffect() callback",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback"
@@ -261028,7 +260971,7 @@
                       "file_methods": [
                         {
                           "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth"
                           ]
@@ -261050,7 +260993,7 @@
                           "file_methods": [
                             {
                               "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.activeAgents.agents.filter() callback",
@@ -261074,7 +261017,7 @@
                           "file_methods": [
                             {
                               "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.fetchMetrics.useCallback() callback",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.idleAgents.agents.filter() callback"
@@ -261097,7 +261040,7 @@
                           "file_methods": [
                             {
                               "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback"
                               ]
@@ -261121,16 +261064,12 @@
                           "file_methods": [
                             {
                               "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "dashboard.frontend.src.components.Canvas.useMetrics.ConsciousnessMetrics",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.SwarmHealthMetrics",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics",
-                                "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.fetchMetrics",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.useEffect() callback",
-                                "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.activeAgents",
-                                "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.idleAgents",
-                                "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.errorAgents",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.AgentApiResponse"
                               ]
                             }
@@ -261204,16 +261143,12 @@
                       "file_methods": [
                         {
                           "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "dashboard.frontend.src.components.Canvas.useMetrics.ConsciousnessMetrics",
                             "dashboard.frontend.src.components.Canvas.useMetrics.SwarmHealthMetrics",
                             "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics",
-                            "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.fetchMetrics",
                             "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.useEffect() callback",
-                            "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.activeAgents",
-                            "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.idleAgents",
-                            "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.errorAgents",
                             "dashboard.frontend.src.components.Canvas.useMetrics.AgentApiResponse"
                           ]
                         }
@@ -261233,7 +261168,7 @@
                           "file_methods": [
                             {
                               "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.useEffect() callback"
                               ]
@@ -261259,17 +261194,13 @@
                           "file_methods": [
                             {
                               "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "dashboard.frontend.src.components.Canvas.useMetrics.ConsciousnessMetrics",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.SwarmHealthMetrics",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics",
-                                "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.fetchMetrics",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback",
-                                "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.activeAgents",
-                                "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.idleAgents",
-                                "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.errorAgents",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.AgentApiResponse"
                               ]
                             }
@@ -261298,7 +261229,7 @@
                           "file_methods": [
                             {
                               "file_path": "dashboard/frontend/src/components/Canvas/useMetrics.ts",
-                              "file_status": "unchanged",
+                              "file_status": "modified",
                               "methods": [
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useConsciousnessMetrics.fetchMetrics.useCallback() callback",
                                 "dashboard.frontend.src.components.Canvas.useMetrics.useSwarmHealth.useEffect() callback.activeAgents.agents.filter() callback",
@@ -266436,27 +266367,22 @@
           "file_methods": [
             {
               "file_path": "dashboard/frontend/src/App.tsx",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "dashboard.frontend.src.App.DashboardContent",
-                "dashboard.frontend.src.App.useEffect() callback",
                 "dashboard.frontend.src.App.DashboardContent.useEffect() callback.error",
-                "dashboard.frontend.src.App.DashboardContent.checkSystemHealth",
                 "dashboard.frontend.src.App.DashboardContent.checkSystemHealth.useCallback() callback",
                 "dashboard.frontend.src.App.DashboardContent.useEffect() callback",
-                "dashboard.frontend.src.App.DashboardContent.handleNavClick",
                 "dashboard.frontend.src.App.DashboardContent.handleNavClick.useCallback() callback",
-                "dashboard.frontend.src.App.DashboardContent.handleSetupComplete",
                 "dashboard.frontend.src.App.DashboardContent.handleSetupComplete.useCallback() callback",
-                "dashboard.frontend.src.App.DashboardContent.handleRerunSetup",
                 "dashboard.frontend.src.App.DashboardContent.handleRerunSetup.useCallback() callback",
-                "dashboard.frontend.src.App.showSetup",
+                "dashboard.frontend.src.App.DashboardContent.showSetup",
                 "dashboard.frontend.src.App.App"
               ]
             },
             {
               "file_path": "dashboard/frontend/src/api/agents.ts",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "dashboard.frontend.src.api.agents.api.interceptors.request.use() callback",
                 "dashboard.frontend.src.api.agents.Agent",
@@ -266475,7 +266401,7 @@
             },
             {
               "file_path": "dashboard/frontend/src/api/client.ts",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "dashboard.frontend.src.api.client.setToastInstance",
                 "dashboard.frontend.src.api.client.ApiErrorCode",
@@ -266484,7 +266410,6 @@
                 "dashboard.frontend.src.api.client.apiClient.interceptors.request.use() callback",
                 "dashboard.frontend.src.api.client.apiClient.interceptors.response.use() callback",
                 "dashboard.frontend.src.api.client.withRetry",
-                "dashboard.frontend.src.api.client.api",
                 "dashboard.frontend.src.api.client.api.get",
                 "dashboard.frontend.src.api.client.api.get.withRetry() callback",
                 "dashboard.frontend.src.api.client.api.post",
@@ -266542,7 +266467,7 @@
             },
             {
               "file_path": "dashboard/frontend/src/api/consciousness.ts",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "dashboard.frontend.src.api.consciousness.api.interceptors.request.use() callback",
                 "dashboard.frontend.src.api.consciousness.ConsciousnessStatistics",
@@ -266553,7 +266478,7 @@
             },
             {
               "file_path": "dashboard/frontend/src/api/wizard.ts",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "dashboard.frontend.src.api.wizard.Provider",
                 "dashboard.frontend.src.api.wizard.AgentTier",
@@ -266563,7 +266488,6 @@
                 "dashboard.frontend.src.api.wizard.WizardConfig",
                 "dashboard.frontend.src.api.wizard.SubmitResult",
                 "dashboard.frontend.src.api.wizard.fetchJson",
-                "dashboard.frontend.src.api.wizard.fetchJson.errorData",
                 "dashboard.frontend.src.api.wizard.fetchJson.errorData.catch() callback",
                 "dashboard.frontend.src.api.wizard.getProviders",
                 "dashboard.frontend.src.api.wizard.getProvider",
@@ -266910,7 +266834,7 @@
             },
             {
               "file_path": "dashboard/frontend/src/components/Home/HomePage.tsx",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "dashboard.frontend.src.components.Home.HomePage.SystemHealth",
                 "dashboard.frontend.src.components.Home.HomePage.AgentSummary",
@@ -266918,18 +266842,13 @@
                 "dashboard.frontend.src.components.Home.HomePage.RecentActivity",
                 "dashboard.frontend.src.components.Home.HomePage.HomePageData",
                 "dashboard.frontend.src.components.Home.HomePage.HomePage",
-                "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchHealth",
                 "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchHealth.useCallback() callback",
-                "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchAgents",
                 "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchAgents.useCallback() callback",
                 "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchAgents.useCallback() callback.active.agents.filter() callback",
                 "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchAgents.useCallback() callback.inactive.agents.filter() callback",
                 "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchAgents.useCallback() callback.error.agents.filter() callback",
-                "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchMemory",
                 "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchMemory.useCallback() callback",
-                "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchConsciousness",
                 "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchConsciousness.useCallback() callback",
-                "dashboard.frontend.src.components.Home.HomePage.HomePage.generateRecentActivity",
                 "dashboard.frontend.src.components.Home.HomePage.HomePage.generateRecentActivity.useCallback() callback",
                 "dashboard.frontend.src.components.Home.HomePage.HomePage.generateRecentActivity.useCallback() callback.activities.sort() callback",
                 "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchAllData.useCallback() callback",
@@ -268126,27 +268045,22 @@
               "file_methods": [
                 {
                   "file_path": "dashboard/frontend/src/App.tsx",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "dashboard.frontend.src.App.DashboardContent",
-                    "dashboard.frontend.src.App.useEffect() callback",
                     "dashboard.frontend.src.App.DashboardContent.useEffect() callback.error",
-                    "dashboard.frontend.src.App.DashboardContent.checkSystemHealth",
                     "dashboard.frontend.src.App.DashboardContent.checkSystemHealth.useCallback() callback",
                     "dashboard.frontend.src.App.DashboardContent.useEffect() callback",
-                    "dashboard.frontend.src.App.DashboardContent.handleNavClick",
                     "dashboard.frontend.src.App.DashboardContent.handleNavClick.useCallback() callback",
-                    "dashboard.frontend.src.App.DashboardContent.handleSetupComplete",
                     "dashboard.frontend.src.App.DashboardContent.handleSetupComplete.useCallback() callback",
-                    "dashboard.frontend.src.App.DashboardContent.handleRerunSetup",
                     "dashboard.frontend.src.App.DashboardContent.handleRerunSetup.useCallback() callback",
-                    "dashboard.frontend.src.App.showSetup",
+                    "dashboard.frontend.src.App.DashboardContent.showSetup",
                     "dashboard.frontend.src.App.App"
                   ]
                 },
                 {
                   "file_path": "dashboard/frontend/src/api/agents.ts",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "dashboard.frontend.src.api.agents.api.interceptors.request.use() callback",
                     "dashboard.frontend.src.api.agents.Agent",
@@ -268165,7 +268079,7 @@
                 },
                 {
                   "file_path": "dashboard/frontend/src/api/client.ts",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "dashboard.frontend.src.api.client.setToastInstance",
                     "dashboard.frontend.src.api.client.ApiErrorCode",
@@ -268174,7 +268088,6 @@
                     "dashboard.frontend.src.api.client.apiClient.interceptors.request.use() callback",
                     "dashboard.frontend.src.api.client.apiClient.interceptors.response.use() callback",
                     "dashboard.frontend.src.api.client.withRetry",
-                    "dashboard.frontend.src.api.client.api",
                     "dashboard.frontend.src.api.client.api.get",
                     "dashboard.frontend.src.api.client.api.get.withRetry() callback",
                     "dashboard.frontend.src.api.client.api.post",
@@ -268232,7 +268145,7 @@
                 },
                 {
                   "file_path": "dashboard/frontend/src/api/consciousness.ts",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "dashboard.frontend.src.api.consciousness.api.interceptors.request.use() callback",
                     "dashboard.frontend.src.api.consciousness.ConsciousnessStatistics",
@@ -268243,7 +268156,7 @@
                 },
                 {
                   "file_path": "dashboard/frontend/src/api/wizard.ts",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "dashboard.frontend.src.api.wizard.Provider",
                     "dashboard.frontend.src.api.wizard.AgentTier",
@@ -268253,7 +268166,6 @@
                     "dashboard.frontend.src.api.wizard.WizardConfig",
                     "dashboard.frontend.src.api.wizard.SubmitResult",
                     "dashboard.frontend.src.api.wizard.fetchJson",
-                    "dashboard.frontend.src.api.wizard.fetchJson.errorData",
                     "dashboard.frontend.src.api.wizard.fetchJson.errorData.catch() callback",
                     "dashboard.frontend.src.api.wizard.getProviders",
                     "dashboard.frontend.src.api.wizard.getProvider",
@@ -268583,7 +268495,7 @@
                 },
                 {
                   "file_path": "dashboard/frontend/src/components/Home/HomePage.tsx",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "dashboard.frontend.src.components.Home.HomePage.SystemHealth",
                     "dashboard.frontend.src.components.Home.HomePage.AgentSummary",
@@ -268591,18 +268503,13 @@
                     "dashboard.frontend.src.components.Home.HomePage.RecentActivity",
                     "dashboard.frontend.src.components.Home.HomePage.HomePageData",
                     "dashboard.frontend.src.components.Home.HomePage.HomePage",
-                    "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchHealth",
                     "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchHealth.useCallback() callback",
-                    "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchAgents",
                     "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchAgents.useCallback() callback",
                     "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchAgents.useCallback() callback.active.agents.filter() callback",
                     "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchAgents.useCallback() callback.inactive.agents.filter() callback",
                     "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchAgents.useCallback() callback.error.agents.filter() callback",
-                    "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchMemory",
                     "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchMemory.useCallback() callback",
-                    "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchConsciousness",
                     "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchConsciousness.useCallback() callback",
-                    "dashboard.frontend.src.components.Home.HomePage.HomePage.generateRecentActivity",
                     "dashboard.frontend.src.components.Home.HomePage.HomePage.generateRecentActivity.useCallback() callback",
                     "dashboard.frontend.src.components.Home.HomePage.HomePage.generateRecentActivity.useCallback() callback.activities.sort() callback",
                     "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchAllData.useCallback() callback",
@@ -269767,27 +269674,22 @@
                   "file_methods": [
                     {
                       "file_path": "dashboard/frontend/src/App.tsx",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "dashboard.frontend.src.App.DashboardContent",
-                        "dashboard.frontend.src.App.useEffect() callback",
                         "dashboard.frontend.src.App.DashboardContent.useEffect() callback.error",
-                        "dashboard.frontend.src.App.DashboardContent.checkSystemHealth",
                         "dashboard.frontend.src.App.DashboardContent.checkSystemHealth.useCallback() callback",
                         "dashboard.frontend.src.App.DashboardContent.useEffect() callback",
-                        "dashboard.frontend.src.App.DashboardContent.handleNavClick",
                         "dashboard.frontend.src.App.DashboardContent.handleNavClick.useCallback() callback",
-                        "dashboard.frontend.src.App.DashboardContent.handleSetupComplete",
                         "dashboard.frontend.src.App.DashboardContent.handleSetupComplete.useCallback() callback",
-                        "dashboard.frontend.src.App.DashboardContent.handleRerunSetup",
                         "dashboard.frontend.src.App.DashboardContent.handleRerunSetup.useCallback() callback",
-                        "dashboard.frontend.src.App.showSetup",
+                        "dashboard.frontend.src.App.DashboardContent.showSetup",
                         "dashboard.frontend.src.App.App"
                       ]
                     },
                     {
                       "file_path": "dashboard/frontend/src/api/agents.ts",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "dashboard.frontend.src.api.agents.api.interceptors.request.use() callback",
                         "dashboard.frontend.src.api.agents.Agent",
@@ -269806,7 +269708,7 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/api/client.ts",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "dashboard.frontend.src.api.client.setToastInstance",
                         "dashboard.frontend.src.api.client.ApiErrorCode",
@@ -269815,7 +269717,6 @@
                         "dashboard.frontend.src.api.client.apiClient.interceptors.request.use() callback",
                         "dashboard.frontend.src.api.client.apiClient.interceptors.response.use() callback",
                         "dashboard.frontend.src.api.client.withRetry",
-                        "dashboard.frontend.src.api.client.api",
                         "dashboard.frontend.src.api.client.api.get",
                         "dashboard.frontend.src.api.client.api.get.withRetry() callback",
                         "dashboard.frontend.src.api.client.api.post",
@@ -269873,7 +269774,7 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/api/consciousness.ts",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "dashboard.frontend.src.api.consciousness.api.interceptors.request.use() callback",
                         "dashboard.frontend.src.api.consciousness.ConsciousnessStatistics",
@@ -269884,7 +269785,7 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/api/wizard.ts",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "dashboard.frontend.src.api.wizard.Provider",
                         "dashboard.frontend.src.api.wizard.AgentTier",
@@ -269894,7 +269795,6 @@
                         "dashboard.frontend.src.api.wizard.WizardConfig",
                         "dashboard.frontend.src.api.wizard.SubmitResult",
                         "dashboard.frontend.src.api.wizard.fetchJson",
-                        "dashboard.frontend.src.api.wizard.fetchJson.errorData",
                         "dashboard.frontend.src.api.wizard.fetchJson.errorData.catch() callback",
                         "dashboard.frontend.src.api.wizard.getProviders",
                         "dashboard.frontend.src.api.wizard.getProvider",
@@ -270224,7 +270124,7 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/components/Home/HomePage.tsx",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "dashboard.frontend.src.components.Home.HomePage.SystemHealth",
                         "dashboard.frontend.src.components.Home.HomePage.AgentSummary",
@@ -270232,18 +270132,13 @@
                         "dashboard.frontend.src.components.Home.HomePage.RecentActivity",
                         "dashboard.frontend.src.components.Home.HomePage.HomePageData",
                         "dashboard.frontend.src.components.Home.HomePage.HomePage",
-                        "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchHealth",
                         "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchHealth.useCallback() callback",
-                        "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchAgents",
                         "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchAgents.useCallback() callback",
                         "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchAgents.useCallback() callback.active.agents.filter() callback",
                         "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchAgents.useCallback() callback.inactive.agents.filter() callback",
                         "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchAgents.useCallback() callback.error.agents.filter() callback",
-                        "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchMemory",
                         "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchMemory.useCallback() callback",
-                        "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchConsciousness",
                         "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchConsciousness.useCallback() callback",
-                        "dashboard.frontend.src.components.Home.HomePage.HomePage.generateRecentActivity",
                         "dashboard.frontend.src.components.Home.HomePage.HomePage.generateRecentActivity.useCallback() callback",
                         "dashboard.frontend.src.components.Home.HomePage.HomePage.generateRecentActivity.useCallback() callback.activities.sort() callback",
                         "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchAllData.useCallback() callback",
@@ -271413,27 +271308,21 @@
                       "file_methods": [
                         {
                           "file_path": "dashboard/frontend/src/App.tsx",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "dashboard.frontend.src.App.DashboardContent",
-                            "dashboard.frontend.src.App.useEffect() callback",
                             "dashboard.frontend.src.App.DashboardContent.useEffect() callback.error",
-                            "dashboard.frontend.src.App.DashboardContent.checkSystemHealth",
                             "dashboard.frontend.src.App.DashboardContent.checkSystemHealth.useCallback() callback",
                             "dashboard.frontend.src.App.DashboardContent.useEffect() callback",
-                            "dashboard.frontend.src.App.DashboardContent.handleNavClick",
                             "dashboard.frontend.src.App.DashboardContent.handleNavClick.useCallback() callback",
-                            "dashboard.frontend.src.App.DashboardContent.handleSetupComplete",
                             "dashboard.frontend.src.App.DashboardContent.handleSetupComplete.useCallback() callback",
-                            "dashboard.frontend.src.App.DashboardContent.handleRerunSetup",
                             "dashboard.frontend.src.App.DashboardContent.handleRerunSetup.useCallback() callback",
-                            "dashboard.frontend.src.App.showSetup",
                             "dashboard.frontend.src.App.App"
                           ]
                         },
                         {
                           "file_path": "dashboard/frontend/src/api/agents.ts",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "dashboard.frontend.src.api.agents.api.interceptors.request.use() callback",
                             "dashboard.frontend.src.api.agents.Agent",
@@ -271452,7 +271341,7 @@
                         },
                         {
                           "file_path": "dashboard/frontend/src/api/client.ts",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "dashboard.frontend.src.api.client.setToastInstance",
                             "dashboard.frontend.src.api.client.ApiErrorCode",
@@ -271461,7 +271350,6 @@
                             "dashboard.frontend.src.api.client.apiClient.interceptors.request.use() callback",
                             "dashboard.frontend.src.api.client.apiClient.interceptors.response.use() callback",
                             "dashboard.frontend.src.api.client.withRetry",
-                            "dashboard.frontend.src.api.client.api",
                             "dashboard.frontend.src.api.client.api.get",
                             "dashboard.frontend.src.api.client.api.get.withRetry() callback",
                             "dashboard.frontend.src.api.client.api.post",
@@ -271519,7 +271407,7 @@
                         },
                         {
                           "file_path": "dashboard/frontend/src/api/consciousness.ts",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "dashboard.frontend.src.api.consciousness.api.interceptors.request.use() callback",
                             "dashboard.frontend.src.api.consciousness.ConsciousnessStatistics",
@@ -271530,7 +271418,7 @@
                         },
                         {
                           "file_path": "dashboard/frontend/src/api/wizard.ts",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "dashboard.frontend.src.api.wizard.Provider",
                             "dashboard.frontend.src.api.wizard.AgentTier",
@@ -271540,7 +271428,6 @@
                             "dashboard.frontend.src.api.wizard.WizardConfig",
                             "dashboard.frontend.src.api.wizard.SubmitResult",
                             "dashboard.frontend.src.api.wizard.fetchJson",
-                            "dashboard.frontend.src.api.wizard.fetchJson.errorData",
                             "dashboard.frontend.src.api.wizard.fetchJson.errorData.catch() callback",
                             "dashboard.frontend.src.api.wizard.getProviders",
                             "dashboard.frontend.src.api.wizard.getProvider",
@@ -271870,7 +271757,7 @@
                         },
                         {
                           "file_path": "dashboard/frontend/src/components/Home/HomePage.tsx",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "dashboard.frontend.src.components.Home.HomePage.SystemHealth",
                             "dashboard.frontend.src.components.Home.HomePage.AgentSummary",
@@ -271878,18 +271765,13 @@
                             "dashboard.frontend.src.components.Home.HomePage.RecentActivity",
                             "dashboard.frontend.src.components.Home.HomePage.HomePageData",
                             "dashboard.frontend.src.components.Home.HomePage.HomePage",
-                            "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchHealth",
                             "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchHealth.useCallback() callback",
-                            "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchAgents",
                             "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchAgents.useCallback() callback",
                             "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchAgents.useCallback() callback.active.agents.filter() callback",
                             "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchAgents.useCallback() callback.inactive.agents.filter() callback",
                             "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchAgents.useCallback() callback.error.agents.filter() callback",
-                            "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchMemory",
                             "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchMemory.useCallback() callback",
-                            "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchConsciousness",
                             "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchConsciousness.useCallback() callback",
-                            "dashboard.frontend.src.components.Home.HomePage.HomePage.generateRecentActivity",
                             "dashboard.frontend.src.components.Home.HomePage.HomePage.generateRecentActivity.useCallback() callback",
                             "dashboard.frontend.src.components.Home.HomePage.HomePage.generateRecentActivity.useCallback() callback.activities.sort() callback",
                             "dashboard.frontend.src.components.Home.HomePage.HomePage.fetchAllData.useCallback() callback",

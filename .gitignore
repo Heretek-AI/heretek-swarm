@@ -128,3 +128,4 @@ plans/OVERNIGHT_LOOP.md
 .actor_states/
 node_modules/*
 node_modules/.bin/*
+.playwright-mcp/*

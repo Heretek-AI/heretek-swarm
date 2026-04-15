@@ -25,7 +25,7 @@ import { useConsciousnessMetrics, useSwarmHealth } from './useMetrics';
 import MetricsOverlay from './MetricsOverlay';
 
 // Use environment variable or relative path (nginx proxies /api to api:8000)
-const API_URL = import.meta.env.VITE_API_URL || '';
+const API_URL = import.meta.env.VITE_API_HOST || '';
 
 interface AgentApiResponse {
   id: string;

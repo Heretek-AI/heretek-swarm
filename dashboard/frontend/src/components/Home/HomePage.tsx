@@ -12,7 +12,7 @@ import { ErrorBoundary, SimpleErrorFallback } from '../UI/ErrorBoundary';
 import { EmptyState } from '../UI/EmptyState';
 
 // API URL configuration
-const API_URL = import.meta.env.VITE_API_URL || '';
+const API_URL = import.meta.env.VITE_API_HOST || '';
 
 // Types
 interface SystemHealth {

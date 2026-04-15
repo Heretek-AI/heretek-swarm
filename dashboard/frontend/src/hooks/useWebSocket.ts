@@ -41,7 +41,7 @@ export function useWebSocket(
   const reconnectTimeout = useRef<ReturnType<typeof setTimeout> | null>(null);
 
   // Use environment variable or current hostname (nginx proxies /ws to api:8000)
-  const API_URL = import.meta.env.VITE_API_URL || window.location.hostname;
+  const API_URL = import.meta.env.VITE_API_HOST || window.location.hostname;
 
   const connect = useCallback(() => {
     // Use relative WebSocket path - works with nginx proxy

@@ -110,7 +110,7 @@ export interface SubmitResult {
 // API Functions
 // =============================================================================
 
-const API_URL = localStorage.getItem('swarm_api_host') || import.meta.env.VITE_API_URL || '';
+const API_URL = localStorage.getItem('swarm_api_host') || import.meta.env.VITE_API_HOST || '';
 
 async function fetchJson<T>(url: string, options?: RequestInit): Promise<T> {
   const apiKey = localStorage.getItem('api_key');

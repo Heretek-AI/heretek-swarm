@@ -124,7 +124,7 @@ function DashboardContent() {
   const checkSystemHealth = useCallback(async () => {
     try {
       // Use stored API host or fall back to environment variable
-      const apiHost = localStorage.getItem('swarm_api_host') || import.meta.env.VITE_API_URL || '';
+      const apiHost = localStorage.getItem('swarm_api_host') || import.meta.env.VITE_API_HOST || '';
       if (!apiHost) {
         setSystemStatus('offline');
         return;
