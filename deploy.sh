@@ -113,19 +113,16 @@ setup_environment() {
     
     if [ -f "$ENV_FILE" ]; then
         log_info "Environment file already exists: $ENV_FILE"
-        read -p "Do you want to overwrite it? (y/N): " overwrite
-        if [[ "$overwrite" =~ ^[Yy]$ ]]; then
-            cp "$ENV_EXAMPLE" "$ENV_FILE"
-            log_info "Environment file created from template"
-        fi
+        # Non-interactive: skip overwrite if .env already exists
     else
-        cp "$ENV_EXAMPLE" "$ENV_FILE"
-        log_info "Environment file created from template: $ENV_FILE"
+        if [ -f "$ENV_EXAMPLE" ]; then
+            cp "$ENV_EXAMPLE" "$ENV_FILE"
+            log_info "Environment file created from template: $ENV_FILE"
+            log_warn "IMPORTANT: Edit $ENV_FILE and set your API keys before running services!"
+        else
+            log_error "No .env or .env.example found!"
+        fi
     fi
-    
-    echo ""
-    log_warn "IMPORTANT: Edit $ENV_FILE and set your API keys before running services!"
-    echo ""
 }
 
 # =============================================================================
@@ -176,7 +173,7 @@ check_services() {
     # Wait for PostgreSQL
     log_info "Waiting for PostgreSQL to be ready..."
     for i in {1..30}; do
-        if docker exec heretek-swarm-postgres-1 pg_isready -U heretek -d heretek_swarm &> /dev/null; then
+        if docker exec heretek-postgres pg_isready -U heretek -d heretek_swarm &> /dev/null; then
             log_info "PostgreSQL is ready"
             break
         fi
@@ -189,7 +186,7 @@ check_services() {
     # Wait for Redis
     log_info "Waiting for Redis to be ready..."
     for i in {1..30}; do
-        if docker exec heretek-swarm-redis-1 redis-cli ping &> /dev/null; then
+        if docker exec heretek-redis redis-cli ping &> /dev/null; then
             log_info "Redis is ready"
             break
         fi
