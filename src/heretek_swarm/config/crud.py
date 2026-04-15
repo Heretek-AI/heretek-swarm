@@ -116,9 +116,7 @@ class ConfigurationServiceCrud:
 
         async with self._session_factory() as session:
             result = await session.execute(
-                select(UserConfigurationORM).where(
-                    UserConfigurationORM.config_key == config_key
-                )
+                select(UserConfigurationORM).where(UserConfigurationORM.config_key == config_key)
             )
             config = result.scalar_one_or_none()
 
@@ -152,6 +150,8 @@ class ConfigurationServiceCrud:
         self: ConfigurationService,
         category: str | None = None,
         include_sensitive: bool = False,
+        limit: int = 100,
+        offset: int = 0,
     ) -> list[UserConfiguration]:
         """
         List configurations, optionally filtered by category.
@@ -159,6 +159,8 @@ class ConfigurationServiceCrud:
         Args:
             category: Optional category filter
             include_sensitive: Whether to include sensitive configs
+            limit: Maximum number of results to return
+            offset: Number of results to skip
 
         Returns:
             List of UserConfiguration objects
@@ -170,7 +172,9 @@ class ConfigurationServiceCrud:
             if not include_sensitive:
                 query = query.where(UserConfigurationORM.is_sensitive == False)  # noqa: E712
 
-            result = await session.execute(query.order_by(UserConfigurationORM.category))
+            result = await session.execute(
+                query.order_by(UserConfigurationORM.category).limit(limit).offset(offset)
+            )
             configs = result.scalars().all()
             return [self._orm_to_pydantic(c) for c in configs]
 
@@ -228,9 +232,7 @@ class ConfigurationServiceCrud:
         """
         async with self._session_factory() as session:
             result = await session.execute(
-                select(UserConfigurationORM).where(
-                    UserConfigurationORM.config_key == config_key
-                )
+                select(UserConfigurationORM).where(UserConfigurationORM.config_key == config_key)
             )
             config = result.scalar_one_or_none()
 
@@ -272,9 +274,7 @@ class ConfigurationServiceCrud:
         """
         async with self._session_factory() as session:
             result = await session.execute(
-                select(UserConfigurationORM).where(
-                    UserConfigurationORM.config_key == config_key
-                )
+                select(UserConfigurationORM).where(UserConfigurationORM.config_key == config_key)
             )
             config = result.scalar_one_or_none()
 
@@ -330,9 +330,7 @@ class ConfigurationServiceCrud:
         """
         async with self._session_factory() as session:
             result = await session.execute(
-                select(LLMProviderORM).where(
-                    LLMProviderORM.provider_name == provider_name
-                )
+                select(LLMProviderORM).where(LLMProviderORM.provider_name == provider_name)
             )
             provider = result.scalar_one_or_none()
             return self._orm_to_pydantic(provider) if provider else None
@@ -580,9 +578,7 @@ class ConfigurationServiceCrud:
         """
         async with self._session_factory() as session:
             result = await session.execute(
-                select(EmbeddingProviderORM).where(
-                    EmbeddingProviderORM.id == provider_id
-                )
+                select(EmbeddingProviderORM).where(EmbeddingProviderORM.id == provider_id)
             )
             provider = result.scalar_one_or_none()
             return self._orm_to_pydantic(provider) if provider else None
@@ -709,9 +705,7 @@ class ConfigurationServiceCrud:
         """
         async with self._session_factory() as session:
             result = await session.execute(
-                select(EmbeddingProviderORM).where(
-                    EmbeddingProviderORM.id == provider_id
-                )
+                select(EmbeddingProviderORM).where(EmbeddingProviderORM.id == provider_id)
             )
             provider = result.scalar_one_or_none()
 
@@ -737,9 +731,7 @@ class ConfigurationServiceCrud:
             await session.commit()
             await session.refresh(provider)
 
-            self._log_change(
-                "update", "embedding_provider", str(provider.id), changes, user
-            )
+            self._log_change("update", "embedding_provider", str(provider.id), changes, user)
             return self._orm_to_pydantic(provider)
 
     async def delete_embedding_provider(
@@ -759,9 +751,7 @@ class ConfigurationServiceCrud:
         """
         async with self._session_factory() as session:
             result = await session.execute(
-                select(EmbeddingProviderORM).where(
-                    EmbeddingProviderORM.id == provider_id
-                )
+                select(EmbeddingProviderORM).where(EmbeddingProviderORM.id == provider_id)
             )
             provider = result.scalar_one_or_none()
 

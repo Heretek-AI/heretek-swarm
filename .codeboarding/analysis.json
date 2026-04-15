@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-15T21:16:00.854513+00:00",
+    "generated_at": "2026-04-15T22:02:06.738180+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -15779,14 +15779,14 @@
       ]
     },
     "src/heretek_swarm/config/crud.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.config.crud.ConfigurationServiceCrud",
           "start_line": 54,
-          "end_line": 1142,
+          "end_line": 1132,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.config.crud.ConfigurationServiceCrud._log_change",
@@ -15798,9 +15798,9 @@
         {
           "qualified_name": "src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_config",
           "start_line": 99,
-          "end_line": 129,
+          "end_line": 127,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_config_value",
@@ -15811,10 +15811,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.config.crud.ConfigurationServiceCrud.list_configs",
-          "start_line": 151,
-          "end_line": 175,
+          "start_line": 149,
+          "end_line": 179,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.config.crud.ConfigurationServiceCrud.create_config",
@@ -15825,17 +15825,17 @@
         },
         {
           "qualified_name": "src.heretek_swarm.config.crud.ConfigurationServiceCrud.update_config",
-          "start_line": 212,
-          "end_line": 256,
+          "start_line": 216,
+          "end_line": 258,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.config.crud.ConfigurationServiceCrud.delete_config",
-          "start_line": 258,
+          "start_line": 260,
           "end_line": 292,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_llm_provider",
@@ -15847,9 +15847,9 @@
         {
           "qualified_name": "src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_llm_provider_by_name",
           "start_line": 318,
-          "end_line": 338,
+          "end_line": 336,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.config.crud.ConfigurationServiceCrud.list_llm_providers",
@@ -15909,10 +15909,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_embedding_provider",
-          "start_line": 568,
-          "end_line": 588,
+          "start_line": 566,
+          "end_line": 584,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_embedding_provider_by_name",
@@ -15944,17 +15944,17 @@
         },
         {
           "qualified_name": "src.heretek_swarm.config.crud.ConfigurationServiceCrud.update_embedding_provider",
-          "start_line": 693,
-          "end_line": 743,
+          "start_line": 689,
+          "end_line": 735,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.config.crud.ConfigurationServiceCrud.delete_embedding_provider",
-          "start_line": 745,
-          "end_line": 775,
+          "start_line": 737,
+          "end_line": 765,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_embedding_provider_api_key",
@@ -71979,9 +71979,9 @@
       "file_path": "src/heretek_swarm/config/crud.py",
       "qualified_name": "src.heretek_swarm.config.crud.ConfigurationServiceCrud",
       "start_line": 54,
-      "end_line": 1142,
+      "end_line": 1132,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/config/crud.py|src.heretek_swarm.config.crud.ConfigurationServiceCrud._log_change": {
       "file_path": "src/heretek_swarm/config/crud.py",
@@ -71995,9 +71995,9 @@
       "file_path": "src/heretek_swarm/config/crud.py",
       "qualified_name": "src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_config",
       "start_line": 99,
-      "end_line": 129,
+      "end_line": 127,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/config/crud.py|src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_config_value": {
       "file_path": "src/heretek_swarm/config/crud.py",
@@ -72010,10 +72010,10 @@
     "src/heretek_swarm/config/crud.py|src.heretek_swarm.config.crud.ConfigurationServiceCrud.list_configs": {
       "file_path": "src/heretek_swarm/config/crud.py",
       "qualified_name": "src.heretek_swarm.config.crud.ConfigurationServiceCrud.list_configs",
-      "start_line": 151,
-      "end_line": 175,
+      "start_line": 149,
+      "end_line": 179,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/config/crud.py|src.heretek_swarm.config.crud.ConfigurationServiceCrud.create_config": {
       "file_path": "src/heretek_swarm/config/crud.py",
@@ -72026,18 +72026,18 @@
     "src/heretek_swarm/config/crud.py|src.heretek_swarm.config.crud.ConfigurationServiceCrud.update_config": {
       "file_path": "src/heretek_swarm/config/crud.py",
       "qualified_name": "src.heretek_swarm.config.crud.ConfigurationServiceCrud.update_config",
-      "start_line": 212,
-      "end_line": 256,
+      "start_line": 216,
+      "end_line": 258,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/config/crud.py|src.heretek_swarm.config.crud.ConfigurationServiceCrud.delete_config": {
       "file_path": "src/heretek_swarm/config/crud.py",
       "qualified_name": "src.heretek_swarm.config.crud.ConfigurationServiceCrud.delete_config",
-      "start_line": 258,
+      "start_line": 260,
       "end_line": 292,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/config/crud.py|src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_llm_provider": {
       "file_path": "src/heretek_swarm/config/crud.py",
@@ -72051,9 +72051,9 @@
       "file_path": "src/heretek_swarm/config/crud.py",
       "qualified_name": "src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_llm_provider_by_name",
       "start_line": 318,
-      "end_line": 338,
+      "end_line": 336,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/config/crud.py|src.heretek_swarm.config.crud.ConfigurationServiceCrud.list_llm_providers": {
       "file_path": "src/heretek_swarm/config/crud.py",
@@ -72122,10 +72122,10 @@
     "src/heretek_swarm/config/crud.py|src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_embedding_provider": {
       "file_path": "src/heretek_swarm/config/crud.py",
       "qualified_name": "src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_embedding_provider",
-      "start_line": 568,
-      "end_line": 588,
+      "start_line": 566,
+      "end_line": 584,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/config/crud.py|src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_embedding_provider_by_name": {
       "file_path": "src/heretek_swarm/config/crud.py",
@@ -72162,18 +72162,18 @@
     "src/heretek_swarm/config/crud.py|src.heretek_swarm.config.crud.ConfigurationServiceCrud.update_embedding_provider": {
       "file_path": "src/heretek_swarm/config/crud.py",
       "qualified_name": "src.heretek_swarm.config.crud.ConfigurationServiceCrud.update_embedding_provider",
-      "start_line": 693,
-      "end_line": 743,
+      "start_line": 689,
+      "end_line": 735,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/config/crud.py|src.heretek_swarm.config.crud.ConfigurationServiceCrud.delete_embedding_provider": {
       "file_path": "src/heretek_swarm/config/crud.py",
       "qualified_name": "src.heretek_swarm.config.crud.ConfigurationServiceCrud.delete_embedding_provider",
-      "start_line": 745,
-      "end_line": 775,
+      "start_line": 737,
+      "end_line": 765,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/config/crud.py|src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_embedding_provider_api_key": {
       "file_path": "src/heretek_swarm/config/crud.py",
@@ -117733,7 +117733,7 @@
         },
         {
           "file_path": "src/heretek_swarm/config/crud.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.config.crud.ConfigurationServiceCrud",
             "src.heretek_swarm.config.crud.ConfigurationServiceCrud._log_change",
@@ -177381,7 +177381,7 @@
             },
             {
               "file_path": "src/heretek_swarm/config/crud.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.config.crud.ConfigurationServiceCrud",
                 "src.heretek_swarm.config.crud.ConfigurationServiceCrud._log_change",
@@ -179448,7 +179448,7 @@
               "file_methods": [
                 {
                   "file_path": "src/heretek_swarm/config/crud.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.config.crud.ConfigurationServiceCrud",
                     "src.heretek_swarm.config.crud.ConfigurationServiceCrud._log_change",
@@ -179808,7 +179808,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/config/crud.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.config.crud.ConfigurationServiceCrud",
                         "src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_config",
@@ -179931,7 +179931,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/config/crud.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.config.crud.ConfigurationServiceCrud.create_config",
                             "src.heretek_swarm.config.crud.ConfigurationServiceCrud.update_llm_provider",
@@ -180001,7 +180001,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/config/crud.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.config.crud.ConfigurationServiceCrud.list_configs",
                             "src.heretek_swarm.config.crud.ConfigurationServiceCrud.delete_config",
@@ -180056,7 +180056,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/config/crud.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.config.crud.ConfigurationServiceCrud._log_change",
                             "src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_config",
@@ -180117,7 +180117,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/config/crud.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.config.crud.ConfigurationServiceCrud",
                             "src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_llm_provider_by_name",
@@ -180529,7 +180529,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/config/crud.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.config.crud.ConfigurationServiceCrud._log_change",
                         "src.heretek_swarm.config.crud.ConfigurationServiceCrud.update_config",
@@ -180580,7 +180580,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/config/crud.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_config",
                             "src.heretek_swarm.config.crud.ConfigurationServiceCrud.get_config_value",
@@ -180635,7 +180635,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/config/crud.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.config.crud.ConfigurationServiceCrud",
                             "src.heretek_swarm.config.crud.ConfigurationServiceCrud._log_change",
@@ -180722,7 +180722,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/config/crud.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.config.crud.ConfigurationServiceCrud.create_config",
                             "src.heretek_swarm.config.crud.ConfigurationServiceCrud.migrate_from_env"
