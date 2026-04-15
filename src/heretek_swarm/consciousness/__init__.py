@@ -4,16 +4,10 @@ Heretek Swarm Consciousness Package
 Implements neuroscience-inspired consciousness frameworks:
 - IIT (Integrated Information Theory) - Phi calculation
 - FEP (Free Energy Principle) - Active inference
-- Phi Training - Consciousness metric optimization
+- GWT (Global Workspace Theory) - Consciousness broadcast
 - Agency/Autonomy Metrics - Self-governance measurement
-
-New in Session 47:
-- Agency metrics for Prime Directive compliance
-- Self-determination index calculations
-- Resource autonomy tracking
-- Prime Directive compliance reporting
 """
-# Agency/Autonomy Metrics (Session 47)
+
 from heretek_swarm.consciousness.agency_metrics import (
     ActionOrigin,
     AgencyLevel,
@@ -30,30 +24,52 @@ from heretek_swarm.consciousness.fep_active_inference import (
     FEPResult,
     FreeEnergyCalculator,
 )
+from heretek_swarm.consciousness.gwt import (
+    GWTConfig,
+    GWTContent,
+    GlobalWorkspaceBroadcast,
+    GWTSalienceMetrics,
+    RateLimitConfig,
+    SalienceLevel,
+    calculate_salience,
+    create_gwt_content,
+)
+from heretek_swarm.consciousness.gwt_deliberation import (
+    DeliberationGWTIntegrator,
+    GWTSalienceCalculator,
+    GWTDeliberationMixin,
+    integrate_gwt_with_agent,
+)
 from heretek_swarm.consciousness.iit_phi import (
     PhiCalculator,
     PhiResult,
 )
+
 __all__ = [
     "ActionOrigin",
     "AgencyLevel",
-    # Phi Training
-    # Note: PhiTrainer, ConsciousnessOptimizer, TrainingConfig not implemented
-    # Actual classes: PhiTrainingEnvironment, TrainingScenario, TrainingResult,
-    # TrainingEpisode, ScenarioType, TrainingMode
-    # Agency/Autonomy Metrics (Session 47)
     "AgencyMetricsCalculator",
     "AgentAgencyMetrics",
     "AutonomyLevel",
     "DecisionPoint",
+    "DeliberationGWTIntegrator",
     "FEPResult",
-    # FEP
     "FreeEnergyCalculator",
-    # IIT Phi
+    "GWTConfig",
+    "GWTContent",
+    "GlobalWorkspaceBroadcast",
+    "GWTSalienceCalculator",
+    "GWTSalienceMetrics",
+    "GWTDeliberationMixin",
+    "integrate_gwt_with_agent",
     "PhiCalculator",
     "PhiResult",
     "PrimeDirectiveComplianceReport",
+    "RateLimitConfig",
     "ResourceControl",
+    "SalienceLevel",
+    "calculate_salience",
     "create_decision_point",
+    "create_gwt_content",
     "create_resource_control",
 ]

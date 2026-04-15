@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-15T14:52:38.058512+00:00",
+    "generated_at": "2026-04-15T19:14:47.274279+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -6180,7 +6180,7 @@
       ]
     },
     "src/heretek_swarm/actors/perceiver_plus.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.actors.perceiver_plus.AnalyticsType",
@@ -6493,7 +6493,7 @@
       ]
     },
     "src/heretek_swarm/actors/prism.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.actors.prism.PerspectiveType",
@@ -114397,7 +114397,7 @@
         },
         {
           "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.actors.perceiver_plus.AnalyticsType",
             "src.heretek_swarm.actors.perceiver_plus.DataModality",
@@ -114447,7 +114447,7 @@
         },
         {
           "file_path": "src/heretek_swarm/actors/prism.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.actors.prism.PerspectiveType",
             "src.heretek_swarm.actors.prism.BiasType",
@@ -163788,7 +163788,7 @@
             },
             {
               "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.actors.perceiver_plus.AnalyticsType",
                 "src.heretek_swarm.actors.perceiver_plus.DataModality",
@@ -163838,7 +163838,7 @@
             },
             {
               "file_path": "src/heretek_swarm/actors/prism.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.actors.prism.PerspectiveType",
                 "src.heretek_swarm.actors.prism.BiasType",
@@ -169435,7 +169435,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.actors.perceiver_plus.AnalyticsType",
                     "src.heretek_swarm.actors.perceiver_plus.DataModality",
@@ -169485,7 +169485,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/actors/prism.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.actors.prism.PerspectiveType",
                     "src.heretek_swarm.actors.prism.BiasType",
@@ -170022,7 +170022,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.actors.perceiver_plus.AnalyticsType",
                         "src.heretek_swarm.actors.perceiver_plus.DataModality",
@@ -170109,7 +170109,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent.__init__",
                             "src.heretek_swarm.actors.perceiver_plus.PerceiverPlusAgent.initialize",
@@ -170186,7 +170186,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/actors/perceiver_plus.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.actors.perceiver_plus.AnalyticsType",
                             "src.heretek_swarm.actors.perceiver_plus.DataModality",
@@ -170259,7 +170259,7 @@
                   "file_methods": [
                     {
                       "file_path": "src/heretek_swarm/actors/prism.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.actors.prism.PerspectiveType",
                         "src.heretek_swarm.actors.prism.BiasType",
@@ -170332,7 +170332,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/actors/prism.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.actors.prism.PerspectiveType",
                             "src.heretek_swarm.actors.prism.BiasType",
@@ -170365,7 +170365,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/actors/prism.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.actors.prism.BiasDetection.to_dict",
                             "src.heretek_swarm.actors.prism.PrismAgent.initialize",
@@ -170401,7 +170401,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/actors/prism.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.actors.prism.Perspective.__init__",
                             "src.heretek_swarm.actors.prism.PrismAgent.process_message",
@@ -170438,7 +170438,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/actors/prism.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.actors.prism.Perspective.to_dict",
                             "src.heretek_swarm.actors.prism.PrismAgent.__init__",
