@@ -213,24 +213,34 @@ class ImmuneQuorum:
         """Check if quorum has been reached."""
         if self.completed_at is not None:
             return True
+        total_votes = self.current_approvals + self.rejection_count
+        if total_votes >= self.required_agents:
+            return True
         if self.started_at is None:
             return False
         elapsed = (datetime.now(UTC) - self.started_at).total_seconds()
         if elapsed > self.timeout_seconds:
             return True
-        total_votes = self.current_approvals + self.rejection_count
-        if total_votes >= self.required_agents:
-            approval_ratio = self.current_approvals / total_votes
-            return approval_ratio >= self.approval_threshold
         return False
 
     def is_approved(self) -> bool | None:
-        """Check if quorum approved. Returns None if incomplete."""
+        """Check if quorum approved. Returns None if incomplete or inconclusive."""
         if not self.is_complete():
             return None
         if self.completed_at is not None:
             return self.current_approvals > self.rejection_count
+        # Timeout occurred - if no votes cast, return None (inconclusive)
+        total_votes = self.current_approvals + self.rejection_count
+        if total_votes == 0:
+            return None
         return self.current_approvals > self.rejection_count
+
+    def get_approval_ratio(self) -> float:
+        """Get the current approval ratio (approvals / total votes)."""
+        total_votes = self.current_approvals + self.rejection_count
+        if total_votes == 0:
+            return 0.0
+        return self.current_approvals / total_votes
 
 
 class ImmuneResponseBuilding:
@@ -660,7 +670,7 @@ class ImmuneResponseBuilding:
         """
         timestamp = datetime.now(UTC)
         pattern_hash = self._generate_pattern_hash(pattern_content)
-        preservation_id = f"NOVEL_{pattern_hash}_{int(timestamp)}"
+        preservation_id = f"NOVEL_{pattern_hash}_{int(timestamp.timestamp())}"
 
         preservation = NovelPatternPreservation(
             preservation_id=preservation_id,

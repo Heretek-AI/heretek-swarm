@@ -1,6 +1,6 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-15T14:41:34.489887+00:00",
+  "timestamp": "2026-04-15T14:52:39.613565+00:00",
   "overall_score": 0.9869964745997803,
   "check_summaries": [
     {
@@ -803,8 +803,8 @@
             {
               "entity_name": "[unused_variable] \"pattern_content\" is not accessed",
               "file_path": "src/heretek_swarm/consensus/immune.py",
-              "line_start": 402,
-              "line_end": 402,
+              "line_start": 412,
+              "line_end": 412,
               "metric_value": 0.0
             },
             {

@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-15T14:37:56.978531+00:00",
+    "generated_at": "2026-04-15T14:52:38.058512+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -19296,29 +19296,36 @@
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.immune.ImmuneQuorum",
-          "start_line": 187,
-          "end_line": 232,
+          "start_line": 188,
+          "end_line": 243,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.immune.ImmuneQuorum.is_complete",
-          "start_line": 211,
+          "start_line": 212,
           "end_line": 224,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.immune.ImmuneQuorum.is_approved",
           "start_line": 226,
-          "end_line": 232,
+          "end_line": 236,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.consensus.immune.ImmuneQuorum.get_approval_ratio",
+          "start_line": 235,
+          "end_line": 240,
+          "node_type": "METHOD",
+          "status": "added"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.immune.ImmuneResponseBuilding",
-          "start_line": 236,
-          "end_line": 894,
+          "start_line": 246,
+          "end_line": 904,
           "node_type": "CLASS",
           "status": "modified"
         },
@@ -19387,10 +19394,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.immune.ImmuneResponseBuilding.preserve_novel_pattern",
-          "start_line": 640,
-          "end_line": 691,
+          "start_line": 650,
+          "end_line": 701,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.immune.ImmuneResponseBuilding.get_novel_patterns_for_review",
@@ -75089,32 +75096,40 @@
     "src/heretek_swarm/consensus/immune.py|src.heretek_swarm.consensus.immune.ImmuneQuorum": {
       "file_path": "src/heretek_swarm/consensus/immune.py",
       "qualified_name": "src.heretek_swarm.consensus.immune.ImmuneQuorum",
-      "start_line": 187,
-      "end_line": 232,
+      "start_line": 188,
+      "end_line": 243,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/consensus/immune.py|src.heretek_swarm.consensus.immune.ImmuneQuorum.is_complete": {
       "file_path": "src/heretek_swarm/consensus/immune.py",
       "qualified_name": "src.heretek_swarm.consensus.immune.ImmuneQuorum.is_complete",
-      "start_line": 211,
+      "start_line": 212,
       "end_line": 224,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/consensus/immune.py|src.heretek_swarm.consensus.immune.ImmuneQuorum.is_approved": {
       "file_path": "src/heretek_swarm/consensus/immune.py",
       "qualified_name": "src.heretek_swarm.consensus.immune.ImmuneQuorum.is_approved",
       "start_line": 226,
-      "end_line": 232,
+      "end_line": 236,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
+    },
+    "src/heretek_swarm/consensus/immune.py|src.heretek_swarm.consensus.immune.ImmuneQuorum.get_approval_ratio": {
+      "file_path": "src/heretek_swarm/consensus/immune.py",
+      "qualified_name": "src.heretek_swarm.consensus.immune.ImmuneQuorum.get_approval_ratio",
+      "start_line": 235,
+      "end_line": 240,
+      "type": "METHOD",
+      "status": "added"
     },
     "src/heretek_swarm/consensus/immune.py|src.heretek_swarm.consensus.immune.ImmuneResponseBuilding": {
       "file_path": "src/heretek_swarm/consensus/immune.py",
       "qualified_name": "src.heretek_swarm.consensus.immune.ImmuneResponseBuilding",
-      "start_line": 236,
-      "end_line": 894,
+      "start_line": 246,
+      "end_line": 904,
       "type": "CLASS",
       "status": "modified"
     },
@@ -75193,10 +75208,10 @@
     "src/heretek_swarm/consensus/immune.py|src.heretek_swarm.consensus.immune.ImmuneResponseBuilding.preserve_novel_pattern": {
       "file_path": "src/heretek_swarm/consensus/immune.py",
       "qualified_name": "src.heretek_swarm.consensus.immune.ImmuneResponseBuilding.preserve_novel_pattern",
-      "start_line": 640,
-      "end_line": 691,
+      "start_line": 650,
+      "end_line": 701,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/consensus/immune.py|src.heretek_swarm.consensus.immune.ImmuneResponseBuilding.get_novel_patterns_for_review": {
       "file_path": "src/heretek_swarm/consensus/immune.py",
@@ -116646,6 +116661,7 @@
             "src.heretek_swarm.consensus.immune.ImmuneQuorum",
             "src.heretek_swarm.consensus.immune.ImmuneQuorum.is_complete",
             "src.heretek_swarm.consensus.immune.ImmuneQuorum.is_approved",
+            "src.heretek_swarm.consensus.immune.ImmuneQuorum.get_approval_ratio",
             "src.heretek_swarm.consensus.immune.ImmuneResponseBuilding",
             "src.heretek_swarm.consensus.immune.ImmuneResponseBuilding.__init__",
             "src.heretek_swarm.consensus.immune.ImmuneResponseBuilding._generate_pattern_hash",
@@ -122368,6 +122384,7 @@
                 "src.heretek_swarm.consensus.immune.ImmuneQuorum",
                 "src.heretek_swarm.consensus.immune.ImmuneQuorum.is_complete",
                 "src.heretek_swarm.consensus.immune.ImmuneQuorum.is_approved",
+                "src.heretek_swarm.consensus.immune.ImmuneQuorum.get_approval_ratio",
                 "src.heretek_swarm.consensus.immune.ImmuneResponseBuilding",
                 "src.heretek_swarm.consensus.immune.ImmuneResponseBuilding.__init__",
                 "src.heretek_swarm.consensus.immune.ImmuneResponseBuilding._generate_pattern_hash",
@@ -125409,6 +125426,7 @@
                     "src.heretek_swarm.consensus.immune.ImmuneQuorum",
                     "src.heretek_swarm.consensus.immune.ImmuneQuorum.is_complete",
                     "src.heretek_swarm.consensus.immune.ImmuneQuorum.is_approved",
+                    "src.heretek_swarm.consensus.immune.ImmuneQuorum.get_approval_ratio",
                     "src.heretek_swarm.consensus.immune.ImmuneResponseBuilding",
                     "src.heretek_swarm.consensus.immune.ImmuneResponseBuilding.__init__",
                     "src.heretek_swarm.consensus.immune.ImmuneResponseBuilding._generate_pattern_hash",
@@ -127814,6 +127832,7 @@
                         "src.heretek_swarm.consensus.immune.ImmuneQuorum",
                         "src.heretek_swarm.consensus.immune.ImmuneQuorum.is_complete",
                         "src.heretek_swarm.consensus.immune.ImmuneQuorum.is_approved",
+                        "src.heretek_swarm.consensus.immune.ImmuneQuorum.get_approval_ratio",
                         "src.heretek_swarm.consensus.immune.ImmuneResponseBuilding",
                         "src.heretek_swarm.consensus.immune.ImmuneResponseBuilding.__init__",
                         "src.heretek_swarm.consensus.immune.ImmuneResponseBuilding._generate_pattern_hash",
