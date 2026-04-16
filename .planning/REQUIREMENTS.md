@@ -143,3 +143,64 @@ Requirements for initial release. Each maps to roadmap phases.
 - **NATS**: 11 tests (fallback pub/sub + wildcards)
 - **Total Phase 1 validation**: 308 new tests, 693 total passing
 - **Gate 1 verdict**: BLOCKED (3 hard blockers)
+
+---
+
+## v1.1 Requirements
+
+Requirements for v1.1 milestone. Addresses Phase 2 open items, production hardening, and technical debt.
+
+### Phase 2 Completion (Steward Failover & Deliberation)
+
+| ID | Requirement | Owner | Priority |
+|----|-------------|-------|----------|
+| GOV-01-F | Steward failover with Charlie tiebreaker | Steward | P0 |
+| GOV-05-M | max_rounds enforcement in deliberation | Steward | P0 |
+| GOV-05-Q | Quorum logic integrated into Steward triad flow | Steward | P1 |
+
+### Production Hardening
+
+| ID | Requirement | Owner | Priority |
+|----|-------------|-------|----------|
+| DEPLOY-01 | NATS service in docker-compose | DevOps | P0 |
+| DEPLOY-02 | LiteLLM config.yaml or removal | DevOps | P0 |
+| DEPLOY-03 | Database pooling configuration | DevOps | P1 |
+| DEPLOY-04 | API key storage hardening | Security | P1 |
+| OPS-01 | Monitoring/alerting gaps | Ops | P1 |
+| OPS-02 | NATS auth (service accounts or mTLS) | Security | P1 |
+
+### Technical Debt
+
+| ID | Requirement | Owner | Priority |
+|----|-------------|-------|----------|
+| TD-01 | Pattern extraction enhancement | Collective | P2 |
+| TD-02 | Consciousness metrics stubs → implementation | Consciousness | P2 |
+| TD-03 | Zero-trust exception list | Security | P2 |
+| TD-04 | Behavioral baseline initialization strategy | Security | P2 |
+
+### v1.1 Traceability
+
+| Requirement | Category | Priority |
+|-------------|----------|----------|
+| GOV-01-F | Phase 2 Completion | P0 |
+| GOV-05-M | Phase 2 Completion | P0 |
+| GOV-05-Q | Phase 2 Completion | P1 |
+| DEPLOY-01 | Production | P0 |
+| DEPLOY-02 | Production | P0 |
+| DEPLOY-03 | Production | P1 |
+| DEPLOY-04 | Production | P1 |
+| OPS-01 | Production | P1 |
+| OPS-02 | Production | P1 |
+| TD-01 | Technical Debt | P2 |
+| TD-02 | Technical Debt | P2 |
+| TD-03 | Technical Debt | P2 |
+| TD-04 | Technical Debt | P2 |
+
+**v1.1 Summary:**
+- Total requirements: 13
+- P0 (Must): 4
+- P1 (Should): 6
+- P2 (Nice): 3
+
+---
+*Requirements updated: 2026-04-15 for v1.1 milestone*
