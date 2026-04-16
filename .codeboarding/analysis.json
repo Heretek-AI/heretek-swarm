@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-16T02:30:54.763480+00:00",
+    "generated_at": "2026-04-16T14:58:49.504247+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -7813,14 +7813,14 @@
         {
           "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent",
           "start_line": 34,
-          "end_line": 611,
+          "end_line": 405,
           "node_type": "CLASS",
           "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent.__init__",
           "start_line": 55,
-          "end_line": 116,
+          "end_line": 118,
           "node_type": "METHOD",
           "status": "modified"
         },
@@ -7927,55 +7927,83 @@
           "start_line": 393,
           "end_line": 399,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent.initiate_failover",
           "start_line": 401,
           "end_line": 412,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.steward._handle_agent_failure",
+          "start_line": 407,
+          "end_line": 468,
+          "node_type": "FUNCTION",
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent._cancel_tasks",
           "start_line": 414,
           "end_line": 422,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent.is_available",
           "start_line": 426,
           "end_line": 445,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent.publish_heartbeat",
           "start_line": 447,
           "end_line": 457,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent.publish_recovery",
           "start_line": 459,
           "end_line": 471,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent.get_quorum_metrics",
           "start_line": 473,
           "end_line": 475,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "deleted"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent.convene_triad",
           "start_line": 477,
           "end_line": 548,
           "node_type": "METHOD",
+          "status": "deleted"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.steward._emit_recovery_failed",
+          "start_line": 521,
+          "end_line": 532,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.steward.initiate_failover",
+          "start_line": 534,
+          "end_line": 545,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.steward.is_available",
+          "start_line": 547,
+          "end_line": 566,
+          "node_type": "FUNCTION",
           "status": "added"
         },
         {
@@ -7983,6 +8011,48 @@
           "start_line": 550,
           "end_line": 601,
           "node_type": "METHOD",
+          "status": "deleted"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.steward.publish_heartbeat",
+          "start_line": 568,
+          "end_line": 578,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.steward.publish_recovery",
+          "start_line": 580,
+          "end_line": 592,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.steward.get_quorum_metrics",
+          "start_line": 594,
+          "end_line": 596,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.steward.convene_triad",
+          "start_line": 598,
+          "end_line": 669,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.steward.check_quorum",
+          "start_line": 671,
+          "end_line": 722,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.actors.steward._cancel_tasks",
+          "start_line": 724,
+          "end_line": 732,
+          "node_type": "FUNCTION",
           "status": "added"
         }
       ]
@@ -63327,7 +63397,7 @@
       "file_path": "src/heretek_swarm/actors/steward.py",
       "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent",
       "start_line": 34,
-      "end_line": 611,
+      "end_line": 405,
       "type": "CLASS",
       "status": "modified"
     },
@@ -63335,7 +63405,7 @@
       "file_path": "src/heretek_swarm/actors/steward.py",
       "qualified_name": "src.heretek_swarm.actors.steward.StewardAgent.__init__",
       "start_line": 55,
-      "end_line": 116,
+      "end_line": 118,
       "type": "METHOD",
       "status": "modified"
     },
@@ -63457,7 +63527,7 @@
       "start_line": 393,
       "end_line": 399,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/steward.py|src.heretek_swarm.actors.steward.StewardAgent.initiate_failover": {
       "file_path": "src/heretek_swarm/actors/steward.py",
@@ -63465,7 +63535,15 @@
       "start_line": 401,
       "end_line": 412,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
+    },
+    "src/heretek_swarm/actors/steward.py|src.heretek_swarm.actors.steward._handle_agent_failure": {
+      "file_path": "src/heretek_swarm/actors/steward.py",
+      "qualified_name": "src.heretek_swarm.actors.steward._handle_agent_failure",
+      "start_line": 407,
+      "end_line": 468,
+      "type": "FUNCTION",
+      "status": "modified"
     },
     "src/heretek_swarm/actors/steward.py|src.heretek_swarm.actors.steward.StewardAgent._cancel_tasks": {
       "file_path": "src/heretek_swarm/actors/steward.py",
@@ -63473,7 +63551,7 @@
       "start_line": 414,
       "end_line": 422,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/steward.py|src.heretek_swarm.actors.steward.StewardAgent.is_available": {
       "file_path": "src/heretek_swarm/actors/steward.py",
@@ -63481,7 +63559,7 @@
       "start_line": 426,
       "end_line": 445,
       "type": "METHOD",
-      "status": "added"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/steward.py|src.heretek_swarm.actors.steward.StewardAgent.publish_heartbeat": {
       "file_path": "src/heretek_swarm/actors/steward.py",
@@ -63489,7 +63567,7 @@
       "start_line": 447,
       "end_line": 457,
       "type": "METHOD",
-      "status": "added"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/steward.py|src.heretek_swarm.actors.steward.StewardAgent.publish_recovery": {
       "file_path": "src/heretek_swarm/actors/steward.py",
@@ -63497,7 +63575,7 @@
       "start_line": 459,
       "end_line": 471,
       "type": "METHOD",
-      "status": "added"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/steward.py|src.heretek_swarm.actors.steward.StewardAgent.get_quorum_metrics": {
       "file_path": "src/heretek_swarm/actors/steward.py",
@@ -63505,7 +63583,7 @@
       "start_line": 473,
       "end_line": 475,
       "type": "METHOD",
-      "status": "added"
+      "status": "deleted"
     },
     "src/heretek_swarm/actors/steward.py|src.heretek_swarm.actors.steward.StewardAgent.convene_triad": {
       "file_path": "src/heretek_swarm/actors/steward.py",
@@ -63513,6 +63591,30 @@
       "start_line": 477,
       "end_line": 548,
       "type": "METHOD",
+      "status": "deleted"
+    },
+    "src/heretek_swarm/actors/steward.py|src.heretek_swarm.actors.steward._emit_recovery_failed": {
+      "file_path": "src/heretek_swarm/actors/steward.py",
+      "qualified_name": "src.heretek_swarm.actors.steward._emit_recovery_failed",
+      "start_line": 521,
+      "end_line": 532,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/actors/steward.py|src.heretek_swarm.actors.steward.initiate_failover": {
+      "file_path": "src/heretek_swarm/actors/steward.py",
+      "qualified_name": "src.heretek_swarm.actors.steward.initiate_failover",
+      "start_line": 534,
+      "end_line": 545,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/actors/steward.py|src.heretek_swarm.actors.steward.is_available": {
+      "file_path": "src/heretek_swarm/actors/steward.py",
+      "qualified_name": "src.heretek_swarm.actors.steward.is_available",
+      "start_line": 547,
+      "end_line": 566,
+      "type": "FUNCTION",
       "status": "added"
     },
     "src/heretek_swarm/actors/steward.py|src.heretek_swarm.actors.steward.StewardAgent.check_quorum": {
@@ -63521,6 +63623,54 @@
       "start_line": 550,
       "end_line": 601,
       "type": "METHOD",
+      "status": "deleted"
+    },
+    "src/heretek_swarm/actors/steward.py|src.heretek_swarm.actors.steward.publish_heartbeat": {
+      "file_path": "src/heretek_swarm/actors/steward.py",
+      "qualified_name": "src.heretek_swarm.actors.steward.publish_heartbeat",
+      "start_line": 568,
+      "end_line": 578,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/actors/steward.py|src.heretek_swarm.actors.steward.publish_recovery": {
+      "file_path": "src/heretek_swarm/actors/steward.py",
+      "qualified_name": "src.heretek_swarm.actors.steward.publish_recovery",
+      "start_line": 580,
+      "end_line": 592,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/actors/steward.py|src.heretek_swarm.actors.steward.get_quorum_metrics": {
+      "file_path": "src/heretek_swarm/actors/steward.py",
+      "qualified_name": "src.heretek_swarm.actors.steward.get_quorum_metrics",
+      "start_line": 594,
+      "end_line": 596,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/actors/steward.py|src.heretek_swarm.actors.steward.convene_triad": {
+      "file_path": "src/heretek_swarm/actors/steward.py",
+      "qualified_name": "src.heretek_swarm.actors.steward.convene_triad",
+      "start_line": 598,
+      "end_line": 669,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/actors/steward.py|src.heretek_swarm.actors.steward.check_quorum": {
+      "file_path": "src/heretek_swarm/actors/steward.py",
+      "qualified_name": "src.heretek_swarm.actors.steward.check_quorum",
+      "start_line": 671,
+      "end_line": 722,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/actors/steward.py|src.heretek_swarm.actors.steward._cancel_tasks": {
+      "file_path": "src/heretek_swarm/actors/steward.py",
+      "qualified_name": "src.heretek_swarm.actors.steward._cancel_tasks",
+      "start_line": 724,
+      "end_line": 732,
+      "type": "FUNCTION",
       "status": "added"
     },
     "src/heretek_swarm/actors/stubs.py|src.heretek_swarm.actors.stubs.get_nats_event_mesh": {
@@ -116712,15 +116862,16 @@
             "src.heretek_swarm.actors.steward.StewardAgent.check_agent_health",
             "src.heretek_swarm.actors.steward.StewardAgent.detect_heartbeat_failure",
             "src.heretek_swarm.actors.steward.StewardAgent._monitor_loop",
-            "src.heretek_swarm.actors.steward.StewardAgent._handle_agent_failure",
-            "src.heretek_swarm.actors.steward.StewardAgent.initiate_failover",
-            "src.heretek_swarm.actors.steward.StewardAgent._cancel_tasks",
-            "src.heretek_swarm.actors.steward.StewardAgent.is_available",
-            "src.heretek_swarm.actors.steward.StewardAgent.publish_heartbeat",
-            "src.heretek_swarm.actors.steward.StewardAgent.publish_recovery",
-            "src.heretek_swarm.actors.steward.StewardAgent.get_quorum_metrics",
-            "src.heretek_swarm.actors.steward.StewardAgent.convene_triad",
-            "src.heretek_swarm.actors.steward.StewardAgent.check_quorum"
+            "src.heretek_swarm.actors.steward._handle_agent_failure",
+            "src.heretek_swarm.actors.steward._emit_recovery_failed",
+            "src.heretek_swarm.actors.steward.initiate_failover",
+            "src.heretek_swarm.actors.steward.is_available",
+            "src.heretek_swarm.actors.steward.publish_heartbeat",
+            "src.heretek_swarm.actors.steward.publish_recovery",
+            "src.heretek_swarm.actors.steward.get_quorum_metrics",
+            "src.heretek_swarm.actors.steward.convene_triad",
+            "src.heretek_swarm.actors.steward.check_quorum",
+            "src.heretek_swarm.actors.steward._cancel_tasks"
           ]
         },
         {
@@ -123349,15 +123500,16 @@
                 "src.heretek_swarm.actors.steward.StewardAgent.check_agent_health",
                 "src.heretek_swarm.actors.steward.StewardAgent.detect_heartbeat_failure",
                 "src.heretek_swarm.actors.steward.StewardAgent._monitor_loop",
-                "src.heretek_swarm.actors.steward.StewardAgent._handle_agent_failure",
-                "src.heretek_swarm.actors.steward.StewardAgent.initiate_failover",
-                "src.heretek_swarm.actors.steward.StewardAgent._cancel_tasks",
-                "src.heretek_swarm.actors.steward.StewardAgent.is_available",
-                "src.heretek_swarm.actors.steward.StewardAgent.publish_heartbeat",
-                "src.heretek_swarm.actors.steward.StewardAgent.publish_recovery",
-                "src.heretek_swarm.actors.steward.StewardAgent.get_quorum_metrics",
-                "src.heretek_swarm.actors.steward.StewardAgent.convene_triad",
-                "src.heretek_swarm.actors.steward.StewardAgent.check_quorum"
+                "src.heretek_swarm.actors.steward._handle_agent_failure",
+                "src.heretek_swarm.actors.steward._emit_recovery_failed",
+                "src.heretek_swarm.actors.steward.initiate_failover",
+                "src.heretek_swarm.actors.steward.is_available",
+                "src.heretek_swarm.actors.steward.publish_heartbeat",
+                "src.heretek_swarm.actors.steward.publish_recovery",
+                "src.heretek_swarm.actors.steward.get_quorum_metrics",
+                "src.heretek_swarm.actors.steward.convene_triad",
+                "src.heretek_swarm.actors.steward.check_quorum",
+                "src.heretek_swarm.actors.steward._cancel_tasks"
               ]
             },
             {
@@ -131803,15 +131955,16 @@
                     "src.heretek_swarm.actors.steward.StewardAgent.check_agent_health",
                     "src.heretek_swarm.actors.steward.StewardAgent.detect_heartbeat_failure",
                     "src.heretek_swarm.actors.steward.StewardAgent._monitor_loop",
-                    "src.heretek_swarm.actors.steward.StewardAgent._handle_agent_failure",
-                    "src.heretek_swarm.actors.steward.StewardAgent.initiate_failover",
-                    "src.heretek_swarm.actors.steward.StewardAgent._cancel_tasks",
-                    "src.heretek_swarm.actors.steward.StewardAgent.is_available",
-                    "src.heretek_swarm.actors.steward.StewardAgent.publish_heartbeat",
-                    "src.heretek_swarm.actors.steward.StewardAgent.publish_recovery",
-                    "src.heretek_swarm.actors.steward.StewardAgent.get_quorum_metrics",
-                    "src.heretek_swarm.actors.steward.StewardAgent.convene_triad",
-                    "src.heretek_swarm.actors.steward.StewardAgent.check_quorum"
+                    "src.heretek_swarm.actors.steward._handle_agent_failure",
+                    "src.heretek_swarm.actors.steward._emit_recovery_failed",
+                    "src.heretek_swarm.actors.steward.initiate_failover",
+                    "src.heretek_swarm.actors.steward.is_available",
+                    "src.heretek_swarm.actors.steward.publish_heartbeat",
+                    "src.heretek_swarm.actors.steward.publish_recovery",
+                    "src.heretek_swarm.actors.steward.get_quorum_metrics",
+                    "src.heretek_swarm.actors.steward.convene_triad",
+                    "src.heretek_swarm.actors.steward.check_quorum",
+                    "src.heretek_swarm.actors.steward._cancel_tasks"
                   ]
                 },
                 {
@@ -134107,15 +134260,16 @@
                         "src.heretek_swarm.actors.steward.StewardAgent.check_agent_health",
                         "src.heretek_swarm.actors.steward.StewardAgent.detect_heartbeat_failure",
                         "src.heretek_swarm.actors.steward.StewardAgent._monitor_loop",
-                        "src.heretek_swarm.actors.steward.StewardAgent._handle_agent_failure",
-                        "src.heretek_swarm.actors.steward.StewardAgent.initiate_failover",
-                        "src.heretek_swarm.actors.steward.StewardAgent._cancel_tasks",
-                        "src.heretek_swarm.actors.steward.StewardAgent.is_available",
-                        "src.heretek_swarm.actors.steward.StewardAgent.publish_heartbeat",
-                        "src.heretek_swarm.actors.steward.StewardAgent.publish_recovery",
-                        "src.heretek_swarm.actors.steward.StewardAgent.get_quorum_metrics",
-                        "src.heretek_swarm.actors.steward.StewardAgent.convene_triad",
-                        "src.heretek_swarm.actors.steward.StewardAgent.check_quorum"
+                        "src.heretek_swarm.actors.steward._handle_agent_failure",
+                        "src.heretek_swarm.actors.steward._emit_recovery_failed",
+                        "src.heretek_swarm.actors.steward.initiate_failover",
+                        "src.heretek_swarm.actors.steward.is_available",
+                        "src.heretek_swarm.actors.steward.publish_heartbeat",
+                        "src.heretek_swarm.actors.steward.publish_recovery",
+                        "src.heretek_swarm.actors.steward.get_quorum_metrics",
+                        "src.heretek_swarm.actors.steward.convene_triad",
+                        "src.heretek_swarm.actors.steward.check_quorum",
+                        "src.heretek_swarm.actors.steward._cancel_tasks"
                       ]
                     },
                     {
@@ -135584,16 +135738,7 @@
                             "src.heretek_swarm.actors.steward.StewardAgent._handle_agent_heartbeat",
                             "src.heretek_swarm.actors.steward.StewardAgent.check_agent_health",
                             "src.heretek_swarm.actors.steward.StewardAgent.detect_heartbeat_failure",
-                            "src.heretek_swarm.actors.steward.StewardAgent._monitor_loop",
-                            "src.heretek_swarm.actors.steward.StewardAgent._handle_agent_failure",
-                            "src.heretek_swarm.actors.steward.StewardAgent.initiate_failover",
-                            "src.heretek_swarm.actors.steward.StewardAgent._cancel_tasks",
-                            "src.heretek_swarm.actors.steward.StewardAgent.is_available",
-                            "src.heretek_swarm.actors.steward.StewardAgent.publish_heartbeat",
-                            "src.heretek_swarm.actors.steward.StewardAgent.publish_recovery",
-                            "src.heretek_swarm.actors.steward.StewardAgent.get_quorum_metrics",
-                            "src.heretek_swarm.actors.steward.StewardAgent.convene_triad",
-                            "src.heretek_swarm.actors.steward.StewardAgent.check_quorum"
+                            "src.heretek_swarm.actors.steward.StewardAgent._monitor_loop"
                           ]
                         },
                         {

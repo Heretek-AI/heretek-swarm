@@ -100,6 +100,8 @@ class StewardAgent(
         self._heartbeat_timeout: float = 15.0  # seconds before declaring failure
         self._monitor_task: asyncio.Task | None = None
         self._failed_agents: set[str] = set()
+        self._restart_cooldowns: dict[str, float] = {}  # agent_id -> next allowed restart timestamp
+        self._restart_base_delay: float = 10.0  # base delay for exponential backoff in seconds
 
         # GOV-01-F: Steward availability tracking
         self._consecutive_missed_heartbeats: int = 0
@@ -402,13 +404,80 @@ class StewardAgent(
             for agent_id in failed:
                 await self._handle_agent_failure(agent_id)
 
-    async def _handle_agent_failure(self, agent_id: str) -> None:
-        """Record and log an agent heartbeat failure."""
+async def _handle_agent_failure(
+        self, agent_id: str, supervisor: "ActorSupervisor" | None = None
+    ) -> None:
+        """Record and log an agent heartbeat failure, attempt restart with backoff."""
         if agent_id in self._failed_agents:
             return
+
+        now = datetime.now(UTC).timestamp()
+        if agent_id in self._restart_cooldowns and now < self._restart_cooldowns[agent_id]:
+            logger.debug(f"[{self.agent_id}] Restart cooldown active for {agent_id}, skipping")
+            return
+        if agent_id in self._restart_cooldowns:
+            del self._restart_cooldowns[agent_id]
+
         self._failed_agents.add(agent_id)
         self.error_count += 1
         logger.warning(f"[{self.agent_id}] Heartbeat failure detected for agent: {agent_id}")
+
+        await self.send(
+            topic="system.recovery",
+            content={
+                "message_type": "recovery_event",
+                "agent_id": agent_id,
+                "status": "started",
+                "restart_count": len([a for a in self._failed_agents if a == agent_id]),
+                "timestamp": datetime.now(UTC).isoformat(),
+            },
+        )
+
+        if supervisor is not None:
+            try:
+                restart_count_before = supervisor.restart_counts.get(agent_id, 0)
+                await supervisor._attempt_restart(agent_id)
+                restart_count_after = supervisor.restart_counts.get(agent_id, 0)
+
+                if restart_count_after > restart_count_before:
+                    if agent_id in self._restart_cooldowns:
+                        del self._restart_cooldowns[agent_id]
+                    self._failed_agents.discard(agent_id)
+                    logger.info(
+                        f"[{self.agent_id}] Agent {agent_id} recovered successfully",
+                        extra={"restart_count": restart_count_after},
+                    )
+
+                    await self.send(
+                        topic="system.recovery",
+                        content={
+                            "message_type": "recovery_event",
+                            "agent_id": agent_id,
+                            "status": "completed",
+                            "restart_count": restart_count_after,
+                            "timestamp": datetime.now(UTC).isoformat(),
+                        },
+                    )
+                else:
+                    backoff_seconds = min(300, self._restart_base_delay * (2 ** restart_count_after))
+                    self._restart_cooldowns[agent_id] = now + backoff_seconds
+                    await self._emit_recovery_failed(agent_id, restart_count_after)
+
+            except Exception as e:
+                logger.error(f"[{self.agent_id}] Restart attempt failed for {agent_id}: {e}")
+                await self._emit_recovery_failed(agent_id, 0)
+
+    async def _emit_recovery_failed(self, agent_id: str, restart_count: int) -> None:
+        await self.send(
+            topic="system.recovery",
+            content={
+                "message_type": "recovery_event",
+                "agent_id": agent_id,
+                "status": "failed",
+                "restart_count": restart_count,
+                "timestamp": datetime.now(UTC).isoformat(),
+            },
+        )
 
     async def initiate_failover(self, agent_id: str) -> None:
         """Send failover message via event mesh."""
