@@ -1,169 +1,205 @@
 # Architecture
 
-**Analysis Date:** 2026-04-13
+**Analysis Date:** 2026-04-15
 
 ## Pattern Overview
 
-**Overall:** Multi-agent swarm orchestration with actor model, event-driven communication, and collective intelligence
+**Overall:** 23-Agent Collective System with Event-Driven Architecture
 
 **Key Characteristics:**
-- Actor model for agents (`AgentActor` base class) with supervised lifecycle
-- Agent-to-Agent (A2A) protocol over JSON-RPC 2.0 for inter-agent communication
-- NATS messaging infrastructure for distributed communication
-- MAKER consensus protocol for collective decision-making
-- HeavySwarm deliberation workflows for complex reasoning
-- Tiered agent hierarchy (6 tiers, 23 agents total)
+- Agent-based architecture with 23 specialized agent types organized in 6 tiers
+- Event mesh communication via NATS A2A (Agent-to-Agent) protocol
+- Multi-tier memory system (episodic, semantic, working, procedural)
+- Consensus-driven decision making via MAKER protocol
+- Zero-trust security with 4-layer validation architecture
+- Consciousness frameworks for agent awareness (GWT, AST, IIT, FEP)
 
 ## Layers
 
-**Actors (Tiered Agent System):**
-- Purpose: Autonomous agents that process tasks and collaborate
+**Core Runtime:**
+- Purpose: Main entry point for autonomous 24/7 swarm operation
+- Location: `src/heretek_swarm/runtime/main_loop.py`
+- Contains: `AutonomousSwarm` class - wires all components together
+- Depends on: NATS event mesh, memory, RAG, consensus engine
+- Used by: Startup scripts, container orchestration
+
+**Actors (Agents):**
+- Purpose: 23 specialized AI agents that perceive, decide, and act
 - Location: `src/heretek_swarm/actors/`
-- Contains: 23 specialized agents organized in tiers
-  - Tier 1 (Core Triad): Steward, Alpha, Beta, Charlie
-  - Tier 2 (Support): Historian, Metis, Empath, Perceiver, Echo
-  - Tier 3 (Exploration): Explorer, Examiner, Dreamer, Coder
-  - Tier 4 (Safety): Sentinel, Sentinel-Prime, Arbiter
-  - Tier 5 (Coordination): Coordinator, Nexus, Catalyst, Chronos
-  - Tier 6 (Enhancement): Prism, Habit-Forge, Perceiver+
-- Depends on: Base agent classes, mixins, memory system
-- Used by: API layer, gateway, collective intelligence
+- Contains: Agent implementations (steward, alpha, beta, charlie, etc.)
+- Tier 1 (Core Triad): Steward, Alpha, Beta, Charlie
+- Tier 2 (Support): Historian, Metis, Empath, Perceiver, Echo
+- Tier 3 (Exploration): Explorer, Examiner, Dreamer, Coder
+- Tier 4 (Safety): Sentinel, Sentinel-Prime, Arbiter
+- Tier 5 (Coordination): Coordinator, Nexus, Catalyst, Chronos
+- Tier 6 (Enhancement): Prism, Habit-Forge, Perceiver+
+- Depends on: Base actor class, mixins, memory access, security
+- Used by: Runtime, gateway, consensus
 
-**API Layer:**
-- Purpose: FastAPI-based REST/WebSocket interface for agent management
-- Location: `src/heretek_swarm/api/`
-- Contains: Agent management, rate limiting, consensus, emergent intelligence, alerts, metrics, evaluation, RAG, consciousness, workflows, autonomous endpoints
-- Depends on: Actors, gateway, consensus, collective
-- Used by: External clients, frontend
-
-**Gateway (A2A Protocol):**
-- Purpose: Agent-to-agent communication and message routing
+**Gateway (Event Mesh):**
+- Purpose: NATS-based A2A communication between agents
 - Location: `src/heretek_swarm/gateway/`
-- Contains: A2A server, protocol handler, auth, event mesh, content router, JetStream manager
-- Depends on: NATS infrastructure, A2A protocol
-- Used by: Actors (for inter-agent communication)
+- Contains: `NATSEventMesh`, `A2AProtocol`, `JetStreamManager`
+- Depends on: NATS server, actor registry
+- Used by: All agents for inter-agent communication
 
 **Consensus (MAKER Protocol):**
-- Purpose: Multi-agent decision-making and agreement
+- Purpose: Multi-agent decision aggregation and voting
 - Location: `src/heretek_swarm/consensus/`
-- Contains: MAKER consensus, deliberation, expertise weighting, tribunal, audit trail, Raft election
-- Depends on: Actors, collective
-- Used by: Gateway, collective intelligence
+- Contains: `MAKERConsensus`, `Tribunal`, `Deliberation`
+- Depends on: Agent votes, reputation tracking
+- Used by: Steward, Coordinator for critical decisions
 
-**Collective Intelligence:**
-- Purpose: Emergent behavior detection, pattern learning, distributed optimization
-- Location: `src/heretek_swarm/collective/`
-- Contains: Emergence analyzer, pattern library, agent adaptation, distributed learning, metrics, agency tracking
-- Depends on: Consensus, actors, memory
-- Used by: API layer, agents
-
-**Infrastructure:**
-- Purpose: NATS messaging, OpenTelemetry observability
-- Location: `src/heretek_swarm/infrastructure/`
-- Contains: NATS client, consensus, memory sync; OpenTelemetry logging
-- Used by: Gateway, API
+**Security (Zero-Trust):**
+- Purpose: 4-layer validation architecture
+- Location: `src/heretek_swarm/security/`
+- Contains: `ZeroTrustValidator`, `InputValidator`, `ContextValidator`, `OutputValidator`, `AuditLogger`
+- Layer 1: Input Validation (Pydantic v2, UUID v4, size limits)
+- Layer 2: Context Validation (injection detection, behavioral analysis)
+- Layer 3: Output Validation (PII detection, sensitive data filtering)
+- Layer 4: Audit Logging (structured logging, severity levels)
+- Used by: Gateway, API, all agents
 
 **Memory System:**
-- Purpose: Persistent storage and retrieval for agents
+- Purpose: Multi-tier storage management
 - Location: `src/heretek_swarm/memory/`
-- Contains: Memory system base classes
-- Used by: Actors, collective
+- Contains: `TieredMemory`, `TierConfig`, migration logic
+- Tiers: L1_HOT (Redis), L2_WARM (PostgreSQL), L3_COLD (compressed archive)
+- Used by: All agents for persistence
 
-**Runtime:**
-- Purpose: Agent execution context, character system, tool registry
-- Location: `src/heretek_swarm/runtime/`
-- Contains: AgentRuntime, AgentContext, Character system, ToolRegistry
-- Used by: Actors
+**State Management:**
+- Purpose: PostgreSQL-backed event sourcing
+- Location: `src/heretek_swarm/state/`
+- Contains: `EventStore`, `Repository`, `models`
+- Used by: API, runtime, consensus
+
+**Consciousness Frameworks:**
+- Purpose: Agent self-awareness and agency metrics
+- Location: `src/heretek_swarm/consciousness/`
+- Contains: `GWT` (Global Workspace Theory), `IIT` (Integrated Information Theory), `AST` (Adaptive Suspension Theory), `FEP` (Free Energy Principle)
+- Used by: Enhancement tier agents (Prism, Habit-Forge, Perceiver+)
+
+**API Layer:**
+- Purpose: HTTP endpoints for external clients
+- Location: `src/heretek_swarm/api/`
+- Contains: FastAPI application with routers for agents, workflows, consciousness, config
+- Used by: Frontend dashboard, external consumers
+
+**Collective Intelligence:**
+- Purpose: Emergent behavior detection and learning
+- Location: `src/heretek_swarm/collective/`
+- Contains: `SwarmIntelligence`, `EmergenceAnalyzer`, `PatternLibrary`
+- Used by: Steward, Coordinator for swarm-level decisions
 
 ## Data Flow
 
 **Agent Communication Flow:**
 
-1. Client sends request to FastAPI (`src/heretek_swarm/api/main.py`)
-2. API routes to appropriate agent management endpoint
-3. Agent processes request, may delegate via A2A protocol
-4. A2A message created at `src/heretek_swarm/gateway/a2a_server.py`
-5. Message routed through NATS infrastructure
-6. Target agent receives and processes via `AgentActor.handle_message()`
-7. Response flows back through gateway to API to client
+1. External client sends HTTP request to API
+2. API validates request via zero-trust security
+3. Request published to NATS subject
+4. Target agent subscribes and receives message
+5. Agent processes, potentially consulting memory
+6. Agent may invoke consensus for critical decisions
+7. Response published back via NATS
+8. API receives response and forwards to client
 
-**Consensus Flow:**
+**State Persistence Flow:**
 
-1. Agent identifies need for consensus
-2. MAKER consensus invoked (`src/heretek_swarm/consensus/maker.py`)
-3. Deliberation through tribunal process
-4. Expertise weighting calculated
-5. Audit trail maintained
-6. Result propagated to involved agents
+1. Agent completes action with state change
+2. Event written to `EventStore`
+3. `Repository` persists to PostgreSQL
+4. Memory system indexes for retrieval
+5. Audit logged via structlog
 
-**State Management:**
+**Consensus Flow (MAKER Protocol):**
 
-- Actor state managed through `AgentActorStateManagement` mixin (`src/heretek_swarm/actors/base/state_management.py`)
-- Message handling via `AgentActorMessageHandling` mixin (`src/heretek_swarm/actors/base/message_handling.py`)
-- Persistent state in memory system
+1. Steward identifies decision requiring consensus
+2. `start_consensus(consensus_id)` initiated
+3. Agents submit votes with confidence scores
+4. `_apply_enhanced_vote_weights()` calculates weighted votes
+5. `_first_to_ahead_by_k()` determines winner
+6. Red flags checked for anomalies
+7. `ConsensusResult` returned with decision
+
+**Memory Tier Migration Flow:**
+
+1. `TierManager` monitors access patterns
+2. `should_migrate()` evaluates triggers (access_pattern, policy, scheduled)
+3. Data moved between tiers based on `MigrationStrategy`
+4. Audit logged for compliance
+5. Rollback available on failure
 
 ## Key Abstractions
 
 **AgentActor (Base Class):**
-- Purpose: Base class for all agents
+- Purpose: Foundation for all 23 agent types
 - Location: `src/heretek_swarm/actors/base/core.py`
 - Pattern: Mixin-based composition (state management + message handling + core)
+- Exports: `ActorMessage`, `ActorState`, `ActorStatus`, `AgentActor`
 
-**ActorFactory:**
-- Purpose: Registry and factory for actor creation
-- Location: `src/heretek_swarm/actors/factory.py`
-- Pattern: Factory pattern with registration
+**Actor Mixins:**
+- Purpose: Composable capabilities (memory access, health reporting, validation)
+- Location: `src/heretek_swarm/actors/mixins/`
+- Examples: `memory_access.py`, `health_reporting.py`, `validation.py`, `deliberation.py`, `audit.py`, `learning.py`, `pattern.py`, `tribunal.py`
 
-**ActorSupervisor:**
-- Purpose: Lifecycle management and monitoring of actors
-- Location: `src/heretek_swarm/actors/supervisor.py`
-- Pattern: Supervisor/observer pattern
-
-**A2AProtocol:**
-- Purpose: JSON-RPC 2.0 based agent communication
-- Location: `src/heretek_swarm/infrastructure/a2a/protocol.py`
-- Pattern: Protocol handler with capability discovery
+**ZeroTrustValidator:**
+- Purpose: Orchestrates 4-layer security validation
+- Location: `src/heretek_swarm/security/zero_trust.py`
+- Pattern: Layered validation with early termination
+- Target: <50ms p95 latency, <0.1% false negative rate
 
 **MAKERConsensus:**
-- Purpose: Multi-agent consensus with confidence thresholds
+- Purpose: Voting-based decision aggregation
 - Location: `src/heretek_swarm/consensus/maker.py`
-- Pattern: Consensus protocol with audit trail
+- Pattern: First-to-ahead-by-k with reputation weighting
+- Features: Red-flagging, confidence thresholds, async execution
+
+**DualTierMemory:**
+- Purpose: Hot/warm tier memory access
+- Location: `src/heretek_swarm/memory/base.py`
+- Pattern: Tier abstraction with automatic migration
+
+**AutonomousSwarm:**
+- Purpose: Main entry point for 24/7 operation
+- Location: `src/heretek_swarm/runtime/main_loop.py`
+- Wires: All components into unified autonomous loop
 
 ## Entry Points
 
-**CLI:**
-- Location: `src/cli.py`
-- Triggers: `heretek-swarm deploy`, `update`, `status`
-- Responsibilities: Deployment commands, version management
-
 **API Server:**
 - Location: `src/heretek_swarm/api/main.py`
-- Triggers: HTTP/WebSocket connections
-- Responsibilities: Agent management, metrics, autonomous operations
+- Triggers: `uvicorn src.heretek_swarm.api.main:app`
+- Responsibilities: HTTP endpoint routing, WebSocket support, CORS
 
-**Actor Supervisor:**
-- Location: `src/heretek_swarm/actors/supervisor.py`
-- Triggers: Agent spawn, termination, health monitoring
-- Responsibilities: Actor lifecycle, status aggregation
+**Autonomous Runtime:**
+- Location: `src/heretek_swarm/runtime/main_loop.py`
+- Triggers: `python -m heretek_swarm.runtime.main_loop`
+- Responsibilities: 24/7 agent orchestration, health monitoring, task processing
+
+**Actor Factory:**
+- Location: `src/heretek_swarm/actors/factory.py`
+- Triggers: Runtime initialization
+- Responsibilities: Agent registration and instantiation
 
 ## Error Handling
 
-**Strategy:** Structured logging via structlog, error propagation through actor hierarchy
+**Strategy:** Structured logging with structlog + circuit breakers
 
 **Patterns:**
-- Actor-level error catching with recovery attempts
-- Supervisor escalation on unrecoverable failures
-- Consensus-based error resolution via tribunal
-- Audit trail logging for all error conditions
+- `try/except` blocks with `structlog` error logging
+- Circuit breaker pattern in `runtime/scaling.py`
+- Graceful degradation in NATS communication
+- Rollback mechanisms in memory tiering
 
 ## Cross-Cutting Concerns
 
-**Logging:** structlog throughout all modules
-**Validation:** Input validation in API layer, agent validation mixin
-**Authentication:** Gateway auth in `src/heretek_swarm/gateway/auth.py`
-**Observability:** OpenTelemetry in `src/heretek_swarm/infrastructure/otel/`
-**Rate Limiting:** `src/heretek_swarm/api/rate_limiting.py`
+**Logging:** structlog with JSON output for Loki/Promtail (`src/heretek_swarm/logging/config.py`)
+**Validation:** Pydantic v2 with `extra='forbid'` for injection protection
+**Authentication:** JWT/API key via `gateway/auth.py`
+**Observability:** Prometheus metrics, OpenTelemetry tracing (`src/heretek_swarm/observability/`)
+**Rate Limiting:** Token bucket via `api/rate_limiting.py`
 
 ---
 
-*Architecture analysis: 2026-04-13*
+*Architecture analysis: 2026-04-15*

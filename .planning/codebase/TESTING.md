@@ -1,114 +1,144 @@
 # Testing Patterns
 
-**Analysis Date:** 2026-04-13
+**Analysis Date:** 2026-04-15
 
-## Test Frameworks
+## Test Framework
 
-### Python
+**Runner:**
+- pytest 8.0+ with `asyncio_mode = "auto"`
+- Configured in `pyproject.toml` under `[tool.pytest.ini_options]`
 
-**Framework:** pytest 8.0+
-- pytest-asyncio for async tests
-- pytest-cov for coverage
-- pytest-mock for mocking
-- pytest-timeout for timeout handling
+**Assertion Library:**
+- pytest built-in assertions
+- `pydantic.ValidationError` for model validation testing
 
-**Configuration (pyproject.toml):**
-```toml
-[tool.pytest.ini_options]
-minversion = "8.0"
-testpaths = ["tests"]
-python_files = ["test_*.py", "*_test.py"]
-python_classes = ["Test*"]
-python_functions = ["test_*"]
-asyncio_mode = "auto"
-asyncio_default_fixture_loop_scope = "function"
-```
+**Mocking:**
+- `unittest.mock.MagicMock` for sync mocks
+- `unittest.mock.AsyncMock` for async mocks
+- Custom in-memory mocks for NATS, LLM, Database
 
-### TypeScript/React
-
-**Framework:** vitest (Vite-based)
-- @testing-library/react for component tests
-
-## Coverage Requirements
-
-**Target:** 80% minimum (enforced)
-
-```toml
-[tool.coverage.report]
-fail_under = 80
-precision = 2
-show_missing = true
-skip_empty = true
-```
-
-**View Coverage:**
+**Run Commands:**
 ```bash
-pytest tests/ --cov=src --cov-report=term-missing
+pytest tests/                           # Run all tests
+pytest tests/unit/                      # Unit tests only
+pytest tests/integration/               # Integration tests
+pytest tests/security/                  # Security tests
+pytest -m "not slow"                   # Skip slow tests
+pytest --cov=src --cov-report=html     # With coverage
 ```
 
-## Test Organization
+## Test File Organization
 
-### Python Directory Structure
+**Location:**
+- Unit tests: `tests/unit/`
+- Integration tests: `tests/integration/`
+- Security tests: `tests/security/`
+- Validation tests: `tests/validation/`
+- Gateway tests: `tests/gateway/`
+- Consensus tests: `tests/consensus/`
+- Actors tests: `tests/actors/`
+- Observability tests: `tests/observability/`
 
+**Naming:**
+- Test files: `test_<module>.py` or `<feature>_test.py`
+- Test classes: `Test<ComponentName>`
+- Test functions: `test_<description_of_behavior>`
+
+**Structure:**
 ```
 tests/
-├── __init__.py
-├── conftest.py                    # Root shared fixtures
-├── actors/                         # Actor tests
-│   ├── test_base_actor.py
-│   ├── test_profiling.py
+├── conftest.py              # Root shared fixtures
+├── unit/
+│   ├── test_actor_factory.py
+│   └── __init__.py
+├── integration/
+│   ├── conftest.py          # Integration-specific fixtures
+│   ├── test_phase1_full_integration.py
+│   ├── test_phase2_full_integration.py
+│   ├── agents/
+│   │   ├── test_alpha.py
+│   │   ├── test_beta.py
+│   │   └── ...
+│   └── scaffolding/
+│       ├── mocks.py
+│       └── state.py
+├── security/
+│   ├── test_zero_trust.py
+│   ├── test_sentinel.py
 │   └── ...
-├── collective/                     # Collective intelligence tests
-├── consciousness/                   # Consciousness module tests
-├── consensus/                       # Consensus mechanism tests
-│   ├── test_maker.py              # MAKER consensus tests
-│   ├── test_deliberation.py
+├── validation/
+│   ├── test_agent_messages.py
+│   ├── test_llm_output_validator.py
 │   └── ...
-├── fixtures/                        # Test fixtures (serverless.yaml, etc.)
-├── gateway/                         # Gateway tests
-├── integration/                     # Integration tests
-│   ├── conftest.py                # Integration-specific mocks
-│   ├── agents/                    # Agent integration tests
-│   └── scaffolding/               # Mock helpers
-├── memory/                          # Memory system tests
-├── security/                       # Security tests
-├── state/                          # State management tests
-├── validation/                    # Validation tests
-└── workflow/                       # Workflow tests
+└── fixtures/
+    ├── __init__.py
+    └── test_data.py
 ```
+
+## Test Types
+
+**Unit Tests (`tests/unit/`):**
+- Fast, isolated tests
+- No external dependencies
+- Mock all external calls
+- Target: core logic, factories, validators
+
+**Integration Tests (`tests/integration/`):**
+- Test component interactions
+- Use `MockNATSEventMesh`, `MockLLMProvider`, `MockDatabase`
+- Test message passing between actors
+- Test state persistence flows
+
+**Security Tests (`tests/security/`):**
+- Zero-trust validation layers
+- Injection detection
+- PII detection
+- Secret patterns
+
+**Validation Tests (`tests/validation/`):**
+- Pydantic model validation
+- Message type validation
+- LLM output validation
+- Agent message safety
+
+**Gateway Tests (`tests/gateway/`):**
+- NATS event mesh
+- JetStream operations
+- Message replay
+- Content routing
+
+**Consensus Tests (`tests/consensus/`):**
+- MAKER protocol
+- Deliberation engine
+- Voting mechanisms
+- Immune response
 
 ## Test Markers
 
-Markers defined in `conftest.py`:
-
+**Configured Markers (from `pyproject.toml`):**
 ```python
-@pytest.mark.unit          # Unit tests (fast, isolated, no external deps)
-@pytest.mark.integration   # Integration tests (require external services)
-@pytest.mark.load          # Load/performance tests for scalability
-@pytest.mark.slow          # Tests that take >5 seconds
-@pytest.mark.a2a            # Agent-to-Agent messaging tests
-@pytest.mark.consensus      # Consensus mechanism tests (MAKER, BFT)
-@pytest.mark.latency        # Latency benchmark tests (<100ms baseline)
-@pytest.mark.security       # Security-focused tests
+markers = [
+    "unit: Unit tests (fast, isolated)",
+    "integration: Integration tests (require external services)",
+    "load: Load/performance tests",
+    "slow: Tests that take >5s",
+    "a2a: Agent-to-Agent messaging tests",
+    "consensus: Consensus mechanism tests",
+    "latency: Latency benchmark tests (<100ms baseline)",
+    "security: Security-focused tests",
+]
 ```
 
-**Running by marker:**
+**Usage:**
 ```bash
-pytest tests/ -m unit                    # Only unit tests
-pytest tests/ -m "not slow"             # Exclude slow tests
-pytest tests/ -m "a2a and not load"     # A2A tests excluding load
+pytest -m unit                    # Run unit tests only
+pytest -m "not slow"              # Exclude slow tests
+pytest -m "security and not slow" # Security tests excluding slow
 ```
 
-## Test Fixtures
+## Fixtures
 
-### Root conftest.py (`tests/conftest.py`)
-
-**Performance Baselines:**
-```python
-MESSAGE_LATENCY_BASELINE_MS = 100  # <100ms message latency requirement
-CONCURRENT_AGENT_TARGET = 1000     # Must support 1,000+ concurrent agents
-COVERAGE_THRESHOLD = 80            # >80% test coverage requirement
-```
+### Root Fixtures (`tests/conftest.py`)
 
 **Agent Fixtures:**
 ```python
@@ -129,31 +159,25 @@ def agent_config(agent_id: str) -> AgentConfig:
 @pytest.fixture
 def triad_agents() -> list[AgentConfig]:
     """Create Alpha, Beta, Charlie triad agents for consensus testing."""
-    return [
-        AgentConfig(agent_id="alpha-primary", agent_type="triad", ...),
-        AgentConfig(agent_id="beta-primary", agent_type="triad", ...),
-        AgentConfig(agent_id="charlie-primary", agent_type="triad", ...),
-    ]
+    # Returns list of 3 AgentConfig objects
 ```
 
-**Model Fixtures:**
+**Message Fixtures:**
 ```python
-class Message(BaseModel):
-    message_id: str
-    sender_id: str
-    receiver_id: str
-    message_type: str
-    payload: dict[str, Any]
-    timestamp: float = field(default_factory=time.time)
-    correlation_id: str | None = None
-    latency_ms: float | None = None
+@pytest.fixture
+def sample_message(agent_id: str) -> Message:
+    """Create a sample A2A message for testing."""
+    return Message(
+        message_id=f"msg-{uuid.uuid4().hex[:8]}",
+        sender_id=agent_id,
+        receiver_id="steward-primary",
+        message_type="task_request",
+        payload={"task": "analyze", "data": {"query": "test query"}},
+    )
 
-class AgentState(BaseModel):
-    agent_id: str
-    status: str = "idle"
-    current_task: str | None = None
-    memory_context: dict[str, Any] = {}
-    last_heartbeat: float = field(default_factory=time.time)
+@pytest.fixture
+def consensus_message() -> Message:
+    """Create a consensus-related message for triad testing."""
 ```
 
 **Mock Fixtures:**
@@ -162,11 +186,8 @@ class AgentState(BaseModel):
 def mock_agent() -> MagicMock:
     """Create a mock agent for isolated testing."""
     agent = MagicMock()
-    agent.agent_id = f"mock-{uuid.uuid4().hex[:8]}"
     agent.send_message = AsyncMock(return_value={"status": "sent"})
     agent.receive_message = AsyncMock()
-    agent.execute_task = AsyncMock(return_value={"result": "success"})
-    agent.get_state = MagicMock(return_value=AgentState(agent_id=agent.agent_id))
     return agent
 
 @pytest.fixture
@@ -175,19 +196,7 @@ def mock_message_bus() -> MagicMock:
     bus = MagicMock()
     bus.publish = AsyncMock(return_value=True)
     bus.subscribe = AsyncMock(return_value=True)
-    bus.get_message = AsyncMock()
-    bus.acknowledge = AsyncMock(return_value=True)
     return bus
-
-@pytest.fixture
-def mock_memory_store() -> MagicMock:
-    """Create a mock memory store for testing."""
-    store = MagicMock()
-    store.store = AsyncMock(return_value=True)
-    store.retrieve = AsyncMock(return_value={"data": "test"})
-    store.delete = AsyncMock(return_value=True)
-    store.query = AsyncMock(return_value=[])
-    return store
 ```
 
 **Security Fixtures:**
@@ -199,185 +208,329 @@ def malicious_inputs() -> list[dict[str, Any]]:
         {"input": "'; DROP TABLE agents; --", "type": "sql_injection"},
         {"input": "<script>alert('xss')</script>", "type": "xss"},
         {"input": "${env.SECRET_KEY}", "type": "template_injection"},
-        {"input": "../../../etc/passwd", "type": "path_traversal"},
-        {"input": "A" * 1000000, "type": "buffer_overflow"},
-        {"input": {"__proto__": {"admin": True}}, "type": "prototype_pollution"},
+        # ... more patterns
     ]
 
 @pytest.fixture
 def secret_patterns() -> list[str]:
     """Patterns that should never appear in logs or outputs."""
-    return ["sk-", "xoxb-", "ghp_", "AKIA", "eyJ", "-----BEGIN", "password", "secret", "api_key"]
+    return ["sk-", "xoxb-", "ghp_", "-----BEGIN", "password", "api_key"]
 ```
 
-**Latency Fixtures:**
-```python
-@pytest.fixture
-def latency_tracker() -> dict[str, list[float]]:
-    """Create a latency tracker for benchmark tests."""
-    return {
-        "message_latency": [],
-        "task_execution": [],
-        "consensus_round": [],
-        "state_rollback": [],
-    }
-
-@pytest.fixture
-def assert_latency_baseline():
-    """Assert that latency meets the <100ms baseline requirement."""
-    def _assert(latency_ms: float, operation: str = "operation") -> None:
-        assert latency_ms < MESSAGE_LATENCY_BASELINE_MS, (
-            f"{operation} latency {latency_ms:.2f}ms exceeds "
-            f"baseline of {MESSAGE_LATENCY_BASELINE_MS}ms - FLAG FOR REFACTORING"
-        )
-    return _assert
-```
-
-### Integration conftest.py (`tests/integration/conftest.py`)
+### Integration Fixtures (`tests/integration/conftest.py`)
 
 **Mock NATS Event Mesh:**
 ```python
 class MockNATSEventMesh:
     """In-memory mock for NATSEventMesh with pub/sub and request-reply patterns."""
-
-    async def connect(self) -> bool: ...
-    async def publish(self, subject: str, data: dict[str, Any], reply: str | None = None) -> bool: ...
-    async def subscribe(self, subject_pattern: str, callback: Callable) -> str: ...
-    async def request(self, subject: str, data: dict[str, Any], timeout: int = 5) -> dict[str, Any]: ...
+    
+    async def connect() -> bool
+    async def publish(subject: str, data: dict, reply: str | None = None) -> bool
+    async def subscribe(subject_pattern: str, callback: Callable) -> str
+    async def request(subject: str, data: dict, timeout: int = 5) -> dict
 ```
 
 **Mock LLM Provider:**
 ```python
 class MockLLMProvider:
     """Mock LLM provider for deterministic testing."""
-
-    def register_response(self, prompt_pattern: str, response: str) -> None: ...
-    def set_default_response(self, response: str) -> None: ...
-    def set_latency(self, latency_ms: float) -> None: ...
-    async def generate(self, prompt: str, **kwargs) -> str: ...
+    
+    def register_response(prompt_pattern: str, response: str) -> None
+    def set_default_response(response: str) -> None
+    async def generate(prompt: str, **kwargs) -> str
 ```
 
 **Mock Database:**
 ```python
 class MockDatabase:
     """In-memory mock database for testing."""
-
-    async def connect(self) -> bool: ...
-    async def execute(self, query: str, params: tuple | None = None) -> list[dict[str, Any]]: ...
-    async def create_table(self, table_name: str, schema: dict[str, str]) -> bool: ...
+    
+    async def connect() -> bool
+    async def execute(query: str, params: tuple | None = None) -> list
+    async def create_table(table_name: str, schema: dict) -> bool
 ```
 
-**Fixtures:**
+**Latency Fixtures:**
 ```python
-@pytest_asyncio.fixture
-async def mock_nats() -> MockNATSEventMesh: ...
+@pytest.fixture
+def latency_tracker() -> dict[str, list[float]]:
+    """Track operation latencies."""
 
-@pytest_asyncio.fixture
-async def connected_nats(mock_nats: MockNATSEventMesh) -> MockNATSEventMesh: ...
-
-@pytest_asyncio.fixture
-async def mock_llm() -> MockLLMProvider: ...
-
-@pytest_asyncio.fixture
-async def mock_llm_with_responses(mock_llm: MockLLMProvider) -> MockLLMProvider: ...
-
-@pytest_asyncio.fixture
-async def mock_db() -> MockDatabase: ...
-
-@pytest_asyncio.fixture
-async def initialized_db(mock_db: MockDatabase) -> MockDatabase: ...
+@pytest.fixture
+def assert_latency_baseline() -> Callable:
+    """Assert latency meets baseline requirements (<100ms)."""
 ```
 
-## Test Patterns
+## Test Structure
 
-### Class-Based Tests (preferred)
-
+**Class-Based Organization:**
 ```python
-class TestMAKERConsensus:
-    """Test MAKERConsensus class."""
-
-    @pytest.fixture
-    def basic_maker(self):
-        """Create a basic MAKERConsensus instance."""
-        return MAKERConsensus(ahead_by_k=2, min_votes=3)
-
-    def test_start_consensus(self, basic_maker):
-        """Test starting a consensus process."""
-        basic_maker.start_consensus("test-decision")
-
-        assert "test-decision" in basic_maker.active_processes
-        assert basic_maker.process_states["test-decision"] == ConsensusState.GATHERING
-
-    def test_add_vote(self, basic_maker):
-        """Test adding a vote."""
-        basic_maker.start_consensus("test")
-        basic_maker.add_vote("test", "agent-1", "approve", 0.85)
-
-        assert len(basic_maker.active_processes["test"]) == 1
+class TestActorMessage:
+    """Tests for ActorMessage model."""
+    
+    def test_valid_actor_message(self):
+        """Test creating a valid actor message."""
+        msg = ActorMessage(
+            content={"text": "Hello"},
+            sender_id="agent1"
+        )
+        assert msg.sender_id == "agent1"
+        assert msg.content == {"text": "Hello"}
+    
+    def test_actor_message_with_dangerous_content_fails(self):
+        """Test that dangerous content in actor message fails."""
+        with pytest.raises(ValidationError) as exc_info:
+            ActorMessage(
+                content={"code": "eval(user_input)"},
+                sender_id="agent1"
+            )
+        assert "Unsafe content" in str(exc_info.value)
 ```
 
-### Async Tests
+**Async Test Pattern:**
+```python
+class TestActorFactory:
+    
+    @pytest.mark.asyncio
+    async def test_create_actor(self, factory):
+        """Test creating an actor from registered configuration."""
+        factory.register_actor_class(
+            "mock-actor",
+            MockAgentActor,
+            {"agent_id": "test-instance", "name": "Test Actor"}
+        )
+        actor = factory.create_actor("mock-actor")
+        assert actor.agent_id == "test-instance"
+```
 
+**Parameterized Tests:**
+```python
+@pytest.mark.parametrize("operation", ["set", "append", "delete", "merge", "increment", "decrement"])
+def test_state_update_valid_operations(self, operation):
+    """Test all valid operations."""
+    update = StateUpdate(
+        state_key="counter",
+        state_value=1,
+        sender_id="agent1",
+        operation=operation
+    )
+    assert update.operation == operation
+```
+
+## Mocking Patterns
+
+**NATS Module Mocking:**
+```python
+@pytest.fixture(autouse=True)
+def mock_nats_module():
+    """Mock NATS module to avoid pynats dependency issues."""
+    mock_module = MagicMock()
+    mock_module.NATSClient = MagicMock()
+    mock_module.NATSPublisher = MagicMock()
+    sys.modules["pynats"] = MagicMock()
+    yield
+    # Cleanup
+    gc.collect()
+```
+
+**Actor Stub Patching:**
+```python
+# In heretek_swarm/actors/stubs.py
+def get_llm_provider():
+    return _llm_provider
+
+# In tests
+with patch("heretek_swarm.actors.stubs.get_llm_provider", return_value=mock_llm):
+    actor = AgentActor(agent_id="test")
+```
+
+## Coverage Requirements
+
+**Minimum Coverage:** 80% (`fail_under = 80` in coverage config)
+
+**Coverage Configuration:**
+```toml
+[tool.coverage.run]
+branch = true
+source = ["src"]
+omit = ["*/tests/*", "*/__pycache__/*", "*/.venv/*"]
+
+[tool.coverage.report]
+exclude_lines = [
+    "pragma: no cover",
+    "def __repr__",
+    "raise NotImplementedError",
+    "if __name__ == .__main__.:",
+    "if TYPE_CHECKING:",
+    "@abstractmethod",
+]
+```
+
+**Run with Coverage:**
+```bash
+pytest --cov=src --cov-report=html --cov-report=term-missing
+```
+
+## Performance Baselines
+
+**Message Latency:** <100ms baseline
+```python
+MESSAGE_LATENCY_BASELINE_MS = 100
+
+@pytest.fixture
+def assert_latency_baseline():
+    def _assert(latency_ms: float, operation: str = "operation") -> None:
+        assert latency_ms < MESSAGE_LATENCY_BASELINE_MS, (
+            f"{operation} latency {latency_ms:.2f}ms exceeds "
+            f"baseline of {MESSAGE_LATENCY_BASELINE_MS}ms"
+        )
+    return _assert
+```
+
+**Throughput:** >1000 validations/second for zero-trust validator
+
+## Common Patterns
+
+**Testing Pydantic Validation:**
+```python
+def test_invalid_uuid_fails():
+    """Invalid UUID should fail validation."""
+    with pytest.raises(ValidationError):
+        ValidatedInput(request_id="not-a-uuid")
+
+def test_extra_fields_forbidden():
+    """Extra fields should be forbidden (injection protection)."""
+    with pytest.raises(ValidationError):
+        ValidatedInput(
+            request_id=str(uuid.uuid4()),
+            malicious_field="injection attempt",
+        )
+```
+
+**Testing Async Actor Lifecycle:**
 ```python
 @pytest.mark.asyncio
-async def test_actor_spawn_and_terminate(test_actor):
-    """Test actor lifecycle."""
-    await test_actor.spawn()
-    assert test_actor.state == ActorState.ACTIVE
-
-    await test_actor.terminate()
-    assert test_actor.state == ActorState.TERMINATED
+async def test_actor_spawn_and_terminate():
+    """Test actor can spawn and terminate cleanly."""
+    actor = MockAgentActor(agent_id="test")
+    await actor.spawn()
+    assert actor.state == ActorState.ACTIVE
+    
+    await actor.terminate()
+    assert actor.state == ActorState.TERMINATED
 ```
 
-### Error Handling Tests
-
+**Testing Error Handling:**
 ```python
-def test_init_invalid_mailbox_size():
-    """Test that invalid mailbox size raises error."""
-    with pytest.raises(ValueError, match="max_mailbox_size must be positive"):
-        AgentActor(max_mailbox_size=0)
+def test_validation_error_message(self):
+    """Test that validation errors have helpful messages."""
+    with pytest.raises(ValidationError) as exc_info:
+        ActorMessage(content={"code": "eval(x)"}, sender_id="agent1")
+    
+    errors = exc_info.value.errors()
+    assert len(errors) > 0
+    assert "Unsafe content" in str(exc_info.value)
 ```
 
-## Running Tests
+## Test Utilities
 
-```bash
-# All tests
-pytest tests/
+**Message Creation Helpers:**
+```python
+from heretek_swarm.validation.agent_messages import (
+    create_actor_message,
+    create_state_update,
+    create_tool_request,
+    create_tool_response,
+)
 
-# Specific directory
-pytest tests/consensus/
-
-# With coverage
-pytest tests/ --cov=src --cov-report=term-missing
-
-# Specific marker
-pytest tests/ -m unit
-
-# Parallel execution
-pytest tests/ -n auto
-
-# Verbose output
-pytest tests/ -v
-
-# Stop on first failure
-pytest tests/ -x
+def test_create_actor_message():
+    msg = create_actor_message(
+        content={"text": "hello"},
+        sender_id="agent1",
+        priority=MessagePriority.HIGH
+    )
+    assert msg.priority == MessagePriority.HIGH
 ```
 
-## CI/CD Commands
+**Reset Async State (autouse fixture):**
+```python
+@pytest.fixture(autouse=True)
+def reset_async_state():
+    """Reset async state between tests."""
+    yield
+    try:
+        loop = asyncio.get_running_loop()
+        pending = asyncio.all_tasks(loop)
+        for task in pending:
+            task.cancel()
+    except RuntimeError:
+        pass
+```
 
-From `CLAUDE.md`:
-```bash
-# Python verification
-pytest tests/
-ruff check src tests
-mypy src
+## Integration Test Patterns
 
-# Frontend verification
-npm test
-npm run lint
-npm run build
+**Agent-to-Agent Messaging:**
+```python
+@pytest.mark.asyncio
+async def test_agent_message_passing(mock_nats):
+    """Test messages pass between agents via NATS."""
+    await mock_nats.connect()
+    
+    # Agent 1 sends message
+    await mock_nats.publish(
+        "agent.2",
+        {"message_type": "task", "content": "do work"},
+        reply="agent.1.replies"
+    )
+    
+    # Verify message was recorded
+    assert len(mock_nats.published_messages) == 1
+```
+
+**Consensus Flow:**
+```python
+@pytest.mark.asyncio
+async def test_deliberation_flow(triad_agents, mock_llm):
+    """Test triad deliberation produces consensus."""
+    # Setup triad with mock LLM
+    # Initiate deliberation
+    # Verify all three agents participate
+    # Verify consensus reached
+```
+
+## Security Test Patterns
+
+**Injection Detection:**
+```python
+def test_exec_injection_detected():
+    """exec() injection pattern should be detected."""
+    validator = InputValidator()
+    result = validator.validate({
+        "request_id": str(uuid.uuid4()),
+        "content": "exec('malicious code')",
+    })
+    assert result.passed is False
+    assert "exec" in result.reason.lower()
+
+def test_sql_injection_detected():
+    """SQL injection pattern should be detected."""
+    result = validator.validate({
+        "request_id": str(uuid.uuid4()),
+        "content": "' OR '1'='1",
+    })
+    assert result.passed is False
+```
+
+**Secret Detection:**
+```python
+def test_api_key_detected():
+    """API key pattern should be detected."""
+    validator = OutputValidator()
+    result = validator.validate("api_key=sk-1234567890abcdef")
+    assert result.severity == Severity.WARNING
+    assert result.details.get("sanitized") is True
 ```
 
 ---
 
-*Testing analysis: 2026-04-13*
+*Testing analysis: 2026-04-15*

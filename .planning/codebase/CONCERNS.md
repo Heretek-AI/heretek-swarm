@@ -1,304 +1,476 @@
 # Codebase Concerns
 
-**Analysis Date:** 2026-04-13
+**Analysis Date:** 2026-04-15
 
-## Tech Debt
+## Critical Issues (P0)
 
-### Large Files (Violating Single Responsibility)
+### P0-A: Dead Code — Legacy Top-Level `src/` Modules
 
-**Issue:** Multiple files exceed 1000 lines, making them difficult to maintain, test, and understand.
+**Severity:** HIGH — Code that is never imported by the active package
 
-- `src/heretek_swarm/actors/arbiter.py` - 1792 lines
-- `src/heretek_swarm/config/service.py` - 1531 lines
-- `src/heretek_swarm/actors/base.py` - 1527 lines
-- `src/heretek_swarm/actors/perceiver_plus.py` - 1477 lines
-- `src/heretek_swarm/collective/swarm_intelligence.py` - 1469 lines
-- `src/heretek_swarm/consensus/maker_enhanced.py` - 1393 lines
-- `src/heretek_swarm/consciousness/fep_active_inference.py` - 1392 lines
-- `src/heretek_swarm/api/observability.py` - 1314 lines
-- `src/heretek_swarm/actors/habit_forge.py` - 1306 lines
+**Issue:** ~8,000 lines of dead code across legacy directories that have been superseded by `src/heretek_swarm/`:
 
-**Fix approach:** Break these into smaller, focused modules with clear responsibilities. Each file should ideally be under 500 lines.
+| Directory | Files | Lines | Status |
+|-----------|-------|-------|--------|
+| `src/observability/` | `__init__.py`, `metrics.py`, `tracing.py` | ~500 | DEAD — `src/heretek_swarm/observability/` supersedes |
+| `src/memory/` | `base.py`, `embeddings.py`, `ephemeral.py`, `mem0_backend.py`, `persistent.py`, `unified.py`, `__init__.py` | ~2,500 | DEAD — `src/heretek_swarm/memory/` supersedes |
+| `src/rag/` | `document_processor.py`, `embedding_service.py`, `rag_pipeline.py`, `retriever.py`, `__init__.py` | ~2,000 | DEAD — `src/heretek_swarm/rag/` supersedes |
+| `src/state/` | `base.py`, `lineage.py`, `manager.py`, `snapshots.py`, `__init__.py` | ~1,500 | DEAD — `src/heretek_swarm/state/` supersedes |
+| `src/tools/` | `base.py`, `examples.py`, `registry.py`, `__init__.py` | ~1,400 | DEAD — `src/heretek_swarm/tools/` supersedes |
+| `src/evaluation/` | `evaluator.py`, `__init__.py` | ~500 | UNUSED — not imported by any active module |
 
-### Deprecated Python AST Nodes
+**Files:** `src/observability/`, `src/memory/`, `src/rag/`, `src/state/`, `src/tools/`, `src/evaluation/`
 
-**Issue:** The workflow engine uses deprecated Python AST node classes for backward compatibility.
+**Fix Approach:** Delete entire legacy directories. Evidence shows zero imports from legacy modules by `src/heretek_swarm/`.
 
-- **Files:** `src/heretek_swarm/workflow/engine.py` (lines 85-87, 225-229)
-- **Details:** Uses `ast.Num`, `ast.Str`, `ast.NameConstant` which were deprecated in Python 3.8
+---
 
-**Impact:** Code may break with future Python versions and generates deprecation warnings.
+### P0-B: Duplicate Module Names — Import Ambiguity
 
-**Fix approach:** Replace with `ast.Constant` which is the unified node type for all constants.
+**Severity:** HIGH — Python import ambiguity, namespace collision risk
 
-### Stub Functions Returning None
+**Issue:** 12 module names appear in both `src/` (legacy) and `src/heretek_swarm/` (active):
 
-**Issue:** Actor stubs module provides functions that return None, relying on tests to patch them.
+| Module | Legacy Path | Active Path | Conflict Risk |
+|--------|-------------|-------------|---------------|
+| `base` | `src/memory/base.py`, `src/tools/base.py`, `src/state/base.py` | `src/heretek_swarm/memory/base.py`, `src/heretek_swarm/tools/base.py`, `src/heretek_swarm/actors/base.py`, `src/heretek_swarm/llm/providers/base.py` | HIGH |
+| `metrics` | `src/observability/metrics.py` | `src/heretek_swarm/collective/metrics.py`, `src/heretek_swarm/api/metrics.py`, `src/heretek_swarm/observability/metrics.py` | HIGH |
+| `registry` | `src/tools/registry.py` | `src/heretek_swarm/tools/registry.py`, `src/heretek_swarm/runtime/registry.py`, `src/heretek_swarm/channels/registry.py` | HIGH |
+| `persistent` | `src/memory/persistent.py` | `src/heretek_swarm/memory/persistent.py` | HIGH |
 
-- **File:** `src/heretek_swarm/actors/stubs.py`
-- **Functions:** `get_nats_event_mesh()`, `get_llm_provider()`, `get_db_pool()` all return `None`
+**Files:** Multiple legacy module files
 
-**Impact:** Runtime errors if stubs are not properly patched; difficult to trace dependency initialization.
+**Fix Approach:** Rename legacy modules with `legacy_` prefix OR delete entirely if unused (per P0-A).
 
-**Fix approach:** Implement proper dependency injection or use a service locator pattern.
+---
+
+### P0-C: GAP-003 — Observability Dashboard Incomplete
+
+**Severity:** CRITICAL — GAP-003 marked P0 in `EXPANSION_ROADMAP.md` but remains incomplete
+
+**Issue:** Acceptance criteria all unchecked:
+- [ ] All 23 agents visible
+- [ ] Real-time updates via WebSocket
+- [ ] Consciousness metrics (GWT, IIT, AST, FEP)
+- [ ] < 500ms component load time
+
+**Files:** `dashboard/frontend/src/` (incomplete implementation)
+
+**Fix Approach:** Schedule as actual implementation sprint, not documentation milestone.
+
+---
+
+## High Priority Issues (P1)
+
+### P1-A: Oversized Files — Domain-Driven Design Violation
+
+**Severity:** MEDIUM-HIGH — CLAUDE.md mandates files under 500 lines
+
+**Issue:** 12+ source files exceed 500 lines (some exceed 2,000):
+
+| File | Lines | Violation |
+|------|-------|-----------|
+| `src/heretek_swarm/actors/sentinel.py` | 2,358 | +1,858 |
+| `src/heretek_swarm/actors/sentinel_prime.py` | 1,733 | +1,233 |
+| `src/heretek_swarm/actors/chronos.py` | 1,625 | +1,125 |
+| `src/heretek_swarm/gateway/nats_event_mesh.py` | 1,583 | +1,083 |
+| `src/heretek_swarm/actors/nexus.py` | 1,546 | +1,046 |
+| `src/heretek_swarm/actors/perceiver_plus.py` | 1,516 | +1,016 |
+| `src/heretek_swarm/security/zero_trust.py` | 1,411 | +911 |
+| `src/heretek_swarm/consensus/immune.py` | 1,405 | +905 |
+| `src/heretek_swarm/consensus/maker_enhanced.py` | 1,393 | +893 |
+| `src/heretek_swarm/consciousness/fep_active_inference.py` | 1,392 | +892 |
+| `src/heretek_swarm/actors/examiner.py` | 1,348 | +848 |
+| `src/heretek_swarm/consensus/deliberation.py` | 1,339 | +839 |
+
+**Total:** 12+ files averaging ~1,500 lines = ~18,000+ lines of oversized code
+
+**Files:** See table above
+
+**Fix Approach:** Break each file into focused sub-modules. Priority order: `sentinel.py`, `sentinel_prime.py`, `chronos.py`, `nats_event_mesh.py`.
+
+---
+
+### P1-B: Broad Exception Handlers — 100+ Instances
+
+**Severity:** MEDIUM — Anti-pattern; masks bugs, prevents granular error handling
+
+**Issue:** `except Exception` appears 100+ times across codebase:
+
+| Module | Count | Notable |
+|--------|-------|---------|
+| `observability/__init__.py` | 6 | Layer 4 audit logging |
+| `runtime/tools.py` | 6 | Tool execution |
+| `runtime/autonomous_runtime.py` | 6 | Main loop |
+| `observability/tracing.py` | 5 | Distributed tracing |
+| `config/service.py` | 9 | Configuration loading |
+| Other modules | ~70+ | Various |
+
+**Files:** `src/heretek_swarm/observability/`, `src/heretek_swarm/runtime/`, `src/heretek_swarm/config/service.py`, etc.
+
+**Fix Approach:** Replace `except Exception` with specific exception types. Use `except (ValueError, TypeError)` etc. where appropriate.
+
+---
+
+### P1-C: Database Pooling Not Configured
+
+**Severity:** MEDIUM — Performance issues under load
+
+**Issue:** Zero-Trust audit (2026-04-10) identified: "Database pooling not configured"
+
+**Impact:** PostgreSQL connection overhead, potential connection exhaustion under load
+
+**Files:** `docker-compose.yml` (no pooling config), `src/heretek_swarm/state/repository.py`
+
+**Fix Approach:** Configure `asyncpg` connection pool parameters:
+- `pool_size=20`
+- `max_overflow=10`
+- `pool_timeout=30`
+- `pool_recycle=3600`
+
+---
+
+### P1-D: NATS → Actor Connection Not Wired
+
+**Severity:** HIGH — Event mesh infrastructure ready but not operational
+
+**Issue:** From SWARM_STATE.md: "NATS → Actor connection - Infrastructure ready, needs wiring"
+
+**Status:** NATS code exists in `src/heretek_swarm/infrastructure/nats/` and `src/heretek_swarm/gateway/`, docker-compose includes NATS service, but agents don't communicate via event mesh.
+
+**Files:** `src/heretek_swarm/infrastructure/nats/*`, `src/heretek_swarm/gateway/nats_event_mesh.py`
+
+**Fix Approach:** Wire NATS publisher/subscriber into agent message handling loop.
+
+---
+
+## Medium Priority Issues (P2)
+
+### P2-A: Consciousness Metrics Incomplete
+
+**Severity:** MEDIUM — Core consciousness frameworks not fully implemented
+
+**Issue:** From SWARM_STATE.md: "Consciousness metrics - IIT/AST measurement incomplete"
+
+**GAP Coverage:**
+| GAP | Status | Verification |
+|-----|--------|--------------|
+| GAP-006 (IIT) | Partial | Import verified only |
+| GAP-007 (AST) | Partial | Import verified only |
+| GAP-008 (FEP) | Partial | Import verified only |
+| GAP-009 (GWT) | Partial | Import verified only |
+
+**Files:** `src/heretek_swarm/consciousness/*`
+
+**Fix Approach:** Complete implementation of consciousness measurement algorithms with actual runtime metrics collection.
+
+---
+
+### P2-B: Tribunal Integration Incomplete
+
+**Severity:** MEDIUM — Consensus mechanism not yet operational
+
+**Issue:** From SWARM_STATE.md: "Tribunal integration - Consensus mechanism not yet operational"
+
+**Files:** `src/heretek_swarm/consensus/tribunal.py`, `src/heretek_swarm/consensus/deliberation.py`
+
+**Fix Approach:** Wire Tribunal into agent decision-making flow for dispute resolution.
+
+---
+
+### P2-C: State Test API Mismatches
+
+**Severity:** MEDIUM — 4 state tests failing due to API changes
+
+**Issue:** From SWARM_STATE.md:
+- `test_compute_diff`: expects `diff.added_agents` but returns `diff["added"]` dict
+- `test_update_agent_state`: KeyError 'task' - working_memory not being set correctly
+- `test_rollback_to_snapshot`: agent states not being restored properly
+- `test_full_workflow`: compound failure from above issues
+
+**Files:** `tests/` (state tests)
+
+**Fix Approach:** Fix test expectations OR fix implementation to match test expectations.
+
+---
+
+### P2-D: RAG Tests Failing (External Dependencies)
+
+**Severity:** MEDIUM — ~30 RAG tests require external services
+
+**Issue:** RAG tests require Qdrant, OpenAI API keys, etc. not available in test environment.
+
+**Files:** `tests/` (RAG tests)
+
+**Fix Approach:** Mock external services for unit tests OR mark as `@pytest.mark.integration`.
+
+---
+
+### P2-E: Qdrant Healthcheck Misconfiguration
+
+**Severity:** LOW — Docker healthcheck fails but functional
+
+**Issue:** Qdrant responds to HTTP (200 OK) but Docker healthcheck fails
+
+**Current (broken):**
+```yaml
+healthcheck:
+  test: ["CMD-SHELL", "bash -c 'echo > /dev/tcp/localhost/6333' || exit 1"]
+```
+
+**Should be:**
+```yaml
+healthcheck:
+  test: ["CMD-SHELL", "curl -f http://localhost:6333/readyz"]
+```
+
+**Files:** `docker-compose.yml` (line 207-212)
+
+**Fix Approach:** Fix Qdrant healthcheck command.
+
+---
+
+## Security Considerations
+
+### SC-1: API Key Storage (MEDIUM Risk)
+
+**Issue:** Zero-Trust audit found: "Env vars used, defaults need hardening"
+
+**Current:** API keys stored in `.env` file, passed via environment variables
+
+**Files:** `.env.example`, `docker-compose.yml`
+
+**Recommendations:**
+- Use secrets manager (HashiCorp Vault, AWS Secrets Manager) for production
+- Remove any hardcoded fallback keys
+- Validate env vars at startup
+
+---
+
+### SC-2: SSRF Vulnerabilities in API Wizard
+
+**Issue:** URL construction from user-controlled data without validation
+
+**Files:** `src/heretek_swarm/api/wizard.py` (lines 470-483, 511-515, 536, 563-575, 599-611, 635-647, 672)
+
+**Recommendations:** Implement URL validation with allowlist of permitted schemes and domains.
+
+---
+
+### SC-3: Weak Cryptography - PRNG Usage (97 instances)
+
+**Issue:** Using `random.random()` instead of cryptographically secure RNG
+
+**Affected files (selected):**
+- `src/heretek_swarm/collective/adaptive_learning.py` - lines 416, 428, 704, 712, 758, 918, 925, 934
+- `src/heretek_swarm/collective/swarm_intelligence.py` - lines 604-605, 689-690
+- `src/heretek_swarm/security/ddos_protection.py` - line 900
+
+**Recommendations:**
+- Python: Use `secrets` module or `os.urandom()`
+- TypeScript: Use `crypto.getRandomValues()` or `randomUUID()`
+
+---
+
+### SC-4: Deprecated Python AST Nodes
+
+**Issue:** Workflow engine uses deprecated Python AST node classes
+
+**Files:** `src/heretek_swarm/workflow/engine.py` (lines 85-87, 225-229)
+
+**Details:** Uses `ast.Num`, `ast.Str`, `ast.NameConstant` deprecated in Python 3.8
+
+**Recommendations:** Replace with `ast.Constant`.
+
+---
+
+## Performance Considerations
+
+### PF-1: Connection Pooling Missing
+
+**Issue:** No explicit PostgreSQL connection pooling configured
+
+**Impact:** Connection overhead, potential exhaustion under load
+
+**Files:** `src/heretek_swarm/state/repository.py`, `docker-compose.yml`
+
+**Recommendations:** Configure asyncpg pool with `pool_size=20`, `max_overflow=10`
+
+---
+
+### PF-2: Large Actor Classes
+
+**Issue:** Multiple actor classes exceed 1,500 lines
+
+**Files:** `src/heretek_swarm/actors/sentinel.py`, `src/heretek_swarm/actors/chronos.py`, `src/heretek_swarm/actors/coordinator.py`
+
+**Impact:** Difficult to maintain, test, and understand
+
+**Improvement path:** Extract mixins into standalone components; use composition over inheritance
+
+---
+
+### PF-3: Synchronous Config Service
+
+**Issue:** Configuration service has blocking I/O patterns in 1,500+ line file
+
+**Files:** `src/heretek_swarm/config/service.py`
+
+**Impact:** Could block event loop in async contexts
+
+**Improvement path:** Review for async/await patterns and batch operations
+
+---
 
 ## Known Bugs
 
-### Broad Exception Handling
+### KB-1: Empty Return Statements Silencing Errors
 
-**Issue:** Multiple locations catch `Exception` broadly without specific handling.
-
-**Files with `except Exception`:**
-- `src/heretek_swarm/observability/alerting.py` - lines 148, 188
-- `src/heretek_swarm/observability/tracing.py` - lines 89, 156, 173, 213, 397
-- `src/heretek_swarm/state/repository.py` - lines 271, 380, 442, 475, 511, 569, 608, 653
-- `src/heretek_swarm/workflow/engine.py` - lines 752, 840, 898
-- `src/heretek_swarm/collective/knowledge_transform.py` - lines 305, 803
-
-**Impact:** Errors are silently masked, making debugging difficult. May also impact performance due to exception unwinding.
-
-**Fix approach:** Catch specific exceptions and handle each appropriately. Log errors with context.
-
-### Empty Return Statements
-
-**Issue:** Multiple functions return empty collections instead of raising appropriate exceptions or propagating errors.
+**Issue:** Functions return `[]`, `{}`, or `None` instead of raising exceptions on error
 
 **Examples:**
 - `src/heretek_swarm/state/repository.py:939` - returns `[]`
 - `src/heretek_swarm/channels/registry.py:258` - returns `[]`
 - `src/heretek_swarm/gateway/jetstream_manager.py:868` - returns `[]`
 - `src/heretek_swarm/gateway/nats_event_mesh.py:530, 534, 580, 1144` - returns `[]`
-- `src/heretek_swarm/gateway/message_replay.py:427, 605` - returns `[]` or `{}`
 
-**Impact:** Calling code may not distinguish between "no data" and "error occurred."
+**Impact:** Calling code cannot distinguish "no data" from "error occurred"
 
-**Fix approach:** Either raise exceptions on error conditions or return a Result type that distinguishes success from failure.
+**Fix Approach:** Raise exceptions on error conditions or return a Result type
 
-### Incomplete Pass Statements
+---
 
-**Issue:** WebSocket handlers contain many `pass` statements indicating incomplete implementations.
+### KB-2: WebSocket Handlers with Incomplete Pass Statements
 
-- **File:** `src/heretek_swarm/api/websockets.py` - lines 388, 511, 536, 555, 604, 682, 782, 878, 965, 1062, 1137
+**Issue:** WebSocket message handlers contain `pass` statements indicating incomplete implementations
 
-**Impact:** WebSocket message handlers silently ignore messages, causing potential message loss.
+**Files:** `src/heretek_swarm/api/websockets.py` - lines 388, 511, 536, 555, 604, 682, 782, 878, 965, 1062, 1137
 
-**Fix approach:** Implement proper message handling or route to appropriate handlers.
+**Impact:** WebSocket messages silently ignored, causing potential message loss
 
-## Security Considerations
+**Fix Approach:** Implement proper message handling or route to appropriate handlers
 
-### Critical Time-Dependent Expressions (CRITICAL)
+---
 
-**Issue:** Time-dependent expressions evaluated at class definition time instead of runtime.
+### KB-3: Time-Dependent Expressions at Class Definition
 
+**Issue:** Time-dependent expressions evaluated at class definition time instead of runtime
+
+**Files:**
 - `src/heretek_swarm/gateway/nats_event_mesh.py:66` - `datetime.now()` in class attribute
 - `src/heretek_swarm/actors/langroid_adapter.py:64` - timeout evaluated once at import
 - `src/heretek_swarm/consensus/raft_election.py:119` - time-dependent class attribute
 
-**Impact:** Stale timestamps; behavior differs between module load time and request time.
+**Impact:** Stale timestamps; behavior differs between module load time and request time
 
-**Fix approach:** Move time-dependent expressions into methods that are called at request time.
+**Fix Approach:** Move time-dependent expressions into methods called at request time
 
-### SSRF Vulnerabilities in API Wizard (MAJOR)
-
-**Issue:** URL construction from user-controlled data without validation in multiple locations.
-
-- **File:** `src/heretek_swarm/api/wizard.py`
-- **Lines:** 470-483, 511-515, 536, 563-575, 599-611, 635-647, 672
-
-**Impact:** Attacker could induce server to make requests to internal services or external untrusted URLs.
-
-**Fix approach:** Implement URL validation with allowlist of permitted schemes and domains.
-
-### Hard-coded Credentials in Tests (MAJOR)
-
-**Issue:** Test files contain hard-coded passwords.
-
-- `tests/state/test_repository.py:61`
-- `tests/collective/test_session46_emergent_intelligence.py:683`
-
-**Fix approach:** Use environment variables for test credentials.
-
-### Weak Cryptography - PRNG Usage (97 instances)
-
-**Issue:** Using `random.random()` or `Math.random()` instead of cryptographically secure RNG.
-
-**Affected files (selected):**
-- `src/heretek_swarm/collective/adaptive_learning.py` - lines 416, 428, 704, 712, 758, 918, 925, 934
-- `src/heretek_swarm/collective/agent_adaptation.py` - line 899
-- `src/heretek_swarm/collective/swarm_intelligence.py` - lines 604-605, 689-690
-- `src/heretek_swarm/security/ddos_protection.py` - line 900
-- `dashboard/frontend/src/components/Observability/A2ATracker.tsx` - lines 82-114, 385-394
-- `dashboard/frontend/src/components/Settings/ModelGarage.tsx` - lines 583-587, 621-623, 637
-
-**Fix approach:**
-- Python: Use `secrets` module or `os.urandom()`
-- TypeScript: Use `crypto.getRandomValues()` or `randomUUID()`
-
-### Regex DoS Vulnerabilities (6 instances)
-
-**Issue:** Regex patterns vulnerable to super-linear/polynomial runtime due to backtracking.
-
-- `dashboard/frontend/src/utils/setupValidation.ts:48`
-- `scripts/wire_agents.py:318`
-- `scripts/wire_agents_session44.py:316`
-- `src/heretek_swarm/plugins/liberation.py:170, 171, 172`
-
-**Fix approach:** Use atomic groups `(?>)` or possessive quantifiers to prevent backtracking.
-
-### Kubernetes Security Issues
-
-**RBAC (7 instances):** Service accounts not bound to RBAC roles in k8s deployments.
-
-**Storage Limits (7 instances):** Missing `ephemeral-storage` limits in container specs.
-
-### Log Injection Vulnerability (MINOR)
-
-**File:** `src/heretek_swarm/consensus/audit_query.py:382`
-
-**Impact:** User-controlled data logged without sanitization enables log injection attacks.
-
-**Fix approach:** Sanitize log input or use structured logging with base64 encoding for non-alphanumeric data.
-
-## Performance Bottlenecks
-
-### Large Actor Classes
-
-**Problem:** The `AgentActor` base class (1527 lines) and derived actors like `Arbiter` (1792 lines) are very large.
-
-- **Files:** `src/heretek_swarm/actors/base.py`, `src/heretek_swarm/actors/arbiter.py`
-- **Cause:** Multiple responsibilities mixed into single classes (messaging, state, lifecycle, validation)
-- **Improvement path:** Extract mixins into standalone components; use composition over inheritance
-
-### Synchronous Config Service
-
-**Problem:** Configuration service appears to have blocking I/O patterns in large file.
-
-- **File:** `src/heretek_swarm/config/service.py` - 1531 lines
-- **Impact:** Could block event loop in async contexts
-- **Improvement path:** Review for async/await patterns and batch operations
-
-### Memory Tiering Not Fully Implemented
-
-**Area:** `src/heretek_swarm/memory/tiering.py`
-- **Problem:** Memory tiering exists but may not be fully utilized across the codebase
-- **Impact:** Memory usage may be higher than necessary
-- **Improvement path:** Audit memory access patterns and ensure tiering is properly applied
-
-## Fragile Areas
-
-### Langroid Adapter (Optional Dependency)
-
-**Files:** `src/heretek_swarm/actors/langroid_adapter.py`
-- **Why fragile:** Uses try/except ImportError pattern; code may run without Langroid installed
-- **Safe modification:** Test both with and without Langroid installed
-- **Test coverage:** Verify behavior when `LANGROID_AVAILABLE` is True and False
-
-### MCP Client Error Handling
-
-**File:** `src/heretek_swarm/mcp/client.py`
-- **Why fragile:** Connection failures may not properly clean up HTTP clients
-- **Safe modification:** Ensure `_http_client` is always closed on error
-- **Test coverage:** Test connection failures and reconnection logic
-
-### Zero Trust Validator
-
-**File:** `src/heretek_swarm/security/zero_trust.py`
-- **Why fragile:** Complex validation logic with many exception handlers
-- **Safe modification:** Add comprehensive error cases and logging
-- **Test coverage:** Verify all exception paths are tested
+---
 
 ## Scaling Limits
 
-### In-Memory Rate Limiting
+### SL-1: In-Memory Rate Limiting
 
 **Resource:** `src/heretek_swarm/api/rate_limiting.py`
 - **Current capacity:** Handles per-instance rate limiting
 - **Limit:** Breaks in multi-instance deployments (each instance has separate state)
 - **Scaling path:** Use Redis-backed rate limiting for distributed deployments
 
-### Actor Supervisor
+---
 
-**Resource:** `src/heretek_swarm/actors/supervisor.py`
-- **Current capacity:** Manages actor lifecycle
-- **Limit:** Unknown maximum actor count; may hit memory limits
-- **Scaling path:** Implement actor pooling and load shedding
-
-### WebSocket Connection Manager
+### SL-2: WebSocket Connection Manager
 
 **Resource:** `src/heretek_swarm/api/websockets.py` - `ConnectionManager`
 - **Current capacity:** Tracks all active WebSocket connections in memory
 - **Limit:** Memory-bound based on connection count
 - **Scaling path:** Use Redis pub/sub for connection state in distributed setup
 
+---
+
 ## Dependencies at Risk
 
-### mem0ai
+### DR-1: mem0ai
 
 **Package:** `mem0ai`
 - **Risk:** External dependency for memory management; may have breaking changes
 - **Impact:** Memory functionality breaks if package changes API
-- **Migration plan:** Already has conditional import with `MEM0_AVAILABLE` flag; maintain this pattern
+- **Mitigation:** Already has conditional import with `MEM0_AVAILABLE` flag; maintain this pattern
 
-### swarms
+---
+
+### DR-2: swarms
 
 **Package:** `swarms>=5.0.0`
 - **Risk:** Core framework dependency
 - **Impact:** All agent functionality depends on this
-- **Migration plan:** Langroid adapter exists as alternative; adapter pattern allows swapping
+- **Mitigation:** Langroid adapter exists as alternative; adapter pattern allows swapping
 
-### Optional Dependency Pattern
-
-**Pattern found:** Multiple files use try/except for optional imports (Langroid, slowapi, mem0)
-- **Risk:** Code may run in degraded state without clear indication
-- **Impact:** Features silently disabled instead of failing fast
-- **Recommendation:** Add startup validation that reports missing optional dependencies
-
-## Missing Critical Features
-
-### Health Checks for All Dependencies
-
-**Gap:** Not all external services have health check endpoints
-- **Files:** `src/heretek_swarm/api/main.py` references health checks
-- **Blocks:** Deployment automation and readiness probes
-
-### Graceful Degradation Documentation
-
-**Gap:** No documented behavior when Redis, NATS, or other services are unavailable
-- **Impact:** Unclear what works vs what fails in partial outage scenarios
-
-### Circuit Breakers Not Fully Integrated
-
-**Gap:** `circuitbreaker>=2.0.0` is a dependency but may not be consistently applied
-- **Impact:** Cascading failures possible under partial outage
+---
 
 ## Test Coverage Gaps
 
-### Large Files Untested
+### TC-1: Large Files Untested
 
 **Untested areas:**
-- `src/heretek_swarm/actors/arbiter.py` - 1792 lines, complex conflict resolution logic
-- `src/heretek_swarm/config/service.py` - 1531 lines, configuration loading
-- `src/heretek_swarm/collective/swarm_intelligence.py` - 1469 lines
+- `src/heretek_swarm/actors/sentinel.py` - 2,358 lines, complex safety logic
+- `src/heretek_swarm/actors/chronos.py` - 1,625 lines
+- `src/heretek_swarm/collective/swarm_intelligence.py` - 1,300+ lines
 
-**Risk:** Changes to these files may break production with no test feedback.
+**Risk:** Changes to these files may break production with no test feedback
 
-**Priority:** HIGH
+---
 
-### WebSocket Message Handling
+### TC-2: WebSocket Message Handling
 
 **What's not tested:** `src/heretek_swarm/api/websockets.py` handlers with `pass` statements
 - **Risk:** Messages are silently ignored
 - **Priority:** HIGH
 
-### MCP Client Reconnection
+---
 
-**What's not tested:** `src/heretek_swarm/mcp/client.py` connection failure and recovery
-- **Risk:** Production connection issues may not be handled gracefully
-- **Priority:** MEDIUM
+### TC-3: State Module Tests (4 Failing)
 
-## Code Quality Issues (SonarQube Findings)
+**What's not tested:**
+- `diff.added_agents` API
+- `working_memory` key in update flow
+- Snapshot rollback functionality
 
-### Cognitive Complexity Violations (14 open CRITICAL issues)
+**Files:** `tests/state/test_repository.py`, `tests/state/test_models.py`
+
+**Risk:** State persistence bugs may go undetected
+
+---
+
+### TC-4: RAG Pipeline Tests (~30 Failing)
+
+**What's not tested:**
+- Qdrant integration
+- Hybrid retrieval
+- Embedding pipeline
+
+**Files:** `tests/rag/*`
+
+**Risk:** RAG functionality may break without detection
+
+---
+
+### TC-5: Consciousness Metrics Tests
+
+**What's not tested:**
+- IIT phi calculation
+- AST consciousness score
+- FEP active inference
+- GWT workspace broadcasting
+
+**Files:** `tests/consciousness/*`
+
+**Risk:** Consciousness measurement may produce incorrect metrics
+
+---
+
+## Code Quality Issues
+
+### CQ-1: Cognitive Complexity Violations (14 CRITICAL)
 
 Functions exceeding complexity threshold of 15:
 
@@ -307,40 +479,27 @@ Functions exceeding complexity threshold of 15:
 | `src/heretek_swarm/mcp/registry.py` | 324 | 61 (4x threshold!) |
 | `src/heretek_swarm/runtime/main_loop.py` | 525 | 28 |
 | `src/heretek_swarm/observability/metrics.py` | 265 | 19 |
-| `src/heretek_swarm/evaluation/evaluator.py` | 213 | 18 |
 | `src/heretek_swarm/runtime/autonomous_runtime.py` | 530 | 18 |
-| `src/heretek_swarm/actors/base/state_management.py` | 26 | 18 |
 | `src/heretek_swarm/infrastructure/nats/memory_sync.py` | 548 | 18 |
-| `src/heretek_swarm/consensus/audit.py` | 229 | 16 |
-| `src/heretek_swarm/actors/base/message_handling.py` | 26 | 16 |
-| `src/heretek_swarm/infrastructure/nats/memory_sync.py` | 342 | 16 |
 
-### Duplicated String Literals (7 open CRITICAL issues)
+---
 
-- `src/heretek_swarm/api/wizard.py` - "API key is required" (5x), "application/json" (4x), "API key is valid" (5x), "Invalid API key" (5x), "Connection timed out" (5x)
-- `src/heretek_swarm/mcp/client.py:122` - "Client not connected" (4x)
-- `src/heretek_swarm/api/consensus.py:1118` - "Tribunal not available" (6x)
-
-### Async Without Await (90+ open issues)
+### CQ-2: Async Without Await (90+ issues)
 
 Functions declared `async` but containing no `await` calls:
 
+**Affected modules:**
 - `src/heretek_swarm/actors/arbiter/strategies.py` - 14 instances
 - `src/heretek_swarm/state/models.py` - 16 instances
 - `src/heretek_swarm/collective/algorithms/*.py` - multiple instances
 
-**Impact:** These functions block when called; async is misleading.
+**Impact:** These functions block when called; async is misleading
 
-### Redundant Exception Classes (15+ open issues)
+---
 
-Custom exception classes that inherit from parent exceptions already caught in same try-except:
+### CQ-3: File Duplication (~5,200 duplicated lines)
 
-- `src/heretek_swarm/state/event_store.py` - 3 instances
-- `src/heretek_swarm/state/repository.py` - 7 instances
-
-## File Duplication (5,203 duplicated lines)
-
-**Priority 1 (>80% density) - Immediate refactoring needed:**
+**Priority 1 (>80% density):**
 
 | File | Duplicated Lines | Density |
 |------|-----------------|---------|
@@ -349,10 +508,31 @@ Custom exception classes that inherit from parent exceptions already caught in s
 | `src/heretek_swarm/actors/charlie.py` | 271 | 91.2% |
 | `src/heretek_swarm/actors/alpha.py` | 258 | 90.8% |
 | `src/heretek_swarm/actors/steward.py` | 285 | 83.3% |
-| `src/heretek_swarm/collective/emergence_analyzer.py` | 80 | 83.3% |
 
-**Estimated deduplication potential:** ~2,700 lines (52% of current duplication)
+**Estimated deduplication potential:** ~2,700 lines
 
 ---
 
-*Concerns audit: 2026-04-13*
+## Summary
+
+| Priority | Count | Estimated Fix Time |
+|----------|-------|-------------------|
+| P0 | 3 | 1-2 days |
+| P1 | 4 | 3-5 days |
+| P2 | 5 | 2-3 days |
+| Security | 4 | 2-3 days |
+| Performance | 3 | 1-2 days |
+| Bugs | 3 | 1-2 days |
+| Quality | 3 | 3-4 days |
+| **Total** | **25+** | **13-21 days** |
+
+**Top 5 Immediate Actions:**
+1. Delete legacy `src/` directories (P0-A) - 1-2 hours
+2. Fix Qdrant healthcheck (P2-E) - 15 minutes
+3. Configure database pooling (P1-C) - 30 minutes
+4. Wire NATS to actors (P1-D) - 2-3 days
+5. Fix state test API mismatches (P2-C) - 4-6 hours
+
+---
+
+*Concerns audit: 2026-04-15*

@@ -1,223 +1,308 @@
 # Coding Conventions
 
-**Analysis Date:** 2026-04-13
+**Analysis Date:** 2026-04-15
 
-## Language and Style
+## Naming Patterns
 
-**Python:**
-- Version: 3.12+ (from `.nvmrc` and pyproject.toml)
-- Style: PEP 8 with type annotations required on all function signatures
-- Formatter: `ruff format` (black-compatible)
-- Linter: `ruff check`
+**Files:**
+- Python modules: `snake_case.py` (e.g., `actor_messages.py`, `zero_trust.py`)
+- Test files: `test_<module>.py` or `<module>_test.py`
+- Integration tests: `tests/<domain>/test_<feature>.py`
 
-**TypeScript/JavaScript:**
-- Framework: React with Vite
-- Style: ESLint + Prettier (configured in project)
+**Classes:**
+- PascalCase: `AgentActor`, `StewardAgent`, `ActorFactory`
+- Mixins: `XxxMixin` suffix (e.g., `ValidationMixin`, `DeliberationMixin`)
+- Data classes: PascalCase with descriptive names (e.g., `ActorConfig`, `LayerResult`)
 
-## Python Conventions
+**Functions/Methods:**
+- snake_case: `validate_message()`, `create_actor()`, `process_message()`
+- Private methods: `_leading_underscore`
+- Async methods: prefixed with `async_` where ambiguous
 
-### Type Annotations
+**Variables:**
+- snake_case: `agent_id`, `message_type`, `state_value`
+- Constants: UPPER_SNAKE_CASE: `MESSAGE_LATENCY_BASELINE_MS`, `CONCURRENT_AGENT_TARGET`
+- Private variables: `_leading_underscore`
 
-All function signatures require type annotations:
+**Types/Enums:**
+- StrEnum with UPPER_SNAKE_CASE values: `class Severity(StrEnum): CRITICAL = "CRITICAL"`
+- Message types: `MESSAGE_TYPE = "message_type"` pattern
 
-```python
-from typing import Any
+## Code Style
 
-def process_message(message: ActorMessage) -> None:
-    ...
+**Formatting:**
+- Tool: `ruff` (configured in `pyproject.toml`)
+- Line length: 100 characters
+- Use `ruff format` for formatting (integrated with ruff)
 
-def get_state(key: str, default: str | None = None) -> str | None:
-    ...
-```
+**Linting:**
+- Tool: `ruff` with comprehensive rule sets (E, W, F, I, B, C4, UP, ARG, SIM, TCH, PTH, ERA, RUF, ASYNC, S, A, COM, DTZ, T10, EXE, FIX, FA, INT, ISC, ICN, G, INP, PIE, PYI, PT, Q, RSE, RET, SLF, SLOT, TID, T20, PERF)
+- Ignored rules in tests: `S101` (assert), `ARG001` (unused args), `PT019` (pytest fixtures)
 
-### Data Classes
-
-Use dataclasses for structured data with `field()` for defaults:
-
-```python
-from dataclasses import dataclass, field
-from datetime import UTC, datetime
-
-@dataclass
-class AgentConfig:
-    agent_id: str
-    agent_type: str
-    capabilities: list[str] = field(default_factory=list)
-    reputation: float = 1.0
-    max_concurrent_tasks: int = 10
-```
-
-### Enums
-
-Use StrEnum for string-based enums:
-
-```python
-from enum import StrEnum
-
-class ConsensusState(StrEnum):
-    GATHERING = "gathering"
-    VOTING = "voting"
-    AGGREGATING = "aggregating"
-    COMPLETED = "completed"
-    FAILED = "failed"
-```
-
-### Immutability
-
-Prefer frozen dataclasses for immutable data:
-
-```python
-@dataclass(frozen=True)
-class Vote:
-    agent_id: str
-    decision: str
-    confidence: float
-    timestamp: str
-    metadata: dict[str, Any] = field(default_factory=dict)
-```
-
-## Naming Conventions
-
-| Element | Convention | Example |
-|---------|------------|---------|
-| Files | snake_case | `test_base_actor.py`, `state_repository.py` |
-| Classes | PascalCase | `AgentActor`, `MAKERConsensus` |
-| Functions/methods | snake_case | `get_state()`, `add_vote()` |
-| Constants | UPPER_SNAKE_CASE | `MESSAGE_LATENCY_BASELINE_MS` |
-| Private methods | _snake_case | `_check_red_flags()` |
-| Module-level vars | UPPER_SNAKE_CASE | `COVERAGE_THRESHOLD = 80` |
+**Type Checking:**
+- Tool: `mypy` with strict mode enabled
+- Python version: 3.11
+- Tests exempt from strict type checking: `[tool.mypy.overrides] module = "tests.*"`
 
 ## Import Organization
 
-Standard library first, then third-party, then local:
+**Order:**
+1. Standard library imports
+2. Third-party imports (pydantic, structlog, swarms, etc.)
+3. Local application imports (from heretek_swarm.*)
+4. Type imports last
 
+**Example:**
 ```python
-# Standard library
 import asyncio
-from dataclasses import dataclass, field
+import uuid
+from datetime import UTC, datetime
 from typing import Any
 
-# Third-party
-import pytest
 import structlog
+from pydantic import BaseModel, Field
 
-# Local application
 from heretek_swarm.actors.base import AgentActor
-from heretek_swarm.state.repository import StateRepository
+from heretek_swarm.validation.agent_messages import ActorMessage
+```
+
+**Path aliases:**
+- Use `from heretek_swarm.xxx` not relative imports within the package
+- `src` added to `known-first-party` in ruff isort config
+
+## Pydantic Models
+
+**Patterns:**
+- Use `BaseModel` with `model_config` for configuration
+- Use `Field()` for field definitions with constraints
+- Use `validator` decorators for custom validation
+- Use `StrEnum` for string-based enums
+
+**Example:**
+```python
+class ActorMessage(BaseModel):
+    message_id: str = Field(default_factory=lambda: f"msg_{uuid.uuid4().hex[:12]}")
+    message_type: str = Field(..., description="Type of the message")
+    content: dict[str, Any] = Field(..., description="Message content payload")
+
+    @pydantic_validator("content")
+    def validate_content_safety(cls, v: dict[str, Any]) -> dict[str, Any]:
+        # validation logic
+        return v
+
+    class Config:
+        extra = "allow"  # Allow flexibility
+        validate_assignment = True
+```
+
+## Error Handling
+
+**Patterns:**
+- Use structured logging via `structlog`
+- Catch specific exceptions, not bare `except:`
+- Propagate errors with context via logger
+- Use `exc_info=True` for exception stack traces in logs
+
+**Example:**
+```python
+try:
+    result = await some_operation()
+except ValidationError as e:
+    logger.warning(
+        f"[{self.agent_id}] Validation failed: {e}",
+        extra={"validation_errors": e.errors()},
+    )
+    raise ValueError(f"Invalid message format: {e.errors()}")
+except Exception as e:
+    logger.error(
+        f"[{self.agent_id}] Operation failed: {e}",
+        exc_info=True,
+    )
+    self.error_count += 1
+    raise
 ```
 
 ## Logging
 
-Use `structlog` for structured logging:
+**Framework:** `structlog`
+- Configured in module or at package init
+- Use bound loggers with agent context
+- JSON rendering for production
 
+**Patterns:**
 ```python
-import structlog
+logger = structlog.get_logger("ModuleName")
 
-logger = structlog.get_logger(__name__)
-
-logger.info("consensus_started", consensus_id="test-1", agent_count=3)
-logger.warning("unknown_consensus_id", consensus_id="nonexistent")
+# With context
+logger.info(
+    f"[{self.agent_id}] Actor spawned",
+    extra={
+        "name": self.name,
+        "topics": self.topics,
+    },
+)
 ```
 
-**Do not use** `print()` statements - use logging instead.
+**Key Conventions:**
+- Always include `agent_id` in brackets: `f"[{self.agent_id}] ..."`
+- Use `extra={}` dict for structured metadata
+- Use `exc_info=True` for errors
+- Log levels: DEBUG < INFO < WARNING < ERROR < CRITICAL
 
-## Error Handling
+## Actor Pattern
 
-- Use validation with Pydantic models for message content
-- Raise `ValueError` with descriptive messages for invalid input
-- Log errors with context before raising
-
+**Mixin Inheritance Order:**
 ```python
-def _validate_message_content(self, message_type: str, content: dict[str, Any]) -> Any:
-    """Validate message content against registered validator."""
-    if message_type not in self._validators:
-        return content  # Unknown types pass through
-
-    validator = self._validators[message_type]
-    try:
-        return validator(**content)
-    except Exception as e:
-        raise ValueError(f"Invalid content for {message_type}: {e}")
+class StewardAgent(
+    HealthReportingMixin,
+    ValidationMixin,
+    DeliberationMixin,
+    PatternMixin,
+    MemoryMixin,
+    LearningMixin,
+    TribunalMixin,
+    AgentActor,
+):
 ```
 
-## Async Code
+**Lifecycle Methods:**
+- `async def initialize(self)` - Override for setup
+- `async def cleanup(self)` - Override for teardown
+- `async def process_message(message: ActorMessage)` - Handle incoming messages
+- `register_handler(message_type, handler)` - Register message handlers
 
-- Use `async def` for all asynchronous functions
-- Use `pytest-asyncio` for async tests with `@pytest.mark.asyncio`
-- Always handle cleanup in fixtures with yield:
+**State Management:**
+- Use `ActorState` enum: SPAWNING, ACTIVE, SUSPENDED, TERMINATED, ERROR
+- Use `_state_repository` for persistence
+- Call `save_state()` before terminate
 
+## Validation Patterns
+
+**Input Validation:**
+- Pydantic models for message validation
+- UUID v4 validation for IDs
+- Size limits (max_content_size, max_string_length)
+- Pattern detection for injection attacks (exec, eval, __import__, subprocess, SQL injection, path traversal)
+
+**Zero-Trust 4-Layer Validation:**
+1. Input Validation - Pydantic v2, UUID v4, size limits
+2. Context Validation - injection detection, behavioral analysis
+3. Output Validation - PII detection, sensitive data filtering
+4. Audit Logging - structured logging, severity levels
+
+## Dataclasses vs Pydantic
+
+**Use Pydantic when:**
+- Validating external input
+- Need automatic validation on assignment
+- Working with JSON serialization
+- Need field constraints and validators
+
+**Use dataclass when:**
+- Internal data structures
+- Simple data containers
+- No validation needed
+
+## Async Patterns
+
+**Async/Await:**
+- Always use `async def` for async methods
+- Use `await` for all async operations
+- Handle `asyncio.CancelledError` in cancellation paths
+- Use `asyncio.create_task()` for fire-and-forget tasks
+
+**Event Loop:**
+- Tests use `pytest-asyncio` with `asyncio_mode = "auto"`
+- Use `@pytest_asyncio.fixture` for async fixtures
+- Cleanup pending tasks in fixtures
+
+## Testing Utilities
+
+**Mock Patterns:**
+- Use `MagicMock` and `AsyncMock` from `unittest.mock`
+- Mock NATS with in-memory `MockNATSEventMesh`
+- Mock LLM provider with deterministic responses
+- Mock database for integration tests
+
+**Fixtures Location:**
+- Root: `tests/conftest.py` - shared fixtures
+- Integration: `tests/integration/conftest.py` - integration-specific
+- Domain: `tests/<domain>/conftest.py` - domain-specific
+
+## Module Structure
+
+**Package Layout:**
+```
+src/heretek_swarm/
+├── actors/           # 23 agent implementations + base classes
+│   ├── base.py       # Re-exports from split modules
+│   ├── base/         # Core implementation (core.py, state_management.py, message_handling.py)
+│   ├── mixins/       # Reusable mixin functionality
+│   ├── factory.py    # ActorFactory for actor creation
+│   └── [agent].py    # Individual agent implementations
+├── validation/       # Message validation (Pydantic models)
+├── security/         # Zero-trust, validators, guardrails
+├── consensus/        # MAKER protocol, deliberation
+├── memory/           # Multi-tier memory
+├── state/            # PostgreSQL persistence
+├── gateway/          # NATS event mesh
+├── observability/    # Metrics, tracing, alerting
+├── logging/          # Logging configuration
+├── runtime/          # Runtime, scaling, registry
+└── cli.py            # CLI entry point
+```
+
+## Docstring Standards
+
+**Modules:**
 ```python
-@pytest_asyncio.fixture
-async def connected_nats(mock_nats: MockNATSEventMesh) -> MockNATSEventMesh:
-    await mock_nats.connect()
-    yield mock_nats
-    await mock_nats.disconnect()
+"""
+Module Name - Brief description.
+
+This module provides:
+- Feature 1
+- Feature 2
+
+Author: Heretek Swarm Collective
+Date: 2026-04-07
+Version: 1.0.0
+"""
 ```
 
-## File Organization
-
-- **Source:** `src/heretek_swarm/` with module-based subdirectories
-- **Tests:** `tests/` organized by module/feature, mirror src structure
-- **Max file length:** ~800 lines; split large modules
-
-## Class Structure
-
-Base classes use mixin pattern for separation of concerns:
-
+**Classes:**
 ```python
-# src/heretek_swarm/actors/base.py - backward compatibility wrapper
-from heretek_swarm.actors.base.core import AgentActor
-from heretek_swarm.actors.base.message_handling import AgentActorMessageHandling
-from heretek_swarm.actors.base.state_management import AgentActorStateManagement
+class AgentActor:
+    """
+    Brief description of the class.
+
+    Extended description if needed, covering:
+    - Purpose
+    - Key features
+    - Usage examples
+
+    Attributes:
+        attr1: Description of attr1
+        attr2: Description of attr2
+    """
 ```
 
-## Linting Configuration
+**Methods:**
+```python
+async def process_message(self, message: ActorMessage) -> None:
+    """
+    Process incoming messages.
 
-From `pyproject.toml`:
+    Args:
+        message: Actor message to process
 
-```toml
-[tool.ruff]
-target-python-version = "3.12"
-line-length = 100
+    Returns:
+        None
 
-[tool.ruff.lint]
-select = [
-    "E",   # pycodestyle errors
-    "W",   # pycodestyle warnings
-    "F",   # Pyflakes
-    "I",   # isort
-    "B",   # flake8-bugbear
-    "C4",  # flake8-comprehensions
-    "UP",  # pyupgrade
-    "ARG", # flake8-unused-arguments
-    "SIM", # flake8-simplify
-    "TCH", # flake8-type-checking
-    "PTH", # flake8-use-pathlib
-    "ERA", # eradicate
-    "RUF", # Ruff-specific rules
-    "ASYNC", # flake8-async
-]
-ignore = ["ERA", "PTH"]
-```
-
-## Type Checking
-
-mypy configuration in `pyproject.toml`:
-
-```toml
-[tool.mypy]
-python_version = "3.12"
-strict = true
-disallow_untyped_defs = true
-disallow_incomplete_defs = true
-check_untyped_defs = true
-warn_return_any = true
-warn_unused_ignores = true
-
-[tool.mypy.tests]
-disallow_untyped_defs = false  # Tests exempt from strict typing
+    Raises:
+        ValueError: If message format is invalid
+    """
 ```
 
 ---
 
-*Convention analysis: 2026-04-13*
+*Convention analysis: 2026-04-15*
