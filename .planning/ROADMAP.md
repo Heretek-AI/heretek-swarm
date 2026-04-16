@@ -18,13 +18,14 @@ Archived to [.planning/milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
 
 ## Overview
 
-This roadmap maps 34 v1 requirements across three implementation phases. Each phase builds on the foundations of the previous, with explicit dependency gates between phases.
+This roadmap maps 34 v1 requirements across three implementation phases plus v1.2 milestone. Each phase builds on the foundations of the previous, with explicit dependency gates between phases.
 
 | Phase | Focus | Duration | Requirements |
 |-------|-------|----------|--------------|
 | **Phase 1** | Foundation — Core Governance & Zero-Trust | ~6-8 weeks | GOV-01–05, KNOW-01–05, ZERO-01–03 |
 | **Phase 2** | Consensus & Coordination | ~8-10 weeks | DISC-01–04, SAFE-01–03, INTG-01–04 |
 | **Phase 3** | Emergence & Optimization | ~8-10 weeks | OPT-01–03, CONS-01–03, COG-01–04 |
+| **Phase 4** | Dashboard, Runtime Container & Workflow | TBD | DASH-01, DASH-02, DASH-03 |
 
 ---
 
@@ -340,6 +341,38 @@ This roadmap maps 34 v1 requirements across three implementation phases. Each ph
 
 ---
 
+## Phase 4: Dashboard, Runtime Container & Workflow
+
+**Duration:** TBD
+**Focus:** Dashboard experience overhaul, Autonomous Runtime Container wiring, workflow creation
+
+### Key Deliverables
+
+1. **Dashboard Experience Overhaul**
+   - Complete UI/UX redesign
+   - Improved visualization and interaction patterns
+   - *Delivered by:* DASH-01
+
+2. **Autonomous Runtime Container Wiring**
+   - Automatically wire and start Heretek Swarm Autonomous Runtime Container
+   - Seamless integration with dashboard
+   - *Delivered by:* DASH-02
+
+3. **Workflow Creation & Enabling**
+   - Create and enable workflow for autonomous operations
+   - Integration with existing orchestration
+   - *Delivered by:* DASH-03
+
+### Requirements Covered
+
+| ID | Requirement | Owner |
+|----|-------------|-------|
+| DASH-01 | Dashboard UI/UX overhaul | Frontend |
+| DASH-02 | Autonomous Runtime Container wiring | Runtime |
+| DASH-03 | Workflow creation and enabling | Orchestration |
+
+---
+
 ## Phase Dependencies
 
 ```
@@ -417,6 +450,7 @@ Each phase gate requires sign-off from Core Triad before proceeding:
 | **Gate 1** | Phase 1 → Phase 2 | Zero-trust integrated; Core Triad operational; NATS mesh stable; ≥ 12 agents reporting health |
 | **Gate 2** | Phase 2 → Phase 3 | Consensus without deadlock demonstrated; Safety agents pass stress tests; Coder safety bounds proven; coordination_ratio ≤ 0.40 |
 | **Gate 1.2** | Phase 1.2 → (release) | Failure recovery < 30s; Auto-scale triggers configurable; Collective intelligence factor ≥ 0.6 |
+| **Gate 4** | Phase 4 → (release) | Dashboard operational; Runtime container auto-start; Workflow functional |
 
 ---
 

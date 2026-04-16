@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-16T14:58:51.214529+00:00",
-  "overall_score": 0.9913644013696246,
+  "timestamp": "2026-04-16T15:07:19.987365+00:00",
+  "overall_score": 0.9911807368726429,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -790,10 +790,10 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 6,
-      "findings_count": 6,
-      "warning_count": 3,
-      "score": 0.7,
+      "total_entities_checked": 10,
+      "findings_count": 10,
+      "warning_count": 5,
+      "score": 0.5,
       "finding_groups": [
         {
           "severity": "info",
@@ -808,6 +808,13 @@
               "metric_value": 0.0
             },
             {
+              "entity_name": "[unused_variable] \"_cancel_tasks\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/steward.py",
+              "line_start": 672,
+              "line_end": 672,
+              "metric_value": 0.0
+            },
+            {
               "entity_name": "[unused_variable] \"_emit_recovery_failed\" is not accessed",
               "file_path": "src/heretek_swarm/actors/steward.py",
               "line_start": 470,
@@ -815,10 +822,17 @@
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_variable] \"_cancel_tasks\" is not accessed",
+              "entity_name": "[unused_variable] \"initiate_failover\" is not accessed",
               "file_path": "src/heretek_swarm/actors/steward.py",
-              "line_start": 672,
-              "line_end": 672,
+              "line_start": 482,
+              "line_end": 482,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"is_available\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/steward.py",
+              "line_start": 495,
+              "line_end": 495,
               "metric_value": 0.0
             }
           ]
@@ -836,6 +850,13 @@
               "metric_value": 0.0
             },
             {
+              "entity_name": "[unused_function] Function \"_cancel_tasks\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/steward.py",
+              "line_start": 672,
+              "line_end": 672,
+              "metric_value": 0.0
+            },
+            {
               "entity_name": "[unused_function] Function \"_emit_recovery_failed\" is not accessed",
               "file_path": "src/heretek_swarm/actors/steward.py",
               "line_start": 470,
@@ -843,10 +864,17 @@
               "metric_value": 0.0
             },
             {
-              "entity_name": "[unused_function] Function \"_cancel_tasks\" is not accessed",
+              "entity_name": "[unused_function] Function \"initiate_failover\" is not accessed",
               "file_path": "src/heretek_swarm/actors/steward.py",
-              "line_start": 672,
-              "line_end": 672,
+              "line_start": 482,
+              "line_end": 482,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_function] Function \"is_available\" is not accessed",
+              "file_path": "src/heretek_swarm/actors/steward.py",
+              "line_start": 495,
+              "line_end": 495,
               "metric_value": 0.0
             }
           ]
@@ -1190,9 +1218,9 @@
   "file_summaries": [
     {
       "file_path": "src/heretek_swarm/actors/steward.py",
-      "total_findings": 6,
-      "warning_findings": 3,
-      "composite_risk_score": 65.0
+      "total_findings": 10,
+      "warning_findings": 5,
+      "composite_risk_score": 75.0
     },
     {
       "file_path": "src/heretek_swarm/actors/sentinel.py",

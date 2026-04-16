@@ -19,14 +19,8 @@ import pytest
 
 from heretek_swarm.actors.base import ActorState
 from heretek_swarm.actors.supervisor import ActorSupervisor
-from heretek_swarm.runtime.autonomous_runtime import (
-    AutonomousRuntime,
-    RuntimeState,
-    start_autonomous_runtime,
-)
-from heretek_swarm.runtime.autonomous_runtime_config import (
-    AutonomousRuntimeConfig,
-)
+from heretek_swarm.runtime.autonomous_runtime import AutonomousRuntime
+from heretek_swarm.runtime.autonomous_runtime_config import AutonomousRuntimeConfig
 
 
 # ============================================================================
@@ -489,11 +483,10 @@ class TestSelfHealingIntegration:
     @pytest.mark.asyncio
     async def test_full_recovery_cycle(self, runtime, mock_supervisor):
         """Test complete recovery cycle: detect -> restart -> recover."""
-        # Arrange
         config_path = MagicMock()
         config_path.exists.return_value = True
         runtime.config.agent_configs = {"recovering": config_path}
-        runtime.config.restart_delay_seconds = 0  # No delay for test
+        runtime.config.restart_delay_seconds = 0
 
         error_actor = MockActor("recovering", ActorState.ERROR)
         mock_supervisor.actors = {"recovering": error_actor}
@@ -502,11 +495,8 @@ class TestSelfHealingIntegration:
 
         initial_restarts = runtime.state.total_agent_restarts
 
-        # Act: Run health check -> restart cycle
-        await runtime._health_checks()
         await runtime._restart_agents(["recovering"])
 
-        # Assert
         assert runtime.state.total_agent_restarts == initial_restarts + 1
 
     @pytest.mark.asyncio
