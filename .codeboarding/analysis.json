@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-16T15:34:00.482137+00:00",
+    "generated_at": "2026-04-16T16:00:53.853177+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -34267,7 +34267,7 @@
       ]
     },
     "src/heretek_swarm/runtime/autonomous_runtime.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.runtime.autonomous_runtime.RuntimeState",
@@ -34278,38 +34278,31 @@
         },
         {
           "qualified_name": "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime",
-          "start_line": 46,
-          "end_line": 751,
+          "start_line": 50,
+          "end_line": 771,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime.__init__",
-          "start_line": 58,
-          "end_line": 81,
+          "start_line": 62,
+          "end_line": 89,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime.initialize",
-          "start_line": 83,
-          "end_line": 102,
+          "start_line": 91,
+          "end_line": 116,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime.start",
-          "start_line": 104,
-          "end_line": 127,
-          "node_type": "METHOD",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime.stop",
-          "start_line": 129,
+          "start_line": 118,
           "end_line": 143,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime._start_initial_agents",
@@ -34317,6 +34310,13 @@
           "end_line": 162,
           "node_type": "METHOD",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime.stop",
+          "start_line": 145,
+          "end_line": 163,
+          "node_type": "METHOD",
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime._monitoring_loop",
@@ -92857,42 +92857,34 @@
     "src/heretek_swarm/runtime/autonomous_runtime.py|src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime": {
       "file_path": "src/heretek_swarm/runtime/autonomous_runtime.py",
       "qualified_name": "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime",
-      "start_line": 46,
-      "end_line": 751,
+      "start_line": 50,
+      "end_line": 771,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/runtime/autonomous_runtime.py|src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime.__init__": {
       "file_path": "src/heretek_swarm/runtime/autonomous_runtime.py",
       "qualified_name": "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime.__init__",
-      "start_line": 58,
-      "end_line": 81,
+      "start_line": 62,
+      "end_line": 89,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/runtime/autonomous_runtime.py|src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime.initialize": {
       "file_path": "src/heretek_swarm/runtime/autonomous_runtime.py",
       "qualified_name": "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime.initialize",
-      "start_line": 83,
-      "end_line": 102,
+      "start_line": 91,
+      "end_line": 116,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/runtime/autonomous_runtime.py|src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime.start": {
       "file_path": "src/heretek_swarm/runtime/autonomous_runtime.py",
       "qualified_name": "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime.start",
-      "start_line": 104,
-      "end_line": 127,
-      "type": "METHOD",
-      "status": "unchanged"
-    },
-    "src/heretek_swarm/runtime/autonomous_runtime.py|src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime.stop": {
-      "file_path": "src/heretek_swarm/runtime/autonomous_runtime.py",
-      "qualified_name": "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime.stop",
-      "start_line": 129,
+      "start_line": 118,
       "end_line": 143,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/runtime/autonomous_runtime.py|src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime._start_initial_agents": {
       "file_path": "src/heretek_swarm/runtime/autonomous_runtime.py",
@@ -92901,6 +92893,14 @@
       "end_line": 162,
       "type": "METHOD",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/runtime/autonomous_runtime.py|src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime.stop": {
+      "file_path": "src/heretek_swarm/runtime/autonomous_runtime.py",
+      "qualified_name": "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime.stop",
+      "start_line": 145,
+      "end_line": 163,
+      "type": "METHOD",
+      "status": "modified"
     },
     "src/heretek_swarm/runtime/autonomous_runtime.py|src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime._monitoring_loop": {
       "file_path": "src/heretek_swarm/runtime/autonomous_runtime.py",
@@ -121574,15 +121574,15 @@
         },
         {
           "file_path": "src/heretek_swarm/runtime/autonomous_runtime.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.runtime.autonomous_runtime.RuntimeState",
             "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime",
             "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime.__init__",
             "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime.initialize",
             "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime.start",
-            "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime.stop",
             "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime._start_initial_agents",
+            "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime.stop",
             "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime._monitoring_loop",
             "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime._health_checks",
             "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime._restart_agents",
@@ -126529,15 +126529,15 @@
             },
             {
               "file_path": "src/heretek_swarm/runtime/autonomous_runtime.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.runtime.autonomous_runtime.RuntimeState",
                 "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime",
                 "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime.__init__",
                 "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime.initialize",
                 "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime.start",
-                "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime.stop",
                 "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime._start_initial_agents",
+                "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime.stop",
                 "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime._monitoring_loop",
                 "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime._health_checks",
                 "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime._restart_agents",
@@ -133164,15 +133164,15 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/runtime/autonomous_runtime.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.runtime.autonomous_runtime.RuntimeState",
                     "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime",
                     "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime.__init__",
                     "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime.initialize",
                     "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime.start",
-                    "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime.stop",
                     "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime._start_initial_agents",
+                    "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime.stop",
                     "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime._monitoring_loop",
                     "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime._health_checks",
                     "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime._restart_agents",
@@ -134952,15 +134952,15 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/runtime/autonomous_runtime.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.runtime.autonomous_runtime.RuntimeState",
                         "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime",
                         "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime.__init__",
                         "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime.initialize",
                         "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime.start",
-                        "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime.stop",
                         "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime._start_initial_agents",
+                        "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime.stop",
                         "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime._monitoring_loop",
                         "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime._health_checks",
                         "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime._restart_agents",
@@ -135360,15 +135360,15 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/runtime/autonomous_runtime.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.runtime.autonomous_runtime.RuntimeState",
                             "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime",
                             "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime.__init__",
                             "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime.initialize",
                             "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime.start",
-                            "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime.stop",
                             "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime._start_initial_agents",
+                            "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime.stop",
                             "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime._monitoring_loop",
                             "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime._health_checks",
                             "src.heretek_swarm.runtime.autonomous_runtime.AutonomousRuntime._restart_agents",

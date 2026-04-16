@@ -26,6 +26,10 @@ from .agent_runtime import AgentRuntime
 from .autonomous_runtime_config import (
     AutonomousRuntimeConfig,
 )
+from .self_maintenance import (
+    SelfMaintenanceConfig,
+    SelfMaintenanceScheduler,
+)
 
 logger = structlog.get_logger("AutonomousRuntime")
 
@@ -80,6 +84,10 @@ class AutonomousRuntime:
         # P1-8 fix: Track restart attempts separately instead of using __dict__
         self._restart_attempts: dict[str, int] = {}
 
+        # Self-maintenance scheduler
+        self._maintenance_scheduler: SelfMaintenanceScheduler | None = None
+        self._maintenance_config = SelfMaintenanceConfig()
+
     async def initialize(self) -> None:
         """Initialize runtime components."""
         logger.info("Initializing autonomous runtime...")
@@ -98,6 +106,12 @@ class AutonomousRuntime:
         # Load persisted state if enabled
         if self.config.state_persistence_enabled:
             await self._load_state()
+
+        # Initialize self-maintenance scheduler
+        self._maintenance_scheduler = SelfMaintenanceScheduler(
+            self._maintenance_config,
+            runtime_ref=self,
+        )
 
         logger.info("Autonomous runtime initialized")
 
@@ -118,7 +132,9 @@ class AutonomousRuntime:
             self._state_persistence_loop(),
             self._metrics_collection_loop(),
             self._report_agents_loop(),
+            self._maintenance_scheduler.start() if self._maintenance_scheduler else None,
         ]
+        tasks = [t for t in tasks if t is not None]
 
         if self.config.consciousness_plugin_enabled:
             tasks.append(self._consciousness_metrics_loop())
@@ -139,6 +155,10 @@ class AutonomousRuntime:
         # Save final state
         if self.config.state_persistence_enabled:
             await self._save_state()
+
+        # Stop self-maintenance scheduler
+        if self._maintenance_scheduler:
+            await self._maintenance_scheduler.stop()
 
         logger.info("Autonomous runtime stopped")
 
