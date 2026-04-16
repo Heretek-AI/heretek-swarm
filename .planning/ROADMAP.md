@@ -1,20 +1,20 @@
 # The Collective — Phase Roadmap
 
 **Project:** The Collective (23-agent autonomous swarm)
-**Version:** 1.1
+**Version:** 1.2
 **Created:** 2026-04-13
-**Status:** v1.0 Released — v1.1 Milestone Started
+**Status:** v1.1 Released — Ready for v1.2
+
+### Completed Milestones
+
+| Version | Date | Summary |
+|---------|------|---------|
+| [v1.0](milestones/v1.0-ROADMAP.md) | 2026-04-15 | All 3 phases complete, Gate 1-3 passed, 714 tests |
+| [v1.1](milestones/v1.1-ROADMAP.md) | 2026-04-16 | Phase 2 completion + production hardening + tech debt, Gate 1.1 passed |
 
 ### v1.1 Milestone Scope
 
-| Category | Items | Focus |
-|----------|-------|-------|
-| Phase 2 Completion | 3 | Steward failover, max_rounds, quorum |
-| Production Hardening | 5 | Docker/K8s, NATS auth, DB pooling |
-| Technical Debt | 4 | Pattern extraction, consciousness stubs |
-| **Total** | **13** | P0: 4, P1: 6, P2: 3 |
-
----
+Archived to [.planning/milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
 
 ## Overview
 
@@ -391,70 +391,13 @@ These must be resolved before or during implementation:
 
 ---
 
-## v1.1 Milestone: Production Hardening & Phase 2 Completion
+## v1.1 Milestone
 
-**Duration:** ~4-6 weeks
-**Focus:** Complete Phase 2 open items + production hardening + technical debt
-
-### Key Deliverables
-
-1. **Steward Failover System**
-   - Charlie tiebreaker logic when Steward becomes unavailable
-   - Failover identity and authority scope definition
-   - Automatic detection and transition
-   - *Delivered by:* GOV-01-F
-
-2. **Deliberation Hardening**
-   - max_rounds enforcement with configurable threshold
-   - Quorum logic integrated into triad coordination
-   - Convoy effect mitigation
-   - *Delivered by:* GOV-05-M, GOV-05-Q
-
-3. **Production Infrastructure**
-   - NATS service added to docker-compose
-   - LiteLLM config.yaml created or references removed
-   - Database pooling configured
-   - API key storage hardened
-   - *Delivered by:* DEPLOY-01, DEPLOY-02, DEPLOY-03, DEPLOY-04
-
-4. **Operational Excellence**
-   - Monitoring and alerting gaps addressed
-   - NATS authentication configured
-   - Connection pooling implemented
-   - *Delivered by:* OPS-01, OPS-02
-
-5. **Technical Debt Resolution**
-   - Pattern extraction enhancement in collective/
-   - Consciousness metrics stubs → real implementation
-   - Zero-trust exception list finalized
-   - Behavioral baseline initialization strategy defined
-   - *Delivered by:* TD-01, TD-02, TD-03, TD-04
-
-### Success Criteria
-
-| Criterion | Measurement |
-|-----------|------------|
-| Steward failover time | < 30 seconds |
-| Deliberation completes | Within max_rounds (default 3) |
-| NATS mesh uptime | ≥ 99.9% under load |
-| Database connection efficiency | Pool utilization < 80% |
-| Zero-trust exception list | 100% coverage, documented |
-
-### Gate 1.1 Assessment
-
-| Criterion | Threshold | Status |
-|-----------|-----------|--------|
-| Steward failover operational | < 30s detection + transition | ❌ PENDING |
-| max_rounds enforced | Configurable, default 3 | ❌ PENDING |
-| Quorum integrated | Steward triad coordination | ❌ PENDING |
-| NATS service deployed | docker-compose includes NATS | ❌ PENDING |
-| LiteLLM configured | Config exists or removed | ❌ PENDING |
-| DB pooling configured | Connection pool < 80% | ❌ PENDING |
-| Monitoring active | Alerts firing correctly | ❌ PENDING |
+Archived to [.planning/milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
 
 ---
 
 *Roadmap created: 2026-04-13*
 *v1.0 released: 2026-04-15*
-*v1.1 milestone started: 2026-04-15*
-*Next action: /gsd-plan-phase 1.1 to execute v1.1*
+*v1.1 released: 2026-04-16*
+*Next action: /gsd-new-milestone v1.2*

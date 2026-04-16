@@ -58,48 +58,62 @@ A self-governing swarm of 23 specialized AI agents that operate independently 24
 
 ---
 
-## v1.1 Milestone
+## Current State
 
-**Started:** 2026-04-15
-**Focus:** Phase 2 Open Items + Production Hardening + Technical Debt
+**Version:** v1.1.0 Released
+**Date:** 2026-04-16
+**Status:** PRODUCTION READY
 
-### v1.1 Goals
+### v1.1 Accomplishments
+
+- **Phase 2 Completion**: Steward failover, max_rounds enforcement, quorum integration
+- **Production Hardening**: NATS deployment, LiteLLM config, DB pooling, API key encryption, monitoring
+- **Technical Debt**: Pattern extraction, consciousness metrics, zero-trust exceptions, behavioral baseline
+
+<details>
+<summary>v1.1 Goals (completed)</summary>
 
 #### Phase 2 Remaining
-- [ ] **GOV-01-F**: Steward failover with Charlie tiebreaker logic
-- [ ] **GOV-05-F**: max_rounds enforcement in deliberation
-- [ ] **GOV-05-Q**: Quorum logic integrated into Steward triad flow
+- [x] **GOV-01-F**: Steward failover with Charlie tiebreaker logic
+- [x] **GOV-05-M**: max_rounds enforcement in deliberation
+- [x] **GOV-05-Q**: Quorum logic integrated into Steward triad flow
 
 #### Production Hardening
-- [ ] **DEPLOY-01**: Docker/K8s deployment fixes (NATS service, LiteLLM config)
-- [ ] **DEPLOY-02**: Database pooling configuration
-- [ ] **DEPLOY-03**: API key storage hardening (env var defaults)
-- [ ] **OPS-01**: Monitoring/alerting gaps addressed
-- [ ] **OPS-02**: NATS production configuration (auth, connection pooling)
+- [x] **DEPLOY-01**: Docker/K8s deployment fixes (NATS service)
+- [x] **DEPLOY-02**: LiteLLM config.yaml created
+- [x] **DEPLOY-03**: Database pooling configuration
+- [x] **DEPLOY-04**: API key storage hardened
+- [x] **OPS-01**: Monitoring/alerting gaps addressed
 
 #### Technical Debt
-- [ ] **TD-01**: Pattern extraction enhancement (collective/)
-- [ ] **TD-02**: Consciousness metrics stubs implementation
-- [ ] **TD-03**: Zero-trust exception list finalization
-- [ ] **TD-04**: Behavioral baseline initialization strategy
+- [x] **TD-01**: Pattern extraction enhancement (collective/)
+- [x] **TD-02**: Consciousness metrics implementation
+- [x] **TD-03**: Zero-trust exception list finalized
+- [x] **TD-04**: Behavioral baseline initialization strategy
 
-### Open Questions (v1.1)
+</details>
 
-1. NATS auth method — service accounts vs. shared token vs. mTLS?
-2. Heartbeat interval — configurable per agent class or global? (default 10s vs 5s)
-3. Audit log retention backend — SQLite, PostgreSQL, or object storage?
-4. Convoy effect threshold — max_rounds default 3, correct for v1.1?
-5. Steward failover identity — Charlie's authority scope during Steward failure?
-6. Behavioral baseline initialization — zero state or bootstrap from static rules?
-7. Zero-trust exception list — any internal topics exempt from sanitization?
+### Next Milestone Goals (v1.2)
+
+- **HEAL-01**: System can detect and recover from agent failures autonomously
+- **HEAL-02**: System can auto-scale agent population based on load
+- **HEAL-03**: System can self-maintain without external intervention
+- **EMER-01**: Collective demonstrates measurable intelligence exceeding individual agents
+- **EMER-02**: System develops novel solutions not explicitly programmed
+
+### Open Questions
+
+1. NATS auth — service accounts vs. mTLS for external exposure?
+2. Agent auto-scaling thresholds — based on queue depth or CPU/memory?
+3. Self-healing recovery procedures — restart vs. recreate containers?
+4. Emergent behavior validation — who/what validates novel solutions?
 
 ---
 
-*Last updated: 2026-04-15 - v1.1 Milestone Started*
+*Last updated: 2026-04-16 - v1.1 Released*
 
-### v1.0.0 Release Summary (2026-04-15)
-- **Phase 1**: Foundation — Zero-Trust, Core Triad, Support Agents ✅ Gate 1 Passed
-- **Phase 2**: Consensus & Coordination — Deliberation Engine, Safety Systems, Coordination Infrastructure ✅ Gate 2 Passed
-- **Phase 3**: Emergence & Optimization — GWT Broadcast, Consciousness Frameworks, Enhancement Agents ✅ Gate 3 Passed
-- **Total Tests**: 714 passing
-- **Status**: PRODUCTION READY
+### v1.1.0 Release Summary (2026-04-16)
+- **Phase 1.1**: Production Hardening & Phase 2 Completion ✅ Gate 1.1 Passed
+- **Total Requirements**: 12 completed, 1 deferred (NATS auth)
+- **Files Changed**: 70 files, +2,465 net LOC
+- **Status**: PRODUCTION READY WITH SELF-HEALING FOUNDATION
