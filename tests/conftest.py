@@ -286,7 +286,10 @@ def mock_nats_module():
 
     # Cleanup: close any lingering sockets from NATS mocks
     import gc
-    gc.collect()  # Force garbage collection to trigger __del__ on unclosed sockets
+    import warnings
+    with warnings.catch_warnings():
+        warnings.filterwarnings("ignore", category=ResourceWarning)
+        gc.collect()  # Force garbage collection without triggering test errors
     if "pynats" in sys.modules:
         del sys.modules["pynats"]
 
