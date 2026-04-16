@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-16T01:46:24.719058+00:00",
+    "generated_at": "2026-04-16T01:50:23.606458+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -41535,7 +41535,7 @@
           "start_line": 18,
           "end_line": 24,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "dashboard.frontend.src.api.consciousness.ConsciousnessStatistics",
@@ -46686,7 +46686,7 @@
       ]
     },
     "dashboard/frontend/src/components/Settings/SettingsPage.tsx": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "dashboard.frontend.src.components.Settings.SettingsPage.TabConfig",
@@ -46714,7 +46714,7 @@
           "start_line": 44,
           "end_line": 47,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiKey.useCallback() callback",
@@ -46728,7 +46728,7 @@
           "start_line": 49,
           "end_line": 55,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiUrl.useCallback() callback",
@@ -46742,7 +46742,7 @@
           "start_line": 57,
           "end_line": 61,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleClearApiKey.useCallback() callback",
@@ -46756,7 +46756,7 @@
           "start_line": 63,
           "end_line": 74,
           "node_type": "CLASS",
-          "status": "unchanged"
+          "status": "deleted"
         },
         {
           "qualified_name": "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleResetConfiguration.useCallback() callback",
@@ -100622,7 +100622,7 @@
       "start_line": 18,
       "end_line": 24,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "dashboard/frontend/src/api/consciousness.ts|dashboard.frontend.src.api.consciousness.ConsciousnessStatistics": {
       "file_path": "dashboard/frontend/src/api/consciousness.ts",
@@ -106318,7 +106318,7 @@
       "start_line": 44,
       "end_line": 47,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/components/Settings/SettingsPage.tsx|dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiKey.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/Settings/SettingsPage.tsx",
@@ -106334,7 +106334,7 @@
       "start_line": 49,
       "end_line": 55,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/components/Settings/SettingsPage.tsx|dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiUrl.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/Settings/SettingsPage.tsx",
@@ -106350,7 +106350,7 @@
       "start_line": 57,
       "end_line": 61,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/components/Settings/SettingsPage.tsx|dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleClearApiKey.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/Settings/SettingsPage.tsx",
@@ -106366,7 +106366,7 @@
       "start_line": 63,
       "end_line": 74,
       "type": "CLASS",
-      "status": "unchanged"
+      "status": "deleted"
     },
     "dashboard/frontend/src/components/Settings/SettingsPage.tsx|dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleResetConfiguration.useCallback() callback": {
       "file_path": "dashboard/frontend/src/components/Settings/SettingsPage.tsx",
@@ -247019,18 +247019,14 @@
         },
         {
           "file_path": "dashboard/frontend/src/components/Settings/SettingsPage.tsx",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "dashboard.frontend.src.components.Settings.SettingsPage.TabConfig",
             "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPageProps",
             "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage",
-            "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiKey",
             "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiKey.useCallback() callback",
-            "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiUrl",
             "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiUrl.useCallback() callback",
-            "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleClearApiKey",
             "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleClearApiKey.useCallback() callback",
-            "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleResetConfiguration",
             "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleResetConfiguration.useCallback() callback",
             "dashboard.frontend.src.components.Settings.SettingsPage.<unknown>..map() callback",
             "dashboard.frontend.src.components.Settings.SettingsPage.renderTabContent"
@@ -266302,18 +266298,14 @@
             },
             {
               "file_path": "dashboard/frontend/src/components/Settings/SettingsPage.tsx",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "dashboard.frontend.src.components.Settings.SettingsPage.TabConfig",
                 "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPageProps",
                 "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage",
-                "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiKey",
                 "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiKey.useCallback() callback",
-                "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiUrl",
                 "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiUrl.useCallback() callback",
-                "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleClearApiKey",
                 "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleClearApiKey.useCallback() callback",
-                "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleResetConfiguration",
                 "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleResetConfiguration.useCallback() callback",
                 "dashboard.frontend.src.components.Settings.SettingsPage.<unknown>..map() callback",
                 "dashboard.frontend.src.components.Settings.SettingsPage.renderTabContent"
@@ -267913,15 +267905,11 @@
                 },
                 {
                   "file_path": "dashboard/frontend/src/components/Settings/SettingsPage.tsx",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "dashboard.frontend.src.components.Settings.SettingsPage.TabConfig",
                     "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPageProps",
                     "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage",
-                    "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiKey",
-                    "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiUrl",
-                    "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleClearApiKey",
-                    "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleResetConfiguration",
                     "dashboard.frontend.src.components.Settings.SettingsPage.<unknown>..map() callback",
                     "dashboard.frontend.src.components.Settings.SettingsPage.renderTabContent"
                   ]
@@ -269505,15 +269493,11 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/components/Settings/SettingsPage.tsx",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "dashboard.frontend.src.components.Settings.SettingsPage.TabConfig",
                         "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPageProps",
                         "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage",
-                        "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiKey",
-                        "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiUrl",
-                        "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleClearApiKey",
-                        "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleResetConfiguration",
                         "dashboard.frontend.src.components.Settings.SettingsPage.<unknown>..map() callback",
                         "dashboard.frontend.src.components.Settings.SettingsPage.renderTabContent"
                       ]
@@ -271113,18 +271097,14 @@
                         },
                         {
                           "file_path": "dashboard/frontend/src/components/Settings/SettingsPage.tsx",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "dashboard.frontend.src.components.Settings.SettingsPage.TabConfig",
                             "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPageProps",
                             "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage",
-                            "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiKey",
                             "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiKey.useCallback() callback",
-                            "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiUrl",
                             "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiUrl.useCallback() callback",
-                            "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleClearApiKey",
                             "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleClearApiKey.useCallback() callback",
-                            "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleResetConfiguration",
                             "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleResetConfiguration.useCallback() callback",
                             "dashboard.frontend.src.components.Settings.SettingsPage.<unknown>..map() callback",
                             "dashboard.frontend.src.components.Settings.SettingsPage.renderTabContent"
@@ -273174,7 +273154,7 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/components/Settings/SettingsPage.tsx",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiKey.useCallback() callback",
                         "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiUrl.useCallback() callback",
@@ -273356,18 +273336,14 @@
                         },
                         {
                           "file_path": "dashboard/frontend/src/components/Settings/SettingsPage.tsx",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "dashboard.frontend.src.components.Settings.SettingsPage.TabConfig",
                             "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPageProps",
                             "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage",
-                            "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiKey",
                             "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiKey.useCallback() callback",
-                            "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiUrl",
                             "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiUrl.useCallback() callback",
-                            "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleClearApiKey",
                             "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleClearApiKey.useCallback() callback",
-                            "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleResetConfiguration",
                             "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleResetConfiguration.useCallback() callback",
                             "dashboard.frontend.src.components.Settings.SettingsPage.<unknown>..map() callback",
                             "dashboard.frontend.src.components.Settings.SettingsPage.renderTabContent"
@@ -274585,7 +274561,7 @@
                 },
                 {
                   "file_path": "dashboard/frontend/src/components/Settings/SettingsPage.tsx",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiKey.useCallback() callback",
                     "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiUrl.useCallback() callback",
@@ -275220,18 +275196,14 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/components/Settings/SettingsPage.tsx",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "dashboard.frontend.src.components.Settings.SettingsPage.TabConfig",
                         "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPageProps",
                         "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage",
-                        "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiKey",
                         "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiKey.useCallback() callback",
-                        "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiUrl",
                         "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiUrl.useCallback() callback",
-                        "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleClearApiKey",
                         "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleClearApiKey.useCallback() callback",
-                        "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleResetConfiguration",
                         "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleResetConfiguration.useCallback() callback",
                         "dashboard.frontend.src.components.Settings.SettingsPage.<unknown>..map() callback",
                         "dashboard.frontend.src.components.Settings.SettingsPage.renderTabContent"
@@ -275412,18 +275384,14 @@
                         },
                         {
                           "file_path": "dashboard/frontend/src/components/Settings/SettingsPage.tsx",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "dashboard.frontend.src.components.Settings.SettingsPage.TabConfig",
                             "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPageProps",
                             "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage",
-                            "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiKey",
                             "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiKey.useCallback() callback",
-                            "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiUrl",
                             "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleSaveApiUrl.useCallback() callback",
-                            "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleClearApiKey",
                             "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleClearApiKey.useCallback() callback",
-                            "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleResetConfiguration",
                             "dashboard.frontend.src.components.Settings.SettingsPage.SettingsPage.handleResetConfiguration.useCallback() callback",
                             "dashboard.frontend.src.components.Settings.SettingsPage.<unknown>..map() callback",
                             "dashboard.frontend.src.components.Settings.SettingsPage.renderTabContent"

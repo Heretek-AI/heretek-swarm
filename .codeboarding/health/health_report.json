@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-16T01:46:26.376145+00:00",
-  "overall_score": 0.988252994618367,
+  "timestamp": "2026-04-16T01:50:25.113277+00:00",
+  "overall_score": 0.9881958106700613,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -1348,8 +1348,8 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "TypeScript",
       "check_type": "standard",
-      "total_entities_checked": 26,
-      "findings_count": 26,
+      "total_entities_checked": 27,
+      "findings_count": 27,
       "warning_count": 0,
       "score": 0.0,
       "finding_groups": [
@@ -1538,6 +1538,13 @@
               "file_path": "dashboard/frontend/src/components/SwarmControlCenter.tsx",
               "line_start": 27,
               "line_end": 27,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] 'React' is declared but its value is never read.",
+              "file_path": "dashboard/frontend/src/components/Settings/SettingsPage.tsx",
+              "line_start": 8,
+              "line_end": 8,
               "metric_value": 0.0
             }
           ]

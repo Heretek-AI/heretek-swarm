@@ -166,7 +166,7 @@ export function SettingsPage({ onRerunSetup }: SettingsPageProps) {
                 type="text"
                 value={apiUrl}
                 onChange={(e) => setApiUrl(e.target.value)}
-                placeholder="API base URL (e.g., http://localhost:8000)"
+                placeholder="Leave empty for relative path (nginx proxy)"
                 className="flex-1 px-4 py-2 bg-gray-900 border border-gray-600 rounded-lg text-white placeholder-gray-500 focus:outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
               />
               <button
