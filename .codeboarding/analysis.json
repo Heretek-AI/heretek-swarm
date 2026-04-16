@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-16T16:17:49.786497+00:00",
+    "generated_at": "2026-04-16T16:25:37.480215+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -5266,22 +5266,22 @@
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.actors.mixins.health_reporting.HealthReportingMixin",
-          "start_line": 6,
-          "end_line": 115,
+          "start_line": 7,
+          "end_line": 117,
           "node_type": "CLASS",
           "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.mixins.health_reporting.HealthReportingMixin.__init__",
-          "start_line": 12,
-          "end_line": 16,
+          "start_line": 13,
+          "end_line": 18,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.actors.mixins.health_reporting.HealthReportingMixin.get_health_status",
-          "start_line": 18,
-          "end_line": 26,
+          "start_line": 20,
+          "end_line": 28,
           "node_type": "METHOD",
           "status": "modified"
         },
@@ -60674,24 +60674,24 @@
     "src/heretek_swarm/actors/mixins/health_reporting.py|src.heretek_swarm.actors.mixins.health_reporting.HealthReportingMixin": {
       "file_path": "src/heretek_swarm/actors/mixins/health_reporting.py",
       "qualified_name": "src.heretek_swarm.actors.mixins.health_reporting.HealthReportingMixin",
-      "start_line": 6,
-      "end_line": 115,
+      "start_line": 7,
+      "end_line": 117,
       "type": "CLASS",
       "status": "modified"
     },
     "src/heretek_swarm/actors/mixins/health_reporting.py|src.heretek_swarm.actors.mixins.health_reporting.HealthReportingMixin.__init__": {
       "file_path": "src/heretek_swarm/actors/mixins/health_reporting.py",
       "qualified_name": "src.heretek_swarm.actors.mixins.health_reporting.HealthReportingMixin.__init__",
-      "start_line": 12,
-      "end_line": 16,
+      "start_line": 13,
+      "end_line": 18,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/actors/mixins/health_reporting.py|src.heretek_swarm.actors.mixins.health_reporting.HealthReportingMixin.get_health_status": {
       "file_path": "src/heretek_swarm/actors/mixins/health_reporting.py",
       "qualified_name": "src.heretek_swarm.actors.mixins.health_reporting.HealthReportingMixin.get_health_status",
-      "start_line": 18,
-      "end_line": 26,
+      "start_line": 20,
+      "end_line": 28,
       "type": "METHOD",
       "status": "modified"
     },
