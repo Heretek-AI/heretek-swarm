@@ -586,9 +586,24 @@ class ImmuneResponseBuilding:
         if quorum.is_complete():
             quorum.completed_at = datetime.now(UTC)
 
-            # Apply result to pattern
-            pattern_id = quorum_id.split("_")[1]
-            if pattern_id in self._immune_memory:
+            # Apply result to pattern - extract pattern_id from quorum_id
+            # quorum_id format: "QUORUM_<pattern_id>_<timestamp>"
+            # Use maxsplit=1 to get everything after "QUORUM" as the pattern_id_timestamp
+            parts = quorum_id.split("_", 1)
+            if len(parts) > 1:
+                # parts[1] is "<pattern_id>_<timestamp>"
+                # Extract pattern_id by removing the trailing timestamp
+                pattern_id_with_ts = parts[1]
+                # Find the last underscore and use everything before it as pattern_id
+                last_underscore = pattern_id_with_ts.rfind("_")
+                if last_underscore > 0:
+                    pattern_id = pattern_id_with_ts[:last_underscore]
+                else:
+                    pattern_id = pattern_id_with_ts
+            else:
+                pattern_id = None
+            
+            if pattern_id and pattern_id in self._immune_memory:
                 immune_pattern = self._immune_memory[pattern_id]
 
                 if quorum.is_approved():

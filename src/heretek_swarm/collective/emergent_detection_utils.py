@@ -3,6 +3,8 @@ from __future__ import annotations
 from datetime import datetime
 from typing import TYPE_CHECKING
 
+from heretek_swarm.collective.emergent_detection_types import PatternProvenance
+
 if TYPE_CHECKING:
     from .emergent_detection import (
         AgentBehaviorSnapshot,
@@ -196,3 +198,101 @@ def generate_recommended_action(pattern: EmergentPattern) -> str | None:
     if impact_score >= -0.7:
         return "INVESTIGATE: Potentially harmful pattern. Analyze root causes and consider intervention."
     return "ALERT: Harmful emergent pattern detected. Immediate intervention recommended."
+
+
+def calculate_novelty_score(
+    pattern: EmergentPattern,
+    historical_patterns: list[EmergentPattern],
+) -> float:
+    """
+    Calculate novelty score for an emergent pattern.
+
+    Novelty is measured by comparing the candidate pattern against
+    historical patterns based on:
+    - Pattern class diversity in history
+    - Agent overlap (shared agents reduce novelty)
+    - Emergence level difference from average historical level
+    - Whether an identical or near-identical pattern was seen before
+
+    Returns a float in [0.0, 1.0] where 1.0 = maximally novel.
+    """
+    if not historical_patterns:
+        # No history = maximally novel
+        return 1.0
+
+    novelty_factors: list[float] = []
+
+    # Factor 1: Pattern class diversity
+    # New class = higher novelty
+    historical_classes = {p.pattern_class for p in historical_patterns}
+    class_novelty = 0.5 if pattern.pattern_class in historical_classes else 1.0
+    novelty_factors.append(class_novelty)
+
+    # Factor 2: Agent overlap
+    # Fewer overlapping agents = higher novelty
+    historical_agents: set[str] = set()
+    for p in historical_patterns:
+        historical_agents.update(p.involved_agents)
+
+    if historical_agents:
+        overlap = len(set(pattern.involved_agents) & historical_agents)
+        total = len(pattern.involved_agents)
+        if total > 0:
+            overlap_ratio = overlap / total
+            agent_novelty = 1.0 - overlap_ratio
+        else:
+            agent_novelty = 1.0
+    else:
+        agent_novelty = 1.0
+    novelty_factors.append(agent_novelty)
+
+    # Factor 3: Emergence level divergence from historical average
+    avg_level_score = {
+        EmergenceLevel.WEAK: 0.2,
+        EmergenceLevel.MODERATE: 0.5,
+        EmergenceLevel.STRONG: 0.7,
+        EmergenceLevel.CRITICAL: 0.9,
+    }
+    pattern_level = avg_level_score.get(pattern.emergence_level, 0.0)
+    hist_avg = sum(avg_level_score.get(p.emergence_level, 0.0) for p in historical_patterns) / len(historical_patterns)
+    level_divergence = abs(pattern_level - hist_avg)
+    novelty_factors.append(level_divergence)
+
+    # Factor 4: Whether a very similar pattern (same class + overlapping agents) was recently seen
+    # Check last 10 patterns
+    recent = historical_patterns[-10:]
+    very_similar = any(
+        p.pattern_class == pattern.pattern_class
+        and len(set(p.involved_agents) & set(pattern.involved_agents)) >= len(pattern.involved_agents) * 0.8
+        for p in recent
+    )
+    recency_novelty = 0.0 if very_similar else 1.0
+    novelty_factors.append(recency_novelty)
+
+    return sum(novelty_factors) / len(novelty_factors)
+
+
+def classify_pattern_provenance(
+    novelty_score: float,
+    validation_rate: float,
+    novelty_threshold: float = 0.5,
+    validation_threshold: float = 0.6,
+) -> PatternProvenance:
+    """
+    Classify a pattern as PROVEN or UNPROVEN.
+
+    A pattern is PROVEN when it has sufficient novelty AND sufficient
+    validation rate. Both conditions must be met.
+
+    Args:
+        novelty_score: Score from 0.0 (identical to history) to 1.0 (completely novel)
+        validation_rate: Fraction of validations that passed [0.0, 1.0]
+        novelty_threshold: Minimum novelty to be considered proven (default 0.5)
+        validation_threshold: Minimum validation rate to be considered proven (default 0.6)
+
+    Returns:
+        PatternProvenance.PROVEN if both thresholds are met, else UNPROVEN
+    """
+    if novelty_score >= novelty_threshold and validation_rate >= validation_threshold:
+        return PatternProvenance.PROVEN
+    return PatternProvenance.UNPROVEN

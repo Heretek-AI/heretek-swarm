@@ -203,13 +203,16 @@ class TestImmuneResponseBuilding:
             disposition="approve",
             notes="Confirmed as malicious pattern",
         )
-        
+
         assert result is True
-        
-        # Check pattern was added to immune memory
-        patterns = immune_system.get_novel_patterns_for_review(limit=10)
-        approved_pattern = [p for p in patterns if p.reviewed and p.disposition == "approve"]
-        assert len(approved_pattern) == 1
+
+        # Check pattern was added to immune memory (approved patterns are moved from novel_patterns to immune_memory)
+        pattern_id = list(immune_system._immune_memory.keys())[0] if immune_system._immune_memory else None
+        assert pattern_id is not None
+        approved_pattern = immune_system._immune_memory.get(pattern_id)
+        assert approved_pattern is not None
+        assert approved_pattern.approved is True
+        assert approved_pattern.approved_by == "human-reviewer"
 
     def test_quorum_request_and_vote(self, immune_system):
         """Test quorum-based baseline update request and voting."""

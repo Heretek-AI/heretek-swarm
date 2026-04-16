@@ -38,6 +38,18 @@ class EmergenceLevel(StrEnum):
     CRITICAL = "critical"
 
 
+class PatternProvenance(StrEnum):
+    """
+    Provenance classification for emergent patterns.
+
+    Patterns are classified PROVEN or UNPROVEN based on novelty
+    and validation rate weighting.
+    """
+
+    PROVEN = "proven"
+    UNPROVEN = "unproven"
+
+
 class EvolutionPhase(StrEnum):
     """Phases of evolutionary development."""
 
@@ -246,6 +258,10 @@ class EmergentPattern:
     emergence_level: EmergenceLevel = EmergenceLevel.WEAK
 
     impact_score: float = 0.0
+    novelty_score: float = 0.0  # How novel this pattern is compared to history
+    provenance: PatternProvenance = PatternProvenance.UNPROVEN  # PROVEN or UNPROVEN
+    validation_rate: float = 0.0  # Fraction of validations that passed
+
     involved_agents: list[str] = field(default_factory=list)
     confidence: float = 0.0
 
@@ -262,6 +278,9 @@ class EmergentPattern:
             "pattern_class": self.pattern_class.value,
             "emergence_level": self.emergence_level.value,
             "impact_score": self.impact_score,
+            "novelty_score": self.novelty_score,
+            "provenance": self.provenance.value,
+            "validation_rate": self.validation_rate,
             "involved_agents": self.involved_agents,
             "confidence": self.confidence,
             "description": self.description,

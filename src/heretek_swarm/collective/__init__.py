@@ -92,6 +92,7 @@ from .emergent_detection_types import (
     CapabilityRecord,
     EvolutionMetrics,
     EvolutionPhase,
+    PatternProvenance,
 )
 from .knowledge_transform import (
     AgentCapabilityProfile,
@@ -228,6 +229,7 @@ __all__ = [
     "PatternLibrary",
     "PatternLibraryService",
     "PatternMetadata",
+    "PatternProvenance",
     "PatternSource",
     "PatternType",
     "QueryResult",

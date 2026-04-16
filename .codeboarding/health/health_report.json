@@ -1,7 +1,7 @@
 {
   "repository_name": "heretek-swarm",
-  "timestamp": "2026-04-16T16:01:26.299014+00:00",
-  "overall_score": 0.9901437847866419,
+  "timestamp": "2026-04-16T16:17:51.251388+00:00",
+  "overall_score": 0.9900863818192359,
   "check_summaries": [
     {
       "check_name": "function_size",
@@ -790,8 +790,8 @@
       "description": "Detects unused imports, variables, functions, and dead code via LSP diagnostics",
       "language": "Python",
       "check_type": "standard",
-      "total_entities_checked": 23,
-      "findings_count": 23,
+      "total_entities_checked": 24,
+      "findings_count": 24,
       "warning_count": 10,
       "score": 0.0,
       "finding_groups": [
@@ -889,6 +889,13 @@
               "file_path": "src/heretek_swarm/runtime/autonomous_runtime.py",
               "line_start": 788,
               "line_end": 788,
+              "metric_value": 0.0
+            },
+            {
+              "entity_name": "[unused_variable] \"pattern_content\" is not accessed",
+              "file_path": "src/heretek_swarm/consensus/immune.py",
+              "line_start": 412,
+              "line_end": 412,
               "metric_value": 0.0
             }
           ]
@@ -1344,6 +1351,12 @@
       "composite_risk_score": 45.0
     },
     {
+      "file_path": "src/heretek_swarm/consensus/immune.py",
+      "total_findings": 3,
+      "warning_findings": 2,
+      "composite_risk_score": 40.0
+    },
+    {
       "file_path": "src/heretek_swarm/security/threat_detection.py",
       "total_findings": 2,
       "warning_findings": 2,
@@ -1417,12 +1430,6 @@
     },
     {
       "file_path": "src/heretek_swarm/config/crud.py",
-      "total_findings": 2,
-      "warning_findings": 2,
-      "composite_risk_score": 30.0
-    },
-    {
-      "file_path": "src/heretek_swarm/actors/coordinator.py",
       "total_findings": 2,
       "warning_findings": 2,
       "composite_risk_score": 30.0

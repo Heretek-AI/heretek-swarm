@@ -1,5 +1,6 @@
 """HealthReportingMixin for agent health and error reporting."""
 import asyncio
+import time
 from typing import Any
 
 
@@ -14,6 +15,7 @@ class HealthReportingMixin:
         self._error_count = 0
         self._last_health_check = 0.0
         self._health_status = "healthy"
+        self._spawn_time = time.monotonic()
 
     def get_health_status(self) -> dict[str, Any]:
         """Get current health status."""
@@ -22,7 +24,7 @@ class HealthReportingMixin:
             "error_count": self._error_count,
             "last_health_check": self._last_health_check,
             "agent_id": getattr(self, "agent_id", "unknown"),
-            "uptime": asyncio.get_event_loop().time() - getattr(self, "_spawn_time", 0),
+            "uptime": time.monotonic() - self._spawn_time,
         }
 
     def record_error(

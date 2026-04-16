@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-16T16:00:53.853177+00:00",
+    "generated_at": "2026-04-16T16:17:49.786497+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -13741,7 +13741,7 @@
       ]
     },
     "src/heretek_swarm/collective/emergent_detection_types.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.EmergentPatternClass",
@@ -13763,6 +13763,13 @@
           "end_line": 50,
           "node_type": "CLASS",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.PatternProvenance",
+          "start_line": 41,
+          "end_line": 50,
+          "node_type": "CLASS",
+          "status": "added"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.CapabilityRecord",
@@ -13836,17 +13843,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.EmergentPattern",
-          "start_line": 241,
-          "end_line": 289,
+          "start_line": 253,
+          "end_line": 308,
           "node_type": "CLASS",
-          "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.EmergentPattern.to_dict",
-          "start_line": 259,
-          "end_line": 272,
-          "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.EmergentPattern.to_extracted_pattern",
@@ -13854,6 +13854,13 @@
           "end_line": 289,
           "node_type": "METHOD",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.EmergentPattern.to_dict",
+          "start_line": 275,
+          "end_line": 291,
+          "node_type": "METHOD",
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.DetectionEvent",
@@ -13879,7 +13886,7 @@
       ]
     },
     "src/heretek_swarm/collective/emergent_detection_utils.py": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.collective.emergent_detection_utils.calculate_window_metrics",
@@ -13950,6 +13957,20 @@
           "end_line": 198,
           "node_type": "FUNCTION",
           "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection_utils.calculate_novelty_score",
+          "start_line": 203,
+          "end_line": 272,
+          "node_type": "FUNCTION",
+          "status": "added"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.collective.emergent_detection_utils.classify_pattern_provenance",
+          "start_line": 275,
+          "end_line": 298,
+          "node_type": "FUNCTION",
+          "status": "added"
         }
       ]
     },
@@ -19542,7 +19563,7 @@
         {
           "qualified_name": "src.heretek_swarm.consensus.immune.ImmuneResponseBuilding",
           "start_line": 246,
-          "end_line": 904,
+          "end_line": 919,
           "node_type": "CLASS",
           "status": "modified"
         },
@@ -19597,10 +19618,10 @@
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.immune.ImmuneResponseBuilding.submit_quorum_vote",
-          "start_line": 547,
-          "end_line": 610,
+          "start_line": 558,
+          "end_line": 636,
           "node_type": "METHOD",
-          "status": "unchanged"
+          "status": "modified"
         },
         {
           "qualified_name": "src.heretek_swarm.consensus.immune.ImmuneResponseBuilding.check_pattern_immunity",
@@ -54851,6 +54872,10 @@
     "src/heretek_swarm/api/agents_management.py": {
       "file_status": "modified",
       "methods": []
+    },
+    "src/heretek_swarm/collective/__init__.py": {
+      "file_status": "modified",
+      "methods": []
     }
   },
   "methods_index": {
@@ -70046,6 +70071,14 @@
       "type": "CLASS",
       "status": "unchanged"
     },
+    "src/heretek_swarm/collective/emergent_detection_types.py|src.heretek_swarm.collective.emergent_detection_types.PatternProvenance": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection_types.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.PatternProvenance",
+      "start_line": 41,
+      "end_line": 50,
+      "type": "CLASS",
+      "status": "added"
+    },
     "src/heretek_swarm/collective/emergent_detection_types.py|src.heretek_swarm.collective.emergent_detection_types.CapabilityRecord": {
       "file_path": "src/heretek_swarm/collective/emergent_detection_types.py",
       "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.CapabilityRecord",
@@ -70129,18 +70162,10 @@
     "src/heretek_swarm/collective/emergent_detection_types.py|src.heretek_swarm.collective.emergent_detection_types.EmergentPattern": {
       "file_path": "src/heretek_swarm/collective/emergent_detection_types.py",
       "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.EmergentPattern",
-      "start_line": 241,
-      "end_line": 289,
+      "start_line": 253,
+      "end_line": 308,
       "type": "CLASS",
-      "status": "unchanged"
-    },
-    "src/heretek_swarm/collective/emergent_detection_types.py|src.heretek_swarm.collective.emergent_detection_types.EmergentPattern.to_dict": {
-      "file_path": "src/heretek_swarm/collective/emergent_detection_types.py",
-      "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.EmergentPattern.to_dict",
-      "start_line": 259,
-      "end_line": 272,
-      "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/collective/emergent_detection_types.py|src.heretek_swarm.collective.emergent_detection_types.EmergentPattern.to_extracted_pattern": {
       "file_path": "src/heretek_swarm/collective/emergent_detection_types.py",
@@ -70149,6 +70174,14 @@
       "end_line": 289,
       "type": "METHOD",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/collective/emergent_detection_types.py|src.heretek_swarm.collective.emergent_detection_types.EmergentPattern.to_dict": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection_types.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection_types.EmergentPattern.to_dict",
+      "start_line": 275,
+      "end_line": 291,
+      "type": "METHOD",
+      "status": "modified"
     },
     "src/heretek_swarm/collective/emergent_detection_types.py|src.heretek_swarm.collective.emergent_detection_types.DetectionEvent": {
       "file_path": "src/heretek_swarm/collective/emergent_detection_types.py",
@@ -70253,6 +70286,22 @@
       "end_line": 198,
       "type": "FUNCTION",
       "status": "unchanged"
+    },
+    "src/heretek_swarm/collective/emergent_detection_utils.py|src.heretek_swarm.collective.emergent_detection_utils.calculate_novelty_score": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection_utils.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection_utils.calculate_novelty_score",
+      "start_line": 203,
+      "end_line": 272,
+      "type": "FUNCTION",
+      "status": "added"
+    },
+    "src/heretek_swarm/collective/emergent_detection_utils.py|src.heretek_swarm.collective.emergent_detection_utils.classify_pattern_provenance": {
+      "file_path": "src/heretek_swarm/collective/emergent_detection_utils.py",
+      "qualified_name": "src.heretek_swarm.collective.emergent_detection_utils.classify_pattern_provenance",
+      "start_line": 275,
+      "end_line": 298,
+      "type": "FUNCTION",
+      "status": "added"
     },
     "src/heretek_swarm/collective/evolution_engine.py|src.heretek_swarm.collective.evolution_engine.EvolutionEngine": {
       "file_path": "src/heretek_swarm/collective/evolution_engine.py",
@@ -76490,7 +76539,7 @@
       "file_path": "src/heretek_swarm/consensus/immune.py",
       "qualified_name": "src.heretek_swarm.consensus.immune.ImmuneResponseBuilding",
       "start_line": 246,
-      "end_line": 904,
+      "end_line": 919,
       "type": "CLASS",
       "status": "modified"
     },
@@ -76553,10 +76602,10 @@
     "src/heretek_swarm/consensus/immune.py|src.heretek_swarm.consensus.immune.ImmuneResponseBuilding.submit_quorum_vote": {
       "file_path": "src/heretek_swarm/consensus/immune.py",
       "qualified_name": "src.heretek_swarm.consensus.immune.ImmuneResponseBuilding.submit_quorum_vote",
-      "start_line": 547,
-      "end_line": 610,
+      "start_line": 558,
+      "end_line": 636,
       "type": "METHOD",
-      "status": "unchanged"
+      "status": "modified"
     },
     "src/heretek_swarm/consensus/immune.py|src.heretek_swarm.consensus.immune.ImmuneResponseBuilding.check_pattern_immunity": {
       "file_path": "src/heretek_swarm/consensus/immune.py",
@@ -118055,11 +118104,12 @@
         },
         {
           "file_path": "src/heretek_swarm/collective/emergent_detection_types.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.collective.emergent_detection_types.EmergentPatternClass",
             "src.heretek_swarm.collective.emergent_detection_types.EmergenceLevel",
             "src.heretek_swarm.collective.emergent_detection_types.EvolutionPhase",
+            "src.heretek_swarm.collective.emergent_detection_types.PatternProvenance",
             "src.heretek_swarm.collective.emergent_detection_types.CapabilityRecord",
             "src.heretek_swarm.collective.emergent_detection_types.CapabilityRecord.to_dict",
             "src.heretek_swarm.collective.emergent_detection_types.EvolutionMetrics",
@@ -118071,8 +118121,8 @@
             "src.heretek_swarm.collective.emergent_detection_types.CollectiveBehavior",
             "src.heretek_swarm.collective.emergent_detection_types.CollectiveBehavior.to_dict",
             "src.heretek_swarm.collective.emergent_detection_types.EmergentPattern",
-            "src.heretek_swarm.collective.emergent_detection_types.EmergentPattern.to_dict",
             "src.heretek_swarm.collective.emergent_detection_types.EmergentPattern.to_extracted_pattern",
+            "src.heretek_swarm.collective.emergent_detection_types.EmergentPattern.to_dict",
             "src.heretek_swarm.collective.emergent_detection_types.DetectionEvent",
             "src.heretek_swarm.collective.emergent_detection_types.DetectionEvent.to_dict",
             "src.heretek_swarm.collective.emergent_detection_types.EmergenceDetectionConfig"
@@ -118080,7 +118130,7 @@
         },
         {
           "file_path": "src/heretek_swarm/collective/emergent_detection_utils.py",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "src.heretek_swarm.collective.emergent_detection_utils.calculate_window_metrics",
             "src.heretek_swarm.collective.emergent_detection_utils.analyze_temporal_windows",
@@ -118091,7 +118141,9 @@
             "src.heretek_swarm.collective.emergent_detection_utils.calculate_statistical_significance",
             "src.heretek_swarm.collective.emergent_detection_utils.calculate_confidence",
             "src.heretek_swarm.collective.emergent_detection_utils.calculate_impact_score",
-            "src.heretek_swarm.collective.emergent_detection_utils.generate_recommended_action"
+            "src.heretek_swarm.collective.emergent_detection_utils.generate_recommended_action",
+            "src.heretek_swarm.collective.emergent_detection_utils.calculate_novelty_score",
+            "src.heretek_swarm.collective.emergent_detection_utils.classify_pattern_provenance"
           ]
         },
         {
@@ -158457,11 +158509,12 @@
             },
             {
               "file_path": "src/heretek_swarm/collective/emergent_detection_types.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.collective.emergent_detection_types.EmergentPatternClass",
                 "src.heretek_swarm.collective.emergent_detection_types.EmergenceLevel",
                 "src.heretek_swarm.collective.emergent_detection_types.EvolutionPhase",
+                "src.heretek_swarm.collective.emergent_detection_types.PatternProvenance",
                 "src.heretek_swarm.collective.emergent_detection_types.CapabilityRecord",
                 "src.heretek_swarm.collective.emergent_detection_types.CapabilityRecord.to_dict",
                 "src.heretek_swarm.collective.emergent_detection_types.EvolutionMetrics",
@@ -158473,8 +158526,8 @@
                 "src.heretek_swarm.collective.emergent_detection_types.CollectiveBehavior",
                 "src.heretek_swarm.collective.emergent_detection_types.CollectiveBehavior.to_dict",
                 "src.heretek_swarm.collective.emergent_detection_types.EmergentPattern",
-                "src.heretek_swarm.collective.emergent_detection_types.EmergentPattern.to_dict",
                 "src.heretek_swarm.collective.emergent_detection_types.EmergentPattern.to_extracted_pattern",
+                "src.heretek_swarm.collective.emergent_detection_types.EmergentPattern.to_dict",
                 "src.heretek_swarm.collective.emergent_detection_types.DetectionEvent",
                 "src.heretek_swarm.collective.emergent_detection_types.DetectionEvent.to_dict",
                 "src.heretek_swarm.collective.emergent_detection_types.EmergenceDetectionConfig"
@@ -158482,7 +158535,7 @@
             },
             {
               "file_path": "src/heretek_swarm/collective/emergent_detection_utils.py",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "src.heretek_swarm.collective.emergent_detection_utils.calculate_window_metrics",
                 "src.heretek_swarm.collective.emergent_detection_utils.analyze_temporal_windows",
@@ -158493,7 +158546,9 @@
                 "src.heretek_swarm.collective.emergent_detection_utils.calculate_statistical_significance",
                 "src.heretek_swarm.collective.emergent_detection_utils.calculate_confidence",
                 "src.heretek_swarm.collective.emergent_detection_utils.calculate_impact_score",
-                "src.heretek_swarm.collective.emergent_detection_utils.generate_recommended_action"
+                "src.heretek_swarm.collective.emergent_detection_utils.generate_recommended_action",
+                "src.heretek_swarm.collective.emergent_detection_utils.calculate_novelty_score",
+                "src.heretek_swarm.collective.emergent_detection_utils.classify_pattern_provenance"
               ]
             },
             {
@@ -160821,11 +160876,12 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/collective/emergent_detection_types.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.collective.emergent_detection_types.EmergentPatternClass",
                     "src.heretek_swarm.collective.emergent_detection_types.EmergenceLevel",
                     "src.heretek_swarm.collective.emergent_detection_types.EvolutionPhase",
+                    "src.heretek_swarm.collective.emergent_detection_types.PatternProvenance",
                     "src.heretek_swarm.collective.emergent_detection_types.CapabilityRecord",
                     "src.heretek_swarm.collective.emergent_detection_types.CapabilityRecord.to_dict",
                     "src.heretek_swarm.collective.emergent_detection_types.EvolutionMetrics",
@@ -160837,8 +160893,8 @@
                     "src.heretek_swarm.collective.emergent_detection_types.CollectiveBehavior",
                     "src.heretek_swarm.collective.emergent_detection_types.CollectiveBehavior.to_dict",
                     "src.heretek_swarm.collective.emergent_detection_types.EmergentPattern",
-                    "src.heretek_swarm.collective.emergent_detection_types.EmergentPattern.to_dict",
                     "src.heretek_swarm.collective.emergent_detection_types.EmergentPattern.to_extracted_pattern",
+                    "src.heretek_swarm.collective.emergent_detection_types.EmergentPattern.to_dict",
                     "src.heretek_swarm.collective.emergent_detection_types.DetectionEvent",
                     "src.heretek_swarm.collective.emergent_detection_types.DetectionEvent.to_dict",
                     "src.heretek_swarm.collective.emergent_detection_types.EmergenceDetectionConfig"
@@ -160846,7 +160902,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/collective/emergent_detection_utils.py",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "src.heretek_swarm.collective.emergent_detection_utils.calculate_window_metrics",
                     "src.heretek_swarm.collective.emergent_detection_utils.analyze_temporal_windows",
@@ -160857,7 +160913,9 @@
                     "src.heretek_swarm.collective.emergent_detection_utils.calculate_statistical_significance",
                     "src.heretek_swarm.collective.emergent_detection_utils.calculate_confidence",
                     "src.heretek_swarm.collective.emergent_detection_utils.calculate_impact_score",
-                    "src.heretek_swarm.collective.emergent_detection_utils.generate_recommended_action"
+                    "src.heretek_swarm.collective.emergent_detection_utils.generate_recommended_action",
+                    "src.heretek_swarm.collective.emergent_detection_utils.calculate_novelty_score",
+                    "src.heretek_swarm.collective.emergent_detection_utils.classify_pattern_provenance"
                   ]
                 },
                 {
@@ -161531,11 +161589,12 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/collective/emergent_detection_types.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.collective.emergent_detection_types.EmergentPatternClass",
                         "src.heretek_swarm.collective.emergent_detection_types.EmergenceLevel",
                         "src.heretek_swarm.collective.emergent_detection_types.EvolutionPhase",
+                        "src.heretek_swarm.collective.emergent_detection_types.PatternProvenance",
                         "src.heretek_swarm.collective.emergent_detection_types.CapabilityRecord",
                         "src.heretek_swarm.collective.emergent_detection_types.CapabilityRecord.to_dict",
                         "src.heretek_swarm.collective.emergent_detection_types.EvolutionMetrics",
@@ -161547,8 +161606,8 @@
                         "src.heretek_swarm.collective.emergent_detection_types.CollectiveBehavior",
                         "src.heretek_swarm.collective.emergent_detection_types.CollectiveBehavior.to_dict",
                         "src.heretek_swarm.collective.emergent_detection_types.EmergentPattern",
-                        "src.heretek_swarm.collective.emergent_detection_types.EmergentPattern.to_dict",
                         "src.heretek_swarm.collective.emergent_detection_types.EmergentPattern.to_extracted_pattern",
+                        "src.heretek_swarm.collective.emergent_detection_types.EmergentPattern.to_dict",
                         "src.heretek_swarm.collective.emergent_detection_types.DetectionEvent",
                         "src.heretek_swarm.collective.emergent_detection_types.DetectionEvent.to_dict",
                         "src.heretek_swarm.collective.emergent_detection_types.EmergenceDetectionConfig"
@@ -161556,7 +161615,7 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/collective/emergent_detection_utils.py",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "src.heretek_swarm.collective.emergent_detection_utils.calculate_window_metrics",
                         "src.heretek_swarm.collective.emergent_detection_utils.analyze_temporal_windows",
@@ -161567,7 +161626,9 @@
                         "src.heretek_swarm.collective.emergent_detection_utils.calculate_statistical_significance",
                         "src.heretek_swarm.collective.emergent_detection_utils.calculate_confidence",
                         "src.heretek_swarm.collective.emergent_detection_utils.calculate_impact_score",
-                        "src.heretek_swarm.collective.emergent_detection_utils.generate_recommended_action"
+                        "src.heretek_swarm.collective.emergent_detection_utils.generate_recommended_action",
+                        "src.heretek_swarm.collective.emergent_detection_utils.calculate_novelty_score",
+                        "src.heretek_swarm.collective.emergent_detection_utils.classify_pattern_provenance"
                       ]
                     },
                     {
@@ -161673,21 +161734,21 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/collective/emergent_detection_types.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.collective.emergent_detection_types.CapabilityRecord.to_dict",
                             "src.heretek_swarm.collective.emergent_detection_types.EvolutionMetrics.to_dict",
                             "src.heretek_swarm.collective.emergent_detection_types.AgentCapabilitySnapshot.to_dict",
                             "src.heretek_swarm.collective.emergent_detection_types.AgentBehaviorSnapshot.to_dict",
                             "src.heretek_swarm.collective.emergent_detection_types.CollectiveBehavior.to_dict",
-                            "src.heretek_swarm.collective.emergent_detection_types.EmergentPattern.to_dict",
                             "src.heretek_swarm.collective.emergent_detection_types.EmergentPattern.to_extracted_pattern",
+                            "src.heretek_swarm.collective.emergent_detection_types.EmergentPattern.to_dict",
                             "src.heretek_swarm.collective.emergent_detection_types.DetectionEvent.to_dict"
                           ]
                         },
                         {
                           "file_path": "src/heretek_swarm/collective/emergent_detection_utils.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.collective.emergent_detection_utils.calculate_window_metrics",
                             "src.heretek_swarm.collective.emergent_detection_utils.analyze_temporal_windows",
@@ -161698,7 +161759,9 @@
                             "src.heretek_swarm.collective.emergent_detection_utils.calculate_statistical_significance",
                             "src.heretek_swarm.collective.emergent_detection_utils.calculate_confidence",
                             "src.heretek_swarm.collective.emergent_detection_utils.calculate_impact_score",
-                            "src.heretek_swarm.collective.emergent_detection_utils.generate_recommended_action"
+                            "src.heretek_swarm.collective.emergent_detection_utils.generate_recommended_action",
+                            "src.heretek_swarm.collective.emergent_detection_utils.calculate_novelty_score",
+                            "src.heretek_swarm.collective.emergent_detection_utils.classify_pattern_provenance"
                           ]
                         },
                         {
@@ -161741,7 +161804,7 @@
                       "file_methods": [
                         {
                           "file_path": "src/heretek_swarm/collective/emergent_detection_types.py",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "src.heretek_swarm.collective.emergent_detection_types.EmergentPatternClass",
                             "src.heretek_swarm.collective.emergent_detection_types.EmergenceLevel",
