@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-16T01:21:06.038877+00:00",
+    "generated_at": "2026-04-16T01:46:24.719058+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -47609,7 +47609,7 @@
       ]
     },
     "dashboard/frontend/src/components/SwarmControlCenter.tsx": {
-      "file_status": "unchanged",
+      "file_status": "modified",
       "methods": [
         {
           "qualified_name": "dashboard.frontend.src.components.SwarmControlCenter.SwarmControlCenterProps",
@@ -47623,7 +47623,7 @@
           "start_line": 24,
           "end_line": 53,
           "node_type": "FUNCTION",
-          "status": "unchanged"
+          "status": "modified"
         }
       ]
     },
@@ -107334,7 +107334,7 @@
       "start_line": 24,
       "end_line": 53,
       "type": "FUNCTION",
-      "status": "unchanged"
+      "status": "modified"
     },
     "dashboard/frontend/src/components/SwarmHealthDashboard.tsx|dashboard.frontend.src.components.SwarmHealthDashboard.SwarmMetrics": {
       "file_path": "dashboard/frontend/src/components/SwarmHealthDashboard.tsx",
@@ -247172,7 +247172,7 @@
         },
         {
           "file_path": "dashboard/frontend/src/components/SwarmControlCenter.tsx",
-          "file_status": "unchanged",
+          "file_status": "modified",
           "methods": [
             "dashboard.frontend.src.components.SwarmControlCenter.SwarmControlCenterProps",
             "dashboard.frontend.src.components.SwarmControlCenter.SwarmControlCenter"
@@ -262006,7 +262006,7 @@
             },
             {
               "file_path": "dashboard/frontend/src/components/SwarmControlCenter.tsx",
-              "file_status": "unchanged",
+              "file_status": "modified",
               "methods": [
                 "dashboard.frontend.src.components.SwarmControlCenter.SwarmControlCenterProps",
                 "dashboard.frontend.src.components.SwarmControlCenter.SwarmControlCenter"
@@ -263197,7 +263197,7 @@
                 },
                 {
                   "file_path": "dashboard/frontend/src/components/SwarmControlCenter.tsx",
-                  "file_status": "unchanged",
+                  "file_status": "modified",
                   "methods": [
                     "dashboard.frontend.src.components.SwarmControlCenter.SwarmControlCenterProps",
                     "dashboard.frontend.src.components.SwarmControlCenter.SwarmControlCenter"
@@ -263677,7 +263677,7 @@
                     },
                     {
                       "file_path": "dashboard/frontend/src/components/SwarmControlCenter.tsx",
-                      "file_status": "unchanged",
+                      "file_status": "modified",
                       "methods": [
                         "dashboard.frontend.src.components.SwarmControlCenter.SwarmControlCenterProps",
                         "dashboard.frontend.src.components.SwarmControlCenter.SwarmControlCenter"
@@ -263801,7 +263801,7 @@
                         },
                         {
                           "file_path": "dashboard/frontend/src/components/SwarmControlCenter.tsx",
-                          "file_status": "unchanged",
+                          "file_status": "modified",
                           "methods": [
                             "dashboard.frontend.src.components.SwarmControlCenter.SwarmControlCenterProps",
                             "dashboard.frontend.src.components.SwarmControlCenter.SwarmControlCenter"

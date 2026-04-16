@@ -49,7 +49,7 @@ interface ConsciousnessMetrics {
   agent_phi_scores: Record<string, number>;
 }
 
-const API_URL = import.meta.env.VITE_API_HOST || localStorage.getItem('swarm_api_host') || 'http://localhost:8000';
+const API_URL = import.meta.env.VITE_API_HOST || localStorage.getItem('swarm_api_host') || '';
 
 // =============================================================================
 // Type Definitions

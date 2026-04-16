@@ -24,7 +24,7 @@ interface SwarmControlCenterProps {
 export function SwarmControlCenter({
   defaultView = 'all',
   natsUrl = 'nats://localhost:4222',
-  apiUrl = 'http://localhost:8000',
+  apiUrl = '/api',
 }: SwarmControlCenterProps) {
   const [activeView, setActiveView] = useState<View>(defaultView);
 
