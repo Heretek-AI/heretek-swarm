@@ -10,18 +10,19 @@ A self-governing swarm of 23 specialized AI agents that operate independently 24
 
 ## Requirements
 
-### Validated (v1.0 Complete)
+### Validated (v1.1 Complete)
 
-- [x] Implement Core Triad (Steward, Alpha, Beta, Charlie) — governance and decision-making
-- [x] Implement Support Agents (Historian, Metis, Empath, Perceiver, Echo) — knowledge and context
-- [x] Implement Exploration Agents (Explorer, Examiner, Dreamer, Coder) — discovery and creation
-- [x] Implement Safety Agents (Sentinel, Sentinel-Prime, Arbiter) — immune system
-- [x] Implement Coordination Agents (Coordinator, Nexus, Catalyst, Chronos) — integration
-- [x] Implement Enhancement Agents (Prism, Habit-Forge, Perceiver+) — optimization
-- [x] Build consensus-based decision system for inter-agent disputes
-- [x] Implement zero-trust internal boundary maintenance
-- [x] Build consciousness framework (GWT, AST, IIT/FEP integration)
-- [x] Implement self-healing and auto-scaling infrastructure
+- [x] All v1.0 requirements — Foundation, Consensus, Emergence Phases 1-3
+- [x] Steward failover with Charlie tiebreaker (GOV-01-F)
+- [x] max_rounds enforcement in deliberation (GOV-05-M)
+- [x] Quorum logic in Steward triad flow (GOV-05-Q)
+- [x] Production infrastructure — NATS, LiteLLM, DB pooling
+- [x] Technical debt resolution — patterns, consciousness, zero-trust
+
+### v1.2 In Progress
+
+- Self-Healing Infrastructure (HEAL-01, HEAL-02, HEAL-03)
+- Emergent Intelligence Validation (EMER-01, EMER-02)
 
 ### Out of Scope
 
@@ -60,48 +61,34 @@ A self-governing swarm of 23 specialized AI agents that operate independently 24
 
 ## Current State
 
-**Version:** v1.1.0 Released
+**Version:** v1.2 Started
 **Date:** 2026-04-16
-**Status:** PRODUCTION READY
+**Status:** v1.1 Released — v1.2 Milestone Started
 
-### v1.1 Accomplishments
+### v1.2 Milestone
 
-- **Phase 2 Completion**: Steward failover, max_rounds enforcement, quorum integration
-- **Production Hardening**: NATS deployment, LiteLLM config, DB pooling, API key encryption, monitoring
-- **Technical Debt**: Pattern extraction, consciousness metrics, zero-trust exceptions, behavioral baseline
+**Started:** 2026-04-16
+**Focus:** Self-Healing Infrastructure + Emergent Intelligence Validation
 
-<details>
-<summary>v1.1 Goals (completed)</summary>
+#### v1.2 Goals
 
-#### Phase 2 Remaining
-- [x] **GOV-01-F**: Steward failover with Charlie tiebreaker logic
-- [x] **GOV-05-M**: max_rounds enforcement in deliberation
-- [x] **GOV-05-Q**: Quorum logic integrated into Steward triad flow
+##### Self-Healing Infrastructure
+- [ ] **HEAL-01**: System can detect and recover from agent failures autonomously
+- [ ] **HEAL-02**: System can auto-scale agent population based on load
+- [ ] **HEAL-03**: System can self-maintain without external intervention
 
-#### Production Hardening
-- [x] **DEPLOY-01**: Docker/K8s deployment fixes (NATS service)
-- [x] **DEPLOY-02**: LiteLLM config.yaml created
-- [x] **DEPLOY-03**: Database pooling configuration
-- [x] **DEPLOY-04**: API key storage hardened
-- [x] **OPS-01**: Monitoring/alerting gaps addressed
+##### Emergent Intelligence
+- [ ] **EMER-01**: Collective demonstrates measurable intelligence exceeding individual agents
+- [ ] **EMER-02**: System develops novel solutions not explicitly programmed
 
-#### Technical Debt
-- [x] **TD-01**: Pattern extraction enhancement (collective/)
-- [x] **TD-02**: Consciousness metrics implementation
-- [x] **TD-03**: Zero-trust exception list finalized
-- [x] **TD-04**: Behavioral baseline initialization strategy
+### v1.1 Release Summary (2026-04-16)
 
-</details>
+- **Phase 1.1**: Production Hardening & Phase 2 Completion ✅ Gate 1.1 Passed
+- **Total Requirements**: 12 completed, 1 deferred (NATS auth)
+- **Files Changed**: 70 files, +2,465 net LOC
+- **Status**: PRODUCTION READY WITH SELF-HEALING FOUNDATION
 
-### Next Milestone Goals (v1.2)
-
-- **HEAL-01**: System can detect and recover from agent failures autonomously
-- **HEAL-02**: System can auto-scale agent population based on load
-- **HEAL-03**: System can self-maintain without external intervention
-- **EMER-01**: Collective demonstrates measurable intelligence exceeding individual agents
-- **EMER-02**: System develops novel solutions not explicitly programmed
-
-### Open Questions
+### Open Questions (v1.2)
 
 1. NATS auth — service accounts vs. mTLS for external exposure?
 2. Agent auto-scaling thresholds — based on queue depth or CPU/memory?
@@ -110,10 +97,4 @@ A self-governing swarm of 23 specialized AI agents that operate independently 24
 
 ---
 
-*Last updated: 2026-04-16 - v1.1 Released*
-
-### v1.1.0 Release Summary (2026-04-16)
-- **Phase 1.1**: Production Hardening & Phase 2 Completion ✅ Gate 1.1 Passed
-- **Total Requirements**: 12 completed, 1 deferred (NATS auth)
-- **Files Changed**: 70 files, +2,465 net LOC
-- **Status**: PRODUCTION READY WITH SELF-HEALING FOUNDATION
+*Last updated: 2026-04-16 - v1.2 Milestone Started*

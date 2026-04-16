@@ -1,8 +1,8 @@
-# v1.1 Milestone State
+# v1.2 Milestone State
 
-**Milestone:** v1.1 — Production Hardening & Phase 2 Completion
-**Started:** 2026-04-15
-**Previous:** v1.0 (released 2026-04-15)
+**Milestone:** v1.2 — Self-Healing Infrastructure & Emergent Intelligence
+**Started:** 2026-04-16
+**Previous:** v1.1 (released 2026-04-16)
 
 ## Status
 
@@ -12,62 +12,47 @@
 | Context Load | ✅ Complete |
 | Requirements | ✅ Complete |
 | Roadmap | ✅ Complete |
-| **Plan Phase 1.1** | ✅ Complete |
-| **Execute Phase 1.1** | ✅ Complete (3/3 plans, +2045/-901 lines) |
-| **Gate 1.1 Assessment** | ✅ PASSED (2026-04-16) |
+| **Plan Phase 1.2** | 🔄 PENDING |
+| **Execute Phase 1.2** | 🔄 PENDING |
+| **Gate 1.2 Assessment** | 🔄 PENDING |
 
-## v1.0 Summary
+## v1.1 Summary
 
-- All 3 phases complete ✅
-- All 3 gates passed ✅
-- 714 tests passing
-- Health score: 95/100
-- Status: PRODUCTION READY
+- All Phase 2 remaining items complete ✅
+- All Production Hardening items complete ✅
+- All Technical Debt items resolved ✅
+- Gate 1.1: PASSED
+- 12/13 requirements complete (1 deferred: NATS auth)
 
-## v1.1 Open Items
+## v1.2 Open Items
 
-### Phase 2 Remaining (3 items)
-
-| ID | Item | Priority | Status |
-|----|------|----------|--------|
-| GOV-01-F | Steward failover with Charlie tiebreaker | P0 | ✅ IMPLEMENTED |
-| GOV-05-M | max_rounds enforcement in deliberation | P0 | ✅ IMPLEMENTED |
-| GOV-05-Q | Quorum logic in Steward triad flow | P1 | ✅ IMPLEMENTED |
-
-### Production Hardening (5 items)
+### Self-Healing Infrastructure (3 items)
 
 | ID | Item | Priority | Status |
 |----|------|----------|--------|
-| DEPLOY-01 | NATS service in docker-compose | P0 | ✅ IMPLEMENTED |
-| DEPLOY-02 | LiteLLM config.yaml | P0 | ✅ IMPLEMENTED |
-| DEPLOY-03 | Database pooling configuration | P1 | ✅ IMPLEMENTED |
-| DEPLOY-04 | API key storage hardening | P1 | ✅ IMPLEMENTED |
-| OPS-01 | Monitoring/alerting gaps | P1 | ✅ IMPLEMENTED |
+| HEAL-01 | Autonomous failure detection and recovery | P0 | 🔄 PENDING |
+| HEAL-02 | Auto-scaling based on load | P0 | 🔄 PENDING |
+| HEAL-03 | Self-maintenance without external intervention | P1 | 🔄 PENDING |
 
-### Technical Debt (4 items)
+### Emergent Intelligence (2 items)
 
 | ID | Item | Priority | Status |
 |----|------|----------|--------|
-| TD-01 | Pattern extraction enhancement | P2 | ✅ IMPLEMENTED |
-| TD-02 | Consciousness metrics stubs | P2 | ✅ IMPLEMENTED |
-| TD-03 | Zero-trust exception list | P2 | ✅ IMPLEMENTED |
-| TD-04 | Behavioral baseline initialization | P2 | ✅ IMPLEMENTED | |
+| EMER-01 | Measurable collective intelligence | P0 | 🔄 PENDING |
+| EMER-02 | Novel solutions not explicitly programmed | P1 | 🔄 PENDING |
 
-## Open Questions (from v1.0)
+## Open Questions (from v1.2)
 
-1. NATS auth method — service accounts vs. shared token vs. mTLS?
-2. Heartbeat interval — configurable per agent class or global? (default 10s vs 5s)
-3. Audit log retention backend — SQLite, PostgreSQL, or object storage?
-4. Convoy effect threshold — max_rounds default 3, correct for v1.1?
-5. Steward failover identity — Charlie's authority scope during Steward failure?
-6. Behavioral baseline initialization — zero state or bootstrap from static rules?
-7. Zero-trust exception list — any internal topics exempt from sanitization?
+1. Agent auto-scaling thresholds — queue depth vs CPU/memory?
+2. Self-healing recovery — restart vs recreate containers?
+3. Emergent behavior validation — who validates novel solutions?
+4. NATS auth — service accounts vs mTLS?
 
 ## Next Action
 
-1. Run `/gsd-verify-work 1.1` to verify Gate 1.1 criteria
+1. Run `/gsd-plan-phase 1.2` to create phase plan
 
 ---
-*Milestone started: 2026-04-15*
-*v1.0 complete: 2026-04-15*
-*Phase 1.1 execution: 2026-04-15*
+*Milestone started: 2026-04-16*
+*v1.1 complete: 2026-04-16*
+*v1.2 execution: pending*

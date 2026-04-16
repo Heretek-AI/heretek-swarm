@@ -397,7 +397,60 @@ Archived to [.planning/milestones/v1.1-ROADMAP.md](milestones/v1.1-ROADMAP.md)
 
 ---
 
+## v1.2 Milestone: Self-Healing & Emergent Intelligence
+
+**Duration:** ~4-6 weeks
+**Focus:** Autonomous failure recovery, auto-scaling, and emergent behavior validation
+
+### Key Deliverables
+
+1. **Self-Healing Infrastructure**
+   - Autonomous failure detection and recovery
+   - Agent failover with automatic restart/recreate
+   - Health-based routing around failed agents
+   - *Delivered by:* HEAL-01
+
+2. **Auto-Scaling System**
+   - Load-based agent population adjustment
+   - Queue depth and latency-based scaling triggers
+   - Scale-down with graceful agent retirement
+   - *Delivered by:* HEAL-02
+
+3. **Self-Maintenance**
+   - Automated log rotation and cleanup
+   - Database maintenance routines
+   - Configuration drift detection
+   - *Delivered by:* HEAL-03
+
+4. **Emergent Intelligence Validation**
+   - Collective vs. individual performance metrics
+   - Novel solution detection and classification
+   - Emergence impact scoring
+   - *Delivered by:* EMER-01, EMER-02
+
+### Success Criteria
+
+| Criterion | Measurement |
+|-----------|-------------|
+| Failure recovery time | < 30 seconds |
+| Agent restart success rate | ≥ 99% |
+| Auto-scale adjustment latency | < 60 seconds |
+| Collective intelligence factor | ≥ 0.6 weighted by validation |
+| Novel solution detection | ≥ 1 per evaluation window |
+
+### Gate 1.2 Assessment (Pending)
+
+| Criterion | Threshold | Status |
+|-----------|-----------|--------|
+| Failure detection time | < 10s | ❌ PENDING |
+| Recovery success rate | ≥ 99% | ❌ PENDING |
+| Auto-scale triggers | Configurable | ❌ PENDING |
+| Novel solution validated | Evidence-based | ❌ PENDING |
+
+---
+
 *Roadmap created: 2026-04-13*
 *v1.0 released: 2026-04-15*
 *v1.1 released: 2026-04-16*
-*Next action: /gsd-new-milestone v1.2*
+*v1.2 started: 2026-04-16*
+*Next action: /gsd-plan-phase 1.2 to execute v1.2*
