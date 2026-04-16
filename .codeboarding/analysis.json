@@ -1,6 +1,6 @@
 {
   "metadata": {
-    "generated_at": "2026-04-16T19:02:40.944322+00:00",
+    "generated_at": "2026-04-16T19:03:38.795353+00:00",
     "commit_hash": "",
     "repo_name": "heretek-swarm",
     "depth_level": 6,
@@ -11130,399 +11130,399 @@
       ]
     },
     "src/heretek_swarm/api/websockets.py": {
-      "file_status": "modified",
+      "file_status": "unchanged",
       "methods": [
         {
           "qualified_name": "src.heretek_swarm.api.websockets.WebSocketAuthManager",
-          "start_line": 29,
-          "end_line": 111,
+          "start_line": 32,
+          "end_line": 114,
           "node_type": "CLASS",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.WebSocketAuthManager.__init__",
-          "start_line": 32,
-          "end_line": 40,
+          "start_line": 35,
+          "end_line": 43,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.WebSocketAuthManager.generate_token",
-          "start_line": 39,
-          "end_line": 48,
+          "start_line": 45,
+          "end_line": 54,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.WebSocketAuthManager.validate_token",
-          "start_line": 50,
-          "end_line": 68,
+          "start_line": 56,
+          "end_line": 74,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.WebSocketAuthManager.revoke_token",
-          "start_line": 70,
-          "end_line": 75,
+          "start_line": 76,
+          "end_line": 81,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.WebSocketAuthManager.check_rate_limit",
-          "start_line": 80,
-          "end_line": 103,
+          "start_line": 83,
+          "end_line": 106,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.WebSocketAuthManager.cleanup_expired",
-          "start_line": 103,
-          "end_line": 109,
+          "start_line": 108,
+          "end_line": 114,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.authenticate_websocket",
-          "start_line": 118,
-          "end_line": 135,
+          "start_line": 121,
+          "end_line": 138,
           "node_type": "FUNCTION",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets._ws_authenticate_and_accept",
-          "start_line": 138,
-          "end_line": 157,
-          "node_type": "FUNCTION",
-          "status": "added"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager",
-          "start_line": 146,
-          "end_line": 384,
-          "node_type": "CLASS",
-          "status": "modified"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.__init__",
-          "start_line": 149,
+          "start_line": 141,
           "end_line": 160,
-          "node_type": "METHOD",
-          "status": "modified"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.connect_execution",
-          "start_line": 153,
-          "end_line": 159,
-          "node_type": "METHOD",
+          "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets._ws_handle_agent_subscribe",
-          "start_line": 160,
-          "end_line": 172,
+          "start_line": 163,
+          "end_line": 175,
           "node_type": "FUNCTION",
-          "status": "added"
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.websockets._ws_handle_agent_unsubscribe",
+          "start_line": 178,
+          "end_line": 186,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.websockets._ws_handle_workflow_subscribe",
+          "start_line": 189,
+          "end_line": 197,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.websockets._ws_handle_workflow_unsubscribe",
+          "start_line": 200,
+          "end_line": 208,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.websockets._ws_handle_metrics_subscribe",
+          "start_line": 211,
+          "end_line": 219,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.websockets._ws_handle_metrics_unsubscribe",
+          "start_line": 222,
+          "end_line": 230,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.websockets._ws_handle_dashboard_message",
+          "start_line": 233,
+          "end_line": 255,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager",
+          "start_line": 266,
+          "end_line": 504,
+          "node_type": "CLASS",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.__init__",
+          "start_line": 269,
+          "end_line": 280,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.connect_execution",
+          "start_line": 282,
+          "end_line": 288,
+          "node_type": "METHOD",
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.disconnect_execution",
-          "start_line": 161,
-          "end_line": 166,
+          "start_line": 290,
+          "end_line": 295,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.connect_a2a",
-          "start_line": 168,
-          "end_line": 172,
+          "start_line": 297,
+          "end_line": 301,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.disconnect_a2a",
-          "start_line": 174,
-          "end_line": 176,
+          "start_line": 303,
+          "end_line": 305,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
-          "qualified_name": "src.heretek_swarm.api.websockets._ws_handle_agent_unsubscribe",
-          "start_line": 175,
-          "end_line": 183,
-          "node_type": "FUNCTION",
-          "status": "added"
-        },
-        {
           "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.connect_dashboard",
-          "start_line": 178,
-          "end_line": 182,
+          "start_line": 307,
+          "end_line": 311,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.disconnect_dashboard",
-          "start_line": 184,
-          "end_line": 186,
+          "start_line": 313,
+          "end_line": 315,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
-          "qualified_name": "src.heretek_swarm.api.websockets._ws_handle_workflow_subscribe",
-          "start_line": 186,
-          "end_line": 194,
-          "node_type": "FUNCTION",
-          "status": "added"
-        },
-        {
           "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.connect_observability",
-          "start_line": 188,
-          "end_line": 192,
+          "start_line": 317,
+          "end_line": 321,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.disconnect_observability",
-          "start_line": 194,
-          "end_line": 196,
+          "start_line": 323,
+          "end_line": 325,
           "node_type": "METHOD",
           "status": "unchanged"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.api.websockets._ws_handle_workflow_unsubscribe",
-          "start_line": 197,
-          "end_line": 205,
-          "node_type": "FUNCTION",
-          "status": "added"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_execution",
-          "start_line": 207,
-          "end_line": 221,
-          "node_type": "METHOD",
-          "status": "modified"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.api.websockets._ws_handle_metrics_subscribe",
-          "start_line": 208,
-          "end_line": 216,
-          "node_type": "FUNCTION",
-          "status": "added"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.api.websockets._ws_handle_metrics_unsubscribe",
-          "start_line": 219,
-          "end_line": 227,
-          "node_type": "FUNCTION",
-          "status": "added"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_a2a",
-          "start_line": 223,
-          "end_line": 235,
-          "node_type": "METHOD",
-          "status": "modified"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.api.websockets._ws_handle_dashboard_message",
-          "start_line": 230,
-          "end_line": 252,
-          "node_type": "FUNCTION",
-          "status": "added"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_dashboard",
-          "start_line": 237,
-          "end_line": 249,
-          "node_type": "METHOD",
-          "status": "modified"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_observability",
-          "start_line": 251,
-          "end_line": 263,
-          "node_type": "METHOD",
-          "status": "modified"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_agent_status",
-          "start_line": 265,
-          "end_line": 279,
-          "node_type": "METHOD",
-          "status": "modified"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_workflow_progress",
-          "start_line": 281,
-          "end_line": 300,
-          "node_type": "METHOD",
-          "status": "modified"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.subscribe_agent_status",
-          "start_line": 296,
-          "end_line": 298,
+          "start_line": 327,
+          "end_line": 341,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
-          "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.unsubscribe_agent_status",
-          "start_line": 300,
-          "end_line": 303,
+          "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_a2a",
+          "start_line": 343,
+          "end_line": 355,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_dashboard",
+          "start_line": 357,
+          "end_line": 369,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_observability",
+          "start_line": 371,
+          "end_line": 383,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_agent_status",
+          "start_line": 385,
+          "end_line": 399,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_workflow_progress",
+          "start_line": 401,
+          "end_line": 420,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_metrics",
-          "start_line": 302,
-          "end_line": 321,
+          "start_line": 422,
+          "end_line": 441,
           "node_type": "METHOD",
-          "status": "modified"
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.subscribe_agent_status",
+          "start_line": 443,
+          "end_line": 445,
+          "node_type": "METHOD",
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.unsubscribe_agent_status",
+          "start_line": 447,
+          "end_line": 450,
+          "node_type": "METHOD",
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.subscribe_workflow_progress",
-          "start_line": 305,
-          "end_line": 309,
+          "start_line": 452,
+          "end_line": 456,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.unsubscribe_workflow_progress",
-          "start_line": 311,
-          "end_line": 316,
+          "start_line": 458,
+          "end_line": 463,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.subscribe_metrics",
-          "start_line": 318,
-          "end_line": 322,
+          "start_line": 465,
+          "end_line": 469,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.unsubscribe_metrics",
-          "start_line": 324,
-          "end_line": 329,
+          "start_line": 471,
+          "end_line": 476,
           "node_type": "METHOD",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.connect_logs",
-          "start_line": 358,
-          "end_line": 362,
+          "start_line": 478,
+          "end_line": 482,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.disconnect_logs",
-          "start_line": 364,
-          "end_line": 367,
+          "start_line": 484,
+          "end_line": 487,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_log",
-          "start_line": 369,
-          "end_line": 384,
+          "start_line": 489,
+          "end_line": 504,
           "node_type": "METHOD",
-          "status": "added"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.execution_websocket",
-          "start_line": 400,
-          "end_line": 498,
+          "start_line": 520,
+          "end_line": 618,
           "node_type": "FUNCTION",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.get_execution_update",
-          "start_line": 505,
-          "end_line": 522,
+          "start_line": 625,
+          "end_line": 642,
           "node_type": "FUNCTION",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.a2a_websocket",
-          "start_line": 531,
-          "end_line": 616,
+          "start_line": 651,
+          "end_line": 736,
           "node_type": "FUNCTION",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.agent_events_websocket",
-          "start_line": 625,
-          "end_line": 694,
+          "start_line": 745,
+          "end_line": 814,
           "node_type": "FUNCTION",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.agent_status_websocket",
           "start_line": 823,
           "end_line": 887,
           "node_type": "FUNCTION",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.workflow_progress_websocket",
           "start_line": 896,
           "end_line": 960,
           "node_type": "FUNCTION",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.agent_metrics_websocket",
           "start_line": 969,
           "end_line": 1037,
           "node_type": "FUNCTION",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.dashboard_websocket",
           "start_line": 1046,
           "end_line": 1104,
           "node_type": "FUNCTION",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.observability_websocket",
-          "start_line": 1094,
-          "end_line": 1163,
+          "start_line": 1113,
+          "end_line": 1182,
           "node_type": "FUNCTION",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.logs_websocket",
-          "start_line": 1167,
-          "end_line": 1196,
-          "node_type": "FUNCTION",
-          "status": "added"
-        },
-        {
-          "qualified_name": "src.heretek_swarm.api.websockets.send_agent_status_update",
-          "start_line": 1169,
-          "end_line": 1184,
+          "start_line": 1186,
+          "end_line": 1205,
           "node_type": "FUNCTION",
           "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.all_agents_websocket",
-          "start_line": 1195,
-          "end_line": 1249,
+          "start_line": 1214,
+          "end_line": 1268,
           "node_type": "FUNCTION",
-          "status": "modified"
+          "status": "unchanged"
+        },
+        {
+          "qualified_name": "src.heretek_swarm.api.websockets.send_agent_status_update",
+          "start_line": 1276,
+          "end_line": 1291,
+          "node_type": "FUNCTION",
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.send_workflow_progress_update",
-          "start_line": 1275,
-          "end_line": 1292,
+          "start_line": 1294,
+          "end_line": 1311,
           "node_type": "FUNCTION",
-          "status": "modified"
+          "status": "unchanged"
         },
         {
           "qualified_name": "src.heretek_swarm.api.websockets.send_agent_metrics_update",
-          "start_line": 1295,
-          "end_line": 1322,
+          "start_line": 1314,
+          "end_line": 1341,
           "node_type": "FUNCTION",
-          "status": "modified"
+          "status": "unchanged"
         }
       ]
     },
@@ -67433,370 +67433,370 @@
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.WebSocketAuthManager": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.WebSocketAuthManager",
-      "start_line": 29,
-      "end_line": 111,
+      "start_line": 32,
+      "end_line": 114,
       "type": "CLASS",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.WebSocketAuthManager.__init__": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.WebSocketAuthManager.__init__",
-      "start_line": 32,
-      "end_line": 40,
+      "start_line": 35,
+      "end_line": 43,
       "type": "METHOD",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.WebSocketAuthManager.generate_token": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.WebSocketAuthManager.generate_token",
-      "start_line": 39,
-      "end_line": 48,
+      "start_line": 45,
+      "end_line": 54,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.WebSocketAuthManager.validate_token": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.WebSocketAuthManager.validate_token",
-      "start_line": 50,
-      "end_line": 68,
+      "start_line": 56,
+      "end_line": 74,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.WebSocketAuthManager.revoke_token": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.WebSocketAuthManager.revoke_token",
-      "start_line": 70,
-      "end_line": 75,
+      "start_line": 76,
+      "end_line": 81,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.WebSocketAuthManager.check_rate_limit": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.WebSocketAuthManager.check_rate_limit",
-      "start_line": 80,
-      "end_line": 103,
+      "start_line": 83,
+      "end_line": 106,
       "type": "METHOD",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.WebSocketAuthManager.cleanup_expired": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.WebSocketAuthManager.cleanup_expired",
-      "start_line": 103,
-      "end_line": 109,
+      "start_line": 108,
+      "end_line": 114,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.authenticate_websocket": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.authenticate_websocket",
-      "start_line": 118,
-      "end_line": 135,
+      "start_line": 121,
+      "end_line": 138,
       "type": "FUNCTION",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets._ws_authenticate_and_accept": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets._ws_authenticate_and_accept",
-      "start_line": 138,
-      "end_line": 157,
-      "type": "FUNCTION",
-      "status": "added"
-    },
-    "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager": {
-      "file_path": "src/heretek_swarm/api/websockets.py",
-      "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager",
-      "start_line": 146,
-      "end_line": 384,
-      "type": "CLASS",
-      "status": "modified"
-    },
-    "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.__init__": {
-      "file_path": "src/heretek_swarm/api/websockets.py",
-      "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.__init__",
-      "start_line": 149,
+      "start_line": 141,
       "end_line": 160,
-      "type": "METHOD",
-      "status": "modified"
-    },
-    "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.connect_execution": {
-      "file_path": "src/heretek_swarm/api/websockets.py",
-      "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.connect_execution",
-      "start_line": 153,
-      "end_line": 159,
-      "type": "METHOD",
+      "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets._ws_handle_agent_subscribe": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets._ws_handle_agent_subscribe",
-      "start_line": 160,
-      "end_line": 172,
+      "start_line": 163,
+      "end_line": 175,
       "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
+    },
+    "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets._ws_handle_agent_unsubscribe": {
+      "file_path": "src/heretek_swarm/api/websockets.py",
+      "qualified_name": "src.heretek_swarm.api.websockets._ws_handle_agent_unsubscribe",
+      "start_line": 178,
+      "end_line": 186,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets._ws_handle_workflow_subscribe": {
+      "file_path": "src/heretek_swarm/api/websockets.py",
+      "qualified_name": "src.heretek_swarm.api.websockets._ws_handle_workflow_subscribe",
+      "start_line": 189,
+      "end_line": 197,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets._ws_handle_workflow_unsubscribe": {
+      "file_path": "src/heretek_swarm/api/websockets.py",
+      "qualified_name": "src.heretek_swarm.api.websockets._ws_handle_workflow_unsubscribe",
+      "start_line": 200,
+      "end_line": 208,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets._ws_handle_metrics_subscribe": {
+      "file_path": "src/heretek_swarm/api/websockets.py",
+      "qualified_name": "src.heretek_swarm.api.websockets._ws_handle_metrics_subscribe",
+      "start_line": 211,
+      "end_line": 219,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets._ws_handle_metrics_unsubscribe": {
+      "file_path": "src/heretek_swarm/api/websockets.py",
+      "qualified_name": "src.heretek_swarm.api.websockets._ws_handle_metrics_unsubscribe",
+      "start_line": 222,
+      "end_line": 230,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets._ws_handle_dashboard_message": {
+      "file_path": "src/heretek_swarm/api/websockets.py",
+      "qualified_name": "src.heretek_swarm.api.websockets._ws_handle_dashboard_message",
+      "start_line": 233,
+      "end_line": 255,
+      "type": "FUNCTION",
+      "status": "unchanged"
+    },
+    "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager": {
+      "file_path": "src/heretek_swarm/api/websockets.py",
+      "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager",
+      "start_line": 266,
+      "end_line": 504,
+      "type": "CLASS",
+      "status": "unchanged"
+    },
+    "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.__init__": {
+      "file_path": "src/heretek_swarm/api/websockets.py",
+      "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.__init__",
+      "start_line": 269,
+      "end_line": 280,
+      "type": "METHOD",
+      "status": "unchanged"
+    },
+    "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.connect_execution": {
+      "file_path": "src/heretek_swarm/api/websockets.py",
+      "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.connect_execution",
+      "start_line": 282,
+      "end_line": 288,
+      "type": "METHOD",
+      "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.disconnect_execution": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.disconnect_execution",
-      "start_line": 161,
-      "end_line": 166,
+      "start_line": 290,
+      "end_line": 295,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.connect_a2a": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.connect_a2a",
-      "start_line": 168,
-      "end_line": 172,
+      "start_line": 297,
+      "end_line": 301,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.disconnect_a2a": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.disconnect_a2a",
-      "start_line": 174,
-      "end_line": 176,
+      "start_line": 303,
+      "end_line": 305,
       "type": "METHOD",
       "status": "unchanged"
-    },
-    "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets._ws_handle_agent_unsubscribe": {
-      "file_path": "src/heretek_swarm/api/websockets.py",
-      "qualified_name": "src.heretek_swarm.api.websockets._ws_handle_agent_unsubscribe",
-      "start_line": 175,
-      "end_line": 183,
-      "type": "FUNCTION",
-      "status": "added"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.connect_dashboard": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.connect_dashboard",
-      "start_line": 178,
-      "end_line": 182,
+      "start_line": 307,
+      "end_line": 311,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.disconnect_dashboard": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.disconnect_dashboard",
-      "start_line": 184,
-      "end_line": 186,
+      "start_line": 313,
+      "end_line": 315,
       "type": "METHOD",
       "status": "unchanged"
-    },
-    "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets._ws_handle_workflow_subscribe": {
-      "file_path": "src/heretek_swarm/api/websockets.py",
-      "qualified_name": "src.heretek_swarm.api.websockets._ws_handle_workflow_subscribe",
-      "start_line": 186,
-      "end_line": 194,
-      "type": "FUNCTION",
-      "status": "added"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.connect_observability": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.connect_observability",
-      "start_line": 188,
-      "end_line": 192,
+      "start_line": 317,
+      "end_line": 321,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.disconnect_observability": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.disconnect_observability",
-      "start_line": 194,
-      "end_line": 196,
+      "start_line": 323,
+      "end_line": 325,
       "type": "METHOD",
       "status": "unchanged"
-    },
-    "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets._ws_handle_workflow_unsubscribe": {
-      "file_path": "src/heretek_swarm/api/websockets.py",
-      "qualified_name": "src.heretek_swarm.api.websockets._ws_handle_workflow_unsubscribe",
-      "start_line": 197,
-      "end_line": 205,
-      "type": "FUNCTION",
-      "status": "added"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.broadcast_execution": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_execution",
-      "start_line": 207,
-      "end_line": 221,
+      "start_line": 327,
+      "end_line": 341,
       "type": "METHOD",
-      "status": "modified"
-    },
-    "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets._ws_handle_metrics_subscribe": {
-      "file_path": "src/heretek_swarm/api/websockets.py",
-      "qualified_name": "src.heretek_swarm.api.websockets._ws_handle_metrics_subscribe",
-      "start_line": 208,
-      "end_line": 216,
-      "type": "FUNCTION",
-      "status": "added"
-    },
-    "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets._ws_handle_metrics_unsubscribe": {
-      "file_path": "src/heretek_swarm/api/websockets.py",
-      "qualified_name": "src.heretek_swarm.api.websockets._ws_handle_metrics_unsubscribe",
-      "start_line": 219,
-      "end_line": 227,
-      "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.broadcast_a2a": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_a2a",
-      "start_line": 223,
-      "end_line": 235,
+      "start_line": 343,
+      "end_line": 355,
       "type": "METHOD",
-      "status": "modified"
-    },
-    "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets._ws_handle_dashboard_message": {
-      "file_path": "src/heretek_swarm/api/websockets.py",
-      "qualified_name": "src.heretek_swarm.api.websockets._ws_handle_dashboard_message",
-      "start_line": 230,
-      "end_line": 252,
-      "type": "FUNCTION",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.broadcast_dashboard": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_dashboard",
-      "start_line": 237,
-      "end_line": 249,
+      "start_line": 357,
+      "end_line": 369,
       "type": "METHOD",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.broadcast_observability": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_observability",
-      "start_line": 251,
-      "end_line": 263,
+      "start_line": 371,
+      "end_line": 383,
       "type": "METHOD",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.broadcast_agent_status": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_agent_status",
-      "start_line": 265,
-      "end_line": 279,
+      "start_line": 385,
+      "end_line": 399,
       "type": "METHOD",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.broadcast_workflow_progress": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_workflow_progress",
-      "start_line": 281,
-      "end_line": 300,
-      "type": "METHOD",
-      "status": "modified"
-    },
-    "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.subscribe_agent_status": {
-      "file_path": "src/heretek_swarm/api/websockets.py",
-      "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.subscribe_agent_status",
-      "start_line": 296,
-      "end_line": 298,
-      "type": "METHOD",
-      "status": "unchanged"
-    },
-    "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.unsubscribe_agent_status": {
-      "file_path": "src/heretek_swarm/api/websockets.py",
-      "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.unsubscribe_agent_status",
-      "start_line": 300,
-      "end_line": 303,
+      "start_line": 401,
+      "end_line": 420,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.broadcast_metrics": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_metrics",
-      "start_line": 302,
-      "end_line": 321,
+      "start_line": 422,
+      "end_line": 441,
       "type": "METHOD",
-      "status": "modified"
+      "status": "unchanged"
+    },
+    "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.subscribe_agent_status": {
+      "file_path": "src/heretek_swarm/api/websockets.py",
+      "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.subscribe_agent_status",
+      "start_line": 443,
+      "end_line": 445,
+      "type": "METHOD",
+      "status": "unchanged"
+    },
+    "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.unsubscribe_agent_status": {
+      "file_path": "src/heretek_swarm/api/websockets.py",
+      "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.unsubscribe_agent_status",
+      "start_line": 447,
+      "end_line": 450,
+      "type": "METHOD",
+      "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.subscribe_workflow_progress": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.subscribe_workflow_progress",
-      "start_line": 305,
-      "end_line": 309,
+      "start_line": 452,
+      "end_line": 456,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.unsubscribe_workflow_progress": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.unsubscribe_workflow_progress",
-      "start_line": 311,
-      "end_line": 316,
+      "start_line": 458,
+      "end_line": 463,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.subscribe_metrics": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.subscribe_metrics",
-      "start_line": 318,
-      "end_line": 322,
+      "start_line": 465,
+      "end_line": 469,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.unsubscribe_metrics": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.unsubscribe_metrics",
-      "start_line": 324,
-      "end_line": 329,
+      "start_line": 471,
+      "end_line": 476,
       "type": "METHOD",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.connect_logs": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.connect_logs",
-      "start_line": 358,
-      "end_line": 362,
+      "start_line": 478,
+      "end_line": 482,
       "type": "METHOD",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.disconnect_logs": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.disconnect_logs",
-      "start_line": 364,
-      "end_line": 367,
+      "start_line": 484,
+      "end_line": 487,
       "type": "METHOD",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.ConnectionManager.broadcast_log": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_log",
-      "start_line": 369,
-      "end_line": 384,
+      "start_line": 489,
+      "end_line": 504,
       "type": "METHOD",
-      "status": "added"
+      "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.execution_websocket": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.execution_websocket",
-      "start_line": 400,
-      "end_line": 498,
+      "start_line": 520,
+      "end_line": 618,
       "type": "FUNCTION",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.get_execution_update": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.get_execution_update",
-      "start_line": 505,
-      "end_line": 522,
+      "start_line": 625,
+      "end_line": 642,
       "type": "FUNCTION",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.a2a_websocket": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.a2a_websocket",
-      "start_line": 531,
-      "end_line": 616,
+      "start_line": 651,
+      "end_line": 736,
       "type": "FUNCTION",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.agent_events_websocket": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.agent_events_websocket",
-      "start_line": 625,
-      "end_line": 694,
+      "start_line": 745,
+      "end_line": 814,
       "type": "FUNCTION",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.agent_status_websocket": {
       "file_path": "src/heretek_swarm/api/websockets.py",
@@ -67804,7 +67804,7 @@
       "start_line": 823,
       "end_line": 887,
       "type": "FUNCTION",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.workflow_progress_websocket": {
       "file_path": "src/heretek_swarm/api/websockets.py",
@@ -67812,7 +67812,7 @@
       "start_line": 896,
       "end_line": 960,
       "type": "FUNCTION",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.agent_metrics_websocket": {
       "file_path": "src/heretek_swarm/api/websockets.py",
@@ -67820,7 +67820,7 @@
       "start_line": 969,
       "end_line": 1037,
       "type": "FUNCTION",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.dashboard_websocket": {
       "file_path": "src/heretek_swarm/api/websockets.py",
@@ -67828,55 +67828,55 @@
       "start_line": 1046,
       "end_line": 1104,
       "type": "FUNCTION",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.observability_websocket": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.observability_websocket",
-      "start_line": 1094,
-      "end_line": 1163,
+      "start_line": 1113,
+      "end_line": 1182,
       "type": "FUNCTION",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.logs_websocket": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.logs_websocket",
-      "start_line": 1167,
-      "end_line": 1196,
-      "type": "FUNCTION",
-      "status": "added"
-    },
-    "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.send_agent_status_update": {
-      "file_path": "src/heretek_swarm/api/websockets.py",
-      "qualified_name": "src.heretek_swarm.api.websockets.send_agent_status_update",
-      "start_line": 1169,
-      "end_line": 1184,
+      "start_line": 1186,
+      "end_line": 1205,
       "type": "FUNCTION",
       "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.all_agents_websocket": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.all_agents_websocket",
-      "start_line": 1195,
-      "end_line": 1249,
+      "start_line": 1214,
+      "end_line": 1268,
       "type": "FUNCTION",
-      "status": "modified"
+      "status": "unchanged"
+    },
+    "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.send_agent_status_update": {
+      "file_path": "src/heretek_swarm/api/websockets.py",
+      "qualified_name": "src.heretek_swarm.api.websockets.send_agent_status_update",
+      "start_line": 1276,
+      "end_line": 1291,
+      "type": "FUNCTION",
+      "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.send_workflow_progress_update": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.send_workflow_progress_update",
-      "start_line": 1275,
-      "end_line": 1292,
+      "start_line": 1294,
+      "end_line": 1311,
       "type": "FUNCTION",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/api/websockets.py|src.heretek_swarm.api.websockets.send_agent_metrics_update": {
       "file_path": "src/heretek_swarm/api/websockets.py",
       "qualified_name": "src.heretek_swarm.api.websockets.send_agent_metrics_update",
-      "start_line": 1295,
-      "end_line": 1322,
+      "start_line": 1314,
+      "end_line": 1341,
       "type": "FUNCTION",
-      "status": "modified"
+      "status": "unchanged"
     },
     "src/heretek_swarm/api/wizard.py|src.heretek_swarm.api.wizard.WizardState": {
       "file_path": "src/heretek_swarm/api/wizard.py",
@@ -118272,7 +118272,7 @@
         },
         {
           "file_path": "src/heretek_swarm/api/websockets.py",
-          "file_status": "modified",
+          "file_status": "unchanged",
           "methods": [
             "src.heretek_swarm.api.websockets.WebSocketAuthManager",
             "src.heretek_swarm.api.websockets.WebSocketAuthManager.__init__",
@@ -118283,32 +118283,32 @@
             "src.heretek_swarm.api.websockets.WebSocketAuthManager.cleanup_expired",
             "src.heretek_swarm.api.websockets.authenticate_websocket",
             "src.heretek_swarm.api.websockets._ws_authenticate_and_accept",
+            "src.heretek_swarm.api.websockets._ws_handle_agent_subscribe",
+            "src.heretek_swarm.api.websockets._ws_handle_agent_unsubscribe",
+            "src.heretek_swarm.api.websockets._ws_handle_workflow_subscribe",
+            "src.heretek_swarm.api.websockets._ws_handle_workflow_unsubscribe",
+            "src.heretek_swarm.api.websockets._ws_handle_metrics_subscribe",
+            "src.heretek_swarm.api.websockets._ws_handle_metrics_unsubscribe",
+            "src.heretek_swarm.api.websockets._ws_handle_dashboard_message",
             "src.heretek_swarm.api.websockets.ConnectionManager",
             "src.heretek_swarm.api.websockets.ConnectionManager.__init__",
             "src.heretek_swarm.api.websockets.ConnectionManager.connect_execution",
-            "src.heretek_swarm.api.websockets._ws_handle_agent_subscribe",
             "src.heretek_swarm.api.websockets.ConnectionManager.disconnect_execution",
             "src.heretek_swarm.api.websockets.ConnectionManager.connect_a2a",
             "src.heretek_swarm.api.websockets.ConnectionManager.disconnect_a2a",
-            "src.heretek_swarm.api.websockets._ws_handle_agent_unsubscribe",
             "src.heretek_swarm.api.websockets.ConnectionManager.connect_dashboard",
             "src.heretek_swarm.api.websockets.ConnectionManager.disconnect_dashboard",
-            "src.heretek_swarm.api.websockets._ws_handle_workflow_subscribe",
             "src.heretek_swarm.api.websockets.ConnectionManager.connect_observability",
             "src.heretek_swarm.api.websockets.ConnectionManager.disconnect_observability",
-            "src.heretek_swarm.api.websockets._ws_handle_workflow_unsubscribe",
             "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_execution",
-            "src.heretek_swarm.api.websockets._ws_handle_metrics_subscribe",
-            "src.heretek_swarm.api.websockets._ws_handle_metrics_unsubscribe",
             "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_a2a",
-            "src.heretek_swarm.api.websockets._ws_handle_dashboard_message",
             "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_dashboard",
             "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_observability",
             "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_agent_status",
             "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_workflow_progress",
+            "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_metrics",
             "src.heretek_swarm.api.websockets.ConnectionManager.subscribe_agent_status",
             "src.heretek_swarm.api.websockets.ConnectionManager.unsubscribe_agent_status",
-            "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_metrics",
             "src.heretek_swarm.api.websockets.ConnectionManager.subscribe_workflow_progress",
             "src.heretek_swarm.api.websockets.ConnectionManager.unsubscribe_workflow_progress",
             "src.heretek_swarm.api.websockets.ConnectionManager.subscribe_metrics",
@@ -118326,8 +118326,8 @@
             "src.heretek_swarm.api.websockets.dashboard_websocket",
             "src.heretek_swarm.api.websockets.observability_websocket",
             "src.heretek_swarm.api.websockets.logs_websocket",
-            "src.heretek_swarm.api.websockets.send_agent_status_update",
             "src.heretek_swarm.api.websockets.all_agents_websocket",
+            "src.heretek_swarm.api.websockets.send_agent_status_update",
             "src.heretek_swarm.api.websockets.send_workflow_progress_update",
             "src.heretek_swarm.api.websockets.send_agent_metrics_update"
           ]
@@ -124881,7 +124881,7 @@
             },
             {
               "file_path": "src/heretek_swarm/api/websockets.py",
-              "file_status": "modified",
+              "file_status": "unchanged",
               "methods": [
                 "src.heretek_swarm.api.websockets.WebSocketAuthManager",
                 "src.heretek_swarm.api.websockets.WebSocketAuthManager.__init__",
@@ -124892,32 +124892,32 @@
                 "src.heretek_swarm.api.websockets.WebSocketAuthManager.cleanup_expired",
                 "src.heretek_swarm.api.websockets.authenticate_websocket",
                 "src.heretek_swarm.api.websockets._ws_authenticate_and_accept",
+                "src.heretek_swarm.api.websockets._ws_handle_agent_subscribe",
+                "src.heretek_swarm.api.websockets._ws_handle_agent_unsubscribe",
+                "src.heretek_swarm.api.websockets._ws_handle_workflow_subscribe",
+                "src.heretek_swarm.api.websockets._ws_handle_workflow_unsubscribe",
+                "src.heretek_swarm.api.websockets._ws_handle_metrics_subscribe",
+                "src.heretek_swarm.api.websockets._ws_handle_metrics_unsubscribe",
+                "src.heretek_swarm.api.websockets._ws_handle_dashboard_message",
                 "src.heretek_swarm.api.websockets.ConnectionManager",
                 "src.heretek_swarm.api.websockets.ConnectionManager.__init__",
                 "src.heretek_swarm.api.websockets.ConnectionManager.connect_execution",
-                "src.heretek_swarm.api.websockets._ws_handle_agent_subscribe",
                 "src.heretek_swarm.api.websockets.ConnectionManager.disconnect_execution",
                 "src.heretek_swarm.api.websockets.ConnectionManager.connect_a2a",
                 "src.heretek_swarm.api.websockets.ConnectionManager.disconnect_a2a",
-                "src.heretek_swarm.api.websockets._ws_handle_agent_unsubscribe",
                 "src.heretek_swarm.api.websockets.ConnectionManager.connect_dashboard",
                 "src.heretek_swarm.api.websockets.ConnectionManager.disconnect_dashboard",
-                "src.heretek_swarm.api.websockets._ws_handle_workflow_subscribe",
                 "src.heretek_swarm.api.websockets.ConnectionManager.connect_observability",
                 "src.heretek_swarm.api.websockets.ConnectionManager.disconnect_observability",
-                "src.heretek_swarm.api.websockets._ws_handle_workflow_unsubscribe",
                 "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_execution",
-                "src.heretek_swarm.api.websockets._ws_handle_metrics_subscribe",
-                "src.heretek_swarm.api.websockets._ws_handle_metrics_unsubscribe",
                 "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_a2a",
-                "src.heretek_swarm.api.websockets._ws_handle_dashboard_message",
                 "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_dashboard",
                 "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_observability",
                 "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_agent_status",
                 "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_workflow_progress",
+                "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_metrics",
                 "src.heretek_swarm.api.websockets.ConnectionManager.subscribe_agent_status",
                 "src.heretek_swarm.api.websockets.ConnectionManager.unsubscribe_agent_status",
-                "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_metrics",
                 "src.heretek_swarm.api.websockets.ConnectionManager.subscribe_workflow_progress",
                 "src.heretek_swarm.api.websockets.ConnectionManager.unsubscribe_workflow_progress",
                 "src.heretek_swarm.api.websockets.ConnectionManager.subscribe_metrics",
@@ -124935,8 +124935,8 @@
                 "src.heretek_swarm.api.websockets.dashboard_websocket",
                 "src.heretek_swarm.api.websockets.observability_websocket",
                 "src.heretek_swarm.api.websockets.logs_websocket",
-                "src.heretek_swarm.api.websockets.send_agent_status_update",
                 "src.heretek_swarm.api.websockets.all_agents_websocket",
+                "src.heretek_swarm.api.websockets.send_agent_status_update",
                 "src.heretek_swarm.api.websockets.send_workflow_progress_update",
                 "src.heretek_swarm.api.websockets.send_agent_metrics_update"
               ]
@@ -145724,7 +145724,7 @@
                 },
                 {
                   "file_path": "src/heretek_swarm/api/websockets.py",
-                  "file_status": "modified",
+                  "file_status": "unchanged",
                   "methods": [
                     "src.heretek_swarm.api.websockets.WebSocketAuthManager",
                     "src.heretek_swarm.api.websockets.WebSocketAuthManager.__init__",
@@ -145735,32 +145735,32 @@
                     "src.heretek_swarm.api.websockets.WebSocketAuthManager.cleanup_expired",
                     "src.heretek_swarm.api.websockets.authenticate_websocket",
                     "src.heretek_swarm.api.websockets._ws_authenticate_and_accept",
+                    "src.heretek_swarm.api.websockets._ws_handle_agent_subscribe",
+                    "src.heretek_swarm.api.websockets._ws_handle_agent_unsubscribe",
+                    "src.heretek_swarm.api.websockets._ws_handle_workflow_subscribe",
+                    "src.heretek_swarm.api.websockets._ws_handle_workflow_unsubscribe",
+                    "src.heretek_swarm.api.websockets._ws_handle_metrics_subscribe",
+                    "src.heretek_swarm.api.websockets._ws_handle_metrics_unsubscribe",
+                    "src.heretek_swarm.api.websockets._ws_handle_dashboard_message",
                     "src.heretek_swarm.api.websockets.ConnectionManager",
                     "src.heretek_swarm.api.websockets.ConnectionManager.__init__",
                     "src.heretek_swarm.api.websockets.ConnectionManager.connect_execution",
-                    "src.heretek_swarm.api.websockets._ws_handle_agent_subscribe",
                     "src.heretek_swarm.api.websockets.ConnectionManager.disconnect_execution",
                     "src.heretek_swarm.api.websockets.ConnectionManager.connect_a2a",
                     "src.heretek_swarm.api.websockets.ConnectionManager.disconnect_a2a",
-                    "src.heretek_swarm.api.websockets._ws_handle_agent_unsubscribe",
                     "src.heretek_swarm.api.websockets.ConnectionManager.connect_dashboard",
                     "src.heretek_swarm.api.websockets.ConnectionManager.disconnect_dashboard",
-                    "src.heretek_swarm.api.websockets._ws_handle_workflow_subscribe",
                     "src.heretek_swarm.api.websockets.ConnectionManager.connect_observability",
                     "src.heretek_swarm.api.websockets.ConnectionManager.disconnect_observability",
-                    "src.heretek_swarm.api.websockets._ws_handle_workflow_unsubscribe",
                     "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_execution",
-                    "src.heretek_swarm.api.websockets._ws_handle_metrics_subscribe",
-                    "src.heretek_swarm.api.websockets._ws_handle_metrics_unsubscribe",
                     "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_a2a",
-                    "src.heretek_swarm.api.websockets._ws_handle_dashboard_message",
                     "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_dashboard",
                     "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_observability",
                     "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_agent_status",
                     "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_workflow_progress",
+                    "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_metrics",
                     "src.heretek_swarm.api.websockets.ConnectionManager.subscribe_agent_status",
                     "src.heretek_swarm.api.websockets.ConnectionManager.unsubscribe_agent_status",
-                    "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_metrics",
                     "src.heretek_swarm.api.websockets.ConnectionManager.subscribe_workflow_progress",
                     "src.heretek_swarm.api.websockets.ConnectionManager.unsubscribe_workflow_progress",
                     "src.heretek_swarm.api.websockets.ConnectionManager.subscribe_metrics",
@@ -145778,8 +145778,8 @@
                     "src.heretek_swarm.api.websockets.dashboard_websocket",
                     "src.heretek_swarm.api.websockets.observability_websocket",
                     "src.heretek_swarm.api.websockets.logs_websocket",
-                    "src.heretek_swarm.api.websockets.send_agent_status_update",
                     "src.heretek_swarm.api.websockets.all_agents_websocket",
+                    "src.heretek_swarm.api.websockets.send_agent_status_update",
                     "src.heretek_swarm.api.websockets.send_workflow_progress_update",
                     "src.heretek_swarm.api.websockets.send_agent_metrics_update"
                   ]
@@ -146928,7 +146928,7 @@
                     },
                     {
                       "file_path": "src/heretek_swarm/api/websockets.py",
-                      "file_status": "modified",
+                      "file_status": "unchanged",
                       "methods": [
                         "src.heretek_swarm.api.websockets.WebSocketAuthManager",
                         "src.heretek_swarm.api.websockets.WebSocketAuthManager.__init__",
@@ -146939,32 +146939,32 @@
                         "src.heretek_swarm.api.websockets.WebSocketAuthManager.cleanup_expired",
                         "src.heretek_swarm.api.websockets.authenticate_websocket",
                         "src.heretek_swarm.api.websockets._ws_authenticate_and_accept",
+                        "src.heretek_swarm.api.websockets._ws_handle_agent_subscribe",
+                        "src.heretek_swarm.api.websockets._ws_handle_agent_unsubscribe",
+                        "src.heretek_swarm.api.websockets._ws_handle_workflow_subscribe",
+                        "src.heretek_swarm.api.websockets._ws_handle_workflow_unsubscribe",
+                        "src.heretek_swarm.api.websockets._ws_handle_metrics_subscribe",
+                        "src.heretek_swarm.api.websockets._ws_handle_metrics_unsubscribe",
+                        "src.heretek_swarm.api.websockets._ws_handle_dashboard_message",
                         "src.heretek_swarm.api.websockets.ConnectionManager",
                         "src.heretek_swarm.api.websockets.ConnectionManager.__init__",
                         "src.heretek_swarm.api.websockets.ConnectionManager.connect_execution",
-                        "src.heretek_swarm.api.websockets._ws_handle_agent_subscribe",
                         "src.heretek_swarm.api.websockets.ConnectionManager.disconnect_execution",
                         "src.heretek_swarm.api.websockets.ConnectionManager.connect_a2a",
                         "src.heretek_swarm.api.websockets.ConnectionManager.disconnect_a2a",
-                        "src.heretek_swarm.api.websockets._ws_handle_agent_unsubscribe",
                         "src.heretek_swarm.api.websockets.ConnectionManager.connect_dashboard",
                         "src.heretek_swarm.api.websockets.ConnectionManager.disconnect_dashboard",
-                        "src.heretek_swarm.api.websockets._ws_handle_workflow_subscribe",
                         "src.heretek_swarm.api.websockets.ConnectionManager.connect_observability",
                         "src.heretek_swarm.api.websockets.ConnectionManager.disconnect_observability",
-                        "src.heretek_swarm.api.websockets._ws_handle_workflow_unsubscribe",
                         "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_execution",
-                        "src.heretek_swarm.api.websockets._ws_handle_metrics_subscribe",
-                        "src.heretek_swarm.api.websockets._ws_handle_metrics_unsubscribe",
                         "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_a2a",
-                        "src.heretek_swarm.api.websockets._ws_handle_dashboard_message",
                         "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_dashboard",
                         "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_observability",
                         "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_agent_status",
                         "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_workflow_progress",
+                        "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_metrics",
                         "src.heretek_swarm.api.websockets.ConnectionManager.subscribe_agent_status",
                         "src.heretek_swarm.api.websockets.ConnectionManager.unsubscribe_agent_status",
-                        "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_metrics",
                         "src.heretek_swarm.api.websockets.ConnectionManager.subscribe_workflow_progress",
                         "src.heretek_swarm.api.websockets.ConnectionManager.unsubscribe_workflow_progress",
                         "src.heretek_swarm.api.websockets.ConnectionManager.subscribe_metrics",
@@ -146982,8 +146982,8 @@
                         "src.heretek_swarm.api.websockets.dashboard_websocket",
                         "src.heretek_swarm.api.websockets.observability_websocket",
                         "src.heretek_swarm.api.websockets.logs_websocket",
-                        "src.heretek_swarm.api.websockets.send_agent_status_update",
                         "src.heretek_swarm.api.websockets.all_agents_websocket",
+                        "src.heretek_swarm.api.websockets.send_agent_status_update",
                         "src.heretek_swarm.api.websockets.send_workflow_progress_update",
                         "src.heretek_swarm.api.websockets.send_agent_metrics_update"
                       ]
@@ -147077,7 +147077,7 @@
                         },
                         {
                           "file_path": "src/heretek_swarm/api/websockets.py",
-                          "file_status": "modified",
+                          "file_status": "unchanged",
                           "methods": [
                             "src.heretek_swarm.api.websockets.WebSocketAuthManager",
                             "src.heretek_swarm.api.websockets.WebSocketAuthManager.__init__",
@@ -147088,32 +147088,32 @@
                             "src.heretek_swarm.api.websockets.WebSocketAuthManager.cleanup_expired",
                             "src.heretek_swarm.api.websockets.authenticate_websocket",
                             "src.heretek_swarm.api.websockets._ws_authenticate_and_accept",
+                            "src.heretek_swarm.api.websockets._ws_handle_agent_subscribe",
+                            "src.heretek_swarm.api.websockets._ws_handle_agent_unsubscribe",
+                            "src.heretek_swarm.api.websockets._ws_handle_workflow_subscribe",
+                            "src.heretek_swarm.api.websockets._ws_handle_workflow_unsubscribe",
+                            "src.heretek_swarm.api.websockets._ws_handle_metrics_subscribe",
+                            "src.heretek_swarm.api.websockets._ws_handle_metrics_unsubscribe",
+                            "src.heretek_swarm.api.websockets._ws_handle_dashboard_message",
                             "src.heretek_swarm.api.websockets.ConnectionManager",
                             "src.heretek_swarm.api.websockets.ConnectionManager.__init__",
                             "src.heretek_swarm.api.websockets.ConnectionManager.connect_execution",
-                            "src.heretek_swarm.api.websockets._ws_handle_agent_subscribe",
                             "src.heretek_swarm.api.websockets.ConnectionManager.disconnect_execution",
                             "src.heretek_swarm.api.websockets.ConnectionManager.connect_a2a",
                             "src.heretek_swarm.api.websockets.ConnectionManager.disconnect_a2a",
-                            "src.heretek_swarm.api.websockets._ws_handle_agent_unsubscribe",
                             "src.heretek_swarm.api.websockets.ConnectionManager.connect_dashboard",
                             "src.heretek_swarm.api.websockets.ConnectionManager.disconnect_dashboard",
-                            "src.heretek_swarm.api.websockets._ws_handle_workflow_subscribe",
                             "src.heretek_swarm.api.websockets.ConnectionManager.connect_observability",
                             "src.heretek_swarm.api.websockets.ConnectionManager.disconnect_observability",
-                            "src.heretek_swarm.api.websockets._ws_handle_workflow_unsubscribe",
                             "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_execution",
-                            "src.heretek_swarm.api.websockets._ws_handle_metrics_subscribe",
-                            "src.heretek_swarm.api.websockets._ws_handle_metrics_unsubscribe",
                             "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_a2a",
-                            "src.heretek_swarm.api.websockets._ws_handle_dashboard_message",
                             "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_dashboard",
                             "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_observability",
                             "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_agent_status",
                             "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_workflow_progress",
+                            "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_metrics",
                             "src.heretek_swarm.api.websockets.ConnectionManager.subscribe_agent_status",
                             "src.heretek_swarm.api.websockets.ConnectionManager.unsubscribe_agent_status",
-                            "src.heretek_swarm.api.websockets.ConnectionManager.broadcast_metrics",
                             "src.heretek_swarm.api.websockets.ConnectionManager.subscribe_workflow_progress",
                             "src.heretek_swarm.api.websockets.ConnectionManager.unsubscribe_workflow_progress",
                             "src.heretek_swarm.api.websockets.ConnectionManager.subscribe_metrics",
@@ -147131,8 +147131,8 @@
                             "src.heretek_swarm.api.websockets.dashboard_websocket",
                             "src.heretek_swarm.api.websockets.observability_websocket",
                             "src.heretek_swarm.api.websockets.logs_websocket",
-                            "src.heretek_swarm.api.websockets.send_agent_status_update",
                             "src.heretek_swarm.api.websockets.all_agents_websocket",
+                            "src.heretek_swarm.api.websockets.send_agent_status_update",
                             "src.heretek_swarm.api.websockets.send_workflow_progress_update",
                             "src.heretek_swarm.api.websockets.send_agent_metrics_update"
                           ]
